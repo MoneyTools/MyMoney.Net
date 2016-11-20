@@ -1,0 +1,56 @@
+﻿<Window x:Class="Walkabout.Dialogs.MoneyFileImportDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Walkabout.Dialogs"
+        xmlns:c="clr-namespace:Walkabout.WpfConverters"
+        mc:Ignorable="d"
+        Title="Money File Import" Height="500" Width="800"
+        Background="{DynamicResource DialogWindowBackgroundBrush}" >
+    <Window.Resources>
+        <local:DemoList x:Key="DemoList"/>
+        <c:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBox x:Name="Status"  Margin="10" Text="Processing file: {0}" TextWrapping="Wrap" BorderThickness="0" Background="Transparent"/>
+
+        <ListView x:Name="AccountList" Grid.Row="1" ItemsSource="{StaticResource DemoList}" SelectionMode="Single" SelectionChanged="OnRowSelected">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <!-- binding to AccountImportState -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Image Source="Icons/CheckMark.png" Visibility="{Binding Done, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <Image Source="/MyMoney;component/Icons/Filter.png" Visibility="{Binding Loading, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <TextBlock Text="{Binding Name}" Grid.Column="1" Margin="5"/>
+                        <TextBlock Text="{Binding Status}" Grid.Column="2" Margin="5"/>
+                        <ProgressBar Grid.Row="1" Grid.Column="1" Height="4" Minimum="0" Maximum="100" Value="{Binding PercentComplete}"
+                                     Visibility="{Binding Loading, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+    </Grid>
+</Window>

@@ -1,0 +1,396 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ClientUptoDate">
+    <value>Based on the client timestamp, the client has the latest information. The response does not supply any additional information.</value>
+  </data>
+  <data name="GeneralError">
+    <value>Error other than those specified by the remaining error codes.</value>
+  </data>
+  <data name="InvalidAccount" xml:space="preserve">
+    <value>Invalid account</value>
+  </data>
+  <data name="GeneralAccountError">
+    <value>Account error not specified by the remaining error codes</value>
+  </data>
+  <data name="AccountNotFound">
+    <value>The specified account number does not correspond to one of the user's accounts.</value>
+  </data>
+  <data name="AccountClosed">
+    <value>The specified account number corresponds to an account that has been closed.</value>
+  </data>
+  <data name="AccountNotAuthorized">
+    <value>The user is not authorized to perform this action on the account, or the server does not allow this type of action to be performed on the account</value>
+  </data>
+  <data name="SourceAccountNotFound">
+    <value>The specified account number does not correspond to one of the user's accounts.</value>
+  </data>
+  <data name="SourceAccountClosed">
+    <value>The specified account number corresponds to an account that has been closed</value>
+  </data>
+  <data name="SourceAccountNnotAuthorized">
+    <value>The user is not authorized to perform this action on the account, or the server does not allow this type of action to be performed on the account</value>
+  </data>
+  <data name="DestinationAccountNotFound">
+    <value>The specified account number does not correspond to one of the user's accounts</value>
+  </data>
+  <data name="DestinationAccountClosed">
+    <value>The specified account number corresponds to an account that has been closed</value>
+  </data>
+  <data name="DestinationAccountNotAuthorized">
+    <value>The user is not authorized to perform this action on the account, or the server does not allow this type of action to be performed on the account</value>
+  </data>
+  <data name="InvalidAmount">
+    <value>The specified amount is not valid for this action; for example, the user specified a negative payment amount</value>
+  </data>
+  <data name="DateTooSoon">
+    <value>The server cannot process the requested action by the date specified by the user</value>
+  </data>
+  <data name="DateTooFarInFuture">
+    <value>The server cannot accept requests for an action that far in the future</value>
+  </data>
+  <data name="TransactionAlreadyCommitted">
+    <value>Transaction has entered the processing loop and cannot be modified/cancelled using OFX. The transaction may still be cancelled or modified using other means (for example, a phone call to Customer Service).</value>
+  </data>
+  <data name="AlreadyCanceled">
+    <value>The transaction cannot be canceled or modified because it has already been canceled.</value>
+  </data>
+  <data name="UnknownServerId">
+    <value>The specified server ID does not exist or no longer exists</value>
+  </data>
+  <data name="DuplicateRequest">
+    <value>A request with this &lt;TRNUID&gt; has already been received and processed</value>
+  </data>
+  <data name="InvalidDate">
+    <value>The specified datetime stamp cannot be parsed; for instance, the datetime stamp specifies 25:00 hours</value>
+  </data>
+  <data name="UnsupportedVersion">
+    <value>The server does not support the requested version. The version of the message set specified by the client is not supported by this server.</value>
+  </data>
+  <data name="InvalidTan">
+    <value>The server was unable to validate the TAN sent in the request</value>
+  </data>
+  <data name="UnknownFITID">
+    <value>The specified FITID/BILLID does not exist or no longer exists</value>
+  </data>
+  <data name="BranchIdMissing">
+    <value>A &lt;BRANCHID&gt; value must be provided in the &lt;BANKACCTFROM&gt; aggregate for this country system, but this field is missing</value>
+  </data>
+  <data name="BankNameDoesntMatchBank">
+    <value>The value of &lt;BANKNAME&gt; in the &lt;EXTBANKACCTTO&gt; aggregate is inconsistent with the value of &lt;BANKID&gt; in the &lt;BANKACCTTO&gt; aggregate.</value>
+  </data>
+  <data name="InvalidateDateRange">
+    <value>Response for non-overlapping dates, date ranges in the future, et cetera</value>
+  </data>
+  <data name="RequestedElementUnknown">
+    <value>One or more elements of the request were not recognized by the server or the server (as noted in the FI Profile) does not support the elements. The server executed the element transactions it understood and supported. For example, the request file included private tags in a &lt;PMTRQ&gt; but the server was able to execute the rest of the request.</value>
+  </data>
+  <data name="MFAChallengeAuthenticationRequired">
+    <value>User credentials are correct, but further authentication required. Client should send &lt;MFACHALLENGERQ&gt; in next request.</value>
+  </data>
+  <data name="MFAChallengeInformationIsInvalid">
+    <value>User or client information sent in MFACHALLENGEA contains invalid information</value>
+  </data>
+  <data name="RejectIfMissingInvalidWithoutToken">
+    <value>This error code may appear in the &lt;SYNCERROR&gt; element of an &lt;xxxSYNCRS&gt; wrapper (in &lt;PRESDLVMSGSRSV1&gt; and V2 message set responses) or the &lt;CODE&gt; contained in any embedded transaction wrappers within a sync response. The corresponding sync request wrapper included &lt;REJECTIFMISSING&gt;Y with &lt;REFRESH&gt;Y or &lt;TOKENONLY&gt;Y, which is illegal</value>
+  </data>
+  <data name="EmbeddedTransactionsInRequestFailed">
+    <value>&lt;REJECTIFMISSING&gt;Y and embedded transactions appeared in the request sync wrapper and the provided &lt;TOKEN&gt; was out of date. This code should be used in the &lt;SYNCERROR&gt; of the response sync wrapper.</value>
+  </data>
+  <data name="UnableToProcessEmbeddedTransactionDueToOutOfDate">
+    <value>Used in response transaction wrapper for embedded transactions when &lt;SYNCERROR&gt;6501 appears in the surrounding sync wrapper.</value>
+  </data>
+  <data name="StopCheckInProcess">
+    <value>Stop check is already in process</value>
+  </data>
+  <data name="TooManyChecksToProcess">
+    <value>The stop-payment request &lt;STPCHKRQ&gt; specifies too many checks</value>
+  </data>
+  <data name="InvalidPayee">
+    <value>Payee error not specified by the remaining error codes</value>
+  </data>
+  <data name="InvalidPayeeAddress">
+    <value>Some portion of the payee's address is incorrect or unknown</value>
+  </data>
+  <data name="InvalidPayeeAccountNumber">
+    <value>The account number &lt;PAYACCT&gt; of the requested payee is invalid</value>
+  </data>
+  <data name="InsufficientFunds">
+    <value>The server cannot process the request because the specified account does not have enough funds.</value>
+  </data>
+  <data name="CannotModifyElement">
+    <value>The server does not allow modifications to one or more values in a modification request.</value>
+  </data>
+  <data name="CannotModifySourceAccount">
+    <value>Reserved for future use.</value>
+  </data>
+  <data name="CannotModifyDestinationAccount">
+    <value>Reserved for future use.</value>
+  </data>
+  <data name="InvalidFrequency">
+    <value>The specified frequency &lt;FREQ&gt; does not match one of the accepted frequencies for recurring transactions.</value>
+  </data>
+  <data name="ModelAlreadyCanceled">
+    <value>The server has already canceled the specified recurring model.</value>
+  </data>
+  <data name="InvalidPayeeID">
+    <value>The specified payee ID does not exist or no longer exists.</value>
+  </data>
+  <data name="InvalidPayeeCity">
+    <value>The specified city is incorrect or unknown.</value>
+  </data>
+  <data name="InvalidPayeeState">
+    <value>The specified state is incorrect or unknown.</value>
+  </data>
+  <data name="InvalidPayeePostalCode">
+    <value>The specified postal code is incorrect or unknown.</value>
+  </data>
+  <data name="TransactionAlreadyProcessed">
+    <value>Transaction has already been sent or date due is past</value>
+  </data>
+  <data name="PayeeNotModifiableByClient">
+    <value>The server does not allow clients to change payee information.</value>
+  </data>
+  <data name="WireBeneficiaryInvalid">
+    <value>The specified wire beneficiary does not exist or no longer exists.</value>
+  </data>
+  <data name="InvalidPayeeName">
+    <value>The server does not recognize the specified payee name.</value>
+  </data>
+  <data name="UnknownModelID">
+    <value>The specified model ID does not exist or no longer exists.</value>
+  </data>
+  <data name="InvalidPayeeListID">
+    <value>The specified payee list ID does not exist or no longer exists.</value>
+  </data>
+  <data name="TableTypeNotFound">
+    <value>The specified table type is not recognized or does not exist.</value>
+  </data>
+  <data name="InvestmentTransactionDownloadNotSupported">
+    <value>The server does not support investment transaction download.</value>
+  </data>
+  <data name="InvestmentPositionDownloadNotSupported">
+    <value>The server does not support investment position download.</value>
+  </data>
+  <data name="InvestmentPositionsForSpecifiedDateNotAvailable">
+    <value>The server does not support investment positions for the specified date.</value>
+  </data>
+  <data name="InvestmentOpenOrderDownloadNotSupported">
+    <value>The server does not support open order download.</value>
+  </data>
+  <data name="InvestmentBalancesDownloadNotSupported">
+    <value>The server does not support investment balances download.</value>
+  </data>
+  <data name="Error401kNotAvailableForThisAccount">
+    <value>401(k) information requested from a non-401(k) account.</value>
+  </data>
+  <data name="OneOrMoreSecuritiesNotFound">
+    <value>The server could not find the requested securities.</value>
+  </data>
+  <data name="UserIDAndPasswordWillBeSentOutOfBand">
+    <value>The server will send the user ID and password via postal mail, e-mail, or another means. The accompanying message will provide details.</value>
+  </data>
+  <data name="UnableToEnrollUser">
+    <value>The server could not enroll the user.</value>
+  </data>
+  <data name="UserAlreadyEnrolled">
+    <value>The server has already enrolled the user.</value>
+  </data>
+  <data name="InvalidService">
+    <value>The server does not support the service &lt;SVC&gt; specified in the service-activation request.</value>
+  </data>
+  <data name="CannotChangeUserInformation">
+    <value>The server does not support the &lt;CHGUSERINFORQ&gt; request.</value>
+  </data>
+  <data name="FIMissingOrInvalidInSONRQ">
+    <value>The FI requires the client to provide the &lt;FI&gt; aggregate in the &lt;SONRQ&gt; request, but either none was provided, or the one provided was invalid.</value>
+  </data>
+  <data name="Form1099NotAvailable">
+    <value>1099 forms are not yet available for the tax year requested.</value>
+  </data>
+  <data name="Form1099NotAvailableForUserID">
+    <value>This user does not have any 1099 forms available.</value>
+  </data>
+  <data name="W2formsNotAvailable">
+    <value>W2 forms are not yet available for the tax year requested.</value>
+  </data>
+  <data name="W2FormsNotAvailableForUserID">
+    <value>The user does not have any W2 forms available.</value>
+  </data>
+  <data name="Form1098NotAvailable">
+    <value>1098 forms are not yet available for the tax year requested.</value>
+  </data>
+  <data name="Form1098NotAvailableForUserID">
+    <value>The user does not have any 1098 forms available.</value>
+  </data>
+  <data name="MustChangeUSERPASS">
+    <value>The user must change his or her &lt;USERPASS&gt; number as part of the next OFX request.</value>
+  </data>
+  <data name="SignonInvalid">
+    <value>The user cannot signon because he or she entered an invalid user ID or password.</value>
+  </data>
+  <data name="CustomerAccountAlreadyInUse">
+    <value>The server allows only one connection at a time, and another user is already signed on. Please try again later.</value>
+  </data>
+  <data name="UserPasslockout">
+    <value>The server has received too many failed signon attempts for this user. Please call the FI's technical support number.</value>
+  </data>
+  <data name="CouldNotChangeUSERPASS">
+    <value>The server does not support the &lt;PINCHRQ&gt; request.</value>
+  </data>
+  <data name="CouldNotProvideRandomData">
+    <value>The server could not generate random data as requested by the &lt;CHALLENGERQ&gt;.</value>
+  </data>
+  <data name="CountrySystemNotSupported">
+    <value>The server does not support the country specified in the &lt;COUNTRY&gt; field of the &lt;SONRQ&gt; aggregate.</value>
+  </data>
+  <data name="EmptySignonNotSupported">
+    <value>The server does not support signons not accompanied by some other transaction.</value>
+  </data>
+  <data name="SignonInvalidWithoutSupportingPinChangeRequest">
+    <value>The OFX block associated with the signon does not contain a pin change request and should.</value>
+  </data>
+  <data name="TransactionNotAuthorized">
+    <value>Current user is not authorized to perform this action on behalf of the &lt;USERID&gt;.</value>
+  </data>
+  <data name="CLIENTUIDError">
+    <value>The CLIENTUID sent by the client was incorrect. User must register the Client UID.</value>
+  </data>
+  <data name="MFAError">
+    <value>User should contact financial institution.</value>
+  </data>
+  <data name="AUTHTOKENRequired">
+    <value>User needs to contact financial institution to obtain AUTHTOKEN. Client should send it in the next request.</value>
+  </data>
+  <data name="AUTHTOKENInvalid">
+    <value>The AUTHTOKEN sent by the client was invalid.</value>
+  </data>
+  <data name="HTMLNotAllowed">
+    <value>The server does not accept HTML formatting in the request.</value>
+  </data>
+  <data name="UnknownMailTo">
+    <value>The server was unable to send mail to the specified Internet address.</value>
+  </data>
+  <data name="InvalidURL">
+    <value>The server could not parse the URL.</value>
+  </data>
+  <data name="UnableToGetURL">
+    <value>The server was unable to retrieve the information at this URL (e.g., an HTTP 400 or 500 series error).</value>
+  </data>
+</root>

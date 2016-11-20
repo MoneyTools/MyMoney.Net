@@ -1,0 +1,168 @@
+﻿<UserControl x:Class="Walkabout.Views.RentInputControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework" 
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:c="clr-namespace:Walkabout.WpfConverters"
+             xmlns:local="clr-namespace:Walkabout.Views.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+
+
+        <c:BoolToVisibilityConverter x:Key="boolToVis" />
+        <c:MonthConverter x:Key="monthConverter" />
+
+
+
+
+        <Style x:Key="GridBlockStyle" TargetType="{x:Type TextBlock}" >
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Visibility" Value="{Binding Path=IsSelected, 
+         											RelativeSource={RelativeSource FindAncestor, 
+             										AncestorType={x:Type ListViewItem}},
+         											Converter={StaticResource boolToVis}, 
+             										ConverterParameter=False}" />
+        </Style>
+
+        <Style TargetType="{x:Type FrameworkElement}" 
+                x:Key="GridEditStyle">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Visibility" 
+                Value="{Binding Path=IsSelected, 
+                        RelativeSource={RelativeSource FindAncestor, 
+                        AncestorType={x:Type ListViewItem}},
+                        Converter={StaticResource boolToVis}, 
+                        ConverterParameter=True}" />
+        </Style>
+
+        <DataTemplate x:Key="myCellTemplateMonth">
+            <Grid>
+                <TextBlock TextAlignment="Left" Text="{Binding Month}"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="myCellTemplateMoney">
+            <Grid>
+                <TextBlock Text="{Binding Amount, StringFormat={}{0:C} }" TextAlignment="Right" Style="{StaticResource GridBlockStyle}"/>
+                <TextBox Text="{Binding Amount, Mode=TwoWay}" Style="{StaticResource GridEditStyle}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="myCellTemplateAppartment">
+            <Grid>
+                <TextBlock TextAlignment="Right" Text="{Binding Appartment}"/>
+            </Grid>
+        </DataTemplate>
+
+
+
+
+        <!-- GROUPING LOGIC for the LISTVIEW -->
+        <CollectionViewSource x:Key="MyGroupView" Source="{Binding}">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Month" />
+                <scm:SortDescription PropertyName="Appartment" />
+            </CollectionViewSource.SortDescriptions>
+
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Month"/>
+            </CollectionViewSource.GroupDescriptions>
+
+        </CollectionViewSource>
+
+
+        <Style x:Key="GroupHeaderStyle" TargetType="{x:Type GroupItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GroupItem}">
+
+                        <!--<Expander IsExpanded="True" Margin="4,10,4,0" HorizontalAlignment="Stretch" Background="LightGray">
+                            <Expander.Header>-->
+
+                        <Border  BorderThickness="1" BorderBrush="Gray" CornerRadius="4" Margin="2,4,2,4" Padding="0,0,0,2">
+                            <StackPanel>
+                                <Border Background="{DynamicResource WalkaboutAccountSubSectionBrush}" CornerRadius="4,4,0,0" >
+                                    <DockPanel >
+
+                                        <TextBlock DockPanel.Dock="Left"
+                                           TextAlignment="Left" Margin="10,2,0,2"
+                                           VerticalAlignment="Center"
+                                           FontWeight="DemiBold"
+                                           FontSize="16"
+                                           Text="{Binding Path=Items[0].Month, Converter={StaticResource monthConverter}}"/>
+
+                                        <TextBlock DockPanel.Dock="Right"
+                                           TextAlignment="Right" Margin="4,0,10,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="12"
+                                           Text="{Binding Path=Items, Converter={StaticResource sumConverter}, StringFormat={}{0:C}}"
+                                           />
+                                    </DockPanel>
+                                </Border>
+
+                                <ItemsPresenter />
+                            </StackPanel>
+                        </Border>
+
+                        <!--</Expander.Header>
+                            
+                        </Expander>-->
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!-- AMOUNT -->
+        <DataTemplate x:Key="myTemplateAmount">
+            <TextBlock  Text="{Binding Amount, StringFormat={}{0:N}}" TextAlignment="Right" Padding="3,0,3,0"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="myTemplateAmountEdit">
+            <TextBox Text="{Binding Amount, StringFormat={}{0:N}}" TextAlignment="Right"/>
+        </DataTemplate>
+    </UserControl.Resources>
+
+
+
+    <Grid  >
+
+        <DataGrid x:Name="TheDataGrid" 
+                  ItemsSource="{Binding Source={StaticResource MyGroupView}}"
+                  AutoGenerateColumns="False"  RowEditEnding="TheDataGrid_RowEditEnding">
+
+            <DataGrid.GroupStyle>
+                <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                    <GroupStyle.Panel>
+                        <ItemsPanelTemplate>
+                            <StackPanel IsItemsHost="True" />
+                        </ItemsPanelTemplate>
+                    </GroupStyle.Panel>
+                </GroupStyle>
+            </DataGrid.GroupStyle>
+
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Appartment"  Binding="{Binding Unit.Name, Mode=OneTime}" MinWidth="100" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Renter" Binding="{Binding Unit.Renter, Mode=OneTime}"  MinWidth="100" IsReadOnly="True"/>
+                <DataGridTemplateColumn Header="Amount"  CellTemplate="{StaticResource myTemplateAmount}" CellEditingTemplate="{StaticResource myTemplateAmountEdit}"
+                                        MinWidth="100"/>
+                <DataGridTextColumn Header="Note" Binding="{Binding Note}" MinWidth="200"/>
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+
+        <!--<Grid.ContextMenu>
+            <ContextMenu Name="cm">
+                <MenuItem Header="_Add New Year" Click="MenuItem_Click" />
+            </ContextMenu>
+        </Grid.ContextMenu>-->
+
+    </Grid>
+
+</UserControl>

@@ -1,0 +1,4443 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<institutions>
+  <institution>
+    <Name>121 Financial Credit Union</Name>
+    <Org>121 Financial Credit Union</Org>
+    <Fid>000001155</Fid>
+    <ProviderURL>https://ppc.121fcu.org/scripts/isaofx.dll</ProviderURL>
+    <SmallLogoURL>https://121fcu.org/images/logo_slogan.png</SmallLogoURL>
+    <OfxHomeId>666</OfxHomeId>
+    <MoneyDanceId>md:1465</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: Could not establish trust relationship for the SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>1st Advantage FCU</Name>
+    <Org>1st Advantage FCU</Org>
+    <Fid>251480563</Fid>
+    <ProviderURL>https://members.1stadvantage.org/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>542</OfxHomeId>
+    <MoneyDanceId>md:1000</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/29/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>1st Source Bank</Name>
+    <Org>DI</Org>
+    <Fid>071212128</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1478</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+    <LastError>The remote server returned an error: (404) Not Found.</LastError>
+    <BrokerId>americanexpress.com</BrokerId>
+    <SmallLogoURL>https://www.aexp-static.com/nav/ngn/img/logo_bluebox.gif</SmallLogoURL>
+    <OfxVersion>2.0</OfxVersion>
+  </institution>
+  <institution>
+    <Name>Abbott Laboratories Employee CU</Name>
+    <Org>Abbott Laboratories ECU – ALEC</Org>
+    <Fid>35MXN</Fid>
+    <ProviderURL>https://www.netit.financial-net.com/ofx/</ProviderURL>
+    <OfxHomeId>667</OfxHomeId>
+    <MoneyDanceId>md:1511</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (400) Bad Request.</LastError>
+  </institution>
+  <institution>
+    <Name>Achieva Credit Union</Name>
+    <Org>Achieva Credit Union</Org>
+    <Fid>4491</Fid>
+    <ProviderURL>https://rbserver.achievacu.com/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>668</OfxHomeId>
+    <MoneyDanceId>md:1513</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Advantage National Bank</Name>
+    <Org>918</Org>
+    <Fid>5501</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1557</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Advantis Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>323075097</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1403</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Affinity Federal Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>221283512</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1419</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Affinity Plus Federal Credit Union</Name>
+    <Org>Affinity Plus FCU</Org>
+    <Fid>75</Fid>
+    <ProviderURL>https://hb.affinityplus.org/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>732</OfxHomeId>
+    <MoneyDanceId>md:1399</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Air Academy FCU</Name>
+    <Org>Air Academy Federal Credit Union</Org>
+    <Fid>1</Fid>
+    <ProviderURL>https://remotebanking.aafcu.com/ofx/ofx.dll</ProviderURL>
+    <MoneyDanceId>md:1006</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (404) Not Found.</LastError>
+  </institution>
+  <institution>
+    <Name>Allegacy Federal Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>253177887</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1443</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Allegiance Community Bank</Name>
+    <Org>MBG</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://personal.netbankerplus.com/ofxallegiancecommunitybank/process.ofx</ProviderURL>
+    <MoneyDanceId>md:1469</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (404) Not Found.</LastError>
+  </institution>
+  <institution>
+    <Name>Allied Healthcare FCU</Name>
+    <Org>DI</Org>
+    <Fid>322276868</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1558</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Alpine Bank</Name>
+    <Org>JackHenry</Org>
+    <Fid>1451</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1577</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Amegy Bank of Texas – DIRECT</Name>
+    <Org>292-3</Org>
+    <Fid>1165</Fid>
+    <ProviderURL>https://quicken.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1351</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>America First Credit Union</Name>
+    <Org>America First Credit Union</Org>
+    <Fid>54324</Fid>
+    <ProviderURL>https://ofx.americafirst.com</ProviderURL>
+    <OfxHomeId>533</OfxHomeId>
+    <MoneyDanceId>md:1426</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>American Express Brokerage</Name>
+    <Org>AMEX</Org>
+    <Fid>3102</Fid>
+    <BrokerId>americanexpress.com</BrokerId>
+    <ProviderURL>https://www99.americanexpress.com/myca/ofxdl/us/download?request_type=nl_desktopdownload</ProviderURL>
+    <SmallLogoURL>https://www.aexp-static.com/nav/ngn/img/logo_bluebox.gif</SmallLogoURL>
+    <MoneyDanceId>md:1019</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Error parsing OFX response</LastError>
+  </institution>
+  <institution>
+    <Name>American Express Card</Name>
+    <OfxVersion>1.0</OfxVersion>
+    <Org>AMEX</Org>
+    <Fid>3101</Fid>
+    <ProviderURL>https://online.americanexpress.com/myca/ofxdl/desktop/desktopDownload.do?request_type=nl_ofxdownload</ProviderURL>
+    <SmallLogoURL>https://www.aexp-static.com/nav/ngn/img/logo_bluebox.gif</SmallLogoURL>
+    <OfxHomeId>424</OfxHomeId>
+    <MoneyDanceId>md:1414</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1700</AppVer>
+    <LastConnection>10/30/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>American Funds</Name>
+    <Org>INTUIT</Org>
+    <Fid>7779</Fid>
+    <ProviderURL>https://ofx.financialtrans.com/tf/OFXServer?tx=OFXController&amp;cz=702110804131918&amp;cl=3000518</ProviderURL>
+    <OfxHomeId>590</OfxHomeId>
+    <MoneyDanceId>md:1011</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>American Momentum Bank</Name>
+    <Org>JackHenry</Org>
+    <Fid>14931</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1550</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>American National Bank</Name>
+    <Org>ISC</Org>
+    <Fid>4201</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/04201.ofx</ProviderURL>
+    <OfxHomeId>669</OfxHomeId>
+    <MoneyDanceId>md:1021</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>American Riviera Bank</Name>
+    <Org>DI</Org>
+    <Fid>122244333</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1576</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Ameriprise Brokerage</Name>
+    <Org>AMPF</Org>
+    <Fid>3102</Fid>
+    <ProviderURL>https://www25.ameriprise.com/AMPFWeb/ofxdl/us/download?request_type=nl_desktopdownload</ProviderURL>
+    <MoneyDanceId>md:1012</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Ameritrade Institutional Services</Name>
+    <Org>Ameritrade Technology Group</Org>
+    <Fid>AIS</Fid>
+    <BrokerId>ameritrade.com</BrokerId>
+    <ProviderURL>https://ofxs.ameritrade.com/cgi-bin/apps/OFX</ProviderURL>
+    <MoneyDanceId>md:1530</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Amplify Federal Credit Union</Name>
+    <Org>Harland Financial Solutions</Org>
+    <Fid>10334</Fid>
+    <ProviderURL>https://ezonline.goamplify.com/ofx/ofx.dll</ProviderURL>
+    <MoneyDanceId>md:1559</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: Could not establish trust relationship for the SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>AmSouth Investment Services, Inc.</Name>
+    <Org>AMSOUTH</Org>
+    <Fid>009</Fid>
+    <BrokerId>amsouth.com</BrokerId>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1014</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Anchor Bank – Washington</Name>
+    <Org>DI</Org>
+    <Fid>325170628</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1560</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Andrews Federal Credit Union</Name>
+    <Org>FundsXpress</Org>
+    <Fid>AFCUSMD</Fid>
+    <ProviderURL>https://ofx.fundsxpress.com/piles/ofx.pile/</ProviderURL>
+    <OfxHomeId>670</OfxHomeId>
+    <MoneyDanceId>md:1475</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (400) Bad Request.</LastError>
+  </institution>
+  <institution>
+    <Name>APCO EMPLOYEES CREDIT UNION</Name>
+    <Org>APCO Employees Credit Union</Org>
+    <Fid>262087609</Fid>
+    <ProviderURL>https://apc.usersonlnet.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>521</OfxHomeId>
+    <MoneyDanceId>md:1003</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Apple FCU</Name>
+    <Org>DI</Org>
+    <Fid>256078514</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <OfxHomeId>746</OfxHomeId>
+    <MoneyDanceId>md:1023</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Arizona Federal Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>322172797</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <OfxHomeId>637</OfxHomeId>
+    <MoneyDanceId>md:1025</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Arizona State CU</Name>
+    <Org>DI</Org>
+    <Fid>322172496</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1493</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>AT&amp;T Universal Card</Name>
+    <Org>Citigroup</Org>
+    <Fid>24909</Fid>
+    <ProviderURL>https://secureofx2.bankhost.com/citi/cgi-forte/ofx_rt?servicename=ofx_rt&amp;pagename=ofx</ProviderURL>
+    <OfxHomeId>427</OfxHomeId>
+    <MoneyDanceId>md:1026</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Athol Savings Bank</Name>
+    <Org>DI</Org>
+    <Fid>211370998</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1396</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Banc of America Investment Services, Inc.</Name>
+    <Org>Fidelity</Org>
+    <Fid>7784</Fid>
+    <BrokerId>1234</BrokerId>
+    <ProviderURL>https://ofx.ibgstreetscape.com:443</ProviderURL>
+    <MoneyDanceId>md:1032</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>BancorpSouth</Name>
+    <Org>DI</Org>
+    <Fid>084201278</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1033</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bank Fund Staff FCU New</Name>
+    <Org>BFSFCU</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://ob.bfsfcu.org/ofx/process.ofx</ProviderURL>
+    <MoneyDanceId>md:1553</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bank of America (All Other States except WA and ID)</Name>
+    <Org>HAN</Org>
+    <Fid>5959</Fid>
+    <ProviderURL>https://ofx.bankofamerica.com/cgi-forte/ofx?servicename=ofx_2-3&amp;pagename=bofa</ProviderURL>
+    <SmallLogoURL>https://www.bankofamerica.com/content/images/ContextualSiteGraphics/Logos/en_US/boa_logo.gif</SmallLogoURL>
+    <MoneyDanceId>md:1039</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection changed="2012-10-31T14:22:44.1665021-07:00">2012-10-31T14:22:44.1655021-07:00</LastConnection>
+    <OfxVersion changed="2012-10-31T14:22:44.1655021-07:00">1.0</OfxVersion>
+    <LastError></LastError>
+  </institution>
+  <institution>
+    <Name>Bank of America (California)</Name>
+    <Org>HAN</Org>
+    <Fid>6805</Fid>
+    <ProviderURL>https://ofx.bankofamerica.com/cgi-forte/ofx?servicename=ofx_2-3&amp;pagename=bofa</ProviderURL>
+    <SmallLogoURL>https://www.bankofamerica.com/content/images/ContextualSiteGraphics/Logos/en_US/boa_logo.gif</SmallLogoURL>
+    <OfxHomeId>635</OfxHomeId>
+    <MoneyDanceId>md:1040</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Bank of America has completed a planned systems update for accounts opened in California. Please visit www.bankofamerica.com/Financialmanagement for detailed instructions on how to update your settings and avoid service interruptions.</LastError>
+  </institution>
+  <institution>
+    <Name>Bank of America (Formerly Fleet)</Name>
+    <Org>ISC</Org>
+    <Fid>1803</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01803.ofx</ProviderURL>
+    <OfxHomeId>674</OfxHomeId>
+    <MoneyDanceId>md:1041</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bank of American Fork – Direct</Name>
+    <Org>JackHenry</Org>
+    <Fid>10446</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1569</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bank of Internet</Name>
+    <Org>DI</Org>
+    <Fid>122287251</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1537</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bank of Marin</Name>
+    <Org>568</Org>
+    <Fid>5001</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1390</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bank of Princeton</Name>
+    <Org>MSevenFourSeven</Org>
+    <Fid>031207940</Fid>
+    <ProviderURL>https://ofx1.evault.ws/ofxserver/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1525</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bank of Stockton – NEW</Name>
+    <Org>BOS</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://internetbanking.bankofstockton.com/ofx/process.ofx</ProviderURL>
+    <MoneyDanceId>md:1567</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bank of Stockton – OLD</Name>
+    <Org>BOS</Org>
+    <Fid>3901</Fid>
+    <ProviderURL>https://internetbanking.bankofstockton.com/scripts/serverext.dll</ProviderURL>
+    <MoneyDanceId>md:1042</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (406) Not Acceptable.</LastError>
+  </institution>
+  <institution>
+    <Name>Bank of the Cascades (formerly Farmers and Merchants Bank)</Name>
+    <Org>JackHenry</Org>
+    <Fid>4751</Fid>
+    <ProviderURL>https://directline.netteller.com/</ProviderURL>
+    <MoneyDanceId>md:1034</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bank of the West</Name>
+    <Org>BancWest Corp</Org>
+    <Fid>5809</Fid>
+    <ProviderURL>https://olbp.bankofthewest.com/ofx0002/ofx_isapi.dll</ProviderURL>
+    <OfxHomeId>656</OfxHomeId>
+    <MoneyDanceId>md:1035</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bank One</Name>
+    <Org>B1</Org>
+    <Fid>5811</Fid>
+    <ProviderURL>https://ofx.chase.com</ProviderURL>
+    <OfxHomeId>428</OfxHomeId>
+    <MoneyDanceId>md:1362</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The request was aborted: Could not create SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>Bank One (Chicago)</Name>
+    <Org>ISC</Org>
+    <Fid>1501</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01501.ofx</ProviderURL>
+    <OfxHomeId>672</OfxHomeId>
+    <MoneyDanceId>md:1037</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bank One (Michigan and Florida)</Name>
+    <Org>ISC</Org>
+    <Fid>6001</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/06001.ofx</ProviderURL>
+    <OfxHomeId>673</OfxHomeId>
+    <MoneyDanceId>md:1038</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>BankAtlantic</Name>
+    <Org>DI</Org>
+    <Fid>267083763</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1466</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>BankBoston PC Banking</Name>
+    <Org>ISC</Org>
+    <Fid>1801</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01801.ofx</ProviderURL>
+    <OfxHomeId>675</OfxHomeId>
+    <MoneyDanceId>md:1044</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>BankDirect</Name>
+    <Org>BankDirect</Org>
+    <Fid>33BAG</Fid>
+    <ProviderURL>https://www.netit.financial-net.com/ofx</ProviderURL>
+    <MoneyDanceId>md:1045</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>BB&amp;T Banking and Bill Payment</Name>
+    <Org>BB&amp;T</Org>
+    <Fid>BB&amp;T</Fid>
+    <ProviderURL>https://eftx.bbt.com/eftxweb/access.ofx</ProviderURL>
+    <MoneyDanceId>md:1030</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>General Error</LastError>
+  </institution>
+  <institution>
+    <Name>Beverly Co-Operative Bank</Name>
+    <Org>orcc</Org>
+    <Fid>531</Fid>
+    <ProviderURL>https://www19.onlinebank.com/OROFX16Listener</ProviderURL>
+    <OfxHomeId>676</OfxHomeId>
+    <MoneyDanceId>md:1402</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Boeing Employees Credit Union</Name>
+    <Org>BECU</Org>
+    <Fid>1001</Fid>
+    <ProviderURL changed="3/1/2015">https://onlinebanking.becu.org/scripts/serverext.dll</ProviderURL>
+    <SmallLogoURL>https://www.becu.org/images/logo_main.gif</SmallLogoURL>
+    <OfxHomeId>647</OfxHomeId>
+    <OfxVersion>1.0</OfxVersion>
+    <MoneyDanceId>md:1048</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1800</AppVer>
+    <LastConnection>3/1/2015</LastConnection>
+  </institution>
+  <institution>
+    <Name>Bridgehampton National Bank. NY</Name>
+    <Org>MSevenTwentyThree</Org>
+    <Fid>021406667</Fid>
+    <ProviderURL>https://ofx1.evault.ws/OFXServer/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1521</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>California Bank &amp; Trust</Name>
+    <Org>401</Org>
+    <Fid>5006</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1458</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>California Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>322078464</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1430</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Cambridge Portuguese Credit Union</Name>
+    <Org>orcc</Org>
+    <Fid>983</Fid>
+    <ProviderURL>https://www20.onlinebank.com/OROFX16Listener</ProviderURL>
+    <OfxHomeId>677</OfxHomeId>
+    <MoneyDanceId>md:1451</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Cambridge Savings Bank</Name>
+    <Org>DI</Org>
+    <Fid>211371120</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <OfxHomeId>760</OfxHomeId>
+    <MoneyDanceId>md:1444</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Campus USA Credit Union</Name>
+    <Org>Campus USA Credit Union</Org>
+    <Fid>263178478</Fid>
+    <ProviderURL>https://que.campuscu.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>546</OfxHomeId>
+    <MoneyDanceId>md:1054</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Canyon State Credit Union</Name>
+    <Org>Grand Canyon State Credit Union</Org>
+    <Fid>10903</Fid>
+    <ProviderURL>https://www.gcscu.net/ofx/ofx.dll</ProviderURL>
+    <MoneyDanceId>md:1561</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Capital Bank (CA)</Name>
+    <Org>JackHenry</Org>
+    <Fid>17277</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1580</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Capital Bank- QN QB DC (FL)</Name>
+    <Org>DI</Org>
+    <Fid>067011760</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1581</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Capital One Bank (Not Credit Cards)</Name>
+    <Org>Hibernia</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://onlinebanking.capitalone.com/ofx/process.ofx</ProviderURL>
+    <MoneyDanceId>md:1052</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Capitol Federal Savings Bank</Name>
+    <Org>CapFed</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://tbofx.capfed.com/scripts/serverext.dll</ProviderURL>
+    <MoneyDanceId>md:1053</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (500) Internal Server Error.</LastError>
+  </institution>
+  <institution>
+    <Name>Cardinal Bank</Name>
+    <Org>DI</Org>
+    <Fid>056008849</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1471</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Cedar Point Federal Credit Union</Name>
+    <Org>Cedar Point Federal Credit Union</Org>
+    <Fid>255077736</Fid>
+    <ProviderURL>https://pcu.cpfcu.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>523</OfxHomeId>
+    <MoneyDanceId>md:1055</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Centra Credit Union</Name>
+    <Org>Users</Org>
+    <Fid>274972883</Fid>
+    <ProviderURL>https://www.centralink.org/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>431</OfxHomeId>
+    <MoneyDanceId>md:1505</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Central Florida Educators Federal Credit Union</Name>
+    <Org>CentralFloridaEduc</Org>
+    <Fid>590678236</Fid>
+    <ProviderURL>https://www.mattweb.cfefcu.com/scripts/isaofx.dll</ProviderURL>
+    <MoneyDanceId>md:1057</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Centura Bank</Name>
+    <Org>ISC</Org>
+    <Fid>1901</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01901.ofx</ProviderURL>
+    <OfxHomeId>432</OfxHomeId>
+    <MoneyDanceId>md:1058</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Century Federal Credit Union</Name>
+    <Org>CenturyFederalCU</Org>
+    <Fid>241075056</Fid>
+    <ProviderURL>https://pcu.cenfedcu.org/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>529</OfxHomeId>
+    <MoneyDanceId>md:1059</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (400) Bad Request.</LastError>
+  </institution>
+  <institution>
+    <Name>Charles Schwab &amp; Co., INC</Name>
+    <Org>Intuit</Org>
+    <Fid>8888</Fid>
+    <BrokerId>SCHWAB.COM</BrokerId>
+    <ProviderURL>https://ofx.schwab.com/cgi_dev/ofx_server</ProviderURL>
+    <MoneyDanceId>md:1060</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Charles Schwab Bank, N.A.</Name>
+    <Org>Intuit</Org>
+    <Fid>8886</Fid>
+    <ProviderURL>https://ofx.schwab.com/bankcgi_dev/ofx_server</ProviderURL>
+    <OfxHomeId>578</OfxHomeId>
+    <MoneyDanceId>md:1433</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Charlotte Metro Credit Union</Name>
+    <Org>CMCUDC</Org>
+    <Fid>253075028</Fid>
+    <ProviderURL>https://mobile.cmcu.com/ofxserver/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1570</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Charlotte State Bank – DC</Name>
+    <Org>FundsXpress Financial Network</Org>
+    <Fid>CSBPCFL</Fid>
+    <ProviderURL>https://ofx.fundsxpress.com/piles/ofx.pile/</ProviderURL>
+    <MoneyDanceId>md:1572</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (400) Bad Request.</LastError>
+  </institution>
+  <institution>
+    <Name>Charter One</Name>
+    <Org>FiServ CheckFree</Org>
+    <Fid>4669</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/04669.ofx</ProviderURL>
+    <MoneyDanceId>md:1545</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Charter One – Small Business</Name>
+    <Org>FiServ CheckFree</Org>
+    <Fid>4670</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/04670.ofx</ProviderURL>
+    <MoneyDanceId>md:1546</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Chase</Name>
+    <Org>B1</Org>
+    <Fid>10898</Fid>
+    <ProviderURL>https://ofx.chase.com</ProviderURL>
+    <MoneyDanceId>md:1360</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The request was aborted: Could not create SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>Chase Investment Services</Name>
+    <Org>Fidelity</Org>
+    <Fid>7784</Fid>
+    <ProviderURL>https://ofx.ibgstreetscape.com:443</ProviderURL>
+    <MoneyDanceId>md:1063</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Chase Manhattan Bank</Name>
+    <Org>ISC</Org>
+    <Fid>1601</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01601.ofx</ProviderURL>
+    <MoneyDanceId>md:1064</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Chemical Bank</Name>
+    <Org>DI</Org>
+    <Fid>072410013</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <OfxHomeId>747</OfxHomeId>
+    <MoneyDanceId>md:1481</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Chesterfield Federal Credit Union</Name>
+    <Org>Chesterfield Employees FCU</Org>
+    <Fid>251480327</Fid>
+    <ProviderURL>https://cfcunet24.online-cu.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>545</OfxHomeId>
+    <MoneyDanceId>md:1503</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Chevron Federal Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>321075947</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1395</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Chittenden Bank</Name>
+    <Org>JackHenry</Org>
+    <Fid>10962</Fid>
+    <ProviderURL>https://directline.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1067</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Citadel Federal Credit Union</Name>
+    <Org>CitadelFCU</Org>
+    <Fid>citadel</Fid>
+    <ProviderURL>https://pcu.citadelfcu.org/scripts/isaofx.dll</ProviderURL>
+    <MoneyDanceId>md:1068</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (404) Not Found.</LastError>
+  </institution>
+  <institution>
+    <Name>Citi Cards</Name>
+    <Org>Citigroup</Org>
+    <Fid>24909</Fid>
+    <ProviderURL>https://secureofx2.bankhost.com/citi/cgi-forte/ofx_rt?servicename=ofx_rt&amp;pagename=ofx</ProviderURL>
+    <MoneyDanceId>md:1069</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Citi Personal Wealth Management</Name>
+    <Org>Citigroup</Org>
+    <Fid>060</Fid>
+    <BrokerId>investments.citi.com</BrokerId>
+    <ProviderURL>https://uat-ofx.netxclient.inautix.com/cgi/OFXNetx</ProviderURL>
+    <OfxHomeId>671</OfxHomeId>
+    <MoneyDanceId>md:1515</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Citibank</Name>
+    <Org>ISC</Org>
+    <Fid>2101</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/02101.ofx</ProviderURL>
+    <OfxHomeId>678</OfxHomeId>
+    <MoneyDanceId>md:1070</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Citizens and Farmers Bank</Name>
+    <Org>MThreeZeroThree</Org>
+    <Fid>051404901</Fid>
+    <ProviderURL>https://ofx1.evault.ws/ofxserver/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1527</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Citizens Bank – Mid Atl – Consumer</Name>
+    <Org>Citizens Bank</Org>
+    <Fid>CTZBK</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/0CTZBK.ofx</ProviderURL>
+    <MoneyDanceId>md:1071</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Citizens Bank – New England – Business</Name>
+    <Org>Citizens Bank</Org>
+    <Fid>4639</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/04639.ofx</ProviderURL>
+    <MoneyDanceId>md:1072</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Citizens Bank – New England – Consumer</Name>
+    <Org>Citizens Bank</Org>
+    <Fid>CTZBK</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/0CTZBK.ofx</ProviderURL>
+    <MoneyDanceId>md:1073</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>City National Bank of CA-Dir Con</Name>
+    <Org>309</Org>
+    <Fid>5010</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1075</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>City National Bank of Florida</Name>
+    <Org>DI</Org>
+    <Fid>066004367</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1076</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>City-County Federal Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>291074308</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1074</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Clark County Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>322484113</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1077</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Clearview Federal Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>243083237</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <OfxHomeId>478</OfxHomeId>
+    <MoneyDanceId>md:1431</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Collegedale Credit Union</Name>
+    <Org>CollegedaleCU</Org>
+    <Fid>35GFA</Fid>
+    <ProviderURL>https://www.netit.financial-net.com/ofx</ProviderURL>
+    <OfxHomeId>496</OfxHomeId>
+    <MoneyDanceId>md:1079</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Colonial Bank</Name>
+    <Org>ISC</Org>
+    <Fid>1046</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01046.ofx</ProviderURL>
+    <OfxHomeId>436</OfxHomeId>
+    <MoneyDanceId>md:1080</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Columbia Credit Union</Name>
+    <Org>Columbia Credit Union</Org>
+    <Fid>323383349</Fid>
+    <ProviderURL>https://ofx.columbiacu.org/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>541</OfxHomeId>
+    <MoneyDanceId>md:1081</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Comercial Federal Bank</Name>
+    <Org>ISC</Org>
+    <Fid>4801</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/04801.ofx</ProviderURL>
+    <MoneyDanceId>md:1082</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Comerica</Name>
+    <Org>ISC</Org>
+    <Fid>5601</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/05601.ofx</ProviderURL>
+    <MoneyDanceId>md:1341</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Commerce Bank – MO, KS, IL</Name>
+    <Org>ISC</Org>
+    <Fid>4001</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/04001.ofx</ProviderURL>
+    <MoneyDanceId>md:1388</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Community Bank, N.A.</Name>
+    <Org>JackHenry</Org>
+    <Fid>11517</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <OfxHomeId>679</OfxHomeId>
+    <MoneyDanceId>md:1460</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Community Resource Bank</Name>
+    <Org>CNB</Org>
+    <Fid>091917160</Fid>
+    <ProviderURL>https://www.cnbinternet.com/OFXServer/ofxsrvr.dll</ProviderURL>
+    <OfxHomeId>600</OfxHomeId>
+    <MoneyDanceId>md:1086</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Community Trust Bank of LA-IB</Name>
+    <Org>DI</Org>
+    <Fid>111102758</Fid>
+    <BrokerId>DI</BrokerId>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1453</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Compass Bank</Name>
+    <Org>Intelidata</Org>
+    <Fid>2201</Fid>
+    <ProviderURL>https://www2.compassweb.com/ofxsecurity/ofx_security_server.dll</ProviderURL>
+    <MoneyDanceId>md:1411</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>CompassPC</Name>
+    <Org>Intelidata</Org>
+    <Fid>2201</Fid>
+    <ProviderURL>https://www2.compassweb.com/ofxsecurity/ofx_security_server.dll</ProviderURL>
+    <MoneyDanceId>md:1089</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>COMSTAR FCU</Name>
+    <Org>Comstar Federal Credit Union</Org>
+    <Fid>255074988</Fid>
+    <ProviderURL>https://pcu.comstarfcu.org/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>441</OfxHomeId>
+    <MoneyDanceId>md:1049</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Consumers Credit Union</Name>
+    <Org>Consumers Credit Union</Org>
+    <Fid>12541</Fid>
+    <ProviderURL>https://ofx.lanxtra.com/ofx/servlet/Teller</ProviderURL>
+    <OfxHomeId>680</OfxHomeId>
+    <MoneyDanceId>md:1494</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Continental Federal Credit Union</Name>
+    <Org>Credit Union</Org>
+    <Fid>322077559</Fid>
+    <ProviderURL>https://wheredreamstakeflight.online-cu.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>555</OfxHomeId>
+    <MoneyDanceId>md:1504</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: Could not establish trust relationship for the SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>CPM Federal Credit Union</Name>
+    <Org>USERS, Inc.</Org>
+    <Fid>253279536</Fid>
+    <ProviderURL>https://cpm.usersonlnet.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>681</OfxHomeId>
+    <MoneyDanceId>md:1436</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: Could not establish trust relationship for the SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>Credit Suisse Private Banking</Name>
+    <Org>Credit Suisse Securities USA LLC</Org>
+    <Fid>001</Fid>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1554</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Credit Union 1</Name>
+    <Org>Credit Union 1</Org>
+    <Fid>1</Fid>
+    <ProviderURL>https://connect2.cu1.org/ofx/ofx.dll</ProviderURL>
+    <MoneyDanceId>md:1092</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Credit Union ONE</Name>
+    <Org>Credit Union ONE</Org>
+    <Fid>14412</Fid>
+    <ProviderURL>https://cuhome.cuone.org/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>618</OfxHomeId>
+    <MoneyDanceId>md:1457</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>CSFB Private Client Services</Name>
+    <Org>PCS</Org>
+    <Fid>001</Fid>
+    <BrokerId>csfbpcs.com</BrokerId>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1050</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>DATCU</Name>
+    <Org>DATCU</Org>
+    <Fid>311980725</Fid>
+    <ProviderURL>https://online.datcu.coop/ofxserver/ofxsrvr.dll</ProviderURL>
+    <OfxHomeId>682</OfxHomeId>
+    <MoneyDanceId>md:1392</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Delta Community Credit Union</Name>
+    <Org>decu.org</Org>
+    <Fid>3328</Fid>
+    <ProviderURL>https://appweb.deltacommunitycu.com/ofxroot/directtocore.asp</ProviderURL>
+    <OfxHomeId>573</OfxHomeId>
+    <MoneyDanceId>md:1095</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Denver Community Federal Credit Union</Name>
+    <Org>Denver Community FCU</Org>
+    <Fid>10524</Fid>
+    <ProviderURL>https://pccu.dcfcu.coop/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>683</OfxHomeId>
+    <MoneyDanceId>md:1508</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Department of Commerce FCU</Name>
+    <Org>DI</Org>
+    <Fid>254074439</Fid>
+    <BrokerId>DI</BrokerId>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1096</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Desert Schools Federal Credit Union</Name>
+    <Org>DSFCU</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://epal.desertschools.org/scripts/serverext.dll</ProviderURL>
+    <OfxHomeId>645</OfxHomeId>
+    <MoneyDanceId>md:1098</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Discover Bank</Name>
+    <Org>Discover Bank</Org>
+    <Fid>12610</Fid>
+    <ProviderURL>https://ofx.discovercard.com</ProviderURL>
+    <OfxHomeId>726</OfxHomeId>
+    <MoneyDanceId>md:1523</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Discover Card</Name>
+    <Org>Discover Financial Services</Org>
+    <Fid>7101</Fid>
+    <ProviderURL>https://ofx.discovercard.com/</ProviderURL>
+    <SmallLogoURL>https://servicecenter.discovernetwork.com/discoverbiz/images/logo.png</SmallLogoURL>
+    <OfxHomeId>444</OfxHomeId>
+    <MoneyDanceId>md:1099</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/29/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Discover Platinum</Name>
+    <Org>Discover Financial Services</Org>
+    <Fid>7102</Fid>
+    <ProviderURL>https://ofx.discovercard.com/</ProviderURL>
+    <OfxHomeId>684</OfxHomeId>
+    <MoneyDanceId>md:1100</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Dominion Credit Union</Name>
+    <Org>Dominion Credit Union</Org>
+    <Fid>251082644</Fid>
+    <ProviderURL>https://dom.usersonlnet.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>561</OfxHomeId>
+    <MoneyDanceId>md:1101</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: An unexpected error occurred on a send.</LastError>
+  </institution>
+  <institution>
+    <Name>E*TRADE Financial</Name>
+    <Org>mdnc</Org>
+    <Fid>1</Fid>
+    <BrokerId>etrade.com</BrokerId>
+    <ProviderURL>https://ofx.etrade.com/cgi-ofx/etradeofx</ProviderURL>
+    <MoneyDanceId>md:1104</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>EAB</Name>
+    <Org>ISC</Org>
+    <Fid>6505</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/06505.ofx</ProviderURL>
+    <OfxHomeId>685</OfxHomeId>
+    <MoneyDanceId>md:1105</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>East West Bank</Name>
+    <Org>DI</Org>
+    <Fid>322070381</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1343</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Eastern Bank</Name>
+    <Org>ISC</Org>
+    <Fid>6201</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/06201.ofx</ProviderURL>
+    <OfxHomeId>447</OfxHomeId>
+    <MoneyDanceId>md:1106</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Easthampton Savings Bank</Name>
+    <Org>orcc</Org>
+    <Fid>570</Fid>
+    <ProviderURL>https://www19.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1107</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Eastman Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>264279350</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1531</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Educational Employees CU</Name>
+    <Org>Educational Employees CU</Org>
+    <Fid>321172594</Fid>
+    <ProviderURL>https://www.eecuonline.org/scripts/isaofx.dll</ProviderURL>
+    <MoneyDanceId>md:1483</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Error parsing OFX response</LastError>
+  </institution>
+  <institution>
+    <Name>Educational Systems FCU</Name>
+    <Org>Users, Inc.</Org>
+    <Fid>255077008</Fid>
+    <ProviderURL>https://onlinebanking.esfcu.org/scripts/isaofx.dll</ProviderURL>
+    <MoneyDanceId>md:1389</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Educators CU WI – Direct</Name>
+    <Org>ECU</Org>
+    <Fid>275981378</Fid>
+    <ProviderURL>https://ofx.ecu.com/ofxserver/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1535</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Edward Jones</Name>
+    <Org>Edward Jones</Org>
+    <Fid>823</Fid>
+    <ProviderURL>https://ofx.edwardjones.com</ProviderURL>
+    <OfxHomeId>608</OfxHomeId>
+    <MoneyDanceId>md:1111</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Elevations CU</Name>
+    <Org>UOCFCU</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://ofx.elevationscu.com/scripts/serverext.dll</ProviderURL>
+    <MoneyDanceId>md:1112</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: Could not establish trust relationship for the SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>FAA Credit Union</Name>
+    <Org>FAA Credit Union</Org>
+    <Fid>114</Fid>
+    <ProviderURL>https://flightline.faaecu.org/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>686</OfxHomeId>
+    <MoneyDanceId>md:1512</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Fairwinds Credit Union</Name>
+    <Org>OSI 2</Org>
+    <Fid>4842</Fid>
+    <ProviderURL>https://OFX.opensolutionsTOC.com/eftxweb/access.ofx</ProviderURL>
+    <OfxHomeId>687</OfxHomeId>
+    <MoneyDanceId>md:1115</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Fidelity Bank- Wichita</Name>
+    <Org>DI</Org>
+    <Fid>301171353</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1532</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Fidelity Investments</Name>
+    <Org>fidelity.com</Org>
+    <Fid>7776</Fid>
+    <BrokerId>fidelity.com</BrokerId>
+    <ProviderURL>https://ofx.fidelity.com/ftgw/OFX/clients/download</ProviderURL>
+    <OfxHomeId>449</OfxHomeId>
+    <MoneyDanceId>md:1117</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Fidelity NetBenefits</Name>
+    <Org>nbofx.fidelity.com</Org>
+    <Fid>8288</Fid>
+    <ProviderURL>https://nbofx.fidelity.com/netbenefits/ofx/download</ProviderURL>
+    <OfxHomeId>558</OfxHomeId>
+    <MoneyDanceId>md:1118</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Fifth Third Bancorp</Name>
+    <Org>Fifth Third Bank</Org>
+    <Fid>5829</Fid>
+    <ProviderURL>https://banking.53.com/ofx/OFXServlet</ProviderURL>
+    <OfxHomeId>450</OfxHomeId>
+    <MoneyDanceId>md:1119</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Finance Center FCU</Name>
+    <Org>Finance Center FCU</Org>
+    <Fid>274073876</Fid>
+    <ProviderURL>https://sec.fcfcu.com/scripts/isaofx.dll</ProviderURL>
+    <MoneyDanceId>md:1120</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Financial Network Investment Corp</Name>
+    <Org>ING Advisors Network</Org>
+    <Fid>057</Fid>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1536</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First American Bank-OK</Name>
+    <Org>JackHenry</Org>
+    <Fid>20070</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1463</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First American State Bank</Name>
+    <Org>JackHenry</Org>
+    <Fid>1764</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1464</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Citizens</Name>
+    <Org>First Citizens</Org>
+    <Fid>1849</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01849.ofx</ProviderURL>
+    <OfxHomeId>690</OfxHomeId>
+    <MoneyDanceId>md:1382</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Citizens Bank, NC, VA, WV</Name>
+    <Org>ISC</Org>
+    <Fid>5013</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/05013.ofx</ProviderURL>
+    <MoneyDanceId>md:1383</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Clearing, LLC</Name>
+    <Org>First Clearing, LLC</Org>
+    <Fid>10033</Fid>
+    <ProviderURL>https://pfmpw.wachovia.com/cgi-forte/fortecgi?servicename=ofxbrk&amp;pagename=PFM</ProviderURL>
+    <OfxHomeId>689</OfxHomeId>
+    <MoneyDanceId>md:1490</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (503) Server Unavailable.</LastError>
+  </institution>
+  <institution>
+    <Name>First Command Bank</Name>
+    <Org>Online Resources</Org>
+    <Fid>188</Fid>
+    <ProviderURL>https://www19.onlinebank.com/OROFX16Listener</ProviderURL>
+    <OfxHomeId>766</OfxHomeId>
+    <MoneyDanceId>md:1125</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Commonwealth FCU</Name>
+    <Org>FirstCommonwealthFCU</Org>
+    <Fid>231379199</Fid>
+    <ProviderURL>https://pcu.firstcomcu.org/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>488</OfxHomeId>
+    <MoneyDanceId>md:1124</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Community Credit Union – MO</Name>
+    <Org>DI</Org>
+    <Fid>281081877</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1491</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Hawaiian Bank</Name>
+    <Org>BancWest Corp</Org>
+    <Fid>3501</Fid>
+    <ProviderURL>https://olbp.fhb.com/ofx0001/ofx_isapi.dll</ProviderURL>
+    <OfxHomeId>691</OfxHomeId>
+    <MoneyDanceId>md:1128</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Horizon</Name>
+    <Org>First Horizon</Org>
+    <Fid>1</Fid>
+    <ProviderURL>https://ofx.firsttennessee.com/ofx/ofx_isapi.dll</ProviderURL>
+    <MoneyDanceId>md:1129</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Independent Bank (Reno, NV)</Name>
+    <Org>DI</Org>
+    <Fid>C121202062</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1482</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Internet Bank of Indiana</Name>
+    <Org>DI</Org>
+    <Fid>074014187</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <OfxHomeId>642</OfxHomeId>
+    <MoneyDanceId>md:1423</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Interstate Bank</Name>
+    <Org>FIB</Org>
+    <Fid>092901683</Fid>
+    <ProviderURL>https://ofx.firstinterstatebank.com/OFXServer/ofxsrvr.dll</ProviderURL>
+    <OfxHomeId>693</OfxHomeId>
+    <MoneyDanceId>md:1366</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Nat Bank of Springdale</Name>
+    <Org>First Nat Bank of Springdale</Org>
+    <Fid>1</Fid>
+    <ProviderURL>https://ofx.firsttennessee.com/ofx/ofx_isapi.dll</ProviderURL>
+    <MoneyDanceId>md:1131</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First National Bank of St. Louis</Name>
+    <Org>81004601</Org>
+    <Fid>162</Fid>
+    <ProviderURL>https://ofx.centralbancompany.com/ofxserver/ofxsrvr.dll</ProviderURL>
+    <OfxHomeId>692</OfxHomeId>
+    <MoneyDanceId>md:1416</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Error returned from server</LastError>
+  </institution>
+  <institution>
+    <Name>First Republic Bank</Name>
+    <Org>DI</Org>
+    <Fid>321081669</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1369</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Security Investment</Name>
+    <Org>ISC</Org>
+    <Fid>6510</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/06510.ofx</ProviderURL>
+    <MoneyDanceId>md:1133</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Service Federal Credit Union</Name>
+    <Org>JackHenry</Org>
+    <Fid>1022</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1495</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Tech Federal Credit Union</Name>
+    <Org>First Tech Federal Credit Union</Org>
+    <Fid>3169</Fid>
+    <ProviderURL>https://ofx.firsttechfed.com</ProviderURL>
+    <OfxHomeId>731</OfxHomeId>
+    <MoneyDanceId>md:1547</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First Tennessee</Name>
+    <Org>FTB</Org>
+    <Fid>2250</Fid>
+    <ProviderURL>https://ofx.firsttennessee.com/ofx/ofx_isapi.dll</ProviderURL>
+    <MoneyDanceId>md:1137</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>First USA</Name>
+    <Org>B1</Org>
+    <Fid>3450</Fid>
+    <ProviderURL>https://ofx.chase.com</ProviderURL>
+    <MoneyDanceId>md:1361</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The request was aborted: Could not create SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>Firstar</Name>
+    <Org>ISC</Org>
+    <Fid>1255</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01255.ofx</ProviderURL>
+    <OfxHomeId>494</OfxHomeId>
+    <MoneyDanceId>md:1140</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>FirstBank of Colorado</Name>
+    <Org>FBDC</Org>
+    <Fid>FirstBank</Fid>
+    <ProviderURL>https://www.efirstbankpfm.com/ofx/OFXServlet</ProviderURL>
+    <OfxHomeId>554</OfxHomeId>
+    <MoneyDanceId>md:1139</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The request was aborted: Could not create SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>Florence Savings Bank</Name>
+    <Org>ORCC</Org>
+    <Fid>476</Fid>
+    <ProviderURL>https://www19.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1142</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Florida Gulf Bank</Name>
+    <Org>MSevenFiftyOne</Org>
+    <Fid>067015119</Fid>
+    <ProviderURL>https://ofx1.evault.ws/ofxserver/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1410</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Error returned from server</LastError>
+  </institution>
+  <institution>
+    <Name>Fort Sill Federal Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>303184856</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1447</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Fort Stewart Georgia Federal Credit Union</Name>
+    <Org>Fort Stewart FCU</Org>
+    <Fid>261271364</Fid>
+    <ProviderURL>https://fsg.usersonlnet.com/scripts/isaofx.dll</ProviderURL>
+    <MoneyDanceId>md:1145</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: An unexpected error occurred on a send.</LastError>
+  </institution>
+  <institution>
+    <Name>Franklin Templeton Bank &amp; Trust</Name>
+    <Org>DI</Org>
+    <Fid>121135346</Fid>
+    <BrokerId>DI</BrokerId>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1146</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Franklin Templeton Investments</Name>
+    <Org>franklintempleton.com</Org>
+    <Fid>9444</Fid>
+    <BrokerId>franklintempleton.com</BrokerId>
+    <ProviderURL>https://ofx.franklintempleton.com/eftxweb/access.ofx</ProviderURL>
+    <OfxHomeId>734</OfxHomeId>
+    <MoneyDanceId>md:1147</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Fremont Bank</Name>
+    <Fid>1</Fid>
+    <ProviderURL>https://ofx.fremontbank.com/OFXServer/FBOFXSrvr.dll</ProviderURL>
+    <OfxHomeId>556</OfxHomeId>
+    <MoneyDanceId>md:1148</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (400) Bad Request.</LastError>
+  </institution>
+  <institution>
+    <Name>Gold Canyon Bank</Name>
+    <Org>043</Org>
+    <Fid>5532</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1562</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Golden 1 Credit Union</Name>
+    <Org>Golden1</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://homebanking.golden1.com/scripts/serverext.dll</ProviderURL>
+    <MoneyDanceId>md:1415</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Goldman Sachs</Name>
+    <Org>gs.com</Org>
+    <Fid>1234</Fid>
+    <BrokerId>gs.com</BrokerId>
+    <ProviderURL>https://portfolio-ofx.gs.com:446/ofx/ofx.eftx</ProviderURL>
+    <OfxHomeId>694</OfxHomeId>
+    <MoneyDanceId>md:1492</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Greylock Federal Credit Union</Name>
+    <Org>Cavion</Org>
+    <Fid>10782</Fid>
+    <ProviderURL>https://ofx.lanxtra.com/ofx/servlet/Teller</ProviderURL>
+    <MoneyDanceId>md:1539</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Harris Investor Services, Inc</Name>
+    <Org>Harris Investor Services</Org>
+    <Fid>032</Fid>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1551</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Hawthorne Credit Union</Name>
+    <Org>Hawthorne Credit Union</Org>
+    <Fid>271979193</Fid>
+    <ProviderURL>https://hwt.usersonlnet.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>493</OfxHomeId>
+    <MoneyDanceId>md:1154</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: Could not establish trust relationship for the SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>Herald National Bank -IB</Name>
+    <Org>DI</Org>
+    <Fid>026014588</Fid>
+    <BrokerId>DI</BrokerId>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1155</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Heritage Bank – KY</Name>
+    <Org>ORCC</Org>
+    <Fid>757</Fid>
+    <ProviderURL>https://www20.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1496</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Hewitt Assoc-YourBenefits Resources</Name>
+    <Org>hewitt.com</Org>
+    <Fid>242</Fid>
+    <BrokerId>hewitt.com</BrokerId>
+    <ProviderURL>https://seven.was.hewitt.com/eftxweb/access.ofx</ProviderURL>
+    <MoneyDanceId>md:1159</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Hewitt Financial Services</Name>
+    <Org>Hewitt Financial Services LLC</Org>
+    <Fid>037</Fid>
+    <BrokerId>hewittfs.com</BrokerId>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1477</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>HFS Federal Credit Union</Name>
+    <Org>Credit Union</Org>
+    <Fid>321378660</Fid>
+    <ProviderURL>https://hfsfcu.online-cu.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>562</OfxHomeId>
+    <MoneyDanceId>md:1502</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Hills Bank and Trust – Direct</Name>
+    <Org>JackHenry</Org>
+    <Fid>1771</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1339</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Horizon Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>325182506</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1571</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Hudson Valley FCU</Name>
+    <Org>Hudson Valley FCU</Org>
+    <Fid>10767</Fid>
+    <ProviderURL>https://internetbanking.hvfcu.org/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>695</OfxHomeId>
+    <MoneyDanceId>md:1162</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Huntington National Bank</Name>
+    <Org>huntington</Org>
+    <Fid>3701</Fid>
+    <ProviderURL>https://ofx.huntington.com/Ofx/process.ofx</ProviderURL>
+    <OfxHomeId>574</OfxHomeId>
+    <MoneyDanceId>md:1548</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name changed="2012-10-30T23:04:31">IBM Southeast Employees Federal Credit Union</Name>
+    <Org changed="2012-10-30T23:04:31">IBM Southeast EFCU</Org>
+    <Fid>1779</Fid>
+    <ProviderURL>https://rb.ibmsecu.org/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>696</OfxHomeId>
+    <MoneyDanceId>md:1164</MoneyDanceId>
+    <AppId>QMOFX</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+    <BrokerId changed="2012-10-31T14:06:04.6941849-07:00"></BrokerId>
+  </institution>
+  <institution>
+    <Name>Indiana Members Credit Union</Name>
+    <Org>Indiana Members Credit Union</Org>
+    <Fid>00FX3</Fid>
+    <ProviderURL>https://www.netit.financial-net.com/ofx</ProviderURL>
+    <MoneyDanceId>md:1338</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name changed="2012-10-31T14:19:59.053486-07:00">ING Direct</Name>
+    <Org>ING DIRECT</Org>
+    <Fid>031176110</Fid>
+    <ProviderURL>https://ofx.ingdirect.com/OFX/ofx.html</ProviderURL>
+    <MoneyDanceId>md:1526</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError changed="2012-10-31T14:19:59.053486-07:00">Sign on failed with ERROR code SignonInvalid(15500)</LastError>
+    <OfxVersion changed="2012-10-31T14:19:59.052486-07:00">1.0</OfxVersion>
+  </institution>
+  <institution>
+    <Name changed="2012-10-31T14:20:27.2450744-07:00">ING DIRECT Canada</Name>
+    <Org>INGDirectCanada</Org>
+    <Fid>061400152</Fid>
+    <ProviderURL>https://ofx.ingdirect.ca</ProviderURL>
+    <MoneyDanceId>md:1528</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError changed="2012-10-31T14:20:27.2450744-07:00">We're sorry for the inconvenience.  This function is currently not available.  Try the function again or call us at 1-888-464-3232 to speak with a Direct Associate. (Error Code: INVALID_PERSONAL_CUSTOMER) (31-Oct-2012 17:31)</LastError>
+    <OfxVersion changed="2012-10-31T14:20:27.2450744-07:00">1.0</OfxVersion>
+  </institution>
+  <institution>
+    <Name>ING Financial Partners</Name>
+    <Org>ING Advisors Network</Org>
+    <Fid>056</Fid>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1367</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>ING Institutional Plan Services </Name>
+    <Org>ing-usa.com</Org>
+    <Fid>1289</Fid>
+    <ProviderURL>https://ofx.ingplans.com/ofx/Server</ProviderURL>
+    <OfxHomeId>735</OfxHomeId>
+    <MoneyDanceId>md:1332</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Insight CU</Name>
+    <Org>Insight Credit Union</Org>
+    <Fid>10764</Fid>
+    <ProviderURL>https://secure.insightcreditunion.com/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>697</OfxHomeId>
+    <MoneyDanceId>md:1427</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>International Bank of Commerce</Name>
+    <Org>IBC</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://ibcbankonline2.ibc.com/scripts/serverext.dll</ProviderURL>
+    <OfxHomeId>743</OfxHomeId>
+    <MoneyDanceId>md:1169</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>InTouch Credit Union</Name>
+    <Org>InTouch Credit Union</Org>
+    <Fid>003U1</Fid>
+    <ProviderURL>https://www.netit.financial-net.com/ofx</ProviderURL>
+    <MoneyDanceId>md:1541</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>INTRUST Bank</Name>
+    <Org>784</Org>
+    <Fid>5012</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1497</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Invesco</Name>
+    <Org>Invesco</Org>
+    <Fid>1214</Fid>
+    <ProviderURL>https://ofx3.financialtrans.com/tf/OFXServer?tx=OFXController&amp;cz=702110804131918&amp;cl=3000812</ProviderURL>
+    <MoneyDanceId>md:1439</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>IronStone Bank – Direct Connect</Name>
+    <Org>first Citizens BancShares</Org>
+    <Fid>5012</Fid>
+    <ProviderURL>https://www.pyramid.cfree.com/fip/genesis/prod/05012.ofx</ProviderURL>
+    <MoneyDanceId>md:1582</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>J.P. Morgan</Name>
+    <Org>ISC</Org>
+    <Fid>4701</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/04701.ofx</ProviderURL>
+    <OfxHomeId>700</OfxHomeId>
+    <MoneyDanceId>md:1170</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>J.P. Morgan Chase Bank</Name>
+    <Org>ISC</Org>
+    <Fid>1601</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01601.ofx</ProviderURL>
+    <MoneyDanceId>md:1171</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>J.P. Morgan Chase Bank – Texas</Name>
+    <Org>ISC</Org>
+    <Fid>5301</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/05301.ofx</ProviderURL>
+    <MoneyDanceId>md:1172</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>J.P. Morgan Clearing Corp.</Name>
+    <Org>GCS</Org>
+    <Fid>7315</Fid>
+    <BrokerId>https://ofxpcs.toolkit</BrokerId>
+    <ProviderURL>https://ofxgcs.toolkit.clearco.com</ProviderURL>
+    <OfxHomeId>701</OfxHomeId>
+    <MoneyDanceId>md:1488</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>J.P. Morgan Private Banking</Name>
+    <Org>jpmorgan.com</Org>
+    <Fid>0417</Fid>
+    <BrokerId>jpmorgan.com</BrokerId>
+    <ProviderURL>https://ofx.jpmorgan.com/jpmredirector</ProviderURL>
+    <OfxHomeId>740</OfxHomeId>
+    <MoneyDanceId>md:1487</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>J.P. Morgan Retirement Plan Services</Name>
+    <Org>JPMORGAN</Org>
+    <Fid>6313</Fid>
+    <BrokerId>JPMORGAN</BrokerId>
+    <ProviderURL>https://ofx.retireonline.com/eftxweb/access.ofx</ProviderURL>
+    <MoneyDanceId>md:1335</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>J.P. Morgan Securities</Name>
+    <Org>PCS</Org>
+    <Fid>7315</Fid>
+    <BrokerId>https://ofxpcs.toolkit</BrokerId>
+    <ProviderURL>https://ofxpcs.toolkit.clearco.com</ProviderURL>
+    <MoneyDanceId>md:1486</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Janney Montgomery Scott LLC</Name>
+    <Org>AFS</Org>
+    <Fid>11326</Fid>
+    <BrokerId>https://jmsofx.automat</BrokerId>
+    <ProviderURL>https://jmsofx.automatedfinancial.com</ProviderURL>
+    <OfxHomeId>698</OfxHomeId>
+    <MoneyDanceId>md:1437</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (400) Bad Request.</LastError>
+  </institution>
+  <institution>
+    <Name>Janus</Name>
+    <Org>janus</Org>
+    <Fid>6115</Fid>
+    <BrokerId>janus.com</BrokerId>
+    <ProviderURL>https://ofx3.financialtrans.com/tf/OFXServer?tx=OFXController&amp;cz=702110804131918&amp;cl=50900132018</ProviderURL>
+    <OfxHomeId>615</OfxHomeId>
+    <MoneyDanceId>md:1375</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Johns Hopkins Federal Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>252076235</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1400</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>JSC Federal Credit Union</Name>
+    <Org>JSC Federal Credit Union</Org>
+    <Fid>10491</Fid>
+    <ProviderURL>https://starpclegacy.jscfcu.org/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>699</OfxHomeId>
+    <MoneyDanceId>md:1404</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Kemba Credit Union, Inc.</Name>
+    <Org>JackHenry</Org>
+    <Fid>11807</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1572</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Kemba Financial CU – Direct</Name>
+    <Org>KEMBA</Org>
+    <Fid>244077556</Fid>
+    <ProviderURL>https://ofx.kemba.org/ofxserver/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1534</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Key Bank</Name>
+    <Org>ISC</Org>
+    <Fid>5901</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/05901.ofx</ProviderURL>
+    <MoneyDanceId>md:1175</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Kinecta Federal Credit Union</Name>
+    <Org>KINECTA</Org>
+    <Fid>322278073</Fid>
+    <ProviderURL>https://ofx.kinecta.org/ofxserver/ofxsrvr.dll</ProviderURL>
+    <OfxHomeId>646</OfxHomeId>
+    <MoneyDanceId>md:1364</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Kirtland Federal Credit Union</Name>
+    <Org>Kirtland Federal Credit Union</Org>
+    <Fid>307070050</Fid>
+    <ProviderURL>https://pcu.kirtlandfcu.org/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>544</OfxHomeId>
+    <MoneyDanceId>md:1177</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Kitsap Community FCU</Name>
+    <Org>Kitsap Community Federal Credit</Org>
+    <Fid>325180223</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1385</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Lake Trust Credit Union</Name>
+    <Org>orcc</Org>
+    <Fid>495</Fid>
+    <ProviderURL>https://www20.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1517</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Las Colinas FCU</Name>
+    <Org>Las Colinas Federal CU</Org>
+    <Fid>311080573</Fid>
+    <ProviderURL>https://las.usersonlnet.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>524</OfxHomeId>
+    <MoneyDanceId>md:1179</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (400) Bad Request.</LastError>
+  </institution>
+  <institution>
+    <Name>LaSalle Bank N.A.</Name>
+    <Org>ISC</Org>
+    <Fid>6501</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/06501.ofx</ProviderURL>
+    <MoneyDanceId>md:1178</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Last Chance Bank Of Hope</Name>
+    <OfxVersion>2.0</OfxVersion>
+    <Org>bankofhope</Org>
+    <Fid>1234</Fid>
+    <ProviderURL>http://localhost:3000/ofx/test/</ProviderURL>
+    <AppId>MyMoney</AppId>
+    <AppVer>1.0</AppVer>
+    <LastConnection>10/30/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Liberty Bank – CT</Name>
+    <Org>DI</Org>
+    <Fid>211170282</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1467</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Local Government Federal CU</Name>
+    <Org>SECU</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://onlineaccess.ncsecu.org/lgfcuofx/lgfcu.ofx</ProviderURL>
+    <MoneyDanceId>md:1397</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Los Alamos National Bank</Name>
+    <Org>LANB</Org>
+    <Fid>107001012</Fid>
+    <ProviderURL>https://ofx.lanb.com/ofx/ofxrelay.dll</ProviderURL>
+    <OfxHomeId>476</OfxHomeId>
+    <MoneyDanceId>md:1180</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Los Angeles Fireman’s Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>322078341</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1434</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>M&amp;T Bank</Name>
+    <Org>ISC</Org>
+    <Fid>2601</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/02601.ofx</ProviderURL>
+    <MoneyDanceId>md:1181</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>M&amp;T Securities, Inc.</Name>
+    <Org>MandT Bank Corporation</Org>
+    <Fid>028</Fid>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1555</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Marquette Banks</Name>
+    <Org>ISC</Org>
+    <Fid>1301</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01301.ofx</ProviderURL>
+    <OfxHomeId>703</OfxHomeId>
+    <MoneyDanceId>md:1182</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Mellon Bank</Name>
+    <Org>ISC</Org>
+    <Fid>1226</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01226.ofx</ProviderURL>
+    <OfxHomeId>454</OfxHomeId>
+    <MoneyDanceId>md:1184</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Mercer</Name>
+    <Org>PutnamDefinedContributions</Org>
+    <Fid>8007527525</Fid>
+    <ProviderURL>https://ofx.mercerhrs.com/eftxweb/access.ofx</ProviderURL>
+    <OfxHomeId>704</OfxHomeId>
+    <MoneyDanceId>md:1448</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Merchants Bank – VT</Name>
+    <Org>DI</Org>
+    <Fid>011600020</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1424</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/30/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Merrill Lynch &amp; Co., Inc.</Name>
+    <Org>Merrill Lynch &amp; Co., Inc.</Org>
+    <Fid>5550</Fid>
+    <BrokerId>www.mldirect.ml.com</BrokerId>
+    <ProviderURL>https://taxcert.mlol.ml.com/eftxweb/access.ofx</ProviderURL>
+    <MoneyDanceId>md:1185</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Merrill Lynch Online Payment</Name>
+    <Org>ISC</Org>
+    <Fid>7301</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/07301.ofx</ProviderURL>
+    <OfxHomeId>705</OfxHomeId>
+    <MoneyDanceId>md:1186</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Metcalf Bank – Business</Name>
+    <Org>101201892</Org>
+    <Fid>769</Fid>
+    <ProviderURL>https://ofx.centralbancompany.com/ofxserver/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1187</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Metcalf Bank – Personal</Name>
+    <Org>101201892</Org>
+    <Fid>823</Fid>
+    <ProviderURL>https://ofx.centralbancompany.com/ofxserver/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1188</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Metro Bank</Name>
+    <Org>MTRO</Org>
+    <Fid>9970</Fid>
+    <ProviderURL>https://ofx.mymetrobank.com/ofx/ofx.ofx</ProviderURL>
+    <OfxHomeId>654</OfxHomeId>
+    <MoneyDanceId>md:1435</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Metro Health Services FCU</Name>
+    <Org>DI</Org>
+    <Fid>304083396</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1485</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Michigan National</Name>
+    <Org>ISC</Org>
+    <Fid>1101</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01101.ofx</ProviderURL>
+    <MoneyDanceId>md:1189</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Michigan State University Federal CU</Name>
+    <Org>MSUFCU</Org>
+    <Fid>272479663</Fid>
+    <ProviderURL>https://ofx.msufcu.org/ofxserver/ofxsrvr.dll</ProviderURL>
+    <OfxHomeId>649</OfxHomeId>
+    <MoneyDanceId>md:1190</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Middleburg Bank</Name>
+    <Org>DI</Org>
+    <Fid>056006786</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1516</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Mission FCU</Name>
+    <Org>MISSION</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://missionlink.missionfcu.org/scripts/serverext.dll</ProviderURL>
+    <MoneyDanceId>md:1192</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Missoula Federal Credit Union</Name>
+    <Org>Missoula Federal Credit Union</Org>
+    <Fid>5097</Fid>
+    <ProviderURL>https://secure.missoulafcu.org/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>706</OfxHomeId>
+    <MoneyDanceId>md:1476</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Morgan Keegan &amp; Co, Inc.</Name>
+    <Org>morgankeegan.com</Org>
+    <Fid>242</Fid>
+    <BrokerId>morgankeegan.com</BrokerId>
+    <ProviderURL>https://ofx.morgankeegan.com/begasp/directtocore.asp</ProviderURL>
+    <MoneyDanceId>md:1195</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Morgan Stanley</Name>
+    <Org>msdw.com</Org>
+    <Fid>1235</Fid>
+    <BrokerId>msdw.com</BrokerId>
+    <ProviderURL>https://ofx.morganstanleyclientserv.com/ofx/QuickenWinProfile.ofx</ProviderURL>
+    <MoneyDanceId>md:1378</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Morgan Stanley (Smith Barney)</Name>
+    <Org>Smithbarney.com</Org>
+    <Fid>5207</Fid>
+    <BrokerId>smithbarney.com</BrokerId>
+    <ProviderURL>https://ofx.smithbarney.com/app-bin/ofx/servlets/access.ofx</ProviderURL>
+    <OfxHomeId>707</OfxHomeId>
+    <MoneyDanceId>md:1379</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Motorola Employees Credit Union</Name>
+    <Org>MECU</Org>
+    <Fid>271984311</Fid>
+    <ProviderURL>https://online.mecunet.org/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>534</OfxHomeId>
+    <MoneyDanceId>md:1197</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Mountain America Credit Union</Name>
+    <Org>MACU</Org>
+    <Fid>324079555</Fid>
+    <BrokerId>DI</BrokerId>
+    <ProviderURL>https://ofx.macu.org/OFXServer/ofxsrvr.dll</ProviderURL>
+    <OfxHomeId>657</OfxHomeId>
+    <MoneyDanceId>md:1380</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Mountain West Bank, NA–Montana</Name>
+    <Org>MWB</Org>
+    <Fid>707</Fid>
+    <ProviderURL>https://ofx.onlinencr.com/scripts/serverext.dll</ProviderURL>
+    <MoneyDanceId>md:1522</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>myStreetscape</Name>
+    <Org>Fidelity</Org>
+    <Fid>7784</Fid>
+    <ProviderURL>https://ofx.ibgstreetscape.com</ProviderURL>
+    <OfxHomeId>495</OfxHomeId>
+    <MoneyDanceId>md:1200</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Nantucket Bank</Name>
+    <Org>Nantucket</Org>
+    <Fid>466</Fid>
+    <ProviderURL>https://ofx.onlinencr.com/scripts/serverext.dll</ProviderURL>
+    <OfxHomeId>456</OfxHomeId>
+    <MoneyDanceId>md:1498</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Nassau Educators FCU Quicken</Name>
+    <Org>DI</Org>
+    <Fid>221480807</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1565</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Nassau Financial FCU</Name>
+    <Org>orcc</Org>
+    <Fid>1000</Fid>
+    <ProviderURL>https://www20.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1564</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>National Bank of Arizona</Name>
+    <Org>294-3</Org>
+    <Fid>1118</Fid>
+    <ProviderURL>https://quicken.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1519</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>National Penn Bank</Name>
+    <Org>ISC</Org>
+    <Fid>6301</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/06301.ofx</ProviderURL>
+    <OfxHomeId>457</OfxHomeId>
+    <MoneyDanceId>md:1204</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Nationwide Federal Credit Union</Name>
+    <Org>Nationwide FCU</Org>
+    <Fid>00FWQ</Fid>
+    <ProviderURL>https://www.netit.financial-net.com/ofx</ProviderURL>
+    <MoneyDanceId>md:1205</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Navy Army Federal Credit Union</Name>
+    <Org>USERS</Org>
+    <Fid>314978543</Fid>
+    <ProviderURL>https://mybranch.navyarmyfcu.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>551</OfxHomeId>
+    <MoneyDanceId>md:1507</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: Could not establish trust relationship for the SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>NetExchange Client</Name>
+    <Org>NXC </Org>
+    <Fid>053 </Fid>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1377</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Nevada State Bank – NEW</Name>
+    <Org>295-3</Org>
+    <Fid>1121</Fid>
+    <ProviderURL>https://quicken.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1209</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Nevada State Bank – OLD</Name>
+    <Org>ISC</Org>
+    <Fid>5401</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/05401.ofx</ProviderURL>
+    <MoneyDanceId>md:1208</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>New Mexico Bank and Trust</Name>
+    <Org>DI</Org>
+    <Fid>107006541</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1408</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>New Resource Bank – IB QFX WC DC</Name>
+    <Org>DI</Org>
+    <Fid>121044369</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1212</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>NewportFed</Name>
+    <Org>ORCC</Org>
+    <Fid>698</Fid>
+    <ProviderURL>https://www20.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1533</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>NMIS, LLC</Name>
+    <Org>NWM</Org>
+    <Fid>027</Fid>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1578</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>North Community Bank</Name>
+    <Org>MBG</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://personal.netbankerplus.com/ofxnorthcommunitybank/process.ofx</ProviderURL>
+    <MoneyDanceId>md:1368</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Northampton Co-operative Bank</Name>
+    <Org>ORCC</Org>
+    <Fid>492</Fid>
+    <ProviderURL>https://www20.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1542</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Northern Trust – Banking</Name>
+    <Org>Northern Trust</Org>
+    <Fid>05642</Fid>
+    <ProviderURL>https://www3883.ntrs.com/nta/ofxservlet</ProviderURL>
+    <MoneyDanceId>md:1211</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The request was aborted: Could not create SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>Northern Trust – Investments</Name>
+    <Org>Northern Trust</Org>
+    <Fid>05641</Fid>
+    <BrokerId>northernfunds.com</BrokerId>
+    <ProviderURL>https://www3883.ntrs.com/nta/ofxservlet?accounttypegroup=INV</ProviderURL>
+    <MoneyDanceId>md:1506</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The request was aborted: Could not create SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>Northstar Bank of Texas</Name>
+    <Org>MEightZeroFive</Org>
+    <Fid>111904817</Fid>
+    <ProviderURL>https://ofx1.evault.ws/OFXServer/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1441</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Northwestern Mutual Credit Union</Name>
+    <Org>Northwestern Mutual Credit Union</Org>
+    <Fid>5MQD7</Fid>
+    <ProviderURL>https://www.netit.financial-net.com/ofx</ProviderURL>
+    <MoneyDanceId>md:1422</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Norwest</Name>
+    <Org>ISC</Org>
+    <Fid>4601</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/04601.ofx</ProviderURL>
+    <OfxHomeId>710</OfxHomeId>
+    <MoneyDanceId>md:1214</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>nuVision Financial FCU</Name>
+    <Org>DI</Org>
+    <Fid>322282399</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1412</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>OceanFirst Bank</Name>
+    <Org>DI</Org>
+    <Fid>231270353</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1355</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>OCTFCU</Name>
+    <Org>OCTFCU</Org>
+    <Fid>17600</Fid>
+    <ProviderURL>https://ofx.octfcu.org</ProviderURL>
+    <OfxHomeId>587</OfxHomeId>
+    <MoneyDanceId>md:1215</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Old National</Name>
+    <Org>ONB</Org>
+    <Fid>914</Fid>
+    <ProviderURL>https://www.ofx.oldnational.com/ofxpreprocess.asp</ProviderURL>
+    <MoneyDanceId>md:1347</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>OneWest Bank</Name>
+    <Org>DI</Org>
+    <Fid>322270288</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1421</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Oppenheimer &amp; Co. Inc.</Name>
+    <Org>Oppenheimer</Org>
+    <Fid>125</Fid>
+    <BrokerId>Oppenheimer</BrokerId>
+    <ProviderURL>https://ofx.opco.com/eftxweb/access.ofx</ProviderURL>
+    <OfxHomeId>711</OfxHomeId>
+    <MoneyDanceId>md:1358</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>OptionsXpress, Inc</Name>
+    <Org>optionxpress.com</Org>
+    <Fid>1</Fid>
+    <BrokerId>optionxpress.com</BrokerId>
+    <ProviderURL>https://ofx.optionsxpress.com/cgi-bin/ox.exe</ProviderURL>
+    <OfxHomeId>565</OfxHomeId>
+    <MoneyDanceId>md:1217</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Oregon College Savings Plan</Name>
+    <Org>tiaaoregon</Org>
+    <Fid>51498</Fid>
+    <BrokerId>tiaa-cref.org</BrokerId>
+    <ProviderURL>https://ofx3.financialtrans.com/tf/OFXServer?tx=OFXController&amp;cz=702110804131918&amp;cl=b1908000027141704061413</ProviderURL>
+    <OfxHomeId>712</OfxHomeId>
+    <MoneyDanceId>md:1480</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Oregon Community Credit Union</Name>
+    <Org>OCCU</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://internetbanking.oregoncommunitycu.org/scripts/serverext.dll</ProviderURL>
+    <MoneyDanceId>md:1218</MoneyDanceId>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Pacific Capital Bank, N.A.</Name>
+    <Org>pfm-l3g</Org>
+    <Fid>5524</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1452</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Patelco CU</Name>
+    <Org>Patelco Credit Union</Org>
+    <Fid>2000</Fid>
+    <ProviderURL>https://ofx.patelco.org</ProviderURL>
+    <OfxHomeId>460</OfxHomeId>
+    <MoneyDanceId>md:1221</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Penson Financial Services</Name>
+    <Org>Penson Financial Services Inc</Org>
+    <Fid>10780</Fid>
+    <BrokerId>penson.com</BrokerId>
+    <ProviderURL>https://ofx.penson.com</ProviderURL>
+    <OfxHomeId>570</OfxHomeId>
+    <MoneyDanceId>md:1223</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>People’s United Bank – CT</Name>
+    <Org>136</Org>
+    <Fid>5534</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1438</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Peremel &amp; Company, Inc</Name>
+    <Org>Peremel</Org>
+    <Fid>011</Fid>
+    <BrokerId>access.peremel.com</BrokerId>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1224</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Pershing Advisor Solutions</Name>
+    <Org>IMS</Org>
+    <Fid>015</Fid>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1225</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Picatinny Federal Credit Union</Name>
+    <Org>Users</Org>
+    <Fid>221275216</Fid>
+    <ProviderURL>https://banking.picacreditunion.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>508</OfxHomeId>
+    <MoneyDanceId>md:1226</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: Could not establish trust relationship for the SSL/TLS secure channel.</LastError>
+  </institution>
+  <institution>
+    <Name>PNC Bank</Name>
+    <Org>ISC</Org>
+    <Fid>4501</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/04501.ofx</ProviderURL>
+    <OfxHomeId>634</OfxHomeId>
+    <MoneyDanceId>md:1219</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Premier America Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>322283990</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <OfxHomeId>764</OfxHomeId>
+    <MoneyDanceId>md:1353</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Premier Bank Rochester</Name>
+    <Org>Fidelity</Org>
+    <Fid>091905664</Fid>
+    <ProviderURL>https://ofx.internet-ebanking.com/CCOFXServer/servlet/TP_OFX_Controller</ProviderURL>
+    <MoneyDanceId>md:1549</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The operation has timed out</LastError>
+  </institution>
+  <institution>
+    <Name>Premier Members Federal Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>307074551</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1384</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Presidential Bank</Name>
+    <Org>DI</Org>
+    <Fid>255073345</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1381</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Principal Financial Group</Name>
+    <Org>Principal Financial Group</Org>
+    <Fid>033</Fid>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1349</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Private Bank of Buckhead</Name>
+    <Org>Certegy</Org>
+    <Fid>061020867</Fid>
+    <ProviderURL>https://ofx.internet-ebanking.com/CCOFXServer/servlet/TP_OFX_Controller</ProviderURL>
+    <MoneyDanceId>md:1474</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The operation has timed out</LastError>
+  </institution>
+  <institution>
+    <Name>Private Issue (R)</Name>
+    <Org>Discover Financial Services</Org>
+    <Fid>7103</Fid>
+    <ProviderURL>https://ofx.discovercard.com/</ProviderURL>
+    <MoneyDanceId>md:1227</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Provident Credit Union</Name>
+    <Org>orcc</Org>
+    <Fid>1830</Fid>
+    <ProviderURL>https://www19.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1357</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Prudential Retirement</Name>
+    <Org>Prudential Retirement Services</Org>
+    <Fid>1271</Fid>
+    <BrokerId>prudential.com</BrokerId>
+    <ProviderURL>https://ofx.prudential.com/eftxweb/EFTXWebRedirector</ProviderURL>
+    <OfxHomeId>567</OfxHomeId>
+    <MoneyDanceId>md:1229</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (400) Bad Request.</LastError>
+  </institution>
+  <institution>
+    <Name>PSECU</Name>
+    <Org>Teknowledge</Org>
+    <Fid>54354</Fid>
+    <ProviderURL>https://ofx.psecu.com/servlet/OFXServlet</ProviderURL>
+    <OfxHomeId>539</OfxHomeId>
+    <MoneyDanceId>md:1220</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: The connection was closed unexpectedly.</LastError>
+  </institution>
+  <institution>
+    <Name>Quicken Credit Card</Name>
+    <Org>HAHI</Org>
+    <Fid>3601</Fid>
+    <ProviderURL>https://secureofx2.bankhost.com/citi/cgi-forte/ofx_rt?servicename=ofx_rt&amp;pagename=ofx</ProviderURL>
+    <MoneyDanceId>md:1231</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Quincy Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>211385297</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1406</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Rabobank</Name>
+    <Org>RBB</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://ofx.rabobankamerica.com/ofx/process.ofx</ProviderURL>
+    <MoneyDanceId>md:1552</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>RBC Bank (USA)</Name>
+    <Org>ISC</Org>
+    <Fid>1901</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01901.ofx</ProviderURL>
+    <MoneyDanceId>md:1393</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>RBC Dain Rauscher</Name>
+    <Org>RBC Dain Rauscher</Org>
+    <Fid>8035</Fid>
+    <BrokerId>RBCDain.com</BrokerId>
+    <ProviderURL>https://ofx.rbcdain.com/</ProviderURL>
+    <OfxHomeId>713</OfxHomeId>
+    <MoneyDanceId>md:1232</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>RBC Wealth Management</Name>
+    <Org>RBC Dain Rauscher</Org>
+    <Fid>8035</Fid>
+    <BrokerId>RBCDain.com</BrokerId>
+    <ProviderURL>https://ofx.rbcdain.com</ProviderURL>
+    <MoneyDanceId>md:1418</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name changed="2009-10-31T01:44:13">Redstone Federal Credit Union</Name>
+    <Org changed="2009-10-31T01:44:13">Harland Financial Solutions</Org>
+    <Fid>262275835</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <OfxHomeId>633</OfxHomeId>
+    <MoneyDanceId>md:1356</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+    <BrokerId changed="2012-10-31T15:14:33.6312806-07:00"></BrokerId>
+  </institution>
+  <institution>
+    <Name>Regions Bank</Name>
+    <Org>AmSouth</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://securebank.regions.com/OfxPipeline/ofx.ofx</ProviderURL>
+    <OfxHomeId>462</OfxHomeId>
+    <MoneyDanceId>md:1236</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Republic Bank &amp; Trust</Name>
+    <Org>DI</Org>
+    <Fid>083001314</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1237</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Rivermark Community Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>323076012</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1420</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Robert W. Baird &amp; Co.</Name>
+    <Org>Robert W. Baird &amp; Co.</Org>
+    <Fid>1109</Fid>
+    <BrokerId>rwbaird.com</BrokerId>
+    <ProviderURL>https://ofx.rwbaird.com</ProviderURL>
+    <OfxHomeId>714</OfxHomeId>
+    <MoneyDanceId>md:1398</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Rock Canyon Bank</Name>
+    <Org>DI</Org>
+    <Fid>124302914</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1563</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Ryan Beck &amp; Co</Name>
+    <Org>RYANBECK</Org>
+    <Fid>008</Fid>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1238</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>S&amp;T Bank</Name>
+    <Org>368</Org>
+    <Fid>5013</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1520</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Sacramento Credit Union</Name>
+    <Org>SACRAMENTO CREDIT UNION</Org>
+    <Fid>1</Fid>
+    <ProviderURL>https://homebank.sactocu.org/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>651</OfxHomeId>
+    <MoneyDanceId>md:1241</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>SAFE Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>321173742</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1242</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Salem Five</Name>
+    <Org>126</Org>
+    <Fid>5007</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1243</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Salomon Smith Barney</Name>
+    <Org>ISC</Org>
+    <Fid>3201</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/03201.ofx</ProviderURL>
+    <MoneyDanceId>md:1245</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Sandia Laboratory Federal Credit Union</Name>
+    <Org>SLFCU</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://www.cu-athome.org/scripts/serverext.dll</ProviderURL>
+    <MoneyDanceId>md:1246</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Savings Institute Bank &amp; Trust</Name>
+    <Org>orcc</Org>
+    <Fid>394</Fid>
+    <ProviderURL>https://www20.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1529</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Schools Financial Credit Union</Name>
+    <Org>JackHenry</Org>
+    <Fid>14568</Fid>
+    <ProviderURL>https://directline.netteller.com</ProviderURL>
+    <OfxHomeId>577</OfxHomeId>
+    <MoneyDanceId>md:1499</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Schwab – The 401k Company</Name>
+    <Org>Intelidata</Org>
+    <Fid>2201</Fid>
+    <ProviderURL>https://www2.compassweb.com/ofxsecurity/ofx_security_server.dll</ProviderURL>
+    <MoneyDanceId>md:1579</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Scottrade, Inc.</Name>
+    <Org>Scottrade</Org>
+    <Fid>777</Fid>
+    <BrokerId>scottsave.com</BrokerId>
+    <ProviderURL>https://ofxstl.scottsave.com</ProviderURL>
+    <OfxHomeId>623</OfxHomeId>
+    <MoneyDanceId>md:1249</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Sears Card</Name>
+    <Org>CITIGROUP</Org>
+    <Fid>26810</Fid>
+    <ProviderURL>https://secureofx.bankhost.com/tuxofx/cgi-bin/cgi_chip</ProviderURL>
+    <OfxHomeId>715</OfxHomeId>
+    <MoneyDanceId>md:1387</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Securian Financial Services, Inc.</Name>
+    <Org>Securian Financial Services, Inc</Org>
+    <Fid>029</Fid>
+    <BrokerId>securianfinancial.com</BrokerId>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1455</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>ServisFirst Bank</Name>
+    <Org>JackHenry</Org>
+    <Fid>2370</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1413</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>ShareBuilder</Name>
+    <Org>ShareBuilder</Org>
+    <Fid>5575</Fid>
+    <ProviderURL>https://ofx.sharebuilder.com</ProviderURL>
+    <OfxHomeId>614</OfxHomeId>
+    <MoneyDanceId>md:1250</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Sharonview Federal Credit Union</Name>
+    <Org>Sharonview Federal Credit Union</Org>
+    <Fid>37MPB</Fid>
+    <ProviderURL>https://www.netit.financial-net.com/ofx</ProviderURL>
+    <MoneyDanceId>md:1251</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Sierra Central Credit Union</Name>
+    <Org>USERS</Org>
+    <Fid>321174770</Fid>
+    <ProviderURL>https://sccupcu.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>502</OfxHomeId>
+    <MoneyDanceId>md:1252</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Silver State Schools CU</Name>
+    <Org>SSSCU</Org>
+    <Fid>322484265</Fid>
+    <ProviderURL>https://www.silverstatecu.com/OFXServer/ofxsrvr.dll</ProviderURL>
+    <OfxHomeId>624</OfxHomeId>
+    <MoneyDanceId>md:1425</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: An unexpected error occurred on a send.</LastError>
+  </institution>
+  <institution>
+    <Name>Simmons First National Bank</Name>
+    <OfxVersion>1.0</OfxVersion>
+    <Org>Jack Henry and Associates</Org>
+    <Fid>3779</Fid>
+    <ProviderURL>https://directline.netteller.com </ProviderURL>
+    <MoneyDanceId>md:1253</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>
+      Did not get the expected response from your financial institution.  Unexpected error from server GeneralError
+      The server does not support the PROFMSGSRQV1 request, or a request was made against an invalid organization.  Please verify the Organization name and FID and try again.
+      [ref: d43f244c-291c-486d-8d96-8f291689d6ae]
+    </LastError>
+  </institution>
+  <institution>
+    <Name>Smith Barney – Investments</Name>
+    <Org>smithbarney.com</Org>
+    <Fid>1</Fid>
+    <BrokerId>smithbarney.com</BrokerId>
+    <ProviderURL>https://ofx.smithbarney.com/cgi-bin/ofx/ofx.cgi</ProviderURL>
+    <MoneyDanceId>md:1255</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>South Trust Bank</Name>
+    <Org>ISC</Org>
+    <Fid>6101</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/06101.ofx</ProviderURL>
+    <OfxHomeId>716</OfxHomeId>
+    <MoneyDanceId>md:1257</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Southeastern CU</Name>
+    <Org>Southeastern FCU</Org>
+    <Fid>261271500</Fid>
+    <ProviderURL>https://moo.usersonlnet.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>511</OfxHomeId>
+    <MoneyDanceId>md:1258</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The underlying connection was closed: An unexpected error occurred on a send.</LastError>
+  </institution>
+  <institution>
+    <Name>Southern Community Bank and Trust</Name>
+    <Org>MOneFortyEight</Org>
+    <Fid>053112097</Fid>
+    <ProviderURL>https://ofx1.evault.ws/OFXServer/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1479</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>St. Marys Credit Union – NEW</Name>
+    <Org>MSevenThirtySeven</Org>
+    <Fid>211384214</Fid>
+    <ProviderURL>https://ofx1.evault.ws/OFXServer/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1334</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Standard Federal Bank</Name>
+    <Org>ISC</Org>
+    <Fid>6507</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/06507.ofx</ProviderURL>
+    <OfxHomeId>717</OfxHomeId>
+    <MoneyDanceId>md:1261</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>State Employees Credit Union</Name>
+    <Org>SECU</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://onlineaccess.ncsecu.org/secuofx/secu.ofx</ProviderURL>
+    <MoneyDanceId>md:1262</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Ste. Croix Regional FCU</Name>
+    <Org>St. Croix Regional FCU</Org>
+    <Fid>211287926</Fid>
+    <ProviderURL>https://cro.usersonlnet.com/scripts/isaofx.dll</ProviderURL>
+    <MoneyDanceId>md:1263</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Sterne Agee</Name>
+    <Org>AFS</Org>
+    <Fid>2170</Fid>
+    <BrokerId>sterneagee.com</BrokerId>
+    <ProviderURL>https://salofx.automatedfinancial.com</ProviderURL>
+    <OfxHomeId>736</OfxHomeId>
+    <MoneyDanceId>md:1264</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (400) Bad Request.</LastError>
+  </institution>
+  <institution>
+    <Name>Summit Credit Union – WI</Name>
+    <Org>Credit Union</Org>
+    <Fid>275979034</Fid>
+    <ProviderURL>https://vault.summitcreditunion.com/scripts/isaofx.dll</ProviderURL>
+    <MoneyDanceId>md:1266</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Suncoast Schools Federal Credit Union</Name>
+    <Org>SunCoast</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://ofx.suncoastfcu.org</ProviderURL>
+    <MoneyDanceId>md:1268</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>SunTrust</Name>
+    <Org>ISC</Org>
+    <Fid>2801</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/02801.ofx</ProviderURL>
+    <OfxHomeId>442</OfxHomeId>
+    <MoneyDanceId>md:1267</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Susquehanna Bank Group</Name>
+    <Org>JackHenry</Org>
+    <Fid>1756</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1269</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Synergy FCU</Name>
+    <Org>DI</Org>
+    <Fid>314092128</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1573</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>T. Rowe Price</Name>
+    <Org>Intuit</Org>
+    <Fid>7775</Fid>
+    <BrokerId>troweprice.com</BrokerId>
+    <ProviderURL>https://www3.troweprice.com/ffs/ffsweb/OFXServlet</ProviderURL>
+    <OfxHomeId>466</OfxHomeId>
+    <MoneyDanceId>md:1270</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (400) Bad Request.</LastError>
+  </institution>
+  <institution>
+    <Name>T. Rowe Price Brokerage</Name>
+    <Org>TRP</Org>
+    <Fid>016</Fid>
+    <BrokerId>troweprice.com</BrokerId>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1333</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>T. Rowe Price Retirement Plans</Name>
+    <Org>T. Rowe Price</Org>
+    <Fid>40109</Fid>
+    <ProviderURL>https://www3.troweprice.com/ffs/ffsweb/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1331</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>TD Ameritrade</Name>
+    <Org>MDNC</Org>
+    <Fid>ameritrade.com</Fid>
+    <BrokerId>ameritrade.com</BrokerId>
+    <ProviderURL>https://ofxs.ameritrade.com/cgi-bin/apps/OFX</ProviderURL>
+    <OfxHomeId>425</OfxHomeId>
+    <MoneyDanceId>md:1271</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>TD Bank BusinessDirect</Name>
+    <Org>CommerceBank</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://businessofx.tdbank.com/scripts/serverext.dll</ProviderURL>
+    <MoneyDanceId>md:1354</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>TD Bank Online Banking</Name>
+    <Org>CommerceBank</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://ofx.tdbank.com/scripts/serverext.dll</ProviderURL>
+    <MoneyDanceId>md:1373</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/30/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Technology Credit Union</Name>
+    <Org>Tech CU</Org>
+    <Fid>11257</Fid>
+    <ProviderURL>https://webbranchofx.techcu.com/TekPortalOFX/servlet/TP_OFX_Controller</ProviderURL>
+    <MoneyDanceId>md:1277</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (500) Internal Server Error.</LastError>
+  </institution>
+  <institution>
+    <Name>Texans Credit Union</Name>
+    <Org>Electronic Data Systems Corp.</Org>
+    <Fid>008PU</Fid>
+    <ProviderURL>https://www.netit.financial-net.com/ofx</ProviderURL>
+    <MoneyDanceId>md:1278</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Texas Capital Bank</Name>
+    <Org>Electronic Data Systems</Org>
+    <Fid>3HG2Y</Fid>
+    <ProviderURL>https://www.netit.financial-net.com/ofx</ProviderURL>
+    <MoneyDanceId>md:1279</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Texas Dow Employees Credit Union</Name>
+    <Org>TexasDow</Org>
+    <Fid>313185515</Fid>
+    <ProviderURL>https://allthetime.tdecu.org/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>512</OfxHomeId>
+    <MoneyDanceId>md:1280</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>The Bank of Miami, N.A</Name>
+    <Org>JackHenry</Org>
+    <Fid>16230</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1449</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (501) Not Implemented.</LastError>
+  </institution>
+  <institution>
+    <Name>The Fauquier Bank</Name>
+    <Org>MEightFiveZero</Org>
+    <Fid>051402259</Fid>
+    <ProviderURL>https://ofx1.evault.ws/ofxserver/ofxsrvr.dll</ProviderURL>
+    <MoneyDanceId>md:1468</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>The Golden 1 Credit Union</Name>
+    <Org>Golden1</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://homebanking.golden1.com/scripts/serverext.dll</ProviderURL>
+    <MoneyDanceId>md:1283</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>The National Iron Bank</Name>
+    <Org>ORCC</Org>
+    <Fid>627</Fid>
+    <ProviderURL>https://www20.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1566</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>The Northampton Co-operative Bank</Name>
+    <Org>ORCC</Org>
+    <Fid>492</Fid>
+    <ProviderURL>https://www19.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1284</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Think Mutual Bank</Name>
+    <Org>JackHenry</Org>
+    <Fid>10139</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1544</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>TIAA-CREF Brokerage Services</Name>
+    <Org>TIAA-CREF</Org>
+    <Fid>041</Fid>
+    <BrokerId>tiaa-cref.org</BrokerId>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1365</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>TIB Bank</Name>
+    <Org>JackHenry</Org>
+    <Fid>11115</Fid>
+    <ProviderURL>https://directline.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1514</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>This server does not support the requested InstitutionID</LastError>
+  </institution>
+  <institution>
+    <Name>Tower Federal Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>255077370</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1450</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Truliant Federal Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>253177832</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1359</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>U.S. Bank – PFM Direct Connect</Name>
+    <Org>ISC</Org>
+    <Fid>1401</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/01401.ofx</ProviderURL>
+    <MoneyDanceId>md:1340</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>UBS Financial Services Inc.</Name>
+    <Org>Intuit</Org>
+    <Fid>7772</Fid>
+    <BrokerId>ubs.com</BrokerId>
+    <ProviderURL>https://ofx1.ubs.com/eftxweb/access.ofx</ProviderURL>
+    <OfxHomeId>459</OfxHomeId>
+    <MoneyDanceId>md:1290</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>Ulster Savings Bank</Name>
+    <Org>DI</Org>
+    <Fid>221971264</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1287</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>UMB Bank</Name>
+    <Org>UMBOFX</Org>
+    <Fid>UMB</Fid>
+    <ProviderURL>https://ofx.umb.com/</ProviderURL>
+    <OfxHomeId>468</OfxHomeId>
+    <MoneyDanceId>md:1291</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Umpqua Bank</Name>
+    <Org>Umpqua</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://ofx.umpquabank.com/ofx/process.ofx</ProviderURL>
+    <OfxHomeId>725</OfxHomeId>
+    <MoneyDanceId>md:1472</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Union Bank, N.A.</Name>
+    <Org>ISC</Org>
+    <Fid>2901</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/02901.ofx</ProviderURL>
+    <MoneyDanceId>md:1363</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>United Bank – Business – MA</Name>
+    <Org>ORCC</Org>
+    <Fid>853</Fid>
+    <ProviderURL>https://www19.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1300</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>United Bank – Massachusetts</Name>
+    <Org>ORCC</Org>
+    <Fid>853</Fid>
+    <ProviderURL>https://www19.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1301</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>United California Bank</Name>
+    <Org>ISC</Org>
+    <Fid>2701</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/02701.ofx</ProviderURL>
+    <OfxHomeId>718</OfxHomeId>
+    <MoneyDanceId>md:1303</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>United Teletech Financial FCU</Name>
+    <Org>Users</Org>
+    <Fid>221276011</Fid>
+    <ProviderURL>https://utfinancial.online-cu.com/scripts/isaofx.dll</ProviderURL>
+    <MoneyDanceId>md:1501</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Unity One Federal Credit Union</Name>
+    <Org>Unity One Federal Credit Union</Org>
+    <Fid>1</Fid>
+    <ProviderURL>https://expressonline.unityonefcu.org/ofx/ofx.dll</ProviderURL>
+    <MoneyDanceId>md:1306</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>USAA Federal Savings Bank</Name>
+    <Org>USAA</Org>
+    <Fid>24591</Fid>
+    <ProviderURL>https://service2.usaa.com/ofx/OFXServlet</ProviderURL>
+    <OfxHomeId>483</OfxHomeId>
+    <MoneyDanceId>md:1295</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>USAA Investment Management Co.</Name>
+    <Org>USAA</Org>
+    <Fid>24592</Fid>
+    <BrokerId>USAA.COM</BrokerId>
+    <ProviderURL>https://service2.usaa.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1296</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>USAgencies Credit Union</Name>
+    <Org>USAgencies Credit Union</Org>
+    <Fid>1</Fid>
+    <ProviderURL>https://pcbranch.usacu.org/ofx/ofx.dll</ProviderURL>
+    <MoneyDanceId>md:1297</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name>USE Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>322281691</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1298</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Utah Community Credit Union</Name>
+    <Org>Utah Community Credit Union</Org>
+    <Fid>324377820</Fid>
+    <ProviderURL>https://ofx.uccu.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>564</OfxHomeId>
+    <MoneyDanceId>md:1310</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Utah Educational Savings Plan-UESP</Name>
+    <Org>UHEAAUESP</Org>
+    <Fid>1</Fid>
+    <BrokerId>UHEAAUESP</BrokerId>
+    <ProviderURL>https://ofx.uesp.org/ofx.ashx</ProviderURL>
+    <MoneyDanceId>md:1518</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>UW Credit Union</Name>
+    <Org>UWCU</Org>
+    <Fid>1001</Fid>
+    <ProviderURL>https://ofx.uwcu.org/serverext.dll</ProviderURL>
+    <OfxHomeId>638</OfxHomeId>
+    <MoneyDanceId>md:1299</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name changed="2012-10-30T23:18:46">VALIC</Name>
+    <Org changed="2012-10-30T23:18:46">valic.com</Org>
+    <Fid>77019</Fid>
+    <BrokerId>valic.com</BrokerId>
+    <ProviderURL>https://ofx.valic.com/eftxweb/access.ofx</ProviderURL>
+    <OfxHomeId>720</OfxHomeId>
+    <MoneyDanceId>md:1428</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Valley Green Bank</Name>
+    <Org>981</Org>
+    <Fid>5502</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1417</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Van Kampen Funds, Inc.</Name>
+    <Org>Van Kampen Funds, Inc.</Org>
+    <Fid>3625</Fid>
+    <ProviderURL>https://ofx3.financialtrans.com/tf/OFXServer?tx=OFXController&amp;cz=702110804131918&amp;cl=9210013100012150413</ProviderURL>
+    <OfxHomeId>721</OfxHomeId>
+    <MoneyDanceId>md:1346</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Vanguard Group</Name>
+    <Org>The Vanguard Group</Org>
+    <Fid>1358</Fid>
+    <BrokerId>vanguard.com</BrokerId>
+    <ProviderURL>https://vesnc.vanguard.com/us/OfxProfileServlet</ProviderURL>
+    <OfxHomeId>722</OfxHomeId>
+    <MoneyDanceId>md:1371</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Vantage Credit Union</Name>
+    <Org>EECU-St. Louis</Org>
+    <Fid>281081479</Fid>
+    <ProviderURL>https://secure2.eecu.com/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>499</OfxHomeId>
+    <MoneyDanceId>md:1313</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Vectra Bank Colorado – QB</Name>
+    <Org>276-3</Org>
+    <Fid>1124</Fid>
+    <ProviderURL>https://quicken.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1352</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Velocity Credit Union</Name>
+    <Org>Velocity Credit Union</Org>
+    <Fid>9909</Fid>
+    <ProviderURL>https://rbserver.velocitycu.com/ofx/ofx.dll</ProviderURL>
+    <OfxHomeId>723</OfxHomeId>
+    <MoneyDanceId>md:1446</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>Did not get the expected response from your financial institution.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+  </institution>
+  <institution>
+    <Name changed="2012-10-31T15:16:01.5434709-07:00">Virginia Educators Credit Union</Name>
+    <BankId />
+    <BrokerId />
+    <Fid changed="2012-10-31T15:16:01.5444718-07:00">251481355</Fid>
+    <OfxVersion changed="2012-10-31T15:16:48.3054229-07:00">2</OfxVersion>
+    <Org changed="2012-10-31T15:16:01.5444718-07:00">Virginia Educators CU</Org>
+    <ProviderURL changed="2012-10-31T15:16:01.5444718-07:00">https://www.vecumoneylink.org/scripts/isaofx.dll</ProviderURL>
+    <SmallLogoURL />
+    <AppId changed="2012-10-31T15:16:01.5444718-07:00">QWIN</AppId>
+    <AppVer changed="2012-10-31T15:16:01.5444718-07:00">1700</AppVer>
+    <LastError changed="2012-10-31T15:16:48.3054229-07:00">Unable to connect to the remote server</LastError>
+  </institution>
+  <institution>
+    <Name>VISA</Name>
+    <Org>VISA</Org>
+    <Fid>10942</Fid>
+    <AppId>QWIN</AppId>
+    <AppVer>1700</AppVer>
+    <OfxVersion changed="2012-10-31T15:15:19.8291615-07:00">1.0</OfxVersion>
+    <ProviderURL changed="2012-10-31T15:15:19.8291615-07:00">https://vis.informationmanagement.visa.com/eftxweb/access.ofx</ProviderURL>
+    <LastError />
+    <LastConnection changed="2012-10-31T15:15:19.8291615-07:00">2012-10-31T15:15:19.8291615-07:00</LastConnection>
+  </institution>
+  <institution>
+    <Name>Vystar Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>263079276</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1432</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name changed="2012-10-02T22:43:46">Wachovia Bank</Name>
+    <Org changed="2012-10-02T22:43:46">Wachovia</Org>
+    <Fid>4309</Fid>
+    <ProviderURL>https://pfmpw.wachovia.com/cgi-forte/fortecgi?servicename=ofx&amp;pagename=PFM</ProviderURL>
+    <OfxHomeId>537</OfxHomeId>
+    <MoneyDanceId>md:1317</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (503) Server Unavailable.</LastError>
+    <BrokerId changed="2012-10-31T15:07:31.8936013-07:00"></BrokerId>
+  </institution>
+  <institution>
+    <Name>Wachovia Sec-Wells Fargo Advisors</Name>
+    <Org>First Union</Org>
+    <Fid>4307</Fid>
+    <BrokerId>First Union Sec (PCG)</BrokerId>
+    <ProviderURL>https://pfmpw.wachovia.com/cgi-forte/fortecgi?servicename=ofxbrk&amp;pagename=PFM</ProviderURL>
+    <MoneyDanceId>md:1401</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (503) Server Unavailable.</LastError>
+  </institution>
+  <institution>
+    <Name>Waddell &amp; Reed – Ivy Funds</Name>
+    <Org>waddell</Org>
+    <Fid>49623</Fid>
+    <BrokerId>waddell.com</BrokerId>
+    <ProviderURL>https://ofx3.financialtrans.com/tf/OFXServer?tx=OFXController&amp;cz=702110804131918&amp;cl=722000303041111</ProviderURL>
+    <MoneyDanceId>md:1461</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Wall Street Access</Name>
+    <Org>WSA</Org>
+    <Fid>005</Fid>
+    <BrokerId>wsaccess.com</BrokerId>
+    <ProviderURL>https://ofx.netxclient.com/cgi/OFXNetx</ProviderURL>
+    <MoneyDanceId>md:1319</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Washington Trust Bank</Name>
+    <Org>DI</Org>
+    <Fid>125100089</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1407</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Waterbury CT Teachers FCU</Name>
+    <Org>orcc</Org>
+    <Fid>867</Fid>
+    <ProviderURL>https://www20.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1509</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Watermark Credit Union</Name>
+    <Org>DI</Org>
+    <Fid>325082033</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1442</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name changed="2012-10-30T23:21:32">Wells Fargo Advantage Funds</Name>
+    <Org changed="2012-10-30T23:21:32">DST</Org>
+    <Fid>000000</Fid>
+    <BrokerId>wellsfargo.com</BrokerId>
+    <ProviderURL>https://ofx3.financialtrans.com/tf/OFXServer?tx=OFXController&amp;cz=702110804131918&amp;cl=6181917141306</ProviderURL>
+    <OfxHomeId>591</OfxHomeId>
+    <MoneyDanceId>md:1429</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name changed="2012-10-30T23:23:27">Wells Fargo Advisors</Name>
+    <Org changed="2012-10-30T23:23:27">WF</Org>
+    <Fid>12748</Fid>
+    <BrokerId>Wells Fargo Advisors</BrokerId>
+    <ProviderURL>https://ofxdc.wellsfargo.com/ofxbrokerage/process.ofx</ProviderURL>
+    <OfxHomeId>737</OfxHomeId>
+    <MoneyDanceId>md:1510</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name changed="2012-10-30T23:23:27">Wells Fargo Bank</Name>
+    <Org changed="2012-10-30T23:23:27">WF</Org>
+    <Fid>3000</Fid>
+    <ProviderURL>https://ofxdc.wellsfargo.com/ofx/process.ofx</ProviderURL>
+    <SmallLogoURL>https://www.wellsfargo.com/img/header/logo_62sq.gif</SmallLogoURL>
+    <OfxHomeId>749</OfxHomeId>
+    <MoneyDanceId>md:1489</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/29/2012</LastConnection>
+    <BrokerId changed="2012-10-31T15:12:38.6866507-07:00"></BrokerId>
+  </institution>
+  <institution>
+    <Name>West Coast Bank</Name>
+    <Org>DI</Org>
+    <Fid>123203218</Fid>
+    <ProviderURL>https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <MoneyDanceId>md:1324</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <OfxVersion changed="2012-10-31T15:12:09.0648804-07:00">1.0</OfxVersion>
+    <ProviderURL changed="2012-10-31T15:12:09.0648804-07:00">https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <Fid changed="2012-10-31T15:12:09.0648804-07:00">124302914</Fid>
+    <Org changed="2012-10-31T15:12:09.0648804-07:00">DI</Org>
+    <Name changed="2012-10-31T15:12:09.0648804-07:00">Western Community Bank</Name>
+    <LastError />
+    <LastConnection changed="2012-10-31T15:12:09.0648804-07:00">2012-10-31T15:12:09.0648804-07:00</LastConnection>
+  </institution>
+  <institution>
+    <Name>Western National Bank</Name>
+    <Org>JackHenry</Org>
+    <Fid>615</Fid>
+    <ProviderURL>https://directline2.netteller.com</ProviderURL>
+    <MoneyDanceId>md:1440</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>The remote server returned an error: (501) Not Implemented.</LastError>
+  </institution>
+  <institution>
+    <Name>Whatcom Educational CU</Name>
+    <Org>Whatcom Educational Credit Union</Org>
+    <Fid>1</Fid>
+    <ProviderURL>https://emax.wecu.com/ofx/ofx.dll</ProviderURL>
+    <MoneyDanceId>md:1325</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError changed="2012-10-31T15:11:42.7405305-07:00">Did not get the expected response from your financial instutition.  Your bank requires security level 'TYPE1' which is not supported.</LastError>
+    <OfxVersion changed="2012-10-31T15:11:42.7405305-07:00">1.0</OfxVersion>
+  </institution>
+  <institution>
+    <Name>Wheaton Bank &amp; Trust</Name>
+    <Org>291</Org>
+    <Fid>5508</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1386</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Williamstown Savings Bank</Name>
+    <Org>ORCC</Org>
+    <Fid>348</Fid>
+    <ProviderURL>https://www20.onlinebank.com/OROFX16Listener</ProviderURL>
+    <MoneyDanceId>md:1462</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name changed="2012-10-31T15:10:33.7587501-07:00">Wings Financial</Name>
+    <Org changed="2012-10-31T15:10:33.7587501-07:00">DI</Org>
+    <Fid>296076152</Fid>
+    <ProviderURL changed="2012-10-31T15:10:33.7587501-07:00">https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <OfxHomeId>756</OfxHomeId>
+    <MoneyDanceId>md:1326</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection changed="2012-10-31T15:10:33.7587501-07:00">2012-10-31T15:10:33.7587501-07:00</LastConnection>
+    <BrokerId changed="2012-10-31T15:10:19.0258743-07:00">102</BrokerId>
+    <OfxVersion changed="2012-10-31T15:10:33.7587501-07:00">1.0</OfxVersion>
+    <LastError />
+  </institution>
+  <institution>
+    <OfxVersion changed="2012-10-31T15:09:49.6871413-07:00">1.0</OfxVersion>
+    <ProviderURL changed="2012-10-31T15:09:49.6881405-07:00">https://ofxdi.diginsite.com/cmr/cmr.ofx</ProviderURL>
+    <Fid changed="2012-10-31T15:09:49.6881405-07:00">075907594</Fid>
+    <Org changed="2012-10-31T15:09:49.6881405-07:00">DI</Org>
+    <Name changed="2012-10-31T15:09:49.6881405-07:00">Wisconsin Community Bank</Name>
+    <LastError />
+    <LastConnection changed="2012-10-31T15:09:49.6881405-07:00">2012-10-31T15:09:49.6881405-07:00</LastConnection>
+  </institution>
+  <institution>
+    <OfxVersion changed="2012-10-31T15:08:47.9852868-07:00">1</OfxVersion>
+    <ProviderURL changed="2012-10-31T15:08:47.9852868-07:00">https://directline.netteller.com</ProviderURL>
+    <Fid changed="2012-10-31T15:08:47.9852868-07:00">7479</Fid>
+    <Org changed="2012-10-31T15:08:47.9852868-07:00">JackHenry</Org>
+    <Name changed="2012-10-31T15:08:47.9852868-07:00">Woodsboro Bank</Name>
+    <LastError />
+    <LastConnection changed="2012-10-31T15:08:47.9852868-07:00">2012-10-31T15:08:47.9852868-07:00</LastConnection>
+  </institution>
+  <institution>
+    <Name>WSECU</Name>
+    <Org>WSECU</Org>
+    <Fid>325181028</Fid>
+    <ProviderURL>https://ssl3.wsecu.org/OFXServer/ofxsrvr.dll</ProviderURL>
+    <OfxHomeId>575</OfxHomeId>
+    <MoneyDanceId>md:1316</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>Xceed Financial Credit Union</Name>
+    <Org>OSI 2</Org>
+    <Fid>322275490</Fid>
+    <ProviderURL>https://OFX.opensolutionsTOC.com/eftxweb/access.ofx</ProviderURL>
+    <MoneyDanceId>md:1328</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError>General Error</LastError>
+  </institution>
+  <institution>
+    <Name changed="2012-10-31T14:25:48.3129411-07:00">Yakima Valley Credit Union</Name>
+    <Org changed="2009-11-16T02:01:24">Yakima Valley Credit Union</Org>
+    <Fid>325183796</Fid>
+    <ProviderURL>https://secure.yvcu.org/scripts/isaofx.dll</ProviderURL>
+    <OfxHomeId>514</OfxHomeId>
+    <MoneyDanceId>md:1329</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastError changed="2012-10-31T15:05:56.5214625-07:00">The underlying connection was closed: Could not establish trust relationship for the SSL/TLS secure channel.</LastError>
+    <BrokerId changed="2012-10-31T14:25:40.2519152-07:00"></BrokerId>
+    <OfxVersion changed="2012-10-31T15:05:56.5214625-07:00">2</OfxVersion>
+  </institution>
+  <institution>
+    <Name changed="2012-10-31T14:25:07.7097728-07:00">Zions Bank</Name>
+    <Org changed="2012-10-31T14:25:07.7097728-07:00">244-3</Org>
+    <Fid>1115</Fid>
+    <ProviderURL>https://quicken.metavante.com/ofx/OFXServlet</ProviderURL>
+    <OfxHomeId>630</OfxHomeId>
+    <MoneyDanceId>md:1330</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection changed="2012-10-31T14:25:24.0778559-07:00">2012-10-31T14:25:24.0778559-07:00</LastConnection>
+    <BrokerId changed="2012-10-31T14:24:58.9846626-07:00"></BrokerId>
+    <OfxVersion changed="2012-10-31T14:25:07.7097728-07:00">1.0</OfxVersion>
+    <LastError></LastError>
+  </institution>
+  <institution>
+    <Name>zWachovia</Name>
+    <Org>ISC</Org>
+    <Fid>4301</Fid>
+    <ProviderURL>https://www.oasis.cfree.com/fip/genesis/prod/04301.ofx</ProviderURL>
+    <OfxHomeId>452</OfxHomeId>
+    <MoneyDanceId>md:1543</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+  <institution>
+    <Name>ZZZ – U.S. Trust Company, N.A.</Name>
+    <Org>115</Org>
+    <Fid>5011</Fid>
+    <ProviderURL>https://pfm.metavante.com/ofx/OFXServlet</ProviderURL>
+    <MoneyDanceId>md:1500</MoneyDanceId>
+    <AppId>QWIN</AppId>
+    <AppVer>1900</AppVer>
+    <LastConnection>10/27/2012</LastConnection>
+  </institution>
+</institutions>

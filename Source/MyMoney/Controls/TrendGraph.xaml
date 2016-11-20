@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="Walkabout.Views.Controls.TrendGraph"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:c="clr-namespace:Walkabout.Charts"
+             xmlns:local="clr-namespace:Walkabout.Views.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.CommandBindings>
+        <CommandBinding Command="local:TrendGraph.CommandYearToDate" Executed="OnYearToDate" CanExecute="CanExecute_YearToDate" />
+        <CommandBinding Command="local:TrendGraph.CommandNext" Executed="OnNext" CanExecute="CanExecute_Next" />
+        <CommandBinding Command="local:TrendGraph.CommandPrevious" Executed="OnPrevious" CanExecute="CanExecute_Previous" />
+        <CommandBinding Command="local:TrendGraph.CommandSetRange" Executed="OnSetRange" CanExecute="CanExecute_SetRange" />
+        <CommandBinding Command="local:TrendGraph.CommandShowAll" Executed="OnShowAll" CanExecute="CanExecute_ShowAll" />
+        <CommandBinding Command="local:TrendGraph.CommandZoomIn" Executed="OnZoomIn" CanExecute="CanExecute_ZoomIn"/>
+        <CommandBinding Command="local:TrendGraph.CommandZoomOut" Executed="OnZoomOut" CanExecute="CanExecute_ZoomOut" />
+        <CommandBinding Command="local:TrendGraph.CommandAddSeries" Executed="OnAddSeries"  CanExecute="CanExecute_AddSeries"/>
+        <CommandBinding Command="local:TrendGraph.CommandRemoveSeries" Executed="OnRemoveSeries" CanExecute="CanExecute_RemoveSeries" />
+    </UserControl.CommandBindings>
+    <UserControl.InputBindings>
+        <KeyBinding Command="local:TrendGraph.CommandNext" Key="F2" Modifiers="Control"/>
+        <KeyBinding Command="local:TrendGraph.CommandPrevious" Key="F1" Modifiers="Control"/>
+        <KeyBinding Command="local:TrendGraph.CommandZoomIn" Key="F3" Modifiers="Control"/>
+        <KeyBinding Command="local:TrendGraph.CommandZoomOut" Key="F4" Modifiers="Control"/>
+    </UserControl.InputBindings>
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Name="menuItemYearToDate" Header="Year to date" Command="local:TrendGraph.CommandYearToDate"/>
+            <MenuItem Name="menuItemNext" Header="Next" Command="local:TrendGraph.CommandNext"/>
+            <MenuItem Name="menuItemPrevious" Header="Previous" Command="local:TrendGraph.CommandPrevious"/>
+            <Separator/>
+            <MenuItem Name="menuItemSetRange" Header="Set range" Command="local:TrendGraph.CommandSetRange"/>
+            <MenuItem Name="menuItemShowAll" Header="Show all" Command="local:TrendGraph.CommandShowAll"/>
+            <MenuItem Name="menuItemZoomIn" Header="Zoom in" Command="local:TrendGraph.CommandZoomIn"/>
+            <MenuItem Name="menuItemZoomOut" Header="Zoom out" Command="local:TrendGraph.CommandZoomOut"/>
+            <Separator/>
+            <MenuItem Name="menuItemAddSeries" Header="Add series" Command="local:TrendGraph.CommandAddSeries"/>
+            <MenuItem Name="menuItemRemoveSeries" Header="Remove series" Command="local:TrendGraph.CommandRemoveSeries"/>
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    <Grid>
+        <c:AreaChart x:Name="Chart" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  />
+    </Grid>
+</UserControl>

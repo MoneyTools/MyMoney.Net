@@ -1,0 +1,36 @@
+﻿<Window x:Class="Walkabout.Dialogs.CategoryTransferDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Category Transfer" Height="242" Width="415"
+        ShowInTaskbar="False"  
+        WindowStartupLocation="CenterOwner" 
+        Background="{DynamicResource DialogWindowBackgroundBrush}" 
+        WindowStyle="ToolWindow" SizeToContent="WidthAndHeight">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock TextWrapping="Wrap" Text="Please enter the amount that you would like to transfer:" Grid.ColumnSpan="2" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="1" TextWrapping="Wrap" Text="From category:" Margin="10,2,10,2" TextAlignment="Right"/>
+        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="ComboFromCategory" MinWidth="100" Margin="2" />
+        <TextBlock  Grid.Row="2" TextWrapping="Wrap" Text="To category:" Margin="10,2,10,2"  TextAlignment="Right"/>
+        <ComboBox  Grid.Row="2" Grid.Column="1" x:Name="ComboToCategory" MinWidth="100" Margin="2"/>
+        <TextBlock  Grid.Row="3" TextWrapping="Wrap" Text="Amount:" Margin="10,2,10,2" TextAlignment="Right"/>
+        <TextBox  Grid.Row="3" Grid.Column="1" x:Name="TextBoxAmount" MinWidth="100" Background="LemonChiffon" Margin="2"/>
+
+        <StackPanel Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
+            <Button Content="_OK" MinHeight="23" Name="ButtonOk" MinWidth="75" Click="buttonOk_Click"/>
+            <Button Content="_Cancel" MinHeight="23" Name="ButtonCacnel" MinWidth="75" Click="buttonCancel_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

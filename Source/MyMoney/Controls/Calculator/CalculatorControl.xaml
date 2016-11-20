@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="Walkabout.Controls.CalculatorControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:c="clr-namespace:Walkabout.Controls" Background="White"
+             mc:Ignorable="d" >
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="MinWidth" Value="32"/>
+            <Setter Property="MinHeight" Value="23"/>
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Style.Triggers>
+                <Trigger Property="c:CalculatorControl.SimulateDown" Value="true">  
+                    <Setter Property="Background" Value="{StaticResource SimulateDownBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <LinearGradientBrush x:Key="SimulateDownBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#C2E4F6" Offset="0"/>
+            <GradientStop Color="#B6DFF4" Offset=".49"/>
+            <GradientStop Color="#A8D9F2" Offset=".5"/>
+            <GradientStop Color="#91CCEB" Offset="1"/>
+        </LinearGradientBrush>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Button x:Name="ButtonMC" Grid.Row="0" Grid.Column="0" Tag="MC" Click="OnClick" ToolTip="Clear the memory">MC</Button>
+        <Button x:Name="ButtonMR" Grid.Row="0" Grid.Column="1" Tag="MR" Click="OnClick" ToolTip="Recall the memory">MR</Button>
+        <Button x:Name="ButtonMS" Grid.Row="0" Grid.Column="2" Tag="MS" Click="OnClick" ToolTip="Set the memory">MS</Button>
+        <Button x:Name="ButtonMPlus" Grid.Row="0" Grid.Column="3" Tag="M+" Click="OnClick" ToolTip="Add the value to the memory">M+</Button>
+        <Button x:Name="ButtonClear" Grid.Row="0" Grid.Column="4" Tag="C" Click="OnClick" ToolTip="Clear the value">C</Button>
+        
+        <Button x:Name="Button7" Grid.Row="1" Grid.Column="0" Tag="7" Click="OnClick" >7</Button>
+        <Button x:Name="Button8" Grid.Row="1" Grid.Column="1" Tag="8" Click="OnClick">8</Button>
+        <Button x:Name="Button9" Grid.Row="1" Grid.Column="2" Tag="9" Click="OnClick">9</Button>
+        <Button x:Name="ButtonDivide" Grid.Row="1" Grid.Column="3" Tag="/" Click="OnClick">/</Button>
+        <Button x:Name="ButtonSquareRoot" Grid.Row="1" Grid.Column="4" Tag="SquareRoot" Click="OnClick" ToolTip="Square Root">√</Button>
+
+        <Button x:Name="Button4" Grid.Row="2" Grid.Column="0" Tag="4" Click="OnClick">4</Button>
+        <Button x:Name="Button5" Grid.Row="2" Grid.Column="1" Tag="5" Click="OnClick">5</Button>
+        <Button x:Name="Button6" Grid.Row="2" Grid.Column="2" Tag="6" Click="OnClick">6</Button>
+        <Button x:Name="ButtonMultiply" Grid.Row="2" Grid.Column="3" Tag="*" Click="OnClick" ToolTip="Multiply">*</Button>
+        <Button x:Name="ButtonSign" Grid.Row="2" Grid.Column="4" Tag="Sign" Click="OnClick" ToolTip="Change Sign">±</Button>
+
+        <Button x:Name="Button1" Grid.Row="3" Grid.Column="0" Tag="1" Click="OnClick">1</Button>
+        <Button x:Name="Button2" Grid.Row="3" Grid.Column="1" Tag="2" Click="OnClick">2</Button>
+        <Button x:Name="Button3" Grid.Row="3" Grid.Column="2" Tag="3" Click="OnClick">3</Button>
+        <Button x:Name="ButtonMinus" Grid.Row="3" Grid.Column="3" Tag="-" Click="OnClick" ToolTip="Subtract">-</Button>
+        <Button x:Name="ButtonPercent" Grid.Row="3" Grid.Column="4" Tag="%" Click="OnClick" ToolTip="Percent (Divide by 100)">%</Button>
+
+        <Button x:Name="Button0" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Tag="0" Click="OnClick">0</Button>
+        <Button x:Name="ButtonPeriod" Grid.Row="4" Grid.Column="2" Tag="." Click="OnClick">.</Button>
+        <Button x:Name="ButtonPlus" Grid.Row="4" Grid.Column="3" Tag="+" Click="OnClick" ToolTip="Add">+</Button>
+        <Button x:Name="ButtonEquals" Grid.Row="4" Grid.Column="4" Tag="=" Click="OnClick" ToolTip="Compute answer">=</Button>
+    </Grid>
+</UserControl>

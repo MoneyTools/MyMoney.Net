@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<MfaPhraseTable>
+  <MfaPhrase Id="MFA1" Label="City of birth"/>
+  <MfaPhrase Id="MFA2" Label="Date of birth, formatted MM/DD/YYYY"/>
+  <MfaPhrase Id="MFA3" Label="Debit card number"/>
+  <MfaPhrase Id="MFA4" Label="Father's middle name"/>
+  <MfaPhrase Id="MFA5" Label="Favorite color"/>
+  <MfaPhrase Id="MFA6" Label="First pet's name"/>
+  <MfaPhrase Id="MFA7" Label="Five digit ZIP code"/>
+
+  <MfaPhrase Id="MFA8" Label="Grandmother’s maiden name on your father’s side"/>
+  <MfaPhrase Id="MFA9" Label="Grandmother’s maiden name on your mother’s side"/>
+  <MfaPhrase Id="MFA10" Label="Last four digits of your cell phone number"/>
+  <MfaPhrase Id="MFA11" Label="Last four digits of your daytime phone number"/>
+  <MfaPhrase Id="MFA12" Label="Last four digits of your home phone number"/>
+  <MfaPhrase Id="MFA13" Label="Last four digits of your social sescurity number"/>
+  <MfaPhrase Id="MFA14" Label="Last four digits of your tax ID"/>
+  <MfaPhrase Id="MFA15" Label="Month of birth of youngest sibling, do not abbreviate"/>
+  <MfaPhrase Id="MFA16" Label="Mother’s maiden name"/>
+  <MfaPhrase Id="MFA17" Label="Mother’s middle name"/>
+  <MfaPhrase Id="MFA18" Label="Name of the company where you had your first job"/>
+  <MfaPhrase Id="MFA19" Label="Name of the manufacturer of your first car"/>
+  <MfaPhrase Id="MFA20" Label="Name of the street you grew up on"/>
+  <MfaPhrase Id="MFA21" Label="Name of your high school football team, do not include high school name, e.g. 'Beavers' rather than 'Central High Beavers'"/>
+  <MfaPhrase Id="MFA22" Label="Recent deposit or recent withdrawal amount"/>
+  <MfaPhrase Id="MFA23" Label="Year of birth, formatted YYYY"/>
+
+</MfaPhraseTable>

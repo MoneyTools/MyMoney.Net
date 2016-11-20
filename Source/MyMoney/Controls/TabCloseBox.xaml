@@ -1,0 +1,55 @@
+﻿<Button x:Class="Walkabout.Controls.TabCloseBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" Width="14" Height="14"
+             d:DesignHeight="16" d:DesignWidth="16">
+    <Button.Template>
+        <ControlTemplate TargetType="{x:Type Button}">
+            <Grid Opacity="0.5" >
+                <Rectangle HorizontalAlignment="Left" Height="14" Width="14" VerticalAlignment="Top"  StrokeThickness="1">
+                    <Rectangle.Fill>
+                        <SolidColorBrush x:Name="BackgroundFill" Color="Transparent"/>
+                    </Rectangle.Fill>
+                    <Rectangle.Stroke>
+                        <SolidColorBrush x:Name="BackgroundStroke" Color="Transparent"/>
+                    </Rectangle.Stroke>
+                </Rectangle>
+                <Path Data="M3,3 L11,10"  StrokeThickness="1.5" StrokeEndLineCap="Round" StrokeStartLineCap="Round" SnapsToDevicePixels="True">
+                    <Path.Stroke>
+                        <SolidColorBrush x:Name="ClosePath1" Color="Gray"/>
+                    </Path.Stroke>
+                </Path>
+                <Path Data="M3,10 L11,3" StrokeThickness="1.5" StrokeEndLineCap="Round" StrokeStartLineCap="Round" SnapsToDevicePixels="True">
+                    <Path.Stroke>
+                        <SolidColorBrush x:Name="ClosePath2" Color="Gray"/>
+                    </Path.Stroke>
+                </Path>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter" >
+                    <BeginStoryboard>
+                        <Storyboard >
+                            <ColorAnimation Duration="0:0:0.1" To="White" Storyboard.TargetProperty="Color" Storyboard.TargetName="BackgroundFill" />
+                            <ColorAnimation Duration="0:0:0.1" To="#E5C365" Storyboard.TargetProperty="Color" Storyboard.TargetName="BackgroundStroke" />
+                            <ColorAnimation Duration="0:0:0.1" To="Black" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath1" />
+                            <ColorAnimation Duration="0:0:0.1" To="Black" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath2" />                            
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Duration="0:0:0.1" To="Transparent" Storyboard.TargetProperty="Color" Storyboard.TargetName="BackgroundFill" />
+                            <ColorAnimation Duration="0:0:0.1" To="Transparent" Storyboard.TargetProperty="Color" Storyboard.TargetName="BackgroundStroke" />
+                            <ColorAnimation Duration="0:0:0.1" To="Black" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath1" />
+                            <ColorAnimation Duration="0:0:0.1" To="Black" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </Button.Template>
+</Button>

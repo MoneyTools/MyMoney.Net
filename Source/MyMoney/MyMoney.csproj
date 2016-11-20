@@ -1,0 +1,1080 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\</SolutionDir>
+    <ProjectType>Local</ProjectType>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6B0B9232-88CF-41B0-84AB-186D2F467184}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>Icons\App.ico</ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>MyMoney</AssemblyName>
+    <AssemblyOriginatorKeyFile>$(MyKeyFile)</AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Walkabout</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>Walkabout.App</StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <Utf8Output>true</Utf8Output>
+    <ExpressionBlendVersion>4.0.20901.0</ExpressionBlendVersion>    
+    <PublishUrl>ftp://vteam.com/MyMoney/download/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Background</UpdateMode>
+    <UpdateInterval>1</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://vteam.com/MyMoney/download/</InstallUrl>
+    <SupportUrl>http://myMoney.VTeam.com</SupportUrl>
+    <ProductName>MyMoney</ProductName>
+    <PublisherName>VTeam.com</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <DisallowUrlActivation>true</DisallowUrlActivation>
+    <ApplicationRevision>343</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;DEBUG;PerformanceBlocks</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\MoneyRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;PerformanceBlocks</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>235CA38984188F94FC230E1DAED8482975D38CFF</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests Condition="'$(AssemblyOriginatorKeyFile)'!=''">true</SignManifests>
+    <SignAssembly Condition="'$(AssemblyOriginatorKeyFile)'!=''">true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestTimestampUrl>
+    </ManifestTimestampUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\packages\System.Data.SQLite.1.0.82.0\lib\net40\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq">
+      <HintPath>..\packages\System.Data.SQLite.1.0.82.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Charts\HistoryBarChart.xaml.cs">
+      <DependentUpon>HistoryBarChart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Charts\LoanChart.xaml.cs">
+      <DependentUpon>LoanChart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Charts\RentalChart.xaml.cs">
+      <DependentUpon>RentalChart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Charts\RentalChartColumn.xaml.cs">
+      <DependentUpon>RentalChartColumn.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Charts\RentalData.cs" />
+    <Compile Include="Commands\Commands.cs" />
+    <Compile Include="Controls\ColorPickerPanel.xaml.cs">
+      <DependentUpon>ColorPickerPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PasswordControl.xaml.cs">
+      <DependentUpon>PasswordControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RoundedButton.xaml.cs">
+      <DependentUpon>RoundedButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CustomizableButton.cs" />
+    <Compile Include="Controls\MoneyDataGrid.cs" />
+    <Compile Include="Controls\OutputPane.xaml.cs">
+      <DependentUpon>OutputPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TabCloseBox.xaml.cs">
+      <DependentUpon>TabCloseBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DropDownButton.xaml.cs">
+      <DependentUpon>DropDownButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Resizer.cs" />
+    <Compile Include="Controls\WpfConverters.cs" />
+    <Compile Include="Dialogs\MoneyFileImportDialog.xaml.cs">
+      <DependentUpon>MoneyFileImportDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\DelayedAction.cs" />
+    <Compile Include="Utilities\FileHash.cs" />
+    <Compile Include="Views\ChangeTracker.cs" />
+    <Compile Include="Database\CostBasis.cs" />
+    <Compile Include="Database\SqliteDatabase.cs" />
+    <Compile Include="Database\CsvStore.cs" />
+    <Compile Include="Database\Encryption.cs" />
+    <Compile Include="Database\MoneyDataObject.cs" />
+    <Compile Include="Database\Money_Loans.cs" />
+    <Compile Include="Database\SqlCeDatabase.cs" />
+    <Compile Include="Database\XmlStore.cs" />
+    <Compile Include="Database\IDatabase.cs" />
+    <Compile Include="Utilities\MessageBox\MessageBoxEx.xaml.cs">
+      <DependentUpon>MessageBoxEx.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\AuthTokenDialog.cs" />
+    <Compile Include="Dialogs\BaseDialog.cs" />
+    <Compile Include="Dialogs\ChangePasswordDialog.cs" />
+    <Compile Include="Dialogs\MfaChallengeDialog.cs" />
+    <Compile Include="Dialogs\MoveMergeCategory.xaml.cs">
+      <DependentUpon>MoveMergeCategory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\OfxLoginDialog.cs" />
+    <Compile Include="Dialogs\PasswordWindow.xaml.cs">
+      <DependentUpon>PasswordWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Database\SecurityService.cs" />
+    <Compile Include="Dialogs\TaxReportDialog.xaml.cs">
+      <DependentUpon>TaxReportDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SampleDatabaseOptions.xaml.cs">
+      <DependentUpon>SampleDatabaseOptions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\LoanDialog.xaml.cs">
+      <DependentUpon>LoanDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\PickYearDialog.xaml.cs">
+      <DependentUpon>PickYearDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\AttachmentDialog.xaml.cs">
+      <DependentUpon>AttachmentDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Attachments\AttachmentManager.cs" />
+    <Compile Include="Controls\MoneyDatePicker.cs" />
+    <Compile Include="Ofx\HtmlResponseException.cs" />
+    <Compile Include="Ofx\OfxObjectModel.cs" />
+    <Compile Include="Ofx\OfxStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OfxStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\BudgetReport.cs" />
+    <Compile Include="Reports\CashFlowReport.cs" />
+    <Compile Include="Reports\W2Report.cs" />
+    <Compile Include="Reports\FlowDocumentReportWriter.cs" />
+    <Compile Include="Reports\IReport.cs" />
+    <Compile Include="Reports\NetWorthReport.cs" />
+    <Compile Include="Reports\PortfolioReport.cs" />
+    <Compile Include="Service References\RestfulWebServices\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Setup\ChangeInfoFormatter.cs" />
+    <Compile Include="Setup\ChangeListRequest.cs" />
+    <Compile Include="Setup\DirectorySetup.cs" />
+    <Compile Include="StockQuotes\ExchangeRates.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\AggregatedObservableCollection.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\AnimationSequence.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\Axis.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\AxisIntervalType.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\AxisLabel.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\AxisLocation.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\AxisOrientation.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\CategoryAxis.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\CategorySortOrder.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\DateTimeAxis.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\DateTimeAxisLabel.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\DateTimeIntervalType.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\DisplayAxis.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\DisplayAxisGridLines.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IAnchoredToOrigin.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IAxis.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IAxisListener.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\ICategoryAxis.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IDataConsumer.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IDataProvider.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IRangeAxis.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IRangeConsumer.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IRangeProvider.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IValueMarginConsumer.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IValueMarginProvider.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\LinearAxis.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\NullableConverter.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\NumericAxis.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\NumericAxisLabel.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\OrientedAxisGridLines.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\RangeAxis.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\ValueMargin.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Chart\Chart.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Chart\SeriesHostAxesCollection.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\AreaDataPoint.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\BarDataPoint.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\BubbleDataPoint.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\ColumnDataPoint.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\DataPoint.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\DataPointState.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\LineDataPoint.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\PieDataPoint.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\ScatterDataPoint.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\FrameworkElementExtensions.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\IRequireSeriesHost.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ISeriesHost.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ISeriesHostExtensions.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Primitives\Edge.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Primitives\EdgePanel.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ResourceDictionaryDispensedEventArgs.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ResourceDictionaryDispenser.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ResourceDictionaryEnumerator.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\AreaSeries.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\BarSeries.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\BubbleSeries.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\ColumnBarBaseSeries.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\ColumnSeries.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\DataPointSeries.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\DataPointSeriesWithAxes.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\DataPointSingleSeriesWithAxes.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\IRequireGlobalSeriesIndex.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\ISeries.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\LegendItem.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\LineAreaBaseSeries.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\LineSeries.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\PieSeries.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\ScatterSeries.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\Series.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ValueMarginCoordinateAndOverlap.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Collections\LeftLeaningRedBlackTree.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Collections\MultipleDictionary.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Collections\OrderedMultipleDictionary.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\DependencyPropertyAnimationHelper.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\DesignerProperties.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\EnumerableFunctions.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\GenericEqualityComparer.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\GlobalSuppressions.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\GridExtensions.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\IResourceDictionaryDispenser.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\LayoutTransformControl.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Legend\Legend.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\NoResetObservableCollection.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\ObjectPool.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\ObservableCollectionListAdapter.cs" />
+    <Compile Include="Charts\AreaChart.cs" />
+    <Compile Include="Charts\ChartData.cs" />
+    <Compile Include="Charts\ExponentialDoubleAnimation.cs" />
+    <Compile Include="Charts\FormattingConverter.cs" />
+    <Compile Include="Charts\SelectionRectVisual.cs" />
+    <Compile Include="Charts\Serialization.cs" />
+    <Compile Include="Charts\Styles.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\OrientedPanel.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Range.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\RangeEnumerableFunctions.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\ReadOnlyObservableCollection.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\ResourceDictionaryCollection.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\ResourceDictionaryExtensions.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\StoryboardQueue.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\StringFormatConverter.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Title\Title.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Tuple.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\UniqueObservableCollection.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Unit.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\UnitValue.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\ValueHelper.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\WeakEventListener.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\WeakReferenceBag.cs" />
+    <Compile Include="Charts\BudgetChart.xaml.cs">
+      <DependentUpon>BudgetChart.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Reports\BudgetData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Charts\CategoryData.cs" />
+    <Compile Include="Charts\CategoryChart.xaml.cs">
+      <DependentUpon>CategoryChart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Accordion.xaml.cs">
+      <DependentUpon>Accordion.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Taxes\CapitalGains.cs" />
+    <Compile Include="Taxes\TaxCategory.cs" />
+    <Compile Include="Taxes\TaxReport.cs" />
+    <Compile Include="Taxes\TxfExporter.cs" />
+    <Compile Include="Utilities\Credential.cs" />
+    <Compile Include="Utilities\EdgeDetector.cs" />
+    <Compile Include="Utilities\EventHandlerCollection.cs" />
+    <Compile Include="Utilities\Exporters.cs" />
+    <Compile Include="Utilities\FilteredObservableCollection.cs" />
+    <Compile Include="Utilities\FtpUtilities.cs" />
+    <Compile Include="Utilities\Hashset.cs" />
+    <Compile Include="Utilities\HelpService.cs" />
+    <Compile Include="Database\IDirectorySecurity.cs" />
+    <Compile Include="Utilities\Importer.cs" />
+    <Compile Include="Utilities\MathHelpers.cs" />
+    <Compile Include="Utilities\MouseUtilities.cs" />
+    <Compile Include="Utilities\ProcessHelper.cs" />
+    <Compile Include="Utilities\SimpleGraph.cs" />
+    <Compile Include="Utilities\Statistics.cs" />
+    <Compile Include="Utilities\TempFileCollection.cs" />
+    <Compile Include="Utilities\XmlCsvReader.cs" />
+    <Compile Include="View Selectors\AccountsControl.xaml.cs">
+      <DependentUpon>AccountsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View Selectors\SecuritiesControl.xaml.cs">
+      <DependentUpon>SecuritiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AliasesView.xaml.cs">
+      <DependentUpon>AliasesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View Selectors\BalanceControl.xaml.cs">
+      <DependentUpon>BalanceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Calculator\CalculatorControl.xaml.cs">
+      <DependentUpon>CalculatorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Calculator\CalculatorPopup.cs" />
+    <Compile Include="Controls\Calculator\Parser.cs" />
+    <Compile Include="Controls\CloseBox.xaml.cs">
+      <DependentUpon>CloseBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View Selectors\CategoriesControl.xaml.cs">
+      <DependentUpon>CategoriesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CurrenciesView.xaml.cs">
+      <DependentUpon>CurrenciesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FindManager.cs" />
+    <Compile Include="Views\LoansView.xaml.cs">
+      <DependentUpon>LoansView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FlowDocumentView.xaml.cs">
+      <DependentUpon>FlowDocumentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\OfxDownloadControl.xaml.cs">
+      <DependentUpon>OfxDownloadControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\QueryViewControl.xaml.cs">
+      <DependentUpon>QueryViewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SecuritiesView.xaml.cs">
+      <DependentUpon>SecuritiesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FilteringComboBox.cs" />
+    <Compile Include="View Selectors\PayeesControl.xaml.cs">
+      <DependentUpon>PayeesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\QuickFilterControl.xaml.cs">
+      <DependentUpon>QuickFilterControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RentPayementsView.xaml.cs">
+      <DependentUpon>RentPayementsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View Selectors\RentsControl.xaml.cs">
+      <DependentUpon>RentsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RentSummaryView.xaml.cs">
+      <DependentUpon>RentSummaryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TrendGraph.xaml.cs">
+      <DependentUpon>TrendGraph.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TransactionsView.xaml.cs">
+      <DependentUpon>TransactionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Database\AsyncSqlQuery.cs" />
+    <Compile Include="Database\SampleDatabase.cs" />
+    <Compile Include="Dialogs\AccountDialog.xaml.cs">
+      <DependentUpon>AccountDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\AddLoginDialog.xaml.cs">
+      <DependentUpon>AddLoginDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\BuildingDialog.xaml.cs">
+      <DependentUpon>BuildingDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\CategoryTransferDialog.xaml.cs">
+      <DependentUpon>CategoryTransferDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\CategoryDialog.xaml.cs">
+      <DependentUpon>CategoryDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FreeStyleQueryDialog.xaml.cs">
+      <DependentUpon>FreeStyleQueryDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\CreateDatabaseDialog.xaml.cs">
+      <DependentUpon>CreateDatabaseDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ReportRangeDialog.xaml.cs">
+      <DependentUpon>ReportRangeDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\LoginDialog.xaml.cs">
+      <DependentUpon>LoginDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\OnlineAccountDialog.xaml.cs">
+      <DependentUpon>OnlineAccountDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\RenamePayeeDialog.xaml.cs">
+      <DependentUpon>RenamePayeeDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SelectAccountDialog.xaml.cs">
+      <DependentUpon>SelectAccountDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SettingsDialog.xaml.cs">
+      <DependentUpon>SettingsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ofx\OfxInstitutionInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\Windows\Controls\DataVisualization\Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\adorners.cs" />
+    <Compile Include="Utilities\DescendingComparer.cs" />
+    <Compile Include="Database\Mapping.cs" />
+    <Compile Include="Database\Query.cs" />
+    <Compile Include="Ofx\QifImporter.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\Colors.cs" />
+    <Compile Include="Utilities\Dispatcher.cs" />
+    <Compile Include="Utilities\DragAndDrop.cs" />
+    <Compile Include="Utilities\HlsColor.cs" />
+    <Compile Include="Utilities\IStatusService.cs" />
+    <Compile Include="Utilities\Settings.cs" />
+    <Compile Include="Utilities\XamlHelpers.cs" />
+    <Compile Include="Utilities\XmlHelpers.cs" />
+    <Compile Include="Utilities\InternetExplorer.cs" />
+    <Compile Include="Views\IView.cs" />
+    <Compile Include="Reports\Reports.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities\Clipboard.cs">
+    </Compile>
+    <Compile Include="Database\SqlDatabase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Database\Money.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities\NativeMethods.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ofx\Ofx.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities\PerfTimer.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Ofx\SgmlParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ofx\SgmlReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities\Sounds.cs" />
+    <Compile Include="StockQuotes\StockQuotes.cs" />
+    <Compile Include="Utilities\StringHelpers.cs" />
+    <Compile Include="Utilities\UndoManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\ViewState.cs" />
+    <None Include="Service References\RestfulWebServices\CurrencyService.wsdl" />
+    <None Include="Service References\RestfulWebServices\CurrencyService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\RestfulWebServices\CurrencyService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\RestfulWebServices\CurrencyService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\RestfulWebServices\CurrencyService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\RestfulWebServices\Walkabout.RestfulWebServices.Currency.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <Resource Include="Charts\Icons\Excel.png" />
+    <Resource Include="Dialogs\Icons\Broken.png" />
+    <Resource Include="Dialogs\Icons\Key.png" />
+    <Resource Include="Dialogs\Icons\Shield.png" />
+    <EmbeddedResource Include="Ofx\MfaPhrases.xml" />
+    <Resource Include="Charts\Icons\Table.png" />
+    <Resource Include="Charts\Icons\Area.png" />
+    <None Include="Service References\RestfulWebServices\configuration91.svcinfo" />
+    <None Include="Service References\RestfulWebServices\configuration.svcinfo" />
+    <None Include="Service References\RestfulWebServices\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="StockQuotes\YahooDocumentation.html" />
+    <Content Include="Tools\signtool.exe" />
+    <Content Include="x64\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Icons\setup.ico" />
+    <Resource Include="Icons\CropImage.png" />
+    <Resource Include="Icons\Filter.png" />
+    <Content Include="Setup\changes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <EmbeddedResource Include="Ofx\OfxStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>OfxStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Taxes\TxfSpec.txt" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Ofx\ofx160.dtd" />
+    <EmbeddedResource Include="System\Windows\Controls\DataVisualization\Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>System.Windows.Controls.DataVisualization.Properties</CustomToolNamespace>
+    </EmbeddedResource>
+    <Resource Include="Dialogs\Icons\CheckMark.png" />
+    <Resource Include="Dialogs\Icons\Warning.png" />
+    <Resource Include="Icons\Back.png" />
+    <Resource Include="Icons\Synchronize.png" />
+    <Resource Include="Icons\Forwards.png" />
+    <Resource Include="Icons\Print.png" />
+    <Resource Include="Icons\Save.png" />
+    <Resource Include="Icons\Search.png" />
+    <Resource Include="Icons\App.ico" />
+    <Resource Include="Dialogs\Icons\QuestionMark.png" />
+    <EmbeddedResource Include="Database\SampleData.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Resource Include="Icons\Help.png" />
+    <Resource Include="Icons\Error.png" />
+    <Resource Include="System\Windows\Controls\DataVisualization\Icons\grab.cur" />
+    <Resource Include="System\Windows\Controls\DataVisualization\Icons\grabbing.cur" />
+    <EmbeddedResource Include="Charts\Icons\grab.cur" />
+    <EmbeddedResource Include="Charts\Icons\grabbing.cur" />
+    <Resource Include="Dialogs\Icons\ZoomOut.png" />
+    <Resource Include="Dialogs\Icons\ZoomIn.png" />
+    <Resource Include="Dialogs\Icons\Save.png" />
+    <Resource Include="Dialogs\Icons\Delete.png" />
+    <Resource Include="Dialogs\Icons\CutHS.png" />
+    <Resource Include="Dialogs\Icons\cut.png" />
+    <Resource Include="Dialogs\Icons\copy.png" />
+    <Resource Include="Dialogs\Icons\Paste.png" />
+    <Resource Include="Dialogs\Icons\PasteHS.png" />
+    <Resource Include="Dialogs\Icons\CopyHS.png" />
+    <Resource Include="Dialogs\Icons\Attachment.png" />
+    <EmbeddedResource Include="Ofx\OfxProviderList.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Ofx\OfxErrorTemplate.htm" />
+    <Resource Include="Icons\TurboTax.png" />
+    <Resource Include="Dialogs\Icons\RotateLeft.png" />
+    <Resource Include="Dialogs\Icons\RotateRight.png" />
+    <Resource Include="Icons\Pencil.png" />
+    <Resource Include="Dialogs\Icons\printer.png" />
+    <Resource Include="Dialogs\Icons\scanner.png" />
+    <Resource Include="Icons\SmallScanner.png" />
+    <Resource Include="Dialogs\Icons\delete_16x.png" />
+    <EmbeddedResource Include="Icons\Ding.wav" />
+    <Resource Include="Icons\Excel.png" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Controls\Calculator\states.dgml" />
+    <None Include="Ofx\OFX 2.1.1.pdf" />
+    <None Include="Ofx\ofx16.pdf" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Charts\HistoryBarChart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Charts\LoanChart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Charts\RentalChart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Charts\RentalChartColumn.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Charts\Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\ColorPickerPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PasswordControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\RoundedButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\OutputPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TabCloseBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\DropDownButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\MoneyFileImportDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Utilities\MessageBox\MessageBoxEx.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\MoveMergeCategory.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\PasswordWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\TaxReportDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\SampleDatabaseOptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\LoanDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\PickYearDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\AttachmentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties\DesignTimeResources.xaml" Condition="'$(DesignTime)'=='true' OR ('$(SolutionPath)'!='' AND Exists('$(SolutionPath)') AND '$(BuildingInsideVisualStudio)'!='true' AND '$(BuildingInsideExpressionBlend)'!='true')">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+    </Page>
+    <Page Include="System\Windows\Controls\DataVisualization\Themes\generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Charts\BudgetChart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Charts\CategoryChart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\GenericWindows7.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\GenericWindows8.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Theme-Flat.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View Selectors\SecuritiesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AliasesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\CloseBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CurrenciesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\LoansView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FlowDocumentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\OfxDownloadControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\QueryViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\AddLoginDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\CategoryDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\FreeStyleQueryDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\CreateDatabaseDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ReportRangeDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\LoginDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\RenamePayeeDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SecuritiesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\SelectAccountDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\SettingsDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Theme-OSX.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Theme-VS2010.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Controls\Accordion.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View Selectors\AccountsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View Selectors\BalanceControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Calculator\CalculatorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View Selectors\CategoriesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View Selectors\PayeesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\QuickFilterControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RentPayementsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View Selectors\RentsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RentSummaryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\TrendGraph.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TransactionsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\AccountDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\BuildingDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\CategoryTransferDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\OnlineAccountDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="System\Windows\Controls\DataVisualization\OldStuff\" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="WIA">
+      <Guid>{94A0E92D-43C0-494E-AC29-FD45948A5221}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyMoneyAdmin\MyMoneyAdmin.csproj">
+      <Project>{D97DDD85-B5E5-445A-8971-AA2171031990}</Project>
+      <Name>MyMoneyAdmin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PerformanceEventProvider\PerformanceEventProvider.csproj">
+      <Project>{6E3CDBAA-7DF1-4413-8501-58ACBBEA8034}</Project>
+      <Name>PerformanceEventProvider</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="Setup\changes.xml">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\RestfulWebServices\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- the best way to set this up so that we never checkin keys and passwords is to create a little launchvs.cmd script like this:
+set MyKeyFile=d:\Keys\ChrisLovett.pfx
+set MyPrivateKeyPassword=Whatever...
+devenv MyMoney.sln
+
+For some unknown reason, clickonce publish copies the target files from obj\debug rather than bin\debug 
+Problem is doing this messes up the file hashcode,  so we get the following errors were detected during installation:
+	* [4/18/2013 11:36:40 PM] System.Deployment.Application.InvalidDeploymentException (HashValidation)
+    <PostBuildEvent Condition="'$(MyPrivateKeyPassword)'!=''">
+      "$(WindowsSdkDir)bin\x86\signtool.exe" sign /p $(MyPrivateKeyPassword) /f "$(MyKeyFile)" /d $(TargetName) /du $(SupportUrl) /t $(ManifestTimestampUrl) "$(TargetPath)"
+    </PostBuildEvent>  -->
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent />
+  </PropertyGroup>
+  <Target Name="BeforePublish" Condition="'$(MyPrivateKeyPassword)'!=''">
+    <!-- 
+		<Exec Command="&quot;$(WindowsSdkDir)bin\x86\signtool.exe&quot; sign /p $(MyPrivateKeyPassword) /f &quot;$(MyKeyFile)&quot; /d $(TargetName) /du $(SupportUrl) /t $(ManifestTimestampUrl) &quot;$(SolutionDir)$(ProjectName)\obj\$(ConfigurationName)\$(TargetFileName)&quot;" />
+  -->
+  </Target>
+</Project>

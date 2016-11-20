@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="a0933964-e17a-4e16-a948-c0cf4290abf6" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.Generic.List`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://www.restfulwebservices.net/wcf/CurrencyService.svc?wsdl " Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="CurrencyService.wsdl" MetadataType="Wsdl" ID="fffe60a9-4eea-4f82-bada-c5a4dcdcf335" SourceId="1" SourceUrl="http://www.restfulwebservices.net/wcf/CurrencyService.svc?wsdl" />
+    <MetadataFile FileName="CurrencyService.xsd" MetadataType="Schema" ID="853c9949-f8dc-47e9-8705-613937c62408" SourceId="1" SourceUrl="http://www.restfulwebservices.net/wcf/CurrencyService.svc?xsd=xsd0" />
+    <MetadataFile FileName="CurrencyService1.xsd" MetadataType="Schema" ID="769859a3-b329-4085-aa34-f8e8bdca0a79" SourceId="1" SourceUrl="http://www.restfulwebservices.net/wcf/CurrencyService.svc?xsd=xsd1" />
+    <MetadataFile FileName="CurrencyService2.xsd" MetadataType="Schema" ID="15263f79-b1a8-4581-84ad-8c56fcd5925a" SourceId="1" SourceUrl="http://www.restfulwebservices.net/wcf/CurrencyService.svc?xsd=xsd2" />
+    <MetadataFile FileName="CurrencyService3.xsd" MetadataType="Schema" ID="81d12ee9-bb81-4ce8-9b81-9770cf9c7266" SourceId="1" SourceUrl="http://www.restfulwebservices.net/wcf/CurrencyService.svc?xsd=xsd3" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

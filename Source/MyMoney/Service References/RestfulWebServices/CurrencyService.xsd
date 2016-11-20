@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://www.restfulwebservices.net/ServiceContracts/2008/01" elementFormDefault="qualified" targetNamespace="http://www.restfulwebservices.net/ServiceContracts/2008/01" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://www.restfulwebservices.net/wcf/CurrencyService.svc?xsd=xsd2" namespace="http://www.restfulwebservices.net/DataContracts/2008/01" />
+  <xs:element name="GetConversionRate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://www.restfulwebservices.net/DataContracts/2008/01" minOccurs="0" name="FromCurrency" type="q1:CurrencyCode" />
+        <xs:element xmlns:q2="http://www.restfulwebservices.net/DataContracts/2008/01" minOccurs="0" name="ToCurrency" type="q2:CurrencyCode" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetConversionRateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://www.restfulwebservices.net/DataContracts/2008/01" minOccurs="0" name="GetConversionRateResult" nillable="true" type="q3:Currency" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

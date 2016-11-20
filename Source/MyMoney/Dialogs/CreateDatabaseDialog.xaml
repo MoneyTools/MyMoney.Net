@@ -1,0 +1,245 @@
+﻿<local:BaseDialog x:Class="Walkabout.Dialogs.CreateDatabaseDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:Walkabout.Controls"
+        Title="Create Database" Height="428" Width="529"
+        AutomationProperties.AutomationId="CreateDatabaseDialog"
+        xmlns:local="clr-namespace:Walkabout.Dialogs"
+        xmlns:help="clr-namespace:Walkabout.Help"
+        help:HelpService.HelpKeyword="Setup">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TabControl Name="tabControl1" VerticalAlignment="Stretch" SelectionChanged="TabControlSelectionChanged">
+
+            <TabItem Header="_Use SQL Lite" x:Name="UseSqliteTab">
+                <Grid>
+                    <Grid Margin="10" x:Name="SqliteOptions" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="32*"/>
+                            <ColumnDefinition Width="357*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="LabelSqlitePrompt" Margin="0,10" Grid.ColumnSpan="4" TextWrapping="Wrap" Text="Please provide the full path of the SQL Lite file that you would like to create to store your money records:"/>
+
+                        <TextBlock x:Name="TextBlockSqliteBackupPrompt" Text="Backup file:" Grid.Row="1" Margin="5,4" />
+                        <TextBox x:Name="TextBoxSqliteBackup" Background="#80FFFFC0" Margin="2" TextChanged="TextBoxSqliteBackup_TextChanged" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"/>
+                        <Button x:Name="ButtonSqliteBrowseBackup" Grid.Column="3" MinWidth="31" MinHeight="23" Click="ButtonSqliteBrowseBackup_Click"  Grid.Row="1">...</Button>
+
+                        <TextBlock Text="SQL Lite file:" Margin="5,2" Grid.Row="2" />
+                        <TextBox Background="#80FFFFC0" x:Name="TextBoxSqliteDatabaseFile"  Grid.Row="2" Grid.Column="1" Margin="2" TextChanged="TextBoxSqliteDatabaseFile_TextChanged" Grid.ColumnSpan="2"/>
+                        <Button x:Name="ButtonSqliteBrowse" Click="ButtonSqliteBrowse_Click" Grid.Column="3"  Grid.Row="2" MinWidth="31" MinHeight="23">...</Button>
+
+                        <TextBlock Text="Password:" Margin="5,2" Grid.Row="3" />
+                        <c:PasswordControl  Background="#80FFFFC0" x:Name="TextBoxSqlitePassword"  Grid.Row="3" Grid.Column="1" Margin="2" Grid.ColumnSpan="2"
+                                            MinHeight="20"/>
+
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="_Use SQL CE" x:Name="UseSqlCeTab">
+                <Grid>
+                    <Grid Margin="10" x:Name="CeNotInstalled">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock TextWrapping="Wrap">
+                            <Run>SQL CE does not appear to be installed.
+                            If you still want to use SQL CE please </Run>
+                            <Hyperlink NavigateUri="http://www.microsoft.com/download/en/details.aspx?id=17876" Click="OnDownloadLink">Click Here</Hyperlink>                        
+                            <Run>to download and run the installer matching your windows platform 
+                            (32 bit or 64 bit) then click here to </Run>
+                            <Hyperlink Tag="SqlCE" Click="OnTryAgain">Try Again</Hyperlink>.
+                        </TextBlock>
+
+                    </Grid>
+                    <Grid Margin="10" x:Name="SqlCeOptions" Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="LabelSqlCEPrompt" Margin="0,10" Grid.ColumnSpan="3" TextWrapping="Wrap" Text="Please provide the full path of the SQL CE file that you would like to create to store your money records:"/>
+
+                        <TextBlock x:Name="TextBlockCeBackupPrompt" Text="Backup file:" Grid.Row="1" Margin="5,4" />
+                        <TextBox x:Name="TextBoxSqlCeBackup" Background="#80FFFFC0" Margin="2" TextChanged="TextBoxSqlCeBackup_TextChanged" Grid.Column="1" Grid.Row="1"/>
+                        <Button x:Name="ButtonCeBrowseBackup" Grid.Column="2" MinWidth="31" MinHeight="23" Click="ButtonCeBrowseBackup_Click"  Grid.Row="1">...</Button>
+
+                        <TextBlock Text="SQL CE file:" Margin="5,2" Grid.Row="2" />
+                        <TextBox Background="#80FFFFC0" x:Name="TextBoxCeDatabaseFile"  Grid.Row="2" Grid.Column="1" Margin="2" TextChanged="TextBoxCeDatabaseFile_TextChanged"/>
+                        <Button x:Name="ButtonSqlCEBrowse" Click="ButtonSqlCEBrowse_Click" Grid.Column="2"  Grid.Row="2" MinWidth="31" MinHeight="23">...</Button>
+
+                        <TextBlock Text="Password:" Margin="5,2" Grid.Row="3" />
+                        <c:PasswordControl Background="#80FFFFC0" x:Name="TextBoxCePassword"  Grid.Row="3" Grid.Column="1" Margin="2"
+                                           MinHeight="20"/>
+
+
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="_Use SQL Server" x:Name="UseSqlServerTab" >
+                <Grid>
+                    <Grid Margin="10" x:Name="SqlServerNotInstalled" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock TextWrapping="Wrap">
+                            <Run>SQL Express does not appear to be installed.
+                            If you still want to use SQL Express please </Run>
+                            <Hyperlink NavigateUri="http://www.microsoft.com/download/en/details.aspx?id=184" Click="OnDownloadLink">Click Here</Hyperlink>                        
+                            <Run>to download and run the installer matching your windows platform 
+                            (32 bit or 64 bit) then click here to </Run>
+                            <Hyperlink Tag="SqlExpress"  Click="OnTryAgain">Try Again</Hyperlink>.
+                        </TextBlock>
+
+                    </Grid>
+                    <Grid x:Name="SqlServerOptions" Margin="10" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="LabelSqlPrompt" Margin="0,10" Grid.Row="0" Grid.ColumnSpan="3" TextWrapping="Wrap" Text="Please provide the SQL Server you would like to use and the name of the database that you would like to create to store your money records:"/>
+                        <TextBlock Text="Server:" Margin="5,4" Grid.Row="2"/>
+                        <ProgressBar x:Name="ProgressSqlConnect" Visibility="Collapsed" IsIndeterminate="true" Grid.Row="2" Grid.Column="1" Margin="2" />
+                        <TextBox x:Name="TextBoxSqlServer" Background="#80FFFFC0" Grid.Row="2" Grid.Column="1" Text="" Margin="2" LostFocus="TextBoxSqlServer_LostFocus" KeyDown="TextBoxSqlServer_KeyDown" TextChanged="TextBoxSqlServer_TextChanged"/>
+
+                        <TextBlock Text="Database Name:" Margin="5,4" Grid.Row="3"/>
+                        <ComboBox x:Name="ComboBoxSqlDataBaseName" Background="#80FFFFC0" Grid.Row="3" Grid.Column="1" Margin="2" IsEditable="True" DropDownOpened="ComboBoxSqlDataBaseName_DropDownOpened" SelectionChanged="ComboBoxSqlDataBaseName_SelectionChanged"/>
+
+                        <TextBlock Text="Location:" Margin="5,2" Grid.Row="4" />
+                        <TextBox Background="#80FFFFC0" x:Name="TextBoxSqlDatabasePath"  Grid.Row="4" Grid.Column="1" TextChanged="TextBoxSqlDatabasePath_TextChanged" Margin="2"/>
+                        <Button x:Name="ButtonSqlServerBrowse" Click="ButtonSqlServerBrowse_Click" Grid.Column="2"  Grid.Row="4" MinWidth="31" MinHeight="23">...</Button>
+
+                        <RadioButton x:Name="RadioWindowsAuthentication" IsChecked="true" Margin="4" Grid.Row="5" Grid.Column="1" Checked="RadioWindowsAuthentication_Checked">Use Windows Integrated Security</RadioButton>
+                        <RadioButton x:Name="RadioSqlAuthentication" Margin="5" Grid.Row="6" Grid.Column="1" Checked="RadioSqlAuthentication_Checked">Use SQL Server authentication</RadioButton>
+
+                        <Grid Grid.Row="7" Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="LabelUserName" Text="User Name:" Margin="5,4" Grid.Row="0"/>
+                            <TextBox x:Name="TextBoxSqlServerUserName" Background="#80FFFFC0" Grid.Row="0" Grid.Column="1" Margin="2" TextChanged="TextBoxSqlServerUserName_TextChanged"/>
+
+                            <TextBlock x:Name="LabelPassword" Text="Password:" Margin="5,4" Grid.Row="1" />
+                            <c:PasswordControl x:Name="TextBoxSqlServerPassword" Background="#80FFFFC0" Grid.Row="1" Grid.Column="1" Margin="2" PasswordChanged="TextBoxSqlServerPassword_TextChanged"
+                                               MinHeight="20"/>
+
+                        </Grid>
+
+                        <TextBlock x:Name="TextBlockBackupPrompt" Text="Backup file:" Grid.Row="1" Margin="5,4" />
+                        <TextBox x:Name="TextBoxSqlBackup" Grid.Row="1" Grid.Column="1" Background="#80FFFFC0" Margin="2" TextChanged="TextBoxSqlBackup_TextChanged"/>
+                        <Button x:Name="ButtonBrowseBackup" Grid.Row="1" Grid.Column="2" MinWidth="30" Click="ButtonBrowseBackup_Click">...</Button>
+
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="_Use XML" x:Name="UseXmlTab">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="LabelXmlPrompt" Margin="0,10" Grid.ColumnSpan="3" TextWrapping="Wrap" Text="Please provide the full path of the XML file that you would like to create to store your money records:"/>
+
+                    <TextBlock x:Name="TextBlockXmlBackupPrompt" Text="Backup file:" Grid.Row="1" Margin="5,4" />
+                    <TextBox x:Name="TextBoxXmlBackup" Background="#80FFFFC0" Margin="2" TextChanged="TextBoxXmlBackup_TextChanged" Grid.Column="1" Grid.Row="1"/>
+                    <Button x:Name="ButtonXmlBrowseBackup" Grid.Column="2" MinWidth="31" MinHeight="23" Click="ButtonXmlBrowseBackup_Click"  Grid.Row="1">...</Button>
+
+                    <TextBlock Text="XML file:" Margin="5,2" Grid.Row="2" />
+                    <TextBox Background="#80FFFFC0" x:Name="TextBoxXmlFile"  Grid.Row="2" Grid.Column="1" Margin="2" TextChanged="TextBoxXmlFile_TextChanged"/>
+                    <Button x:Name="ButtonXmlBrowse" Click="ButtonXmlBrowse_Click" Grid.Column="2"  Grid.Row="2" MinWidth="31" MinHeight="23">...</Button>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="_Use Binary XML" x:Name="UseBinaryXmlTab">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="LabelBinaryXmlPrompt" Margin="0,10" Grid.ColumnSpan="3" TextWrapping="Wrap" Text="Please provide the full path of the Binary XML file that you would like to create to store your money records:"/>
+
+                    <TextBlock x:Name="TextBlockBinaryXmlBackupPrompt" Text="Backup file:" Grid.Row="1" Margin="5,4" />
+                    <TextBox x:Name="TextBoxBinaryXmlBackup" Background="#80FFFFC0" Margin="2" TextChanged="TextBoxBinaryXmlBackup_TextChanged" Grid.Column="1" Grid.Row="1"/>
+                    <Button x:Name="ButtonBinaryXmlBrowseBackup" Grid.Column="2" MinWidth="31" MinHeight="23" Click="ButtonBinaryXmlBrowseBackup_Click"  Grid.Row="1">...</Button>
+
+                    <TextBlock Text="Binary XML file:" Margin="5,2" Grid.Row="2" />
+                    <TextBox Background="#80FFFFC0" x:Name="TextBoxBinaryXmlFile"  Grid.Row="2" Grid.Column="1" Margin="2" TextChanged="TextBoxBinaryXmlFile_TextChanged"/>
+                    <Button x:Name="ButtonBinaryXmlBrowse" Click="ButtonBinaryXmlBrowse_Click" Grid.Column="2"  Grid.Row="2" MinWidth="31" MinHeight="23">...</Button>
+
+                    <TextBlock x:Name="LabelBinaryXmlPassword" Text="Password:" Margin="5,4" Grid.Row="3" />
+                    <c:PasswordControl x:Name="TextBoxBinayXmlPassword" Background="#80FFFFC0" Grid.Row="3" Grid.Column="1" Margin="2" MinHeight="20"/>
+
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Grid Grid.Row="1" HorizontalAlignment="Stretch" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="ButtonOpen" Grid.Column="0" IsDefault="True" MinWidth="80" MinHeight="23" Margin="3" Click="ButtonOpen_Click" Visibility="Hidden">_Open</Button>
+            <Button x:Name="ButtonCreate" Grid.Column="2" IsDefault="True" MinWidth="80" MinHeight="23" Margin="3" Click="ButtonCreate_Click">C_reate</Button>
+            <Button x:Name="ButtonCancel" Grid.Column="3" IsCancel="True" MinWidth="80" MinHeight="23" Margin="3">_Cancel</Button>
+        </Grid>
+
+    </Grid>
+</local:BaseDialog>

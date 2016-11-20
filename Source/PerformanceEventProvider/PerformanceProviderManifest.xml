@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+This is the ETW manifest file for the PerformanceProvider ETW provider.
+ 
+To register the provider on a Vista+ machine:
+
+    wevtutil im PerformanceProviderManifest.xml
+
+-->
+<instrumentationManifest xsi:schemaLocation="http://schemas.microsoft.com/win/2004/08/events eventman.xsd" 
+                         xmlns="http://schemas.microsoft.com/win/2004/08/events" 
+                         xmlns:win="http://manifests.microsoft.com/win/2004/08/windows/events" 
+                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                         xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+                         xmlns:trace="http://schemas.microsoft.com/win/2004/08/events/trace">
+  <instrumentation>
+    <events>
+      <provider name="Microsoft.VisualStudio.PerformanceBlock.4.0.0.0"
+                symbol="PerformanceBlockProvider"
+                guid="{45a86a61-e4f2-4a65-b908-4408ead653fd}"  		           
+                resourceFileName="%SystemRoot%\System32\advapi32.dll" 
+		            messageFileName="%SystemRoot%\System32\advapi32.dll">  
+        <events>
+          <event symbol="_Begin" value="1" version="0" level="win:Verbose" task="Block" opcode="Begin" template="EventPayload"/>
+          <event symbol="_End" value="2" version="0" level="win:Verbose" task="Block" opcode="End" template="EventPayload"/>
+          <event symbol="_Step" value="3" version="0" level="win:Verbose" task="Block" opcode="Step" template="EventPayload"/>
+          <event symbol="_Mark" value="4" version="0" level="win:Verbose" task="Block" opcode="Mark" template="EventPayload"/>
+        </events>
+        <tasks>
+          <task name="Block" symbol="Block_Task" value="1" eventGUID="{d10b6293-1c44-425b-a9e0-04e03c46779b}"/>
+        </tasks>
+        <opcodes>
+          <opcode name="Begin" symbol="_BeginOpcode" value="11"/>
+          <opcode name="End" symbol="_EndOpcode" value="12"/>
+          <opcode name="Step" symbol="_StepOpcode" value="13"/>
+          <opcode name="Mark" symbol="_MarkOpcode" value="14"/>
+        </opcodes>
+        <templates>
+          <template tid="EventPayload">
+            <data name="ComponentId" inType="win:UInt32" outType="xs:unsignedInt"/>
+            <data name="Category"  inType="win:UInt32" outType="xs:unsignedInt"/>
+            <data name="MeasurementId" inType="win:UInt32" outType="xs:unsignedInt"/>
+            <data name="Ticks" inType="win:UInt64" outType="xs:unsignedLong"/>
+            <data name="Size" inType="win:UInt64" outType="xs:unsignedLong"/>
+            <data name="Rate" inType="win:Double" outType="xs:double"/>
+          </template>
+        </templates>
+      </provider>
+    </events>
+  </instrumentation>
+</instrumentationManifest>

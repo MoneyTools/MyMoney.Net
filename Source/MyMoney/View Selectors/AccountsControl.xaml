@@ -1,0 +1,112 @@
+﻿<UserControl x:Class="Walkabout.Views.Controls.AccountsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:c="clr-namespace:Walkabout.WpfConverters"
+             xmlns:local="clr-namespace:Walkabout.Views.Controls"
+             xmlns:localData="clr-namespace:Walkabout.Data"
+             xmlns:help="clr-namespace:Walkabout.Help"
+             help:HelpService.HelpKeyword="Bank Accounts"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+
+    <UserControl.Resources>
+
+        <c:MoneyColorConverter x:Key="MoneyColorConverter"/>
+        <local:AccountNameColorConverter x:Key="AccountNameColorConverter"/>
+        <local:AccountFontWeightConverter x:Key="AccountFontWeightConverter"/>
+        <local:AccountWarningIconConverter x:Key="AccountWarningIconConverter"/>
+        <local:AccountWarningVisibilityConverter x:Key="AccountWarningVisibilityConverter"/>
+        <local:AccountWarningTooltipConverter x:Key="AccountWarningTooltipConverter"/>
+        <local:AccountLastBalancedTooltipConverter x:Key="AccountLastBalancedTooltipConverter"/>
+
+        <DataTemplate DataType="{x:Type localData:AccountSectionHeader}">
+
+            <Border Style="{DynamicResource WalkaboutAccountSubSectionBorderStyle}" Margin="0,10,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                    <TextBlock Text="{Binding Title}" Foreground="{DynamicResource WalkaboutAccountSubSectionTextBrush}"/>
+
+                    <TextBlock Text="{Binding BalanceInNormalizedCurrencyValue, StringFormat={}{0:C}}"  
+                               Foreground="{DynamicResource WalkaboutAccountSubSectionTextBrush}"
+							   HorizontalAlignment="Right" 
+                               Margin="10,0,10,0"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type localData:Account}">
+            <Grid Name="ItemInTheList" >
+                <Grid.ToolTip>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text="{Binding AccountId}"/>
+                        <TextBlock Text="{Binding LastBalance, Converter={StaticResource AccountLastBalancedTooltipConverter}}"/>
+                    </StackPanel>
+                </Grid.ToolTip>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Image Source="{Binding Path=., Converter={StaticResource AccountWarningIconConverter}}" Width="16" Height="16"
+                       Visibility="{Binding Path=., Converter={StaticResource AccountWarningVisibilityConverter}}" Margin="0,0,5,0" 
+                       ToolTip="{Binding Path=., Converter={StaticResource AccountWarningTooltipConverter}}"/>
+
+                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True" Grid.Column="1" 
+                           Foreground="{Binding ., Converter={StaticResource AccountNameColorConverter}}"
+                           FontWeight="{Binding ., Converter={StaticResource AccountFontWeightConverter}}"/>
+
+                <TextBlock Text="{Binding BalanceNormalized, StringFormat={}{0:C}}"  Grid.Column="2" 
+                           HorizontalAlignment="Right" Margin="8,0,10,0"
+                           Foreground="{Binding BalanceNormalized, Converter={StaticResource MoneyColorConverter}}"
+                           FontWeight="{Binding ., Converter={StaticResource AccountFontWeightConverter}}"/>
+            </Grid>
+        </DataTemplate>
+
+
+
+    </UserControl.Resources>
+
+    <UserControl.CommandBindings>
+        <CommandBinding  Command="local:AccountsControl.CommandFileImport" Executed="OnAccountDetails" CanExecute="CanShowAccountDetails"/>
+        <CommandBinding  Command="local:AccountsControl.CommandSynchronize" Executed="OnSynchronizeAccount" CanExecute="CanSynchronizeAccount"/>
+        <CommandBinding  Command="local:AccountsControl.CommandBalance" Executed="OnBalanceAccount" CanExecute="CanBalanceAccount"/>
+        <CommandBinding  Command="local:AccountsControl.CommandNewAccount" Executed="OnAddNewAccount" CanExecute="CanAddNewAccount"/>
+        <CommandBinding  Command="local:AccountsControl.CommandDownloadAccounts" Executed="OnDownloadAccounts" CanExecute="CanDownloadAccounts"/>
+        <CommandBinding  Command="local:AccountsControl.CommandAddNewLoanAccount" Executed="OnAddNewLoanAccount" CanExecute="CanAddNewLoanAccount"/>
+        <CommandBinding  Command="local:AccountsControl.CommandDeleteAccount" Executed="OnDeleteAccount" CanExecute="CanDeleteAccount"/>
+        <CommandBinding  Command="local:AccountsControl.CommandViewTransfers" Executed="OnViewTransfers" CanExecute="CanViewTransfers"/>
+        <CommandBinding  Command="local:AccountsControl.CommandExportAccount" Executed="OnExportAccount" CanExecute="CanExportAccount"/>
+        <CommandBinding  Command="local:AccountsControl.CommandToggleClosedAccounts" Executed="OnToggleShowClosedAccounts" CanExecute="CanToggleShowClosedAccounts"/>        
+    </UserControl.CommandBindings>
+
+    <Grid>
+        <ListBox    Name="listBox1" ItemsSource="{Binding}" 
+                    Style="{DynamicResource WalkaboutToolBoxList}"
+                    HorizontalContentAlignment="Stretch" 
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+
+
+        <Grid.ContextMenu>
+            <ContextMenu Name="AccountsControlContextMenu">
+                <MenuItem AutomationProperties.AutomationId="Properties" Header="_Properties..." Command="local:AccountsControl.CommandFileImport"  />
+                <MenuItem AutomationProperties.AutomationId="SynchronizeAccount" Name="MenuSync" Header="_Synchronize Account" Command="local:AccountsControl.CommandSynchronize" />
+                <MenuItem AutomationProperties.AutomationId="BalanceAccount" Header="_Balance account" Command="local:AccountsControl.CommandBalance" />
+                <Separator />
+                <MenuItem AutomationProperties.AutomationId="NewAccount" Header="_New Account..." Command="local:AccountsControl.CommandNewAccount" />
+                <MenuItem AutomationProperties.AutomationId="DownloadAccounts" Header="_Download Accounts..." Command="local:AccountsControl.CommandDownloadAccounts" />
+                <MenuItem AutomationProperties.AutomationId="NewLoan" Header="New _Loan..." Command="local:AccountsControl.CommandAddNewLoanAccount" />
+                <MenuItem AutomationProperties.AutomationId="DeleteAccount" Header="Delete _Account" Command="local:AccountsControl.CommandDeleteAccount" />
+                <Separator />
+                <MenuItem AutomationProperties.AutomationId="ViewTransfersToThisAccount" Header="View _Transfers To This Account" Command="local:AccountsControl.CommandViewTransfers" />
+                <MenuItem AutomationProperties.AutomationId="Export" Header="E_xport..." Command="local:AccountsControl.CommandExportAccount"/>
+                <Separator />
+                <MenuItem AutomationProperties.AutomationId="DisplayClosedAccounts" Name="MenuDisplayClosedAccounts" Header="Display _Closed Accounts" Command="local:AccountsControl.CommandToggleClosedAccounts"/>
+            </ContextMenu>
+        </Grid.ContextMenu>
+
+    </Grid>
+</UserControl>

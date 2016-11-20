@@ -1,0 +1,113 @@
+﻿<Window x:Class="Walkabout.Dialogs.ReportRangeDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Walkabout.Controls"
+        Title="Report" 
+        Height="420"
+        Width="300"
+        MinHeight="260"
+        MinWidth="300"
+        ResizeMode="CanResizeWithGrip"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner" 
+        Background="{DynamicResource DialogWindowBackgroundBrush}" WindowStyle="ToolWindow"
+        FocusManager.FocusedElement="{Binding ElementName=comboBox1}">
+
+    <Window.Resources>
+        <DataTemplate x:Key="CheckBoxCategory">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox IsChecked="{Binding IsChecked}" />
+                <TextBlock Text="{Binding Content.Name}" />
+            </StackPanel>
+        </DataTemplate>
+
+    </Window.Resources>
+
+    <Grid DockPanel.Dock="Top" Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="Enter range of dates" Grid.Row="0" >
+
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Margin" Value="10" />
+                    </Style>
+                    <Style TargetType="{x:Type Label}">
+                        <Setter Property="Margin" Value="0,3,5,5" />
+                        <Setter Property="Padding" Value="0,0,0,5" />
+                    </Style>
+                    <Style TargetType="{x:Type TextBox}">
+                        <Setter Property="Margin" Value="0,0,0,5" />
+                        <Style.Triggers>
+                            <Trigger Property="Validation.HasError" Value="true">
+                                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                    <Style TargetType="{x:Type StackPanel}">
+                        <Setter Property="Orientation" Value="Horizontal" />
+                        <Setter Property="HorizontalAlignment" Value="Right" />
+                    </Style>
+
+                </Grid.Resources>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <!-- FROM -->
+                <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center">_From:</Label>
+                <local:MoneyDatePicker x:Name="dateTimePicker1" SelectedDateFormat="Short" Grid.Column="1" Grid.Row="0" />
+
+                <!-- TO -->
+                <Label Grid.Column="0" Grid.Row="2"  HorizontalAlignment="Right" VerticalAlignment="Center">_To:</Label>
+                <local:MoneyDatePicker x:Name="dateTimePicker2" SelectedDateFormat="Short" Grid.Column="1" Grid.Row="2" />
+
+                <!-- Interval -->
+                <Label Grid.Column="0" Grid.Row="4"  HorizontalAlignment="Right" VerticalAlignment="Center">_Interval:</Label>
+                <local:ComboBox2 x:Name="comboBox1"  Grid.Column="1" Grid.Row="4" Height="24" >
+                </local:ComboBox2>
+
+            </Grid >
+
+        </GroupBox>
+
+        <GroupBox Name="CategoriesPicker" Header="Included categories"  Visibility="Collapsed" Height="150" Grid.Row="1">
+            <ListBox Name="checkedListBox1" 
+                         ItemTemplate="{StaticResource CheckBoxCategory}">
+            </ListBox>
+        </GroupBox>
+
+        <!-- OK or Cancel -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom" Margin="10,0,10,10">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="MinWidth" Value="70" />
+                    <Setter Property="MinHeight" Value="25" />
+                    <Setter Property="Margin" Value="5,0,0,0" />
+                </Style>
+            </StackPanel.Resources>
+            <Button Name="okButton" IsDefault="True">OK</Button>
+            <Button Name="cancelButton" IsCancel="True">Cancel</Button>
+        </StackPanel>
+
+    </Grid>
+
+</Window>

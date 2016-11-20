@@ -1,0 +1,159 @@
+﻿<UserControl x:Class="Walkabout.Views.RentSummaryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             Background="White"
+             VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+             mc:Ignorable="d" 
+             d:DesignWidth="300" DataContext="{Binding}">
+
+    <UserControl.Resources>
+
+        <Style x:Key="SectionCaption" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="Income" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Green"/>
+        </Style>
+
+        <Style x:Key="Expense" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Red"/>
+        </Style>
+
+
+        <Style x:Key="TextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        </Style>
+        <Style x:Key="Bucket" TargetType="Border">
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="CornerRadius" Value="3"/>
+            <Setter Property="BorderThickness" Value=".5"/>
+            <Setter Property="Margin" Value="-5" />
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="1" />
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Background" Value="{DynamicResource SumarySectionBrush}"/>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{DynamicResource ControlBackgroundBrush}" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top header -->
+        <Border Grid.Row="0" BorderBrush="#FFC5C5C5" BorderThickness="0,0,0,2" VerticalAlignment="Center" Padding="10,2,10,2">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FFC4CFE6" Offset="1"/>
+                    <GradientStop Color="White"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding BuildingName}" HorizontalAlignment="Left" FontSize="22"/>
+                <TextBlock Text="{Binding Period}" HorizontalAlignment="Right" Grid.Column="1" FontSize="22"/>
+            </Grid>
+        </Border>
+
+        <!-- Show the numbers -->
+        <Grid Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"  >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="A_Captions"/>
+                <ColumnDefinition Width="Auto" MinWidth="100" SharedSizeGroup="B_AmountSmall"/>
+                <ColumnDefinition Width="Auto" MinWidth="80" SharedSizeGroup="C_AmountBig"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <!-- INCOME -->
+                <RowDefinition Height="Auto" />
+
+                <!-- GAP -->
+                <RowDefinition Height="20" />
+
+                <!-- EXPENSES -->
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="20" />
+
+                <!-- GAP -->
+                <RowDefinition Height="20" />
+
+                <!-- PROFITS -->
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="20" />
+
+            </Grid.RowDefinitions>
+
+            <!-- SEPERATOR -->
+            <Border Grid.Column="0" Grid.Row="0"  Grid.ColumnSpan="3" Grid.RowSpan="1" Style="{StaticResource Bucket}"/>
+
+            <!-- INCOME -->
+            <TextBlock Grid.Column="0" Text="Income:" Style="{StaticResource SectionCaption}" TextAlignment="Right" VerticalAlignment="Bottom"  Margin="0,3,0,3" />
+            <TextBlock Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding TotalIncomes, StringFormat=\{0:C\}}"  TextAlignment="Right"  VerticalAlignment="Bottom" FontSize="24" Style="{StaticResource Income}" />
+
+
+            <!-- SEPERATOR -->
+            <Border Grid.Column="0" Grid.Row="2"  Grid.ColumnSpan="3" Grid.RowSpan="6" Style="{StaticResource Bucket}"/>
+
+            <!-- EXPENSES -->
+            <TextBlock Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="1" Text="Expense:" TextAlignment="Right"  Style="{StaticResource SectionCaption}" />
+            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding TotalExpenses, StringFormat=\{0:C\}}"  TextAlignment="Right"  FontSize="24" Grid.ColumnSpan="2" Style="{StaticResource Expense}" />
+
+            <!-- EXPENSES TAXES -->
+            <TextBlock Grid.Column="0" Grid.Row="3" Text="Taxes:" TextAlignment="Right"  Opacity=".55" Style="{StaticResource TextStyle}"/>
+            <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding TotalExpensesTaxes, StringFormat=\{0:C\}}"  TextAlignment="Right"    Style="{StaticResource Expense}" Opacity=".55"/>
+
+            <!-- EXPENSES REPAIRS -->
+            <TextBlock Grid.Column="0" Grid.Row="4" Text="Repairs:" TextAlignment="Right"  Opacity=".55"  Style="{StaticResource TextStyle}"/>
+            <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding TotalExpensesRepairs, StringFormat=\{0:C\}}"  TextAlignment="Right"    Style="{StaticResource Expense}" Opacity=".55"/>
+
+            <!-- EXPENSES MAINTENANCE -->
+            <TextBlock Grid.Column="0" Grid.Row="5" Text="Maintenance:" TextAlignment="Right"  Opacity=".55" Style="{StaticResource TextStyle}"/>
+            <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding TotalExpensesMaintenance, StringFormat=\{0:C\}}"  TextAlignment="Right"  Style="{StaticResource Expense}" Opacity=".55"/>
+
+            <!-- EXPENSES MANAGMENT -->
+            <TextBlock Grid.Column="0" Grid.Row="6" Text="Management:" TextAlignment="Right"  Opacity=".55" Style="{StaticResource TextStyle}" />
+            <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding TotalExpensesManagement, StringFormat=\{0:C\}}"  TextAlignment="Right"  Style="{StaticResource Expense}" Opacity=".55" />
+
+            <!-- EXPENSES INTEREST -->
+            <TextBlock Grid.Column="0" Grid.Row="7" Text="Mortgage Interest:" TextAlignment="Right"  Opacity=".55" Style="{StaticResource TextStyle}" />
+            <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding TotalExpensesInterest, StringFormat=\{0:C\}}"  TextAlignment="Right"   Style="{StaticResource Expense}" Opacity=".55" />
+
+
+            <!-- SEPERATOR -->
+            <Border Grid.Column="0" Grid.Row="9"  Grid.ColumnSpan="3" Grid.RowSpan="3" Style="{StaticResource Bucket}"/>
+
+            <!-- PROFIT -->
+            <TextBlock Grid.Column="0" Grid.Row="9" Text="Profit:" Style="{StaticResource SectionCaption}" Margin="0,3,0,3"/>
+            <TextBlock Grid.Column="1" Grid.Row="9" Text="{Binding TotalProfit, StringFormat=\{0:C\}}"  TextAlignment="Right"  VerticalAlignment="Center"  FontSize="24" Grid.ColumnSpan="2" />
+
+            <!-- PROFIT OWNER 1-->
+            <TextBlock Grid.Column="0" Grid.Row="10" Text="{Binding Owner1}" TextAlignment="Right" FontSize="13" Opacity=".55" Style="{StaticResource TextStyle}"/>
+            <TextBlock Grid.Column="1" Grid.Row="10" Text="{Binding TotalProfitOwner1, StringFormat=\{0:C\}}"  TextAlignment="Right"  FontSize="13"  Opacity=".55" Style="{StaticResource TextStyle}"/>
+
+            <!-- PROFIT OWNER 2-->
+            <TextBlock Grid.Column="0" Grid.Row="11" Text="{Binding Owner2}" TextAlignment="Right"  FontSize="13" Opacity=".55" Style="{StaticResource TextStyle}"/>
+            <TextBlock Grid.Column="1" Grid.Row="11" Text="{Binding TotalProfitOwner2, StringFormat=\{0:C\}}"  TextAlignment="Right"    FontSize="13"  Opacity=".55" Style="{StaticResource TextStyle}"/>
+
+        </Grid>
+    </Grid>
+</UserControl>

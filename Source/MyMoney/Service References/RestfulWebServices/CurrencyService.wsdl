@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://www.restfulwebservices.net/ServiceContracts/2008/01" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="CurrencyService" targetNamespace="http://www.restfulwebservices.net/ServiceContracts/2008/01" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.restfulwebservices.net/ServiceContracts/2008/01/Imports">
+      <xsd:import schemaLocation="http://www.restfulwebservices.net/wcf/CurrencyService.svc?xsd=xsd0" namespace="http://www.restfulwebservices.net/ServiceContracts/2008/01" />
+      <xsd:import schemaLocation="http://www.restfulwebservices.net/wcf/CurrencyService.svc?xsd=xsd3" namespace="http://GOTLServices.FaultContracts/2008/01" />
+      <xsd:import schemaLocation="http://www.restfulwebservices.net/wcf/CurrencyService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://www.restfulwebservices.net/wcf/CurrencyService.svc?xsd=xsd2" namespace="http://www.restfulwebservices.net/DataContracts/2008/01" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ICurrencyService_GetConversionRate_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetConversionRate" />
+  </wsdl:message>
+  <wsdl:message name="ICurrencyService_GetConversionRate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetConversionRateResponse" />
+  </wsdl:message>
+  <wsdl:message name="ICurrencyService_GetConversionRate_DefaultFaultContractFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://GOTLServices.FaultContracts/2008/01" name="detail" element="q1:DefaultFaultContract" />
+  </wsdl:message>
+  <wsdl:portType name="ICurrencyService">
+    <wsdl:operation name="GetConversionRate">
+      <wsdl:input wsaw:Action="GetConversionRate" message="tns:ICurrencyService_GetConversionRate_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.restfulwebservices.net/ServiceContracts/2008/01/ICurrencyService/GetConversionRateResponse" message="tns:ICurrencyService_GetConversionRate_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.restfulwebservices.net/ServiceContracts/2008/01/ICurrencyService/GetConversionRateDefaultFaultContractFault" name="DefaultFaultContractFault" message="tns:ICurrencyService_GetConversionRate_DefaultFaultContractFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_ICurrencyService" type="tns:ICurrencyService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetConversionRate">
+      <soap:operation soapAction="GetConversionRate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="DefaultFaultContractFault">
+        <soap:fault use="literal" name="DefaultFaultContractFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CurrencyService">
+    <wsdl:port name="BasicHttpBinding_ICurrencyService" binding="tns:BasicHttpBinding_ICurrencyService">
+      <soap:address location="http://www.restfulwebservices.net/wcf/CurrencyService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,283 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountNameValidChars" xml:space="preserve">
+    <value>Account name cannot contain the characters '{', '}' or ':'</value>
+  </data>
+  <data name="AccountTypeMismatch" xml:space="preserve">
+    <value>Account '{0}' should be of type {1} in order to import these transactions.</value>
+  </data>
+  <data name="AllFileFilter" xml:space="preserve">
+    <value>All files (*.*)|*.*</value>
+  </data>
+  <data name="BinaryXmlFileFilter" xml:space="preserve">
+    <value>Binary XML files (*.bxml)|*.bxml</value>
+  </data>
+  <data name="CsvFileFilter" xml:space="preserve">
+    <value>CSV files (*.csv)|*.csv</value>
+  </data>
+  <data name="DuplicateAccount" xml:space="preserve">
+    <value>Account with name '{0}' already exists, would you like to use the existing account instead?</value>
+    <comment>OnlineAccountDialog</comment>
+  </data>
+  <data name="DuplicateAccountCaption" xml:space="preserve">
+    <value>Account Exists</value>
+  </data>
+  <data name="ErrorFetchingSymbols" xml:space="preserve">
+    <value>Error fetching stock quotes for query {0}</value>
+  </data>
+  <data name="MergeSecurityCaption" xml:space="preserve">
+    <value>Merge Security</value>
+  </data>
+  <data name="MoneySQLCEFileFilter" xml:space="preserve">
+    <value>Money SQL CE Files (*.MyMoney.sdf)|*.MyMoney.sdf</value>
+  </data>
+  <data name="MoneySQLLiteFileFilter" xml:space="preserve">
+    <value>Money SQL Lite Files (*.MyMoney.db)|*.MyMoney.db</value>
+  </data>
+  <data name="OfxFileFilter" xml:space="preserve">
+    <value>OFX files (*.ofx)|*.ofx</value>
+  </data>
+  <data name="PasswordPrompt" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="QfxFileFilter" xml:space="preserve">
+    <value>QFX files (*.qfx)|*.qfx</value>
+  </data>
+  <data name="QifFileFilter" xml:space="preserve">
+    <value>QIF files (*.qif)|*.qif</value>
+  </data>
+  <data name="RenameSecurity" xml:space="preserve">
+    <value>Would you like to delete the security '{0}' and move all investments referencing that old security to the new security you selected '{1}'</value>
+  </data>
+  <data name="SecurityDeleteDisabled" xml:space="preserve">
+    <value>You cannot delete the security '{0}' because there are still {1} transactions referencing it.  You need to move those transactions to some other security first.  You can do that easily using drag/drop.</value>
+  </data>
+  <data name="SecurityDeleteDisabledCaption" xml:space="preserve">
+    <value>Delete Disabled</value>
+  </data>
+  <data name="SkippingSecurityIllegalSymbol" xml:space="preserve">
+    <value>Symbol '{0}' contains illegal characters</value>
+  </data>
+  <data name="SkippingSecurityMissingSymbol" xml:space="preserve">
+    <value>Not updating security '{0}' because it has an empty stock symbol</value>
+  </data>
+  <data name="SqlServerBackupFileFilter" xml:space="preserve">
+    <value>SQL Server Backup Files (*.dat)|*.dat</value>
+  </data>
+  <data name="StatusClearedTip" xml:space="preserve">
+    <value>C means this transaction was entered manually but has cleared at your bank</value>
+  </data>
+  <data name="StatusElectronicTip" xml:space="preserve">
+    <value>E means this was an electronically downloaded transaction</value>
+  </data>
+  <data name="StatusReconciledTip" xml:space="preserve">
+    <value>R means this is a reconciled transaction</value>
+  </data>
+  <data name="StatusVoidTip" xml:space="preserve">
+    <value>V means this is a voided transaction</value>
+  </data>
+  <data name="StockQuoteErrorCaption" xml:space="preserve">
+    <value>Error Fetching Stock Quotes</value>
+  </data>
+  <data name="StockQuotesException" xml:space="preserve">
+    <value>Unhanded exception processing stock quote results</value>
+  </data>
+  <data name="TransferFromClosedAccountPrefix" xml:space="preserve">
+    <value>Transfer from closed account:</value>
+  </data>
+  <data name="TransferFromPrefix" xml:space="preserve">
+    <value>Transfer from: </value>
+  </data>
+  <data name="TransferToClosedAccountPrefix" xml:space="preserve">
+    <value>Transfer to closed account: </value>
+  </data>
+  <data name="TransferToPrefix" xml:space="preserve">
+    <value>Transfer to: </value>
+  </data>
+  <data name="TurboTaxFileFilter" xml:space="preserve">
+    <value>TXF File (.txf)|*.txf</value>
+  </data>
+  <data name="WIA_ERROR_GENERAL_ERROR" xml:space="preserve">
+    <value>An unknown error has occurred with the scanning device.</value>
+  </data>
+  <data name="WIA_ERROR_PAPER_JAM" xml:space="preserve">
+    <value>Paper is jammed in the scanner's document feeder.</value>
+  </data>
+  <data name="WIA_ERROR_PAPER_EMPTY" xml:space="preserve">
+    <value>The user requested a scan and there are no documents left in the document feeder.</value>
+  </data>
+  <data name="WIA_ERROR_PAPER_PROBLEM" xml:space="preserve">
+    <value>An unspecified problem occurred with the scanner's document feeder</value>
+  </data>
+  <data name="WIA_ERROR_OFFLINE" xml:space="preserve">
+    <value>The scanning device is not online.</value>
+  </data>
+  <data name="WIA_ERROR_BUSY" xml:space="preserve">
+    <value>The scanning device is busy.</value>
+  </data>
+  <data name="WIA_ERROR_WARMING_UP" xml:space="preserve">
+    <value>The scanner is warming up.</value>
+  </data>
+  <data name="WIA_ERROR_USER_INTERVENTION" xml:space="preserve">
+    <value>An unspecified error has occurred with the scanner that requires user intervention. The user should ensure that the device is turned on, online, and any cables are properly connected.</value>
+  </data>
+  <data name="WIA_ERROR_ITEM_DELETED" xml:space="preserve">
+    <value>The scanner device was deleted. It can no longer be accessed</value>
+  </data>
+  <data name="WIA_ERROR_DEVICE_COMMUNICATION" xml:space="preserve">
+    <value>An unspecified error occurred during an attempted communication with the scanner.</value>
+  </data>
+  <data name="WIA_ERROR_INVALID_COMMAND" xml:space="preserve">
+    <value>The device does not support this command</value>
+  </data>
+  <data name="WIA_ERROR_INCORRECT_HARDWARE_SETTING" xml:space="preserve">
+    <value>There is an incorrect setting on the scanner.</value>
+  </data>
+  <data name="WIA_ERROR_DEVICE_LOCKED" xml:space="preserve">
+    <value>The scanner head is locked</value>
+  </data>
+  <data name="WIA_ERROR_EXCEPTION_IN_DRIVER" xml:space="preserve">
+    <value>The device driver threw an exception.</value>
+  </data>
+  <data name="WIA_ERROR_INVALID_DRIVER_RESPONSE" xml:space="preserve">
+    <value>The response from the driver is invalid.</value>
+  </data>
+  <data name="WIA_ERROR_COVER_OPEN" xml:space="preserve">
+    <value>The cover is open</value>
+  </data>
+  <data name="WIA_ERROR_LAMP_OFF" xml:space="preserve">
+    <value>The lamp is off</value>
+  </data>
+  <data name="WIA_ERROR_DESTINATION" xml:space="preserve">
+    <value>Error in scanner destination.</value>
+  </data>
+  <data name="WIA_ERROR_NETWORK_RESERVATION_FAILED" xml:space="preserve">
+    <value>Network reservation failed</value>
+  </data>
+  <data name="XmlFileFilter" xml:space="preserve">
+    <value>XML files (*.xml)|*.xml</value>
+  </data>
+  <data name="YahooSymbolNotFound" xml:space="preserve">
+    <value>Yahoo returned 'N/A' for stock symbol {0}</value>
+  </data>
+  <data name="MoneyFileFilter" xml:space="preserve">
+    <value>Money Files (*.db)|*.db</value>
+  </data>
+</root>

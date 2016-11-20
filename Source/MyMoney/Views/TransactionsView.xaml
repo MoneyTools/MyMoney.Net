@@ -1,0 +1,1059 @@
+﻿<UserControl x:Class="Walkabout.Views.TransactionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Walkabout.Controls"
+             xmlns:vc="clr-namespace:Walkabout.Views.Controls"
+             xmlns:c="clr-namespace:Walkabout.WpfConverters"
+             xmlns:p="clr-namespace:Walkabout.Commands"
+             xmlns:views="clr-namespace:Walkabout.Views"
+             xmlns:data="clr-namespace:Walkabout.Data"
+             xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:help="clr-namespace:Walkabout.Help"
+             mc:Ignorable="d"
+             FontFamily="{StaticResource DataGridFont}"
+             FontSize="{DynamicResource MainTransactionAreaFontSize}"
+             d:DesignHeight="300" d:DesignWidth="400">
+
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <ContextMenu.Resources>
+                <views:TransactionFilterToBooleanConverter x:Key="TransactionFilterToBoolean"/>
+            </ContextMenu.Resources>
+
+            <MenuItem Name="menuItemToggleAccept" Header="Toggle _Accept" Command="views:TransactionsView.CommandAccept" InputGestureText="Ctrl-Space"/>
+            <MenuItem Name="menuItemToggleVoid" Header="Toggle _Void" Command="views:TransactionsView.CommandVoid"/>
+            <MenuItem Name="menuItemBudget" Header="_Budgeted" Command="views:TransactionsView.CommandBudgeted" IsChecked="{Binding Path=SelectedTransaction.IsBudgeted}"/>
+            <MenuItem Name="menuItemSplit" Header="_Splits..." Command="views:TransactionsView.CommandSplits"/>
+            <MenuItem Name="menuItemRenamePayee" Header="_Rename Payee" Command="views:TransactionsView.CommandRenamePayee"/>
+            <MenuItem Name="menuItemLookupPayee" Header="_Lookup Payee " Command="views:TransactionsView.CommandLookupPayee" InputGestureText="F3"/>
+            <MenuItem Name="menuItemCategories" Header="_Category Properties..." Command="views:TransactionsView.CommandCategoryDetails"/>
+
+            <Separator/>
+            <MenuItem Name="menuItemDelete" Header="_Delete" Command="Delete"/>
+            <Separator/>
+            
+            <MenuItem x:Name="MenuViewToggleOneLineView" Header="_One Line View" Command="views:TransactionsView.CommandViewToggleOneLineView" InputGestureText="Ctrl-T" IsChecked="{Binding OneLineView}"/>
+            <MenuItem x:Name="MenuViewToggleSplitViews" Header="_Show All Splits" Command="views:TransactionsView.CommandViewToggleAllSplits" InputGestureText="Alt-T"  IsChecked="{Binding ViewAllSplits}"/>
+            <Separator/>
+            <MenuItem Name="menuItemGotoRelated" Header="_Go to related transaction" Command="views:TransactionsView.CommandGotoRelatedTransaction" InputGestureText="F12"/>
+            <!--<MenuItem Name="menuItemViewSimilar" Header="View _Similar Transactions" Command="views:TransactionsView.CommandViewSimilarTransactions"/>-->
+            <Separator/>
+            <MenuItem Name="menuItemByAccount" Header="_View Transactions by Account" Command="views:TransactionsView.CommandViewTransactionsByAccount"/>
+            <MenuItem Name="menuItemByCategory" Header="View Transactions by _Category" Command="views:TransactionsView.CommandViewTransactionsByCategory"/>
+            <MenuItem Name="menuItemByPayee" Header="View Transactions by _Payee" Command="views:TransactionsView.CommandViewTransactionsByPayee"/>
+            <MenuItem Name="menuItemBySecurity" Header="View Transactions by _Security" Command="views:TransactionsView.CommandViewTransactionsBySecurity"/>
+            <MenuItem Name="menuItemViewSecurity" Header="View _Security" Command="views:TransactionsView.CommandViewSecurity"/>
+            <Separator/>
+            <MenuItem Name="menuItemExport" Header="Export..." Command="views:TransactionsView.CommandViewExport"/>
+        </ContextMenu>
+    </UserControl.ContextMenu>
+
+    <UserControl.CommandBindings>
+        <CommandBinding Command="views:TransactionsView.CommandAccept" Executed="OnCommandAccept" CanExecute="CanExecute_Accept"/>
+        <CommandBinding Command="views:TransactionsView.CommandCopySplits" Executed="OnCopySplits" CanExecute="CanCopySplits"/>
+        <CommandBinding Command="views:TransactionsView.CommandPasteSplits" Executed="OnPasteSplits" CanExecute="CanPasteSplits"/>
+        <CommandBinding Command="views:TransactionsView.CommandVoid" Executed="OnCommandVoid" CanExecute="CanExecute_Void" />
+        <CommandBinding Command="views:TransactionsView.CommandBudgeted" Executed="OnCommandBudgeted" CanExecute="CanExecute_Budgeted" />
+        <CommandBinding Command="views:TransactionsView.CommandSplits" Executed="OnCommandSplits" CanExecute="CanExecute_Splits" />
+        <CommandBinding Command="views:TransactionsView.CommandRenamePayee" Executed="OnCommandRenamePayee" CanExecute="CanExecute_RenamePayee"/>
+        <CommandBinding Command="views:TransactionsView.CommandLookupPayee" Executed="OnCommandLookupPayee" CanExecute="CanExecute_LookupPayee"/>
+        <CommandBinding Command="views:TransactionsView.CommandCategoryDetails" Executed="OnCommandCategoryDetails" CanExecute="CanExecute_CategoryDetails" />
+        <CommandBinding Command="views:TransactionsView.CommandGotoRelatedTransaction" Executed="OnCommandGotoRelatedTransaction"  CanExecute="CanExecute_GotoRelatedTransaction"/>
+        <CommandBinding Command="views:TransactionsView.CommandViewTransactionsByAccount" Executed="OnCommandViewTransactionsByAccount" CanExecute="CanExecute_ViewTransactionsByAccount" />
+        <CommandBinding Command="views:TransactionsView.CommandViewSimilarTransactions" Executed="OnCommandViewSimilarTransactions" CanExecute="CanExecute_ViewSimilarTransactions" />
+        <CommandBinding Command="views:TransactionsView.CommandViewTransactionsByCategory" Executed="OnCommandViewTransactionsByCategory" CanExecute="CanExecute_ViewTransactionsByCategory" />
+        <CommandBinding Command="views:TransactionsView.CommandViewTransactionsByPayee" Executed="OnCommandViewTransactionsByPayee" CanExecute="CanExecute_ViewTransactionsByPayee" />
+        <CommandBinding Command="views:TransactionsView.CommandViewTransactionsBySecurity" Executed="OnCommandViewTransactionsBySecurity" CanExecute="CanExecute_ViewTransactionsBySecurity" />
+        <CommandBinding Command="views:TransactionsView.CommandViewSecurity" Executed="OnCommandViewSecurity" CanExecute="CanExecute_ViewSecurity"  />
+
+        <CommandBinding Command="views:TransactionsView.CommandViewToggleOneLineView" Executed="OnCommandViewToggleOneLineView" CanExecute="CanExecute_ToggleOneLineView" />
+        <CommandBinding Command="views:TransactionsView.CommandViewToggleAllSplits" Executed="OnCommandViewToggleAllSplits" CanExecute="CanExecute_ToggleViewsAllSplits"/>
+        <CommandBinding Command="views:TransactionsView.CommandViewAllTransactions" Executed="OnCommandViewAllTransactions" CanExecute="CanExecute_AllTransactions"/>
+        <CommandBinding Command="views:TransactionsView.CommandViewUnacceptedTransactions" Executed="OnCommandViewUnacceptedTransactions" CanExecute="CanExecute_UnacceptedTransactions"/>
+        <CommandBinding Command="views:TransactionsView.CommandViewUnreconciledTransactions" Executed="OnCommandViewUnreconciledTransactions" CanExecute="CanExecute_UnreconciledTransactions"/>
+        <CommandBinding Command="views:TransactionsView.CommandViewBudgetedTransactions" Executed="OnCommandViewBudgetedTransactions" CanExecute="CanExecute_BudgetedTransactions"/>
+        <CommandBinding Command="views:TransactionsView.CommandViewUncategorizedTransactions" Executed="OnCommandViewUncategorizedTransactions" CanExecute="CanExecute_UncategorizedTransactions"/>
+
+        <CommandBinding Command="views:TransactionsView.CommandViewExport" Executed="OnCommandViewExport" />
+        <CommandBinding Command="views:TransactionsView.CommandScanAttachment" Executed="OnScanAttachment" />
+    </UserControl.CommandBindings>
+
+    <UserControl.InputBindings>
+        <KeyBinding Command="views:TransactionsView.CommandAccept" Key="Space" Modifiers="Control"/>
+        <KeyBinding Command="views:TransactionsView.CommandViewToggleOneLineView" Key="T" Modifiers="Control"/>
+        <KeyBinding Command="views:TransactionsView.CommandViewToggleAllSplits" Key="T" Modifiers="Alt"/>
+        <KeyBinding Command="views:TransactionsView.CommandGotoRelatedTransaction" Key="F12" />
+        <KeyBinding Command="views:TransactionsView.CommandViewTransactionsByAccount" Key="F8"/>
+        <KeyBinding Command="views:TransactionsView.CommandLookupPayee" Key="F3"/>
+   </UserControl.InputBindings>
+
+    <UserControl.Resources>        
+        
+        <ContextMenu x:Key="SplitViewContextMenu">
+            <ContextMenu.Resources>
+                <views:TransactionFilterToBooleanConverter x:Key="TransactionFilterToBoolean"/>
+            </ContextMenu.Resources>
+            <MenuItem Name="menuItemCopySplit" Header="_Copy" Command="Copy"/>
+            <MenuItem Name="menuItemPasteSplit" Header="_Paste" Command="Paste"/>
+            <MenuItem Name="menuItemDeleteSplit" Header="_Delete" Command="Delete"/>
+            <Separator/>
+            <MenuItem Name="menuItemCopySplits" Header="_Copy All Splits" Command="views:TransactionsView.CommandCopySplits"/>
+            <MenuItem Name="menuItemPasteSplits" Header="_Paste All Splits" Command="views:TransactionsView.CommandPasteSplits"/>
+            <Separator/>
+            <MenuItem Name="menuItemGotoRelated2" Header="_Go to related transaction" Command="views:TransactionsView.CommandGotoRelatedTransaction" InputGestureText="F12"/>            
+            <Separator/>
+            <MenuItem Name="menuItemByAccount2" Header="_View Transactions by Account" Command="views:TransactionsView.CommandViewTransactionsByAccount" InputGestureText="F8"/>
+            <MenuItem Name="menuItemByCategory2" Header="View Transactions by _Category" Command="views:TransactionsView.CommandViewTransactionsByCategory"/>
+            <MenuItem Name="menuItemByPayee2" Header="View Transactions by _Payee" Command="views:TransactionsView.CommandViewTransactionsByPayee"/>            
+        </ContextMenu>
+
+        <c:MoneyColorConverter x:Key="MoneyColorConverter"/>
+        
+        <views:ValidationErrorGetErrorMessageConverter x:Key="ValidationErrorGetErrorMessageConverter" />
+
+        <ControlTemplate x:Key="RowValidationErrorTemplate">
+            <Grid ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}},
+                        Path=(Validation.Errors),
+                        Converter={StaticResource ValidationErrorGetErrorMessageConverter}}" 
+                   Background="Yellow" Margin="-1,-1,-1,-1">
+                <Image Width="16" Height="16" Source="/MyMoney;component/Icons/Error.png"/>
+            </Grid>
+        </ControlTemplate>
+
+        <c:NullableValueConverter x:Key="NullableValueConverter" />
+        <c:AttachmentIconConverter x:Key="AttachmentIconConverter"/>
+
+        <c:TrueToVisible x:Key="TrueToVisible" />
+        <c:FalseToVisible x:Key="FalseToVisible" />
+        <c:TrueToVisibleWhenSelected x:Key="TrueToVisibleWhenSelected" />
+
+        <views:ShowSplitForDebit x:Key="ShowSplitForDebit" />
+        <views:ShowSplitForCredit x:Key="ShowSplitForCredit" />
+
+        <c:RoutingLines x:Key="RoutingLines" />
+
+        <Color x:Key="CheckMarkBackground" R="243" G="243" B="249"/>
+        <Color x:Key="CheckMarkPressedBackground" R="197" G="197" B="208"/>
+
+        <SolidColorBrush x:Key="CheckMarkBoxBorder" Color="#DFDFEF"/>
+        <SolidColorBrush x:Key="CheckMarkStroke" Color="#969FFF"/>
+
+        <LinearGradientBrush x:Key="CheckRadioFillNormal">
+            <GradientStop Color="#FFD2D4D2" Offset="0"/>
+            <GradientStop Color="#FFFFFFFF" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="CheckRadioStrokeNormal">
+            <GradientStop Color="#FF004C94" Offset="0"/>
+            <GradientStop Color="#FF003C74" Offset="1"/>
+        </LinearGradientBrush>
+
+        <Style x:Key="CurrentUnitStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Opacity" Value=".55"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+        </Style>
+        
+        <Style x:Key="RunningUnitStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Opacity" Value=".55"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="Foreground" Value="{Binding RunningUnits, Converter={StaticResource MoneyColorConverter}}"/>
+        </Style>
+        
+        <Style x:Key="EmptyCheckBoxFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle SnapsToDevicePixels="true" Margin="1" Stroke="Black" StrokeDashArray="1 2" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CheckRadioFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle SnapsToDevicePixels="true" Margin="14,0,0,0" Stroke="Black" StrokeDashArray="1 2" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SimpleCheckBox" TargetType="{x:Type CheckBox}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Background" Value="{StaticResource CheckRadioFillNormal}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource CheckRadioStrokeNormal}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource EmptyCheckBoxFocusVisual}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Grid>
+                            <Rectangle x:Name="Box" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Height="14" Stroke="{StaticResource CheckMarkBoxBorder}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Width="14">
+                                <Rectangle.Fill>
+                                    <SolidColorBrush x:Name="BoxColor" Color="{StaticResource CheckMarkBackground}"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+
+                            <Path x:Name="Checkmark" Data="M1,7.75 L4,11.5 11,1.5" Height="14" Opacity="0" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                  Stroke="{StaticResource CheckMarkStroke}" UseLayoutRounding="False" Width="14" StrokeThickness="2"/>
+
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"  
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                              Margin="16,0,0,0" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                              RecognizesAccessKey="True"/>
+                        </Grid>
+                        <ControlTemplate.Resources>
+                            <Storyboard x:Key="IsPressedTimeLine">
+                                <ColorAnimation Duration="00:00:00.1" Storyboard.TargetName="BoxColor" Storyboard.TargetProperty="Color" To="{StaticResource CheckMarkPressedBackground}"/>
+                            </Storyboard>
+                            <Storyboard x:Key="IsUnpressedTimeLine">
+                                <ColorAnimation Duration="00:00:00.1" Storyboard.TargetName="BoxColor" Storyboard.TargetProperty="Color" To="{StaticResource CheckMarkBackground}"/>
+                            </Storyboard>
+                            <Storyboard x:Key="IsCheckedTimeLine">
+                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Checkmark" Storyboard.TargetProperty="Opacity">
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.05" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                            <Storyboard x:Key="IsUncheckedTimeLine">
+                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Checkmark" Storyboard.TargetProperty="Opacity">
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.05" Value="0"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </ControlTemplate.Resources>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasContent" Value="true">
+                                <Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
+                                <Setter Property="Padding" Value="2,0,0,0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource IsPressedTimeLine}"/>
+                                    <BeginStoryboard Storyboard="{StaticResource IsCheckedTimeLine}"/>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard Storyboard="{StaticResource IsUnpressedTimeLine}"/>
+                                    <BeginStoryboard Storyboard="{StaticResource IsUncheckedTimeLine}"/>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource IsCheckedTimeLine}"/>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard Storyboard="{StaticResource IsUncheckedTimeLine}"/>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}">
+            <Setter Property="IsEditable" Value="True"/>
+            <Setter Property="StaysOpenOnEdit" Value="True"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
+        </Style>
+        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <Style x:Key="ButtonStyleSplitAmount" TargetType="{x:Type Button}">
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="Content" Value="{Binding Path=Splits.Count}"/>
+            <Setter Property="Margin" Value="-2,2,3,0"/>
+            <Setter Property="Height" Value="13"/>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="MinWidth" Value="13"/>
+            <Setter Property="FontSize" Value="8"/>
+            <Setter Property="ToolTip" Value="Show or edit the splits for this transaction"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid SnapsToDevicePixels="True">
+
+                            <Path   Name="ThePath"
+                                    Fill="Transparent" Stretch="Fill" Stroke="{Binding Splits.Unassigned, Converter={StaticResource ZeroToBrushConverter }}"
+                                    Data="M0,0 L10,0 10,5 5,8 0,5z" StrokeThickness="0.5"
+                                    StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeDashCap="Round" />
+
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Top"  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" RecognizesAccessKey="True"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True"/>
+                            <Trigger Property="IsDefaulted" Value="True"/>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Fill" Value="LightGray" TargetName="ThePath"/>
+                                <Setter Property="Effect" TargetName="ThePath" >
+                                    <Setter.Value>
+                                        <DropShadowEffect ShadowDepth="1" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Fill" Value="Gray" TargetName="ThePath"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- FIFO -->
+        <DataTemplate x:Key="myTemplateFifo">
+            <ContentPresenter Content="{Binding RoutingPath, Converter={StaticResource RoutingLines}}" SnapsToDevicePixels="True"/>
+        </DataTemplate>
+        
+        <!-- PAYMENT USED IN DETAILED SPLIT VIEW -->
+        <DataTemplate x:Key="myTemplateSplitPayment">
+            <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0" 
+                            Grid.Column="1" Text="{Binding Debit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}"                            
+                            TextAlignment="Right" VerticalAlignment="Top" />
+        </DataTemplate>
+        <DataTemplate x:Key="myTemplatePaymentEditInTheSplitDetailedView">
+            <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Debit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right"/>
+        </DataTemplate>
+
+        <!-- DEPOSIT USED IN DETAILED SPLIT VIEW -->
+        <DataTemplate x:Key="myTemplateSplitDeposit">
+            <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0" 
+                            Grid.Column="1" Text="{Binding Credit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}"                            
+                            TextAlignment="Right" VerticalAlignment="Top" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="myTemplateDepositEditInTheSplitDetailedView" >
+            <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Credit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right" />
+        </DataTemplate>
+
+        <!-- PAYEE ONLY -->
+        <DataTemplate x:Key="myTemplateSplitPayee">
+            <TextBlock Text="{Binding PayeeOrTransferCaption, Converter={StaticResource NullableValueConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="myTemplateSplitPayeeEdit">
+            <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
+                      SelectedItem="{Binding PayeeOrTransferCaption, Mode=TwoWay}"
+                      ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=PayeesAndTransferNames}" 
+                      PreviewLostKeyboardFocus="ComboBoxForPayee_PreviewLostKeyboardFocus"  
+                      FilterChanged="ComboBoxForPayee_FilterChanged"
+                     >
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </local:FilteringComboBox>
+        </DataTemplate>
+
+
+        <!-- CATEGORY ONLY -->
+        <DataTemplate x:Key="myTemplateSplitCategory">
+            <TextBlock Text="{Binding Category, Converter={StaticResource NullableValueConverter}}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="myTemplateSplitCategoryEdit">
+            <!--<TextBlock Text="{Binding Category.Name, Converter={StaticResource NullableValueConverter}}" />-->
+            <local:FilteringComboBox   Style="{StaticResource GridComboStyle}"
+                        SelectedItem="{Binding Category, Mode=TwoWay}"
+                        ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=Categories}" 
+                        PreviewLostKeyboardFocus="ComboBoxForCategory_PreviewLostKeyboardFocus"
+                        PreviewGotKeyboardFocus="ComboBoxForCategory_PreviewGotKeyboardFocus"
+                        FilterChanged="ComboBoxForCategory_FilterChanged"
+                        ItemContainerStyle="{DynamicResource ComboBoxItemCategory}"        
+                        >
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </local:FilteringComboBox>
+        </DataTemplate>
+
+        <!-- PAYEE / CATEGORY / MEMO -->
+        <!-- This editing template is instantiated from code. -->
+        <DataTemplate x:Key="myTemplatePayeeCategoryMemoEdit">
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Focusable="false">
+                <Border BorderThickness="0,0,0,1" BorderBrush="#FFDFDFEF" Focusable="false">
+                    <!-- PAYEE -->
+                    <local:FilteringComboBox Style="{StaticResource GridComboStyle}" x:Name="ComboBoxForPayee"
+                          SelectedItem="{Binding PayeeOrTransferCaption, Mode=TwoWay}"
+                          ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=PayeesAndTransferNames}" 
+                          PreviewLostKeyboardFocus="ComboBoxForPayee_PreviewLostKeyboardFocus" 
+                          FilterChanged="ComboBoxForPayee_FilterChanged"
+                          >
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+                    </local:FilteringComboBox >
+                </Border>
+                <Border BorderThickness="0,0,0,1" BorderBrush="#FFDFDFEF" Focusable="false">
+                    <!-- CATEGORY -->
+                    <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
+                                SelectedItem="{Binding Category, Mode=TwoWay}"
+                                ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=Categories}" 
+                                PreviewLostKeyboardFocus="ComboBoxForCategory_PreviewLostKeyboardFocus"
+                                PreviewGotKeyboardFocus="ComboBoxForCategory_PreviewGotKeyboardFocus"
+                                FilterChanged="ComboBoxForCategory_FilterChanged"
+                                ItemContainerStyle="{DynamicResource ComboBoxItemCategory}"        
+                                >
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+
+                    </local:FilteringComboBox >
+                </Border>
+
+                <Border BorderThickness="0,0,0,1" BorderBrush="#FFDFDFEF" Focusable="false">
+                    <!-- MEMO -->
+                    <TextBox Text="{Binding Memo, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" FontStyle="Italic" Style="{StaticResource GridTextBoxStyle}"/>
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- ACTIVITY -->
+        <DataTemplate x:Key="myTemplateActivity" >
+            <TextBlock Text="{Binding InvestmentType, Converter={StaticResource NullableValueConverter}}" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="myTemplateActivityEdit">
+            <ComboBox Style="{StaticResource GridComboStyle}"
+                SelectedItem="{Binding Path=InvestmentType, Mode=TwoWay}"
+                ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=Activities}" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
+        </DataTemplate>
+
+
+        <!-- SYMBOL -->
+        <DataTemplate x:Key="myTemplateSymbol">
+            <TextBlock Text="{Binding Path=InvestmentSecurity, Converter={StaticResource NullableValueConverter}}" VerticalAlignment="Top"  HorizontalAlignment="Stretch"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="myTemplateSymbolEdit">
+            <local:FilteringComboBox Style="{StaticResource GridComboStyle}"  HorizontalAlignment="Stretch"
+                    SelectedItem="{Binding Path=InvestmentSecurity, Mode=TwoWay}"
+                    ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=Securities}" VerticalAlignment="Top"
+                    PreviewLostKeyboardFocus="ComboBoxSymbol_PreviewLostKeyboardFocus"  
+                    FilterChanged="ComboBoxForSymbols_FilterChanged"
+                    ItemContainerStyle="{DynamicResource ComboBoxItemSecurity}"   >
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </local:FilteringComboBox>
+        </DataTemplate>
+
+        <!-- MARKET PRICE BASIS (binds to Investment) -->
+        <DataTemplate x:Key="myTemplateInvestmentCurrentUnitPrice">
+            <TextBlock Text="{Binding CurrentUnitPrice, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}" TextAlignment="Right" VerticalAlignment="Top"/>
+        </DataTemplate>
+
+
+        <!-- COST BASIS (binds to Investment) -->
+        <DataTemplate x:Key="myTemplateInvestmentCostBasis">
+            <TextBlock Text="{Binding CostBasis, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}" TextAlignment="Right" VerticalAlignment="Top"/>
+        </DataTemplate>
+
+
+        <!-- MARKET VALUE (binds to Investment) -->
+        <DataTemplate x:Key="myTemplateInvestmentMarketValue">
+            <TextBlock Text="{Binding MarketValue, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}" TextAlignment="Right" VerticalAlignment="Top"/>
+        </DataTemplate>
+
+
+        <!-- GAIN (binds to Investment) -->
+        <DataTemplate x:Key="myTemplateInvestmentGain">
+            <TextBlock Text="{Binding Path=GainLoss, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}" TextAlignment="Right" VerticalAlignment="Top"/>
+        </DataTemplate>
+
+        <!-- PERCENTAGE (binds to Investment) -->
+        <DataTemplate x:Key="myTemplateInvestmentPercentage">
+            <TextBlock Text="{Binding PercentGainLoss, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}" TextAlignment="Right" VerticalAlignment="Top"/>
+        </DataTemplate>
+
+
+        <!-- 
+        DETAIL MINI VIEW 
+        -->
+        <DataTemplate x:Key="myDataGridDetailMiniView">
+
+            <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent">
+
+                <Border.Resources>
+
+                    <Style TargetType="{x:Type ListBox}">
+                        <Style.Resources>
+                            <!--{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=IsSelected}-->
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
+                        </Style.Resources>
+                    </Style>
+                </Border.Resources>
+
+                <StackPanel Orientation="Horizontal">
+                    <ListBox x:Name="TheMiniListForAmountSplit" Style="{DynamicResource TransactionMiniDetailPreview}"
+                             Background="Transparent"
+                             FontStyle="Italic"
+                             BorderThickness="0"
+                             IsEnabled="False"
+                             Padding="0"
+                             Margin="0"
+                             ItemsSource="{Binding Path=NonNullSplits.ObservableCollection}">
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Width="200" Text="{Binding Payee}" TextAlignment="Left" FontSize="10"/>
+                                    <TextBlock MinWidth="200" Margin="10,0,0,0" Text="{Binding Category}" TextAlignment="Left" FontSize="10"/>
+                                    <TextBlock MinWidth="100" Margin="10,0,0,0" Text="{Binding Amount, StringFormat={}{0:N}}" TextAlignment="Right" FontSize="10"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock Text="{Binding Path=NonNullSplits.TotalSplitAmount, StringFormat={}{0:N}}" Width="60" FontSize="11" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center" TextAlignment="Right" IsEnabled="False"/>
+                </StackPanel>
+
+            </Border>
+        </DataTemplate>
+
+        <!-- 
+             DETAIL VIEW and EDIT
+        -->
+        <DataTemplate x:Key="myDataGridDetailView">
+
+            <Border Background="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" >
+
+                <Border  x:Name="MainBorderForSplitterView" Margin="8,0,13,13" 
+                         Style="{DynamicResource MainBorderForSplitterViewStyle}">
+
+                    <!-- Tiny animation to show the expanding of the split view editor 
+                    [Chris: removed because fixed size of 100 below doesn't work... and stops autosizing from working.
+                    <Border.Triggers>
+                        <EventTrigger RoutedEvent="Border.Loaded">
+                            <EventTrigger.Actions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="MainBorderForSplitterView"
+                                             Storyboard.TargetProperty="Height"
+                                             From="10" To="100" Duration="0:0:0.3"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                    </Border.Triggers>-->
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <local:MoneyDataGrid  x:Name="TheGridForAmountSplit"
+                                  Loaded="TheGridForAmountSplit_Loaded"
+                                  Unloaded="TheGridForAmountSplit_Unloaded"
+                                  ItemsSource="{Binding Path=NonNullSplits.ObservableCollection}"
+                                  RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
+                                  RowEditEnding="TheGridForAmountSplit_RowEditEnding"
+                                  CellStyle="{DynamicResource MyDataGridCellStyle}"
+                                  Style="{DynamicResource MyDataGridStyle2}" 
+                                  help:HelpService.HelpKeyword="Splits"
+                                  CanUserAddRows="True"
+                                  AutoGenerateColumns="False"
+                                  ContextMenu="{StaticResource SplitViewContextMenu}">
+                            <DataGrid.Columns>
+
+                                <!-- PAYEE -->
+                                <DataGridTemplateColumn Header="Payee" CellTemplate="{StaticResource myTemplateSplitPayee}" CellEditingTemplate="{StaticResource myTemplateSplitPayeeEdit}" MinWidth="100"/>
+
+                                <!-- CATEGORY -->
+                                <DataGridTemplateColumn Header="Category" CellTemplate="{StaticResource myTemplateSplitCategory}" CellEditingTemplate="{StaticResource myTemplateSplitCategoryEdit}" MinWidth="100"/>
+
+                                <!-- PAYEMENT-->
+                                <DataGridTemplateColumn Header="Payment"  CellTemplate="{StaticResource myTemplateSplitPayment}" CellEditingTemplate="{StaticResource myTemplatePaymentEditInTheSplitDetailedView}"/>
+
+                                <!-- DEPOSIT -->
+                                <DataGridTemplateColumn Header="Deposit"  CellTemplate="{StaticResource myTemplateSplitDeposit}" CellEditingTemplate="{StaticResource myTemplateDepositEditInTheSplitDetailedView}"/>
+
+                                <!-- MEMO -->
+                                <DataGridTextColumn Header="Memo" Binding="{Binding Memo, Mode=TwoWay}" MinWidth="300"/>
+
+
+                            </DataGrid.Columns>
+                        </local:MoneyDataGrid>
+
+                        <TextBlock Text="{Binding NonNullSplits.SplitsBalanceMessage}" Margin="5" Grid.Row="1"
+                                   ToolTip="Press F6 to assign the delta amount to the currently select split entry"/>
+                    </Grid>
+                </Border>
+            </Border>
+        </DataTemplate>
+
+        <SolidColorBrush x:Key="GridLineBrush" Color="#FFDFDFEF"/>
+
+        <Style x:Key="MyDataGridStyle" TargetType="{x:Type local:MoneyDataGrid}">
+            <Setter Property="ItemsSource" Value="{Binding}"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="RowBackground" Value="{StaticResource GridNormalBackgroundBrush}"/>
+            <Setter Property="AlternatingRowBackground" Value="{StaticResource GridAlternateBackgroundBrush}"/>
+            <Setter Property="GridLinesVisibility" Value="Vertical"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{StaticResource GridLineBrush}"/>
+            <Setter Property="CanUserResizeRows" Value="False"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
+            <Setter Property="RowDetailsTemplate" Value="{StaticResource myDataGridDetailView}"/>
+            <Setter Property="ClipboardCopyMode" Value="None"/>
+            <Setter Property="ContentMargin" Value="0,0,0,30"/>
+            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+            <!-- Recycling breaks the TransactionConnector for some unknown reason -->
+            <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Standard"/>
+        </Style>
+
+        <Style x:Key="MyDataGridStyle2" TargetType="DataGrid">
+            <Setter Property="ItemsSource" Value="{Binding}"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="RowBackground" Value="{StaticResource GridNormalBackgroundBrush}"/>
+            <Setter Property="AlternatingRowBackground" Value="{StaticResource GridAlternateBackgroundBrush}"/>
+            <Setter Property="GridLinesVisibility" Value="Vertical"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{StaticResource GridLineBrush}"/>
+            <Setter Property="CanUserResizeRows" Value="False"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
+            <Setter Property="ClipboardCopyMode" Value="None"/>
+            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+            <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Standard"/>
+        </Style>
+
+        <Style x:Key="MyDataGridRowStyle" TargetType="DataGridRow">
+            <EventSetter Event="DragOver" Handler="OnDataGridRowDragOver"/>
+            <EventSetter Event="DragEnter" Handler="OnDataGridRowDragEnter"/>
+            <EventSetter Event="DragLeave" Handler="OnDataGridRowDragLeave"/>
+            <EventSetter Event="Drop" Handler="OnDataGridRowDragDrop"/>
+            <Setter Property="AllowDrop" Value="True"/>
+        </Style>
+
+        <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <!-- the TransactionCell border properties makes the whole column hittable when in expanded 3 lines per row mode. -->
+                        <views:TransactionCell BorderThickness="0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Margin="0,-2,0,2">
+                            <ContentPresenter  SnapsToDevicePixels="True"/>
+                        </views:TransactionCell>
+                        <!--
+                            ### The following was removed for performance reasons.-->
+                        
+                        <!--<Border x:Name="CellBorder">
+                            <ContentPresenter  SnapsToDevicePixels="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsReconciling}" Value="True">                                
+                                <Setter Property="Background" Value="{DynamicResource WalkaboutReconciledRowBackgroundBrush}" TargetName="CellBorder"/>
+                            </DataTrigger>
+
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="CellBorder"/>
+                                <Setter Property="Foreground" Value="{DynamicResource WalkaboutSelectedTextBrush}"/>
+                            </Trigger>
+
+                            <DataTrigger Binding="{Binding Path=Unaccepted}" Value="True">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="TextBlock.FontWeight" Value="Bold"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Path=Unaccepted}" Value="False">
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Setter Property="TextBlock.FontWeight" Value="Normal"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
+                                <Setter Property="Foreground" Value="Red"/>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Path=IsReadOnly}" Value="True">
+                                <Setter Property="Foreground" Value="Gray"/>
+                            </DataTrigger>
+
+                        </ControlTemplate.Triggers>-->
+                        
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <c:TrueToVisible x:Key="TrueToVisible1" />
+
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+
+            <!-- Top Search area -->
+            <RowDefinition x:Name="SearchAreaRow" Height="30"/>
+
+            <!-- Splitter -->
+            <RowDefinition x:Name="QuerySplitterGridRowHeight" Height="0" />
+
+            <!-- Editing Area [Transactions and Rent panel] -->
+            <RowDefinition Height="*"/>
+
+        </Grid.RowDefinitions>
+
+        <!-- SEARCH AREA -->
+        <Grid Grid.Row="0" x:Name="SearchArea">
+
+            <Grid.RowDefinitions >
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- QUICK SEARCH BUTTON AREA -->
+            <Border Style="{DynamicResource TransactionHeaderBorder}" Height="30"  SizeChanged="Border_SizeChanged">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Margin="5,0,3,0" Orientation="Horizontal">
+
+                        <!-- COMBO BOX STATE FILTERS -->
+                        <ComboBox x:Name="TransactionViewMode"  SelectionChanged="ComboBox_SelectionChanged"  HorizontalAlignment="Left" VerticalAlignment="Center" Opacity=".70">
+                            <ComboBoxItem x:Name="FilterByNothing" >
+                                <TextBlock Text="All" />
+                            </ComboBoxItem>
+                            <ComboBoxItem x:Name="FilterByUnreconciled">
+                                <TextBlock  Text="Unreconciled" />
+                            </ComboBoxItem>
+                            <ComboBoxItem x:Name="FilterByUnaccepted">
+                                <TextBlock  Text="Unaccepted" />
+                            </ComboBoxItem>
+                            <ComboBoxItem x:Name="FilterByUncategorized">
+                                <TextBlock  Text="Uncategorized"/>
+                            </ComboBoxItem>
+                            <ComboBoxItem x:Name="FilterByBudgeted">
+                                <TextBlock Text="Budgeted"/>
+                            </ComboBoxItem>
+                            <ComboBoxItem x:Name="FilterByCustom">
+                                <TextBlock Text="Custom"/>
+                            </ComboBoxItem>
+                        </ComboBox>
+
+                        <!-- Toggle view for OneLine -->
+                        <ToggleButton x:Name="ToggleShowLines" Margin="10,0,0,0"  VerticalAlignment="Center" ToolTip="Toggle One Line View (Ctrl-T)" Checked="OnToggleLines_Checked" Unchecked="OnToggleLines_Unchecked" >
+                            <Image x:Name="ToggleShowLinesImage" Width="14" Height="12" Source="{DynamicResource ThreeLines}" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" 
+                                   Margin="1,2,1,2"/>                            
+                        </ToggleButton>
+
+                        <!-- Toggle view for Show splits -->
+                        <ToggleButton x:Name="ToggleShowSplits" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show All Splits (Alt-T)" Checked="OnToggleShowSplits_Checked" Unchecked="OnToggleShowSplits_Unchecked" >
+                            <Image x:Name="ToggleShowSplitsImage" Width="10" Height="8" Source="{DynamicResource SplitIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" 
+                                   Margin="3,4,3,4"/>
+                        </ToggleButton>
+                        
+                        <!-- Toggle view for expand all in portfolio view -->
+                        <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show Details" Checked="OnToggleShowSecurities_Checked" Unchecked="OnToggleShowSecurities_Unchecked" >
+                            <Image x:Name="ToggleExpandAllImage" Width="16" Height="16" Source="{DynamicResource ExpandAllIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" 
+                                   />
+                        </ToggleButton>
+                    </StackPanel>
+
+                    <!-- RUN -->
+                    <Button x:Name="RunQuery" Grid.Column="1" Command="p:AppCommands.CommandQueryRun" Margin="4,0,4,0" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                        <TextBlock x:Name="Run" Text="Search" VerticalAlignment="Center" Margin="2,0,2,0" TextAlignment="Center"/>
+                    </Button>
+
+
+                    <StackPanel x:Name="SearchWidgetArea"  Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,2,2,2" VerticalAlignment="Center" >
+
+
+                        <!-- QUICK FILTER -->
+                        <local:QuickFilterControl x:Name="QuickFilterUX"  Width="200" FilterValueChanged="OnQuickFilterValueChanged" HorizontalAlignment="Left"/>
+
+                        <!-- ADVANCE & CLOSE -->
+                        <Expander x:Name="AdvancedSearch" Margin="4,0,0,0" HorizontalAlignment="Right"
+                                   ToolTip="Show advanced query"
+                              IsExpanded="{Binding IsQueryPanelDisplayed, Mode=TwoWay}">
+                        </Expander>
+
+                    </StackPanel>
+                </Grid>
+
+            </Border>
+
+            <!-- FULL ADVANCED QUERY -->
+            <vc:QueryViewControl x:Name="QueryPanel" Grid.Row="1" Visibility="Collapsed" />
+
+        </Grid>
+
+
+        <!-- Split between Search and Transaction -->
+        <GridSplitter x:Name="QueryPanelSplitter" Grid.Row="1" HorizontalAlignment="Stretch"  ResizeBehavior="PreviousAndNext" Visibility="Collapsed" ShowsPreview="false"/>
+
+        <!-- TRANSACTIONS -->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TabControl x:Name="InvestmentAccountTabs" Visibility="Collapsed">
+                <TabItem Header="Activity" />
+                <TabItem Header="Portfolio" />
+            </TabControl>
+
+
+            <!-- BANK -->
+            <!-- Note the SecondarySortOrder has to match the Transaction SortByDate method -->
+            <local:MoneyDataGrid x:Name="TheGrid_BankTransactionDetails" Grid.Row="1" CellStyle="{StaticResource MyDataGridCellStyle}"
+              Style="{StaticResource MyDataGridStyle}" RowStyle="{StaticResource MyDataGridRowStyle}"
+              RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
+              RowDetailsVisibilityMode="Visible" SecondarySortOrder="Date,NegativeAmount,Id">
+
+                <DataGrid.Columns>
+
+                    <!-- Scanned Attachment -->
+                    <views:TransactionAttachmentColumn Header="A" SortMemberPath="HasAttachment" AutomationProperties.AutomationId="AttachmentColumn"/>
+
+                    <!-- NUMBER -->
+                    <views:TransactionNumberColumn Header="Num" SortMemberPath="Number"/>
+
+                    <!-- DATE -->
+                    <views:TransactionDateColumn Header="Date" SortMemberPath="Date" SortDirection="Ascending"/>
+
+                    <!-- Category Color -->
+                    <views:TransactionCategoryColorColumn Header="C" MaxWidth="20" SortMemberPath="CategoryFullName" IsReadOnly="True"/>
+
+                    <!-- PAYEE - CATEGORY - MEMO -->
+                    <views:TransactionPayeeCategoryMemoColumn Header="Payee/Category/Memo" SortMemberPath="PayeeOrTransferCaption"/>
+                    
+                    <!-- STATUS -->
+                    <views:TransactionStatusColumn  Header="S" IsReadOnly="True" SortMemberPath="StatusString"/>
+
+                    <!-- TAX -->
+                    <views:TransactionNumericColumn Header="Sales Tax" SortMemberPath="SalesTax"/>
+
+                    <!-- PAYEMENT-->
+                    <views:TransactionAmountColumn Header="Payment" SortMemberPath="Debit"/>
+
+                    <!-- DEPOSIT -->
+                    <views:TransactionAmountColumn Header="Deposit" SortMemberPath="Credit"/>
+
+                    <!-- BALANCE -->
+                    <views:TransactionNumericColumn Header="Balance" SortMemberPath="Balance" IsReadOnly="True"/>
+
+                    <!-- ANCHOR -->
+                    <views:TransactionAnchorColumn IsReadOnly="True"/>
+
+                </DataGrid.Columns>
+            </local:MoneyDataGrid>
+
+
+            <!-- BY CATEGORY -->
+            <!-- Note the SecondarySortOrder has to match the Transaction SortByDate method -->
+            <local:MoneyDataGrid x:Name="TheGrid_TransactionFromDetails" Grid.Row="1" CellStyle="{StaticResource MyDataGridCellStyle}"
+              Style="{StaticResource MyDataGridStyle}"  RowStyle="{StaticResource MyDataGridRowStyle}"
+              RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
+              CanUserAddRows="False" SecondarySortOrder="Date,NegativeAmount,Id">
+
+
+                <DataGrid.Columns>
+
+                    <!-- Scanned Attachment -->
+                    <views:TransactionAttachmentColumn Header="A" SortMemberPath="HasAttachment" AutomationProperties.AutomationId="AttachmentColumn"/>
+                    
+                    <!-- ACCOUNT -->
+                    <DataGridTextColumn Header="Account" Binding="{Binding Account.Name, Converter={StaticResource NullableValueConverter}}" IsReadOnly="True" />
+
+                    <!-- NUMBER -->
+                    <views:TransactionNumberColumn Header="Num" SortMemberPath="Number"/>
+
+                    <!-- DATE -->
+                    <views:TransactionDateColumn Header="Date" SortMemberPath="Date" SortDirection="Ascending"/>
+
+                    <!-- Category Color -->
+                    <views:TransactionCategoryColorColumn Header="C" MaxWidth="20" SortMemberPath="CategoryFullName" IsReadOnly="True"/>
+
+                    <!-- PAYEE - CATEGORY - MEMO -->
+                    <views:TransactionPayeeCategoryMemoColumn Header="Payee/Category/Memo" SortMemberPath="PayeeOrTransferCaption"/>
+                    
+                    <!-- STATUS -->                    
+                    <views:TransactionStatusColumn  Header="S" IsReadOnly="True" SortMemberPath="StatusString"/>
+
+                    <!-- PAYEMENT-->
+                    <views:TransactionAmountColumn Header="Payment" SortMemberPath="Debit"/>
+
+                    <!-- DEPOSIT -->
+                    <views:TransactionAmountColumn Header="Deposit" SortMemberPath="Credit"/>
+
+                    <!-- ANCHOR -->
+                    <views:TransactionAnchorColumn IsReadOnly="True"/>
+                    
+                </DataGrid.Columns>
+            </local:MoneyDataGrid>
+
+
+            <!-- ACCOUNT OF TYPE INVESTMENT -->
+            <!-- Note the SecondarySortOrder has to match the Transaction SortByDate method -->
+            <local:MoneyDataGrid x:Name="TheGrid_InvestmentActivity"  Grid.Row="1" Style="{StaticResource MyDataGridStyle}"  RowStyle="{StaticResource MyDataGridRowStyle}" 
+                  RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
+                  CellStyle="{StaticResource MyDataGridCellStyle}" SecondarySortOrder="Date,NegativeAmount,Id">
+
+
+                <DataGrid.Columns>
+
+                    <!-- Scanned Attachment -->
+                    <views:TransactionAttachmentColumn Header="A" SortMemberPath="HasAttachment" AutomationProperties.AutomationId="AttachmentColumn"/>
+
+                    <!-- NUMBER/REF -->
+                    <views:TransactionNumberColumn Header="Ref" SortMemberPath="Number" />
+
+                    <!-- DATE -->
+                    <views:TransactionDateColumn Header="Date" SortMemberPath="Date" SortDirection="Ascending"/>
+
+                    <!-- Category Color -->
+                    <views:TransactionCategoryColorColumn Header="C" MaxWidth="20" SortMemberPath="CategoryFullName" IsReadOnly="True"/>                    
+
+                    <!-- PAYEE - CATEGORY - MEMO -->
+                    <views:TransactionPayeeCategoryMemoColumn Header="Payee/Category/Memo" SortMemberPath="PayeeOrTransferCaption"/>
+                    
+                    <!-- ACTIVITY -->
+                    <DataGridTemplateColumn Header="Activity"  CellTemplate="{StaticResource myTemplateActivity}" CellEditingTemplate="{StaticResource myTemplateActivityEdit}"
+                                        SortMemberPath="InvestmentType"/>
+
+                    <!-- SECURITY -->
+                    <DataGridTemplateColumn Header="Security"  CellTemplate="{StaticResource myTemplateSymbol}" CellEditingTemplate="{StaticResource myTemplateSymbolEdit}"
+                                        SortMemberPath="InvestmentSecuritySymbol"/>
+
+
+                    <views:TransactionNumericColumn Header="Units" SortMemberPath="InvestmentUnits" />
+                    
+                    <!-- Price per unit -->
+                    <views:TransactionNumericColumn Header="Unit Price" SortMemberPath="InvestmentUnitPrice" />
+
+                    <!-- STATUS -->
+                    <views:TransactionStatusColumn  Header="S" IsReadOnly="True" SortMemberPath="StatusString"/>
+
+                    <!-- SALES TAX -->
+                    <views:TransactionNumericColumn Header="Sales Tax" SortMemberPath="SalesTax"/>
+
+                    <!-- PAYEMENT-->
+                    <views:TransactionAmountColumn Header="Payment" SortMemberPath="Debit"/>
+
+                    <!-- DEPOSIT -->
+                    <views:TransactionAmountColumn Header="Deposit" SortMemberPath="Credit"/>
+
+                    <!-- BALANCE -->
+                    <views:TransactionNumericColumn Header="Balance" SortMemberPath="Balance" IsReadOnly="True"/>
+                    
+                    <!-- ANCHOR -->
+                    <views:TransactionAnchorColumn IsReadOnly="True"/>
+                </DataGrid.Columns>
+            </local:MoneyDataGrid>
+
+
+            <!-- VIEW SECURITY ACCROSS ALL ACCOUNT -->
+            <!-- Note the SecondarySortOrder has to match the Transaction SortByDate method -->
+            <local:MoneyDataGrid x:Name="TheGrid_BySecurity" Grid.Row="1" Style="{StaticResource MyDataGridStyle}"  RowStyle="{StaticResource MyDataGridRowStyle}" 
+                  RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
+                  CellStyle="{StaticResource MyDataGridCellStyle}"
+                  CanUserAddRows="False" SecondarySortOrder="Date,NegativeAmount,Id">
+
+                <DataGrid.Columns>
+
+
+                    <!-- ACCOUNT -->
+                    <DataGridTextColumn Header="Account" Binding="{Binding Account.Name, Converter={StaticResource NullableValueConverter}}" IsReadOnly="True" />                    
+
+                    <!-- DATE -->
+                    <views:TransactionDateColumn Header="Date" SortMemberPath="Date" SortDirection="Ascending"/>
+
+                    <!-- PAYEE - CATEGORY - MEMO -->
+                    <views:TransactionPayeeCategoryMemoColumn Header="Payee/Category/Memo" SortMemberPath="PayeeOrTransferCaption"/>
+                    
+                    <!-- SECURITY -->
+                    <DataGridTemplateColumn Header="Security"  CellTemplate="{StaticResource myTemplateSymbol}" CellEditingTemplate="{StaticResource myTemplateSymbolEdit}"
+                                        SortMemberPath="InvestmentSecuritySymbol"/>
+
+                    <!-- ACTIVITY -->
+                    <DataGridTemplateColumn Header="Activity"  CellTemplate="{StaticResource myTemplateActivity}" CellEditingTemplate="{StaticResource myTemplateActivityEdit}"
+                                        SortMemberPath="InvestmentType"/>
+
+                    <!-- FIFO TRACKING -->
+                    <DataGridTemplateColumn Header="FIFO"  CellTemplate="{StaticResource myTemplateFifo}" 
+                                        SortMemberPath="RoutingPath" SortDirection="Ascending"/>
+
+
+                    <!-- UNITS -->
+                    <views:TransactionNumericColumn Header="Units" SortMemberPath="InvestmentUnits" />
+
+                    <!-- UNITS  AFTER SPLITS -->                    
+                    <views:TransactionNumericColumn Header="Units A.S." SortMemberPath="CurrentUnits" IsReadOnly="True"
+                                                    TextBlockStyle="{StaticResource CurrentUnitStyle}"/>
+
+                    <!-- RUNNING TOTAL UNITS -->
+                    <views:TransactionNumericColumn Header="Holding" SortMemberPath="RunningUnits" IsReadOnly="true" 
+                                                    TextBlockStyle="{StaticResource RunningUnitStyle}"/>                           
+
+                    <!-- Price per unit -->
+                    <views:TransactionNumericColumn Header="Unit Price" SortMemberPath="InvestmentUnitPrice" IsReadOnly="true" />
+
+                    <!-- Price per unit after split -->
+                    <views:TransactionNumericColumn Header="Price A.S." SortMemberPath="CurrentUnitPrice" IsReadOnly="True"
+                                                    TextBlockStyle="{StaticResource CurrentUnitStyle}"/>
+
+                    <!-- STATUS -->
+                    <views:TransactionStatusColumn  Header="S" IsReadOnly="True" SortMemberPath="StatusString"/>
+
+                    <!-- PAYEMENT-->
+                    <views:TransactionAmountColumn Header="Payment" SortMemberPath="Debit"/>
+
+                    <!-- DEPOSIT -->
+                    <views:TransactionAmountColumn Header="Deposit" SortMemberPath="Credit"/>
+
+                    <!-- RUNNING BALANCE -->
+                    <views:TransactionNumericColumn Header="Balance" SortMemberPath="RunningBalance" IsReadOnly="True"/>
+                    
+                    <!-- ANCHOR -->
+                    <views:TransactionAnchorColumn IsReadOnly="True"/>
+                </DataGrid.Columns>
+            </local:MoneyDataGrid>
+
+            <!-- VIEW CURRENTLY HELD SECURITIES FOR ACCOUNT AKA "PORTFOLIO TAB" -->
+            <views:FlowDocumentView x:Name="InvestmentPortfolioView" Grid.Row="1" ShowSearchStrip="False">
+            </views:FlowDocumentView>
+
+            <!-- MAGNIFY GLASS -->
+            <Viewbox  Name="FilterWatermark" Margin="120,120,20,20" Grid.Row="1"   VerticalAlignment="Bottom" HorizontalAlignment="Right" 
+                  IsHitTestVisible="False"  Visibility="Collapsed" Style="{DynamicResource SmoothFadeIn}">
+                <Grid Opacity="0.05">
+                    <Ellipse Fill="Transparent" HorizontalAlignment="Left" Height="14" Width="14" Stroke="Gray" VerticalAlignment="Top" StrokeThickness="2" />
+                    <Path Data="M12,12 L16,16" Stroke="Gray" StrokeThickness="3.5" StrokeEndLineCap="Round" StrokeStartLineCap="Triangle" />
+                </Grid>
+            </Viewbox >
+
+        </Grid>
+
+        <Canvas x:Name="GridOverlayCanvas" Grid.Row="2"></Canvas>
+    </Grid>
+
+</UserControl>
+
+    

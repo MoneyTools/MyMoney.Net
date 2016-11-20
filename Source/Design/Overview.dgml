@@ -1,0 +1,390 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph DataVirtualized="True" GraphDirection="TopToBottom" Layout="Sugiyama" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="(@1 @19 @20 Member=BudgetChart)" Category="CodeSchema_Field" Bounds="163.849593010944,-43.2204109035807,103.713333333333,25.96" CodeSchemaProperty_IsInternal="True" DelayedCrossGroupLinksState="Fetched" Icon="CodeSchema_Field" Label="BudgetChart" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="(@1 @19 @20 Member=TransactionGraph)" Category="CodeSchema_Field" Bounds="20.3078276776108,68.6998734164194,130.25,25.96" CodeSchemaProperty_IsInternal="True" Icon="CodeSchema_Field" Label="TransactionGraph" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="(@1 @2 Type=MappingEngine)" Category="CodeSchema_Class" Bounds="-609.155880344491,-108.623006171203,124.653333333333,26" CodeSchemaProperty_IsInternal="True" Icon="CodeSchema_Class" Label="MappingEngine" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="(@1 @2 Type=TableMapping)" Category="CodeSchema_Class" Bounds="-756.539213677824,-108.623006171203,117.383333333333,26" CodeSchemaProperty_IsInternal="True" Icon="CodeSchema_Class" Label="TableMapping" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="2d489aca-8b55-4661-94c2-99d0ac2046a01" Category="Comment" Bounds="-756.539213677823,-300.383006171202,241.48,105.76" Label="The mapping engine is home grown, it does not use Linq to Entities or Linq to SQL.  All data is always loaded into memory which makes things a WHOLE lot easier (and much to do anything from there like generating reports, etc)" />
+    <Node Id="3d3cd0a9-638c-4583-8ad5-fc98dba06fd11" Category="Comment" Bounds="-470.792547011157,-32.6228061712026,249.856666666667,57.8800000000001" Label="The PersistentObjects are all mapped to storage using these classes, it can persist to SQL, SQL CE, Xml and Binary XML files." />
+    <Node Id="6dc9280b-5edb-477e-adbc-c04d4519c2041" Category="Comment" Bounds="-465.767132568359,369.32732241387,246.6,57.8800000000001" Label="The MyMoney class is the main entry point to the data model.  It contains all the other collections." UseManualLocation="True" />
+    <Node Id="@10" Category="CodeSchema_Class" Bounds="108.656336913584,315.18787341642,88.9566666666665,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Category" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@11" Category="CodeSchema_Class" Bounds="-466.817547011157,-164.623106171203,130.036666666668,26" CodeSchemaProperty_IsInternal="True" Icon="CodeSchema_Class" Label="ColumnMapping" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@12" Category="CodeSchema_Class" Bounds="-484.264213677824,-260.503106171202,164.93,25.9999999999998" CodeSchemaProperty_IsInternal="True" Icon="CodeSchema_Class" Label="ColumnObjectMapping" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@13" Category="CodeSchema_Class" Bounds="-782.09199641975,241.56037341642,96.4533333333334,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Currencies" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@14" Category="CodeSchema_Class" Bounds="228.14300358025,315.18787341642,87.9833333333336,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Currency" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@15" Category="CodeSchema_Interface" Bounds="-608.452547011157,79.3773938287976,93.4166666666667,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Interface" Label="IDatabase" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@16" Category="CodeSchema_Class" Bounds="708.316336913583,315.18787341642,99.6366666666668,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Investment" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@17" Category="CodeSchema_Class" Bounds="838.794670246917,315.18787341642,112.68,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="LoanPayment" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@18" Category="CodeSchema_Class" Bounds="-19.7519964197497,241.56037341642,117.773333333333,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="LoanPayments" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@21" Category="CodeSchema_Class" Bounds="-19.6921723223893,-354.021579543581,672.835098666669,488.681652960001" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Expanded" Icon="CodeSchema_Class" Label="MainWindow" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@22" Category="CodeSchema_Class" Bounds="-110.578285310571,387.407926789874,94.2633333333333,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="MyMoney" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" UseManualLocation="True">
+      <Category Ref="EntryPoint" />
+    </Node>
+    <Node Id="@23" Category="CodeSchema_Class" Bounds="346.524670246917,315.18787341642,119.22,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="OnlineAccount" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@24" Category="CodeSchema_Class" Bounds="375.97800358025,241.560373416419,124.313333333333,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="OnlineAccounts" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@25" Category="CodeSchema_Class" Bounds="6.04133691358356,315.18787341642,72.1866666666665,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Payee" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@26" Category="CodeSchema_Class" Bounds="-127.505325927734,239.699704713675,77.2799999999997,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Payees" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@27" Category="CodeSchema_Class" Bounds="-283.8819925944,313.32722241387,144.033333333333,26" CodeSchemaProperty_IsAbstract="True" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="PersistentContainer" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@28" Category="CodeSchema_Class" Bounds="582.456336913584,387.14787341642,127.356666666667,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="PersistentObject" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@29" Category="CodeSchema_Class" Bounds="1690.82300358025,315.18787341642,108.623333333333,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="RentBuilding" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@3" Category="CodeSchema_Class" Bounds="1447.62467024692,315.18787341642,213.02,26" CodeSchemaProperty_IsPrivate="True" Icon="CodeSchema_Class" Label="Splits‎.SplitsObservableCollection" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@30" Category="CodeSchema_Class" Bounds="-531.723663086417,241.56037341642,113.716666666667,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="RentBuildings" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@31" Category="CodeSchema_Class" Bounds="496.476336913584,315.18787341642,87.3166666666666,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="RentUnit" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@32" Category="CodeSchema_Class" Bounds="-655.070329753083,241.56037341642,92.4099999999999,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="RentUnits" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@33" Category="CodeSchema_Class" Bounds="-387.568659261068,239.699704713675,91.4066666666668,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Securities" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@34" Category="CodeSchema_Class" Bounds="981.666336913584,315.18787341642,82.9366666666665,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Security" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@35" Category="CodeSchema_Class" Bounds="613.981336913583,315.18787341642,64.3066666666668,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Split" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@36" Category="CodeSchema_Class" Bounds="659.434670246917,241.560373416419,69.4000000000001,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Splits" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@37" Category="CodeSchema_Class" Bounds="-773.882547011157,-32.6228861712104,120.276666666667,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="SqlCeDatabase" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@38" Category="CodeSchema_Class" Bounds="-776.539213677824,23.3772938287976,139.59,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="SqlServerDatabase" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@39" Category="CodeSchema_Class" Bounds="1323.49300358025,315.18787341642,93.2833333333333,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="StockSplit" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@4" Category="CodeSchema_Class" Bounds="-109.11699641975,315.18787341642,84.5033333333333,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Account" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@40" Category="CodeSchema_Class" Bounds="530.946336913584,241.560373416419,98.3766666666666,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="StockSplits" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@41" Category="CodeSchema_Class" Bounds="1095.18800358025,315.18787341642,101.893333333333,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Transaction" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@42" Category="CodeSchema_Class" Bounds="-265.358666890462,239.699704713675,106.986666666667,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Transactions" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@43" Category="CodeSchema_Class" Bounds="-606.364213677824,23.3772938287976,89.24,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="XmlStore" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@44" Category="CodeSchema_Field" Bounds="20.3078276776107,-272.061379543581,123.408432,25.9601843200001" CodeSchemaProperty_IsPrivate="True" Icon="CodeSchema_Field" Label="accountsControl" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@45" Category="CodeSchema_Field" Bounds="20.3078276776107,-216.101095223581,130.985098666667,25.9601843200001" CodeSchemaProperty_IsPrivate="True" Icon="CodeSchema_Field" Label="categoriesControl" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@46" Category="CodeSchema_Field" Bounds="20.3078276776107,-43.2205109035808,113.541765333333,25.9601843200001" CodeSchemaProperty_IsInternal="True" Icon="CodeSchema_Field" Label="CategoryChart" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@47" Category="CodeSchema_Field" Bounds="358.144494344279,-84.1803109035804,84.8950986666669,25.9601843200001" CodeSchemaProperty_IsPrivate="True" Icon="CodeSchema_Field" Label="database" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@48" Category="CodeSchema_Field" Bounds="355.671161010946,-12.2601265835805,89.8417653333336,25.9601843200001" CodeSchemaProperty_IsInternal="True" Icon="CodeSchema_Field" Label="myMoney" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@49" Category="CodeSchema_Field" Bounds="20.3078276776107,-160.140810903581,113.04,25.96" CodeSchemaProperty_IsPrivate="True" Icon="CodeSchema_Field" Label="payeesControl" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@5" Category="CodeSchema_Class" Bounds="128.336336913583,241.56037341642,89.5966666666668,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Accounts" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@50" Category="CodeSchema_Field" Bounds="176.041161010945,12.7398734164193,129.630000000001,25.96" CodeSchemaProperty_IsInternal="True" Icon="CodeSchema_Field" Label="PieChartExpenses" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@51" Category="CodeSchema_Field" Bounds="20.3078276776106,12.7397734164194,125.733333333334,25.96" CodeSchemaProperty_IsInternal="True" Icon="CodeSchema_Field" Label="PieChartIncomes" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@52" Category="CodeSchema_Field" Bounds="163.347827677611,-160.140810903581,125.553333333333,25.96" CodeSchemaProperty_IsPrivate="True" DelayedCrossGroupLinksState="Fetched" Icon="CodeSchema_Field" Label="securitiesControl" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@53" Category="CodeSchema_Property" Bounds="492.001728950588,-28.2203109035805,124.652394787382,25.96" CodeSchemaProperty_IsPrivate="True" FunctionTypeFlags="Property Assignment" Icon="CodeSchema_Property" Label="TransactionView" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@6" Category="CodeSchema_Class" Bounds="1227.25800358025,315.18787341642,65.7533333333331,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Alias" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@7" Category="CodeSchema_Class" Bounds="-889.42699641975,241.56037341642,77.1233333333334,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Aliases" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@8" Category="CodeSchema_Class" Bounds="-622.69588034449,-32.6228061712026,121.903333333333,26.0000000000002" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="BinaryXmlStore" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="@9" Category="CodeSchema_Class" Bounds="248.421336913584,241.56037341642,97.4266666666667,26" CodeSchemaProperty_IsPublic="True" Icon="CodeSchema_Class" Label="Categories" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
+    <Node Id="Charting" Bounds="907.82659711445,-244.644730436404,65.3299999999999,25.96" />
+    <Node Id="Charts" Bounds="0.307827677610703,-84.1806109035809,325.363333333335,198.84058432" Group="Expanded" />
+    <Node Id="Config" Bounds="1053.30690656269,-356.564887850952,54.98,25.96" />
+    <Node Id="Controls" Bounds="813.306597114451,-244.644691301285,64.52,25.96" />
+    <Node Id="DataModel" Bounds="-909.426992594401,198.739604713675,2728.87336385091,248.467817700195" Group="Expanded" Label="DataModel" />
+    <Node Id="Dialogs" Bounds="902.680076321807,-300.604830436404,59.5233333333335,25.96" />
+    <Node Id="Help" Bounds="813.306546862172,-356.56486388491,50,25.96" />
+    <Node Id="Mapping" Bounds="-776.539213677823,-341.343106171202,477.205,278.7202" Group="Expanded" />
+    <Node Id="Networking" Bounds="813.306187161651,-188.684557333392,81.9233333333332,25.96" />
+    <Node Id="OFX" Bounds="893.306546862172,-356.564870551583,50,25.96" />
+    <Node Id="OtherStuff" Bounds="793.306187161651,-397.525030436404,334.980719401042,254.800573103012" Group="Expanded" Label="Lots of Other Stuff" UseManualLocation="True" />
+    <Node Id="Reports" Bounds="992.203409655141,-300.604787850952,60.87,25.96" Label="Reports" />
+    <Node Id="SelectorPanels" Bounds="0.307827677610703,-313.021479543581,308.593333333333,198.84076864" Group="Expanded" Label="Selector Panels" />
+    <Node Id="Storage" Bounds="-796.539213677823,-382.303206171202,595.603333333334,507.6807" Group="Expanded" Label="Storage" UseManualLocation="True" />
+    <Node Id="Taxes" Bounds="973.306672187693,-356.564887850952,50,25.96" />
+    <Node Id="TheMainTransactionView" Category="Comment" Bounds="475.512926344279,-84.1804109035805,157.63,25.96" Label="The main transaction view" />
+    <Node Id="UI" Bounds="-39.6921723223893,-394.981679543581,712.835098666669,549.641852960001" Group="Expanded" Label="UI" UseManualLocation="True" />
+    <Node Id="Updating" Bounds="1003.15659711445,-244.644687850952,69.3000000000001,25.96" />
+    <Node Id="Utilities" Bounds="813.306639432159,-300.604791301285,59.3733333333334,25.96" />
+  </Nodes>
+  <Links>
+    <Link Source="2d489aca-8b55-4661-94c2-99d0ac2046a01" Target="@11" Bounds="-515.059204101563,-198.030563354492,73.2048034667969,29.9952239990234" />
+    <Link Source="6dc9280b-5edb-477e-adbc-c04d4519c2041" Target="@22" Bounds="-219.167132568359,399.213268350296,99.589112101215,0.764028901930885" />
+    <Link Source="@10" Target="@28" Category="InheritsFrom" Bounds="189.606094360352,341.187896728516,383.924423217773,49.583251953125" />
+    <Link Source="@12" Target="@11" Category="InheritsFrom" Bounds="-401.799224853516,-234.503036499023,0,60.8800506591797" />
+    <Link Source="@13" Target="@27" Category="InheritsFrom" Bounds="-694.971984863281,267.560363769531,402.155853271484,48.9197082519531" />
+    <Link Source="@14" Target="@28" Category="InheritsFrom" Bounds="316.126355997721,336.65217434422,258.339110401305,49.7060947019668" />
+    <Link Source="@16" Target="@28" Category="InheritsFrom" Bounds="673.94000029245,341.187896728516,63.9612138553462,41.095086219729" />
+    <Link Source="@17" Target="@28" Category="InheritsFrom" Bounds="699.764214787443,341.187896728516,150.387160391908,43.4612802279324" />
+    <Link Source="@18" Target="@27" Category="InheritsFrom" Bounds="-157.745410616351,267.56037902832,151.413406121324,43.2926781019192" />
+    <Link Source="@21" Target="@47" Category="Contains" Bounds="145.553333333333,13.6853188101992,1851.66603239455,250.656483989018" />
+    <Link Source="@21" Target="@48" Category="Contains" Bounds="145.553333333333,13.0373677419985,1971.18349025491,251.405496640485" />
+    <Link Source="@21" Target="@53" Category="Contains" Bounds="145.553333333333,18.6580492668249,1222.58725164798,238.945074580031" />
+    <Link Source="@21" Target="Charts" Category="Contains" />
+    <Link Source="@21" Target="SelectorPanels" Category="Contains" />
+    <Link Source="@21" Target="TheMainTransactionView" Category="Contains" />
+    <Link Source="@22" Target="@28" Category="InheritsFrom" Bounds="-16.3149428304031,400.174522614138,589.771314691265,0.216133509511508" />
+    <Link Source="@23" Target="@28" Category="InheritsFrom" Bounds="449.492105523272,341.187896728516,144.664335523496,43.375179268416" />
+    <Link Source="@24" Target="@27" Category="InheritsFrom" Bounds="-157.02555847168,267.560363769531,554.589370727539,43.3739318847656" />
+    <Link Source="@25" Target="@28" Category="InheritsFrom" Bounds="75.8921432495117,341.113464355469,497.61206817627,51.5153503417969" />
+    <Link Source="@26" Target="@27" Category="InheritsFrom" Bounds="-182.425692555765,265.699704713675,71.8429428991613,43.0050207312369" />
+    <Link Source="@27" Target="@28" Bounds="-162.414825439453,339.327209472656,735.896514892578,55.3593139648438" Label="contains" LabelBounds="-89.3480521778727,350.538465831723,44.3266666666668,15.96" />
+    <Link Source="@29" Target="@28" Category="InheritsFrom" Bounds="718.798645019531,340.932067871094,973.812194824219,55.1040649414063" />
+    <Link Source="@30" Target="@27" Category="InheritsFrom" Bounds="-427.224929117426,267.56037902832,159.036678982748,43.3975707045899" />
+    <Link Source="@31" Target="@28" Category="InheritsFrom" Bounds="559.284184370257,341.187896728516,60.2547217568147,40.9049694915781" />
+    <Link Source="@32" Target="@27" Category="InheritsFrom" Bounds="-562.660325927734,262.912991115548,271.633483973444,49.103974061948" />
+    <Link Source="@33" Target="@27" Category="InheritsFrom" Bounds="-318.911951254945,265.699704713675,76.2620396193286,43.1921897840392" />
+    <Link Source="@34" Target="@28" Category="InheritsFrom" Bounds="717.882756738847,336.103177663059,263.783614517663,50.3497789036622" />
+    <Link Source="@35" Target="@28" Category="InheritsFrom" Bounds="646.134654581051,341.187896728516,3.1348792845165E-05,36.9599914550814" />
+    <Link Source="@36" Target="@27" Category="InheritsFrom" Bounds="-157.018035888672,267.560363769531,825.978363037109,43.4013671875" />
+    <Link Source="@36" Target="@3" Category="Contains" Bounds="728.834655761719,257.245422363281,739.839294433594,57.2477416992188" />
+    <Link Source="@37" Target="@38" Category="InheritsFrom" Bounds="-712.119201660156,-6.62268829345703,2.6336669921875,21.0695285797119" />
+    <Link Source="@38" Target="@15" Category="Implements" Bounds="-673.08349609375,49.3773880004883,69.282958984375,26.7575912475586" />
+    <Link Source="@39" Target="@28" Category="InheritsFrom" Bounds="718.778869628906,340.802856445313,606.243835449219,52.9948425292969" />
+    <Link Source="@4" Target="@28" Category="InheritsFrom" Bounds="-27.3869304656982,341.179321289063,600.877592086792,52.6083984375" />
+    <Link Source="@40" Target="@27" Category="InheritsFrom" Bounds="-157.021575927734,267.560363769531,698.082489013672,43.3883666992188" />
+    <Link Source="@41" Target="@28" Category="InheritsFrom" Bounds="718.743225097656,336.801605224609,376.444763183594,54.249755859375" />
+    <Link Source="@42" Target="@27" Category="InheritsFrom" Bounds="-211.865332210049,265.699704713675,4.00264192990107E-06,38.6275177001954" />
+    <Link Source="@43" Target="@15" Category="Implements" Bounds="-561.744201660156,49.3773880004883,0,21.0000305175781" />
+    <Link Source="@44" Target="@5" Bounds="1152.30142524038,145.707917324795,29.0509455658807,473.909347955409" />
+    <Link Source="@45" Target="@9" Bounds="1016.80811254262,201.707928768887,276.372441286457,419.37755798319" />
+    <Link Source="@47" Target="@48" Bounds="400.592041015625,-58.2203598022461,0,36.9600830078125" Label="loads" LabelBounds="372.388710344279,-43.2210265835807,28.2033333333334,15.96" />
+    <Link Source="@47" Target="Storage" Bounds="-188.440035764348,-106.499986939906,546.584867147708,33.3180806293571" />
+    <Link Source="@48" Target="@22" Bounds="-41.5343799259553,13.7000571410792,427.056518670235,367.834326815909" />
+    <Link Source="@49" Target="@26" Bounds="924.166372988404,145.747646331787,75.056482146085,473.96352676291" />
+    <Link Source="@5" Target="@27" Category="InheritsFrom" Bounds="-133.502135142938,262.911119546993,261.838460623081,48.8086247808067" />
+    <Link Source="@52" Target="@33" Bounds="684.59864098298,257.668018798828,309.891495650586,364.07887455452" />
+    <Link Source="@53" Target="@42" Bounds="839.398744850874,389.588535766602,604.119838902379,235.740152483613" />
+    <Link Source="@6" Target="@28" Category="InheritsFrom" Bounds="718.766662597656,340.787200927734,509.993469238281,51.9606018066406" />
+    <Link Source="@7" Target="@27" Category="InheritsFrom" Bounds="-814.840881347656,267.524475097656,522.001373291016,50.9060668945313" />
+    <Link Source="@8" Target="@43" Category="InheritsFrom" Bounds="-561.744201660156,-6.62268829345703,0,21.0000286102295" />
+    <Link Source="@9" Target="@27" Category="InheritsFrom" Bounds="-130.930191040039,263.883026123047,379.351516723633,51.4282836914063" />
+    <Link Source="Charts" Target="(@1 @19 @20 Member=BudgetChart)" Category="Contains" />
+    <Link Source="Charts" Target="(@1 @19 @20 Member=TransactionGraph)" Category="Contains" />
+    <Link Source="Charts" Target="@46" Category="Contains" />
+    <Link Source="Charts" Target="@50" Category="Contains" />
+    <Link Source="Charts" Target="@51" Category="Contains" />
+    <Link Source="DataModel" Target="6dc9280b-5edb-477e-adbc-c04d4519c2041" Category="Contains" />
+    <Link Source="DataModel" Target="@10" Category="Contains" />
+    <Link Source="DataModel" Target="@13" Category="Contains" />
+    <Link Source="DataModel" Target="@14" Category="Contains" />
+    <Link Source="DataModel" Target="@16" Category="Contains" />
+    <Link Source="DataModel" Target="@17" Category="Contains" />
+    <Link Source="DataModel" Target="@18" Category="Contains" />
+    <Link Source="DataModel" Target="@22" Category="Contains" />
+    <Link Source="DataModel" Target="@23" Category="Contains" />
+    <Link Source="DataModel" Target="@24" Category="Contains" />
+    <Link Source="DataModel" Target="@25" Category="Contains" />
+    <Link Source="DataModel" Target="@26" Category="Contains" />
+    <Link Source="DataModel" Target="@27" Category="Contains" />
+    <Link Source="DataModel" Target="@28" Category="Contains" />
+    <Link Source="DataModel" Target="@29" Category="Contains" />
+    <Link Source="DataModel" Target="@3" Category="Contains" />
+    <Link Source="DataModel" Target="@30" Category="Contains" />
+    <Link Source="DataModel" Target="@31" Category="Contains" />
+    <Link Source="DataModel" Target="@32" Category="Contains" />
+    <Link Source="DataModel" Target="@33" Category="Contains" />
+    <Link Source="DataModel" Target="@34" Category="Contains" />
+    <Link Source="DataModel" Target="@35" Category="Contains" />
+    <Link Source="DataModel" Target="@36" Category="Contains" />
+    <Link Source="DataModel" Target="@39" Category="Contains" />
+    <Link Source="DataModel" Target="@4" Category="Contains" />
+    <Link Source="DataModel" Target="@40" Category="Contains" />
+    <Link Source="DataModel" Target="@41" Category="Contains" />
+    <Link Source="DataModel" Target="@42" Category="Contains" />
+    <Link Source="DataModel" Target="@5" Category="Contains" />
+    <Link Source="DataModel" Target="@6" Category="Contains" />
+    <Link Source="DataModel" Target="@7" Category="Contains" />
+    <Link Source="DataModel" Target="@9" Category="Contains" />
+    <Link Source="Mapping" Target="(@1 @2 Type=MappingEngine)" Category="Contains" />
+    <Link Source="Mapping" Target="(@1 @2 Type=TableMapping)" Category="Contains" />
+    <Link Source="Mapping" Target="2d489aca-8b55-4661-94c2-99d0ac2046a01" Category="Contains" />
+    <Link Source="Mapping" Target="@11" Category="Contains" />
+    <Link Source="Mapping" Target="@12" Category="Contains" />
+    <Link Source="OtherStuff" Target="Charting" Category="Contains" />
+    <Link Source="OtherStuff" Target="Config" Category="Contains" />
+    <Link Source="OtherStuff" Target="Controls" Category="Contains" />
+    <Link Source="OtherStuff" Target="Dialogs" Category="Contains" />
+    <Link Source="OtherStuff" Target="Help" Category="Contains" />
+    <Link Source="OtherStuff" Target="Networking" Category="Contains" />
+    <Link Source="OtherStuff" Target="OFX" Category="Contains" />
+    <Link Source="OtherStuff" Target="Reports" Category="Contains" />
+    <Link Source="OtherStuff" Target="Taxes" Category="Contains" />
+    <Link Source="OtherStuff" Target="Updating" Category="Contains" />
+    <Link Source="OtherStuff" Target="Utilities" Category="Contains" />
+    <Link Source="SelectorPanels" Target="@44" Category="Contains" />
+    <Link Source="SelectorPanels" Target="@45" Category="Contains" />
+    <Link Source="SelectorPanels" Target="@49" Category="Contains" />
+    <Link Source="SelectorPanels" Target="@52" Category="Contains" />
+    <Link Source="Storage" Target="3d3cd0a9-638c-4583-8ad5-fc98dba06fd11" Category="Contains" />
+    <Link Source="Storage" Target="@15" Category="Contains" />
+    <Link Source="Storage" Target="@37" Category="Contains" />
+    <Link Source="Storage" Target="@38" Category="Contains" />
+    <Link Source="Storage" Target="@43" Category="Contains" />
+    <Link Source="Storage" Target="@8" Category="Contains" />
+    <Link Source="Storage" Target="Mapping" Category="Contains" />
+    <Link Source="TheMainTransactionView" Target="@53" Bounds="554.327941894531,-58.2205467224121,0,21.0000495910645" />
+    <Link Source="UI" Target="@21" Category="Contains" />
+    <Link Source="UI" Target="DataModel" Bounds="1239.17914800555,546.509008371894,4.79922164231539E-08,21.0001000000003" />
+  </Links>
+  <Categories>
+    <Category Id="CodeSchema_Class" Label="Class" BasedOn="CodeSchema_Type" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_Member" Icon="CodeSchema_Class" NavigationActionLabel="Classes" />
+    <Category Id="CodeSchema_Field" Label="Field" BasedOn="CodeSchema_Member" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Field" NavigationActionLabel="Fields" />
+    <Category Id="CodeSchema_Interface" Label="Interface" BasedOn="CodeSchema_Type" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_Member" Icon="CodeSchema_Interface" NavigationActionLabel="Interfaces" />
+    <Category Id="CodeSchema_Member" Label="Member" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Field" NavigationActionLabel="Members" />
+    <Category Id="CodeSchema_Property" Label="Property" BasedOn="CodeSchema_Member" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Property" NavigationActionLabel="Properties" />
+    <Category Id="CodeSchema_Type" Label="Type" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_Member" Icon="CodeSchema_Class" NavigationActionLabel="Types" />
+    <Category Id="Comment" Label="Comment" Description="Represents a user defined comment on the diagram" CanBeDataDriven="True" IsProviderRoot="False" NavigationActionLabel="Comments" />
+    <Category Id="Contains" Label="Contains" Description="Whether the source of the link contains the target object" CanBeDataDriven="False" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Contained By" IsContainment="True" OutgoingActionLabel="Contains" />
+    <Category Id="EntryPoint" Label="EntryPoint" IsTag="True" />
+    <Category Id="Implements" Label="Implements" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Implemented by" OutgoingActionLabel="Implements" />
+    <Category Id="InheritsFrom" Label="Inherits From" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Inherited By" OutgoingActionLabel="Inherits From" />
+  </Categories>
+  <Properties>
+    <Property Id="Bounds" DataType="System.Windows.Rect" />
+    <Property Id="CanBeDataDriven" Label="CanBeDataDriven" Description="CanBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CanLinkedNodesBeDataDriven" Label="CanLinkedNodesBeDataDriven" Description="CanLinkedNodesBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsAbstract" Label="Is Abstract" Description="Flag to indicate member is 'Abstract' does not provide a full implementation" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsInternal" Label="Is Internal" Description="Flag to indicate the method is 'Internal'" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsPrivate" Label="Is Private" Description="Flag to indicate the scope is Private" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsPublic" Label="Is Public" Description="Flag to indicate the scope is Public" DataType="System.Boolean" />
+    <Property Id="DataVirtualized" Label="Data Virtualized" Description="If true, the graph can contain nodes and links that represent data for virtualized nodes/links (i.e. not actually created in the graph)." DataType="System.Boolean" />
+    <Property Id="DefaultAction" Label="DefaultAction" Description="DefaultAction" DataType="System.String" />
+    <Property Id="DelayedChildNodesState" Label="Delayed Child Nodes State" Description="Unspecified if the delayed child nodes state is not specified. NotFetched if the group contains child nodes that are not fetched into the graph yet. Fetched if the group has all its delayed child nodes already fetched." DataType="Microsoft.VisualStudio.GraphModel.DelayedDataState" />
+    <Property Id="DelayedCrossGroupLinksState" Label="Delayed Cross-Group Links State" Description="Unspecified if the delayed cross-group links state is not specified. NotFetched if delayed cross-group links on this node are not fetched into the graph yet. Fetched if all delayed cross-group links have already fetched." DataType="Microsoft.VisualStudio.GraphModel.DelayedDataState" />
+    <Property Id="Expression" DataType="System.String" />
+    <Property Id="FunctionTypeFlags" Label="FunctionTypeFlags" Description="FunctionTypeFlags" DataType="System.String" />
+    <Property Id="GraphDirection" DataType="Microsoft.VisualStudio.Diagrams.Layout.LayoutOrientation" />
+    <Property Id="Group" Label="Group" Description="Display the node as a group" DataType="Microsoft.VisualStudio.GraphModel.GraphGroupStyle" />
+    <Property Id="GroupLabel" DataType="System.String" />
+    <Property Id="Icon" Label="Icon" Description="Icon" DataType="System.String" />
+    <Property Id="IncomingActionLabel" Label="IncomingActionLabel" Description="IncomingActionLabel" DataType="System.String" />
+    <Property Id="IsContainment" DataType="System.Boolean" />
+    <Property Id="IsEnabled" DataType="System.Boolean" />
+    <Property Id="IsProviderRoot" Label="IsProviderRoot" Description="IsProviderRoot" DataType="System.Boolean" />
+    <Property Id="IsTag" DataType="System.Boolean" />
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+    <Property Id="LabelBounds" DataType="System.Windows.Rect" />
+    <Property Id="Language" Label="Language" Description="Language" DataType="System.String" />
+    <Property Id="Layout" DataType="System.String" />
+    <Property Id="NavigationActionLabel" Label="NavigationActionLabel" Description="NavigationActionLabel" DataType="System.String" />
+    <Property Id="OutgoingActionLabel" Label="OutgoingActionLabel" Description="OutgoingActionLabel" DataType="System.String" />
+    <Property Id="TargetType" DataType="System.Type" />
+    <Property Id="UseManualLocation" DataType="System.Boolean" />
+    <Property Id="Value" DataType="System.String" />
+    <Property Id="ValueLabel" DataType="System.String" />
+  </Properties>
+  <QualifiedNames>
+    <Name Id="Assembly" Label="Assembly" ValueType="Uri" />
+    <Name Id="Member" Label="Member" ValueType="System.Object" />
+    <Name Id="Name" Label="Name" ValueType="System.String" />
+    <Name Id="Namespace" Label="Namespace" ValueType="System.String" />
+    <Name Id="ParentType" Label="Parent Type" ValueType="System.Object" />
+    <Name Id="Type" Label="Type" ValueType="System.Object" />
+  </QualifiedNames>
+  <IdentifierAliases>
+    <Alias n="1" Uri="Assembly=$(6b0b9232-88cf-41b0-84ab-186d2f467184.OutputPathUri)" />
+    <Alias n="2" Id="Namespace=Walkabout.Data" />
+    <Alias n="3" Id="(@1 @2 Type=(Name=SplitsObservableCollection ParentType=Splits))" />
+    <Alias n="4" Id="(@1 @2 Type=Account)" />
+    <Alias n="5" Id="(@1 @2 Type=Accounts)" />
+    <Alias n="6" Id="(@1 @2 Type=Alias)" />
+    <Alias n="7" Id="(@1 @2 Type=Aliases)" />
+    <Alias n="8" Id="(@1 @2 Type=BinaryXmlStore)" />
+    <Alias n="9" Id="(@1 @2 Type=Categories)" />
+    <Alias n="10" Id="(@1 @2 Type=Category)" />
+    <Alias n="11" Id="(@1 @2 Type=ColumnMapping)" />
+    <Alias n="12" Id="(@1 @2 Type=ColumnObjectMapping)" />
+    <Alias n="13" Id="(@1 @2 Type=Currencies)" />
+    <Alias n="14" Id="(@1 @2 Type=Currency)" />
+    <Alias n="15" Id="(@1 @2 Type=IDatabase)" />
+    <Alias n="16" Id="(@1 @2 Type=Investment)" />
+    <Alias n="17" Id="(@1 @2 Type=LoanPayment)" />
+    <Alias n="18" Id="(@1 @2 Type=LoanPayments)" />
+    <Alias n="19" Id="Namespace=Walkabout" />
+    <Alias n="20" Id="Type=MainWindow" />
+    <Alias n="21" Id="(@1 @19 @20)" />
+    <Alias n="22" Id="(@1 @2 Type=MyMoney)" />
+    <Alias n="23" Id="(@1 @2 Type=OnlineAccount)" />
+    <Alias n="24" Id="(@1 @2 Type=OnlineAccounts)" />
+    <Alias n="25" Id="(@1 @2 Type=Payee)" />
+    <Alias n="26" Id="(@1 @2 Type=Payees)" />
+    <Alias n="27" Id="(@1 @2 Type=PersistentContainer)" />
+    <Alias n="28" Id="(@1 @2 Type=PersistentObject)" />
+    <Alias n="29" Id="(@1 @2 Type=RentBuilding)" />
+    <Alias n="30" Id="(@1 @2 Type=RentBuildings)" />
+    <Alias n="31" Id="(@1 @2 Type=RentUnit)" />
+    <Alias n="32" Id="(@1 @2 Type=RentUnits)" />
+    <Alias n="33" Id="(@1 @2 Type=Securities)" />
+    <Alias n="34" Id="(@1 @2 Type=Security)" />
+    <Alias n="35" Id="(@1 @2 Type=Split)" />
+    <Alias n="36" Id="(@1 @2 Type=Splits)" />
+    <Alias n="37" Id="(@1 @2 Type=SqlCeDatabase)" />
+    <Alias n="38" Id="(@1 @2 Type=SqlServerDatabase)" />
+    <Alias n="39" Id="(@1 @2 Type=StockSplit)" />
+    <Alias n="40" Id="(@1 @2 Type=StockSplits)" />
+    <Alias n="41" Id="(@1 @2 Type=Transaction)" />
+    <Alias n="42" Id="(@1 @2 Type=Transactions)" />
+    <Alias n="43" Id="(@1 @2 Type=XmlStore)" />
+    <Alias n="44" Id="(@1 @19 @20 Member=accountsControl)" />
+    <Alias n="45" Id="(@1 @19 @20 Member=categoriesControl)" />
+    <Alias n="46" Id="(@1 @19 @20 Member=CategoryChart)" />
+    <Alias n="47" Id="(@1 @19 @20 Member=database)" />
+    <Alias n="48" Id="(@1 @19 @20 Member=myMoney)" />
+    <Alias n="49" Id="(@1 @19 @20 Member=payeesControl)" />
+    <Alias n="50" Id="(@1 @19 @20 Member=PieChartExpenses)" />
+    <Alias n="51" Id="(@1 @19 @20 Member=PieChartIncomes)" />
+    <Alias n="52" Id="(@1 @19 @20 Member=securitiesControl)" />
+    <Alias n="53" Id="(@1 @19 @20 Member=TransactionView)" />
+  </IdentifierAliases>
+  <Styles>
+    <Style TargetType="Node" GroupLabel="EntryPoint" ValueLabel="True">
+      <Condition Expression="HasCategory('EntryPoint')" />
+      <Setter Property="Background" Value="#FF4CC734" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Comment" ValueLabel="Has comment">
+      <Condition Expression="HasCategory('Comment')" />
+      <Setter Property="Background" Value="#FFFFFACD" />
+      <Setter Property="Stroke" Value="#FFE5C365" />
+      <Setter Property="StrokeThickness" Value="1" />
+      <Setter Property="NodeRadius" Value="2" />
+      <Setter Property="MaxWidth" Value="250" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Assembly" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Assembly')" />
+      <Setter Property="Background" Value="#FF094167" />
+      <Setter Property="Icon" Value="CodeSchema_Assembly" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Namespace" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Namespace')" />
+      <Setter Property="Background" Value="#FF0E619A" />
+      <Setter Property="Icon" Value="CodeSchema_Namespace" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Interface" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Interface')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Interface" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Struct" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Struct')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Struct" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Enumeration" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Enum')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Enum" />
+      <Setter Property="LayoutSettings" Value="List" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Delegate" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Delegate')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Delegate" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Class" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Class')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Class" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Property" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Property')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Property" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Method" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Method')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Method" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Event" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Event')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Event" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Field" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Field')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Field" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Externals" ValueLabel="Has category">
+      <Condition Expression="HasCategory('Externals')" />
+      <Setter Property="Background" Value="#FF424242" />
+    </Style>
+  </Styles>
+  <Paths>
+    <Path Id="6b0b9232-88cf-41b0-84ab-186d2f467184.OutputPath" Value="d:\TFSPreview\MyMoney\Source\MyMoney\bin\debug\MyMoney.exe" />
+    <Path Id="6b0b9232-88cf-41b0-84ab-186d2f467184.OutputPathUri" Value="file:///d:/TFSPreview/MyMoney/Source/MyMoney/bin/debug/MyMoney.exe" />
+  </Paths>
+</DirectedGraph>

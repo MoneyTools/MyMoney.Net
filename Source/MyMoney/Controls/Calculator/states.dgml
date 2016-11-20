@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="0" Label="0" />
+    <Node Id="1" Label="1" />
+    <Node Id="2" Label="2" />
+    <Node Id="3" Label="3" />
+    <Node Id="End" Label="End" />
+  </Nodes>
+  <Links>
+    <Link Source="0" Target="0" Label="(" />
+    <Link Source="0" Target="1" Label="Number" />
+    <Link Source="0" Target="2" Label="+/-" />
+    <Link Source="0" Target="3" Label="$" />
+    <Link Source="1" Target="0" Label="+ - * / )" />
+    <Link Source="1" Target="1" Label="%" />
+    <Link Source="1" Target="End" Label="EOF" />
+    <Link Source="2" Target="1" Label="Number" />
+    <Link Source="2" Target="3" Label="$" />
+    <Link Source="3" Target="1" Label="Number" />
+  </Links>
+  <Properties>
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+  </Properties>
+</DirectedGraph>

@@ -1,0 +1,99 @@
+﻿<UserControl x:Class="Walkabout.Views.Controls.RentsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Walkabout.Controls"
+             xmlns:localData="clr-namespace:Walkabout.Data" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+
+        <HierarchicalDataTemplate DataType="{x:Type localData:RentBuilding}" ItemsSource="{Binding Path=Years.Values}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" >
+                <TextBlock  Text="{Binding Path=Name}"  
+                            FontWeight="ExtraBold"
+                            HorizontalAlignment="Stretch" 
+                            Padding="0,0,8,0"/>
+
+                <TextBlock Text="{Binding Path=TotalProfit, StringFormat={}{0:C}}"  />
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
+        <HierarchicalDataTemplate DataType="{x:Type localData:RentalBuildingSingleYear}" ItemsSource="{Binding Path=Departments}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" >
+                <TextBlock Text="{Binding Path=Year}"  FontWeight="ExtraBold"  Padding="0,0,8,0"/>
+
+                <Border BorderThickness="0.3,0,0.3,0.3" CornerRadius="4" Padding="4,1,4,0" VerticalAlignment="Center" Width="Auto">
+                    <Border.BorderBrush>
+                        <LinearGradientBrush  StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="White" Offset="0" />
+                            <GradientStop Color="White" Offset="0.5" />
+                            <GradientStop Color="Gray" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="{Binding Path=TotalProfit, StringFormat={}{0:C}}"  FontSize="12" Width="80"  TextAlignment="Right"  FontWeight="DemiBold"  VerticalAlignment="Center"/>
+                        <TextBlock Text=" = "/>
+                        <TextBlock Text ="{Binding Path=TotalIncome, StringFormat={}{0:N}}" FontSize="10" Width="50" VerticalAlignment="Center" TextAlignment="Right" />
+                        <TextBlock Text="{Binding Path=TotalExpense, StringFormat={}{0:N}}" FontSize="10" Width="50" VerticalAlignment="Center" TextAlignment="Right" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
+
+        <HierarchicalDataTemplate DataType="{x:Type localData:RentalBuildingSingleYearSingleDepartment}"  >
+            <Grid IsSharedSizeScope="True" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Department"/>
+                    <ColumnDefinition Width="*" SharedSizeGroup="Amount"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock  Grid.Column="0" 
+                            Text="{Binding Path=Name}"  
+                            FontWeight="ExtraBold"
+                            HorizontalAlignment="Stretch" 
+                            Width="90"
+                            Padding="0,0,8,0"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock 
+                           Text="{Binding Path=Total, StringFormat={}{0:C}}"  
+                           Width="100"
+                           TextAlignment="Right" />
+                </StackPanel>
+            </Grid>
+        </HierarchicalDataTemplate>
+
+
+
+
+
+
+
+    </UserControl.Resources>
+
+
+
+    <Grid >
+
+        <TreeView Name="treeView1" ItemsSource="{Binding}" 
+                  Style="{DynamicResource WalkaboutToolBoxTreeView}"
+                  VirtualizingStackPanel.IsVirtualizing="True" 
+                  VirtualizingStackPanel.VirtualizationMode="Recycling"/>
+
+        <Grid.ContextMenu>
+            <ContextMenu Name="cm">
+                <MenuItem Header="_Properties..." Click="OnMenuItem_Edit" />
+                <Separator/>
+                <MenuItem Header="_New Rental" Click="OnMenuNewRental_Click" />
+                <MenuItem Header="_Refresh" Click="OnMenuRefresh_Click" />
+                <Separator/>
+                <MenuItem Header="_Delete" Click="OnMenuItem_Delete" />
+            </ContextMenu>
+        </Grid.ContextMenu>
+
+    </Grid>
+</UserControl>

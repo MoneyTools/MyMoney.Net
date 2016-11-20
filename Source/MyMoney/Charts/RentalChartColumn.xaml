@@ -1,0 +1,110 @@
+﻿<UserControl
+   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+   mc:Ignorable="d"
+   x:Class="Walkabout.Charts.RentalChartColumn"
+   x:Name="UserControl"
+   d:DesignWidth="200"
+   >
+
+
+    <Grid x:Name="LayoutRoot" >
+        <Grid.RowDefinitions>
+            <RowDefinition Name="BarArea"  Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.20*"/>
+            <ColumnDefinition Width="0.60*"/>
+            <ColumnDefinition Width="0.20*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border x:Name="BarForIncome" Background="{DynamicResource BrushForRentalIncome}" Height="200" VerticalAlignment="Bottom"   Grid.ColumnSpan="2" >
+            <!-- INCOME COLUMN -->
+        </Border>
+
+        <Border x:Name="BarForExpense" SnapsToDevicePixels="True" Background="{DynamicResource BrushForRentalExpense}" Height="100" VerticalAlignment="Bottom"  Grid.Column="1" Grid.ColumnSpan="2" BorderThickness="0" BorderBrush="{DynamicResource BrushForRentalExpense}" CornerRadius="0" >
+            <!-- EXPENSE COLUMN -->
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0*" />
+                    <ColumnDefinition Width="100*" />
+                    <ColumnDefinition Width="0*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Name="Row0" Height="*" />
+                    <RowDefinition Name="Row1" Height="*" />
+                    <RowDefinition Name="Row2" Height="*" />
+                    <RowDefinition Name="Row3" Height="*" />
+                    <RowDefinition Name="Row4" Height="*" />
+                </Grid.RowDefinitions>
+
+          
+                
+                <Border Name="Expense0" Grid.Row="0" Grid.Column="1" Style="{DynamicResource RentalChartExpenseDistribution}"  Grid.ColumnSpan="1" >
+                    <Border.ToolTip>
+                        <TextBlock Text="{Binding}"/>
+                    </Border.ToolTip>
+                    <Viewbox>
+                        <TextBlock Text="{Binding}" Style="{DynamicResource SubExpensesText}"/>
+                    </Viewbox>
+                </Border>
+                <Border Name="Expense1" Grid.Row="1"  Grid.Column="1" Style="{DynamicResource RentalChartExpenseDistribution}"  Grid.ColumnSpan="1" >
+                    <Border.ToolTip>
+                        <TextBlock Text="{Binding}"/>
+                    </Border.ToolTip>
+                    <Viewbox>
+                        <TextBlock Text="{Binding}" Style="{DynamicResource SubExpensesText}"/>
+                    </Viewbox>
+                </Border>
+
+                <Border Name="Expense2" Grid.Row="2" Grid.Column="1" Style="{DynamicResource RentalChartExpenseDistribution}"  Grid.ColumnSpan="1" >
+                    <Border.ToolTip>
+                        <TextBlock Text="{Binding}"/>
+                    </Border.ToolTip>
+                    <Viewbox>
+                        <TextBlock Text="{Binding}" Style="{DynamicResource SubExpensesText}"/>
+                    </Viewbox>
+                </Border>
+
+                <Border Name="Expense3" Grid.Row="3" Grid.Column="1" Style="{DynamicResource RentalChartExpenseDistribution}"   Grid.ColumnSpan="1" >
+                    <Border.ToolTip>
+                        <TextBlock Text="{Binding}"/>
+                    </Border.ToolTip>
+                    <Viewbox>
+                        <TextBlock Text="{Binding}" Style="{DynamicResource SubExpensesText}"/>
+                    </Viewbox>
+                </Border>
+
+                <Border Name="Expense4" Grid.Row="4" Grid.Column="1" Style="{DynamicResource RentalChartExpenseDistribution}" Background="DarkRed"  Grid.ColumnSpan="1" BorderBrush="Black" BorderThickness="0.5">
+                    <Border.ToolTip>
+                        <TextBlock Text="{Binding}"/>
+                    </Border.ToolTip>
+                    <Viewbox>
+                        <TextBlock Text="{Binding}" Style="{DynamicResource SubExpensesText}"/>
+                    </Viewbox>
+                </Border>
+
+
+
+            </Grid>
+        </Border>
+
+        <TextBlock Name="Label" Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Label, FallbackValue=1999}"  VerticalAlignment="Bottom" TextAlignment="Center" Foreground="Black" />
+
+        <Ellipse  Grid.RowSpan="2" Grid.ColumnSpan="3" Margin="2,0,0,0" Fill="{DynamicResource BrushForRentalIncome}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="10" Height="10" >
+            <Ellipse.ToolTip>
+                <TextBlock Text="{Binding Income, StringFormat={}{0:C}}"/>
+            </Ellipse.ToolTip>
+        </Ellipse>
+
+        <Ellipse  Grid.RowSpan="2" Grid.ColumnSpan="3" Margin="0,0,2,0" Fill="{DynamicResource BrushForRentalExpense}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="10" Height="10" >
+            <Ellipse.ToolTip>
+                <TextBlock Text="{Binding Expense, StringFormat={}{0:C}}"/>
+            </Ellipse.ToolTip>
+        </Ellipse>
+    </Grid>
+</UserControl>

@@ -1,0 +1,31 @@
+﻿<Window x:Class="EdgeDetectionTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Edge Detection Test" Height="600" Width="800">
+    <Window.CommandBindings>
+        <CommandBinding Command="Paste" Executed="OnPaste"/>
+        <CommandBinding Command="Copy" Executed="OnCopy"/>
+        <CommandBinding Command="Open" Executed="OnOpen"/>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Command="Paste" Key="V" Modifiers="Control"/>
+        <KeyBinding Command="Copy" Key="C" Modifiers="Control"/>
+        <KeyBinding Command="Open" Key="O" Modifiers="Control"/>
+    </Window.InputBindings>
+    <DockPanel>
+        <ToolBar DockPanel.Dock="Top">
+            <Button Command="Open">Open</Button>
+            <Button x:Name="DetectButton" Click="OnDetect">Detect</Button>
+            <TextBox x:Name="Min" Text="20" Width="50" Margin="2,0,2,0" Background="LemonChiffon" ToolTip="Minimum Threshold"/>
+            <TextBox x:Name="Max" Text="80" Width="50" Margin="2,0,2,0" Background="LemonChiffon" ToolTip="Maximum Threshold"/>
+            <TextBox x:Name="EdgeLength" Text="10" Width="50" Margin="2,0,2,0" Background="LemonChiffon" ToolTip="Minimum Edge Length"/>
+            <Button x:Name="HideButton" Click="OnToggleVisibility">Hide</Button>
+        </ToolBar>
+        <ScrollViewer x:Name="Scroller" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Grid x:Name="ContentGrid">
+                <Image x:Name="ImageContent" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Canvas x:Name="DebugView"/>
+            </Grid>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

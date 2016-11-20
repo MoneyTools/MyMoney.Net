@@ -1,0 +1,68 @@
+﻿<Window x:Class="Walkabout.Dialogs.AddLoginDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Dialog" Height="194" Width="441"  >
+
+    <Window.Resources>
+
+        <!-- Define a Drawing as a resource that can be used as content for a Tiled DrawingBrush to get the Blend backdop effect. -->
+        <DrawingGroup x:Key="CheckerBoxBackground">
+            <GeometryDrawing Brush="#F5F5FF">
+                <!-- Brush="#2B3C59">-->
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="0,0,1,1"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+            <GeometryDrawing Brush="#FFFFF5">
+                <!-- Dark-->
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="1,0,1,1" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+            <GeometryDrawing Brush="#F5F5FF">
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="1,1,1,1" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+            <GeometryDrawing Brush="#FFFFF5">
+                <!-- Dark-->
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="0,1,1,1" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+
+    </Window.Resources>
+
+    <Window.Background>
+        <DrawingBrush TileMode="Tile" Viewport="0,0,16,16" ViewportUnits="Absolute"
+                                        Drawing="{DynamicResource CheckerBoxBackground}"/>
+
+    </Window.Background>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>            
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Please provide user name and password for new database login:" Margin="3" Grid.ColumnSpan="4"/>
+        <TextBlock Text="User name:" Grid.Row="1" TextAlignment="Right" Margin="3"/>
+        <TextBox x:Name="UserNameBox" Margin="2" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Background="LemonChiffon"/>
+        <TextBlock Text="Password:" Grid.Row="2" TextAlignment="Right" Margin="3"/>
+        <PasswordBox x:Name="PasswordBox" Margin="2" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="5" Background="LemonChiffon"/>
+        <TextBlock Text="Confirm Password:" Grid.Row="3" TextAlignment="Right" Margin="3"/>
+        <PasswordBox x:Name="ConfirmPasswordBox" Margin="2" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5" Background="LemonChiffon"/>
+        
+        <Button x:Name="buttonOk" Click="buttonOk_Click" Grid.Row="5" Grid.Column="2" MinWidth="74" MinHeight="23" Margin="3" IsDefault="True">_OK</Button>
+        <Button x:Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="5" Grid.Column="3" MinWidth="74" MinHeight="23" Margin="3" IsCancel="True">_Cancel</Button>
+    </Grid>
+</Window>

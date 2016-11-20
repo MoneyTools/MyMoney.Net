@@ -1,0 +1,475 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<changes>
+  <change version="1.0.0.342" date="9/7/2016">
+    Fix some bugs.
+  </change>
+  <change version="1.0.0.339" date="7/7/2016">
+    Fix some bugs in entering new categories.
+    Update model based testing new new version.
+    Some theme tweaks from JP.
+  </change>
+  <change version="1.0.0.335" date="4/5/2016">
+    Fix w2 report so it includes unsplit transactions.
+    Add some other tax forms to that report.
+  </change>
+  <change  version="1.0.0.334" date="10/11/2015">
+    Fix stackoverflow when cancelling a new category dialog.
+    Fix crash in unhandled exception handling on stack overflow.
+  </change>
+  <change  version="1.0.0.333" date="6/14/2015">
+    Report contents of HTML response from financial institution.
+  </change>
+  <change  version="1.0.0.332" date="6/14/2015">
+    Fix skipping of accounts during OFX import to avoid redundant dialogs.
+    Switch to vteam.visualstudio.com since tfspreview.com is not longer supported.
+  </change>
+  <change  version="1.0.0.329" date="4/8/2015">
+    Add "F3" key to search for payee on the web.
+    Increase size of pie charts.
+  </change>
+  <change  version="1.0.0.327" date="4/5/2015">
+    Add Ctrl+Enter key to auto-populate category and accept transaction and move to next.
+  </change>
+  <change  version="1.0.0.326" date="4/4/2015">
+    Improve security of money file password by moving it to Windows Credential Store.
+    Fix Securities view selector - it was never working!
+  </change>
+  <change  version="1.0.0.325" date="4/4/2015">
+    Fix bug parsing short OFX dates.
+  </change>
+  <change  version="1.0.0.324" date="3/31/2015">
+    Fix payee renaming using regular expressions for transactions that have no payee.
+    It was incorrectly matching empty payee strings in some cases.
+  </change>
+  <change  version="1.0.0.322" date="3/5/2015">
+    Fix bug in how app settings are persisted that sometimes causes settings to be lost.
+  </change>
+  <change  version="1.0.0.321" date="12/25/2014">
+    Fix OFX import when OFX file starts with the old version 1.0 format header.
+    Fix crash in online account setup dialog.
+  </change>
+  <change  version="1.0.0.319" date="12/25/2014">
+    Fix OFX account setup so it checks the SUPTXDL before showing an account in the account list.  If the account doesn't support transaction download then there is no point listing it.
+  </change>
+  <change  version="1.0.0.318" date="10/29/2014">
+    Fix bug in previous statement selection in Balance Account panel - sometimes it wasn't showing the right transactions, or the right balance.
+  </change>
+  <change  version="1.0.0.317" date="10/22/2014">
+    Add "skip account" option on account select dialog during QFX file import.
+  </change>
+  <change  version="1.0.0.316" date="4/8/2014">
+    Fix bugs in Alias View to do with editing in that view.
+  </change>
+  <change  version="1.0.0.315" date="4/8/2014">
+    Fix bug in search, false positives and missing numeric columns due to recent search optimization code.
+  </change>
+  <change  version="1.0.0.311" date="3/14/2014">
+    Fix bug in OFX download that happens if you have different types of accounts (banking/checking) from the same financial institution.
+  </change>
+  <change  version="1.0.0.308" date="3/3/2014">
+    Fix bug in searching for transaction amounts greater than $1000.00
+    Also optimize quick filter * search speed so it is about 3 times faster or more depending on the complexity of the search.
+  </change>
+  <change  version="1.0.0.307" date="2/17/2014">
+    Make change history show up only once after launching new version.
+    Fix Stock Symbol ComboBox so it allows a new Stock symbol to be entered.
+    Fix updating of new stock symbol Name when the GetStockQuote returns.
+  </change>
+  <change  version="1.0.0.306" date="2/9/2014">
+    Switch to Yahoo for stock quote service
+  </change>
+  <change  version="1.0.0.305" date="2/2/2014">
+    Fix parsing of .qfx that starts with lots of empty lines.
+  </change>
+  <change  version="1.0.0.304" date="1/26/2014">
+    Remove categories from tax deferred accounts in the tax report.
+  </change>
+  <change  version="1.0.0.303" date="1/25/2014">
+    Implement drag/drop to rename securites.
+    Add more info to error message about account type mismatches.
+  </change>
+  <change  version="1.0.0.302" date="1/23/2014">
+    Fix bug in removing unused payees if the only thing referencing the payee is a split.
+    Fix cost basis so it includes any brokerage fees.
+  </change>
+  <change  version="1.0.0.299" date="1/22/2014">
+    Fix tax report so it does not include capital gains from tax deferred accounts like 401k.
+  </change>
+  <change  version="1.0.0.298" date="1/14/2014">
+    Fix bug in date serialization. If you enter the minimum value of 1/1/0001 it doesn't round trip to SQL and back causing
+    database load to crash the app.
+    Add a new report called "Estimated W2".
+  </change>
+  <change  version="1.0.0.297" date="11/25/2013">
+    Fix copy/paste of transactions containing investment details.
+    Fix Portfolio view during statement balancing so that it shows the stock balances as of the statement date so that information can also be reconciled.
+  </change>
+  <change  version="1.0.0.296" date="11/24/2013">
+    Fix error handling in numeric columns.
+  </change>
+  <change  version="1.0.0.295" date="11/20/2013">
+    Fix TAB and ENTER key in split grid view
+  </change>
+  <change  version="1.0.0.294" date="11/17/2013">
+    Fix bug in calculation of initial account balance "off by" field.
+    Fix import of 'A' field in QIF files.
+    Fill payee automatically from security name.
+  </change>
+  <change  version="1.0.0.293" date="8/31/2013">
+    Fix report columns so .00 is shown, and fix auto-calculation of column widths to avoid wrapping.
+    Fix View By Payee so that it handles Payee information in Splits.
+    Fix view transactions by account from a fake split transaction (a grayed out one).
+  </change>
+  <change  version="1.0.0.291" date="8/27/2013">
+    Add flexibility to Online Account dialog so you can customize which accounts are connected to which online account.
+    Add garbage collection of unused online accounts.
+  </change>
+  <change  version="1.0.0.290" date="8/2/2013">
+    Fix multithreading bug in OFX downloads that sometimes results in "error" from one of the downloading accounts.
+    Remove old style gradients from behind the charting controls.
+  </change>
+  <change  version="1.0.0.289" date="7/28/2013">
+    Add some new command keyboard bindings, CTRL+F to move focus to the quick search box
+    and F8 to do View Transactions by Account.
+  </change>
+  <change  version="1.0.0.288" date="7/25/2013">
+    Allow numeric columns to have more decimal places when you are editing them, up to 5 decimal places.
+    But round the numbers to 2 decimal places in the reports.
+  </change>
+  <change  version="1.0.0.286" date="7/22/2013">
+    Companies don't typically let you to keep fractional stocks after a split, since you can't really rip a stock certificat in half, so instead they
+    usually issue "cash in lieu" transactions for the remainder after rounding down to the nearest whole stock.  This fix takes care of these rounding errors.
+    Also added a link in the portfolio reports back to view by security so you can quickly see the entire history of a given security.
+    Also added handling of "pending" sales which are matched when the actual purchase comes in, which is needed for "short" sales.
+    Then report any open pending sales in a new section titled "Pending Sales".
+  </change>
+  <change  version="1.0.0.284" date="7/21/2013">
+    Fix tracking of cost basis across transfers.
+  </change>
+  <change  version="1.0.0.283" date="7/11/2013">
+    Fix back button from cash flow reports
+    Fix transaction filtering on QuickSearch results
+    Improve stock quote error reporting
+    Improve scanning attachments UX (don't repeatedly show the scanner selection dialog).
+  </change>
+  <change version="1.0.0.282" date="7/10/2013">
+    Remove Investments section from cash flow report.
+  </change>
+  <change version="1.0.0.281" date="7/10/2013">
+    Separate Investment info on Cash Flow report and add drill into details.
+  </change>
+  <change version="1.0.0.279" date="7/8/2013">
+    Revamp the CashFlow Report.
+  </change>
+  <change version="1.0.0.280" date="7/8/2013">
+    Take opening account balance into account on portfolio reports.
+  </change>
+  <change version="1.0.0.277" date="7/5/2013">
+    Fix alignment of market value column in portfolio report.
+  </change>
+  <change version="1.0.0.276" date="7/1/2013">
+    Add "dividend" as an investment transaction activity type.
+    Fix random hang in charting control.
+    Fix clipboard SetText so it doesn't fail when clipboard already contains something incompatible.
+  </change>
+  <change version="1.0.0.275" date="6/29/2013">
+    Fix System.ArgumentOutOfRangeException: currency should be one of RestfulWebServices.CurrencyCode.
+    So unknown currency codes entered earlier are now ignored.
+    Add menu to remove duplicate Payees.
+  </change>
+  <change version="1.0.0.273" date="6/29/2013">
+    Add exchange rate service that looks up the current exchange rates.
+    Automatically compute the amount on the other side of a transfer using the current exchange rates,
+    (only done once at the time the transfer is inserted, after that time the user is in control of the amounts).
+    Fix bug in auto-categorization, sometimes it was trying to copy a split transfer category which is illegal.
+  </change>
+  <change version="1.0.0.272" date="6/23/2013">
+    Fix NullReferenceException when you type ctrl+end.
+  </change>
+  <change version="1.0.0.271" date="6/23/2013">
+    Fix arrow key handling in the Transaction view.
+  </change>
+  <change version="1.0.0.270" date="6/22/2013">
+    Fix bug in sorted display of Transactions so it matches the sort user used when computing the Balance column.
+  </change>
+  <change version="1.0.0.267" date="6/22/2013">
+    Minor bug fixes, crash in calculator on weird input.
+    Focus issues after deleting a row.
+    Crash in portfolio report when market value is zero.
+    Stop auto-updating new statement balance after user has entered a value.
+  </change>
+  <change version="1.0.0.266" date="6/18/2013">
+    Add ability to reset last download date on Account properties dialog.
+  </change>
+  <change version="1.0.0.264" date="6/17/2013">
+    Fix bug with duplicate transaction ids.
+    Add margin at the bottom of the grid views.
+    Add show all splits toggle button on securities view.
+    Add support for REINVEST transactions.
+  </change>
+  <change version="1.0.0.255" date="6/11/2013">
+    Fix bug in gain/loss totals.
+    Add percentage gain column.
+    Fix persistence of portfolio view.
+    Add price and average unit cost to the totals.
+  </change>
+  <change version="1.0.0.253" date="6/9/2013">
+    Add ability to show/hide all security transaction details in the portfolio view.
+  </change>
+  <change version="1.0.0.252" date="6/4/2013">
+    Fix handling of CUSIP field on downloaded investment transactions.
+  </change>
+  <change version="1.0.0.251" date="5/29/2013">
+    Normalize the sign on the units for a INVSELL transaction.
+    Add a bit more error handling around fetching of stock quotes.
+    Add Trends to view by category and by payee, since long term cumulative trends are still interesting in that case.
+  </change>
+  <change version="1.0.0.249" date="5/25/2013">
+    Add copy/paste support for individual splits.
+  </change>
+  <change version="1.0.0.248" date="5/25/2013">
+    Fix income/expense pie charts.
+    Add history chart on Payee selection as well as Category selection.
+    Move income/expense totals inside the tab content
+    Fix download of BUYOPT transactions.
+    Fix DGML test so it runs more reliably.
+  </change>
+  <change version="1.0.0.244" date="5/18/2013">
+    Fix OFX downoad for MONEYMRKT accounts.
+  </change>
+  <change version="1.0.0.243" date="5/18/2013">
+    Fix error handling in OFX downloads.
+    Fix the sign on the Amount of a BUY transaction.
+  </change>
+  <change version="1.0.0.241" date="4/16/2013">
+    Fix a crash in ComboBoxForCategory_PreviewGotKeyboardFocus
+  </change>
+  <change version="1.0.0.240" date="2/5/2013">
+    Fix a date entry bug which happens when you provide just month/day.
+  </change>
+  <change version="1.0.0.238" date="1/16/2013">
+    Add search box to Aliases View.
+    Fix performance bug in Alias view and bugs to do with delete.
+    Also fix a crash on shutdown if the only view you ever use is the Alias view.
+  </change>
+  <change version="1.0.0.237" date="1/16/2013">
+    Fix bug in saving of OFX download logs triggered by duplicate account names.
+    Fix sort by date so deposits come before withdrawals.
+  </change>
+  <change version="1.0.0.235" date="1/2/2013">
+    Add export budget report to CSV
+    Add new buttons to budget chart to get report and cumulative views.
+    Fix bug in category history chart - it sometimes got stuck showing the wrong data.
+  </change>
+  <change version="1.0.0.234" date="1/2/2013">
+    Improve duplicate transaction checking by adding date range check (default 60 days).
+    Add File/Open Containing Folder command to find make it easier to find your Money database.
+    Fix transaction auto-selection during navigation bugs once and for all.
+  </change>
+  <change version="1.0.0.233" date="11/12/2012">
+    Fix NullReferenceException in handling of OFX signup response from banks that provie no FI element in their response.
+  </change>
+  <change version="1.0.0.229" date="11/7/2012">
+    Add a merge transaction widget.
+    Move OFX logs to the directory containing your database, in a subdirectory called "Logs"
+    Fix a download merge bug to do with daylight savings.
+  </change>
+  <change version="1.0.0.225" date="10/29/2012">
+    Add support for MFA Challenge, AuthToken and Change Password Request during statement download
+    Do more manual testing of all this by adding config window to OfxTestServer.
+    Add ability to show logo in password dialog.
+  </change>
+  <change version="1.0.0.224" date="10/25/2012">
+    Add support for MFA Challenge Request.
+    Add support for AuthToken Request.
+    Add support for USERKEY, ACCESSKEY, and Change Password Request.
+    Fix various OFX related bugs.
+  </change>
+  <change version="1.0.0.216" date="10/24/2012">
+    Add richer search expression capability using 'and', 'or' and parentheses.
+    Fix "save as XML".
+  </change>
+  <change version="1.0.0.213" date="10/11/2012">
+    Add support for SQL Lite databases.
+    Add "Save As" option for saving out into SQL CE or SQL Lite formats.
+  </change>
+  <change version="1.0.0.211" date="10/11/2012">
+    Add support for rich text attachments.
+  </change>
+  <change version="1.0.0.209" date="10/2/2012">
+    Fix various bugs found by Model Based Testing.
+    Fix recategorization of fake splits shown in view by category.
+    Clean up downloads and output window when switching databases.
+    Don't select first Payee by default, make default an empty string.
+    Add breakpoint support to the DgmlTestMonitor.
+  </change>
+  <change version="1.0.0.206" date="9/29/2012">
+    Improve category drag/drop UX.
+    Fix Windows 8 WPF theme bugs and various other random bugs.
+    Add property edge detection for attachment dialog using Canny algorithm.
+    Add an output window instead of random message boxes.
+    Add DGML Test Monitor VSIX package so you can watch the TestModel execution.
+  </change>
+  <change version="1.0.0.205" date="9/29/2012">
+    Only download stock prices for stocks that are still in posession.
+    Give SecuritiesView the option to show all past securities, or only currently owned securities.
+    Persist all ViewState in user settings, not just the one for TransactionView.
+  </change>
+  <change version="1.0.0.204" date="8/28/2012">
+    Strip out deleted transactions when showing downloaded transactions
+    Fix budgeting bugs, is budgeted checkbox was misbehaving.
+    Stop copy/paste of IsBudgeted flag.
+  </change>
+  <change version="1.0.0.203" date="8/26/2012">
+    Add auto-scroll support in TransactionGrid when using drag/drop to merge similar transactions.
+  </change>
+  <change version="1.0.0.198" date="8/21/2012">
+    Fix Merge so it prefers reconciled transaction and preserves splits and attachments.
+    Allow drag/drop merge from a row that is being edited.
+  </change>
+  <change version="1.0.0.197" date="8/21/2012">
+    Add tooltips on status column.
+    Change caption for transfers to closed accounts, so it is harder to create one by accident.
+    Fix binding bugs that caused captions to revert when entering new transactions
+    Fix Enter key row commit inside DatePicker.
+  </change>
+  <change version="1.0.0.196" date="8/12/2012">
+    Fix rendering bug, and add more ETW events.
+  </change>
+  <change version="1.0.0.187" date="7/15/2012">
+    Improve scrolling performance by about 33%
+  </change>
+  <change version="1.0.0.186" date="7/14/2012">
+    Done button was disabled when re-balancing a previous statement date.
+    Stop CTRL+SPACE from entering edit mode on next row when reconciling.
+    Fix "Balance" amount for investment accounts when remaining stock quantiy is &gt; 0 and &lt; 1.
+  </change>
+  <change version="1.0.0.185" date="7/12/2012">
+    Fix Expander style - show query form expander was broken.
+    Make accordion expander style explicitly named so it doesn't take over all Expanders.
+  </change>
+  <change version="1.0.0.183" date="7/11/2012">
+    Fix attachment manager so it doesn't impact performance of TransactionView.
+    Fix some updating issues to do with multithreading and OnPropertyChanged.
+    Fix handling of attachments for account names that are not legal file names.
+    Fix ChangeTracking so it ignores all changes to "transient" properties like "Balance".
+    Fix test bug to do with tracking of known categories.
+  </change>
+  <change version="1.0.0.182" date="6/18/2012">
+    Fix calculation of "unassigned amount" in split details view.
+  </change>
+  <change version="1.0.0.181" date="5/28/2012">
+    Changed the context menu on the Split details view so it has two new commands specific to the splits window that allow you to explicitly pick which transaction you want to copy splits from (which is handy when the auto-picking isn’t what you want).
+    Fixed some bugs in handling drag/drop merging of transactions involving splits.  The bug was if you merged an unaccepted transaction that was also a Transfer with another transaction it would sometimes leave the Transfer dangling.
+    Added code to also auto-correct some dangling transfers and I fixed drag/drop so it doesn’t create this problem.
+    Improved F12 so you can do it on a Split transaction where one of the Splits is a transfer, it will find that transfer and jump you to the other side.
+    Fixed F12 so it doesn’t put the target side into edit mode.
+    Fix another unhandled exception involving data grid sort order.
+  </change>
+  <change version="1.0.0.178" date="4/28/2012">
+    Fix threading bug on observable collections during download/import operations.
+    Improve auto-merging by keeping track of original downloaded payee names.
+    Fix bug in adding rows when a sort order is in effect.
+  </change>
+  <change version="1.0.0.175" date="4/28/2012">
+    AttachmentIconCOnverter blew up on null ref exception
+    SortByColumn blew up on null ref exception
+    Scan dialog blew up with out of bounds crop rectangle
+    Splits grid sometimes doesn't let you enter a row.
+  </change>
+  <change version="1.0.0.174" date="4/19/2012">
+    Fix preservation of user chosen sorting option after a delete.
+    Always sort by date in addition to whatever other sort the user has chosen.
+    Fix TAB key in stock splits details grid
+    Make Aliases grid work consistently with others.
+    Factor out common data grid helper code into new base class MoneyDataGrid.
+  </change>
+  <change version="1.0.0.173" date="4/13/2012">
+    Improve merging of downloaded transactions by remembering the date of merged transactions.
+    Fix crash in some dialogs "..." browse buttons due to faulty changes made previously.
+  </change>
+  <change version="1.0.0.172" date="4/4/2012">
+    QueryForm needs to hide Report View
+    Tax Report should include Sales Tax
+    Delete in Query Form should not also delete selected Transaction
+  </change>
+  <change version="1.0.0.164" date="3/31/2012">
+    Add pie chart to net worth report
+    Add "Tax Deferred" flag to Account Properties and use that to group stuff on net worth and portfolio reports.
+  </change>
+  <change version="1.0.0.163" date="3/30/2012">
+    Add OFX test server and scenario test for adding online accounts.
+    Fix bugs in OFX account download dialog
+    Fix crash in transaction grid keyboard handling found by automated tests.
+  </change>
+  <change version="1.0.0.162" date="3/29/2012">
+    Run all OFX downloads in parallel.
+  </change>
+  <change version="1.0.0.161" date="3/27/2012">
+    Fix OFX download from Fidelity Investments.
+    Fix merging of downloaded transactions (some were being merged that should not have been).
+    Fix balance on closed accounts (so it is always zero).
+  </change>
+  <change version="1.0.0.160" date="3/27/2012">
+    Improve auto-cropping of scanned images and add tests.
+  </change>
+  <change version="1.0.0.159" date="3/26/2012">
+    Fix crash in security view when adding a new security.
+    Improve auto image cropping in scanning attachments - especially when white on white.
+    Add search and close box to FlowDocumentView so you can close reports and update page.
+    Add attachment column to multi-account view.
+    Fix update page so it doesn't appear on every launch of the app, only if .exe timestamps have changed.
+    Cleanup the categories panel context menu.
+  </change>
+  <change version="1.0.0.155" date="3/24/2012">
+    Add more scenario test coverage.
+    Fix a crashing bug and a bug in horizontal scrollbars for reports.
+  </change>
+  <change version="1.0.0.153" date="3/24/2012">
+    Switch help files to .htm format, extracting images from the .mht format since
+    some web browsers work better with good old fashioned html.
+  </change>
+  <change version="1.0.0.152" date="3/22/2012">
+    Bug fixes - crash in Budget graph when viewing accounts.
+    Re-implement budgeting report so to shows up inline in a FlowDocumentView.
+    Make Budget graph show all up summary of budget when not filtering by category.
+  </change>
+  <change version="1.0.0.149" date="3/16/2012">
+    Add context sensitive help and system for publishing the help from OneNote (F1 key).
+  </change>
+  <change version="1.0.0.148" date="3/16/2012">
+    Fixes to budgeting feature.
+  </change>
+  <change version="1.0.0.147" date="3/16/2012">
+    Add support for detecting new updates and showing change history.
+  </change>
+  <change version="1.0.0.144" date="3/16/2012">
+    Fix some budgeting bugs
+    Fix dialogs so they show up on the same monitor (multi-mon support)
+    Fix bug after "importing" a .qfx the "download" button didn't work.
+    Fix error reporting on importing .qfx files.
+    Fix setting of online account info on a newly added account.
+    Fix crash when you paste a cut split transaction in the account that the split contains a transfer to.
+    Fix resizing of online account dialog.
+    Fix crash when switching to Categories tab if you have no category selected.
+    Fix refreshing of current transaction view after ofx download
+    Add support for SQL local DB.
+  </change>
+  <change version="1.0.0.143" date="3/7/2012">
+    Fix stack overflow cancelling new category dialog after pressing ENTER to commit edit
+    Fix crash on Access Denied trying to create SQL express database when not running as administrator.
+    Fix crash on Null reference if you cancel after failing to creating a database in non-existent directory
+  </change>
+  <change version="1.0.0.141" date="3/3/2012">
+    Fix bug in Security panel filtering (wasn't handling upper case properly)
+    Fix bugs in capital gains reporting, and add more options on how securities are consolidated
+    Add some error reporting when matching buy transactions are not found to cover a sell.
+    Add ability to specify more than 2 decimal points on Units field of Investments.
+  </change>
+  <change version="1.0.0.139" date="2/27/2012">
+    Change "Pending" button to a "Save" button so you can just click it to save.
+  </change>
+  <change version="1.0.0.137" date="2/24/2012">
+    Add support for XML and Binary XML format (with support for encryption)
+  </change>
+</changes>

@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Walkabout.Controls.QuickFilterControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:c="clr-namespace:Walkabout.Controls"
+             xmlns:help="clr-namespace:Walkabout.Help"
+             help:HelpService.HelpKeyword="Quick Search"
+             mc:Ignorable="d" 
+             d:DesignHeight="24" d:DesignWidth="128">
+
+
+
+    <Grid x:Name="LayoutRoot">
+        <Border x:Name="QuickFilter" Style="{DynamicResource QuickFilderBorder}" BorderBrush="{DynamicResource NormalBorderBrush}"   Background="{DynamicResource QuickFilterBackgroundBrush}" SnapsToDevicePixels="True">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+
+
+                <!-- MAGNIFY GLASS -->
+                <Viewbox Height="16" Width="16">
+                    <Grid Opacity="0.5" VerticalAlignment="Center">
+                        <Ellipse Fill="Transparent"  Stroke="{DynamicResource GlyphBrush}" HorizontalAlignment="Left" Height="14" Width="14"  VerticalAlignment="Top" StrokeThickness="3" />
+                        <Path Data="M10,10 L16,16" Stroke="{DynamicResource GlyphBrush}" StrokeThickness="3.5" StrokeEndLineCap="Round" StrokeStartLineCap="Triangle" />
+                    </Grid>
+                </Viewbox>
+
+                <!-- TEXT BOX GLASS -->
+                <TextBox Name="InputFilterText" Grid.Column="1" BorderThickness="0" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Stretch"  
+                         KeyUp="OnTextBox_KeyUp" TextChanged="OnInputFilterText_TextChanged" Margin="2,0,2,0" FontSize="12" Padding="2" />
+
+                <!-- CANCEL BUTTON -->
+                <c:CloseBox x:Name="ClearFilter" Click="OnClearFilterButton_Closed"  Visibility="Collapsed" VerticalAlignment="Center" Grid.Column="2"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
