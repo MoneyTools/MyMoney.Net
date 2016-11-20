@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MarkdownConverter.cs" />
     <Compile Include="MimePackage.cs" />
     <Compile Include="PageInfo.cs" />
     <Compile Include="Program.cs" />
