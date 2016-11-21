@@ -62,7 +62,7 @@ namespace PublishHelp
                     writer.Write("### ");
                     heading = true;
                 }
-                else if (size >= 13 && size < 17)
+                else if (size >= 13 && size < 17 && beforeSize != 13)
                 {
                     writer.Write("## ");
                     heading = true;
