@@ -13,6 +13,7 @@ namespace PublishHelp
     class MarkdownConverter
     {
         string baseUri;
+        StreamWriter writer;
 
         public void Convert(string path, string baseUri)
         {
@@ -22,7 +23,7 @@ namespace PublishHelp
             string mdFile = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + ".md");
             using (StreamWriter sw = new StreamWriter(mdFile))
             {
-
+                this.writer = sw;
                 XNamespace ns = html.Root.Name.Namespace;
                 XElement body = html.Root.Element(ns + "body");
                 if (body == null)
@@ -30,7 +31,7 @@ namespace PublishHelp
                     throw new Exception("Missing html body");
                 }
 
-                WalkElements(body, null, sw);
+                WalkElements(body, null);
             }
 
             File.Delete(path);
@@ -38,9 +39,10 @@ namespace PublishHelp
 
         bool ignoreFirstParagraph = true;
 
-        void WalkElements(XElement e, CssAttributes inherited, StreamWriter writer)
+        void WalkElements(XElement e, CssAttributes inherited)
         {
             double beforeSize = (inherited != null) ? inherited.GetFontSize() : 0;
+
             CssAttributes attrs = CssAttributes.Parse((string)e.Attribute("style"), inherited);
             double size = attrs.GetFontSize();
 
@@ -51,24 +53,32 @@ namespace PublishHelp
                 return;
             }
 
-            if (beforeSize == 11 && size > 11 && !e.Name.LocalName.StartsWith("h"))
+            bool heading = false;
+
+            if (beforeSize != size)
             {
                 if (size == 12)
                 {
                     writer.Write("### ");
+                    heading = true;
                 }
                 else if (size >= 13 && size < 17)
                 {
                     writer.Write("## ");
+                    heading = true;
                 }
                 else if (size >= 17)
                 {
                     writer.Write("# ");
+                    heading = true;
                 }
                 else
                 {
                     Console.WriteLine("Font size changed to {0} on element {1}", size, e.Name.LocalName);
                 }
+            }
+            if (heading) {
+                attrs.Push("heading", "true");
             }
 
             foreach (XNode child in e.Nodes())
@@ -80,30 +90,55 @@ namespace PublishHelp
                     {
                         case "a":
                             writer.Write("[");
-                            WalkElements((XElement)child, attrs, writer);
+                            WalkElements(ce, attrs);
                             writer.Write("](");
-                            WriteAnchor((string)ce.Attribute("href"), writer);
+                            WriteAnchor((string)ce.Attribute("href"), attrs);
                             writer.Write(")");
                             break;
                         case "h3":
-                            writer.Write("### ");
-                            WalkElements((XElement)child, attrs, writer);
-                            writer.WriteLine();
+                            CheckNewLine();
+                            if (!string.IsNullOrWhiteSpace(ce.Value))
+                            {
+                                attrs.Push("font-size", "12pt");
+                                attrs.Push("heading", "true");
+                                writer.Write("### ");
+                                WalkElements(ce, attrs);
+                                attrs.Pop("font-size");
+                                attrs.Pop("heading");
+                                WriteLine();
+                            }
                             break;
                         case "h2":
-                            writer.Write("## ");
-                            WalkElements((XElement)child, attrs, writer);
-                            writer.WriteLine();
+                            CheckNewLine();
+                            if (!string.IsNullOrWhiteSpace(ce.Value))
+                            {
+                                attrs.Push("font-size", "13pt");
+                                attrs.Push("heading", "true");
+                                writer.Write("## ");
+                                WalkElements(ce, attrs);
+                                attrs.Pop("font-size");
+                                attrs.Pop("heading");
+                                WriteLine();
+                            }
                             break;
                         case "h1":
-                            writer.Write("# ");
-                            WalkElements((XElement)child, attrs, writer);
-                            writer.WriteLine();
+                            CheckNewLine();
+                            if (!string.IsNullOrWhiteSpace(ce.Value))
+                            {
+                                attrs.Push("font-size", "17pt");
+                                attrs.Push("heading", "true");
+                                writer.Write("# ");
+                                WalkElements(ce, attrs);
+                                attrs.Pop("font-size");
+                                attrs.Pop("heading");
+                                WriteLine();
+                            }
                             break;
                         case "div":
                         case "p":
-                            WalkElements((XElement)child, attrs, writer);
-                            writer.WriteLine();
+                            CheckNewLine();
+                            WalkElements(ce, attrs);
+                            WriteLine();
                             break;
                         case "li":
                             string listType = attrs.Find("list");
@@ -115,34 +150,48 @@ namespace PublishHelp
                             {
                                 writer.Write("* ");
                             }
-                            WalkElements((XElement)child, attrs, writer);
-                            writer.WriteLine();
+                            WalkElements(ce, attrs);
+                            WriteLine();
                             break;
                         case "span":
-                            bool bold = attrs.Find("fond-weight") == "bold";
-                            if (bold) {
-                                writer.Write("** ");
+
+                            if (!string.IsNullOrEmpty(ce.Value))
+                            {
+                                bool bold = attrs.Find("fond-weight") == "bold";
+                                if (bold)
+                                {
+                                    writer.Write("** ");
+                                }
+                                WalkElements(ce, attrs);
+                                if (bold)
+                                {
+                                    writer.Write("** ");
+                                }
                             }
-                            WalkElements((XElement)child, attrs, writer);
                             break;
                         case "img":
+                            CheckNewLine();
                             writer.Write("![");
                             writer.Write("](");
-                            WriteAnchor((string)ce.Attribute("src"), writer);
+                            WriteAnchor((string)ce.Attribute("src"), attrs);
                             writer.Write(")");
                             break;
                         case "ol":
+                            CheckNewLine();
                             attrs.Push("list", "ordered");
-                            WalkElements((XElement)child, attrs, writer);
+                            WalkElements(ce, attrs);
                             attrs.Pop("list");
+                            WriteLine();
                             break;
                         case "ul":
+                            CheckNewLine();
                             attrs.Push("list", "unordered");
-                            WalkElements((XElement)child, attrs, writer);
+                            WalkElements(ce, attrs);
                             attrs.Pop("list");
+                            WriteLine();
                             break;
                         case "br":
-                            writer.WriteLine();
+                            WriteLine();
                             break;
                         case "table":
                             throw new Exception("HTML Table doesn't translate to markdown");
@@ -155,14 +204,37 @@ namespace PublishHelp
                 else if (child is XText)
                 {
                     XText text = (XText)child;
-                    WriteText(text.Value, writer);
+                    WriteText(text.Value, attrs);
                 }
+            }
+
+            if (heading)
+            {
+                attrs.Pop("heading");
             }
         }
 
-        private void WriteAnchor(string href, StreamWriter writer)
+        int linePos = 0;
+
+        void WriteLine()
         {
-            if (!href.Contains("://")) {
+            writer.WriteLine();
+            linePos = 0;
+        }
+
+        void CheckNewLine()
+        {
+            if (linePos > 0)
+            {
+                WriteLine();
+                WriteLine();
+            }
+        }
+
+        private void WriteAnchor(string href, CssAttributes attrs)
+        {
+            if (!href.Contains("://"))
+            {
                 // relative links are to markdown files, so no .htm suffix
                 if (href.EndsWith(".htm"))
                 {
@@ -170,20 +242,44 @@ namespace PublishHelp
                 }
                 href = this.baseUri + href;
             }
-            WriteText(href, writer);
+            attrs.Push("attribute", "true");
+            WriteText(href, attrs);
+            attrs.Pop("attribute");
         }
 
         static char[] whitespace = new char[] { ' ', '\t', '\r', '\n' };
 
-        void WriteText(string value, StreamWriter writer)
+        void WriteText(string value, CssAttributes attrs)
         {
             if (value == "Created with Microsoft OneNote 2016.")
             {
                 return;
             }
-            if (string.IsNullOrWhiteSpace(value))
+            bool isAttribute = attrs.Find("attribute") == "true";
+            if (!isAttribute)
             {
-                return;
+                if (attrs.Find("heading") == "true")
+                {
+                    // markdown can't handle newlines in a heading.
+                    value = value.Replace("\n", " ");
+                }
+                if (attrs.GetMarginLeft() > 0.3)
+                {
+                    value = value.Replace("\n", " ");
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        writer.Write("    ");
+                        linePos += 4;
+                    }
+                }
+                if (attrs.Find("font-weight", false) == "bold")
+                {
+                    writer.Write("** ");
+                }
+            }
+            if (value.Replace("\n", " ").Contains("Did not get the expected response"))
+            {
+                Console.WriteLine("found it");
             }
             bool carriageReturn = false;
 
@@ -201,22 +297,32 @@ namespace PublishHelp
                         {
                             case "amp":
                                 writer.Write('&');
+                                this.linePos++;
                                 break;
                             case "lt":
                                 writer.Write('<');
+                                this.linePos++;
                                 break;
                             case "gt":
                                 writer.Write('>');
+                                this.linePos++;
                                 break;
                             case "apos":
                                 writer.Write('\'');
+                                this.linePos++;
                                 break;
                             case "quot":
                                 writer.Write('"');
+                                this.linePos++;
                                 break;
                             default:
                                 throw new Exception("Unsupported entity: " + name);
                         }
+                    }
+                    else
+                    {
+                        writer.Write('&');
+                        this.linePos++;
                     }
                 }
                 else if (ch == '\r')
@@ -226,16 +332,28 @@ namespace PublishHelp
                 else if (ch == '\n')
                 {
                     carriageReturn = false;
-                    writer.WriteLine();
+                    WriteLine();
+                }
+                else if ((ch == ' ' || ch == '\t' || ch == 0xA0) && linePos == 0)
+                {
+                    continue;
                 }
                 else
                 {
                     if (carriageReturn)
                     {
                         carriageReturn = false;
-                        writer.WriteLine();
+                        WriteLine();
                     }
                     writer.Write(ch);
+                    this.linePos++;
+                }
+            }
+            if (!isAttribute)
+            {
+                if (attrs.Find("font-weight", false) == "bold")
+                {
+                    writer.Write("** ");
                 }
             }
         }
@@ -270,22 +388,22 @@ namespace PublishHelp
             return result;
         }
 
-        public string Find(string name)
+        public string Find(string name, bool searchInheritance = true)
         {
             string result = null;
             if (!map.TryGetValue(name, out result))
             {
-                if (inherited != null)
+                if (inherited != null && searchInheritance)
                 {
-                    return inherited.Find(name);
+                    return inherited.Find(name, searchInheritance);
                 }
             }
             return result;
         }
 
-        internal double GetFontSize()
+        internal double GetFontSize(bool searchInheritance = false)
         {
-            string value = Find("font-size");
+            string value = Find("font-size", searchInheritance);
             if (!string.IsNullOrEmpty(value))
             {
                 if (value.EndsWith("pt"))
@@ -296,6 +414,23 @@ namespace PublishHelp
                 else
                 {
                     throw new Exception("Only supports point sizes");
+                }
+            }
+            return 0;
+        }
+        internal double GetMarginLeft(bool searchInheritance = false)
+        {
+            string value = Find("margin-left", searchInheritance);
+            if (!string.IsNullOrEmpty(value))
+            {
+                if (value.EndsWith("in"))
+                {
+                    value = value.Substring(0, value.Length - 2);
+                    return double.Parse(value);
+                }
+                else
+                {
+                    throw new Exception("Only supports margin in inches");
                 }
             }
             return 0;

@@ -208,3 +208,4 @@ $RECYCLE.BIN/
 # Nuget lock files
 *.lock.json
 /Source/.vs/config
+/Source/Docs
