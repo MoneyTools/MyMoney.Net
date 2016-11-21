@@ -255,14 +255,14 @@ namespace PublishHelp
             {
                 return;
             }
+
+            // onenote output puts newlines in lots of weird places which breaks
+            // markdown headings and other things.
+            value = value.Replace("\n", " ");
+            
             bool isAttribute = attrs.Find("attribute") == "true";
             if (!isAttribute)
             {
-                if (attrs.Find("heading") == "true")
-                {
-                    // markdown can't handle newlines in a heading.
-                    value = value.Replace("\n", " ");
-                }
                 if (attrs.GetMarginLeft() > 0.3)
                 {
                     value = value.Replace("\n", " ");
@@ -274,7 +274,8 @@ namespace PublishHelp
                 }
                 if (attrs.Find("font-weight", false) == "bold")
                 {
-                    writer.Write("** ");
+                    writer.Write("**");
+                    value = value.Trim(whitespace);
                 }
             }
             if (value.Replace("\n", " ").Contains("Did not get the expected response"))

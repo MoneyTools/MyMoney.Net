@@ -3282,11 +3282,11 @@ namespace Walkabout
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
             List<string> fileTypes = new List<string>();
+            fileTypes.Add(Properties.Resources.MoneySQLLiteFileFilter);
             if (SqlCeDatabase.IsSqlCEInstalled)
             {
                 fileTypes.Add(Properties.Resources.MoneySQLCEFileFilter);
             }
-            fileTypes.Add(Properties.Resources.MoneySQLLiteFileFilter);
             fileTypes.Add(Properties.Resources.XmlFileFilter);
             fileTypes.Add(Properties.Resources.BinaryXmlFileFilter);
             fileTypes.Add(Properties.Resources.CsvFileFilter);
