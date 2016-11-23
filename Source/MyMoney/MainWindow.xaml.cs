@@ -3850,7 +3850,7 @@ namespace Walkabout
 
         private void OnCommandViewHelp(object sender, ExecutedRoutedEventArgs e)
         {
-            InternetExplorer.OpenUrl(IntPtr.Zero, "http://vteam.com/mymoney/documentation/Home.htm");
+            InternetExplorer.OpenUrl(IntPtr.Zero, "https://github.com/clovett/MyMoney.Net/wiki");
         }
 
         private void OnCommandAddSampleData(object sender, ExecutedRoutedEventArgs e)

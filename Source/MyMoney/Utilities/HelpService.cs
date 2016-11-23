@@ -10,7 +10,7 @@ namespace Walkabout.Help
 {
     internal class HelpService : DependencyObject
     {
-        static string WebPath = @"http://vteam.com/mymoney/documentation/";
+        static string WebPath = @"https://github.com/clovett/MyMoney.Net/wiki/";
 
         static List<WeakReference> dependencyObjects = new List<WeakReference>();
 
@@ -107,7 +107,7 @@ namespace Walkabout.Help
                     {
                         keyword = "Home";
                     }
-                    OpenHelpPage(keyword + ".htm");
+                    OpenHelpPage(keyword);
                     e.Handled = true;
                 }
             }
