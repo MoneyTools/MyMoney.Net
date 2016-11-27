@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.0.0.346" date="11/26/2016">
+    Fix updating of the visible transactions during OFX download.
+  </change>
   <change version="1.0.0.342" date="9/7/2016">
     Fix some bugs.
   </change>

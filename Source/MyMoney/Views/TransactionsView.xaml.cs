@@ -89,6 +89,7 @@ namespace Walkabout.Views
 
         private MyMoney myMoney;
         private TypeToFind ttf;
+        private DelayedActions delayedUpdates = new DelayedActions();
 
         private IEnumerable<Transaction> fixedList;
 
@@ -2595,71 +2596,96 @@ namespace Walkabout.Views
             return false;
         }
 
+        List<ChangeEventArgs> pendingUpdates = new List<ChangeEventArgs>();
+
         private void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
             if (rebalancing)
             {
                 return;
             }
-            UiDispatcher.BeginInvoke(new Action(() =>
+            // concatenate the updates so we can absorb an event storm here (e.g. OFX download).
+            lock (pendingUpdates)
             {
-                HandleChanges(args);
-            }));
+                pendingUpdates.Add(args);
+            }
+            delayedUpdates.StartDelayedAction("ProcessUpdates", HandleChanges, TimeSpan.FromMilliseconds(100));
         }
 
-        void HandleChanges(ChangeEventArgs args)
+        void HandleChanges()
         {
+            bool rebalance = false;
+            List<ChangeEventArgs> list;
+            lock (pendingUpdates)
+            {
+                list = new List<ChangeEventArgs>(pendingUpdates);
+                pendingUpdates.Clear();
+            }
             DataGrid grid = TheActiveGrid;
             if (grid != null)
             {
                 TransactionCollection tc = grid.ItemsSource as TransactionCollection;
                 bool refresh = false;
-                while (args != null)
+                foreach (var item in list)
                 {
-                    Security s = args.Item as Security;
-                    Transaction t = args.Item as Transaction;
-                    Investment i = args.Item as Investment;
-                    Account a = args.Item as Account;
+                    var args = item;
+                    while (args != null)
+                    {
+                        Security s = args.Item as Security;
+                        Transaction t = args.Item as Transaction;
+                        Investment i = args.Item as Investment;
+                        Account a = args.Item as Account;
 
-                    if (s != null && !string.IsNullOrEmpty(s.Name))
-                    {
-                        // ok, this might be the GetStock auto-update, see if there is anything to copy to 
-                        // uncommitted payee.
-                        if (this.SelectedTransaction != null && this.SelectedTransaction.Investment != null &&
-                            this.SelectedTransaction.Investment.Security == s) {
-                            string payee = GetUncomittedPayee();
-                            if (string.IsNullOrEmpty(payee) && this.SelectedTransaction != null)
-                            {
-                                this.SelectedTransaction.Payee = this.myMoney.Payees.FindPayee(s.Name, true);
-                            }
-                        }
-                    }
-                    // the "NewPlaceHolder" item may have just been changed into a real Transaction object.
-                    // ChangeType.Changed would have already been handled by the INotifyPropertyChanged events, what we really care
-                    // about here are transactions being inserted or removed which can happen if you do a background 'download'
-                    // for example.
-                    // These two change types are not structural, so the normal data binding update of the UI should be enough.
-                    else if (args.ChangeType != ChangeType.Rebalanced && args.ChangeType != ChangeType.TransientChanged)
-                    {
-                        if (t != null && tc != null)
+                        if (s != null && !string.IsNullOrEmpty(s.Name))
                         {
-                            if (t.Account == this.ActiveAccount || this.ActiveAccount == null)
+                            // ok, this might be the GetStock auto-update, see if there is anything to copy to 
+                            // uncommitted payee.
+                            if (this.SelectedTransaction != null && this.SelectedTransaction.Investment != null &&
+                                this.SelectedTransaction.Investment.Security == s)
                             {
-                                if (args.ChangeType == ChangeType.Deleted)
+                                string payee = GetUncomittedPayee();
+                                if (string.IsNullOrEmpty(payee) && this.SelectedTransaction != null)
                                 {
-                                    // then we need a refresh.
-                                    refresh = true;
+                                    this.SelectedTransaction.Payee = this.myMoney.Payees.FindPayee(s.Name, true);
                                 }
                             }
                         }
-                        else if (a != null && a == this.ActiveAccount && args.ChangeType == ChangeType.Deleted)
+                        // the "NewPlaceHolder" item may have just been changed into a real Transaction object.
+                        // ChangeType.Changed would have already been handled by the INotifyPropertyChanged events, what we really care
+                        // about here are transactions being inserted or removed which can happen if you do a background 'download'
+                        // for example.
+                        // These two change types are not structural, so the normal data binding update of the UI should be enough.
+                        else if (args.ChangeType != ChangeType.Rebalanced && args.ChangeType != ChangeType.TransientChanged)
                         {
-                            // then this account is gone, so we need to clear the display.
-                            this.TheActiveGrid.ClearItemsSource();
+                            if (t != null && tc != null)
+                            {
+                                if (t.Account == this.ActiveAccount || this.ActiveAccount == null)
+                                {
+                                    if (args.ChangeType == ChangeType.Deleted || args.ChangeType == ChangeType.Inserted)
+                                    {
+                                        // then we need a refresh.
+                                        refresh = true;
+                                    }
+                                }
+                            }
+                            else if (a != null && a == this.ActiveAccount && args.ChangeType == ChangeType.Deleted)
+                            {
+                                // then this account is gone, so we need to clear the display.
+                                this.TheActiveGrid.ClearItemsSource();
+                            }
+                            else if (a != null && a == this.ActiveAccount && args.ChangeType == ChangeType.Changed)
+                            {
+                                // then we need a refresh, may have just loaded a bunch of new transactions from OFX.
+                                refresh = true;
+                                rebalance = true;
+                            }
                         }
-
+                        args = args.Next;
                     }
-                    args = args.Next;
+                }
+                if (rebalance)
+                {
+                    this.Rebalance();
                 }
                 if (refresh)
                 {

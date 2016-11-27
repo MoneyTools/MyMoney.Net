@@ -1735,11 +1735,7 @@ NEWFILEUID:{1}
             Guid guid = Guid.NewGuid();
             string fileuid = guid.ToString();
             doc = SendOfxRequest(doc, this.account.SyncGuid.IsNull ? null : this.account.SyncGuid.ToString(), fileuid);
-            foreach (Account a in accounts)
-            {
-                a.SyncGuid = guid;
-            }
-
+       
             SaveLog(doc, GetLogfileName(this.onlineAccount) + "RS.xml");
 
             dispatcher.BeginInvoke(new Action(() =>
@@ -1747,6 +1743,11 @@ NEWFILEUID:{1}
                 // do this on the UI thread so we don't have to worry about parallel access to the Money object.
                 try
                 {
+                    foreach (Account a in accounts)
+                    {
+                        a.SyncGuid = guid;
+                    }
+
                     this.ProcessResponse(doc, results);
                 }
                 catch (OperationCanceledException)
