@@ -168,7 +168,7 @@ namespace Walkabout.Views
                 {
                     list.Add(it);
                 }
-                
+
                 this.Activities = list;
             }
         }
@@ -626,7 +626,7 @@ namespace Walkabout.Views
                                 }
                             }
                             else
-                            { 
+                            {
                                 DataGrid grid = this.TheActiveGrid;
                                 if (grid != null && grid.CurrentCell != null && !this.IsEditing)
                                 {
@@ -1285,7 +1285,7 @@ namespace Walkabout.Views
         }
 
         private void UpdateView()
-        {            
+        {
             switch (this.currentDisplayName)
             {
                 case TransactionViewName.Account:
@@ -1735,7 +1735,7 @@ namespace Walkabout.Views
                 SwitchLayout(layout);
                 SetActiveAccount(account, null, null, null, null);
                 IList data = new TransactionCollection(myMoney, account, newList, true, includeInvestmentInfo, filter);
-                Display(data, viewName, account != null ? account.Name : "Transactions", SelectedRowId);                
+                Display(data, viewName, account != null ? account.Name : "Transactions", SelectedRowId);
                 FireAfterViewStateChanged(SelectedRowId);
 
 #if PerformanceBlocks
@@ -2466,7 +2466,7 @@ namespace Walkabout.Views
         {
             object selected = e.AddedItems[0];
 
-            if (selected == FilterByNothing )
+            if (selected == FilterByNothing)
             {
                 OnCommandViewAllTransactions(this, null);
             }
@@ -2804,17 +2804,6 @@ namespace Walkabout.Views
                 ttf.Dispose();
             }
 
-            this.myMoney.CurrentView = null;
-
-            if (data != null)
-            {
-                if (data is TransactionCollection)
-                {
-                    this.myMoney.CurrentView = (TransactionCollection)data;
-                    ttf = new TransactionTypeToFind(TheActiveGrid);
-                }
-            }
-
             this.Commit();
             this.Caption = caption;
 
@@ -2833,6 +2822,23 @@ namespace Walkabout.Views
             else if (data != null && data.Count > 0)
             {
                 this.TheActiveGrid.SelectedIndex = data.Count - 1;
+            }
+
+            if (data != null)
+            {
+                if (data is TransactionCollection)
+                {
+                    this.ViewModel = (TransactionCollection)data;
+                    ttf = new TransactionTypeToFind(TheActiveGrid);
+                }
+                else
+                {
+                    this.ViewModel = null;
+                }
+            }
+            else
+            {
+                this.ViewModel = null;
             }
 
             UpdateActivities();
@@ -3155,12 +3161,12 @@ namespace Walkabout.Views
 
         private bool IsPotentialDuplicate(Transaction t, Transaction u, int dayRange)
         {
-            return !u.IsFake && !t.IsFake && 
+            return !u.IsFake && !t.IsFake &&
                 u != t && u.amount == t.amount && u.PayeeName == t.PayeeName &&
                 // they must be in the same account (which they may not be if on the multi-account view).
                 u.Account == t.Account &&
                 // ignore transfers for now
-                (t.Transfer == null && u.Transfer == null) && 
+                (t.Transfer == null && u.Transfer == null) &&
                 // if user has already marked both as not duplicates, then skip it.
                 (!t.NotDuplicate || !u.NotDuplicate) &&
                 // and if they are investment transactions the stock type and unit quanities have to be the same
@@ -3340,6 +3346,29 @@ namespace Walkabout.Views
                 return this.SelectedTransaction != null && !this.SelectedTransaction.IsReadOnly;
             }
         }
+
+        TransactionCollection viewModel;
+
+        /// <summary>
+        /// The currently visible set of transactions.
+        /// </summary>
+        public TransactionCollection ViewModel
+        {
+            get
+            {
+                return viewModel;
+            }
+            set
+            {
+                viewModel = value;
+                if (ViewModelChanged != null)
+                {
+                    ViewModelChanged(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public event EventHandler ViewModelChanged;
 
         private void CanExecute_Accept(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -3558,7 +3587,7 @@ namespace Walkabout.Views
 
         void RenamePayee(Payee payee)
         {
-            RenamePayeeDialog dialog = RenamePayeeDialog.ShowDialogRenamePayee(this.myMoney, payee);
+            RenamePayeeDialog dialog = RenamePayeeDialog.ShowDialogRenamePayee(site, this.myMoney, payee);
             dialog.Owner = App.Current.MainWindow;
             dialog.ShowDialog();
         }
@@ -5749,11 +5778,11 @@ namespace Walkabout.Views
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (targetType != typeof(string)) 
+            if (targetType != typeof(string))
             {
                 throw new Exception("Unexpected target type passed to PreserveDecimalDigitsValueConverter.Convert : " + targetType.Name);
             }
-            if (value == null) 
+            if (value == null)
             {
                 return "";
             }
@@ -5777,7 +5806,7 @@ namespace Walkabout.Views
             {
                 return ((DateTime)value).ToString("d");
             }
-            else 
+            else
             {
                 return value.ToString();
             }
@@ -5833,17 +5862,17 @@ namespace Walkabout.Views
             {
                 VerticalAlignment = VerticalAlignment.Top,
                 TextAlignment = TextAlignment.Right
-            };            
+            };
 
             if (this.SortMemberPath == "Debit" || this.SortMemberPath == "Credit")
             {
                 throw new Exception("Should be using TransactionAmountColumn for these");
-            }            
+            }
 
             box.SetResourceReference(TextBox.StyleProperty, "NumericTextBoxStyle");
             box.SetBinding(TextBox.TextProperty, new Binding(this.SortMemberPath)
             {
-                StringFormat = "N5", 
+                StringFormat = "N5",
                 Converter = new PreserveDecimalDigitsValueConverter(),
                 Mode = BindingMode.TwoWay,
                 ValidatesOnDataErrors = true,
@@ -6447,7 +6476,7 @@ namespace Walkabout.Views
                 return base.CommitCellEdit(editingElement);
             }
             catch (Exception ex)
-            {                
+            {
                 TransactionAmountControl edit = editingElement as TransactionAmountControl;
                 if (edit != null)
                 {
@@ -6489,7 +6518,7 @@ namespace Walkabout.Views
         Transaction context;
         TextBox editbox;
         string editedValue;
-        bool? editFieldEmpty;        
+        bool? editFieldEmpty;
 
         /// <summary>
         /// This button presents the transaction status

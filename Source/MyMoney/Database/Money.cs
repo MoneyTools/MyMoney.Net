@@ -1509,17 +1509,10 @@ namespace Walkabout.Data
             return null;
         }
 
-        /// <summary>
-        /// This property allows us to find and update fake transactions so the UI looks right when we
-        /// rename categories and payees and so forth.
-        /// </summary>
-        public IList<Transaction> CurrentView { get; set; }
-
-        public IEnumerable<PersistentObject> FindAliasMatches(Alias alias)
+        public IEnumerable<PersistentObject> FindAliasMatches(Alias alias, IEnumerable<Transaction> transactions)
         {
             Payee np = alias.Payee;
-            IEnumerable<Transaction> currentTransactions = (CurrentView == null) ? this.transactions : this.transactions.Concat(CurrentView);
-            foreach (Transaction t in currentTransactions)
+            foreach (Transaction t in transactions)
             {
                 Payee p = t.Payee;
                 if (p != null && np != p &&
@@ -1550,12 +1543,12 @@ namespace Walkabout.Data
             }
         }
 
-        public int ApplyAlias(Alias alias)
+        public int ApplyAlias(Alias alias, IEnumerable<Transaction> transactions)
         {
             int count = 0;
             Payee np = alias.Payee;
             this.Transactions.BeginUpdate(true);
-            foreach (PersistentObject po in FindAliasMatches(alias))
+            foreach (PersistentObject po in FindAliasMatches(alias, transactions))
             {
                 Transaction t = po as Transaction;
                 Split s = po as Split;

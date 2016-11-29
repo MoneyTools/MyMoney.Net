@@ -259,7 +259,7 @@ namespace Walkabout.Views.Controls
 
         Payee Rename(Payee fromPayee, Payee renameToThisPayee)
         {
-            RenamePayeeDialog dialog = RenamePayeeDialog.ShowDialogRenamePayee(this.myMoney, fromPayee, renameToThisPayee);
+            RenamePayeeDialog dialog = RenamePayeeDialog.ShowDialogRenamePayee((IServiceProvider)this, this.myMoney, fromPayee, renameToThisPayee);
 
             dialog.Owner = App.Current.MainWindow;
             if (dialog.ShowDialog() == true)

@@ -8,6 +8,7 @@ using Walkabout.Controls;
 using Walkabout.Utilities;
 using System.Text;
 using System.Collections.Generic;
+using Walkabout.Views;
 
 namespace Walkabout.Dialogs
 {
@@ -35,6 +36,8 @@ namespace Walkabout.Dialogs
                 LoadPayees();
             }
         }
+
+        public IServiceProvider ServiceProvider { get; set; }
 
         public string Pattern
         {
@@ -87,9 +90,9 @@ namespace Walkabout.Dialogs
         /// <param name="myMoney"></param>
         /// <param name="payeeToRename"></param>
         /// <returns></returns>
-        public static RenamePayeeDialog ShowDialogRenamePayee(MyMoney myMoney, Payee payeeToRename)
+        public static RenamePayeeDialog ShowDialogRenamePayee(IServiceProvider sp, MyMoney myMoney, Payee payeeToRename)
         {
-            return ShowDialogRenamePayee(myMoney, payeeToRename, payeeToRename);
+            return ShowDialogRenamePayee(sp, myMoney, payeeToRename, payeeToRename);
         }
 
         /// <summary>
@@ -100,11 +103,12 @@ namespace Walkabout.Dialogs
         /// <param name="fromPayee"></param>
         /// <param name="renameToThisPayee"></param>
         /// <returns></returns>
-        public static RenamePayeeDialog ShowDialogRenamePayee(MyMoney myMoney, Payee fromPayee, Payee renameToThisPayee)
+        public static RenamePayeeDialog ShowDialogRenamePayee(IServiceProvider sp, MyMoney myMoney, Payee fromPayee, Payee renameToThisPayee)
         {
             RenamePayeeDialog dialog = new RenamePayeeDialog();
             dialog.Owner = Application.Current.MainWindow;
             dialog.MyMoney = myMoney;
+            dialog.ServiceProvider = sp;
             dialog.Payee = fromPayee;
             dialog.RenameTo = renameToThisPayee;
             return dialog;
@@ -182,8 +186,19 @@ namespace Walkabout.Dialogs
                     this.selectedPayee = a.Payee;
                 }
 
+                IEnumerable<Transaction> transactions = this.money.Transactions.GetAllTransactions();
+                if (ServiceProvider != null)
+                {
+                    // make sure we search visible transactions being edited as well.
+                    TransactionCollection viewModel = ServiceProvider.GetService(typeof(TransactionCollection)) as TransactionCollection;
+                    if (viewModel != null)
+                    {
+                        transactions = transactions.Concat(viewModel);
+                    }
+                }
+
                 // Now see if we have any matches
-                IEnumerable<PersistentObject> result = this.money.FindAliasMatches(a);                
+                IEnumerable<PersistentObject> result = this.money.FindAliasMatches(a, transactions);                
                 if (!result.Any())
                 {
                     if (MessageBoxResult.Cancel == MessageBoxEx.Show("No matching transactions found (that don't already have the target Payee), do you want to save it anyway?", "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning))
@@ -196,7 +211,7 @@ namespace Walkabout.Dialogs
 
                 // Now the user really wants to switch all transactions
                 // referencing p over to q, then remove p.
-                int count = this.money.ApplyAlias(a);
+                int count = this.money.ApplyAlias(a, transactions);
 
             }
             else

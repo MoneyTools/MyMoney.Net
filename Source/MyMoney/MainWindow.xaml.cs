@@ -1054,8 +1054,15 @@ namespace Walkabout
         {
             get
             {
-                return GetOrCreateView<TransactionsView>();
+                var result = GetOrCreateView<TransactionsView>();
+                result.ViewModelChanged += OnTransactionViewModelChanged;
+                return result;
             }
+        }
+
+        private void OnTransactionViewModelChanged(object sender, EventArgs e)
+        {
+            SetChartsDirty();
         }
 
         #endregion
@@ -1213,7 +1220,7 @@ namespace Walkabout
             UiDispatcher.BeginInvoke(
                     new Action(() =>
                     {
-                        TransactionsView transactionView = GetOrCreateView<TransactionsView>();
+                        TransactionsView transactionView = this.TransactionView;
                         if (transactionView != null)
                         {
                             transactionView.ViewTransactionsForSingleAccount(transaction.Account, TransactionSelection.Specific, transaction.Id);
@@ -1556,7 +1563,7 @@ namespace Walkabout
             {
                 this.Cursor = saved;
             }
-            return total; 
+            return total;
         }
 
         #endregion
@@ -2209,12 +2216,12 @@ namespace Walkabout
             int total = 0;
 
             Account acct = null;
-            
+
             int count;
             Importer importer = new Importer(myMoney);
             acct = importer.Import(file, out count);
             total += count;
-            
+
             var view = SetCurrentView<TransactionsView>();
             if (view.CheckTransfers() && acct != null)
             {
@@ -2225,7 +2232,7 @@ namespace Walkabout
 
         private int ImportMoneyFile(string[] fileNames)
         {
-            if (MessageBoxEx.Show("Merging money databases only works if both started with the same state and you just want to merge the deltas.  Do you want to continue?", 
+            if (MessageBoxEx.Show("Merging money databases only works if both started with the same state and you just want to merge the deltas.  Do you want to continue?",
                 "Merge Warning",
                 MessageBoxButton.OKCancel, MessageBoxImage.Hand) == MessageBoxResult.OK)
             {
@@ -2623,10 +2630,33 @@ namespace Walkabout
                             bool historyWasNotVisible = TabHistory.Visibility != System.Windows.Visibility.Visible;
                             TabHistory.Visibility = System.Windows.Visibility.Visible;
                             TabTrends.Visibility = System.Windows.Visibility.Visible;
-                            HistoryChart.MyMoney = this.myMoney;
-                            HistoryChart.Category = this.TransactionView.ActiveCategory;
-                            HistoryChart.Payee = this.TransactionView.ActivePayee;
-                            HistoryChart.UpdateChart();
+
+                            // pick a color based on selected category or payee.
+                            Category cat = this.TransactionView.ActiveCategory;
+                            Payee payee = this.TransactionView.ActivePayee;
+                            Brush brush = null; // this will request the default color.
+                            if (cat != null)
+                            {
+                                if (!string.IsNullOrEmpty(cat.InheritedColor))
+                                {
+                                    Color c = ColorAndBrushGenerator.GenerateNamedColor(cat.InheritedColor);
+                                    brush = new SolidColorBrush(c);
+                                }
+                            }
+                            if (brush == null && payee != null)
+                            {
+                                Color c = ColorAndBrushGenerator.GenerateNamedColor(payee.Name);
+                                brush = new SolidColorBrush(c);
+                            }
+                            HistoryChartColumn selection = HistoryChart.Selection;
+                            if (selection == null)
+                            {
+                                selection = new Charts.HistoryChartColumn();
+                            }
+                            selection.Transactions = this.TransactionView.ViewModel;
+                            selection.Brush = brush;
+                            HistoryChart.Selection = selection;
+
                             if (historyWasNotVisible || TabLoan.IsSelected || TabRental.IsSelected)
                             {
                                 TabHistory.IsSelected = true;
@@ -2638,9 +2668,7 @@ namespace Walkabout
                             TabHistory.Visibility = System.Windows.Visibility.Collapsed;
                             if (TabLoan.IsSelected || TabRental.IsSelected || TabHistory.IsSelected)
                             {
-                                HistoryChart.MyMoney = null;
-                                HistoryChart.Category = null;
-                                HistoryChart.UpdateChart();
+                                HistoryChart.Selection = null;
                                 TabTrends.IsSelected = true;
                             }
                         }
@@ -3003,6 +3031,10 @@ namespace Walkabout
             else if (service == typeof(OutputPane))
             {
                 return this.OutputView;
+            }
+            else if (service == typeof(TransactionCollection))
+            {
+                return this.TransactionView.ViewModel;
             }
             return null;
         }
@@ -3402,7 +3434,7 @@ namespace Walkabout
                         {
                             totalTransactions += ImportOfx(ofxFiles.ToArray());
                         }
-                        if(moneyFiles.Count > 0)
+                        if (moneyFiles.Count > 0)
                         {
                             totalTransactions += ImportMoneyFile(moneyFiles.ToArray());
                         }
