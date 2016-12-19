@@ -168,7 +168,24 @@ namespace Walkabout.Controls
             {
                 this.sorted = sorted;
             }
-            this.ItemsSource = items;
+            try
+            {
+                // time times we get a weird exception saying 
+                // 'DeferRefresh' is not allowed during an AddNew or EditItem transaction
+                this.ItemsSource = items;
+            }
+            catch (Exception ex)
+            {
+                // I want to see these errors
+                if (MessageBoxEx.Show(ex.ToString() + "\n\nDo you want to try again?", "Debug Error", MessageBoxButton.OKCancel, MessageBoxImage.Error) == MessageBoxResult.OK)
+                {
+                    // and try again later...at low priority so that the UI has a chance to settle down...
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        SetItemsSource(items);
+                    }), DispatcherPriority.Background);
+                }
+            }
         }
 
         protected override void OnItemsChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

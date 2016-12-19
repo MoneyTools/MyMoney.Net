@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="1.0.0.346" date="11/26/2016">
+  <change version="1.0.0.347" date="11/26/2016">
     Fix updating of the visible transactions during OFX download.
-  </change>
-  <change version="1.0.0.342" date="9/7/2016">
-    Fix some bugs.
+    Catch an exception that sometimes happens in the DataGrid.
+    Fix some other bugs.
   </change>
   <change version="1.0.0.339" date="7/7/2016">
     Fix some bugs in entering new categories.
