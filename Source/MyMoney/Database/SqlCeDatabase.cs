@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using Walkabout.Utilities;
 using System.Reflection;
 using System.Data.Common;
+using System.Data.SqlClient;
 
 namespace Walkabout.Data
 {
@@ -275,7 +276,8 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
 
         protected override string GetConnectionString(bool includeDatabase)
         {
-            string cstr = "DataSource=" + this.DatabasePath;
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+            builder.DataSource = this.DatabasePath;
             //if (includeDatabase)
             //{
             //    cstr += "Initial Catalog=" + this.name;
@@ -292,14 +294,14 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
             //    }
                 if (!string.IsNullOrEmpty(this.Password))
                 {
-                    cstr += ";password=" + this.Password;
+                    builder.Password = this.Password;                    
                 }
             //    cstr += ";Workstation Id=" + Environment.MachineName;
             //}
 
             // cstr += ";connection timeout=20";
 
-            return cstr;
+            return builder.ConnectionString;
         }
 
         public override string GetDatabaseFullPath()

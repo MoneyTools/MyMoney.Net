@@ -30,5 +30,6 @@ namespace Walkabout.Data
 
         string GetLog();
         DataSet QueryDataSet(string cmd);
+        void Disconnect();
     }
 }

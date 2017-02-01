@@ -43,12 +43,22 @@ namespace Walkabout.Data
 
         protected override string GetConnectionString(bool includeDatabase)
         {
-            string cstr = "Data Source=" + this.DatabasePath;            
+            SQLiteConnectionStringBuilder builder = new SQLiteConnectionStringBuilder();
+            builder.DataSource = this.DatabasePath;            
             if (!string.IsNullOrEmpty(this.Password))
             {
-                cstr += ";Password=" + this.Password;
+                builder.Password = this.Password;
             }
-            return cstr;
+            return builder.ConnectionString;
+        }
+
+        public override void OnPasswordChanged(string oldPassword, string newPassword)
+        {
+            Connect();
+            this.sqliteConnection.ChangePassword(newPassword);
+
+            // if ChangePassword succeeds the next operation needs a new connection with the new password.
+            Disconnect();
         }
 
         public override string GetDatabaseFullPath()
@@ -142,6 +152,7 @@ namespace Walkabout.Data
                 }
                 catch { }
             }
+            this.sqliteConnection = null;
         }
 
         public override bool Exists
@@ -158,7 +169,6 @@ namespace Walkabout.Data
             object result = ExecuteScalar("SELECT tbl_name FROM sqlite_master where tbl_name='" + name + "'");
             return (result != null);
         }
-
 
         /// <summary>
         /// Get the schema of the given table

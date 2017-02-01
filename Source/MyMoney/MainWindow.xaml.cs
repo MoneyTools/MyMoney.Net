@@ -1831,33 +1831,8 @@ namespace Walkabout
         private CreateDatabaseDialog InitializeCreateDatabaseDialog()
         {
             CreateDatabaseDialog frm = new CreateDatabaseDialog();
-
-            if (this.database == null)
-            {
-                // SQL Lite is a good default since it has zero install.
-                frm.UseSqlite = true;
-            }
-            else
-            {
-                switch (this.database.DbFlavor)
-                {
-                    case DbFlavor.SqlServer:
-                        frm.UseSqlServer = true;
-                        break;
-                    case DbFlavor.SqlCE:
-                        frm.UseSqlCe = true;
-                        break;
-                    case DbFlavor.Sqlite:
-                        frm.UseSqlite = true;
-                        break;
-                    case DbFlavor.Xml:
-                        frm.UseXml = true;
-                        break;
-                    case DbFlavor.BinaryXml:
-                        frm.UseBinaryXml = true;
-                        break;
-                }
-            }
+            // SQL Lite is a good default since it has zero install.
+            frm.UseSqlite = true;
             return frm;
         }
 
@@ -2094,6 +2069,12 @@ namespace Walkabout
         {
             try
             {
+                if (this.database != null)
+                {
+                    // just in case user is saving over the same database file.
+                    this.database.Disconnect();
+                }
+
                 // force all the data to be written.
                 myMoney.MarkAllNew();
 
@@ -3310,7 +3291,6 @@ namespace Walkabout
         private void OnCommandFileSaveAs(object sender, ExecutedRoutedEventArgs e)
         {
             TransactionView.Commit();
-            Stream myStream;
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
             List<string> fileTypes = new List<string>();
@@ -3326,37 +3306,37 @@ namespace Walkabout
             saveFileDialog1.Filter = string.Join("|", fileTypes.ToArray());
             saveFileDialog1.FilterIndex = 1;
             saveFileDialog1.RestoreDirectory = true;
+            saveFileDialog1.OverwritePrompt = false;
 
             if (saveFileDialog1.ShowDialog(this) == true)
             {
                 string fname = saveFileDialog1.FileName;
-                string ext = Path.GetExtension(fname);
-
-                if ((myStream = saveFileDialog1.OpenFile()) != null)
+                if (File.Exists(fname))
                 {
-                    myStream.Close();
-                    myStream.Dispose();
-                    switch (ext.ToLowerInvariant())
-                    {
-                        case ".sdf":
-                            SaveAsSqlCe(fname);
-                            break;
-                        case ".db":
-                            SaveAsSqlite(fname);
-                            break;
-                        case ".xml":
-                            SaveAsXml(fname);
-                            break;
-                        case ".bxml":
-                            SaveAsBinaryXml(fname);
-                            break;
-                        case ".csv":
-                            ExportCsv(fname);
-                            break;
-                        default:
-                            MessageBox.Show(string.Format("Don't know how to write file of type '{0}'", ext), "Save As Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            break;
-                    }
+                    MessageBox.Show("Sorry that file already exists, please try a new name.", "Save As Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                string ext = Path.GetExtension(fname);
+                switch (ext.ToLowerInvariant())
+                {
+                    case ".sdf":
+                        SaveAsSqlCe(fname);
+                        break;
+                    case ".db":
+                        SaveAsSqlite(fname);
+                        break;
+                    case ".xml":
+                        SaveAsXml(fname);
+                        break;
+                    case ".bxml":
+                        SaveAsBinaryXml(fname);
+                        break;
+                    case ".csv":
+                        ExportCsv(fname);
+                        break;
+                    default:
+                        MessageBox.Show(string.Format("Don't know how to write file of type '{0}'", ext), "Save As Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
                 }
             }
         }

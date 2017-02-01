@@ -98,7 +98,7 @@ namespace Walkabout.Data
 
         // this is used to give SQL Server access to the database directory.
         public IDirectorySecurity SecurityService { get; set; }
-        
+
         public string DatabasePath
         {
             get { return path; }
@@ -120,10 +120,20 @@ namespace Walkabout.Data
         public string Password
         {
             get { return password; }
-            set { 
-                password = value; 
-                // todo: implement changing password on SQL user account....
+            set
+            {
+                if (password != null && password != value)
+                {
+                    OnPasswordChanged(password, value);
+                }
+                password = value;
             }
+        }
+
+        public virtual void OnPasswordChanged(string oldPassword, string newPassword)
+        {
+            // todo: implement changing password on SQL user account....
+            throw new Exception("Sorry ALTER LOGIN is not supported yet, you could try using File/SaveAs instead...");
         }
 
         public string BackupPath
@@ -210,28 +220,30 @@ namespace Walkabout.Data
 
         public static string GetConnectionString(string server, string database, string userid, string password)
         {
-            string cstr = "Data Source=" + server;
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+            builder.DataSource = server;
+
             if (!string.IsNullOrEmpty(database))
             {
-                cstr += ";Initial Catalog=" + database;
+                builder.InitialCatalog = database;
             }
             if (string.IsNullOrEmpty(userid))
             {
-                cstr += ";Integrated Security=SSPI";
+                builder.IntegratedSecurity = true;
             }
             else
             {
-                cstr += ";User Id=" + userid;
+                builder.UserID = userid;
 
                 if (!string.IsNullOrEmpty(password))
                 {
-                    cstr += ";password=" + password;
+                    builder.Password = password;
                 }
-                cstr += ";Workstation Id=" + Environment.MachineName;
+                builder.WorkstationID = Environment.MachineName;
             }
-            cstr += ";connection timeout=20";
+            builder.ConnectTimeout = 20;
 
-            return cstr;
+            return builder.ConnectionString;
         }
 
         protected virtual string GetConnectionString(bool includeDatabase)
@@ -268,7 +280,7 @@ namespace Walkabout.Data
                         createCommand = string.Format(@"Create Database {0} ON PRIMARY (NAME = Data, FILENAME = '{1}') LOG ON (NAME = Log, FILENAME = '{2}')",
                                                         this.DatabaseName, this.DatabasePath, logPhysicalPath);
                     }
-                    else 
+                    else
                     {
                         string.Format(@"Create Database {0}", this.DatabaseName);
                     }
@@ -853,7 +865,7 @@ namespace Walkabout.Data
                     sb.Append(String.Format(",Flags={0}", ((int)a.Flags).ToString()));
                     sb.Append(String.Format(",Currency='{0}'", DBString(a.Currency)));
                     sb.Append(String.Format(",WebSite='{0}'", DBString(a.WebSite)));
-                    sb.Append(String.Format(",ReconcileWarning={0}", a.ReconcileWarning));                    
+                    sb.Append(String.Format(",ReconcileWarning={0}", a.ReconcileWarning));
                     sb.Append(String.Format(",CategoryIdForPrincipal='{0}'", a.CategoryForPrincipal == null ? "-1" : a.CategoryForPrincipal.Id.ToString()));
                     sb.Append(String.Format(",CategoryIdForInterest='{0}'", a.CategoryForInterest == null ? "-1" : a.CategoryForInterest.Id.ToString()));
 
@@ -876,7 +888,7 @@ namespace Walkabout.Data
                     sb.Append(String.Format(",{0}", ((int)a.Flags).ToString()));
                     sb.Append(String.Format(",'{0}'", DBString(a.Currency)));
                     sb.Append(String.Format(",'{0}'", DBString(a.WebSite)));
-                    sb.Append(String.Format(",{0}", a.ReconcileWarning)); 
+                    sb.Append(String.Format(",{0}", a.ReconcileWarning));
                     sb.Append(String.Format(",'{0}'", a.CategoryForPrincipal == null ? "-1" : a.CategoryForPrincipal.Id.ToString()));
                     sb.Append(String.Format(",'{0}'", a.CategoryForInterest == null ? "-1" : a.CategoryForInterest.Id.ToString()));
                     sb.AppendLine(");");
@@ -1827,7 +1839,7 @@ namespace Walkabout.Data
             while (reader.Read())
             {
                 IncrementProgress("StockSplits");
-                
+
                 int sid = reader.GetInt32(2);
                 long id = reader.GetInt64(0);
                 StockSplit s = splits.AddStockSplit(id);
@@ -2349,7 +2361,7 @@ namespace Walkabout.Data
             ExecuteNonQuery("alter database [" + this.DatabaseName + "] set recovery simple");
             ExecuteNonQuery("checkpoint");
             ExecuteNonQuery("alter database [" + this.DatabaseName + "] set recovery full");
-            ExecuteNonQuery("backup database [" + this.DatabaseName + "] to disk = '" + backupPath + "' with init");            
+            ExecuteNonQuery("backup database [" + this.DatabaseName + "] to disk = '" + backupPath + "' with init");
         }
 
         public static SqlServerDatabase Restore(string server, string databasePath, string userId, string password, string backupPath)
@@ -2376,7 +2388,7 @@ namespace Walkabout.Data
                 con.Open();
                 try
                 {
-                    string dir = Path.GetDirectoryName(this.DatabasePath);            
+                    string dir = Path.GetDirectoryName(this.DatabasePath);
                     AclDatabasePath(dir);
                     string cmd = "RESTORE DATABASE [" + DatabaseName + "] FROM DISK = '" + backupPath + "' WITH REPLACE";
                     // Get the logical to physical file mapping.
@@ -2622,6 +2634,7 @@ namespace Walkabout.Data
         {
             this.log.AppendLine(cmd);
         }
+
     }
 
     // This is a fake SQL type so we can differentiate between "char" and "nchar"

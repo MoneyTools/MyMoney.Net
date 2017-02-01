@@ -62,6 +62,11 @@ namespace Walkabout.Data
         {
         }
 
+        public virtual void Disconnect()
+        {
+
+        }
+
         public virtual void Delete()
         {
             if (Exists)

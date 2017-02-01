@@ -723,6 +723,16 @@ namespace Walkabout.Dialogs
 
         private bool VerifyFileName(string path)
         {
+            string dir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dir))
+            {
+                if (this.mode == ConnectMode.Create)
+                {
+                    // then create it!
+                    Directory.CreateDirectory(dir);
+                }
+            }
+
             if (UseSqlCe && !path.EndsWith(".mymoney.sdf", StringComparison.OrdinalIgnoreCase))
             {
                 MessageBoxEx.Show("The SQL CE file must end with the extension '.MyMoney.sdf'", "File Name Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -970,14 +980,11 @@ namespace Walkabout.Dialogs
         private void ButtonBrowseBackup_Click(object sender, RoutedEventArgs e)
         {
             // Restore SQL Express database from a backup.
-            OpenFileDialog fd = new OpenFileDialog();
-            fd.Title = "Restore Database";
-            fd.Filter = Properties.Resources.SqlServerBackupFileFilter;
+            OpenFileDialog fd = InitializeOpenFileDialog("Restore Database", Properties.Resources.SqlServerBackupFileFilter);
             if (!string.IsNullOrEmpty(BackupPath))
             {
                 fd.InitialDirectory = System.IO.Path.GetDirectoryName(BackupPath);
             }
-            fd.CheckFileExists = true;
             if (fd.ShowDialog(this) != true)
             {
                 return;
@@ -1023,11 +1030,9 @@ namespace Walkabout.Dialogs
 
         private void ButtonSqlCEBrowse_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog fdlg = new OpenFileDialog();
-            fdlg.Title = "MyMoney SQLCE *.MyMoney.SDF file";
-            fdlg.Filter = StringHelpers.CreateFileFilter(Properties.Resources.MoneySQLCEFileFilter, Properties.Resources.AllFileFilter);
+            OpenFileDialog fdlg = InitializeOpenFileDialog("MyMoney SQLCE *.MyMoney.SDF file",
+                StringHelpers.CreateFileFilter(Properties.Resources.MoneySQLCEFileFilter, Properties.Resources.AllFileFilter));
             fdlg.FilterIndex = 1;
-            fdlg.RestoreDirectory = true;
 
             if (fdlg.ShowDialog(this) == true)
             {
@@ -1063,14 +1068,11 @@ namespace Walkabout.Dialogs
         private void ButtonCeBrowseBackup_Click(object sender, RoutedEventArgs e)
         {
             // Restore SQL CE database from a backup.
-            OpenFileDialog fd = new OpenFileDialog();
-            fd.Title = "Restore Database";
-            fd.Filter = Properties.Resources.MoneySQLCEFileFilter;
+            OpenFileDialog fd = InitializeOpenFileDialog("Restore Database", Properties.Resources.MoneySQLCEFileFilter);
             if (!string.IsNullOrEmpty(BackupPath))
             {
                 fd.InitialDirectory = System.IO.Path.GetDirectoryName(BackupPath);
             }
-            fd.CheckFileExists = true;
             if (fd.ShowDialog(this) != true)
             {
                 return;
@@ -1133,17 +1135,31 @@ namespace Walkabout.Dialogs
             EnableControls();
         }
 
+        private OpenFileDialog InitializeOpenFileDialog(string title, string filter)
+        {
+            OpenFileDialog fd = new OpenFileDialog();
+            fd.Title = title;
+            fd.Filter = filter;
+            if (this.mode == ConnectMode.Create)
+            {
+                fd.CheckFileExists = false;
+            }
+            else
+            {
+                fd.CheckFileExists = true;
+            }
+            fd.RestoreDirectory = true;
+            return fd;
+        }
+
         private void ButtonSqliteBrowseBackup_Click(object sender, RoutedEventArgs e)
         {
             // Restore SQL CE database from a backup.
-            OpenFileDialog fd = new OpenFileDialog();
-            fd.Title = "Restore Database";
-            fd.Filter = Properties.Resources.MoneySQLLiteFileFilter;
+            OpenFileDialog fd = InitializeOpenFileDialog("Restore Database", Properties.Resources.MoneySQLLiteFileFilter);
             if (!string.IsNullOrEmpty(BackupPath))
             {
                 fd.InitialDirectory = System.IO.Path.GetDirectoryName(BackupPath);
             }
-            fd.CheckFileExists = true;
             if (fd.ShowDialog(this) != true)
             {
                 return;
@@ -1156,12 +1172,9 @@ namespace Walkabout.Dialogs
 
         private void ButtonSqliteBrowse_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog fdlg = new OpenFileDialog();
-            fdlg.Title = "MyMoney SQL Lite *.MyMoney.db file";
-            fdlg.Filter = StringHelpers.CreateFileFilter(Properties.Resources.MoneySQLLiteFileFilter, Properties.Resources.AllFileFilter);
+            OpenFileDialog fdlg = InitializeOpenFileDialog("MyMoney SQL Lite *.MyMoney.db file",
+                StringHelpers.CreateFileFilter(Properties.Resources.MoneySQLLiteFileFilter, Properties.Resources.AllFileFilter));
             fdlg.FilterIndex = 1;
-            fdlg.RestoreDirectory = true;
-
             if (fdlg.ShowDialog(this) == true)
             {
                 string path = fdlg.FileName;
@@ -1211,14 +1224,11 @@ namespace Walkabout.Dialogs
         private void ButtonXmlBrowseBackup_Click(object sender, RoutedEventArgs e)
         {
             // Restore XML database from a backup.
-            OpenFileDialog fd = new OpenFileDialog();
-            fd.Title = "Restore XML File";
-            fd.Filter = Properties.Resources.XmlFileFilter;
+            OpenFileDialog fd = InitializeOpenFileDialog("Restore XML File", Properties.Resources.XmlFileFilter);
             if (!string.IsNullOrEmpty(BackupPath))
             {
                 fd.InitialDirectory = System.IO.Path.GetDirectoryName(BackupPath);
             }
-            fd.CheckFileExists = true;
             if (fd.ShowDialog(this) != true)
             {
                 return;
@@ -1236,11 +1246,9 @@ namespace Walkabout.Dialogs
 
         private void ButtonXmlBrowse_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog fdlg = new OpenFileDialog();
-            fdlg.Title = "XML file";
-            fdlg.Filter = StringHelpers.CreateFileFilter(Properties.Resources.XmlFileFilter, Properties.Resources.AllFileFilter);
+            OpenFileDialog fdlg = InitializeOpenFileDialog("XML file",
+                StringHelpers.CreateFileFilter(Properties.Resources.XmlFileFilter, Properties.Resources.AllFileFilter));
             fdlg.FilterIndex = 1;
-            fdlg.RestoreDirectory = true;
 
             if (fdlg.ShowDialog(this) == true)
             {
@@ -1278,14 +1286,11 @@ namespace Walkabout.Dialogs
         private void ButtonBinaryXmlBrowseBackup_Click(object sender, RoutedEventArgs e)
         {
             // Restore Binary XML  from a backup.
-            OpenFileDialog fd = new OpenFileDialog();
-            fd.Title = "Restore Binary XML File";
-            fd.Filter = Properties.Resources.BinaryXmlFileFilter;
+            OpenFileDialog fd = InitializeOpenFileDialog("Restore Binary XML File", Properties.Resources.BinaryXmlFileFilter);
             if (!string.IsNullOrEmpty(BackupPath))
             {
                 fd.InitialDirectory = System.IO.Path.GetDirectoryName(BackupPath);
             }
-            fd.CheckFileExists = true;
             if (fd.ShowDialog(this) != true)
             {
                 return;
@@ -1312,12 +1317,10 @@ namespace Walkabout.Dialogs
 
         private void ButtonBinaryXmlBrowse_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog fdlg = new OpenFileDialog();
-            fdlg.Title = "Binary XML file";
-            fdlg.Filter = StringHelpers.CreateFileFilter(Properties.Resources.BinaryXmlFileFilter,
-                Properties.Resources.AllFileFilter);
+            OpenFileDialog fdlg = InitializeOpenFileDialog("Binary XML file",
+                StringHelpers.CreateFileFilter(Properties.Resources.BinaryXmlFileFilter,
+                Properties.Resources.AllFileFilter));
             fdlg.FilterIndex = 1;
-            fdlg.RestoreDirectory = true;
 
             if (fdlg.ShowDialog(this) == true)
             {
