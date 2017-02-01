@@ -81,27 +81,9 @@ namespace Walkabout.Tests
                 TestContext.WriteLine("Model Seed = " + seed);
                 model = new DgmlTestModel(this, new TestLog(TestContext), random);
 
-                // Find the tests directory independent of which solution we are loaded from, assuming there's a parent
-                // folder named 'MyMoney' somewhere in the path.
-                StringBuilder path = new StringBuilder();
-                Uri uri = new Uri(this.TestContext.TestDir);
-                foreach (string segment in uri.Segments)
-                {
-                    string p = segment.Trim('/');
-                    if (!string.IsNullOrEmpty(p))
-                    {
-                        path.Append(p);
-                        path.Append(Path.DirectorySeparatorChar);
-                        if (string.Compare(p, "MyMoney", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            break;
-                        }
-                    }
-                }
-
-                path.Append(@"Source\Tests\TestModel.dgml");
-
-                model.Load(path.ToString());
+                string fileName = Path.GetFullPath("TestModel.dgml");
+                CreateGraph(fileName);
+                model.Load(fileName);
                 Thread.Sleep(2000); // let graph load.
                 int delay = 0; // 1000 is handy for debugging.
                 model.Run(new Predicate<DgmlTestModel>((m) => { return m.StatesExecuted > 500; }), delay);
@@ -116,6 +98,17 @@ namespace Walkabout.Tests
             finally
             {
                 Terminate();
+            }
+        }
+
+        void CreateGraph(string path)
+        {
+            if (!File.Exists(path)) {
+                string dgml = GetEmbeddedResource("Walkabout.Tests.TestModel.dgml");
+                using (StreamWriter writer = File.CreateText(path))
+                {
+                    writer.Write(dgml);
+                }
             }
         }
 
