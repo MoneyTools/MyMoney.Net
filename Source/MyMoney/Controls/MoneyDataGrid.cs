@@ -170,7 +170,7 @@ namespace Walkabout.Controls
             }
             try
             {
-                // time times we get a weird exception saying 
+                // sometimes we get a weird exception saying 
                 // 'DeferRefresh' is not allowed during an AddNew or EditItem transaction
                 this.ItemsSource = items;
             }

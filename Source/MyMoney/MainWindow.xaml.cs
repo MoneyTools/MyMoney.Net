@@ -385,9 +385,30 @@ namespace Walkabout
             }
         }
 
+        // stop re-entrancy
+        bool handlingException;
+
         void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            e.Handled = HandleUnhandledException(e.Exception);
+            if (handlingException)
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                handlingException = true;
+                UiDispatcher.Invoke(new Action(() =>
+                {
+                    try
+                    {
+                        e.Handled = HandleUnhandledException(e.Exception);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                    handlingException = false;
+                }));
+            }
         }
 
         bool HandleUnhandledException(object exceptionObject)
