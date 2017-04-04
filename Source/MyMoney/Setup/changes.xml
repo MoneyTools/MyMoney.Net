@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
   https://github.com/clovett/MyMoney.Net/issues/1
+  <change version="1.0.0.349" date="4/4/2018">
+    Improve updates to transaction view while reconciling bank account so updates are less disruptive.
+  </change>
   <change version="1.0.0.348" date="2/1/2017">
     Fix issues with creating non-existant directories when creating new database, and on changing passwords on SQLite database
     and on overriting existing files with SaveAs.

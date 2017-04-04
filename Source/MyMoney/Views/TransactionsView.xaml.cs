@@ -1989,7 +1989,8 @@ namespace Walkabout.Views
                         // before or after that are not reconciled.
                         filter = new Predicate<Transaction>((t) =>
                         {
-                            return (t.Status != TransactionStatus.Reconciled && t.Status != TransactionStatus.Void && !t.Account.IsCategoryFund) || IsIncludedInCurrentStatement(t);
+                            return (t.Status != TransactionStatus.Reconciled && t.Status != TransactionStatus.Void && !t.Account.IsCategoryFund) ||
+                                    t.IsReconciling || IsIncludedInCurrentStatement(t);
                         });
                     }
                     break;
@@ -2007,19 +2008,7 @@ namespace Walkabout.Views
         {
             if (this.StatmentReconcileDateBegin.HasValue)
             {
-                // We have to be clever here and make sure that we only include transactions that exactly matching 
-                // The date after the day of the last balanced date
-                // here's an example
-                //
-                //          Last Balance date = 2010.10.25 00:00:00
-
-                //          Transactions:
-                //                              2010.10.24 00:00:00  will NOT be included
-                //                              2010.10.24 00:19:59  will NOT be included
-                //                              2010.10.25 00:00:00  will     be included
-                //                              2010.10.25 00:19:15  will     be included
-                //                              2010.10.26 00:00:00  will     be included
-                return t.Date >= this.StatmentReconcileDateBegin.Value.AddDays(1);
+                return t.Date >= this.StatmentReconcileDateBegin.Value;
             }
 
             return true;
@@ -2259,10 +2248,10 @@ namespace Walkabout.Views
                     this.BeforeViewStateChanged(this, new EventArgs());
                 }
 
-                if (!quickFilterValueChanging)
+                if (!quickFilterValueChanging && !refresh)
                 {
                     // since we are switching views, clear out the quick filter
-                    // (but only if this is not the result of the quick filter being set!)
+                    // (but only if this is not the result of the quick filter being set or simply a refresh!)
                     this.QuickFilterNoRefresh = string.Empty;
                 }
             }
@@ -2663,7 +2652,7 @@ namespace Walkabout.Views
                                 {
                                     if (args.ChangeType == ChangeType.Deleted || args.ChangeType == ChangeType.Inserted)
                                     {
-                                        // then we need a refresh.
+                                        // then we need a refresh
                                         refresh = true;
                                     }
                                 }
@@ -2675,9 +2664,12 @@ namespace Walkabout.Views
                             }
                             else if (a != null && a == this.ActiveAccount && args.ChangeType == ChangeType.Changed)
                             {
-                                // then we need a refresh, may have just loaded a bunch of new transactions from OFX.
-                                refresh = true;
-                                rebalance = true;
+                                if (args.Name != "Unaccepted" && args.Name != "LastBalance")
+                                {
+                                    // then we need a refresh, may have just loaded a bunch of new transactions from OFX.
+                                    refresh = true;
+                                    rebalance = true;
+                                }
                             }
                         }
                         args = args.Next;
