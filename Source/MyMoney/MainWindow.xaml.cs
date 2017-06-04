@@ -403,7 +403,7 @@ namespace Walkabout
                     {
                         e.Handled = HandleUnhandledException(e.Exception);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                     }
                     handlingException = false;
