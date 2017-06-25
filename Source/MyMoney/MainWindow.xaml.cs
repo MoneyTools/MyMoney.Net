@@ -145,6 +145,7 @@ namespace Walkabout
                 this.payeesControl.TabIndex = 3;
                 this.payeesControl.Name = "PayeesControl";
                 this.payeesControl.MyMoney = this.myMoney;
+                this.payeesControl.Site = (IServiceProvider)this;
 
                 //-----------------------------------------------------------------
                 // STOCKS CONTROL

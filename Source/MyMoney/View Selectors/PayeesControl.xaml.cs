@@ -25,6 +25,8 @@ namespace Walkabout.Views.Controls
     {
         #region PROPERTIES
 
+        public IServiceProvider Site { get; set; }
+
         private MyMoney myMoney;
 
         public MyMoney MyMoney
@@ -259,7 +261,7 @@ namespace Walkabout.Views.Controls
 
         Payee Rename(Payee fromPayee, Payee renameToThisPayee)
         {
-            RenamePayeeDialog dialog = RenamePayeeDialog.ShowDialogRenamePayee((IServiceProvider)this, this.myMoney, fromPayee, renameToThisPayee);
+            RenamePayeeDialog dialog = RenamePayeeDialog.ShowDialogRenamePayee(this.Site, this.myMoney, fromPayee, renameToThisPayee);
 
             dialog.Owner = App.Current.MainWindow;
             if (dialog.ShowDialog() == true)
