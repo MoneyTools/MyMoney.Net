@@ -3,7 +3,7 @@ MyMoney.Net is a rich client .NET 4.0 ClickOnce application for managing your pe
 
 ## Install
 
-You can simply click the [ClickOnce Installer](http://vteam.com/MyMoney/download/MyMoney.application) to install the app, it requires
+You can simply click the [ClickOnce Installer](http://www.lovettsoftware.com/Downloads/MyMoney/MyMoney.application) to install the app, it requires
 .NET 4.0.  
 
 ## Help

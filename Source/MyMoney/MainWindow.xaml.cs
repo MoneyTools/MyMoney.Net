@@ -50,7 +50,7 @@ namespace Walkabout
     {
         #region PROPERTIES PRIVATE
 
-        internal static Uri DownloadSite = new Uri("http://vteam.com/MyMoney/download/");
+        internal static Uri DownloadSite = new Uri("http://www.lovettsoftware.com/Downloads/MyMoney/");
 
 
         private Settings settings;

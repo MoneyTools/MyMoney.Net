@@ -32,7 +32,7 @@
     </TargetFrameworkProfile>
     <Utf8Output>true</Utf8Output>
     <ExpressionBlendVersion>4.0.20901.0</ExpressionBlendVersion>
-    <PublishUrl>ftp://vteam.com/MyMoney/download/</PublishUrl>
+    <PublishUrl>ftp://www.lovettsoftware.com/LovettSoftware/Downloads/MyMoney/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -42,14 +42,14 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://vteam.com/MyMoney/download/</InstallUrl>
-    <SupportUrl>http://myMoney.VTeam.com</SupportUrl>
+    <InstallUrl>http://www.lovettsoftware.com/Downloads/MyMoney/</InstallUrl>
+    <SupportUrl>http://www.lovettsoftware.com/lovettsoftware/downloads/mymoney/</SupportUrl>
     <ProductName>MyMoney</ProductName>
     <PublisherName>VTeam.com</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <DisallowUrlActivation>true</DisallowUrlActivation>
-    <ApplicationRevision>351</ApplicationRevision>
+    <ApplicationRevision>353</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

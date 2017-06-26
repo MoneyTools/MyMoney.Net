@@ -54,7 +54,7 @@
     <SignManifests Condition="'$(AssemblyOriginatorKeyFile)'!=''">true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>D93E8FCE8AB06E2D0489049E67D43E7317B26EE4</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>235CA38984188F94FC230E1DAED8482975D38CFF</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>
