@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="1.0.0.353" date="8/4/2018">
-    Show the CLIENTUID field of the online account and fix a bug where CLIENTUID is not supported
+  <change version="1.0.0.354" date="8/4/2018">
+    Show the CLIENTUID field of the online account and allowing user to clear it. CLIENTUID is not supported
     on OFX version 1 connections (this solves problems with UMB Bank).
   </change>
   <change version="1.0.0.349" date="4/4/2018">

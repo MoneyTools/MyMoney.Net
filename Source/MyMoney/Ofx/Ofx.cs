@@ -810,7 +810,6 @@ namespace Walkabout.Ofx
 
         internal XDocument GetSignonRequest(bool useUserKey)
         {
-            bool version2 = this.onlineAccount.OfxVersion != null && this.onlineAccount.OfxVersion.StartsWith("2");
             bool anonymous = string.IsNullOrEmpty(this.onlineAccount.UserId);
 
             XElement signonrequest = new XElement("SONRQ", new XElement("DTCLIENT", GetIsoDateTime(DateTime.Now)));
@@ -861,7 +860,7 @@ namespace Walkabout.Ofx
                 signonrequest.Add(new XElement("APPVER", this.onlineAccount.AppVersion));
             }
 
-            if (version2 && !string.IsNullOrEmpty(onlineAccount.ClientUid))
+            if (!string.IsNullOrEmpty(onlineAccount.ClientUid))
             {
                 signonrequest.Add(new XElement("CLIENTUID", this.onlineAccount.ClientUid));
             }
