@@ -92,6 +92,12 @@ namespace Walkabout.Tests.Wrappers
             set { SetTextBox("TextBoxAppVersion", value); }
         }
 
+        public string ClientUid
+        {
+            get { return GetTextBox("TextBoxClientUid"); }
+            set { SetTextBox("TextBoxClientUid", value); }
+        }
+
         public PasswordDialogWrapper ClickConnect()
         {
             ClickButton("ButtonVerify");

@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  https://github.com/clovett/MyMoney.Net/issues/1
+  <change version="1.0.0.353" date="8/4/2018">
+    Show the CLIENTUID field of the online account and fix a bug where CLIENTUID is not supported
+    on OFX version 1 connections (this solves problems with UMB Bank).
+  </change>
   <change version="1.0.0.349" date="4/4/2018">
     Improve updates to transaction view while reconciling bank account so updates are less disruptive.
   </change>

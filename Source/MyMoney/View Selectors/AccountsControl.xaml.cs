@@ -353,11 +353,11 @@ namespace Walkabout.Views.Controls
 
                     decimal netWorth = 0;
 
-                    var accountOfTypeBanking = from a in inputList where a.Type == AccountType.Checking || a.Type == AccountType.Savings || a.Type == AccountType.Cash || a.Type == AccountType.CreditLine select a;
+                    var accountOfTypeBanking = from a in inputList where a.Type == AccountType.Checking || a.Type == AccountType.Savings || a.Type == AccountType.Cash select a;
                     AccountSectionHeader sh = BundleAccount("Banking", output, accountOfTypeBanking);
                     netWorth += sh.BalanceInNormalizedCurrencyValue;
 
-                    var accountOfTypeCredit = from a in inputList where a.Type == AccountType.Credit select a;
+                    var accountOfTypeCredit = from a in inputList where a.Type == AccountType.Credit || a.Type == AccountType.CreditLine select a;
                     sh = BundleAccount("Credit", output, accountOfTypeCredit);
                     netWorth += sh.BalanceInNormalizedCurrencyValue;
 

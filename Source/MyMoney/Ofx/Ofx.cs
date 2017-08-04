@@ -810,6 +810,7 @@ namespace Walkabout.Ofx
 
         internal XDocument GetSignonRequest(bool useUserKey)
         {
+            bool version2 = this.onlineAccount.OfxVersion != null && this.onlineAccount.OfxVersion.StartsWith("2");
             bool anonymous = string.IsNullOrEmpty(this.onlineAccount.UserId);
 
             XElement signonrequest = new XElement("SONRQ", new XElement("DTCLIENT", GetIsoDateTime(DateTime.Now)));
@@ -860,11 +861,11 @@ namespace Walkabout.Ofx
                 signonrequest.Add(new XElement("APPVER", this.onlineAccount.AppVersion));
             }
 
-            if (!string.IsNullOrEmpty(onlineAccount.ClientUid))
+            if (version2 && !string.IsNullOrEmpty(onlineAccount.ClientUid))
             {
                 signonrequest.Add(new XElement("CLIENTUID", this.onlineAccount.ClientUid));
             }
-
+            
             if (!string.IsNullOrEmpty(onlineAccount.UserCred1))
             {
                 signonrequest.Add(new XElement("USERCRED1", this.onlineAccount.UserCred1));
@@ -3586,7 +3587,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     case "ACCESSKEY":
                     case "AUTHTOKEN":
                         string value = e.Value;
-                        e.Value = new string('X', value.Length);
+                        e.Value = new string('X', 40);
                         break;
                 }
             }
