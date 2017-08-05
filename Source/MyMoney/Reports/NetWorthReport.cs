@@ -85,10 +85,11 @@ namespace Walkabout.Reports
 
             balance = 0;
 
+            bool hasNoneTypeTaxDeferred = false;
             if (hasTaxDeferred)
             {
                 WriteHeader(writer, "Tax Deferred Assets");
-                totalBalance += WriteSecurities(writer, data, "Tax Deferred ", new Predicate<Account>((a) => { return a.Type == AccountType.Investment && a.IsTaxDeferred; }));
+                totalBalance += WriteSecurities(writer, data, "Tax Deferred ", new Predicate<Account>((a) => { return a.Type == AccountType.Investment && a.IsTaxDeferred; }), out hasNoneTypeTaxDeferred);
             }
 
             WriteHeader(writer, "Long Term Assets");
@@ -103,7 +104,8 @@ namespace Walkabout.Reports
                 }
             }
 
-            totalBalance += WriteSecurities(writer, data, "", new Predicate<Account>((a) => { return a.Type == AccountType.Investment && !a.IsTaxDeferred; }));
+            bool hasNoneType = false;
+            totalBalance += WriteSecurities(writer, data, "", new Predicate<Account>((a) => { return a.Type == AccountType.Investment && !a.IsTaxDeferred; }), out hasNoneType);
 
             balance = 0;
             WriteHeader(writer, "Liabilities");
@@ -168,11 +170,18 @@ namespace Walkabout.Reports
             writer.EndRow();
             writer.EndTable();
 
+            if (hasNoneTypeTaxDeferred || hasNoneType)
+            {
+                writer.WriteParagraph("(*) One ore more of your securities has no SecurityType, you can fix this using View/Securities", 
+                    System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Maroon);
+            }
+
             writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
         }
 
-        private decimal WriteSecurities(IReportWriter writer, List<PieData> data, string prefix, Predicate<Account> filter)
+        private decimal WriteSecurities(IReportWriter writer, List<PieData> data, string prefix, Predicate<Account> filter, out bool hasNoneType)
         {
+            hasNoneType = false;
             decimal balance = 0;
             Dictionary<SecurityType, decimal> byType = new Dictionary<SecurityType, decimal>();
 
@@ -194,13 +203,23 @@ namespace Walkabout.Reports
 
             if (byType.Count > 0)
             {
-                foreach (SecurityType st in new SecurityType[] { SecurityType.Bond, SecurityType.MutualFund, SecurityType.Equity, SecurityType.MoneyMarket, SecurityType.ETF, SecurityType.Reit, SecurityType.Futures })
+                foreach (SecurityType st in new SecurityType[] { SecurityType.Bond,
+                    SecurityType.MutualFund, SecurityType.Equity, SecurityType.MoneyMarket, SecurityType.ETF, SecurityType.Reit, SecurityType.Futures,
+                    SecurityType.None })
                 {
                     decimal sb = 0;
                     if (byType.TryGetValue(st, out sb))
                     {
                         string caption = prefix + Security.GetSecurityTypeCaption(st);
-                        if (sb > 0) data.Add(new PieData() { Name = caption, Total = sb });
+                        if (sb > 0)
+                        {
+                            data.Add(new PieData() { Name = caption, Total = sb });
+                            if (st == SecurityType.None)
+                            {
+                                hasNoneType = true;
+                                caption += "*";
+                            }
+                        }
                         WriteRow(writer, caption, sb);
                         balance += sb;
                     }
