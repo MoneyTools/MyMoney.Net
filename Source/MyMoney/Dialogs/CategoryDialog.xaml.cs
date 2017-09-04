@@ -104,6 +104,7 @@ namespace Walkabout.Dialogs
             this.comboBoxType.Items.Add(CategoryType.Income);
             this.comboBoxType.Items.Add(CategoryType.Expense);
             this.comboBoxType.Items.Add(CategoryType.Savings);
+            this.comboBoxType.Items.Add(CategoryType.Investments);
 
             this.categories = money.Categories;
 
@@ -344,50 +345,54 @@ namespace Walkabout.Dialogs
             }
 
             money.Categories.BeginUpdate(true);
-
-            IntelliComboBoxItem item = (IntelliComboBoxItem)this.comboBoxCategory.SelectedItem;
-            string cat = this.comboBoxCategory.Text;
-            if (item != null)
+            try
             {
-                if (cat == item.ToString())
+                IntelliComboBoxItem item = (IntelliComboBoxItem)this.comboBoxCategory.SelectedItem;
+                string cat = this.comboBoxCategory.Text;
+                if (item != null)
                 {
-                    cat = item.EditValue.ToString();
+                    if (cat == item.ToString())
+                    {
+                        cat = item.EditValue.ToString();
+                    }
                 }
-            }
 
-            CategoryType type = (CategoryType)StringHelpers.ParseEnum(typeof(CategoryType), this.comboBoxType.Text, (int)CategoryType.None);
-            string text = cat;
-            if (text != null && text.Length > 0)
+                CategoryType type = (CategoryType)StringHelpers.ParseEnum(typeof(CategoryType), this.comboBoxType.Text, (int)CategoryType.None);
+                string text = cat;
+                if (text != null && text.Length > 0)
+                {
+                    this.category = this.categories.GetOrCreateCategory(text, type);
+                }
+
+                TaxCategory tc = this.comboTaxCategory.SelectedItem as TaxCategory;
+                if (tc != null)
+                {
+                    this.category.TaxRefNum = tc.RefNum;
+                }
+                else
+                {
+                    this.category.TaxRefNum = 0;
+                }
+
+                this.category.Description = this.textBoxDescription.Text;
+                if (this.category.Type != type)
+                {
+                    this.category.Type = type;
+                    PropagateCategoryTypeToChildren(this.category);
+                }
+
+                this.category.Budget = StringHelpers.ParseDecimal(this.textBoxBudget.Text, 0);
+
+                var picker = this.ColorPicker;
+                Color color = picker.Color;
+                this.category.Color = color.ToString();
+                ColorAndBrushGenerator.SetNamedColor(this.category.GetFullName(), color);
+            }
+            finally
             {
-                this.category = this.categories.GetOrCreateCategory(text, type);
+                // if parent categories were added then set their type & color also.            
+                money.Categories.EndUpdate();
             }
-
-            TaxCategory tc = this.comboTaxCategory.SelectedItem as TaxCategory;
-            if (tc != null)
-            {
-                this.category.TaxRefNum = tc.RefNum;
-            }
-            else
-            {
-                this.category.TaxRefNum = 0;
-            }
-            
-            this.category.Description = this.textBoxDescription.Text;
-            if (this.category.Type != type)
-            {
-                this.category.Type = type;
-                PropagateCategoryTypeToChildren(this.category);
-            }
-
-            this.category.Budget = StringHelpers.ParseDecimal(this.textBoxBudget.Text, 0);
-
-            var picker = this.ColorPicker;
-            Color color = picker.Color;
-            this.category.Color = color.ToString();
-            ColorAndBrushGenerator.SetNamedColor(this.category.GetFullName(), color);
-
-            // if parent categories were added then set their type & color also.            
-            money.Categories.EndUpdate();
         }
 
         private class HistoryRange

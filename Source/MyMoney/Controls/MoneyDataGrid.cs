@@ -32,6 +32,8 @@ namespace Walkabout.Controls
             this.Loaded += OnLoaded;
         }
 
+        public ContextMenu ParentMenu { get; set; }
+
         void OnLoaded(object sender, RoutedEventArgs e)
         {
             OnContentMarginChanged();
@@ -347,6 +349,12 @@ namespace Walkabout.Controls
 
         public bool SetFocusOnSelectedRow(object selected, string columnHeader)
         {
+            if ((this.ParentMenu != null && this.ParentMenu.IsOpen) ||
+                 (this.ContextMenu != null && this.ContextMenu.IsOpen))
+            {
+                // fix bug where context menu disappears when you right click on a new item.
+                return false;
+            }
             // the focus this row so that user can continue using keyboard navigation 
             DataGridRow row = this.ItemContainerGenerator.ContainerFromItem(selected) as DataGridRow;
             if (row != null)

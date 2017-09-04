@@ -132,9 +132,22 @@ namespace Walkabout.Views
             return names;
         }
 
+
+
         public ListCollectionView Categories
         {
-            get { return new ListCollectionView(((List<Category>)myMoney.Categories.AllCategories).ToArray()); }
+            get { return (ListCollectionView)GetValue(CategoriesProperty); }
+            set { SetValue(CategoriesProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Categories.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CategoriesProperty =
+            DependencyProperty.Register("Categories", typeof(ListCollectionView), typeof(TransactionsView), new PropertyMetadata(null));
+
+
+        public void UpdateCategoriesView()
+        {
+            this.Categories = new ListCollectionView(((List<Category>)myMoney.Categories.AllCategories).ToArray());
         }
 
         public ListCollectionView Securities
@@ -423,6 +436,11 @@ namespace Walkabout.Views
 
                 InitializeComponent();
 
+                TheGrid_BankTransactionDetails.ParentMenu = this.ContextMenu;
+                TheGrid_TransactionFromDetails.ParentMenu = this.ContextMenu;
+                TheGrid_InvestmentActivity.ParentMenu = this.ContextMenu;
+                TheGrid_BySecurity.ParentMenu = this.ContextMenu;
+
                 TheActiveGrid = TheGrid_BankTransactionDetails;
 
                 InvestmentAccountTabs.SelectionChanged += new SelectionChangedEventHandler(OnInvestmentAccountTabs_SelectionChanged);
@@ -702,6 +720,7 @@ namespace Walkabout.Views
                                 if (t != null)
                                 {
                                     t.Parent.BeginUpdate(true);
+                                    try
                                     {
                                         // ACCEPTED
                                         if (t.Category != null || t.Transfer != null)
@@ -713,8 +732,10 @@ namespace Walkabout.Views
                                         // RECONCILED
                                         ReconcileThisTransaction(t);
                                     }
-                                    t.Parent.EndUpdate();
-
+                                    finally
+                                    {
+                                        t.Parent.EndUpdate();
+                                    }
                                     // Move to the next row
                                     SelectedRowIndex = SelectedRowIndex + 1;
 
@@ -1115,7 +1136,7 @@ namespace Walkabout.Views
                 {
                     myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
                 }
-
+                this.UpdateCategoriesView();
                 this.TheActiveGrid.ClearItemsSource();
 
                 if (this.IsVisible && currentDisplayName != TransactionViewName.None)
@@ -1379,21 +1400,26 @@ namespace Walkabout.Views
         private void SetReconciledState(bool cancelled)
         {
             this.myMoney.Transactions.BeginUpdate(false);
-
-            // Clear reconciling flags and set reconciled date.            
-            foreach (Transaction t in reconcilingTransactions.Keys)
+            try
             {
-                t.IsReconciling = false;
-                if (cancelled)
+                // Clear reconciling flags and set reconciled date.            
+                foreach (Transaction t in reconcilingTransactions.Keys)
                 {
-                    t.Status = reconcilingTransactions[t];
-                    if (t.Status != TransactionStatus.Reconciled)
+                    t.IsReconciling = false;
+                    if (cancelled)
                     {
-                        t.ReconciledDate = null;
+                        t.Status = reconcilingTransactions[t];
+                        if (t.Status != TransactionStatus.Reconciled)
+                        {
+                            t.ReconciledDate = null;
+                        }
                     }
                 }
             }
-            this.myMoney.Transactions.EndUpdate();
+            finally
+            {
+                this.myMoney.Transactions.EndUpdate();
+            }
         }
 
         /// <summary>
@@ -1406,26 +1432,31 @@ namespace Walkabout.Views
             reconcilingTransactions = new Dictionary<Transaction, TransactionStatus>();
 
             this.myMoney.Transactions.BeginUpdate(false);
-
-            Account account = this.ActiveAccount;
-            if (account != null)
+            try
             {
-                foreach (Transaction t in this.myMoney.Transactions.GetTransactionsFrom(this.ActiveAccount))
+                Account account = this.ActiveAccount;
+                if (account != null)
                 {
-                    if (t.ReconciledDate.HasValue && t.Status == TransactionStatus.Reconciled)
+                    foreach (Transaction t in this.myMoney.Transactions.GetTransactionsFrom(this.ActiveAccount))
                     {
-                        DateTime dt = t.ReconciledDate.Value;
-
-                        if (dt.Year == statementDate.Year && dt.Month == statementDate.Month)
+                        if (t.ReconciledDate.HasValue && t.Status == TransactionStatus.Reconciled)
                         {
-                            // dt.Day == statementDate.Day
-                            t.IsReconciling = true;
-                            reconcilingTransactions[t] = t.Status;
+                            DateTime dt = t.ReconciledDate.Value;
+
+                            if (dt.Year == statementDate.Year && dt.Month == statementDate.Month)
+                            {
+                                // dt.Day == statementDate.Day
+                                t.IsReconciling = true;
+                                reconcilingTransactions[t] = t.Status;
+                            }
                         }
                     }
                 }
             }
-            this.myMoney.Transactions.EndUpdate();
+            finally
+            {
+                this.myMoney.Transactions.EndUpdate();
+            }
         }
 
         private DateTime? StatmentReconcileDateBegin;
@@ -1749,6 +1780,8 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
             {
 #endif
+                // make sure it's  real payee
+                p = this.myMoney.Payees.FindPayee(p.Name, false); 
                 if (p != null)
                 {
                     FireBeforeViewStateChanged();
@@ -2624,6 +2657,7 @@ namespace Walkabout.Views
                         Transaction t = args.Item as Transaction;
                         Investment i = args.Item as Investment;
                         Account a = args.Item as Account;
+                        Category c = args.Item as Category;                        
 
                         if (s != null && !string.IsNullOrEmpty(s.Name))
                         {
@@ -2639,6 +2673,12 @@ namespace Walkabout.Views
                                 }
                             }
                         }
+
+                        if (c != null)
+                        {
+                            this.UpdateCategoriesView();
+                        }
+
                         // the "NewPlaceHolder" item may have just been changed into a real Transaction object.
                         // ChangeType.Changed would have already been handled by the INotifyPropertyChanged events, what we really care
                         // about here are transactions being inserted or removed which can happen if you do a background 'download'
@@ -3309,7 +3349,7 @@ namespace Walkabout.Views
         public readonly static RoutedUICommand CommandSplits = new RoutedUICommand("Splits", "CommandSplits", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandRenamePayee = new RoutedUICommand("RenamePayee", "CommandRenamePayee", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandLookupPayee = new RoutedUICommand("LookupPayee", "CommandLookupPayee", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandCategoryDetails = new RoutedUICommand("CategoryDetails", "CommandCategoryDetails", typeof(TransactionsView));
+        public readonly static RoutedUICommand CommandRecategorize = new RoutedUICommand("Recategorize", "CommandRecategorize", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandGotoRelatedTransaction = new RoutedUICommand("GotoRelatedTransaction", "CommandGotoRelatedTransaction", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewTransactionsByAccount = new RoutedUICommand("ViewTransactionsByAccount", "CommandViewTransactionsByAccount", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewSimilarTransactions = new RoutedUICommand("ViewSimilarTransactions", "CommandViewSimilarTransactions", typeof(TransactionsView));
@@ -3393,7 +3433,7 @@ namespace Walkabout.Views
             e.CanExecute = true;
             e.Handled = true;
         }
-        private void CanExecute_CategoryDetails(object sender, CanExecuteRoutedEventArgs e)
+        private void CanExecute_Recategorize(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
             e.Handled = true;
@@ -3584,13 +3624,38 @@ namespace Walkabout.Views
             dialog.ShowDialog();
         }
 
-        void OnCommandCategoryDetails(object sender, RoutedEventArgs e)
+        void OnRecategorizeAll(object sender, RoutedEventArgs e)
         {
             this.TheActiveGrid.CommitEdit();
-            Transaction t = this.SelectedTransaction;
-            if (t != null)
+            RecategorizeDialog dialog = new Dialogs.RecategorizeDialog(this.myMoney);
+            dialog.Owner = App.Current.MainWindow;
+            Category category = null;
+            if (this.SelectedTransaction != null)
             {
-                CategoriesControl.ShowDetails(this.Money, t.Category);
+                category = this.SelectedTransaction.Category;
+            }
+            else if (this.viewModel.Count > 0)
+            {
+                category = this.viewModel[0].Category;
+            }
+            dialog.FromCategory = dialog.ToCategory = category;
+            if (dialog.ShowDialog() == true)
+            {
+                // do it !!
+                Category to = dialog.ToCategory;
+                if (to != category)
+                {
+                    this.myMoney.BeginUpdate();
+                    try
+                    {
+                        foreach (Transaction t in this.ViewModel)
+                        {
+                            t.Category = to;
+                        }
+                    } finally {
+                        this.myMoney.EndUpdate();
+                    }
+                }
             }
         }
 
@@ -3876,44 +3941,50 @@ namespace Walkabout.Views
             }
 
             t.Parent.BeginUpdate(true);
-
-            // toggle it.
-            if (this.reconciling)
+            try
             {
-                if (t.Status != TransactionStatus.Reconciled)
+
+                // toggle it.
+                if (this.reconciling)
                 {
-                    ReconcileThisTransaction(t);
-                }
-                else
-                {
-                    if (reconcilingTransactions.ContainsKey(t))
+                    if (t.Status != TransactionStatus.Reconciled)
                     {
-                        t.Status = reconcilingTransactions[t];
-                        if (t.Status == TransactionStatus.Reconciled)
-                        {
-                            t.Status = TransactionStatus.Cleared;
-                        }
+                        ReconcileThisTransaction(t);
                     }
                     else
                     {
+                        if (reconcilingTransactions.ContainsKey(t))
+                        {
+                            t.Status = reconcilingTransactions[t];
+                            if (t.Status == TransactionStatus.Reconciled)
+                            {
+                                t.Status = TransactionStatus.Cleared;
+                            }
+                        }
+                        else
+                        {
+                            t.Status = TransactionStatus.Cleared;
+                        }
+                        t.IsReconciling = false;
+                        t.ReconciledDate = null;
+                    }
+                }
+                else
+                {
+                    if (t.Status == TransactionStatus.None)
+                    {
                         t.Status = TransactionStatus.Cleared;
                     }
-                    t.IsReconciling = false;
-                    t.ReconciledDate = null;
+                    else if (t.Status == TransactionStatus.Cleared)
+                    {
+                        t.Status = TransactionStatus.None;
+                    }
                 }
             }
-            else
+            finally
             {
-                if (t.Status == TransactionStatus.None)
-                {
-                    t.Status = TransactionStatus.Cleared;
-                }
-                else if (t.Status == TransactionStatus.Cleared)
-                {
-                    t.Status = TransactionStatus.None;
-                }
+                t.Parent.EndUpdate();
             }
-            t.Parent.EndUpdate();
         }
 
         private void ReconcileThisTransaction(Transaction t)
@@ -4097,7 +4168,7 @@ namespace Walkabout.Views
             if (dialog.ShowDialog() == true)
             {
                 newCategory = dialog.Category;
-                // the OnMoneyChanged event should have fired, and the list is now updated.
+                this.UpdateCategoriesView(); // make sure combo now contains this item otherwise ComboBox will clear the Text.
             }
             else
             {

@@ -168,6 +168,15 @@ namespace Walkabout.Reports
             return (c.Type == CategoryType.Income || c.Type == CategoryType.Savings);
         }
 
+        private bool IsInvestment(Category c)
+        {
+            if (c.Type == CategoryType.None && c.ParentCategory != null)
+            {
+                return IsInvestment(c.ParentCategory);
+            }
+            return (c.Type == CategoryType.Investments);
+        }
+
         public void Regenerate()
         {
             view.Generate(this);
@@ -267,7 +276,9 @@ namespace Walkabout.Reports
             GenerateGroup(writer, byCategory, columnTotals, "Income", (c) => { return IsIncome(c); });
 
             GenerateGroup(writer, byCategory, columnTotals, "Expenses", (c) => { return IsExpense(c); });
-            
+
+            GenerateGroup(writer, byCategory, columnTotals, "Investments", (c) => { return IsInvestment(c); });
+
             List<decimal> totals = columnTotals.GetOrderedValues(this.columns);
             decimal balance = (from d in totals select d).Sum();
 

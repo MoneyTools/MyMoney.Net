@@ -329,11 +329,17 @@ namespace Walkabout.Network
 
                 // Now batch update the securities instead of dribbling them in one by one.
                 this.myMoney.Securities.BeginUpdate(true);
-                foreach (XElement e in newQuotes.Root.Elements())
+                try
                 {
-                    ProcessResult(e);
+                    foreach (XElement e in newQuotes.Root.Elements())
+                    {
+                        ProcessResult(e);
+                    }
                 }
-                this.myMoney.Securities.EndUpdate();
+                finally
+                {
+                    this.myMoney.Securities.EndUpdate();
+                }
 
                 busy = false;
 

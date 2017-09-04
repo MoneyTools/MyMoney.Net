@@ -57,7 +57,7 @@
     </UserControl.Resources>
     <Grid>
         <ComboBox x:Name="RangeCombo" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" />
-        <charting:Chart   x:Name="AreaChart" >
+        <charting:Chart   x:Name="BarChart" >
             <charting:ColumnSeries x:Name="SeriesAmount" 
                             DataPointStyle="{StaticResource AmountStyle}" 
                             DependentValuePath="Amount"  
@@ -71,7 +71,7 @@
 
             </charting:LineSeries>
             <charting:Chart.Axes>
-                <charting:LinearAxis Minimum="0" Orientation="Y"  />
+                <charting:LinearAxis Orientation="Y"  />
             </charting:Chart.Axes>
         </charting:Chart>
 

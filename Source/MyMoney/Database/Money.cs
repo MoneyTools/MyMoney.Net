@@ -973,15 +973,21 @@ namespace Walkabout.Data
             {
                 CostBasisCalculator calculator = new CostBasisCalculator(this, DateTime.Now);
                 this.Transactions.BeginUpdate(false);
-                foreach (Account account in new List<Account>(balancePending))
+                try
                 {
-                    changed = this.Transactions.Rebalance(calculator, account);
-                    if (changed && this.balanceHandlers != null && this.balanceHandlers.HasListeners)
+                    foreach (Account account in new List<Account>(balancePending))
                     {
-                        this.balanceHandlers.RaiseEvent(this, new ChangeEventArgs(account, "Balance", ChangeType.Rebalanced));
+                        changed = this.Transactions.Rebalance(calculator, account);
+                        if (changed && this.balanceHandlers != null && this.balanceHandlers.HasListeners)
+                        {
+                            this.balanceHandlers.RaiseEvent(this, new ChangeEventArgs(account, "Balance", ChangeType.Rebalanced));
+                        }
                     }
                 }
-                this.Transactions.EndUpdate();
+                finally
+                {
+                    this.Transactions.EndUpdate();
+                }
                 balancePending.Clear();
             }
 
@@ -1002,15 +1008,20 @@ namespace Walkabout.Data
             else
             {
                 this.Transactions.BeginUpdate(false);
-
-                CostBasisCalculator calculator = new CostBasisCalculator(this, DateTime.Now);
-                changed = this.Transactions.Rebalance(calculator, t.Account);
-                if (t.Transfer != null)
+                try
                 {
-                    Transaction u = t.Transfer.Transaction;
-                    changed |= this.Transactions.Rebalance(calculator, u.Account);
+                    CostBasisCalculator calculator = new CostBasisCalculator(this, DateTime.Now);
+                    changed = this.Transactions.Rebalance(calculator, t.Account);
+                    if (t.Transfer != null)
+                    {
+                        Transaction u = t.Transfer.Transaction;
+                        changed |= this.Transactions.Rebalance(calculator, u.Account);
+                    }
                 }
-                this.Transactions.EndUpdate();
+                finally
+                {
+                    this.Transactions.EndUpdate();
+                }
                 if (changed && this.balanceHandlers != null && this.balanceHandlers.HasListeners)
                 {
                     this.balanceHandlers.RaiseEvent(this, new ChangeEventArgs(t.Account, "Balance", ChangeType.Rebalanced));
@@ -1548,24 +1559,29 @@ namespace Walkabout.Data
             int count = 0;
             Payee np = alias.Payee;
             this.Transactions.BeginUpdate(true);
-            foreach (PersistentObject po in FindAliasMatches(alias, transactions))
+            try
             {
-                Transaction t = po as Transaction;
-                Split s = po as Split;
-                if (t != null)
+                foreach (PersistentObject po in FindAliasMatches(alias, transactions))
                 {
-                    t.Payee = np;
-                    count++;
-                }
-                else if (s != null)
-                {
-                    Payee sp = s.Payee;
-                    s.Payee = np;
-                    count++;
+                    Transaction t = po as Transaction;
+                    Split s = po as Split;
+                    if (t != null)
+                    {
+                        t.Payee = np;
+                        count++;
+                    }
+                    else if (s != null)
+                    {
+                        Payee sp = s.Payee;
+                        s.Payee = np;
+                        count++;
+                    }
                 }
             }
-
-            this.Transactions.EndUpdate();
+            finally
+            {
+                this.Transactions.EndUpdate();
+            }
             return count;
         }
 
@@ -6243,6 +6259,7 @@ namespace Walkabout.Data
         Savings,
         Reserved, // this is not used (but hard to delete because of database).
         Transfer, // special category only used by pie charts
+        Investments // so you can separate out investment income and expenditures.
     }
 
     public enum CalendarRange
@@ -6434,13 +6451,31 @@ namespace Walkabout.Data
                     this.name = Truncate(value, 80);
                     this.label = null;
                     this.label = this.Label;
-                    if (this.Parent != null) this.Parent.BeginUpdate(true);
-                    RenameSubcategories();
-                    OnNameChanged(old, this.name);
-                    OnChanged("Name");
-                    if (this.Parent != null) this.Parent.EndUpdate();
+                    if (this.Parent != null)
+                    {
+                        this.Parent.BeginUpdate(true);
+                        try
+                        {
+                            OnNameChanged(old);
+                        }
+                        finally
+                        {
+                            this.Parent.EndUpdate();
+                        }
+                    }
+                    else
+                    {
+                        OnNameChanged(old);
+                    }
                 }
             }
+        }
+
+        void OnNameChanged(string old)
+        {
+            RenameSubcategories();
+            OnNameChanged(old, this.name);
+            OnChanged("Name");
         }
 
         [XmlIgnore]
@@ -8007,46 +8042,51 @@ namespace Walkabout.Data
 
             bool changed = false;
             this.BeginUpdate(true);
-
-            lock (this.transactions)
+            try
             {
-
-                decimal balance = a.OpeningBalance;
-
-                int unaccepted = 0;
-                foreach (Transaction t in GetTransactionsFrom(a))
+                lock (this.transactions)
                 {
-                    if (t.Unaccepted)
-                        unaccepted++;
 
-                    if (t.IsDeleted || t.Status == TransactionStatus.Void)
-                        continue;
+                    decimal balance = a.OpeningBalance;
 
-                    // current account balance 
-                    balance += t.Amount;
-
-                    // snapshot the current running balance value
-                    t.Balance = balance;
-                }
-
-                if (a.Type == AccountType.Investment)
-                {
-                    foreach (SecurityPurchase sp in calculator.GetHolding(a).GetHoldings())
+                    int unaccepted = 0;
+                    foreach (Transaction t in GetTransactionsFrom(a))
                     {
-                        Security s = sp.Security;
-                        if (Math.Floor(sp.UnitsRemaining) > 0)
+                        if (t.Unaccepted)
+                            unaccepted++;
+
+                        if (t.IsDeleted || t.Status == TransactionStatus.Void)
+                            continue;
+
+                        // current account balance 
+                        balance += t.Amount;
+
+                        // snapshot the current running balance value
+                        t.Balance = balance;
+                    }
+
+                    if (a.Type == AccountType.Investment)
+                    {
+                        foreach (SecurityPurchase sp in calculator.GetHolding(a).GetHoldings())
                         {
-                            balance += sp.MarketValue;
+                            Security s = sp.Security;
+                            if (Math.Floor(sp.UnitsRemaining) > 0)
+                            {
+                                balance += sp.MarketValue;
+                            }
                         }
                     }
+
+                    // Refresh the Account balance value
+                    a.Balance = balance;
+                    a.Unaccepted = unaccepted;
+
                 }
-
-                // Refresh the Account balance value
-                a.Balance = balance;
-                a.Unaccepted = unaccepted;
-
             }
-            this.EndUpdate();
+            finally
+            {
+                this.EndUpdate();
+            }
             return changed;
         }
 
@@ -8232,7 +8272,7 @@ namespace Walkabout.Data
             return view;
         }
 
-        int SortByDate(Transaction x, Transaction y)
+        public static int SortByDate(Transaction x, Transaction y)
         {
             if (x == null)
             {
@@ -8836,14 +8876,19 @@ namespace Walkabout.Data
             this.Account = t.Account;
             this.Date = t.Date;
             this.IsReadOnly = true;
-            this.Payee = s.Payee;
+
+            Payee toFake = s.Payee;
             if (s.Payee == null)
             {
-                this.Payee = t.Payee;
+                toFake = t.Payee;
+            }
+            // we want a disconnected Payee so we don't corrupt the real Payee book keeping.
+            if (toFake != null) { 
+                this.payee = new Data.Payee() { Name = toFake.Name, Id = toFake.Id };
             }
             this.Memo = s.Memo;
             this.Amount = s.Amount;
-            this.Transfer = s.Transfer;
+            this.transfer = s.Transfer; // hmmm
             this.relatedSplit = s;
 
             // Category must be set last in order to ensure

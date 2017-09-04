@@ -175,6 +175,7 @@ namespace Walkabout
                 //
                 this.accountsControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Account);
                 this.categoriesControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Categories);
+                this.categoriesControl.GroupSelectionChanged += new EventHandler(OnSelectionChangeFor_CategoryGroup);
                 this.categoriesControl.SelectedTransactionChanged += new EventHandler(CategoriesControl_SelectedTransactionChanged);
                 this.categoriesControl.StartBalanceBudget += new EventHandler(OnStartBalanceBudget);
                 this.categoriesControl.BudgetDateChanged += new EventHandler(OnBudgetDateChanged);
@@ -662,6 +663,7 @@ namespace Walkabout
         {
             if (this.chartsDirty && !this.myMoney.IsUpdating)
             {
+                this.chartsDirty = false;
                 UpdateCharts();
             }
             tickCount++;
@@ -873,6 +875,15 @@ namespace Walkabout
             }
         }
 
+        private void OnSelectionChangeFor_CategoryGroup(object sender, EventArgs e)
+        {
+            CategoryGroup g = this.categoriesControl.SelectedGroup;
+            if (g != null)
+            {
+                ViewTransactionsByCategoryGroup(g);
+            }
+        }
+
         private long GetFirstTransactionInCategory(TransactionsView view, Category c, DateTime date)
         {
             foreach (Transaction t in myMoney.Transactions.GetTransactionsByCategory(c, view.GetTransactionIncludePredicate()))
@@ -895,6 +906,27 @@ namespace Walkabout
                 selectedId = GetFirstTransactionInCategory(view, c, view.BudgetDate);
             }
             view.ViewTransactionsForCategory(c, selectedId);
+            if (!isTransactionViewAlready)
+            {
+                this.navigator.Pop();
+            }
+            TrackSelectionChanges();
+        }
+
+        private void ViewTransactionsByCategoryGroup(CategoryGroup g)
+        {
+            bool isTransactionViewAlready = CurrentView is TransactionsView;
+            TransactionsView view = SetCurrentView<TransactionsView>();
+            List<Transaction> total = new List<Data.Transaction>();
+            foreach (Category c in g.Subcategories)
+            {
+                IList<Transaction> transactions = myMoney.Transactions.GetTransactionsByCategory(c,
+                    new Predicate<Transaction>((t) => { return true; }));
+                total.AddRange(transactions);
+            }
+
+            total.Sort(Transactions.SortByDate);
+            view.ViewTransactionsForCategory(new Data.Category() { Name = g.Name }, total);
             if (!isTransactionViewAlready)
             {
                 this.navigator.Pop();
@@ -1077,6 +1109,7 @@ namespace Walkabout
             get
             {
                 var result = GetOrCreateView<TransactionsView>();
+                result.ViewModelChanged -= OnTransactionViewModelChanged;
                 result.ViewModelChanged += OnTransactionViewModelChanged;
                 return result;
             }
@@ -2790,7 +2823,6 @@ namespace Walkabout
                     this.myMoney.EndUpdate();
                 }
 
-                this.chartsDirty = false;
 #if PerformanceBlocks
             }
 #endif

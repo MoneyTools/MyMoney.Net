@@ -29,7 +29,7 @@
             <MenuItem Name="menuItemSplit" Header="_Splits..." Command="views:TransactionsView.CommandSplits"/>
             <MenuItem Name="menuItemRenamePayee" Header="_Rename Payee" Command="views:TransactionsView.CommandRenamePayee"/>
             <MenuItem Name="menuItemLookupPayee" Header="_Lookup Payee " Command="views:TransactionsView.CommandLookupPayee" InputGestureText="F3"/>
-            <MenuItem Name="menuItemCategories" Header="_Category Properties..." Command="views:TransactionsView.CommandCategoryDetails"/>
+            <MenuItem Name="menuItemCategories" Header="Recategori_ze all..." Command="views:TransactionsView.CommandRecategorize"/>
 
             <Separator/>
             <MenuItem Name="menuItemDelete" Header="_Delete" Command="Delete"/>
@@ -60,7 +60,7 @@
         <CommandBinding Command="views:TransactionsView.CommandSplits" Executed="OnCommandSplits" CanExecute="CanExecute_Splits" />
         <CommandBinding Command="views:TransactionsView.CommandRenamePayee" Executed="OnCommandRenamePayee" CanExecute="CanExecute_RenamePayee"/>
         <CommandBinding Command="views:TransactionsView.CommandLookupPayee" Executed="OnCommandLookupPayee" CanExecute="CanExecute_LookupPayee"/>
-        <CommandBinding Command="views:TransactionsView.CommandCategoryDetails" Executed="OnCommandCategoryDetails" CanExecute="CanExecute_CategoryDetails" />
+        <CommandBinding Command="views:TransactionsView.CommandRecategorize" Executed="OnRecategorizeAll" CanExecute="CanExecute_Recategorize" />
         <CommandBinding Command="views:TransactionsView.CommandGotoRelatedTransaction" Executed="OnCommandGotoRelatedTransaction"  CanExecute="CanExecute_GotoRelatedTransaction"/>
         <CommandBinding Command="views:TransactionsView.CommandViewTransactionsByAccount" Executed="OnCommandViewTransactionsByAccount" CanExecute="CanExecute_ViewTransactionsByAccount" />
         <CommandBinding Command="views:TransactionsView.CommandViewSimilarTransactions" Executed="OnCommandViewSimilarTransactions" CanExecute="CanExecute_ViewSimilarTransactions" />

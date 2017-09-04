@@ -130,6 +130,19 @@ namespace Walkabout.Views.Controls
             }
         }
 
+        public CategoryGroup SelectedGroup
+        {
+            get
+            {
+                CategoryGroup g = treeView.SelectedItem as CategoryGroup;
+                if (g != null)
+                {
+                    return g;
+                }
+                return null;
+            }
+        }
+
         public IServiceProvider Site { get; set; }
 
         #endregion
@@ -173,7 +186,7 @@ namespace Walkabout.Views.Controls
 
                 decimal balance = 0;
 
-                foreach (CategoryType t in new CategoryType[] { CategoryType.Income, CategoryType.Expense, CategoryType.None })
+                foreach (CategoryType t in new CategoryType[] { CategoryType.Income, CategoryType.Expense, CategoryType.Investments, CategoryType.None })
                 {
                     ObservableCollection<Category> list = new ObservableCollection<Category>();
 
@@ -288,7 +301,7 @@ namespace Walkabout.Views.Controls
             {
                 List<Category> roots = this.money.Categories.GetRootCategories();
                 decimal balance = 0;
-                foreach (CategoryType t in new CategoryType[] { CategoryType.Income, CategoryType.Expense, CategoryType.None })
+                foreach (CategoryType t in new CategoryType[] { CategoryType.Income, CategoryType.Expense, CategoryType.Investments, CategoryType.None })
                 {
                     foreach (Category c in roots)
                     {
@@ -529,6 +542,8 @@ namespace Walkabout.Views.Controls
 
         public event EventHandler SelectionChanged;
 
+        public event EventHandler GroupSelectionChanged;
+
         public event EventHandler SelectedTransactionChanged;
 
         void OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -539,6 +554,14 @@ namespace Walkabout.Views.Controls
                 if (SelectionChanged != null)
                 {
                     SelectionChanged(this, EventArgs.Empty);
+                }
+            }
+            CategoryGroup group = (this.treeView.SelectedItem as CategoryGroup);
+            if (group != null)
+            {
+                if (GroupSelectionChanged != null)
+                {
+                    GroupSelectionChanged(this, EventArgs.Empty);
                 }
             }
         }

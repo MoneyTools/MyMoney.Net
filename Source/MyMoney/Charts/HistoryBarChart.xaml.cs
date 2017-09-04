@@ -22,11 +22,32 @@ namespace Walkabout.Charts
         Day
     }
 
+    public class ColumnLabel
+    {
+        string label;
+        HistoryChartColumn data;
+
+        public HistoryChartColumn Data
+        {
+            get { return data; }
+            set { data = value; }
+        }
+
+        public ColumnLabel(string label)
+        {
+            this.label = label;
+        }
+        public override string ToString()
+        {
+            return label;
+        }
+    }
+
     public class HistoryChartColumn
     {
         public Brush Brush { get; set; }
         public decimal Amount { get; set; }
-        public string Label { get; set; }
+        public ColumnLabel Label { get; set; }
         public decimal Average { get; set; }
         public bool Partial { get; set; } // whether this column has partial data (doesn't seem to be a full set of transactions in this date range).
         public DateTime EndDate
@@ -65,7 +86,7 @@ namespace Walkabout.Charts
             RangeCombo.Items.Add(HistoryRange.Day);
             RangeCombo.SelectedIndex = 0;
             RangeCombo.SelectionChanged += new SelectionChangedEventHandler(RangeCombo_SelectionChanged);
-            AreaChart.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(AreaChart_PreviewMouseLeftButtonDown);
+            BarChart.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(BarChart_PreviewMouseLeftButtonDown);
 
             this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(HistoryBarChart_IsVisibleChanged);
         }
@@ -120,7 +141,7 @@ namespace Walkabout.Charts
         }
 
 
-        void AreaChart_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        void BarChart_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DependencyObject d = e.OriginalSource as DependencyObject;
             if (e == null)
@@ -136,6 +157,13 @@ namespace Walkabout.Charts
                     if (data != null)
                     {
                         this.selection = data;
+                        OnSelectionChanged();
+                        return;
+                    }
+                    ColumnLabel label = f.DataContext as ColumnLabel;
+                    if (label != null)
+                    {
+                        this.selection = label.Data;
                         OnSelectionChanged();
                         return;
                     }
@@ -239,10 +267,6 @@ namespace Walkabout.Charts
                         // skip transfers.
                         continue;
                     }
-                    if (t.Date < startDate)
-                    {
-                        continue;
-                    }
                     decimal amount = t.Amount;
                     if (invert)
                     {
@@ -281,6 +305,10 @@ namespace Walkabout.Charts
                         total = 0;
                         transactions = new List<Transaction>();
                     }
+                    if (t.Date < start)
+                    {
+                        continue;
+                    }
                     total += amount;
                     transactions.Add(t);
                 }
@@ -299,7 +327,7 @@ namespace Walkabout.Charts
 
                 SeriesAmount.ItemsSource = copy;
                 AverageSeries.ItemsSource = copy;
-                AreaChart.InvalidateArrange();
+                BarChart.InvalidateArrange();
             }
             catch (Exception ex)
             {
@@ -407,9 +435,11 @@ namespace Walkabout.Charts
                     label = string.Format("{0:00}", start.Day);
                     break;
             }
-            collection.Add(new HistoryChartColumn() { Amount = total, Label = label, Transactions = transactions, Brush = brush });
+            ColumnLabel clabel = new Charts.ColumnLabel(label);
+            HistoryChartColumn column = new HistoryChartColumn() { Amount = total, Label = clabel, Transactions = transactions, Brush = brush };
+            clabel.Data = column;
+            collection.Add(column);
         }
-
 
     }
 }

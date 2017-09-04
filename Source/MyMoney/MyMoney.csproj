@@ -199,6 +199,9 @@
     </Compile>
     <Compile Include="Controls\Resizer.cs" />
     <Compile Include="Controls\WpfConverters.cs" />
+    <Compile Include="Dialogs\RecategorizeDialog.xaml.cs">
+      <DependentUpon>RecategorizeDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\MoneyFileImportDialog.xaml.cs">
       <DependentUpon>MoneyFileImportDialog.xaml</DependentUpon>
     </Compile>
@@ -784,6 +787,10 @@
     <Page Include="Controls\DropDownButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\RecategorizeDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\MoneyFileImportDialog.xaml">
       <SubType>Designer</SubType>
