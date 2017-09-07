@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -2615,15 +2616,16 @@ namespace Walkabout
             HistoryChartColumn c = HistoryChart.Selection;
             if (c != null)
             {
+                List<Transaction> list = new List<Transaction>(from v in c.Values select (Transaction)v.UserData);
                 this.TransactionView.QuickFilter = ""; // need to clear this as they might conflict.
                 var view = SetCurrentView<TransactionsView>();
                 if (this.TransactionView.ActiveCategory != null)
                 {
-                    view.ViewTransactionsForCategory(this.TransactionView.ActiveCategory, c.Transactions);
+                    view.ViewTransactionsForCategory(this.TransactionView.ActiveCategory, list);
                 }
                 else if (this.TransactionView.ActivePayee != null)
                 {
-                    view.ViewTransactionsForPayee(this.TransactionView.ActivePayee, c.Transactions);
+                    view.ViewTransactionsForPayee(this.TransactionView.ActivePayee, list);
                 }
             }
         }
@@ -2667,31 +2669,7 @@ namespace Walkabout
                             TabHistory.Visibility = System.Windows.Visibility.Visible;
                             TabTrends.Visibility = System.Windows.Visibility.Visible;
 
-                            // pick a color based on selected category or payee.
-                            Category cat = this.TransactionView.ActiveCategory;
-                            Payee payee = this.TransactionView.ActivePayee;
-                            Brush brush = null; // this will request the default color.
-                            if (cat != null)
-                            {
-                                if (!string.IsNullOrEmpty(cat.InheritedColor))
-                                {
-                                    Color c = ColorAndBrushGenerator.GenerateNamedColor(cat.InheritedColor);
-                                    brush = new SolidColorBrush(c);
-                                }
-                            }
-                            if (brush == null && payee != null)
-                            {
-                                Color c = ColorAndBrushGenerator.GenerateNamedColor(payee.Name);
-                                brush = new SolidColorBrush(c);
-                            }
-                            HistoryChartColumn selection = HistoryChart.Selection;
-                            if (selection == null)
-                            {
-                                selection = new Charts.HistoryChartColumn();
-                            }
-                            selection.Transactions = this.TransactionView.ViewModel;
-                            selection.Brush = brush;
-                            HistoryChart.Selection = selection;
+                            UpdateHistoryChart();
 
                             if (historyWasNotVisible || TabLoan.IsSelected || TabRental.IsSelected)
                             {
@@ -2826,6 +2804,63 @@ namespace Walkabout
 #if PerformanceBlocks
             }
 #endif
+        }
+
+        private void UpdateHistoryChart()
+        {
+            // pick a color based on selected category or payee.
+            Category cat = this.TransactionView.ActiveCategory;
+            Payee payee = this.TransactionView.ActivePayee;
+            Brush brush = null; // this will request the default color.
+            if (cat != null)
+            {
+                if (!string.IsNullOrEmpty(cat.InheritedColor))
+                {
+                    Color c = ColorAndBrushGenerator.GenerateNamedColor(cat.InheritedColor);
+                    brush = new SolidColorBrush(c);
+                }
+            }
+            if (brush == null && payee != null)
+            {
+                Color c = ColorAndBrushGenerator.GenerateNamedColor(payee.Name);
+                brush = new SolidColorBrush(c);
+            }
+            HistoryChartColumn selection = HistoryChart.Selection;
+            if (selection == null)
+            {
+                selection = new Charts.HistoryChartColumn();
+            }
+            List<HistoryDataValue> rows = new List<Charts.HistoryDataValue>();
+            foreach (var transaction in this.TransactionView.ViewModel)
+            {
+                if (transaction.Transfer != null)
+                {
+                    continue;
+                }
+                decimal amount = transaction.Amount;
+                if (transaction.Investment != null)
+                {
+                    if (transaction.InvestmentType == InvestmentType.Add)
+                    {
+                        // add the value of this event to the amount of this transaction
+                        amount += transaction.InvestmentSecurity.Price * transaction.Investment.Units;
+                    }
+                    else if (transaction.InvestmentType == InvestmentType.Add)
+                    {
+                        // subtract the value of this event to the amount of this transaction
+                        amount -= transaction.InvestmentSecurity.Price * transaction.Investment.Units;
+                    }
+                }
+                rows.Add(new HistoryDataValue()
+                {
+                    Date = transaction.Date,
+                    UserData = transaction,
+                    Value = amount
+                });
+            }
+            selection.Values = rows;// this.TransactionView.ViewModel;
+            selection.Brush = brush;
+            HistoryChart.Selection = selection;
         }
 
         void TransactionGraph_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

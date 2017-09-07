@@ -43,6 +43,13 @@ namespace Walkabout.Charts
         }
     }
 
+    public class HistoryDataValue
+    {
+        public DateTime Date { get; set; }
+        public decimal Value { get; set; }
+        public object UserData { get; set; }
+    }
+
     public class HistoryChartColumn
     {
         public Brush Brush { get; set; }
@@ -54,17 +61,14 @@ namespace Walkabout.Charts
         {
             get
             {
-                Transaction last = Transactions.LastOrDefault();
+                HistoryDataValue last = Values != null ? Values.LastOrDefault() : null;
                 return (last != null) ? last.Date : DateTime.Now;
             }
         }
         public HistoryRange Range { get; set; }
-
-        /// <summary>
-        /// The set of transactions in this column
-        /// </summary>
-        public IEnumerable<Transaction> Transactions { get; set; }
+        public IEnumerable<HistoryDataValue> Values { get; set; }
     };
+
 
     /// <summary>
     /// Interaction logic for BudgetChart.xaml
@@ -198,7 +202,7 @@ namespace Walkabout.Charts
                     return;
                 }
 
-                IEnumerable<Transaction> rows = this.Selection.Transactions;
+                IEnumerable<HistoryDataValue> rows = this.Selection.Values;
 
                 if (rows == null || !this.IsVisible)
                 {
@@ -258,16 +262,12 @@ namespace Walkabout.Charts
 
                 decimal total = 0;
                 DateTime start = DateTime.MinValue;
-                List<Transaction> transactions = new List<Transaction>();
+                // the current column fills this bucket until the next column date boundary is reached
+                List<HistoryDataValue> bucket = new List<HistoryDataValue>();
 
-                foreach (Transaction t in rows)
+                foreach (HistoryDataValue t in rows)
                 {
-                    if (t.Transfer != null)
-                    {
-                        // skip transfers.
-                        continue;
-                    }
-                    decimal amount = t.Amount;
+                    decimal amount = t.Value;
                     if (invert)
                     {
                         amount = -amount;
@@ -279,7 +279,7 @@ namespace Walkabout.Charts
                     {
                         if (start != DateTime.MinValue)
                         {
-                            AddColumn(start, range, total, transactions, brush);
+                            AddColumn(start, range, total, bucket, brush);
                         }
                         if (start == DateTime.MinValue)
                         {
@@ -303,18 +303,18 @@ namespace Walkabout.Charts
                             }
                         }
                         total = 0;
-                        transactions = new List<Transaction>();
+                        bucket = new List<HistoryDataValue>();
                     }
                     if (t.Date < start)
                     {
                         continue;
                     }
                     total += amount;
-                    transactions.Add(t);
+                    bucket.Add(t);
                 }
                 if (total != 0)
                 {
-                    AddColumn(start, range, total, transactions, brush);
+                    AddColumn(start, range, total, bucket, brush);
                 }
                 while (collection.Count > maxColumns)
                 {
@@ -349,7 +349,7 @@ namespace Walkabout.Charts
             }
 
             // skip the first and/or last column if they don't seem to have enough data (they may have incomplete year/month).
-            double sum = (from c in collection select c.Transactions.Count()).Sum();
+            double sum = (from c in collection select c.Values.Count()).Sum();
             double avg = sum / count;
 
             HistoryChartColumn first = collection[0];
@@ -359,7 +359,7 @@ namespace Walkabout.Charts
             List<Point> points = new List<Point>();
             foreach (HistoryChartColumn c in collection)
             {
-                if ((c == last || c == last) && c.Transactions.Count() < (avg / 2))
+                if ((c == last || c == last) && c.Values.Count() < (avg / 2))
                 {
                     // skip it.
                     continue;
@@ -381,15 +381,15 @@ namespace Walkabout.Charts
             }
         }
 
-        private TimeSpan ComputeChartParameters(IEnumerable<Transaction> rows)
+        private TimeSpan ComputeChartParameters(IEnumerable<HistoryDataValue> rows)
         {
             int count = 0;
             int negatives = 0;
             DateTime startDate = DateTime.MinValue;
             DateTime endDate = DateTime.MinValue;
-            foreach (Transaction t in rows)
+            foreach (HistoryDataValue t in rows)
             {
-                if (t.Transfer != null || t.Amount == 0)
+                if (t.Value == 0)
                 {
                     continue;
                 }
@@ -402,7 +402,7 @@ namespace Walkabout.Charts
                     endDate = t.Date;
                 }
                 count++;
-                if (t.Amount < 0)
+                if (t.Value < 0)
                 {
                     negatives++;
                 }
@@ -415,7 +415,7 @@ namespace Walkabout.Charts
             return (endDate == startDate) ? TimeSpan.FromDays(0) : endDate - startDate;
         }
 
-        private void AddColumn(DateTime start, HistoryRange range, decimal total, List<Transaction> transactions, Brush brush)
+        private void AddColumn(DateTime start, HistoryRange range, decimal total, List<HistoryDataValue> bucket, Brush brush)
         {
             int century = start.Year / 100;
             int year = start.Year;
@@ -436,7 +436,8 @@ namespace Walkabout.Charts
                     break;
             }
             ColumnLabel clabel = new Charts.ColumnLabel(label);
-            HistoryChartColumn column = new HistoryChartColumn() { Amount = total, Label = clabel, Transactions = transactions, Brush = brush };
+
+            HistoryChartColumn column = new HistoryChartColumn() { Amount = total, Label = clabel, Values = bucket, Brush = brush };
             clabel.Data = column;
             collection.Add(column);
         }
