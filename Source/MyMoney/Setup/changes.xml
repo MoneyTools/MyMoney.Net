@@ -2,8 +2,9 @@
 <changes>
     <change version="1.0.0.357" date="9/7/2017">
         Cleanup architecture of HistoryBarChart so it has a clean ViewModel that knows nothing about Transactions.
-        Add Stock Add/Remove events to the History chart value of each column using current stock prices 
+        Add Stock Add/Remove events to the History chart value of each column using current stock prices
         (which is handy to see when Stock Awards are part of your Income category).
+        Cleanup look of the HistoryBarChart a bit.
     </change>
     <change version="1.0.0.356" date="9/3/2017">
         Fix bug where context menu disappears when you right click on a new item.

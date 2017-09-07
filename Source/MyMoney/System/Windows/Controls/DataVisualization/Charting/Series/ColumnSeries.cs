@@ -19,6 +19,8 @@ namespace System.Windows.Controls.DataVisualization.Charting
     [TemplatePart(Name = DataPointSeries.PlotAreaName, Type = typeof(Canvas))]
     public partial class ColumnSeries : ColumnBarBaseSeries<ColumnDataPoint>
     {
+        const double ColumnGapRatio = 0.06;
+
         /// <summary>
         /// Initializes a new instance of the ColumnSeries class.
         /// </summary>
@@ -88,14 +90,14 @@ namespace System.Windows.Controls.DataVisualization.Charting
             IEnumerable<ColumnSeries> columnSeries = SeriesHost.Series.OfType<ColumnSeries>().Where(series => series.ActualIndependentAxis == ActualIndependentAxis);
             int numberOfSeries = columnSeries.Count();
             double coordinateRangeWidth = (maximum - minimum);
-            double segmentWidth = coordinateRangeWidth * 0.8;
+            double segmentWidth = coordinateRangeWidth * (1 - ColumnGapRatio);
             double columnWidth = segmentWidth / numberOfSeries;
             int seriesIndex = columnSeries.IndexOf(this);
 
             double dataPointY = ActualDependentRangeAxis.GetPlotAreaCoordinate(ValueHelper.ToDouble(dataPoint.ActualDependentValue)).Value;
             double zeroPointY = ActualDependentRangeAxis.GetPlotAreaCoordinate(ActualDependentRangeAxis.Origin).Value;
 
-            double offset = seriesIndex * Math.Round(columnWidth) + coordinateRangeWidth * 0.1;
+            double offset = seriesIndex * Math.Round(columnWidth) + coordinateRangeWidth;
             double dataPointX = minimum + offset;
 
             if (GetIsDataPointGrouped(category))
@@ -103,7 +105,7 @@ namespace System.Windows.Controls.DataVisualization.Charting
                 // Multiple DataPoints share this category; offset and overlap them appropriately
                 IGrouping<object, DataPoint> categoryGrouping = GetDataPointGroup(category);
                 int index = categoryGrouping.IndexOf(dataPoint);
-                dataPointX += (index * (columnWidth * 0.2)) / (categoryGrouping.Count() - 1);
+                dataPointX += (index * (columnWidth * ColumnGapRatio)) / (categoryGrouping.Count() - 1);
                 columnWidth *= 0.8;
                 Canvas.SetZIndex(dataPoint, -index);
             }

@@ -528,9 +528,9 @@
                                     </LinearGradientBrush>
                                 </Rectangle.Fill>
                             </Rectangle>
-                            <Border BorderBrush="#ccffffff" BorderThickness="1">
+                            <!--<Border BorderBrush="#ccffffff" BorderThickness="1">
                                 <Border BorderBrush="#77ffffff" BorderThickness="1" />
-                            </Border>
+                            </Border>-->
                             <Rectangle x:Name="SelectionHighlight" Fill="Red" Opacity="0" />
                             <Rectangle x:Name="MouseOverHighlight" Fill="White" Opacity="0" />
                         </Grid>
@@ -864,7 +864,7 @@
     <!--  charting:ColumnDataPoint  -->
     <Style TargetType="charting:ColumnDataPoint">
         <Setter Property="Background" Value="Orange" />
-        <Setter Property="BorderBrush" Value="Black" />
+        <Setter Property="BorderBrush" Value="#303040" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
@@ -919,9 +919,9 @@
                                     </LinearGradientBrush>
                                 </Rectangle.Fill>
                             </Rectangle>
-                            <Border BorderBrush="#ccffffff" BorderThickness="1">
+                            <!--<Border BorderBrush="#ccffffff" BorderThickness="1">
                                 <Border BorderBrush="#77ffffff" BorderThickness="1" />
-                            </Border>
+                            </Border>-->
                             <Rectangle x:Name="SelectionHighlight" Fill="Red" Opacity="0" />
                             <Rectangle x:Name="MouseOverHighlight" Fill="White" Opacity="0" />
                         </Grid>
