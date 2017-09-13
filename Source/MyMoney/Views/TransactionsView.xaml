@@ -369,7 +369,7 @@
             <!--<TextBlock Text="{Binding Category.Name, Converter={StaticResource NullableValueConverter}}" />-->
             <local:FilteringComboBox   Style="{StaticResource GridComboStyle}"
                         SelectedItem="{Binding Category, Mode=TwoWay}"
-                        ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=Categories}" 
+                        ItemsSource="{Binding Path=Categories}" 
                         PreviewLostKeyboardFocus="ComboBoxForCategory_PreviewLostKeyboardFocus"
                         PreviewGotKeyboardFocus="ComboBoxForCategory_PreviewGotKeyboardFocus"
                         FilterChanged="ComboBoxForCategory_FilterChanged"
@@ -406,7 +406,7 @@
                     <!-- CATEGORY -->
                     <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
                                 SelectedItem="{Binding Category, Mode=TwoWay}"
-                                ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=Categories}" 
+                                ItemsSource="{Binding Categories}" 
                                 PreviewLostKeyboardFocus="ComboBoxForCategory_PreviewLostKeyboardFocus"
                                 PreviewGotKeyboardFocus="ComboBoxForCategory_PreviewGotKeyboardFocus"
                                 FilterChanged="ComboBoxForCategory_FilterChanged"

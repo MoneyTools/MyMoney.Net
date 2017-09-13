@@ -132,24 +132,6 @@ namespace Walkabout.Views
             return names;
         }
 
-
-
-        public ListCollectionView Categories
-        {
-            get { return (ListCollectionView)GetValue(CategoriesProperty); }
-            set { SetValue(CategoriesProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for Categories.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty CategoriesProperty =
-            DependencyProperty.Register("Categories", typeof(ListCollectionView), typeof(TransactionsView), new PropertyMetadata(null));
-
-
-        public void UpdateCategoriesView()
-        {
-            this.Categories = new ListCollectionView(((List<Category>)myMoney.Categories.AllCategories).ToArray());
-        }
-
         public ListCollectionView Securities
         {
             get
@@ -1136,7 +1118,6 @@ namespace Walkabout.Views
                 {
                     myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
                 }
-                this.UpdateCategoriesView();
                 this.TheActiveGrid.ClearItemsSource();
 
                 if (this.IsVisible && currentDisplayName != TransactionViewName.None)
@@ -2673,12 +2654,7 @@ namespace Walkabout.Views
                                 }
                             }
                         }
-
-                        if (c != null)
-                        {
-                            this.UpdateCategoriesView();
-                        }
-
+                        
                         // the "NewPlaceHolder" item may have just been changed into a real Transaction object.
                         // ChangeType.Changed would have already been handled by the INotifyPropertyChanged events, what we really care
                         // about here are transactions being inserted or removed which can happen if you do a background 'download'
@@ -4151,11 +4127,13 @@ namespace Walkabout.Views
                     if (t != null)
                     {
                         this.myMoney.Categorize(t, (Category)value);
+                        t.UpdateCategoriesView();
                     }
                     Split s = combo.DataContext as Split;
                     if (s != null)
                     {
                         s.Category = (Category)value;
+                        s.UpdateCategoriesView();
                     }
                 }
             }
@@ -4168,7 +4146,6 @@ namespace Walkabout.Views
             if (dialog.ShowDialog() == true)
             {
                 newCategory = dialog.Category;
-                this.UpdateCategoriesView(); // make sure combo now contains this item otherwise ComboBox will clear the Text.
             }
             else
             {
@@ -4188,17 +4165,27 @@ namespace Walkabout.Views
 
         private void ComboBoxForCategory_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-
             ComboBox combo = (ComboBox)sender;
             if (!string.IsNullOrEmpty(combo.Text))
             {
                 return;
             }
 
-            // Auto-populate category (and/or Splits) from previous similar transaction.
-            // This saves a LOT of typing.
-            Transaction t = this.SelectedTransaction;
-            AutoPopulateCategory(t);
+            Split s = combo.DataContext as Split;
+            if (s != null)
+            {
+                s.UpdateCategoriesView();
+            }
+
+            Transaction t = combo.DataContext as Transaction;
+            if (t != null)
+            {
+                t.UpdateCategoriesView();
+                // Auto-populate category (and/or Splits) from previous similar transaction.
+                // This saves a LOT of typing.
+                AutoPopulateCategory(t);
+            }
+
         }
 
         private void AutoPopulateCategory(Transaction t)

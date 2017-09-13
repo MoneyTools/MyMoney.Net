@@ -15,6 +15,7 @@ using System.Xml.Serialization;
 using Walkabout.Utilities;
 using System.Threading;
 using Walkabout.Database;
+using System.Collections.Specialized;
 
 namespace Walkabout.Data
 {
@@ -10921,10 +10922,24 @@ namespace Walkabout.Data
             }
         }
 
+        #region DataBinding Hack to work around some new weird WPF behavior for Category editing
+        [XmlIgnore]
+        [IgnoreDataMember]
+        public IList<Category> Categories
+        {
+            get
+            {
+                return this.MyMoney.Categories.AllCategories;
+            }
+        }
 
+        public void UpdateCategoriesView()
+        {
+            RaisePropertyChanged("Categories");
+        }
+
+        #endregion
     }
-
-
 
     //================================================================================
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
@@ -11159,7 +11174,6 @@ namespace Walkabout.Data
                 }
                 this.parent.Changed += new EventHandler<ChangeEventArgs>(OnParentChanged);
                 Rebalance();
-
             }
 
             void OnParentChanged(object sender, ChangeEventArgs args)
@@ -11218,6 +11232,7 @@ namespace Walkabout.Data
                     this.parent.Rebalance();
                 }
             }
+
         }
 
         public void RemoveAll()
@@ -12091,6 +12106,25 @@ namespace Walkabout.Data
                 }
             }
         }
+
+        #region DataBinding Hack to work around some new weird WPF behavior for Category editing
+
+        [XmlIgnore]
+        [IgnoreDataMember]
+        public IList<Category> Categories
+        {
+            get
+            {
+                return new List<Category>(this.MyMoney.Categories.AllCategories);
+            }
+        }
+
+        public void UpdateCategoriesView()
+        {
+            RaisePropertyChanged("Categories");
+        }
+
+        #endregion
 
     }
 
