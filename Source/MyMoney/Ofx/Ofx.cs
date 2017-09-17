@@ -1108,6 +1108,19 @@ namespace Walkabout.Ofx
                     settings.Indent = true;
                     settings.Encoding = Encoding.Unicode;
                     settings.OmitXmlDeclaration = true;
+                    if (!(doc.FirstNode is XProcessingInstruction))
+                    {
+                        string versionInfo = "";
+                        if (doc.Descendants("SONRQ").Any())
+                        {
+                            versionInfo = string.Format("OFXHEADER='200' VERSION='211' SECURITY='NONE' OLDFILEUID='NONE' NEWFILEUID='NONE'");
+                        }
+                        else
+                        {
+                            versionInfo = string.Format("OFXHEADER='200' VERSION='211' SECURITY='NONE' OLDFILEUID='{0}' NEWFILEUID='{1}'", oldFileUid, newFileUid);
+                        }
+                        doc.AddFirst(new XProcessingInstruction("OFX", versionInfo));
+                    }
                     using (XmlWriter xw = XmlWriter.Create(sw, settings))
                     {
                         doc.WriteTo(xw);
@@ -1121,9 +1134,8 @@ namespace Walkabout.Ofx
 
             if (version2)
             {
-                header = "<?xml version='1.0' encoding='utf-8'?>\r\n" +
-                            string.Format("<?OFX OFXHEADER='200' VERSION='203' SECURITY='NONE' OLDFILEUID='{0}' NEWFILEUID='{1}'?>", oldFileUid, newFileUid);
-
+                //header = "<?xml version='1.0' encoding='utf-8'?>\r\n" + body;
+                header = "";
                 encoding = Encoding.UTF8;
             }
             else
@@ -1218,18 +1230,28 @@ NEWFILEUID:{1}
             Uri uri = new Uri(url);
             pending = (HttpWebRequest)WebRequest.Create(uri);
 
-            pending.UserAgent = GetUserAgent(this.onlineAccount);
-
+            pending.Method = "POST";
             pending.ContentType = "application/x-ofx";
             pending.Accept = "application/x-ofx";
-            pending.Method = "POST";
             pending.Expect = string.Empty;
+            pending.ServicePoint.Expect100Continue = false;
+            pending.AllowAutoRedirect = true;
+            pending.UserAgent = GetUserAgent(this.onlineAccount);
+
+            // Discover doesn't like these headers
+            if (this.onlineAccount.FID == "7101")
+            {
+                pending.UserAgent = null;
+                pending.Accept = null;
+                pending.KeepAlive = false;
+            }
+
             byte[] data = encoding.GetBytes(msg);
             pending.ContentLength = data.Length;
-            System.Net.ServicePointManager.Expect100Continue = false;
             Stream stm = pending.GetRequestStream();
             stm.Write(data, 0, data.Length);
             stm.Close();
+
 
             HttpWebResponse resp = null;
             try
@@ -1258,6 +1280,17 @@ NEWFILEUID:{1}
                 if (resp != null) resp.Close();
                 pending = null;
             }
+        }
+
+        private string RemoveIndents(string msg)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (string line in msg.Split('\n'))
+            {
+                sb.Append(line.Trim());
+                sb.Append("\n");
+            }
+            return sb.ToString();
         }
 
         private static string GetHttpHeaders(HttpWebResponse response)
@@ -1597,7 +1630,16 @@ NEWFILEUID:{1}
                 // try a different version of OFX
                 string version = oa.OfxVersion.Trim();
                 oa.OfxVersion = version.StartsWith("2") ? "1" : "2";
-                result = InternalSignup(oa, out rslog);
+                try
+                {
+                    result = InternalSignup(oa, out rslog);
+                }
+                catch (Exception ex)
+                {
+                    // still didn't work, so put it back the way it was
+                    oa.OfxVersion = version;
+                    throw;
+                }
             }
 
             return result;
@@ -2066,26 +2108,53 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
             foreach (XElement child in doc.Root.Elements())
             {
-                this.myMoney.BeginUpdate();
-                try
+                e = child.SelectElement("*/STATUS/CODE");
+                statusCode = 0;
+                if (e != null)
                 {
-                    switch (child.Name.LocalName)
+                    int.TryParse(e.Value.Trim(), out statusCode);
+                }
+                if (statusCode != 0)
+                {
+                    OfxErrorCode ec = (OfxErrorCode)statusCode;
+                    string message = OfxStrings.ResourceManager.GetString(ec.ToString());
+                    if (message == null)
                     {
-                        case "CREDITCARDMSGSRSV1":                
-                            ProcessCreditCardResponse(child, results);
-                            break;
-                        case "BANKMSGSRSV1":
-                            ProcessBankResponse(child, results);
-                            break;
-                        case "INVSTMTMSGSRSV1":
-                            ProcessInvestmentResponse(child, results);
-                            break;
+                        message = string.Format("Error {0}({1}) returned from server.", ec.ToString(), statusCode);
+                    }
 
+                    results.AddError(this.OnlineAccount, this.Account, message).OfxError = ec;
+
+                    e = child.SelectElement("*/STATUS/MESSAGE");
+                    if (e != null)
+                    {
+                        message += e.Value.Trim();
+                        results.AddError(this.OnlineAccount, this.Account, message);
                     }
                 }
-                finally
+                else
                 {
-                    this.myMoney.EndUpdate();
+                    this.myMoney.BeginUpdate();
+                    try
+                    {
+                        switch (child.Name.LocalName)
+                        {
+                            case "CREDITCARDMSGSRSV1":
+                                ProcessCreditCardResponse(child, results);
+                                break;
+                            case "BANKMSGSRSV1":
+                                ProcessBankResponse(child, results);
+                                break;
+                            case "INVSTMTMSGSRSV1":
+                                ProcessInvestmentResponse(child, results);
+                                break;
+
+                        }
+                    }
+                    finally
+                    {
+                        this.myMoney.EndUpdate();
+                    }
                 }
             }
         }
