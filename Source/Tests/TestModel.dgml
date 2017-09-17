@@ -430,8 +430,6 @@
     </Style>
   </Styles>
   <Paths>
-    <Path Id="0be36fe2-b740-45f5-b23a-d77f5cb7ad4d.OutputPath" Value="D:\TFSPreview\MyMoney\Source\Tests\bin\Debug\MyMoneyTests.dll" />
-    <Path Id="0be36fe2-b740-45f5-b23a-d77f5cb7ad4d.OutputPathUri" Value="file:///D:/TFSPreview/MyMoney/Source/Tests/bin/Debug/MyMoneyTests.dll" />
-    <Path Id="FxReferenceAssemblies" Value="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework" />
+    <Path Id="0be36fe2-b740-45f5-b23a-d77f5cb7ad4d.OutputPathUri" Value="file:///D:/TFSPreview/MyMoney/Source/Tests/bin/Debug/MyMoneyTests.dll" />    
   </Paths>
 </DirectedGraph>

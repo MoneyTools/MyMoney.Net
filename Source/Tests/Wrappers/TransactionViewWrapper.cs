@@ -262,6 +262,10 @@ namespace Walkabout.Tests.Wrappers
 
             // the invoke pattern causes new row to be added
             InvokePattern p = (InvokePattern)placeholder.GetCurrentPattern(InvokePattern.Pattern);
+            if (p == null)
+            {
+                throw new Exception("Expecting {NewItemPlaceholder} at the bottom of the DataGrid");
+            }
             p.Invoke();
 
             // now get the new list of items, the new row is the last one

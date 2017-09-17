@@ -17,6 +17,7 @@ using System.Windows.Media;
 using Walkabout.Setup;
 using Walkabout.Dialogs;
 using Ofx;
+using System.Xml.Linq;
 
 namespace Walkabout.Tests
 {
@@ -103,13 +104,20 @@ namespace Walkabout.Tests
 
         void CreateGraph(string path)
         {
-            if (!File.Exists(path)) {
-                string dgml = GetEmbeddedResource("Walkabout.Tests.TestModel.dgml");
-                using (StreamWriter writer = File.CreateText(path))
+            string dgml = GetEmbeddedResource("Walkabout.Tests.TestModel.dgml");
+            XDocument doc = XDocument.Parse(dgml);
+            XNamespace ns = doc.Root.Name.Namespace;
+            // fix up the Path to MyMoneyTests.dll
+            foreach (XElement pathVar in doc.Root.Element(ns + "Paths").Elements(ns + "Path"))
+            {
+                XAttribute a = pathVar.Attribute("Value");
+                string value = (string)a;
+                if (value.Contains("MyMoneyTests.dll"))
                 {
-                    writer.Write(dgml);
+                    a.Value = new Uri(this.GetType().Assembly.Location).ToString();
                 }
             }
+            doc.Save(path);
         }
 
         #region Model State
