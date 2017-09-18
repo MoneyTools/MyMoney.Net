@@ -2,6 +2,7 @@
 <changes>
   <change version="1.1.0.0" date="9/17/2017">
     Some fixes for Discover card OFX connections.
+    Fix Attachment dialog, sometimes paste button was disabled when it should not be.
   </change>
   <change version="1.0.0.357" date="9/7/2017">
     Cleanup architecture of HistoryBarChart so it has a clean ViewModel that knows nothing about Transactions.

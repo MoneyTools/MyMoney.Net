@@ -1634,7 +1634,7 @@ NEWFILEUID:{1}
                 {
                     result = InternalSignup(oa, out rslog);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // still didn't work, so put it back the way it was
                     oa.OfxVersion = version;
@@ -3475,7 +3475,6 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         // The caller can use any heuristic for resolving the Account ID, including asking the user via the UI
                         //
                         bool cancelled = false;
-                        bool newAccount = false;
                         UiDispatcher.Invoke(new Action(() =>
                         {
                             Account picked = callerPickAccount(this.myMoney, temp);
@@ -3483,10 +3482,6 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                             {
                                 // cancelled
                                 cancelled = true;
-                            }
-                            if (picked == temp)
-                            {
-                                newAccount = true;
                             }
                             temp = picked;
                         }));

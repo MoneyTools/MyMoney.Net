@@ -581,14 +581,6 @@ namespace Walkabout.Dialogs
             e.CanExecute = (selected != null);
         }
 
-        private void ClipboardHasData(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = Clipboard.ContainsImage() ||
-                Clipboard.ContainsData(DataFormats.Xaml) ||
-                Clipboard.ContainsData(DataFormats.Rtf) ||
-                Clipboard.ContainsData(DataFormats.Text);
-        }
-
         private void HasSelectedImage(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = (selected is AttachmentDialogImageItem);

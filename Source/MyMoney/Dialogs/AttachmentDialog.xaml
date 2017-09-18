@@ -12,7 +12,7 @@
     <Window.CommandBindings>
         <CommandBinding Command="Cut" Executed="Cut" CanExecute="HasSelectedItem"/>
         <CommandBinding Command="Copy" Executed="Copy" CanExecute="HasSelectedItem"/>
-        <CommandBinding Command="Paste" Executed="Paste" CanExecute="ClipboardHasData"/>
+        <CommandBinding Command="Paste" Executed="Paste"/>
         <CommandBinding Command="Delete" Executed="Delete" CanExecute="HasSelectedItem"/>
         <CommandBinding Command="Save" Executed="Save" CanExecute="CanSave"/>
         <CommandBinding Command="Print" Executed="Print" CanExecute="HasSelectedItem"/>

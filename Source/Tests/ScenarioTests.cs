@@ -810,6 +810,7 @@ namespace Walkabout.Tests
 containing some random text
 to make sure attachments work.");
 
+            attachmentDialog.WaitForInputIdle(50);
             attachmentDialog.ClickPaste();
 
             // verify RichTextBox
