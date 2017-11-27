@@ -12,6 +12,7 @@ using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Views;
 using Walkabout.Interfaces.Views;
+using System.IO;
 
 namespace Walkabout.Reports
 {
@@ -234,7 +235,6 @@ namespace Walkabout.Reports
             monthMap = new Dictionary<string, int>();
 
             heading.Inlines.Add(" including ");
-
             
             ComboBox countCombo = new ComboBox();
             countCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
@@ -255,6 +255,8 @@ namespace Walkabout.Reports
             byYearMonthCombo.SelectionChanged += OnByYearMonthChanged;
 
             heading.Inlines.Add(new InlineUIContainer(byYearMonthCombo));
+
+            heading.Inlines.Add(new InlineUIContainer(CreateExportReportButton()));
 
             writer.StartTable();
             writer.StartColumnDefinitions();
@@ -290,6 +292,19 @@ namespace Walkabout.Reports
 
             writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
 
+        }
+
+        private Button CreateExportReportButton()
+        {
+            Button button = CreateReportButton("Icons/Excel.png", "Export", "Export .csv spreadsheet file format");
+
+            button.HorizontalAlignment = HorizontalAlignment.Left;
+            button.Margin = new Thickness(10,0,10,0);
+            button.Click += new RoutedEventHandler((s, args) =>
+            {
+                ExportReportAsCsv();
+            });
+            return button;
         }
 
         string GetCategoryCaption(Category c)
@@ -333,11 +348,10 @@ namespace Walkabout.Reports
                 if (inGroup(c))
                 {
                     List<CashFlowCell> cells = new List<CashFlowCell>();
-
+                    CashFlowColumns cc = columns[c];
 
                     foreach (string columnName in this.columns)
                     {
-                        CashFlowColumns cc = columns[c];
                         CashFlowCell cell = cc.GetCell(columnName);
                         cells.Add(cell);
                     }
@@ -525,7 +539,58 @@ namespace Walkabout.Reports
 
         public override void Export(string filename)
         {
-            throw new NotImplementedException();
+            using (StreamWriter writer = new StreamWriter(filename, false, Encoding.UTF8))
+            {
+                GenerateCsvGroup(writer, byCategory, "Income", (c) => { return IsIncome(c); }, (v) => { return v;  });
+
+                GenerateCsvGroup(writer, byCategory, "Expenses", (c) => { return IsExpense(c); }, (v) => { return -v; });
+
+                GenerateCsvGroup(writer, byCategory, "Investments", (c) => { return IsInvestment(c); }, (v) => { return v; });
+
+            }
+        }
+
+        private void GenerateCsvGroup(StreamWriter writer, Dictionary<Category, CashFlowColumns> byCategory, string groupTitle, Func<Category, bool> inGroup, Func<decimal,decimal> scaleFunc)
+        {
+            writer.Write(groupTitle);
+            foreach (string columnName in this.columns)
+            {
+                writer.Write(",");
+                writer.Write(columnName);
+            }
+            writer.WriteLine();
+
+            List<Category> rootCategories = new List<Category>(byCategory.Keys);
+            rootCategories.Sort(new Comparison<Category>((a, b) =>
+            {
+                return string.Compare(GetCategoryCaption(a), GetCategoryCaption(b));
+            }));
+
+            // now add the detail rows of the group
+            foreach (Category c in rootCategories)
+            {
+                if (inGroup(c))
+                {
+                    List<CashFlowCell> cells = new List<CashFlowCell>();
+                    CashFlowColumns cc = byCategory[c];
+
+                    foreach (string columnName in this.columns)
+                    {
+                        CashFlowCell cell = cc.GetCell(columnName);
+                        cells.Add(cell);
+                    }
+
+                    writer.Write(GetCategoryCaption(c));
+
+                    foreach (CashFlowCell cell in cells)
+                    {
+                        writer.Write(",");
+                        writer.Write(scaleFunc(cell.Value));
+                    }
+                    writer.WriteLine();
+                }
+            }
+            writer.WriteLine();
         }
     }
 

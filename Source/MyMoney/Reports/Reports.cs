@@ -45,7 +45,10 @@ namespace Walkabout.Reports
                 {
                     string filename = fd.FileName;
                     this.Export(filename);
-                    InternetExplorer.OpenUrl(IntPtr.Zero, filename);
+                    if (System.IO.File.Exists(filename))
+                    {
+                        InternetExplorer.OpenUrl(IntPtr.Zero, filename);
+                    }
                 }
                 catch (Exception ex)
                 {

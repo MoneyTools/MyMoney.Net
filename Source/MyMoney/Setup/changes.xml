@@ -4,6 +4,7 @@
     Fix copy/paste in Query Form and show math strings in drop down.
     Fix reconcile so you cannot accidentally change date of already reconciled transaction.
     Fix transaction merge so it keeps the 'E' status.
+    Add export to .csv button to Cash Flow report
   </change>
   <change version="1.1.0.0" date="9/17/2017">
     Some fixes for Discover card OFX connections.

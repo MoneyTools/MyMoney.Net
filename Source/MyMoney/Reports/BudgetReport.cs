@@ -28,12 +28,6 @@ namespace Walkabout.Reports
         public BudgetReport(FlowDocumentView view, MyMoney money)
         {
             this.money = money;
-
-            if (view != null)
-            {
-                var doc = view.DocumentViewer.Document;
-                doc.Blocks.InsertAfter(doc.Blocks.FirstBlock, new BlockUIContainer(CreateExportReportButton()));
-            }
         }
 
         private Button CreateExportReportButton()
@@ -79,6 +73,15 @@ namespace Walkabout.Reports
 
         public override void Generate(IReportWriter writer)
         {
+            if (writer is FlowDocumentReportWriter)
+            {
+                FlowDocumentReportWriter fw = (FlowDocumentReportWriter)writer;
+                var doc = fw.Document;
+                if (doc != null)
+                {
+                    doc.Blocks.InsertAfter(doc.Blocks.FirstBlock, new BlockUIContainer(CreateExportReportButton()));
+                }
+            }
             writer.WriteHeading("Budget Report");
 
             this.rows = new Dictionary<string, BudgetRow>();
