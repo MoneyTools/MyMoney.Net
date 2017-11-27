@@ -87,7 +87,7 @@
         <DataTemplate x:Key="myTemplateOperation">
             <!-- the border makes the whole column hitable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding Path=Operation}" VerticalAlignment="Top"  HorizontalAlignment="Stretch"/>
+                <TextBlock Text="{Binding Path=OperationDisplay}" VerticalAlignment="Top"  HorizontalAlignment="Stretch"/>
             </Border>
         </DataTemplate>
 
@@ -95,7 +95,7 @@
             <!-- the border makes the whole column hitable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
                 <ComboBox HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                    SelectedItem="{Binding Path=Operation, Mode=TwoWay}"
+                    SelectedItem="{Binding Path=OperationDisplay, Mode=TwoWay}"
                     ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:QueryViewControl}}, Path=ListOfOperations}" 
                     />
             </Border>

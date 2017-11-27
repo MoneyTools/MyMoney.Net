@@ -6896,6 +6896,8 @@ namespace Walkabout.Data
             string s = o.ToString();
             switch (op)
             {
+                case Operation.None:
+                    return false;
                 case Operation.Contains:
                     return this.Contains(s);
                 case Operation.Equals:
@@ -10382,7 +10384,7 @@ namespace Walkabout.Data
                 rc = true;
             }
 
-            if (t.Status != this.Status && this.Status != TransactionStatus.Reconciled)
+            if (t.Status != this.Status && this.Status != TransactionStatus.Reconciled && t.status != TransactionStatus.None)
             {
                 this.Status = t.status;
                 rc = true;
@@ -10483,6 +10485,8 @@ namespace Walkabout.Data
         {
             switch (q.Field)
             {
+                case Field.None:
+                    return false; // or should this allow matching of any field?
                 case Field.Accepted:
                     return q.Matches(!this.Unaccepted);
                 case Field.Budgeted:

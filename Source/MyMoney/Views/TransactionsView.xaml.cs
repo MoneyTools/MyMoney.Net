@@ -2118,7 +2118,12 @@ namespace Walkabout.Views
 
         public void Copy()
         {
-            if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+            if (QueryPanel.Visibility == Visibility.Visible &&
+                QueryPanel.ContainsKeyboardFocus())
+            {
+                QueryPanel.Copy();
+            }
+            else if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
             {
                 InvestmentPortfolioView.Copy();
             }
@@ -2131,12 +2136,20 @@ namespace Walkabout.Views
 
         public void Paste()
         {
-            if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+            if (QueryPanel.Visibility == Visibility.Visible &&
+                QueryPanel.ContainsKeyboardFocus())
+            {
+                QueryPanel.Paste();
+            }
+            else if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
             {
                 return;
             }
-            this.Commit();
-            this.PasteSelection();
+            else
+            {
+                this.Commit();
+                this.PasteSelection();
+            }
         }
 
         public void Delete()
@@ -2427,6 +2440,7 @@ namespace Walkabout.Views
                     // Show the splitter between the Advanced & Transactions
                     tgv.QueryPanelSplitter.Visibility = System.Windows.Visibility.Visible;
                     tgv.QuerySplitterGridRowHeight.Height = new GridLength(3);
+                    tgv.QueryPanel.OnShow();
                 }
                 else
                 {
@@ -2444,8 +2458,8 @@ namespace Walkabout.Views
                     tgv.QueryPanelSplitter.Visibility = System.Windows.Visibility.Collapsed;
                     tgv.QuerySplitterGridRowHeight.Height = new GridLength(0);
 
-                    // Reset the list view
-                    tgv.QueryPanel.Clear();
+                    // Reset the list view (Chris: why? what if user wants to run it again in 5 minutes?)
+                    // tgv.QueryPanel.Clear();
                 }
             }
         }
@@ -3965,10 +3979,13 @@ namespace Walkabout.Views
 
         private void ReconcileThisTransaction(Transaction t)
         {
-            reconcilingTransactions[t] = t.Status;
-            t.Status = TransactionStatus.Reconciled;
-            t.IsReconciling = true;
-            t.ReconciledDate = this.StatmentReconcileDateEnd;
+            if (t.Status != TransactionStatus.Reconciled)
+            {
+                reconcilingTransactions[t] = t.Status;
+                t.Status = TransactionStatus.Reconciled;
+                t.IsReconciling = true;
+                t.ReconciledDate = this.StatmentReconcileDateEnd;
+            }
         }
 
         #endregion

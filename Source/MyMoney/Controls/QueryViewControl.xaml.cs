@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml;
 using System.Xml.Serialization;
@@ -33,6 +35,7 @@ namespace Walkabout.Views.Controls
             dataGrid1.CurrentCellChanged += new EventHandler<EventArgs>(OnDataGrid1_CurrentCellChanged);
             dataGrid1.BeginningEdit += new EventHandler<DataGridBeginningEditEventArgs>(OnDataGrid_BeginningEdit);
             dataGrid1.RowEditEnding += new EventHandler<DataGridRowEditEndingEventArgs>(OnDataGrid_RowEditEnding);
+            dataGrid1.CanUserAddRows = true;
         }
 
         #region Properties
@@ -65,6 +68,7 @@ namespace Walkabout.Views.Controls
                 if (listOfFields == null)
                 {
                     listOfFields = new List<Field>();
+                    listOfFields.Add(Field.None);
                     listOfFields.Add(Field.Accepted);
                     listOfFields.Add(Field.Account);
                     listOfFields.Add(Field.Budgeted);
@@ -83,29 +87,28 @@ namespace Walkabout.Views.Controls
         }
 
 
-        List<Operation> listOfOperations;
-        public List<Operation> ListOfOperations
+        List<string> listOfOperations;
+        public List<string> ListOfOperations
         {
             get
             {
                 if (listOfOperations == null)
                 {
-                    listOfOperations = new List<Operation>();
-                    listOfOperations.Add(Operation.Contains);
-                    listOfOperations.Add(Operation.Equals);
-                    listOfOperations.Add(Operation.GreaterThan);
-                    listOfOperations.Add(Operation.GreaterThanEquals);
-                    listOfOperations.Add(Operation.LessThan);
-                    listOfOperations.Add(Operation.LessThanEquals);
-                    listOfOperations.Add(Operation.NotContains);
-                    listOfOperations.Add(Operation.NotEquals);
-                    listOfOperations.Add(Operation.Regex);
+                    listOfOperations = new List<string>();
+                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.None));
+                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.Contains));
+                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.Equals));
+                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.GreaterThan));
+                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.GreaterThanEquals));
+                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.LessThan));
+                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.LessThanEquals));
+                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.NotContains));
+                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.NotEquals));
+                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.Regex));
                 }
                 return listOfOperations;
             }
         }
-
-
 
 
         bool isEditing; 
@@ -135,10 +138,7 @@ namespace Walkabout.Views.Controls
         {
             if (e.Key == Key.Delete)
             {
-                if (this.dataGrid1.SelectedItems.Count > 0)
-                {
-                    this.queryRows.RemoveAt(this.dataGrid1.SelectedIndex);
-                }
+                Delete();
                 e.Handled = true;
             }
         } 
@@ -183,6 +183,7 @@ namespace Walkabout.Views.Controls
                 {
                     // I've seen case where the Data Grid inner Cells was throwing NULL exception
                     // still need to understand whwy and fix this
+                    this.isEditing = false;
                 }
             }
             return queryRows.ToArray();
@@ -246,22 +247,12 @@ namespace Walkabout.Views.Controls
         public void Cut()
         {
             ArrayList qrows = new ArrayList();
-            ArrayList list = new ArrayList();
-            //for (int i = 0, n = dataTable1.Rows.Count; i < n; i++)
-            //{
-            //    // JPD
-            //    //if (dataGrid1.IsSelected(i))
-            //    //{
-            //    //    DataRow row = dataTable1.Rows[i];
-            //    //    list.Add(row);
-            //    //    QueryRow qr = GetQueryRow(row);
-            //    //    qrows.Add(qr);
-            //    //}
-            //}
-            //foreach (DataRow row in list)
-            //{
-            //    dataTable1.Rows.Remove(row);
-            //}
+
+            List<QueryRow> list = GetSelectedRows();
+            foreach (QueryRow row in list)
+            {
+                queryRows.Remove(row);
+            }
             if (qrows.Count >= 0)
             {
                 string xml = Serialize((QueryRow[])qrows.ToArray(typeof(QueryRow)));
@@ -273,22 +264,27 @@ namespace Walkabout.Views.Controls
         {
             get { return true; } // todo: efficiently keep track of whether we have any selected rows.
         }
+
+        List<QueryRow> GetSelectedRows()
+        {
+            List<QueryRow> list = new List<QueryRow>();
+            for (int i = 0, n = queryRows.Count; i < n; i++)
+            {
+                QueryRow qr = queryRows[i];
+                if (dataGrid1.SelectedItems.Contains(qr))
+                {
+                    list.Add(qr);
+                }
+            }
+            return list;
+        }
+
         public void Copy()
         {
-            ArrayList list = new ArrayList();
-            //for (int i = 0, n = dataTable1.Rows.Count; i < n; i++)
-            //{
-            //    // JPD
-            //    //if (dataGrid1.IsSelected(i))
-            //    //{
-            //    //    DataRow row = dataTable1.Rows[i];
-            //    //    QueryRow qr = GetQueryRow(row);
-            //    //    list.Add(qr);
-            //    //}
-            //}
+            List<QueryRow> list = GetSelectedRows();
             if (list.Count > 0)
             {
-                string xml = Serialize((QueryRow[])list.ToArray(typeof(QueryRow)));
+                string xml = Serialize(list.ToArray());
                 Clipboard.SetDataObject(xml, true);
             }
         }
@@ -297,28 +293,21 @@ namespace Walkabout.Views.Controls
         {
             get { return true; } // todo: efficiently keep track of whether we have any selected rows.
         }
+
         public void Delete()
         {
-            ArrayList list = new ArrayList();
-            //for (int i = 0, n = dataTable1.Rows.Count; i < n; i++)
-            //{
-            //    // JPD
-            //    //if (dataGrid1.IsSelected(i))
-            //    //{
-            //    //    DataRow row = dataTable1.Rows[i];
-            //    //    list.Add(row);
-            //    //}
-            //}
-            //foreach (DataRow row in list)
-            //{
-            //    dataTable1.Rows.Remove(row);
-            //}
+            if (this.dataGrid1.SelectedItems.Count > 0 &&
+                this.queryRows.Count > this.dataGrid1.SelectedIndex)
+            {
+                this.queryRows.RemoveAt(this.dataGrid1.SelectedIndex);
+            }
         }
 
         public bool CanPaste
         {
             get { return Clipboard.ContainsText(); }
         }
+
         public void Paste()
         {
             IDataObject data = Clipboard.GetDataObject();
@@ -335,79 +324,18 @@ namespace Walkabout.Views.Controls
                 }
             }
         }
+
+        internal bool ContainsKeyboardFocus()
+        {
+            DependencyObject e = Keyboard.FocusedElement as DependencyObject;
+            if (e != null && WpfHelper.FindAncestor<QueryViewControl>(e) == this)
+            {
+                return true;
+            }
+            return false;
+        }
         #endregion
 
     }
 
-
-    //
-    // THE COMMENTED CODE BELOW WILL EVENTUAL BE PUT INTO PRDODUCTION
-    // IT IS USED TO RE MAKE THE OPERATION MORE HUMAN FRIENDLY INSTEAD OF "Grather Then" THE USER WOULD SEE ">"
-    //
-
-    //public class ReadableToEnumConverter : IValueConverter
-    //{
-    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    //    {
-    //        if (value is Conjunction)
-    //        {
-    //            return QueryMapToHuman.GetHumanFormat(QueryMapToHuman.ListOfConjunctions, value);
-    //        }
-    //        return value.ToString();
-    //    }
-
-    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    //    {
-    //        //if (string.IsNullOrEmpty(value.ToString()))
-    //        //    return null;
-    //        return value;
-    //    }
-
-    //}
-
-    /*
-        public class QueryMapToHuman
-    {
-        public class MapHumanReadableToEnum
-        {
-            public string Readable { get; set; }
-            public object EnumValue { get; set; }
-
-            public override string ToString()
-            {
-                return Readable;
-            }
-        }
-
-        static List<MapHumanReadableToEnum> listConjunctionMap;
-
-        public static List<MapHumanReadableToEnum> ListOfConjunctions
-        {
-            get
-            {
-                if (listConjunctionMap == null)
-                {
-                    listConjunctionMap = new List<MapHumanReadableToEnum>();
-                    listConjunctionMap.Add(new MapHumanReadableToEnum() { Readable = "", EnumValue = Conjunction.None });
-                    listConjunctionMap.Add(new MapHumanReadableToEnum() { Readable = "And", EnumValue = Conjunction.And });
-                    listConjunctionMap.Add(new MapHumanReadableToEnum() { Readable = "Or", EnumValue = Conjunction.Or });
-                }
-                return listConjunctionMap;
-            }
-        }
-
-        public static string GetHumanFormat(List<MapHumanReadableToEnum> map, object valueToFind)
-        {
-            foreach(MapHumanReadableToEnum m in map)
-            {
-                if (m.EnumValue.ToString() == valueToFind.ToString())
-                {
-                    return m.Readable;
-                }
-
-            }
-            return string.Empty;
-        }
-    }
-*/
 }

@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.1" date="11/26/2017">
+    Fix copy/paste in Query Form and show math strings in drop down.
+    Fix reconcile so you cannot accidentally change date of already reconciled transaction.
+    Fix transaction merge so it keeps the 'E' status.
+  </change>
   <change version="1.1.0.0" date="9/17/2017">
     Some fixes for Discover card OFX connections.
     Fix Attachment dialog, sometimes paste button was disabled when it should not be.

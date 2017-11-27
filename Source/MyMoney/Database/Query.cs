@@ -9,6 +9,7 @@ namespace Walkabout.Data
 
     public enum Field
     {
+        None,
         Accepted,
         Account,
         Budgeted,
@@ -26,6 +27,7 @@ namespace Walkabout.Data
 
     public enum Operation
     {
+        None,
         Contains,
         Equals,
         GreaterThan,
@@ -109,6 +111,80 @@ namespace Walkabout.Data
             }
         }
 
+        public static string GetOperationDisplayString(Operation op)
+        {
+            switch (op)
+            {
+                case Operation.Contains:
+                    return "contains";
+                case Operation.Equals:
+                    return "=";
+                case Operation.GreaterThan:
+                    return ">";
+                case Operation.GreaterThanEquals:
+                    return ">=";
+                case Operation.LessThan:
+                    return "<";
+                case Operation.LessThanEquals:
+                    return "<=";
+                case Operation.NotContains:
+                    return "not contains";
+                case Operation.NotEquals:
+                    return "!=";
+                case Operation.Regex:
+                    return "regex";
+                case Operation.None:
+                default:
+                    break;
+            }
+            return "";
+        }
+
+        public string OperationDisplay
+        {
+            get
+            {
+                return GetOperationDisplayString(this.Operation);
+            }
+            set
+            {
+                Operation op = Operation.None;
+                switch (value)
+                {
+                    case "contains":
+                        op = Operation.Contains;
+                        break;
+                    case "=":
+                        op = Operation.Equals;
+                        break;
+                    case ">":
+                        op = Operation.GreaterThan;
+                        break;
+                    case ">=":
+                        op = Operation.GreaterThanEquals;
+                        break;
+                    case "<":
+                        op = Operation.LessThan;
+                        break;
+                    case "<=":
+                        op = Operation.LessThanEquals;
+                        break;
+                    case "not contains":
+                        op = Operation.NotContains;
+                        break;
+                    case "!=":
+                        op = Operation.NotEquals;
+                        break;
+                    case "regex":
+                        op = Operation.Regex;
+                        break;
+                    default:
+                        break;
+                }
+                this.Operation = op;
+            }
+        }
+
         public string Value
         {
             get { return this.value; }
@@ -175,6 +251,8 @@ namespace Walkabout.Data
         {
             switch (this.op)
             {
+                case Operation.None:
+                    return false;
                 case Operation.Contains:
                     return this.Matches(value.ToString());
                 case Operation.Equals:
@@ -202,6 +280,8 @@ namespace Walkabout.Data
         {
             switch (this.op)
             {
+                case Operation.None:
+                    return false;
                 case Operation.Contains:
                     return this.Matches(value.ToString());
                 case Operation.Equals:
@@ -228,6 +308,8 @@ namespace Walkabout.Data
         {
             switch (this.op)
             {
+                case Operation.None:
+                    return false;
                 case Operation.Contains:
                     return this.Matches(value.ToString());
                 case Operation.Equals:
@@ -258,6 +340,8 @@ namespace Walkabout.Data
 
             switch (this.op)
             {
+                case Operation.None:
+                    return false;
                 case Operation.Contains:
                     if (string.IsNullOrEmpty(s)) return string.IsNullOrEmpty(value);
                     if (string.IsNullOrEmpty(value)) return string.IsNullOrEmpty(s);
@@ -288,6 +372,8 @@ namespace Walkabout.Data
         {
             switch (this.op)
             {
+                case Operation.None:
+                    return false;
                 case Operation.Contains:
                     return this.Matches(value.ToString());
                 case Operation.Equals:
