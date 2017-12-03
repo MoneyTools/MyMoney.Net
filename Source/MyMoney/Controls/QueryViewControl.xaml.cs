@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Configuration;
+using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Utilities;
 
@@ -136,7 +137,7 @@ namespace Walkabout.Views.Controls
 
         void OnDataGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key == Key.Delete)
+            if (e.Key == Key.Delete && !(e.OriginalSource is TextBox))
             {
                 Delete();
                 e.Handled = true;
@@ -336,6 +337,29 @@ namespace Walkabout.Views.Controls
         }
         #endregion
 
+        private void ComboBoxForConjunction_FilterChanged(object sender, RoutedEventArgs e)
+        {
+            FilteringComboBox combo = sender as FilteringComboBox;
+            combo.Items.Filter = new Predicate<object>((o) => {
+                return ((Conjunction)o).ToString().IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0;
+            });
+        }
+
+        private void ComboBoxForField_FilterChanged(object sender, RoutedEventArgs e)
+        {
+            FilteringComboBox combo = sender as FilteringComboBox;
+            combo.Items.Filter = new Predicate<object>((o) => {
+                return ((Field)o).ToString().IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0;
+            });
+        }
+
+        private void ComboBoxForOperation_FilterChanged(object sender, RoutedEventArgs e)
+        {
+            FilteringComboBox combo = sender as FilteringComboBox;
+            combo.Items.Filter = new Predicate<object>((o) => {
+                return ((string)o).IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0;
+            });
+        }
     }
 
 }

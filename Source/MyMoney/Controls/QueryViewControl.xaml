@@ -3,10 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:controls="clr-namespace:Walkabout.Controls"
              xmlns:local="clr-namespace:Walkabout.Views.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    
+
     <UserControl.Resources>
         <Style TargetType="{x:Type DataGridCell}">
             <Setter Property="Background" Value="Transparent" />
@@ -47,21 +48,41 @@
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
         </Style>
 
+        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}">
+            <Setter Property="IsEditable" Value="True"/>
+            <Setter Property="StaysOpenOnEdit" Value="True"/>
+            <Setter Property="Padding" Value="2,0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
+            <Style.Triggers>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="IsDropDownOpen" Value="true" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <!-- CONJUNCTION  -->
         <DataTemplate x:Key="myTemplateConjunction">
             <!-- the border makes the whole column hitable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding Path=Conjunction}" VerticalAlignment="Top"  HorizontalAlignment="Stretch"/>
+                <TextBlock Text="{Binding Path=Conjunction}" Padding="2,0" VerticalAlignment="Top"  HorizontalAlignment="Stretch"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateConjunctionEdit">
             <!-- the border makes the whole column hitable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <ComboBox HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                    SelectedItem="{Binding Path=Conjunction, Mode=TwoWay}"
-                    ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:QueryViewControl}}, Path=ListOfConjunctions}" 
-                    />
+                <controls:FilteringComboBox Style="{StaticResource GridComboStyle}"
+                                SelectedItem="{Binding Conjunction, Mode=TwoWay}"
+                                ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:QueryViewControl}}, Path=ListOfConjunctions}"
+                                FilterChanged="ComboBoxForConjunction_FilterChanged"
+                                >
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </controls:FilteringComboBox >
             </Border>
         </DataTemplate>
 
@@ -69,17 +90,24 @@
         <DataTemplate x:Key="myTemplateField">
             <!-- the border makes the whole column hitable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding Path=Field}" VerticalAlignment="Top"  HorizontalAlignment="Stretch"/>
+                <TextBlock Text="{Binding Path=Field}" Padding="2,0" VerticalAlignment="Top"  HorizontalAlignment="Stretch"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateFieldEdit">
             <!-- the border makes the whole column hitable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <ComboBox HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                    SelectedItem="{Binding Path=Field, Mode=TwoWay}"
-                    ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:QueryViewControl}}, Path=ListOfFields}" 
-                    />
+                <controls:FilteringComboBox Style="{StaticResource GridComboStyle}"
+                                SelectedItem="{Binding Field, Mode=TwoWay}"
+                                ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:QueryViewControl}}, Path=ListOfFields}" 
+                                FilterChanged="ComboBoxForField_FilterChanged"
+                                >
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </controls:FilteringComboBox >
             </Border>
         </DataTemplate>
 
@@ -87,33 +115,40 @@
         <DataTemplate x:Key="myTemplateOperation">
             <!-- the border makes the whole column hitable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding Path=OperationDisplay}" VerticalAlignment="Top"  HorizontalAlignment="Stretch"/>
+                <TextBlock Text="{Binding Path=OperationDisplay}" Padding="2,0" VerticalAlignment="Top"  HorizontalAlignment="Stretch"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateOperationEdit">
             <!-- the border makes the whole column hitable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <ComboBox HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                    SelectedItem="{Binding Path=OperationDisplay, Mode=TwoWay}"
-                    ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:QueryViewControl}}, Path=ListOfOperations}" 
-                    />
+                <controls:FilteringComboBox Style="{StaticResource GridComboStyle}"
+                                SelectedItem="{Binding OperationDisplay, Mode=TwoWay}"
+                                ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:QueryViewControl}}, Path=ListOfOperations}" 
+                                FilterChanged="ComboBoxForOperation_FilterChanged"
+                                >
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </controls:FilteringComboBox >
             </Border>
         </DataTemplate>
 
 
     </UserControl.Resources>
-    
-        <DataGrid Name="dataGrid1" Style="{StaticResource MyDataGridStyle}" RowHeaderWidth="20"
+
+    <controls:MoneyDataGrid x:Name="dataGrid1" Style="{StaticResource MyDataGridStyle}" RowHeaderWidth="20"
                   CanUserAddRows="True" CanUserDeleteRows="True" CanUserResizeRows="False" AutoGenerateColumns="False"
                   PreviewKeyDown="OnDataGrid_PreviewKeyDown">
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="And/Or" MinWidth="50" CellTemplate="{StaticResource myTemplateConjunction}" CellEditingTemplate="{StaticResource myTemplateConjunctionEdit}" SortMemberPath="Conjunction"/>
-                <DataGridTemplateColumn Header="Field" MinWidth="200" CellTemplate="{StaticResource myTemplateField}" CellEditingTemplate="{StaticResource myTemplateFieldEdit}" SortMemberPath="Field"/>
-                <DataGridTemplateColumn Header="Operation" MinWidth="200" CellTemplate="{StaticResource myTemplateOperation}" CellEditingTemplate="{StaticResource myTemplateOperationEdit}" SortMemberPath="Operation"/>
-                <DataGridTextColumn Header="Value" MinWidth="300" Binding="{Binding Value}"/>
-            </DataGrid.Columns>
+        <DataGrid.Columns>
+            <DataGridTemplateColumn Header="And/Or" MinWidth="50" CellTemplate="{StaticResource myTemplateConjunction}" CellEditingTemplate="{StaticResource myTemplateConjunctionEdit}" SortMemberPath="Conjunction"/>
+            <DataGridTemplateColumn Header="Field" MinWidth="200" CellTemplate="{StaticResource myTemplateField}" CellEditingTemplate="{StaticResource myTemplateFieldEdit}" SortMemberPath="Field"/>
+            <DataGridTemplateColumn Header="Operation" MinWidth="200" CellTemplate="{StaticResource myTemplateOperation}" CellEditingTemplate="{StaticResource myTemplateOperationEdit}" SortMemberPath="Operation"/>
+            <DataGridTextColumn Header="Value" MinWidth="300" Binding="{Binding Value}"/>
+        </DataGrid.Columns>
 
-        </DataGrid>
-    
+    </controls:MoneyDataGrid>
+
 </UserControl>
