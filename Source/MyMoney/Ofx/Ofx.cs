@@ -1,28 +1,26 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Sgml;
 using Walkabout.Utilities;
 using Dispatcher = System.Windows.Threading.Dispatcher;
-using Walkabout.Configuration;
-using System.Collections.Concurrent;
-using System.Net.NetworkInformation;
 
 
 namespace Walkabout.Ofx
@@ -204,7 +202,7 @@ namespace Walkabout.Ofx
 
     }
 
-    class LogFile
+    class LogFileInfo
     {
         public string Path { get; set; }
     }
@@ -306,7 +304,7 @@ namespace Walkabout.Ofx
                                     doc = ofx.ParseOfxResponse(fs, false);
                                     fs.Close();
                                     string file = OfxRequest.SaveLog(doc, Path.GetFileNameWithoutExtension(fname) + ".xml");
-                                    doc.AddAnnotation(new LogFile() { Path = file });
+                                    doc.AddAnnotation(new LogFileInfo() { Path = file });
                                 }
                                 OfxDownloadData se = e.AddEntry(null, null, fname);
                                 ofx.ProcessResponse(doc, se);
@@ -535,259 +533,6 @@ namespace Walkabout.Ofx
             BankRequest,
             CreditRequest,
             InvestmentRequest
-        }
-
-        static List<OfxInstitutionInfo> providerListCache;
-
-        static string OfxHomeProviderList = "http://www.ofxhome.com/api.php?all=yes";
-
-        public static List<OfxInstitutionInfo> GetCachedBankList()
-        {
-            if (providerListCache != null)
-            {
-                return providerListCache;
-            }
-
-            // Check local cache.
-            string fname = OfxProviderList;
-
-            List<OfxInstitutionInfo> list = new List<OfxInstitutionInfo>();
-            XDocument doc = null;
-
-            if (File.Exists(fname))
-            {
-                try
-                {
-                    doc = XDocument.Load(fname);
-                    list = LoadProviderList(doc);
-                }
-                catch
-                {
-                    // rats, got corrupted, so start over.
-                }
-            }
-
-            // Now merge any updates from the built in starter list.
-            using (Stream s = typeof(OfxRequest).Assembly.GetManifestResourceStream("Walkabout.Ofx.OfxProviderList.xml"))
-            {
-                if (s != null)
-                {
-                    XDocument builtIndoc = XDocument.Load(s);
-                    MergeProviderList(list, builtIndoc);
-                }
-            }
-
-            SaveList(list);
-            return list;
-        }
-
-        private static List<OfxInstitutionInfo> LoadProviderList(XDocument doc)
-        {
-            List<OfxInstitutionInfo> list = new List<OfxInstitutionInfo>();
-            Dictionary<string, OfxInstitutionInfo> map = new Dictionary<string, OfxInstitutionInfo>();
-
-            foreach (XElement e in doc.Root.Elements())
-            {
-                OfxInstitutionInfo info = OfxInstitutionInfo.Create(e);
-                if (info != null && info.Name != null)
-                {
-                    OfxInstitutionInfo other;
-                    if (map.TryGetValue(info.Name, out other))
-                    {
-                        other.Merge(info);
-                    }
-                    else
-                    {
-                        list.Add(info);
-                        map[info.Name] = info;
-                    }
-                }
-            }
-
-            return list;
-        }
-
-        public static List<OfxInstitutionInfo> GetRemoteBankList()
-        {
-            if (providerListCache != null)
-            {
-                return providerListCache;
-            }
-
-            List<OfxInstitutionInfo> list = GetCachedBankList();
-
-            // check if the OfxHome list has been updated.
-            try
-            {
-                string url = OfxHomeProviderList;
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                request.Method = "GET";
-                HttpWebResponse r = request.GetResponse() as HttpWebResponse;
-                using (Stream s = r.GetResponseStream())
-                {
-                    XDocument all = XDocument.Load(s);
-                    all.Save(Path.Combine(OfxLogPath, "OfxHomeList.xml"));
-                    MergeProviderList(list, all);
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("GetRemoteBankList " + e.GetType().Name + ": " + e.Message);
-            }
-
-            // save list in case it was updated.
-            SaveList(list);
-
-            providerListCache = list;
-            return list;
-        }
-
-        private static void UpdateCachedProfile(OfxInstitutionInfo profile)
-        {
-            List<OfxInstitutionInfo> list = GetCachedBankList();
-            if (list.Contains(profile))
-            {
-                // already there.
-                SaveList(list);
-                return;
-            }
-            else
-            {
-                // find the same provider in our cacheList and merge the info
-                foreach (OfxInstitutionInfo item in list)
-                {
-                    if (string.Compare(item.MoneyDanceId, profile.MoneyDanceId) == 0 ||
-                        string.Compare(item.OfxHomeId, profile.OfxHomeId) == 0)
-                    {
-                        if (item.Merge(profile))
-                        {
-                            SaveList(list);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        private static string OfxProviderList
-        {
-            get
-            {
-                string appdata = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MyMoney");
-                Directory.CreateDirectory(appdata);
-                string fname = Path.Combine(appdata, "ofx-index.xml");
-                return fname;
-            }
-        }
-
-        public static void SaveList(List<OfxInstitutionInfo> list)
-        {
-            string fname = OfxProviderList;
-
-            XDocument doc = new XDocument(new XElement("institutions"));
-            foreach (OfxInstitutionInfo info in list)
-            {
-                doc.Root.Add(info.ToXml());
-            }
-            doc.Save(fname);
-        }
-
-        private static bool? IsMergable(string a, string b)
-        {
-            if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b))
-            {
-                // not enough info to be sure
-                return null;
-            }
-            else if (string.Compare(a, b) == 0)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        private static void MergeProviderList(List<OfxInstitutionInfo> result, XDocument doc)
-        {
-            try
-            {
-
-                /* The financial institution list from http://www.ofxhome.com/api.php?all=yes
-                 * is in this format:
-                    <institutionlist> 
-                        <institutionid id="555" name="121 Financial Credit Union"/>         
-                        ...             
-                */
-                foreach (XElement institution in doc.Root.Elements())
-                {
-                    OfxInstitutionInfo c = OfxInstitutionInfo.Create(institution);
-
-                    string name = c.Name;
-                    if (!string.IsNullOrEmpty(name))
-                    {
-                        bool exists = false;
-                        foreach (OfxInstitutionInfo i in result)
-                        {
-                            bool? mergable = IsMergable(i.MoneyDanceId, c.MoneyDanceId);
-                            if (!mergable.HasValue)
-                            {
-                                mergable= IsMergable(i.OfxHomeId, c.OfxHomeId);
-                            }
-                            if (!mergable.HasValue)
-                            {
-                                mergable = IsMergable(i.Name, c.Name);
-                            }
-
-                            if (mergable == true)
-                            {
-                                exists = true;
-                                i.Merge(c);
-                                break;
-                            }
-                        }
-                        if (!exists)
-                        {
-                            // found a new one!
-                            result.Add(c);
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                // todo: error handling...
-            }
-        }
-
-        static string OfxHomeProviderInfo = "http://www.ofxhome.com/api.php?lookup={0}";
-
-        public static OfxInstitutionInfo GetProviderInformation(OfxInstitutionInfo provider)
-        {
-            if (provider == null || string.IsNullOrEmpty(provider.OfxHomeId))
-            {
-                return null;
-            }
-
-            // update the cached information.
-            string url = string.Format(OfxHomeProviderInfo, provider.OfxHomeId);
-            try
-            {
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                request.Method = "GET";
-                HttpWebResponse r = request.GetResponse() as HttpWebResponse;
-                using (Stream s = r.GetResponseStream())
-                {
-                    XDocument doc = XDocument.Load(s);
-                    if (provider.AddInfoFromOfxHome(doc.Root))
-                    {
-                        UpdateCachedProfile(provider);
-                    }
-                }
-            }
-            catch
-            {
-                // todo: report error
-            }
-            return provider;
         }
 
         static OfxRequestType GetRequestType(Account a)
@@ -1227,8 +972,12 @@ NEWFILEUID:{1}
                 url = "https://" + url;
             }
 
+            //SecurityProtocolType.Tls
+
             Uri uri = new Uri(url);
             pending = (HttpWebRequest)WebRequest.Create(uri);
+
+            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(AllwaysGoodCertificate);
 
             pending.Method = "POST";
             pending.ContentType = "application/x-ofx";
@@ -1280,6 +1029,11 @@ NEWFILEUID:{1}
                 if (resp != null) resp.Close();
                 pending = null;
             }
+        }
+
+        private bool AllwaysGoodCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
         }
 
         private string RemoveIndents(string msg)
@@ -2040,7 +1794,7 @@ NEWFILEUID:{1}
 
         static string GetLogFileLocation(XDocument doc)
         {
-            LogFile log = doc.Annotation<LogFile>();
+            LogFileInfo log = doc.Annotation<LogFileInfo>();
             if (log != null) return log.Path;
             return null;
         }

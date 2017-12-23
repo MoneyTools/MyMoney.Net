@@ -271,10 +271,10 @@ namespace Walkabout.Dialogs
         void GetBankList(object state)
         {
             // show the cached list first.
-            providers = OfxRequest.GetCachedBankList();
+            providers = OfxInstitutionInfo.GetCachedBankList();
             ShowBankList();
 
-            providers = OfxRequest.GetRemoteBankList();
+            providers = OfxInstitutionInfo.GetRemoteBankList();
             ShowBankList();
         }
 
@@ -533,7 +533,7 @@ namespace Walkabout.Dialogs
         {
             OfxInstitutionInfo provider = (OfxInstitutionInfo)state;
 
-            OfxInstitutionInfo ps = OfxRequest.GetProviderInformation(provider);
+            OfxInstitutionInfo ps = OfxInstitutionInfo.GetProviderInformation(provider);
 
             if (this.selected != state)
             {
@@ -710,7 +710,7 @@ namespace Walkabout.Dialogs
                 {
                     provider.OfxVersion = editing.OfxVersion;
                 }
-                OfxRequest.SaveList(providers);
+                OfxInstitutionInfo.SaveList(providers);
             }
 
             this.DialogResult = true;
@@ -1681,7 +1681,7 @@ namespace Walkabout.Dialogs
                 {
                     institution.LastConnection = DateTime.Now;
                 }
-                OfxRequest.SaveList(providers);
+                OfxInstitutionInfo.SaveList(providers);
             }
         }
 
