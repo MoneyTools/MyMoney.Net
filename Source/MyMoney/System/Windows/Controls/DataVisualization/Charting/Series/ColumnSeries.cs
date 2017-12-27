@@ -97,7 +97,8 @@ namespace System.Windows.Controls.DataVisualization.Charting
             double dataPointY = ActualDependentRangeAxis.GetPlotAreaCoordinate(ValueHelper.ToDouble(dataPoint.ActualDependentValue)).Value;
             double zeroPointY = ActualDependentRangeAxis.GetPlotAreaCoordinate(ActualDependentRangeAxis.Origin).Value;
 
-            double offset = seriesIndex * Math.Round(columnWidth) + coordinateRangeWidth;
+            double gap = (columnWidth * ColumnGapRatio);
+            double offset = seriesIndex * Math.Round(columnWidth) + gap; // + coordinateRangeWidth;
             double dataPointX = minimum + offset;
 
             if (GetIsDataPointGrouped(category))
@@ -105,7 +106,7 @@ namespace System.Windows.Controls.DataVisualization.Charting
                 // Multiple DataPoints share this category; offset and overlap them appropriately
                 IGrouping<object, DataPoint> categoryGrouping = GetDataPointGroup(category);
                 int index = categoryGrouping.IndexOf(dataPoint);
-                dataPointX += (index * (columnWidth * ColumnGapRatio)) / (categoryGrouping.Count() - 1);
+                dataPointX += (index * gap) / (categoryGrouping.Count() - 1);
                 columnWidth *= 0.8;
                 Canvas.SetZIndex(dataPoint, -index);
             }

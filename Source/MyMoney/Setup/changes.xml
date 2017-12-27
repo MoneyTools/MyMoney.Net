@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+    <change version="1.1.0.5" date="12/26/2017">
+        Fix one off error in layout of columns in the history bar chart.
+    </change>
     <change version="1.1.0.4" date="12/23/2017">
         Fix TSL network connection problems with some OFX banks (Citibank).
         This is done by upgrading MyMoney app to use .NET Framework version 4.6.1.
