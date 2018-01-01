@@ -3269,12 +3269,13 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             {
                 foreach (Account acct in this.myMoney.Accounts.GetAccounts())
                 {
-                    if (!string.IsNullOrEmpty(acct.AccountId))
+                    if (!string.IsNullOrEmpty(acct.AccountId) && acct.AccountId == accountId)
                     {
-                        if (acct.OfxAccountId == accountId || acct.AccountId == accountId)
-                        {
-                            return acct;
-                        }
+                        return acct;
+                    }
+                    if (!string.IsNullOrEmpty(acct.OfxAccountId) && acct.OfxAccountId == accountId)
+                    {
+                        return acct;
                     }
                 }
             }

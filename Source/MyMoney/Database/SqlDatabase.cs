@@ -806,7 +806,7 @@ namespace Walkabout.Data
         #region TABLE ACCCOUNTS
         public void ReadAccounts(Accounts accts, MyMoney money)
         {
-            IDataReader reader = ExecuteReader("SELECT Id,AccountId,Name,Type,Description,OnlineAccount,OpeningBalance,LastSync,LastBalance,SyncGuid,Flags,Currency,WebSite,ReconcileWarning,CategoryIdForPrincipal,CategoryIdForInterest FROM Accounts");
+            IDataReader reader = ExecuteReader("SELECT Id,AccountId,Name,Type,Description,OnlineAccount,OpeningBalance,LastSync,LastBalance,SyncGuid,Flags,Currency,WebSite,ReconcileWarning,CategoryIdForPrincipal,CategoryIdForInterest,OfxAccountId FROM Accounts");
             accts.BeginUpdate(false);
             accts.Clear();
             while (reader.Read())
@@ -836,6 +836,8 @@ namespace Walkabout.Data
 
                 a.CategoryForPrincipal = money.Categories.FindCategoryById(ReadInt32(reader, 14));
                 a.CategoryForInterest = money.Categories.FindCategoryById(ReadInt32(reader, 15));
+
+                a.OfxAccountId = ReadDbString(reader, 16);
                 a.OnUpdated();
             }
             accts.EndUpdate();
@@ -854,6 +856,7 @@ namespace Walkabout.Data
                     sb.AppendLine("-- updating account: " + a.Name);
                     sb.Append("UPDATE Accounts SET ");
                     sb.Append(String.Format("AccountId='{0}'", DBString(a.AccountId)));
+                    sb.Append(String.Format(",OfxAccountId='{0}'", DBString(a.OfxAccountId)));
                     sb.Append(String.Format(",Name='{0}'", DBString(a.Name)));
                     sb.Append(String.Format(",Type={0}", ((int)a.Type).ToString()));
                     sb.Append(String.Format(",Description='{0}'", DBString(a.Description)));
@@ -874,9 +877,10 @@ namespace Walkabout.Data
                 else if (a.IsInserted)
                 {
                     sb.AppendLine("-- inserting account: " + a.Name);
-                    sb.Append("INSERT INTO Accounts (Id,AccountId,Name,Type,Description,OnlineAccount,OpeningBalance,LastSync,LastBalance,SyncGuid,Flags,Currency,WebSite,ReconcileWarning,CategoryIdForPrincipal,CategoryIdForInterest) VALUES (");
+                    sb.Append("INSERT INTO Accounts (Id,AccountId,OfxAccountId.Name,Type,Description,OnlineAccount,OpeningBalance,LastSync,LastBalance,SyncGuid,Flags,Currency,WebSite,ReconcileWarning,CategoryIdForPrincipal,CategoryIdForInterest) VALUES (");
                     sb.Append(String.Format("{0}", a.Id.ToString()));
                     sb.Append(String.Format(",'{0}'", DBString(a.AccountId)));
+                    sb.Append(String.Format(",'{0}'", DBString(a.OfxAccountId)));
                     sb.Append(String.Format(",'{0}'", DBString(a.Name)));
                     sb.Append(String.Format(",{0}", ((int)a.Type).ToString()));
                     sb.Append(String.Format(",'{0}'", DBString(a.Description)));

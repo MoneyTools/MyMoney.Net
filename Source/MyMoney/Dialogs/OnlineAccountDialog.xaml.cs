@@ -1225,7 +1225,7 @@ namespace Walkabout.Dialogs
 
             foreach (Account a in this.money.Accounts.GetAccounts())
             {
-                if (FuzzyMatchId(a.AccountId, id))
+                if (a.AccountId == id || a.OfxAccountId == id)
                 {
                     if (a.OnlineAccount != null )
                     {
@@ -1321,31 +1321,6 @@ namespace Walkabout.Dialogs
                     e.ToolTip = "Click here to connect this account to the selected online account";
                 }
             }
-        }
-
-
-        bool FuzzyMatchId(string id1, string id2)
-        {
-            string a = CanonicalizeId(id1);
-            string b = CanonicalizeId(id2);
-            return string.Compare(a, b, StringComparison.OrdinalIgnoreCase) == 0;
-        }
-
-        string CanonicalizeId(string id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-            StringBuilder sb = new StringBuilder();
-            foreach (char c in id)
-            {
-                if (Char.IsLetterOrDigit(c))
-                {
-                    sb.Append(c);
-                }
-            }
-            return sb.ToString();
         }
 
         private void OnAddAccount(AccountListItem item)

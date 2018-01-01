@@ -344,7 +344,7 @@ namespace Walkabout.Data
                                 {
                                     throw new NotImplementedException("Cannot rename the primary key automatically, sorry");
                                 }
-                                // we delimerately do NOT copy the AllowNulls because we can't set that yet.
+                                // we deliberately do NOT copy the AllowNulls because we can't set that yet.
                                 ColumnMapping clone = new ColumnMapping() {
                                   ColumnName = c.ColumnName,
                                   OldColumnName = c.OldColumnName,

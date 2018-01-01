@@ -2308,6 +2308,7 @@ namespace Walkabout.Data
     {
         int id = -1;
         string accountId;
+        string ofxAccountId;
         string name;
         string description;
         AccountType type;
@@ -2356,15 +2357,13 @@ namespace Walkabout.Data
             set { if (this.accountId != value) { this.accountId = Truncate(value, 20); OnChanged("AccountId"); } }
         }
 
-        [XmlIgnore]
+        [DataMember]
+        [XmlAttribute]
+        [ColumnMapping(ColumnName = "OfxAccountId", MaxLength = 50, AllowNulls = true)]
         public string OfxAccountId
         {
-            get
-            {
-                string id = this.accountId;
-                if (id == null || id.Trim() == "") return "";
-                return id.Replace(" ", "");
-            }
+            get { return this.ofxAccountId == null ? this.accountId : this.ofxAccountId; }
+            set { if (this.ofxAccountId != value) { this.ofxAccountId = Truncate(value, 50); OnChanged("OfxAccountId"); } }
         }
 
         [XmlIgnore]
@@ -10378,10 +10377,18 @@ namespace Walkabout.Data
                 rc = true;
             }
 
-            if (string.IsNullOrEmpty(this.memo) && !string.IsNullOrEmpty(t.memo))
+            if (string.IsNullOrEmpty(this.memo))
             {
-                this.Memo = t.memo;
-                rc = true;
+                if (!string.IsNullOrEmpty(t.memo))
+                {
+                    this.Memo = t.memo;
+                    rc = true;
+                }
+                else if (this.Payee != t.Payee)
+                {
+                    this.Memo = t.Payee.Name;
+                    rc = true;
+                }
             }
 
             if (t.Status != this.Status && this.Status != TransactionStatus.Reconciled && t.status != TransactionStatus.None)

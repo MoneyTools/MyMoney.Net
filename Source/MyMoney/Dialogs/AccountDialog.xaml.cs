@@ -332,6 +332,7 @@ namespace Walkabout.Dialogs
 
             theAccount.Name = editingAccount.Name;
             theAccount.AccountId = editingAccount.AccountId;
+            theAccount.OfxAccountId = editingAccount.OfxAccountId;
             theAccount.Description = editingAccount.Description;
             theAccount.Type = editingAccount.Type;
 

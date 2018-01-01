@@ -1,5 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+    <change version="1.1.0.6" date="1/1/2018">
+        Add support for separate "OnlineAccountId" because some online accounts do weird thigns to your
+        account number.  For example, Discover Card changes your card number to something like this:
+        'Discovr82X02X6234X2511' and then you need to match online accounts to this string, so the
+        Online Account Dialog now allows you to set this in a separate field so the online account
+        downloads work properly.  When you do the first time connect to Discover it will find a new
+        account that doesn't match yours, click the box to create this account then look at it's
+        account id, you should see something like the above.  Copy that account id to your real account 
+        Online Account Id, then delete the new account.  After this online downloads should work properly again.
+    </change>
     <change version="1.1.0.5" date="12/26/2017">
         Fix one off error in layout of columns in the history bar chart.
     </change>
