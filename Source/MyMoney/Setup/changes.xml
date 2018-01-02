@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+    <change version="1.1.0.7" date="1/1/2018">
+        Yahoo turned off their free stock quote service, so switching to https://www.alphavantage.co.  Unfortunately this service doesn't support batch downloading, so you have to wait longer for each stock price to be updated.  The service does provide a lot more information however, so  we can do a lot more with that in the future.
+    </change>
     <change version="1.1.0.6" date="1/1/2018">
         Add support for separate "OnlineAccountId" because some online accounts do weird thigns to your
         account number.  For example, Discover Card changes your card number to something like this:

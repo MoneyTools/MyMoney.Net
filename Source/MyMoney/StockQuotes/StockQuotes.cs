@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows;
@@ -15,6 +16,8 @@ using Walkabout.Utilities;
 using System.Text;
 using System.Windows.Documents;
 using System.Windows.Input;
+using Newtonsoft.Json;
+using Walkabout.Ofx;
 
 namespace Walkabout.Network
 {
@@ -36,7 +39,7 @@ namespace Walkabout.Network
         IServiceProvider provider;
         HttpWebRequest _current;        
         char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
-        const string address = "http://download.finance.yahoo.com/d/quotes";
+        const string address = "https://www.alphavantage.co/query?apikey={0}&function=TIME_SERIES_DAILY_ADJUSTED&symbol={1}";
 
         public StockQuotes(IServiceProvider provider)
         {
@@ -214,18 +217,13 @@ namespace Walkabout.Network
                     queue.Clear();
                 }
 
-                StringBuilder query = new StringBuilder();                
-                string joiner = "";
-                int maxQuery = int.MaxValue;
-                int count = 0;
-
                 for (int i = 0; i < max; i++)
                 {
                     Security s = localCopy[i];
+                    string symbol = s.Symbol;
                     if (stop) break;
                     try
                     {
-                        string symbol = s.Symbol;
                         if (!string.IsNullOrEmpty(symbol))
                         {
                             if (symbol.IndexOfAny(illegalUrlChars) >= 0)
@@ -234,31 +232,23 @@ namespace Walkabout.Network
                             }
                             else
                             {
-                                query.Append(joiner);
-                                query.Append(symbol);
-                                joiner = "+";
-                                count++;
+                                FetchQuote(s);
                             }
                         }
                         else
                         {
                             AddError(string.Format(Walkabout.Properties.Resources.SkippingSecurityMissingSymbol, s.Name));
                         }
-                        if (count > maxQuery || i == max - 1)
-                        {
-                            FetchQuotesFromYahoo(query.ToString());
-                            query = new StringBuilder();
-                        }
                         if (status != null)
                         {
-                            status.ShowProgress(s.Name, 0, max, count);
+                            status.ShowProgress(s.Name, 0, max, i);
                         }
                     }
                     catch (System.Net.WebException we)
                     {
                         if (we.Status != WebExceptionStatus.RequestCanceled)
                         {
-                            AddError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, query.ToString()) + "\r\n" + we.Message);
+                            AddError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + we.Message);
                         }
                         else
                         {
@@ -284,12 +274,12 @@ namespace Walkabout.Network
                     }
                     catch (Exception e)
                     {
-                        XElement se = new XElement("Query", new XAttribute("Symbols", query.ToString()));
+                        XElement se = new XElement("Query", new XAttribute("Symbols", symbol));
                         se.Add(new XElement("Error", e.Message));
                         newQuotes.Root.Add(se);
 
                         // continue
-                        AddError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, query.ToString()) + "\r\n" + e.Message);
+                        AddError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + e.Message);
                     }
                 }
 
@@ -350,12 +340,12 @@ namespace Walkabout.Network
                 quotesThread = null;
                 if (newQuotes != null)
                 {
-                    string dir = ProcessHelper.StartupPath + "\\OfxLogs";
+                    string dir = OfxRequest.OfxLogPath;
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
 
-                    string path = dir + "\\Stocks.xml";
-                    newQuotes.Save(dir + "\\Stocks.xml");
+                    string path = Path.Combine(dir, "Stocks.xml");
+                    newQuotes.Save(path);
 
                     if (hasError && !stop)
                     {
@@ -396,54 +386,155 @@ namespace Walkabout.Network
         }
 
 
-        XDocument FetchQuotesFromYahoo(string symbols)
+        static void ReadMetadata(JsonTextReader reader, string symbol)
         {
-            
+            while (reader.Read() && reader.TokenType != JsonToken.EndObject)
+            {
+                if (reader.TokenType == JsonToken.PropertyName && (string)reader.Value == "2. Symbol")
+                {
+                    if (reader.Read() && reader.TokenType == JsonToken.String)
+                    {
+                        string s = (string)reader.Value;
+                        if (string.Compare(s, symbol, StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            throw new Exception(string.Format("Expection information on symbol {0}, but got symbol {1} instead", symbol, s));
+                        }
+                    }
+                }
+            }
+        }
 
-            //  see http://cliffngan.net/a/13 or
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(address + "?s=" + symbols + "&f=snl1p");
-            req.ContentType = "text/csv; charset=utf-8";
-            req.Accept = "text/csv";
+        static XElement ReadDailyValue(JsonTextReader reader)
+        {
+            //  "Symbol", "Name", "Price", "LastPrice" 
+            XElement quote = new XElement("Quote");
+
+            while (reader.Read() && reader.TokenType != JsonToken.EndObject)
+            {
+                if (reader.TokenType == JsonToken.PropertyName)
+                {
+                    string name = (string)reader.Value;
+                    if (reader.Read())
+                    {
+                        if (reader.TokenType == JsonToken.StartObject)
+                        {
+                            quote.Add(new XElement("Date", name));
+                        }
+                        else if (reader.TokenType == JsonToken.String)
+                        {
+                            string value = (string)reader.Value;
+                            switch (name)
+                            {
+                                case "1. open":
+                                    quote.Add(new XElement("LastPrice", value));
+                                    break;
+                                case "2. high":
+                                    break;
+                                case "3. low":
+                                    break;
+                                case "4. close":
+                                    quote.Add(new XElement("Price", value));
+                                    break;
+                                case "5. adjusted close":
+                                    break;
+                                case "6. volume":
+                                    break;
+                                case "7. dividend amount":
+                                    break;
+                                case "8. split coefficient":
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            return quote;
+        }
+
+        static XElement ReadTimeSeries(JsonTextReader reader)
+        {
+            List<XElement> list = new List<XElement>();
+            while (reader.Read() && reader.TokenType != JsonToken.EndObject)
+            {
+                if (reader.TokenType == JsonToken.StartObject)
+                {
+                    return ReadDailyValue(reader);
+                }
+            }
+            return null;
+        }
+        
+        XElement ParseStockQuote(JsonTextReader reader, Security s)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.PropertyName)
+                {
+                    string name = (string)reader.Value;
+                    if (name == "Meta Data")
+                    {
+                        ReadMetadata(reader, s.Symbol);
+                    }
+                    else if (name == "Time Series (Daily)")
+                    {
+                        XElement today = ReadTimeSeries(reader);
+                        if (today != null)
+                        {
+                            today.Add(new XElement("Symbol", s.Symbol));
+                            today.Add(new XElement("Name", s.Name));
+                            return today;
+                        }
+                    }
+                    else if (name == "Information")
+                    {
+                        if (reader.Read() && reader.TokenType == JsonToken.String)
+                        {
+                            string reason = (string)reader.Value;
+                            throw new Exception(string.Format("Error fetching security '{0}': {1}", s.Name, reason));
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+
+        void FetchQuote(Security s)
+        {
+            // T7ZS25TB090CWC0Q
+            // See https://www.alphavantage.co/documentation/
+            string uri = string.Format(address, "T7ZS25TB090CWC0Q", s.Symbol);
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
             req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
             req.Method = "GET";
             req.Timeout = 10000;
             req.UseDefaultCredentials = false;
             _current = req;
 
-            WebResponse resp = req.GetResponse();
+            WebResponse resp = req.GetResponse();            
             using (Stream stm = resp.GetResponseStream())
             {
-                XDocument doc = null;
-
                 using (StreamReader sr = new StreamReader(stm, Encoding.UTF8)) 
                 {
-                    using (XmlCsvReader reader = new XmlCsvReader(sr, new Uri(address), new NameTable()))
+                    using (var reader = new Newtonsoft.Json.JsonTextReader(sr))
                     {
-                        reader.ColumnNames = new string[] { "Symbol", "Name", "Price", "LastPrice" };
-                        reader.RootName = "StockQuotes";
-                        reader.RowName = "Quote";
-                        doc = XDocument.Load(reader);                        
-                        foreach (XElement e in new List<XElement>(doc.Root.Elements()))
+                        XElement quote = ParseStockQuote(reader, s);
+                        if (quote != null)
                         {
-                            e.Remove();
-                            newQuotes.Root.Add(e);
+                            newQuotes.Root.Add(quote);
+                        }
+                        else
+                        {
+                            AddError("Stock quote result format not recognized.");
                         }
                     }
                 }
-
-                _current = null;
-                XElement firstNode = doc.Root.FirstNode as XElement;
-                string text = firstNode != null ? firstNode.Value : null;
-                if (text == "exception")
-                {
-                    AddError(text);
-                    return null;
-                }
-                else
-                {
-                    return doc;
-                }
             }
+
+            // this service doesn't want too many calls per second.
+            Thread.Sleep(1000);
         }
 
         void AddError(string msg)

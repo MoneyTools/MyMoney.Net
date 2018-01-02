@@ -4256,13 +4256,23 @@ namespace Walkabout.Views
                 {
                     ComboBox combo = sender as System.Windows.Controls.ComboBox;
                     object value = combo.SelectedItem;
-                    string selected = value == null ? string.Empty : value.ToString();
-                    string text = combo.Text;
-                    if ((selected != text || t.InvestmentSecurity == null) && !string.IsNullOrWhiteSpace(text))
+                    Security s = value as Security;
+                    if (s == null)
                     {
-                        if (t.InvestmentSecurity == null)
+                        string text = combo.Text;
+                        if (!string.IsNullOrWhiteSpace(text))
                         {
-                            t.InvestmentSecurity = this.myMoney.Securities.FindSymbol(text, true);
+                            s = this.myMoney.Securities.FindSymbol(text, false);
+                            if (s == null)
+                            {
+                                s = this.myMoney.Securities.FindSecurityById(text);
+                                if (s == null)
+                                {
+                                    // add a new one!
+                                    s = this.myMoney.Securities.FindSymbol(text, true);
+                                }
+                            }
+                            t.InvestmentSecurity = s;
                         }
                     }
                 }
