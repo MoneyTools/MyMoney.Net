@@ -63,7 +63,6 @@
         <CommandBinding Command="p:AppCommands.CommandViewThemeOSX" Executed="OnCommandViewThemeOSX" />
 
         <!-- REPORTS  -->
-        <CommandBinding Command="p:AppCommands.CommandReportBudget" Executed="OnCommandBudgetReport"/>
         <CommandBinding Command="p:AppCommands.CommandReportNetWorth" Executed="OnCommandNetWorth"/>
         <CommandBinding Command="p:AppCommands.CommandReportInvestment" Executed="OnCommandReportInvestment"/>
         <CommandBinding Command="p:AppCommands.CommandTaxReport" Executed="OnTaxReport"/>
@@ -188,7 +187,6 @@
                     </MenuItem>
 
                     <MenuItem x:Name="MenuViewReports" Header="_Reports">
-                        <MenuItem x:Name="MenuReportsBudget" Header="B_udget" Command="p:AppCommands.CommandReportBudget"/>
                         <MenuItem x:Name="MenuReportsNetWorth" Header="_Net Worth" Command="p:AppCommands.CommandReportNetWorth"/>
                         <Separator/>
                         <MenuItem x:Name="MenuReportsInvestment" Header="_Investment Portfolio" Command="p:AppCommands.CommandReportInvestment"/>

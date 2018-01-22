@@ -18,7 +18,7 @@
 
         <Style x:Key="EditBoxRename" TargetType="{x:Type TextBox}">
             <EventSetter Event="Loaded" Handler="OnTextEditorForRenaming_Loaded"/>
-            <EventSetter Event="KeyDown" Handler="RenameEditBoxBudget_KeyDown"/>
+            <EventSetter Event="KeyDown" Handler="RenameEditBox_KeyDown"/>
         </Style>
 
 
@@ -31,16 +31,12 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBlock  Text="{Binding Path=Label}" ToolTip="{Binding Path=Name}" MinWidth="200"/>
                             <Border Grid.Column="1" Margin="2" BorderThickness="0,0,0,0" Height="8" Width="8" VerticalAlignment="Center"  HorizontalAlignment="Center"                                     
                                     Background="{Binding InheritedColor, Converter={StaticResource CategoryToBrush}}"
                                     CornerRadius="0" Focusable="false" />
-
-                            <TextBlock Grid.Column="2" Text="{Binding Path=Balance, StringFormat={}{0:C}}" TextAlignment="Right" Margin="5,0,0,0"
-                                       Foreground="{Binding Balance, Converter={StaticResource MoneyColorConverter}, Mode=OneWay}" Tag="Balance"/>
                         </Grid>
                     </DataTemplate>
                 </Setter.Value>
@@ -56,7 +52,6 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBox BorderThickness="0" Background="LemonChiffon" Text="{Binding Path=Label, Mode=TwoWay}" ToolTip="{Binding Path=Name}"  MinWidth="200" 
                                              Style="{StaticResource EditBoxRename}"/>
@@ -65,8 +60,6 @@
                                             Background="{Binding InheritedColor, Converter={StaticResource CategoryToBrush}}"
                                             CornerRadius="0" Focusable="false" />
 
-                                    <TextBlock Grid.Column="2" Text="{Binding Path=Balance, StringFormat={}{0:C}}" TextAlignment="Right" Margin="5,0,0,0"
-                                               Foreground="{Binding Balance, Converter={StaticResource MoneyColorConverter}, Mode=OneWay}" Tag="Balance"/>
                                 </Grid>
                             </DataTemplate>
                         </Setter.Value>
@@ -95,9 +88,6 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock  Text="{Binding Path=Name}" MinWidth="200" FontWeight="Bold"/>
-
-                    <TextBlock Grid.Column="1" Text="{Binding Path=Balance, StringFormat={}{0:C}}" TextAlignment="Right" Margin="5,0,0,0" FontWeight="Bold"
-                                                   Foreground="{Binding Balance, Converter={StaticResource MoneyColorConverter}}"/>
                 </Grid>
             </Border>
 
@@ -117,8 +107,6 @@
             <MenuItem Name="MenuRename" Header="_Rename" Command="local:CategoriesControl.CommandRenameCategory" InputGestureText="F2"/>
             <MenuItem Header="_Delete" Command="local:CategoriesControl.CommandDeleteCategory" />
             <Separator />
-            <MenuItem Header="_Balance budget..." Command="local:CategoriesControl.CommandBalanceBudget"/>
-            <Separator />
             <MenuItem Header="_Expand all" Command="local:CategoriesControl.CommandExpandAll" />
             <MenuItem Header="_Collapse all" Command="local:CategoriesControl.CommandCollapseAll" />
             <Separator />
@@ -131,10 +119,8 @@
         <CommandBinding Command="local:CategoriesControl.CommandAddCategory" Executed="OnAddCategory" />
         <CommandBinding Command="local:CategoriesControl.CommandRenameCategory" Executed="OnExecutedRename" CanExecute="IsCategorySelected" />
         <CommandBinding Command="local:CategoriesControl.CommandDeleteCategory" Executed="OnDeleteCategory" CanExecute="IsCategorySelected" />
-        <CommandBinding Command="local:CategoriesControl.CommandBalanceBudget" Executed="OnBalanceBudget"  />
         <CommandBinding Command="local:CategoriesControl.CommandExpandAll" Executed="OnExpandAll"  />
         <CommandBinding Command="local:CategoriesControl.CommandCollapseAll" Executed="OnCollapseAll"  />
-        <CommandBinding Command="local:CategoriesControl.CommandResetBudget" Executed="OnResetBudget"  />
     </UserControl.CommandBindings>
 
     <UserControl.InputBindings>
@@ -149,18 +135,6 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
-
-        <StackPanel x:Name="BudgetTitlePanel" Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch"  Visibility="Collapsed" >
-            <TextBlock x:Name="BalanceTitle" Text="Balancing Budget for which month? " Margin="5" />
-            <controls:MoneyDatePicker x:Name="BudgetDate" SelectedDateChanged="BudgetDate_SelectedDateChanged" />
-        </StackPanel>
-
-        <StackPanel x:Name="Buttons" Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right"  Visibility="Collapsed">
-            <Button x:Name="StartButton" Click="StartButton_Click" MinWidth="70" MinHeight="23" Margin="5"  IsEnabled="false">_Start</Button>
-            <Button x:Name="FinishButton" Click="FinishButton_Click" MinWidth="70" MinHeight="23" Margin="5" IsEnabled="false">_Finish</Button>
-            <Button x:Name="CancelButton" Click="CancelButton_Click" MinWidth="70" MinHeight="23" Margin="5">_Cancel</Button>
-        </StackPanel>
 
         <TreeView Name="treeView" ItemsSource="{Binding}" Grid.Row="2"
                   Style="{DynamicResource WalkaboutToolBoxTreeView}"

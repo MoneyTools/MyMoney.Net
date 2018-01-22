@@ -8132,53 +8132,45 @@ namespace Walkabout.Data
             return balance;
         }
 
-        public static decimal GetLastInvestmentValue(IList<Transaction> data)
+        public static decimal GetBalance(MyMoney money, Account a, Category category, System.Collections.IEnumerable data, out decimal salestax, out decimal investmentValue)
         {
-            decimal balance = 0;
-            foreach (Transaction t in data)
-            {
-                if (t.Investment != null)
-                {
-                    InvestmentType it = t.Investment.Type;
-                    decimal qty = t.Investment.Units;
-                    decimal value = qty == 0 ? 0 : (t.Investment.Security == null ? 0 : (t.Investment.Security.LastPrice * qty));
-                    if (it == InvestmentType.Add || it == InvestmentType.Buy)
-                    {
-                        balance += value;
-                    }
-                    else
-                    {
-                        balance -= value;
-                    }
-                }
-            }
-            return balance;
-        }
-
-        public static decimal GetBalance(Account a, Category category, System.Collections.IEnumerable data, out decimal salestax)
-        {
+            investmentValue = 0;
             decimal tax = 0;
             salestax = 0;
-            if (a != null && a.Type == AccountType.Investment)
-            {
-                return GetInvestmentValue(data, out salestax);
-            }
             decimal result = 0;
+            DateTime lastDate = DateTime.Now;
+            bool hasInvestments = false;
+
             foreach (object row in data)
             {
-                if (row is Investment)
-                {
-                    return GetInvestmentValue(data, out salestax);
-                }
                 Transaction t = row as Transaction;
                 if (t != null)
                 {
+                    lastDate = t.Date;
+                    if (t.Investment != null)
+                    {
+                        hasInvestments = true;
+                    }
+                    investmentValue = t.Balance;
                     tax += t.NetSalesTax;
                     if (t.Investment != null)
                     {
                         tax += t.Investment.Taxes;
                     }
                     result += (decimal)GetCategoryValue(t, category);
+                }
+            }
+            if (hasInvestments && a != null)
+            {
+                // get the investment value as of the date of the last transaction
+                CostBasisCalculator calculator = new CostBasisCalculator(money, lastDate);
+                foreach (SecurityPurchase sp in calculator.GetHolding(a).GetHoldings())
+                {
+                    Security s = sp.Security;
+                    if (Math.Floor(sp.UnitsRemaining) > 0)
+                    {
+                        investmentValue += sp.MarketValue;
+                    }
                 }
             }
             salestax = tax;

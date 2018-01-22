@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using Walkabout.Utilities;
 using Walkabout.Views;
 using System.Windows.Documents;
+using System.Diagnostics;
 
 namespace Walkabout.Taxes
 {
@@ -401,6 +402,7 @@ namespace Walkabout.Taxes
             writer.StartColumnDefinitions();
             writer.WriteColumnDefinition("auto", 100, double.MaxValue);
             writer.WriteColumnDefinition("auto", 100, double.MaxValue);
+            writer.WriteColumnDefinition("auto", 100, double.MaxValue);
             writer.EndColumnDefinitions();
             writer.StartHeaderRow();
             writer.StartCell();
@@ -408,6 +410,9 @@ namespace Walkabout.Taxes
             writer.EndCell();
             writer.StartCell();
             writer.WriteNumber("Amount");
+            writer.EndCell();
+            writer.StartCell();
+            writer.WriteNumber("Tax Excempt");
             writer.EndCell();
             writer.EndRow();
 
@@ -440,16 +445,36 @@ namespace Walkabout.Taxes
                     writer.StartCell();
                     writer.WriteParagraph(subtotal.Key);
                     writer.EndCell();
-                    writer.StartCell();
 
-                    decimal value = (from t in subtotal.Value select t.Amount).Sum();
+                    decimal value = 0;
+                    decimal taxExempt = 0;
+                    foreach (Transaction t in subtotal.Value)
+                    {
+                        var amount = t.Amount;
+                        if (t.Investment != null && t.Investment.Security != null && t.Investment.Security.Taxable == YesNo.No)
+                        {
+                            taxExempt += amount;
+                        }
+                        else
+                        {
+                            value += amount;
+                        }
+                    }
 
                     if (tc.DefaultSign < 0)
                     {
                         value = value * -1;
                     }
 
+                    writer.StartCell();
                     writer.WriteNumber(value.ToString("C"));
+                    writer.EndCell();
+
+                    writer.StartCell();
+                    if (taxExempt > 0)
+                    {
+                        writer.WriteNumber(taxExempt.ToString("C"));
+                    }
                     writer.EndCell();
                     writer.EndRow();
                     sum += value;

@@ -34,7 +34,6 @@ namespace Walkabout.Views.Controls
         public static RoutedUICommand CommandAddCategory;
         public static RoutedUICommand CommandRenameCategory;
         public static RoutedUICommand CommandDeleteCategory;
-        public static RoutedUICommand CommandBalanceBudget;
         public static RoutedUICommand CommandExpandAll;
         public static RoutedUICommand CommandCollapseAll;
         public static RoutedUICommand CommandResetBudget;
@@ -45,7 +44,6 @@ namespace Walkabout.Views.Controls
             CommandAddCategory = new RoutedUICommand("Add", "CommandAddCategory", typeof(AccountsControl));
             CommandRenameCategory = new RoutedUICommand("Rename", "CommandRenameCategory", typeof(AccountsControl));
             CommandDeleteCategory = new RoutedUICommand("Delete", "CommandDeleteCategory", typeof(AccountsControl));
-            CommandBalanceBudget = new RoutedUICommand("Balance Budget", "CommandBalanceBudget", typeof(AccountsControl));
             CommandExpandAll = new RoutedUICommand("Expand All", "CommandExpandAll", typeof(AccountsControl));
             CommandCollapseAll = new RoutedUICommand("Collapse All", "CommandCollapseAll", typeof(AccountsControl));
             CommandResetBudget = new RoutedUICommand("Reset Budget", "CommandResetBudget", typeof(AccountsControl));
@@ -534,12 +532,6 @@ namespace Walkabout.Views.Controls
 
         #region Events
 
-        public event EventHandler BudgetDateChanged;
-
-        public event EventHandler StartBalanceBudget;
-
-        public event EventHandler FinishBalanceBudget;
-
         public event EventHandler SelectionChanged;
 
         public event EventHandler GroupSelectionChanged;
@@ -804,96 +796,6 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void ClearBudget()
-        {
-            this.MyMoney.BeginUpdate();
-            foreach (Transaction t in this.MyMoney.Transactions.GetAllTransactions())
-            {
-                t.IsBudgeted = false;
-                t.BudgetBalanceDate = null;
-            }
-            foreach (Category c in this.MyMoney.Categories.GetRootCategories())
-            {
-                c.ClearBalance();
-            }
-            foreach (Account a in this.MyMoney.Accounts.GetCategoryFunds())
-            {
-                foreach (Transaction t in this.MyMoney.Transactions.GetTransactionsFrom(a))
-                {
-                    this.MyMoney.Transactions.RemoveTransaction(t);
-                }
-            }
-            this.MyMoney.EndUpdate();
-        }
-
-        /// <summary>
-        /// Subtract the budgeted amounts from the income category and transfer those amounts to the expense categories.
-        /// </summary>
-        private Category ApplyBudgetIncome(DateTime month)
-        {
-            ObservableCollection<CategoryGroup> groups = this.treeView.ItemsSource as ObservableCollection<CategoryGroup>;
-            CategoryGroup incomeGroup = groups[0];
-            Category income = null;
-            
-            this.MyMoney.BeginUpdate();
-
-            try
-            {
-                if (incomeGroup.Subcategories.Count == 0)
-                {
-                    income = this.MyMoney.Categories.Savings;
-                }
-                else
-                {
-                    income = incomeGroup.Subcategories[0];
-                }
-                decimal balance = income.Balance;
-                Account incomeAccount = GetCategoryFund(income);
-                decimal totalBudget = 0;
-                CategoryGroup expenseGroup = groups[1];
-                foreach (Category expense in expenseGroup.Subcategories)
-                {
-                    if (expense.Budget > 0)
-                    {
-                        CategoryTransfer(income, incomeAccount, expense, expense.Budget, month);
-                        totalBudget += expense.Budget;
-                    }
-                }
-                return income;
-            }
-            finally
-            {
-                this.MyMoney.EndUpdate();
-            }
-        }
-
-        List<Transaction> transfers;
-        List<TransactionException> errors;
-
-        private void CategoryTransfer(Category income, Account sourceAccount, Category expense, decimal amount, DateTime transferDate)
-        {
-            MyMoney.BeginUpdate();
-            try
-            {
-                Account fund = GetCategoryFund(expense);
-                Transaction t = this.MyMoney.Transactions.NewTransaction(sourceAccount);
-                t.Date = transferDate;
-                t.Amount = -amount;
-                t.BudgetBalanceDate = transferDate;
-                t.SetBudgeted(true, errors);
-                this.MyMoney.Transactions.AddTransaction(t);
-                this.MyMoney.Transfer(t, fund);
-                this.MyMoney.Rebalance(fund);
-                t.Transfer.Transaction.BudgetBalanceDate = transferDate;
-                t.Transfer.Transaction.SetBudgeted(true, errors);
-                transfers.Add(t);
-            }
-            finally
-            {
-                MyMoney.EndUpdate();
-            }
-        }
-
         private void ReverseTransfer(Transaction t)
         {
             MyMoney.BeginUpdate();
@@ -904,33 +806,6 @@ namespace Walkabout.Views.Controls
             MyMoney.EndUpdate();
         }
 
-
-        private void CategoryTransfer(Category categorySource, Category categoryTarget)
-        {
-
-            Account sourceAccount = GetCategoryFund(categorySource);
-
-            if (categoryTarget != null)
-            {
-
-                List<Category> roots = this.money.Categories.GetRootCategories();
-
-                CategoryTransferDialog ctd = new CategoryTransferDialog();
-
-                ctd.Categories = roots;
-                ctd.FromCategory = categorySource;
-                ctd.ToCategory = categoryTarget;
-                ctd.Amount = categorySource.Balance;
-                ctd.Owner = App.Current.MainWindow;
-
-                if (ctd.ShowDialog() == true && ctd.Amount != 0)
-                {
-                    CategoryTransfer(categorySource, sourceAccount, categoryTarget, ctd.Amount, this.LastDayInBudget);
-                }
-            }
-        }
-
-
         Account GetCategoryFund(Category c)
         {
             Account fund = this.MyMoney.Accounts.FindCategoryFund(c);
@@ -940,206 +815,6 @@ namespace Walkabout.Views.Controls
             }
             return fund;
         }
-
-
-        void AddTransactions(DateTime from, DateTime to, Category income)
-        {
-            Account incomeAccount = GetCategoryFund(income);
-            DateTime lastDay = LastDayInBudget;
-            this.MyMoney.BeginUpdate();
-            try
-            {
-                foreach (Account a in this.MyMoney.Accounts.GetAccounts())
-                {
-                    if (a.IsBudgeted)
-                    {
-                        foreach (Transaction t in this.MyMoney.Transactions.GetTransactionsFrom(a))
-                        {
-                            if (t.Date >= from && t.Date < to)
-                            {
-                                if (!t.IsBudgeted)
-                                {
-                                    t.SetBudgeted(true, errors);
-                                    t.BudgetBalanceDate = lastDay;
-                                }
-                                if (t.IsPaycheck && t.IsSplit)
-                                {
-                                    // paycheck may have embedded expenses, like 401k, Taxes, etc that we need to auto-budget.
-                                    foreach (Split s in t.Splits)
-                                    {
-                                        if (s.Category != null && s.Category.Type == CategoryType.Expense)
-                                        {
-                                            // automatically cover this paycheck expense so user doesn't have to keep guessing the amounts for budgeting.
-                                            CategoryTransfer(income, incomeAccount, s.Category, -s.amount, t.Date);
-                                        }
-                                    }
-
-                                }
-                                this.added.Add(t);
-                            }
-                        }
-                    }
-                }
-            }
-            finally
-            {
-                this.MyMoney.EndUpdate();
-            }
-        }
-
-        List<Transaction> added;
-
-        private void OnStartBalanceBudget()
-        {
-            IsBalancingBudget = true;
-
-            HelpService.SetHelpKeyword(this, "Budgets");
-
-            // user could create a transfer even without clicking "Start"
-            FinishButton.IsEnabled = true;
-            StartButton.IsEnabled = (BudgetDate.SelectedDate.HasValue);
-
-            this.transfers = new List<Transaction>();
-            this.added = new List<Transaction>();
-            this.errors = new List<TransactionException>();
-            FireStartBalanceBudget();
-        }
-
-        private void FireStartBalanceBudget()
-        {
-            if (StartBalanceBudget != null)
-            {
-                StartBalanceBudget(this, EventArgs.Empty);
-            }
-        }
-
-        private void StartButton_Click(object sender, RoutedEventArgs e)
-        {
-            DateTime start = SelectedBudgetDate;
-            DateTime end = start.AddMonths(1);
-            try
-            {
-                Category income = ApplyBudgetIncome(start);
-                if (income == null)
-                {
-                    return;
-                }
-                AddTransactions(start, end, income);
-                if (errors.Count != 0)
-                {
-                    throw new Exception("Some transactions are missing category information, check that all splits have categories also.");
-                }
-                StartButton.IsEnabled = false;
-                // send it again to set the right start date
-                FireStartBalanceBudget();
-            }
-            catch (Exception ex)
-            {
-                CancelBudget();
-                MessageBoxEx.Show(ex.Message + "\nPress OK to fix the missing categories", "Budget Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                if (this.errors != null)
-                {
-                    OnSelectedTransactionChanged(from error in errors select error.Transaction);
-                }
-            }
-        }
-
-        public bool IsBalancingBudget { get; set; }
-
-        public DateTime SelectedBudgetDate
-        {
-            get
-            {
-                DateTime selection = DateTime.Now;
-
-                if (BudgetDate.SelectedDate != null)
-                {
-                    selection = BudgetDate.SelectedDate.Value;
-                }
-                return new DateTime(selection.Year, selection.Month, 1);
-            }
-        }
-
-        DateTime LastDayInBudget
-        {
-            get
-            {
-                DateTime start = SelectedBudgetDate;
-                return start.AddMonths(1).AddDays(-1);
-            }
-        }
-
-        private void FinishButton_Click(object sender, RoutedEventArgs e)
-        {
-            // good to go!
-            CleanupBalanceBudget();
-        }
-
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            CancelBudget();
-        }
-
-        void CancelBudget()
-        {
-            this.MyMoney.BeginUpdate();
-            try
-            {
-                if (this.added != null)
-                {
-                    foreach (Transaction t in this.added)
-                    {
-                        t.BudgetBalanceDate = null;
-                        t.IsBudgeted = false;
-                    }
-                }
-                if (this.transfers != null)
-                {
-                    foreach (Transaction t in this.transfers)
-                    {
-                        ReverseTransfer(t);
-                    }
-                }
-            }
-            finally
-            {
-                this.MyMoney.EndUpdate();
-            }
-            CleanupBalanceBudget();
-        }
-
-        private void CleanupBalanceBudget()
-        {
-            HelpService.SetHelpKeyword(this, "Categories");
-            FinishButton.IsEnabled = false;
-            StartButton.IsEnabled = true;
-            BudgetTitlePanel.Visibility = System.Windows.Visibility.Collapsed;
-            Buttons.Visibility = System.Windows.Visibility.Collapsed;
-            added = null;
-            transfers = null;
-            OnFinishBalanceBudget();
-            this.treeView.Focus();
-        }
-
-        private void OnFinishBalanceBudget()
-        {
-            IsBalancingBudget = false;
-            if (FinishBalanceBudget != null)
-            {
-                FinishBalanceBudget(this, EventArgs.Empty);
-            }
-        }
-
-        private void BudgetDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
-        {
-            StartButton.IsEnabled = (BudgetDate.SelectedDate.HasValue);
-
-            if (BudgetDateChanged != null)
-            {
-                BudgetDateChanged(this, EventArgs.Empty);
-            }
-        }
-
 
         #endregion
 
@@ -1182,15 +857,7 @@ namespace Walkabout.Views.Controls
                             {
                                 returnSource = new DragDropSource();
                                 returnSource.DataSource = category;
-
-                                if (this.IsBalancingBudget)
-                                {
-                                    returnSource.VisualForDraginSource = CreateFrameworkElementForBalanceDragDrop(category);
-                                }
-                                else
-                                {
-                                    returnSource.VisualForDraginSource = representationOfTheTreeNodeToDrag;
-                                }
+                                returnSource.VisualForDraginSource = representationOfTheTreeNodeToDrag;
                             }
                         }
                     }
@@ -1254,23 +921,10 @@ namespace Walkabout.Views.Controls
 
 
         private void OnDragDropSourceOnTarget(object source, object target, DragDropEffects dropEffect)
-        {
-
-         
+        {         
             try
             {
-                if (IsBalancingBudget)
-                {
-                    CategoryTransfer(
-                        source as Category,
-                        target as Category
-                        );
-                }
-                else
-                {
-
-                    MoveOrMergeItem(source as Category, target as Category);
-                }
+                MoveOrMergeItem(source as Category, target as Category);                
             }
             catch (Exception)
             {
@@ -1436,7 +1090,7 @@ namespace Walkabout.Views.Controls
             this.editorForRenaming.CaretIndex = this.editorForRenaming.Text.Length;
         }
 
-        private void RenameEditBoxBudget_KeyDown(object sender, KeyEventArgs e)
+        private void RenameEditBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -1496,21 +1150,6 @@ namespace Walkabout.Views.Controls
             Delete();
         }
 
-        private void OnBalanceBudget(object sender, ExecutedRoutedEventArgs e)
-        {
-            added = null;
-            DateTime? newDate = this.MyMoney.Transactions.GetMostRecentBudgetDate();
-            if (newDate.HasValue)
-            {
-                newDate = new DateTime(newDate.Value.Year, newDate.Value.Month, 1).AddMonths(1);
-            }
-            BudgetDate.SelectedDate = newDate;
-            BudgetTitlePanel.Visibility = System.Windows.Visibility.Visible;
-            Buttons.Visibility = System.Windows.Visibility.Visible;
-            // Make blue check marks appear
-            OnStartBalanceBudget();
-        }
-
         private void OnExpandAll(object sender, ExecutedRoutedEventArgs e)
         {
             this.ExpandAll(treeView, true);
@@ -1519,14 +1158,6 @@ namespace Walkabout.Views.Controls
         private void OnCollapseAll(object sender, ExecutedRoutedEventArgs e)
         {
             this.ExpandAll(treeView, false);
-        }
-
-        private void OnResetBudget(object sender, ExecutedRoutedEventArgs e)
-        {            
-            if (MessageBoxEx.Show("This operation is not undoable.  Are you sure you reset your budget? ", "Confirm Reset Budget", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                ClearBudget();
-            }
         }
 
         #endregion 

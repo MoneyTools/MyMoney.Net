@@ -2892,7 +2892,8 @@ namespace Walkabout.Views
             {
                 Account account = this.ActiveAccount;
                 decimal salestax = 0;
-                decimal balance = Transactions.GetBalance(account, this.ActiveCategory, data, out salestax);
+                decimal investmentValue = 0;
+                decimal balance = Transactions.GetBalance(this.myMoney, account, this.ActiveCategory, data, out salestax, out investmentValue);
                 if (account != null)
                 {
                     balance += account.OpeningBalance;
@@ -2906,6 +2907,10 @@ namespace Walkabout.Views
                 if (salestax != 0)
                 {
                     msg += ", taxes " + salestax.ToString("C");
+                }
+                if (investmentValue != 0)
+                {
+                    msg += ", investments " + investmentValue.ToString("C");
                 }
                 return msg;
             }

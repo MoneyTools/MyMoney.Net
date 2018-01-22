@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+    <change version="1.1.0.8" date="1/22/2018">
+        Fix Tax Report so that TaxExempt securities are reported in separate column, this way you 
+        can see two totals for dividends, first column is taxable dividends, and the second is 
+        taxexempt. This is handy for dividends on Municipal Bonds and other tax exempt funds.
+        Also removed budgetting UI since the feature requires a complete overhaul.
+    </change>
     <change version="1.1.0.7" date="1/1/2018">
         Yahoo turned off their free stock quote service, so switching to https://www.alphavantage.co.  Unfortunately this service doesn't support batch downloading, so you have to wait longer for each stock price to be updated.  The service does provide a lot more information however, so  we can do a lot more with that in the future.
     </change>

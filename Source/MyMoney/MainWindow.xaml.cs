@@ -178,9 +178,6 @@ namespace Walkabout
                 this.categoriesControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Categories);
                 this.categoriesControl.GroupSelectionChanged += new EventHandler(OnSelectionChangeFor_CategoryGroup);
                 this.categoriesControl.SelectedTransactionChanged += new EventHandler(CategoriesControl_SelectedTransactionChanged);
-                this.categoriesControl.StartBalanceBudget += new EventHandler(OnStartBalanceBudget);
-                this.categoriesControl.BudgetDateChanged += new EventHandler(OnBudgetDateChanged);
-                this.categoriesControl.FinishBalanceBudget += new EventHandler(OnFinishBalanceBudget);
                 this.payeesControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Payees);
                 this.securitiesControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Securities);
 
@@ -680,28 +677,7 @@ namespace Walkabout
                 StopTimer();
             }
         }
-
-        void OnBudgetDateChanged(object sender, EventArgs e)
-        {
-            this.TransactionView.BudgetDate = this.categoriesControl.SelectedBudgetDate;
-        }
-
-        void OnStartBalanceBudget(object sender, EventArgs e)
-        {
-            SetCurrentView<TransactionsView>();
-            this.TransactionView.BalancingBudget = true;
-            this.TransactionView.BudgetDate = this.categoriesControl.SelectedBudgetDate;
-        }
-
-        void OnFinishBalanceBudget(object sender, EventArgs e)
-        {
-            this.TransactionView.BalancingBudget = false;
-            if (sender is PayeesControl)
-            {
-                this.TransactionView.BudgetDate = this.categoriesControl.SelectedBudgetDate;
-            }
-        }
-
+        
         void OnToolBoxFilterUpdated(object sender, string filter)
         {
             if (sender is CategoriesControl)
@@ -3258,18 +3234,7 @@ namespace Walkabout
         }
         #endregion
 
-        #region Reports Menu
-
-        private void OnCommandBudgetReport(object sender, ExecutedRoutedEventArgs e)
-        {
-            FlowDocumentView view = SetCurrentView<FlowDocumentView>();
-            view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportBudget");
-            view.Closed += new EventHandler(OnFlowDocumentViewClosed);
-            HelpService.SetHelpKeyword(view, "Budgets");
-            BudgetReport report = new BudgetReport(view, this.myMoney);
-            view.Generate(report);
-
-        }
+        #region Reports Menu        
 
         void OnFlowDocumentViewClosed(object sender, EventArgs e)
         {
