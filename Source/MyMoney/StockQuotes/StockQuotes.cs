@@ -29,7 +29,7 @@ namespace Walkabout.Network
         MyMoney myMoney;
         Thread quotesThread;
         bool busy;
-        StringBuilder errorLog;
+        StringBuilder errorLog = new StringBuilder();
         bool hasError;
         bool stop;
         List<Security> queue = new List<Security>(); // list of securities to fetch
@@ -37,9 +37,9 @@ namespace Walkabout.Network
         XDocument newQuotes;
         IStatusService status;
         IServiceProvider provider;
-        HttpWebRequest _current;        
+        HttpWebRequest _current;
         char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
-        const string address = "https://www.alphavantage.co/query?apikey={0}&function=TIME_SERIES_DAILY_ADJUSTED&symbol={1}";
+        const string address = "https://api.iextrading.com/1.0/stock/market/batch?types=quote&range=1m&last=1&symbols={0}";
 
         public StockQuotes(IServiceProvider provider)
         {
@@ -94,7 +94,7 @@ namespace Walkabout.Network
                 args = args.Next;
             }
 
-            Enqueue(newSecurities);            
+            Enqueue(newSecurities);
         }
 
         private void Enqueue(List<Security> toFetch)
@@ -120,9 +120,51 @@ namespace Walkabout.Network
             }
         }
 
+        static string PasswordName = "MyMoneyIntrinio";
+        public static void SaveCredentials(string username, string password)
+        {
+            using (Credential credential = new Credential(PasswordName, CredentialType.Generic))
+            {
+                try
+                {
+                    credential.UserName = Environment.GetEnvironmentVariable("USERNAME");
+                    credential.Persistence = CredentialPersistence.LocalComputer;
+                    credential.Password = Credential.ToSecureString(username + ":" + password);
+                    credential.Save();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("### Credential Error: {0}", ex.Message);
+                }
+            }
+        }
+
         public void UpdateQuotes()
         {
-            Enqueue(myMoney.GetOwnedSecurities());
+            //using (Credential credential = new Credential(PasswordName, CredentialType.Generic))
+            //{
+            //    this.password = null;
+            //    credential.UserName = Environment.GetEnvironmentVariable("USERNAME");
+            //    credential.Persistence = CredentialPersistence.LocalComputer;
+            //    try
+            //    {
+            //        credential.Load();
+            //        this.password = Credential.SecureStringToString(credential.Password);
+            //    }
+            //    catch
+            //    {
+            //        // no password stored 
+            //    }
+            //}
+            //if (string.IsNullOrEmpty(this.password))
+            //{
+            //    AddError("Please setup your Intrinio account, and provide the password using Online Menu 'Intrinio Password...'");
+            //    ShowErrors(null);
+            //}
+            //else
+            {
+                Enqueue(myMoney.GetOwnedSecurities());
+            }
         }
 
         void BeginGetQuotes()
@@ -217,6 +259,9 @@ namespace Walkabout.Network
                     queue.Clear();
                 }
 
+                List<Security> batch = new List<Data.Security>();
+                int max_batch = 100;
+
                 for (int i = 0; i < max; i++)
                 {
                     Security s = localCopy[i];
@@ -232,7 +277,11 @@ namespace Walkabout.Network
                             }
                             else
                             {
-                                FetchQuote(s);
+                                batch.Add(s);
+                                if (batch.Count == max_batch || i + 1 == max)
+                                {
+                                    FetchQuotes(batch);
+                                }
                             }
                         }
                         else
@@ -349,25 +398,10 @@ namespace Walkabout.Network
 
                     if (hasError && !stop)
                     {
-                        Paragraph p = new Paragraph();
-                        p.Inlines.Add(errorLog.ToString());
-                        p.Inlines.Add(new LineBreak());
-                        p.Inlines.Add(new LineBreak());
-                        p.Inlines.Add("See ");
-                        var link = new Hyperlink() { NavigateUri = new Uri("file://" + path) };
-                        link.Cursor = Cursors.Arrow;
-                        link.PreviewMouseLeftButtonDown += OnShowLogFile;
-                        link.Inlines.Add("Log File");
-                        p.Inlines.Add(link);
-                        p.Inlines.Add(" for details");
-
-                        OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
-                        output.AppendHeading(Walkabout.Properties.Resources.StockQuoteErrorCaption);
-                        output.AppendParagraph(p);
-                        output.Show();
+                        ShowErrors(path);
                     }
                 }
-            } 
+            }
             catch (Exception e)
             {
                 MessageBoxEx.Show(e.ToString(), Walkabout.Properties.Resources.StockQuotesException, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -378,6 +412,28 @@ namespace Walkabout.Network
             }
         }
 
+        private void ShowErrors(string path)
+        {
+            Paragraph p = new Paragraph();
+            p.Inlines.Add(errorLog.ToString());
+            p.Inlines.Add(new LineBreak());
+            p.Inlines.Add(new LineBreak());
+            if (!string.IsNullOrEmpty(path))
+            {
+                p.Inlines.Add("See ");
+                var link = new Hyperlink() { NavigateUri = new Uri("file://" + path) };
+                link.Cursor = Cursors.Arrow;
+                link.PreviewMouseLeftButtonDown += OnShowLogFile;
+                link.Inlines.Add("Log File");
+                p.Inlines.Add(link);
+                p.Inlines.Add(" for details");
+            }
+            OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
+            output.AppendHeading(Walkabout.Properties.Resources.StockQuoteErrorCaption);
+            output.AppendParagraph(p);
+            output.Show();
+        }
+
         void OnShowLogFile(object sender, RoutedEventArgs e)
         {
             Hyperlink link = (Hyperlink)sender;
@@ -385,63 +441,83 @@ namespace Walkabout.Network
             InternetExplorer.OpenUrl(IntPtr.Zero, uri.AbsoluteUri);
         }
 
-
-        static void ReadMetadata(JsonTextReader reader, string symbol)
+        class Quote
         {
-            while (reader.Read() && reader.TokenType != JsonToken.EndObject)
+            public string symbol = null;
+            public string companyName = null;
+            public string primaryExchange = null;
+            public string sector = null;
+            public decimal open = 0;
+            public decimal close = 0;
+            public decimal high = 0;
+            public decimal low = 0;
+            // and much more....
+        }
+
+        class IEXTradingResult
+        {
+            public List<Quote> quotes;
+
+            public void ParseResult(JsonTextReader reader)
             {
-                if (reader.TokenType == JsonToken.PropertyName && (string)reader.Value == "2. Symbol")
+                quotes = new List<Network.StockQuotes.Quote>();
+
+                while (reader.Read())
                 {
-                    if (reader.Read() && reader.TokenType == JsonToken.String)
+                    if (reader.TokenType == JsonToken.PropertyName)
                     {
-                        string s = (string)reader.Value;
-                        if (string.Compare(s, symbol, StringComparison.OrdinalIgnoreCase) != 0)
+                        string name = (string)reader.Value;
+                        if (reader.Read() && reader.TokenType == JsonToken.StartObject)
                         {
-                            throw new Exception(string.Format("Expection information on symbol {0}, but got symbol {1} instead", symbol, s));
+                            if (reader.Read() && reader.TokenType == JsonToken.PropertyName)
+                            {
+                                name = (string)reader.Value;
+                                if (name == "quote" && reader.Read() && reader.TokenType == JsonToken.StartObject)
+                                {
+                                    Quote q = new Quote();
+                                    ReadQuote(reader, q);
+                                    quotes.Add(q);
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
 
-        static XElement ReadDailyValue(JsonTextReader reader)
-        {
-            //  "Symbol", "Name", "Price", "LastPrice" 
-            XElement quote = new XElement("Quote");
-
-            while (reader.Read() && reader.TokenType != JsonToken.EndObject)
+            private void ReadQuote(JsonTextReader reader, Quote quote)
             {
-                if (reader.TokenType == JsonToken.PropertyName)
+                while (reader.Read() && reader.TokenType != JsonToken.EndObject)
                 {
-                    string name = (string)reader.Value;
-                    if (reader.Read())
+                    if (reader.TokenType == JsonToken.PropertyName)
                     {
-                        if (reader.TokenType == JsonToken.StartObject)
+                        string name = (string)reader.Value;
+                        if (reader.Read())
                         {
-                            quote.Add(new XElement("Date", name));
-                        }
-                        else if (reader.TokenType == JsonToken.String)
-                        {
-                            string value = (string)reader.Value;
                             switch (name)
                             {
-                                case "1. open":
-                                    quote.Add(new XElement("LastPrice", value));
+                                case "symbol":
+                                    quote.symbol = (string)reader.Value;
                                     break;
-                                case "2. high":
+                                case "companyName":
+                                    quote.companyName = (string)reader.Value;
                                     break;
-                                case "3. low":
+                                case "primaryExchange":
+                                    quote.primaryExchange = (string)reader.Value;
                                     break;
-                                case "4. close":
-                                    quote.Add(new XElement("Price", value));
+                                case "sector":
+                                    quote.sector = (string)reader.Value;
                                     break;
-                                case "5. adjusted close":
+                                case "open":
+                                    quote.open = GetDecimal(reader.Value);
                                     break;
-                                case "6. volume":
+                                case "close":
+                                    quote.close = GetDecimal(reader.Value);
                                     break;
-                                case "7. dividend amount":
+                                case "high":
+                                    quote.high = GetDecimal(reader.Value);
                                     break;
-                                case "8. split coefficient":
+                                case "low":
+                                    quote.low = GetDecimal(reader.Value);
                                     break;
                                 default:
                                     break;
@@ -450,85 +526,67 @@ namespace Walkabout.Network
                     }
                 }
             }
-            return quote;
+            decimal GetDecimal(object v)
+            {
+                try
+                {
+                    return Convert.ToDecimal(v);
+                }
+                catch
+                {
+                }
+                return 0;
+            }
+
         }
 
-        static XElement ReadTimeSeries(JsonTextReader reader)
+
+        void ParseStockQuotes(JsonTextReader reader, List<Security> batch)
         {
-            List<XElement> list = new List<XElement>();
-            while (reader.Read() && reader.TokenType != JsonToken.EndObject)
+            IEXTradingResult result = new Network.StockQuotes.IEXTradingResult();
+            result.ParseResult(reader);
+            foreach (Security s in batch)
             {
-                if (reader.TokenType == JsonToken.StartObject)
+                Quote quote = (from q in result.quotes
+                           where string.Compare(q.symbol, s.Symbol, StringComparison.OrdinalIgnoreCase) == 0
+                           select q).FirstOrDefault();
+                if (quote != null)
                 {
-                    return ReadDailyValue(reader);
+                    XElement e = new XElement("Quote");
+                    e.Add(new XElement("LastPrice", quote.open));
+                    e.Add(new XElement("Price", quote.close));
+                    e.Add(new XElement("Symbol", s.Symbol));
+                    newQuotes.Root.Add(e);
+                }
+                else
+                {
+                    AddError(string.Format("Stock quote not found for symbol '{0}'", s.Symbol));
                 }
             }
-            return null;
-        }
-        
-        XElement ParseStockQuote(JsonTextReader reader, Security s)
-        {
-            while (reader.Read())
-            {
-                if (reader.TokenType == JsonToken.PropertyName)
-                {
-                    string name = (string)reader.Value;
-                    if (name == "Meta Data")
-                    {
-                        ReadMetadata(reader, s.Symbol);
-                    }
-                    else if (name == "Time Series (Daily)")
-                    {
-                        XElement today = ReadTimeSeries(reader);
-                        if (today != null)
-                        {
-                            today.Add(new XElement("Symbol", s.Symbol));
-                            today.Add(new XElement("Name", s.Name));
-                            return today;
-                        }
-                    }
-                    else if (name == "Information")
-                    {
-                        if (reader.Read() && reader.TokenType == JsonToken.String)
-                        {
-                            string reason = (string)reader.Value;
-                            throw new Exception(string.Format("Error fetching security '{0}': {1}", s.Name, reason));
-                        }
-                    }
-                }
-            }
-            return null;
         }
 
-
-        void FetchQuote(Security s)
+        void FetchQuotes(List<Security> securities)
         {
-            // T7ZS25TB090CWC0Q
-            // See https://www.alphavantage.co/documentation/
-            string uri = string.Format(address, "T7ZS25TB090CWC0Q", s.Symbol);
+            // See https://iextrading.com/developer/docs/#batch-requests
+            string symbols = string.Join(",", from s in securities select s.Symbol);
+            string uri = string.Format(address, symbols);
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
             req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
             req.Method = "GET";
             req.Timeout = 10000;
+            //String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(this.password));
+            //req.Headers.Add("Authorization", "Basic " + encoded);
             req.UseDefaultCredentials = false;
             _current = req;
 
-            WebResponse resp = req.GetResponse();            
+            WebResponse resp = req.GetResponse();
             using (Stream stm = resp.GetResponseStream())
             {
-                using (StreamReader sr = new StreamReader(stm, Encoding.UTF8)) 
+                using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
                 {
                     using (var reader = new Newtonsoft.Json.JsonTextReader(sr))
                     {
-                        XElement quote = ParseStockQuote(reader, s);
-                        if (quote != null)
-                        {
-                            newQuotes.Root.Add(quote);
-                        }
-                        else
-                        {
-                            AddError("Stock quote result format not recognized.");
-                        }
+                        ParseStockQuotes(reader, securities);
                     }
                 }
             }
@@ -545,7 +603,7 @@ namespace Walkabout.Network
 
         void ProcessResult(XElement stock)
         {
-            string name = GetString(stock, "Symbol");                            
+            string name = GetString(stock, "Symbol");
             decimal quote = GetDecimal(stock, "Price");
             if (quote != 0)
             {

@@ -568,6 +568,9 @@ namespace Walkabout
 
                 this.exchangeRates.MyMoney = money;
 
+                ClearOutput();
+                ClearOfxDownloads();
+
                 if (this.settings.LastStockRequest != DateTime.Today && this.quotes != null)
                 {
                     this.quotes.UpdateQuotes();
@@ -580,11 +583,7 @@ namespace Walkabout
 
                 SetChartsDirty();
 
-                ClearOutput();
-
                 HideBalancePanel(false);
-
-                ClearOfxDownloads();
 
                 this.Dispatcher.BeginInvoke(new Action(AfterLoadChecks), DispatcherPriority.Background);
             }
@@ -4293,5 +4292,27 @@ namespace Walkabout
 
         #endregion
 
+        // this could be handy if we add support for stock quote accounts...
+        //private void OnCommandStockQuoteAccountCreds(object sender, ExecutedRoutedEventArgs e)
+        //{
+        //    PasswordWindow pw = new PasswordWindow();
+        //    pw.Title = "Intrinio Password";
+        //    pw.UserNamePrompt = "Username";
+        //    var box = pw.IntroMessagePrompt;
+        //    box.Document.Blocks.Clear();
+        //    Paragraph p = new Paragraph();
+        //    p.Inlines.Add(new Run("Stock quotes are downloaded using https://intrinio.com.  Please register with them for free developer account and enter your username and password here"));
+        //    box.Document.Blocks.Add(p);
+        //    box.Visibility = Visibility.Visible;
+
+        //    pw.Owner = Application.Current.MainWindow;
+        //    pw.Optional = true;
+        //    if (pw.ShowDialog() == true)
+        //    {
+        //        string username = pw.UserName;
+        //        string password = pw.PasswordConfirmation;
+        //        StockQuotes.SaveCredentials(username, password);
+        //    }
+        //}
     }
 }
