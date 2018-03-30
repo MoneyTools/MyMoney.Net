@@ -10,7 +10,7 @@
 # VS 2015 compiled metadata
 *.VC.db
 *.idb
-/.vs/
+.vs/
 *.opendb
 
 # Build results
