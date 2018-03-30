@@ -3683,7 +3683,7 @@ namespace Walkabout.Data
             get { return this.ratio; }
             set
             {
-                if (this.ratio != value)
+                //if (this.ratio != value)
                 {
                     this.ratio = value;
                     OnChanged("Ratio");

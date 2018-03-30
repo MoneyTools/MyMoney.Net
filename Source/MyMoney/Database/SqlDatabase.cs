@@ -1725,7 +1725,7 @@ namespace Walkabout.Data
                     sb.AppendLine(string.Format("DELETE FROM Currencies WHERE Id={0};", s.Id.ToString()));
                 }
 
-                if (!this.SupportsBatchUpdate)
+                if (!this.SupportsBatchUpdate && sb.Length > 0)
                 {
                     ExecuteScalar(sb.ToString());
                     sb.Length = 0;
