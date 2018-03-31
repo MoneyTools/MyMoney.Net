@@ -88,6 +88,7 @@
         <CommandBinding Command="p:AppCommands.CommandForward" Executed="CommandBinding_Executed" CanExecute="CommandBinding_CanExecute"/>
 
         <!-- Help -->
+        <CommandBinding Command="p:AppCommands.CommandHelpAbout" Executed="OnCommandHelpAbout"/>
         <CommandBinding Command="p:AppCommands.CommandViewHelp" Executed="OnCommandViewHelp"/>
         <CommandBinding Command="p:AppCommands.CommandAddSampleData" Executed="OnCommandAddSampleData"/>
         <CommandBinding Command="p:AppCommands.CommandTroubleshootCheckTransfer" Executed="OnCommandTroubleshootCheckTransfer"/>
@@ -217,6 +218,7 @@
                     </MenuItem>
 
                     <MenuItem x:Name="MenuHelp" Header="_Help">
+                        <MenuItem x:Name="MenuHelpAbout" Header="_About" Command="p:AppCommands.CommandHelpAbout"/>
                         <MenuItem x:Name="MenuViewHelp" Header="_View Help" Command="p:AppCommands.CommandViewHelp"/>
                         <MenuItem x:Name="MenuViewChanges" Header="_View Changes" Command="p:AppCommands.CommandViewChanges"/>
                         <Separator/>

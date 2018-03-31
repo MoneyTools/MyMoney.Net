@@ -36,6 +36,7 @@ using Walkabout.Help;
 using Walkabout.Ofx;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
+using System.Deployment.Application;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -4288,6 +4289,21 @@ namespace Walkabout
                 Trace.WriteLine("SaveConfig failed: " + ex.Message);
             }
             TempFilesManager.Shutdown();
+        }
+
+        private void OnCommandHelpAbout(object sender, ExecutedRoutedEventArgs e)
+        {
+            string version;
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+            }
+            else
+            {
+                version = this.GetType().Assembly.GetName().Version.ToString();
+            }
+            var msg = string.Format("MyMoney, Version {0}", version);
+            MessageBoxEx.Show(msg, "About", MessageBoxButton.OK, MessageBoxImage.Information); 
         }
 
         #endregion

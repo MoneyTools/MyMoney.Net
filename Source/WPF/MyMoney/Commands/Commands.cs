@@ -56,6 +56,7 @@ namespace Walkabout.Commands
         public readonly static RoutedUICommand CommandStockQuoteAccountCreds;
 
         // Help
+        public readonly static RoutedUICommand CommandHelpAbout;
         public readonly static RoutedUICommand CommandViewHelp;
         public readonly static RoutedUICommand CommandAddSampleData;
         public readonly static RoutedUICommand CommandTroubleshootCheckTransfer;
@@ -110,6 +111,7 @@ namespace Walkabout.Commands
             CommandStockQuoteAccountCreds = new RoutedUICommand("StockQuoteAccountCreds", "StockQuoteAccountCreds", typeof(AppCommands));
 
             // HELP
+            CommandHelpAbout= new RoutedUICommand("HelpAbout", "About", typeof(AppCommands));
             CommandViewHelp = new RoutedUICommand("ViewHelp", "View Help", typeof(AppCommands));
             CommandAddSampleData = new RoutedUICommand("AddSampleData", "Add Sample Data", typeof(AppCommands));
             CommandTroubleshootCheckTransfer = new RoutedUICommand("TroubleshootCheckTransfer", "Check Transfer", typeof(AppCommands));
