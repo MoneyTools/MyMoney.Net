@@ -34,7 +34,7 @@
     <ExpressionBlendVersion>4.0.20901.0</ExpressionBlendVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <PublishUrl>ftp://www.lovettsoftware.com/lovettsoftware.com/Downloads/MyMoney/</PublishUrl>
+    <PublishUrl>ftp://lovettsoftware.com/lovettsoftware.com/Downloads/MyMoney/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -44,14 +44,14 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://www.lovettsoftware.com/Downloads/MyMoney/</InstallUrl>
-    <SupportUrl>http://www.lovettsoftware.com/lovettsoftware/downloads/mymoney/</SupportUrl>
+    <InstallUrl>http://lovettsoftware.com/Downloads/MyMoney/</InstallUrl>
+    <SupportUrl>https://github.com/clovett/MyMoney.Net/wiki</SupportUrl>
     <ProductName>MyMoney</ProductName>
-    <PublisherName>VTeam.com</PublisherName>
+    <PublisherName>Chris Lovett</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <DisallowUrlActivation>true</DisallowUrlActivation>
-    <ApplicationRevision>12</ApplicationRevision>
+    <ApplicationRevision>13</ApplicationRevision>
     <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -112,7 +112,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>235CA38984188F94FC230E1DAED8482975D38CFF</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>AFFF93C9E6AD77B2519D1778A820B789F9F1E31D</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+    <change version="1.1.0.12" date="4/4/2018">
+        New code signing certificate.
+    </change>
     <change version="1.1.0.11" date="3/31/2018">
         Add About box with version information.
     </change>
