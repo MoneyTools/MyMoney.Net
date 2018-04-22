@@ -877,7 +877,7 @@ namespace Walkabout.Data
                 else if (a.IsInserted)
                 {
                     sb.AppendLine("-- inserting account: " + a.Name);
-                    sb.Append("INSERT INTO Accounts (Id,AccountId,OfxAccountId.Name,Type,Description,OnlineAccount,OpeningBalance,LastSync,LastBalance,SyncGuid,Flags,Currency,WebSite,ReconcileWarning,CategoryIdForPrincipal,CategoryIdForInterest) VALUES (");
+                    sb.Append("INSERT INTO Accounts (Id,AccountId,OfxAccountId,Name,Type,Description,OnlineAccount,OpeningBalance,LastSync,LastBalance,SyncGuid,Flags,Currency,WebSite,ReconcileWarning,CategoryIdForPrincipal,CategoryIdForInterest) VALUES (");
                     sb.Append(String.Format("{0}", a.Id.ToString()));
                     sb.Append(String.Format(",'{0}'", DBString(a.AccountId)));
                     sb.Append(String.Format(",'{0}'", DBString(a.OfxAccountId)));
