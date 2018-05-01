@@ -3168,7 +3168,7 @@ namespace Walkabout.Data
             {
                 if (this.password != value)
                 {
-                    this.password = Truncate(value, 20);
+                    this.password = Truncate(value, 50);
                     OnChanged("Password");
                 }
             }

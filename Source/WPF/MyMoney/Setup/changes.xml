@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+    <change version="1.1.0.15" date="4/30/2018">
+        Support longer passwords on Online Accounts (up to 50).
+        Fix bugs in SqlLite migration on column change.
+        Add tests for SqlLite migration.
+    </change>
     <change version="1.1.0.14" date="4/4/2018">
         Fix SQL bug in new account creation.
     </change>
