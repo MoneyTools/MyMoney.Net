@@ -72,7 +72,7 @@ namespace Walkabout.Data
 
             if (!File.Exists(this.DatabasePath))
             {
-                // nothing to do here, the create is implicit in the first Open of the database file.
+                LazyCreateTables();
             }   
         }
 
@@ -501,6 +501,252 @@ namespace Walkabout.Data
         {
             this.BackupPath = backupPath;
             File.Copy(this.DatabasePath, backupPath);
+        }
+
+
+        public override void CreateOrUpdateTable(TableMapping mapping)
+        {
+            if (!this.TableExists(mapping.TableName))
+            {
+                // this is the easy case, we need to create the table
+                string createTable = GetCreateTableScript(mapping);
+                this.ExecuteNonQuery(createTable);
+            }
+            else
+            {
+                StringBuilder sb = new StringBuilder();
+                StringBuilder log = new StringBuilder();
+
+                using (var transaction = this.sqliteConnection.BeginTransaction())
+                {
+
+                    // the hard part, figure out if table needs to be altered...                
+                    TableMapping actual = LoadTableMetadata(mapping.TableName);
+
+                    // Lastly see if any types or maxlengths need to be changed.
+                    // Unfortunately SqlLite does not support ALTER a column!!
+                    // See https://www.sqlite.org/lang_altertable.html
+
+                    bool newTable = false;
+                    foreach (ColumnMapping c in actual.Columns)
+                    {
+                        ColumnMapping ac = mapping.FindColumn(c.ColumnName);
+                        if (ac != null)
+                        {
+                            if (c.MaxLength != ac.MaxLength || c.SqlType != ac.SqlType || c.Precision != ac.Precision || c.Scale != ac.Scale ||
+                                c.AllowNulls != ac.AllowNulls)
+                            {
+                                // bummer, so the only way to do this is to copy all the data over to a new table!
+                                newTable = true;
+                                break;
+                            }
+                        }
+                    }
+                    List<ColumnMapping> newColumns = new List<ColumnMapping>();
+                    List<ColumnMapping> renames = new List<ColumnMapping>();
+                    // See if any new columns need to be added.
+                    foreach (ColumnMapping c in mapping.Columns)
+                    {
+                        ColumnMapping ac = actual.FindColumn(c.ColumnName);
+                        if (ac == null)
+                        {
+                            if (!string.IsNullOrEmpty(c.OldColumnName))
+                            {
+                                ac = actual.FindColumn(c.OldColumnName);
+                                if (ac != null)
+                                {
+                                    // this column needs to be renamed, ALTER TABLE doesn't allow renames, so the most efficient way to do it
+                                    // is add the new column, do an UPDATE to copy all the values over, then DROP the old column.
+                                    if (c.IsPrimaryKey || ac.IsPrimaryKey)
+                                    {
+                                        newTable = true; // then we need to create a new table!
+                                    }
+                                    // we deliberately do NOT copy the AllowNulls because we can't set that yet.
+                                    ColumnMapping clone = new ColumnMapping()
+                                    {
+                                        ColumnName = c.ColumnName,
+                                        OldColumnName = c.OldColumnName,
+                                        MaxLength = c.MaxLength,
+                                        Precision = c.Precision,
+                                        Scale = c.Scale,
+                                        SqlType = c.SqlType,
+                                        AllowNulls = true // because we can't set this initially until we populate the column.
+                                    };
+                                    renames.Add(clone);
+                                }
+                                else
+                                {
+                                    newColumns.Add(c);
+                                }
+                            }
+                            else
+                            {
+                                newColumns.Add(c);
+                            }
+                        }
+                    }
+
+                    // See if any columns need to be dropped.
+                    foreach (ColumnMapping c in actual.Columns)
+                    {
+                        ColumnMapping ac = mapping.FindColumn(c.ColumnName);
+                        if (ac == null)
+                        {
+                            // bummer, sqllite can't drop columns.
+                            newTable = true;
+                            break;
+                        }
+                    }
+
+                    if (newTable)
+                    {
+                        // invent a new name for the temporary table
+                        string originalTableName = mapping.TableName;
+                        mapping.TableName = "NEW_" + originalTableName;
+                        string createTable = GetCreateTableScript(mapping);
+                        this.ExecuteNonQuery(createTable);
+
+                        // copy the data across to this new table, taking any "renames" into account.
+                        // INSERT INTO new_X SELECT ... FROM X
+                        sb.Length = 0;
+                        sb.Append(string.Format("INSERT INTO [{0}] (", mapping.TableName));
+
+                        StringBuilder select = new StringBuilder();
+                        select.Append("SELECT ");
+                        bool first = true;
+
+                        foreach (ColumnMapping c in actual.Columns)
+                        {
+                            ColumnMapping ac = mapping.FindColumn(c.ColumnName);
+                            if (ac == null)
+                            {
+                                if (!string.IsNullOrEmpty(c.OldColumnName))
+                                {
+                                    // renaming a column
+                                    ac = actual.FindColumn(c.OldColumnName);
+                                    if (ac != null)
+                                    {
+                                        if (!first)
+                                        {
+                                            sb.Append(", ");
+                                            select.Append(", ");
+                                        }
+                                        sb.Append(c.ColumnName);
+                                        select.Append(c.OldColumnName);
+                                        first = false;
+                                    }
+                                    else
+                                    {
+                                        // already been renamed, now we are dropping it.
+                                    }
+                                }
+                                else
+                                {
+                                    // dropping this column
+                                }
+                            }
+                            else
+                            {
+                                // copy as is.
+                                if (!first)
+                                {
+                                    sb.Append(", ");
+                                    select.Append(", ");
+                                }
+                                sb.Append(c.ColumnName);
+                                select.Append(c.ColumnName);
+                                first = false;
+                            }
+                        }
+
+                        if (first)
+                        {
+                            throw new Exception("Invalid table definition, no columns found in the old table");
+                        }
+
+                        sb.Append(") ");
+                        select.Append(string.Format(" FROM [{0}]", originalTableName));
+                        sb.Append(select.ToString());
+                        this.ExecuteNonQuery(sb.ToString());
+
+                        // drop the old table, now that we've copied all the data into the new one
+                        this.ExecuteNonQuery(string.Format("DROP TABLE [{0}]", originalTableName));
+
+                        // rename new table to original table name.
+                        this.ExecuteNonQuery(string.Format("ALTER TABLE [{0}] RENAME TO [{1}]", mapping.TableName, originalTableName));
+
+                        mapping.TableName = originalTableName;
+                    }
+                    else
+                    {
+                        if (newColumns.Count > 0)
+                        {
+                            // create the new column that was added.
+                            foreach (ColumnMapping c in newColumns)
+                            {
+                                sb.Append(string.Format("ALTER TABLE [{0}] ADD ", mapping.TableName));
+                                c.GetPartialSqlDefinition(sb);
+                                string cmd = sb.ToString();
+                                log.AppendLine(cmd);
+                                this.ExecuteScalar(cmd);
+                                sb.Length = 0;
+                            }
+                        }
+                        
+                        if (renames.Count > 0)
+                        {
+                            // create the new column that was added.
+                            foreach (ColumnMapping c in renames)
+                            {
+                                sb.Append(string.Format("ALTER TABLE [{0}] ADD ", mapping.TableName));
+                                c.GetPartialSqlDefinition(sb);
+                                string cmd = sb.ToString();
+                                log.AppendLine(cmd);
+                                this.ExecuteScalar(cmd);
+                                sb.Length = 0;
+                            }
+
+                            // now copy the data across to the new column that was added.
+                            foreach (ColumnMapping c in renames)
+                            {
+                                if (sb.Length > 0)
+                                {
+                                    sb.AppendLine(",");
+                                }
+                                sb.Append(string.Format("[{0}] = [{1}]", c.ColumnName, c.OldColumnName));
+                                actual.Columns.Add(c);
+                            }
+
+                            string update = string.Format("UPDATE [{0}] SET ", mapping.TableName) + sb.ToString();
+                            log.AppendLine(update);
+                            this.ExecuteScalar(update);
+                            sb.Length = 0;
+                        }
+
+                        // See if any columns need to be dropped.
+                        foreach (ColumnMapping c in actual.Columns)
+                        {
+                            ColumnMapping ac = mapping.FindColumn(c.ColumnName);
+                            if (ac == null)
+                            {
+                                string drop = string.Format("ALTER TABLE [{0}]  DROP  COLUMN [{1}] ", mapping.TableName, c.ColumnName);
+                                log.AppendLine(drop);
+                                this.ExecuteScalar(drop);
+                            }
+                        }
+
+                    }
+
+                    // Ok, commit the transaction!
+                    transaction.Commit();
+                }
+
+
+                if (log.Length > 0)
+                {
+                    this.AppendLog(log.ToString());
+                }
+            }
         }
 
     }

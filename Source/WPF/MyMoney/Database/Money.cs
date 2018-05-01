@@ -3160,7 +3160,7 @@ namespace Walkabout.Data
 
 
         [DataMember]
-        [ColumnMapping(ColumnName = "Password", MaxLength = 20, AllowNulls = true)]
+        [ColumnMapping(ColumnName = "Password", MaxLength = 50, AllowNulls = true)]
         public string Password
         {
             get { return this.password; }

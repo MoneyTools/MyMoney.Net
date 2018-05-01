@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Walkabout.Data
 {
-    class TableMapping : Attribute
+    public class TableMapping : Attribute
     {
         List<ColumnMapping> columns;
         Type objectType;
@@ -174,41 +174,6 @@ namespace Walkabout.Data
 
     class MappingEngine
     {
-        /* for example:
-         create table OnlineAccounts (
-            [Id] int PRIMARY KEY,
-            [Name] nvarchar(80) NOT NULL,
-            [Institution] nvarchar(80),
-            [OFX] nvarchar(255),
-            [FID] char(10),
-            [UserId] char(20),
-            [Password] char(20),
-            [BankId] char(10),
-            [BranchId] char(10),
-            [OfxVersion] char(10)
-        )
-         */
-        internal static string GetCreateTableScript(TableMapping mapping)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(string.Format("create table [{0}] (", mapping.TableName));
-            bool first = true;
-            foreach (ColumnMapping column in mapping.Columns)
-            {
-                // generate SQL...
-                if (!first)
-                {
-                    sb.AppendLine(",");
-                }
-                column.GetSqlDefinition(sb);
-
-                first = false;
-            }
-            sb.AppendLine();
-            sb.AppendLine(")");
-            return sb.ToString();
-        }
-
         internal static List<ColumnMapping> GetColumnsFromObject(Type objectType)
         {
             List<ColumnMapping> result = new List<ColumnMapping>();
@@ -310,140 +275,6 @@ namespace Walkabout.Data
         }
 
         
-        public static void CreateOrUpdateTable(SqlServerDatabase database, TableMapping mapping)
-        {
-            if (!database.TableExists(mapping.TableName)) 
-            {
-                // this is the easy case, we need to create the table
-                string createTable = MappingEngine.GetCreateTableScript(mapping);
-                database.ExecuteNonQuery(createTable);
-                
-            }
-            else
-            {
-                StringBuilder log = new StringBuilder();
-
-                // the hard part, figure out if table needs to be altered...                
-                TableMapping actual = LoadTableMetadata(database, mapping);
-                List<ColumnMapping> renames = new List<ColumnMapping>();
-                StringBuilder sb = new StringBuilder();
-                // See if any new columns need to be added.
-                foreach (ColumnMapping c in mapping.Columns)
-                {
-                    ColumnMapping ac = actual.FindColumn(c.ColumnName);
-                    if (ac == null)
-                    {
-                        if (!string.IsNullOrEmpty(c.OldColumnName))
-                        {
-                            ac = actual.FindColumn(c.OldColumnName);
-                            if (ac != null)
-                            {
-                                // this column needs to be renamed, ALTER TABLE doesn't allow renames, so the most efficient way to do it
-                                // is add the new column, do an UPDATE to copy all the values over, then DROP the old column.
-                                if (c.IsPrimaryKey || ac.IsPrimaryKey)
-                                {
-                                    throw new NotImplementedException("Cannot rename the primary key automatically, sorry");
-                                }
-                                // we deliberately do NOT copy the AllowNulls because we can't set that yet.
-                                ColumnMapping clone = new ColumnMapping() {
-                                  ColumnName = c.ColumnName,
-                                  OldColumnName = c.OldColumnName,
-                                  MaxLength = c.MaxLength,
-                                  Precision = c.Precision,
-                                  Scale = c.Scale,
-                                  SqlType = c.SqlType,
-                                  AllowNulls = true // because we can't set this initially until we populate the column.
-                                };
-                                renames.Add(clone);
-                            }
-                        }
-
-                        
-                        sb.Append(string.Format("ALTER TABLE [{0}] ADD ", mapping.TableName));
-                        c.GetPartialSqlDefinition(sb);
-
-                        string cmd = sb.ToString();
-                        log.AppendLine(cmd);
-                        database.ExecuteScalar(cmd);
-                        sb.Length = 0;
-                    }
-                }
-
-                if (renames.Count > 0)
-                {
-                    sb.Length = 0;
-                    // now copy the data across to the new column that was added.
-                    foreach (ColumnMapping c in renames)
-                    {
-                        if (sb.Length > 0) 
-                        {
-                            sb.AppendLine(",");
-                        }
-                        sb.Append(string.Format("[{0}] = [{1}]", c.ColumnName, c.OldColumnName) );
-                        actual.Columns.Add(c);
-                    }
-
-                    string update = string.Format("UPDATE [{0}] SET ", mapping.TableName) + sb.ToString();
-                    log.AppendLine(update);
-                    database.ExecuteScalar(update);
-                    sb.Length = 0;
-                }
-
-                // See if any columns need to be dropped.
-                foreach (ColumnMapping c in actual.Columns)
-                {
-                    ColumnMapping ac = mapping.FindColumn(c.ColumnName);
-                    if (ac == null)
-                    {                        
-                        string drop = string.Format("ALTER TABLE [{0}]  DROP  COLUMN [{1}] ", mapping.TableName, c.ColumnName);
-                        log.AppendLine(drop);
-                        database.ExecuteScalar(drop);
-                    }
-                }
-
-                // Lastly see if any types or maxlengths need to be changed.
-                foreach (ColumnMapping c in actual.Columns)
-                {
-                    ColumnMapping ac = mapping.FindColumn(c.ColumnName);
-                    if (ac != null)
-                    {
-                        if (c.MaxLength != ac.MaxLength || c.SqlType != ac.SqlType || c.Precision != ac.Precision || c.Scale != ac.Scale ||
-                            c.AllowNulls != ac.AllowNulls )
-                        {
-                            if (sb.Length > 0)
-                            {
-                                sb.AppendLine(",");
-                            }
-                            sb.Append(string.Format("ALTER TABLE [{0}]  ALTER COLUMN ", mapping.TableName));
-                            ac.GetSqlDefinition(sb);  
-
-                            string alter = sb.ToString();
-                            log.AppendLine(alter);
-                            database.ExecuteScalar(alter);
-                            sb.Length = 0;                      
-                        }
-                    }
-                }
-
-                if (log.Length > 0)
-                {
-                    database.AppendLog(log.ToString());
-                }
-            }
-        }
-
-
-        
-        internal static TableMapping LoadTableMetadata(SqlServerDatabase database, TableMapping mapping)
-        {
-            TableMapping table = new TableMapping();
-            table.TableName = mapping.TableName;
-
-            List<ColumnMapping> columns = database.GetTableSchema(mapping.TableName);
-                
-            table.Columns = columns;
-            return table;
-        }
 
     }
 

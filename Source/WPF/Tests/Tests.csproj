@@ -121,6 +121,7 @@
     <Compile Include="CostBasisTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataTests.cs" />
+    <Compile Include="SqlMappingTests.cs" />
     <Compile Include="Win32.cs" />
     <Compile Include="Wrappers\AccountSettingsWrapper.cs" />
     <Compile Include="Wrappers\AccountsWrapper.cs" />
