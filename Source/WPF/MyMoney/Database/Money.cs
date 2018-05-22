@@ -7850,7 +7850,7 @@ namespace Walkabout.Data
             // 'u' is a real transaction
             // 't' is a potential merge transaction.
 
-            TimeSpan span = (dt - udt);
+            TimeSpan span = (dt - udt).Duration();
             if (span.TotalHours < 24)
             {
                 return true;
