@@ -3231,7 +3231,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         bool cancelled = false;
                         UiDispatcher.Invoke(new Action(() =>
                         {
-                            Account picked = callerPickAccount(this.myMoney, temp);
+                            Account picked = callerPickAccount(this.myMoney, temp.AccountId);
                             if (picked == null)
                             {
                                 // cancelled
@@ -3260,7 +3260,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             return true;
         }
 
-        public delegate Account PickAccountDelegate(MyMoney money, Account a);
+        public delegate Account PickAccountDelegate(MyMoney money, string a);
 
         // Find account matching the given id.
         private Account FindAccountByOfxId(string accountId)

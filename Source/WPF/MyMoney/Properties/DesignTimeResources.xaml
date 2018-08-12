@@ -9,6 +9,6 @@
         <ResourceDictionary Source="/MyMoney;component/Themes/Theme-Flat.xaml"/>
 		<ResourceDictionary Source="/MyMoney;component/Themes/Theme-OSX.xaml"/>
 	</ResourceDictionary.MergedDictionaries>
-	<!-- Resource dictionary entries should be defined here. -->
+	-->
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

@@ -50,9 +50,9 @@ namespace Walkabout.Dialogs
         }
 
 
-        public void SetUnknownAccount(string number)
+        public void SetUnknownAccountPrompt(string text)
         {
-            TextBlockPrompt.Text = number;
+            TextBlockPrompt.Text = text;
         }
 
         public void SetAccounts(IList<Account> list)
@@ -87,12 +87,13 @@ namespace Walkabout.Dialogs
 
     static class AccountHelper
     {
-        static public Account PickAccount(MyMoney money, Account a)
+        static public Account PickAccount(MyMoney money, string id)
         {
             SelectAccountDialog frm = new SelectAccountDialog();
-            frm.SetUnknownAccount(a.AccountId);
+            frm.Title = "Select Account for: " + id;
             frm.SetAccounts(money.Accounts.GetAccounts());
             frm.Owner = App.Current.MainWindow;
+            Account a = null;
             if (frm.ShowDialog() == true)
             {
                 a = frm.SelectedAccount;

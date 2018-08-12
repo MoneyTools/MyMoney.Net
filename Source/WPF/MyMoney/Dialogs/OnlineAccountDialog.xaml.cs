@@ -1160,6 +1160,11 @@ namespace Walkabout.Dialogs
 
         }
 
+        string GetResolveButtonCaption()
+        {
+            return "Click here to select an account to match with this online account";
+        }
+
         AccountListItem FindMatchingOnlineAccount(AccountInfoResponse ar)
         {
             AccountType type = AccountType.Checking;
@@ -1232,12 +1237,12 @@ namespace Walkabout.Dialogs
                         if (a.OnlineAccount.Name != this.editing.Name)
                         {
                             connected = true;
-                            tooltip = "Click here to disconnect this account to the selected online account";
+                            tooltip = "Click here to disconnect this account from the selected online account";
                         }
                         else
                         {
                             connected = true;
-                            tooltip = "Click here to connect this account from the selected online account";
+                            tooltip = "Click here to connect this account to the selected online account";
                         }
                     }
 
@@ -1254,7 +1259,7 @@ namespace Walkabout.Dialogs
             if (found == null)
             {
                 isNew = true;
-                tooltip = "Click here to add this account to your local database";
+                tooltip = GetResolveButtonCaption();
                 // create place holder for new account, this will be turned into a real account when
                 // user clicks the "add" button.
                 found = new Account();
@@ -1298,17 +1303,27 @@ namespace Walkabout.Dialogs
                 }
                 else if (item.IsNew)
                 {
-                    item.UserAdded = true;
-                    item.IsNew = false;
-                    item.IsDisconnected = false;
-                    e.ToolTip = "Click here to undo the last account add operation";
+                    Account a = AccountHelper.PickAccount(this.money, item.AccountId);
+                    if (a != null)
+                    {
+                        // user made a choice
+                        item.Account = a;
+                        item.UserAdded = true;
+                        item.IsNew = false;
+                        item.IsDisconnected = false;
+                        e.ToolTip = "Click here to undo the last account add operation";
+                    } else
+                    {
+                        // user cancelled
+                    }
                 }
                 else if (item.UserAdded)
                 {
+                    item.Account = null;
                     item.UserAdded = false;
                     item.IsNew = true;
                     item.IsDisconnected = true;
-                    e.ToolTip = "Click here to add this account to your local database"; 
+                    e.ToolTip = GetResolveButtonCaption(); 
                 }
                 else if (item.IsDisconnected)
                 {
@@ -1342,25 +1357,6 @@ namespace Walkabout.Dialogs
                     this.money.OnlineAccounts.AddOnlineAccount(editing);
                 }
                 a.OnlineAccount = oa;
-
-                // provide a default name.
-                a.Name = oa.Name + " " + item.Name;
-
-                if (this.money.Accounts.FindAccount(a.Name) != null)
-                {
-                    // hmmm, add the type also
-                    a.Name = oa.Name + " " + item.Name + " " + item.Account.Type.ToString();
-                    int index = 1;
-                    string uniqueName = a.Name;
-                    while (this.money.Accounts.FindAccount(uniqueName) != null)
-                    {
-                        // argh!
-                        uniqueName = a.Name + " " + index++;
-                    }
-                    a.Name = uniqueName;
-                }
-
-                this.money.Accounts.AddAccount(a);
             }
 
         }

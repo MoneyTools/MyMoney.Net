@@ -35,12 +35,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel >
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="The downloaded file contains an unknown account number:"/>
-                <TextBox x:Name="TextBlockPrompt" IsReadOnly="True" Margin="5,0,5,0"/>
-            </StackPanel>
-
-            <TextBlock Text="Please select the account that you want to load the OFX transactions into:" TextWrapping="Wrap"/>
+            <TextBlock x:Name="TextBlockPrompt" Text="We found a reference to an unknown account number. Please select the account that you want to use or click the Add New Account button at the bottom of this window:"
+                           TextWrapping="Wrap"/>
         </StackPanel>
         
         <ListBox x:Name="ListBoxAccounts" Grid.Row="1" BorderThickness="1"  Grid.IsSharedSizeScope="True"
