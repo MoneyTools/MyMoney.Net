@@ -7984,6 +7984,27 @@ namespace Walkabout.Data
             return view;
         }
 
+        public Transaction GetLatestTransactionFrom(Account a)
+        {
+            DateTime date = DateTime.MinValue;
+            Transaction latest = null;
+            lock (transactions)
+            {
+                foreach (Transaction t in transactions.Values)
+                {
+                    if (t.IsDeleted || t.Account != a)
+                        continue;
+
+                    if (t.Date > date)
+                    {
+                        date = t.Date;
+                        latest = t;
+                    }
+                }
+            }
+            return latest;
+        }
+
         public IList<Transaction> GetTransactionsFrom(Account a, Predicate<Transaction> include)
         {
             List<Transaction> view = new List<Transaction>();

@@ -833,7 +833,41 @@ namespace Walkabout.Views.Controls
                     return string.Format("Last Balanced {0}", dt.ToShortDateString());
                 }
             }
-            return "Never balanced";
+            return "";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+
+    public class AccountLastTransactionTooltipConverter : IValueConverter
+    {
+        #region IValueConverter Members
+
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is Account)
+            {
+                Account a = (Account)value;
+                if (a.Parent is Accounts)
+                {
+                    Accounts s = (Accounts)a.Parent;
+                    if (s.Parent is MyMoney)
+                    {
+                        MyMoney m = (MyMoney)s.Parent;
+                        Transaction t = m.Transactions.GetLatestTransactionFrom(a);
+                        if (t != null)
+                        {
+                            return string.Format("Last Transaction\n  Date: {0}\n  Payee: {1}\n  Amount: {2:C2}", t.Date.ToShortDateString(), t.PayeeName, t.Amount);
+                        }
+                    }
+                }
+            }
+            return "";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

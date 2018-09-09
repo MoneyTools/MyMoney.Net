@@ -41,10 +41,10 @@
             <MenuItem Name="menuItemGotoRelated" Header="_Go to related transaction" Command="views:TransactionsView.CommandGotoRelatedTransaction" InputGestureText="F12"/>
             <!--<MenuItem Name="menuItemViewSimilar" Header="View _Similar Transactions" Command="views:TransactionsView.CommandViewSimilarTransactions"/>-->
             <Separator/>
-            <MenuItem Name="menuItemByAccount" Header="_View Transactions by Account" Command="views:TransactionsView.CommandViewTransactionsByAccount"/>
-            <MenuItem Name="menuItemByCategory" Header="View Transactions by _Category" Command="views:TransactionsView.CommandViewTransactionsByCategory"/>
-            <MenuItem Name="menuItemByPayee" Header="View Transactions by _Payee" Command="views:TransactionsView.CommandViewTransactionsByPayee"/>
-            <MenuItem Name="menuItemBySecurity" Header="View Transactions by _Security" Command="views:TransactionsView.CommandViewTransactionsBySecurity"/>
+            <MenuItem Name="menuItemByAccount" Header="_View Transactions by Account" Command="views:TransactionsView.CommandViewTransactionsByAccount" InputGestureText="F8"/>
+            <MenuItem Name="menuItemByCategory" Header="View Transactions by _Category" Command="views:TransactionsView.CommandViewTransactionsByCategory" InputGestureText="F7"/>
+            <MenuItem Name="menuItemByPayee" Header="View Transactions by _Payee" Command="views:TransactionsView.CommandViewTransactionsByPayee" InputGestureText="F6"/>
+            <MenuItem Name="menuItemBySecurity" Header="View Transactions by _Security" Command="views:TransactionsView.CommandViewTransactionsBySecurity" InputGestureText="F5"/>
             <MenuItem Name="menuItemViewSecurity" Header="View _Security" Command="views:TransactionsView.CommandViewSecurity"/>
             <Separator/>
             <MenuItem Name="menuItemExport" Header="Export..." Command="views:TransactionsView.CommandViewExport"/>
@@ -87,6 +87,9 @@
         <KeyBinding Command="views:TransactionsView.CommandViewToggleAllSplits" Key="T" Modifiers="Alt"/>
         <KeyBinding Command="views:TransactionsView.CommandGotoRelatedTransaction" Key="F12" />
         <KeyBinding Command="views:TransactionsView.CommandViewTransactionsByAccount" Key="F8"/>
+        <KeyBinding Command="views:TransactionsView.CommandViewTransactionsByCategory" Key="F7"/>
+        <KeyBinding Command="views:TransactionsView.CommandViewTransactionsByPayee" Key="F6"/>
+        <KeyBinding Command="views:TransactionsView.CommandViewTransactionsBySecurity" Key="F5"/>
         <KeyBinding Command="views:TransactionsView.CommandLookupPayee" Key="F3"/>
    </UserControl.InputBindings>
 
@@ -106,8 +109,8 @@
             <MenuItem Name="menuItemGotoRelated2" Header="_Go to related transaction" Command="views:TransactionsView.CommandGotoRelatedTransaction" InputGestureText="F12"/>            
             <Separator/>
             <MenuItem Name="menuItemByAccount2" Header="_View Transactions by Account" Command="views:TransactionsView.CommandViewTransactionsByAccount" InputGestureText="F8"/>
-            <MenuItem Name="menuItemByCategory2" Header="View Transactions by _Category" Command="views:TransactionsView.CommandViewTransactionsByCategory"/>
-            <MenuItem Name="menuItemByPayee2" Header="View Transactions by _Payee" Command="views:TransactionsView.CommandViewTransactionsByPayee"/>            
+            <MenuItem Name="menuItemByCategory2" Header="View Transactions by _Category" Command="views:TransactionsView.CommandViewTransactionsByCategory" InputGestureText="F7"/>
+            <MenuItem Name="menuItemByPayee2" Header="View Transactions by _Payee" Command="views:TransactionsView.CommandViewTransactionsByPayee" InputGestureText="F6"/>            
         </ContextMenu>
 
         <c:MoneyColorConverter x:Key="MoneyColorConverter"/>

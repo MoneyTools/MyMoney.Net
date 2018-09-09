@@ -263,7 +263,7 @@ namespace Walkabout.Utilities
                         sb.Append(ch);
                     }
                 }
-                else if (ch == ',' || ch == '|')
+                else if (ch == '|') // we do not recognize "," as "or" because "," exists as a thousands separator in $amounts, so that would be ambiguous.
                 {
                     token = QuickFilterToken.Or;
                     literal = ch.ToString();
