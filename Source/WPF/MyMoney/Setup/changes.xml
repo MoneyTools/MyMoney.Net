@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.18" date="9/23/2018">
+    Fix bug in auto-fill of category for transfers.
+  </change>
   <change version="1.1.0.17" date="9/8/2018">
     Remove comma from search filter syntax so you can find $ amounts containing thousands separators like "6,556.70".
     Add last transaction details to Account view tooltips.

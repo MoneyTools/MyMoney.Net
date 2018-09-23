@@ -1401,12 +1401,15 @@ namespace Walkabout.Data
         {
             if (from.Transfer != null)
             {
-                if (from.Transfer.Split != null)
+                if (to.Transfer == null)
                 {
-                    // throw new MoneyException("Don't know how to copy a transfer to a split");
-                    return;
+                    if (from.Transfer.Split != null)
+                    {
+                        // throw new MoneyException("Don't know how to copy a transfer to a split");
+                        return;
+                    }
+                    this.Transfer(to, from.Transfer.Transaction.Account);
                 }
-                this.Transfer(to, from.Transfer.Transaction.Account);
             }
             else if (from.IsSplit)
             {
