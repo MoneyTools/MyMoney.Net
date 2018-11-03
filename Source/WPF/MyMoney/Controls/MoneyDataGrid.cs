@@ -71,6 +71,21 @@ namespace Walkabout.Controls
         {
             sorted = eventArgs.Column;
 
+            ListSortDirection direction = ListSortDirection.Ascending;
+            if (sorted.SortDirection.HasValue)
+            {
+                direction = sorted.SortDirection.Value;
+                if (direction == ListSortDirection.Ascending)
+                {
+                    direction = ListSortDirection.Descending;
+                }
+                else
+                {
+                    direction = ListSortDirection.Ascending;
+                }
+                sorted.SortDirection = direction;
+            }
+
             // user is sorting the grid, but we will still add our secondary sort order
             // information in this case.
             base.OnSorting(eventArgs);
