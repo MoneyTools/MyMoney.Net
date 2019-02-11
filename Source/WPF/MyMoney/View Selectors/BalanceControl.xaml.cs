@@ -185,11 +185,21 @@ namespace Walkabout.Views.Controls
 
         public void Transactions_Changed(object sender, ChangeEventArgs e)
         {
-            decimal d = this.myMoney.ReconciledBalance(this.account, this.StatementDate);
-            this.LastBalance = d;
-            this.FindInterestTransaction(this.StatementDate);
-            this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, this.StatementDate.AddMonths(1));
-            
+            try
+            {
+                decimal d = this.myMoney.ReconciledBalance(this.account, this.StatementDate);
+                this.LastBalance = d;
+                this.FindInterestTransaction(this.StatementDate);
+                this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, this.StatementDate.AddMonths(1));
+            }
+            catch (Exception)
+            {
+                // we can get System.InvalidOperationException: Collection was modified; enumeration operation may not execute
+                // if a download thread is busily modifying the Money data at the moment...
+                // todo: we really need a proper locking mechanism on the Money data to make this stuff safe...
+                // or we need a proper journaling system that provides stable versioned snapshots of the money data to 
+                // accompany the ChangeEvents so that handlers can operating on each new version.
+            }
         }
 
         public event EventHandler StatementDateChanged;
