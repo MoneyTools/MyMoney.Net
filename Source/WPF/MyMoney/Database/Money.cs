@@ -5326,7 +5326,8 @@ namespace Walkabout.Data
                     TotalForCategory(transactionsForYear, g.TransactionsForThatYear, "Interest", money.Categories.FindCategoryById(building.CategoryForInterest));
 
                     transactionsForYear.RecalcYears();
-                    building.Years.Add(year, transactionsForYear);
+
+                    building.Years[year] = transactionsForYear;
                 }
             }
         }
