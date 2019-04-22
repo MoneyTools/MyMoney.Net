@@ -2645,6 +2645,14 @@ namespace Walkabout.Data
         }
 
         [DataMember]
+        public int FlagsAsInt
+        {
+            get { return (int)this.Flags; }
+            set { this.Flags = (AccountFlags)value; }
+        }
+
+
+        [DataMember]
         [ColumnMapping(ColumnName = "LastBalance", AllowNulls = true)]
         public DateTime LastBalance
         {
