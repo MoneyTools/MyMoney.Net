@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+    <change version="1.1.0.20" date="5/5/2019">
+        Fix bug in rental view and database XML serialization.
+    </change>
     <change version="1.1.0.19" date="11/3/2018">
         Fix bug in column sorting so both ascending and descending works.
     </change>
