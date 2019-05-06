@@ -88,6 +88,16 @@ namespace Walkabout.Configuration
             set { map["AttachmentDirectory"] = value; }
         }
 
+        public string[] RecentFiles
+        {
+            get
+            {
+                object value = map["RecentFiles"];
+                return value is string[] ? (string[])value : null;
+            }
+            set { map["RecentFiles"] = value; }
+        }
+
         public int ToolBoxWidth
         {
             get
@@ -401,9 +411,22 @@ namespace Walkabout.Configuration
                         {
                             pi.SetValue(this, r.ReadString(), null);
                         }
+                        else if (t == typeof(string[]))
+                        {
+                            List<string> items = new List<string>();
+                            while (r.Read() && r.NodeType != XmlNodeType.EndElement)
+                            {
+                                if (r.NodeType == XmlNodeType.Element && r.LocalName == "item")
+                                {
+                                    var value = r.ReadElementContentAsString();
+                                    items.Add(value);
+                                }
+                            }
+                            pi.SetValue(this, items.ToArray(), null);
+                        }
                         else if (t == typeof(XmlElement))
                         {
-                            pi.SetValue(this,  (XmlElement)doc.ReadNode(r), null);
+                            pi.SetValue(this, (XmlElement)doc.ReadNode(r), null);
                         }
                         else if (t == typeof(GraphState))
                         {
@@ -419,7 +442,7 @@ namespace Walkabout.Configuration
                         }
                         else if (t == typeof(bool))
                         {
-                            pi.SetValue(this,  bool.Parse(r.ReadString()), null);
+                            pi.SetValue(this, bool.Parse(r.ReadString()), null);
                         }
                         else if (t == typeof(QueryRow[]))
                         {
@@ -526,6 +549,16 @@ namespace Walkabout.Configuration
                     else if (t == typeof(string))
                     {
                         w.WriteElementString(key, ((string)value));
+                    }
+                    else if (t == typeof(string[]))
+                    {
+                        w.WriteStartElement(key);
+                        string[] values = (string[])value;
+                        foreach (var item in values)
+                        {
+                            w.WriteElementString("item", item);
+                        }
+                        w.WriteEndElement();
                     }
                     else if (t == typeof(GraphState))
                     {

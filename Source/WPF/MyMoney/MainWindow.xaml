@@ -135,6 +135,7 @@
                         <MenuItem x:Name="MenuFileSave" Header="_Save" Command="Save"/>
                         <MenuItem x:Name="MenuFileSaveAs" Header="Save _as..." Command="SaveAs"/>
                         <MenuItem x:Name="MenuFileOpenContainingFolder" Header="Open _Containing Folder..." Command="p:AppCommands.CommandOpenContainingFolder"/>
+                        <MenuItem x:Name="MenuRecentFiles" Header="Recent _Files" />
                         <Separator/>
                         <MenuItem x:Name="MenuFileImport" Header="_Import..." Command="p:AppCommands.CommandFileImport"/>
                         <MenuItem x:Name="MenuFileExportGraph" Header="Export Accounts _Dependencies (DGML)..." Command="p:AppCommands.CommandFileExportGraph"/>

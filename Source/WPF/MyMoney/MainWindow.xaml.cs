@@ -81,7 +81,7 @@ namespace Walkabout
         private StockQuotes quotes;
         private int mainThreadId;
         private int loadTime = Environment.TickCount;
-
+        private RecentFilesMenu recentFilesMenu;
         #endregion
 
         #region CONSTRUCTORS
@@ -97,7 +97,6 @@ namespace Walkabout
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.MainWindowInitialize))
             {
 #endif
-
                 UiDispatcher.CurrentDispatcher = this.Dispatcher;
                 this.settings = settings;
 
@@ -276,9 +275,19 @@ namespace Walkabout
                 AddHandler(OutputPane.ShowOutputEvent, new RoutedEventHandler(OnShowOutputWindow));
                 AddHandler(OutputPane.HideOutputEvent, new RoutedEventHandler(OnHideOutputWindow));
 
+                this.recentFilesMenu = new RecentFilesMenu(MenuRecentFiles);
+                this.recentFilesMenu.SetFiles(settings.RecentFiles);
+                this.recentFilesMenu.RecentFileSelected += OnRecentFileSelected;
+
 #if PerformanceBlocks
             }
 #endif
+        }
+
+        private void OnRecentFileSelected(object sender, RecentFileEventArgs e)
+        {
+            var databaseName = e.FileName;
+            // tbd: hook it up... may need userid/password to open the database...
         }
 
         void OfxDownloadControl_SelectionChanged(object sender, OfxDocumentControlSelectionChangedEventArgs e)
@@ -1393,6 +1402,7 @@ namespace Walkabout
             s.ToolBoxWidth = Convert.ToInt32(this.toolBox.Width);
             s.GraphHeight = (int)this.TransactionGraph.Height;
             s.DisplayClosedAccounts = this.accountsControl.DisplayClosedAccounts;
+            s.RecentFiles = this.recentFilesMenu.ToArray();
 
             if (this.database != null)
             {
@@ -1709,6 +1719,8 @@ namespace Walkabout
                 LoadDatabase(server, database, userid, password, backuppath);
 
                 UiDispatcher.BeginInvoke(new System.Action(() => { this.Cursor = Cursors.Arrow; }));
+
+                UiDispatcher.BeginInvoke(new System.Action(() => { this.recentFilesMenu.AddRecentFile(database); }));                
             }
         }
 

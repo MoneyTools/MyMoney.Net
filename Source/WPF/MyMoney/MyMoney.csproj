@@ -226,6 +226,7 @@
     </Compile>
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\FileHash.cs" />
+    <Compile Include="Utilities\RecentFilesMenu.cs" />
     <Compile Include="Views\ChangeTracker.cs" />
     <Compile Include="Database\CostBasis.cs" />
     <Compile Include="Database\SqliteDatabase.cs" />
