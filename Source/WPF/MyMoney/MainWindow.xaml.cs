@@ -743,7 +743,15 @@ namespace Walkabout
                             noSettings = true;
                             break;
                     }
+                }
 
+                // are we asked to open a sqlite file?
+                {
+                    string possibleFilename = arg.Trim('"');
+                    if (possibleFilename.EndsWith(".mymoney.db", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Settings.TheSettings.Database = possibleFilename;
+                    }
                 }
             }
         }
@@ -1651,48 +1659,48 @@ namespace Walkabout
                 this.ShowMessage("Loading data base...");
 
                 try
-                {
-                    string path = this.settings.Database;
-                    string name = ("" + path).Trim().ToLowerInvariant();
-                    string password = null;
-                    bool error = false;
-                    try
                     {
-                        password = DatabaseSecurity.LoadDatabasePassword(name);
-                    }
-                    catch
-                    {
-                        error = true;
-                    }
-                    if (error)
-                    {
-                        // hmmm, no password saved, so we need to prompt for one.
-                        PasswordWindow pw = new PasswordWindow();
-                        pw.UserName = Environment.GetEnvironmentVariable("USERNAME");
-                        pw.Owner = Application.Current.MainWindow;
-                        pw.Optional = true;
-                        if (pw.ShowDialog() == true)
+                        string path = this.settings.Database;
+                        string name = ("" + path).Trim().ToLowerInvariant();
+                        string password = null;
+                        bool error = false;
+                        try
                         {
-                            password = pw.PasswordConfirmation;
+                            password = DatabaseSecurity.LoadDatabasePassword(name);
+                        }
+                        catch
+                        {
+                            error = true;
+                        }
+                        if (error)
+                        {
+                            // hmmm, no password saved, so we need to prompt for one.
+                            PasswordWindow pw = new PasswordWindow();
+                            pw.UserName = Environment.GetEnvironmentVariable("USERNAME");
+                            pw.Owner = Application.Current.MainWindow;
+                            pw.Optional = true;
+                            if (pw.ShowDialog() == true)
+                            {
+                                password = pw.PasswordConfirmation;
+                            }
+                            else
+                            {
+                                // don't open it then...
+                                this.settings.Database = null;
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(this.settings.Database))
+                        {
+                            isLoading = true;
+                            ThreadPool.QueueUserWorkItem(new WaitCallback(LoadDatabase), password);
                         }
                         else
                         {
-                            // don't open it then...
-                            this.settings.Database = null;
+                            this.NewDatabase();
+                            StartTracking();
                         }
                     }
-
-                    if (!string.IsNullOrEmpty(this.settings.Database))
-                    {
-                        isLoading = true;
-                        ThreadPool.QueueUserWorkItem(new WaitCallback(LoadDatabase), password);
-                    }
-                    else
-                    {
-                        this.NewDatabase();
-                        StartTracking();
-                    }
-                }
                 catch (Exception e)
                 {
                     MessageBoxEx.Show(e.Message, "Error Loading Database", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -4335,7 +4343,7 @@ namespace Walkabout
                 version = this.GetType().Assembly.GetName().Version.ToString();
             }
             var msg = string.Format("MyMoney, Version {0}\r\n\r\nData provided for free by IEX. View IEX’s Terms of Use.", version);
-            MessageBoxEx.Show(msg, "About", MessageBoxButton.OK, MessageBoxImage.Information); 
+            MessageBoxEx.Show(msg, "About", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         #endregion
