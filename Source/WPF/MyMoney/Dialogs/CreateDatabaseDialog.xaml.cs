@@ -739,9 +739,9 @@ namespace Walkabout.Dialogs
                 return false;
             }
             
-            if (UseSqlite  && !path.EndsWith(".mymoney.db", StringComparison.OrdinalIgnoreCase))
+            if (UseSqlite && !(path.EndsWith(".mymoney.db", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".mmdb", StringComparison.OrdinalIgnoreCase)))
             {
-                MessageBoxEx.Show("The SQL Lite file must end with the extension '.MyMoney.db'", "File Name Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxEx.Show("The SQL Lite file must end with the extension '.mmdb'", "File Name Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             
@@ -1172,7 +1172,7 @@ namespace Walkabout.Dialogs
 
         private void ButtonSqliteBrowse_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog fdlg = InitializeOpenFileDialog("MyMoney SQL Lite *.MyMoney.db file",
+            OpenFileDialog fdlg = InitializeOpenFileDialog("MyMoney SQL Lite *.mmdb file",
                 StringHelpers.CreateFileFilter(Properties.Resources.MoneySQLLiteFileFilter, Properties.Resources.AllFileFilter));
             fdlg.FilterIndex = 1;
             if (fdlg.ShowDialog(this) == true)

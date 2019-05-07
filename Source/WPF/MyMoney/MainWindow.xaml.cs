@@ -718,7 +718,7 @@ namespace Walkabout
         void ParseCommandLine()
         {
             string[] args = Environment.GetCommandLineArgs();
-            for (int i = 0, n = args.Length; i < n; i++)
+            for (int i = 1, n = args.Length; i < n; i++)
             {
                 string arg = args[i];
                 if (arg[0] == '-' || arg[0] == '/')
@@ -745,10 +745,13 @@ namespace Walkabout
                     }
                 }
 
-                // are we asked to open a sqlite file?
+                // are we asked to open a database file?
                 {
                     string possibleFilename = arg.Trim('"');
-                    if (possibleFilename.EndsWith(".mymoney.db", StringComparison.OrdinalIgnoreCase))
+                    if (possibleFilename.EndsWith(".mymoney.db", StringComparison.OrdinalIgnoreCase) ||
+                        possibleFilename.EndsWith(".mmdb", StringComparison.OrdinalIgnoreCase) ||
+                        possibleFilename.EndsWith(".xml", StringComparison.OrdinalIgnoreCase) ||
+                        possibleFilename.EndsWith(".bxml", StringComparison.OrdinalIgnoreCase))
                     {
                         Settings.TheSettings.Database = possibleFilename;
                     }
@@ -1796,7 +1799,7 @@ namespace Walkabout
                             database.Create();
                         }
                     }
-                    else if (databaseName.EndsWith(".db", StringComparison.OrdinalIgnoreCase))
+                    else if (databaseName.EndsWith(".db", StringComparison.OrdinalIgnoreCase) || databaseName.EndsWith(".mmdb", StringComparison.OrdinalIgnoreCase))
                     {
                         database = new SqliteDatabase()
                         {
@@ -3574,15 +3577,15 @@ namespace Walkabout
 
         private void OnCommandFileExtensionAssociation(object sender, ExecutedRoutedEventArgs e)
         {
-
             try
             {
                 string currentApplicationPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
                 Walkabout.Configuration.FileAssociation.Associate(".qif", currentApplicationPath);
                 Walkabout.Configuration.FileAssociation.Associate(".qfx", currentApplicationPath);
                 Walkabout.Configuration.FileAssociation.Associate(".ofx", currentApplicationPath);
+                Walkabout.Configuration.FileAssociation.Associate(".mmdb", currentApplicationPath);
 
-                MessageBoxEx.Show("File type .qif, .qfx and .ofx are now associated with this application");
+                MessageBoxEx.Show("File type .qif, .qfx, .ofx and .mmdb are now associated with this application");
             }
             catch (Exception exp)
             {

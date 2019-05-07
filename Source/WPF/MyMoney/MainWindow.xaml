@@ -140,7 +140,7 @@
                         <MenuItem x:Name="MenuFileImport" Header="_Import..." Command="p:AppCommands.CommandFileImport"/>
                         <MenuItem x:Name="MenuFileExportGraph" Header="Export Accounts _Dependencies (DGML)..." Command="p:AppCommands.CommandFileExportGraph"/>
 
-                        <MenuItem x:Name="MenuFileFileExtensions" Header="_Associate QIF, QFX and OFX" Command="p:AppCommands.CommandFileExtensionAssociation"/>
+                        <MenuItem x:Name="MenuFileFileExtensions" Header="_Associate QIF, QFX, OFX and MMDB" Command="p:AppCommands.CommandFileExtensionAssociation"/>
 
                         <Separator/>
                         <MenuItem x:Name="MenuFileAddUser" Header="Add _User..." Command="p:AppCommands.CommandFileAddUser"/>

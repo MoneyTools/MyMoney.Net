@@ -149,7 +149,7 @@
     <value>Money SQL CE Files (*.MyMoney.sdf)|*.MyMoney.sdf</value>
   </data>
   <data name="MoneySQLLiteFileFilter" xml:space="preserve">
-    <value>Money SQL Lite Files (*.MyMoney.db)|*.MyMoney.db</value>
+    <value>Money SQL Lite Files (*.mmdb)|*.mmdb|Old Money SQL Lite Files (*.MyMoney.db)|*.MyMoney.db</value>
   </data>
   <data name="OfxFileFilter" xml:space="preserve">
     <value>OFX files (*.ofx)|*.ofx</value>

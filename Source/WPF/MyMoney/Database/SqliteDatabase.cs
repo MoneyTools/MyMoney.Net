@@ -32,7 +32,7 @@ namespace Walkabout.Data
             }
         }
 
-        public static string OfficialSqliteFileExtension = ".myMoney.db";
+        public static string OfficialSqliteFileExtension = ".mmdb";
 
         private SQLiteConnection sqliteConnection;
 
