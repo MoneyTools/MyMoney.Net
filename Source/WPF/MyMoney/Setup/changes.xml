@@ -2,6 +2,7 @@
 <changes>
     <change version="1.1.0.21" date="5/5/2019">
         Add a recent files menu under File.
+        Fix loading of databases with no passwords.
     </change>
     <change version="1.1.0.20" date="5/5/2019">
         Fix bug in rental view and database XML serialization.

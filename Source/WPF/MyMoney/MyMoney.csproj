@@ -51,7 +51,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <DisallowUrlActivation>true</DisallowUrlActivation>
-    <ApplicationRevision>21</ApplicationRevision>
+    <ApplicationRevision>22</ApplicationRevision>
     <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -224,6 +224,7 @@
     <Compile Include="Dialogs\MoneyFileImportDialog.xaml.cs">
       <DependentUpon>MoneyFileImportDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\AnimatedMessage.cs" />
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\FileHash.cs" />
     <Compile Include="Utilities\RecentFilesMenu.cs" />

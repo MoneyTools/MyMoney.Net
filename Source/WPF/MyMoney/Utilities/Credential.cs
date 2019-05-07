@@ -281,9 +281,11 @@ namespace Walkabout.Utilities
             this.description = GetNativeString(data.Comment);
             this.persist = (CredentialPersistence)data.Persist;
             this.lastWriteTime = DateTime.FromFileTime(data.LastWritten);
-
-            int len = (int)data.CredentialBlobSize / sizeof(char);
-            this.password = Credential.ToSecureString(Marshal.PtrToStringUni(data.CredentialBlob, len));
+            if (data.CredentialBlobSize > 0)
+            {
+                int len = (int)data.CredentialBlobSize / sizeof(char);
+                this.password = Credential.ToSecureString(Marshal.PtrToStringUni(data.CredentialBlob, len));
+            }
 
             // free the memory CredRead allocated.
             CredFree(block);
@@ -341,8 +343,12 @@ namespace Walkabout.Utilities
 
             try
             {
-                bstr = Marshal.SecureStringToBSTR(secureString);
-                return Marshal.PtrToStringBSTR(bstr);
+                if (secureString != null)
+                {
+                    bstr = Marshal.SecureStringToBSTR(secureString);
+                    return Marshal.PtrToStringBSTR(bstr);
+                }
+                return "";
             }
             finally
             {

@@ -93,35 +93,17 @@ namespace Walkabout.Utilities
         void SyncRecentFilesMenu()
         {
             // Synchronize menu items.
-            if (this.recentFiles.Count == 0)
-            {
-                this.parent.Items.Clear();
-                return;
-            }
-
+            this.parent.Items.Clear();
+            
             // Add most recent files first.
             for (int i = this.recentFiles.Count - 1, j = 0; i >= 0; i--, j++)
             {
                 string filename = this.recentFiles[i];
-                MenuItem item = null;
-                if (this.parent.Items.Count > j)
-                {
-                    item = this.parent.Items[j] as MenuItem;
-                }
-                else
-                {
-                    item = new MenuItem();
-                    item.Click += OnMenuItemClick;
-                    this.parent.Items.Add(item);
-                }
+                MenuItem item = new MenuItem();
+                item.Click += OnMenuItemClick;
+                this.parent.Items.Add(item);
                 item.Header = string.Format("_{0} {1}", j + 1, filename);
                 item.Tag = filename;
-            }
-
-            // Remove any extra menu items.
-            for (int i = this.parent.Items.Count - 1, n = this.recentFiles.Count; i > n; i--)
-            {
-                this.parent.Items.RemoveAt(i);
             }
         }
 

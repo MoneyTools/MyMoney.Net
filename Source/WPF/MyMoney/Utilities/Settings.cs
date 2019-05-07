@@ -118,6 +118,9 @@ namespace Walkabout.Configuration
             set { map["GraphHeight"] = value; }
         }
 
+        /// <summary>
+        /// The current database (older ones are listed in RecentFiles)
+        /// </summary>
         public string Database
         {
             get
@@ -389,7 +392,7 @@ namespace Walkabout.Configuration
             r.MoveToContent();
             while (r.Read())
             {
-                if (r.NodeType == XmlNodeType.Element)
+                if (r.NodeType == XmlNodeType.Element && !r.IsEmptyElement)
                 {
                     PropertyInfo pi = this.GetType().GetProperty(r.Name);
                     if (pi != null)
@@ -418,8 +421,11 @@ namespace Walkabout.Configuration
                             {
                                 if (r.NodeType == XmlNodeType.Element && r.LocalName == "item")
                                 {
-                                    var value = r.ReadElementContentAsString();
-                                    items.Add(value);
+                                    if (!r.IsEmptyElement)
+                                    {
+                                        var value = r.ReadElementContentAsString();
+                                        items.Add(value);
+                                    }
                                 }
                             }
                             pi.SetValue(this, items.ToArray(), null);

@@ -82,6 +82,7 @@ namespace Walkabout
         private int mainThreadId;
         private int loadTime = Environment.TickCount;
         private RecentFilesMenu recentFilesMenu;
+        private AnimatedMessage animatedStatus;
         #endregion
 
         #region CONSTRUCTORS
@@ -286,8 +287,8 @@ namespace Walkabout
 
         private void OnRecentFileSelected(object sender, RecentFileEventArgs e)
         {
-            var databaseName = e.FileName;
-            // tbd: hook it up... may need userid/password to open the database...
+            Settings.TheSettings.Database = e.FileName;
+            BeginLoadDatabase();
         }
 
         void OfxDownloadControl_SelectionChanged(object sender, OfxDocumentControlSelectionChangedEventArgs e)
@@ -1720,7 +1721,6 @@ namespace Walkabout
 
                 UiDispatcher.BeginInvoke(new System.Action(() => { this.Cursor = Cursors.Arrow; }));
 
-                UiDispatcher.BeginInvoke(new System.Action(() => { this.recentFilesMenu.AddRecentFile(database); }));                
             }
         }
 
@@ -1862,9 +1862,29 @@ namespace Walkabout
                     canSave = true;
                     isLoading = false;
                     string label = Path.GetFileName(database.DatabasePath);
-                    InternalShowMessage("Loaded from " + label + " in " + (int)watch.Elapsed.TotalMilliseconds + " milliseconds");
+                    var msg = "Loaded from " + label + " in " + (int)watch.Elapsed.TotalMilliseconds + " milliseconds";
+                    if (string.IsNullOrEmpty(password))
+                    {
+                        string end = msg + " (database has no password!!)";
+                        AnimateStatus(msg, end);
+                    }
+                    else
+                    {
+                        InternalShowMessage(msg);
+                    }
+
+                    this.recentFilesMenu.AddRecentFile(database.DatabasePath);
                 }));
             }
+        }
+
+        private void AnimateStatus(string start, string end)
+        {
+            if (animatedStatus == null)
+            {
+                animatedStatus = new AnimatedMessage((string value) => { StatusMessage.Content = value; });
+            }
+            animatedStatus.Start(start, end, TimeSpan.FromMilliseconds(50));
         }
 
         public IDatabase Database
