@@ -2517,6 +2517,27 @@ namespace Walkabout.Data
             }
         }
 
+        /// <summary>
+        /// Return the Last Transaction date in the Account
+        /// </summary>
+        [XmlIgnore]
+        public DateTime LastTransactionDate
+        {
+            get
+            {
+                MyMoney money = this.Parent.Parent as MyMoney;
+                if (money != null)
+                {
+                    Transaction t = money.Transactions.GetLatestTransactionFrom(this);
+                    if (t != null)
+                    {
+                        return t.Date;
+                    }
+                }
+                return DateTime.MinValue;
+            }
+        }
+
 
         [DataMember]
         [ColumnMapping(ColumnName = "Currency", MaxLength = 3, AllowNulls = true)]
@@ -8169,7 +8190,6 @@ namespace Walkabout.Data
         {
             investmentValue = 0;
             decimal tax = 0;
-            salestax = 0;
             decimal result = 0;
             DateTime lastDate = DateTime.Now;
             bool hasInvestments = false;
@@ -8180,14 +8200,11 @@ namespace Walkabout.Data
                 if (t != null)
                 {
                     lastDate = t.Date;
-                    if (t.Investment != null)
-                    {
-                        hasInvestments = true;
-                    }
-                    investmentValue = t.Balance;
                     tax += t.NetSalesTax;
                     if (t.Investment != null)
                     {
+                        hasInvestments = true;
+                        investmentValue = t.Balance;
                         tax += t.Investment.Taxes;
                     }
                     result += (decimal)GetCategoryValue(t, category);
@@ -8396,8 +8413,7 @@ namespace Walkabout.Data
             view.Sort(SortByDate);
 
             decimal sortedRunningUnits = 0;
-            decimal sortedRunningBalance = 0;
-
+            decimal runningUnitPrice = 0;
 
             foreach (Transaction t in view)
             {
@@ -8405,9 +8421,6 @@ namespace Walkabout.Data
                 {
                     t.Investment.ApplySplit(split);
                 }
-
-
-                sortedRunningBalance += t.Amount;
 
                 if (t.InvestmentType == InvestmentType.Buy || t.InvestmentType == InvestmentType.Add)
                 {
@@ -8441,14 +8454,7 @@ namespace Walkabout.Data
 
                     if (sortedRunningUnits == 0)
                     {
-                        if (sortedRunningBalance >= 0)
-                        {
-                            t.RoutingPath = "C";  // Actual Close with a positive balance
-                        }
-                        else
-                        {
-                            t.RoutingPath = "c";  // Actual Close Negative value
-                        }
+                        t.RoutingPath = "C";  // Actual Close with a positive balance
                     }
                     else
                     {
@@ -8460,10 +8466,15 @@ namespace Walkabout.Data
                     t.RoutingPath = "|";
                 }
 
-
+                // The UnitPrice is not a mandatory field.  Add rarely have it and dividend never have it.
+                // Use the last non-zero value as the closest value
+                if (t.Investment.CurrentUnitPrice != 0)
+                {
+                    runningUnitPrice = t.Investment.CurrentUnitPrice;
+                }
 
                 t.RunningUnits = sortedRunningUnits;
-                t.RunningBalance = sortedRunningBalance;
+                t.RunningBalance = t.RunningUnits * runningUnitPrice;
             }
 
             return view;
