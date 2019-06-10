@@ -282,6 +282,10 @@ namespace Walkabout.Views.Controls
                     (account == null )) // showing transactions by category // && ((!t.IsBudgeted && t.Account.IsBudgeted))
                 {
                     decimal v = t.GetCategorizedAmount(this.category);
+                    if (t.Status == TransactionStatus.Void)
+                    {
+                        v = 0;
+                    }
                     if (t.Date >= start && t.Date <= end)
                     {
                         started = true;
@@ -292,22 +296,13 @@ namespace Walkabout.Views.Controls
                             first = false;
                         }
 
-                        balance = AddDatum(balance, last, t.Date, t, timeData, (double)v);
+                        AddDatum(balance, last, t.Date, t, timeData, (double)v);
                         last = t.Date;
                         lastt = t;
                     }
-                    if (started)
-                    {
-                        balance += (double)v;
-                    }
+                    balance += (double)v;
                 }
             }
-
-            if (last != end && lastt != null)
-            {
-                balance = AddDatum(balance, last, end, lastt, timeData, 0);
-            }
-            
             s.EndUpdate();
             //s.Accumulate = false;
             //s.Color = color;
@@ -323,7 +318,7 @@ namespace Walkabout.Views.Controls
             return balance.ToString("n", nfi) + "\r\n" + t.Date.ToShortDateString();
         }
 
-        double AddDatum(double balance, DateTime start, DateTime end, Transaction t, IList<ChartValue> timeData, double v)
+        void AddDatum(double balance, DateTime start, DateTime end, Transaction t, IList<ChartValue> timeData, double v)
         {
             // for this math to work, we have to ignore "time" in the dates.
             start = new DateTime(start.Year, start.Month, start.Day);
@@ -353,7 +348,6 @@ namespace Walkabout.Views.Controls
                     date = date.AddDays(1);
                 }
             }
-            return balance;
         }
 
         void OnYearToDate(object sender, RoutedEventArgs e)
