@@ -275,10 +275,12 @@ namespace Walkabout.Views.Controls
             {
                 Transaction t = row as Transaction;
                 if (t == null) continue;
+                if (t.Status == TransactionStatus.Void) continue;
 
                 if ( t.Account == this.account || // showing transactions for an account
                     (this.account == null )) // showing transactions by category // && ((!t.IsBudgeted && t.Account.IsBudgeted))
                 {
+
                     if (t.Date >= start && t.Date <= end)
                     {
                         // If the transactions are on the same day, don't add to the graph yet.  
@@ -287,9 +289,9 @@ namespace Walkabout.Views.Controls
                         {
                             AddDatum(balance, last, t.Date, t, timeData);
                         }
+
                         last = t.Date;
                         lastt = t;
-
                     }
 
                     // For all regular transaction lists, we calcuclate the overall balance on the fly, based on each transaction amount.
