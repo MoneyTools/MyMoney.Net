@@ -280,36 +280,34 @@ namespace Walkabout.Views.Controls
                 if ( t.Account == this.account || // showing transactions for an account
                     (this.account == null )) // showing transactions by category // && ((!t.IsBudgeted && t.Account.IsBudgeted))
                 {
-
-                    if (t.Date >= start && t.Date <= end)
+                    // calcualte balances using data frmo teh start of teh account \ list so the end balance is correct
+                    if (t.Date <= end)
                     {
-                        // If the transactions are on the same day, don't add to the graph yet.  
-                        // Accumulate them and the accumulated value for the day will be displayed
-                        if (last != t.Date)
+                        // Start adding to the graph itself on the start date
+                        if (t.Date >= start)
                         {
-                            AddDatum(balance, last, t.Date, t, timeData);
+                            // If the transactions are on the same day, don't add to the graph yet.  
+                            // Accumulate them and the accumulated value for the day will be displayed
+                            if (last != t.Date)
+                            {
+                                AddDatum(balance, last, t.Date, t, timeData);
+                            }
+
+                            last = t.Date;
+                            lastt = t;
                         }
 
-                        last = t.Date;
-                        lastt = t;
-                    }
-
-                    // For all regular transaction lists, we calcuclate the overall balance on the fly, based on each transaction amount.
-                    // When we list securities - not an account - we should show the overall value of the securities instead, 
-                    // which is precalculated and stored within each transaction
-                    if (this.account == null && t.Investment != null)
-                    {
-                        balance = (double) t.RunningBalance;
-                    }
-                    else
-                    {
-                        balance += (double) t.GetCategorizedAmount(this.category);
-                    }
-                  
-                    // Got to the last transaction in the range
-                    if (t.Date > end)
-                    {
-                        break; 
+                        // For all regular transaction lists, we calcuclate the overall balance on the fly, based on each transaction amount.
+                        // When we list securities - not an account - we should show the overall value of the securities instead, 
+                        // which is precalculated and stored within each transaction
+                        if (this.account == null && t.Investment != null)
+                        {
+                            balance = (double) t.RunningBalance;
+                        }
+                        else
+                        {
+                            balance += (double) t.GetCategorizedAmount(this.category);
+                        }
                     }
                 }
             }
