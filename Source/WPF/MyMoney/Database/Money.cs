@@ -2517,28 +2517,6 @@ namespace Walkabout.Data
             }
         }
 
-        /// <summary>
-        /// Return the Last Transaction date in the Account
-        /// </summary>
-        [XmlIgnore]
-        public DateTime LastTransactionDate
-        {
-            get
-            {
-                MyMoney money = this.Parent.Parent as MyMoney;
-                if (money != null)
-                {
-                    Transaction t = money.Transactions.GetLatestTransactionFrom(this);
-                    if (t != null)
-                    {
-                        return t.Date;
-                    }
-                }
-                return DateTime.MinValue;
-            }
-        }
-
-
         [DataMember]
         [ColumnMapping(ColumnName = "Currency", MaxLength = 3, AllowNulls = true)]
         public string Currency
