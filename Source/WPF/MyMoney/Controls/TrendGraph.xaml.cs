@@ -267,42 +267,57 @@ namespace Walkabout.Views.Controls
             IList<ChartValue> timeData = s.Values;
             s.BeginUpdate();
 
-            bool first = true;
             double balance = this.account != null ? (double)this.account.OpeningBalance : 0;
             DateTime last = start;
             Transaction lastt = null;
-            bool started = this.account != null;
 
             foreach (object row in data)
             {
                 Transaction t = row as Transaction;
                 if (t == null) continue;
+                if (t.Status == TransactionStatus.Void) continue;
 
                 if ( t.Account == this.account || // showing transactions for an account
-                    (account == null )) // showing transactions by category // && ((!t.IsBudgeted && t.Account.IsBudgeted))
+                    (this.account == null )) // showing transactions by category // && ((!t.IsBudgeted && t.Account.IsBudgeted))
                 {
-                    decimal v = t.GetCategorizedAmount(this.category);
-                    if (t.Status == TransactionStatus.Void)
+                    // calculate balances using data from the start of the account \ list so the end balance is correct
+                    if (t.Date <= end)
                     {
-                        v = 0;
-                    }
-                    if (t.Date >= start && t.Date <= end)
-                    {
-                        started = true;
-                        if (first)
+                        // Start adding to the graph itself on the start date
+                        if (t.Date >= start)
                         {
-                            string label = GetLabel(balance, t);
-                            timeData.Add(new ChartValue(label, (double)balance, t));
-                            first = false;
+                            // If the transactions are on the same day, don't add to the graph yet.  
+                            // Accumulate them and the accumulated value for the day will be displayed
+                            if (last != t.Date)
+                            {
+                                AddDatum(balance, last, t.Date, t, timeData);
+                            }
+
+                            last = t.Date;
+                            lastt = t;
                         }
 
-                        AddDatum(balance, last, t.Date, t, timeData, (double)v);
-                        last = t.Date;
-                        lastt = t;
+                        // For all regular transaction lists, we calcuclate the overall balance on the fly, based on each transaction amount.
+                        // When we list securities - not an account - we should show the overall value of the securities instead, 
+                        // which is precalculated and stored within each transaction
+                        if (this.account == null && t.Investment != null)
+                        {
+                            balance = (double) t.RunningBalance;
+                        }
+                        else
+                        {
+                            balance += (double) t.GetCategorizedAmount(this.category);
+                        }
                     }
-                    balance += (double)v;
                 }
             }
+
+            // Put the last transaction in the list
+            if (lastt != null)
+            {
+                AddDatum(balance, last, end.AddDays(1), lastt, timeData);
+            }
+            
             s.EndUpdate();
             //s.Accumulate = false;
             //s.Color = color;
@@ -313,41 +328,22 @@ namespace Walkabout.Views.Controls
             return s;
         }
 
-        string GetLabel(double balance, Transaction t)
-        {
-            return balance.ToString("n", nfi) + "\r\n" + t.Date.ToShortDateString();
-        }
-
-        void AddDatum(double balance, DateTime start, DateTime end, Transaction t, IList<ChartValue> timeData, double v)
+        void AddDatum(double balance, DateTime start, DateTime end, Transaction t, IList<ChartValue> timeData)
         {
             // for this math to work, we have to ignore "time" in the dates.
             start = new DateTime(start.Year, start.Month, start.Day);
             end = new DateTime(end.Year, end.Month, end.Day);
             TimeSpan r = (end - start);
             int d = r.Days;
-            if (d == 0)
+
+            // spread the transactions across a range to fill the gaps so the graph spans the whole time span.
+            for (int i = 0; i < d; i++)
             {
-                // multiple transactions on the same day, just add the data values.
-                int i = timeData.Count - 1;
-                ChartValue datum = timeData[i];
-                if (datum.UserData != t)
-                {
-                    datum.Value += v;
-                    datum.Label = GetLabel(datum.Value, t);
-                }
+                string label = balance.ToString("n", nfi) + "\r\n" + start.ToShortDateString();
+                timeData.Add(new ChartValue(label, balance, t));
+                start = start.AddDays(1);
             }
-            else
-            {
-                // spread the transactions across a range to fill the gaps so the graph spans the whole time span.
-                DateTime today = DateTime.Today;
-                DateTime date = start;
-                for (int i = 0; i < d; i++)
-                {
-                    string label = GetLabel(balance, t);
-                    timeData.Add(new ChartValue(label, balance, t));
-                    date = date.AddDays(1);
-                }
-            }
+            return;
         }
 
         void OnYearToDate(object sender, RoutedEventArgs e)

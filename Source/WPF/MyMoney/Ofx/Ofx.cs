@@ -2979,6 +2979,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                             {
                                 sec.LastPrice = sec.Price;
                                 sec.Price = unitprice;
+                                sec.PriceDate = DateTime.Today;
                             }
                         }
 

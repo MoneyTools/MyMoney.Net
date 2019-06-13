@@ -1920,7 +1920,7 @@ namespace Walkabout.Data
         public void ReadSecurities(Securities securities, MyMoney money)
         {
             securities.Clear();
-            IDataReader reader = ExecuteReader("SELECT Id,Name,Symbol,Price,LastPrice,CuspId,SecurityType,Taxable FROM Securities");
+            IDataReader reader = ExecuteReader("SELECT Id,Name,Symbol,Price,LastPrice,CuspId,SecurityType,Taxable,PriceDate FROM Securities");
             securities.BeginUpdate(false);
             while (reader.Read())
             {
@@ -1934,6 +1934,7 @@ namespace Walkabout.Data
                 s.CuspId = ReadDbString(reader, 5);
                 if (!reader.IsDBNull(6)) s.SecurityType = (SecurityType)reader.GetInt32(6);
                 if (!reader.IsDBNull(7)) s.Taxable = (YesNo)reader.GetByte(7);
+                if (!reader.IsDBNull(8)) s.PriceDate = reader.SafeGetDateTime(8);
                 s.OnUpdated();
             }
             securities.EndUpdate();
@@ -1958,6 +1959,7 @@ namespace Walkabout.Data
                     sb.Append(String.Format(",CuspId='{0}'", s.CuspId));
                     sb.Append(String.Format(",SecurityType={0}", (int)s.SecurityType));
                     sb.Append(String.Format(",Taxable={0}", (byte)s.Taxable));
+                    sb.Append(String.Format(",PriceDate={0}", DBDateTime(s.PriceDate)));
                     sb.AppendLine(String.Format(" WHERE Id={0};", s.Id));
                 }
                 else if (s.IsInserted)
@@ -1972,6 +1974,7 @@ namespace Walkabout.Data
                     sb.Append(String.Format(",'{0}'", s.CuspId));
                     sb.Append(String.Format(",{0}", (int)s.SecurityType));
                     sb.Append(String.Format(",{0}", (byte)s.Taxable));
+                    sb.Append(String.Format(",{0}", DBDateTime(s.PriceDate)));
                     sb.AppendLine(");");
                 }
                 else if (s.IsDeleted)
