@@ -280,7 +280,7 @@ namespace Walkabout.Views.Controls
                 if ( t.Account == this.account || // showing transactions for an account
                     (this.account == null )) // showing transactions by category // && ((!t.IsBudgeted && t.Account.IsBudgeted))
                 {
-                    // calcualte balances using data frmo teh start of teh account \ list so the end balance is correct
+                    // calculate balances using data from the start of the account \ list so the end balance is correct
                     if (t.Date <= end)
                     {
                         // Start adding to the graph itself on the start date
