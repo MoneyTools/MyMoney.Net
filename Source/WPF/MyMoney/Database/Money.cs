@@ -12583,7 +12583,6 @@ namespace Walkabout.Data
         }
     }
 
-
     //================================================================================
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class StockSplits : PersistentContainer, ICollection<StockSplit>

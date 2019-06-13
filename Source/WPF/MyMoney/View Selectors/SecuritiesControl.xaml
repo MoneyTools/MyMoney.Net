@@ -13,7 +13,6 @@
 
 
     <UserControl.Resources>
-        <c:NonzeroToFontBoldConverter x:Key="PayeeFontWeightConverter"/>
         
         <DataTemplate DataType="{x:Type localData:Security}">
             <Grid Name="ItemInTheList" >
@@ -35,8 +34,7 @@
                 <TextBlock Text="{Binding Name}" 
                            Grid.Column="0"
                            TextTrimming="CharacterEllipsis" 
-                           ClipToBounds="True"
-                           FontWeight="{Binding Flags, Converter={StaticResource PayeeFontWeightConverter}}"/>
+                           ClipToBounds="True"/>
                 
                 <TextBlock Text="{Binding Symbol}" 
                            Grid.Column="1"

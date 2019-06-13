@@ -1006,6 +1006,18 @@ namespace Walkabout.Controls
             return this.scrollViewer;
         }
 
+        public Tuple<int,int> GetVisibleRows()
+        {
+            ScrollViewer sv = GetScrollViewer();
+            if (sv != null)
+            {
+                int firstRow = (int)sv.VerticalOffset;
+                int lastRow = (int)sv.VerticalOffset + (int)sv.ViewportHeight + 1;
+                return new Tuple<int, int>(firstRow, lastRow);
+            }
+            return null;
+        }
+
         private DataGridRowsPresenter GetRowsPresenter()
         {
             ScrollViewer viewer = GetScrollViewer();
