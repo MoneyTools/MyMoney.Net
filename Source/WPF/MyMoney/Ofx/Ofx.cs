@@ -2095,8 +2095,8 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             {
                 XElement srs = pair.Item2;
                 Account a = pair.Item1;
-                ProcessInvestmentTransactionList(a, srs.SelectElement("INVTRANLIST"), results);
                 ProcessInvestmentPositions(srs.SelectElement("INVPOSLIST"));
+                ProcessInvestmentTransactionList(a, srs.SelectElement("INVTRANLIST"), results);
                 
                 // todo: compare this info with our local account info...
                 /*
@@ -2171,6 +2171,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     {
                         s.Price = price;
                     }
+                    s.PriceDate = ParseOfxDate(invPos.SelectElementValue("DTPRICEASOF"));
                 }
             }
         }
@@ -2259,6 +2260,10 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
                 if (t != null)
                 {
+                    if (t.Investment != null && t.Investment.UnitPrice == 0 && t.Investment.Security != null)
+                    {
+                        t.Investment.UnitPrice = t.Investment.Security.Price;  // use the latest value just updated by ProcessInvestmentPositions.
+                    }
                     found.Add(t);
                 }
             }

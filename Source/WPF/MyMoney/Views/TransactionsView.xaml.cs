@@ -947,11 +947,26 @@ namespace Walkabout.Views
                 this.myMoney.Rebalance(this.ActiveRental);
             }
 
-
             if (isDisplayInvalid)
             {
                 Refresh();
                 isDisplayInvalid = false;
+            }
+            else
+            {
+                var rows = this.TheActiveGrid.GetVisibleRows();
+                if (rows != null)
+                {
+                    TransactionCollection c = TheActiveGrid.ItemsSource as TransactionCollection;
+                    if (c != null)
+                    {
+                        for (int row = rows.Item1; row < rows.Item2 && row < c.Count; row++)
+                        {
+                            Transaction t = c[row];
+                            t.RaisePropertyChanged("Balance");
+                        }
+                    }
+                }
             }
             rebalancing = false;
         }
@@ -2638,7 +2653,7 @@ namespace Walkabout.Views
                 list = new List<ChangeEventArgs>(pendingUpdates);
                 pendingUpdates.Clear();
             }
-            DataGrid grid = TheActiveGrid;
+            MoneyDataGrid grid = TheActiveGrid;
             if (grid != null)
             {
                 TransactionCollection tc = grid.ItemsSource as TransactionCollection;
@@ -2682,8 +2697,7 @@ namespace Walkabout.Views
                                 {
                                     if (args.ChangeType == ChangeType.Deleted || args.ChangeType == ChangeType.Inserted)
                                     {
-                                        // then we need a refresh
-                                        refresh = true;
+                                        rebalance = true;
                                     }
                                 }
                             }

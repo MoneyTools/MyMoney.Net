@@ -1001,7 +1001,7 @@
 
                     <!-- FIFO TRACKING -->
                     <DataGridTemplateColumn Header="FIFO"  CellTemplate="{StaticResource myTemplateFifo}" 
-                                        SortMemberPath="RoutingPath" SortDirection="Ascending"/>
+                                        SortMemberPath="RoutingPath" />
 
 
                     <!-- UNITS -->
