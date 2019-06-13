@@ -278,16 +278,18 @@ namespace Walkabout.Network
                             else
                             {
                                 batch.Add(s);
-                                if (batch.Count == max_batch || i + 1 == max)
-                                {
-                                    FetchQuotes(batch);
-                                }
                             }
                         }
                         else
                         {
                             AddError(string.Format(Walkabout.Properties.Resources.SkippingSecurityMissingSymbol, s.Name));
                         }
+
+                        if (batch.Count == max_batch || i + 1 == max)
+                        {
+                            FetchQuotes(batch);
+                        }
+
                         if (status != null)
                         {
                             status.ShowProgress(s.Name, 0, max, i);
