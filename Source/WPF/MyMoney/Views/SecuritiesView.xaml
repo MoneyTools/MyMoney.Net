@@ -184,8 +184,7 @@
             </Border>
         </DataTemplate>
 
-
-        <!-- LastPrice -->
+        <!-- %Change -->
         <DataTemplate x:Key="myTemplatePercentChange">
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
@@ -193,8 +192,23 @@
             </Border>
         </DataTemplate>
 
+      <!-- PriceDate -->
+      <DataTemplate x:Key="myTemplatePriceDate">
+        <!-- the border makes the whole column hittable -->
+        <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+          <TextBlock Text="{Binding PriceDate, StringFormat={}{0:d}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
+        </Border>
+      </DataTemplate>
 
-        <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
+      <DataTemplate x:Key="myTemplatePriceDateEdit" >
+        <!-- the border makes the whole column hittable -->
+        <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+          <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Price, StringFormat={}{0:d}, Mode=TwoWay}" TextAlignment="Right" />
+        </Border>
+      </DataTemplate>
+
+
+      <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="1" />
@@ -553,9 +567,12 @@
                 <DataGridTemplateColumn Header="LastPrice"  CellTemplate="{StaticResource myTemplateLastPrice}" CellEditingTemplate="{StaticResource myTemplateLastPriceEdit}"
                                         SortMemberPath="LastPrice" MinWidth="80"/>
 
-
                 <!-- PercentChange -->
                 <DataGridTemplateColumn Header="%Change"  CellTemplate="{StaticResource myTemplatePercentChange}" SortMemberPath="PercentChange" MinWidth="80" />
+
+               <!-- PriceDate -->
+               <DataGridTemplateColumn Header="PriceDate"  CellTemplate="{StaticResource myTemplatePriceDate}" CellEditingTemplate="{StaticResource myTemplatePriceEdit}"
+                                       SortMemberPath="PriceDate" MinWidth="80"/>
 
             </DataGrid.Columns>
         </local:MoneyDataGrid>

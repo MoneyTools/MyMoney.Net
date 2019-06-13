@@ -7258,6 +7258,7 @@ namespace Walkabout.Data
             s.LastPrice = security.LastPrice;
             s.SecurityType = security.SecurityType;
             s.Taxable = security.Taxable;
+            s.PriceDate = security.PriceDate;
             // todo: merge stock splits...
             return s;
         }
@@ -7291,6 +7292,7 @@ namespace Walkabout.Data
         string name;
         string symbol;
         decimal price;
+        DateTime priceDate;
         decimal lastPrice;
         string cuspid;
         bool expanded;
@@ -7397,6 +7399,14 @@ namespace Walkabout.Data
         {
             get { return this.taxable; }
             set { if (this.taxable != value) { this.taxable = value; OnChanged("Taxable"); } }
+        }
+
+        [DataMember]
+        [ColumnMapping(ColumnName = "PriceDate", SqlType = typeof(SqlDateTime), AllowNulls = true)]
+        public DateTime PriceDate
+        {
+            get { return this.priceDate; }
+            set { if (this.priceDate != value) { this.priceDate = value; OnChanged("PriceDate"); } }
         }
 
         [XmlIgnore]

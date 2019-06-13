@@ -633,6 +633,7 @@ namespace Walkabout.Network
                 decimal last = GetDecimal(stock, "LastPrice");
                 s.LastPrice = last;
                 s.Price = quote;
+                s.PriceDate = DateTime.Today;
             }
         }
 
