@@ -52,13 +52,10 @@ namespace Walkabout.Utilities
             SyncRecentFilesMenu();
         }
 
-        bool addingFile;
-
         void AddRecentFileName(string fileName)
         {
             try
             {
-                addingFile = true;
                 if (this.recentFiles.Contains(fileName))
                 {
                     this.recentFiles.Remove(fileName);
@@ -77,10 +74,6 @@ namespace Walkabout.Utilities
             catch (System.IO.IOException)
             {
                 // ignore bad files
-            }
-            finally
-            {
-                addingFile = false;
             }
         }
 

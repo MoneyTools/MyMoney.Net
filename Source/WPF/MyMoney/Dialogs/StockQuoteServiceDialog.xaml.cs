@@ -61,6 +61,7 @@ namespace Walkabout.Dialogs
                 item.ApiKey = current.ApiKey;
                 item.ApiRequestsPerDayLimit = current.ApiRequestsPerDayLimit;
                 item.ApiRequestsPerMinuteLimit = current.ApiRequestsPerMinuteLimit;
+                item.ApiRequestsPerMonthLimit = current.ApiRequestsPerMonthLimit;
                 list.RemoveAt(found);
                 list.Insert(0, item);
             }

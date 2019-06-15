@@ -84,7 +84,8 @@ namespace Walkabout.Network
                 Name = FriendlyName,
                 ApiKey = "",
                 ApiRequestsPerMinuteLimit = 60,
-                ApiRequestsPerDayLimit = 500000
+                ApiRequestsPerDayLimit = 0,
+                ApiRequestsPerMonthLimit = 500000
             };
         }
 

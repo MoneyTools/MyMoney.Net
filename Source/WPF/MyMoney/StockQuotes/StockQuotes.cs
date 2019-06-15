@@ -32,6 +32,7 @@ namespace Walkabout.Network
         private string _apiKey;
         private int _requestsPerMinute;
         private int _requestsPerDay;
+        private int _requestsPerMonth;
 
         public string Name
         {
@@ -85,6 +86,19 @@ namespace Walkabout.Network
             }
         }
 
+        public int ApiRequestsPerMonthLimit
+        {
+            get { return _requestsPerMonth; }
+            set
+            {
+                if (_requestsPerMonth != value)
+                {
+                    _requestsPerMonth = value;
+                    OnPropertyChanged("ApiRequestsPerMonthLimit");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string name)
@@ -101,6 +115,7 @@ namespace Walkabout.Network
             w.WriteElementString("ApiKey", this.ApiKey == null ? "" : this.ApiKey);
             w.WriteElementString("ApiRequestsPerMinuteLimit", this.ApiRequestsPerMinuteLimit.ToString());
             w.WriteElementString("ApiRequestsPerDayLimit", this.ApiRequestsPerDayLimit.ToString());
+            w.WriteElementString("ApiRequestsPerMonthLimit", this.ApiRequestsPerMonthLimit.ToString());
         }
 
         public void Deserialize(XmlReader r)
@@ -125,6 +140,10 @@ namespace Walkabout.Network
                     else if (r.Name == "ApiRequestsPerDayLimit")
                     {
                         this.ApiRequestsPerDayLimit = r.ReadElementContentAsInt();
+                    }
+                    else if (r.Name == "ApiRequestsPerMonthLimit")
+                    {
+                        this.ApiRequestsPerMonthLimit = r.ReadElementContentAsInt();
                     }
                 }
             }
@@ -573,6 +592,7 @@ namespace Walkabout.Network
         DateTime _lastCall = DateTime.MinValue;
         int _callsThisMinute;
         int _callsToday;
+        int _callsThisMonth;
 
         public StockQuoteThrottle()
         {
@@ -600,6 +620,12 @@ namespace Walkabout.Network
             set { _callsToday = value; }
         }
 
+        public int CallsThisMonth
+        {
+            get { return _callsThisMonth; }
+            set { _callsThisMonth = value; }
+        }
+
         /// <summary>
         /// Get throttled sleep amount in milliseconds.
         /// </summary>
@@ -607,17 +633,29 @@ namespace Walkabout.Network
         public int GetSleep()
         {
             DateTime now = DateTime.Today;
+            if (now.Year == _lastCall.Year && now.Month == _lastCall.Month)
+            {
+                _callsThisMonth++;
+                if (Settings.ApiRequestsPerMonthLimit != 0 && _callsThisMonth > Settings.ApiRequestsPerMonthLimit)
+                {
+                    throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
+                }
+            }
+            else
+            {
+                _callsThisMonth = 0;
+            }
             if (now.Date == _lastCall.Date)
             {
                 _callsToday++;
-                if (_callsToday > Settings.ApiRequestsPerDayLimit)
+                if (Settings.ApiRequestsPerDayLimit != 0 && _callsToday > Settings.ApiRequestsPerDayLimit)
                 {
                     throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
                 }
                 if (now.Hour == _lastCall.Hour && now.Minute == _lastCall.Minute)
                 {
                     _callsThisMinute++;
-                    if (_callsThisMinute >= Settings.ApiRequestsPerMinuteLimit)
+                    if (Settings.ApiRequestsPerMinuteLimit != 0 && _callsThisMinute >= Settings.ApiRequestsPerMinuteLimit)
                     {
                         _callsThisMinute = 0;
                         return 60000; // sleep to next minute.
