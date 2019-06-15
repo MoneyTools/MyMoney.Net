@@ -139,7 +139,7 @@ namespace PublishHelp
                 string newhref = MapUrl(href);
                 if (href != newhref)
                 {
-                    anchor.SetAttributeValue("href", newhref);
+                    anchor.SetAttributeValue("href", System.Uri.EscapeUriString(newhref));
                     changed = true;
                 }
             }
@@ -264,7 +264,6 @@ namespace PublishHelp
                         name = s;
                     }
                 }
-
 
                 name = name.Replace("%20", " ");
 
