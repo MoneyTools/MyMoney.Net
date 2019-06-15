@@ -224,6 +224,11 @@
     <Compile Include="Dialogs\MoneyFileImportDialog.xaml.cs">
       <DependentUpon>MoneyFileImportDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\StockQuoteServiceDialog.xaml.cs">
+      <DependentUpon>StockQuoteServiceDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StockQuotes\AlphaVantage.cs" />
+    <Compile Include="StockQuotes\IEXTrading.cs" />
     <Compile Include="Utilities\AnimatedMessage.cs" />
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\FileHash.cs" />
@@ -635,7 +640,6 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <Content Include="StockQuotes\YahooDocumentation.html" />
     <Content Include="Tools\signtool.exe" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -814,6 +818,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\MoneyFileImportDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\StockQuoteServiceDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

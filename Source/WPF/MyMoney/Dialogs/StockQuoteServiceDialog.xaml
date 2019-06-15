@@ -1,0 +1,45 @@
+﻿<Window x:Class="Walkabout.Dialogs.StockQuoteServiceDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Walkabout.Dialogs"
+        mc:Ignorable="d" SizeToContent="WidthAndHeight"
+        Title="Stock Quote Service Dialog" >
+    <Grid>
+        <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Name" Grid.Row="0" Grid.Column="0" Margin="5"/>
+            <ComboBox x:Name="ComboServiceName" Grid.Row="0" Grid.Column="1" MinWidth="200"/>
+
+            <TextBlock Text="API Key:" Grid.Row="2" Grid.Column="0" Margin="5"/>
+            <TextBox x:Name="TextBoxApiKey" Grid.Row="2" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiKey, Mode=TwoWay}"/>
+
+            <TextBlock Text="Limit on Requests Per Minute:" Grid.Row="4" Grid.Column="0" Margin="5"/>
+            <TextBox x:Name="TextBoxRequestsPerMinuteLimit" Grid.Row="4" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerMinuteLimit, Mode=TwoWay}"/>
+
+            <TextBlock Text="Limit on Requests Per Day:" Grid.Row="6" Grid.Column="0" Margin="5"/>
+            <TextBox x:Name="TextBoxRequestsPerDayLimit" Grid.Row="6" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerDayLimit, Mode=TwoWay}"/>
+
+            <StackPanel Orientation="Horizontal" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,20,0,0">
+                <Button x:Name="ButtonOk" MinWidth="73" MinHeight="24" Margin="5" IsDefault="True" Click="OnOk">OK</Button>
+                <Button x:Name="ButtonCancel" MinWidth="73" MinHeight="24" Margin="5" IsCancel="True" Click="OnCancel">Cancel</Button>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</Window>

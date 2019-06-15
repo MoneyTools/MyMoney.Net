@@ -18,31 +18,190 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using Newtonsoft.Json;
 using Walkabout.Ofx;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Walkabout.Network
 {
     /// <summary>
-    /// This class tracks changes to Securities and fetches stock quotes from Yahoo
+    /// </summary>
+    public class StockServiceSettings : INotifyPropertyChanged
+    {
+        private string _name;
+        private string _apiKey;
+        private int _requestsPerMinute;
+        private int _requestsPerDay;
+
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    OnPropertyChanged("Name");
+                }
+            }
+        }
+
+        public string ApiKey
+        {
+            get { return _apiKey; }
+            set
+            {
+                if (_apiKey != value)
+                {
+                    _apiKey = value;
+                    OnPropertyChanged("ApiKey");
+                }
+            }
+        }
+
+        public int ApiRequestsPerMinuteLimit
+        {
+            get { return _requestsPerMinute; }
+            set
+            {
+                if (_requestsPerMinute != value)
+                {
+                    _requestsPerMinute = value;
+                    OnPropertyChanged("ApiRequestsPerMinuteLimit");
+                }
+            }
+        }
+
+        public int ApiRequestsPerDayLimit
+        {
+            get { return _requestsPerDay; }
+            set
+            {
+                if (_requestsPerDay != value)
+                {
+                    _requestsPerDay = value;
+                    OnPropertyChanged("ApiRequestsPerDayLimit");
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string name)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
+        public void Serialize(XmlWriter w)
+        {
+            w.WriteElementString("Name", this.Name == null ? "" : this.Name);
+            w.WriteElementString("ApiKey", this.ApiKey == null ? "" : this.ApiKey);
+            w.WriteElementString("ApiRequestsPerMinuteLimit", this.ApiRequestsPerMinuteLimit.ToString());
+            w.WriteElementString("ApiRequestsPerDayLimit", this.ApiRequestsPerDayLimit.ToString());
+        }
+
+        public void Deserialize(XmlReader r)
+        {
+            if (r.IsEmptyElement) return;
+            while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
+            {
+                if (r.NodeType == XmlNodeType.Element)
+                {
+                    if (r.Name == "Name")
+                    {
+                        this.Name = r.ReadElementContentAsString();
+                    }
+                    else if (r.Name == "ApiKey")
+                    {
+                        this.ApiKey = r.ReadElementContentAsString();
+                    }
+                    else if (r.Name == "ApiRequestsPerMinuteLimit")
+                    {
+                        this.ApiRequestsPerMinuteLimit = r.ReadElementContentAsInt();
+                    }
+                    else if (r.Name == "ApiRequestsPerDayLimit")
+                    {
+                        this.ApiRequestsPerDayLimit = r.ReadElementContentAsInt();
+                    }
+                }
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// This class encapsulates a new stock quote from IStockQuoteService
+    /// </summary>
+    public class StockQuote
+    {
+        public string Name { get; set; }
+        public string Symbol { get; set; }
+        public decimal Price { get; set; }
+        public DateTime Date { get; set; }
+    }
+
+    public interface IStockQuoteService
+    {
+        /// <summary>
+        /// Fetch updated security information for the given securities (most recent closing price).
+        /// This can be called multiple times and any pending downloads will be merged automatically
+        /// </summary>
+        /// <param name="securities">List of securities to fetch </param>
+        void BeginFetchQuotes(List<Security> securities);
+
+        /// <summary>
+        /// Return a count of pending downloads.
+        /// </summary>
+        int PendingCount { get; }
+
+        /// <summary>
+        /// Each downloaded quote is raised as an event on this interface.  Could be from any thread.
+        /// </summary>
+        event EventHandler<StockQuote> QuoteAvailable;
+
+        /// <summary>
+        /// If some error happens fetching a quote, this event is raised.
+        /// </summary>
+        event EventHandler<string> DownloadError;
+
+        /// <summary>
+        /// If the service is performing a whole batch at once, this event is raised after each batch is complete.
+        /// If there are still more downloads pending the boolean value is raised with the value false.
+        /// This is also raised when the entire pending list is completed with the boolean set to true.
+        /// </summary>
+        event EventHandler<bool> Complete;
+
+        /// <summary>
+        /// Stop all pending requests
+        /// </summary>
+        void Cancel();
+    }
+
+    /// <summary>
+    /// This class tracks changes to Securities and fetches stock quotes from the configured online stock quote service.
     /// </summary>
     public class StockQuotes : IDisposable
     {
         MyMoney myMoney;
-        Thread quotesThread;
         bool busy;
         StringBuilder errorLog = new StringBuilder();
         bool hasError;
         bool stop;
         List<Security> queue = new List<Security>(); // list of securities to fetch
         HashSet<string> fetched = new HashSet<string>(); // list that we have already fetched.
-        XDocument newQuotes;
         IStatusService status;
         IServiceProvider provider;
-        HttpWebRequest _current;
-        char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
-        const string address = "https://api.iextrading.com/1.0/stock/market/batch?types=quote&range=1m&last=1&symbols={0}";
+        StockServiceSettings _settings;
+        IStockQuoteService _service;
+        int _progressMax;
+        List<StockQuote> _batch = new List<StockQuote>();
 
-        public StockQuotes(IServiceProvider provider)
+        public StockQuotes(IServiceProvider provider, StockServiceSettings settings)
         {
+            this.Settings = settings;
             this.provider = provider;
             this.myMoney = (MyMoney)provider.GetService(typeof(MyMoney));
             this.status = (IStatusService)provider.GetService(typeof(IStatusService));
@@ -55,9 +214,63 @@ namespace Walkabout.Network
             {
                 if (!string.IsNullOrEmpty(s.Symbol))
                 {
-                    fetched.Add(s.Symbol);
+                    lock (fetched)
+                    {
+                        fetched.Add(s.Symbol);
+                    }
                 }
             }
+        }
+
+        public StockServiceSettings Settings
+        {
+            get
+            {
+                return _settings;
+            }
+            set
+            {
+                StopThread();
+                _settings = value;
+
+                IStockQuoteService service = null;
+                if (AlphaVantage.IsMySettings(_settings))
+                {
+                    service = new AlphaVantage(_settings);
+                }
+                else 
+                {
+                    service = new IEXTrading(_settings);
+                }
+                SetService(service);
+            }
+        }
+
+        void SetService(IStockQuoteService service)
+        {
+            if (_service != null)
+            {
+                _service.DownloadError -= OnServiceDownloadError;
+                _service.QuoteAvailable -= OnServiceQuoteAvailable;
+                _service.Complete -= OnServiceQuotesComplete;
+                _service.Cancel();
+            }
+            _service = service;
+            if (_service != null)
+            {
+                _service.DownloadError += OnServiceDownloadError;
+                _service.QuoteAvailable += OnServiceQuoteAvailable;
+                _service.Complete += OnServiceQuotesComplete;
+            }
+        }
+
+
+        public List<StockServiceSettings> GetDefaultSettingsList()
+        {
+            List<StockServiceSettings> result = new List<StockServiceSettings>();
+            result.Add(IEXTrading.GetDefaultSettings());
+            result.Add(AlphaVantage.GetDefaultSettings());
+            return result;
         }
 
         void OnMoneyChanged(object sender, ChangeEventArgs args)
@@ -76,16 +289,22 @@ namespace Walkabout.Network
                         {
                             case ChangeType.Changed:
                             case ChangeType.Inserted:
-                                if (!fetched.Contains(symbol))
+                                lock (fetched)
                                 {
-                                    newSecurities.Add(s);
+                                    if (!fetched.Contains(symbol))
+                                    {
+                                        newSecurities.Add(s);
+                                    }
                                 }
                                 break;
                             case ChangeType.Deleted:
-                                if (fetched.Contains(symbol))
+                                lock (fetched)
                                 {
-                                    fetched.Remove(symbol);
-                                    newSecurities.Remove(s);
+                                    if (fetched.Contains(symbol))
+                                    {
+                                        fetched.Remove(symbol);
+                                        newSecurities.Remove(s);
+                                    }
                                 }
                                 break;
                         }
@@ -120,61 +339,64 @@ namespace Walkabout.Network
             }
         }
 
-        static string PasswordName = "MyMoneyIntrinio";
-        public static void SaveCredentials(string username, string password)
-        {
-            using (Credential credential = new Credential(PasswordName, CredentialType.Generic))
-            {
-                try
-                {
-                    credential.UserName = Environment.GetEnvironmentVariable("USERNAME");
-                    credential.Persistence = CredentialPersistence.LocalComputer;
-                    credential.Password = Credential.ToSecureString(username + ":" + password);
-                    credential.Save();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("### Credential Error: {0}", ex.Message);
-                }
-            }
-        }
-
         public void UpdateQuotes()
         {
-            //using (Credential credential = new Credential(PasswordName, CredentialType.Generic))
-            //{
-            //    this.password = null;
-            //    credential.UserName = Environment.GetEnvironmentVariable("USERNAME");
-            //    credential.Persistence = CredentialPersistence.LocalComputer;
-            //    try
-            //    {
-            //        credential.Load();
-            //        this.password = Credential.SecureStringToString(credential.Password);
-            //    }
-            //    catch
-            //    {
-            //        // no password stored 
-            //    }
-            //}
-            //if (string.IsNullOrEmpty(this.password))
-            //{
-            //    AddError("Please setup your Intrinio account, and provide the password using Online Menu 'Intrinio Password...'");
-            //    ShowErrors(null);
-            //}
-            //else
-            {
-                Enqueue(myMoney.GetOwnedSecurities());
-            }
+            Enqueue(myMoney.GetOwnedSecurities());
         }
 
         void BeginGetQuotes()
         {
-            if (quotesThread == null)
+            stop = false;
+
+            List<Security> localCopy;
+            lock (queue)
             {
-                stop = false;
-                this.quotesThread = new Thread(new ThreadStart(GetQuotes));
-                this.quotesThread.Start();
+                localCopy = new List<Security>(queue);
+                queue.Clear();
             }
+
+            _progressMax = localCopy.Count;
+            _service.BeginFetchQuotes(localCopy);
+        }
+
+        private void OnServiceQuoteAvailable(object sender, StockQuote e)
+        {
+            if (status != null)
+            {
+                status.ShowProgress(e.Name, 0, _progressMax, _progressMax - _service.PendingCount);
+            }
+            lock (fetched)
+            {
+                fetched.Add(e.Symbol);
+            }
+            _batch.Add(e);
+        }
+
+        private void OnServiceQuotesComplete(object sender, bool complete)
+        {
+            if (complete)
+            {
+                if (status != null)
+                {
+                    status.ShowProgress(string.Empty, 0, 0, 0);
+                }
+                if (!stop)
+                {
+                    OnDownloadComplete();
+                }
+            }
+             
+            UiDispatcher.BeginInvoke(new Action(() =>
+            {
+                // must run on the UI thread because some Money changed event handlers change dependency properties and that requires UI thread.
+                ProcessResults(_batch);
+                _batch.Clear();
+            }));
+        }
+
+        private void OnServiceDownloadError(object sender, string e)
+        {
+            AddError(e);
         }
 
         EventHandlerCollection<EventArgs> handlers;
@@ -231,9 +453,9 @@ namespace Walkabout.Network
         void StopThread()
         {
             stop = true;
-            if (_current != null)
+            if (_service != null)
             {
-                _current.Abort();
+                _service.Cancel();
             }
             if (status != null)
             {
@@ -241,128 +463,9 @@ namespace Walkabout.Network
             }
         }
 
-        void GetQuotes()
-        {
-            try
-            {
-                busy = true;
-                hasError = false;
-                errorLog = new StringBuilder();
-                newQuotes = XDocument.Parse("<StockQuotes/>");
-
-                int max = 0;
-                List<Security> localCopy;
-                lock (queue)
-                {
-                    localCopy = new List<Security>(queue);
-                    max = localCopy.Count;
-                    queue.Clear();
-                }
-
-                List<Security> batch = new List<Data.Security>();
-                int max_batch = 100;
-
-                for (int i = 0; i < max; i++)
-                {
-                    Security s = localCopy[i];
-                    string symbol = s.Symbol;
-                    if (stop) break;
-                    try
-                    {
-                        if (!string.IsNullOrEmpty(symbol))
-                        {
-                            if (symbol.IndexOfAny(illegalUrlChars) >= 0)
-                            {
-                                AddError(string.Format(Walkabout.Properties.Resources.SkippingSecurityIllegalSymbol, symbol));
-                            }
-                            else
-                            {
-                                batch.Add(s);
-                            }
-                        }
-                        else
-                        {
-                            AddError(string.Format(Walkabout.Properties.Resources.SkippingSecurityMissingSymbol, s.Name));
-                        }
-
-                        if (batch.Count == max_batch || i + 1 == max)
-                        {
-                            FetchQuotes(batch);
-                        }
-
-                        if (status != null)
-                        {
-                            status.ShowProgress(s.Name, 0, max, i);
-                        }
-                    }
-                    catch (System.Net.WebException we)
-                    {
-                        if (we.Status != WebExceptionStatus.RequestCanceled)
-                        {
-                            AddError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + we.Message);
-                        }
-                        else
-                        {
-                            // we cancelled, so bail.
-                            stop = true;
-                            break;
-                        }
-
-                        HttpWebResponse http = we.Response as HttpWebResponse;
-                        if (http != null)
-                        {
-                            // certain http error codes are fatal.
-                            switch (http.StatusCode)
-                            {
-                                case HttpStatusCode.ServiceUnavailable:
-                                case HttpStatusCode.InternalServerError:
-                                case HttpStatusCode.Unauthorized:
-                                    AddError(http.StatusDescription);
-                                    stop = true;
-                                    break;
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        XElement se = new XElement("Query", new XAttribute("Symbols", symbol));
-                        se.Add(new XElement("Error", e.Message));
-                        newQuotes.Root.Add(se);
-
-                        // continue
-                        AddError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + e.Message);
-                    }
-                }
-
-                if (!stop)
-                {
-                    OnDownloadComplete();
-                }
-
-            }
-            catch (ThreadAbortException)
-            {
-                // shutting down.            
-                quotesThread = null;
-                return;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-
-            UiDispatcher.BeginInvoke(new Action(() =>
-            {
-                // must run on the UI thread because some Money changed event handlers change dependency properties and that requires UI thread.
-                ProcessResults();
-            }));
-
-            this.quotesThread = null;
-        }
-
         bool processingResults;
 
-        private void ProcessResults()
+        private void ProcessResults(List<StockQuote> results)
         {
             try
             {
@@ -372,36 +475,21 @@ namespace Walkabout.Network
                 this.myMoney.Securities.BeginUpdate(true);
                 try
                 {
-                    foreach (XElement e in newQuotes.Root.Elements())
+                    foreach (StockQuote quote in results)
                     {
-                        ProcessResult(e);
+                        ProcessResult(quote);
                     }
                 }
                 finally
                 {
                     this.myMoney.Securities.EndUpdate();
                 }
-
+                
                 busy = false;
 
-                if (status != null)
+                if (hasError && !stop)
                 {
-                    status.ShowProgress("", 0, 0, 0);
-                }
-                quotesThread = null;
-                if (newQuotes != null)
-                {
-                    string dir = OfxRequest.OfxLogPath;
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
-
-                    string path = Path.Combine(dir, "Stocks.xml");
-                    newQuotes.Save(path);
-
-                    if (hasError && !stop)
-                    {
-                        ShowErrors(path);
-                    }
+                    ShowErrors(null);
                 }
             }
             catch (Exception e)
@@ -443,159 +531,6 @@ namespace Walkabout.Network
             InternetExplorer.OpenUrl(IntPtr.Zero, uri.AbsoluteUri);
         }
 
-        class Quote
-        {
-            public string symbol = null;
-            public string companyName = null;
-            public string primaryExchange = null;
-            public string sector = null;
-            public decimal open = 0;
-            public decimal close = 0;
-            public decimal high = 0;
-            public decimal low = 0;
-            // and much more....
-        }
-
-        class IEXTradingResult
-        {
-            public List<Quote> quotes;
-
-            public void ParseResult(JsonTextReader reader)
-            {
-                quotes = new List<Network.StockQuotes.Quote>();
-
-                while (reader.Read())
-                {
-                    if (reader.TokenType == JsonToken.PropertyName)
-                    {
-                        string name = (string)reader.Value;
-                        if (reader.Read() && reader.TokenType == JsonToken.StartObject)
-                        {
-                            if (reader.Read() && reader.TokenType == JsonToken.PropertyName)
-                            {
-                                name = (string)reader.Value;
-                                if (name == "quote" && reader.Read() && reader.TokenType == JsonToken.StartObject)
-                                {
-                                    Quote q = new Quote();
-                                    ReadQuote(reader, q);
-                                    quotes.Add(q);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            private void ReadQuote(JsonTextReader reader, Quote quote)
-            {
-                while (reader.Read() && reader.TokenType != JsonToken.EndObject)
-                {
-                    if (reader.TokenType == JsonToken.PropertyName)
-                    {
-                        string name = (string)reader.Value;
-                        if (reader.Read())
-                        {
-                            switch (name)
-                            {
-                                case "symbol":
-                                    quote.symbol = (string)reader.Value;
-                                    break;
-                                case "companyName":
-                                    quote.companyName = (string)reader.Value;
-                                    break;
-                                case "primaryExchange":
-                                    quote.primaryExchange = (string)reader.Value;
-                                    break;
-                                case "sector":
-                                    quote.sector = (string)reader.Value;
-                                    break;
-                                case "open":
-                                    quote.open = GetDecimal(reader.Value);
-                                    break;
-                                case "close":
-                                    quote.close = GetDecimal(reader.Value);
-                                    break;
-                                case "high":
-                                    quote.high = GetDecimal(reader.Value);
-                                    break;
-                                case "low":
-                                    quote.low = GetDecimal(reader.Value);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-            decimal GetDecimal(object v)
-            {
-                try
-                {
-                    return Convert.ToDecimal(v);
-                }
-                catch
-                {
-                }
-                return 0;
-            }
-
-        }
-
-
-        void ParseStockQuotes(JsonTextReader reader, List<Security> batch)
-        {
-            IEXTradingResult result = new Network.StockQuotes.IEXTradingResult();
-            result.ParseResult(reader);
-            foreach (Security s in batch)
-            {
-                Quote quote = (from q in result.quotes
-                           where string.Compare(q.symbol, s.Symbol, StringComparison.OrdinalIgnoreCase) == 0
-                           select q).FirstOrDefault();
-                if (quote != null)
-                {
-                    XElement e = new XElement("Quote");
-                    e.Add(new XElement("LastPrice", quote.open));
-                    e.Add(new XElement("Price", quote.close));
-                    e.Add(new XElement("Symbol", s.Symbol));
-                    newQuotes.Root.Add(e);
-                }
-                else
-                {
-                    AddError(string.Format("Stock quote not found for symbol '{0}'", s.Symbol));
-                }
-            }
-        }
-
-        void FetchQuotes(List<Security> securities)
-        {
-            // See https://iextrading.com/developer/docs/#batch-requests
-            string symbols = string.Join(",", from s in securities select s.Symbol);
-            string uri = string.Format(address, symbols);
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
-            req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
-            req.Method = "GET";
-            req.Timeout = 10000;
-            //String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(this.password));
-            //req.Headers.Add("Authorization", "Basic " + encoded);
-            req.UseDefaultCredentials = false;
-            _current = req;
-
-            WebResponse resp = req.GetResponse();
-            using (Stream stm = resp.GetResponseStream())
-            {
-                using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
-                {
-                    using (var reader = new Newtonsoft.Json.JsonTextReader(sr))
-                    {
-                        ParseStockQuotes(reader, securities);
-                    }
-                }
-            }
-
-            // this service doesn't want too many calls per second.
-            Thread.Sleep(1000);
-        }
 
         void AddError(string msg)
         {
@@ -603,61 +538,141 @@ namespace Walkabout.Network
             errorLog.AppendLine(msg);
         }
 
-        void ProcessResult(XElement stock)
+        void ProcessResult(StockQuote quote)
         {
-            string name = GetString(stock, "Symbol");
-            decimal quote = GetDecimal(stock, "Price");
-            if (quote != 0)
+            string symbol = quote.Symbol;
+            decimal price = quote.Price;
+            if (price != 0)
             {
                 // we want to stop this from adding new Security objects by passing false
                 // because the Security objects should already exist as given to Enqueue
                 // and we don't even fetch anything of those Security objects don't already
                 // have a 'Symbol' to lookup.
-                Security s = this.myMoney.Securities.FindSymbol(name, false);
+                Security s = this.myMoney.Securities.FindSymbol(symbol, false);
                 if (s == null || s.IsDeleted)
                 {
                     return;
                 }
 
                 // Check to see if the security name has changed and update if needed
-                string securityName = GetString(stock, "Name");
-                if (!string.IsNullOrEmpty(securityName) && (string.IsNullOrEmpty(s.Name) || s.Name == name))
+                string securityName = quote.Name;
+                if (!string.IsNullOrEmpty(securityName) && (string.IsNullOrEmpty(s.Name) || s.Name == symbol))
                 {
                     s.Name = securityName;
                 }
-                string lp = GetString(stock, "LastPrice");
-                if (lp == "N/A")
-                {
-                    AddError(string.Format(Walkabout.Properties.Resources.YahooSymbolNotFound, name));
-                }
-                decimal last = GetDecimal(stock, "LastPrice");
-                s.LastPrice = last;
-                s.Price = quote;
-                s.PriceDate = DateTime.Today;
+                s.Price = price;
+                s.PriceDate = quote.Date;
             }
-        }
-
-        static string GetString(XElement e, string name)
-        {
-            XElement node = e.Element(name);
-            return (node != null) ? node.Value : string.Empty;
-        }
-
-        static decimal GetDecimal(XElement e, string name)
-        {
-            decimal result = 0;
-            XElement node = e.Element(name);
-            if (node == null)
-            {
-                return 0;
-            }
-            string value = node.Value;
-            if (!string.IsNullOrEmpty(value))
-            {
-                decimal.TryParse(value, out result);
-            }
-            return result;
         }
 
     }
+
+    public class StockQuoteThrottle
+    {
+        static StockQuoteThrottle _instance = null;
+        DateTime _lastCall = DateTime.MinValue;
+        int _callsThisMinute;
+        int _callsToday;
+
+        public StockQuoteThrottle()
+        {
+            _instance = this;
+        }
+
+        [XmlIgnore]
+        public StockServiceSettings Settings { get; set; }
+
+        public DateTime LastCall
+        {
+            get { return _lastCall; }
+            set { _lastCall = value; }
+        }
+
+        public int CallsThisMinute
+        {
+            get { return _callsThisMinute; }
+            set { _callsThisMinute = value; }
+        }
+
+        public int CallsToday
+        {
+            get { return _callsToday; }
+            set { _callsToday = value; }
+        }
+
+        /// <summary>
+        /// Get throttled sleep amount in milliseconds.
+        /// </summary>
+        /// <returns></returns>
+        public int GetSleep()
+        {
+            DateTime now = DateTime.Today;
+            if (now.Date == _lastCall.Date)
+            {
+                _callsToday++;
+                if (_callsToday > Settings.ApiRequestsPerDayLimit)
+                {
+                    throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
+                }
+                if (now.Hour == _lastCall.Hour && now.Minute == _lastCall.Minute)
+                {
+                    _callsThisMinute++;
+                    if (_callsThisMinute >= Settings.ApiRequestsPerMinuteLimit)
+                    {
+                        _callsThisMinute = 0;
+                        return 60000; // sleep to next minute.
+                    }
+                }
+            }
+            _lastCall = now;
+            return 0;
+        }
+
+        public void Save()
+        {
+            XmlSerializer s = new XmlSerializer(typeof(StockQuoteThrottle));
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            using (XmlWriter w = XmlWriter.Create(FileName, settings))
+            {
+                s.Serialize(w, this);
+            }
+        }
+
+        private static StockQuoteThrottle Load()
+        {
+            if (System.IO.File.Exists(FileName))
+            {
+                XmlSerializer s = new XmlSerializer(typeof(StockQuoteThrottle));
+                using (XmlReader r = XmlReader.Create(FileName))
+                {
+                    return (StockQuoteThrottle)s.Deserialize(r);
+                }
+            }
+            return new StockQuoteThrottle();
+        }
+
+        public static StockQuoteThrottle Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = Load();
+                }
+                return _instance;
+            }
+        }
+
+
+        internal static string FileName
+        {
+            get
+            {
+                return System.IO.Path.Combine(ProcessHelper.AppDataPath, "throttle.xml");
+            }
+        }
+
+    }
+
 }
