@@ -472,8 +472,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                     Grid grid = GetPopupContent(closest);
                     if (grid != null)
                     {
-                        Popup popup = hover.ShowPopup(grid);
-                        Dispatcher.BeginInvoke(new Action(() => {
+                        Popup popup = hover.CreatePopup(grid);
+                        popup.Opened += (sender2, args) => {
                             try
                             {
                                 Point p = scaled[closest];
@@ -494,13 +494,19 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                             catch
                             {
                             }
-                        }), System.Windows.Threading.DispatcherPriority.Background);
-                        
+                        };
+
+                        popup.IsOpen = true;
+
                     }
                 }
             }
         }
 
+        private void Popup_Loaded(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
         Grid GetPopupContent(int index)
         {

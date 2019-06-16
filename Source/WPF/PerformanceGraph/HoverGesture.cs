@@ -79,7 +79,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
         }
 
-        public Popup ShowPopup(FrameworkElement content)
+        public Popup CreatePopup(FrameworkElement content)
         {            
             Border border;
             if (popup == null)
@@ -93,7 +93,6 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             border = (Border)popup.Child;
             border.Child = content;
             popup.Placement = PlacementMode.Mouse;
-            popup.IsOpen = true;
             return popup;
         }
 
