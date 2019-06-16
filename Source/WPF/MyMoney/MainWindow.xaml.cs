@@ -24,7 +24,7 @@ using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Dialogs;
 using Walkabout.Migrate;
-using Walkabout.Network;
+using Walkabout.StockQuotes;
 using Walkabout.Reports;
 using Walkabout.Taxes;
 using Walkabout.Utilities;
@@ -78,7 +78,7 @@ namespace Walkabout
         private BalanceControl balanceControl;
 
         private ExchangeRates exchangeRates;
-        private StockQuotes quotes;
+        private StockQuoteManager quotes;
         private int mainThreadId;
         private int loadTime = Environment.TickCount;
         private RecentFilesMenu recentFilesMenu;
@@ -103,6 +103,12 @@ namespace Walkabout
 
                 this.attachmentManager = new AttachmentManager(this.myMoney);
                 this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
+
+                var stockService = settings.StockServiceSettings;
+                if (stockService == null)
+                {
+                    settings.StockServiceSettings = IEXTrading.GetDefaultSettings();
+                }
 
                 Walkabout.Utilities.UiDispatcher.CurrentDispatcher = this.Dispatcher;
                 this.mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
@@ -193,7 +199,7 @@ namespace Walkabout
                 //-----------------------------------------------------------------
                 // Stock related setup
                 //
-                this.quotes = new StockQuotes((IServiceProvider)this);
+                this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings);
                 this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
 
                 this.exchangeRates = new ExchangeRates();
@@ -279,6 +285,8 @@ namespace Walkabout
                 this.recentFilesMenu = new RecentFilesMenu(MenuRecentFiles);
                 this.recentFilesMenu.SetFiles(settings.RecentFiles);
                 this.recentFilesMenu.RecentFileSelected += OnRecentFileSelected;
+
+                this.TransactionGraph.ServiceProvider = this;
 
 #if PerformanceBlocks
             }
@@ -512,11 +520,13 @@ namespace Walkabout
 
                 if (this.quotes != null)
                 {
-                    this.quotes.DownloadComplete -= new EventHandler<EventArgs>(OnStockDownloadComplete);
+                    using (this.quotes)
+                    {
+                        this.quotes.DownloadComplete -= new EventHandler<EventArgs>(OnStockDownloadComplete);
+                    }
                 }
-                this.quotes = new StockQuotes((IServiceProvider)this);
+                this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings);
                 this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
-
 
                 if (settings.RentalManagement)
                 {
@@ -533,8 +543,8 @@ namespace Walkabout
                 if (this.database != null)
                 {
                     string path = this.database.DatabasePath;
-                    string logPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
-                    OfxRequest.OfxLogPath = logPath;
+                    OfxRequest.OfxLogPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
+                    this.quotes.LogPath = Path.Combine(Path.GetDirectoryName(path), "StockQuotes");
                 }
 
                 this.accountsControl.MyMoney = this.myMoney;
@@ -3089,6 +3099,10 @@ namespace Walkabout
             {
                 return this.toolBox;
             }
+            else if (service == typeof(StockQuoteManager))
+            {
+                return this.quotes;
+            }
             else if (service == typeof(ExchangeRates))
             {
                 return this.exchangeRates;
@@ -4349,29 +4363,22 @@ namespace Walkabout
             MessageBoxEx.Show(msg, "About", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        private void OnStockQuoteServiceOptions(object sender, ExecutedRoutedEventArgs e)
+        {
+            StockQuoteServiceDialog d = new StockQuoteServiceDialog();
+            d.Owner = this;
+            d.StockQuoteManager = this.quotes;
+            if (d.ShowDialog() == true)
+            {
+                // service may have changed, so update our persistent settings and 
+                // update the stock quote service to use it.
+                var settings = d.SelectedSettings;
+                this.settings.StockServiceSettings = settings;
+                this.quotes.Settings = settings;
+                this.quotes.UpdateQuotes();
+            }
+        }
+
         #endregion
-
-        // this could be handy if we add support for stock quote accounts...
-        //private void OnCommandStockQuoteAccountCreds(object sender, ExecutedRoutedEventArgs e)
-        //{
-        //    PasswordWindow pw = new PasswordWindow();
-        //    pw.Title = "Intrinio Password";
-        //    pw.UserNamePrompt = "Username";
-        //    var box = pw.IntroMessagePrompt;
-        //    box.Document.Blocks.Clear();
-        //    Paragraph p = new Paragraph();
-        //    p.Inlines.Add(new Run("Stock quotes are downloaded using https://intrinio.com.  Please register with them for free developer account and enter your username and password here"));
-        //    box.Document.Blocks.Add(p);
-        //    box.Visibility = Visibility.Visible;
-
-        //    pw.Owner = Application.Current.MainWindow;
-        //    pw.Optional = true;
-        //    if (pw.ShowDialog() == true)
-        //    {
-        //        string username = pw.UserName;
-        //        string password = pw.PasswordConfirmation;
-        //        StockQuotes.SaveCredentials(username, password);
-        //    }
-        //}
     }
 }

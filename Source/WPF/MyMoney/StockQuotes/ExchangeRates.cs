@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Walkabout.Data;
 using Walkabout.RestfulWebServices;
 
-namespace Walkabout.Network
+namespace Walkabout.StockQuotes
 {
     public class ExchangeRates : IDisposable
     {

@@ -8,7 +8,7 @@ using Walkabout.Controls;
 using Walkabout.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Walkabout.Network;
+using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs

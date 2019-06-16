@@ -39,8 +39,7 @@
                 <TextBlock Text="{Binding Symbol}" 
                            Grid.Column="1"
                            TextTrimming="CharacterEllipsis" 
-                           ClipToBounds="True"
-                           FontWeight="{Binding Flags, Converter={StaticResource PayeeFontWeightConverter}}"/>
+                           ClipToBounds="True"/>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>

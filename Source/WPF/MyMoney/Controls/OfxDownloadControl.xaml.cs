@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Collections.Generic;
 using Walkabout.Data;
 using Walkabout.Dialogs;
-using Walkabout.Network;
+using Walkabout.StockQuotes;
 using System.Windows.Documents;
 using Walkabout.Utilities;
 using System;

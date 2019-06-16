@@ -109,8 +109,17 @@ namespace Walkabout.Utilities
             get
             {
                 string user = Environment.GetEnvironmentVariable("USERNAME");
+                return System.IO.Path.Combine(AppDataPath, user + ".settings");
+            }
+        }
+
+        public static string AppDataPath
+        {
+            get
+            {
+                string user = Environment.GetEnvironmentVariable("USERNAME");
                 string folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MyMoney");
-                return System.IO.Path.Combine(folder, user + ".settings");
+                return folder;
             }
         }
 

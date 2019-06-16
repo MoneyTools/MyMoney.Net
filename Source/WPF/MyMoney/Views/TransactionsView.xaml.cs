@@ -963,7 +963,14 @@ namespace Walkabout.Views
                         for (int row = rows.Item1; row < rows.Item2 && row < c.Count; row++)
                         {
                             Transaction t = c[row];
-                            t.RaisePropertyChanged("Balance");
+                            if (TheActiveGrid.Name == "TheGrid_BySecurity")
+                            {
+                                t.RaisePropertyChanged("RunningBalance");
+                            }
+                            else
+                            {
+                                t.RaisePropertyChanged("Balance");
+                            }
                         }
                     }
                 }

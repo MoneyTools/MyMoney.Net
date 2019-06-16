@@ -313,6 +313,24 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stock quote service quota has been exceeded, try again tomorrow..
+        /// </summary>
+        internal static string StockServiceQuotaExceeded {
+            get {
+                return ResourceManager.GetString("StockServiceQuotaExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stock symbol {0} not found online.
+        /// </summary>
+        internal static string SymbolNotFound {
+            get {
+                return ResourceManager.GetString("SymbolNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Transfer from closed account:.
         /// </summary>
         internal static string TransferFromClosedAccountPrefix {
@@ -534,15 +552,6 @@ namespace Walkabout.Properties {
         internal static string XmlFileFilter {
             get {
                 return ResourceManager.GetString("XmlFileFilter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yahoo returned &apos;N/A&apos; for stock symbol {0}.
-        /// </summary>
-        internal static string YahooSymbolNotFound {
-            get {
-                return ResourceManager.GetString("YahooSymbolNotFound", resourceCulture);
             }
         }
     }

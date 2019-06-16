@@ -885,7 +885,7 @@ namespace Walkabout.Views.Controls
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             Account a = value as Account;
-            if (a != null)
+            if (a != null && !a.IsClosed)
             {
                 if (a.ReconcileWarning > 0 && a.LastBalance < DateTime.Now.AddMonths(-a.ReconcileWarning - 1))
                 {

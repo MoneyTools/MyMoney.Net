@@ -274,10 +274,13 @@
   <data name="XmlFileFilter" xml:space="preserve">
     <value>XML files (*.xml)|*.xml</value>
   </data>
-  <data name="YahooSymbolNotFound" xml:space="preserve">
-    <value>Yahoo returned 'N/A' for stock symbol {0}</value>
+  <data name="SymbolNotFound" xml:space="preserve">
+    <value>Stock symbol {0} not found online</value>
   </data>
   <data name="MoneyFileFilter" xml:space="preserve">
     <value>Money Files (*.db)|*.db</value>
+  </data>
+  <data name="StockServiceQuotaExceeded" xml:space="preserve">
+    <value>Stock quote service quota has been exceeded, try again tomorrow.</value>
   </data>
 </root>

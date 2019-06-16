@@ -14,6 +14,7 @@ using Walkabout.Interfaces;
 using Walkabout.Utilities;
 using Walkabout.Views;
 using Walkabout.Interfaces.Views;
+using Walkabout.StockQuotes;
 
 namespace Walkabout.Configuration
 {
@@ -235,6 +236,19 @@ namespace Walkabout.Configuration
             set { map["RentalManagement"] = value; }
         }
 
+        public StockServiceSettings StockServiceSettings
+        {
+            get
+            {
+                object value = map["StockServiceSettings"];
+                return value is StockServiceSettings ? (StockServiceSettings)value : null;
+            }
+            set
+            {
+                map["StockServiceSettings"] = value;
+            }
+        }
+
         public QueryRow[] Query
         {
             get
@@ -454,6 +468,12 @@ namespace Walkabout.Configuration
                         {
                             pi.SetValue(this, ReadQuery(r), null);
                         }
+                        else if (t == typeof(StockServiceSettings))
+                        {
+                            StockServiceSettings s = new StockServiceSettings();
+                            s.Deserialize(r);
+                            pi.SetValue(this, s, null);
+                        }
                         else
                         {
                             throw new Exception("Settings.ReadXml encountered unsupported property type '" + t.FullName + "'");
@@ -589,6 +609,14 @@ namespace Walkabout.Configuration
                         w.WriteStartElement(key);
                         WriteQuery(w, (QueryRow[])value);
                         w.WriteEndElement();
+                    }
+                    else if (t == typeof(StockServiceSettings))
+                    {
+                        StockServiceSettings s = (StockServiceSettings)value;
+                        w.WriteStartElement("StockServiceSettings");
+                        s.Serialize(w);
+                        w.WriteEndElement();
+
                     }
                     else
                     {
@@ -775,7 +803,6 @@ namespace Walkabout.Configuration
             w.WriteString(XmlConvert.ToString(dt, XmlDateTimeSerializationMode.Utc));
             w.WriteEndElement();
         }
-
 
         static private void SerializeTimeSpan(XmlWriter w, string name, TimeSpan span)
         {
