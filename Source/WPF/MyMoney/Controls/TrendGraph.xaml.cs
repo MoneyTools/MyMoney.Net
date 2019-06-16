@@ -27,6 +27,7 @@ namespace Walkabout.Views.Controls
         DateTime end;
         bool yearToDate;
         int series = 1;
+        IServiceProvider sp;
 
         public readonly static RoutedUICommand CommandYearToDate;
         public readonly static RoutedUICommand CommandNext;
@@ -60,6 +61,12 @@ namespace Walkabout.Views.Controls
             this.start = Step(end, this.range, this.years, -1);
             InitializeComponent();
             this.MouseWheel += new MouseWheelEventHandler(TransactionGraph_MouseWheel);            
+        }
+
+        public IServiceProvider ServiceProvider
+        {
+            get { return sp; }
+            set { sp = value; }
         }
 
         public bool ShowBalance { get; set; }

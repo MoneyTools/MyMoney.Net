@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Walkabout.Network;
+using Walkabout.StockQuotes;
 
 namespace Walkabout.Dialogs
 {
@@ -20,7 +20,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class StockQuoteServiceDialog : Window
     {
-        StockQuotes _stockQuotes;
+        StockQuoteManager _stockQuotes;
         List<StockServiceSettings> _list;
         StockServiceSettings _selection;
 
@@ -29,7 +29,7 @@ namespace Walkabout.Dialogs
             InitializeComponent();
         }
 
-        public StockQuotes StockQuotes
+        public StockQuoteManager StockQuoteManager
         {
             get { return _stockQuotes;  }
             set

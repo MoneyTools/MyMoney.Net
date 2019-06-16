@@ -9,10 +9,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Walkabout.Data;
 using Walkabout.Utilities;
 
-namespace Walkabout.Network
+namespace Walkabout.StockQuotes
 {
     class IEXTrading : IStockQuoteService
     {
@@ -21,15 +20,17 @@ namespace Walkabout.Network
         const string address = "https://cloud.iexapis.com/stable/stock/market/batch?symbols={0}&types=quote&range=1m&last=1&token={1}";
         char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
         StockServiceSettings _settings;
-        List<Security> _pending;
+        HashSet<string> _pending;
         Thread _downloadThread;
         HttpWebRequest _current;
         bool _cancelled;
+        string _logPath;
 
-        public IEXTrading(StockServiceSettings settings)
+        public IEXTrading(StockServiceSettings settings, string logPath)
         {
             _settings = settings;
             settings.Name = FriendlyName;
+            _logPath = logPath;
         }
 
         public int PendingCount { get { return (_pending == null) ? 0 : _pending.Count; } }
@@ -94,25 +95,22 @@ namespace Walkabout.Network
             return settings.Name == FriendlyName;
         }
 
-        public void BeginFetchQuotes(List<Security> securities)
+        public void BeginFetchQuotes(List<string> symbols)
         {
             int count = 0;
             if (_pending == null)
             {
-                _pending = securities;
-                count = securities.Count;
+                _pending = new HashSet<string>(symbols);
+                count = _pending.Count;
             }
             else
             {
                 lock (_pending)
                 {
                     // merge the lists.
-                    foreach (Security s in securities)
+                    foreach (string s in symbols)
                     {
-                        if (!(from p in _pending where p.Symbol == s.Symbol select p).Any())
-                        {
-                            _pending.Add(s);
-                        }
+                        _pending.Add(s);
                     }
                     count = _pending.Count;
                 }
@@ -132,28 +130,27 @@ namespace Walkabout.Network
                 StockQuoteThrottle.Instance.Settings = this._settings;
                 // This is on a background thread
                 int max_batch = 100;
-                List<Security> batch = new List<Security>();
+                List<string> batch = new List<string>();
                 while (!_cancelled)
                 {
                     int remaining = 0;
-                    Security security = null;
+                    string symbol = null;
                     lock (_pending)
                     {
                         if (_pending.Count > 0)
                         {
-                            security = _pending[0];
-                            _pending.RemoveAt(0);
+                            symbol = _pending.FirstOrDefault();
+                            _pending.Remove(symbol);
                             remaining = _pending.Count;
                         }
                     }
-                    if (security == null)
+                    if (symbol == null)
                     {
                         // done!
                         break;
                     }
 
-                    // weed out any securities that have no symbol or have a symbol that would be invalid.               
-                    string symbol = security.Symbol;
+                    // weed out any securities that have no symbol or have a symbol that would be invalid. 
                     if (string.IsNullOrEmpty(symbol))
                     {
                         // skip securities that have no symbol.
@@ -165,12 +162,12 @@ namespace Walkabout.Network
                     }
                     else
                     {
-                        batch.Add(security);
+                        batch.Add(symbol);
                     }
 
                     if (batch.Count() == max_batch || remaining == 0)
                     {
-                        string symbols = string.Join(",", from s in batch select s.Symbol);
+                        string symbols = string.Join(",", batch);
                         try
                         {
                             string uri = string.Format(address, symbols, _settings.ApiKey);
@@ -189,12 +186,13 @@ namespace Walkabout.Network
                                     string json = sr.ReadToEnd();
                                     JObject o = JObject.Parse(json);
                                     List<StockQuote> result = ParseStockQuotes(o);
-                                    foreach (Security s in batch)
+                                    // make sure they are all returned, and report errors for any that are not.
+                                    foreach (string s in batch)
                                     {
-                                        StockQuote q = (from i in result where string.Compare(i.Symbol, s.Symbol, StringComparison.OrdinalIgnoreCase) == 0 select i).FirstOrDefault();
+                                        StockQuote q = (from i in result where string.Compare(i.Symbol, s, StringComparison.OrdinalIgnoreCase) == 0 select i).FirstOrDefault();
                                         if (q == null)
                                         {
-                                            OnError(string.Format("No quote returned for symbol {0}", s.Symbol));
+                                            OnError(string.Format("No quote returned for symbol {0}", s));
                                         }
                                         else
                                         {
@@ -293,9 +291,25 @@ namespace Walkabout.Network
                         {
                             quote.Name = (string)value;
                         }
+                        if (child.TryGetValue("open", StringComparison.Ordinal, out value))
+                        {
+                            quote.Open = (decimal)value;
+                        }
                         if (child.TryGetValue("close", StringComparison.Ordinal, out value))
                         {
-                            quote.Price = (decimal)value;
+                            quote.Close = (decimal)value;
+                        }
+                        if (child.TryGetValue("high", StringComparison.Ordinal, out value))
+                        {
+                            quote.High = (decimal)value;
+                        }
+                        if (child.TryGetValue("low", StringComparison.Ordinal, out value))
+                        {
+                            quote.Low = (decimal)value;
+                        }
+                        if (child.TryGetValue("latestVolume", StringComparison.Ordinal, out value))
+                        {
+                            quote.Volume = (decimal)value;
                         }
                         if (child.TryGetValue("closeTime", StringComparison.Ordinal, out value))
                         {
@@ -308,5 +322,9 @@ namespace Walkabout.Network
             return result;
         }
 
+        public async Task<StockQuoteHistory> DownloadHistory(string symbol)
+        {
+            return null;
+        }
     }
 }

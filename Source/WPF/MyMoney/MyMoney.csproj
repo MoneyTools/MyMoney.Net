@@ -229,6 +229,8 @@
     </Compile>
     <Compile Include="StockQuotes\AlphaVantage.cs" />
     <Compile Include="StockQuotes\IEXTrading.cs" />
+    <Compile Include="StockQuotes\IStockQuoteService.cs" />
+    <Compile Include="StockQuotes\StockQuoteThrottle.cs" />
     <Compile Include="Utilities\AnimatedMessage.cs" />
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\FileHash.cs" />
@@ -605,7 +607,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities\Sounds.cs" />
-    <Compile Include="StockQuotes\StockQuotes.cs" />
+    <Compile Include="StockQuotes\StockQuoteManager.cs" />
     <Compile Include="Utilities\StringHelpers.cs" />
     <Compile Include="Utilities\UndoManager.cs">
       <SubType>Code</SubType>

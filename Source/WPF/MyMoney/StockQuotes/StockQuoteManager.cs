@@ -22,187 +22,12 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Walkabout.Network
+namespace Walkabout.StockQuotes
 {
-    /// <summary>
-    /// </summary>
-    public class StockServiceSettings : INotifyPropertyChanged
-    {
-        private string _name;
-        private string _apiKey;
-        private int _requestsPerMinute;
-        private int _requestsPerDay;
-        private int _requestsPerMonth;
-
-        public string Name
-        {
-            get { return _name; }
-            set
-            {
-                if (_name != value)
-                {
-                    _name = value;
-                    OnPropertyChanged("Name");
-                }
-            }
-        }
-
-        public string ApiKey
-        {
-            get { return _apiKey; }
-            set
-            {
-                if (_apiKey != value)
-                {
-                    _apiKey = value;
-                    OnPropertyChanged("ApiKey");
-                }
-            }
-        }
-
-        public int ApiRequestsPerMinuteLimit
-        {
-            get { return _requestsPerMinute; }
-            set
-            {
-                if (_requestsPerMinute != value)
-                {
-                    _requestsPerMinute = value;
-                    OnPropertyChanged("ApiRequestsPerMinuteLimit");
-                }
-            }
-        }
-
-        public int ApiRequestsPerDayLimit
-        {
-            get { return _requestsPerDay; }
-            set
-            {
-                if (_requestsPerDay != value)
-                {
-                    _requestsPerDay = value;
-                    OnPropertyChanged("ApiRequestsPerDayLimit");
-                }
-            }
-        }
-
-        public int ApiRequestsPerMonthLimit
-        {
-            get { return _requestsPerMonth; }
-            set
-            {
-                if (_requestsPerMonth != value)
-                {
-                    _requestsPerMonth = value;
-                    OnPropertyChanged("ApiRequestsPerMonthLimit");
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
-        }
-
-        public void Serialize(XmlWriter w)
-        {
-            w.WriteElementString("Name", this.Name == null ? "" : this.Name);
-            w.WriteElementString("ApiKey", this.ApiKey == null ? "" : this.ApiKey);
-            w.WriteElementString("ApiRequestsPerMinuteLimit", this.ApiRequestsPerMinuteLimit.ToString());
-            w.WriteElementString("ApiRequestsPerDayLimit", this.ApiRequestsPerDayLimit.ToString());
-            w.WriteElementString("ApiRequestsPerMonthLimit", this.ApiRequestsPerMonthLimit.ToString());
-        }
-
-        public void Deserialize(XmlReader r)
-        {
-            if (r.IsEmptyElement) return;
-            while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
-            {
-                if (r.NodeType == XmlNodeType.Element)
-                {
-                    if (r.Name == "Name")
-                    {
-                        this.Name = r.ReadElementContentAsString();
-                    }
-                    else if (r.Name == "ApiKey")
-                    {
-                        this.ApiKey = r.ReadElementContentAsString();
-                    }
-                    else if (r.Name == "ApiRequestsPerMinuteLimit")
-                    {
-                        this.ApiRequestsPerMinuteLimit = r.ReadElementContentAsInt();
-                    }
-                    else if (r.Name == "ApiRequestsPerDayLimit")
-                    {
-                        this.ApiRequestsPerDayLimit = r.ReadElementContentAsInt();
-                    }
-                    else if (r.Name == "ApiRequestsPerMonthLimit")
-                    {
-                        this.ApiRequestsPerMonthLimit = r.ReadElementContentAsInt();
-                    }
-                }
-            }
-        }
-
-    }
-
-    /// <summary>
-    /// This class encapsulates a new stock quote from IStockQuoteService
-    /// </summary>
-    public class StockQuote
-    {
-        public string Name { get; set; }
-        public string Symbol { get; set; }
-        public decimal Price { get; set; }
-        public DateTime Date { get; set; }
-    }
-
-    public interface IStockQuoteService
-    {
-        /// <summary>
-        /// Fetch updated security information for the given securities (most recent closing price).
-        /// This can be called multiple times and any pending downloads will be merged automatically
-        /// </summary>
-        /// <param name="securities">List of securities to fetch </param>
-        void BeginFetchQuotes(List<Security> securities);
-
-        /// <summary>
-        /// Return a count of pending downloads.
-        /// </summary>
-        int PendingCount { get; }
-
-        /// <summary>
-        /// Each downloaded quote is raised as an event on this interface.  Could be from any thread.
-        /// </summary>
-        event EventHandler<StockQuote> QuoteAvailable;
-
-        /// <summary>
-        /// If some error happens fetching a quote, this event is raised.
-        /// </summary>
-        event EventHandler<string> DownloadError;
-
-        /// <summary>
-        /// If the service is performing a whole batch at once, this event is raised after each batch is complete.
-        /// If there are still more downloads pending the boolean value is raised with the value false.
-        /// This is also raised when the entire pending list is completed with the boolean set to true.
-        /// </summary>
-        event EventHandler<bool> Complete;
-
-        /// <summary>
-        /// Stop all pending requests
-        /// </summary>
-        void Cancel();
-    }
-
     /// <summary>
     /// This class tracks changes to Securities and fetches stock quotes from the configured online stock quote service.
     /// </summary>
-    public class StockQuotes : IDisposable
+    public class StockQuoteManager : IDisposable
     {
         MyMoney myMoney;
         bool busy;
@@ -217,8 +42,12 @@ namespace Walkabout.Network
         IStockQuoteService _service;
         int _progressMax;
         List<StockQuote> _batch = new List<StockQuote>();
+        DelayedActions delayedActions = new DelayedActions();
+        Dictionary<string, StockQuoteHistory> history = new Dictionary<string, StockQuoteHistory>();
+        HistoryDownloader _downloader;
+        string _logPath;
 
-        public StockQuotes(IServiceProvider provider, StockServiceSettings settings)
+        public StockQuoteManager(IServiceProvider provider, StockServiceSettings settings)
         {
             this.Settings = settings;
             this.provider = provider;
@@ -240,7 +69,7 @@ namespace Walkabout.Network
                 }
             }
         }
-
+        
         public StockServiceSettings Settings
         {
             get
@@ -255,11 +84,11 @@ namespace Walkabout.Network
                 IStockQuoteService service = null;
                 if (AlphaVantage.IsMySettings(_settings))
                 {
-                    service = new AlphaVantage(_settings);
+                    service = new AlphaVantage(_settings, this.LogPath);
                 }
                 else 
                 {
-                    service = new IEXTrading(_settings);
+                    service = new IEXTrading(_settings, this.LogPath);
                 }
                 SetService(service);
             }
@@ -363,19 +192,51 @@ namespace Walkabout.Network
             Enqueue(myMoney.GetOwnedSecurities());
         }
 
-        void BeginGetQuotes()
+        async void BeginGetQuotes()
         {
             stop = false;
 
-            List<Security> localCopy;
+            List<string> batch = new List<string>();
             lock (queue)
             {
-                localCopy = new List<Security>(queue);
+                foreach (var item in queue)
+                {
+                    if (!string.IsNullOrEmpty(item.Symbol))
+                    {
+                        batch.Add(item.Symbol);
+                    }
+                }
                 queue.Clear();
             }
 
-            _progressMax = localCopy.Count;
-            _service.BeginFetchQuotes(localCopy);
+            if (_downloader == null)
+            {
+                _downloader = new HistoryDownloader(_service, this.LogPath);
+                _downloader.Error += OnDownloadError;
+            }
+            _downloader.BeginFetchHistory(batch);
+            _progressMax = batch.Count;
+            _service.BeginFetchQuotes(batch);
+        }
+
+        private void OnDownloadError(object sender, string error)
+        {
+            AddError(error);
+        }
+
+        public StockQuoteHistory GetStockQuoteHistory(string symbol)
+        {
+            StockQuoteHistory history = null;
+            this.history.TryGetValue(symbol, out history);
+            if (history == null)
+            {
+                history = StockQuoteHistory.Load(this.LogPath, symbol);
+                if (history != null)
+                {
+                    this.history[symbol] = history;
+                }
+            }
+            return history;
         }
 
         private void OnServiceQuoteAvailable(object sender, StockQuote e)
@@ -387,6 +248,11 @@ namespace Walkabout.Network
             lock (fetched)
             {
                 fetched.Add(e.Symbol);
+            }
+            StockQuoteHistory history = GetStockQuoteHistory(e.Symbol);
+            if (history.AddQuote(e))
+            {
+                history.Save(this.LogPath);
             }
             _batch.Add(e);
         }
@@ -467,6 +333,15 @@ namespace Walkabout.Network
             {
                 return busy;
             }
+        }
+
+        /// <summary>
+        /// Location where we store the stock quote log files.
+        /// </summary>
+        public string LogPath
+        {
+            get { return this._logPath; }
+            set { this._logPath = value; }
         }
 
         void StopThread()
@@ -560,7 +435,7 @@ namespace Walkabout.Network
         void ProcessResult(StockQuote quote)
         {
             string symbol = quote.Symbol;
-            decimal price = quote.Price;
+            decimal price = quote.Close;
             if (price != 0)
             {
                 // we want to stop this from adding new Security objects by passing false
@@ -583,134 +458,165 @@ namespace Walkabout.Network
                 s.PriceDate = quote.Date;
             }
         }
-
     }
 
-    public class StockQuoteThrottle
+    public class DownloadInfo
     {
-        static StockQuoteThrottle _instance = null;
-        DateTime _lastCall = DateTime.MinValue;
-        int _callsThisMinute;
-        int _callsToday;
-        int _callsThisMonth;
+        public DownloadInfo() { }
+        public string Symbol { get; set; }
+        public DateTime Downloaded { get; set; }
+    }
 
-        public StockQuoteThrottle()
+    /// <summary>
+    /// A log of stocks we have downloaded a history for
+    /// </summary>
+    public class DownloadLog
+    {
+        public DownloadLog() { Downloaded = new List<DownloadInfo>();  }
+
+        public List<DownloadInfo> Downloaded { get; set; }
+
+        public DownloadInfo GetInfo(string symbol)
         {
-            _instance = this;
-        }
-
-        [XmlIgnore]
-        public StockServiceSettings Settings { get; set; }
-
-        public DateTime LastCall
-        {
-            get { return _lastCall; }
-            set { _lastCall = value; }
-        }
-
-        public int CallsThisMinute
-        {
-            get { return _callsThisMinute; }
-            set { _callsThisMinute = value; }
-        }
-
-        public int CallsToday
-        {
-            get { return _callsToday; }
-            set { _callsToday = value; }
-        }
-
-        public int CallsThisMonth
-        {
-            get { return _callsThisMonth; }
-            set { _callsThisMonth = value; }
-        }
-
-        /// <summary>
-        /// Get throttled sleep amount in milliseconds.
-        /// </summary>
-        /// <returns></returns>
-        public int GetSleep()
-        {
-            DateTime now = DateTime.Today;
-            if (now.Year == _lastCall.Year && now.Month == _lastCall.Month)
+            if (this.Downloaded == null)
             {
-                _callsThisMonth++;
-                if (Settings.ApiRequestsPerMonthLimit != 0 && _callsThisMonth > Settings.ApiRequestsPerMonthLimit)
+                return null;
+            }
+            return (from i in this.Downloaded where i.Symbol == symbol select i).FirstOrDefault();
+        }
+
+        public static DownloadLog Load(string logFolder)
+        {
+            var filename = System.IO.Path.Combine(logFolder, "DownloadLog.xml");
+            if (System.IO.File.Exists(filename))
+            {
+                XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
+                using (XmlReader r = XmlReader.Create(filename))
                 {
-                    throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
+                    return (DownloadLog)s.Deserialize(r);
                 }
             }
-            else
-            {
-                _callsThisMonth = 0;
-            }
-            if (now.Date == _lastCall.Date)
-            {
-                _callsToday++;
-                if (Settings.ApiRequestsPerDayLimit != 0 && _callsToday > Settings.ApiRequestsPerDayLimit)
-                {
-                    throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
-                }
-                if (now.Hour == _lastCall.Hour && now.Minute == _lastCall.Minute)
-                {
-                    _callsThisMinute++;
-                    if (Settings.ApiRequestsPerMinuteLimit != 0 && _callsThisMinute >= Settings.ApiRequestsPerMinuteLimit)
-                    {
-                        _callsThisMinute = 0;
-                        return 60000; // sleep to next minute.
-                    }
-                }
-            }
-            _lastCall = now;
-            return 0;
+            return new DownloadLog();
         }
 
-        public void Save()
+        public void Save(string logFolder)
         {
-            XmlSerializer s = new XmlSerializer(typeof(StockQuoteThrottle));
+            var filename = System.IO.Path.Combine(logFolder, "DownloadLog.xml");
+            XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
-            using (XmlWriter w = XmlWriter.Create(FileName, settings))
+            using (XmlWriter w = XmlWriter.Create(filename, settings))
             {
                 s.Serialize(w, this);
             }
         }
 
-        private static StockQuoteThrottle Load()
+    }
+
+    class HistoryDownloader
+    {
+        object _downloadSync = new object();
+        HashSet<string> _downloadBatch;
+        bool _downloadingHistory;
+        IStockQuoteService _service;
+        DownloadLog _downloadLog;
+        string _logPath;
+
+        public HistoryDownloader(IStockQuoteService service, string logPath)
         {
-            if (System.IO.File.Exists(FileName))
+            _service = service;
+            _logPath = logPath;
+        }
+
+        public event EventHandler<string> Error;
+
+        Task _downloadLogTask = null;
+
+        async Task<DownloadLog> GetDownloadLogAsync()
+        {
+            if (this._downloadLog != null)
             {
-                XmlSerializer s = new XmlSerializer(typeof(StockQuoteThrottle));
-                using (XmlReader r = XmlReader.Create(FileName))
+                return this._downloadLog;
+            }
+            if (_downloadLogTask != null)
+            {
+                // download has been kicked off already, but someone else also wants it, so they have to wait.
+                await _downloadLogTask;
+            }
+            else
+            {
+                _downloadLogTask = Task.Run(new Action(() =>
                 {
-                    return (StockQuoteThrottle)s.Deserialize(r);
+                    this._downloadLog = DownloadLog.Load(this._logPath);
+                }));
+                await _downloadLogTask;
+                _downloadLogTask = null;
+            }
+            return this._downloadLog;
+        }
+
+        public async void BeginFetchHistory(List<string> batch)
+        {
+            lock (_downloadSync)
+            {
+                if (_downloadingHistory)
+                {
+                    foreach (var item in batch)
+                    {
+                        _downloadBatch.Add(item);
+                    }
+                    return;
+                }
+                else
+                {
+                    _downloadBatch = new HashSet<string>(batch);
                 }
             }
-            return new StockQuoteThrottle();
-        }
+            _downloadingHistory = true;
+            await GetDownloadLogAsync();
 
-        public static StockQuoteThrottle Instance
-        {
-            get
+            while (true)
             {
-                if (_instance == null)
+                string symbol = null;
+                lock (_downloadSync)
                 {
-                    _instance = Load();
+                    if (_downloadBatch != null && _downloadBatch.Count > 0)
+                    {
+                        symbol = _downloadBatch.First();
+                        _downloadBatch.Remove(symbol);
+                    }
                 }
-                return _instance;
+                if (symbol == null)
+                {
+                    break;
+                }
+                else if (_downloadLog.GetInfo(symbol) == null)
+                {
+                    try
+                    {
+                        var history = await _service.DownloadHistory(symbol);
+                        if (history != null)
+                        {
+                            history.Save(this._logPath);
+                            _downloadLog.Downloaded.Add(new DownloadInfo() { Downloaded = DateTime.Today, Symbol = symbol });
+                            _downloadLog.Save(this._logPath);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        OnError("Download history error: " + ex.Message);
+                    }
+                }
             }
+            _downloadingHistory = false;
         }
 
-
-        internal static string FileName
+        void OnError(string message)
         {
-            get
-            {
-                return System.IO.Path.Combine(ProcessHelper.AppDataPath, "throttle.xml");
+            if (Error != null) {
+                Error(this, message);
             }
         }
-
     }
 
 }

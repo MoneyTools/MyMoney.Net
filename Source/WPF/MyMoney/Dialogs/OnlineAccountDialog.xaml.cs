@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.ComponentModel;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -11,19 +13,9 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Walkabout.Controls;
 using Walkabout.Data;
-using Walkabout.Network;
-using Walkabout.Utilities;
-using Walkabout.Configuration;
-using System.Windows.Media.Animation;
-using System.Collections.Concurrent;
-using System.Net.NetworkInformation;
-using System.Xml.Linq;
 using Walkabout.Ofx;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
+using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs
 {

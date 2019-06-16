@@ -24,7 +24,7 @@ using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Dialogs;
 using Walkabout.Migrate;
-using Walkabout.Network;
+using Walkabout.StockQuotes;
 using Walkabout.Reports;
 using Walkabout.Taxes;
 using Walkabout.Utilities;
@@ -78,7 +78,7 @@ namespace Walkabout
         private BalanceControl balanceControl;
 
         private ExchangeRates exchangeRates;
-        private StockQuotes quotes;
+        private StockQuoteManager quotes;
         private int mainThreadId;
         private int loadTime = Environment.TickCount;
         private RecentFilesMenu recentFilesMenu;
@@ -199,7 +199,7 @@ namespace Walkabout
                 //-----------------------------------------------------------------
                 // Stock related setup
                 //
-                this.quotes = new StockQuotes((IServiceProvider)this, settings.StockServiceSettings);
+                this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings);
                 this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
 
                 this.exchangeRates = new ExchangeRates();
@@ -285,6 +285,8 @@ namespace Walkabout
                 this.recentFilesMenu = new RecentFilesMenu(MenuRecentFiles);
                 this.recentFilesMenu.SetFiles(settings.RecentFiles);
                 this.recentFilesMenu.RecentFileSelected += OnRecentFileSelected;
+
+                this.TransactionGraph.ServiceProvider = this;
 
 #if PerformanceBlocks
             }
@@ -523,9 +525,8 @@ namespace Walkabout
                         this.quotes.DownloadComplete -= new EventHandler<EventArgs>(OnStockDownloadComplete);
                     }
                 }
-                this.quotes = new StockQuotes((IServiceProvider)this, settings.StockServiceSettings);
+                this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings);
                 this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
-
 
                 if (settings.RentalManagement)
                 {
@@ -542,8 +543,8 @@ namespace Walkabout
                 if (this.database != null)
                 {
                     string path = this.database.DatabasePath;
-                    string logPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
-                    OfxRequest.OfxLogPath = logPath;
+                    OfxRequest.OfxLogPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
+                    this.quotes.LogPath = Path.Combine(Path.GetDirectoryName(path), "StockQuotes");
                 }
 
                 this.accountsControl.MyMoney = this.myMoney;
@@ -3098,6 +3099,10 @@ namespace Walkabout
             {
                 return this.toolBox;
             }
+            else if (service == typeof(StockQuoteManager))
+            {
+                return this.quotes;
+            }
             else if (service == typeof(ExchangeRates))
             {
                 return this.exchangeRates;
@@ -4362,7 +4367,7 @@ namespace Walkabout
         {
             StockQuoteServiceDialog d = new StockQuoteServiceDialog();
             d.Owner = this;
-            d.StockQuotes = this.quotes;
+            d.StockQuoteManager = this.quotes;
             if (d.ShowDialog() == true)
             {
                 // service may have changed, so update our persistent settings and 

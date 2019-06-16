@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,10 +10,9 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Walkabout.Data;
 using Walkabout.Utilities;
 
-namespace Walkabout.Network
+namespace Walkabout.StockQuotes
 {
 
     /// <summary>
@@ -24,14 +24,18 @@ namespace Walkabout.Network
         const string address = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={0}&apikey={1}";
         char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
         StockServiceSettings _settings;
-        List<Security> _pending;
+        HashSet<string> _pending;
         HttpWebRequest _current;
         bool _cancelled;
         Thread _downloadThread;
+        string _logPath;
 
-        public AlphaVantage(StockServiceSettings settings)
+        public AlphaVantage(StockServiceSettings settings, string logPath)
         {
             _settings = settings;
+            StockQuoteThrottle.Instance.Settings = this._settings;
+            settings.Name = FriendlyName;
+            _logPath = logPath;
         }
 
         public static StockServiceSettings GetDefaultSettings()
@@ -96,25 +100,22 @@ namespace Walkabout.Network
             }
         }
 
-        public void BeginFetchQuotes(List<Security> securities)
+        public void BeginFetchQuotes(List<string> symbols)
         {
             int count = 0;
             if (_pending == null)
             {
-                _pending = securities;
-                count = securities.Count;
+                _pending = new HashSet<string>(symbols);
+                count = symbols.Count;
             }
             else
             {
                 lock (_pending)
                 {
-                    // merge the lists.
-                    foreach (Security s in securities)
+                    // merge the lists.                    
+                    foreach (string s in symbols)
                     {
-                        if (!(from p in _pending where p.Symbol == s.Symbol select p).Any())
-                        {
-                            _pending.Add(s);
-                        }
+                        _pending.Add(s);
                     }
                     count = _pending.Count;
                 }
@@ -130,30 +131,27 @@ namespace Walkabout.Network
         private void DownloadQuotes()
         {
             try
-            {
-                StockQuoteThrottle.Instance.Settings = this._settings;
-
+            {                
                 while (!_cancelled)
                 {
                     int remaining = 0;
-                    Security security = null;
+                    string symbol = null;
                     lock (_pending)
                     {
                         if (_pending.Count > 0)
                         {
-                            security = _pending[0];
-                            _pending.RemoveAt(0);
+                            symbol = _pending.FirstOrDefault();
+                            _pending.Remove(symbol);
                             remaining = _pending.Count;
                         }
                     }
-                    if (security == null)
+                    if (symbol == null)
                     {
                         // done!
                         break;
                     }
 
                     // weed out any securities that have no symbol or have a 
-                    string symbol = security.Symbol;
                     if (string.IsNullOrEmpty(symbol))
                     {
                         // skip securities that have no symbol.
@@ -167,6 +165,19 @@ namespace Walkabout.Network
                     {
                         try
                         {
+                            // this service doesn't want too many calls per second.
+                            int ms = StockQuoteThrottle.Instance.GetSleep();
+                            if (ms > 0)
+                            {
+                                OnError("AlphaVantage service needs to sleep for " + ms.ToString() + " ms");
+                                OnComplete(PendingCount == 0);
+                            }
+                            while (!_cancelled && ms > 0)
+                            {
+                                Thread.Sleep(1000);
+                                ms -= 1000;
+                            }
+
                             string uri = string.Format(address, symbol, _settings.ApiKey);
                             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
                             req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
@@ -174,6 +185,8 @@ namespace Walkabout.Network
                             req.Timeout = 10000;
                             req.UseDefaultCredentials = false;
                             _current = req;
+
+                            Debug.WriteLine("AlphaVantage fetching quote " + symbol);
 
                             WebResponse resp = req.GetResponse();
                             using (Stream stm = resp.GetResponseStream())
@@ -198,13 +211,6 @@ namespace Walkabout.Network
                                 }
                             }
 
-                            // this service doesn't want too many calls per second.
-                            int ms = StockQuoteThrottle.Instance.GetSleep();
-                            while (!_cancelled && ms > 0)
-                            {
-                                Thread.Sleep(1000);
-                                ms -= 1000;
-                            }
                         }
                         catch (System.Net.WebException we)
                         {
@@ -238,6 +244,13 @@ namespace Walkabout.Network
                         {
                             // continue
                             OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + e.Message);
+
+                            var message = e.Message;
+                            if (message.Contains("Please visit https://www.alphavantage.co/premium/"))
+                            {
+                                StockQuoteThrottle.Instance.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
+                            }
+                            OnComplete(PendingCount == 0);
                         }
                     }
                 }
@@ -249,12 +262,19 @@ namespace Walkabout.Network
             StockQuoteThrottle.Instance.Save();
             _downloadThread = null;
             _current = null;
+            Debug.WriteLine("AlphaVantage download thread terminating");
         }
 
         private static StockQuote ParseStockQuote(JObject o)
         {
             StockQuote result = null;
             Newtonsoft.Json.Linq.JToken value;
+
+            if (o.TryGetValue("Note", StringComparison.Ordinal, out value))
+            {
+                string message = (string)value;
+                throw new Exception(message);
+            }
 
             if (o.TryGetValue("Global Quote", StringComparison.Ordinal, out value))
             {
@@ -266,24 +286,173 @@ namespace Walkabout.Network
                     {
                         result.Symbol = (string)value;
                     }
-                    if (child.TryGetValue("05. price", StringComparison.Ordinal, out value))
+                    if (child.TryGetValue("02. open", StringComparison.Ordinal, out value))
                     {
-                        result.Price = (decimal)value;
+                        result.Open = (decimal)value;
+                    }
+                    if (child.TryGetValue("03. high", StringComparison.Ordinal, out value))
+                    {
+                        result.High = (decimal)value;
+                    }
+                    if (child.TryGetValue("04. low", StringComparison.Ordinal, out value))
+                    {
+                        result.Low = (decimal)value;
+                    }
+                    if (child.TryGetValue("08. previous close", StringComparison.Ordinal, out value))
+                    {
+                        result.Close = (decimal)value;
+                    }
+                    if (child.TryGetValue("06. volume", StringComparison.Ordinal, out value))
+                    {
+                        result.Volume = (decimal)value;
                     }
                     if (child.TryGetValue("07. latest trading day", StringComparison.Ordinal, out value))
                     {
                         result.Date = (DateTime)value;
                     }
-                    // "02. open"
-                    // "03. high"
-                    // "04. low"
-                    // "06. volume"
-                    // "08. previous close":
-                    // "09. change":
-                    // "10. change percent":
                 }
             }
             return result;
+        }
+
+        public async Task<StockQuoteHistory> DownloadHistory(string symbol)
+        {
+            const string timeSeriesAddress = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}&outputsize=full&apikey={1}";
+            StockQuoteHistory history = null;
+            string uri = string.Format(timeSeriesAddress, symbol, this._settings.ApiKey);
+            await Task.Run(new Action(() =>
+            {
+                try
+                {
+                    // this service doesn't want too many calls per second.
+                    int ms = StockQuoteThrottle.Instance.GetSleep();
+                    if (ms > 0)
+                    {
+                        OnError("AlphaVantage service needs to sleep for " + ms.ToString() + " ms");
+
+                        OnComplete(PendingCount == 0);
+                    }
+                    while (!_cancelled && ms > 0)
+                    {
+                        Thread.Sleep(1000);
+                        ms -= 1000;
+                    }
+
+                    HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
+                    req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
+                    req.Method = "GET";
+                    req.Timeout = 10000;
+                    req.UseDefaultCredentials = false;
+                    _current = req;
+
+                    Debug.WriteLine("AlphaVantage fetching history for " + symbol);
+
+                    WebResponse resp = req.GetResponse();
+                    using (Stream stm = resp.GetResponseStream())
+                    {
+                        using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
+                        {
+                            string json = sr.ReadToEnd();
+                            JObject o = JObject.Parse(json);
+                            history = ParseTimeSeries(o);
+                            if (string.Compare(history.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                OnError(string.Format("History for symbol {0} return different symbol {1}", symbol, history.Symbol));
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    string message = ex.Message;
+                    OnError(message);
+                    if (message.Contains("Please visit https://www.alphavantage.co/premium/"))
+                    {
+                        StockQuoteThrottle.Instance.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
+                    }
+                    OnComplete(PendingCount == 0);
+                }
+
+            }));
+            return history;
+        }
+
+        private StockQuoteHistory ParseTimeSeries(JObject o)
+        {
+            StockQuoteHistory history = new StockQuoteHistory();
+            history.History = new List<StockQuote>();
+
+            Newtonsoft.Json.Linq.JToken value;
+
+            if (o.TryGetValue("Note", StringComparison.Ordinal, out value))
+            {
+                string message = (string)value;
+                throw new Exception(message);
+            }
+
+            if (o.TryGetValue("Meta Data", StringComparison.Ordinal, out value))
+            {
+                if (value.Type == JTokenType.Object)
+                {
+                    JObject child = (JObject)value;
+                    if (child.TryGetValue("2. Symbol", StringComparison.Ordinal, out value))
+                    {
+                        history.Symbol = (string)value;
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Time series data schema has changed");
+            }
+
+            if (o.TryGetValue("Time Series (Daily)", StringComparison.Ordinal, out value))
+            {
+                if (value.Type == JTokenType.Object)
+                {
+                    JObject series = (JObject)value;
+                    foreach (var p in series.Properties().Reverse())
+                    {
+                        DateTime date;
+                        if (DateTime.TryParse(p.Name, out date))
+                        {
+                            value = series.GetValue(p.Name);
+                            if (value.Type == JTokenType.Object)
+                            {
+                                StockQuote quote = new StockQuote() { Date = date };
+                                JObject child = (JObject)value;
+
+                                if (child.TryGetValue("1. open", StringComparison.Ordinal, out value))
+                                {
+                                    quote.Open = (decimal)value;
+                                }
+                                if (child.TryGetValue("4. close", StringComparison.Ordinal, out value))
+                                {
+                                    quote.Close = (decimal)value;
+                                }
+                                if (child.TryGetValue("2. high", StringComparison.Ordinal, out value))
+                                {
+                                    quote.High = (decimal)value;
+                                }
+                                if (child.TryGetValue("3. low", StringComparison.Ordinal, out value))
+                                {
+                                    quote.Low = (decimal)value;
+                                }
+                                if (child.TryGetValue("5. volume", StringComparison.Ordinal, out value))
+                                {
+                                    quote.Volume = (decimal)value;
+                                }
+                                history.History.Add(quote);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Time series data schema has changed");
+            }
+            return history;
         }
     }
 }

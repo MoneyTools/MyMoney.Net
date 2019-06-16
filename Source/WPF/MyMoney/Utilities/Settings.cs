@@ -14,7 +14,7 @@ using Walkabout.Interfaces;
 using Walkabout.Utilities;
 using Walkabout.Views;
 using Walkabout.Interfaces.Views;
-using Walkabout.Network;
+using Walkabout.StockQuotes;
 
 namespace Walkabout.Configuration
 {
