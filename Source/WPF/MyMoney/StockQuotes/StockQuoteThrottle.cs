@@ -89,7 +89,7 @@ namespace Walkabout.StockQuotes
                     }
                     else
                     {
-                        _callsThisMinute = 0;
+                        _callsThisMinute = 1;
                     }
                 }
                 _lastCall = now;

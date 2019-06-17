@@ -30,7 +30,6 @@ namespace Walkabout.StockQuotes
     public class StockQuoteManager : IDisposable
     {
         MyMoney myMoney;
-        bool busy;
         StringBuilder errorLog = new StringBuilder();
         bool hasError;
         bool stop;
@@ -348,7 +347,7 @@ namespace Walkabout.StockQuotes
         {
             get
             {
-                return busy;
+                return _service != null && _service.PendingCount > 0;
             }
         }
 
@@ -400,8 +399,6 @@ namespace Walkabout.StockQuotes
                     this.myMoney.Securities.EndUpdate();
                 }
                 
-                busy = false;
-
                 if (hasError && !stop)
                 {
                     ShowErrors(null);
