@@ -266,7 +266,7 @@ namespace Walkabout.StockQuotes
                 fetched.Add(e.Symbol);
             }
             StockQuoteHistory history = GetStockQuoteHistory(e.Symbol);
-            if (history.AddQuote(e))
+            if (history != null && history.AddQuote(e))
             {
                 history.Save(this.LogPath);
             }
