@@ -262,7 +262,7 @@ namespace Walkabout.WpfConverters
         ///       FULL    BUY    ADD     SELL    CLOSE LINKED
         ///   0    │             │       │        │  
         ///        │             │       │        │
-        ///   1    │      O      O       O        └─ 
+        ///   1    │      O      O+     -O        └─ 
         ///        │      │      |
         ///   2    │      │      |
         /// </summary>
@@ -316,16 +316,51 @@ namespace Walkabout.WpfConverters
             if (trackStyle != TrackStyle.Full)
             {
                 Border spot = new Border();
+                spot.BorderThickness = new Thickness(2);
+                spot.Height = 10;
+                spot.Width = 10;
+                Grid.SetRow(spot, 1); // Always in the center row
+                Grid.SetColumn(spot, columnIndex);
+                g.Children.Add(spot);
 
-                spot.HorizontalAlignment = HorizontalAlignment.Center;
-
+                
+                Label label = new Label();
+                label.FontSize = 11;
+                label.FontWeight = FontWeights.UltraBold;
+                label.Height = 16;
+                label.Width = 16;
+                spot.Child = label;
+               
                 switch (trackStyle)
                 {
+                    case TrackStyle.Buy:
+                        spot.BorderBrush = lineColorBrush;
+                        spot.Background = Brushes.AliceBlue;
+                        spot.CornerRadius = shapeStart;
+                        spot.HorizontalAlignment = HorizontalAlignment.Center;
+                        spot.VerticalAlignment = VerticalAlignment.Top;
+
+                        label.Content = "+";
+                        label.Margin = new Thickness(0,-5,0,0);
+                        label.HorizontalContentAlignment = spot.HorizontalAlignment;
+                        label.VerticalContentAlignment = spot.VerticalAlignment;
+                        label.HorizontalAlignment = spot.HorizontalAlignment;
+                        label.VerticalAlignment = spot.VerticalAlignment;
+                        
+                        break;
+
                     case TrackStyle.Add:
                         spot.BorderBrush = lineColorBrush;
                         spot.Background = Brushes.AliceBlue;
                         spot.CornerRadius = shapeAdd;
                         spot.HorizontalAlignment = HorizontalAlignment.Right;
+                        spot.VerticalAlignment = VerticalAlignment.Center;
+                        label.Content = "+";
+                        label.Margin = new Thickness(-1, -3, 0, 0);
+                        label.HorizontalContentAlignment = spot.HorizontalAlignment;
+                        label.VerticalContentAlignment = spot.VerticalAlignment;
+                        label.HorizontalAlignment = spot.HorizontalAlignment;
+                        label.VerticalAlignment = spot.VerticalAlignment;
                         break;
 
                     case TrackStyle.Sell:
@@ -333,36 +368,32 @@ namespace Walkabout.WpfConverters
                         spot.Background = lineColorBrush;
                         spot.CornerRadius = shapeSubtract;
                         spot.HorizontalAlignment = HorizontalAlignment.Left;
-                        break;
-
-                    case TrackStyle.Buy:
-                        spot.BorderBrush = lineColorBrush;
-                        spot.Background = Brushes.AliceBlue;
-                        spot.CornerRadius = shapeStart;
+                        spot.VerticalAlignment = VerticalAlignment.Center;
+                        label.Content = "-";
+                        label.Margin = new Thickness(1, -4, 0, 0);
+                        label.Foreground = new SolidColorBrush(Colors.White);
+                        label.HorizontalContentAlignment = spot.HorizontalAlignment;
+                        label.VerticalContentAlignment = spot.VerticalAlignment;
+                        label.HorizontalAlignment = spot.HorizontalAlignment;
+                        label.VerticalAlignment = spot.VerticalAlignment;
                         break;
 
                     case TrackStyle.CloseNegative:
                         spot.BorderBrush = Brushes.Red;
                         spot.Background = Brushes.Red;
                         spot.CornerRadius = shapeStop;
+                        spot.HorizontalAlignment = HorizontalAlignment.Center;
+                        spot.VerticalAlignment = VerticalAlignment.Bottom;
                         break;
 
                     case TrackStyle.ClosePositive:
                         spot.BorderBrush = Brushes.Green;
                         spot.Background = Brushes.Green;
                         spot.CornerRadius = shapeStop;
+                        spot.HorizontalAlignment = HorizontalAlignment.Center;
+                        spot.VerticalAlignment = VerticalAlignment.Bottom;
                         break;
                 }
-
-                spot.BorderThickness = new Thickness(2);
-
-                spot.VerticalAlignment = VerticalAlignment.Center;
-                
-                spot.Height = 10;
-                spot.Width = 10;
-                Grid.SetRow(spot, 1); // Always in the center row
-                Grid.SetColumn(spot, columnIndex);
-                g.Children.Add(spot);
             }
         }
 
