@@ -201,6 +201,7 @@ namespace Walkabout
                 //
                 this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings);
                 this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
+                this.quotes.HistoryAvailable += OnStockQuoteHistoryAvailable;
 
                 this.exchangeRates = new ExchangeRates();
 
@@ -293,7 +294,77 @@ namespace Walkabout
 #endif
         }
 
-        private void OnRecentFileSelected(object sender, RecentFileEventArgs e)
+        private void OnStockQuoteHistoryAvailable(object sender, StockQuoteHistory history)
+        {
+            var manager = this.quotes;
+            if (manager == null || history == null || history.History.Count == 0)
+            {
+                return;
+            }
+            var security = this.myMoney.Securities.FindSymbol(history.Symbol, false);
+            if (security == null || string.IsNullOrEmpty(security.Symbol))
+            {
+                return;
+            }
+
+#if PerformanceBlocks
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.UpdateStockQuoteHistory))
+            {
+#endif
+                List<StockQuote> sorted = history.GetSorted();
+
+                // Ok, so the list of transactions should all be investments related to this security and 
+                // we have a stock quote history which can be used to fill in any missing details on the
+                // UnitPrices associated with this stock (for example, Dividends may be missing UnitPrice).
+                int pos = 0;
+                bool changed = false;
+                try
+                {
+                    this.myMoney.BeginUpdate();
+                    StockQuote quote = sorted[0];
+                    foreach (Transaction t in this.myMoney.Transactions.GetTransactionsBySecurity(security, null))
+                    {
+                        Investment i = t.Investment;
+                        if (i != null && i.Security == security)
+                        {
+                            while (pos < sorted.Count)
+                            {
+                                StockQuote nextQuote = sorted[pos];
+                                if (nextQuote.Date > t.Date)
+                                {
+                                    break;
+                                }
+                                quote = nextQuote;
+                                pos++;
+                            }
+                            if (t.Date >= quote.Date)
+                            {
+                                if (Math.Abs(i.UnitPrice - quote.Close) > 5)
+                                {
+                                    Debug.WriteLine(string.Format("{0} close price {1} on {2} didn't match our transaction at {3} UnitPrice {4}",
+                                        security.Symbol, quote.Close, quote.Date.ToShortDateString(), t.Date.ToShortDateString(), t.InvestmentUnitPrice));
+                                    i.UnitPrice = quote.Close;
+                                    changed = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    this.myMoney.EndUpdate();
+                }
+                if (changed && this.TransactionView.ActiveSecurity == security)
+                {
+                    this.TransactionView.RefreshViewBySecurity(security, this.TransactionView.SelectedRowId);
+                }
+
+#if PerformanceBlocks
+            }
+#endif
+        }
+
+            private void OnRecentFileSelected(object sender, RecentFileEventArgs e)
         {
             Settings.TheSettings.Database = e.FileName;
             BeginLoadDatabase();
@@ -523,10 +594,12 @@ namespace Walkabout
                     using (this.quotes)
                     {
                         this.quotes.DownloadComplete -= new EventHandler<EventArgs>(OnStockDownloadComplete);
+                        this.quotes.HistoryAvailable -= OnStockQuoteHistoryAvailable;
                     }
                 }
                 this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings);
                 this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
+                this.quotes.HistoryAvailable += OnStockQuoteHistoryAvailable;
 
                 if (settings.RentalManagement)
                 {
@@ -1240,7 +1313,11 @@ namespace Walkabout
                 this.navigator.Undo();          // undo the state we just pushed on the stack
             }
 
-            this.navigator.Undo();
+            var cmd = this.navigator.Undo();
+            if (cmd != null)
+            {
+                cmd.Undo();
+            }
         }
 
         private void Forward()

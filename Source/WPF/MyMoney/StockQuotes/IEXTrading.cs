@@ -322,7 +322,7 @@ namespace Walkabout.StockQuotes
             return result;
         }
 
-        public async Task<StockQuoteHistory> DownloadHistory(string symbol)
+        public Task<StockQuoteHistory> DownloadHistory(string symbol)
         {
             return null;
         }

@@ -30,6 +30,7 @@ using Walkabout.WpfConverters;
 using System.Windows.Media.Imaging;
 using Walkabout.Configuration;
 using Walkabout.Interfaces.Views;
+using Walkabout.StockQuotes;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -92,7 +93,6 @@ namespace Walkabout.Views
         private DelayedActions delayedUpdates = new DelayedActions();
 
         private IEnumerable<Transaction> fixedList;
-
         #endregion
 
         #region PROPERTIES PUBLIC
@@ -454,9 +454,16 @@ namespace Walkabout.Views
 
                 // setup initial transaction filter settings
                 OnTransactionFilterChanged();
+
+                this.Unloaded += OnTransactionViewUnloaded;
 #if PerformanceBlocks
             }
 #endif
+        }
+
+        private void OnTransactionViewUnloaded(object sender, RoutedEventArgs e)
+        {
+            delayedUpdates.CancelAll();
         }
 
         private void SetupContextMenuBinding(ContextMenu menu, string itemname, DependencyProperty property, Binding binding)
@@ -954,28 +961,26 @@ namespace Walkabout.Views
             }
             else
             {
-                var rows = this.TheActiveGrid.GetVisibleRows();
-                if (rows != null)
+                RefreshVisibleColumns(TheActiveGrid.Name == "TheGrid_BySecurity" ? "RunningBalance" : "Balance");
+            }
+            rebalancing = false;
+        }
+
+        private void RefreshVisibleColumns(string colummName)
+        {
+            var rows = this.TheActiveGrid.GetVisibleRows();
+            if (rows != null)
+            {
+                TransactionCollection c = TheActiveGrid.ItemsSource as TransactionCollection;
+                if (c != null)
                 {
-                    TransactionCollection c = TheActiveGrid.ItemsSource as TransactionCollection;
-                    if (c != null)
+                    for (int row = rows.Item1; row < rows.Item2 && row < c.Count; row++)
                     {
-                        for (int row = rows.Item1; row < rows.Item2 && row < c.Count; row++)
-                        {
-                            Transaction t = c[row];
-                            if (TheActiveGrid.Name == "TheGrid_BySecurity")
-                            {
-                                t.RaisePropertyChanged("RunningBalance");
-                            }
-                            else
-                            {
-                                t.RaisePropertyChanged("Balance");
-                            }
-                        }
+                        Transaction t = c[row];
+                        t.RaisePropertyChanged(colummName);
                     }
                 }
             }
-            rebalancing = false;
         }
 
         private void OnDataGridRowDragDrop(object sender, DragEventArgs e)
@@ -1784,7 +1789,7 @@ namespace Walkabout.Views
             {
 #endif
                 // make sure it's  real payee
-                p = this.myMoney.Payees.FindPayee(p.Name, false); 
+                p = this.myMoney.Payees.FindPayee(p.Name, false);
                 if (p != null)
                 {
                     FireBeforeViewStateChanged();
@@ -1813,16 +1818,27 @@ namespace Walkabout.Views
                     FireBeforeViewStateChanged();
                     this.fixedList = null;
                     this.lastQuery = null;
-                    SwitchLayout("TheGrid_BySecurity");
-                    SetActiveAccount(null, null, null, s, null);
-                    IList<Transaction> transactions = myMoney.Transactions.GetTransactionsBySecurity(s, GetTransactionIncludePredicate());
-                    var data = new TransactionCollection(myMoney, null, transactions, true, false, this.QuickFilter);
-                    Display(data, TransactionViewName.BySecurity, "Investments in " + s.Name, selectedRowId);
+                    var transactions = RefreshViewBySecurity(s, selectedRowId);
+                    var mgr = (StockQuoteManager)site.GetService(typeof(StockQuoteManager));
+                    if (!mgr.HasStockQuoteHistory(s.Symbol))
+                    {
+                        mgr.BeginDownloadHistory(s.Symbol);
+                    }
                     FireAfterViewStateChanged(selectedRowId);
                 }
 #if PerformanceBlocks
             }
 #endif
+        }
+
+        public IList<Transaction> RefreshViewBySecurity(Security s, long selectedRowId)
+        {
+            SwitchLayout("TheGrid_BySecurity");
+            SetActiveAccount(null, null, null, s, null);
+            IList<Transaction> transactions = myMoney.Transactions.GetTransactionsBySecurity(s, GetTransactionIncludePredicate());
+            var data = new TransactionCollection(myMoney, null, transactions, true, false, this.QuickFilter);
+            Display(data, TransactionViewName.BySecurity, "Investments in " + s.Name, selectedRowId);
+            return transactions;
         }
 
         internal void ViewTransactionsForCategory(Category c, long selectedRowId)
@@ -2674,7 +2690,7 @@ namespace Walkabout.Views
                         Transaction t = args.Item as Transaction;
                         Investment i = args.Item as Investment;
                         Account a = args.Item as Account;
-                        Category c = args.Item as Category;                        
+                        Category c = args.Item as Category;
 
                         if (s != null && !string.IsNullOrEmpty(s.Name))
                         {
@@ -2690,7 +2706,7 @@ namespace Walkabout.Views
                                 }
                             }
                         }
-                        
+
                         // the "NewPlaceHolder" item may have just been changed into a real Transaction object.
                         // ChangeType.Changed would have already been handled by the INotifyPropertyChanged events, what we really care
                         // about here are transactions being inserted or removed which can happen if you do a background 'download'
@@ -3668,7 +3684,9 @@ namespace Walkabout.Views
                         {
                             t.Category = to;
                         }
-                    } finally {
+                    }
+                    finally
+                    {
                         this.myMoney.EndUpdate();
                     }
                 }

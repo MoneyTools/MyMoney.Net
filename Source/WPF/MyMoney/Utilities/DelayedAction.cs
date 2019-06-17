@@ -36,13 +36,14 @@ namespace Walkabout.Utilities
             }
         }
 
-        public void Close()
+        public void CancelAll()
         {
-            foreach (var pair in pending)
+            var snapshot = pending.ToArray();
+            pending.Clear();
+            foreach (var pair in snapshot)
             {
                 pair.Value.StopDelayTimer();
             }
-            pending.Clear();
         }
 
 
@@ -107,5 +108,6 @@ namespace Walkabout.Utilities
                 }
             }
         }
+
     }
 }

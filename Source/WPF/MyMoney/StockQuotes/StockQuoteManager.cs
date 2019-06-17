@@ -112,7 +112,6 @@ namespace Walkabout.StockQuotes
             }
         }
 
-
         public List<StockServiceSettings> GetDefaultSettingsList()
         {
             List<StockServiceSettings> result = new List<StockServiceSettings>();
@@ -192,7 +191,7 @@ namespace Walkabout.StockQuotes
             Enqueue(myMoney.GetOwnedSecurities());
         }
 
-        async void BeginGetQuotes()
+        void BeginGetQuotes()
         {
             stop = false;
 
@@ -209,14 +208,31 @@ namespace Walkabout.StockQuotes
                 queue.Clear();
             }
 
+            GetDownloader().BeginFetchHistory(batch);
+            _progressMax = batch.Count;
+            _service.BeginFetchQuotes(batch);
+        }
+
+        private HistoryDownloader GetDownloader()
+        {
             if (_downloader == null)
             {
                 _downloader = new HistoryDownloader(_service, this.LogPath);
                 _downloader.Error += OnDownloadError;
+                _downloader.HistoryAvailable += OnHistoryAvailable;
             }
-            _downloader.BeginFetchHistory(batch);
-            _progressMax = batch.Count;
-            _service.BeginFetchQuotes(batch);
+            return _downloader;
+        }
+
+        public event EventHandler<StockQuoteHistory> HistoryAvailable;
+
+        private void OnHistoryAvailable(object sender, StockQuoteHistory history)
+        {
+            if (HistoryAvailable != null)
+            {
+                HistoryAvailable(this, history);
+            }
+            this.history[history.Symbol] = history;
         }
 
         private void OnDownloadError(object sender, string error)
@@ -234,6 +250,7 @@ namespace Walkabout.StockQuotes
                 if (history != null)
                 {
                     this.history[symbol] = history;
+                    OnHistoryAvailable(this, history);
                 }
             }
             return history;
@@ -351,6 +368,10 @@ namespace Walkabout.StockQuotes
             {
                 _service.Cancel();
             }
+            if (_downloader != null)
+            {
+                _downloader.Cancel();
+            }
             if (status != null)
             {
                 status.ShowProgress(string.Empty, 0, 0, 0);
@@ -458,12 +479,24 @@ namespace Walkabout.StockQuotes
                 s.PriceDate = quote.Date;
             }
         }
+
+        internal void BeginDownloadHistory(string symbol)
+        {
+            GetDownloader().BeginFetchHistory(new List<string>(new string[] { symbol }));
+        }
+
+        internal bool HasStockQuoteHistory(string symbol)
+        {
+            return GetStockQuoteHistory(symbol) != null;
+        }
     }
 
     public class DownloadInfo
     {
         public DownloadInfo() { }
+        [XmlAttribute]
         public string Symbol { get; set; }
+        [XmlAttribute]
         public DateTime Downloaded { get; set; }
     }
 
@@ -530,6 +563,16 @@ namespace Walkabout.StockQuotes
 
         public event EventHandler<string> Error;
 
+        public event EventHandler<StockQuoteHistory> HistoryAvailable;
+
+        void OnHistoryAvailable(StockQuoteHistory history)
+        {
+            if (HistoryAvailable != null)
+            {
+                HistoryAvailable(this, history);
+            }
+        }
+
         Task _downloadLogTask = null;
 
         async Task<DownloadLog> GetDownloadLogAsync()
@@ -575,7 +618,7 @@ namespace Walkabout.StockQuotes
             _downloadingHistory = true;
             await GetDownloadLogAsync();
 
-            while (true)
+            while (_downloadingHistory)
             {
                 string symbol = null;
                 lock (_downloadSync)
@@ -600,11 +643,20 @@ namespace Walkabout.StockQuotes
                             history.Save(this._logPath);
                             _downloadLog.Downloaded.Add(new DownloadInfo() { Downloaded = DateTime.Today, Symbol = symbol });
                             _downloadLog.Save(this._logPath);
+                            OnHistoryAvailable(history);
                         }
                     }
                     catch (Exception ex)
                     {
                         OnError("Download history error: " + ex.Message);
+                    }
+                }
+                else
+                {
+                    var history = StockQuoteHistory.Load(this._logPath, symbol);
+                    if (history != null)
+                    {
+                        OnHistoryAvailable(history);
                     }
                 }
             }
@@ -616,6 +668,11 @@ namespace Walkabout.StockQuotes
             if (Error != null) {
                 Error(this, message);
             }
+        }
+
+        internal void Cancel()
+        {
+            _downloadingHistory = false;
         }
     }
 
