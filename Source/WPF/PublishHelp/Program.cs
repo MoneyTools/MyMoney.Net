@@ -18,13 +18,26 @@ namespace PublishHelp
         static string PublishPath;
         static string GitHubRoot = "https://github.com/clovett/MyMoney.Net/wiki/";
 
+        static void PrintUsage()
+        {
+            Console.WriteLine("Usage: PublishHelp <targetdir>");
+            Console.WriteLine("Publishes content of 'Money Specs' as Markdown to the target directory");
+            Console.WriteLine("OneNote must be running and the Money Specs one note must be open.");
+        }
         static void Main(string[] args)
         {
             Program p = new Program();
 
-            Uri uri = new Uri(p.GetType().Assembly.Location);
-            uri = new Uri(uri, @"..\..\..\Docs");
-            PublishPath = uri.LocalPath + "\\";
+            if (args.Length > 0)
+            {
+                PublishPath = args[0];
+            }
+            else
+            {
+                PrintUsage();
+                return;
+            }
+
 
             bool export = true;
             bool markdown = true;
@@ -34,7 +47,7 @@ namespace PublishHelp
                 Directory.CreateDirectory(tempPath);
 
                 p.ClearTargetDirectory(PublishPath);
-                p.ClearTargetDirectory(PublishPath + "Images");
+                p.ClearTargetDirectory(System.IO.Path.Combine(PublishPath, "Images"));
                 p.ClearTargetDirectory(tempPath);
                 p.PublishPages(tempPath);
                 p.FixupLinksAndSaveParts(PublishPath);

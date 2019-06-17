@@ -47,12 +47,7 @@ namespace Walkabout.Utilities
             if (pos > 0)
             {
                 pos--;
-                Command cmd = this.Current;
-                if (cmd != null)
-                {
-                    cmd.Undo();
-                }
-                return cmd;
+                return this.Current;
             }
             return null;
         }

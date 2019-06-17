@@ -63,13 +63,21 @@ namespace Walkabout.StockQuotes
     public class StockQuote
     {
         public StockQuote() { }
+        [XmlAttribute]
         public string Name { get; set; }
+        [XmlAttribute]
         public string Symbol { get; set; }
+        [XmlAttribute]
         public DateTime Date { get; set; }
+        [XmlAttribute]
         public decimal Open { get; set; }
+        [XmlAttribute]
         public decimal Close { get; set; }
+        [XmlAttribute]
         public decimal High { get; set; }
+        [XmlAttribute]
         public decimal Low { get; set; }
+        [XmlAttribute]
         public decimal Volume { get; set; }
     }
 
@@ -84,7 +92,7 @@ namespace Walkabout.StockQuotes
 
         public List<StockQuote> History { get; set; }
 
-        public SortedDictionary<DateTime, StockQuote> GetSorted()
+        public List<StockQuote> GetSorted()
         {
             var result = new SortedDictionary<DateTime, StockQuote>();
             if (History != null)
@@ -94,7 +102,7 @@ namespace Walkabout.StockQuotes
                     result[quote.Date] = quote;
                 }
             }
-            return result;
+            return new List<StockQuote>(result.Values);
         }
 
         public bool AddQuote(StockQuote quote)

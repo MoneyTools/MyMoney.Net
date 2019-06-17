@@ -359,7 +359,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                     bounds.Inflate(inflation, inflation);
                     if (bounds.Contains(pos))
                     {
-                        gesture.ShowPopup(GetPopupContent(record));
+                        Popup popup = gesture.CreatePopup(GetPopupContent(record));
+                        popup.IsOpen = true;
                         return;
                     }
                 }
