@@ -107,6 +107,13 @@ namespace Walkabout.StockQuotes
 
         public void BeginFetchQuotes(List<string> symbols)
         {
+            if (string.IsNullOrEmpty(_settings.ApiKey))
+            {
+                OnError(Walkabout.Properties.Resources.ConfigureStockQuoteService);
+                OnComplete(true);
+                return;
+            }
+
             int count = 0;
             if (_pending == null)
             {

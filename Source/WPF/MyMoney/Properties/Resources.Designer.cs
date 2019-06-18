@@ -97,6 +97,15 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please configure your Stock Quote Acount from the Online menu.
+        /// </summary>
+        internal static string ConfigureStockQuoteService {
+            get {
+                return ResourceManager.GetString("ConfigureStockQuoteService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CSV files (*.csv)|*.csv.
         /// </summary>
         internal static string CsvFileFilter {

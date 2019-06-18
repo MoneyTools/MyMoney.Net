@@ -85,7 +85,7 @@ namespace Walkabout.StockQuotes
                 {
                     service = new AlphaVantage(_settings, this.LogPath);
                 }
-                else 
+                else if (IEXTrading.IsMySettings(_settings))
                 {
                     service = new IEXTrading(_settings, this.LogPath);
                 }
@@ -208,6 +208,10 @@ namespace Walkabout.StockQuotes
         void BeginGetQuotes()
         {
             stop = false;
+            if (_service == null)
+            {
+                return;
+            }
 
             List<string> batch = new List<string>();
             lock (queue)
@@ -497,6 +501,10 @@ namespace Walkabout.StockQuotes
 
         internal void BeginDownloadHistory(string symbol)
         {
+            if (_service == null)
+            {
+                return;
+            }
             GetDownloader().BeginFetchHistory(new List<string>(new string[] { symbol }));
         }
 

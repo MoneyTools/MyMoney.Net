@@ -286,4 +286,7 @@
   <data name="FetchedStockQuotes" xml:space="preserve">
     <value>Fetched stock quotes {0}</value>
   </data>
+  <data name="ConfigureStockQuoteService" xml:space="preserve">
+    <value>Please configure your Stock Quote Acount from the Online menu</value>
+  </data>
 </root>
