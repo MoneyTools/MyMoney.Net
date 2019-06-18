@@ -43,6 +43,11 @@ namespace Walkabout.Controls
             OutputTextView.Document.Blocks.Clear();
         }
 
+        public bool IsClear
+        {
+            get { return OutputTextView.Document.Blocks.Count == 0; }
+        }
+
         public void AppendParagraph(Paragraph p)
         {
             OutputTextView.Document.Blocks.Add(p);

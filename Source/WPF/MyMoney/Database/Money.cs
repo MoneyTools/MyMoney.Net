@@ -83,11 +83,52 @@ namespace Walkabout.Data
 
     }
 
+    class BatchSync
+    {
+        object syncObject = new object();
+        int refCount;
+
+        public int Increment()
+        {
+            int b = 0;
+            lock (this.syncObject)
+            {
+                this.refCount++;
+                b = this.refCount;
+            }
+            return b;
+        }
+
+        public int Decrement()
+        {
+            int b = 0;
+            lock (this.syncObject)
+            {
+                if (this.refCount > 0)
+                {
+                    this.refCount--;
+                }
+                b = this.refCount;
+            }
+            return b;
+        }
+
+        internal int Read()
+        {
+            int b = 0;
+            lock (this.syncObject)
+            {
+                b = this.refCount;
+            }
+            return b;
+        }
+    }
+
     // For change tracking.
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public abstract class PersistentContainer : INotifyPropertyChanged, IEnumerable<PersistentObject>
     {
-        int batched;
+        BatchSync batched = new BatchSync();
         bool changePending;
         bool saveChangeHistory;
         ChangeEventArgs head;
@@ -147,7 +188,7 @@ namespace Walkabout.Data
         /// <returns>Returns true if the parent container or this container are in batching mode</returns>
         public virtual bool FireChangeEvent(Object sender, ChangeEventArgs args)
         {
-            if (this.batched == 0)
+            if (this.batched.Read() == 0)
             {
                 if (this.parent != null)
                 {
@@ -158,6 +199,7 @@ namespace Walkabout.Data
                 }
 
                 SendEvent(sender, args);
+                return false;
             }
             else
             {
@@ -173,10 +215,9 @@ namespace Walkabout.Data
                     {
                         this.head = this.tail = args;
                     }
-                    return true;
                 }
+                return true;
             }
-            return this.batched > 0;
         }
 
         void SendEvent(object sender, ChangeEventArgs args)
@@ -191,37 +232,33 @@ namespace Walkabout.Data
 
         public bool IsUpdating
         {
-            get { return this.batched > 0; }
+            get { return this.batched.Read() > 0; }
         }
 
         public virtual void BeginUpdate(bool saveChangeHistory)
         {
             // batched updates
-            if (batched > 0 && !this.saveChangeHistory)
+            if (IsUpdating && !this.saveChangeHistory)
                 saveChangeHistory = this.saveChangeHistory;
-            batched++;
+            this.batched.Increment();
             this.saveChangeHistory = saveChangeHistory;
         }
 
         public virtual void EndUpdate()
         {
-            if (this.batched > 0)
+            if (this.batched.Decrement() == 0 && this.handlers != null && this.handlers.HasListeners && changePending)
             {
-                this.batched--;
-                if (this.batched == 0 && this.handlers != null && this.handlers.HasListeners && changePending)
+                changePending = false;
+                if (this.head != null)
                 {
-                    changePending = false;
-                    if (this.head != null)
-                    {
-                        SendEvent(this, head);
-                    }
-                    else
-                    {
-                        SendEvent(this, new ChangeEventArgs(this, null, ChangeType.Changed));
-                    }
-                    this.head = this.tail = null;
+                    SendEvent(this, head);
                 }
-            }
+                else
+                {
+                    SendEvent(this, new ChangeEventArgs(this, null, ChangeType.Changed));
+                }
+                this.head = this.tail = null;
+            }            
         }
 
         public virtual void OnNameChanged(object o, string oldName, string newName)
@@ -415,44 +452,40 @@ namespace Walkabout.Data
             this.change = ChangeType.Changed;
         }
 
-
-        int batched;
+        BatchSync batched = new BatchSync();
         bool changePending;
         ChangeEventArgs head;
         ChangeEventArgs tail;
 
         public bool IsUpdating
         {
-            get { return this.batched > 0; }
+            get { return this.batched.Read() > 0; }
         }
 
         public virtual void BeginUpdate()
         {
             // batched updates
-            batched++;
+            this.batched.Increment();
         }
 
         public virtual void EndUpdate()
         {
-            if (this.batched > 0)
+            if (this.batched.Decrement() == 0 && changePending)
             {
-                this.batched--;
-                if (this.batched == 0 && changePending)
+                changePending = false;
+                if (this.head != null)
                 {
-                    changePending = false;
-                    if (this.head != null)
-                    {
-                        FireChangeEvent(this, head);
-                    }
-                    else
-                    {
-                        FireChangeEvent(this, new ChangeEventArgs(this, null, ChangeType.Changed));
-                    }
-
-                    this.head = this.tail = null;
+                    FireChangeEvent(this, head);
                 }
+                else
+                {
+                    FireChangeEvent(this, new ChangeEventArgs(this, null, ChangeType.Changed));
+                }
+
+                this.head = this.tail = null;
             }
         }
+    
 
         internal void FlushUpdates()
         {
@@ -467,7 +500,7 @@ namespace Walkabout.Data
 
         public virtual bool FireChangeEvent(Object sender, ChangeEventArgs args)
         {
-            if (this.batched > 0)
+            if (this.batched.Read() > 0)
             {
                 changePending = true;
                 if (head == null)
@@ -479,6 +512,7 @@ namespace Walkabout.Data
                     tail.Next = args;
                     tail = args;
                 }
+                return true;
             }
             else if (this.Parent != null)
             {
@@ -491,8 +525,7 @@ namespace Walkabout.Data
             {
                 SendEvent(sender, args);
             }
-
-            return this.batched > 0;
+            return false;
         }
 
         void SendEvent(object sender, ChangeEventArgs args)

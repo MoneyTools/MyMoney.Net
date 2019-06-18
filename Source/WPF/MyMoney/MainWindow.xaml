@@ -388,10 +388,10 @@
         <StatusBar Grid.Row="2" Height="23" Background="{DynamicResource WalkaboutStatusBarBrush}" Foreground="{DynamicResource WalkaboutStatusBarTextBrush}">
             <StatusBarItem x:Name="StatusMessage" HorizontalAlignment="Left"/>
             <StatusBarItem HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="ProgressPrompt" />
+                <Grid >
                     <ProgressBar Width="200" x:Name="ProgressBar" Visibility="Hidden"/>
-                </StackPanel>
+                    <TextBlock x:Name="ProgressPrompt" Text="" Margin="8,0" Foreground="DarkGreen" />
+                </Grid>
             </StatusBarItem>
         </StatusBar>
 

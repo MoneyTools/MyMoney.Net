@@ -100,6 +100,7 @@ namespace Walkabout.StockQuotes
                 _service.DownloadError -= OnServiceDownloadError;
                 _service.QuoteAvailable -= OnServiceQuoteAvailable;
                 _service.Complete -= OnServiceQuotesComplete;
+                _service.Suspended -= OnServiceSuspended;
                 _service.Cancel();
             }
             _service = service;
@@ -108,6 +109,20 @@ namespace Walkabout.StockQuotes
                 _service.DownloadError += OnServiceDownloadError;
                 _service.QuoteAvailable += OnServiceQuoteAvailable;
                 _service.Complete += OnServiceQuotesComplete;
+                _service.Suspended += OnServiceSuspended;
+            }
+        }
+
+        private void OnServiceSuspended(object sender, bool suspended)
+        {
+            OnServiceQuotesComplete(sender, false);
+            if (suspended)
+            {
+                status.ShowProgress("Zzzz!", 0, _progressMax, _progressMax - _service.PendingCount);
+            }
+            else
+            {
+                status.ShowProgress("", 0, _progressMax, _progressMax - _service.PendingCount);
             }
         }
 
@@ -207,6 +222,10 @@ namespace Walkabout.StockQuotes
                 queue.Clear();
             }
 
+            OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
+            output.Clear();
+            output.AppendHeading(Walkabout.Properties.Resources.StockQuoteCaption);
+            
             GetDownloader().BeginFetchHistory(batch);
             _progressMax = batch.Count;
             _service.BeginFetchQuotes(batch);
@@ -418,8 +437,6 @@ namespace Walkabout.StockQuotes
         {
             Paragraph p = new Paragraph();
             p.Inlines.Add(errorLog.ToString());
-            p.Inlines.Add(new LineBreak());
-            p.Inlines.Add(new LineBreak());
             if (!string.IsNullOrEmpty(path))
             {
                 p.Inlines.Add("See ");
@@ -431,10 +448,11 @@ namespace Walkabout.StockQuotes
                 p.Inlines.Add(" for details");
             }
             OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
-            output.AppendHeading(Walkabout.Properties.Resources.StockQuoteErrorCaption);
             output.AppendParagraph(p);
             output.Show();
+            errorLog = new StringBuilder();
         }
+
 
         void OnShowLogFile(object sender, RoutedEventArgs e)
         {

@@ -419,17 +419,23 @@ namespace Walkabout.Attachments
                             FindAttachments(path, a, changed);
                         }
                         this.money.BeginUpdate();
-                        Transaction t;
-                        while (queue.TryDequeue(out t) && threadRunning)
+                        try
                         {
-                            bool yes = HasAttachments(path, t);
-                            if (t.HasAttachment != yes)
+                            Transaction t;
+                            while (queue.TryDequeue(out t) && threadRunning)
                             {
-                                t.HasAttachment = yes;
-                                changed.Add(t);
+                                bool yes = HasAttachments(path, t);
+                                if (t.HasAttachment != yes)
+                                {
+                                    t.HasAttachment = yes;
+                                    changed.Add(t);
+                                }
                             }
                         }
-                        this.money.EndUpdate();
+                        finally
+                        {
+                            this.money.EndUpdate();
+                        }
                     }
                 }
                 catch
@@ -444,10 +450,14 @@ namespace Walkabout.Attachments
 
         private void FindAttachments(string path, Account a, HashSet<Transaction> changed)
         {
+            if (a.IsCategoryFund)
+            {
+                return;
+            }
             HashSet<Transaction> set = new HashSet<Transaction>();
 
             string accountDirectory = Path.Combine(path, NativeMethods.GetValidFileName(a.Name));
-            if (!a.IsCategoryFund && !string.IsNullOrEmpty(accountDirectory) && Directory.Exists(accountDirectory))
+            if (!string.IsNullOrEmpty(accountDirectory) && Directory.Exists(accountDirectory))
             {
                 foreach (string fileName in Directory.GetFiles(accountDirectory, "*.*"))
                 {
@@ -473,25 +483,31 @@ namespace Walkabout.Attachments
                 }
             }
 
-            this.money.BeginUpdate();
-            foreach (Transaction t in this.money.Transactions.GetTransactionsFrom(a))
+            try
             {
-                if (!threadRunning)
+                this.money.BeginUpdate();
+                foreach (Transaction t in this.money.Transactions.GetTransactionsFrom(a))
                 {
-                    return;
-                }
-                if (t.HasAttachment && !set.Contains(t))
-                {
-                    changed.Add(t);
-                    t.HasAttachment = false;
-                }
-                if (!t.HasAttachment && set.Contains(t))
-                {
-                    changed.Add(t);
-                    t.HasAttachment = true;
+                    if (!threadRunning)
+                    {
+                        return;
+                    }
+                    if (t.HasAttachment && !set.Contains(t))
+                    {
+                        changed.Add(t);
+                        t.HasAttachment = false;
+                    }
+                    if (!t.HasAttachment && set.Contains(t))
+                    {
+                        changed.Add(t);
+                        t.HasAttachment = true;
+                    }
                 }
             }
-            this.money.EndUpdate();
+            finally
+            {
+                this.money.EndUpdate();
+            }
         }
 
         /// <summary>

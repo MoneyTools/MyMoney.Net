@@ -51,6 +51,12 @@ namespace Walkabout.StockQuotes
         event EventHandler<bool> Complete;
 
         /// <summary>
+        /// This event is raised if quota limits are stopping the service from responding right now.
+        /// The booling is true when suspended, and false when resuming.
+        /// </summary>
+        event EventHandler<bool> Suspended;
+
+        /// <summary>
         /// Stop all pending requests
         /// </summary>
         void Cancel();

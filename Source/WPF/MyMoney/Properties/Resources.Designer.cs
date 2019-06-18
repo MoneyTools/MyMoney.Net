@@ -133,6 +133,15 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fetched stock quotes {0}.
+        /// </summary>
+        internal static string FetchedStockQuotes {
+            get {
+                return ResourceManager.GetString("FetchedStockQuotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Merge Security.
         /// </summary>
         internal static string MergeSecurityCaption {
@@ -295,11 +304,11 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error Fetching Stock Quotes.
+        ///   Looks up a localized string similar to Fetching Stock Quotes.
         /// </summary>
-        internal static string StockQuoteErrorCaption {
+        internal static string StockQuoteCaption {
             get {
-                return ResourceManager.GetString("StockQuoteErrorCaption", resourceCulture);
+                return ResourceManager.GetString("StockQuoteCaption", resourceCulture);
             }
         }
         

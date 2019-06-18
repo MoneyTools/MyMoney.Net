@@ -100,6 +100,16 @@ namespace Walkabout.StockQuotes
             }
         }
 
+        public event EventHandler<bool> Suspended;
+
+        private void OnSuspended(bool suspended)
+        {
+            if (Suspended != null)
+            {
+                Suspended(this, suspended);
+            }
+        }
+
         public void BeginFetchQuotes(List<string> symbols)
         {
             int count = 0;
@@ -167,15 +177,25 @@ namespace Walkabout.StockQuotes
                         {
                             // this service doesn't want too many calls per second.
                             int ms = StockQuoteThrottle.Instance.GetSleep();
-                            if (ms > 0)
+                            bool suspended = ms > 0;
+                            if (suspended)
                             {
-                                OnError("AlphaVantage service needs to sleep for " + ms.ToString() + " ms");
-                                OnComplete(PendingCount == 0);
-                            }
-                            while (!_cancelled && ms > 0)
-                            {
-                                Thread.Sleep(1000);
-                                ms -= 1000;
+                                if (ms > 1000)
+                                {
+                                    int seconds = ms / 1000;
+                                    OnError("AlphaVantage service needs to sleep for " + seconds + " seconds");
+                                }
+                                else
+                                {
+                                    OnError("AlphaVantage service needs to sleep for " + ms.ToString() + " ms");
+                                }
+                                OnSuspended(true);
+                                while (!_cancelled && ms > 0)
+                                {
+                                    Thread.Sleep(1000);
+                                    ms -= 1000;
+                                }
+                                OnSuspended(false);
                             }
 
                             string uri = string.Format(address, symbol, _settings.ApiKey);
@@ -211,6 +231,7 @@ namespace Walkabout.StockQuotes
                                 }
                             }
 
+                            OnError(string.Format(Walkabout.Properties.Resources.FetchedStockQuotes, symbol));
                         }
                         catch (System.Net.WebException we)
                         {
@@ -328,7 +349,15 @@ namespace Walkabout.StockQuotes
                     int ms = StockQuoteThrottle.Instance.GetSleep();
                     if (ms > 0)
                     {
-                        OnError("AlphaVantage service needs to sleep for " + ms.ToString() + " ms");
+                        if (ms > 1000)
+                        {
+                            int seconds = ms / 1000;
+                            OnError("AlphaVantage service needs to sleep for " + seconds + " seconds");
+                        }
+                        else
+                        {
+                            OnError("AlphaVantage service needs to sleep for " + ms.ToString() + " ms");
+                        }
 
                         OnComplete(PendingCount == 0);
                     }

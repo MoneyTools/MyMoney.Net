@@ -193,8 +193,8 @@
   <data name="StatusVoidTip" xml:space="preserve">
     <value>V means this is a voided transaction</value>
   </data>
-  <data name="StockQuoteErrorCaption" xml:space="preserve">
-    <value>Error Fetching Stock Quotes</value>
+  <data name="StockQuoteCaption" xml:space="preserve">
+    <value>Fetching Stock Quotes</value>
   </data>
   <data name="StockQuotesException" xml:space="preserve">
     <value>Unhanded exception processing stock quote results</value>
@@ -282,5 +282,8 @@
   </data>
   <data name="StockServiceQuotaExceeded" xml:space="preserve">
     <value>Stock quote service quota has been exceeded, try again tomorrow.</value>
+  </data>
+  <data name="FetchedStockQuotes" xml:space="preserve">
+    <value>Fetched stock quotes {0}</value>
   </data>
 </root>

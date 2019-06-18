@@ -612,24 +612,28 @@ namespace Walkabout
                 UpdateCaption(null);
 
                 myMoney.BeginUpdate();
-
-                if (this.database != null)
+                try
                 {
-                    string path = this.database.DatabasePath;
-                    OfxRequest.OfxLogPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
-                    this.quotes.LogPath = Path.Combine(Path.GetDirectoryName(path), "StockQuotes");
+                    if (this.database != null)
+                    {
+                        string path = this.database.DatabasePath;
+                        OfxRequest.OfxLogPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
+                        this.quotes.LogPath = Path.Combine(Path.GetDirectoryName(path), "StockQuotes");
+                    }
+
+                    this.accountsControl.MyMoney = this.myMoney;
+                    this.categoriesControl.MyMoney = this.myMoney;
+                    this.payeesControl.MyMoney = this.myMoney;
+                    this.securitiesControl.MyMoney = this.myMoney;
+
+                    this.attachmentManager.Stop();
+                    this.attachmentManager = new AttachmentManager(this.myMoney);
+                    this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
                 }
-
-                this.accountsControl.MyMoney = this.myMoney;
-                this.categoriesControl.MyMoney = this.myMoney;
-                this.payeesControl.MyMoney = this.myMoney;
-                this.securitiesControl.MyMoney = this.myMoney;
-
-                this.attachmentManager.Stop();
-                this.attachmentManager = new AttachmentManager(this.myMoney);
-                this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
-
-                myMoney.EndUpdate();
+                finally
+                {
+                    myMoney.EndUpdate();
+                }
 
                 this.Cursor = Cursors.Arrow;
 
@@ -692,33 +696,37 @@ namespace Walkabout
         void AfterLoadChecks()
         {
             myMoney.BeginUpdate();
-
-            // remove dangling transactions.
-            foreach (Transaction t in myMoney.Transactions)
+            try
             {
-                if (t.Account == null)
+                // remove dangling transactions.
+                foreach (Transaction t in myMoney.Transactions)
                 {
-                    myMoney.Transactions.Remove(t);
+                    if (t.Account == null)
+                    {
+                        myMoney.Transactions.Remove(t);
+                    }
                 }
+
+                CostBasisCalculator calculator = new CostBasisCalculator(myMoney, DateTime.Now);
+
+                // This can be done on the background thread before we wire up 
+                // all the event handlers (for improved performance).
+                foreach (Account a in myMoney.Accounts.GetAccounts())
+                {
+                    if (a.Type != AccountType.Loan)
+                    {
+                        myMoney.Rebalance(calculator, a);
+                    }
+                }
+
+                myMoney.CheckSecurities();
+
+                myMoney.CheckCategoryFunds();
             }
-
-            CostBasisCalculator calculator = new CostBasisCalculator(myMoney, DateTime.Now);
-
-            // This can be done on the background thread before we wire up 
-            // all the event handlers (for improved performance).
-            foreach (Account a in myMoney.Accounts.GetAccounts())
+            finally
             {
-                if (a.Type != AccountType.Loan)
-                {
-                    myMoney.Rebalance(calculator, a);
-                }
+                myMoney.EndUpdate();
             }
-
-            myMoney.CheckSecurities();
-
-            myMoney.CheckCategoryFunds();
-
-            myMoney.EndUpdate();
 
             SetDirty(false);
 
