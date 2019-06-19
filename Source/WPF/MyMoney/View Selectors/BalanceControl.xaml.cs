@@ -141,7 +141,7 @@ namespace Walkabout.Views.Controls
 
             this.myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(Transactions_Changed);
 
-            this.interestCategory = (this.account.Type == AccountType.Investment) ?
+            this.interestCategory = (this.account.Type == AccountType.Brokerage) ?
                 this.myMoney.Categories.InvestmentInterest : this.myMoney.Categories.InterestEarned;
 
             FindInterestTransaction(estdate);

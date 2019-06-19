@@ -58,39 +58,60 @@ namespace Walkabout.Reports
             decimal totalBalance = 0;
             decimal balance = 0;
             bool hasTaxDeferred = false;
+            bool hasRetirement = false;
 
             Transactions transactions = myMoney.Transactions;
             foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
             {
+                if (a.Type == AccountType.Retirement)
+                {
+                    hasRetirement = true;
+                    continue;
+                }
                 if (a.IsTaxDeferred) hasTaxDeferred = true;
-                if (a.Type == AccountType.Credit || a.Type == AccountType.Investment || a.Type == AccountType.CategoryFund || a.Type == AccountType.Loan)
+                if (a.Type == AccountType.Credit || 
+                    a.Type == AccountType.Asset ||                     
+                    a.Type == AccountType.Brokerage || 
+                    a.Type == AccountType.CategoryFund || 
+                    a.Type == AccountType.Loan)
                 {
                     continue;
                 }
-                else if (a.Type != AccountType.Asset)
-                {
-                    balance += a.BalanceNormalized;
-                }
+
+                balance += a.BalanceNormalized;
             }
 
             if (balance > 0) data.Add(new PieData() { Name = "Cash", Total = balance });
             WriteRow(writer, "Cash", balance);
 
             totalBalance += balance;
-            balance = this.myMoney.GetInvestmentCashBalance(null);
-            
+            balance = this.myMoney.GetInvestmentCashBalance(new Predicate<Account>((a) => { return !a.IsClosed && (a.Type == AccountType.Brokerage); }));
+
             if (balance > 0) data.Add(new PieData() { Name = "Investment Cash", Total = balance });
             WriteRow(writer, "Investment Cash", balance);
             totalBalance += balance;
 
-            balance = 0;
+            bool hasNoneRetirement = false;
+            if (hasRetirement)
+            {
+                WriteHeader(writer, "Retirement Assets");
+                balance = this.myMoney.GetInvestmentCashBalance(new Predicate<Account>((a) => { return !a.IsClosed && a.Type == AccountType.Retirement; }));
+            
+                if (balance > 0) data.Add(new PieData() { Name = "Retirement Cash", Total = balance });
+                WriteRow(writer, "Retirement Cash", balance);
+                totalBalance += balance;
+
+                totalBalance += WriteSecurities(writer, data, "Retirement ", new Predicate<Account>((a) => { return a.Type == AccountType.Retirement; }), out hasNoneRetirement);
+            }
 
             bool hasNoneTypeTaxDeferred = false;
             if (hasTaxDeferred)
             {
                 WriteHeader(writer, "Tax Deferred Assets");
-                totalBalance += WriteSecurities(writer, data, "Tax Deferred ", new Predicate<Account>((a) => { return a.Type == AccountType.Investment && a.IsTaxDeferred; }), out hasNoneTypeTaxDeferred);
+                totalBalance += WriteSecurities(writer, data, "Tax Deferred ", new Predicate<Account>((a) => { return a.Type == AccountType.Brokerage && a.IsTaxDeferred; }), out hasNoneTypeTaxDeferred);
             }
+
+            balance = 0;
 
             WriteHeader(writer, "Long Term Assets");
 
@@ -105,7 +126,7 @@ namespace Walkabout.Reports
             }
 
             bool hasNoneType = false;
-            totalBalance += WriteSecurities(writer, data, "", new Predicate<Account>((a) => { return a.Type == AccountType.Investment && !a.IsTaxDeferred; }), out hasNoneType);
+            totalBalance += WriteSecurities(writer, data, "", new Predicate<Account>((a) => { return a.Type == AccountType.Brokerage && !a.IsTaxDeferred; }), out hasNoneType);
 
             balance = 0;
             WriteHeader(writer, "Liabilities");
@@ -170,7 +191,7 @@ namespace Walkabout.Reports
             writer.EndRow();
             writer.EndTable();
 
-            if (hasNoneTypeTaxDeferred || hasNoneType)
+            if (hasNoneRetirement || hasNoneTypeTaxDeferred || hasNoneType)
             {
                 writer.WriteParagraph("(*) One ore more of your securities has no SecurityType, you can fix this using View/Securities", 
                     System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Maroon);

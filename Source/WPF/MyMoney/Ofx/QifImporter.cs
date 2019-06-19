@@ -102,19 +102,24 @@ namespace Walkabout.Migrate
                 {
                     string atype = line.Substring(6);
                     AccountType at = AccountType.Checking;
+                    bool AccountTypeMismatch = false;
                     switch (atype)
                     {
                         case "Bank":
                             at = filename.IndexOf("Checking") >= 0 ? AccountType.Checking : AccountType.Savings;
+                            AccountTypeMismatch = at != a.Type;
                             break;
                         case "Cash":
                             at = AccountType.Cash;
+                            AccountTypeMismatch = at != a.Type;
                             break;
                         case "CCard":
                             at = AccountType.Credit;
+                            AccountTypeMismatch = at != a.Type;
                             break;
                         case "Invst":
-                            at = AccountType.Investment;
+                            at = AccountType.Brokerage;
+                            AccountTypeMismatch = (a.Type != AccountType.Brokerage && a.Type != AccountType.Retirement);
                             break;
 
                         case "Oth A":
@@ -122,6 +127,7 @@ namespace Walkabout.Migrate
                             // QIF from MSMoney, the Type will show up as "!Type:Oth A"
                             // The best thing to do is match it to a Checking account type
                             at = AccountType.Checking;
+                            AccountTypeMismatch = at != a.Type;
                             break;
 
                         default:
@@ -130,7 +136,7 @@ namespace Walkabout.Migrate
                     }
                     if (merge)
                     {
-                        if (a.Type != at)
+                        if (AccountTypeMismatch)
                         {
                             throw new Exception(String.Format("Account type {0} in QIF doesn't match selected account type {1}", at, a.Type));
                         }
@@ -143,7 +149,7 @@ namespace Walkabout.Migrate
 
                 // see http://www.respmech.com/mym2qifw/qif_new.htm 
                 Transaction t = myMoney.Transactions.NewTransaction(a);
-                if (a.Type == AccountType.Investment)
+                if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
                 {
                     t.GetOrCreateInvestment();
                 }
@@ -218,7 +224,7 @@ namespace Walkabout.Migrate
                                 try
                                 {
                                     t.Number = line;
-                                    if (a.Type == AccountType.Investment)
+                                    if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
                                     {
                                         if (t.Investment == null)
                                         {
@@ -367,7 +373,7 @@ namespace Walkabout.Migrate
                             case '^': // commit
                                 if (t != null)
                                 {
-                                    if (a.Type == AccountType.Investment)
+                                    if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
                                     {
                                         switch (t.Investment.Type)
                                         {
@@ -407,7 +413,7 @@ namespace Walkabout.Migrate
                                     newTransactions[t.Id] = t;
                                 }
                                 t = myMoney.Transactions.NewTransaction(a);
-                                if (a.Type == AccountType.Investment)
+                                if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
                                 {
                                     t.GetOrCreateInvestment();
                                 }

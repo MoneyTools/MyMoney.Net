@@ -546,7 +546,8 @@ namespace Walkabout.Ofx
                     return OfxRequestType.BankRequest;
                 case AccountType.Credit:
                     return OfxRequestType.CreditRequest;
-                case AccountType.Investment:
+                case AccountType.Brokerage:
+                case AccountType.Retirement:
                     return OfxRequestType.InvestmentRequest;
                 default:
                     throw new OfxException(string.Format("OFX request on {0} account not supported", a.Type.ToString()));
@@ -819,7 +820,7 @@ namespace Walkabout.Ofx
                     return "SAVINGS";
                 case AccountType.MoneyMarket:
                     return "MONEYMRKT";
-                case AccountType.Investment:
+                case AccountType.Brokerage:
                     return "MONEYMRKT";
             }
             throw new InvalidOperationException("Should not be trying to use this account type here");
@@ -2055,7 +2056,10 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 {
                     // and we find the account using the account id in the statement.
 
-                    if (a.Type != AccountType.Investment && a.Type != AccountType.Checking && a.Type != AccountType.Savings)
+                    if (a.Type != AccountType.Brokerage &&
+                        a.Type != AccountType.Retirement && 
+                        a.Type != AccountType.Checking &&
+                        a.Type != AccountType.Savings)
                     {
                         throw new OfxException(string.Format(Properties.Resources.AccountTypeMismatch, a.Name, "'Investment'"));
                     }
@@ -2081,7 +2085,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 }
 
                 XElement from = srs.SelectExpectedElement("INVACCTFROM");
-                if (!CheckAccountId(ref a, AccountType.Investment, from, results))
+                if (!CheckAccountId(ref a, AccountType.Brokerage, from, results))
                 {
                     continue;
                 }

@@ -1616,7 +1616,7 @@ namespace Walkabout.Views
                     string layout = this.TheActiveGrid.Name;
                     IList data = null;
 
-                    if (a.Type == AccountType.Investment)
+                    if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
                     {
                         if (this.InvestmentAccountTabs.SelectedIndex == PortfolioTab)
                         {
@@ -1753,7 +1753,7 @@ namespace Walkabout.Views
 
                 if (!multiple)
                 {
-                    if (account != null && account.Type == AccountType.Investment)
+                    if (account != null && (account.Type == AccountType.Brokerage || account.Type == AccountType.Retirement))
                     {
                         includeInvestmentInfo = true;
                         layout = "TheGrid_InvestmentActivity";
@@ -2348,7 +2348,7 @@ namespace Walkabout.Views
             //
             // Hide / Show Tabs
             //
-            if (a != null && a.Type == AccountType.Investment)
+            if (a != null && (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement))
             {
                 this.InvestmentAccountTabs.Visibility = System.Windows.Visibility.Visible;
             }

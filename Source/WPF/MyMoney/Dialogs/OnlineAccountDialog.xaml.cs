@@ -203,7 +203,8 @@ namespace Walkabout.Dialogs
                     TextBoxBranchId.Visibility = BranchIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
                     TextBoxBankId.Visibility = BankIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
                     break;
-                case AccountType.Investment:
+                case AccountType.Brokerage:
+                case AccountType.Retirement:
                     TextBoxBrokerId.Visibility = BrokerIdPrompt.Visibility = System.Windows.Visibility.Visible;
                     TextBoxBranchId.Visibility = BranchIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
                     TextBoxBankId.Visibility = BankIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
@@ -1198,7 +1199,7 @@ namespace Walkabout.Dialogs
             }
             else if (ar.InvAccountInfo != null )
             {
-                type = AccountType.Investment;
+                type = AccountType.Brokerage;
                 var from = ar.InvAccountInfo.InvAccountFrom;
                 if (from != null)
                 {

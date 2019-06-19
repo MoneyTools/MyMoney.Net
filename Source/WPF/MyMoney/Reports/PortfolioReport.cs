@@ -75,6 +75,22 @@ namespace Walkabout.Reports
         decimal totalMarketValue;
         decimal totalGainLoss;
 
+
+        private void WriteSummaryRow(IReportWriter writer, String Col1, String Col2, String Col3)
+        {
+            writer.StartCell();
+            writer.WriteParagraph(Col1);
+            writer.EndCell();
+            writer.StartCell();
+            writer.WriteNumber(Col2);
+            writer.EndCell();
+            writer.StartCell();
+            writer.WriteNumber(Col3);
+            writer.EndCell();
+            writer.EndRow();
+
+        }
+
         public void Generate(IReportWriter writer)
         {
             flowwriter = writer as FlowDocumentReportWriter;
@@ -114,63 +130,25 @@ namespace Walkabout.Reports
                 writer.WriteColumnDefinition("Auto", minWidth, double.MaxValue);
             }
             writer.EndColumnDefinitions();
-            writer.StartHeaderRow();
-            writer.StartCell();
-            writer.WriteParagraph("Security Type");
-            writer.EndCell();
-            writer.StartCell();
-            writer.WriteNumber("Market Value");
-            writer.EndCell();
-            writer.StartCell();
-            writer.WriteNumber("Gain/Loss");
-            writer.EndCell();
-            writer.EndRow();
+
+
 
             List<SecurityPieData> data = new List<SecurityPieData>();
 
-            decimal cash = this.myMoney.GetInvestmentCashBalance(account);
-            if (cash > 0)
-            {
-                writer.StartRow();
-                writer.StartCell();
-                writer.WriteParagraph("Cash");
-                writer.EndCell();
-                writer.StartCell();
-                writer.WriteNumber(cash.ToString("C"));
-                writer.EndCell();
-                writer.EndRow();
-
-                data.Add(new SecurityPieData()
-                {
-                    Total = RoundToNearestCent(cash),
-                    Name = "Cash"
-                });
-
-            }
-
-            totalMarketValue += cash;
-
             if (account == null)
             {
-                WriteSummary(writer, data, "Tax Deferred ", new Predicate<Account>( (a) => { return a.IsTaxDeferred; }));
-                WriteSummary(writer, data, "", new Predicate<Account>((a) => { return !a.IsTaxDeferred; }));
+                WriteSummary(writer, data, TaxableIncomeType.None,  "Retirement Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
+                WriteSummary(writer, data, TaxableIncomeType.All,   "Retirement ",          new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
+                WriteSummary(writer, data, TaxableIncomeType.All,   "Tax Deferred ",        new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
+                WriteSummary(writer, data, TaxableIncomeType.Gains, "",                     new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
             }
             else
             {
-                WriteSummary(writer, data, "", new Predicate<Account>((a) => { return a == account; }));
+                WriteSummary(writer, data, TaxableIncomeType.Gains, "", new Predicate<Account>((a) => { return a == account; }));
             }
 
             writer.StartHeaderRow();
-            writer.StartCell();
-            writer.WriteParagraph("Total");
-            writer.EndCell();
-            writer.StartCell();
-            writer.WriteNumber(totalMarketValue.ToString("C"));
-            writer.EndCell();
-            writer.StartCell();
-            writer.WriteNumber(totalGainLoss.ToString("C"));
-            writer.EndCell();
-            writer.EndRow();
+            WriteSummaryRow(writer, "Total", totalMarketValue.ToString("C"), totalGainLoss.ToString("C"));
             writer.EndTable();
 
             writer.EndCell();
@@ -211,11 +189,12 @@ namespace Walkabout.Reports
                 }
             }
 
-            
             if (account == null)
             {
-                WriteDetails(writer, "Tax Deferred ", new Predicate<Account>((a) => { return a.IsTaxDeferred; }));
-                WriteDetails(writer, "", new Predicate<Account>((a) => { return !a.IsTaxDeferred; }));
+                WriteDetails(writer, "Retirement Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
+                WriteDetails(writer, "Retirement ",          new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
+                WriteDetails(writer, "Tax Deferred ",        new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
+                WriteDetails(writer, "",                     new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
             }
             else 
             {
@@ -372,8 +351,33 @@ namespace Walkabout.Reports
             }
         }
 
-        private void WriteSummary(IReportWriter writer, List<SecurityPieData> data, string prefix, Predicate<Account> filter)
+        private void WriteSummary(IReportWriter writer, List<SecurityPieData> data, TaxableIncomeType taxableIncomeType, string prefix, Predicate<Account> filter)
         {
+            string caption = prefix + "Investments";
+            decimal totalSectionMarketValue;
+            decimal totalSectionGainValue = 0;
+
+            writer.StartHeaderRow();
+            WriteSummaryRow(writer, caption, "Market Value", "Taxable");
+
+            decimal cash = RoundToNearestCent(this.myMoney.GetInvestmentCashBalance(filter));
+
+            if (taxableIncomeType == TaxableIncomeType.None) totalSectionGainValue = 0;
+            if (taxableIncomeType == TaxableIncomeType.All) totalSectionGainValue = cash;
+            totalSectionMarketValue = cash;
+
+            if (cash > 0)
+            {
+                WriteSummaryRow(writer, "    Cash", cash.ToString("C"), totalSectionGainValue.ToString("C"));
+                caption = prefix + "Cash";
+
+                data.Add(new SecurityPieData()
+                {
+                    Total = RoundToNearestCent(cash),
+                    Name = caption
+                });
+            }
+
 
             // compute summary
             foreach (var securityGroup in calc.GetHoldingsBySecurityType(filter))
@@ -392,32 +396,31 @@ namespace Walkabout.Reports
                         count++;
                     }
                 }
-                string caption = prefix + Security.GetSecurityTypeCaption(st);
+
+                if (taxableIncomeType == TaxableIncomeType.None) gainLoss = 0;
+                if (taxableIncomeType == TaxableIncomeType.All) gainLoss = marketValue;
 
                 if (count > 0)
                 {
+                    caption = prefix + Security.GetSecurityTypeCaption(st);
                     data.Add(new SecurityPieData()
                     {
                         Total = RoundToNearestCent(marketValue),
                         Name = caption
                     });
 
-                    writer.StartRow();
-                    writer.StartCell();
-                    writer.WriteParagraph(caption);
-                    writer.EndCell();
-                    writer.StartCell();
-                    writer.WriteNumber(marketValue.ToString("C"));
-                    writer.EndCell();
-                    writer.StartCell();
-                    writer.WriteNumber(gainLoss.ToString("C"));
-                    writer.EndCell();
-                    writer.EndRow();
+                    caption = "    " + Security.GetSecurityTypeCaption(st);
+                    WriteSummaryRow(writer, caption, marketValue.ToString("C"), gainLoss.ToString("C"));
                 }
 
-                totalMarketValue += marketValue;
-                totalGainLoss += gainLoss;
+                totalSectionMarketValue += marketValue;
+                totalSectionGainValue += gainLoss;
             }
+
+            WriteSummaryRow(writer, "    SubTotal", totalSectionMarketValue.ToString("C"), totalSectionGainValue.ToString("C"));
+
+            totalMarketValue += totalSectionMarketValue;
+            totalGainLoss += totalSectionGainValue;
         }
 
         private decimal RoundToNearestCent(decimal x)

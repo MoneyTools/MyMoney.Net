@@ -361,9 +361,14 @@ namespace Walkabout.Views.Controls
                     sh = BundleAccount("Credit", output, accountOfTypeCredit);
                     netWorth += sh.BalanceInNormalizedCurrencyValue;
 
-                    var accountOfTypeInvestment = from a in inputList where a.Type == AccountType.Investment || a.Type == AccountType.MoneyMarket select a;
-                    sh = BundleAccount("Investment", output, accountOfTypeInvestment);
-                    sh.IsSelectable = true; // Only the INVESTEMENT Header can be selected 
+                    var accountOfTypeBrokerage = from a in inputList where a.Type == AccountType.Brokerage || a.Type == AccountType.MoneyMarket select a;
+                    sh = BundleAccount("Brokerage", output, accountOfTypeBrokerage);
+                    sh.IsSelectable = true; // Only INVESTEMENT types Header can be selected 
+                    netWorth += sh.BalanceInNormalizedCurrencyValue;
+
+                    var accountOfTypeRetirement = from a in inputList where a.Type == AccountType.Retirement select a;
+                    sh = BundleAccount("Retirement", output, accountOfTypeRetirement);
+                    sh.IsSelectable = true; // Only INVESTEMENT types Header can be selected 
                     netWorth += sh.BalanceInNormalizedCurrencyValue;
 
                     var accountOfTypeAsset = from a in inputList where a.Type == AccountType.Asset select a;
