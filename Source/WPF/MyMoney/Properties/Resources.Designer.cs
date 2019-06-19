@@ -97,6 +97,15 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please configure your Stock Quote Acount from the Online menu.
+        /// </summary>
+        internal static string ConfigureStockQuoteService {
+            get {
+                return ResourceManager.GetString("ConfigureStockQuoteService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CSV files (*.csv)|*.csv.
         /// </summary>
         internal static string CsvFileFilter {
@@ -129,6 +138,15 @@ namespace Walkabout.Properties {
         internal static string ErrorFetchingSymbols {
             get {
                 return ResourceManager.GetString("ErrorFetchingSymbols", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fetched stock quotes {0}.
+        /// </summary>
+        internal static string FetchedStockQuotes {
+            get {
+                return ResourceManager.GetString("FetchedStockQuotes", resourceCulture);
             }
         }
         
@@ -295,11 +313,11 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error Fetching Stock Quotes.
+        ///   Looks up a localized string similar to Fetching Stock Quotes.
         /// </summary>
-        internal static string StockQuoteErrorCaption {
+        internal static string StockQuoteCaption {
             get {
-                return ResourceManager.GetString("StockQuoteErrorCaption", resourceCulture);
+                return ResourceManager.GetString("StockQuoteCaption", resourceCulture);
             }
         }
         

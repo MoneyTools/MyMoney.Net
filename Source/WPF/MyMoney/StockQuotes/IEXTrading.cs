@@ -78,6 +78,16 @@ namespace Walkabout.StockQuotes
             }
         }
 
+        public event EventHandler<bool> Suspended;
+
+        private void OnSuspended(bool suspended)
+        {
+            if (Suspended != null)
+            {
+                Suspended(this, suspended);
+            }
+        }
+
         public static StockServiceSettings GetDefaultSettings()
         {
             return new StockServiceSettings()
@@ -97,6 +107,13 @@ namespace Walkabout.StockQuotes
 
         public void BeginFetchQuotes(List<string> symbols)
         {
+            if (string.IsNullOrEmpty(_settings.ApiKey))
+            {
+                OnError(Walkabout.Properties.Resources.ConfigureStockQuoteService);
+                OnComplete(true);
+                return;
+            }
+
             int count = 0;
             if (_pending == null)
             {
@@ -131,9 +148,9 @@ namespace Walkabout.StockQuotes
                 // This is on a background thread
                 int max_batch = 100;
                 List<string> batch = new List<string>();
+                int remaining = 0;
                 while (!_cancelled)
                 {
-                    int remaining = 0;
                     string symbol = null;
                     lock (_pending)
                     {
@@ -170,6 +187,29 @@ namespace Walkabout.StockQuotes
                         string symbols = string.Join(",", batch);
                         try
                         {
+                            // this service doesn't want too many calls per second.
+                            int ms = StockQuoteThrottle.Instance.GetSleep();
+                            bool suspended = ms > 0;
+                            if (ms > 0)
+                            {
+                                if (ms > 1000)
+                                {
+                                    int seconds = ms / 1000;
+                                    OnError("IEXTrading service needs to sleep for " + seconds + " seconds");
+                                }
+                                else
+                                {
+                                    OnError("IEXTrading service needs to sleep for " + ms.ToString() + " ms");
+                                }
+                                OnSuspended(true);
+                                while (!_cancelled && ms > 0)
+                                {
+                                    Thread.Sleep(1000);
+                                    ms -= 1000;
+                                }
+                                OnSuspended(false);
+                            }
+
                             string uri = string.Format(address, symbols, _settings.ApiKey);
                             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
                             req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
@@ -202,17 +242,11 @@ namespace Walkabout.StockQuotes
                                 }
                             }
 
-                            // this service doesn't want too many calls per second.
-                            int ms = StockQuoteThrottle.Instance.GetSleep();
-                            while (!_cancelled)
-                            {
-                                Thread.Sleep(1000);
-                                ms -= 1000;
-                                if (ms <= 0)
-                                {
-                                    break;
-                                }
-                            }
+                            Thread.Sleep(1000); // there is also a minimum sleep between requests that we must enforce.
+
+                            symbols = string.Join(", ", batch);
+                            OnError(string.Format(Walkabout.Properties.Resources.FetchedStockQuotes, symbols));
+
                         }
                         catch (System.Net.WebException we)
                         {
@@ -247,11 +281,11 @@ namespace Walkabout.StockQuotes
                             // continue
                             OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbols) + "\r\n" + e.Message);
                         }
+
+                        OnComplete(remaining == 0);
                     }
 
                     _current = null;
-                    OnComplete(remaining == 0);
-
                 }
             }
             catch
@@ -283,35 +317,35 @@ namespace Walkabout.StockQuotes
                     {
                         child = (JObject)value;
 
-                        if (child.TryGetValue("symbol", StringComparison.Ordinal, out value))
+                        if (child.TryGetValue("symbol", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                         {
                             quote.Symbol = (string)value;
                         }
-                        if (child.TryGetValue("companyName", StringComparison.Ordinal, out value))
+                        if (child.TryGetValue("companyName", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                         {
                             quote.Name = (string)value;
                         }
-                        if (child.TryGetValue("open", StringComparison.Ordinal, out value))
+                        if (child.TryGetValue("open", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                         {
                             quote.Open = (decimal)value;
                         }
-                        if (child.TryGetValue("close", StringComparison.Ordinal, out value))
+                        if (child.TryGetValue("close", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                         {
                             quote.Close = (decimal)value;
                         }
-                        if (child.TryGetValue("high", StringComparison.Ordinal, out value))
+                        if (child.TryGetValue("high", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                         {
                             quote.High = (decimal)value;
                         }
-                        if (child.TryGetValue("low", StringComparison.Ordinal, out value))
+                        if (child.TryGetValue("low", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                         {
                             quote.Low = (decimal)value;
                         }
-                        if (child.TryGetValue("latestVolume", StringComparison.Ordinal, out value))
+                        if (child.TryGetValue("latestVolume", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                         {
                             quote.Volume = (decimal)value;
                         }
-                        if (child.TryGetValue("closeTime", StringComparison.Ordinal, out value))
+                        if (child.TryGetValue("closeTime", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                         {
                             long ticks = (long)value;
                             quote.Date = DateTimeOffset.FromUnixTimeMilliseconds(ticks).LocalDateTime;
@@ -322,9 +356,12 @@ namespace Walkabout.StockQuotes
             return result;
         }
 
-        public Task<StockQuoteHistory> DownloadHistory(string symbol)
+        public async Task<StockQuoteHistory> DownloadHistory(string symbol)
         {
-            return null;
+            OnError(String.Format("Download history for {0} is not supported by IEXTrading service", symbol));
+            OnComplete(true);
+            await Task.Delay(0);
+            return new StockQuoteHistory() { Symbol = symbol };
         }
     }
 }

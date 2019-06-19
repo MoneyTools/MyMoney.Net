@@ -537,38 +537,43 @@ namespace Walkabout.Data
             this.LazyCreateTables();
             MyMoney money = new MyMoney();
             money.BeginUpdate();
-
-            // Must be done in the right order so all object references can be resolved properly
-
-            if (status != null)
+            try
             {
-                progressMax = 0;
-                progressValue = 0;
-                progressLastReport = 0;
-                foreach (string name in tableNames)
+                // Must be done in the right order so all object references can be resolved properly
+
+                if (status != null)
                 {
-                    progressMax += CountTableRows(name);
+                    progressMax = 0;
+                    progressValue = 0;
+                    progressLastReport = 0;
+                    foreach (string name in tableNames)
+                    {
+                        progressMax += CountTableRows(name);
+                    }
+                    status.ShowProgress("Loading database:", 0, progressMax, progressValue);
                 }
-                status.ShowProgress("Loading database:", 0, progressMax, progressValue);
+                this.ReadOnlineAccounts(money.OnlineAccounts, money);
+                this.ReadCategories(money.Categories, money);  // Must populate the Categories before the Account, since the Account now have 2 fields pointing to Categories
+                this.ReadAccounts(money.Accounts, money);
+                this.ReadPayees(money.Payees, money);
+                this.ReadAliases(money.Payees, money);
+
+                this.ReadSecurities(money.Securities, money);
+                this.ReadStockSplits(money.StockSplits, money);
+                this.ReadCurrencies(money.Currencies, money);
+                this.ReadTransactions(money.Transactions, money);
+
+
+                // Loan and Building are loaded last since they use the Transactions for looking up totals of expenses per Buildings
+                this.ReadLoanPayments(money.LoanPayments, money);
+                this.ReadRentBuildings(money.Buildings, money);
+
             }
-            this.ReadOnlineAccounts(money.OnlineAccounts, money);
-            this.ReadCategories(money.Categories, money);  // Must populate the Categories before the Account, since the Account now have 2 fields pointing to Categories
-            this.ReadAccounts(money.Accounts, money);
-            this.ReadPayees(money.Payees, money);
-            this.ReadAliases(money.Payees, money);
-
-            this.ReadSecurities(money.Securities, money);
-            this.ReadStockSplits(money.StockSplits, money);
-            this.ReadCurrencies(money.Currencies, money);
-            this.ReadTransactions(money.Transactions, money);
-
-
-            // Loan and Building are loaded last since they use the Transactions for looking up totals of expenses per Buildings
-            this.ReadLoanPayments(money.LoanPayments, money);
-            this.ReadRentBuildings(money.Buildings, money);
-
-            money.FlushUpdates();
-            money.EndUpdate();
+            finally
+            {
+                money.FlushUpdates();
+                money.EndUpdate();
+            }
             if (status != null)
             {
                 status.ShowProgress(string.Empty, 0, 0, 0);

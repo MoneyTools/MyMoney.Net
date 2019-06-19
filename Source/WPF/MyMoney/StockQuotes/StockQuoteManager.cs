@@ -32,7 +32,7 @@ namespace Walkabout.StockQuotes
         MyMoney myMoney;
         StringBuilder errorLog = new StringBuilder();
         bool hasError;
-        bool stop;
+        bool disposed;
         List<Security> queue = new List<Security>(); // list of securities to fetch
         HashSet<string> fetched = new HashSet<string>(); // list that we have already fetched.
         IStatusService status;
@@ -85,7 +85,7 @@ namespace Walkabout.StockQuotes
                 {
                     service = new AlphaVantage(_settings, this.LogPath);
                 }
-                else 
+                else if (IEXTrading.IsMySettings(_settings))
                 {
                     service = new IEXTrading(_settings, this.LogPath);
                 }
@@ -100,6 +100,7 @@ namespace Walkabout.StockQuotes
                 _service.DownloadError -= OnServiceDownloadError;
                 _service.QuoteAvailable -= OnServiceQuoteAvailable;
                 _service.Complete -= OnServiceQuotesComplete;
+                _service.Suspended -= OnServiceSuspended;
                 _service.Cancel();
             }
             _service = service;
@@ -108,6 +109,20 @@ namespace Walkabout.StockQuotes
                 _service.DownloadError += OnServiceDownloadError;
                 _service.QuoteAvailable += OnServiceQuoteAvailable;
                 _service.Complete += OnServiceQuotesComplete;
+                _service.Suspended += OnServiceSuspended;
+            }
+        }
+
+        private void OnServiceSuspended(object sender, bool suspended)
+        {
+            OnServiceQuotesComplete(sender, false);
+            if (suspended)
+            {
+                status.ShowProgress("Zzzz!", 0, _progressMax, _progressMax - _service.PendingCount);
+            }
+            else
+            {
+                status.ShowProgress("", 0, _progressMax, _progressMax - _service.PendingCount);
             }
         }
 
@@ -192,7 +207,10 @@ namespace Walkabout.StockQuotes
 
         void BeginGetQuotes()
         {
-            stop = false;
+            if (_service == null)
+            {
+                return;
+            }
 
             List<string> batch = new List<string>();
             lock (queue)
@@ -207,6 +225,10 @@ namespace Walkabout.StockQuotes
                 queue.Clear();
             }
 
+            OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
+            output.Clear();
+            output.AppendHeading(Walkabout.Properties.Resources.StockQuoteCaption);
+            
             GetDownloader().BeginFetchHistory(batch);
             _progressMax = batch.Count;
             _service.BeginFetchQuotes(batch);
@@ -281,7 +303,7 @@ namespace Walkabout.StockQuotes
                 {
                     status.ShowProgress(string.Empty, 0, 0, 0);
                 }
-                if (!stop)
+                if (!disposed)
                 {
                     OnDownloadComplete();
                 }
@@ -337,6 +359,7 @@ namespace Walkabout.StockQuotes
 
         protected virtual void Dispose(bool disposing)
         {
+            disposed = true;
             if (disposing)
             {
                 StopThread();
@@ -361,8 +384,7 @@ namespace Walkabout.StockQuotes
         }
 
         void StopThread()
-        {
-            stop = true;
+        {            
             if (_service != null)
             {
                 _service.Cancel();
@@ -399,7 +421,7 @@ namespace Walkabout.StockQuotes
                     this.myMoney.Securities.EndUpdate();
                 }
                 
-                if (hasError && !stop)
+                if (hasError && !disposed)
                 {
                     ShowErrors(null);
                 }
@@ -418,8 +440,6 @@ namespace Walkabout.StockQuotes
         {
             Paragraph p = new Paragraph();
             p.Inlines.Add(errorLog.ToString());
-            p.Inlines.Add(new LineBreak());
-            p.Inlines.Add(new LineBreak());
             if (!string.IsNullOrEmpty(path))
             {
                 p.Inlines.Add("See ");
@@ -431,10 +451,11 @@ namespace Walkabout.StockQuotes
                 p.Inlines.Add(" for details");
             }
             OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
-            output.AppendHeading(Walkabout.Properties.Resources.StockQuoteErrorCaption);
             output.AppendParagraph(p);
             output.Show();
+            errorLog = new StringBuilder();
         }
+
 
         void OnShowLogFile(object sender, RoutedEventArgs e)
         {
@@ -479,6 +500,10 @@ namespace Walkabout.StockQuotes
 
         internal void BeginDownloadHistory(string symbol)
         {
+            if (_service == null)
+            {
+                return;
+            }
             GetDownloader().BeginFetchHistory(new List<string>(new string[] { symbol }));
         }
 
@@ -523,7 +548,18 @@ namespace Walkabout.StockQuotes
                 XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
                 using (XmlReader r = XmlReader.Create(filename))
                 {
-                    return (DownloadLog)s.Deserialize(r);
+                    var log = (DownloadLog)s.Deserialize(r);
+                    if (log.Downloaded != null)
+                    {
+                        foreach(var info in log.Downloaded.ToArray())
+                        {
+                            var quotes = System.IO.Path.Combine(logFolder, info.Symbol + ".xml");
+                            if (!System.IO.File.Exists(quotes))
+                            {
+                                log.Downloaded.Remove(info);
+                            }
+                        }
+                    }
                 }
             }
             return new DownloadLog();
@@ -635,7 +671,7 @@ namespace Walkabout.StockQuotes
                     try
                     {
                         var history = await _service.DownloadHistory(symbol);
-                        if (history != null)
+                        if (history != null && history.History != null && history.History.Count != 0)
                         {
                             history.Save(this._logPath);
                             _downloadLog.Downloaded.Add(new DownloadInfo() { Downloaded = DateTime.Today, Symbol = symbol });

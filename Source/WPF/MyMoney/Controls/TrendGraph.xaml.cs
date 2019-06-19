@@ -290,6 +290,18 @@ namespace Walkabout.Views.Controls
                     // calculate balances using data from the start of the account \ list so the end balance is correct
                     if (t.Date <= end)
                     {
+                        // For all regular transaction lists, we calcuclate the overall balance on the fly, based on each transaction amount.
+                        // When we list securities - not an account - we should show the overall value of the securities instead, 
+                        // which is precalculated and stored within each transaction
+                        if (this.account == null && t.Investment != null)
+                        {
+                            balance = (double)t.RunningBalance;
+                        }
+                        else
+                        {
+                            balance += (double)t.GetCategorizedAmount(this.category);
+                        }
+
                         // Start adding to the graph itself on the start date
                         if (t.Date >= start)
                         {
@@ -304,17 +316,6 @@ namespace Walkabout.Views.Controls
                             lastt = t;
                         }
 
-                        // For all regular transaction lists, we calcuclate the overall balance on the fly, based on each transaction amount.
-                        // When we list securities - not an account - we should show the overall value of the securities instead, 
-                        // which is precalculated and stored within each transaction
-                        if (this.account == null && t.Investment != null)
-                        {
-                            balance = (double) t.RunningBalance;
-                        }
-                        else
-                        {
-                            balance += (double) t.GetCategorizedAmount(this.category);
-                        }
                     }
                 }
             }
