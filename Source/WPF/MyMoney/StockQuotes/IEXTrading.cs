@@ -356,9 +356,12 @@ namespace Walkabout.StockQuotes
             return result;
         }
 
-        public Task<StockQuoteHistory> DownloadHistory(string symbol)
+        public async Task<StockQuoteHistory> DownloadHistory(string symbol)
         {
-            return null;
+            OnError(String.Format("Download history for {0} is not supported by IEXTrading service", symbol));
+            OnComplete(true);
+            await Task.Delay(0);
+            return new StockQuoteHistory() { Symbol = symbol };
         }
     }
 }
