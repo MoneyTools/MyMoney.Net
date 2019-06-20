@@ -353,12 +353,10 @@ namespace Walkabout.Reports
 
         private void WriteSummary(IReportWriter writer, List<SecurityPieData> data, TaxableIncomeType taxableIncomeType, string prefix, Predicate<Account> filter)
         {
+            bool wroteSectionHeader = false;
             string caption = prefix + "Investments";
             decimal totalSectionMarketValue;
             decimal totalSectionGainValue = 0;
-
-            writer.StartHeaderRow();
-            WriteSummaryRow(writer, caption, "Market Value", "Taxable");
 
             decimal cash = RoundToNearestCent(this.myMoney.GetInvestmentCashBalance(filter));
 
@@ -367,7 +365,10 @@ namespace Walkabout.Reports
             totalSectionMarketValue = cash;
 
             if (cash > 0)
-            {
+            {                
+                writer.StartHeaderRow();
+                WriteSummaryRow(writer, caption, "Market Value", "Taxable");
+                wroteSectionHeader = true;
                 WriteSummaryRow(writer, "    Cash", cash.ToString("C"), totalSectionGainValue.ToString("C"));
                 caption = prefix + "Cash";
 
@@ -402,6 +403,13 @@ namespace Walkabout.Reports
 
                 if (count > 0)
                 {
+                    if (wroteSectionHeader == false)
+                    {
+                        writer.StartHeaderRow();
+                        WriteSummaryRow(writer, caption, "Market Value", "Taxable");
+                        wroteSectionHeader = true;
+                    }
+
                     caption = prefix + Security.GetSecurityTypeCaption(st);
                     data.Add(new SecurityPieData()
                     {
@@ -417,7 +425,10 @@ namespace Walkabout.Reports
                 totalSectionGainValue += gainLoss;
             }
 
-            WriteSummaryRow(writer, "    SubTotal", totalSectionMarketValue.ToString("C"), totalSectionGainValue.ToString("C"));
+            if (wroteSectionHeader == true)
+            {
+                WriteSummaryRow(writer, "    SubTotal", totalSectionMarketValue.ToString("C"), totalSectionGainValue.ToString("C"));
+            }
 
             totalMarketValue += totalSectionMarketValue;
             totalGainLoss += totalSectionGainValue;
