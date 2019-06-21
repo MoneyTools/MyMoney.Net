@@ -1820,9 +1820,12 @@ namespace Walkabout.Views
                     this.lastQuery = null;
                     var transactions = RefreshViewBySecurity(s, selectedRowId);
                     var mgr = (StockQuoteManager)site.GetService(typeof(StockQuoteManager));
-                    if (!mgr.HasStockQuoteHistory(s.Symbol))
+                    if (!string.IsNullOrEmpty(s.Symbol))
                     {
-                        mgr.BeginDownloadHistory(s.Symbol);
+                        if (!mgr.HasStockQuoteHistory(s.Symbol))
+                        {
+                            mgr.BeginDownloadHistory(s.Symbol);
+                        }
                     }
                     FireAfterViewStateChanged(selectedRowId);
                 }

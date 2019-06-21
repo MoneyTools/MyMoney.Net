@@ -25,6 +25,8 @@ namespace Walkabout.StockQuotes
         char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
         StockServiceSettings _settings;
         HashSet<string> _pending;
+        HashSet<string> _retry = new HashSet<string>();
+        int _completed;
         HttpWebRequest _current;
         bool _cancelled;
         Thread _downloadThread;
@@ -57,6 +59,8 @@ namespace Walkabout.StockQuotes
 
         public int PendingCount { get { return (_pending == null) ? 0 : _pending.Count; } }
 
+        public int DownloadsCompleted { get { return _completed; } }
+
         public void Cancel()
         {
             _cancelled = true;
@@ -77,6 +81,16 @@ namespace Walkabout.StockQuotes
             if (QuoteAvailable != null)
             {
                 QuoteAvailable(this, quote);
+            }
+        }
+
+        public event EventHandler<string> SymbolNotFound;
+
+        private void OnSymbolNotFound(string symbol)
+        {
+            if (SymbolNotFound != null)
+            {
+                SymbolNotFound(this, symbol);
             }
         }
 
@@ -155,6 +169,18 @@ namespace Walkabout.StockQuotes
                     string symbol = null;
                     lock (_pending)
                     {
+                        if (_pending.Count == 0)
+                        {
+                            lock (_retry)
+                            {
+                                foreach (var item in _retry)
+                                {
+                                    _completed--;
+                                    _pending.Add(item);
+                                }
+                                _retry.Clear();
+                            }
+                        }
                         if (_pending.Count > 0)
                         {
                             symbol = _pending.FirstOrDefault();
@@ -167,6 +193,8 @@ namespace Walkabout.StockQuotes
                         // done!
                         break;
                     }
+                    // even if it fails, we consider the job complete (from a progress point of view).
+                    _completed++;
 
                     // weed out any securities that have no symbol or have a 
                     if (string.IsNullOrEmpty(symbol))
@@ -177,6 +205,7 @@ namespace Walkabout.StockQuotes
                     {
                         // since we are passing the symbol on an HTTP URI line, we can't pass Uri illegal characters...
                         OnError(string.Format(Walkabout.Properties.Resources.SkippingSecurityIllegalSymbol, symbol));
+                        OnSymbolNotFound(symbol);
                     }
                     else
                     {
@@ -226,6 +255,7 @@ namespace Walkabout.StockQuotes
                                     if (quote == null || quote.Symbol == null)
                                     {
                                         OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol));
+                                        OnSymbolNotFound(symbol);
                                     }
                                     else if (string.Compare(quote.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
@@ -276,6 +306,10 @@ namespace Walkabout.StockQuotes
                             var message = e.Message;
                             if (message.Contains("Please visit https://www.alphavantage.co/premium/"))
                             {
+                                lock(_retry)
+                                {
+                                    _retry.Add(symbol);
+                                }
                                 StockQuoteThrottle.Instance.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
                             }
                             OnComplete(PendingCount == 0);
@@ -286,6 +320,7 @@ namespace Walkabout.StockQuotes
             catch
             {
             }
+            _completed = 0;
             OnComplete(PendingCount == 0);
             StockQuoteThrottle.Instance.Save();
             _downloadThread = null;

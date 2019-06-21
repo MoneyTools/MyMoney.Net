@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -21,10 +22,12 @@ namespace Walkabout.StockQuotes
         char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
         StockServiceSettings _settings;
         HashSet<string> _pending;
+        int _completed;
         Thread _downloadThread;
         HttpWebRequest _current;
         bool _cancelled;
         string _logPath;
+        bool _downloadError;
 
         public IEXTrading(StockServiceSettings settings, string logPath)
         {
@@ -34,6 +37,8 @@ namespace Walkabout.StockQuotes
         }
 
         public int PendingCount { get { return (_pending == null) ? 0 : _pending.Count; } }
+
+        public int DownloadsCompleted{ get { return _completed; } }
 
         public void Cancel()
         {
@@ -55,6 +60,16 @@ namespace Walkabout.StockQuotes
             if (QuoteAvailable != null)
             {
                 QuoteAvailable(this, quote);
+            }
+        }
+
+        public event EventHandler<string> SymbolNotFound;
+
+        private void OnSymbolNotFound(string symbol)
+        {
+            if (SymbolNotFound != null)
+            {
+                SymbolNotFound(this, symbol);
             }
         }
 
@@ -175,6 +190,7 @@ namespace Walkabout.StockQuotes
                     else if (symbol.IndexOfAny(illegalUrlChars) >= 0)
                     {
                         // since we are passing the symbol on an HTTP URI line, we can't pass Uri illegal characters...
+                        OnSymbolNotFound(symbol);
                         OnError(string.Format(Walkabout.Properties.Resources.SkippingSecurityIllegalSymbol, symbol));
                     }
                     else
@@ -184,6 +200,8 @@ namespace Walkabout.StockQuotes
 
                     if (batch.Count() == max_batch || remaining == 0)
                     {
+                        // even it if tails we consider the job completed from a status point of view.
+                        _completed += batch.Count;
                         string symbols = string.Join(",", batch);
                         try
                         {
@@ -233,6 +251,7 @@ namespace Walkabout.StockQuotes
                                         if (q == null)
                                         {
                                             OnError(string.Format("No quote returned for symbol {0}", s));
+                                            OnSymbolNotFound(s);
                                         }
                                         else
                                         {
@@ -281,8 +300,7 @@ namespace Walkabout.StockQuotes
                             // continue
                             OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbols) + "\r\n" + e.Message);
                         }
-
-                        OnComplete(remaining == 0);
+                        batch.Clear();
                     }
 
                     _current = null;
@@ -291,9 +309,12 @@ namespace Walkabout.StockQuotes
             catch
             {
             }
+            OnComplete(PendingCount == 0);
             StockQuoteThrottle.Instance.Save();
             _downloadThread = null;
             _current = null;
+            _completed = 0;
+            Debug.WriteLine("IEXTrading download thread terminating");
         }
 
 
@@ -358,8 +379,12 @@ namespace Walkabout.StockQuotes
 
         public async Task<StockQuoteHistory> DownloadHistory(string symbol)
         {
-            OnError(String.Format("Download history for {0} is not supported by IEXTrading service", symbol));
-            OnComplete(true);
+            if (!_downloadError)
+            {
+                _downloadError = true;
+                OnError(String.Format("Download history is not supported by IEXTrading service", symbol));
+                OnComplete(true);
+            }
             await Task.Delay(0);
             return new StockQuoteHistory() { Symbol = symbol };
         }
