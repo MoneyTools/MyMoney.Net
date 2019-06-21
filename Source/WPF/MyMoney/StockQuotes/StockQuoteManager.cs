@@ -39,8 +39,9 @@ namespace Walkabout.StockQuotes
         IServiceProvider provider;
         StockServiceSettings _settings;
         IStockQuoteService _service;
-        int _progressMax;
+
         List<StockQuote> _batch = new List<StockQuote>();
+        HashSet<string> _unknown = new HashSet<string>();
         DelayedActions delayedActions = new DelayedActions();
         Dictionary<string, StockQuoteHistory> history = new Dictionary<string, StockQuoteHistory>();
         HistoryDownloader _downloader;
@@ -101,6 +102,7 @@ namespace Walkabout.StockQuotes
                 _service.QuoteAvailable -= OnServiceQuoteAvailable;
                 _service.Complete -= OnServiceQuotesComplete;
                 _service.Suspended -= OnServiceSuspended;
+                _service.SymbolNotFound -= OnSymbolNotFound;
                 _service.Cancel();
             }
             _service = service;
@@ -110,19 +112,30 @@ namespace Walkabout.StockQuotes
                 _service.QuoteAvailable += OnServiceQuoteAvailable;
                 _service.Complete += OnServiceQuotesComplete;
                 _service.Suspended += OnServiceSuspended;
+                _service.SymbolNotFound += OnSymbolNotFound;
+            }
+        }
+
+        private void OnSymbolNotFound(object sender, string symbol)
+        {
+            // todo: what kind of cleanup should we do with symbols that are no longer trading?
+            lock(_unknown)
+            {
+                _unknown.Add(symbol);
             }
         }
 
         private void OnServiceSuspended(object sender, bool suspended)
         {
             OnServiceQuotesComplete(sender, false);
+            var max = _service.DownloadsCompleted + _service.PendingCount;
             if (suspended)
             {
-                status.ShowProgress("Zzzz!", 0, _progressMax, _progressMax - _service.PendingCount);
+                status.ShowProgress("Zzzz!", 0, max, max - _service.PendingCount);
             }
             else
             {
-                status.ShowProgress("", 0, _progressMax, _progressMax - _service.PendingCount);
+                status.ShowProgress("", 0, max, max - _service.PendingCount);
             }
         }
 
@@ -188,7 +201,7 @@ namespace Walkabout.StockQuotes
             {
                 foreach (Security s in toFetch)
                 {
-                    if (!queue.Contains(s))
+                    if (!queue.Contains(s) && s.PriceDate.Date != DateTime.Today)
                     {
                         queue.Add(s);
                     }
@@ -202,7 +215,12 @@ namespace Walkabout.StockQuotes
 
         public void UpdateQuotes()
         {
+            // start with owned securities first
             Enqueue(myMoney.GetOwnedSecurities());
+            // then complete the picture with everything else that is referenced by a Transaction in an open account
+            Enqueue(myMoney.GetUsedSecurities((a) => !a.IsClosed));
+            // then complete the picture with everything else that is referenced by a Transaction in a closed account
+            Enqueue(myMoney.GetUsedSecurities((a) => a.IsClosed));
         }
 
         void BeginGetQuotes()
@@ -230,7 +248,6 @@ namespace Walkabout.StockQuotes
             output.AppendHeading(Walkabout.Properties.Resources.StockQuoteCaption);
             
             GetDownloader().BeginFetchHistory(batch);
-            _progressMax = batch.Count;
             _service.BeginFetchQuotes(batch);
         }
 
@@ -281,14 +298,20 @@ namespace Walkabout.StockQuotes
         {
             if (status != null)
             {
-                status.ShowProgress(e.Name, 0, _progressMax, _progressMax - _service.PendingCount);
+                var max = _service.DownloadsCompleted + _service.PendingCount;
+                status.ShowProgress(e.Name, 0, max, max - _service.PendingCount);
             }
             lock (fetched)
             {
                 fetched.Add(e.Symbol);
             }
             StockQuoteHistory history = GetStockQuoteHistory(e.Symbol);
-            if (history != null && history.AddQuote(e))
+            if (history == null)
+            {
+                // then start a new history!
+                history = new StockQuoteHistory() { Symbol = e.Symbol };
+            }
+            if (history.AddQuote(e))
             {
                 history.Save(this.LogPath);
             }
@@ -311,10 +334,28 @@ namespace Walkabout.StockQuotes
              
             UiDispatcher.BeginInvoke(new Action(() =>
             {
-                // must run on the UI thread because some Money changed event handlers change dependency properties and that requires UI thread.
-                ProcessResults(_batch);
-                _batch.Clear();
+                UpdateUI();
             }));
+        }
+
+        private void UpdateUI()
+        {
+            // must run on the UI thread because some Money changed event handlers change dependency properties and that requires UI thread.
+            lock (_unknown)
+            {
+                if (_unknown.Count > 0)
+                {
+                    AddError(Walkabout.Properties.Resources.FoundUnknownStockQuotes);
+                }
+                _unknown.Clear();
+            }
+            ProcessResults(_batch);
+            _batch.Clear();
+
+            if (hasError && !disposed)
+            {
+                ShowErrors(null);
+            }
         }
 
         private void OnServiceDownloadError(object sender, string e)
@@ -398,7 +439,7 @@ namespace Walkabout.StockQuotes
                 status.ShowProgress(string.Empty, 0, 0, 0);
             }
         }
-
+        
         bool processingResults;
 
         private void ProcessResults(List<StockQuote> results)
@@ -421,10 +462,6 @@ namespace Walkabout.StockQuotes
                     this.myMoney.Securities.EndUpdate();
                 }
                 
-                if (hasError && !disposed)
-                {
-                    ShowErrors(null);
-                }
             }
             catch (Exception e)
             {
@@ -438,8 +475,13 @@ namespace Walkabout.StockQuotes
 
         private void ShowErrors(string path)
         {
+            var errorMessages = errorLog.ToString();
+            if (string.IsNullOrEmpty(errorMessages))
+            {
+                return;
+            }
             Paragraph p = new Paragraph();
-            p.Inlines.Add(errorLog.ToString());
+            p.Inlines.Add(errorMessages);
             if (!string.IsNullOrEmpty(path))
             {
                 p.Inlines.Add("See ");
@@ -548,18 +590,17 @@ namespace Walkabout.StockQuotes
                 XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
                 using (XmlReader r = XmlReader.Create(filename))
                 {
-                    var log = (DownloadLog)s.Deserialize(r);
-                    if (log.Downloaded != null)
+                    var log = (DownloadLog)s.Deserialize(r);                    
+                    // remove any entries for files that don't exist any more.
+                    foreach(var info in log.Downloaded.ToArray())
                     {
-                        foreach(var info in log.Downloaded.ToArray())
+                        var quotes = System.IO.Path.Combine(logFolder, info.Symbol + ".xml");
+                        if (!System.IO.File.Exists(quotes))
                         {
-                            var quotes = System.IO.Path.Combine(logFolder, info.Symbol + ".xml");
-                            if (!System.IO.File.Exists(quotes))
-                            {
-                                log.Downloaded.Remove(info);
-                            }
+                            log.Downloaded.Remove(info);
                         }
                     }
+                    return log;
                 }
             }
             return new DownloadLog();

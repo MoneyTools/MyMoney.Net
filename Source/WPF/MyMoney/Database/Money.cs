@@ -23,6 +23,9 @@ namespace Walkabout.Data
 
     public delegate void ErrorHandler(string errorMessage);
 
+    public delegate bool AccountFilterPredicate(Account a);
+
+
     public class ChangeEventArgs : EventArgs
     {
         object item;
@@ -905,8 +908,7 @@ namespace Walkabout.Data
             }
         }
 
-
-        public void RemoveUnusedSecurities()
+        public List<Security> GetUnusedSecurities()
         {
             HashSet<Security> used = new HashSet<Security>();
             foreach (Transaction t in Transactions.GetAllTransactions())
@@ -916,15 +918,41 @@ namespace Walkabout.Data
                     used.Add(t.Investment.Security);
                 }
             }
-            List<Security> toRemove = new List<Security>();
+            List<Security> unused = new List<Security>();
             foreach (Security s in Securities.GetSecurities())
             {
                 if (!used.Contains(s))
                 {
-                    toRemove.Add(s);
+                    unused.Add(s);
                 }
             }
-            foreach (Security s in toRemove)
+            return unused;
+        }
+
+        public List<Security> GetUsedSecurities(AccountFilterPredicate pred)
+        {
+            HashSet<Security> used = new HashSet<Security>();
+            foreach (Transaction t in Transactions.GetAllTransactions())
+            {
+                if (t.Investment != null && t.Investment.Security != null && pred(t.Account))
+                {
+                    used.Add(t.Investment.Security);
+                }
+            }
+            List<Security> result = new List<Security>();
+            foreach (Security s in Securities.GetSecurities())
+            {
+                if (used.Contains(s))
+                {
+                    result.Add(s);
+                }
+            }
+            return result;
+        }
+
+        public void RemoveUnusedSecurities()
+        {
+            foreach (Security s in GetUnusedSecurities())
             {
                 Securities.RemoveSecurity(s);
             }

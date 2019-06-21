@@ -34,9 +34,21 @@ namespace Walkabout.StockQuotes
         int PendingCount { get; }
 
         /// <summary>
+        /// For the current session until all downloads are complete this returns the number of
+        /// items completed from the batch provided in BeginFetchQuotes.  Once all downloads are
+        /// complete this goes back to zero.
+        /// </summary>
+        int DownloadsCompleted { get; }
+
+        /// <summary>
         /// Each downloaded quote is raised as an event on this interface.  Could be from any thread.
         /// </summary>
         event EventHandler<StockQuote> QuoteAvailable;
+
+        /// <summary>
+        /// Event means a given stock quote symbol was not found by the stock quote service.  
+        /// </summary>
+        event EventHandler<string> SymbolNotFound;
 
         /// <summary>
         /// If some error happens fetching a quote, this event is raised.
