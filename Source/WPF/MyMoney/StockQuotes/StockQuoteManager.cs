@@ -421,7 +421,18 @@ namespace Walkabout.StockQuotes
         public string LogPath
         {
             get { return this._logPath; }
-            set { this._logPath = value; }
+            set { this._logPath = value; EnsurePathExists(value); }
+        }
+
+        static void EnsurePathExists(string path)
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            }
         }
 
         void StopThread()

@@ -70,7 +70,7 @@ namespace Walkabout.StockQuotes
                 }
                 else
                 {
-                    _callsThisMonth = 0;
+                    _callsThisMonth = 1;
                 }
                 if (now.Date == _lastCall.Date)
                 {
@@ -91,6 +91,10 @@ namespace Walkabout.StockQuotes
                     {
                         _callsThisMinute = 1;
                     }
+                }
+                else
+                {
+                    _callsToday = 1;
                 }
                 _lastCall = now;
             }
