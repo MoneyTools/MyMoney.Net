@@ -8519,7 +8519,13 @@ namespace Walkabout.Data
                 }
 
                 t.RunningUnits = sortedRunningUnits;
-                t.RunningBalance = t.RunningUnits * runningUnitPrice;
+
+                decimal factor = 1;
+                if (t.Investment.Security.SecurityType == SecurityType.Futures)
+                {
+                    factor = 100;
+                }                                                                               
+                t.RunningBalance = factor * t.RunningUnits * runningUnitPrice;
             }
 
             return view;
@@ -12511,7 +12517,20 @@ namespace Walkabout.Data
             }
         }
 
-        public decimal MarketValue { get { return CurrentUnits * this.Security.Price; } }
+        public decimal MarketValue 
+        { 
+            get 
+            { 
+                decimal factor = 1;
+
+                // futures prices are always listed by the instance.  But wen you buy 1 contract, you always get 100 futures in that contract
+                if (this.Security.SecurityType == SecurityType.Futures)
+                {
+                    factor = 100;
+                }
+                return factor * CurrentUnits * this.Security.Price; 
+            }
+        }
 
         [XmlIgnore]
         public decimal GainLoss { get { return MarketValue - CostBasis; } }
