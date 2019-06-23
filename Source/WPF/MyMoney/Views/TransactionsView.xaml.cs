@@ -1822,10 +1822,7 @@ namespace Walkabout.Views
                     var mgr = (StockQuoteManager)site.GetService(typeof(StockQuoteManager));
                     if (!string.IsNullOrEmpty(s.Symbol))
                     {
-                        if (!mgr.HasStockQuoteHistory(s.Symbol))
-                        {
-                            mgr.BeginDownloadHistory(s.Symbol);
-                        }
+                        mgr.BeginDownloadHistory(s.Symbol);
                     }
                     FireAfterViewStateChanged(selectedRowId);
                 }

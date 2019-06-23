@@ -52,5 +52,6 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider
         ViewTransactions = 330,
         UpdateCharts = 331,
         UpdateStockQuoteHistory = 332,
+        LoadStockDownloadLog = 333,
     }
 }

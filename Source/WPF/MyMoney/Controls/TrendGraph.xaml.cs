@@ -60,7 +60,7 @@ namespace Walkabout.Views.Controls
             this.end = DateTime.Now;
             this.start = Step(end, this.range, this.years, -1);
             InitializeComponent();
-            this.MouseWheel += new MouseWheelEventHandler(TransactionGraph_MouseWheel);            
+            this.MouseWheel += new MouseWheelEventHandler(TrendGraph_MouseWheel);            
         }
 
         public IServiceProvider ServiceProvider
@@ -145,7 +145,7 @@ namespace Walkabout.Views.Controls
             CalendarRange.Annually  
             };
 
-        void TransactionGraph_MouseWheel(object sender, MouseWheelEventArgs e)
+        void TrendGraph_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (e.Delta != 0)
             {

@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
     <change version="1.1.0.30" date="6/18/2019">
-        Add support for downloading stock price information using iexcloud.io or alphavantage.co.
+        Add support for downloading stock price information using iexcloud.io and/or alphavantage.co.
         Addded Online/Stock Quote Account dialog where you can enter the API key and any API limits.
-        Fill in missing UnitPrice information in Investment accounts using stock quote history downloaded
-        from alphavantage.co.
+        It supports using both services at once since iexcloud.io is best at
+        downloading a bunch of stock quotes and alphavantage.co is best at downloading history.
+        It will fill in missing UnitPrice information in Investment accounts using stock quote history.
     </change>
     <change version="1.1.0.23" date="6/13/2019">
         Fix TrendGraph for View By Security so it shows correct balance (thanks to andreva7 on github!)

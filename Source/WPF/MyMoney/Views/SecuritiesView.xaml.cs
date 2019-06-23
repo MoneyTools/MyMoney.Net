@@ -18,7 +18,7 @@ using System.Xml;
 using Walkabout.Utilities;
 using Walkabout.Help;
 using Walkabout.Interfaces.Views;
-
+using Walkabout.Views.Controls;
 
 namespace Walkabout.Views
 {
@@ -159,8 +159,25 @@ namespace Walkabout.Views
                     
 
                 lastSelectedItem = selected;
-
+                OnSelectionChanged(selected as Security);
             }
+        }
+
+        void OnSelectionChanged(Security security)
+        {
+            if (security != null)
+            {
+                TrendGraph graph = (TrendGraph)ServiceProvider.GetService(typeof(TrendGraph));
+                if (graph != null)
+                {
+                    UpdateGraph(graph, security);
+                }
+            }
+        }
+
+        private void UpdateGraph(TrendGraph graph, Security security)
+        {
+            // todo: need to make TrendGraph more general.  It should not know about Transactions directly.
         }
 
         DataGrid FindDataGridContainingFocus()

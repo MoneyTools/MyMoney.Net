@@ -11,16 +11,22 @@ namespace Walkabout.StockQuotes
 {
     public class StockQuoteThrottle
     {
-        static StockQuoteThrottle _instance = null;
         DateTime _lastCall = DateTime.MinValue;
         int _callsThisMinute;
         int _callsToday;
         int _callsThisMonth;
+        string _filename;
         object _sync = new object();
+        DelayedActions saveActions = new DelayedActions();
 
         public StockQuoteThrottle()
         {
-            _instance = this;
+        }
+
+        public string FileName
+        {
+            get { return _filename; }
+            set { _filename = value; }
         }
 
         [XmlIgnore]
@@ -50,102 +56,97 @@ namespace Walkabout.StockQuotes
             set { _callsThisMonth = value; }
         }
 
+        private void CheckResetCounters()
+        {
+            lock (_sync)
+            {
+                bool changed = false;
+                var now = DateTime.Now;
+                if (!(now.Year == _lastCall.Year && now.Month == _lastCall.Month))
+                {
+                    _callsThisMonth = 0;
+                    _callsToday = 0;
+                    _callsThisMinute = 0;
+                }
+                else if (now.Date != _lastCall.Date)
+                {
+                    _callsToday = 0;
+                    _callsThisMinute = 0;
+                }
+                else if (now.Hour != _lastCall.Hour || now.Minute != _lastCall.Minute)
+                {
+                    _callsThisMinute = 0;
+                }
+                if (changed)
+                {
+                    saveActions.StartDelayedAction("save", Save, TimeSpan.FromSeconds(1));
+                }
+            }
+        }
+
+        public void RecordCall()
+        {
+            lock (_sync)
+            {
+                CheckResetCounters();
+                _callsThisMonth++;
+                _callsToday++;
+                _callsThisMinute++;
+                _lastCall = DateTime.Now;
+            }
+            saveActions.StartDelayedAction("save", Save, TimeSpan.FromSeconds(1));
+        }
+
         /// <summary>
         /// Get throttled sleep amount in milliseconds.
         /// </summary>
         /// <returns></returns>
         public int GetSleep()
         {
+            CheckResetCounters();
             int result = 0;
-            lock (_sync)
+            if (Settings.ApiRequestsPerMonthLimit != 0 && _callsThisMonth > Settings.ApiRequestsPerMonthLimit)
             {
-                DateTime now = DateTime.Now;
-                if (now.Year == _lastCall.Year && now.Month == _lastCall.Month)
-                {
-                    _callsThisMonth++;
-                    if (Settings.ApiRequestsPerMonthLimit != 0 && _callsThisMonth > Settings.ApiRequestsPerMonthLimit)
-                    {
-                        throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
-                    }
-                }
-                else
-                {
-                    _callsThisMonth = 1;
-                }
-                if (now.Date == _lastCall.Date)
-                {
-                    _callsToday++;
-                    if (Settings.ApiRequestsPerDayLimit != 0 && _callsToday > Settings.ApiRequestsPerDayLimit)
-                    {
-                        throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
-                    }
-                    if (now.Hour == _lastCall.Hour && now.Minute == _lastCall.Minute)
-                    {
-                        _callsThisMinute++;
-                        if (Settings.ApiRequestsPerMinuteLimit != 0 && _callsThisMinute >= Settings.ApiRequestsPerMinuteLimit)
-                        {
-                            result = 60000; // sleep to next minute.
-                        }
-                    }
-                    else
-                    {
-                        _callsThisMinute = 1;
-                    }
-                }
-                else
-                {
-                    _callsToday = 1;
-                }
-                _lastCall = now;
+                throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
+            }
+            else if (Settings.ApiRequestsPerDayLimit != 0 && _callsToday > Settings.ApiRequestsPerDayLimit)
+            {
+                throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
+            }
+            else if (Settings.ApiRequestsPerMinuteLimit != 0 && _callsThisMinute >= Settings.ApiRequestsPerMinuteLimit)
+            {
+                result = 60000; // sleep to next minute.
             }
             return result;
         }
 
         public void Save()
         {
+            var fullPath = System.IO.Path.Combine(ProcessHelper.AppDataPath, _filename);
             XmlSerializer s = new XmlSerializer(typeof(StockQuoteThrottle));
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
-            using (XmlWriter w = XmlWriter.Create(FileName, settings))
+            using (XmlWriter w = XmlWriter.Create(fullPath, settings))
             {
                 s.Serialize(w, this);
             }
         }
 
-        private static StockQuoteThrottle Load()
+        public static StockQuoteThrottle Load(string filename)
         {
-            if (System.IO.File.Exists(FileName))
+            var fullPath = System.IO.Path.Combine(ProcessHelper.AppDataPath, filename);
+            if (System.IO.File.Exists(fullPath))
             {
                 XmlSerializer s = new XmlSerializer(typeof(StockQuoteThrottle));
-                using (XmlReader r = XmlReader.Create(FileName))
+                using (XmlReader r = XmlReader.Create(fullPath))
                 {
-                    return (StockQuoteThrottle)s.Deserialize(r);
+                    var throttle = (StockQuoteThrottle)s.Deserialize(r);
+                    throttle.FileName = filename;
+                    return throttle;
                 }
             }
-            return new StockQuoteThrottle();
-        }
-
-        public static StockQuoteThrottle Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = Load();
-                }
-                return _instance;
-            }
-        }
-
-
-        internal static string FileName
-        {
-            get
-            {
-                return System.IO.Path.Combine(ProcessHelper.AppDataPath, "throttle.xml");
-            }
-        }
-
+            return new StockQuoteThrottle() { FileName = filename };
+        }        
     }
 
 }

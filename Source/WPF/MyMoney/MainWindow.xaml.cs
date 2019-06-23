@@ -107,7 +107,8 @@ namespace Walkabout
                 var stockService = settings.StockServiceSettings;
                 if (stockService == null)
                 {
-                    settings.StockServiceSettings = IEXTrading.GetDefaultSettings();
+                    settings.StockServiceSettings = new List<StockServiceSettings>();
+                    settings.StockServiceSettings.Add(IEXTrading.GetDefaultSettings());
                 }
 
                 Walkabout.Utilities.UiDispatcher.CurrentDispatcher = this.Dispatcher;
@@ -195,13 +196,6 @@ namespace Walkabout
                     //
                     this.rentsControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Rents);
                 }
-
-                //-----------------------------------------------------------------
-                // Stock related setup
-                //
-                this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings);
-                this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
-                this.quotes.HistoryAvailable += OnStockQuoteHistoryAvailable;
 
                 this.exchangeRates = new ExchangeRates();
 
@@ -307,6 +301,14 @@ namespace Walkabout
                 return;
             }
 
+            UiDispatcher.BeginInvoke(new Action(() =>
+            {
+                FillinMissingUnitPrices(security, history);
+            }));
+        }
+
+        void FillinMissingUnitPrices(Security security, StockQuoteHistory history)
+        { 
 #if PerformanceBlocks
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.UpdateStockQuoteHistory))
             {
@@ -346,8 +348,15 @@ namespace Walkabout
                                 }
                                 else if (i.UnitPrice != quote.Close)
                                 {
-                                    Debug.WriteLine(string.Format("{0}: {1} close price {2} on {3} didn't match our transaction at {4} UnitPrice {5}",
-                                        t.Account.Name, security.Symbol, quote.Close, quote.Date.ToShortDateString(), t.Date.ToShortDateString(), t.InvestmentUnitPrice));
+                                    if (i.TradeType == InvestmentTradeType.Buy || i.TradeType == InvestmentTradeType.Sell)
+                                    {
+                                        // normal for this to be a bit different, should we do a a sanity check though?
+                                    }
+                                    else
+                                    {
+                                        Debug.WriteLine(string.Format("{0}: {1} close price {2} on {3} didn't match our transaction at {4} UnitPrice {5}",
+                                            t.Account.Name, security.Symbol, quote.Close, quote.Date.ToShortDateString(), t.Date.ToShortDateString(), t.InvestmentUnitPrice));
+                                    }
                                 }
                             }
                         }
@@ -367,7 +376,7 @@ namespace Walkabout
 #endif
         }
 
-            private void OnRecentFileSelected(object sender, RecentFileEventArgs e)
+        private void OnRecentFileSelected(object sender, RecentFileEventArgs e)
         {
             Settings.TheSettings.Database = e.FileName;
             BeginLoadDatabase();
@@ -600,10 +609,6 @@ namespace Walkabout
                         this.quotes.HistoryAvailable -= OnStockQuoteHistoryAvailable;
                     }
                 }
-                this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings);
-                this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
-                this.quotes.HistoryAvailable += OnStockQuoteHistoryAvailable;
-
                 if (settings.RentalManagement)
                 {
                     this.rentsControl.MyMoney = this.myMoney;
@@ -620,8 +625,11 @@ namespace Walkabout
                     if (this.database != null)
                     {
                         string path = this.database.DatabasePath;
+
+                        this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings, Path.Combine(Path.GetDirectoryName(path), "StockQuotes"));
+                        this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
+                        this.quotes.HistoryAvailable += OnStockQuoteHistoryAvailable;
                         OfxRequest.OfxLogPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
-                        this.quotes.LogPath = Path.Combine(Path.GetDirectoryName(path), "StockQuotes");
                     }
 
                     this.accountsControl.MyMoney = this.myMoney;
@@ -3227,6 +3235,10 @@ namespace Walkabout
             {
                 return this.TransactionView.ViewModel;
             }
+            else if (service == typeof(TrendGraph))
+            {
+                return this.TransactionGraph;
+            }
             return null;
         }
 
@@ -4039,13 +4051,16 @@ namespace Walkabout
 
         private void OnCommandUpdateSecurities(object sender, ExecutedRoutedEventArgs e)
         {
-            this.quotes.UpdateQuotes();
-            this.settings.LastStockRequest = DateTime.Today;
+            if (this.quotes != null)
+            {
+                this.quotes.UpdateQuotes();
+                this.settings.LastStockRequest = DateTime.Today;
+            }
         }
 
         private void CanUpdateSecurities(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = !this.quotes.Busy;
+            e.CanExecute = this.quotes != null && !this.quotes.Busy;
         }
 
         private void OnCommandShowLastUpdate(object sender, ExecutedRoutedEventArgs e)
@@ -4411,7 +4426,10 @@ namespace Walkabout
         {
             base.OnClosed(e);
 
-            this.quotes.Dispose();
+            using (this.quotes)
+            {
+                this.quotes = null;
+            }
 
             this.exchangeRates.Dispose();
 
@@ -4453,17 +4471,20 @@ namespace Walkabout
 
         private void OnStockQuoteServiceOptions(object sender, ExecutedRoutedEventArgs e)
         {
-            StockQuoteServiceDialog d = new StockQuoteServiceDialog();
-            d.Owner = this;
-            d.StockQuoteManager = this.quotes;
-            if (d.ShowDialog() == true)
+            if (this.quotes != null)
             {
-                // service may have changed, so update our persistent settings and 
-                // update the stock quote service to use it.
-                var settings = d.SelectedSettings;
-                this.settings.StockServiceSettings = settings;
-                this.quotes.Settings = settings;
-                this.quotes.UpdateQuotes();
+                StockQuoteServiceDialog d = new StockQuoteServiceDialog();
+                d.Owner = this;
+                d.StockQuoteManager = this.quotes;
+                if (d.ShowDialog() == true)
+                {
+                    // service may have changed, so update our persistent settings and 
+                    // update the stock quote service to use it.
+                    var settings = d.Settings;
+                    this.settings.StockServiceSettings = settings;
+                    this.quotes.Settings = settings;
+                    this.quotes.UpdateQuotes();
+                }
             }
         }
 

@@ -408,34 +408,33 @@ namespace Walkabout.Attachments
                 try
                 {
                     string path = this.AttachmentDirectory;
-
-                    HashSet<Transaction> changed = new HashSet<Transaction>();
-
+                    
                     if (!string.IsNullOrEmpty(path) && Directory.Exists(path) && this.money != null)
                     {
+                        // process pending account checks
                         Account a;
                         while (accountQueue.TryDequeue(out a) && threadRunning)
                         {
-                            FindAttachments(path, a, changed);
+                            FindAttachments(path, a);
                         }
-                        this.money.BeginUpdate();
-                        try
+
+                        // process pending individual transaction checks.
+                        List<Tuple<Transaction, bool>> toUpdate = new List<Tuple<Transaction, bool>>();
+                        Transaction t;
+                        while (queue.TryDequeue(out t) && threadRunning)
                         {
-                            Transaction t;
-                            while (queue.TryDequeue(out t) && threadRunning)
+                            bool yes = HasAttachments(path, t);
+                            if (t.HasAttachment != yes)
                             {
-                                bool yes = HasAttachments(path, t);
-                                if (t.HasAttachment != yes)
-                                {
-                                    t.HasAttachment = yes;
-                                    changed.Add(t);
-                                }
+                                toUpdate.Add(new Tuple<Transaction, bool>(t, yes));
                             }
                         }
-                        finally
+
+                        // Updating Money transactions has to happen on the UI thread.
+                        UiDispatcher.BeginInvoke(new Action(() =>
                         {
-                            this.money.EndUpdate();
-                        }
+                            BatchUpdate(toUpdate);
+                        }));
                     }
                 }
                 catch
@@ -448,7 +447,23 @@ namespace Walkabout.Attachments
             threadStopEvent.Set();
         }
 
-        private void FindAttachments(string path, Account a, HashSet<Transaction> changed)
+        private void BatchUpdate(List<Tuple<Transaction, bool>> toUpdate)
+        {
+            this.money.BeginUpdate();
+            try
+            {
+                foreach(var pair in toUpdate)
+                {
+                    pair.Item1.HasAttachment = pair.Item2;
+                }
+            }
+            finally
+            {
+                this.money.EndUpdate();
+            }
+        }
+
+        private void FindAttachments(string path, Account a)
         {
             if (a.IsCategoryFund)
             {
@@ -483,31 +498,33 @@ namespace Walkabout.Attachments
                 }
             }
 
-            try
+            // Updating Money transactions has to happen on the UI thread.
+            UiDispatcher.BeginInvoke(new Action(() =>
             {
-                this.money.BeginUpdate();
-                foreach (Transaction t in this.money.Transactions.GetTransactionsFrom(a))
+                try
                 {
-                    if (!threadRunning)
+                    this.money.BeginUpdate();
+                    foreach (Transaction t in this.money.Transactions.GetTransactionsFrom(a))
                     {
-                        return;
-                    }
-                    if (t.HasAttachment && !set.Contains(t))
-                    {
-                        changed.Add(t);
-                        t.HasAttachment = false;
-                    }
-                    if (!t.HasAttachment && set.Contains(t))
-                    {
-                        changed.Add(t);
-                        t.HasAttachment = true;
+                        if (!threadRunning)
+                        {
+                            return;
+                        }
+                        if (t.HasAttachment && !set.Contains(t))
+                        {
+                            t.HasAttachment = false;
+                        }
+                        if (!t.HasAttachment && set.Contains(t))
+                        {
+                            t.HasAttachment = true;
+                        }
                     }
                 }
-            }
-            finally
-            {
-                this.money.EndUpdate();
-            }
+                finally
+                {
+                    this.money.EndUpdate();
+                }
+            }));
         }
 
         /// <summary>
