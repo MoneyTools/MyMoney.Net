@@ -1,26 +1,19 @@
+using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Windows;
-using System.Xml.Linq;
-using System.Xml;
-using Walkabout.Data;
-using Walkabout.Sgml;
-using Walkabout.Controls;
-using Walkabout.Configuration;
-using Walkabout.Utilities;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
-using Newtonsoft.Json;
-using Walkabout.Ofx;
-using System.ComponentModel;
-using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Serialization;
+using Walkabout.Controls;
+using Walkabout.Data;
+using Walkabout.Utilities;
 
 namespace Walkabout.StockQuotes
 {
@@ -33,22 +26,22 @@ namespace Walkabout.StockQuotes
         StringBuilder errorLog = new StringBuilder();
         bool hasError;
         bool disposed;
-        List<Security> queue = new List<Security>(); // list of securities to fetch
         HashSet<string> fetched = new HashSet<string>(); // list that we have already fetched.
         IStatusService status;
         IServiceProvider provider;
-        StockServiceSettings _settings;
-        IStockQuoteService _service;
-
+        List<StockServiceSettings> _settings;
+        List<IStockQuoteService> _services = new List<IStockQuoteService>();
+        DownloadLog _downloadLog = new DownloadLog();
         List<StockQuote> _batch = new List<StockQuote>();
         HashSet<string> _unknown = new HashSet<string>();
         DelayedActions delayedActions = new DelayedActions();
-        Dictionary<string, StockQuoteHistory> history = new Dictionary<string, StockQuoteHistory>();
         HistoryDownloader _downloader;
         string _logPath;
 
-        public StockQuoteManager(IServiceProvider provider, StockServiceSettings settings)
+        public StockQuoteManager(IServiceProvider provider, List<StockServiceSettings> settings, string logPath)
         {
+            this._logPath = logPath;
+            EnsurePathExists(logPath);
             this.Settings = settings;
             this.provider = provider;
             this.myMoney = (MyMoney)provider.GetService(typeof(MyMoney));
@@ -68,9 +61,12 @@ namespace Walkabout.StockQuotes
                     }
                 }
             }
+            Debug.WriteLine("Loading download log...");
+            _downloadLog = DownloadLog.Load(logPath);
+            Debug.WriteLine("Done");
         }
-        
-        public StockServiceSettings Settings
+
+        public List<StockServiceSettings> Settings
         {
             get
             {
@@ -79,63 +75,96 @@ namespace Walkabout.StockQuotes
             set
             {
                 StopThread();
+                ResetServices();
                 _settings = value;
+                if (!string.IsNullOrEmpty(this.LogPath))
+                {
+                    UpdateServices();
+                }
 
-                IStockQuoteService service = null;
-                if (AlphaVantage.IsMySettings(_settings))
-                {
-                    service = new AlphaVantage(_settings, this.LogPath);
-                }
-                else if (IEXTrading.IsMySettings(_settings))
-                {
-                    service = new IEXTrading(_settings, this.LogPath);
-                }
-                SetService(service);
             }
         }
 
-        void SetService(IStockQuoteService service)
+        private void ResetServices()
         {
-            if (_service != null)
+            foreach (var item in this._services)
             {
-                _service.DownloadError -= OnServiceDownloadError;
-                _service.QuoteAvailable -= OnServiceQuoteAvailable;
-                _service.Complete -= OnServiceQuotesComplete;
-                _service.Suspended -= OnServiceSuspended;
-                _service.SymbolNotFound -= OnSymbolNotFound;
-                _service.Cancel();
+                item.DownloadError -= OnServiceDownloadError;
+                item.QuoteAvailable -= OnServiceQuoteAvailable;
+                item.Complete -= OnServiceQuotesComplete;
+                item.Suspended -= OnServiceSuspended;
+                item.SymbolNotFound -= OnSymbolNotFound;
+                item.Cancel();
             }
-            _service = service;
-            if (_service != null)
+        }
+
+        private void UpdateServices()
+        {
+            this._services = new List<IStockQuoteService>();
+
+            foreach (var item in _settings)
             {
-                _service.DownloadError += OnServiceDownloadError;
-                _service.QuoteAvailable += OnServiceQuoteAvailable;
-                _service.Complete += OnServiceQuotesComplete;
-                _service.Suspended += OnServiceSuspended;
-                _service.SymbolNotFound += OnSymbolNotFound;
+                IStockQuoteService service = null;
+                if (AlphaVantage.IsMySettings(item))
+                {
+                    service = new AlphaVantage(item, this.LogPath);
+                }
+                else if (IEXTrading.IsMySettings(item))
+                {
+                    service = new IEXTrading(item, this.LogPath);
+                }
+
+                service.DownloadError += OnServiceDownloadError;
+                service.QuoteAvailable += OnServiceQuoteAvailable;
+                service.Complete += OnServiceQuotesComplete;
+                service.Suspended += OnServiceSuspended;
+                service.SymbolNotFound += OnSymbolNotFound;
+                this._services.Add(service);
             }
         }
 
         private void OnSymbolNotFound(object sender, string symbol)
         {
             // todo: what kind of cleanup should we do with symbols that are no longer trading?
-            lock(_unknown)
+            lock (_unknown)
             {
                 _unknown.Add(symbol);
             }
         }
 
+        Tuple<int,int> GetProgress()
+        {
+            int max = 0;
+            int value = 0;
+            bool complete = true;
+            foreach(var service in _services)
+            {
+                int m = service.DownloadsCompleted + service.PendingCount;
+                int v = service.DownloadsCompleted;   
+                if (v < m) { complete = false; }
+                max += m;
+                value += v;
+                
+            }
+            if (complete)
+            {
+                max = 0;
+                value = 0;
+            }
+            return new Tuple<int, int>(max, value);
+        }
+
         private void OnServiceSuspended(object sender, bool suspended)
         {
             OnServiceQuotesComplete(sender, false);
-            var max = _service.DownloadsCompleted + _service.PendingCount;
+            Tuple<int, int> progress = GetProgress();
             if (suspended)
             {
-                status.ShowProgress("Zzzz!", 0, max, max - _service.PendingCount);
+                status.ShowProgress("Zzzz!", 0, progress.Item1, progress.Item2);
             }
             else
             {
-                status.ShowProgress("", 0, max, max - _service.PendingCount);
+                status.ShowProgress("", 0, progress.Item1, progress.Item2);
             }
         }
 
@@ -149,7 +178,12 @@ namespace Walkabout.StockQuotes
 
         void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
-            List<Security> newSecurities = new List<Security>();
+            if (processingResults)
+            {
+                // we are updating the security, so avoid infinite update loop here
+                return;
+            }
+            HashSet<Security> newSecurities = new HashSet<Security>();
             while (args != null)
             {
                 if (args.Item is Security)
@@ -187,75 +221,100 @@ namespace Walkabout.StockQuotes
                 args = args.Next;
             }
 
-            Enqueue(newSecurities);
-        }
-
-        private void Enqueue(List<Security> toFetch)
-        {
-            if (processingResults)
-            {
-                // avoid triggering our own infinite loop.
-                return;
-            }
-            lock (queue)
-            {
-                foreach (Security s in toFetch)
-                {
-                    if (!queue.Contains(s) && s.PriceDate.Date != DateTime.Today)
-                    {
-                        queue.Add(s);
-                    }
-                }
-            }
-            if (queue.Count > 0)
-            {
-                BeginGetQuotes();
-            }
+            BeginGetQuotes(newSecurities);
         }
 
         public void UpdateQuotes()
         {
             // start with owned securities first
-            Enqueue(myMoney.GetOwnedSecurities());
+            HashSet<Security> combined = new HashSet<Security>(myMoney.GetOwnedSecurities());
             // then complete the picture with everything else that is referenced by a Transaction in an open account
-            Enqueue(myMoney.GetUsedSecurities((a) => !a.IsClosed));
+            foreach (Security s in myMoney.GetUsedSecurities((a) => !a.IsClosed))
+            {
+                combined.Add(s);
+            }
             // then complete the picture with everything else that is referenced by a Transaction in a closed account
-            Enqueue(myMoney.GetUsedSecurities((a) => a.IsClosed));
+            foreach (Security s in myMoney.GetUsedSecurities((a) => a.IsClosed))
+            {
+                combined.Add(s);
+            }
+            BeginGetQuotes(combined);
         }
 
-        void BeginGetQuotes()
+        void BeginGetQuotes(HashSet<Security> toFetch)
         {
-            if (_service == null)
+            if (_services.Count == 0 || toFetch.Count == 0)
             {
                 return;
-            }
-
-            List<string> batch = new List<string>();
-            lock (queue)
-            {
-                foreach (var item in queue)
-                {
-                    if (!string.IsNullOrEmpty(item.Symbol))
-                    {
-                        batch.Add(item.Symbol);
-                    }
-                }
-                queue.Clear();
             }
 
             OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
             output.Clear();
             output.AppendHeading(Walkabout.Properties.Resources.StockQuoteCaption);
-            
-            GetDownloader().BeginFetchHistory(batch);
-            _service.BeginFetchQuotes(batch);
+
+            List<string> batch = new List<string>();
+            foreach (Security s in toFetch)
+            {
+                if (string.IsNullOrEmpty(s.Symbol))
+                {
+                    continue; // skip it.
+                }
+                batch.Add(s.Symbol);
+            }
+
+            IStockQuoteService service = GetHistoryService();
+            HistoryDownloader downloader = GetDownloader(service);
+            if (service != null)
+            {
+                downloader.BeginFetchHistory(batch);
+            }
+
+            service = GetQuoteService();
+            if (service != null)
+            {
+                if (service.SupportsBatchQuotes)
+                {
+                    service.BeginFetchQuotes(batch);
+                }
+                else
+                {
+                    foreach (var item in batch)
+                    {
+                        service.BeginFetchQuote(item);
+                    }
+                }
+            }
         }
 
-        private HistoryDownloader GetDownloader()
+        private IStockQuoteService GetQuoteService()
+        {
+            foreach (var service in _services)
+            {
+                if (service.SupportsBatchQuotes)
+                {
+                    return service;
+                }
+            }
+            return _services.FirstOrDefault();
+        }
+
+        private IStockQuoteService GetHistoryService()
+        {
+            foreach (var service in _services)
+            {
+                if (service.SupportsDownloadHistory)
+                {
+                    return service;
+                }
+            }
+            return null;
+        }
+
+        private HistoryDownloader GetDownloader(IStockQuoteService service)
         {
             if (_downloader == null)
             {
-                _downloader = new HistoryDownloader(_service, this.LogPath);
+                _downloader = new HistoryDownloader(service, this._downloadLog);
                 _downloader.Error += OnDownloadError;
                 _downloader.HistoryAvailable += OnHistoryAvailable;
             }
@@ -270,7 +329,6 @@ namespace Walkabout.StockQuotes
             {
                 HistoryAvailable(this, history);
             }
-            this.history[history.Symbol] = history;
         }
 
         private void OnDownloadError(object sender, string error)
@@ -278,42 +336,27 @@ namespace Walkabout.StockQuotes
             AddError(error);
         }
 
-        public StockQuoteHistory GetStockQuoteHistory(string symbol)
-        {
-            StockQuoteHistory history = null;
-            this.history.TryGetValue(symbol, out history);
-            if (history == null)
-            {
-                history = StockQuoteHistory.Load(this.LogPath, symbol);
-                if (history != null)
-                {
-                    this.history[symbol] = history;
-                    OnHistoryAvailable(this, history);
-                }
-            }
-            return history;
-        }
-
         private void OnServiceQuoteAvailable(object sender, StockQuote e)
         {
-            if (status != null)
-            {
-                var max = _service.DownloadsCompleted + _service.PendingCount;
-                status.ShowProgress(e.Name, 0, max, max - _service.PendingCount);
-            }
+            Tuple<int, int> progress = GetProgress();
+            status.ShowProgress(e.Name, 0, progress.Item1, progress.Item2);
+
             lock (fetched)
             {
                 fetched.Add(e.Symbol);
             }
-            StockQuoteHistory history = GetStockQuoteHistory(e.Symbol);
+            StockQuoteHistory history = this._downloadLog.GetHistory(e.Symbol);
             if (history == null)
             {
-                // then start a new history!
                 history = new StockQuoteHistory() { Symbol = e.Symbol };
+                this._downloadLog.AddHistory(history);
             }
             if (history.AddQuote(e))
             {
-                history.Save(this.LogPath);
+                delayedActions.StartDelayedAction("Save" + e.Symbol, new Action(() =>
+                {
+                    history.Save(this.LogPath);
+                }), TimeSpan.FromSeconds(1));
             }
             _batch.Add(e);
         }
@@ -322,16 +365,15 @@ namespace Walkabout.StockQuotes
         {
             if (complete)
             {
-                if (status != null)
-                {
-                    status.ShowProgress(string.Empty, 0, 0, 0);
-                }
+                Tuple<int, int> progress = GetProgress();
+                status.ShowProgress("", 0, progress.Item1, progress.Item2);
+
                 if (!disposed)
                 {
                     OnDownloadComplete();
                 }
             }
-             
+
             UiDispatcher.BeginInvoke(new Action(() =>
             {
                 UpdateUI();
@@ -404,6 +446,7 @@ namespace Walkabout.StockQuotes
             if (disposing)
             {
                 StopThread();
+                ResetServices();
             }
         }
 
@@ -411,7 +454,7 @@ namespace Walkabout.StockQuotes
         {
             get
             {
-                return _service != null && _service.PendingCount > 0;
+                return (from s in _services where s.PendingCount > 0 select s).Any();
             }
         }
 
@@ -421,14 +464,24 @@ namespace Walkabout.StockQuotes
         public string LogPath
         {
             get { return this._logPath; }
-            set { this._logPath = value; }
+        }
+
+        static void EnsurePathExists(string path)
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            }
         }
 
         void StopThread()
-        {            
-            if (_service != null)
+        {
+            foreach (var item in _services)
             {
-                _service.Cancel();
+                item.Cancel();
             }
             if (_downloader != null)
             {
@@ -439,7 +492,7 @@ namespace Walkabout.StockQuotes
                 status.ShowProgress(string.Empty, 0, 0, 0);
             }
         }
-        
+
         bool processingResults;
 
         private void ProcessResults(List<StockQuote> results)
@@ -461,7 +514,7 @@ namespace Walkabout.StockQuotes
                 {
                     this.myMoney.Securities.EndUpdate();
                 }
-                
+
             }
             catch (Exception e)
             {
@@ -481,7 +534,7 @@ namespace Walkabout.StockQuotes
                 return;
             }
             Paragraph p = new Paragraph();
-            p.Inlines.Add(errorMessages);
+            p.Inlines.Add(errorMessages.Trim());
             if (!string.IsNullOrEmpty(path))
             {
                 p.Inlines.Add("See ");
@@ -509,8 +562,11 @@ namespace Walkabout.StockQuotes
 
         void AddError(string msg)
         {
-            hasError = true;
-            errorLog.AppendLine(msg);
+            if (!string.IsNullOrWhiteSpace(msg))
+            {
+                hasError = true;
+                errorLog.AppendLine(msg);
+            }
         }
 
         void ProcessResult(StockQuote quote)
@@ -542,16 +598,11 @@ namespace Walkabout.StockQuotes
 
         internal void BeginDownloadHistory(string symbol)
         {
-            if (_service == null)
+            var service = GetHistoryService();
+            if (service != null)
             {
-                return;
+                GetDownloader(service).BeginFetchHistory(new List<string>(new string[] { symbol }));
             }
-            GetDownloader().BeginFetchHistory(new List<string>(new string[] { symbol }));
-        }
-
-        internal bool HasStockQuoteHistory(string symbol)
-        {
-            return GetStockQuoteHistory(symbol) != null;
         }
     }
 
@@ -569,41 +620,111 @@ namespace Walkabout.StockQuotes
     /// </summary>
     public class DownloadLog
     {
-        public DownloadLog() { Downloaded = new List<DownloadInfo>();  }
+        Dictionary<string, StockQuoteHistory> database = new Dictionary<string, StockQuoteHistory>();
+        Dictionary<string, DownloadInfo> _downloaded = new Dictionary<string, DownloadInfo>();
+        DelayedActions delayedActions = new DelayedActions();
+        string _logFolder;
+
+        public DownloadLog() { Downloaded = new List<DownloadInfo>(); }
 
         public List<DownloadInfo> Downloaded { get; set; }
 
         public DownloadInfo GetInfo(string symbol)
         {
-            if (this.Downloaded == null)
+            DownloadInfo info = null;
+            _downloaded.TryGetValue(symbol, out info);
+            return info;
+        }
+
+        public StockQuoteHistory GetHistory(string symbol)
+        {
+            if (database.ContainsKey(symbol))
             {
-                return null;
+                return database[symbol];
             }
-            return (from i in this.Downloaded where i.Symbol == symbol select i).FirstOrDefault();
+            return null;
+        }
+
+        public void AddHistory(StockQuoteHistory history)
+        {
+            this.database[history.Symbol] = history;
+            DownloadInfo info = GetInfo(history.Symbol);
+            if (info == null)
+            {
+                info = new DownloadInfo() { Downloaded = DateTime.Today, Symbol = history.Symbol };
+                this.Downloaded.Add(info);
+                this._downloaded[info.Symbol] = info;
+                delayedActions.StartDelayedAction("save", new Action(()=>{ Save(_logFolder); }), TimeSpan.FromSeconds(1));
+            }
+            else
+            {
+                info.Downloaded = DateTime.Today;
+            }
         }
 
         public static DownloadLog Load(string logFolder)
         {
+            DownloadLog log = new DownloadLog();
             var filename = System.IO.Path.Combine(logFolder, "DownloadLog.xml");
             if (System.IO.File.Exists(filename))
             {
-                XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
-                using (XmlReader r = XmlReader.Create(filename))
+#if PerformanceBlocks
+                using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.LoadStockDownloadLog))
                 {
-                    var log = (DownloadLog)s.Deserialize(r);                    
-                    // remove any entries for files that don't exist any more.
-                    foreach(var info in log.Downloaded.ToArray())
+#endif
+                    XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
+                    using (XmlReader r = XmlReader.Create(filename))
                     {
-                        var quotes = System.IO.Path.Combine(logFolder, info.Symbol + ".xml");
-                        if (!System.IO.File.Exists(quotes))
+                        log = (DownloadLog)s.Deserialize(r);
+                    }
+                    log._logFolder = logFolder;
+
+                    // ensure unique list.
+                    foreach (var info in log.Downloaded.ToArray())
+                    {
+                        log._downloaded[info.Symbol] = info;
+                    }
+
+                    if (log._downloaded.Count != log.Downloaded.Count)
+                    {
+                        log.Downloaded.Clear();
+                        foreach (var info in log._downloaded.Values)
                         {
-                            log.Downloaded.Remove(info);
+                            log.Downloaded.Add(info);
                         }
                     }
-                    return log;
+                    var changed = false;
+                    foreach (var info in log._downloaded.Values)
+                    {
+                        StockQuoteHistory history = null;
+                        try
+                        {
+                            history = StockQuoteHistory.Load(logFolder, info.Symbol);
+                        }
+                        catch (Exception)
+                        {
+                            // file is bad, so ignore it
+                        }
+                        if (history == null)
+                        {
+                            log.Downloaded.Remove(info);
+                            log._downloaded.Remove(info.Symbol);
+                            changed = true;
+                        }
+                        else
+                        {
+                            log.AddHistory(history);
+                        }
+                    }
+                    if (changed)
+                    {
+                        log.Save(logFolder);
+                    }
+#if PerformanceBlocks
                 }
+#endif
             }
-            return new DownloadLog();
+            return log;
         }
 
         public void Save(string logFolder)
@@ -627,12 +748,11 @@ namespace Walkabout.StockQuotes
         bool _downloadingHistory;
         IStockQuoteService _service;
         DownloadLog _downloadLog;
-        string _logPath;
 
-        public HistoryDownloader(IStockQuoteService service, string logPath)
+        public HistoryDownloader(IStockQuoteService service, DownloadLog log)
         {
             _service = service;
-            _logPath = logPath;
+            _downloadLog = log;
         }
 
         public event EventHandler<string> Error;
@@ -641,36 +761,14 @@ namespace Walkabout.StockQuotes
 
         void OnHistoryAvailable(StockQuoteHistory history)
         {
+            _downloadLog.AddHistory(history);
+
             if (HistoryAvailable != null)
             {
                 HistoryAvailable(this, history);
             }
         }
 
-        Task _downloadLogTask = null;
-
-        async Task<DownloadLog> GetDownloadLogAsync()
-        {
-            if (this._downloadLog != null)
-            {
-                return this._downloadLog;
-            }
-            if (_downloadLogTask != null)
-            {
-                // download has been kicked off already, but someone else also wants it, so they have to wait.
-                await _downloadLogTask;
-            }
-            else
-            {
-                _downloadLogTask = Task.Run(new Action(() =>
-                {
-                    this._downloadLog = DownloadLog.Load(this._logPath);
-                }));
-                await _downloadLogTask;
-                _downloadLogTask = null;
-            }
-            return this._downloadLog;
-        }
 
         public async void BeginFetchHistory(List<string> batch)
         {
@@ -690,7 +788,6 @@ namespace Walkabout.StockQuotes
                 }
             }
             _downloadingHistory = true;
-            await GetDownloadLogAsync();
 
             while (_downloadingHistory)
             {
@@ -707,28 +804,35 @@ namespace Walkabout.StockQuotes
                 {
                     break;
                 }
-                else if (_downloadLog.GetInfo(symbol) == null)
-                {
-                    try
-                    {
-                        var history = await _service.DownloadHistory(symbol);
-                        if (history != null && history.History != null && history.History.Count != 0)
-                        {
-                            history.Save(this._logPath);
-                            _downloadLog.Downloaded.Add(new DownloadInfo() { Downloaded = DateTime.Today, Symbol = symbol });
-                            _downloadLog.Save(this._logPath);
-                            OnHistoryAvailable(history);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        OnError("Download history error: " + ex.Message);
-                    }
-                }
                 else
                 {
-                    var history = StockQuoteHistory.Load(this._logPath, symbol);
-                    if (history != null)
+                    StockQuoteHistory history = null;
+                    var info = this._downloadLog.GetInfo(symbol);
+                    if (info != null && info.Downloaded.Date == DateTime.Today)
+                    {
+                        // already downloaded?
+                        history = this._downloadLog.GetHistory(symbol);
+                        if (history != null && !history.Complete)
+                        {
+                            history = null;
+                        }
+                    }
+                    if (history == null)
+                    {
+                        try
+                        {
+                            history = await _service.DownloadHistory(symbol);
+                            if (history != null)
+                            {
+                                history.Complete = true;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            OnError("Download history error: " + ex.Message);
+                        }
+                    }
+                    if (history != null && history.History != null && history.History.Count != 0)
                     {
                         OnHistoryAvailable(history);
                     }
@@ -739,7 +843,8 @@ namespace Walkabout.StockQuotes
 
         void OnError(string message)
         {
-            if (Error != null) {
+            if (Error != null)
+            {
                 Error(this, message);
             }
         }
@@ -748,6 +853,7 @@ namespace Walkabout.StockQuotes
         {
             _downloadingHistory = false;
         }
+
     }
 
 }

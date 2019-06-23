@@ -44,35 +44,39 @@ namespace Walkabout.Dialogs
             this.ComboServiceName.SelectionChanged -= ComboServiceName_SelectionChanged;
             var list = _stockQuotes.GetDefaultSettingsList();
             var current = _stockQuotes.Settings;
-            int found = -1;
+            if (current == null)
+            {
+                current = new List<StockServiceSettings>();
+            }
             for (int i = 0; i < list.Count(); i++)
             {
+                bool found = false;
                 var item = list[i];
-                if (item.Name == current.Name)
+                foreach (var c in current)
                 {
-                    // put this one first!
-                    found = i;
+                    if (c.Name == item.Name)
+                    {
+                        found = true;
+                    }
+                }
+                if (!found)
+                {
+                    current.Add(item);
                 }
             }
-            if (found >= 0)
-            {
-                // put the current settings first, and replace defaults with our actual saved settings.
-                var item = list[found];
-                item.ApiKey = current.ApiKey;
-                item.ApiRequestsPerDayLimit = current.ApiRequestsPerDayLimit;
-                item.ApiRequestsPerMinuteLimit = current.ApiRequestsPerMinuteLimit;
-                item.ApiRequestsPerMonthLimit = current.ApiRequestsPerMonthLimit;
-                list.RemoveAt(found);
-                list.Insert(0, item);
-            }
-            foreach (var item in list)
+            foreach (var item in current)
             {
                 this.ComboServiceName.Items.Add(item.Name);
             }
-            this._list = list;
+            this._list = current;
             this.ComboServiceName.SelectedIndex = 0;
             this.ComboServiceName.SelectionChanged += ComboServiceName_SelectionChanged;
-            this.DataContext = list[0];
+            this.DataContext = current[0];
+        }
+
+        public List<StockServiceSettings> Settings
+        {
+            get { return _list; }
         }
 
         private void ComboServiceName_SelectionChanged(object sender, SelectionChangedEventArgs e)

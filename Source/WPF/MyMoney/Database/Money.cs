@@ -131,13 +131,23 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public abstract class PersistentContainer : INotifyPropertyChanged, IEnumerable<PersistentObject>
     {
-        BatchSync batched = new BatchSync();
+        BatchSync batched;
         bool changePending;
         bool saveChangeHistory;
         ChangeEventArgs head;
         ChangeEventArgs tail;
         PersistentObject parent;
         EventHandlerCollection<ChangeEventArgs> handlers;
+
+        BatchSync GetBatched()
+        {
+            if (batched == null)
+            {
+                batched = new BatchSync();
+            }
+            return batched;
+        }
+
 
         protected PersistentContainer()
         {
@@ -191,7 +201,7 @@ namespace Walkabout.Data
         /// <returns>Returns true if the parent container or this container are in batching mode</returns>
         public virtual bool FireChangeEvent(Object sender, ChangeEventArgs args)
         {
-            if (this.batched.Read() == 0)
+            if (GetBatched().Read() == 0)
             {
                 if (this.parent != null)
                 {
@@ -235,7 +245,7 @@ namespace Walkabout.Data
 
         public bool IsUpdating
         {
-            get { return this.batched.Read() > 0; }
+            get { return GetBatched().Read() > 0; }
         }
 
         public virtual void BeginUpdate(bool saveChangeHistory)
@@ -243,13 +253,13 @@ namespace Walkabout.Data
             // batched updates
             if (IsUpdating && !this.saveChangeHistory)
                 saveChangeHistory = this.saveChangeHistory;
-            this.batched.Increment();
+            GetBatched().Increment();
             this.saveChangeHistory = saveChangeHistory;
         }
 
         public virtual void EndUpdate()
         {
-            if (this.batched.Decrement() == 0 && this.handlers != null && this.handlers.HasListeners && changePending)
+            if (GetBatched().Decrement() == 0 && this.handlers != null && this.handlers.HasListeners && changePending)
             {
                 changePending = false;
                 if (this.head != null)
@@ -455,25 +465,34 @@ namespace Walkabout.Data
             this.change = ChangeType.Changed;
         }
 
-        BatchSync batched = new BatchSync();
+        BatchSync batched;
         bool changePending;
         ChangeEventArgs head;
         ChangeEventArgs tail;
 
+        BatchSync GetBatched()
+        {
+            if (batched == null)
+            {
+                batched = new BatchSync();
+            }
+            return batched;
+        }
+
         public bool IsUpdating
         {
-            get { return this.batched.Read() > 0; }
+            get { return GetBatched().Read() > 0; }
         }
 
         public virtual void BeginUpdate()
         {
             // batched updates
-            this.batched.Increment();
+            GetBatched().Increment();
         }
 
         public virtual void EndUpdate()
         {
-            if (this.batched.Decrement() == 0 && changePending)
+            if (GetBatched().Decrement() == 0 && changePending)
             {
                 changePending = false;
                 if (this.head != null)
@@ -503,7 +522,7 @@ namespace Walkabout.Data
 
         public virtual bool FireChangeEvent(Object sender, ChangeEventArgs args)
         {
-            if (this.batched.Read() > 0)
+            if (GetBatched().Read() > 0)
             {
                 changePending = true;
                 if (head == null)

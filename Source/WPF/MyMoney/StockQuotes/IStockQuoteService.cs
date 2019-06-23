@@ -14,6 +14,35 @@ namespace Walkabout.StockQuotes
     public interface IStockQuoteService
     {
         /// <summary>
+        /// Fetch updated security information for the given security.
+        /// This can be called multiple times so the service needs to keep a queue of pending
+        /// downloads.
+        /// </summary>
+        /// <param name="securities">List of securities to fetch </param>
+        void BeginFetchQuote(string symbol);
+
+        /// <summary>
+        /// Return true if your service supports batch download of quotes, meaning one http
+        /// request retrives multiple different quotes at once.  This is usually faster 
+        /// than using BeginFetchQuote and is preferred, but if your service doesn't support
+        /// this then BeginFetchQuotes will not be called.
+        /// </summary>
+        bool SupportsBatchQuotes { get; }
+
+        /// <summary>
+        /// Fetch updated security information for the given securities (most recent closing price).
+        /// This can be called multiple times so the service needs to keep a queue of pending
+        /// downloads.
+        /// </summary>
+        /// <param name="securities">List of securities to fetch </param>
+        void BeginFetchQuotes(List<string> symbols);
+
+        /// <summary>
+        /// Return true if your service supports the DownloadHistory function.
+        /// </summary>
+        bool SupportsDownloadHistory { get; }
+
+        /// <summary>
         /// If the stock quote service supports it, this method downloads a daily stock price history
         /// for the given symbol.
         /// </summary>
@@ -22,16 +51,10 @@ namespace Walkabout.StockQuotes
         Task<StockQuoteHistory> DownloadHistory(string symbol);
 
         /// <summary>
-        /// Fetch updated security information for the given securities (most recent closing price).
-        /// This can be called multiple times and any pending downloads will be merged automatically
-        /// </summary>
-        /// <param name="securities">List of securities to fetch </param>
-        void BeginFetchQuotes(List<string> symbols);
-
-        /// <summary>
         /// Return a count of pending downloads.
         /// </summary>
         int PendingCount { get; }
+
 
         /// <summary>
         /// For the current session until all downloads are complete this returns the number of
@@ -97,6 +120,8 @@ namespace Walkabout.StockQuotes
         public decimal Low { get; set; }
         [XmlAttribute]
         public decimal Volume { get; set; }
+        [XmlAttribute]
+        public DateTime Downloaded { get; set; }
     }
 
     /// <summary>
@@ -104,11 +129,28 @@ namespace Walkabout.StockQuotes
     /// </summary>
     public class StockQuoteHistory
     {
-        public StockQuoteHistory() { }
+        public StockQuoteHistory() { History = new List<StockQuote>(); }
 
         public string Symbol { get; set; }
 
+        /// <summary>
+        /// Whether this is a partial or complete history.
+        /// </summary>
+        public bool Complete { get; set; }
+
         public List<StockQuote> History { get; set; }
+
+        public DateTime MostRecentDownload
+        {
+            get
+            {
+                if (History != null && History.Count > 0)
+                {
+                    return History.Last().Downloaded;
+                }
+                return DateTime.MinValue;
+            }
+        }
 
         public List<StockQuote> GetSorted()
         {
@@ -133,9 +175,12 @@ namespace Walkabout.StockQuotes
             if (found == null)
             {
                 History.Add(quote);
-                return true;
             }
-            return false;
+            else
+            {
+                found.Downloaded = quote.Downloaded;
+            }
+            return true;
         }
 
         public static StockQuoteHistory Load(string logFolder, string symbol)

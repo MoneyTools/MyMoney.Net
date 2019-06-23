@@ -28,12 +28,15 @@ namespace Walkabout.StockQuotes
         bool _cancelled;
         string _logPath;
         bool _downloadError;
+        StockQuoteThrottle _throttle;
 
         public IEXTrading(StockServiceSettings settings, string logPath)
         {
             _settings = settings;
             settings.Name = FriendlyName;
             _logPath = logPath;
+            _throttle = StockQuoteThrottle.Load("IEXTradingThrottle.xml");
+            _throttle.Settings = settings;
         }
 
         public int PendingCount { get { return (_pending == null) ? 0 : _pending.Count; } }
@@ -120,6 +123,13 @@ namespace Walkabout.StockQuotes
             return settings.Name == FriendlyName;
         }
 
+        public void BeginFetchQuote(string symbol)
+        {
+            BeginFetchQuotes(new List<string>(new string[] { symbol }));
+        }
+
+        public bool SupportsBatchQuotes { get { return true; } }
+
         public void BeginFetchQuotes(List<string> symbols)
         {
             if (string.IsNullOrEmpty(_settings.ApiKey))
@@ -159,7 +169,6 @@ namespace Walkabout.StockQuotes
         {
             try
             {
-                StockQuoteThrottle.Instance.Settings = this._settings;
                 // This is on a background thread
                 int max_batch = 100;
                 List<string> batch = new List<string>();
@@ -206,9 +215,8 @@ namespace Walkabout.StockQuotes
                         try
                         {
                             // this service doesn't want too many calls per second.
-                            int ms = StockQuoteThrottle.Instance.GetSleep();
-                            bool suspended = ms > 0;
-                            if (ms > 0)
+                            int ms = _throttle.GetSleep();
+                            while (ms > 0 && !_cancelled)
                             {
                                 if (ms > 1000)
                                 {
@@ -226,6 +234,11 @@ namespace Walkabout.StockQuotes
                                     ms -= 1000;
                                 }
                                 OnSuspended(false);
+                                ms = _throttle.GetSleep();
+                            }
+                            if (_cancelled)
+                            {
+                                break;
                             }
 
                             string uri = string.Format(address, symbols, _settings.ApiKey);
@@ -237,6 +250,7 @@ namespace Walkabout.StockQuotes
                             _current = req;
 
                             WebResponse resp = req.GetResponse();
+                            _throttle.RecordCall();
                             using (Stream stm = resp.GetResponseStream())
                             {
                                 using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
@@ -310,7 +324,6 @@ namespace Walkabout.StockQuotes
             {
             }
             OnComplete(PendingCount == 0);
-            StockQuoteThrottle.Instance.Save();
             _downloadThread = null;
             _current = null;
             _completed = 0;
@@ -329,7 +342,7 @@ namespace Walkabout.StockQuotes
                 JToken token = pair.Value;
                 if (token.Type == JTokenType.Object)
                 {
-                    var quote = new StockQuote();
+                    var quote = new StockQuote() { Downloaded = DateTime.Now };
                     result.Add(quote);
 
                     JObject child = (JObject)token;
@@ -376,6 +389,8 @@ namespace Walkabout.StockQuotes
             }
             return result;
         }
+
+        public bool SupportsDownloadHistory { get { return false; } }
 
         public async Task<StockQuoteHistory> DownloadHistory(string symbol)
         {

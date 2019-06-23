@@ -236,12 +236,12 @@ namespace Walkabout.Configuration
             set { map["RentalManagement"] = value; }
         }
 
-        public StockServiceSettings StockServiceSettings
+        public List<StockServiceSettings> StockServiceSettings
         {
             get
             {
                 object value = map["StockServiceSettings"];
-                return value is StockServiceSettings ? (StockServiceSettings)value : null;
+                return value is List<StockServiceSettings> ? (List<StockServiceSettings>)value : null;
             }
             set
             {
@@ -468,11 +468,15 @@ namespace Walkabout.Configuration
                         {
                             pi.SetValue(this, ReadQuery(r), null);
                         }
-                        else if (t == typeof(StockServiceSettings))
+                        else if (t == typeof(List<StockServiceSettings>))
                         {
                             StockServiceSettings s = new StockServiceSettings();
                             s.Deserialize(r);
-                            pi.SetValue(this, s, null);
+                            if (this.StockServiceSettings == null)
+                            {
+                                this.StockServiceSettings = new List<StockServiceSettings>();
+                            }
+                            this.StockServiceSettings.Add(s);
                         }
                         else
                         {
@@ -610,13 +614,15 @@ namespace Walkabout.Configuration
                         WriteQuery(w, (QueryRow[])value);
                         w.WriteEndElement();
                     }
-                    else if (t == typeof(StockServiceSettings))
+                    else if (t == typeof(List<StockServiceSettings>))
                     {
-                        StockServiceSettings s = (StockServiceSettings)value;
-                        w.WriteStartElement("StockServiceSettings");
-                        s.Serialize(w);
-                        w.WriteEndElement();
-
+                        List<StockServiceSettings> s = (List<StockServiceSettings>)value;
+                        foreach (var item in s)
+                        {
+                            w.WriteStartElement("StockServiceSettings");
+                            item.Serialize(w);
+                            w.WriteEndElement();
+                        }
                     }
                     else
                     {

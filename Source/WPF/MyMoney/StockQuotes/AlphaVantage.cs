@@ -31,11 +31,13 @@ namespace Walkabout.StockQuotes
         bool _cancelled;
         Thread _downloadThread;
         string _logPath;
+        StockQuoteThrottle _throttle;
 
         public AlphaVantage(StockServiceSettings settings, string logPath)
         {
             _settings = settings;
-            StockQuoteThrottle.Instance.Settings = this._settings;
+            _throttle = StockQuoteThrottle.Load("AlphaVantageThrottle.xml");
+            _throttle.Settings = settings;
             settings.Name = FriendlyName;
             _logPath = logPath;
         }
@@ -124,7 +126,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        public void BeginFetchQuotes(List<string> symbols)
+        public void BeginFetchQuote(string symbol)
         {
             if (string.IsNullOrEmpty(_settings.ApiKey))
             {
@@ -133,22 +135,17 @@ namespace Walkabout.StockQuotes
                 return;
             }
 
-            int count = 0;
             if (_pending == null)
             {
-                _pending = new HashSet<string>(symbols);
-                count = symbols.Count;
+                _pending = new HashSet<string>();
+                _pending.Add(symbol);
             }
             else
             {
                 lock (_pending)
                 {
                     // merge the lists.                    
-                    foreach (string s in symbols)
-                    {
-                        _pending.Add(s);
-                    }
-                    count = _pending.Count;
+                    _pending.Add(symbol);
                 }
             }
             _cancelled = false;
@@ -157,6 +154,13 @@ namespace Walkabout.StockQuotes
                 _downloadThread = new Thread(new ThreadStart(DownloadQuotes));
                 _downloadThread.Start();
             }
+        }
+
+        public bool SupportsBatchQuotes { get { return false; } }
+
+        public void BeginFetchQuotes(List<string> symbols)
+        {
+            throw new Exception("Batch downloading of quotes is not supported by the AlphaVantage service");
         }
 
         private void DownloadQuotes()
@@ -212,18 +216,17 @@ namespace Walkabout.StockQuotes
                         try
                         {
                             // this service doesn't want too many calls per second.
-                            int ms = StockQuoteThrottle.Instance.GetSleep();
-                            bool suspended = ms > 0;
-                            if (suspended)
+                            int ms = _throttle.GetSleep();
+                            while (ms > 0)
                             {
                                 if (ms > 1000)
                                 {
                                     int seconds = ms / 1000;
-                                    OnError("AlphaVantage service needs to sleep for " + seconds + " seconds");
+                                    OnError("AlphaVantage quote service needs to sleep for " + seconds + " seconds");
                                 }
                                 else
                                 {
-                                    OnError("AlphaVantage service needs to sleep for " + ms.ToString() + " ms");
+                                    OnError("AlphaVantage quote service needs to sleep for " + ms.ToString() + " ms");
                                 }
                                 OnSuspended(true);
                                 while (!_cancelled && ms > 0)
@@ -232,6 +235,11 @@ namespace Walkabout.StockQuotes
                                     ms -= 1000;
                                 }
                                 OnSuspended(false);
+                                ms = _throttle.GetSleep();
+                            }
+                            if (_cancelled)
+                            {
+                                break;
                             }
 
                             string uri = string.Format(address, symbol, _settings.ApiKey);
@@ -245,6 +253,7 @@ namespace Walkabout.StockQuotes
                             Debug.WriteLine("AlphaVantage fetching quote " + symbol);
 
                             WebResponse resp = req.GetResponse();
+                            _throttle.RecordCall();
                             using (Stream stm = resp.GetResponseStream())
                             {
                                 using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
@@ -310,10 +319,12 @@ namespace Walkabout.StockQuotes
                                 {
                                     _retry.Add(symbol);
                                 }
-                                StockQuoteThrottle.Instance.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
+                                _throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
                             }
                             OnComplete(PendingCount == 0);
                         }
+
+                        Thread.Sleep(1000); // this is so we don't starve out the download service.
                     }
                 }
             }
@@ -322,7 +333,6 @@ namespace Walkabout.StockQuotes
             }
             _completed = 0;
             OnComplete(PendingCount == 0);
-            StockQuoteThrottle.Instance.Save();
             _downloadThread = null;
             _current = null;
             Debug.WriteLine("AlphaVantage download thread terminating");
@@ -339,37 +349,43 @@ namespace Walkabout.StockQuotes
                 throw new Exception(message);
             }
 
+            if (o.TryGetValue("Error Message", StringComparison.Ordinal, out value))
+            {
+                string message = (string)value;
+                throw new Exception(message);
+            }
+
             if (o.TryGetValue("Global Quote", StringComparison.Ordinal, out value))
             {
-                result = new StockQuote();
+                result = new StockQuote() { Downloaded = DateTime.Now };
                 if (value.Type == JTokenType.Object)
                 {
                     JObject child = (JObject)value;
-                    if (child.TryGetValue("01. symbol", StringComparison.Ordinal, out value))
+                    if (child.TryGetValue("01. symbol", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                     {
                         result.Symbol = (string)value;
                     }
-                    if (child.TryGetValue("02. open", StringComparison.Ordinal, out value))
+                    if (child.TryGetValue("02. open", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                     {
                         result.Open = (decimal)value;
                     }
-                    if (child.TryGetValue("03. high", StringComparison.Ordinal, out value))
+                    if (child.TryGetValue("03. high", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                     {
                         result.High = (decimal)value;
                     }
-                    if (child.TryGetValue("04. low", StringComparison.Ordinal, out value))
+                    if (child.TryGetValue("04. low", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                     {
                         result.Low = (decimal)value;
                     }
-                    if (child.TryGetValue("08. previous close", StringComparison.Ordinal, out value))
+                    if (child.TryGetValue("08. previous close", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                     {
                         result.Close = (decimal)value;
                     }
-                    if (child.TryGetValue("06. volume", StringComparison.Ordinal, out value))
+                    if (child.TryGetValue("06. volume", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                     {
                         result.Volume = (decimal)value;
                     }
-                    if (child.TryGetValue("07. latest trading day", StringComparison.Ordinal, out value))
+                    if (child.TryGetValue("07. latest trading day", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                     {
                         result.Date = (DateTime)value;
                     }
@@ -377,6 +393,8 @@ namespace Walkabout.StockQuotes
             }
             return result;
         }
+
+        public bool SupportsDownloadHistory { get { return true; } }
 
         public async Task<StockQuoteHistory> DownloadHistory(string symbol)
         {
@@ -388,47 +406,57 @@ namespace Walkabout.StockQuotes
                 try
                 {
                     // this service doesn't want too many calls per second.
-                    int ms = StockQuoteThrottle.Instance.GetSleep();
-                    if (ms > 0)
+                    int ms = _throttle.GetSleep();
+                    while (ms > 0)
                     {
                         if (ms > 1000)
                         {
                             int seconds = ms / 1000;
-                            OnError("AlphaVantage service needs to sleep for " + seconds + " seconds");
+                            OnError("AlphaVantage history service needs to sleep for " + seconds + " seconds");
                         }
                         else
                         {
-                            OnError("AlphaVantage service needs to sleep for " + ms.ToString() + " ms");
+                            OnError("AlphaVantage history service needs to sleep for " + ms.ToString() + " ms");
                         }
 
                         OnComplete(PendingCount == 0);
-                    }
-                    while (!_cancelled && ms > 0)
-                    {
-                        Thread.Sleep(1000);
-                        ms -= 1000;
-                    }
-
-                    HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
-                    req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
-                    req.Method = "GET";
-                    req.Timeout = 10000;
-                    req.UseDefaultCredentials = false;
-                    _current = req;
-
-                    Debug.WriteLine("AlphaVantage fetching history for " + symbol);
-
-                    WebResponse resp = req.GetResponse();
-                    using (Stream stm = resp.GetResponseStream())
-                    {
-                        using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
+                        while (!_cancelled && ms > 0)
                         {
-                            string json = sr.ReadToEnd();
-                            JObject o = JObject.Parse(json);
-                            history = ParseTimeSeries(o);
-                            if (string.Compare(history.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
+                            Thread.Sleep(1000);
+                            ms -= 1000;
+                        }
+                        ms = _throttle.GetSleep();
+                    }
+                    if (!_cancelled)
+                    {
+                        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
+                        req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
+                        req.Method = "GET";
+                        req.Timeout = 10000;
+                        req.UseDefaultCredentials = false;
+                        _current = req;
+
+                        OnError("AlphaVantage fetching history for " + symbol);
+
+                        WebResponse resp = req.GetResponse();
+                        _throttle.RecordCall();
+
+                        using (Stream stm = resp.GetResponseStream())
+                        {
+                            using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
                             {
-                                OnError(string.Format("History for symbol {0} return different symbol {1}", symbol, history.Symbol));
+                                string json = sr.ReadToEnd();
+                                JObject o = JObject.Parse(json);
+                                history = ParseTimeSeries(o);
+
+                                if (string.Compare(history.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
+                                {
+                                    OnError(string.Format("History for symbol {0} return different symbol {1}", symbol, history.Symbol));
+                                }
+                                else
+                                {
+                                    history.Save(this._logPath);
+                                }
                             }
                         }
                     }
@@ -439,10 +467,10 @@ namespace Walkabout.StockQuotes
                     OnError(message);
                     if (message.Contains("Please visit https://www.alphavantage.co/premium/"))
                     {
-                        StockQuoteThrottle.Instance.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
+                        _throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
                     }
-                    OnComplete(PendingCount == 0);
                 }
+                OnComplete(PendingCount == 0);
 
             }));
             return history;
@@ -452,10 +480,17 @@ namespace Walkabout.StockQuotes
         {
             StockQuoteHistory history = new StockQuoteHistory();
             history.History = new List<StockQuote>();
+            history.Complete = true; // this is a complete history.
 
             Newtonsoft.Json.Linq.JToken value;
 
             if (o.TryGetValue("Note", StringComparison.Ordinal, out value))
+            {
+                string message = (string)value;
+                throw new Exception(message);
+            }
+
+            if (o.TryGetValue("Error Message", StringComparison.Ordinal, out value))
             {
                 string message = (string)value;
                 throw new Exception(message);
@@ -490,7 +525,7 @@ namespace Walkabout.StockQuotes
                             value = series.GetValue(p.Name);
                             if (value.Type == JTokenType.Object)
                             {
-                                StockQuote quote = new StockQuote() { Date = date };
+                                StockQuote quote = new StockQuote() { Date = date, Downloaded = DateTime.Now };
                                 JObject child = (JObject)value;
 
                                 if (child.TryGetValue("1. open", StringComparison.Ordinal, out value))
