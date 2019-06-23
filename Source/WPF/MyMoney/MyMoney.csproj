@@ -629,6 +629,7 @@
     <None Include="Service References\RestfulWebServices\Walkabout.RestfulWebServices.Currency.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="StockQuotes\Design.dgml" />
     <Resource Include="Charts\Icons\Excel.png" />
     <Resource Include="Dialogs\Icons\Broken.png" />
     <Resource Include="Dialogs\Icons\Key.png" />
