@@ -144,7 +144,26 @@ namespace Walkabout.Reports
             }
             else
             {
-                WriteSummary(writer, data, TaxableIncomeType.Gains, "", new Predicate<Account>((a) => { return a == account; }));
+                TaxableIncomeType taxableIncomeType;
+
+                if (account.IsTaxDeferred)
+                {
+                    taxableIncomeType = TaxableIncomeType.All;
+                }
+                else
+                {
+                    if (account.Type == AccountType.Retirement)
+                    {
+                        // Currently treating this combination as tax free
+                        taxableIncomeType = TaxableIncomeType.None;
+                    }
+                    else
+                    {
+                        taxableIncomeType = TaxableIncomeType.Gains;
+                    }
+                }
+                
+                WriteSummary(writer, data, taxableIncomeType, "", new Predicate<Account>((a) => { return a == account; }));
             }
 
             writer.StartHeaderRow();
