@@ -622,6 +622,8 @@ namespace Walkabout.StockQuotes
     {
         Dictionary<string, StockQuoteHistory> database = new Dictionary<string, StockQuoteHistory>();
         Dictionary<string, DownloadInfo> _downloaded = new Dictionary<string, DownloadInfo>();
+        DelayedActions delayedActions = new DelayedActions();
+        string _logFolder;
 
         public DownloadLog() { Downloaded = new List<DownloadInfo>(); }
 
@@ -652,6 +654,7 @@ namespace Walkabout.StockQuotes
                 info = new DownloadInfo() { Downloaded = DateTime.Today, Symbol = history.Symbol };
                 this.Downloaded.Add(info);
                 this._downloaded[info.Symbol] = info;
+                delayedActions.StartDelayedAction("save", new Action(()=>{ Save(_logFolder); }), TimeSpan.FromSeconds(1));
             }
             else
             {
@@ -674,6 +677,7 @@ namespace Walkabout.StockQuotes
                     {
                         log = (DownloadLog)s.Deserialize(r);
                     }
+                    log._logFolder = logFolder;
 
                     // ensure unique list.
                     foreach (var info in log.Downloaded.ToArray())
@@ -689,6 +693,7 @@ namespace Walkabout.StockQuotes
                             log.Downloaded.Add(info);
                         }
                     }
+                    var changed = false;
                     foreach (var info in log._downloaded.Values)
                     {
                         StockQuoteHistory history = null;
@@ -704,11 +709,16 @@ namespace Walkabout.StockQuotes
                         {
                             log.Downloaded.Remove(info);
                             log._downloaded.Remove(info.Symbol);
+                            changed = true;
                         }
                         else
                         {
                             log.AddHistory(history);
                         }
+                    }
+                    if (changed)
+                    {
+                        log.Save(logFolder);
                     }
 #if PerformanceBlocks
                 }
@@ -796,26 +806,35 @@ namespace Walkabout.StockQuotes
                 }
                 else
                 {
+                    StockQuoteHistory history = null;
                     var info = this._downloadLog.GetInfo(symbol);
                     if (info != null && info.Downloaded.Date == DateTime.Today)
                     {
-                        // already downloaded.
+                        // already downloaded?
+                        history = this._downloadLog.GetHistory(symbol);
+                        if (history != null && !history.Complete)
+                        {
+                            history = null;
+                        }
                     }
-                    else
+                    if (history == null)
                     {
                         try
                         {
-                            var history = await _service.DownloadHistory(symbol);
-                            if (history != null && history.History != null && history.History.Count != 0)
+                            history = await _service.DownloadHistory(symbol);
+                            if (history != null)
                             {
-                                Debug.WriteLine(string.Format("Downloaded history for {0}", history.Symbol));
-                                OnHistoryAvailable(history);
+                                history.Complete = true;
                             }
                         }
                         catch (Exception ex)
                         {
                             OnError("Download history error: " + ex.Message);
                         }
+                    }
+                    if (history != null && history.History != null && history.History.Count != 0)
+                    {
+                        OnHistoryAvailable(history);
                     }
                 }
             }

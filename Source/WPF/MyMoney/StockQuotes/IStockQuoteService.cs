@@ -133,6 +133,11 @@ namespace Walkabout.StockQuotes
 
         public string Symbol { get; set; }
 
+        /// <summary>
+        /// Whether this is a partial or complete history.
+        /// </summary>
+        public bool Complete { get; set; }
+
         public List<StockQuote> History { get; set; }
 
         public DateTime MostRecentDownload

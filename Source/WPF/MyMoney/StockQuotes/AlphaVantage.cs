@@ -405,66 +405,57 @@ namespace Walkabout.StockQuotes
             {
                 try
                 {
-                    history = StockQuoteHistory.Load(_logPath, symbol);
-                    if (history != null && history.MostRecentDownload.Date == DateTime.Today)
+                    // this service doesn't want too many calls per second.
+                    int ms = _throttle.GetSleep();
+                    while (ms > 0)
                     {
-                        // then we already have the most up to date history!
-                    }
-                    else
-                    {
-                        // this service doesn't want too many calls per second.
-                        int ms = _throttle.GetSleep();
-                        while (ms > 0)
+                        if (ms > 1000)
                         {
-                            if (ms > 1000)
-                            {
-                                int seconds = ms / 1000;
-                                OnError("AlphaVantage history service needs to sleep for " + seconds + " seconds");
-                            }
-                            else
-                            {
-                                OnError("AlphaVantage history service needs to sleep for " + ms.ToString() + " ms");
-                            }
-
-                            OnComplete(PendingCount == 0);
-                            while (!_cancelled && ms > 0)
-                            {
-                                Thread.Sleep(1000);
-                                ms -= 1000;
-                            }
-                            ms = _throttle.GetSleep();
+                            int seconds = ms / 1000;
+                            OnError("AlphaVantage history service needs to sleep for " + seconds + " seconds");
                         }
-                        if (!_cancelled)
+                        else
                         {
+                            OnError("AlphaVantage history service needs to sleep for " + ms.ToString() + " ms");
+                        }
 
-                            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
-                            req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
-                            req.Method = "GET";
-                            req.Timeout = 10000;
-                            req.UseDefaultCredentials = false;
-                            _current = req;
+                        OnComplete(PendingCount == 0);
+                        while (!_cancelled && ms > 0)
+                        {
+                            Thread.Sleep(1000);
+                            ms -= 1000;
+                        }
+                        ms = _throttle.GetSleep();
+                    }
+                    if (!_cancelled)
+                    {
+                        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
+                        req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
+                        req.Method = "GET";
+                        req.Timeout = 10000;
+                        req.UseDefaultCredentials = false;
+                        _current = req;
 
-                            OnError("AlphaVantage fetching history for " + symbol);
+                        OnError("AlphaVantage fetching history for " + symbol);
 
-                            WebResponse resp = req.GetResponse();
-                            _throttle.RecordCall();
+                        WebResponse resp = req.GetResponse();
+                        _throttle.RecordCall();
 
-                            using (Stream stm = resp.GetResponseStream())
+                        using (Stream stm = resp.GetResponseStream())
+                        {
+                            using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
                             {
-                                using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
-                                {
-                                    string json = sr.ReadToEnd();
-                                    JObject o = JObject.Parse(json);
-                                    history = ParseTimeSeries(o);
+                                string json = sr.ReadToEnd();
+                                JObject o = JObject.Parse(json);
+                                history = ParseTimeSeries(o);
 
-                                    if (string.Compare(history.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
-                                    {
-                                        OnError(string.Format("History for symbol {0} return different symbol {1}", symbol, history.Symbol));
-                                    }
-                                    else
-                                    {
-                                        history.Save(this._logPath);
-                                    }
+                                if (string.Compare(history.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
+                                {
+                                    OnError(string.Format("History for symbol {0} return different symbol {1}", symbol, history.Symbol));
+                                }
+                                else
+                                {
+                                    history.Save(this._logPath);
                                 }
                             }
                         }
@@ -489,6 +480,7 @@ namespace Walkabout.StockQuotes
         {
             StockQuoteHistory history = new StockQuoteHistory();
             history.History = new List<StockQuote>();
+            history.Complete = true; // this is a complete history.
 
             Newtonsoft.Json.Linq.JToken value;
 
