@@ -979,7 +979,7 @@ namespace Walkabout.Data
 
         public static void EnsureInvestmentAccount(Account a, string line, int lineNumber)
         {
-            if (a.Type != AccountType.Investment)
+            if (a.Type != AccountType.Brokerage && a.Type != AccountType.Retirement)
             {
                 throw new MoneyException(String.Format("Received information for investment account on line {0}: {1}, but account {2} is of type {3}",
                     line, lineNumber, a.Name, a.Type.ToString()));
@@ -1028,7 +1028,7 @@ namespace Walkabout.Data
 
             foreach (Account a in this.Accounts.GetAccounts())
             {
-                if (a.Type == AccountType.Investment)
+                if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
                 {
                     Rebalance(calculator, a);
                 }
@@ -1982,32 +1982,21 @@ namespace Walkabout.Data
         /// </summary>
         /// <param name="account">The account or null</param>
         /// <returns>Cash balance</returns>
-        public decimal GetInvestmentCashBalance(Account account)
+        public decimal GetInvestmentCashBalance(Predicate<Account> filter)
         {
             decimal cash = 0;
-            if (account == null)
+            foreach (Account a in this.Accounts.GetAccounts(false))
             {
-                foreach (Account a in this.Accounts.GetAccounts(true))
+                if (filter(a))
                 {
-                    if (!a.IsClosed && a.Type == AccountType.Investment)
+                    cash += a.OpeningBalance;
+                    foreach (Transaction t in this.Transactions.GetTransactionsFrom(a))
                     {
-                        cash += a.OpeningBalance;
-                        foreach (Transaction t in this.Transactions.GetTransactionsFrom(a))
-                        {
-                            cash += t.Amount;
-                        }
+                        cash += t.Amount;
                     }
                 }
             }
-            else
-            {
-                cash += account.OpeningBalance;
 
-                foreach (Transaction t in this.Transactions.GetTransactionsFrom(account))
-                {
-                    cash += t.Amount;
-                }
-            }
             return cash;
         }
 
@@ -2359,7 +2348,8 @@ namespace Walkabout.Data
         MoneyMarket = 2,
         Cash = 3,
         Credit = 4,
-        Investment = 5,
+        Brokerage = 5,
+        Retirement = 6,
         // There is a hole here from deleted type which we can fill when we invent new types, but the types 8-10 have to keep those numbers        
         // or else we mess up the existing databases.
         Asset = 8,              // Used for tracking Assets like "House, Car, Boat, Jewelry, this helps to make NetWorth more accurate
@@ -2368,6 +2358,12 @@ namespace Walkabout.Data
         CreditLine = 11
     }
 
+    public enum TaxableIncomeType
+    {
+        All = 0,
+        None = 1,
+        Gains = 2
+    }
     public enum AccountFlags
     {
         None = 0,
@@ -8189,7 +8185,7 @@ namespace Walkabout.Data
                         t.Balance = balance;
                     }
 
-                    if (a.Type == AccountType.Investment)
+                    if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
                     {
                         foreach (SecurityPurchase sp in calculator.GetHolding(a).GetHoldings())
                         {
@@ -8542,7 +8538,13 @@ namespace Walkabout.Data
                 }
 
                 t.RunningUnits = sortedRunningUnits;
-                t.RunningBalance = t.RunningUnits * runningUnitPrice;
+
+                decimal factor = 1;
+                if (t.Investment.Security.SecurityType == SecurityType.Futures)
+                {
+                    factor = 100;
+                }                                                                               
+                t.RunningBalance = factor * t.RunningUnits * runningUnitPrice;
             }
 
             return view;
@@ -12534,7 +12536,20 @@ namespace Walkabout.Data
             }
         }
 
-        public decimal MarketValue { get { return CurrentUnits * this.Security.Price; } }
+        public decimal MarketValue 
+        { 
+            get 
+            { 
+                decimal factor = 1;
+
+                // futures prices are always listed by the instance.  But wen you buy 1 contract, you always get 100 futures in that contract
+                if (this.Security.SecurityType == SecurityType.Futures)
+                {
+                    factor = 100;
+                }
+                return factor * CurrentUnits * this.Security.Price; 
+            }
+        }
 
         [XmlIgnore]
         public decimal GainLoss { get { return MarketValue - CostBasis; } }

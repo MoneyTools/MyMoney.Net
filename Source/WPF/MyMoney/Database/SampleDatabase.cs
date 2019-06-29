@@ -75,7 +75,7 @@ namespace Walkabout.Assitance
                 // by scaling the payee frequencies to match the above desired count.
                 double ratio = (double)count / (double)totalFrequency;
 
-                if (a.Type == AccountType.Investment)
+                if (a.Type == AccountType.Brokerage)
                 {
                     CreateInvestmentSamples(data, a);
                 }
@@ -372,7 +372,7 @@ namespace Walkabout.Assitance
             foreach (Transaction t in money.Transactions.GetAllTransactions())
             {
                 SampleAccount sa;
-                if (!accountMap.TryGetValue(t.Account, out sa) || t.Account.Type == AccountType.Investment || t.Payee == null || t.IsSplit || t.Category == null || t.Transfer != null)
+                if (!accountMap.TryGetValue(t.Account, out sa) || t.Account.Type == AccountType.Brokerage || t.Payee == null || t.IsSplit || t.Category == null || t.Transfer != null)
                 {
                     continue;
                 }

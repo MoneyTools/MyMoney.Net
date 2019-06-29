@@ -69,7 +69,8 @@
                 <ComboBoxItem Content="Cash" />
                 <ComboBoxItem Content="Checking" />
                 <ComboBoxItem Content="Credit" />
-                <ComboBoxItem Content="Investment" />
+                <ComboBoxItem Content="Brokerage" />
+                <ComboBoxItem Content="Retirement" />
                 <ComboBoxItem Content="MoneyMarket" />
                 <ComboBoxItem Content="Savings" />
                 <ComboBoxItem Content="Asset" />

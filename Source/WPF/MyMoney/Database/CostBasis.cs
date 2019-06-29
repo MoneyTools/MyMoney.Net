@@ -42,7 +42,21 @@ namespace Walkabout.Data
         /// <summary>
         /// Get market value of remaining units.
         /// </summary>
-        public decimal MarketValue { get { return UnitsRemaining * Security.Price; } }
+        public decimal MarketValue 
+        { 
+            get 
+            { 
+                decimal factor = 1;
+
+                // futures prices are always listed by the instance.  But wen you buy 1 contract, you always get 100 futures in that contract
+                if (Security.SecurityType == SecurityType.Futures)
+                {
+                    factor = 100;
+                }
+
+                return factor * UnitsRemaining * Security.Price; 
+            } 
+        }
 
         /// <summary>
         /// Return the difference between what we paid for the units and what they are worth now.
