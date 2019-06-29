@@ -38,17 +38,17 @@ namespace Walkabout.StockQuotes
         void BeginFetchQuotes(List<string> symbols);
 
         /// <summary>
-        /// Return true if your service supports the DownloadHistory function.
+        /// Return true if your service supports the UpdateHistory function.
         /// </summary>
-        bool SupportsDownloadHistory { get; }
+        bool SupportsHistory { get; }
 
         /// <summary>
-        /// If the stock quote service supports it, this method downloads a daily stock price history
-        /// for the given symbol.
+        /// If the stock quote service supports it, updates the given StockQuoteHistory
+        /// with daily quotes back 20 years.
         /// </summary>
         /// <param name="symbol">The stock whose history is to be downloaded</param>
-        /// <returns>The history or null if downloading a history is not supported</returns>
-        Task<StockQuoteHistory> DownloadHistory(string symbol);
+        /// <returns>The true if the history was updated or false if history is not found</returns>
+        Task<bool> UpdateHistory(StockQuoteHistory history);
 
         /// <summary>
         /// Return a count of pending downloads.
@@ -165,21 +165,38 @@ namespace Walkabout.StockQuotes
             return new List<StockQuote>(result.Values);
         }
 
-        public bool AddQuote(StockQuote quote)
+        public bool AddQuote(StockQuote quote, bool replace=true)
         {
             if (History == null)
             {
                 History = new List<StockQuote>();
             }
-            var found = (from i in History where i.Date == quote.Date select i).FirstOrDefault();
-            if (found == null)
+            int len = History.Count;
+            for(int i = 0; i < len; i++)
             {
-                History.Add(quote);
+                var h = History[i];
+                if (h.Date == quote.Date)
+                {
+                    // already have this one
+                    if (replace)
+                    {
+                        h.Downloaded = quote.Downloaded;
+                        h.Open = quote.Open;
+                        h.Close = quote.Close;
+                        h.High = quote.High;
+                        h.Low = quote.Low;
+                        h.Volume = quote.Volume;
+                    }
+                    return true;
+                }
+                if (h.Date > quote.Date)
+                {
+                    // keep it sorted by date
+                    History.Insert(i, quote);
+                    return true;
+                }
             }
-            else
-            {
-                found.Downloaded = quote.Downloaded;
-            }
+            History.Add(quote);
             return true;
         }
 
@@ -209,6 +226,13 @@ namespace Walkabout.StockQuotes
             }
         }
 
+        internal void Merge(StockQuoteHistory newHistory)
+        {
+            foreach (var item in newHistory.History)
+            {
+                this.AddQuote(item);
+            }
+        }
     }
 
     /// <summary>
