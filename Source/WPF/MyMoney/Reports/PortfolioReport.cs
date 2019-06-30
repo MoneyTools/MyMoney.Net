@@ -76,19 +76,24 @@ namespace Walkabout.Reports
         decimal totalGainLoss;
 
 
-        private void WriteSummaryRow(IReportWriter writer, String Col1, String Col2, String Col3)
+        private void WriteSummaryRow(IReportWriter writer, String col1, String col2, String col3)
         {
             writer.StartCell();
-            writer.WriteParagraph(Col1);
+            writer.WriteParagraph(col1);
             writer.EndCell();
             writer.StartCell();
-            writer.WriteNumber(Col2);
+            writer.WriteNumber(col2);
             writer.EndCell();
             writer.StartCell();
-            writer.WriteNumber(Col3);
+            writer.WriteNumber(col3);
             writer.EndCell();
             writer.EndRow();
+        }
 
+        private void WriteheaderRow(IReportWriter writer, String col1, String col2, String col3)
+        {
+            writer.StartHeaderRow();
+            WriteSummaryRow(writer, col1, col2, col3);
         }
 
         public void Generate(IReportWriter writer)
@@ -137,10 +142,10 @@ namespace Walkabout.Reports
 
             if (account == null)
             {
-                WriteSummary(writer, data, TaxableIncomeType.None,  "Retirement Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
-                WriteSummary(writer, data, TaxableIncomeType.All,   "Retirement ",          new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
-                WriteSummary(writer, data, TaxableIncomeType.All,   "Tax Deferred ",        new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
-                WriteSummary(writer, data, TaxableIncomeType.Gains, "",                     new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
+                WriteSummary(writer, data, TaxableIncomeType.None,  "Retirement Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Retirement; }), true);
+                WriteSummary(writer, data, TaxableIncomeType.All,   "Retirement ",          new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Retirement; }), true);
+                WriteSummary(writer, data, TaxableIncomeType.All,   "Tax Deferred ",        new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Brokerage; }), true);
+                WriteSummary(writer, data, TaxableIncomeType.Gains, "",                     new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Brokerage; }), true);
             }
             else
             {
@@ -163,11 +168,10 @@ namespace Walkabout.Reports
                     }
                 }
                 
-                WriteSummary(writer, data, taxableIncomeType, "", new Predicate<Account>((a) => { return a == account; }));
+                WriteSummary(writer, data, taxableIncomeType, "", new Predicate<Account>((a) => { return a == account; }), false);
             }
 
-            writer.StartHeaderRow();
-            WriteSummaryRow(writer, "Total", totalMarketValue.ToString("C"), totalGainLoss.ToString("C"));
+            WriteheaderRow(writer, "Total", totalMarketValue.ToString("C"), totalGainLoss.ToString("C"));
             writer.EndTable();
 
             writer.EndCell();
@@ -370,7 +374,7 @@ namespace Walkabout.Reports
             }
         }
 
-        private void WriteSummary(IReportWriter writer, List<SecurityPieData> data, TaxableIncomeType taxableIncomeType, string prefix, Predicate<Account> filter)
+        private void WriteSummary(IReportWriter writer, List<SecurityPieData> data, TaxableIncomeType taxableIncomeType, string prefix, Predicate<Account> filter, bool subtotal)
         {
             bool wroteSectionHeader = false;
             string caption = prefix + "Investments";
@@ -384,9 +388,8 @@ namespace Walkabout.Reports
             totalSectionMarketValue = cash;
 
             if (cash > 0)
-            {                
-                writer.StartHeaderRow();
-                WriteSummaryRow(writer, caption, "Market Value", "Taxable");
+            {
+                WriteheaderRow(writer, caption, "Market Value", "Taxable");
                 wroteSectionHeader = true;
                 WriteSummaryRow(writer, "    Cash", cash.ToString("C"), totalSectionGainValue.ToString("C"));
                 caption = prefix + "Cash";
@@ -398,6 +401,7 @@ namespace Walkabout.Reports
                 });
             }
 
+            int rowCount = 0;
 
             // compute summary
             foreach (var securityGroup in calc.GetHoldingsBySecurityType(filter))
@@ -422,10 +426,9 @@ namespace Walkabout.Reports
 
                 if (count > 0)
                 {
-                    if (wroteSectionHeader == false)
+                    if (!wroteSectionHeader)
                     {
-                        writer.StartHeaderRow();
-                        WriteSummaryRow(writer, caption, "Market Value", "Taxable");
+                        WriteheaderRow(writer, caption, "Market Value", "Taxable");
                         wroteSectionHeader = true;
                     }
 
@@ -438,13 +441,14 @@ namespace Walkabout.Reports
 
                     caption = "    " + Security.GetSecurityTypeCaption(st);
                     WriteSummaryRow(writer, caption, marketValue.ToString("C"), gainLoss.ToString("C"));
+                    rowCount++;
                 }
 
                 totalSectionMarketValue += marketValue;
                 totalSectionGainValue += gainLoss;
             }
 
-            if (wroteSectionHeader == true)
+            if (wroteSectionHeader && subtotal && rowCount > 1)
             {
                 WriteSummaryRow(writer, "    SubTotal", totalSectionMarketValue.ToString("C"), totalSectionGainValue.ToString("C"));
             }

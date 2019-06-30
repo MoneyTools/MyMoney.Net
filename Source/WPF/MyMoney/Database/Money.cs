@@ -2372,12 +2372,20 @@ namespace Walkabout.Data
         TaxDeferred = 4
     }
 
+
     public class AccountSectionHeader
     {
         public string Title { get; set; }
         public decimal BalanceInNormalizedCurrencyValue { get; set; }
         public List<Account> Accounts { get; set; }
-        public bool IsSelectable { get; set; }
+        public event EventHandler Clicked;
+        public void OnClick()
+        {
+            if (Clicked != null)
+            {
+                Clicked(this, EventArgs.Empty);
+            }
+        }
     }
 
     //================================================================================

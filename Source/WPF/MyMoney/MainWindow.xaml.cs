@@ -949,21 +949,6 @@ namespace Walkabout
                 return;
             }
 
-
-            //-----------------------------------------------------------------
-            // Look for Investment Header
-            // Usually the Header entries in the Account do nothing when selected
-            // Except for the Investment
-            //
-            AccountSectionHeader i = this.accountsControl.Selected as AccountSectionHeader;
-
-            // Is this the Investment header
-            if (i != null && i.Title.ToLower().Contains("investment"))
-            {
-                ViewInvestmentPortfolio();
-            }
-
-
         }
 
         private void OnSelectionChangeFor_Categories(object sender, EventArgs e)
