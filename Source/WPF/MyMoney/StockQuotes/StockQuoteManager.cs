@@ -336,7 +336,7 @@ namespace Walkabout.StockQuotes
             AddError(error);
         }
 
-        private void OnServiceQuoteAvailable(object sender, StockQuote e)
+        private async void OnServiceQuoteAvailable(object sender, StockQuote e)
         {
             Tuple<int, int> progress = GetProgress();
             status.ShowProgress(e.Name, 0, progress.Item1, progress.Item2);
@@ -345,7 +345,7 @@ namespace Walkabout.StockQuotes
             {
                 fetched.Add(e.Symbol);
             }
-            StockQuoteHistory history = this._downloadLog.GetHistory(e.Symbol);
+            StockQuoteHistory history = await this._downloadLog.GetHistory(e.Symbol);
             if (history == null)
             {
                 history = new StockQuoteHistory() { Symbol = e.Symbol };
@@ -636,13 +636,52 @@ namespace Walkabout.StockQuotes
             return info;
         }
 
-        public StockQuoteHistory GetHistory(string symbol)
+        public async Task<StockQuoteHistory> GetHistory(string symbol)
         {
             if (database.ContainsKey(symbol))
             {
                 return database[symbol];
             }
-            return null;
+
+            StockQuoteHistory history = null;
+            DownloadInfo info;
+            var changed = false;
+            if (_downloaded.TryGetValue(symbol, out info))
+            { 
+                // read from disk on background thread so we don't block the UI thread loading
+                // all these stock quote histories.
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        history = StockQuoteHistory.Load(this._logFolder, symbol);
+                    }
+                    catch (Exception)
+                    {
+                        // file is bad, so ignore it
+                    }
+                });
+                if (history == null)
+                {
+                    this.Downloaded.Remove(info);
+                    this._downloaded.Remove(info.Symbol);
+                    changed = true;
+                }
+                else
+                {
+                    database[symbol] = history;
+                }
+            }
+            if (changed)
+            {
+                DelayedSave();
+            }
+            return history;
+        }
+
+        private void DelayedSave()
+        {
+            delayedActions.StartDelayedAction("save", new Action(() => { Save(_logFolder); }), TimeSpan.FromSeconds(1));
         }
 
         public void AddHistory(StockQuoteHistory history)
@@ -659,7 +698,7 @@ namespace Walkabout.StockQuotes
             {
                 info.Downloaded = DateTime.Today;
             }
-            delayedActions.StartDelayedAction("save", new Action(() => { Save(_logFolder); }), TimeSpan.FromSeconds(1));
+            DelayedSave();
         }
 
         public static DownloadLog Load(string logFolder)
@@ -700,33 +739,6 @@ namespace Walkabout.StockQuotes
                         {
                             log.Downloaded.Add(info);
                         }
-                    }
-                    var changed = false;
-                    foreach (var info in log._downloaded.Values.ToArray())
-                    {
-                        StockQuoteHistory history = null;
-                        try
-                        {
-                            history = StockQuoteHistory.Load(logFolder, info.Symbol);
-                        }
-                        catch (Exception)
-                        {
-                            // file is bad, so ignore it
-                        }
-                        if (history == null)
-                        {
-                            log.Downloaded.Remove(info);
-                            log._downloaded.Remove(info.Symbol);
-                            changed = true;
-                        }
-                        else
-                        {
-                            log.AddHistory(history);
-                        }
-                    }
-                    if (changed)
-                    {
-                        log.Save(logFolder);
                     }
 #if PerformanceBlocks
                 }
@@ -817,7 +829,7 @@ namespace Walkabout.StockQuotes
                 {
                     StockQuoteHistory history = null;
                     var info = this._downloadLog.GetInfo(symbol);
-                    history = this._downloadLog.GetHistory(symbol);
+                    history = await this._downloadLog.GetHistory(symbol);
                     if (history == null)
                     {
                         history = new StockQuoteHistory() { Symbol = symbol };

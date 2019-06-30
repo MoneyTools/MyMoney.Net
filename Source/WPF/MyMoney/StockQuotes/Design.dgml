@@ -20,31 +20,31 @@
     <Node Id="bb577711-d497-497b-a7a6-d9d951b36aaa1" Category="Comment" Bounds="-76.9180208333335,369.009853687692,233.983333333333,57.88" Label="Implements IStockQuoteService API and performs downloading on a background thread." UseManualLocation="True" />
   </Nodes>
   <Links>
-    <Link Source="1c5dbdfd-dd68-4c03-83df-5fa235ff5b341" Target="StockQuote" Bounds="277.19288533887,-84.8928418748619,59.1157731430114,11.7920282605567" />
-    <Link Source="21aa22ce-adea-46e2-8204-8c494d26feba1" Target="DownloadLog" Bounds="-339.794999796549,33.3706770040688,21.0678098494954,2.60099377977104" />
-    <Link Source="58c908df-774f-4b4d-ba78-9914216ee2801" Target="StockServiceSettings" Bounds="206.404864669963,87.0597361042671,54.6771144967032,1.95742574597598" />
-    <Link Source="868d96d8-c9fb-4fe0-b072-449a7c6d88b91" Target="StockQuoteThrottle" Bounds="227.349863133935,303.848258972441,33.003265172136,0.888427842082763" />
-    <Link Source="AlphaVantage" Target="StockQuoteThrottle" Bounds="15.6208321253459,297.783241597719,70.3533168012798,4.41797936185839" />
-    <Link Source="AlphaVantage" Target="StockServiceSettings" Bounds="-20.6747924339585,111.618018188409,137.667030904956,170.246845703193" />
-    <Link Source="HistoryDownloader" Target="DownloadLog" Bounds="-258.48810521719,48.2801154987444,14.3849409568238,70.8648374004255" />
-    <Link Source="HistoryDownloader" Target="IStockQuoteService" Bounds="-213.866376764233,145.10495803833,108.302506388908,50.9299509652176" Label="DownloadHistory" LabelBounds="-252.179559310213,172.379802215797,91.6133333333333,15.96" />
-    <Link Source="IEXTrading" Target="StockQuoteThrottle" Bounds="112.423635494661,243.392437438965,29.9958906393407,42.89193202432" />
-    <Link Source="IEXTrading" Target="StockServiceSettings" Bounds="106.133667391744,113.419151766293,22.3365627347422,104.013285672672" />
-    <Link Source="IStockQuoteService" Target="AlphaVantage" Bounds="-63.7000135787716,225.824863891602,22.5747749307866,47.8988738157197" />
-    <Link Source="IStockQuoteService" Target="IEXTrading" Bounds="-8.67250000000002,219.048067269331,65.1213758353973,6.60660318046811" />
-    <Link Source="MainWindow" Target="Settings" Bounds="19.8474676839338,-102.040000457764,33.0452849383984,55.5668315366085" />
-    <Link Source="MainWindow" Target="StockQuote" Bounds="55.295708430158,-102.225681056296,95.5769304071144,28.327916452396" />
-    <Link Source="MainWindow" Target="StockQuoteManager" Bounds="-60.9525052316923,-102.040000457764,57.4702808322936,47.7858782464783" />
-    <Link Source="ManagesTheDownloadingOf" Target="HistoryDownloader" Bounds="-338.104203074945,148.762389492181,59.2284817014865,26.342663406989" />
-    <Link Source="Settings" Target="StockServiceSettings" Bounds="72.7233577689293,-12.7776851844788,48.4049661681029,83.6476971239745" />
-    <Link Source="StockQuote" Target="StockServiceSettings" Bounds="143.030028012023,-45.380237121582,54.1952735626842,115.887440313104" />
-    <Link Source="StockQuoteManager" Target="DownloadLog" Bounds="-216.842306271918,-22.5400004577637,95.7944361281509,33.1006786897715" />
-    <Link Source="StockQuoteManager" Target="HistoryDownloader" Bounds="-223.063808274309,-22.5400004577637,127.34840490839,135.135084264127" Label="BeginFetchHistory" LabelBounds="-157.934079355045,46.399198595504,96.0533333333333,15.96" />
-    <Link Source="StockQuoteManager" Target="IStockQuoteService" Bounds="-82.7691286452155,-22.5400004577637,11.7429666606301,213.418463421713" Label="BeginFetchQuotes" LabelBounds="-72.8976407456996,76.0793510626815,96.76,15.96" />
-    <Link Source="StockQuoteManager" Target="StockServiceSettings" Bounds="-61.3704741730391,-22.5400004577637,164.643279201532,96.643771510206" />
-    <Link Source="StockQuoteThrottle" Target="StockServiceSettings" Bounds="135.544694950488,113.56644465542,19.6908972420799,180.093310593603" />
-    <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="AlphaVantage" Bounds="-17.0854983880673,315.229157983139,37.1619038732843,53.7806957045531" />
-    <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="IEXTrading" Bounds="51.0031991584353,251.812007057114,44.2612340821023,117.197846630578" />
+    <Link Source="1c5dbdfd-dd68-4c03-83df-5fa235ff5b341" Target="StockQuote" Bounds="277.192892652025,-84.8928410875021,59.1157662404908,11.7920273991781" />
+    <Link Source="21aa22ce-adea-46e2-8204-8c494d26feba1" Target="DownloadLog" Bounds="-339.794999525282,33.3706763483222,21.0678144143401,2.6009940952206" />
+    <Link Source="58c908df-774f-4b4d-ba78-9914216ee2801" Target="StockServiceSettings" Bounds="206.404863248023,87.0597353628205,54.6771159186443,1.9574254206383" />
+    <Link Source="868d96d8-c9fb-4fe0-b072-449a7c6d88b91" Target="StockQuoteThrottle" Bounds="227.349869135551,303.848259059336,33.0032591705198,0.888427704287494" />
+    <Link Source="AlphaVantage" Target="StockQuoteThrottle" Bounds="15.6208333333333,297.783245985861,70.3533215764022,4.41797732257379" />
+    <Link Source="AlphaVantage" Target="StockServiceSettings" Bounds="-20.6747917822553,111.618016764247,137.667029566729,170.246853071253" />
+    <Link Source="HistoryDownloader" Target="DownloadLog" Bounds="-258.488101352849,48.2801155776686,14.3849376882403,70.8648373215014" />
+    <Link Source="HistoryDownloader" Target="IStockQuoteService" Bounds="-213.866378521555,145.10495289917,108.302509997455,50.9299559046954" Label="UpdateHistory" LabelBounds="-158.864021071353,152.800062177527,76.41,15.96" />
+    <Link Source="IEXTrading" Target="StockQuoteThrottle" Bounds="112.423637355859,243.39243491775,29.9958941058457,42.8919346757365" />
+    <Link Source="IEXTrading" Target="StockServiceSettings" Bounds="106.133668522468,113.419150229246,22.3365605796227,104.013284688504" />
+    <Link Source="IStockQuoteService" Target="AlphaVantage" Bounds="-63.7000154471545,225.8248698355,22.57477547027,47.8988680842368" />
+    <Link Source="IStockQuoteService" Target="IEXTrading" Bounds="-8.6725,219.048066329883,65.1213771948735,6.60660231784476" />
+    <Link Source="MainWindow" Target="Settings" Bounds="19.8474667451818,-102.04,33.0452836604886,55.5668310194976" />
+    <Link Source="MainWindow" Target="StockQuote" Bounds="55.295708967874,-102.225681059954,95.5769371492845,28.3279166089082" />
+    <Link Source="MainWindow" Target="StockQuoteManager" Bounds="-60.9525078595967,-102.04,57.4702823605842,47.7858783309351" />
+    <Link Source="ManagesTheDownloadingOf" Target="HistoryDownloader" Bounds="-338.104203074945,148.762389492181,59.2284817014864,26.342663406989" />
+    <Link Source="Settings" Target="StockServiceSettings" Bounds="72.7233554500189,-12.7776851844788,48.4049667378324,83.6476956115056" />
+    <Link Source="StockQuote" Target="StockServiceSettings" Bounds="143.030028204873,-45.380237121582,54.1952824752939,115.887438999481" />
+    <Link Source="StockQuoteManager" Target="DownloadLog" Bounds="-216.842302840229,-22.54,95.7944309945859,33.100678135279" />
+    <Link Source="StockQuoteManager" Target="HistoryDownloader" Bounds="-223.063808534743,-22.54,127.348402288667,135.135083754604" Label="BeginFetchHistory" LabelBounds="-175.842449985683,65.4025699392915,96.0533333333333,15.96" />
+    <Link Source="StockQuoteManager" Target="IStockQuoteService" Bounds="-82.7691315683029,-22.54,11.7429693089206,213.418462970125" Label="BeginFetchQuotes" LabelBounds="-72.8976423446376,76.0793512697135,96.76,15.96" />
+    <Link Source="StockQuoteManager" Target="StockServiceSettings" Bounds="-61.3704767363401,-22.54,164.643279771329,96.643769561684" />
+    <Link Source="StockQuoteThrottle" Target="StockServiceSettings" Bounds="135.544694262584,113.566443052002,19.6909034938229,180.093312197021" />
+    <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="AlphaVantage" Bounds="-17.0854966741817,315.229163829665,37.1619013456415,53.7806898580266" />
+    <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="IEXTrading" Bounds="51.0031992311788,251.812004528904,44.2612353315014,117.197849158788" />
   </Links>
   <Categories>
     <Category Id="Comment" Label="Comment" Description="Represents a user defined comment on the diagram" CanBeDataDriven="True" IsProviderRoot="False" NavigationActionLabel="Comments" />

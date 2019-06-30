@@ -1997,8 +1997,6 @@ namespace Walkabout
         private CreateDatabaseDialog InitializeCreateDatabaseDialog()
         {
             CreateDatabaseDialog frm = new CreateDatabaseDialog();
-            // SQL Lite is a good default since it has zero install.
-            frm.UseSqlite = true;
             return frm;
         }
 
@@ -2047,7 +2045,7 @@ namespace Walkabout
                 this.canSave = false;
                 try
                 {
-                    LoadDatabase(frm.Server, frm.Database, frm.UserId, frm.Password, frm.BackupPath);
+                    LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
                     CreateAttachmentDirectory();
                 }
                 catch (Exception ex)
@@ -2121,7 +2119,7 @@ namespace Walkabout
             {
                 try
                 {
-                    this.LoadDatabase(frm.Server, frm.Database, frm.UserId, frm.Password, frm.BackupPath);
+                    this.LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
                     CreateAttachmentDirectory();
                 }
                 catch (Exception ex)
@@ -3710,7 +3708,7 @@ namespace Walkabout
                     break;
                 case DbFlavor.Sqlite:
                     fd.Filter = Properties.Resources.MoneySQLLiteFileFilter;
-                    path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + ".db");
+                    path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + ".mmdb");
                     break;
                 case DbFlavor.Xml:
                     fd.Filter = Properties.Resources.XmlFileFilter;
@@ -3752,29 +3750,24 @@ namespace Walkabout
             string path = (this.database != null) ? this.database.BackupPath : null;
             if (string.IsNullOrWhiteSpace(path))
             {
+                string filename = "MyMoney";
+                if (this.database.DatabasePath != null)
+                {
+                    filename = System.IO.Path.GetFileName(this.database.DatabasePath);
+                }
                 string folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MyMoney");
                 string backupPath = System.IO.Path.Combine(folder, "Backups");
                 if (!Directory.Exists(backupPath))
                 {
                     Directory.CreateDirectory(backupPath);
                 }
-                path = Path.Combine(backupPath, "MyMoney.dat");
+                path = Path.Combine(backupPath, filename);
             }
             return path;
         }
 
         private void OnCommandRestore(object sender, ExecutedRoutedEventArgs e)
         {
-            //OpenFileDialog fd = new OpenFileDialog();
-            //fd.Filter = DatabaseFileNameFilter;
-            //fd.FileName = GetBackupPath();
-            //fd.CheckFileExists = true;
-            //fd.Title = "Backup File";
-            //if (fd.ShowDialog() != true)
-            //{
-            //    return;
-            //}
-
             CreateDatabaseDialog frm = InitializeCreateDatabaseDialog();
             frm.BackupPath = GetBackupPath();
             frm.Mode = ConnectMode.Restore;
@@ -3785,79 +3778,18 @@ namespace Walkabout
                 {
                     this.Cursor = Cursors.Wait;
 
-                    if (frm.UseSqlCe)
+                    if (File.Exists(frm.Database))
                     {
-                        //
-                        // SQL CE
-                        //
-                        if (File.Exists(frm.Database))
+                        if (MessageBoxEx.Show(string.Format("Are you sure you want to replace the exising data in '{0}' with the backup data in '{1}'", frm.Database, frm.BackupPath), "Delete Existing File", MessageBoxButton.OKCancel, MessageBoxImage.Hand) != MessageBoxResult.OK)
                         {
-                            if (MessageBoxEx.Show(string.Format("Are you sure you want to replace the exising data in '{0}' with the backup data in '{1}'", frm.Database, frm.BackupPath), "Delete Existing File", MessageBoxButton.OKCancel, MessageBoxImage.Hand) != MessageBoxResult.OK)
-                            {
-                                return;
-                            }
+                            return;
                         }
-
-                        SqlCeDatabase.Restore(frm.BackupPath, frm.Database, frm.Password);
                     }
-                    else if (frm.UseSqlite)
-                    {
-                        //
-                        // SQL CE
-                        //
-                        if (File.Exists(frm.Database))
-                        {
-                            if (MessageBoxEx.Show(string.Format("Are you sure you want to replace the exising data in '{0}' with the backup data in '{1}'", frm.Database, frm.BackupPath), "Delete Existing File", MessageBoxButton.OKCancel, MessageBoxImage.Hand) != MessageBoxResult.OK)
-                            {
-                                return;
-                            }
-                        }
 
-                        SqliteDatabase.Restore(frm.BackupPath, frm.Database, frm.Password);
-                    }
-                    else if (frm.UseSqlServer)
-                    {
-                        SqlServerDatabase sd = new SqlServerDatabase()
-                        {
-                            DatabasePath = frm.Database,
-                            Server = frm.Server,
-                            UserId = frm.UserId,
-                            Password = frm.Password,
-                            SecurityService = new SecurityService()
-                        };
-
-                        if (sd.Exists)
-                        {
-                            if (MessageBoxEx.Show(string.Format("Are you sure you want to replace the exising data in '{0}' with the backup data in '{1}'", frm.Database, frm.BackupPath), "Delete Existing File", MessageBoxButton.OKCancel, MessageBoxImage.Hand) != MessageBoxResult.OK)
-                            {
-                                return;
-                            }
-                        }
-
-                        //
-                        // SQL SERVER
-                        //
-                        SqlServerDatabase.Restore(frm.Server, frm.Database, frm.UserId, frm.Password, frm.BackupPath);
-
-                        // todo: if the backup file is not a SQL DAT file then we could load the MyMoney objects
-                        // and call MarkAllnew so that next save will save everything into SQL database.
-                        // myMoney.MarkAllNew(); 
-                    }
-                    else
-                    {
-                        if (File.Exists(frm.Database))
-                        {
-                            if (MessageBoxEx.Show(string.Format("Are you sure you want to replace the exising data in '{0}' with the backup data in '{1}'", frm.Database, frm.BackupPath), "Delete Existing File", MessageBoxButton.OKCancel, MessageBoxImage.Hand) != MessageBoxResult.OK)
-                            {
-                                return;
-                            }
-                            File.Delete(frm.Database);
-                        }
-                        File.Copy(frm.BackupPath, frm.Database);
-                    }
+                    SqliteDatabase.Restore(frm.BackupPath, frm.Database, frm.Password);
 
                     // Now load it into memory and make sure tables are up to date in case anything changed since the backup was created.
-                    LoadDatabase(frm.Server, frm.Database, frm.UserId, frm.Password, frm.BackupPath);
+                    LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
                     CreateAttachmentDirectory();
                 }
                 catch (Exception ex)
