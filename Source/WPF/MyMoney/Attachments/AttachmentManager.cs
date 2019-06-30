@@ -71,8 +71,8 @@ namespace Walkabout.Attachments
                 myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(OnTransactionsChanged);
                 myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
                 myMoney.BeforeTransferChanged += new EventHandler<TransferChangedEventArgs>(OnBeforeTransferChanged);
-                myMoney.BeforeSplitTransferChanged += new EventHandler<SplitTransferChangedEventArgs>(OnBeforeSplitTransferChanged);                
-                this.watcher.Start();
+                myMoney.BeforeSplitTransferChanged += new EventHandler<SplitTransferChangedEventArgs>(OnBeforeSplitTransferChanged);
+                this.watcher.ScanAllAccounts();
             }
         }
 
@@ -165,7 +165,7 @@ namespace Walkabout.Attachments
             }
             if (watcher != null)
             {
-                watcher.Start();
+                watcher.StartQueued();
             }
         }
 
@@ -330,7 +330,7 @@ namespace Walkabout.Attachments
     class AttachmentWatcher 
     {
         private ConcurrentQueue<Account> accountQueue;
-        private ConcurrentQueue<Transaction> queue;
+        private ConcurrentQueue<Transaction> transactionQueue;
         private bool threadRunning;
         private MyMoney money;
         private AutoResetEvent threadStopEvent = new AutoResetEvent(false);
@@ -340,7 +340,7 @@ namespace Walkabout.Attachments
         public AttachmentWatcher(MyMoney money)
         {
             this.accountQueue = new ConcurrentQueue<Account>();
-            this.queue = new ConcurrentQueue<Transaction>();
+            this.transactionQueue = new ConcurrentQueue<Transaction>();
             this.money = money;  
         }
 
@@ -355,27 +355,32 @@ namespace Walkabout.Attachments
 
         internal void QueueTransaction(Transaction t)
         {
-            if (t != null)
+            if (t != null && !transactionQueue.Contains(t))
             {
-                queue.Enqueue(t);
+                transactionQueue.Enqueue(t);
             }
         }
 
         internal void QueueAccount(Account a)
         {
-            if (a != null)
+            if (a != null && !accountQueue.Contains(a))
             {
                 accountQueue.Enqueue(a);
             }
         }
 
-        internal void Start()
+        public void ScanAllAccounts()
         {
             foreach (Account a in money.Accounts)
             {
                 QueueAccount(a);
             }
-            if (accountQueue.Count > 0 || queue.Count > 0)
+            StartQueued();
+        }
+
+        public void StartQueued()
+        {
+            if (accountQueue.Count > 0 || transactionQueue.Count > 0)
             {
                 StartThread();
             }
@@ -421,7 +426,7 @@ namespace Walkabout.Attachments
                         // process pending individual transaction checks.
                         List<Tuple<Transaction, bool>> toUpdate = new List<Tuple<Transaction, bool>>();
                         Transaction t;
-                        while (queue.TryDequeue(out t) && threadRunning)
+                        while (transactionQueue.TryDequeue(out t) && threadRunning)
                         {
                             bool yes = HasAttachments(path, t);
                             if (t.HasAttachment != yes)
