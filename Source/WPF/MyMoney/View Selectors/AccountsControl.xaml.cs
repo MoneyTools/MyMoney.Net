@@ -18,6 +18,7 @@ using Walkabout.Taxes;
 using System.IO;
 using System.Windows.Media.Imaging;
 using Walkabout.Help;
+using Walkabout.Commands;
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 #endif
@@ -239,16 +240,6 @@ namespace Walkabout.Views.Controls
 
         void listBox1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            AccountSectionHeader item = GetElementFromPoint(listBox1, e.GetPosition(listBox1)) as AccountSectionHeader;
-
-            if (item != null)
-            {
-                if (item.IsSelectable == false)
-                {
-                    e.Handled = true;
-                }
-            }
-            
         }
 
         void OnListBoxMouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -363,12 +354,12 @@ namespace Walkabout.Views.Controls
 
                     var accountOfTypeBrokerage = from a in inputList where a.Type == AccountType.Brokerage || a.Type == AccountType.MoneyMarket select a;
                     sh = BundleAccount("Brokerage", output, accountOfTypeBrokerage);
-                    sh.IsSelectable = true; // Only INVESTEMENT types Header can be selected 
+                    sh.Clicked += (s, e) => { AppCommands.CommandReportInvestment.Execute(null, this); };
                     netWorth += sh.BalanceInNormalizedCurrencyValue;
 
                     var accountOfTypeRetirement = from a in inputList where a.Type == AccountType.Retirement select a;
                     sh = BundleAccount("Retirement", output, accountOfTypeRetirement);
-                    sh.IsSelectable = true; // Only INVESTEMENT types Header can be selected 
+                    sh.Clicked += (s, e) => { AppCommands.CommandReportInvestment.Execute(null, this); };
                     netWorth += sh.BalanceInNormalizedCurrencyValue;
 
                     var accountOfTypeAsset = from a in inputList where a.Type == AccountType.Asset select a;
@@ -388,10 +379,14 @@ namespace Walkabout.Views.Controls
             }
         }
 
+        private void Sh_Clicked(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         private static AccountSectionHeader BundleAccount(string caption, List<object> output, IEnumerable<Account> accountOfTypeBanking)
         {
             AccountSectionHeader sectionHeader = new AccountSectionHeader();
-            sectionHeader.IsSelectable = false; // By default the Account header are not selectable in the list box 
 
             if (accountOfTypeBanking.Count() > 0)
             {
@@ -438,10 +433,9 @@ namespace Walkabout.Views.Controls
 
             AccountSectionHeader ash = selected as AccountSectionHeader;
 
-            if (ash != null && ash.IsSelectable == false)
+            if (ash != null)
             {
-                // Don't allow selection of an AcccountHeader when it does not want to
-                return;
+                ash.OnClick();
             }
 
             if (this.selected != selected && SelectionChanged != null)

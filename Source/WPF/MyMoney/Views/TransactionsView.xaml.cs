@@ -1351,6 +1351,7 @@ namespace Walkabout.Views
                     break;
                 case TransactionViewName.Portfolio:
                     ShowInvestmentPortfolio(this.activeAccount);
+                    SwitchLayout("InvestmentPortfolioView");
                     break;
                 case TransactionViewName.ByQuery:
                     if (this.lastQuery != null)

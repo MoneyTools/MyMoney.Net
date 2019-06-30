@@ -394,13 +394,23 @@ namespace Walkabout.StockQuotes
             return result;
         }
 
-        public bool SupportsDownloadHistory { get { return true; } }
+        public bool SupportsHistory { get { return true; } }
 
-        public async Task<StockQuoteHistory> DownloadHistory(string symbol)
+        public async Task<bool> UpdateHistory(StockQuoteHistory history)
         {
-            const string timeSeriesAddress = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}&outputsize=full&apikey={1}";
-            StockQuoteHistory history = null;
-            string uri = string.Format(timeSeriesAddress, symbol, this._settings.ApiKey);
+            string outputsize;
+            if (!history.Complete)
+            {
+                outputsize = "full";
+            }
+            else
+            {
+                outputsize = "compact";
+            }
+            bool updated = false;
+            const string timeSeriesAddress = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}&outputsize={1}&apikey={2}";
+            string symbol = history.Symbol;
+            string uri = string.Format(timeSeriesAddress, symbol, outputsize, this._settings.ApiKey);
             await Task.Run(new Action(() =>
             {
                 try
@@ -447,14 +457,17 @@ namespace Walkabout.StockQuotes
                             {
                                 string json = sr.ReadToEnd();
                                 JObject o = JObject.Parse(json);
-                                history = ParseTimeSeries(o);
+                                var newHistory = ParseTimeSeries(o);
 
-                                if (string.Compare(history.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
+                                if (string.Compare(newHistory.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
                                 {
-                                    OnError(string.Format("History for symbol {0} return different symbol {1}", symbol, history.Symbol));
+                                    OnError(string.Format("History for symbol {0} return different symbol {1}", symbol, newHistory.Symbol));
                                 }
                                 else
                                 {
+                                    updated = true;
+                                    history.Merge(newHistory);
+                                    history.Complete = true;
                                     history.Save(this._logPath);
                                 }
                             }
@@ -473,7 +486,7 @@ namespace Walkabout.StockQuotes
                 OnComplete(PendingCount == 0);
 
             }));
-            return history;
+            return updated;
         }
 
         private StockQuoteHistory ParseTimeSeries(JObject o)

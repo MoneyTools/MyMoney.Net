@@ -302,7 +302,7 @@ namespace Walkabout.StockQuotes
         {
             foreach (var service in _services)
             {
-                if (service.SupportsDownloadHistory)
+                if (service.SupportsHistory)
                 {
                     return service;
                 }
@@ -336,7 +336,7 @@ namespace Walkabout.StockQuotes
             AddError(error);
         }
 
-        private void OnServiceQuoteAvailable(object sender, StockQuote e)
+        private async void OnServiceQuoteAvailable(object sender, StockQuote e)
         {
             Tuple<int, int> progress = GetProgress();
             status.ShowProgress(e.Name, 0, progress.Item1, progress.Item2);
@@ -345,13 +345,13 @@ namespace Walkabout.StockQuotes
             {
                 fetched.Add(e.Symbol);
             }
-            StockQuoteHistory history = this._downloadLog.GetHistory(e.Symbol);
+            StockQuoteHistory history = await this._downloadLog.GetHistory(e.Symbol);
             if (history == null)
             {
                 history = new StockQuoteHistory() { Symbol = e.Symbol };
                 this._downloadLog.AddHistory(history);
             }
-            if (history.AddQuote(e))
+            if (history.AddQuote(e, false))
             {
                 delayedActions.StartDelayedAction("Save" + e.Symbol, new Action(() =>
                 {
@@ -636,13 +636,52 @@ namespace Walkabout.StockQuotes
             return info;
         }
 
-        public StockQuoteHistory GetHistory(string symbol)
+        public async Task<StockQuoteHistory> GetHistory(string symbol)
         {
             if (database.ContainsKey(symbol))
             {
                 return database[symbol];
             }
-            return null;
+
+            StockQuoteHistory history = null;
+            DownloadInfo info;
+            var changed = false;
+            if (_downloaded.TryGetValue(symbol, out info))
+            { 
+                // read from disk on background thread so we don't block the UI thread loading
+                // all these stock quote histories.
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        history = StockQuoteHistory.Load(this._logFolder, symbol);
+                    }
+                    catch (Exception)
+                    {
+                        // file is bad, so ignore it
+                    }
+                });
+                if (history == null)
+                {
+                    this.Downloaded.Remove(info);
+                    this._downloaded.Remove(info.Symbol);
+                    changed = true;
+                }
+                else
+                {
+                    database[symbol] = history;
+                }
+            }
+            if (changed)
+            {
+                DelayedSave();
+            }
+            return history;
+        }
+
+        private void DelayedSave()
+        {
+            delayedActions.StartDelayedAction("save", new Action(() => { Save(_logFolder); }), TimeSpan.FromSeconds(1));
         }
 
         public void AddHistory(StockQuoteHistory history)
@@ -654,12 +693,12 @@ namespace Walkabout.StockQuotes
                 info = new DownloadInfo() { Downloaded = DateTime.Today, Symbol = history.Symbol };
                 this.Downloaded.Add(info);
                 this._downloaded[info.Symbol] = info;
-                delayedActions.StartDelayedAction("save", new Action(()=>{ Save(_logFolder); }), TimeSpan.FromSeconds(1));
             }
             else
             {
                 info.Downloaded = DateTime.Today;
             }
+            DelayedSave();
         }
 
         public static DownloadLog Load(string logFolder)
@@ -672,10 +711,18 @@ namespace Walkabout.StockQuotes
                 using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.LoadStockDownloadLog))
                 {
 #endif
-                    XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
-                    using (XmlReader r = XmlReader.Create(filename))
+                    try
                     {
-                        log = (DownloadLog)s.Deserialize(r);
+                        XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
+                        using (XmlReader r = XmlReader.Create(filename))
+                        {
+                            log = (DownloadLog)s.Deserialize(r);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // goit corrupted? no problem, just start over.
+                        log = new DownloadLog();
                     }
                     log._logFolder = logFolder;
 
@@ -692,33 +739,6 @@ namespace Walkabout.StockQuotes
                         {
                             log.Downloaded.Add(info);
                         }
-                    }
-                    var changed = false;
-                    foreach (var info in log._downloaded.Values)
-                    {
-                        StockQuoteHistory history = null;
-                        try
-                        {
-                            history = StockQuoteHistory.Load(logFolder, info.Symbol);
-                        }
-                        catch (Exception)
-                        {
-                            // file is bad, so ignore it
-                        }
-                        if (history == null)
-                        {
-                            log.Downloaded.Remove(info);
-                            log._downloaded.Remove(info.Symbol);
-                            changed = true;
-                        }
-                        else
-                        {
-                            log.AddHistory(history);
-                        }
-                    }
-                    if (changed)
-                    {
-                        log.Save(logFolder);
                     }
 #if PerformanceBlocks
                 }
@@ -737,6 +757,7 @@ namespace Walkabout.StockQuotes
             {
                 s.Serialize(w, this);
             }
+            Debug.WriteLine("Saved " + filename);
         }
 
     }
@@ -808,24 +829,20 @@ namespace Walkabout.StockQuotes
                 {
                     StockQuoteHistory history = null;
                     var info = this._downloadLog.GetInfo(symbol);
-                    if (info != null && info.Downloaded.Date == DateTime.Today)
-                    {
-                        // already downloaded?
-                        history = this._downloadLog.GetHistory(symbol);
-                        if (history != null && !history.Complete)
-                        {
-                            history = null;
-                        }
-                    }
+                    history = await this._downloadLog.GetHistory(symbol);
                     if (history == null)
+                    {
+                        history = new StockQuoteHistory() { Symbol = symbol };
+                    }
+                    if (info != null && info.Downloaded.Date == DateTime.Today && history != null && history.Complete)
+                    {
+                        // already up to date
+                    }
+                    else
                     {
                         try
                         {
-                            history = await _service.DownloadHistory(symbol);
-                            if (history != null)
-                            {
-                                history.Complete = true;
-                            }
+                            await _service.UpdateHistory(history);
                         }
                         catch (Exception ex)
                         {

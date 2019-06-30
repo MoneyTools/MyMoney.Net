@@ -390,18 +390,18 @@ namespace Walkabout.StockQuotes
             return result;
         }
 
-        public bool SupportsDownloadHistory { get { return false; } }
+        public bool SupportsHistory { get { return false; } }
 
-        public async Task<StockQuoteHistory> DownloadHistory(string symbol)
+        public async Task<bool> UpdateHistory(StockQuoteHistory history)
         {
             if (!_downloadError)
             {
                 _downloadError = true;
-                OnError(String.Format("Download history is not supported by IEXTrading service", symbol));
+                OnError("Download history is not supported by IEXTrading service");
                 OnComplete(true);
             }
             await Task.Delay(0);
-            return new StockQuoteHistory() { Symbol = symbol };
+            return false;
         }
     }
 }
