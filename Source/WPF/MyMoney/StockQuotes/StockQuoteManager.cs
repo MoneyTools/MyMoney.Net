@@ -358,7 +358,10 @@ namespace Walkabout.StockQuotes
                     history.Save(this.LogPath);
                 }), TimeSpan.FromSeconds(1));
             }
-            _batch.Add(e);
+            lock (_batch)
+            {
+                _batch.Add(e);
+            }
         }
 
         private void OnServiceQuotesComplete(object sender, bool complete)
@@ -391,8 +394,14 @@ namespace Walkabout.StockQuotes
                 }
                 _unknown.Clear();
             }
-            ProcessResults(_batch);
-            _batch.Clear();
+
+            List<StockQuote> results = null;
+            lock (_batch)
+            {
+                results = _batch;
+                _batch = new List<StockQuote>();
+            }
+            ProcessResults(results);
 
             if (hasError && !disposed)
             {
