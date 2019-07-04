@@ -106,13 +106,13 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        public event EventHandler<bool> Complete;
+        public event EventHandler<DownloadCompleteEventArgs> Complete;
 
-        private void OnComplete(bool complete)
+        private void OnComplete(bool complete, string message)
         {
             if (Complete != null)
             {
-                Complete(this, complete);
+                Complete(this, new DownloadCompleteEventArgs() { Message = message, Complete = complete });
             }
         }
 
@@ -130,8 +130,7 @@ namespace Walkabout.StockQuotes
         {
             if (string.IsNullOrEmpty(_settings.ApiKey))
             {
-                OnError(Walkabout.Properties.Resources.ConfigureStockQuoteService);
-                OnComplete(true);
+                OnComplete(true, Walkabout.Properties.Resources.ConfigureStockQuoteService);
                 return;
             }
 
@@ -310,9 +309,8 @@ namespace Walkabout.StockQuotes
                         catch (Exception e)
                         {
                             // continue
-                            OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + e.Message);
+                            string message = string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + e.Message;
 
-                            var message = e.Message;
                             if (message.Contains("Please visit https://www.alphavantage.co/premium/"))
                             {
                                 lock(_retry)
@@ -321,7 +319,7 @@ namespace Walkabout.StockQuotes
                                 }
                                 _throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
                             }
-                            OnComplete(PendingCount == 0);
+                            OnComplete(PendingCount == 0, message);
                         }
 
                         Thread.Sleep(1000); // this is so we don't starve out the download service.
@@ -332,10 +330,16 @@ namespace Walkabout.StockQuotes
             {
             }
             _completed = 0;
-            OnComplete(PendingCount == 0);
+            if (PendingCount == 0)
+            {
+                OnComplete(true, "AlphaVantage download complete");
+            }
+            else
+            {
+                OnComplete(false, "AlphaVantage download cancelled");
+            }   
             _downloadThread = null;
             _current = null;
-            Debug.WriteLine("AlphaVantage download thread terminating");
         }
 
         private static StockQuote ParseStockQuote(JObject o)
@@ -419,17 +423,18 @@ namespace Walkabout.StockQuotes
                     int ms = _throttle.GetSleep();
                     while (ms > 0)
                     {
+                        string message = null;
                         if (ms > 1000)
                         {
                             int seconds = ms / 1000;
-                            OnError("AlphaVantage history service needs to sleep for " + seconds + " seconds");
+                            message = string.Format("AlphaVantage history service needs to sleep for {0} seconds", seconds);
                         }
                         else
                         {
-                            OnError("AlphaVantage history service needs to sleep for " + ms.ToString() + " ms");
+                            message = string.Format("AlphaVantage history service needs to sleep for {0} ms", ms.ToString());
                         }
 
-                        OnComplete(PendingCount == 0);
+                        OnComplete(PendingCount == 0, message);
                         while (!_cancelled && ms > 0)
                         {
                             Thread.Sleep(1000);
@@ -483,7 +488,7 @@ namespace Walkabout.StockQuotes
                         _throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
                     }
                 }
-                OnComplete(PendingCount == 0);
+                OnComplete(PendingCount == 0, null);
 
             }));
             return updated;

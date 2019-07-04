@@ -156,7 +156,7 @@ namespace Walkabout.StockQuotes
 
         private void OnServiceSuspended(object sender, bool suspended)
         {
-            OnServiceQuotesComplete(sender, false);
+            OnServiceQuotesComplete(sender, new DownloadCompleteEventArgs() { Complete = false });
             Tuple<int, int> progress = GetProgress();
             if (suspended)
             {
@@ -364,9 +364,13 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        private void OnServiceQuotesComplete(object sender, bool complete)
+        private void OnServiceQuotesComplete(object sender, DownloadCompleteEventArgs args)
         {
-            if (complete)
+            if (!string.IsNullOrEmpty(args.Message))
+            {
+                AddError(args.Message);
+            }
+            if (args.Complete)
             {
                 Tuple<int, int> progress = GetProgress();
                 status.ShowProgress("", 0, progress.Item1, progress.Item2);

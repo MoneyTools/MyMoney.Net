@@ -11,6 +11,20 @@ using Walkabout.Data;
 namespace Walkabout.StockQuotes
 {
 
+    public class DownloadCompleteEventArgs : EventArgs
+    {
+        /// <summary>
+        /// A status message to display on completion.
+        /// </summary>
+        public string Message { get; set; }
+
+        /// <summary>
+        /// Set this to true if the entire download is complete.  Set it to false if
+        /// it is just a batch completion.
+        /// </summary>
+        public bool Complete { get; set; }
+    }
+
     public interface IStockQuoteService
     {
         /// <summary>
@@ -80,10 +94,10 @@ namespace Walkabout.StockQuotes
 
         /// <summary>
         /// If the service is performing a whole batch at once, this event is raised after each batch is complete.
-        /// If there are still more downloads pending the boolean value is raised with the value false.
+        /// If there are still more downloads pending the boolean value for the Complete property is false.
         /// This is also raised when the entire pending list is completed with the boolean set to true.
         /// </summary>
-        event EventHandler<bool> Complete;
+        event EventHandler<DownloadCompleteEventArgs> Complete;
 
         /// <summary>
         /// This event is raised if quota limits are stopping the service from responding right now.
