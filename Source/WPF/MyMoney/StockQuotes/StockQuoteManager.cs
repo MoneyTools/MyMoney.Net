@@ -694,7 +694,10 @@ namespace Walkabout.StockQuotes
 
         private void DelayedSave()
         {
-            delayedActions.StartDelayedAction("save", new Action(() => { Save(_logFolder); }), TimeSpan.FromSeconds(1));
+            if (!string.IsNullOrEmpty(_logFolder))
+            {
+                delayedActions.StartDelayedAction("save", new Action(() => { Save(_logFolder); }), TimeSpan.FromSeconds(1));
+            }
         }
 
         public void AddHistory(StockQuoteHistory history)

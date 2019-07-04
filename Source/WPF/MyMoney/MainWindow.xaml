@@ -215,7 +215,7 @@
                         <MenuItem x:Name="MenuOnlineSyncAccount" Header="_Synchronize Account" Command="p:AppCommands.CommandOnlineSyncAccount"/>
                         <MenuItem x:Name="MenuOnlineUpdateSecurities" Header="_Update Securities" Command="p:AppCommands.CommandOnlineUpdateSecurities"/>
                         <MenuItem x:Name="MenuOnlineDownloadAccounts" Header="_Download Accounts..." Command="p:AppCommands.CommandDownloadAccounts"/>
-                        <MenuItem x:Name="MenuStockQuoteServiceOptions" Header="Stock Quote Account..." Command="p:AppCommands.CommandStockQuoteServiceOptions"/>
+                        <MenuItem x:Name="MenuStockQuoteServiceOptions" Header="Stock Quote Accounts..." Command="p:AppCommands.CommandStockQuoteServiceOptions"/>
                     </MenuItem>
 
                     <MenuItem x:Name="MenuHelp" Header="_Help">

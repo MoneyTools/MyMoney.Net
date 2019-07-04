@@ -378,6 +378,9 @@ namespace Walkabout
 
         private void OnRecentFileSelected(object sender, RecentFileEventArgs e)
         {
+            if (!SaveIfDirty())
+                return;
+
             Settings.TheSettings.Database = e.FileName;
             BeginLoadDatabase();
         }
@@ -3057,9 +3060,9 @@ namespace Walkabout
             this.TransactionView.QueryPanel.OnShow();
         }
 
-        private void HideQueryPanel()
+        private void HideQueryPanel(bool force = false)
         {
-            if (MenuQueryShowForm.IsChecked)
+            if (force || MenuQueryShowForm.IsChecked)
             {
                 MenuQueryShowForm.IsChecked = false;
                 this.CurrentView.IsQueryPanelDisplayed = false;
@@ -3096,8 +3099,7 @@ namespace Walkabout
             }
             else
             {
-                HideQueryPanel();
-
+                HideQueryPanel(true);
             }
         }
 

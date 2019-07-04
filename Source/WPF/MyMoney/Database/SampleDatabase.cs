@@ -75,7 +75,7 @@ namespace Walkabout.Assitance
                 // by scaling the payee frequencies to match the above desired count.
                 double ratio = (double)count / (double)totalFrequency;
 
-                if (a.Type == AccountType.Brokerage)
+                if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
                 {
                     CreateInvestmentSamples(data, a);
                 }
@@ -117,8 +117,6 @@ namespace Walkabout.Assitance
         {
             money.BeginUpdate();
             Transactions transactions = money.Transactions;
-
-
 
             for (int year = DateTime.Now.Year-10; year <= DateTime.Now.Year; year++)
             {
