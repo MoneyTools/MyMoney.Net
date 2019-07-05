@@ -1420,7 +1420,6 @@ namespace Walkabout
             // Menu association to themes 
             this.menuToThemeMapping.Add("Themes/Theme-VS2010.xaml", MenuViewThemeVS2010);
             this.menuToThemeMapping.Add("Themes/Theme-Flat.xaml", MenuViewThemeFlat);
-            this.menuToThemeMapping.Add("Themes/Theme-OSX.xaml", MenuViewThemeOSX);
 
             this.TransactionView.QueryPanel.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnQueryPanelIsVisibleChanged);
 
@@ -3919,11 +3918,6 @@ namespace Walkabout
         private void OnCommandViewThemeVS2010(object sender, ExecutedRoutedEventArgs e)
         {
             SetTheme("Themes/Theme-VS2010.xaml");
-        }
-
-        private void OnCommandViewThemeOSX(object sender, ExecutedRoutedEventArgs e)
-        {
-            SetTheme("Themes/Theme-OSX.xaml");
         }
 
         private void OnCommandViewThemeFlat(object sender, ExecutedRoutedEventArgs e)

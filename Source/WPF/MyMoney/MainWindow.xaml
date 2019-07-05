@@ -60,7 +60,6 @@
         <CommandBinding Command="p:AppCommands.CommandViewOptions" Executed="OnCommandViewOptions" />
         <CommandBinding Command="p:AppCommands.CommandViewThemeVS2010" Executed="OnCommandViewThemeVS2010" />
         <CommandBinding Command="p:AppCommands.CommandViewThemeFlat" Executed="OnCommandViewThemeFlat" />
-        <CommandBinding Command="p:AppCommands.CommandViewThemeOSX" Executed="OnCommandViewThemeOSX" />
 
         <!-- REPORTS  -->
         <CommandBinding Command="p:AppCommands.CommandReportNetWorth" Executed="OnCommandNetWorth"/>
@@ -182,9 +181,8 @@
                         <MenuItem x:Name="MenuViewOnlineOptions" Header="_Options" Command="p:AppCommands.CommandViewOptions"/>
                         <Separator/>
                         <MenuItem Header="_Theme">
-                            <MenuItem x:Name="MenuViewThemeVS2010" Header="_1 Visual Studio" Command="p:AppCommands.CommandViewThemeVS2010"/>
-                            <MenuItem x:Name="MenuViewThemeFlat" Header="_2 Flat" Command="p:AppCommands.CommandViewThemeFlat"/>
-                            <MenuItem x:Name="MenuViewThemeOSX" Header="_3 OSX" Command="p:AppCommands.CommandViewThemeOSX"/>
+                            <MenuItem x:Name="MenuViewThemeVS2010" Header="_1 Light" Command="p:AppCommands.CommandViewThemeVS2010"/>
+                            <MenuItem x:Name="MenuViewThemeFlat" Header="_2 Dark" Command="p:AppCommands.CommandViewThemeFlat"/>
                         </MenuItem>
                     </MenuItem>
 

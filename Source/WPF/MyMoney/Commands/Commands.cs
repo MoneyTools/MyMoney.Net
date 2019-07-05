@@ -27,7 +27,6 @@ namespace Walkabout.Commands
 
         public readonly static RoutedUICommand CommandViewThemeVS2010;
         public readonly static RoutedUICommand CommandViewThemeFlat;
-        public readonly static RoutedUICommand CommandViewThemeOSX;
 
         // History
         public readonly static RoutedUICommand CommandBack;
@@ -83,7 +82,6 @@ namespace Walkabout.Commands
             CommandViewOptions = new RoutedUICommand("View Options", "ViewOptions", typeof(AppCommands));
             CommandViewThemeVS2010 = new RoutedUICommand("View Theme VS2010", "ViewThemeVS2010", typeof(AppCommands));
             CommandViewThemeFlat = new RoutedUICommand("View Theme Flat", "ViewThemeFlat", typeof(AppCommands));
-            CommandViewThemeOSX = new RoutedUICommand("View Theme OSX", "ViewThemeOSX", typeof(AppCommands));
 
             // History
             CommandBack = new RoutedUICommand("Back", "Back", typeof(AppCommands));

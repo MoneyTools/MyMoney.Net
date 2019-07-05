@@ -965,10 +965,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\Theme-OSX.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Themes\Theme-VS2010.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
