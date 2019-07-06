@@ -114,12 +114,15 @@ namespace Walkabout.StockQuotes
                     service = new IEXTrading(item, this.LogPath);
                 }
 
-                service.DownloadError += OnServiceDownloadError;
-                service.QuoteAvailable += OnServiceQuoteAvailable;
-                service.Complete += OnServiceQuotesComplete;
-                service.Suspended += OnServiceSuspended;
-                service.SymbolNotFound += OnSymbolNotFound;
-                this._services.Add(service);
+                if (service != null)
+                {
+                    service.DownloadError += OnServiceDownloadError;
+                    service.QuoteAvailable += OnServiceQuoteAvailable;
+                    service.Complete += OnServiceQuotesComplete;
+                    service.Suspended += OnServiceSuspended;
+                    service.SymbolNotFound += OnSymbolNotFound;
+                    this._services.Add(service);
+                }
             }
         }
 
