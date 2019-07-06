@@ -13,10 +13,8 @@ Dark Theme
 
 
     <!-- Color Resources -->
-    <Color x:Key="MainColor">black</Color>
     <Color x:Key="SelectedItemBorderColor">#E5C365</Color>
-    <Color x:Key="GlyphColor">Pink</Color>
-    
+
     <SolidColorBrush x:Key="SelectedItemBorderBrush" Color="#E5C365"/>
 
     <LinearGradientBrush x:Key="MainBackgroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
@@ -25,13 +23,14 @@ Dark Theme
     </LinearGradientBrush>
 
     <Color x:Key="BlackColor">White</Color>
+    <Color x:Key="WhiteColor">Black</Color>
+    
     <LinearGradientBrush x:Key="ButtonNormalBackground" EndPoint="0,1" StartPoint="0,0">
         <GradientStop Color="#DDDDDD" Offset="0" />
         <GradientStop Color="#DDDDDD" Offset="0.5" />
         <GradientStop Color="#DDDDDD" Offset="0.5" />
         <GradientStop Color="#DDDDDD" Offset="1" />
     </LinearGradientBrush>
-    <Color x:Key="WhiteColor">Black</Color>
 
     <SolidColorBrush x:Key="TextBrush" Color="Black"/>
 
@@ -68,8 +67,8 @@ Dark Theme
 
 
     <LinearGradientBrush x:Key="MenuBackgroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#FF181818" Offset="0" />
-        <GradientStop Color="#FF191919" Offset="1" />
+        <GradientStop Color="#FF2C2C2C" Offset="0" />
+        <GradientStop Color="#FF2C2C2C" Offset="1" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="MenuForegroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
@@ -246,7 +245,7 @@ Dark Theme
     <SolidColorBrush x:Key="LightColorBrush" Color="#DDD"/>
 
 
-    <SolidColorBrush x:Key="GlyphBrush" Color="#CED4DD"/>
+    <SolidColorBrush x:Key="GlyphBrush" Color="Black"/>
     <SolidColorBrush x:Key="ReportTableBorder" Color="#FF8586A9"/>
     <SolidColorBrush x:Key="ReportHeaderBackground" Color="#FFC2D4DA"/>
     <SolidColorBrush x:Key="ReportHeaderForeground" Color="Black"/>
@@ -1002,6 +1001,7 @@ Dark Theme
                         <Trigger Property="IsExpanded" Value="False">
                             <Setter Property="Style" TargetName="HeaderSite" Value="{DynamicResource WalkaboutToolbarExpanderCollapsed}" />
                             <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="BorderThickness" TargetName="border1" Value="0"/>
                             <Setter Property="Background" Value="{StaticResource WalkaboutToolbarExpanderBrushNormal}"/>
                         </Trigger>
 
@@ -2141,14 +2141,14 @@ Dark Theme
                                     <TransformGroup>
                                         <TransformGroup.Children>
                                             <TransformCollection>
-                                                <RotateTransform Angle="180" />
+                                                <RotateTransform Angle="-90" />
                                             </TransformCollection>
                                         </TransformGroup.Children>
                                     </TransformGroup>
                                 </Grid.LayoutTransform>
                                 <Rectangle Margin="3,3,0,3" x:Name="Rectangle" Fill="Transparent"  StrokeThickness="1" RadiusX="2" RadiusY="2" HorizontalAlignment="Left" Width="15" />
                                 <Rectangle Margin="3,3,3,3" x:Name="HoverRectangle" Fill="Transparent"  StrokeThickness="1" RadiusX="2" RadiusY="2" Opacity="0" />
-                                <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="{DynamicResource GlyphBrush}" Data="M 0 0 L 4 4 L 8 0 Z" />
+                                <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="LightGray" Data="M 0 0 L 4 4 L 8 0 Z" />
 
                             </Grid>
                             <ContentPresenter SnapsToDevicePixels="True" HorizontalAlignment="Left" Margin="4,3,0,3" VerticalAlignment="Center" Grid.Column="1" RecognizesAccessKey="True" />
@@ -2224,7 +2224,7 @@ Dark Theme
                             </Grid.ColumnDefinitions>
                             <Rectangle Margin="3,3,3,3" x:Name="Rectangle"   StrokeThickness="1" RadiusX="2" RadiusY="2" />
                             <Rectangle Margin="3,3,3,3" x:Name="HoverRectangle"   StrokeThickness="1" RadiusX="2" RadiusY="2" Opacity="0" />
-                            <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="#75633D" Data="M 0 0 L 4 4 L 8 0 Z" />
+                            <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="White" Data="M 0 0 L 4 4 L 8 0 Z" />
                             <ContentPresenter SnapsToDevicePixels="True" HorizontalAlignment="Left" Margin="4,3,0,3" VerticalAlignment="Center" Grid.Column="1" RecognizesAccessKey="True" />
                         </Grid>
                     </Border>
