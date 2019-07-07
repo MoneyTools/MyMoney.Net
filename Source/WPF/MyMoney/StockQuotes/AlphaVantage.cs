@@ -419,61 +419,70 @@ namespace Walkabout.StockQuotes
             {
                 try
                 {
-                    // this service doesn't want too many calls per second.
-                    int ms = _throttle.GetSleep();
-                    while (ms > 0)
+                    // first check if history needs updating!
+                    bool historyComplete = history.IsComplete();
+                    if (historyComplete)
                     {
-                        string message = null;
-                        if (ms > 1000)
-                        {
-                            int seconds = ms / 1000;
-                            message = string.Format("AlphaVantage history service needs to sleep for {0} seconds", seconds);
-                        }
-                        else
-                        {
-                            message = string.Format("AlphaVantage history service needs to sleep for {0} ms", ms.ToString());
-                        }
-
-                        OnComplete(PendingCount == 0, message);
-                        while (!_cancelled && ms > 0)
-                        {
-                            Thread.Sleep(1000);
-                            ms -= 1000;
-                        }
-                        ms = _throttle.GetSleep();
+                        OnError(string.Format("History for symbol {0} is already up to date", symbol));
                     }
-                    if (!_cancelled)
+                    else
                     {
-                        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
-                        req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
-                        req.Method = "GET";
-                        req.Timeout = 10000;
-                        req.UseDefaultCredentials = false;
-                        _current = req;
-
-                        OnError("AlphaVantage fetching history for " + symbol);
-
-                        WebResponse resp = req.GetResponse();
-                        _throttle.RecordCall();
-
-                        using (Stream stm = resp.GetResponseStream())
+                        // this service doesn't want too many calls per second.
+                        int ms = _throttle.GetSleep();
+                        while (ms > 0)
                         {
-                            using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
+                            string message = null;
+                            if (ms > 1000)
                             {
-                                string json = sr.ReadToEnd();
-                                JObject o = JObject.Parse(json);
-                                var newHistory = ParseTimeSeries(o);
+                                int seconds = ms / 1000;
+                                message = string.Format("AlphaVantage history service needs to sleep for {0} seconds", seconds);
+                            }
+                            else
+                            {
+                                message = string.Format("AlphaVantage history service needs to sleep for {0} ms", ms.ToString());
+                            }
 
-                                if (string.Compare(newHistory.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
+                            OnComplete(PendingCount == 0, message);
+                            while (!_cancelled && ms > 0)
+                            {
+                                Thread.Sleep(1000);
+                                ms -= 1000;
+                            }
+                            ms = _throttle.GetSleep();
+                        }
+                        if (!_cancelled)
+                        {
+                            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
+                            req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
+                            req.Method = "GET";
+                            req.Timeout = 10000;
+                            req.UseDefaultCredentials = false;
+                            _current = req;
+
+                            OnError("AlphaVantage fetching history for " + symbol);
+
+                            WebResponse resp = req.GetResponse();
+                            _throttle.RecordCall();
+
+                            using (Stream stm = resp.GetResponseStream())
+                            {
+                                using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
                                 {
-                                    OnError(string.Format("History for symbol {0} return different symbol {1}", symbol, newHistory.Symbol));
-                                }
-                                else
-                                {
-                                    updated = true;
-                                    history.Merge(newHistory);
-                                    history.Complete = true;
-                                    history.Save(this._logPath);
+                                    string json = sr.ReadToEnd();
+                                    JObject o = JObject.Parse(json);
+                                    var newHistory = ParseTimeSeries(o);
+
+                                    if (string.Compare(newHistory.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        OnError(string.Format("History for symbol {0} return different symbol {1}", symbol, newHistory.Symbol));
+                                    }
+                                    else
+                                    {
+                                        updated = true;
+                                        history.Merge(newHistory);
+                                        history.Complete = true;
+                                        history.Save(this._logPath);
+                                    }
                                 }
                             }
                         }

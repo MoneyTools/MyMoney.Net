@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+
+    <change version="1.1.0.45" date="7/6/2019">
+        Further optimize startup performance by delaying the use of stock quote history
+        until the user does a "View by security" request.  Optimize when stock quote
+        history is downloaded, namely, only when there are holes in the history that need filling.
+        Add a "stock" tab with chart showing stock history (when in "View by security" mode).
+        Some tweaks to UI Themes.
+    </change>
     <change version="1.1.0.44" date="7/2/2019">
         Add lazy loading of stock quote history to improve startup performance.
         Simplify File/New dialog to show SQL Lite option only.

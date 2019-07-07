@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
@@ -61,10 +62,8 @@ namespace Walkabout.StockQuotes
                     }
                 }
             }
-            Debug.WriteLine("Loading download log...");
             _downloadLog = DownloadLog.Load(logPath);
-            Debug.WriteLine("Done");
-        }
+         }
 
         public List<StockServiceSettings> Settings
         {
@@ -339,7 +338,7 @@ namespace Walkabout.StockQuotes
             AddError(error);
         }
 
-        private async void OnServiceQuoteAvailable(object sender, StockQuote e)
+        private void OnServiceQuoteAvailable(object sender, StockQuote e)
         {
             Tuple<int, int> progress = GetProgress();
             status.ShowProgress(e.Name, 0, progress.Item1, progress.Item2);
@@ -348,19 +347,7 @@ namespace Walkabout.StockQuotes
             {
                 fetched.Add(e.Symbol);
             }
-            StockQuoteHistory history = await this._downloadLog.GetHistory(e.Symbol);
-            if (history == null)
-            {
-                history = new StockQuoteHistory() { Symbol = e.Symbol };
-                this._downloadLog.AddHistory(history);
-            }
-            if (history.AddQuote(e, false))
-            {
-                delayedActions.StartDelayedAction("Save" + e.Symbol, new Action(() =>
-                {
-                    history.Save(this.LogPath);
-                }), TimeSpan.FromSeconds(1));
-            }
+            this._downloadLog.OnQuoteAvailable(e);
             lock (_batch)
             {
                 _batch.Add(e);
@@ -593,8 +580,8 @@ namespace Walkabout.StockQuotes
             {
                 // we want to stop this from adding new Security objects by passing false
                 // because the Security objects should already exist as given to Enqueue
-                // and we don't even fetch anything of those Security objects don't already
-                // have a 'Symbol' to lookup.
+                // and we shouldn't even fetch anything of those Security objects don't already
+                // have a 'Symbol' to lookup.  
                 Security s = this.myMoney.Securities.FindSymbol(symbol, false);
                 if (s == null || s.IsDeleted)
                 {
@@ -620,6 +607,16 @@ namespace Walkabout.StockQuotes
                 GetDownloader(service).BeginFetchHistory(new List<string>(new string[] { symbol }));
             }
         }
+
+        internal async Task<StockQuoteHistory> GetCachedHistory(string symbol)
+        {
+            var service = GetHistoryService();
+            if (service != null)
+            {
+                return await GetDownloader(service).GetCachedHistory(symbol);
+            }
+            return null;
+        }
     }
 
     public class DownloadInfo
@@ -640,6 +637,7 @@ namespace Walkabout.StockQuotes
         Dictionary<string, DownloadInfo> _downloaded = new Dictionary<string, DownloadInfo>();
         DelayedActions delayedActions = new DelayedActions();
         string _logFolder;
+        Dictionary<string, StockQuote> _downloadedQuotes = new Dictionary<string, StockQuote>();
 
         public DownloadLog() { Downloaded = new List<DownloadInfo>(); }
 
@@ -652,6 +650,15 @@ namespace Walkabout.StockQuotes
             return info;
         }
 
+        public void OnQuoteAvailable(StockQuote quote)
+        {
+            // record downloaded quotes so they can be merged with quote histories.
+            lock (_downloadedQuotes)
+            {
+                _downloadedQuotes[quote.Symbol] = quote;
+            }
+        }
+
         public async Task<StockQuoteHistory> GetHistory(string symbol)
         {
             if (database.ContainsKey(symbol))
@@ -662,6 +669,7 @@ namespace Walkabout.StockQuotes
             StockQuoteHistory history = null;
             DownloadInfo info;
             var changed = false;
+            var changedHistory = false;
             if (_downloaded.TryGetValue(symbol, out info))
             { 
                 // read from disk on background thread so we don't block the UI thread loading
@@ -671,6 +679,14 @@ namespace Walkabout.StockQuotes
                     try
                     {
                         history = StockQuoteHistory.Load(this._logFolder, symbol);
+                        if (symbol == "GE")
+                        {
+                            Debug.WriteLine("debug me");
+                        }
+                        if (history.RemoveDuplicates())
+                        {
+                            changedHistory = true;
+                        }
                     }
                     catch (Exception)
                     {
@@ -687,10 +703,24 @@ namespace Walkabout.StockQuotes
                 {
                     database[symbol] = history;
                 }
+                lock(_downloadedQuotes)
+                {
+                    if (_downloadedQuotes.ContainsKey(info.Symbol))
+                    {
+                        if (history.AddQuote(_downloadedQuotes[info.Symbol]))
+                        {
+                            changedHistory = true;
+                        }
+                    }
+                }
             }
             if (changed)
             {
                 DelayedSave();
+            }
+            if (changedHistory)
+            {
+                history.Save(_logFolder);
             }
             return history;
         }
@@ -784,10 +814,11 @@ namespace Walkabout.StockQuotes
     class HistoryDownloader
     {
         object _downloadSync = new object();
-        HashSet<string> _downloadBatch;
+        List<string> _downloadBatch;
         bool _downloadingHistory;
         IStockQuoteService _service;
         DownloadLog _downloadLog;
+        CancellationTokenSource tokenSource;
 
         public HistoryDownloader(IStockQuoteService service, DownloadLog log)
         {
@@ -816,17 +847,37 @@ namespace Walkabout.StockQuotes
             {
                 if (_downloadingHistory)
                 {
-                    foreach (var item in batch)
+                    if (batch.Count == 1)
                     {
-                        _downloadBatch.Add(item);
+                        // then we need this individual stock ASAP
+                        var item = batch[0];
+                        if (_downloadBatch.Contains(item))
+                        {
+                            _downloadBatch.Remove(item);
+                        }
+                        _downloadBatch.Insert(0, item);
+                    }
+                    else
+                    {
+                        // then merge the new batch with existing batch that we are downloading.
+                        foreach (var item in batch)
+                        {
+                            if (!_downloadBatch.Contains(item))
+                            {
+                                _downloadBatch.Add(item);
+                            }
+                        }
                     }
                     return;
                 }
                 else
                 {
-                    _downloadBatch = new HashSet<string>(batch);
+                    // starting a new download batch.
+                    _downloadBatch = new List<string>(batch);
                 }
             }
+
+            tokenSource = new CancellationTokenSource();
             _downloadingHistory = true;
 
             while (_downloadingHistory)
@@ -846,33 +897,46 @@ namespace Walkabout.StockQuotes
                 }
                 else
                 {
-                    StockQuoteHistory history = null;
-                    var info = this._downloadLog.GetInfo(symbol);
-                    history = await this._downloadLog.GetHistory(symbol);
-                    if (history == null)
+
+#if PerformanceBlocks
+                    using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.DownloadStockQuoteHistory))
                     {
-                        history = new StockQuoteHistory() { Symbol = symbol };
-                    }
-                    if (info != null && info.Downloaded.Date == DateTime.Today && history != null && history.Complete)
-                    {
-                        // already up to date
-                    }
-                    else
-                    {
-                        try
+#endif
+                        StockQuoteHistory history = null;
+                        var info = this._downloadLog.GetInfo(symbol);
+                        history = await this._downloadLog.GetHistory(symbol);
+                        if (history == null)
                         {
-                            await _service.UpdateHistory(history);
+                            history = new StockQuoteHistory() { Symbol = symbol };
                         }
-                        catch (Exception ex)
+                        if (info != null && info.Downloaded.Date == DateTime.Today && history != null && history.Complete)
                         {
-                            OnError("Download history error: " + ex.Message);
+                            // already up to date
                         }
+                        else
+                        {
+                            try
+                            {
+                                await _service.UpdateHistory(history);
+                            }
+                            catch (Exception ex)
+                            {
+                                OnError("Download history error: " + ex.Message);
+                            }
+                        }
+                        if (history != null && history.History != null && history.History.Count != 0)
+                        {
+                            OnHistoryAvailable(history);
+                        }
+#if PerformanceBlocks
                     }
-                    if (history != null && history.History != null && history.History.Count != 0)
-                    {
-                        OnHistoryAvailable(history);
-                    }
+#endif
                 }
+            }
+            _downloadingHistory = false;
+
+            while (_downloadingHistory && _downloadBatch.Count > 0) {
+                Thread.Sleep(1000); // wait for download to finish.
             }
             _downloadingHistory = false;
         }
@@ -888,8 +952,16 @@ namespace Walkabout.StockQuotes
         internal void Cancel()
         {
             _downloadingHistory = false;
+            if (tokenSource != null)
+            {
+                tokenSource.Cancel();
+            }
         }
 
+        public async Task<StockQuoteHistory> GetCachedHistory(string symbol)
+        {
+            return await this._downloadLog.GetHistory(symbol);
+        }
     }
 
 }

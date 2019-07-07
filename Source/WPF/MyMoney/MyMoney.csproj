@@ -235,6 +235,7 @@
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\FileHash.cs" />
     <Compile Include="Utilities\RecentFilesMenu.cs" />
+    <Compile Include="Utilities\UsHolidays.cs" />
     <Compile Include="Views\ChangeTracker.cs" />
     <Compile Include="Database\CostBasis.cs" />
     <Compile Include="Database\SqliteDatabase.cs" />
@@ -469,6 +470,7 @@
       <DependentUpon>CurrenciesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FindManager.cs" />
+    <Compile Include="Views\GraphGenerators.cs" />
     <Compile Include="Views\LoansView.xaml.cs">
       <DependentUpon>LoansView.xaml</DependentUpon>
     </Compile>

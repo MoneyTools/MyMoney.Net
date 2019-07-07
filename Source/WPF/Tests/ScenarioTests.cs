@@ -725,10 +725,10 @@ namespace Walkabout.Tests
             charts.SelectExpenses();
         }
 
-        internal void ViewBudget()
+        internal void ViewStock()
         {
             var charts = window.GetChartsArea();
-            charts.SelectBudget();
+            charts.SelectStock();
         }
         #endregion 
 

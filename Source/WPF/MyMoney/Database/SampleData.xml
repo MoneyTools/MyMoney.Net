@@ -563,12 +563,6 @@
         <SampleCategory Name="Travel:Train" Type="Expense" Frequency="12" Average="-13" Min="-18" Max="-4" />
       </Categories>
     </SamplePayee>
-    <SamplePayee Name="Applebees" Frequency="13">
-      <Categories>
-        <SampleCategory Name="Food:Lunches" Type="Expense" Frequency="5" Average="-26" Min="-49" Max="-15" />
-        <SampleCategory Name="Food:Dinner" Type="Expense" Frequency="8" Average="-46" Min="-73" Max="-27" />
-      </Categories>
-    </SamplePayee>
     <SamplePayee Name="Seattle Times" Frequency="14">
       <Categories>
         <SampleCategory Name="Education:Subscriptions" Type="Expense" Frequency="14" Average="-61" Min="-98" Max="-27" />

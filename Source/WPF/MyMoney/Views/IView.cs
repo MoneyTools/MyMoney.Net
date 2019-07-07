@@ -42,6 +42,7 @@ namespace Walkabout.Interfaces.Views
     {
         Account ActiveAccount { get; }
         Category ActiveCategory { get; }
+        Security ActiveSecurity { get; }
         Payee ActivePayee { get; }
         RentBuilding ActiveRental { get; }
     }
