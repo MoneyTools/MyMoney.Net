@@ -2953,7 +2953,7 @@ namespace Walkabout
                         // add the value of this event to the amount of this transaction
                         amount += transaction.InvestmentSecurity.Price * transaction.Investment.Units;
                     }
-                    else if (transaction.InvestmentType == InvestmentType.Add)
+                    else if (transaction.InvestmentType == InvestmentType.Remove)
                     {
                         // subtract the value of this event to the amount of this transaction
                         amount -= transaction.InvestmentSecurity.Price * transaction.Investment.Units;
