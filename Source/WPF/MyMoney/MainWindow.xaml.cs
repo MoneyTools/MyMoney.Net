@@ -231,15 +231,7 @@ namespace Walkabout
                 //
                 PieChartExpenses.SelectionChanged += new EventHandler(PieChartSelectionChanged);
                 PieChartIncomes.SelectionChanged += new EventHandler(PieChartSelectionChanged);
-
-
-                //-----------------------------------------------------------------
-                // Setup the Budget area
-                //
-                this.BudgetChart.MyMoney = this.myMoney;
-                this.BudgetChart.SelectionChanged += new EventHandler(BudgetChartSelectionChanged);
-
-
+                
                 //-----------------------------------------------------------------
                 // Setup the Loan area
                 //
@@ -252,7 +244,6 @@ namespace Walkabout
                 // Transaction Graph
                 //
                 this.TransactionGraph.MouseDown += new MouseButtonEventHandler(OnGraphMouseDown);
-                this.TransactionGraph.IsVisibleChanged += TransactionGraph_IsVisibleChanged;
 
                 //-----------------------------------------------------------------
                 // Main context setup
@@ -290,94 +281,17 @@ namespace Walkabout
 
         private void OnStockQuoteHistoryAvailable(object sender, StockQuoteHistory history)
         {
-            var manager = this.quotes;
-            if (manager == null || history == null || history.History == null || history.History.Count == 0)
+            if (TransactionView.ActiveSecurity != null && TransactionView.ActiveSecurity.Symbol == history.Symbol)
             {
-                return;
+                StockGraph.Generator = new SecurityGraphGenerator(history, TransactionView.ActiveSecurity);
             }
-            var security = this.myMoney.Securities.FindSymbol(history.Symbol, false);
-            if (security == null || string.IsNullOrEmpty(security.Symbol))
-            {
-                return;
-            }
-
-            UiDispatcher.BeginInvoke(new Action(() =>
-            {
-                FillinMissingUnitPrices(security, history);
-            }));
-        }
-
-        void FillinMissingUnitPrices(Security security, StockQuoteHistory history)
-        { 
-#if PerformanceBlocks
-            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.UpdateStockQuoteHistory))
-            {
-#endif
-                List<StockQuote> sorted = history.GetSorted();
-
-                // Ok, so the list of transactions should all be investments related to this security and 
-                // we have a stock quote history which can be used to fill in any missing details on the
-                // UnitPrices associated with this stock (for example, Dividends may be missing UnitPrice).
-                int pos = 0;
-                bool changed = false;
-                try
-                {
-                    this.myMoney.BeginUpdate();
-                    StockQuote quote = sorted[0];
-                    foreach (Transaction t in this.myMoney.Transactions.GetTransactionsBySecurity(security, null))
-                    {
-                        Investment i = t.Investment;
-                        if (i != null && i.Security == security)
-                        {
-                            while (pos < sorted.Count)
-                            {
-                                StockQuote nextQuote = sorted[pos];
-                                if (nextQuote.Date > t.Date)
-                                {
-                                    break;
-                                }
-                                quote = nextQuote;
-                                pos++;
-                            }
-                            if (t.Date >= quote.Date)
-                            {
-                                if (i.UnitPrice == 0)
-                                {
-                                    i.UnitPrice = quote.Close;
-                                    changed = true;
-                                }
-                                else if (i.UnitPrice != quote.Close)
-                                {
-                                    if (i.TradeType == InvestmentTradeType.Buy || i.TradeType == InvestmentTradeType.Sell)
-                                    {
-                                        // normal for this to be a bit different, should we do a a sanity check though?
-                                    }
-                                    else
-                                    {
-                                        Debug.WriteLine(string.Format("{0}: {1} close price {2} on {3} didn't match our transaction at {4} UnitPrice {5}",
-                                            t.Account.Name, security.Symbol, quote.Close, quote.Date.ToShortDateString(), t.Date.ToShortDateString(), t.InvestmentUnitPrice));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                finally
-                {
-                    this.myMoney.EndUpdate();
-                }
-                if (changed && this.TransactionView.ActiveSecurity == security)
-                {
-                    this.TransactionView.RefreshViewBySecurity(security, this.TransactionView.SelectedRowId);
-                }
-
-#if PerformanceBlocks
-            }
-#endif
         }
 
         private void OnRecentFileSelected(object sender, RecentFileEventArgs e)
         {
+            if (!SaveIfDirty())
+                return;
+
             Settings.TheSettings.Database = e.FileName;
             BeginLoadDatabase();
         }
@@ -613,10 +527,6 @@ namespace Walkabout
                 {
                     this.rentsControl.MyMoney = this.myMoney;
                 }
-                SetCurrentView<TransactionsView>();
-                TransactionView.Money = myMoney;
-                this.BudgetChart.MyMoney = this.myMoney;
-
                 UpdateCaption(null);
 
                 myMoney.BeginUpdate();
@@ -648,6 +558,8 @@ namespace Walkabout
 
                 this.Cursor = Cursors.Arrow;
 
+                SetCurrentView<TransactionsView>();
+                TransactionView.Money = myMoney;
                 IView view = (IView)TransactionView;
 
                 // try again to restore the selected account/payee, whatever, since we now have loaded data to play with
@@ -1417,7 +1329,6 @@ namespace Walkabout
             // Menu association to themes 
             this.menuToThemeMapping.Add("Themes/Theme-VS2010.xaml", MenuViewThemeVS2010);
             this.menuToThemeMapping.Add("Themes/Theme-Flat.xaml", MenuViewThemeFlat);
-            this.menuToThemeMapping.Add("Themes/Theme-OSX.xaml", MenuViewThemeOSX);
 
             this.TransactionView.QueryPanel.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnQueryPanelIsVisibleChanged);
 
@@ -2592,6 +2503,13 @@ namespace Walkabout
                     rentsControl.Selected = view.ActiveRental;
                     this.toolBox.Selected = this.rentsControl;
                 }
+                else if (view.ActiveSecurity != null)
+                {
+                    securitiesControl.Selected = view.ActiveSecurity;
+                    this.toolBox.Selected = this.securitiesControl;
+                    StockGraph.Generator = null; // wait for stock history to load.
+                }
+            
             }
             else
             {
@@ -2795,11 +2713,7 @@ namespace Walkabout
                             }
                         }
 
-                        if (this.TransactionGraph.IsVisible)
-                        {
-                            var tgraph = this.TransactionGraph;
-                            tgraph.UpdateGraph(TransactionView.Rows, TransactionView.ActiveAccount, TransactionView.ActiveCategory);
-                        }
+                        UpdateTransactionGraph(TransactionView.Rows, TransactionView.ActiveAccount, TransactionView.ActiveCategory);
 
                         // expense categories.
                         TabExpenses.Visibility = System.Windows.Visibility.Visible;
@@ -2816,7 +2730,6 @@ namespace Walkabout
                         PieChartExpenses.Transactions = rows;
                         TabExpensesHeaderText.Foreground = (PieChartExpenses.NetAmount != 0) ? (Brush)FindResource("TextBrush") : (Brush)FindResource("DisabledForegroundBrush");
 
-
                         // income categories
                         TabIncomes.Visibility = System.Windows.Visibility.Visible;
 
@@ -2825,10 +2738,20 @@ namespace Walkabout
                         PieChartIncomes.Transactions = rows;
                         TabIncomesHeaderText.Foreground = (PieChartIncomes.NetAmount != 0) ? (Brush)FindResource("TextBrush") : (Brush)FindResource("DisabledForegroundBrush");
 
-                        // view the budget
-                        TabBudget.Visibility = System.Windows.Visibility.Visible;
-                        this.BudgetChart.CategoryFilter = filter;
-                        this.BudgetChart.UpdateChart();
+                        // view the stock history
+                        if (TransactionView.ActiveSecurity != null)
+                        {
+                            TabStock.Visibility = System.Windows.Visibility.Visible;
+                        }
+                        else
+                        {
+                            if (TabStock.IsSelected)
+                            {
+                                TabStock.IsSelected = false;
+                                TabTrends.IsSelected = true;
+                            }
+                            TabStock.Visibility = System.Windows.Visibility.Collapsed;
+                        }
 
                         // Hide these Tabs
                         TabLoan.Visibility = System.Windows.Visibility.Collapsed;
@@ -2844,7 +2767,7 @@ namespace Walkabout
                         TabTrends.Visibility = System.Windows.Visibility.Collapsed;
                         TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
                         TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
-                        TabBudget.Visibility = System.Windows.Visibility.Collapsed;
+                        TabStock.Visibility = System.Windows.Visibility.Collapsed;
                         TabHistory.Visibility = System.Windows.Visibility.Collapsed;
 
                         if (this.LoanChart.IsVisible)
@@ -2865,7 +2788,7 @@ namespace Walkabout
                         TabTrends.Visibility = System.Windows.Visibility.Collapsed;
                         TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
                         TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
-                        TabBudget.Visibility = System.Windows.Visibility.Collapsed;
+                        TabStock.Visibility = System.Windows.Visibility.Collapsed;
                         TabLoan.Visibility = System.Windows.Visibility.Collapsed;
                         TabHistory.Visibility = System.Windows.Visibility.Collapsed;
 
@@ -2971,13 +2894,10 @@ namespace Walkabout
             HistoryChart.Selection = selection;
         }
 
-        void TransactionGraph_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+
+        void UpdateTransactionGraph(IEnumerable data, Account account, Category category)
         {
-            if ((bool)e.NewValue)
-            {
-                var tgraph = this.TransactionGraph;
-                tgraph.UpdateGraph(TransactionView.Rows, TransactionView.ActiveAccount, TransactionView.ActiveCategory);
-            }
+            this.TransactionGraph.Generator = new TransactionGraphGenerator(data, account, category);
         }
 
         private void UpdateCategoryColors()
@@ -3057,9 +2977,9 @@ namespace Walkabout
             this.TransactionView.QueryPanel.OnShow();
         }
 
-        private void HideQueryPanel()
+        private void HideQueryPanel(bool force = false)
         {
-            if (MenuQueryShowForm.IsChecked)
+            if (force || MenuQueryShowForm.IsChecked)
             {
                 MenuQueryShowForm.IsChecked = false;
                 this.CurrentView.IsQueryPanelDisplayed = false;
@@ -3096,8 +3016,7 @@ namespace Walkabout
             }
             else
             {
-                HideQueryPanel();
-
+                HideQueryPanel(true);
             }
         }
 
@@ -3917,11 +3836,6 @@ namespace Walkabout
         private void OnCommandViewThemeVS2010(object sender, ExecutedRoutedEventArgs e)
         {
             SetTheme("Themes/Theme-VS2010.xaml");
-        }
-
-        private void OnCommandViewThemeOSX(object sender, ExecutedRoutedEventArgs e)
-        {
-            SetTheme("Themes/Theme-OSX.xaml");
         }
 
         private void OnCommandViewThemeFlat(object sender, ExecutedRoutedEventArgs e)

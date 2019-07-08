@@ -1,5 +1,5 @@
 ﻿<!--
-FLAT UI
+Dark Theme
 -->
 
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -11,24 +11,26 @@ FLAT UI
                     mc:Ignorable="d" 
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 
+
     <!-- Color Resources -->
-    <Color x:Key="MainColor">#293955</Color>
     <Color x:Key="SelectedItemBorderColor">#E5C365</Color>
+
     <SolidColorBrush x:Key="SelectedItemBorderBrush" Color="#E5C365"/>
 
     <LinearGradientBrush x:Key="MainBackgroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#0061B5" Offset="0" />
-        <GradientStop Color="#0061B5" Offset="1" />
+        <GradientStop Color="#FF191919" Offset="0" />
+        <GradientStop Color="#FF202020" Offset="1" />
     </LinearGradientBrush>
 
-    <Color x:Key="BlackColor">Black</Color>
+    <Color x:Key="BlackColor">White</Color>
+    <Color x:Key="WhiteColor">Black</Color>
+    
     <LinearGradientBrush x:Key="ButtonNormalBackground" EndPoint="0,1" StartPoint="0,0">
         <GradientStop Color="#DDDDDD" Offset="0" />
         <GradientStop Color="#DDDDDD" Offset="0.5" />
         <GradientStop Color="#DDDDDD" Offset="0.5" />
         <GradientStop Color="#DDDDDD" Offset="1" />
     </LinearGradientBrush>
-    <Color x:Key="WhiteColor">White</Color>
 
     <SolidColorBrush x:Key="TextBrush" Color="Black"/>
 
@@ -57,14 +59,21 @@ FLAT UI
     <Color x:Key="WindowBackgroundBrushGradient1">#FFD1D1D1</Color>
     <Color x:Key="WindowBackgroundBrushGradient2">#FFD1D1D1</Color>
 
+    
+    <LinearGradientBrush x:Key="WalkaboutAccordionBackgroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FF353553" Offset="0" />
+        <GradientStop Color="#FF191919" Offset="1" />
+    </LinearGradientBrush>
+
+
     <LinearGradientBrush x:Key="MenuBackgroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#0061B5" Offset="0" />
-        <GradientStop Color="#0061B5" Offset="1" />
+        <GradientStop Color="#FF2C2C2C" Offset="0" />
+        <GradientStop Color="#FF2C2C2C" Offset="1" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="MenuForegroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="White" Offset="0" />
-        <GradientStop Color="White" Offset="1" />
+        <GradientStop Color="#FFD2D2D2" Offset="0" />
+        <GradientStop Color="#FFD2D2D2" Offset="1" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="NormalBrush" EndPoint="0.5,1" StartPoint="0.5,0">
@@ -178,8 +187,8 @@ FLAT UI
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="WalkaboutToolBoxListBoxItemBrushWhenSelected" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#FFEFBB" />
-        <GradientStop Color="#FFEFBB" Offset="1" />
+        <GradientStop Color="#FFF9F366" />
+        <GradientStop Color="#FFF9F366" Offset="1" />
     </LinearGradientBrush>
 
 
@@ -236,7 +245,7 @@ FLAT UI
     <SolidColorBrush x:Key="LightColorBrush" Color="#DDD"/>
 
 
-    <SolidColorBrush x:Key="GlyphBrush" Color="#CED4DD"/>
+    <SolidColorBrush x:Key="GlyphBrush" Color="Black"/>
     <SolidColorBrush x:Key="ReportTableBorder" Color="#FF8586A9"/>
     <SolidColorBrush x:Key="ReportHeaderBackground" Color="#FFC2D4DA"/>
     <SolidColorBrush x:Key="ReportHeaderForeground" Color="Black"/>
@@ -262,28 +271,195 @@ FLAT UI
     </LinearGradientBrush>
     <SolidColorBrush x:Key="ListBorder" Color="#828790" />
     <SolidColorBrush x:Key="ButtonNormalBorder" Color="#FF707070" />
+    
     <LinearGradientBrush x:Key="WalkaboutToolbarExpanderBrushNormal" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="#4D6082" Offset="0" />
         <GradientStop Color="#4D6082" Offset="1" />
     </LinearGradientBrush>
+    
     <LinearGradientBrush x:Key="WalkaboutToolbarExpanderBrushSelected" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#FFF3CF" Offset="0" />
-        <GradientStop Color="#FFF3CF" Offset="0.49"/>
-        <GradientStop Color="#FFF3CF" Offset="0.50"/>
-        <GradientStop Color="#FFF3CF" Offset="1" />
+        <GradientStop Color="#FF525B70" Offset="0" />
+        <GradientStop Color="#FF525B70" Offset="1" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="WalkaboutAccountSubSectionBrush" StartPoint="0.5,0" EndPoint="0.5,1">
         <GradientStop Color="#D7DCE4" Offset="0" />
-        <GradientStop Color="#D7DCE4" Offset="0.49999" />
-        <GradientStop Color="#D7DCE4" Offset="0.5" />
         <GradientStop Color="#D7DCE4" Offset="1" />
     </LinearGradientBrush>
+    
     <SolidColorBrush x:Key="WalkaboutAccountSubSectionTextBrush" Color="Black"/>
+    
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter" />
+
+    <Style TargetType="{x:Type Menu}">
+        <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+
+
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Menu}">
+                    <Grid>
+                        <Border Margin="1" x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"/>
+                        <StackPanel Background="{TemplateBinding Background}" IsItemsHost="True" ClipToBounds="True" Orientation="Horizontal"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="{DynamicResource DisabledBackgroundBrush}" TargetName="Border"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource DisabledBorderBrush}" TargetName="Border"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
+        <Setter Property="Height"
+          Value="1" />
+        <Setter Property="Margin"
+          Value="0,4,0,4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Separator}">
+                    <Border BorderThickness="1">
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="Gray" />
+                        </Border.BorderBrush>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style TargetType="{x:Type MenuItem}">
+        <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}"></Setter>
+        <Setter Property="Foreground" Value="White"></Setter>
+    
+        <Style.Triggers>
+            <Trigger Property="MenuItem.Role" Value="TopLevelHeader">
+                <Setter Property="Control.Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type MenuItem}">
+                            <Border x:Name="templateRoot" SnapsToDevicePixels="true"
+                                        BorderThickness="{TemplateBinding Control.BorderThickness}"
+                                        Background="{TemplateBinding Control.Background}"
+                                        BorderBrush="{TemplateBinding Control.BorderBrush}">
+                                <Grid VerticalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <ContentPresenter x:Name="Icon" ContentSource="Icon" 
+                                                          SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" VerticalAlignment="Center"
+                                                          HorizontalAlignment="Center" Width="16" Height="16" Margin="3"/>
+                                    <Path x:Name="GlyphPanel" Data="F1 M 10.0,1.2 L 4.7,9.1 L 4.5,9.1 L 0,5.2 L 1.3,3.5 L 4.3,6.1L 8.3,0 L 10.0,1.2 Z" FlowDirection="LeftToRight" Margin="3" Visibility="Collapsed" VerticalAlignment="Center" Fill="White"/>
+                                    
+                                    <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="true"
+                                                          Margin="{TemplateBinding Control.Padding}"
+                                                          SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"/>
+                                    
+                                    <Popup x:Name="PART_Popup" AllowsTransparency="true" Focusable="false"
+                                               PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+                                               Placement="Bottom"
+                                               IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                               PlacementTarget="{Binding ElementName=templateRoot}">
+
+                                        <Border x:Name="SubMenuBorder" Background="{StaticResource MenuBackgroundBrush}" BorderBrush="{StaticResource MenuBackgroundBrush}" BorderThickness="1" Padding="2">
+                                            
+                                            <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                                                <Grid RenderOptions.ClearTypeHint="Enabled">
+                                                    <Canvas Height="0" Width="0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                                        <Rectangle Name="OpaqueRect" Height="{Binding ElementName=SubMenuBorder, Path=ActualHeight}"
+                                                                         Width="{Binding ElementName=SubMenuBorder, Path=ActualWidth}"
+                                                                         Fill="{Binding ElementName=SubMenuBorder, Path=Background}"/>
+                                                    </Canvas>
+                                                    
+                                                    <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                                        KeyboardNavigation.TabNavigation="Cycle" Grid.IsSharedSizeScope="true"
+                                                                        SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"/>
+                                                </Grid>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="MenuItem.IsSuspendingPopupAnimation" Value="true">
+                                    <Setter TargetName="PART_Popup" Property="Popup.PopupAnimation" Value="None"/>
+                                </Trigger>
+                                <Trigger Value="{x:Null}" Property="MenuItem.Icon">
+                                    <Setter TargetName="Icon" Property="UIElement.Visibility" Value="Collapsed"/>
+                                </Trigger>
+                                <Trigger Property="MenuItem.IsChecked" Value="true">
+                                    <Setter TargetName="GlyphPanel" Property="UIElement.Visibility" Value="Visible"/>
+                                    <Setter TargetName="Icon" Property="UIElement.Visibility" Value="Collapsed"/>
+                                </Trigger>
+                                <Trigger Property="MenuItem.IsHighlighted" Value="true">
+                                    <Setter TargetName="templateRoot" Value="#3D26A0DA" Property="Border.Background"/>
+                                    <Setter TargetName="templateRoot" Value="#FF26A0DA" Property="Border.BorderBrush"/>
+                                </Trigger>
+                                <Trigger Property="UIElement.IsEnabled" Value="false">
+                                    <Setter TargetName="templateRoot" Value="#FF707070" Property="TextElement.Foreground"/>
+                                    <Setter TargetName="GlyphPanel" Value="#FF707070" Property="Shape.Fill"/>
+                                </Trigger>
+                                <Trigger SourceName="SubMenuScrollViewer" Property="ScrollViewer.CanContentScroll" Value="false">
+                                    <Setter TargetName="OpaqueRect" Value="{Binding ElementName=SubMenuScrollViewer, Path=VerticalOffset}" Property="Canvas.Top"/>
+                                    <Setter TargetName="OpaqueRect" Value="{Binding ElementName=SubMenuScrollViewer, Path=HorizontalOffset}" Property="Canvas.Left"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+
+
+    </Style>
+
+
+    <Style TargetType="{x:Type ContextMenu}">
+        <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ShadeBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ContextMenu}">
+                    <Border Uid="Border_93">
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="Tag" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Padding" Value="0,0,5,5"/>
+                                        <Setter Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="4" Opacity="0.8" ShadowDepth="1"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Uid="Border_50">
+                            <ScrollViewer CanContentScroll="True" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}" Uid="ScrollViewer_9">
+                                <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Uid="ItemsPresenter_5"/>
+                            </ScrollViewer>
+                        </Border>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 
     <Style x:Key="MainAppClientArea" TargetType="Border">
         <Setter Property="Padding" Value="3,3,3,0"/>
+       
     </Style>
 
     <Style x:Key="TransactionHeaderBorder" TargetType="Border">
@@ -315,7 +491,7 @@ FLAT UI
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="QuickFilderBorder" TargetType="{x:Type Border}">
+    <Style x:Key="QuickFilterBorder" TargetType="{x:Type Border}">
         <Setter Property="CornerRadius" Value="0"/>
         <Setter Property="Padding" Value="4,0,4,0"/>
         <Setter Property="BorderThickness" Value=".5"/>
@@ -817,7 +993,7 @@ FLAT UI
                         <Trigger Property="IsExpanded" Value="true">
                             <Setter Property="Visibility" TargetName="grid" Value="Visible"/>
                             <Setter Property="Style" TargetName="HeaderSite" Value="{DynamicResource WalkaboutToolbarExpanderExpanded}" />
-                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="Foreground" Value="White"/>
                             <Setter Property="BorderThickness" TargetName="border1" Value="0"/>
                             <Setter Property="Background" Value="{StaticResource WalkaboutToolbarExpanderBrushSelected}"/>
                         </Trigger>
@@ -825,6 +1001,7 @@ FLAT UI
                         <Trigger Property="IsExpanded" Value="False">
                             <Setter Property="Style" TargetName="HeaderSite" Value="{DynamicResource WalkaboutToolbarExpanderCollapsed}" />
                             <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="BorderThickness" TargetName="border1" Value="0"/>
                             <Setter Property="Background" Value="{StaticResource WalkaboutToolbarExpanderBrushNormal}"/>
                         </Trigger>
 
@@ -1964,14 +2141,14 @@ FLAT UI
                                     <TransformGroup>
                                         <TransformGroup.Children>
                                             <TransformCollection>
-                                                <RotateTransform Angle="180" />
+                                                <RotateTransform Angle="-90" />
                                             </TransformCollection>
                                         </TransformGroup.Children>
                                     </TransformGroup>
                                 </Grid.LayoutTransform>
                                 <Rectangle Margin="3,3,0,3" x:Name="Rectangle" Fill="Transparent"  StrokeThickness="1" RadiusX="2" RadiusY="2" HorizontalAlignment="Left" Width="15" />
                                 <Rectangle Margin="3,3,3,3" x:Name="HoverRectangle" Fill="Transparent"  StrokeThickness="1" RadiusX="2" RadiusY="2" Opacity="0" />
-                                <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="{DynamicResource GlyphBrush}" Data="M 0 0 L 4 4 L 8 0 Z" />
+                                <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="LightGray" Data="M 0 0 L 4 4 L 8 0 Z" />
 
                             </Grid>
                             <ContentPresenter SnapsToDevicePixels="True" HorizontalAlignment="Left" Margin="4,3,0,3" VerticalAlignment="Center" Grid.Column="1" RecognizesAccessKey="True" />
@@ -2047,7 +2224,7 @@ FLAT UI
                             </Grid.ColumnDefinitions>
                             <Rectangle Margin="3,3,3,3" x:Name="Rectangle"   StrokeThickness="1" RadiusX="2" RadiusY="2" />
                             <Rectangle Margin="3,3,3,3" x:Name="HoverRectangle"   StrokeThickness="1" RadiusX="2" RadiusY="2" Opacity="0" />
-                            <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="#75633D" Data="M 0 0 L 4 4 L 8 0 Z" />
+                            <Path HorizontalAlignment="Center" x:Name="Up_Arrow" VerticalAlignment="Center" Fill="White" Data="M 0 0 L 4 4 L 8 0 Z" />
                             <ContentPresenter SnapsToDevicePixels="True" HorizontalAlignment="Left" Margin="4,3,0,3" VerticalAlignment="Center" Grid.Column="1" RecognizesAccessKey="True" />
                         </Grid>
                     </Border>

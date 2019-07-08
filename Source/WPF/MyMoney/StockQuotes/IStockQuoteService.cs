@@ -7,9 +7,24 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Data;
+using Walkabout.Utilities;
 
 namespace Walkabout.StockQuotes
 {
+
+    public class DownloadCompleteEventArgs : EventArgs
+    {
+        /// <summary>
+        /// A status message to display on completion.
+        /// </summary>
+        public string Message { get; set; }
+
+        /// <summary>
+        /// Set this to true if the entire download is complete.  Set it to false if
+        /// it is just a batch completion.
+        /// </summary>
+        public bool Complete { get; set; }
+    }
 
     public interface IStockQuoteService
     {
@@ -47,7 +62,7 @@ namespace Walkabout.StockQuotes
         /// with daily quotes back 20 years.
         /// </summary>
         /// <param name="symbol">The stock whose history is to be downloaded</param>
-        /// <returns>The true if the history was updated or false if history is not found</returns>
+        /// <returns>Returns true if the history was updated or false if history is not found</returns>
         Task<bool> UpdateHistory(StockQuoteHistory history);
 
         /// <summary>
@@ -80,10 +95,10 @@ namespace Walkabout.StockQuotes
 
         /// <summary>
         /// If the service is performing a whole batch at once, this event is raised after each batch is complete.
-        /// If there are still more downloads pending the boolean value is raised with the value false.
+        /// If there are still more downloads pending the boolean value for the Complete property is false.
         /// This is also raised when the entire pending list is completed with the boolean set to true.
         /// </summary>
-        event EventHandler<bool> Complete;
+        event EventHandler<DownloadCompleteEventArgs> Complete;
 
         /// <summary>
         /// This event is raised if quota limits are stopping the service from responding right now.
@@ -132,6 +147,7 @@ namespace Walkabout.StockQuotes
         public StockQuoteHistory() { History = new List<StockQuote>(); }
 
         public string Symbol { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Whether this is a partial or complete history.
@@ -170,6 +186,12 @@ namespace Walkabout.StockQuotes
             if (History == null)
             {
                 History = new List<StockQuote>();
+            }
+            quote.Date = quote.Date.Date;
+            if (!string.IsNullOrEmpty(quote.Name))
+            {
+                this.Name = quote.Name;
+                quote.Name = null;
             }
             int len = History.Count;
             for(int i = 0; i < len; i++)
@@ -232,6 +254,100 @@ namespace Walkabout.StockQuotes
             {
                 this.AddQuote(item);
             }
+            // promote any stock quote names to the root (to save space)
+            foreach(var item in this.History)
+            {
+                if (!string.IsNullOrEmpty(item.Name))
+                {
+                    this.Name = item.Name;
+                    item.Name = null;
+                }
+            }
+        }
+
+        static DateTime[] knownClosures = new DateTime[]
+        {
+            new DateTime(2018, 12, 5), // honor of President George Bush
+            new DateTime(2012, 10, 30), // Hurrican Sandy
+            new DateTime(2012, 10, 29), // Hurrican Sandy
+            new DateTime(2007, 1, 2), // Honor of President Gerald Ford
+            new DateTime(2004, 6, 11), // Honor of President Ronald Reagan
+            new DateTime(2001, 9, 14), // 9/11
+            new DateTime(2001, 9, 13), // 9/11
+            new DateTime(2001, 9, 12), // 9/11
+            new DateTime(2001, 9, 11), // 9/11
+        };
+
+        internal bool IsComplete()
+        {
+            if (!this.Complete || this.History.Count == 0)
+            {
+                return false;
+            }
+
+            int missing = 0; // in the last 3 months
+            var holidays = new UsHolidays();
+            DateTime workDay = holidays.GetPreviousWorkDay(DateTime.Today.AddDays(1));
+            DateTime stopDate = workDay.AddMonths(-3);
+            int count = 0; // work days
+            for (int i = this.History.Count - 1; i >= 0; i--)
+            {
+                count++;
+                StockQuote quote = this.History[i];
+                DateTime date = quote.Date.Date;
+                if (date > workDay)
+                {
+                    continue; // might have duplicates?
+                }
+                if (workDay < stopDate)
+                {
+                    break;
+                }
+                if (date < workDay)
+                {
+                    if (!knownClosures.Contains(workDay))
+                    {
+                        missing++;
+                    }
+                    i++;
+                }
+                workDay = holidays.GetPreviousWorkDay(workDay);
+            }
+            // There are some random stock market closures which we can't keep track of easily, so
+            // make sure we are not missing more than 1% of the history.
+            return (missing < count * 0.01);
+        }
+
+
+        internal bool RemoveDuplicates()
+        {
+            if (this.History != null)
+            {
+                StockQuote previous = null;
+                List<StockQuote> duplicates = new List<StockQuote>();
+                for (int i = 0; i < this.History.Count; i++)
+                {
+                    StockQuote quote = this.History[i];
+                    if (quote.Date == DateTime.MinValue)
+                    {
+                        duplicates.Add(quote);
+                    }
+                    else if (previous != null)
+                    {
+                        if (previous.Date.Date == quote.Date.Date)
+                        {
+                            duplicates.Add(previous);
+                        }
+                    }
+                    previous = quote;
+                }
+                foreach (StockQuote dup in duplicates)
+                {
+                    this.History.Remove(dup);
+                }
+                return duplicates.Count > 0;
+            }
+            return false;
         }
     }
 

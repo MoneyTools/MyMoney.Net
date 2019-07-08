@@ -86,13 +86,13 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        public event EventHandler<bool> Complete;
+        public event EventHandler<DownloadCompleteEventArgs> Complete;
 
-        private void OnComplete(bool complete)
+        private void OnComplete(bool complete, string message)
         {
             if (Complete != null)
             {
-                Complete(this, complete);
+                Complete(this, new DownloadCompleteEventArgs() { Message = message, Complete = complete });
             }
         }
 
@@ -134,8 +134,7 @@ namespace Walkabout.StockQuotes
         {
             if (string.IsNullOrEmpty(_settings.ApiKey))
             {
-                OnError(Walkabout.Properties.Resources.ConfigureStockQuoteService);
-                OnComplete(true);
+                OnComplete(true, Walkabout.Properties.Resources.ConfigureStockQuoteService);
                 return;
             }
 
@@ -323,11 +322,17 @@ namespace Walkabout.StockQuotes
             catch
             {
             }
-            OnComplete(PendingCount == 0);
+            if (PendingCount == 0)
+            {
+                OnComplete(true, "IEXTrading download complete");
+            }
+            else
+            {
+                OnComplete(false, "IEXTrading download cancelled");
+            }
             _downloadThread = null;
             _current = null;
             _completed = 0;
-            Debug.WriteLine("IEXTrading download thread terminating");
         }
 
 
@@ -397,8 +402,7 @@ namespace Walkabout.StockQuotes
             if (!_downloadError)
             {
                 _downloadError = true;
-                OnError("Download history is not supported by IEXTrading service");
-                OnComplete(true);
+                OnComplete(true, "Download history is not supported by IEXTrading service");
             }
             await Task.Delay(0);
             return false;

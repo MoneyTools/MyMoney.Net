@@ -67,10 +67,6 @@
     <c:NullOrEmptyStringToVisible x:Key="NullOrEmptyStringToVisible" />
     <c:CategoryTypeLetterConverter x:Key="CategoryTypeLetterConverter"/>
 
-    <!--<ResourceDictionary  Source="/Themes/Theme-Expression.xaml"/>-->
-    <!--<ResourceDictionary  Source="/Themes/Theme-OSX.xaml"/>-->
-    <!-- <ResourceDictionary  Source="/Themes/Theme-VS2010.xaml"/>-->
-
     <LinearGradientBrush x:Key="MessageBoxCaptionBackground" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="#C8D1E0" Offset="0" />
         <GradientStop Color="#AEB9CD" Offset="1" />
