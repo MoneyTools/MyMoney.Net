@@ -112,19 +112,23 @@ namespace Walkabout.Views.Controls
         }
 
 
-        bool isEditing; 
+        bool isEditing;
         #endregion
 
         #region Data Grid Event
 
+        DataGridBeginningEditEventArgs editingArgs;
+
         void OnDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             isEditing = true;
+            editingArgs = e;
         }
 
         void OnDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
             isEditing = false;
+            editingArgs = null;
         }
 
         void OnDataGrid1_CurrentCellChanged(object sender, EventArgs e)
@@ -132,7 +136,27 @@ namespace Walkabout.Views.Controls
             // Edit as soon as you click on a cell
             // if we don't do this the user has to click twice on the cell in order to edit (Very anoying)
             DataGrid grid = (DataGrid)sender;
-            grid.BeginEdit();
+            bool rc = grid.BeginEdit();
+            if (!rc)
+            {
+                try
+                {
+                    if (!grid.CommitEdit())
+                    {
+                        if (!grid.CommitEdit(DataGridEditingUnit.Row, true))
+                        {
+                            System.Diagnostics.Debug.WriteLine("Why is CommitEdit failing?");
+                        }
+                    }
+                    rc = grid.BeginEdit();
+                    if (!rc)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Why is BeginEdit failing?");
+                    }
+                } catch {
+
+                }
+            }
         }
 
         void OnDataGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -187,7 +211,8 @@ namespace Walkabout.Views.Controls
                     this.isEditing = false;
                 }
             }
-            return queryRows.ToArray();
+            List<QueryRow> complete = new List<QueryRow>(from q in queryRows where q.Operation != Operation.None && q.Operation != Operation.None select q);
+            return complete.ToArray();
         }
 
         static public QueryRow GetQueryRow(DataRow row)

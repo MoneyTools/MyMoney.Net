@@ -23,7 +23,7 @@ namespace Walkabout.Dialogs
 
             // TO DO - THEME ALL DIALOG BOX
             //ResourceDictionary theme = new ResourceDictionary();
-            //theme.Source = new Uri("Themes/Theme-OSX.xaml", UriKind.Relative);
+            //theme.Source = new Uri("Themes/Theme-Flat.xaml", UriKind.Relative);
             //Resources.MergedDictionaries.Add(theme);
         }
 

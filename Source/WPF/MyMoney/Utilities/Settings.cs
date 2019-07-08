@@ -858,6 +858,8 @@ namespace Walkabout.Configuration
         public bool ShowBalance;
         public bool ShowBudget;
 
+        public bool ShowAll;
+
         public GraphState()
         {
         }
@@ -869,6 +871,7 @@ namespace Walkabout.Configuration
             w.WriteElementString("Start", Start.ToShortDateString());
             w.WriteElementString("End", End.ToShortDateString());
             w.WriteElementString("YearToDate", YearToDate.ToString());
+            w.WriteElementString("ShowAll", ShowAll.ToString());
             w.WriteElementString("Series", Series.ToString());
             w.WriteElementString("ShowBalance", ShowBalance.ToString());
             w.WriteElementString("ShowBudget", ShowBudget.ToString());
@@ -896,6 +899,9 @@ namespace Walkabout.Configuration
                             break;
                         case "YearToDate":
                             this.YearToDate = ReadBoolean(r, true);
+                            break;
+                        case "ShowAll":
+                            this.ShowAll = ReadBoolean(r, true);
                             break;
                         case "Series":
                             this.Series = ReadInt(r, 1);

@@ -13,19 +13,36 @@ using Walkabout.Dialogs;
 
 namespace Walkabout.Views.Controls
 {
+    public class TrendValue
+    {
+        public DateTime Date { get; set; }
+        public decimal Value { get; set; }
+        public object UserData { get; set; }
+    }
+
+    /// <summary>
+    /// This object generates the graph on demand which happens lazily when the graph
+    /// becomes visible or when the graph generator object is changed.
+    /// </summary>
+    /// <returns></returns>
+    public interface IGraphGenerator
+    {
+        IEnumerable<TrendValue> Generate();
+        bool IsFlipped { get; }
+        string GetLabel(TrendValue v);
+    }
+
     /// <summary>
     /// Interaction logic for TrendGraph.xaml
     /// </summary>
     public partial class TrendGraph : UserControl
     {
-        IEnumerable data;
-        Account account;
-        Category category;
         CalendarRange range = CalendarRange.Annually;
         int years = 1;
         DateTime start;
         DateTime end;
         bool yearToDate;
+        bool showAll;
         int series = 1;
         IServiceProvider sp;
 
@@ -51,7 +68,7 @@ namespace Walkabout.Views.Controls
             CommandZoomOut = new RoutedUICommand("Zoom out", "CommandZoomOut", typeof(TrendGraph));
             CommandAddSeries = new RoutedUICommand("Add series", "CommandAddSeries", typeof(TrendGraph));
             CommandRemoveSeries = new RoutedUICommand("Remove series", "CommandRemoveSeries", typeof(TrendGraph));
-            CommandShowBudget = new RoutedUICommand("Show budget", "CommandShowBudget", typeof(TrendGraph));            
+            CommandShowBudget = new RoutedUICommand("Show budget", "CommandShowBudget", typeof(TrendGraph));
         }
 
         public TrendGraph()
@@ -60,7 +77,17 @@ namespace Walkabout.Views.Controls
             this.end = DateTime.Now;
             this.start = Step(end, this.range, this.years, -1);
             InitializeComponent();
-            this.MouseWheel += new MouseWheelEventHandler(TrendGraph_MouseWheel);            
+            this.MouseWheel += new MouseWheelEventHandler(TrendGraph_MouseWheel);
+
+            this.IsVisibleChanged += TransactionGraph_IsVisibleChanged;
+        }
+
+        private void TransactionGraph_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue)
+            {
+                GenerateGraph();
+            }
         }
 
         public IServiceProvider ServiceProvider
@@ -74,7 +101,7 @@ namespace Walkabout.Views.Controls
         public TrendGraphSeries SelectedSeries { get { return selected; } }
 
         public object SelectedItem
-        { 
+        {
             get {
                 ChartValue v = this.Chart.Selected;
                 return v != null ? v.UserData : null;
@@ -95,6 +122,7 @@ namespace Walkabout.Views.Controls
             state.Start = this.start;
             state.End = this.end;
             state.YearToDate = this.yearToDate;
+            state.ShowAll = this.showAll;
             state.Series = this.series;
             state.ShowBalance = this.ShowBalance;
             return state;
@@ -107,6 +135,7 @@ namespace Walkabout.Views.Controls
             this.start = state.Start;
             this.end = state.End;
             this.yearToDate = state.YearToDate;
+            this.showAll = state.ShowAll;
             this.menuItemYearToDate.IsChecked = this.yearToDate;
             this.series = state.Series;
             GenerateGraph();
@@ -139,10 +168,10 @@ namespace Walkabout.Views.Controls
         }
 
         CalendarRange[] mouseWheelDateSteps = {
-            0, 
-            CalendarRange.Monthly, 
-            CalendarRange.SemiAnnually,  
-            CalendarRange.Annually  
+            0,
+            CalendarRange.Monthly,
+            CalendarRange.SemiAnnually,
+            CalendarRange.Annually
             };
 
         void TrendGraph_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -171,51 +200,72 @@ namespace Walkabout.Views.Controls
             base.OnRenderSizeChanged(sizeInfo);
         }
 
-        public Category Category
-        {
-            get { return this.category; }
-        }
-
         public DateTime StartDate { get { return this.start; } }
 
         public DateTime EndDate { get { return this.end; } }
 
-        public void UpdateGraph(IEnumerable data, Account a, Category c)
+        public IGraphGenerator Generator
         {
-            this.data = data;
-            this.account = a;
-            this.category = c;
-            GenerateGraph();
+            set
+            {
+                this.generator = value;
+                if (this.Visibility == Visibility.Visible)
+                {
+                    GenerateGraph();
+                }
+            }
         }
 
+        IGraphGenerator generator;
+        List<TrendValue> data = null;
         ChartData chartData;
-            
+        
         public void GenerateGraph()
         {
             chartData = new ChartData();
             
-            if (this.yearToDate)
-            {
-                this.end = DateTime.Today;
-                this.start = Step(this.end, CalendarRange.Annually, 1, -1);
-            }
-            
             TimeSpan span = (end - start);
             int days = span.Days;
-            
-            if (data != null)
+
+            if (generator != null)
             {
-                if (series > 1)
+                this.data = new List<TrendValue>(generator.Generate());
+                if (this.data.Count > 0)
                 {
-                    DateTime previous = start.AddDays(-days * (series - 1));
-                    for (int i = 1; i < series; i++)
+                    if (this.yearToDate)
                     {
-                        DateTime next = previous.AddDays(days);
-                        AddSeries(previous, next, favorites[i]);
-                        previous = next;
+                        this.end = DateTime.Today;
+                        this.start = Step(this.end, CalendarRange.Annually, 1, -1);
                     }
+                    else if (this.showAll)
+                    {
+                        this.start = DateTime.MaxValue;
+                        this.end = DateTime.MinValue;
+                        foreach (var d in this.data)
+                        {
+                            if (d.Date < start)
+                            {
+                                this.start = d.Date;
+                            }
+                            if (d.Date > end)
+                            {
+                                this.end = d.Date;
+                            }
+                        }
+                    }
+
+                    if (series > 1)
+                    {
+                        DateTime previous = start.AddDays(-days * (series - 1));
+                        for (int i = 1; i < series; i++)
+                        {
+                            DateTime next = previous.AddDays(days);
+                            AddSeries(previous, next, favorites[i]);
+                            previous = next;
+                        }
+                    }
+                    selected = AddSeries(this.start, this.end, favorites[0]);
                 }
-                selected = AddSeries(this.start, this.end, favorites[0]);
             }
 
             Chart.Data = chartData;
@@ -264,66 +314,33 @@ namespace Walkabout.Views.Controls
             TrendGraphSeries s = new TrendGraphSeries(cat.Name, cat.Name);            
             chartData.AddSeries(s);
 
-            
-            if ((this.account != null && this.account.Type == AccountType.Credit) ||
-                (this.category != null && this.category.Type == CategoryType.Expense))
-            {
-                s.Flipped = true;
-            }
+            s.Flipped = generator.IsFlipped;
 
             IList<ChartValue> timeData = s.Values;
             s.BeginUpdate();
 
-            double balance = this.account != null ? (double)this.account.OpeningBalance : 0;
             DateTime last = start;
-            Transaction lastt = null;
-
-            foreach (object row in data)
+            TrendValue lastv = null;
+            foreach (TrendValue v in this.data)
             {
-                Transaction t = row as Transaction;
-                if (t == null) continue;
-                if (t.Status == TransactionStatus.Void) continue;
-
-                if ( t.Account == this.account || // showing transactions for an account
-                    (this.account == null )) // showing transactions by category // && ((!t.IsBudgeted && t.Account.IsBudgeted))
+                // calculate balances using data from the start of the account \ list so the end balance is correct
+                if (v.Date <= end && v.Date >= start)
                 {
-                    // calculate balances using data from the start of the account \ list so the end balance is correct
-                    if (t.Date <= end)
+                    // If the items are on the same day, don't add to the graph yet.  
+                    // Accumulate them and the accumulated value for the day will be displayed
+                    if (last != v.Date)
                     {
-                        // For all regular transaction lists, we calcuclate the overall balance on the fly, based on each transaction amount.
-                        // When we list securities - not an account - we should show the overall value of the securities instead, 
-                        // which is precalculated and stored within each transaction
-                        if (this.account == null && t.Investment != null)
-                        {
-                            balance = (double)t.RunningBalance;
-                        }
-                        else
-                        {
-                            balance += (double)t.GetCategorizedAmount(this.category);
-                        }
-
-                        // Start adding to the graph itself on the start date
-                        if (t.Date >= start)
-                        {
-                            // If the transactions are on the same day, don't add to the graph yet.  
-                            // Accumulate them and the accumulated value for the day will be displayed
-                            if (last != t.Date)
-                            {
-                                AddDatum(balance, last, t.Date, t, timeData);
-                            }
-
-                            last = t.Date;
-                            lastt = t;
-                        }
-
+                        AddDatum(v, last, v.Date, timeData);
                     }
+                    last = v.Date;
+                    lastv = v;
                 }
             }
 
-            // Put the last transaction in the list
-            if (lastt != null)
+            // Put the last item on the graph
+            if (lastv != null)
             {
-                AddDatum(balance, last, end.AddDays(1), lastt, timeData);
+                AddDatum(lastv, last, end.AddDays(1), timeData);
             }
             
             s.EndUpdate();
@@ -336,19 +353,16 @@ namespace Walkabout.Views.Controls
             return s;
         }
 
-        void AddDatum(double balance, DateTime start, DateTime end, Transaction t, IList<ChartValue> timeData)
+        void AddDatum(TrendValue v, DateTime start, DateTime end, IList<ChartValue> timeData)
         {
             // for this math to work, we have to ignore "time" in the dates.
-            start = new DateTime(start.Year, start.Month, start.Day);
-            end = new DateTime(end.Year, end.Month, end.Day);
-            TimeSpan r = (end - start);
-            int d = r.Days;
-
-            // spread the transactions across a range to fill the gaps so the graph spans the whole time span.
-            for (int i = 0; i < d; i++)
+            start = start.Date;
+            end = end.Date;
+            // duplicate the items across a range to fill the gaps so the graph spans the whole time span.
+            while (start < end)
             {
-                string label = balance.ToString("n", nfi) + "\r\n" + start.ToShortDateString();
-                timeData.Add(new ChartValue(label, balance, t));
+                string label = this.generator.GetLabel(v);
+                timeData.Add(new ChartValue(label, (double)v.Value, v.UserData));
                 start = start.AddDays(1);
             }
             return;
@@ -357,6 +371,7 @@ namespace Walkabout.Views.Controls
         void OnYearToDate(object sender, RoutedEventArgs e)
         {
             this.yearToDate = !this.yearToDate;
+            this.showAll = false;
             menuItemYearToDate.IsChecked = this.yearToDate;
             GenerateGraph();
         }
@@ -373,6 +388,7 @@ namespace Walkabout.Views.Controls
                 this.start = this.end;
                 this.end = Step(this.start, this.range, 1, 1);
             }
+            this.showAll = false; 
             Pin();
             GenerateGraph();
         }
@@ -389,6 +405,9 @@ namespace Walkabout.Views.Controls
                 this.end = this.start;
                 this.start = Step(this.start, this.range, 1, -1);
             }
+            this.yearToDate = false;
+            this.showAll = false;
+
             GenerateGraph();
         }
 
@@ -405,6 +424,8 @@ namespace Walkabout.Views.Controls
                     range = (CalendarRange)(range - 1);
                 }
                 this.end = Step(this.start, this.range, this.years, 1);
+                this.yearToDate = false;
+                this.showAll = false;
                 Pin();
                 GenerateGraph();
             }
@@ -421,6 +442,8 @@ namespace Walkabout.Views.Controls
                 range = (CalendarRange)(range + 1);
             }
             this.end = Step(this.start, this.range, this.years, 1);
+            this.yearToDate = false;
+            this.showAll = false;
             Pin();
             GenerateGraph();
         }
@@ -438,6 +461,7 @@ namespace Walkabout.Views.Controls
                 this.start = start;
                 this.end = frm.EndDate;
                 this.yearToDate = false;
+                this.showAll = false;
                 this.menuItemYearToDate.IsChecked = this.yearToDate;
                 GenerateGraph();
             }
@@ -525,26 +549,7 @@ namespace Walkabout.Views.Controls
         {
             this.yearToDate = false;
             this.menuItemYearToDate.IsChecked = this.yearToDate;
-
-            DateTime minDate = DateTime.MaxValue;
-            DateTime maxDate = DateTime.MinValue;
-            foreach (object row in data)
-            {
-                Transaction t = row as Transaction;
-                if (t == null) continue;
-                if (t.Date < minDate)
-                {
-                    minDate = t.Date;
-                }
-                if (t.Date > maxDate)
-                {
-                    maxDate = t.Date;
-                }
-            }
-
-            this.start = minDate;
-            this.end = maxDate;
-
+            this.showAll = true;
             GenerateGraph();
         }
     }

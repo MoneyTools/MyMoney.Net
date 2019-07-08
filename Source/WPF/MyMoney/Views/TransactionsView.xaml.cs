@@ -1156,6 +1156,7 @@ namespace Walkabout.Views
 
         public void ActivateView()
         {
+
             this.Focus();
         }
 
@@ -1820,12 +1821,19 @@ namespace Walkabout.Views
                     this.fixedList = null;
                     this.lastQuery = null;
                     var transactions = RefreshViewBySecurity(s, selectedRowId);
-                    var mgr = (StockQuoteManager)site.GetService(typeof(StockQuoteManager));
-                    if (!string.IsNullOrEmpty(s.Symbol))
-                    {
-                        mgr.BeginDownloadHistory(s.Symbol);
-                    }
                     FireAfterViewStateChanged(selectedRowId);
+
+                    // Async load of security info.
+                    var mgr = (StockQuoteManager)site.GetService(typeof(StockQuoteManager));
+                    if (mgr != null)
+                    {
+                        mgr.HistoryAvailable -= OnStockHistoryAvailable;
+                        mgr.HistoryAvailable += OnStockHistoryAvailable;
+                        if (!string.IsNullOrEmpty(s.Symbol))
+                        {
+                            mgr.BeginDownloadHistory(s.Symbol);
+                        }
+                    }
                 }
 #if PerformanceBlocks
             }
@@ -1840,6 +1848,91 @@ namespace Walkabout.Views
             var data = new TransactionCollection(myMoney, null, transactions, true, false, this.QuickFilter);
             Display(data, TransactionViewName.BySecurity, "Investments in " + s.Name, selectedRowId);
             return transactions;
+        }
+
+        private void OnStockHistoryAvailable(object sender, StockQuoteHistory e)
+        {
+            if (this.ActiveSecurity != null && e != null && this.ActiveSecurity.Symbol == e.Symbol)
+            {
+                TransactionCollection tc = this.TheActiveGrid.ItemsSource as TransactionCollection;
+                if (tc != null)
+                {
+                    FillinMissingUnitPrices(this.ActiveSecurity, tc.GetOriginalTransactions());
+                }
+            }
+        }
+
+        async void FillinMissingUnitPrices(Security security, IEnumerable<Transaction> transactions)
+        {
+#if PerformanceBlocks
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.UpdateStockQuoteHistory))
+            {
+#endif
+                StockQuoteManager manager = (StockQuoteManager)this.ServiceProvider.GetService(typeof(StockQuoteManager));
+                StockQuoteHistory history = await manager.GetCachedHistory(security.Symbol);
+                if (history != null)
+                {
+                    List<StockQuote> sorted = history.GetSorted();
+
+                    // Ok, so the list of transactions should all be investments related to this security and 
+                    // we have a stock quote history which can be used to fill in any missing details on the
+                    // UnitPrices associated with this stock (for example, Dividends may be missing UnitPrice).
+                    int pos = 0;
+                    bool changed = false;
+                    try
+                    {
+                        this.myMoney.BeginUpdate();
+                        StockQuote quote = sorted[0];
+                        foreach (Transaction t in transactions)
+                        {
+                            Investment i = t.Investment;
+                            if (i != null && i.Security == security)
+                            {
+                                while (pos < sorted.Count)
+                                {
+                                    StockQuote nextQuote = sorted[pos];
+                                    if (nextQuote.Date > t.Date)
+                                    {
+                                        break;
+                                    }
+                                    quote = nextQuote;
+                                    pos++;
+                                }
+                                if (t.Date >= quote.Date)
+                                {
+                                    if (i.UnitPrice == 0)
+                                    {
+                                        i.UnitPrice = quote.Close;
+                                        changed = true;
+                                    }
+                                    else if (i.UnitPrice != quote.Close)
+                                    {
+                                        if (i.TradeType == InvestmentTradeType.Buy || i.TradeType == InvestmentTradeType.Sell)
+                                        {
+                                            // normal for this to be a bit different, should we do a a sanity check though?
+                                        }
+                                        else
+                                        {
+                                            Debug.WriteLine(string.Format("{0}: {1} close price {2} on {3} didn't match our transaction at {4} UnitPrice {5}",
+                                                t.Account.Name, security.Symbol, quote.Close, quote.Date.ToShortDateString(), t.Date.ToShortDateString(), t.InvestmentUnitPrice));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        this.myMoney.EndUpdate();
+                    }
+                    if (changed && this.ActiveSecurity == security)
+                    {
+                        this.RefreshViewBySecurity(security, this.SelectedRowId);
+                    }
+                }
+#if PerformanceBlocks
+            }
+#endif
         }
 
         internal void ViewTransactionsForCategory(Category c, long selectedRowId)
@@ -4782,21 +4875,7 @@ namespace Walkabout.Views
         private bool filterOnInvestmentInfo; // whether to include investment info in the quick filtering
         private bool filterOnAccountName; // whether to include account name in the quick filtering.
         private bool constructing = true;
-
-        //public TransactionCollection(MyMoney money, Account a, IList data, string filter) : base(data, filter)
-        //{
-        //    this.money = money;
-        //    this.account = a;
-        //    constructing = true;
-        //    if (data != null)
-        //    {
-        //        foreach (Transaction t in data)
-        //        {
-        //            this.Add(t);
-        //        }
-        //    }
-        //    constructing = false;
-        //}
+        private IEnumerable<Transaction> transactions;
 
         public TransactionCollection(MyMoney money, Account a, IEnumerable<Transaction> data, bool filterOnAccountName, bool filterOnInvestmentInfo, string filter)
             : base(data)
@@ -4806,7 +4885,14 @@ namespace Walkabout.Views
             this.filterOnAccountName = filterOnAccountName;
             this.filterOnInvestmentInfo = filterOnInvestmentInfo;
             this.Filter = filter;
+            this.transactions = data;
             constructing = false;
+        }
+
+        // return the original unfiltered transactions
+        public IEnumerable<Transaction> GetOriginalTransactions()
+        {
+            return this.transactions;
         }
 
         bool prompt;

@@ -62,10 +62,10 @@ namespace Walkabout.Tests.Wrappers
             return new ExpensesChartWrapper(tab);
         }
 
-        public BudgetChartWrapper SelectBudget()
+        public StockChartWrapper SelectStock()
         {
-            AutomationElement tab = FindAndSelectTab("TabBudget");
-            return new BudgetChartWrapper(tab);
+            AutomationElement tab = FindAndSelectTab("TabStock");
+            return new StockChartWrapper(tab);
         }
 
         public DownloadDetailsWrapper SelectDownload()

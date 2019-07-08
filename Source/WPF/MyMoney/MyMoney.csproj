@@ -51,7 +51,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <DisallowUrlActivation>true</DisallowUrlActivation>
-    <ApplicationRevision>42</ApplicationRevision>
+    <ApplicationRevision>46</ApplicationRevision>
     <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -235,6 +235,7 @@
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\FileHash.cs" />
     <Compile Include="Utilities\RecentFilesMenu.cs" />
+    <Compile Include="Utilities\UsHolidays.cs" />
     <Compile Include="Views\ChangeTracker.cs" />
     <Compile Include="Database\CostBasis.cs" />
     <Compile Include="Database\SqliteDatabase.cs" />
@@ -469,6 +470,7 @@
       <DependentUpon>CurrenciesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FindManager.cs" />
+    <Compile Include="Views\GraphGenerators.cs" />
     <Compile Include="Views\LoansView.xaml.cs">
       <DependentUpon>LoansView.xaml</DependentUpon>
     </Compile>
@@ -962,10 +964,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\Theme-OSX.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

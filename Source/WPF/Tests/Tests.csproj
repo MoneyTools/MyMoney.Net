@@ -125,7 +125,7 @@
     <Compile Include="Win32.cs" />
     <Compile Include="Wrappers\AccountSettingsWrapper.cs" />
     <Compile Include="Wrappers\AccountsWrapper.cs" />
-    <Compile Include="Wrappers\BudgetChartWrapper.cs" />
+    <Compile Include="Wrappers\StockChartWrapper.cs" />
     <Compile Include="Wrappers\CategoriesWrapper.cs" />
     <Compile Include="Wrappers\ChartsAreaWrapper.cs" />
     <Compile Include="Wrappers\ContextMenu.cs" />

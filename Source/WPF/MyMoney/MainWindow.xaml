@@ -60,7 +60,6 @@
         <CommandBinding Command="p:AppCommands.CommandViewOptions" Executed="OnCommandViewOptions" />
         <CommandBinding Command="p:AppCommands.CommandViewThemeVS2010" Executed="OnCommandViewThemeVS2010" />
         <CommandBinding Command="p:AppCommands.CommandViewThemeFlat" Executed="OnCommandViewThemeFlat" />
-        <CommandBinding Command="p:AppCommands.CommandViewThemeOSX" Executed="OnCommandViewThemeOSX" />
 
         <!-- REPORTS  -->
         <CommandBinding Command="p:AppCommands.CommandReportNetWorth" Executed="OnCommandNetWorth"/>
@@ -167,7 +166,6 @@
                             <MenuItem x:Name="MenuFixSplits" Header="Fix _Splits" Click="MenuFixSplits_Click"/>
                             <MenuItem x:Name="MenuFixSecurities" Header="Remove _Duplicate Securities" Click="MenuRemoveDuplicateSecurities_Click"/>
                             <MenuItem x:Name="MenuFixPayees" Header="Remove _Duplicate Payees" Click="MenuRemoveDuplicatePayees_Click"/>
-                            <MenuItem x:Name="MenuRecomputeBudgetBalance" Header="Recompute _Budget Balance" Click="MenuRecomputeBudgetBalance_Click"/>
                         </MenuItem>
                     </MenuItem>
 
@@ -182,9 +180,8 @@
                         <MenuItem x:Name="MenuViewOnlineOptions" Header="_Options" Command="p:AppCommands.CommandViewOptions"/>
                         <Separator/>
                         <MenuItem Header="_Theme">
-                            <MenuItem x:Name="MenuViewThemeVS2010" Header="_1 Visual Studio" Command="p:AppCommands.CommandViewThemeVS2010"/>
-                            <MenuItem x:Name="MenuViewThemeFlat" Header="_2 Flat" Command="p:AppCommands.CommandViewThemeFlat"/>
-                            <MenuItem x:Name="MenuViewThemeOSX" Header="_3 OSX" Command="p:AppCommands.CommandViewThemeOSX"/>
+                            <MenuItem x:Name="MenuViewThemeVS2010" Header="_1 Light" Command="p:AppCommands.CommandViewThemeVS2010"/>
+                            <MenuItem x:Name="MenuViewThemeFlat" Header="_2 Dark" Command="p:AppCommands.CommandViewThemeFlat"/>
                         </MenuItem>
                     </MenuItem>
 
@@ -215,7 +212,7 @@
                         <MenuItem x:Name="MenuOnlineSyncAccount" Header="_Synchronize Account" Command="p:AppCommands.CommandOnlineSyncAccount"/>
                         <MenuItem x:Name="MenuOnlineUpdateSecurities" Header="_Update Securities" Command="p:AppCommands.CommandOnlineUpdateSecurities"/>
                         <MenuItem x:Name="MenuOnlineDownloadAccounts" Header="_Download Accounts..." Command="p:AppCommands.CommandDownloadAccounts"/>
-                        <MenuItem x:Name="MenuStockQuoteServiceOptions" Header="Stock Quote Account..." Command="p:AppCommands.CommandStockQuoteServiceOptions"/>
+                        <MenuItem x:Name="MenuStockQuoteServiceOptions" Header="Stock Quote Accounts..." Command="p:AppCommands.CommandStockQuoteServiceOptions"/>
                     </MenuItem>
 
                     <MenuItem x:Name="MenuHelp" Header="_Help">
@@ -349,10 +346,11 @@
                             <cc:CategoryChart x:Name="PieChartExpenses" CategoryType="Expense"/>
                         </TabItem>
 
-                        <TabItem x:Name="TabBudget" Header="Budget">
-                            <cc:BudgetChart x:Name="BudgetChart" />
+                        <TabItem x:Name="TabStock" Header="Stock">
+                            <vc:TrendGraph x:Name="StockGraph"  ShowBalance="False"
+                            />
                         </TabItem>
-
+                        
                         <TabItem x:Name="TabLoan" Header="Payments">
                             <cc:LoanChart x:Name="LoanChart" />
                         </TabItem>
