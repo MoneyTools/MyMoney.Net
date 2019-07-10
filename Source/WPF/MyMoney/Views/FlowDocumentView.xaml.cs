@@ -10,6 +10,9 @@ using Walkabout.Help;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Reports;
 using Walkabout.Interfaces.Views;
+using System.Windows.Threading;
+using System.Windows.Media;
+using Walkabout.Controls;
 
 namespace Walkabout.Views
 {
@@ -49,11 +52,20 @@ namespace Walkabout.Views
 
         public void Generate(IReport report)
         {
-            FlowDocumentReportWriter writer = new FlowDocumentReportWriter(this.Viewer.Document);
-            report.Generate(writer);
-            this.writer = writer;
+            this.Viewer.Document.Blocks.Clear();
 
-            ResetExpandAllToggleButton();
+            Paragraph p = new Paragraph();
+            p.Inlines.Add(new Run() { Text = "Loading..." });
+            p.FontSize = 18;
+            this.Viewer.Document.Blocks.Add(p);
+
+            this.Viewer.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                FlowDocumentReportWriter writer = new FlowDocumentReportWriter(this.Viewer.Document);
+                report.Generate(writer);
+                this.writer = writer;
+                ResetExpandAllToggleButton();
+            }), DispatcherPriority.ContextIdle);
         }
 
         public FlowDocumentScrollViewer DocumentViewer

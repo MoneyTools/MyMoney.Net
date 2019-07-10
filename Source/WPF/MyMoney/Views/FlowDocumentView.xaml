@@ -11,12 +11,12 @@
 
         <Grid.RowDefinitions>
             <!-- Top Search area -->
-            <RowDefinition x:Name="SearchAreaRow" Height="30"/>
+            <RowDefinition x:Name="SearchAreaRow" Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- SEARCH AREA -->
-        <Grid Grid.Row="0" x:Name="SearchArea">
+        <Grid Grid.Row="0" x:Name="SearchArea" Height="30">
 
             <Grid.RowDefinitions >
                 <RowDefinition Height="Auto" />

@@ -843,9 +843,12 @@ namespace Walkabout.StockQuotes
 
         public async void BeginFetchHistory(List<string> batch)
         {
+            string singleton = null;
+            bool busy = false;
             lock (_downloadSync)
             {
-                if (_downloadingHistory)
+                busy = _downloadingHistory;
+                if (busy)
                 {
                     if (batch.Count == 1)
                     {
@@ -856,6 +859,7 @@ namespace Walkabout.StockQuotes
                             _downloadBatch.Remove(item);
                         }
                         _downloadBatch.Insert(0, item);
+                        singleton = item;
                     }
                     else
                     {
@@ -868,13 +872,28 @@ namespace Walkabout.StockQuotes
                             }
                         }
                     }
-                    return;
                 }
                 else
                 {
                     // starting a new download batch.
                     _downloadBatch = new List<string>(batch);
                 }
+            }
+            if (busy)
+            {
+                if (!string.IsNullOrEmpty(singleton))
+                {
+                    // in this case we want to load any cached history and make that available to unblock the UI thread ASAP
+                    // otherwise UI might be blocks on slow HTTP downloads.
+                    var history = await this._downloadLog.GetHistory(singleton);
+                    if (history != null && history.History != null && history.History.Count != 0)
+                    {
+                        // unblock the UI thread with the cached history for now.
+                        OnHistoryAvailable(history);
+                    }
+                }
+                // only allow one thread do all the downloading.
+                return;
             }
 
             tokenSource = new CancellationTokenSource();

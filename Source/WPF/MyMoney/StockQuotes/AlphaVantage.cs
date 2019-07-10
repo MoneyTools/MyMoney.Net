@@ -29,6 +29,7 @@ namespace Walkabout.StockQuotes
         int _completed;
         HttpWebRequest _current;
         bool _cancelled;
+        bool _suspended;
         Thread _downloadThread;
         string _logPath;
         StockQuoteThrottle _throttle;
@@ -120,11 +121,14 @@ namespace Walkabout.StockQuotes
 
         private void OnSuspended(bool suspended)
         {
+            _suspended = suspended;
             if (Suspended != null)
             {
                 Suspended(this, suspended);
             }
         }
+
+        public bool IsSuspended {  get { return _suspended; } }
 
         public void BeginFetchQuote(string symbol)
         {

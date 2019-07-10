@@ -107,6 +107,11 @@ namespace Walkabout.StockQuotes
         event EventHandler<bool> Suspended;
 
         /// <summary>
+        /// Returns true if the service is currently suspended (sleeping)
+        /// </summary>
+        bool IsSuspended { get; }
+
+        /// <summary>
         /// Stop all pending requests
         /// </summary>
         void Cancel();
