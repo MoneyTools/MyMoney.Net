@@ -26,6 +26,16 @@ namespace Walkabout.Utilities
             }
         }
 
+        // return a string (never returns null) so it is safe to operate directly on the result.
+        public static string SafeLower(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return "";
+            }
+            return s.ToLowerInvariant();
+        }
+
         public static bool Matches(string a, string b)
         {
             if (a == b) return true;

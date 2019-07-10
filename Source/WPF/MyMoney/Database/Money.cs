@@ -4251,18 +4251,15 @@ namespace Walkabout.Data
 
         public List<Payee> GetPayeesAsList(string filter)
         {
-            string lower = filter.ToLowerInvariant();
+            string lower = StringHelpers.SafeLower(filter);
             List<Payee> list = new List<Payee>();
             lock (payees)
             {
                 foreach (Payee p in this.payees.Values)
                 {
-                    if (!p.IsDeleted)
+                    if (!p.IsDeleted && (string.IsNullOrEmpty(lower) || StringHelpers.SafeLower(p.Name).Contains(lower)))
                     {
-                        if (p.Name.ToLowerInvariant().Contains(lower))
-                        {
-                            list.Add(p);
-                        }
+                        list.Add(p);
                     }
                 }
             }
@@ -7228,16 +7225,15 @@ namespace Walkabout.Data
             return list;
         }
 
-
         public List<Security> GetSecuritiesAsList(string filter)
         {
-            string lower = filter.ToLowerInvariant();
+            string lower = StringHelpers.SafeLower(filter);
             List<Security> list = new List<Security>();
             lock (securities)
             {
                 foreach (Security x in this.securities.Values)
                 {
-                    if (!x.IsDeleted && (x.Name.ToLowerInvariant().Contains(lower) || x.Symbol.ToLowerInvariant().Contains(lower)))
+                    if (!x.IsDeleted && (string.IsNullOrEmpty(lower) || StringHelpers.SafeLower(x.Name).Contains(lower) || StringHelpers.SafeLower(x.Symbol).Contains(lower)))
                     {
                         list.Add(x);
                     }
