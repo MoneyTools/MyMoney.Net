@@ -26,6 +26,7 @@ namespace Walkabout.StockQuotes
         Thread _downloadThread;
         HttpWebRequest _current;
         bool _cancelled;
+        bool _suspended;
         string _logPath;
         bool _downloadError;
         StockQuoteThrottle _throttle;
@@ -100,11 +101,13 @@ namespace Walkabout.StockQuotes
 
         private void OnSuspended(bool suspended)
         {
+            _suspended = suspended;
             if (Suspended != null)
             {
                 Suspended(this, suspended);
             }
         }
+        public bool IsSuspended { get { return _suspended; } }
 
         public static StockServiceSettings GetDefaultSettings()
         {

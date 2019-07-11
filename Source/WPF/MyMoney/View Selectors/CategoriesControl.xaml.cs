@@ -255,7 +255,7 @@ namespace Walkabout.Views.Controls
             // Only keep the category matching the filter
             foreach (Category c in this.money.Categories.GetRootCategories())
             {
-                if (c.Name.ToLowerInvariant().Contains(this.filterCategory))
+                if (StringHelpers.SafeLower(c.Name).Contains(this.filterCategory))
                 {
                     // The root itself match the filter, no need to dig deeper
                     newFilteredList.Add(c);
@@ -276,7 +276,7 @@ namespace Walkabout.Views.Controls
             {
                 foreach (Category c in category.GetSubcategories())
                 {
-                    if (c.Name.ToLowerInvariant().Contains(this.filterCategory))
+                    if (StringHelpers.SafeLower(c.Name).Contains(this.filterCategory))
                     {
                         newFilteredList.Add(rootCategory);
                         return true;
@@ -525,7 +525,7 @@ namespace Walkabout.Views.Controls
         /// <param name="filterText"></param>
         public void Filter(string filterText)
         {
-            filterCategory = filterText.ToLowerInvariant();
+            filterCategory = StringHelpers.SafeLower(filterText);
             UpdateRoots();
         }
         #endregion

@@ -137,6 +137,7 @@ namespace Walkabout.Views.Controls
             this.yearToDate = state.YearToDate;
             this.showAll = state.ShowAll;
             this.menuItemYearToDate.IsChecked = this.yearToDate;
+            this.menuItemShowAll.IsChecked = this.showAll;
             this.series = state.Series;
             GenerateGraph();
         }
@@ -373,6 +374,7 @@ namespace Walkabout.Views.Controls
             this.yearToDate = !this.yearToDate;
             this.showAll = false;
             menuItemYearToDate.IsChecked = this.yearToDate;
+            this.menuItemShowAll.IsChecked = this.showAll;
             GenerateGraph();
         }
 
@@ -463,6 +465,7 @@ namespace Walkabout.Views.Controls
                 this.yearToDate = false;
                 this.showAll = false;
                 this.menuItemYearToDate.IsChecked = this.yearToDate;
+                this.menuItemShowAll.IsChecked = this.showAll;
                 GenerateGraph();
             }
         }
@@ -548,8 +551,9 @@ namespace Walkabout.Views.Controls
         private void OnShowAll(object sender, ExecutedRoutedEventArgs e)
         {
             this.yearToDate = false;
-            this.menuItemYearToDate.IsChecked = this.yearToDate;
             this.showAll = true;
+            this.menuItemYearToDate.IsChecked = this.yearToDate;
+            this.menuItemShowAll.IsChecked = this.showAll;
             GenerateGraph();
         }
     }

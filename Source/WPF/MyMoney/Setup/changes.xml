@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-
+    <change version="1.1.0.47" date="7/9/2019">
+        In the stock history graph, use the price at the time of the add, not the current price.
+        Add a "loading..." prompt on reports that take a while to generate.
+        Always show cached stock history even when new history is being downloaded.
+    </change>
     <change version="1.1.0.45" date="7/6/2019">
         Further optimize startup performance by delaying the use of stock quote history
         until the user does a "View by security" request.  Optimize when stock quote

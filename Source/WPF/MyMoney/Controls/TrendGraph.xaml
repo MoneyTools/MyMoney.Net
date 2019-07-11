@@ -27,11 +27,11 @@
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem Name="menuItemYearToDate" Header="Year to date" Command="local:TrendGraph.CommandYearToDate"/>
+            <MenuItem Name="menuItemShowAll" Header="Show all" Command="local:TrendGraph.CommandShowAll"/>
             <MenuItem Name="menuItemNext" Header="Next" Command="local:TrendGraph.CommandNext"/>
             <MenuItem Name="menuItemPrevious" Header="Previous" Command="local:TrendGraph.CommandPrevious"/>
             <Separator/>
             <MenuItem Name="menuItemSetRange" Header="Set range" Command="local:TrendGraph.CommandSetRange"/>
-            <MenuItem Name="menuItemShowAll" Header="Show all" Command="local:TrendGraph.CommandShowAll"/>
             <MenuItem Name="menuItemZoomIn" Header="Zoom in" Command="local:TrendGraph.CommandZoomIn"/>
             <MenuItem Name="menuItemZoomOut" Header="Zoom out" Command="local:TrendGraph.CommandZoomOut"/>
             <Separator/>

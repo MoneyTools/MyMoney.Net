@@ -1040,7 +1040,7 @@
             </local:MoneyDataGrid>
 
             <!-- VIEW CURRENTLY HELD SECURITIES FOR ACCOUNT AKA "PORTFOLIO TAB" -->
-            <views:FlowDocumentView x:Name="InvestmentPortfolioView" Grid.Row="1" ShowSearchStrip="False">
+            <views:FlowDocumentView x:Name="InvestmentPortfolioView" Grid.Row="1" ShowSearchStrip="False" >
             </views:FlowDocumentView>
 
             <!-- MAGNIFY GLASS -->
