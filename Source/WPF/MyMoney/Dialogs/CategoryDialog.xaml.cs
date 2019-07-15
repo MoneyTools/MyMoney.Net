@@ -515,13 +515,17 @@ namespace Walkabout.Dialogs
                 decimal balance = 0;
                 foreach (Transaction t in data)
                 {
-                    balance += t.GetCategorizedAmount(this.category);
-                    if (first)
+                    if (!t.IsDeleted && t.Status != TransactionStatus.Void)
                     {
-                        start = t.Date;
-                        first = false;
+                        balance += t.CurrencyNormalizedAmount(t.AmountMinusTax);
+
+                        if (first)
+                        {
+                            start = t.Date;
+                            first = false;
+                        }
+                        end = t.Date;
                     }
-                    end = t.Date;
                 }
 
                 TimeSpan span = end - start;

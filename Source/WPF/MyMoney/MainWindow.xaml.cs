@@ -159,7 +159,7 @@ namespace Walkabout
                 //-----------------------------------------------------------------
                 // STOCKS CONTROL
                 this.securitiesControl = new SecuritiesControl();
-                this.securitiesControl.TabIndex = 3;
+                this.securitiesControl.TabIndex = 4;
                 this.securitiesControl.Name = "SecuritiesControl";
                 this.securitiesControl.MyMoney = this.myMoney;
 
@@ -168,7 +168,7 @@ namespace Walkabout
                     //-----------------------------------------------------------------
                     // RENTAL CONTROL
                     this.rentsControl = new RentsControl();
-                    this.rentsControl.TabIndex = 4;
+                    this.rentsControl.TabIndex = 5;
                     this.rentsControl.Name = "RentsControl";
                     this.rentsControl.MyMoney = this.myMoney;
                 }
@@ -2868,7 +2868,25 @@ namespace Walkabout
                 {
                     continue;
                 }
-                decimal amount = transaction.Amount;
+
+                decimal amount;
+
+                switch (this.TransactionView.ActiveViewName)
+                {
+                    case TransactionViewName.ByCategory:
+                    case TransactionViewName.ByCategoryCustom:
+                        amount = transaction.CurrencyNormalizedAmount(transaction.AmountMinusTax);
+                        break;
+
+                    case TransactionViewName.ByPayee:
+                        amount = transaction.CurrencyNormalizedAmount(transaction.Amount);
+                        break;
+
+                    default:
+                        amount = transaction.Amount;
+                        break;
+                }            
+                // Todo Trend graph is inconsistent with the below ...
                 if (transaction.Investment != null)
                 {
                     if (transaction.InvestmentType == InvestmentType.Add)
@@ -2894,10 +2912,9 @@ namespace Walkabout
             HistoryChart.Selection = selection;
         }
 
-
         void UpdateTransactionGraph(IEnumerable data, Account account, Category category)
         {
-            this.TransactionGraph.Generator = new TransactionGraphGenerator(data, account, category);
+            this.TransactionGraph.Generator = new TransactionGraphGenerator(data, account, category, this.TransactionView.ActiveViewName);
         }
 
         private void UpdateCategoryColors()

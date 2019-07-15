@@ -17,12 +17,14 @@ namespace Walkabout.Views
         IEnumerable data;
         Account account;
         Category category;
+        TransactionViewName viewName;
 
-        public TransactionGraphGenerator(IEnumerable data, Account account, Category category)
+        public TransactionGraphGenerator(IEnumerable data, Account account, Category category, TransactionViewName viewName)
         {
             this.data = data;
             this.account = account;
             this.category = category;
+            this.viewName = viewName;
             nfi.NumberDecimalDigits = 2;
             nfi.CurrencyNegativePattern = 0;
         }
@@ -40,31 +42,33 @@ namespace Walkabout.Views
         {
             if (data != null)
             {
-                NumberFormatInfo nfi = new NumberFormatInfo();
-                nfi.NumberDecimalDigits = 2;
-                nfi.CurrencyNegativePattern = 0;
-
                 decimal balance = this.account != null ? this.account.OpeningBalance : 0;
 
                 foreach (object row in data)
                 {
                     Transaction t = row as Transaction;
-                    if (t == null) continue;
-                    if (t.Status == TransactionStatus.Void) continue;
+                    if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
+                    { 
+                        switch (this.viewName)
+                        {
+                            case TransactionViewName.BySecurity:
+                                // When we build the trend graph for a specific security in the security view,
+                                // we should show the overall value of the securities instead, which is precalculated and stored within each transaction
+                                balance = t.RunningBalance;
+                                break;
 
-                    if (t.Account == this.account || // showing transactions for an account
-                        (this.account == null)) // showing transactions by category
-                    {
-                        // For all regular transaction lists, we calculate the overall balance on the fly, based on each transaction amount.
-                        // When we list securities - not an account - we should show the overall value of the securities instead, 
-                        // which is precalculated and stored within each transaction
-                        if (this.account == null && t.Investment != null)
-                        {
-                            balance = t.RunningBalance;
-                        }
-                        else
-                        {
-                            balance += t.GetCategorizedAmount(this.category);
+                            case TransactionViewName.ByCategory:
+                            case TransactionViewName.ByCategoryCustom:
+                                balance += t.CurrencyNormalizedAmount(t.AmountMinusTax);
+                                break;
+
+                            case TransactionViewName.ByPayee:
+                                balance += t.CurrencyNormalizedAmount(t.Amount);
+                                break;
+
+                            default:
+                                balance += t.Amount;
+                                break;
                         }
 
                         yield return new TrendValue()
@@ -73,14 +77,14 @@ namespace Walkabout.Views
                             Value = balance,
                             UserData = t
                         };
-                    }
+                    }                    
                 }
             }
         }
 
         public string GetLabel(TrendValue item)
         {
-            return item.Value.ToString("n", nfi) + "\r\n" + item.Date.ToShortDateString();
+            return item.Value.ToString("n", nfi);
         }
     }
 
@@ -139,7 +143,7 @@ namespace Walkabout.Views
         public string GetLabel(TrendValue item)
         {
             string symbol = (string)item.UserData;
-            return symbol + "\r\n" + item.Value.ToString("n", nfi) + "\r\n" + item.Date.ToShortDateString();
+            return symbol + "\r\n" + item.Value.ToString("n", nfi);
         }
     }
 

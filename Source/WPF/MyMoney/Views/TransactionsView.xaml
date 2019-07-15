@@ -881,9 +881,12 @@
 
                     <!-- Scanned Attachment -->
                     <views:TransactionAttachmentColumn Header="A" SortMemberPath="HasAttachment" AutomationProperties.AutomationId="AttachmentColumn"/>
-                    
+
                     <!-- ACCOUNT -->
                     <DataGridTextColumn Header="Account" Binding="{Binding Account.Name, Converter={StaticResource NullableValueConverter}}" IsReadOnly="True" />
+
+                    <!-- CURRENCY -->
+                    <DataGridTextColumn Header="Currency" Binding="{Binding Account.Currency, Converter={StaticResource NullableValueConverter}}" IsReadOnly="True" />
 
                     <!-- NUMBER -->
                     <views:TransactionNumberColumn Header="Num" SortMemberPath="Number"/>

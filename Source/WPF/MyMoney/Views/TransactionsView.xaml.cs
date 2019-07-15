@@ -3019,33 +3019,77 @@ namespace Walkabout.Views
         public string GetBalance()
         {
             IEnumerable data = this.Rows;
-            if (data != null)
+            if (data == null)
             {
-                Account account = this.ActiveAccount;
-                decimal salestax = 0;
-                decimal investmentValue = 0;
-                decimal balance = Transactions.GetBalance(this.myMoney, account, this.ActiveCategory, data, out salestax, out investmentValue);
-                if (account != null)
-                {
-                    balance += account.OpeningBalance;
-                }
-                int count = 0;
-                foreach (object item in data)
-                {
-                    count++;
-                }
-                string msg = count + " rows, " + balance.ToString("C");
-                if (salestax != 0)
-                {
-                    msg += ", taxes " + salestax.ToString("C");
-                }
-                if (investmentValue != 0)
-                {
-                    msg += ", investments " + investmentValue.ToString("C");
-                }
-                return msg;
+                return string.Empty;
             }
-            return string.Empty;
+
+            Account account = this.ActiveAccount;
+            decimal balance = account != null ? account.OpeningBalance : 0;
+            int count = 0;
+            decimal salestax = 0;
+            decimal investmentValue = 0;
+            DateTime lastDate = DateTime.Now;
+            bool hasInvestments = false;
+
+            foreach (object row in data)
+            {
+                count++;
+                Transaction t = row as Transaction;
+                if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
+                {                       
+                    lastDate = t.Date;
+
+                    switch (this.ActiveViewName)
+                    {
+                        case TransactionViewName.ByCategory:
+                        case TransactionViewName.ByCategoryCustom:
+                            balance += t.CurrencyNormalizedAmount(t.AmountMinusTax);
+                            salestax += t.CurrencyNormalizedAmount(t.NetSalesTax);
+                            break;
+
+                        case TransactionViewName.ByPayee:
+                            balance += t.CurrencyNormalizedAmount(t.Amount);
+                            salestax += t.CurrencyNormalizedAmount(t.NetSalesTax);
+                            break;
+
+                        default:
+                            balance += t.Amount;
+                            salestax += t.NetSalesTax;
+                            if (t.Investment != null)
+                            {
+                                hasInvestments = true;
+                                salestax += t.Investment.Taxes;
+                            }
+                            break;
+                    }
+                }
+            }
+
+            if (hasInvestments && account != null)
+            {
+                // get the investment value as of the date of the last transaction
+                CostBasisCalculator calculator = new CostBasisCalculator(this.myMoney, lastDate);
+                foreach (SecurityPurchase sp in calculator.GetHolding(account).GetHoldings())
+                {
+                    Security s = sp.Security;
+                    if (Math.Floor(sp.UnitsRemaining) > 0)
+                    {
+                        investmentValue += sp.MarketValue;
+                    }
+                }
+            }            
+
+            string msg = count + " rows, " + balance.ToString("C");
+            if (salestax != 0)
+            {
+                msg += ", taxes " + salestax.ToString("C");
+            }
+            if (investmentValue != 0)
+            {
+                msg += ", investments " + investmentValue.ToString("C");
+            }
+            return msg;
         }
 
         private bool refresh;
