@@ -323,6 +323,8 @@ namespace Walkabout.Charts
 
                 ComputeLinearRegression();
 
+                BarChartAxis.Minimum = ComputeMinimumYAxis();
+
                 ObservableCollection<HistoryChartColumn> copy = new ObservableCollection<HistoryChartColumn>(this.collection);
 
                 SeriesAmount.ItemsSource = copy;
@@ -337,6 +339,20 @@ namespace Walkabout.Charts
             {
                 updating = false;
             }
+        }
+
+        private double ComputeMinimumYAxis()
+        {
+            double minimum = double.MaxValue;
+            foreach (HistoryChartColumn c in collection)
+            {
+                double y = (double)c.Amount;
+                if (y < minimum)
+                {
+                    minimum = y;
+                }
+            }
+            return minimum > 0 ? 0 : minimum;
         }
 
         private void ComputeLinearRegression()

@@ -71,7 +71,7 @@
 
             </charting:LineSeries>
             <charting:Chart.Axes>
-                <charting:LinearAxis Orientation="Y"  />
+                <charting:LinearAxis x:Name="BarChartAxis" Orientation="Y" />
             </charting:Chart.Axes>
         </charting:Chart>
 
