@@ -2839,6 +2839,10 @@ namespace Walkabout
 
         private void UpdateHistoryChart()
         {
+            if (this.TransactionView.ViewModel == null)
+            {
+                return;
+            }
             // pick a color based on selected category or payee.
             Category cat = this.TransactionView.ActiveCategory;
             Payee payee = this.TransactionView.ActivePayee;
