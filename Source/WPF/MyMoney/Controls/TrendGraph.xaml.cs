@@ -369,7 +369,7 @@ namespace Walkabout.Views.Controls
             // duplicate the items across a range to fill the gaps so the graph spans the whole time span.
             while (start < end)
             {
-                string label = this.generator.GetLabel(v);
+                string label = this.generator.GetLabel(v) + "\r\n" + start.Date.ToShortDateString();
                 timeData.Add(new ChartValue(label, (double)v.Value, v.UserData));
                 start = start.AddDays(1);
             }
