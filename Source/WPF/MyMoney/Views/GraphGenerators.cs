@@ -84,7 +84,7 @@ namespace Walkabout.Views
 
         public string GetLabel(TrendValue item)
         {
-            return item.Value.ToString("n", nfi);
+            return item.Value.ToString("n", nfi) + "\r\n" + item.Date.ToShortDateString();
         }
     }
 
@@ -143,7 +143,7 @@ namespace Walkabout.Views
         public string GetLabel(TrendValue item)
         {
             string symbol = (string)item.UserData;
-            return symbol + "\r\n" + item.Value.ToString("n", nfi);
+            return symbol + "\r\n" + item.Value.ToString("n", nfi) + "\r\n" + item.Date.ToShortDateString();
         }
     }
 
