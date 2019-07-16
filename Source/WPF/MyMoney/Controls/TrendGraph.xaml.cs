@@ -328,6 +328,7 @@ namespace Walkabout.Views.Controls
             TrendValue lastv = emptyTrendValue;
             foreach (TrendValue v in this.data)
             {
+                // NOTE: This list is assumed to be sorted
                 if (v.Date > end)
                 {
                     break;
