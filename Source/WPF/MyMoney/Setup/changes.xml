@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+    <change version="1.1.0.48" date="7/31/2019">
+        Fix threading bug in import of QFX files.
+    </change>
     <change version="1.1.0.47" date="7/9/2019">
         In the stock history graph, use the price at the time of the add, not the current price.
         Add a "loading..." prompt on reports that take a while to generate.
