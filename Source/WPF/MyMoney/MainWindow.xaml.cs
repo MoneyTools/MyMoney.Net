@@ -159,7 +159,7 @@ namespace Walkabout
                 //-----------------------------------------------------------------
                 // STOCKS CONTROL
                 this.securitiesControl = new SecuritiesControl();
-                this.securitiesControl.TabIndex = 3;
+                this.securitiesControl.TabIndex = 4;
                 this.securitiesControl.Name = "SecuritiesControl";
                 this.securitiesControl.MyMoney = this.myMoney;
 
@@ -168,7 +168,7 @@ namespace Walkabout
                     //-----------------------------------------------------------------
                     // RENTAL CONTROL
                     this.rentsControl = new RentsControl();
-                    this.rentsControl.TabIndex = 4;
+                    this.rentsControl.TabIndex = 5;
                     this.rentsControl.Name = "RentsControl";
                     this.rentsControl.MyMoney = this.myMoney;
                 }
