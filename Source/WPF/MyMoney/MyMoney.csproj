@@ -51,7 +51,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <DisallowUrlActivation>true</DisallowUrlActivation>
-    <ApplicationRevision>51</ApplicationRevision>
+    <ApplicationRevision>52</ApplicationRevision>
     <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -237,6 +237,7 @@
     <Compile Include="Utilities\AnimatedMessage.cs" />
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\FileHash.cs" />
+    <Compile Include="Utilities\QuickFilterParser.cs" />
     <Compile Include="Utilities\RecentFilesMenu.cs" />
     <Compile Include="Utilities\UsHolidays.cs" />
     <Compile Include="Views\ChangeTracker.cs" />

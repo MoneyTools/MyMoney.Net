@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+    <change version="1.1.0.51" date="8/5/2019">
+        Add "not" to the quick filter search grammar so you can do quick search like "costco and not gas".  Add Accepted, Categorized and Reconciled to the quick filter dropdown.
+    </change>
     <change version="1.1.0.50" date="7/31/2019">
         Fix threading bug in import of QFX files.
         Some fixes to TrendGraph mouse wheel scrolling, and CTRL+WHEEL for panning.
