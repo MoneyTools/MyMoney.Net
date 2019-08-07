@@ -71,11 +71,6 @@
 
         <CommandBinding Command="views:TransactionsView.CommandViewToggleOneLineView" Executed="OnCommandViewToggleOneLineView" CanExecute="CanExecute_ToggleOneLineView" />
         <CommandBinding Command="views:TransactionsView.CommandViewToggleAllSplits" Executed="OnCommandViewToggleAllSplits" CanExecute="CanExecute_ToggleViewsAllSplits"/>
-        <CommandBinding Command="views:TransactionsView.CommandViewAllTransactions" Executed="OnCommandViewAllTransactions" CanExecute="CanExecute_AllTransactions"/>
-        <CommandBinding Command="views:TransactionsView.CommandViewUnacceptedTransactions" Executed="OnCommandViewUnacceptedTransactions" CanExecute="CanExecute_UnacceptedTransactions"/>
-        <CommandBinding Command="views:TransactionsView.CommandViewUnreconciledTransactions" Executed="OnCommandViewUnreconciledTransactions" CanExecute="CanExecute_UnreconciledTransactions"/>
-        <CommandBinding Command="views:TransactionsView.CommandViewBudgetedTransactions" Executed="OnCommandViewBudgetedTransactions" CanExecute="CanExecute_BudgetedTransactions"/>
-        <CommandBinding Command="views:TransactionsView.CommandViewUncategorizedTransactions" Executed="OnCommandViewUncategorizedTransactions" CanExecute="CanExecute_UncategorizedTransactions"/>
 
         <CommandBinding Command="views:TransactionsView.CommandViewExport" Executed="OnCommandViewExport" />
         <CommandBinding Command="views:TransactionsView.CommandScanAttachment" Executed="OnScanAttachment" />
@@ -742,17 +737,23 @@
                             <ComboBoxItem x:Name="FilterByNothing" >
                                 <TextBlock Text="All" />
                             </ComboBoxItem>
+                            <ComboBoxItem x:Name="FilterByReconciled">
+                                <TextBlock  Text="Reconciled" />
+                            </ComboBoxItem>
                             <ComboBoxItem x:Name="FilterByUnreconciled">
                                 <TextBlock  Text="Unreconciled" />
+                            </ComboBoxItem>
+                            <ComboBoxItem x:Name="FilterByAccepted">
+                                <TextBlock  Text="Accepted" />
                             </ComboBoxItem>
                             <ComboBoxItem x:Name="FilterByUnaccepted">
                                 <TextBlock  Text="Unaccepted" />
                             </ComboBoxItem>
+                            <ComboBoxItem x:Name="FilterByCategorized">
+                                <TextBlock  Text="Categorized"/>
+                            </ComboBoxItem>
                             <ComboBoxItem x:Name="FilterByUncategorized">
                                 <TextBlock  Text="Uncategorized"/>
-                            </ComboBoxItem>
-                            <ComboBoxItem x:Name="FilterByBudgeted">
-                                <TextBlock Text="Budgeted"/>
                             </ComboBoxItem>
                             <ComboBoxItem x:Name="FilterByCustom">
                                 <TextBlock Text="Custom"/>

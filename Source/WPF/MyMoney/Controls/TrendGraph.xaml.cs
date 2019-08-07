@@ -10,6 +10,7 @@ using Walkabout.Charts;
 using Walkabout.Configuration;
 using Walkabout.Data;
 using Walkabout.Dialogs;
+using Walkabout.Utilities;
 
 namespace Walkabout.Views.Controls
 {
@@ -45,6 +46,7 @@ namespace Walkabout.Views.Controls
         bool showAll;
         int series = 1;
         IServiceProvider sp;
+        DelayedActions delayedActions = new DelayedActions();
 
         public readonly static RoutedUICommand CommandYearToDate;
         public readonly static RoutedUICommand CommandNext;
@@ -187,12 +189,26 @@ namespace Walkabout.Views.Controls
                 {
                     spinIndex = mouseWheelDateSteps.Length - 1;
                 }
+                CalendarRange scrollAmount = mouseWheelDateSteps[spinIndex];
 
-                this.start = Step(this.start, mouseWheelDateSteps[spinIndex], 1, direction);
-                this.end = DateTime.Now;
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                {
+                    // pan
+                    this.start = Step(this.start, scrollAmount, 1, direction);
+                    this.end = Step(this.end, scrollAmount, 1, direction);
+                    this.yearToDate = false;
+                    this.showAll = false;
+                }
+                else
+                {
+                    // zoom.
+                    this.start = Step(this.start, scrollAmount, 1, direction);
+                    this.yearToDate = false;
+                    this.showAll = false;
+                }
 
                 Pin();
-                GenerateGraph();
+                delayedActions.StartDelayedAction("update_graph", GenerateGraph, TimeSpan.FromMilliseconds(100));
             }
         }
 
@@ -240,10 +256,14 @@ namespace Walkabout.Views.Controls
                     }
                     else if (this.showAll)
                     {
-                        this.start = DateTime.MaxValue;
-                        this.end = DateTime.MinValue;
+                        this.start = DateTime.Now;
+                        this.end = DateTime.Now;
                         foreach (var d in this.data)
                         {
+                            if (d.Date.Year < 1900)
+                            {
+                                continue;
+                            }
                             if (d.Date < start)
                             {
                                 this.start = d.Date;

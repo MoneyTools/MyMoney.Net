@@ -250,9 +250,12 @@ namespace Walkabout.StockQuotes
                 return;
             }
 
-            OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
-            output.Clear();
-            output.AppendHeading(Walkabout.Properties.Resources.StockQuoteCaption);
+            UiDispatcher.BeginInvoke(new Action(() =>
+            {
+                OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
+                output.Clear();
+                output.AppendHeading(Walkabout.Properties.Resources.StockQuoteCaption);
+            }));
 
             List<string> batch = new List<string>();
             foreach (Security s in toFetch)

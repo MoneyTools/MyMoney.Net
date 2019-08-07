@@ -43,9 +43,11 @@ namespace Walkabout.Views
     public enum TransactionFilter
     {
         All,
+        Accepted,
         Unaccepted,
+        Reconciled,
         Unreconciled,
-        Budgeted,
+        Categorized,
         Uncategorized,
         Custom
     }
@@ -379,17 +381,23 @@ namespace Walkabout.Views
                 case TransactionFilter.All:
                     this.TransactionViewMode.SelectedValue = this.FilterByNothing;
                     break;
+                case TransactionFilter.Accepted:
+                    this.TransactionViewMode.SelectedValue = this.FilterByAccepted;
+                    break;
                 case TransactionFilter.Unaccepted:
                     this.TransactionViewMode.SelectedValue = this.FilterByUnaccepted;
+                    break;
+                case TransactionFilter.Categorized:
+                    this.TransactionViewMode.SelectedValue = this.FilterByCategorized;
                     break;
                 case TransactionFilter.Uncategorized:
                     this.TransactionViewMode.SelectedValue = this.FilterByUncategorized;
                     break;
+                case TransactionFilter.Reconciled:
+                    this.TransactionViewMode.SelectedValue = this.FilterByReconciled;
+                    break;
                 case TransactionFilter.Unreconciled:
                     this.TransactionViewMode.SelectedValue = this.FilterByUnreconciled;
-                    break;
-                case TransactionFilter.Budgeted:
-                    this.TransactionViewMode.SelectedValue = this.FilterByBudgeted;
                     break;
                 case TransactionFilter.Custom:
                     this.TransactionViewMode.SelectedValue = this.FilterByCustom;
@@ -2120,8 +2128,28 @@ namespace Walkabout.Views
                 case TransactionFilter.Custom:
                     filter = new Predicate<Transaction>((t) => { return !t.Account.IsCategoryFund; });
                     break;
+                case TransactionFilter.Accepted:
+                    filter = new Predicate<Transaction>((t) => { return !t.Unaccepted && !t.Account.IsCategoryFund; });
+                    break;
                 case TransactionFilter.Unaccepted:
                     filter = new Predicate<Transaction>((t) => { return t.Unaccepted && !t.Account.IsCategoryFund; });
+                    break;
+                case TransactionFilter.Reconciled:
+                    if (!this.IsReconciling)
+                    {
+                        // We are not in BALANCING mode so use the normal un-reconcile filter (show all transactions that are not reconciled)
+                        filter = new Predicate<Transaction>((t) => { return t.Status == TransactionStatus.Reconciled && !t.Account.IsCategoryFund; });
+                    }
+                    else
+                    {
+                        // While balancing we need to see the reconciled transactions for the current statement date as well as any 
+                        // before or after that are not reconciled.
+                        filter = new Predicate<Transaction>((t) =>
+                        {
+                            return (t.Status == TransactionStatus.Reconciled && !t.Account.IsCategoryFund) ||
+                                    t.IsReconciling || IsIncludedInCurrentStatement(t);
+                        });
+                    }
                     break;
                 case TransactionFilter.Unreconciled:
                     if (!this.IsReconciling)
@@ -2140,11 +2168,39 @@ namespace Walkabout.Views
                         });
                     }
                     break;
-                case TransactionFilter.Budgeted:
-                    filter = new Predicate<Transaction>((t) => { return t.IsBudgeted; });
+                case TransactionFilter.Categorized:
+                    filter = new Predicate<Transaction>((t) => {
+                        if (t.Status != TransactionStatus.Void)
+                        {
+                            return false; // no point seeing these
+                        }
+                        if (t.IsFakeSplit || t.Account.IsCategoryFund)
+                        {
+                            return false; // this represents a category by definition.
+                        }
+                        if (t.IsSplit)
+                        {
+                            return t.Splits.Unassigned == 0; // then all splits are good!
+                        }
+                        return t.Category != null || t.Transfer != null;
+                    });
                     break;
                 case TransactionFilter.Uncategorized:
-                    filter = new Predicate<Transaction>((t) => { return !t.Account.IsCategoryFund && t.Status != TransactionStatus.Void && ((!t.IsFakeSplit && t.IsSplit && t.Splits.Unassigned > 0) || (t.Category == null && t.Transfer == null)); });
+                    filter = new Predicate<Transaction>((t) => {
+                        if (t.Status != TransactionStatus.Void)
+                        {
+                            return false; // no point seeing these
+                        }
+                        if (t.IsFakeSplit || t.Account.IsCategoryFund)
+                        {
+                            return false; // this represents a category by definition.
+                        }
+                        if (t.IsSplit)
+                        {
+                            return t.Splits.Unassigned > 0; // then there is more to categorize in the splits!
+                        }
+                        return (t.Category == null && t.Transfer == null);
+                    });
                     break;
             }
             return filter;
@@ -2617,30 +2673,33 @@ namespace Walkabout.Views
 
             if (selected == FilterByNothing)
             {
-                OnCommandViewAllTransactions(this, null);
+                this.TransactionFilter = TransactionFilter.All;
             }
-
-            if (selected == FilterByUnreconciled)
+            else if (selected == FilterByReconciled)
             {
-                OnCommandViewUnreconciledTransactions(this, null);
+                this.TransactionFilter = TransactionFilter.Reconciled;
             }
-
-            if (selected == FilterByUnaccepted)
+            else if (selected == FilterByUnreconciled)
             {
-                OnCommandViewUnacceptedTransactions(this, null);
+                this.TransactionFilter = TransactionFilter.Unreconciled;
             }
-
-            if (selected == FilterByUncategorized)
+            else if (selected == FilterByAccepted)
             {
-                OnCommandViewUncategorizedTransactions(this, null);
+                this.TransactionFilter = TransactionFilter.Accepted;
             }
-
-            if (selected == FilterByBudgeted)
+            else if (selected == FilterByUnaccepted)
             {
-                OnCommandViewBudgetedTransactions(this, null);
+                this.TransactionFilter = TransactionFilter.Unaccepted;
             }
-
-            if (selected == FilterByCustom)
+            else if (selected == FilterByCategorized)
+            {
+                this.TransactionFilter = TransactionFilter.Uncategorized;
+            }
+            else if (selected == FilterByCategorized)
+            {
+                this.TransactionFilter = TransactionFilter.Categorized;
+            }
+            else if (selected == FilterByCustom)
             {
                 // do nothing - this one is usually selected programatically.
             }
@@ -3530,11 +3589,6 @@ namespace Walkabout.Views
 
         public readonly static RoutedUICommand CommandViewToggleOneLineView = new RoutedUICommand("View ToggleOneLineView", "ViewToggleOneLineView", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewToggleAllSplits = new RoutedUICommand("View Toggle View All Splits", "ViewToggleViewAllSplits", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewAllTransactions = new RoutedUICommand("View All Transactions", "CommandViewAllTransactions", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewUnacceptedTransactions = new RoutedUICommand("View Unaccepted Transactions", "CommandViewUnacceptedTransactions", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewUnreconciledTransactions = new RoutedUICommand("View Unreconciled Transactions", "CommandViewUnreconciledTransactions", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewBudgetedTransactions = new RoutedUICommand("View Budgeted Transactions", "CommandViewBudgetedTransactions", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewUncategorizedTransactions = new RoutedUICommand("View Uncategorized Transactions", "CommandViewUncategorizedTransactions", typeof(TransactionsView));
 
         public readonly static RoutedUICommand CommandViewExport = new RoutedUICommand("Export", "CommandViewExport", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandScanAttachment = new RoutedUICommand("ScanAttachment", "CommandScanAttachment", typeof(TransactionsView));
@@ -3993,31 +4047,6 @@ namespace Walkabout.Views
         private void OnCommandViewToggleOneLineView(object sender, ExecutedRoutedEventArgs e)
         {
             this.OneLineView = !this.OneLineView;
-        }
-
-        private void OnCommandViewAllTransactions(object sender, ExecutedRoutedEventArgs e)
-        {
-            this.TransactionFilter = TransactionFilter.All;
-        }
-
-        private void OnCommandViewUnacceptedTransactions(object sender, ExecutedRoutedEventArgs e)
-        {
-            this.TransactionFilter = TransactionFilter.Unaccepted;
-        }
-
-        private void OnCommandViewUnreconciledTransactions(object sender, ExecutedRoutedEventArgs e)
-        {
-            this.TransactionFilter = TransactionFilter.Unreconciled;
-        }
-
-        private void OnCommandViewBudgetedTransactions(object sender, ExecutedRoutedEventArgs e)
-        {
-            this.TransactionFilter = TransactionFilter.Budgeted;
-        }
-
-        private void OnCommandViewUncategorizedTransactions(object sender, ExecutedRoutedEventArgs e)
-        {
-            this.TransactionFilter = TransactionFilter.Uncategorized;
         }
 
         private void OnCommandViewToggleAllSplits(object sender, ExecutedRoutedEventArgs e)
@@ -7222,12 +7251,16 @@ namespace Walkabout.Views
             {
                 case "All":
                     return filter == TransactionFilter.All;
+                case "Accepted":
+                    return filter == TransactionFilter.Accepted;
                 case "Unaccepted":
                     return filter == TransactionFilter.Unaccepted;
+                case "Reconciled":
+                    return filter == TransactionFilter.Reconciled;
                 case "Unreconciled":
                     return filter == TransactionFilter.Unreconciled;
-                case "Budgeted":
-                    return filter == TransactionFilter.Budgeted;
+                case "Categorized":
+                    return filter == TransactionFilter.Categorized;
                 case "Uncategorized":
                     return filter == TransactionFilter.Uncategorized;
                 case "Custom":
