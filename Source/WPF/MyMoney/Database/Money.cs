@@ -9043,7 +9043,8 @@ namespace Walkabout.Data
                 if (this.transactionDropTarget != value)
                 {
                     this.transactionDropTarget = value;
-                    OnChanged("TransactionDropTarget");
+                    // don't use OnChanged, we don't want this to make the database dirty.
+                    FireChangeEvent(this, new ChangeEventArgs(this, "TransactionDropTarget", ChangeType.None));
                 }
             }
         }
@@ -9057,7 +9058,8 @@ namespace Walkabout.Data
                 if (this.attachmentDropTarget != value)
                 {
                     this.attachmentDropTarget = value;
-                    OnChanged("AttachmentDropTarget");
+                    // don't use OnChanged, we don't want this to make the database dirty.
+                    FireChangeEvent(this, new ChangeEventArgs(this, "AttachmentDropTarget", ChangeType.None));
                 }
             }
         }
