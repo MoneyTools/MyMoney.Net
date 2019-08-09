@@ -72,12 +72,8 @@
         <GradientStop Color="#AEB9CD" Offset="1" />
     </LinearGradientBrush>
 
-    <Style TargetType="DataGridRow" x:Key="DragDropRowFeedback">
-        <Setter Property="BorderBrush" Value="Navy"/>
-        <Setter Property="BorderThickness" Value="2"/>
-    </Style>
-
-
+    <SolidColorBrush x:Key="ValidDropTargetFeedbackBrush" Color="Navy"/>
+    
     <Style x:Key="SmoothFadeIn" TargetType="FrameworkElement" >
         <Style.Triggers>
             <Trigger Property="Visibility" Value="Visible">

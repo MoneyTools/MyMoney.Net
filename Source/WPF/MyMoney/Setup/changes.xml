@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+    <change version="1.1.0.52" date="8/9/2019">
+        Add ability to drag/drop a .png, .jpg, .gif or .bmp image of a receipt onto a Transaction to add it as an attachment.
+        Thanks to github community member 'tobin5' for this handy contribution.
+    </change>
     <change version="1.1.0.51" date="8/5/2019">
         Add "not" to the quick filter search grammar so you can do quick search like "costco and not gas".  Add Accepted, Categorized and Reconciled to the quick filter dropdown.
     </change>

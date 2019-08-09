@@ -8973,6 +8973,8 @@ namespace Walkabout.Data
         Split relatedSplit;
         DateTime? mergeDate;
         string originalPayee; // before auto-aliasing, helps with future merging.
+        bool transactionDropTarget;
+        bool attachmentDropTarget;
 
         public Transaction()
         { // for serialization.
@@ -9028,6 +9030,34 @@ namespace Walkabout.Data
                     {
                         this.Investment.Id = value; // mirror Id in the investment.
                     }
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public bool TransactionDropTarget
+        {
+            get { return this.transactionDropTarget; }
+            set
+            {
+                if (this.transactionDropTarget != value)
+                {
+                    this.transactionDropTarget = value;
+                    OnChanged("TransactionDropTarget");
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public bool AttachmentDropTarget
+        {
+            get { return this.attachmentDropTarget; }
+            set
+            {
+                if (this.attachmentDropTarget != value)
+                {
+                    this.attachmentDropTarget = value;
+                    OnChanged("AttachmentDropTarget");
                 }
             }
         }

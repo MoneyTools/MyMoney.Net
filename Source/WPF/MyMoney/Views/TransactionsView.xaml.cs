@@ -1095,13 +1095,38 @@ namespace Walkabout.Views
             }
         }
 
+        enum DropType
+        {
+            Transaction,
+            File
+        }
+
+        private void SetDragDropStyles(DataGridRow row, DropType type)
+        {
+            Transaction target = row.Item as Transaction;
+            if (target != null)
+            {
+                switch (type)
+                {
+                    case DropType.Transaction:
+                        target.TransactionDropTarget = true;
+                        break;
+                    case DropType.File:
+                        target.AttachmentDropTarget = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         private void ClearDragDropStyles(DataGridRow row)
         {
-            Style originalRowStyle = row.Tag as Style;
-            if (originalRowStyle != null)
+            Transaction target = row.Item as Transaction;
+            if (target != null)
             {
-                row.Style = originalRowStyle;
-                row.Tag = null;
+                target.TransactionDropTarget = false;
+                target.AttachmentDropTarget = false;
             }
         }
 
@@ -1125,12 +1150,7 @@ namespace Walkabout.Views
                         Transaction target = row.Item as Transaction;
                         if (target != null && t != target && t.Amount == target.Amount)
                         {
-                            if (row.Tag == null)
-                            {
-                                row.Tag = row.Style;
-                                Style style = (Style)FindResource("DragDropRowFeedback");
-                                row.Style = row.Style.MergeStyles(style);
-                            }
+                            SetDragDropStyles(row, DropType.Transaction);
                             e.Effects = DragDropEffects.Move;
                         }
                     }
@@ -1146,6 +1166,7 @@ namespace Walkabout.Views
                         if (files.Length == 1 && IsValidAttachmentExtension(files[0]))
                         {
                             proceed = true;
+                            SetDragDropStyles(row, DropType.File);
                             e.Effects = DragDropEffects.Copy;
                         }
                     }
@@ -5186,6 +5207,7 @@ namespace Walkabout.Views
             UpdateBackground();
             UpdateForeground();
             UpdateFontWeight();
+            UpdateBorder();
         }
 
         void ClearContext()
@@ -5221,6 +5243,9 @@ namespace Walkabout.Views
                     break;
                 case "IsReadOnly":
                     UpdateForeground();
+                    break;
+                case "AttachmentDropTarget":
+                    UpdateBorder();
                     break;
             }
         }
@@ -5358,6 +5383,25 @@ namespace Walkabout.Views
                 if (cell != null)
                 {
                     cell.ClearValue(DataGridCell.FontWeightProperty);
+                }
+            }
+        }
+
+        void UpdateBorder()
+        {
+            if (this.context != null && this.cell != null)
+            {
+                if (cell.Column.SortMemberPath == "HasAttachment")
+                {
+                    if (this.context.AttachmentDropTarget)
+                    {
+                        this.SetResourceReference(DataGridCell.BorderBrushProperty, "ValidDropTargetFeedbackBrush");
+                        this.BorderThickness = new Thickness(1);
+                    }
+                    else
+                    {
+                        this.BorderThickness = new Thickness(0);
+                    }
                 }
             }
         }

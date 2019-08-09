@@ -642,6 +642,15 @@
             <EventSetter Event="DragLeave" Handler="OnDataGridRowDragLeave"/>
             <EventSetter Event="Drop" Handler="OnDataGridRowDragDrop"/>
             <Setter Property="AllowDrop" Value="True"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=TransactionDropTarget}" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource ValidDropTargetFeedbackBrush}"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=TransactionDropTarget}" Value="False">
+                    <Setter Property="BorderThickness" Value="0"/>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
