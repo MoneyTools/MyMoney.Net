@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -994,15 +994,49 @@ namespace Walkabout.Views
         private void OnDataGridRowDragDrop(object sender, DragEventArgs e)
         {
             DataGridRow row = (DataGridRow)sender;
-            Transaction t = e.Data.GetData(typeof(Transaction)) as Transaction;
-            if (t != null)
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                Transaction u = row.Item as Transaction;
-                if (t != u && t.Amount == u.Amount)
+                var transaction = row.Item as Transaction;
+
+                if (transaction != null && transaction.HasAttachment == false)
                 {
-                    Merge(t, u, true);
+                    var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    if (files.Length == 1)
+                    {
+                        var extension = Path.GetExtension(files[0]);
+                        var settings = (Settings)this.site.GetService(typeof(Settings));
+                        var directory = Path.Combine(settings.AttachmentDirectory, NativeMethods.GetValidFileName(transaction.AccountName));
+
+                        try
+                        {
+                            if (!Directory.Exists(directory))
+                                Directory.CreateDirectory(directory);
+
+                            var attachmentFullPath = Path.Combine(directory, $"{transaction.Id}{extension}");
+
+                            if (!File.Exists(attachmentFullPath))
+                            {
+                                File.Copy(files[0], attachmentFullPath);
+                                transaction.HasAttachment = true;
+                            }
+                        }
+                        catch { }
+                    }
                 }
             }
+            else
+            {
+                Transaction t = e.Data.GetData(typeof(Transaction)) as Transaction;
+                if (t != null)
+                {
+                    Transaction u = row.Item as Transaction;
+                    if (t != u && t.Amount == u.Amount)
+                    {
+                        Merge(t, u, true);
+                    }
+                }
+            }          
 
             ClearDragDropStyles(row);
         }
@@ -1061,13 +1095,38 @@ namespace Walkabout.Views
             }
         }
 
+        enum DropType
+        {
+            Transaction,
+            File
+        }
+
+        private void SetDragDropStyles(DataGridRow row, DropType type)
+        {
+            Transaction target = row.Item as Transaction;
+            if (target != null)
+            {
+                switch (type)
+                {
+                    case DropType.Transaction:
+                        target.TransactionDropTarget = true;
+                        break;
+                    case DropType.File:
+                        target.AttachmentDropTarget = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         private void ClearDragDropStyles(DataGridRow row)
         {
-            Style originalRowStyle = row.Tag as Style;
-            if (originalRowStyle != null)
+            Transaction target = row.Item as Transaction;
+            if (target != null)
             {
-                row.Style = originalRowStyle;
-                row.Tag = null;
+                target.TransactionDropTarget = false;
+                target.AttachmentDropTarget = false;
             }
         }
 
@@ -1083,23 +1142,54 @@ namespace Walkabout.Views
             DataGridRow row = (DataGridRow)sender;
             if (!row.IsEditing)
             {
-                Transaction t = e.Data.GetData(typeof(Transaction)) as Transaction;
-                if (t != null)
+                if (e.Data.GetDataPresent(typeof(Transaction)))
                 {
-                    Transaction target = row.Item as Transaction;
-                    if (target != null && t != target && t.Amount == target.Amount)
+                    Transaction t = e.Data.GetData(typeof(Transaction)) as Transaction;
+                    if (t != null)
                     {
-                        if (row.Tag == null)
+                        Transaction target = row.Item as Transaction;
+                        if (target != null && t != target && t.Amount == target.Amount)
                         {
-                            row.Tag = row.Style;
-                            Style style = (Style)FindResource("DragDropRowFeedback");
-                            row.Style = row.Style.MergeStyles(style);
+                            SetDragDropStyles(row, DropType.Transaction);
+                            e.Effects = DragDropEffects.Move;
                         }
-                        e.Effects = DragDropEffects.Move;
                     }
                 }
-                e.Handled = true;
+                else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                    var proceed = false;
+                    var transaction = row.Item as Transaction;
+                    if(transaction != null && transaction.HasAttachment == false)
+                    {
+                        var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                        if (files.Length == 1 && IsValidAttachmentExtension(files[0]))
+                        {
+                            proceed = true;
+                            SetDragDropStyles(row, DropType.File);
+                            e.Effects = DragDropEffects.Copy;
+                        }
+                    }
+                    
+                    if(!proceed)
+                    {
+                        e.Effects = DragDropEffects.None;
+                        e.Handled = true;
+                    }
+                }
+                else
+                {
+                    e.Handled = true;
+                }
             }
+        }
+
+        private bool IsValidAttachmentExtension(string filePath)
+        {
+            var extension = Path.GetExtension(filePath).ToLower();
+            if (extension == ".jpg" || extension == ".png" || extension == ".gif" || extension == ".bmp")
+                return true;
+            return false;
         }
 
         private void OnDataGridRowDragLeave(object sender, DragEventArgs e)
@@ -5161,6 +5251,7 @@ namespace Walkabout.Views
             UpdateBackground();
             UpdateForeground();
             UpdateFontWeight();
+            UpdateBorder();
         }
 
         void ClearContext()
@@ -5196,6 +5287,9 @@ namespace Walkabout.Views
                     break;
                 case "IsReadOnly":
                     UpdateForeground();
+                    break;
+                case "AttachmentDropTarget":
+                    UpdateBorder();
                     break;
             }
         }
@@ -5333,6 +5427,25 @@ namespace Walkabout.Views
                 if (cell != null)
                 {
                     cell.ClearValue(DataGridCell.FontWeightProperty);
+                }
+            }
+        }
+
+        void UpdateBorder()
+        {
+            if (this.context != null && this.cell != null)
+            {
+                if (cell.Column.SortMemberPath == "HasAttachment")
+                {
+                    if (this.context.AttachmentDropTarget)
+                    {
+                        this.SetResourceReference(DataGridCell.BorderBrushProperty, "ValidDropTargetFeedbackBrush");
+                        this.BorderThickness = new Thickness(1);
+                    }
+                    else
+                    {
+                        this.BorderThickness = new Thickness(0);
+                    }
                 }
             }
         }

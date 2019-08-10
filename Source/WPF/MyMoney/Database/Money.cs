@@ -8911,7 +8911,6 @@ namespace Walkabout.Data
         decimal runningBalance;
         string routingPath;
         TransactionFlags flags;
-        bool reconciling;
         DateTime? reconciledDate;
         Splits splits;
         string pendingTransfer;
@@ -8920,6 +8919,15 @@ namespace Walkabout.Data
         Split relatedSplit;
         DateTime? mergeDate;
         string originalPayee; // before auto-aliasing, helps with future merging.
+        TransactionViewFlags viewState; // ui transient state only, not persisted.
+
+        enum TransactionViewFlags : byte
+        {
+            None,
+            TransactionDropTarget = 1,
+            AttachmentDropTarget = 2,
+            Reconciling = 4
+        }
 
         public Transaction()
         { // for serialization.
@@ -8975,6 +8983,50 @@ namespace Walkabout.Data
                     {
                         this.Investment.Id = value; // mirror Id in the investment.
                     }
+                }
+            }
+        }
+
+        private void SetViewState(TransactionViewFlags flag, bool set)
+        {
+            if (set)
+            {
+                this.viewState |= flag;
+            }
+            else
+            {
+                this.viewState &= ~flag;
+            }
+        }
+
+        [XmlIgnore]
+        [IgnoreDataMember]
+        public bool TransactionDropTarget
+        {
+            get { return (this.viewState & TransactionViewFlags.TransactionDropTarget) != 0; }
+            set
+            {
+                if (this.TransactionDropTarget != value)
+                {
+                    SetViewState(TransactionViewFlags.TransactionDropTarget, value);
+                    // don't use OnChanged, we don't want this to make the database dirty.
+                    FireChangeEvent(this, new ChangeEventArgs(this, "TransactionDropTarget", ChangeType.None));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        [IgnoreDataMember]
+        public bool AttachmentDropTarget
+        {
+            get { return (this.viewState & TransactionViewFlags.AttachmentDropTarget) != 0; }
+            set
+            {
+                if (this.AttachmentDropTarget != value)
+                {
+                    SetViewState(TransactionViewFlags.AttachmentDropTarget, value);
+                    // don't use OnChanged, we don't want this to make the database dirty.
+                    FireChangeEvent(this, new ChangeEventArgs(this, "AttachmentDropTarget", ChangeType.None));
                 }
             }
         }
@@ -9254,16 +9306,17 @@ namespace Walkabout.Data
         /// <summary>
         /// Get or set a transient boolean value indicating that this transaction is being included in current statement reconciliation.
         /// </summary>
+        [XmlIgnore]
         [IgnoreDataMember]
         public bool IsReconciling
         {
-            get { return this.reconciling; }
+            get { return (this.viewState & TransactionViewFlags.Reconciling) != 0; }
             set
             {
-                if (this.reconciling != value)
+                if (this.IsReconciling != value)
                 {
-                    this.reconciling = value;
-                    OnChanged("IsReconciling");
+                    SetViewState(TransactionViewFlags.Reconciling, value);
+                    FireChangeEvent(this, new ChangeEventArgs(this, "IsReconciling", ChangeType.None));
                 }
             }
         }
