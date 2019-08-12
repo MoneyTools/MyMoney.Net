@@ -8262,6 +8262,69 @@ namespace Walkabout.Data
             return balance;
         }
 
+        public static decimal GetBalance(MyMoney money, System.Collections.IEnumerable data, Account account, bool normalize, bool withoutTax, out int count, out decimal salestax, out decimal investmentValue)
+        {
+            count = 0;
+            salestax = 0;
+            investmentValue = 0;
+
+            decimal balance = account != null ? account.OpeningBalance : 0;
+            DateTime lastDate = DateTime.Now;
+            bool hasInvestments = false;
+
+            foreach (object row in data)
+            {
+                count++;
+                Transaction t = row as Transaction;
+                if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
+                {
+                    lastDate = t.Date;
+
+                    decimal iTax = 0;
+                    if (t.Investment != null)
+                    {
+                        hasInvestments = true;
+                        iTax = t.Investment.Taxes;
+                    }
+
+                    if (normalize)
+                    {
+                        salestax += t.CurrencyNormalizedAmount(t.NetSalesTax) + t.CurrencyNormalizedAmount(iTax);
+
+                        if (withoutTax)
+                        {
+                            balance += t.CurrencyNormalizedAmount(t.AmountMinusTax);
+                        }
+                        else
+                        {
+                            balance += t.CurrencyNormalizedAmount(t.Amount);
+                        }                        
+                    }
+                    else
+                    {
+                        balance += t.Amount;
+                        salestax += t.NetSalesTax + iTax;
+                    }
+                }
+            }
+
+            if (hasInvestments && account != null)
+            {
+                // get the investment value as of the date of the last transaction
+                CostBasisCalculator calculator = new CostBasisCalculator(money, lastDate);
+                foreach (SecurityPurchase sp in calculator.GetHolding(account).GetHoldings())
+                {
+                    Security s = sp.Security;
+                    if (Math.Floor(sp.UnitsRemaining) > 0)
+                    {
+                        investmentValue += sp.MarketValue;
+                    }
+                }
+            }
+            return balance;
+        }
+
+
         public decimal ReconciledBalance(Account a, DateTime statementDate)
         {
             DateTime std = new DateTime(statementDate.Year, statementDate.Month, statementDate.Day);
