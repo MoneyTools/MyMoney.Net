@@ -2402,6 +2402,7 @@ namespace Walkabout.Data
         decimal openingBalance;
         decimal balance;
         string currency;
+        decimal accountCurrencyRatio;
         int onlineAccountId;
         OnlineAccount onlineAccount;
         string webSite;
@@ -2633,6 +2634,13 @@ namespace Walkabout.Data
         {
             get { return this.onlineAccountId; }
             set { this.onlineAccountId = value; }
+        }
+
+        [DataMember]
+        public decimal AccountCurrencyRatio
+        {
+            get { return this.accountCurrencyRatio; }
+            set { this.accountCurrencyRatio = value; }
         }
 
         [ColumnObjectMapping(ColumnName = "OnlineAccount", KeyProperty = "Id", AllowNulls = true)]
@@ -10638,6 +10646,12 @@ namespace Walkabout.Data
             // Convert the value to USD 
             // ToDo: Convert to default currency.
 
+            // Use cached value for performance
+            if (this.Account.AccountCurrencyRatio != 0)
+            {
+                return Amount * this.Account.AccountCurrencyRatio;
+            }
+
             MyMoney money = this.Account.Parent.Parent as MyMoney;
             if (money != null)
             {
@@ -10648,8 +10662,15 @@ namespace Walkabout.Data
                     // Apply ratio of conversion
                     // for example USD 2,000 * CAN .95 = 1,900 (in USD currency)
                     Amount *= c.Ratio;
-                }
 
+                    this.Account.AccountCurrencyRatio = c.Ratio;
+                }
+                else
+                {
+                    // We must be using the default currency, so the ratio is 1
+
+                    this.Account.AccountCurrencyRatio = 1;
+                }
             }
             return Amount;
         }
