@@ -2636,7 +2636,6 @@ namespace Walkabout.Data
             set { this.onlineAccountId = value; }
         }
 
-        [DataMember]
         public decimal AccountCurrencyRatio
         {
             get { return this.accountCurrencyRatio; }
@@ -8302,6 +8301,9 @@ namespace Walkabout.Data
                     }
                     else
                     {
+                        // We don't currently have a scenario where we want unnormalized, without tax
+                        Debug.Assert(withoutTax == false);
+
                         balance += t.Amount;
                         salestax += t.NetSalesTax + iTax;
                     }
