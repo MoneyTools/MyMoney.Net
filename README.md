@@ -4,7 +4,7 @@ MyMoney.Net is a rich client .NET 4.0 ClickOnce application for managing your pe
 ## Install
 
 You can simply click the [ClickOnce Installer](http://www.lovettsoftware.com/Downloads/MyMoney/MyMoney.application) to install the app, it requires
-.NET 4.0.  
+.NET 4.0.
 
 ## Help
 
@@ -15,16 +15,17 @@ Learn  how to use the app by reading our [Helpful Wiki](https://github.com/clove
 ## Licenses
 
 This program is provided with [MIT license](https://opensource.org/licenses/MIT).
-This program uses System.Windows.Controls.DataVisualization.Charting which is (c) Copyright Microsoft Corporationand 
+This program uses System.Windows.Controls.DataVisualization.Charting which is (c) Copyright Microsoft Corporation and
 is subject to the Microsoft Public License (Ms-PL).
-This program uses Stock Quote Service from [Yahoo](http://download.finance.yahoo.com/d/quotes?s=MSFT&f=snl1p).
+This program optionally uses Stock Quote Services from [AlphaVantage](https://www.alphavantage.co/) and
+[IEX Trading](https://iextrading.com/) which are subject to their respective licenses.
 It also uses Currency Rates from [restfulwebservices.net](http://www.restfulwebservices.net/ServiceContracts/2008/01/ICurrencyService/GetCo).
-It uses online Banking information (OFX) from [http://www.ofxhome.com/](http://www.ofxhome.com/) and implements the 
+It uses online Banking information (OFX) from [http://www.ofxhome.com/](http://www.ofxhome.com/) and implements the
 [OFX 1.0 and 2.0 specifications](http://www.ofx.net/).
 It uses [SQLite](http://sqlite.org/copyright.html) to store your financial transactions in a local file on your computer.
 It also has an implementation of the [Canny edge detection](https://en.wikipedia.org/wiki/Canny_edge_detector) algorithm used in
 getting quick image boundaries from your scanner, especially useful for receipts.
-It also contains a documentation generator that uses the [Microsoft OneNote API](http://dev.onenote.com/) to generate HTML 
+It also contains a documentation generator that uses the [Microsoft OneNote API](http://dev.onenote.com/) to generate HTML
 and from HTML it generates Markdown format for the github Wiki (see PublishHelp tool).
 Lastly the app is built entirely in C#, using .NET 4.0 and Visual Studio, and WPF and is published using ClickOnce setup technology.
 UnitTests are written and executed from a DGML test Model using a custom solution called [DgmlTestModeling](http://www.lovettsoftware.com/Downloads/DgmlTestModel/Readme.htm).
