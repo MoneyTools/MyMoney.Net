@@ -2402,6 +2402,7 @@ namespace Walkabout.Data
         decimal openingBalance;
         decimal balance;
         string currency;
+        decimal accountCurrencyRatio;
         int onlineAccountId;
         OnlineAccount onlineAccount;
         string webSite;
@@ -2577,7 +2578,7 @@ namespace Walkabout.Data
 
 
         /// <summary>
-        /// Return the Balance in USA currency
+        /// Return the Balance in USD currency
         /// </summary>
         [XmlIgnore]
         public decimal BalanceNormalized
@@ -2616,7 +2617,7 @@ namespace Walkabout.Data
         }
 
         [XmlIgnore]
-        public object NonNullCurrency
+        public string NonNullCurrency
         {
             get
             {
@@ -2633,6 +2634,12 @@ namespace Walkabout.Data
         {
             get { return this.onlineAccountId; }
             set { this.onlineAccountId = value; }
+        }
+
+        public decimal AccountCurrencyRatio
+        {
+            get { return this.accountCurrencyRatio; }
+            set { this.accountCurrencyRatio = value; }
         }
 
         [ColumnObjectMapping(ColumnName = "OnlineAccount", KeyProperty = "Id", AllowNulls = true)]
@@ -8254,35 +8261,60 @@ namespace Walkabout.Data
             return balance;
         }
 
-        public static decimal GetBalance(MyMoney money, Account a, Category category, System.Collections.IEnumerable data, out decimal salestax, out decimal investmentValue)
+        public static decimal GetBalance(MyMoney money, System.Collections.IEnumerable data, Account account, bool normalize, bool withoutTax, out int count, out decimal salestax, out decimal investmentValue)
         {
+            count = 0;
+            salestax = 0;
             investmentValue = 0;
-            decimal tax = 0;
-            decimal result = 0;
+
+            decimal balance = account != null ? account.OpeningBalance : 0;
             DateTime lastDate = DateTime.Now;
             bool hasInvestments = false;
 
             foreach (object row in data)
             {
+                count++;
                 Transaction t = row as Transaction;
-                if (t != null)
+                if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
                 {
                     lastDate = t.Date;
-                    tax += t.NetSalesTax;
+
+                    decimal iTax = 0;
                     if (t.Investment != null)
                     {
                         hasInvestments = true;
-                        investmentValue = t.Balance;
-                        tax += t.Investment.Taxes;
+                        iTax = t.Investment.Taxes;
                     }
-                    result += (decimal)GetCategoryValue(t, category);
+
+                    if (normalize)
+                    {
+                        salestax += t.CurrencyNormalizedAmount(t.NetSalesTax) + t.CurrencyNormalizedAmount(iTax);
+
+                        if (withoutTax)
+                        {
+                            balance += t.CurrencyNormalizedAmount(t.AmountMinusTax);
+                        }
+                        else
+                        {
+                            balance += t.CurrencyNormalizedAmount(t.Amount);
+                        }                        
+                    }
+                    else
+                    {
+                        // We don't currently have a scenario where we want unnormalized, without tax
+                        Debug.Assert(withoutTax == false);
+
+                        balance += t.Amount;
+                        salestax += t.NetSalesTax + iTax;
+                    }
                 }
             }
-            if (hasInvestments && a != null)
+
+            if (hasInvestments && account != null)
             {
                 // get the investment value as of the date of the last transaction
                 CostBasisCalculator calculator = new CostBasisCalculator(money, lastDate);
-                foreach (SecurityPurchase sp in calculator.GetHolding(a).GetHoldings())
+                foreach (SecurityPurchase sp in calculator.GetHolding(account).GetHoldings())
                 {
                     Security s = sp.Security;
                     if (Math.Floor(sp.UnitsRemaining) > 0)
@@ -8291,21 +8323,9 @@ namespace Walkabout.Data
                     }
                 }
             }
-            salestax = tax;
-            return result;
+            return balance;
         }
 
-        static decimal GetCategoryValue(Transaction t, Category category)
-        {
-            decimal value = 0;
-            if (t.IsDeleted || t.Status == TransactionStatus.Void)
-                return value;
-            if (category == null)
-            {
-                return t.Amount;
-            }
-            return t.GetCategorizedAmount(category);
-        }
 
         public decimal ReconciledBalance(Account a, DateTime statementDate)
         {
@@ -10685,66 +10705,42 @@ namespace Walkabout.Data
             return false;
         }
 
-        public decimal GetCategorizedAmount(Category c)
+
+        public decimal CurrencyNormalizedAmount(decimal Amount)
         {
-            if (c == null)
+            // Convert the value to USD 
+            // ToDo: Convert to default currency.
+
+            // Use cached value for performance
+            if (this.Account.AccountCurrencyRatio != 0)
             {
-                return this.amount;
+                return Amount * this.Account.AccountCurrencyRatio;
             }
 
-            if (this.IsDeleted || this.Status == TransactionStatus.Void)
-                return 0;
-
-            decimal result = 0;
-            if (this.IsSplit)
+            MyMoney money = this.Account.Parent.Parent as MyMoney;
+            if (money != null)
             {
-                foreach (Split s in this.Splits.Items)
+                Currency c = money.Currencies.FindCurrency(this.account.NonNullCurrency);
+                if (c != null)
                 {
-                    if (c.Contains(s.Category))
-                    {
-                        result += s.Amount;
-                    }
+                    //-----------------------------------------------------
+                    // Apply ratio of conversion
+                    // for example USD 2,000 * CAN .95 = 1,900 (in USD currency)
+                    Amount *= c.Ratio;
+
+                    this.Account.AccountCurrencyRatio = c.Ratio;
+                }
+                else
+                {
+                    // We must be using the default currency, so the ratio is 1
+
+                    this.Account.AccountCurrencyRatio = 1;
                 }
             }
-            else if (c.Contains(this.Category))
-            {
-                result = this.AmountMinusTax;
-            }
-            else
-            {
-                Account a = this.Account;
-                if (a != null && a.IsCategoryFund && c.Contains(a.GetFundCategory()))
-                {
-                    return this.Amount;
-                }
-            }
-
-            return result;
+            return Amount;
         }
 
-        [XmlIgnore]
-        [IgnoreDataMember]
-        public bool IsPaycheck
-        {
-            get
-            {
-                if (this.IsSplit)
-                {
-                    foreach (Split s in this.Splits.Items)
-                    {
-                        if (s.Category != null && s.Category.Root.Type == CategoryType.Income)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                else if (this.category != null && this.category.Root.Type == CategoryType.Income)
-                {
-                    return true;
-                }
-                return false;
-            }
-        }
+
 
         private void UpdateBudget(bool budgeting, List<TransactionException> errors)
         {

@@ -340,29 +340,35 @@ namespace Walkabout.Views.Controls
             IList<ChartValue> timeData = s.Values;
             s.BeginUpdate();
 
+            TrendValue emptyTrendValue = new TrendValue();
+            emptyTrendValue.Value = 0;
+            emptyTrendValue.UserData = null;
+
             DateTime last = start;
-            TrendValue lastv = null;
+            TrendValue lastv = emptyTrendValue;
             foreach (TrendValue v in this.data)
             {
-                // calculate balances using data from the start of the account \ list so the end balance is correct
-                if (v.Date <= end && v.Date >= start)
+                // NOTE: This list is assumed to be sorted
+                if (v.Date > end)
+                {
+                    break;
+                }
+
+                if (v.Date >= start)
                 {
                     // If the items are on the same day, don't add to the graph yet.  
                     // Accumulate them and the accumulated value for the day will be displayed
                     if (last != v.Date)
                     {
-                        AddDatum(v, last, v.Date, timeData);
+                        AddDatum(lastv, last, v.Date, timeData);
                     }
                     last = v.Date;
-                    lastv = v;
                 }
+                lastv = v;            
             }
 
             // Put the last item on the graph
-            if (lastv != null)
-            {
-                AddDatum(lastv, last, end.AddDays(1), timeData);
-            }
+            AddDatum(lastv, last, end.AddDays(1), timeData);
             
             s.EndUpdate();
             //s.Accumulate = false;
@@ -379,6 +385,7 @@ namespace Walkabout.Views.Controls
             // for this math to work, we have to ignore "time" in the dates.
             start = start.Date;
             end = end.Date;
+
             // duplicate the items across a range to fill the gaps so the graph spans the whole time span.
             while (start < end)
             {

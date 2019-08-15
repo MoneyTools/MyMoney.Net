@@ -3158,31 +3158,28 @@ namespace Walkabout.Views
 
         private void ShowBalance()
         {
-            string balance = GetBalance();
-            if (!string.IsNullOrWhiteSpace(balance))
+            if (this.Rows != null)
             {
-                ShowStatus(balance);
-            }
-        }
-
-        public string GetBalance()
-        {
-            IEnumerable data = this.Rows;
-            if (data != null)
-            {
-                Account account = this.ActiveAccount;
+                int count = 0;
                 decimal salestax = 0;
                 decimal investmentValue = 0;
-                decimal balance = Transactions.GetBalance(this.myMoney, account, this.ActiveCategory, data, out salestax, out investmentValue);
-                if (account != null)
+                decimal balance;
+                switch (this.ActiveViewName)
                 {
-                    balance += account.OpeningBalance;
+                    case TransactionViewName.ByCategory:
+                    case TransactionViewName.ByCategoryCustom:
+                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, true, true, out count, out salestax, out investmentValue);
+                        break;
+                        
+                    case TransactionViewName.ByPayee:
+                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, true, false, out count, out salestax, out investmentValue);
+                        break;
+
+                    default:
+                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, false, false, out count, out salestax, out investmentValue);
+                        break;
                 }
-                int count = 0;
-                foreach (object item in data)
-                {
-                    count++;
-                }
+
                 string msg = count + " rows, " + balance.ToString("C");
                 if (salestax != 0)
                 {
@@ -3192,9 +3189,9 @@ namespace Walkabout.Views
                 {
                     msg += ", investments " + investmentValue.ToString("C");
                 }
-                return msg;
+            
+                ShowStatus(msg);    
             }
-            return string.Empty;
         }
 
         private bool refresh;

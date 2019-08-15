@@ -143,7 +143,7 @@ namespace Walkabout.Reports
                     columns = new CashFlowColumns();
                     byCategory[c] = columns;
                 }
-                columns.AddValue(columnName, data, amount);
+                columns.AddValue(columnName, data, t.CurrencyNormalizedAmount(amount));
             }
             else
             {
@@ -405,11 +405,11 @@ namespace Walkabout.Reports
                 }
                 else if (t.Category != null)
                 {
-                    TallyCategory(t, t.Category, t, columnName, t.amount);
+                    TallyCategory(t, t.Category, t, columnName, t.AmountMinusTax);
                 }
                 else if (t.Amount != 0)
                 {
-                    TallyCategory(t, this.myMoney.Categories.Unknown, t, columnName, t.Amount);
+                    TallyCategory(t, this.myMoney.Categories.Unknown, t, columnName, t.AmountMinusTax);
                 }
             }
         }

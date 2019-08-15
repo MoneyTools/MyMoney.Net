@@ -2839,6 +2839,10 @@ namespace Walkabout
 
         private void UpdateHistoryChart()
         {
+            if (this.TransactionView.ViewModel == null)
+            {
+                return;
+            }
             // pick a color based on selected category or payee.
             Category cat = this.TransactionView.ActiveCategory;
             Payee payee = this.TransactionView.ActivePayee;
@@ -2868,7 +2872,25 @@ namespace Walkabout
                 {
                     continue;
                 }
-                decimal amount = transaction.Amount;
+
+                decimal amount;
+
+                switch (this.TransactionView.ActiveViewName)
+                {
+                    case TransactionViewName.ByCategory:
+                    case TransactionViewName.ByCategoryCustom:
+                        amount = transaction.CurrencyNormalizedAmount(transaction.AmountMinusTax);
+                        break;
+
+                    case TransactionViewName.ByPayee:
+                        amount = transaction.CurrencyNormalizedAmount(transaction.Amount);
+                        break;
+
+                    default:
+                        amount = transaction.Amount;
+                        break;
+                }            
+                // Todo Trend graph is inconsistent with the below ...
                 if (transaction.Investment != null)
                 {
                     if (transaction.InvestmentType == InvestmentType.Add)
@@ -2894,10 +2916,9 @@ namespace Walkabout
             HistoryChart.Selection = selection;
         }
 
-
         void UpdateTransactionGraph(IEnumerable data, Account account, Category category)
         {
-            this.TransactionGraph.Generator = new TransactionGraphGenerator(data, account, category);
+            this.TransactionGraph.Generator = new TransactionGraphGenerator(data, account, category, this.TransactionView.ActiveViewName);
         }
 
         private void UpdateCategoryColors()
