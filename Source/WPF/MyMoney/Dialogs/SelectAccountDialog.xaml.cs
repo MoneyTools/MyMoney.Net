@@ -87,10 +87,10 @@ namespace Walkabout.Dialogs
 
     static class AccountHelper
     {
-        static public Account PickAccount(MyMoney money, string id)
+        static public Account PickAccount(MyMoney money, Account accountTemplate)
         {
             SelectAccountDialog frm = new SelectAccountDialog();
-            frm.Title = "Select Account for: " + id;
+            frm.Title = "Select Account for: " + accountTemplate.AccountId;
             frm.SetAccounts(money.Accounts.GetAccounts());
             frm.Owner = App.Current.MainWindow;
             Account a = null;
@@ -101,7 +101,7 @@ namespace Walkabout.Dialogs
             }
             if (frm.AddAccount)
             {
-                AccountDialog newAccountDialog = new AccountDialog(money, a, App.Current.MainWindow as IServiceProvider);
+                AccountDialog newAccountDialog = new AccountDialog(money, accountTemplate, App.Current.MainWindow as IServiceProvider);
                 newAccountDialog.Owner = App.Current.MainWindow;
                 if (newAccountDialog.ShowDialog() == true)
                 {

@@ -15,10 +15,13 @@ namespace Walkabout.Tests.Wrappers
     {
         AutomationElement control;
         bool isOpened;
-        
-        public ContextMenu(AutomationElement control)
+        bool isPopupMenu;
+        MainWindowWrapper root;
+
+        public ContextMenu(AutomationElement control, bool isPopupMenu)
         {
-            root = MainWindowWrapper.FindMainWindow(control.Current.ProcessId).Element;
+            this.isPopupMenu = isPopupMenu;
+            root = MainWindowWrapper.FindMainWindow(control.Current.ProcessId);
             this.control = control;
         }
 
@@ -26,11 +29,14 @@ namespace Walkabout.Tests.Wrappers
         /// Opens the context menu and returns the AutomationElement for the Menu.
         /// </summary>
         /// <param name="e">Automation element to right-click</param>
-        public bool Open(bool throwIfNotOpened)
+        public AutomationElement Open(bool throwIfNotOpened)
         {
+            if (!isPopupMenu)
+            {
+                return null;
+            }
             isOpened = false;
-            opened = false;
-            openMenu = null;
+            AutomationElement openMenu = null;
 
             // see if this is a SubMenuItem already
             object pattern;
@@ -38,6 +44,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 ExpandCollapsePattern expandCollapse = (ExpandCollapsePattern)pattern;
                 expandCollapse.Expand();
+                Thread.Sleep(250);
 
                 for (int retries = 5; retries > 0; retries--)
                 {
@@ -55,9 +62,6 @@ namespace Walkabout.Tests.Wrappers
             }
             else
             {
-
-                RegisterForMenuOpened();
-
                 for (int outerRetries = 5; outerRetries > 0; outerRetries--)
                 {
                     if (control == null)
@@ -80,25 +84,15 @@ namespace Walkabout.Tests.Wrappers
                         }
                     }
 
-                    for (int retries = 5; retries > 0; retries--)
+                    if (!isPopupMenu)
                     {
-                        if (opened)
-                        {
-                            isOpened = true;
-                            return opened;
-                        }
-
-                        // this is needed to pump events so we actually get the menu event!
-                        System.Windows.Forms.Application.DoEvents();
-
-                        Thread.Sleep(250);
-
-                        // this is needed to pump events so we actually get the menu event!
-                        System.Windows.Forms.Application.DoEvents();
+                        openMenu = root.FindChildMenuPopup(5);
+                    }
+                    else
+                    {
+                        openMenu = root.FindChildContextMenu(5);
                     }
 
-                    Thread.Sleep(250);
-                    Input.TapKey(Key.Escape);
                 }
             }
 
@@ -109,32 +103,41 @@ namespace Walkabout.Tests.Wrappers
                     string message = "Error: context menu is not appearing!";
                     throw new ApplicationException(message);
                 }
-                return false;
             }
 
-            return true;
+            return openMenu;
         }
 
         public void InvokeMenuItem(string menuItemId)
         {
-            if (!isOpened)
+            AutomationElement subMenu = null;
+            if (!isPopupMenu)
             {
-                Open(true);
+                subMenu = control;
+            }
+            else if (!isOpened)
+            {
+                subMenu = Open(true);
             }
 
-            AutomationElement menuItem = FindSubMenuItem(openMenu, menuItemId);
+            AutomationElement menuItem = FindSubMenuItem(subMenu, menuItemId);
             InvokeMenuItem(menuItem);
             isOpened = false;
         }
 
         public ContextMenu OpenSubMenu(string menuItemId)
         {
-            if (!isOpened)
+            AutomationElement subMenu = null;
+            if (!isPopupMenu)
             {
-                Open(true);
+                subMenu = control;
+            }
+            else if (!isOpened)
+            {
+                subMenu = Open(true);
             }
 
-            AutomationElement subMenuItem = FindSubMenuItem(openMenu, menuItemId);
+            AutomationElement subMenuItem = FindSubMenuItem(subMenu, menuItemId);
             return ExpandSubMenuItem(subMenuItem);
         }
 
@@ -189,50 +192,11 @@ namespace Walkabout.Tests.Wrappers
             object pattern;
             if (subMenuItem.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out pattern))
             {
-                ContextMenu menu = new ContextMenu(subMenuItem);
+                ContextMenu menu = new ContextMenu(subMenuItem, true);
                 menu.Open(true);
                 return menu;
             }
             throw new Exception("SubMenuItem does not contain ExpandCollapsePattern");
-        }
-
-        /// <summary>
-        /// Sets opened to true indicating that an automation event has occured
-        /// </summary>
-        /// <param name="sender">ignored</param>
-        /// <param name="args">ignored</param>
-        private static void OnMenuOpened(object sender, AutomationEventArgs args)
-        {
-            openMenu = sender as AutomationElement;
-            opened = true;
-        }
-
-        /// <summary>
-        /// Sets opened to true indicating that an automation event has occured
-        /// </summary>
-        /// <param name="sender">ignored</param>
-        /// <param name="args">ignored</param>
-        private static void OnMenuClosed(object sender, AutomationEventArgs args)
-        {
-            opened = false;
-        }
-
-        static AutomationElement root;
-        static bool opened;
-        static AutomationElement registered;
-        static AutomationElement openMenu;
-
-        /// <summary>
-        /// Note: this method takes a LONG time (several seconds) so we don't want to do this too often.
-        /// </summary>
-        private static void RegisterForMenuOpened()
-        {
-            if (registered != root)
-            {
-                Automation.AddAutomationEventHandler(AutomationElement.MenuOpenedEvent, root, TreeScope.Descendants, new AutomationEventHandler(OnMenuOpened));
-                Automation.AddAutomationEventHandler(AutomationElement.MenuClosedEvent, root, TreeScope.Descendants, new AutomationEventHandler(OnMenuClosed));
-                registered = root;
-            }
         }
 
     }

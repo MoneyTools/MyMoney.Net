@@ -87,9 +87,11 @@
     </When>
   </Choose>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.DgmlTestModeling, Version=3.2.0.0, Culture=neutral, PublicKeyToken=e171c0919ddb5572, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.DgmlTestModeling.2015.dll.3.2.0\lib\net40\Microsoft.VisualStudio.DgmlTestModeling.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="LovettSoftware.DgmlTestModeling, Version=3.4.0.0, Culture=neutral, PublicKeyToken=ab3ea86545595e2b, processorArchitecture=MSIL">
+      <HintPath>..\packages\LovettSoftware.DgmlTestModeling.2017.dll.3.5.0\lib\net40\LovettSoftware.DgmlTestModeling.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.DgmlTestModeling, Version=3.4.0.0, Culture=neutral, PublicKeyToken=ab3ea86545595e2b, processorArchitecture=MSIL">
+      <HintPath>..\packages\LovettSoftware.DgmlTestModeling.2017.dll.3.5.0\lib\net40\Microsoft.VisualStudio.DgmlTestModeling.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore" />
@@ -125,6 +127,7 @@
     <Compile Include="Win32.cs" />
     <Compile Include="Wrappers\AccountSettingsWrapper.cs" />
     <Compile Include="Wrappers\AccountsWrapper.cs" />
+    <Compile Include="Wrappers\AccountPickerWrapper.cs" />
     <Compile Include="Wrappers\StockChartWrapper.cs" />
     <Compile Include="Wrappers\CategoriesWrapper.cs" />
     <Compile Include="Wrappers\ChartsAreaWrapper.cs" />
@@ -163,9 +166,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="TestModel.dgml">
+    <None Include="packages.config" />
+    <None Include="TestModel.dgml">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -183,9 +187,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

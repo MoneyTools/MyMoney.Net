@@ -10,7 +10,7 @@ using Walkabout.Tests.Wrappers;
 using Walkabout.Tests.Interop;
 using System.Windows.Automation;
 using Walkabout.Data;
-using Microsoft.VisualStudio.DgmlTestModeling;
+using LovettSoftware.DgmlTestModeling;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
@@ -82,8 +82,7 @@ namespace Walkabout.Tests
                 TestContext.WriteLine("Model Seed = " + seed);
                 model = new DgmlTestModel(this, new TestLog(TestContext), random);
 
-                string fileName = Path.GetFullPath("TestModel.dgml");
-                CreateGraph(fileName);
+                string fileName = FindTestModel("TestModel.dgml");                
                 model.Load(fileName);
                 Thread.Sleep(2000); // let graph load.
                 int delay = 0; // 1000 is handy for debugging.
@@ -102,22 +101,17 @@ namespace Walkabout.Tests
             }
         }
 
-        void CreateGraph(string path)
+        string FindTestModel(string filename)
         {
-            string dgml = GetEmbeddedResource("Walkabout.Tests.TestModel.dgml");
-            XDocument doc = XDocument.Parse(dgml);
-            XNamespace ns = doc.Root.Name.Namespace;
-            // fix up the Path to MyMoneyTests.dll
-            foreach (XElement pathVar in doc.Root.Element(ns + "Paths").Elements(ns + "Path"))
+            string path = new Uri(this.GetType().Assembly.Location).LocalPath;
+
+            // walk up to TestResults.
+            while (System.IO.Path.GetFileName(path) != "TestResults")
             {
-                XAttribute a = pathVar.Attribute("Value");
-                string value = (string)a;
-                if (value.Contains("MyMoneyTests.dll"))
-                {
-                    a.Value = new Uri(this.GetType().Assembly.Location).ToString();
-                }
+                path = System.IO.Path.GetDirectoryName(path);
             }
-            doc.Save(path);
+
+            return System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), "Tests", filename);
         }
 
         #region Model State
@@ -157,15 +151,7 @@ namespace Walkabout.Tests
                 testProcess = Process.Start(psi);
                 testProcess.WaitForInputIdle();
                 window = MainWindowWrapper.FindMainWindow(testProcess.Id);
-
-                SetDirectoryPermissions();
             }
-        }
-
-        private void SetDirectoryPermissions()
-        {
-            string dir = TestContext.TestDeploymentDir;
-            DirectorySetup.AddWritePermission("NT AUTHORITY\\NETWORK SERVICE", dir);
         }
 
         /// <summary>
@@ -194,29 +180,6 @@ namespace Walkabout.Tests
 
         void EnsureCleanState()
         {
-            string server = GetSqlServerName();
-            string databasePath = System.IO.Path.GetFullPath("TestDatabase.mdf");
-
-            if (!string.IsNullOrEmpty(server))
-            {
-                SqlServerDatabase sql = new SqlServerDatabase()
-                {
-                    DatabasePath = databasePath,
-                    Server = server,
-                    SecurityService = new SecurityService()
-                };
-                if (sql.Exists)
-                {
-                    try
-                    {
-                        // make sure it does not exist before hand.
-                        sql.Delete();
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
         }
 
         void Interactive()
@@ -337,7 +300,7 @@ namespace Walkabout.Tests
             }
 
 
-            string attachmentPath = System.IO.Path.GetFullPath(System.IO.Path.GetFileNameWithoutExtension(string.Format(baseNamePattern, ""))) + ".Attachments";
+            string attachmentPath = System.IO.Path.GetFullPath(System.IO.Path.GetFileNameWithoutExtension(databasePath)) + ".Attachments";
             if (Directory.Exists(attachmentPath))
             {
                 Directory.Delete(attachmentPath, true);
@@ -362,39 +325,13 @@ namespace Walkabout.Tests
             }
         }
 
-        void CreateSqlCeDatabase()
-        {
-            string databasePath = GetFreeDatabase("TestDatabase{0}.MyMoney.sdf");
-            createNewDatabaseDialog.CreateSqlCeDatabase(databasePath);
-            isLoaded = true;
-            createNewDatabaseDialog = null;
-            Database = new SqlCeDatabase() { DatabasePath = databasePath };
-        }
-
         void CreateSqliteDatabase()
         {
-            string databasePath = GetFreeDatabase("TestDatabase{0}.MyMoney.db");
+            string databasePath = GetFreeDatabase("TestDatabase{0}.mmdb");
             createNewDatabaseDialog.CreateSqliteDatabase(databasePath);
             isLoaded = true;
             createNewDatabaseDialog = null;
             Database = new SqliteDatabase() { DatabasePath = databasePath };
-        }
-
-        void CreateSqlExpressDatabase()
-        {
-            string server = GetSqlServerName();
-            Assert.IsTrue(!string.IsNullOrEmpty(server), "Model should have made sure SQL was installed");
-            databasePath = GetFreeDatabase("TestDatabase{0}.mdf");
-            DeleteFileWithRetries(databasePath, 5);
-            createNewDatabaseDialog.CreateSqlExpressDatabase(databasePath);
-            isLoaded = true;
-            createNewDatabaseDialog = null;
-            Database = new SqlServerDatabase()
-            {
-                DatabasePath = databasePath,
-                Server = server,
-                SecurityService = new SecurityService()
-            };
         }
 
         void CreateXmlDatabase()
@@ -649,6 +586,22 @@ namespace Walkabout.Tests
                     {
                         item.ClickAdd();
                         hasOnlineAccounts = true;
+
+                        string title = "Select Account for: " + item.Id;
+                        MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(onlineAccounts.Element.Current.ProcessId);
+                        AutomationElement child = mainWindow.FindChildWindow(title, 5);
+                        if (child != null)
+                        {
+                            AccountPickerWrapper picker = new AccountPickerWrapper(child);
+                            picker.ClickAddNewAccount();
+
+                            AutomationElement child2 = mainWindow.FindChildWindow("Account", 5);
+                            if (child2 != null)
+                            {
+                                AccountSettingsWrapper settings = new AccountSettingsWrapper(child2);
+                                settings.ClickOk();
+                            }
+                        }
                         return;
                     }
                 }
@@ -956,7 +909,7 @@ to make sure attachments work.");
             }
         }
 
-        static string[] AccountTypes = new string[] { "Checking", "Credit", "Investment" };
+        static string[] AccountTypes = new string[] { "Checking", "Credit", "Brokerage" };
 
         void AddAccount()
         {
@@ -1381,12 +1334,6 @@ to make sure attachments work.");
         void NetWorthReport()
         {
             window.NetWorthReport();
-            ClearTransactionViewState();
-        }
-
-        void BudgetReport()
-        {
-            window.BudgetReport();
             ClearTransactionViewState();
         }
 
