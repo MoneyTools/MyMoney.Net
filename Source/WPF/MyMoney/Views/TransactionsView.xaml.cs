@@ -5545,6 +5545,11 @@ namespace Walkabout.Views
                 memo = new Binding("Memo");
             }
             TransactionsView view = WpfHelper.FindAncestor<TransactionsView>(cell);
+            if (view == null)
+            {
+                // has this item been deleted?
+                return null;
+            }
             return new TransactionPayeeCategoryMemoField(view, payee, category, memo, dataItem);
         }
     }

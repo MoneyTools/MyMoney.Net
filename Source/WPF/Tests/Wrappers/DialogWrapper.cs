@@ -303,6 +303,7 @@ namespace Walkabout.Tests.Wrappers
 
             ExpandCollapsePattern p = (ExpandCollapsePattern)box.GetCurrentPattern(ExpandCollapsePattern.Pattern);
             p.Expand();
+            Thread.Sleep(250);
 
             AutomationElement item = box.FindFirstWithRetries(TreeScope.Descendants, new AndCondition(new PropertyCondition(AutomationElement.NameProperty, value),
                 new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem)));
@@ -333,6 +334,51 @@ namespace Walkabout.Tests.Wrappers
 
                 Thread.Sleep(250);
                 
+                // this is needed to pump events so we actually get the new window we're looking for
+                System.Windows.Forms.Application.DoEvents();
+            }
+
+            return null;
+        }
+
+        public AutomationElement FindChildMenuPopup(int retries)
+        {
+            for (int i = 0; i < retries; i++)
+            {
+                foreach (AutomationElement popup in window.FindAll(TreeScope.Descendants,
+                    new PropertyCondition(AutomationElement.ClassNameProperty, "Popup")))
+                {
+                    if (!popup.Current.IsOffscreen)
+                    {
+                        return popup;
+                    }
+                }
+
+                Thread.Sleep(250);
+
+                // this is needed to pump events so we actually get the new window we're looking for
+                System.Windows.Forms.Application.DoEvents();
+            }
+
+            return null;
+        }
+
+
+        public AutomationElement FindChildContextMenu( int retries)
+        {
+            for (int i = 0; i < retries; i++)
+            {
+                foreach (AutomationElement popup in window.FindAll(TreeScope.Descendants,
+                            new PropertyCondition(AutomationElement.ClassNameProperty, "ContextMenu")))
+                {
+                    if (!popup.Current.IsOffscreen)
+                    {
+                        return popup;
+                    }
+                }
+
+                Thread.Sleep(250);
+
                 // this is needed to pump events so we actually get the new window we're looking for
                 System.Windows.Forms.Application.DoEvents();
             }

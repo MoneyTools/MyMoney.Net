@@ -26,8 +26,9 @@ It uses [SQLite](http://sqlite.org/copyright.html) to store your financial trans
 It also has an implementation of the [Canny edge detection](https://en.wikipedia.org/wiki/Canny_edge_detector) algorithm used in
 getting quick image boundaries from your scanner, especially useful for receipts.
 It also contains a documentation generator that uses the [Microsoft OneNote API](http://dev.onenote.com/) to generate HTML
-and from HTML it generates Markdown format for the github Wiki (see PublishHelp tool).
+and from HTML it generates Markdown format for the github Wiki.
+
 Lastly the app is built entirely in C#, using .NET 4.0 and Visual Studio, and WPF and is published using ClickOnce setup technology.
-UnitTests are written and executed from a DGML test Model using a custom solution called [DgmlTestModeling](http://www.lovettsoftware.com/Downloads/DgmlTestModel/Readme.htm).
+UnitTests are written and executed from a DGML test Model using [DgmlTestModeling](http://www.lovettsoftware.com/Downloads/DgmlTestModel/Readme.htm).
 
 --Enjoy!

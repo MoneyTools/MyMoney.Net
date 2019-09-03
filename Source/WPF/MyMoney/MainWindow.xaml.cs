@@ -37,6 +37,7 @@ using Walkabout.Ofx;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
 using System.Deployment.Application;
+using System.Threading.Tasks;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -119,9 +120,11 @@ namespace Walkabout
                 this.navigator = new UndoManager(1000); // view state stack
                 this.manager = new UndoManager(1000);
 
-                AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(OnUnhandledException);
 
+                System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
+                AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(OnUnhandledException);
                 App.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(OnDispatcherUnhandledException);
+                TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
                 // Make sure the menu check boxes are initialized correctly.
                 SetTheme(settings.Theme);
@@ -399,6 +402,15 @@ namespace Walkabout
             {
                 HandleUnhandledException(e.ExceptionObject);
             }
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                HandleUnhandledException(e.Exception);
+            }
+            e.SetObserved();
         }
 
         // stop re-entrancy

@@ -67,8 +67,7 @@ namespace Walkabout.Tests.Wrappers
         {
             string name = GetUniqueCaption(baseName);
 
-            ContextMenu menu = new ContextMenu(this.Element);
-            menu.Open(true);
+            ContextMenu menu = new ContextMenu(this.Element, true);
             menu.InvokeMenuItem("NewAccount");
 
             MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(Element.Current.ProcessId);
@@ -91,8 +90,7 @@ namespace Walkabout.Tests.Wrappers
             string name = item.Current.Name;
             if (name != "Walkabout.Data.AccountSectionHeader")
             {
-                ContextMenu menu = new ContextMenu(item);
-                menu.Open(true);
+                ContextMenu menu = new ContextMenu(item, true);
                 menu.InvokeMenuItem("DeleteAccount");
 
                 MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(Element.Current.ProcessId);

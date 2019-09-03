@@ -1296,7 +1296,7 @@ namespace Walkabout.Dialogs
                 }
                 else if (item.IsNew)
                 {
-                    Account a = AccountHelper.PickAccount(this.money, item.AccountId);
+                    Account a = AccountHelper.PickAccount(this.money, item.Account);
                     if (a != null)
                     {
                         // user made a choice
@@ -1385,6 +1385,11 @@ namespace Walkabout.Dialogs
         /// <param name="state"></param>
         void StartVerify(object state)
         {            
+            if (this.pendingVerify != null)
+            {
+                // hmmm, what does this mean?
+                return;
+            }
             string fetchingName = this.editing.Name;
 
             OfxRequest req = new OfxRequest( this.editing, this.money, AccountHelper.PickAccount);

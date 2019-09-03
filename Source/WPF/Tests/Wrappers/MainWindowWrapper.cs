@@ -52,13 +52,15 @@ namespace Walkabout.Tests.Wrappers
             {
                 MessageBoxWrapper msg = new MessageBoxWrapper(child);
                 msg.ClickNo();
+                Thread.Sleep(300);
             }
 
-            child = FindChildWindow("New Database", 5);
+            child = this.FindChildWindow("New Database", 1);
             if (child != null)
             {
                 MessageBoxWrapper msg = new MessageBoxWrapper(child);
                 msg.ClickOk();
+                Thread.Sleep(300);
             }
         }
 
@@ -79,7 +81,7 @@ namespace Walkabout.Tests.Wrappers
                 {
                     throw new Exception("MainMenu not found");
                 }
-                return new ContextMenu(mainMenu);
+                return new ContextMenu(mainMenu, false);
             }
         }
 
@@ -175,7 +177,7 @@ namespace Walkabout.Tests.Wrappers
                 {
                     if (!e.Current.IsOffscreen)
                     {
-                        Debug.WriteLine("### Found visible TransactionGrdi named: " + e.Current.AutomationId);
+                        Debug.WriteLine("### Found visible TransactionGrid named: " + e.Current.AutomationId);
                         return e;
                     }
                 }
@@ -263,14 +265,6 @@ namespace Walkabout.Tests.Wrappers
             subMenu.InvokeMenuItem("MenuReportsNetWorth");
             reportOpen = true;
             return FindReport("ReportNetworth");
-        }
-
-        public AutomationElement BudgetReport()
-        {
-            ContextMenu subMenu = MainMenu.OpenSubMenu("MenuViewReports");
-            subMenu.InvokeMenuItem("MenuReportsBudget");
-            reportOpen = true;
-            return FindReport("ReportBudget");
         }
 
         public AutomationElement TaxReport()

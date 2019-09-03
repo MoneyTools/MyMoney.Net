@@ -39,30 +39,12 @@ namespace Walkabout.Tests.Wrappers
             return null;
         }
 
-        internal void CreateSqlCeDatabase(string databasePath)
-        {
-            SelectTab("UseSqlCeTab");
-            SetTextBox("TextBoxCeDatabaseFile", databasePath);
-            ClickButton("ButtonCreate");
-        }
         internal void CreateSqliteDatabase(string databasePath)
-        {
-            SelectTab("UseSqliteTab");
+        {            
             SetTextBox("TextBoxSqliteDatabaseFile", databasePath);
             ClickButton("ButtonCreate");
         }
         
-        internal void CreateSqlExpressDatabase(string path)
-        {
-            SelectTab("UseSqlServerTab");
-            SetTextBox("ComboBoxSqlDataBaseName", Path.GetFileNameWithoutExtension(path));
-            if (IsControlEnabled("TextBoxSqlDatabasePath"))
-            {
-                SetTextBox("TextBoxSqlDatabasePath", Path.GetDirectoryName(path));
-            }
-            ClickButton("ButtonCreate");
-            ClickOkIfExists();
-        }
 
         private void ClickOkIfExists()
         {
