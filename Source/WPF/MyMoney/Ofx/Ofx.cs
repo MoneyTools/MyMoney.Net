@@ -1092,6 +1092,10 @@ NEWFILEUID:{1}
             {
                 result = SendOfxRequest(doc, "NONE", fileuid);
             }
+            catch (HtmlResponseException)
+            {
+                throw;
+            }
             catch (Exception)
             {
                 // try a different version of OFX
