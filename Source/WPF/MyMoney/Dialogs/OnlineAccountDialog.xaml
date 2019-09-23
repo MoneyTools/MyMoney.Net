@@ -17,7 +17,7 @@
         <c:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
 
         <SolidColorBrush x:Key="TextBrush" Color="Black"/>
-        
+
         <SolidColorBrush x:Key="GridViewHeaderBrush" Color="#C9BDAF"/>
 
         <Style TargetType="{x:Type ListView}">
@@ -58,7 +58,7 @@
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
-        
+
         <DataTemplate x:Key="ComboItemTemplate">
             <TextBlock x:Name="ComboItemLabel" Text="{Binding Name}" />
             <DataTemplate.Triggers>
@@ -72,12 +72,26 @@
         </DataTemplate>
     </Window.Resources>
 
-    <StackPanel Margin="20,20,20,20">
-        <Grid  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,20,20,20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="22" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="8" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="0" MaxWidth="400">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="22" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="51*" />
                 <ColumnDefinition Width="8" />
             </Grid.ColumnDefinitions>
 
@@ -85,140 +99,128 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="8"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+
             </Grid.RowDefinitions>
 
-            <Grid  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="0" MaxWidth="400">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="51*" />
-                    <ColumnDefinition Width="8" />
-                </Grid.ColumnDefinitions>
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-
-                </Grid.RowDefinitions>
-                                
-                <TextBlock Text="Name:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right"/>
-                <ComboBox x:Name="ComboBoxName"  Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" 
+            <TextBlock Text="Name:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right"/>
+            <ComboBox x:Name="ComboBoxName"  Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" 
                   Grid.ColumnSpan="2" StaysOpenOnEdit="True" IsEditable="True" PreviewKeyUp="ComboBoxName_KeyUp" IsSynchronizedWithCurrentItem="False" 
                           IsTextSearchCaseSensitive="True"  
                           ItemTemplate="{StaticResource ComboItemTemplate}">
-                    <ComboBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel />
-                        </ItemsPanelTemplate>
-                    </ComboBox.ItemsPanel>
-                </ComboBox>
-                <ProgressBar x:Name="GetBankListProgress" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsIndeterminate="True"/>
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </ComboBox>
+            <ProgressBar x:Name="GetBankListProgress" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsIndeterminate="True"/>
 
-                <TextBlock Text="Institution name:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" />
-                <TextBox x:Name="TextBoxInstitution" Text="{Binding Path=Institution}" Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"   Height="22" TextChanged="OnTextChanged"/>
+            <TextBlock Text="Institution name:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" />
+            <TextBox x:Name="TextBoxInstitution" Text="{Binding Path=Institution}" Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"   Height="22" TextChanged="OnTextChanged"/>
 
-                <TextBlock Text="Institution ID (FID):" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" />
-                <TextBox x:Name="TextBoxFid" Text="{Binding Path=FID}" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" TextChanged="OnTextChanged" />
+            <TextBlock Text="Institution ID (FID):" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" />
+            <TextBox x:Name="TextBoxFid" Text="{Binding Path=FID}" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" TextChanged="OnTextChanged" />
 
-                <TextBlock x:Name="BankIdPrompt" Text="Bank Identifier:" Grid.Column="0" Grid.Row="8" HorizontalAlignment="Right" />
-                <TextBox x:Name="TextBoxBankId" Text="{Binding Path=BankId}" Grid.Column="2" Grid.Row="8" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" />
+            <TextBlock x:Name="BankIdPrompt" Text="Bank Identifier:" Grid.Column="0" Grid.Row="8" HorizontalAlignment="Right" />
+            <TextBox x:Name="TextBoxBankId" Text="{Binding Path=BankId}" Grid.Column="2" Grid.Row="8" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" />
 
-                <TextBlock x:Name="BranchIdPrompt" Text="Branch Identifier:" Grid.Column="0" Grid.Row="10" HorizontalAlignment="Right" />
-                <TextBox x:Name="TextBoxBranchId" Text="{Binding Path=BranchId}" Grid.Column="2" Grid.Row="10" Grid.ColumnSpan="2" />
+            <TextBlock x:Name="BranchIdPrompt" Text="Branch Identifier:" Grid.Column="0" Grid.Row="10" HorizontalAlignment="Right" />
+            <TextBox x:Name="TextBoxBranchId" Text="{Binding Path=BranchId}" Grid.Column="2" Grid.Row="10" Grid.ColumnSpan="2" />
 
-                <TextBlock x:Name="BrokerIdPrompt" Text="Broker Identifier:" Grid.Column="0" Grid.Row="12" HorizontalAlignment="Right" />
-                <TextBox x:Name="TextBoxBrokerId" Text="{Binding Path=BrokerId}" Grid.Column="2" Grid.Row="12" Grid.ColumnSpan="2" />
+            <TextBlock x:Name="BrokerIdPrompt" Text="Broker Identifier:" Grid.Column="0" Grid.Row="12" HorizontalAlignment="Right" />
+            <TextBox x:Name="TextBoxBrokerId" Text="{Binding Path=BrokerId}" Grid.Column="2" Grid.Row="12" Grid.ColumnSpan="2" />
 
-                <TextBlock Text="OFX Address:" Grid.Column="0" Grid.Row="14" HorizontalAlignment="Right" />
-                <TextBox x:Name="TextBoxOfxAddress"  Text="{Binding Path=Ofx}" Grid.Column="2" Grid.Row="14" Grid.ColumnSpan="2" TextChanged="OnTextChanged"/>
+            <TextBlock Text="OFX Address:" Grid.Column="0" Grid.Row="14" HorizontalAlignment="Right" />
+            <TextBox x:Name="TextBoxOfxAddress"  Text="{Binding Path=Ofx}" Grid.Column="2" Grid.Row="14" Grid.ColumnSpan="2" TextChanged="OnTextChanged"/>
 
-                <TextBlock Text="OFX Version:" Grid.Column="0" Grid.Row="16" HorizontalAlignment="Right" />
-                <ComboBox x:Name="OfxVersions" Text="{Binding Path=OfxVersion}"   Grid.Column="2" Grid.Row="16" Grid.ColumnSpan="2" />
+            <TextBlock Text="OFX Version:" Grid.Column="0" Grid.Row="16" HorizontalAlignment="Right" />
+            <ComboBox x:Name="OfxVersions" Text="{Binding Path=OfxVersion}"   Grid.Column="2" Grid.Row="16" Grid.ColumnSpan="2" />
 
-                <TextBlock Text="App Id:" Grid.Column="0" Grid.Row="18" HorizontalAlignment="Right" />
-                <TextBox x:Name="TextBoxAppId" Text="{Binding Path=AppId}" Grid.Column="2" Grid.Row="18" Grid.ColumnSpan="2" />
+            <TextBlock Text="App Id:" Grid.Column="0" Grid.Row="18" HorizontalAlignment="Right" />
+            <TextBox x:Name="TextBoxAppId" Text="{Binding Path=AppId}" Grid.Column="2" Grid.Row="18" Grid.ColumnSpan="2" />
 
-                <TextBlock Text="App Version:" Grid.Column="0" Grid.Row="20" HorizontalAlignment="Right" />
-                <TextBox x:Name="TextBoxAppVersion" Text="{Binding Path=AppVersion}" Grid.Column="2" Grid.Row="20" Grid.ColumnSpan="2" />
+            <TextBlock Text="App Version:" Grid.Column="0" Grid.Row="20" HorizontalAlignment="Right" />
+            <TextBox x:Name="TextBoxAppVersion" Text="{Binding Path=AppVersion}" Grid.Column="2" Grid.Row="20" Grid.ColumnSpan="2" />
 
-                <TextBlock Text="Client UID:" Grid.Column="0" Grid.Row="22" HorizontalAlignment="Right" />
-                <TextBox x:Name="TextBoxClientUid" Text="{Binding Path=ClientUid}" Grid.Column="2" Grid.Row="22" Grid.ColumnSpan="2" />
-            </Grid>
+            <TextBlock Text="Client UID:" Grid.Column="0" Grid.Row="22" HorizontalAlignment="Right" />
+            <TextBox x:Name="TextBoxClientUid" Text="{Binding Path=ClientUid}" Grid.Column="2" Grid.Row="22" Grid.ColumnSpan="2" />
+        </Grid>
 
-            <Grid x:Name="AccountListPanel" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Visibility="Collapsed" >
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+        <Grid x:Name="AccountListPanel" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Visibility="Collapsed" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-                <TextBlock x:Name="SignupResultPrompt" Text="The following accounts were found online.  Click the icons to setup each account." Grid.Row="1" TextWrapping="Wrap"/>
+            <TextBlock x:Name="SignupResultPrompt" Text="The following accounts were found online.  Click the icons to setup each account." Grid.Row="1" TextWrapping="Wrap"/>
 
-                <Grid Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="ScrollerGrid" MinWidth="400" >
-                    <ListView x:Name="OnlineResultList"  HorizontalAlignment="Stretch" >
-                        <ListView.View>
-                            <GridView >
-                                <GridViewColumn x:Name="ColumnIcon" Width="Auto" CellTemplate="{StaticResource IconTemplate}"  HeaderContainerStyle="{StaticResource SimpleHeaderStyle}"/>
-                                <GridViewColumn x:Name="ColumnId" DisplayMemberBinding="{Binding Path=AccountId}" Width="Auto" Header="Id" HeaderContainerStyle="{StaticResource SimpleHeaderStyle}"/>
-                                <GridViewColumn x:Name="ColumnName" DisplayMemberBinding="{Binding Path=Name}" Width="Auto" Header="Name" HeaderContainerStyle="{StaticResource SimpleHeaderStyle}"/>                                
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+            <Grid Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="ScrollerGrid" MinWidth="400" >
+                <ListView x:Name="OnlineResultList"  HorizontalAlignment="Stretch" >
+                    <ListView.View>
+                        <GridView >
+                            <GridViewColumn x:Name="ColumnIcon" Width="Auto" CellTemplate="{StaticResource IconTemplate}"  HeaderContainerStyle="{StaticResource SimpleHeaderStyle}"/>
+                            <GridViewColumn x:Name="ColumnId" DisplayMemberBinding="{Binding Path=AccountId}" Width="Auto" Header="Id" HeaderContainerStyle="{StaticResource SimpleHeaderStyle}"/>
+                            <GridViewColumn x:Name="ColumnName" DisplayMemberBinding="{Binding Path=Name}" Width="Auto" Header="Name" HeaderContainerStyle="{StaticResource SimpleHeaderStyle}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
 
-                    <RichTextBox  x:Name="ErrorMessage" AcceptsReturn="True" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" 
-                                  MaxWidth="400" MaxHeight="600"/>
-                </Grid>
-
-            </Grid>
-
-            <Grid  Grid.Column="0" Grid.Row="2"  Grid.ColumnSpan="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <Button x:Name="ButtonVerify" Grid.Column="0" HorizontalAlignment="Right" IsDefault="True" MinWidth="72" MinHeight="23" Click="OnButtonVerify" ToolTip="Click here to verify this financial institution supports OFX downloading">_Connect...</Button>
-
-                <ProgressBar x:Name="Progress" IsIndeterminate="True"  Grid.Column="1" Height="20" HorizontalAlignment="Stretch" Margin="10,2,10,0" VerticalAlignment="Top" />
-
-                <Button x:Name="ButtonOk" Grid.Column="2" IsDefault="True" MinWidth="72" MinHeight="23" Margin="0,0,0,0" Click="OnButtonOk">OK</Button>
-                <Button x:Name="ButtonCancel" Grid.Column="3" IsCancel="True" MinWidth="72" MinHeight="23" Margin="12,0,0,0" Click="OnButtonCancel">Cancel</Button>
+                <ScrollViewer x:Name="ErrorScroller" MaxWidth="400" MaxHeight="600" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" >
+                    <Grid>
+                        <RichTextBox  x:Name="ErrorMessage" AcceptsReturn="True" />
+                        <WebBrowser x:Name="ErrorHtml" Visibility="Collapsed"/>
+                    </Grid>
+                </ScrollViewer>
             </Grid>
 
         </Grid>
-    </StackPanel>
+
+        <Grid  Grid.Column="0" Grid.Row="2"  Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="ButtonVerify" Grid.Column="0" HorizontalAlignment="Right" IsDefault="True" MinWidth="72" MinHeight="23" Click="OnButtonVerify" ToolTip="Click here to verify this financial institution supports OFX downloading">_Connect...</Button>
+
+            <ProgressBar x:Name="Progress" IsIndeterminate="True"  Grid.Column="1" Height="20" HorizontalAlignment="Stretch" Margin="10,2,10,0" VerticalAlignment="Top" />
+
+            <Button x:Name="ButtonOk" Grid.Column="2" IsDefault="True" MinWidth="72" MinHeight="23" Margin="0,0,0,0" Click="OnButtonOk">OK</Button>
+            <Button x:Name="ButtonCancel" Grid.Column="3" IsCancel="True" MinWidth="72" MinHeight="23" Margin="12,0,0,0" Click="OnButtonCancel">Cancel</Button>
+        </Grid>
+
+    </Grid>
 </local:BaseDialog>
 
     

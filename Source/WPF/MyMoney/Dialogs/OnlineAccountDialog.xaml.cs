@@ -763,7 +763,8 @@ namespace Walkabout.Dialogs
             {
                 if (this.pendingSignon == id)
                 {
-                    Dispatcher.Invoke(new Action(() =>
+                    this.pendingSignon = null;
+                       Dispatcher.Invoke(new Action(() =>
                     {
                         HandleSignOnErrors(ex, new Action(() => {
                             ThreadPool.QueueUserWorkItem(new WaitCallback(StartSignup));
@@ -775,6 +776,7 @@ namespace Walkabout.Dialogs
             {
                 if (this.pendingSignon == id)
                 {
+                    this.pendingSignon = null;
                     Dispatcher.Invoke(new Action(() =>
                     {
                         ShowError(ex.GetType().Name, ex.Message);
@@ -825,6 +827,7 @@ namespace Walkabout.Dialogs
             OFX ofx = req.Signup(this.editing, out logpath);
             if (this.signupRequest == req)
             {
+                this.signupRequest = null;
                 UiDispatcher.BeginInvoke(new Action(() =>
                 {
                     Progress.Visibility = Visibility.Collapsed;
@@ -877,8 +880,14 @@ namespace Walkabout.Dialogs
                     errorLink = InternetExplorer.GetOpenFileHyperlink("XML Log File", oe.HelpLink);
                 }                    
             }
-
-            ShowError(code, msg, errorLink);
+            if (msg.Contains("<HTML>"))
+            {
+                ShowHtmlError(code, msg);
+            }
+            else
+            {
+                ShowError(code, msg, errorLink);
+            }
         }
 
         private void HandleSignOnErrors(OfxException ex, Action continuation)
@@ -1048,7 +1057,24 @@ namespace Walkabout.Dialogs
             }
             ErrorMessage.Document.Blocks.Add(p);
 
+            ErrorScroller.Visibility = System.Windows.Visibility.Visible;
+            ErrorHtml.Visibility = System.Windows.Visibility.Collapsed;
             ErrorMessage.Visibility = System.Windows.Visibility.Visible;
+            Progress.Visibility = Visibility.Collapsed;
+        }
+
+        private void ShowHtmlError(string code, string message)
+        {
+            AccountListPanel.Visibility = Visibility.Visible;
+            SignupResultPrompt.Text = code;
+            SignupResultPrompt.Foreground = Brushes.Red;
+            OnlineResultList.Visibility = System.Windows.Visibility.Collapsed;
+
+            ErrorHtml.NavigateToString(message);
+
+            ErrorScroller.Visibility = System.Windows.Visibility.Visible;
+            ErrorHtml.Visibility = System.Windows.Visibility.Visible;
+            ErrorMessage.Visibility = System.Windows.Visibility.Collapsed;
             Progress.Visibility = Visibility.Collapsed;
         }
 
@@ -1103,6 +1129,7 @@ namespace Walkabout.Dialogs
             }
             OnlineResultList.ItemsSource = this.found;
             OnlineResultList.Visibility = System.Windows.Visibility.Visible;
+            ErrorScroller.Visibility = System.Windows.Visibility.Collapsed;
 
             ResizeListColumns();
         }
@@ -1406,6 +1433,7 @@ namespace Walkabout.Dialogs
                 {
                     if (this.pendingVerify == req && fetchingName == this.editing.Name)
                     {
+                        this.pendingVerify = null;
                         Progress.Visibility = Visibility.Collapsed;
                         HandleProfileResponse(profile, cachePath);
                         OfxVersions.SelectedIndex = InsertVersion(this.editing.OfxVersion); // in case it was changed by the "GetProfile" method.
@@ -1416,6 +1444,7 @@ namespace Walkabout.Dialogs
             {
                 if (this.pendingVerify == req)
                 {
+                    this.pendingVerify = null;
                     Dispatcher.Invoke(new Action(() =>
                     {
                         OnGotProfile(ex.Message);
@@ -1430,6 +1459,7 @@ namespace Walkabout.Dialogs
             {
                 if (this.pendingVerify == req)
                 {
+                    this.pendingVerify = null;
                     Dispatcher.Invoke(new Action(() =>
                     {
                         OnHtmlResponse(he.Html);
@@ -1440,6 +1470,7 @@ namespace Walkabout.Dialogs
             {
                 if (this.pendingVerify == req)
                 {
+                    this.pendingVerify = null;
                     Dispatcher.Invoke(new Action(() =>
                     {
                         OnGotProfile(ex.Message);
@@ -1450,15 +1481,8 @@ namespace Walkabout.Dialogs
         }
 
         private void OnHtmlResponse(string html)
-        {
-            string path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "response.htm");
-            using (var writer = new StreamWriter(path, false, UTF8Encoding.UTF8))
-            {
-                writer.WriteLine(html);
-            }
-
-            ShowError("Connect Error", "Unexpected HTML response from your financial institution:  ", InternetExplorer.GetOpenFileHyperlink("Open HTML file", path));
-
+        {            
+            ShowHtmlError("Connect Error", html);
         }
 
         private void HandleProfileResponse(ProfileResponseMessageSet profile, string cachePath)

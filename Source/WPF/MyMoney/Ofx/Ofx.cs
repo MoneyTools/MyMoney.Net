@@ -1175,11 +1175,26 @@ NEWFILEUID:{1}
             XDocument doc = this.GetProfileRequest(lastGetProfileDate);
             SaveLog(doc, GetLogfileName(this.onlineAccount) + "PROF_RQ.xml");
 
-            doc = SendOfxRequest(doc);
-
-            // deserialize response into our OfxProfile structure.
-
-            OFX ofx = DeserializeOfxResponse(doc);
+            OFX ofx = null;
+            try
+            {
+                doc = SendOfxRequest(doc);
+                // deserialize response into our OfxProfile structure.
+                ofx = DeserializeOfxResponse(doc);
+            }
+            catch (Exception ex)
+            {
+                if (File.Exists(cache))
+                {
+                    // then return the cached profile.
+                    doc = XDocument.Load(cache);
+                    ofx = DeserializeOfxResponse(doc);
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
 
             CheckSignOnStatusError(ofx);
 
