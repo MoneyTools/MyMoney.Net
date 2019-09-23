@@ -873,7 +873,11 @@ namespace Walkabout.Dialogs
                 {
                     code = oe.Code;
                 }
-                msg = oe.Response;
+
+                if (oe.Response != null)
+                {
+                    msg = oe.Response;
+                }
                 
                 if (oe.HelpLink != null) 
                 {

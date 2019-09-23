@@ -1181,6 +1181,8 @@ NEWFILEUID:{1}
                 doc = SendOfxRequest(doc);
                 // deserialize response into our OfxProfile structure.
                 ofx = DeserializeOfxResponse(doc);
+
+                CheckSignOnStatusError(ofx);
             }
             catch (Exception ex)
             {
@@ -1196,7 +1198,6 @@ NEWFILEUID:{1}
                 }
             }
 
-            CheckSignOnStatusError(ofx);
 
             if (ofx.ProfileMessageSet == null || ofx.ProfileMessageSet.ProfileMessageResponse == null)
             {
@@ -1459,12 +1460,35 @@ NEWFILEUID:{1}
 
             OFX ofx = DeserializeOfxResponse(doc);
 
-            CheckSignOnStatusError(ofx);
+            OfxException e = GetSignOnStatusError(ofx);
+
+            var status = ofx?.SignUpMessageResponse?.AccountInfoSet?.OfxStatus;
+            if (status != null && status.Code != 0)
+            {
+                string sev = status.Severity ?? "Error";
+                OfxErrorCode code = (OfxErrorCode)status.Code;
+                string message = status.Message ?? string.Format("Sign up failed with {0} code {1}({2})", sev, code.ToString(), status.Code);
+
+                if (e != null)
+                {
+                    message += "\n" + e.Message;
+                }
+
+                e = new OfxException(message, code.ToString(), null, null)
+                {
+                    Root = ofx,
+                    OfxError = (OfxErrorCode)status.Code
+                };
+            }
+            if (e != null)
+            {
+                throw e;
+            }
 
             return ofx;
         }
 
-        internal void CheckSignOnStatusError(OFX ofx)
+        internal OfxException GetSignOnStatusError(OFX ofx)
         {
             var sms = ofx.SignOnMessageResponse;
             if (sms != null)
@@ -1493,13 +1517,24 @@ NEWFILEUID:{1}
                         string sev = status.Severity ?? "Error";
                         OfxErrorCode code = (OfxErrorCode)status.Code;
                         string message = status.Message ?? string.Format("Sign on failed with {0} code {1}({2})", sev, code.ToString(), status.Code);
-                        throw new OfxException(message, code.ToString(), null, null)
+
+                        return new OfxException(message, code.ToString(), null, null)
                         {
                             Root = ofx,
                             OfxError = (OfxErrorCode)status.Code
                         };
                     }
                 }
+            }
+            return null;
+        }
+
+        internal void CheckSignOnStatusError(OFX ofx)
+        {
+            var e = GetSignOnStatusError(ofx);
+            if (e != null)
+            {
+                throw e;
             }
         }
 

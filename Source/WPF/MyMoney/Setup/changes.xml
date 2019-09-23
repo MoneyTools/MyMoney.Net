@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="1.1.0.55" date="9/22/2019">
+  <change version="1.1.0.57" date="9/22/2019">
     Fix some error handling in OFX connection dialog, including showing HTML error responses.
     FIx bugs in creating new accounts found by ScenarioTests.
     Fix some timing bugs in ScenarioTests to do with selecting menu options.
