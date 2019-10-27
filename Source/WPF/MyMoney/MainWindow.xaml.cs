@@ -541,7 +541,7 @@ namespace Walkabout
                 }
                 UpdateCaption(null);
 
-                myMoney.BeginUpdate();
+                myMoney.BeginUpdate(this);
                 try
                 {
                     if (this.database != null)
@@ -630,7 +630,7 @@ namespace Walkabout
 
         void AfterLoadChecks()
         {
-            myMoney.BeginUpdate();
+            myMoney.BeginUpdate(this);
             try
             {
                 // remove dangling transactions.
@@ -2689,7 +2689,7 @@ namespace Walkabout
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.UpdateCharts))
             {
 #endif
-                this.myMoney.BeginUpdate();
+                this.myMoney.BeginUpdate(this);
                 try
                 {
 

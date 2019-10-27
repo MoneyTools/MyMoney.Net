@@ -536,7 +536,7 @@ namespace Walkabout.Data
 
             this.LazyCreateTables();
             MyMoney money = new MyMoney();
-            money.BeginUpdate();
+            money.BeginUpdate(this);
             try
             {
                 // Must be done in the right order so all object references can be resolved properly

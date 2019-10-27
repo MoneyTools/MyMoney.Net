@@ -83,7 +83,7 @@ namespace Walkabout.Migrate
         public IEnumerable<object> ImportObjects(XmlReader reader, Account selected, Transaction selectedTransaction)
         {
             List<object> result = new List<object>();
-            Money.BeginUpdate();
+            Money.BeginUpdate(this);
             try
             {
                     reader.MoveToElement();

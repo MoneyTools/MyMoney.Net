@@ -115,7 +115,7 @@ namespace Walkabout.Assitance
 
         private void CreateInvestmentSamples(SampleData data, Account a)
         {
-            money.BeginUpdate();
+            money.BeginUpdate(this);
             Transactions transactions = money.Transactions;
 
             for (int year = DateTime.Now.Year-10; year <= DateTime.Now.Year; year++)
@@ -229,7 +229,7 @@ namespace Walkabout.Assitance
             double biMonthlyInfation = (inflation / 24);
 
             DateTime date = new DateTime(first.Year, 1, 1);
-            money.BeginUpdate();
+            money.BeginUpdate(this);
             Payee payee = money.Payees.FindPayee(employer, true);
             Category category = money.Categories.GetOrCreateCategory("Wages & Salary:Gross Pay", CategoryType.Income);
             category.Type = CategoryType.Income;
@@ -269,7 +269,7 @@ namespace Walkabout.Assitance
             int totalDays = (int)span.TotalDays;
             double monthlyInflation = (inflation / 12);
 
-            money.BeginUpdate();
+            money.BeginUpdate(this);
             Transactions transactions = money.Transactions;
             Accounts accounts = money.Accounts;
             Payees payees = money.Payees;

@@ -32,12 +32,19 @@ namespace Walkabout.Data
         string name;
         ChangeType type;
         ChangeEventArgs next;
+        object source;
 
         public ChangeEventArgs(object item, string name, ChangeType type)
         {
             this.item = item;
             this.type = type;
             this.name = name;
+        }
+
+        public object ChangeSource
+        {
+            get { return this.source; }
+            set { this.source = value; }
         }
 
         public ChangeType ChangeType
@@ -469,6 +476,7 @@ namespace Walkabout.Data
         bool changePending;
         ChangeEventArgs head;
         ChangeEventArgs tail;
+        object changeSource;
 
         BatchSync GetBatched()
         {
@@ -484,9 +492,10 @@ namespace Walkabout.Data
             get { return GetBatched().Read() > 0; }
         }
 
-        public virtual void BeginUpdate()
+        public virtual void BeginUpdate(object source)
         {
             // batched updates
+            changeSource = source;
             GetBatched().Increment();
         }
 
@@ -494,6 +503,7 @@ namespace Walkabout.Data
         {
             if (GetBatched().Decrement() == 0 && changePending)
             {
+                changeSource = null;
                 changePending = false;
                 if (this.head != null)
                 {
@@ -512,6 +522,7 @@ namespace Walkabout.Data
         internal void FlushUpdates()
         {
             changePending = false;
+            changeSource = null;
             this.head = this.tail = null;
         }
 
@@ -524,6 +535,7 @@ namespace Walkabout.Data
         {
             if (GetBatched().Read() > 0)
             {
+                args.ChangeSource = changeSource;
                 changePending = true;
                 if (head == null)
                 {
@@ -835,7 +847,7 @@ namespace Walkabout.Data
 
         public void Save(IDatabase database)
         {
-            BeginUpdate();
+            BeginUpdate(this);
             RemoveUnusedPayees();
             RemoveUnusedOnlineAccounts();
 
@@ -1872,7 +1884,7 @@ namespace Walkabout.Data
         /// </summary>
         internal void PostDeserializeFixup()
         {
-            this.BeginUpdate();
+            this.BeginUpdate(this);
 
             // rebuild category hierarchy
             this.Categories.FixParents();
@@ -1907,7 +1919,7 @@ namespace Walkabout.Data
 
         private void MarkAllUpToDate()
         {
-            this.BeginUpdate();
+            this.BeginUpdate(this);
 
             // Mark all objects as up to date.
             foreach (Account a in this.Accounts) { a.OnUpdated(); }
@@ -1936,7 +1948,7 @@ namespace Walkabout.Data
 
         internal void MarkAllNew()
         {
-            this.BeginUpdate();
+            this.BeginUpdate(this);
 
             // Mark all objects as being new (needing to be saved).
             this.OnlineAccounts.MarkAllNew();
@@ -2229,7 +2241,7 @@ namespace Walkabout.Data
             a.OnDelete();
 
             MyMoney myMoney = this.Parent as MyMoney;
-            myMoney.BeginUpdate();
+            myMoney.BeginUpdate(this);
 
             // Fix up any transfers that are pointing to this account.
             IList<Transaction> view = myMoney.Transactions.FindTransfersToAccount(a);
@@ -6288,7 +6300,7 @@ namespace Walkabout.Data
         internal void ComputeCategoryBalance()
         {
             MyMoney money = (MyMoney)this.Parent;
-            money.BeginUpdate();
+            money.BeginUpdate(this);
 
             foreach (Category c in this.GetRootCategories())
             {
@@ -11374,7 +11386,7 @@ namespace Walkabout.Data
 
                     // Append the collection of Split for this transaction with the new split created by the dataGrid
                     MyMoney money = this.MyMoney;
-                    money.BeginUpdate();
+                    money.BeginUpdate(this);
                     s.Transaction.Splits.AddSplit(s);
                     Rebalance();
                     money.EndUpdate();
@@ -11387,7 +11399,7 @@ namespace Walkabout.Data
             {
                 Split s = this[index];
                 MyMoney money = this.MyMoney;
-                money.BeginUpdate();
+                money.BeginUpdate(this);
                 base.RemoveItem(index);
                 ((Splits)s.Parent).RemoveSplit(s);
                 Rebalance();

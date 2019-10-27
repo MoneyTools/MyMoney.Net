@@ -204,7 +204,7 @@ namespace Walkabout.Dialogs
             a.Loading = true;
             List<Transaction> changed = new List<Transaction>();
             a.Changed = changed;
-            this.myMoney.BeginUpdate();
+            this.myMoney.BeginUpdate(this);
             StringBuilder sb = new StringBuilder();
 
             List<Transaction> newTransactions = new List<Transaction>();

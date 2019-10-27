@@ -798,7 +798,7 @@ namespace Walkabout.Views.Controls
 
         private void ReverseTransfer(Transaction t)
         {
-            MyMoney.BeginUpdate();
+            MyMoney.BeginUpdate(this);
             decimal amount = -t.Amount;
             t.IsBudgeted = false;
             t.Transfer.Transaction.IsBudgeted = false;

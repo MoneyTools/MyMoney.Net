@@ -1979,7 +1979,7 @@ namespace Walkabout.Views
                     bool changed = false;
                     try
                     {
-                        this.myMoney.BeginUpdate();
+                        this.myMoney.BeginUpdate(this);
                         StockQuote quote = sorted[0];
                         foreach (Transaction t in transactions)
                         {
@@ -2964,6 +2964,19 @@ namespace Walkabout.Views
                                     if (args.ChangeType == ChangeType.Deleted || args.ChangeType == ChangeType.Inserted)
                                     {
                                         rebalance = true;
+                                        // optimization tor TransactionCollection
+                                        if (args.ChangeSource != null && args.ChangeSource.GetType() == typeof(TransactionCollection))
+                                        {
+                                            // TransactionCollection will already have taken care of inserts and deletes, so we
+                                            // can optimize this case (refresh is slow).
+                                            rebalance = true;
+                                        }
+                                        else
+                                        { 
+                                            // change came from somewhere else (like OFX import) so need a full refresh.
+                                            refresh = true;
+                                            rebalance = true;
+                                        }
                                     }
                                 }
                             }
@@ -3809,7 +3822,7 @@ namespace Walkabout.Views
             {
                 try
                 {
-                    this.myMoney.BeginUpdate();
+                    this.myMoney.BeginUpdate(this);
                     t.SetBudgeted(!t.IsBudgeted, null);
                 }
                 catch (Exception ex)
@@ -3912,7 +3925,7 @@ namespace Walkabout.Views
                 Category to = dialog.ToCategory;
                 if (to != category)
                 {
-                    this.myMoney.BeginUpdate();
+                    this.myMoney.BeginUpdate(this);
                     try
                     {
                         foreach (Transaction t in this.ViewModel)
@@ -5035,7 +5048,7 @@ namespace Walkabout.Views
                 // The Begin/EndUpdate stops the TransactionControl from doing a Refresh which is what we want.
                 if (!constructing)
                 {
-                    this.money.BeginUpdate();
+                    this.money.BeginUpdate(this);
                     this.money.Transactions.AddTransaction(t);
                     this.money.EndUpdate();
                 }
@@ -5060,7 +5073,7 @@ namespace Walkabout.Views
                 {
                     if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || !Prompt || ConfirmDelete())
                     {
-                        this.money.BeginUpdate();
+                        this.money.BeginUpdate(this);
                         try
                         {
                             this.money.RemoveTransaction(t);
@@ -6635,7 +6648,7 @@ namespace Walkabout.Views
             Transaction t = box.DataContext as Transaction;
             if (t != null)
             {
-                t.BeginUpdate();
+                t.BeginUpdate(this);
                 if (!t.IsBudgeted)
                 {
                     t.IsBudgeted = true;

@@ -454,7 +454,7 @@ namespace Walkabout.Attachments
 
         private void BatchUpdate(List<Tuple<Transaction, bool>> toUpdate)
         {
-            this.money.BeginUpdate();
+            this.money.BeginUpdate(this);
             try
             {
                 foreach(var pair in toUpdate)
@@ -508,7 +508,7 @@ namespace Walkabout.Attachments
             {
                 try
                 {
-                    this.money.BeginUpdate();
+                    this.money.BeginUpdate(this);
                     foreach (Transaction t in this.money.Transactions.GetTransactionsFrom(a))
                     {
                         if (!threadRunning)
