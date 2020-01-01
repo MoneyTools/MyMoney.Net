@@ -935,6 +935,10 @@ namespace Walkabout.Views
             this.committed = e.Row.Item as Transaction;
             if (this.committed != null)
             {
+                if (this.committed.Splits != null)
+                {
+                    this.committed.Splits.AmountMinusSalesTax = null;
+                }
                 // Note: this must be DispatcherPriority.Background otherwise Rebalance() happens too soon and
                 // doesn't see the new value!
                 this.Dispatcher.BeginInvoke(new Action(Rebalance), DispatcherPriority.Background);
@@ -4273,30 +4277,59 @@ namespace Walkabout.Views
 
         void OnDataGridCellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            DataGridColumn c = e.Column;
-            if (c.SortMemberPath == "SalesTax")
+            MoneyDataGrid grid = sender as MoneyDataGrid;
+            Transaction t = this.SelectedTransaction;
+            if (t != null && t.IsSplit && grid != null && (e.Column.SortMemberPath == "SalesTax" || e.Column.SortMemberPath == "Debit" || e.Column.SortMemberPath == "Credit"))
             {
-                string text = MoneyDataGrid.GetColumnValue(e.Row, e.Column);
-                if (string.IsNullOrWhiteSpace(text))
+                decimal salesTax = t.SalesTax;
+                decimal amount = t.Amount;
+
+                bool editedTax = TryGetDecimal(grid.GetUncommittedColumnText(e.Row, "SalesTax"), ref salesTax);
+                bool editedAmount = false;
+                if (TryGetDecimal(grid.GetUncommittedColumnText(e.Row, "Debit"), ref amount))
                 {
-                    text = "0";
+                    amount = -amount;
+                    editedAmount = true;
                 }
-                decimal value;
-                if (decimal.TryParse(text, out value))
+                else
                 {
-                    Transaction t = this.SelectedTransaction;
-                    if (t != null)
-                    {
-                        t.PendingSalesTax = value;
-                        if (t.IsSplit)
-                        {
-                            t.NonNullSplits.Rebalance();
-                        }
-                    }
+                    editedAmount = TryGetDecimal(grid.GetUncommittedColumnText(e.Row, "Credit"), ref amount);
                 }
+
+                if (amount < 0)
+                {
+                    amount += salesTax;
+                }
+                else
+                {
+                    amount -= salesTax; // then it was a refund, so sales tax was refunded also!
+                }
+
+                if (editedAmount || editedTax)
+                {
+                    t.NonNullSplits.AmountMinusSalesTax = amount;
+                }
+                else
+                {
+                    t.NonNullSplits.AmountMinusSalesTax = null;
+                }
+                t.NonNullSplits.Rebalance();
             }
         }
 
+        bool TryGetDecimal(string s, ref decimal value)
+        {
+            if (!string.IsNullOrEmpty(s))
+            {
+                decimal v;
+                if (decimal.TryParse(s, out v))
+                {
+                    value = v;
+                    return true;
+                }
+            }
+            return false;
+        }
 
         private void ComboBoxForPayee_PreviewLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {

@@ -8981,7 +8981,6 @@ namespace Walkabout.Data
         DateTime date;
         internal decimal amount;
         decimal salesTax;
-        decimal? pendingSalesTax;
         TransactionStatus status;
         string memo;
         Payee payee;
@@ -10046,36 +10045,18 @@ namespace Walkabout.Data
             }
         }
 
-        [XmlIgnore]
-        [IgnoreDataMember]
-        public decimal? PendingSalesTax
-        {
-            get { return pendingSalesTax; }
-            set
-            {
-                pendingSalesTax = value;
-                OnChanged("SalesTax");
-            }
-        }
-
-
         [DataMember]
         [ColumnMapping(ColumnName = "SalesTax", SqlType = typeof(SqlMoney), AllowNulls = true)]
         public decimal SalesTax
         {
             get
             {
-                if (pendingSalesTax.HasValue)
-                {
-                    return pendingSalesTax.Value;
-                }
                 return this.salesTax;
             }
             set
             {
                 if (this.salesTax != value)
                 {
-                    this.pendingSalesTax = null;
                     this.salesTax = value;
                     OnChanged("SalesTax");
                 }
@@ -11131,6 +11112,7 @@ namespace Walkabout.Data
         int nextSplit;
         Hashtable<int, Split> splits;
         decimal unassigned;
+        decimal? amountMinusSalesTax;
 
         public Splits()
         { // for serialization.
@@ -11168,7 +11150,14 @@ namespace Walkabout.Data
         public Transaction Transaction
         {
             get { return this.transaction; }
-            set { this.transaction = value; }
+            set {  this.transaction = value; }
+        }
+
+        [XmlIgnore]
+        public decimal? AmountMinusSalesTax
+        {
+            get { return this.amountMinusSalesTax; }
+            set { this.amountMinusSalesTax = value; }
         }
 
         [XmlIgnore]
@@ -11216,8 +11205,14 @@ namespace Walkabout.Data
                             total += s.Amount;
                         }
                     }
-                    decimal amount = this.transaction.AmountMinusTax;
-                    this.Unassigned = amount - total;
+                    if (this.amountMinusSalesTax != null)
+                    {
+                        this.Unassigned = this.AmountMinusSalesTax.Value - total;
+                    } 
+                    else
+                    {
+                        this.Unassigned = this.Transaction.AmountMinusTax - total;
+                    }
 
                     if (this.unassigned != 0)
                     {

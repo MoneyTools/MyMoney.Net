@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.59" date="10/27/2019">
+    Fix how "unblanced part of a split" is calulated.
+    Move solution to VS 2019.
+  </change>
   <change version="1.1.0.58" date="10/27/2019">
     Make OFX import a little more robust in the case of garbled input.
     Fix an update bug so new rows are shown properly after OFX import.

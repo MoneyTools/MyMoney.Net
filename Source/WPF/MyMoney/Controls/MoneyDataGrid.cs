@@ -568,7 +568,8 @@ namespace Walkabout.Controls
             List<Control> editors = new List<Control>();
             WpfHelper.FindEditableControls(contentPresenter, editors);
 
-            // move focus to the next editor.
+            // Move focus to the next editor in the cell if there is one.  
+            // This can happen on the "Payee/Category/Memo" column which has 3 editors in one column.
             for (int i = 0; i < editors.Count; i++)
             {
                 Control editor = editors[i];
@@ -758,56 +759,51 @@ namespace Walkabout.Controls
             DataGridColumn column = this.FindColumn(sortMemberPath);
             if (column != null)
             {
-                return GetColumnValue(row, column, columnEditorIndex);
-            }
-            return null;
-        }
-
-        public static string GetColumnValue(DataGridRow row, DataGridColumn column, int columnEditorIndex = 0)
-        {
-            FrameworkElement contentPresenter = column.GetCellContent(row.DataContext);
-
-            if (row.IsEditing)
-            {
-                List<Control> editors = new List<Control>();
-                WpfHelper.FindEditableControls(contentPresenter, editors);
-                if (editors.Count > columnEditorIndex)
+                FrameworkElement contentPresenter = column.GetCellContent(row.DataContext);
+                if (row.IsEditing)
                 {
-                    Control editor = editors[columnEditorIndex];
-                    TextBox box = editor as TextBox;
-                    if (box != null)
+                    List<Control> editors = new List<Control>();
+                    WpfHelper.FindEditableControls(contentPresenter, editors);
+                    if (editors.Count > columnEditorIndex)
                     {
-                        return box.Text;
-                    }
-                    ComboBox combo = editor as ComboBox;
-                    if (combo != null)
-                    {
-                        return combo.Text;
-                    }
-                    DatePicker picker = editor as DatePicker;
-                    if (picker != null)
-                    {
-                        return picker.Text;
-                    }
-                }
-                else
-                {
-                    List<TextBlock> blocks = new List<TextBlock>();
-                    WpfHelper.FindTextBlocks(contentPresenter, blocks);
-                    if (blocks.Count > columnEditorIndex)
-                    {
-                        TextBlock block = blocks[columnEditorIndex];
-                        if (block != null)
+                        Control editor = editors[columnEditorIndex];
+                        TextBox box = editor as TextBox;
+                        if (box != null)
                         {
-                            return block.Text;
+                            return box.Text;
+                        }
+                        ComboBox combo = editor as ComboBox;
+                        if (combo != null)
+                        {
+                            return combo.Text;
+                        }
+                        DatePicker picker = editor as DatePicker;
+                        if (picker != null)
+                        {
+                            return picker.Text;
                         }
                     }
+                    else
+                    {
+                        // Row might not yet be committed to Transaction and edited value
+                        // is stored in a TextBlock.
+                        List<TextBlock> blocks = new List<TextBlock>();
+                        WpfHelper.FindTextBlocks(contentPresenter, blocks);
+                        if (blocks.Count > columnEditorIndex)
+                        {
+                            TextBlock block = blocks[columnEditorIndex];
+                            if (block != null)
+                            {
+                                return block.Text;
+                            }
+                        }
 
+                    }
                 }
             }
-
             return null;
         }
+
 
         public void SetUncommittedColumnText(DataGridRow row, string sortMemberPath, int columnEditorIndex, string value)
         {
