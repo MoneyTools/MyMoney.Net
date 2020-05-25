@@ -143,12 +143,6 @@ namespace Walkabout
             return s;
         }
 
-
-     
-
-        
-     
-
         /// <summary>
         /// If the process was invoke with a QIF file as argument
         /// we copy the file to the "well-known" folder where MyMoney.exe will be listening on

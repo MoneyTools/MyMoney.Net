@@ -3345,6 +3345,61 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         public delegate Account PickAccountDelegate(MyMoney money, Account accountTemplate);
 
+        static Regex ObfuscatedId = new Regex("([X]+)([0-9]+)");
+
+        private bool AccoundIdMatches(string downloadedId, string localId)
+        {
+            if (string.IsNullOrEmpty(localId))
+            {
+                return false;
+            }
+            if (string.Compare(downloadedId, localId, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private Account AccountIdFuzzyMatch(string downloadedId)
+        {
+            Account matched = null;
+            var m = ObfuscatedId.Match(downloadedId);
+            if (m.Success && m.Groups.Count == 3)
+            {
+                var exs = m.Groups[1].Value;
+                var tail = m.Groups[2].Value;
+
+                foreach (Account acct in this.myMoney.Accounts.GetAccounts())
+                {
+                    foreach (string localId in new string[] {  acct.AccountId, acct.OfxAccountId })
+                    {
+                        if (!string.IsNullOrEmpty(localId))
+                        {
+                            var trimmedLocalId = localId.Replace(" ", "").Trim();
+                            if (trimmedLocalId.Length == downloadedId.Length)
+                            {
+                                var localTail = trimmedLocalId.Substring(exs.Length);
+                                if (string.Compare(tail, localTail, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    if (matched != null && matched != acct)
+                                    {
+                                        // ambiguouis!
+                                        return null;
+                                    }
+                                    else
+                                    {
+                                        matched = acct;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return matched;
+        }
+
         // Find account matching the given id.
         private Account FindAccountByOfxId(string accountId)
         {
@@ -3352,17 +3407,18 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             {
                 foreach (Account acct in this.myMoney.Accounts.GetAccounts())
                 {
-                    if (!string.IsNullOrEmpty(acct.AccountId) && acct.AccountId == accountId)
+                    if (AccoundIdMatches(accountId, acct.AccountId))
                     {
                         return acct;
                     }
-                    if (!string.IsNullOrEmpty(acct.OfxAccountId) && acct.OfxAccountId == accountId)
+                    if (AccoundIdMatches(accountId, acct.OfxAccountId))
                     {
                         return acct;
                     }
                 }
-            }
 
+                return AccountIdFuzzyMatch(accountId);
+            }
             return null;
         }
 
