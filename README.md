@@ -3,8 +3,9 @@ MyMoney.Net is a rich client .NET 4.0 ClickOnce application for managing your pe
 
 ## Install
 
-You can simply click the [ClickOnce Installer](http://www.lovettsoftware.com/Downloads/MyMoney/MyMoney.application) to install the app, it requires
-.NET 4.0.
+You can simply click the [ClickOnce Installer](http://lovettsoftware.com/Downloads/MyMoney/MyMoney.application) to install the app, it requires .NET 4.0.
+
+You can also install using the new [MSIX Installer](http://lovettsoftware.com/Downloads/MyMoney/MoneyPackage_1.1.60.0_AnyCPU.msixbundle) for Windows 10.
 
 ## Help
 
