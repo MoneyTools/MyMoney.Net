@@ -30,6 +30,7 @@ namespace Walkabout.Tests
         Random random;
         static Process serverProcess;
         private TestContext testContextInstance;
+        private const int vsDgmlMonitorTimeout = 3000;
 
         /// <summary>
         ///Gets or sets the test context which provides
@@ -80,7 +81,8 @@ namespace Walkabout.Tests
                 // seed = 313591431;  // Another variation of the above, sometimes even CancelEdit throws!
                 random = new Random(seed);
                 TestContext.WriteLine("Model Seed = " + seed);
-                model = new DgmlTestModel(this, new TestLog(TestContext), random);
+                
+                model = new DgmlTestModel(this, new TestLog(TestContext), random, vsDgmlMonitorTimeout);
 
                 string fileName = FindTestModel("TestModel.dgml");                
                 model.Load(fileName);

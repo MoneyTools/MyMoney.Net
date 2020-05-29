@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Walkabout.Tests</RootNamespace>
     <AssemblyName>MyMoneyTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <AssemblyOriginatorKeyFile>$(MyKeyFile)</AssemblyOriginatorKeyFile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -87,11 +87,8 @@
     </When>
   </Choose>
   <ItemGroup>
-    <Reference Include="LovettSoftware.DgmlTestModeling, Version=3.4.0.0, Culture=neutral, PublicKeyToken=ab3ea86545595e2b, processorArchitecture=MSIL">
-      <HintPath>..\packages\LovettSoftware.DgmlTestModeling.2017.dll.3.5.0\lib\net40\LovettSoftware.DgmlTestModeling.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.DgmlTestModeling, Version=3.4.0.0, Culture=neutral, PublicKeyToken=ab3ea86545595e2b, processorArchitecture=MSIL">
-      <HintPath>..\packages\LovettSoftware.DgmlTestModeling.2017.dll.3.5.0\lib\net40\Microsoft.VisualStudio.DgmlTestModeling.dll</HintPath>
+    <Reference Include="LovettSoftware.DgmlTestModeling, Version=3.8.1.0, Culture=neutral, PublicKeyToken=ab3ea86545595e2b, processorArchitecture=MSIL">
+      <HintPath>..\packages\LovettSoftware.DgmlTestModeling.3.8.1\lib\net472\LovettSoftware.DgmlTestModeling.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore" />
@@ -166,9 +163,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
     <None Include="TestModel.dgml">
       <SubType>Designer</SubType>
     </None>
@@ -189,6 +184,13 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="docit\doc.xslt" />
+    <Content Include="docit\ILToXml.exe" />
+    <Content Include="docit\Microsoft.VisualStudio.DgmlTestModeling.xml" />
+    <Content Include="docit\System.Compiler.dll" />
+    <Content Include="Readme.htm" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
