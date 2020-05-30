@@ -51,7 +51,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <DisallowUrlActivation>true</DisallowUrlActivation>
-    <ApplicationRevision>61</ApplicationRevision>
+    <ApplicationRevision>62</ApplicationRevision>
     <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -654,7 +654,6 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <Content Include="Tools\signtool.exe" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1107,26 +1106,10 @@
     </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- the best way to set this up so that we never checkin keys and passwords is to create a little launchvs.cmd script like this:
-set MyKeyFile=d:\Keys\ChrisLovett.pfx
-set MyPrivateKeyPassword=Whatever...
-devenv MyMoney.sln
-
-For some unknown reason, clickonce publish copies the target files from obj\debug rather than bin\debug 
-Problem is doing this messes up the file hashcode,  so we get the following errors were detected during installation:
-	* [4/18/2013 11:36:40 PM] System.Deployment.Application.InvalidDeploymentException (HashValidation)
-    <PostBuildEvent Condition="'$(MyPrivateKeyPassword)'!=''">
-      "$(WindowsSdkDir)bin\x86\signtool.exe" sign /p $(MyPrivateKeyPassword) /f "$(MyKeyFile)" /d $(TargetName) /du $(SupportUrl) /t $(ManifestTimestampUrl) "$(TargetPath)"
-    </PostBuildEvent>  -->
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent />
   </PropertyGroup>
-  <Target Name="BeforePublish" Condition="'$(MyPrivateKeyPassword)'!=''">
-    <!-- 
-		<Exec Command="&quot;$(WindowsSdkDir)bin\x86\signtool.exe&quot; sign /p $(MyPrivateKeyPassword) /f &quot;$(MyKeyFile)&quot; /d $(TargetName) /du $(SupportUrl) /t $(ManifestTimestampUrl) &quot;$(SolutionDir)$(ProjectName)\obj\$(ConfigurationName)\$(TargetFileName)&quot;" />
-  -->
-  </Target>
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

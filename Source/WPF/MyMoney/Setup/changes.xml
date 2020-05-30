@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.61" date="5/30/2020">
+    Add new Windows 10 MSIX installer with a nice new App Icon.
+    Fix unit tests so they work in Visual Studio 2019.
+  </change>
   <change version="1.1.0.60" date="5/25/2020">
     Fix importing of VISA QFX files so that XXXXXXXXXXXXXXX1234 numbers can
     be automatically matched (if unambiguous).
-    Add new Windows 10 MSIX installer with a nice new App Icon.
-    Fix unit tests so they work in Visual Studio 2019.
   </change>
   <change version="1.1.0.59" date="10/27/2019">
     Fix how "unblanced part of a split" is calulated.
