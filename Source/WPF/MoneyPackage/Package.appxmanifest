@@ -8,7 +8,7 @@
 
   <Identity
     Name="43906ChrisLovett.MyMoney.Net"
-    Publisher="CN=BC801FCC-0BF8-49D7-9F51-1B625C3BE476"
+    Publisher="CN=Chris Lovett, O=Chris Lovett, STREET=18606 201st Ave NE, L=Woodinville, S=WA, PostalCode=98077, C=US"
     Version="1.1.60.0" />
 
   <Properties>
@@ -32,7 +32,7 @@
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="MyMoney.Net"
-        Description="MyMoney is a rich client .NET 4.0 ClickOnce application for managing your personal finances. It is written entirely in C# and is designed for programmers who want easy access to their data and who want to quickly and easily add their own features. Your data will not be locked up in some proprietary format, it is yours to do with as you like."
+        Description="MyMoney is a rich client .NET application for managing your personal finances. It is written entirely in C# and is designed for programmers who want easy access to their data and who want to quickly and easily add their own features. Your data will not be locked up in some proprietary format, it is yours to do with as you like."
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">

@@ -18,7 +18,7 @@ namespace Walkabout.Setup
     }
 
     /// <summary>
-    /// THis class downloads the latest changes.xml from http://vteam.com/MyMoney/download/Application Files/MyMoney_1_0_0_145/Setup/changes.xml.deploy
+    /// This class downloads the latest changes.xml from a click once deployment location.
     /// </summary>
     public class ChangeListRequest
     {

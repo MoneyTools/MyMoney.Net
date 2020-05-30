@@ -9,12 +9,6 @@ using System.Windows;
 // associated with an assembly.
 [assembly: AssemblyTitle("MyMoney")]
 [assembly: AssemblyDescription("A personal money management application")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Walkabout")]
-[assembly: AssemblyProduct("My Money")]
-[assembly: AssemblyCopyright("VTeam.com")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]	
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -51,8 +45,9 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.0.23")]
-[assembly: AssemblyFileVersion("1.1.0.23")]
 [assembly: NeutralResourcesLanguageAttribute("")]
 
 [assembly: InternalsVisibleTo(@"MyMoneyTests, PublicKey=002400000480000094000000060200000024000052534131000400000100010075BA8B492C6DFC7D931414074F83ED4C2277EB06E3D2F0AC39A0EFDA3F4333436CC2E09BDCF70EEFD440487708441AA7B64B43D8147E1002B3D0754720C7E277214FFC3E9B9472FBC12BCAE89E9DABF7C13057B54DEC078896FB800C694907FAFAB201E8707CACC55A169D35D0CE9E1F47EA61AF75DD30BB362B22DCC1EBD7AF")]
+
+
+// See ../Version/*.cs

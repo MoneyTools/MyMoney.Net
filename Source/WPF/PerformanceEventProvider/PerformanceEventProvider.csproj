@@ -11,7 +11,7 @@
     <RootNamespace>Microsoft.VisualStudio.Diagnostics.PerformanceProvider</RootNamespace>
     <AssemblyName>PerformanceEventProvider</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>    
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Version\CommonInfo.cs">
+      <Link>Properties\CommonInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Version\Version.cs">
+      <Link>Properties\Version.cs</Link>
+    </Compile>
     <Compile Include="Listener\EventArrivedEventArgs.cs" />
     <Compile Include="Listener\EventTraceWatcher.cs" />
     <Compile Include="Listener\MeasurementBlockEventArgs.cs" />
