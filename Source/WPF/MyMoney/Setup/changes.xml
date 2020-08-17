@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<changes>
+<changes>  
+  <change version="1.1.0.62" date="5/30/2020">
+    Improved auto categorization using k nearest neighbor.
+    Improved performance of auto categorization  by caching payee to account index.
+    Fixed bug in new category dialog escape key scenario.
+  </change>
   <change version="1.1.0.61" date="5/30/2020">
     Add new Windows 10 MSIX installer with a nice new App Icon.
     Fix unit tests so they work in Visual Studio 2019.
