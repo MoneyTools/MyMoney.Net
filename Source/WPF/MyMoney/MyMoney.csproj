@@ -145,7 +145,6 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
@@ -173,7 +172,6 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -226,6 +224,7 @@
     </Compile>
     <Compile Include="Controls\Resizer.cs" />
     <Compile Include="Controls\WpfConverters.cs" />
+    <Compile Include="Database\AutoCategorization.cs" />
     <Compile Include="Dialogs\RecategorizeDialog.xaml.cs">
       <DependentUpon>RecategorizeDialog.xaml</DependentUpon>
     </Compile>
@@ -242,6 +241,7 @@
     <Compile Include="Utilities\AnimatedMessage.cs" />
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\FileHash.cs" />
+    <Compile Include="Utilities\KNearestNeighbor.cs" />
     <Compile Include="Utilities\QuickFilterParser.cs" />
     <Compile Include="Utilities\RecentFilesMenu.cs" />
     <Compile Include="Utilities\UsHolidays.cs" />
@@ -449,7 +449,6 @@
     <Compile Include="Utilities\MouseUtilities.cs" />
     <Compile Include="Utilities\ProcessHelper.cs" />
     <Compile Include="Utilities\SimpleGraph.cs" />
-    <Compile Include="Utilities\Statistics.cs" />
     <Compile Include="Utilities\TempFileCollection.cs" />
     <Compile Include="Utilities\XmlCsvReader.cs" />
     <Compile Include="View Selectors\AccountsControl.xaml.cs">

@@ -281,9 +281,11 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
 
     internal enum DecodingSource
     {
+#pragma warning disable CA1712 // Do not prefix enum values with type name
         DecodingSourceXmlFile,
         DecodingSourceWbem,
         DecodingSourceWPP
+#pragma warning restore CA1712 // Do not prefix enum values with type name
     }
 
     [StructLayout(LayoutKind.Sequential)]

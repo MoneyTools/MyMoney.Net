@@ -239,6 +239,7 @@ namespace Walkabout.Data
             }
 
             money.PostDeserializeFixup();
+            money.OnLoaded();
 
             return money;
         }

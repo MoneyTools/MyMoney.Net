@@ -1,0 +1,111 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Walkabout.Utilities;
+
+namespace Walkabout.Data
+{
+    internal class AutoCategorization
+    {
+        /// <summary>
+        /// Find the best category match for given payee and amount from past history of transactions and splits.
+        /// </summary>
+        /// <param name="t">The current transaction</param>
+        /// <param name="payeeOrTransferCaption">The payee we are matching</param>
+        /// <returns></returns>
+        public static object AutoCategoryMatch(Transaction t, string payeeOrTransferCaption)
+        {
+            MyMoney money = t.MyMoney;
+            object found = null;
+            Account a = t.Account;
+            if (a != null)
+            {
+                found = FindPreviousTransactionByPayee(a, t, payeeOrTransferCaption);
+                if (found == null)
+                {
+                    // try other accounts;
+                    foreach (Account other in money.payeeAccountIndex.FindAccountsRelatedToPayee(payeeOrTransferCaption))
+                    {
+                        found = FindPreviousTransactionByPayee(other, t, payeeOrTransferCaption);
+                        if (found != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            return found;
+        }
+
+        private static object FindPreviousTransactionByPayee(Account a, Transaction t, string payeeOrTransferCaption)
+        {
+            MyMoney money = t.MyMoney;
+            IList<Transaction> list = money.Transactions.GetTransactionsFrom(a);
+            int len = list.Count;
+
+            if (len == 0)
+            {
+                // Nothing to do here
+                return null;
+            }
+
+            // Tally of how close the current transaction is to the amounts for a given category.
+            var neighbors = new KNearestNeighbor<Category>();
+
+            Transaction closestByDate = null;
+            long ticks = 0;
+
+            decimal amount = t.Amount;
+            for (int i = 0; i < len; i++)
+            {
+                Transaction u = list[i] as Transaction;
+                if (amount == 0)
+                {
+                    // we can't use the probabilities when the amount is zero, so we just return
+                    // the closest transaction by date because in the case of something like a paycheck
+                    // the most recent paycheck usually has the closest numbers on the splits.
+                    long newTicks = Math.Abs((u.Date - t.Date).Ticks);
+                    if (closestByDate == null || newTicks < ticks)
+                    {
+                        closestByDate = u;
+                        ticks = newTicks;
+                    }
+                }
+                else 
+                { 
+                    AddPossibility(t, u, payeeOrTransferCaption, neighbors);
+                }
+            }
+
+            if (closestByDate != null)
+            {
+                return closestByDate;
+            }
+
+            return neighbors.GetNearestNeighbors(1, t.Amount).FirstOrDefault();
+        }
+
+        private static void AddPossibility(Transaction t, Transaction u, string payeeOrTransferCaption, KNearestNeighbor<Category> neighbors)
+        {
+            if (u != t && u.Category != null && u.Payee != null && string.Compare(u.PayeeOrTransferCaption, payeeOrTransferCaption, true) == 0)
+            {
+                if (u.IsSplit)
+                {
+                    foreach (var s in u.Splits)
+                    {
+                        if (s.Payee == null && s.Category != null)
+                        {
+                            neighbors.Add(s, s.Category, Math.Abs(s.Amount));
+                        }
+                    }
+                }
+
+                // absolute value because for this purpose of categorization we don't care if it was 
+                // a purchase or refund on that category.
+                neighbors.Add(u, u.Category, Math.Abs(u.Amount));
+            }
+        }
+    }
+}

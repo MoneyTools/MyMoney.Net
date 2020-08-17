@@ -337,6 +337,8 @@ namespace Walkabout.Assitance
             // trigger category update
             money.Categories.BeginUpdate(false);
             money.Categories.EndUpdate();
+
+            money.OnLoaded();
         }
 
         private decimal Inflate(decimal amount, int months, decimal monthlyInflation)

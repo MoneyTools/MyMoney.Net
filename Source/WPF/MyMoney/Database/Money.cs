@@ -13,9 +13,10 @@ using System.Xml;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Walkabout.Utilities;
-using System.Threading;
-using Walkabout.Database;
-using System.Collections.Specialized;
+using System.Windows.Forms;
+#if PerformanceBlocks
+using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+#endif
 
 namespace Walkabout.Data
 {
@@ -657,7 +658,7 @@ namespace Walkabout.Data
         private Securities securities;
         private StockSplits stockSplits;
         private RentBuildings buildings;
-
+        internal PayeeIndex payeeAccountIndex;
 
         public MyMoney()
         {
@@ -672,6 +673,7 @@ namespace Walkabout.Data
             StockSplits = new StockSplits(this);
             Buildings = new RentBuildings(this);
             LoanPayments = new LoanPayments(this);
+            payeeAccountIndex = new PayeeIndex(this);
 
             EventHandler<ChangeEventArgs> handler = new EventHandler<ChangeEventArgs>(OnChanged);
             Accounts.Changed += handler;
@@ -703,6 +705,11 @@ namespace Walkabout.Data
         {
             get { return payees; }
             set { payees = value; payees.Parent = this; }
+        }
+
+        internal void OnLoaded()
+        {
+            this.payeeAccountIndex.Reload();
         }
 
         [DataMember]
@@ -1511,111 +1518,7 @@ namespace Walkabout.Data
             }
             to.Category = from.Category;
         }
-
-        public Transaction FindPreviousTransactionByPayee(Transaction t, string payeeOrTransferCaption)
-        {
-            Transaction found = null;
-            Account a = t.Account;
-            if (a != null)
-            {
-                found = FindPreviousTransactionByPayee(a, t, payeeOrTransferCaption);
-                if (found == null)
-                {
-                    // try other accounts;
-                    foreach (Account other in this.Accounts.GetAccounts())
-                    {
-                        if (other != a)
-                        {
-                            found = FindPreviousTransactionByPayee(other, t, payeeOrTransferCaption);
-                            if (found != null)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            return found;
-        }
-
-        Transaction FindPreviousTransactionByPayee(Account a, Transaction t, string payeeOrTransferCaption)
-        {
-            int ucount = 0;
-            Transaction u = FindPreviousTransactionByPayee(a, t, payeeOrTransferCaption, /*searchSplits*/ false, out ucount);
-            int splitcount = 0;
-            Transaction v = FindPreviousTransactionByPayee(a, t, payeeOrTransferCaption, /*searchSplits*/ true, out splitcount);
-
-            if (splitcount == 0 || splitcount < ucount / 2)
-            {
-                return u;
-            }
-            else
-            {
-                return v;
-            }
-        }
-
-        Transaction FindPreviousTransactionByPayee(Account a, Transaction t, string payeeOrTransferCaption, bool searchSplits, out int count)
-        {
-            IList<Transaction> list = this.Transactions.GetTransactionsFrom(a);
-            int len = list.Count;
-
-            if (len == 0)
-            {
-                // Nothing to do here
-                count = 0;
-                return null;
-            }
-
-            // Tally of how close the current transaction is to the amounts for a given category.
-            CategoryProbabilies<Transaction> probabilities = new CategoryProbabilies<Transaction>();
-
-            Transaction closestByDate = null;
-            long ticks = 0;
-
-            decimal amount = t.Amount;
-            for (int i = 0; i < len; i++)
-            {
-                Transaction u = list[i] as Transaction;
-                if (searchSplits == u.IsSplit)
-                {
-                    u = AddPossibility(t, u, payeeOrTransferCaption, probabilities);
-                    if (u != null && amount == 0)
-                    {
-                        // we can't use the probabilities when the amount is zero, so we just return
-                        // the closest transaction by date because in the case of something like a paycheck
-                        // the most recent paycheck usually has the closed numbers on the splits.
-                        long newTicks = Math.Abs((u.Date - t.Date).Ticks);
-                        if (closestByDate == null || newTicks < ticks)
-                        {
-                            closestByDate = u;
-                            ticks = newTicks;
-                        }
-                    }
-                }
-
-            }
-
-            if (closestByDate != null)
-            {
-                count = 1;
-                return closestByDate;
-            }
-
-            count = probabilities.Count;
-            return probabilities.GetBestMatch(t.Amount);
-        }
-
-        private Transaction AddPossibility(Transaction t, Transaction u, string payeeOrTransferCaption, CategoryProbabilies<Transaction> probabilities)
-        {
-            if (u != t && u.Category != null && u.Payee != null && string.Compare(u.PayeeOrTransferCaption, payeeOrTransferCaption, true) == 0)
-            {
-                probabilities.Add(u, u.Category.GetFullName(), u.Amount);
-                return u;
-            }
-            return null;
-        }
-
+        
         public IEnumerable<PersistentObject> FindAliasMatches(Alias alias, IEnumerable<Transaction> transactions)
         {
             Payee np = alias.Payee;
@@ -8484,8 +8387,6 @@ namespace Walkabout.Data
             return view;
         }
 
-
-
         public IList<Transaction> GetTransactionsBySecurity(Security s, Predicate<Transaction> include)
         {
             List<Transaction> view = new List<Transaction>();
@@ -11102,6 +11003,85 @@ namespace Walkabout.Data
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// This class represents a one time (load time only) map of which accounts 
+    /// contain which payees.  This helps improve the performance
+    /// of auto-categorization since we can limit which accounts need to be searched.
+    /// </summary>
+    public class PayeeIndex
+    {
+        MyMoney money;
+        Dictionary<string, HashSet<Account>> map = new Dictionary<string, HashSet<Account>>();
+
+        public PayeeIndex(MyMoney money)
+        {
+            this.money = money;
+        }
+
+        internal IEnumerable<Account> FindAccountsRelatedToPayee(string payeeOrTransferCaption)
+        {
+            if (map.TryGetValue(payeeOrTransferCaption, out var set))
+            {
+                foreach(var a in set)
+                {
+                    if (money.Accounts.Contains(a)) // make sure index is ok
+                    {
+                        yield return a;
+                    }
+                }
+            }
+        }
+
+        internal void Reload()
+        {
+#if PerformanceBlocks
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.Model, MeasurementId.Indexing))
+            {
+#endif
+                // now we can build the payee index, only need to do non-closed accounts
+                // since we don't care about old stale data in this index.
+                foreach (var t in money.Transactions)
+                {
+                    var account = t.Account;
+                    if (account != null && !account.IsClosed)
+                    {
+                        if (t.IsSplit)
+                        {
+                            foreach (var s in t.Splits)
+                            {
+                                string cap = s.PayeeOrTransferCaption;
+                                if (!string.IsNullOrEmpty(cap))
+                                {
+                                    GetOrCreate(cap, account);
+                                    continue;
+                                }
+                            }
+                        }
+
+                        var caption = t.PayeeOrTransferCaption;
+                        if (!string.IsNullOrEmpty(caption))
+                        {
+                            GetOrCreate(caption, account);
+                        }
+                    }
+                }
+#if PerformanceBlocks
+            }
+#endif
+        }
+
+        public void GetOrCreate(string payeeOrTransferCaption, Account owner)
+        {
+            HashSet<Account> bucket = null;
+            if (!map.TryGetValue(payeeOrTransferCaption, out bucket))
+            {
+                bucket = new HashSet<Account>();
+                map[payeeOrTransferCaption] = bucket;
+            }
+            bucket.Add(owner);
+        }
     }
 
     //================================================================================

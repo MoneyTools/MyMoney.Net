@@ -642,19 +642,22 @@ namespace Walkabout.Controls
         public void OnStartEdit(Control e)
         {
             e.Focus();
-            TextBox box = e as TextBox;
-            if (box == null && e.Template != null)
+            if (e.IsFocused)
             {
-                box = e.Template.FindName("PART_TextBox", e) as TextBox;
-                if (box == null)
+                TextBox box = e as TextBox;
+                if (box == null && e.Template != null)
                 {
-                    box = e.Template.FindName("PART_EditableTextBox", e) as TextBox;
+                    box = e.Template.FindName("PART_TextBox", e) as TextBox;
+                    if (box == null)
+                    {
+                        box = e.Template.FindName("PART_EditableTextBox", e) as TextBox;
+                    }
                 }
-            }
 
-            if (box != null)
-            {
-                box.SelectAll();
+                if (box != null)
+                {
+                    box.SelectAll();
+                }
             }
         }
 

@@ -573,6 +573,7 @@ namespace Walkabout.Data
             {
                 money.FlushUpdates();
                 money.EndUpdate();
+                money.OnLoaded();
             }
             if (status != null)
             {

@@ -46,6 +46,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider
         CategoryChartInitialize = 308,
 
         Loaded = 310,
+        Indexing = 311,
 
         PrepareContainerForItemOverride = 320,
 

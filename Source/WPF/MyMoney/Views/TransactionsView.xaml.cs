@@ -4464,19 +4464,19 @@ namespace Walkabout.Views
             {
                 newCategory = dialog.Category;
             }
-            else
+                         
+            TextBox box = (TextBox)combo.Template.FindName("PART_EditableTextBox", combo);
+            if (box != null)
             {
-                this.Dispatcher.BeginInvoke(new Action(() =>
+                // move focus back to this box
+                box.SelectAll();
+                box.Focus();
+                if (newCategory != null)
                 {
-                    TextBox box = (TextBox)combo.Template.FindName("PART_EditableTextBox", combo);
-                    if (box != null)
-                    {
-                        // move focus back to this box
-                        box.SelectAll();
-                        box.Focus();
-                    }
-                }));
+                    box.Text = newCategory.Name;
+                }
             }
+
             return newCategory;
         }
 
@@ -4519,8 +4519,7 @@ namespace Walkabout.Views
 
             if (t != null && t.Category == null && string.IsNullOrEmpty(hasCategoryPending) && !string.IsNullOrEmpty(payeeOrTransfer))
             {
-                Transaction u = this.myMoney.FindPreviousTransactionByPayee(t, payeeOrTransfer);
-
+                object u = AutoCategorization.AutoCategoryMatch(t, payeeOrTransfer);
                 if (u != null)
                 {
                     try
@@ -4530,7 +4529,14 @@ namespace Walkabout.Views
                         {
                             t.Date = date.Value;
                         }
-                        this.myMoney.CopyCategory(u, t);
+                        if (u is Split s)
+                        {
+                            t.Category = s.Category;
+                        }
+                        else if (u is Transaction ut)
+                        {
+                            this.myMoney.CopyCategory(ut, t);
+                        }
                     }
                     catch (Exception ex)
                     {
