@@ -10474,7 +10474,7 @@ namespace Walkabout.Data
                 rc = true;
             }
 
-            if (t.salesTax != this.salesTax)
+            if (t.salesTax != this.salesTax && t.salesTax != 0)
             {
                 this.SalesTax = t.salesTax;
                 rc = true;

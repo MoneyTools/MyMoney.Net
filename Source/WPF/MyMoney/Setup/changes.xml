@@ -2,6 +2,7 @@
 <changes>
   <change version="1.1.0.63" date="8/29/2020">
     Allow paste image on selected transaction to add an attachment, so no need to open attachment dialog.
+    Fix merge transaction so it doesn't lose sales tax info.
   </change>
   <change version="1.1.0.62" date="8/16/2020">
     Improved auto categorization using k nearest neighbor.
