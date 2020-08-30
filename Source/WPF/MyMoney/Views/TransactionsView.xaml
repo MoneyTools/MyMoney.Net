@@ -821,7 +821,7 @@
         <GridSplitter x:Name="QueryPanelSplitter" Grid.Row="1" HorizontalAlignment="Stretch"  ResizeBehavior="PreviousAndNext" Visibility="Collapsed" ShowsPreview="false"/>
 
         <!-- TRANSACTIONS -->
-        <Grid Grid.Row="2">
+        <Grid x:Name="TransactionsGrid" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />

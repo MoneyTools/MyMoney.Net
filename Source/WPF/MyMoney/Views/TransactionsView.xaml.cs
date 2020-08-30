@@ -31,6 +31,7 @@ using System.Windows.Media.Imaging;
 using Walkabout.Configuration;
 using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
+using System.Windows.Media.Animation;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -1002,30 +1003,29 @@ namespace Walkabout.Views
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 var transaction = row.Item as Transaction;
-
-                if (transaction != null && transaction.HasAttachment == false)
+                AttachmentManager mgr = this.ServiceProvider.GetService(typeof(AttachmentManager)) as AttachmentManager;
+                if (transaction != null && transaction.HasAttachment == false && mgr != null)
                 {
+                    StringBuilder sb = new StringBuilder();
                     var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                    if (files.Length == 1)
+                    foreach (var file in files) 
                     {
-                        var extension = Path.GetExtension(files[0]);
-                        var settings = (Settings)this.site.GetService(typeof(Settings));
-                        var directory = Path.Combine(settings.AttachmentDirectory, NativeMethods.GetValidFileName(transaction.AccountName));
+                        var extension = Path.GetExtension(file);
 
                         try
                         {
-                            if (!Directory.Exists(directory))
-                                Directory.CreateDirectory(directory);
-
-                            var attachmentFullPath = Path.Combine(directory, $"{transaction.Id}{extension}");
-
-                            if (!File.Exists(attachmentFullPath))
-                            {
-                                File.Copy(files[0], attachmentFullPath);
-                                transaction.HasAttachment = true;
-                            }
+                            string attachmentFullPath = mgr.GetUniqueFileName(transaction, extension);
+                            File.Copy(files[0], attachmentFullPath, true);
+                            transaction.HasAttachment = true;
                         }
-                        catch { }
+                        catch (Exception ex)
+                        {
+                            sb.AppendLine(ex.Message);
+                        }
+                    }
+                    if (sb.Length > 0)
+                    {
+                        MessageBoxEx.Show(sb.ToString(), "Add Attachments Failed", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -1040,7 +1040,7 @@ namespace Walkabout.Views
                         Merge(t, u, true);
                     }
                 }
-            }          
+            }
 
             ClearDragDropStyles(row);
         }
@@ -1163,7 +1163,7 @@ namespace Walkabout.Views
                 {
                     var proceed = false;
                     var transaction = row.Item as Transaction;
-                    if(transaction != null && transaction.HasAttachment == false)
+                    if (transaction != null && transaction.HasAttachment == false)
                     {
                         var files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
@@ -1174,8 +1174,8 @@ namespace Walkabout.Views
                             e.Effects = DragDropEffects.Copy;
                         }
                     }
-                    
-                    if(!proceed)
+
+                    if (!proceed)
                     {
                         e.Effects = DragDropEffects.None;
                         e.Handled = true;
@@ -2263,7 +2263,8 @@ namespace Walkabout.Views
                     }
                     break;
                 case TransactionFilter.Categorized:
-                    filter = new Predicate<Transaction>((t) => {
+                    filter = new Predicate<Transaction>((t) =>
+                    {
                         if (t.Status != TransactionStatus.Void)
                         {
                             return false; // no point seeing these
@@ -2280,7 +2281,8 @@ namespace Walkabout.Views
                     });
                     break;
                 case TransactionFilter.Uncategorized:
-                    filter = new Predicate<Transaction>((t) => {
+                    filter = new Predicate<Transaction>((t) =>
+                    {
                         if (t.Status != TransactionStatus.Void)
                         {
                             return false; // no point seeing these
@@ -2344,7 +2346,7 @@ namespace Walkabout.Views
                 {
                     return false;
                 }
-                return Clipboard.ContainsText();
+                return Clipboard.ContainsText() || (this.SelectedTransaction != null && Clipboard.ContainsImage());
             }
         }
         public bool CanDelete
@@ -2418,7 +2420,16 @@ namespace Walkabout.Views
 
         public void Paste()
         {
-            if (QueryPanel.Visibility == Visibility.Visible &&
+            if (Clipboard.ContainsImage())
+            {
+                if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+                {
+                    return;
+                }
+
+                PasteAttachment();
+            }
+            else if (QueryPanel.Visibility == Visibility.Visible &&
                 QueryPanel.ContainsKeyboardFocus())
             {
                 QueryPanel.Paste();
@@ -2432,6 +2443,117 @@ namespace Walkabout.Views
                 this.Commit();
                 this.PasteSelection();
             }
+        }
+
+        private void PasteAttachment()
+        {
+            var selected = this.SelectedTransaction;
+            if (selected != null)
+            {
+                // add a new attachment containing this image.
+                var bitmap = Clipboard.GetImage();
+
+                try
+                {
+                    AttachmentManager mgr = this.ServiceProvider.GetService(typeof(AttachmentManager)) as AttachmentManager;
+                    var fileName = mgr.GetUniqueFileName(selected, ".png");
+                    PngBitmapEncoder encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                    using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                    {
+                        encoder.Save(stream);
+                    }
+                    selected.HasAttachment = true;
+                } 
+                catch (Exception ex)
+                {
+                    MessageBoxEx.Show(ex.Message, "Paste Attachment Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var image = new Image() { Source = bitmap };
+                double aspectRatio = (bitmap.Height / bitmap.Width);
+                image.Width = bitmap.Width;
+                image.Height = bitmap.Height;
+                // scale it to fit the window.
+                if (bitmap.Width > this.ActualWidth * 0.8)
+                {
+                    double w = this.ActualWidth * 0.8;
+                    image.Width = w;
+                    image.Height = w * aspectRatio;
+                }
+
+                if (bitmap.Height > this.ActualHeight * 0.8)
+                {
+                    double h = this.ActualHeight * 0.8;
+                    image.Height = h;
+                    image.Width = h / aspectRatio;
+                }
+
+                this.GridOverlayCanvas.Children.Clear();
+                this.GridOverlayCanvas.Children.Add(image);
+                var row = this.TheActiveGrid.GetRowFromItem(selected);
+                if (row != null)
+                {
+                    Point pos = row.TransformToVisual(this.TransactionsGrid).Transform(new Point(0, 0));
+                    // shrink image down to the attachment cell of this row.
+                    TransformGroup g = new TransformGroup();
+                    MatrixTransform mt = new MatrixTransform();
+                    ScaleTransform st = new ScaleTransform();
+                    g.Children.Add(st);
+                    g.Children.Add(mt);
+                    image.RenderTransform = g;
+
+                    double x = (this.ActualWidth - image.Width) / 2;
+                    double y = (this.ActualHeight - image.Height) / 2;
+                    double dx = pos.X - x;
+                    double dy = pos.Y - y;
+                    Point start = new Point(x, y);
+                    Point point1 = new Point(x + dx * 0.25, y + dy * 0.3);
+                    Point point2 = new Point(x + dx * 0.75, y + dy * 0.8);
+                    Point point3 = pos;
+                    var duration = new Duration(TimeSpan.FromSeconds(0.5));
+
+                    var animation = new System.Windows.Media.Animation.MatrixAnimationUsingPath();
+                    animation.PathGeometry = new PathGeometry(new PathFigure[] {
+                        new PathFigure(start,
+                            new PathSegment[]
+                            {
+                                new BezierSegment(point1, point2, point3, true)
+                            }, false)
+                    });
+                    animation.Duration = duration;
+                    animation.AccelerationRatio = 1;
+
+                    Storyboard.SetTarget(animation, image);
+                    Storyboard.SetTargetProperty(animation, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[1].(MatrixTransform.Matrix)"));
+
+                    var scaleXAnimation = new DoubleAnimation(1.0, 0, duration);
+                    scaleXAnimation.AccelerationRatio = 1;
+                    Storyboard.SetTarget(scaleXAnimation, image);
+                    Storyboard.SetTargetProperty(scaleXAnimation, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"));
+
+                    var scaleYAnimation = new DoubleAnimation(1.0, 0, duration);
+                    scaleYAnimation.AccelerationRatio = 1;
+                    Storyboard.SetTarget(scaleYAnimation, image);
+                    Storyboard.SetTargetProperty(scaleYAnimation, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"));
+
+                    Storyboard s = new Storyboard();
+                    s.Children.Add(animation);
+                    s.Children.Add(scaleXAnimation);
+                    s.Children.Add(scaleYAnimation);
+                    s.Begin(image);
+                }
+                else
+                {
+                    // hmmm, row is not visible, so the image should animate off the top or bottom of the screen...?
+                }
+            }
+        }
+
+        private void OnImageAnimationComplete(object sender, EventArgs e)
+        {
+            Debug.WriteLine("done!");
         }
 
         public void Delete()
@@ -2976,7 +3098,7 @@ namespace Walkabout.Views
                                             rebalance = true;
                                         }
                                         else
-                                        { 
+                                        {
                                             // change came from somewhere else (like OFX import) so need a full refresh.
                                             refresh = true;
                                             rebalance = true;
@@ -3187,7 +3309,7 @@ namespace Walkabout.Views
                     case TransactionViewName.ByCategoryCustom:
                         balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, true, true, out count, out salestax, out investmentValue);
                         break;
-                        
+
                     case TransactionViewName.ByPayee:
                         balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, true, false, out count, out salestax, out investmentValue);
                         break;
@@ -3206,8 +3328,8 @@ namespace Walkabout.Views
                 {
                     msg += ", investments " + investmentValue.ToString("C");
                 }
-            
-                ShowStatus(msg);    
+
+                ShowStatus(msg);
             }
         }
 
@@ -3821,6 +3943,7 @@ namespace Walkabout.Views
         }
 
         private void BudgetTransaction(Transaction t)
+
         {
             if (t != null)
             {
@@ -4464,7 +4587,7 @@ namespace Walkabout.Views
             {
                 newCategory = dialog.Category;
             }
-                         
+
             TextBox box = (TextBox)combo.Template.FindName("PART_EditableTextBox", combo);
             if (box != null)
             {

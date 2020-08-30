@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<changes>  
-  <change version="1.1.0.62" date="5/30/2020">
+<changes>
+  <change version="1.1.0.63" date="8/29/2020">
+    Allow paste image on selected transaction to add an attachment, so no need to open attachment dialog.
+  </change>
+  <change version="1.1.0.62" date="8/16/2020">
     Improved auto categorization using k nearest neighbor.
     Improved performance of auto categorization  by caching payee to account index.
     Fixed bug in new category dialog escape key scenario.
