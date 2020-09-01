@@ -83,7 +83,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        public IEnumerable<object> GetNearestNeighbors(int k, decimal value)
+        public IEnumerable<Tuple<object, T>> GetNearestNeighbors(int k, decimal value)
         {
             // This is computing distance and a score in one loop, weighted 
             // by the inverse of the distance from our test value, and that way
@@ -121,7 +121,7 @@ namespace Walkabout.Utilities
             }
 
             SortedSet<DataScore<T>> sorted = new SortedSet<DataScore<T>>(scores.Values);
-            return from i in sorted.Take(k) select i.Data;
+            return from i in sorted.Take(k) select new Tuple<object,T>(i.Data, i.Label);
         }
     }
 }
