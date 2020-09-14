@@ -43,6 +43,8 @@ namespace Walkabout.StockQuotes
             _logPath = logPath;
         }
 
+        public bool IsEnabled => !string.IsNullOrEmpty(_settings?.ApiKey);
+
         public static StockServiceSettings GetDefaultSettings()
         {
             return new StockServiceSettings()

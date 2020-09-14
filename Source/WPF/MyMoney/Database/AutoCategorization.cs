@@ -129,7 +129,7 @@ namespace Walkabout.Data
                     return closestByDate;
                 }
 
-                return first.Item2;
+                return first.Item1;
             }
 
             return null;

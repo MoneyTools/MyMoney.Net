@@ -29,6 +29,11 @@ namespace Walkabout.StockQuotes
     public interface IStockQuoteService
     {
         /// <summary>
+        /// Whether this service is configured with an Api Key
+        /// </summary>
+        bool IsEnabled { get; }
+
+        /// <summary>
         /// Fetch updated security information for the given security.
         /// This can be called multiple times so the service needs to keep a queue of pending
         /// downloads.
@@ -38,7 +43,7 @@ namespace Walkabout.StockQuotes
 
         /// <summary>
         /// Return true if your service supports batch download of quotes, meaning one http
-        /// request retrives multiple different quotes at once.  This is usually faster 
+        /// request retrieves multiple different quotes at once.  This is usually faster 
         /// than using BeginFetchQuote and is preferred, but if your service doesn't support
         /// this then BeginFetchQuotes will not be called.
         /// </summary>

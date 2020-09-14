@@ -40,6 +40,8 @@ namespace Walkabout.StockQuotes
             _throttle.Settings = settings;
         }
 
+        public bool IsEnabled => !string.IsNullOrEmpty(_settings?.ApiKey);
+
         public int PendingCount { get { return (_pending == null) ? 0 : _pending.Count; } }
 
         public int DownloadsCompleted{ get { return _completed; } }

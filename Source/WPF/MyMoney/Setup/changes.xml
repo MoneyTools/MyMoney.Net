@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="1.1.0.65" date="9/1/2020">
+  <change version="1.1.0.66" date="9/13/2020">
     Allow paste image on selected transaction to add an attachment, so no need to open attachment dialog.
     Fix merge transaction so it doesn't lose sales tax info.
     Fix auto-categorizing of paycheck splits.
+    Fix handling of stock services when only one of the services is enabled.
   </change>
   <change version="1.1.0.62" date="8/16/2020">
     Improved auto categorization using k nearest neighbor.

@@ -267,16 +267,19 @@ namespace Walkabout.StockQuotes
                 batch.Add(s.Symbol);
             }
 
+            bool foundService = false;
             IStockQuoteService service = GetHistoryService();
             HistoryDownloader downloader = GetDownloader(service);
             if (service != null)
             {
                 downloader.BeginFetchHistory(batch);
+                foundService = true;
             }
 
             service = GetQuoteService();
             if (service != null)
             {
+                foundService = true;
                 if (service.SupportsBatchQuotes)
                 {
                     service.BeginFetchQuotes(batch);
@@ -289,25 +292,39 @@ namespace Walkabout.StockQuotes
                     }
                 }
             }
+            
+            if (!foundService)
+            {
+                AddError(Walkabout.Properties.Resources.ConfigureStockQuoteService);
+                UiDispatcher.BeginInvoke(new Action(UpdateUI));
+            }
         }
 
         private IStockQuoteService GetQuoteService()
         {
+            IStockQuoteService result = null;
             foreach (var service in _services)
             {
-                if (service.SupportsBatchQuotes)
+                if (service.IsEnabled)
                 {
-                    return service;
+                    if (service.SupportsBatchQuotes)
+                    {
+                        return service;
+                    }
+                    if (result == null)
+                    {
+                        result = service;
+                    }
                 }
             }
-            return _services.FirstOrDefault();
+            return result;
         }
 
         private IStockQuoteService GetHistoryService()
         {
             foreach (var service in _services)
             {
-                if (service.SupportsHistory)
+                if (service.SupportsHistory && service.IsEnabled)
                 {
                     return service;
                 }
@@ -374,10 +391,7 @@ namespace Walkabout.StockQuotes
                 }
             }
 
-            UiDispatcher.BeginInvoke(new Action(() =>
-            {
-                UpdateUI();
-            }));
+            UiDispatcher.BeginInvoke(new Action(UpdateUI));
         }
 
         private void UpdateUI()
@@ -773,7 +787,7 @@ namespace Walkabout.StockQuotes
                     }
                     catch (Exception)
                     {
-                        // goit corrupted? no problem, just start over.
+                        // got corrupted? no problem, just start over.
                         log = new DownloadLog();
                     }
                     log._logFolder = logFolder;
