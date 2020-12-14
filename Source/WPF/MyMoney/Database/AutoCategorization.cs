@@ -74,11 +74,14 @@ namespace Walkabout.Data
                     // we can't use the probabilities when the amount is zero, so we just return
                     // the closest transaction by date because in the case of something like a paycheck
                     // the most recent paycheck usually has the closest numbers on the splits.
-                    long newTicks = Math.Abs((u.Date - t.Date).Ticks);
-                    if (closestByDate == null || newTicks < ticks)
+                    if (u.Category != null && u.Transfer == null && u.Payee != null && string.Compare(u.PayeeOrTransferCaption, payeeOrTransferCaption, true) == 0)
                     {
-                        closestByDate = u;
-                        ticks = newTicks;
+                        long newTicks = Math.Abs((u.Date - t.Date).Ticks);
+                        if (closestByDate == null || newTicks < ticks)
+                        {
+                            closestByDate = u;
+                            ticks = newTicks;
+                        }
                     }
                 }
                 else
