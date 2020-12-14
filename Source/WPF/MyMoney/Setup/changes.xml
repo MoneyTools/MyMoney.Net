@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.67" date="12/13/2020">
+    Fix bug in auto-categorization for transaction with zero balance.
+  </change>
   <change version="1.1.0.66" date="9/13/2020">
     Allow paste image on selected transaction to add an attachment, so no need to open attachment dialog.
     Fix merge transaction so it doesn't lose sales tax info.
