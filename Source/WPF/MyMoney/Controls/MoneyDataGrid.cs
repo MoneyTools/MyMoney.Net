@@ -888,6 +888,15 @@ namespace Walkabout.Controls
 
                 if ((pos - downPosition).Length > Threshold)
                 {
+                    Window w = Window.GetWindow(this);
+                    if (w == null || !w.Topmost)
+                    {
+                        // Then there is a popup dialog that left a dangling mouseDown, so we
+                        // have to ignore this one.
+                        mouseDown = false;
+                        return;
+                    }
+
                     TextBox hit = null;
                     if (IsEditing)
                     {

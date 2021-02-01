@@ -1035,7 +1035,7 @@ namespace Walkabout.Views
                 if (t != null)
                 {
                     Transaction u = row.Item as Transaction;
-                    if (t != u && t.Amount == u.Amount)
+                    if (t != u && u != null && t.Amount == u.Amount)
                     {
                         Merge(t, u, true);
                     }
