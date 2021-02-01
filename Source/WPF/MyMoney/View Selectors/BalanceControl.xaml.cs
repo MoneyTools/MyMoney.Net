@@ -582,7 +582,29 @@ namespace Walkabout.Views.Controls
             ((TextBox)sender).SelectAll();
         }
 
+        private void OnTextBoxPreviewLeftMouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            TextBox box = (TextBox)sender;
+            if (!box.IsFocused)
+            {
+                box.Focus();
+                // stop mouse up undoing the SelectAll in this case.
+                captured = this.CaptureMouse();
+                e.Handled = true;
+            }
+        }
 
+        bool captured;
+
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            if (captured)
+            {
+                this.ReleaseMouseCapture();
+                e.Handled = true;
+            }
+            base.OnMouseLeftButtonUp(e);
+        }
     }
 
     public class BalanceEventArgs : EventArgs

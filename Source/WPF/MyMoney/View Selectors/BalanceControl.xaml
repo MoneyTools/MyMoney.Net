@@ -98,9 +98,11 @@ reconciliation dropdown above."/>
                 <Image Source="/MyMoney;component/Dialogs/Icons/Warning.png" />
               </Button>
 
-              <TextBox x:Name="TextBoxStatementBalance" Grid.Column="1" Text="24.96"  HorizontalContentAlignment="Right" TextChanged="TextBoxStatementBalance_TextChanged"
+              <TextBox x:Name="TextBoxStatementBalance" Grid.Column="1" Text="24.96"  HorizontalContentAlignment="Right" 
+                       TextChanged="TextBoxStatementBalance_TextChanged"
                        KeyDown="TextBoxStatementBalance_KeyDown"
                        Style="{StaticResource NumericTextBoxStyle}"  GotFocus="OnTextBoxGotFocus"
+                       PreviewMouseLeftButtonDown="OnTextBoxPreviewLeftMouseButtonDown"
                        ToolTip="Enter the correct statement balance in case the calculated estimate was not correct."  />
             </Grid>
           </StackPanel>
