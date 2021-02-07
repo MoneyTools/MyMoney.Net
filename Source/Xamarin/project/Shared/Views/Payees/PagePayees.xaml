@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<d:Page xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:local="clr-namespace:XMoney"
+             xmlns:d="clr-namespace:XMoney.Views"
+             x:Class="XMoney.Views.PagePayees"          
+             Title="Payees">
+             
+    
+    <Grid x:Name="TheGrid" RowSpacing="0" ColumnSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <local:ViewButtonList Grid.Row="1" x:Name="columBarTop"/>
+
+        <ListView x:Name="MyListView"
+                  Grid.Row="2"
+                  BackgroundColor="White"                  
+                  ItemTapped="OnItemTapped"
+                  RowHeight="50">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid
+                            Padding="0,0,15,0"
+                            BackgroundColor="{Binding . , 
+                                    Converter={StaticResource AlternatingHighlightColorConverter},
+                                    ConverterParameter={x:Reference Name=MyListView}}">
+                              
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40*" />
+                                <ColumnDefinition Width="30*" />
+                                <ColumnDefinition Width="30*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Text="{Binding Name}" TextColor="Black" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Left" VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="1" Text="{Binding Quantity}" TextColor="Black" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="2" Text="{Binding AmountAsText}" TextColor="{Binding AmountColor}"  HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ActivityIndicator x:Name="WorkingSpinner" Color="Blue" Grid.Row="2" VerticalOptions="Center" HorizontalOptions="Center" IsRunning="True" HeightRequest="50" WidthRequest="50"/>
+    </Grid>
+</d:Page>

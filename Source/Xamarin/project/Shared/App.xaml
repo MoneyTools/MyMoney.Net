@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:local="clr-namespace:XMoney;assembly=XMoney"
+             x:Class="XMoney.App">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <local:AlternatingHighlightColorConverter x:Key="AlternatingHighlightColorConverter"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

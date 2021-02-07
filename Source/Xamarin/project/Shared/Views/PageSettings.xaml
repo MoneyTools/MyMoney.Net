@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core" 
+             xmlns:local="clr-namespace:XMoney;assembly=XMoney"
+             ios:Page.UseSafeArea="true"              
+             x:Class="XMoney.PageSettings"
+             Title="{Binding Title}"             
+             NavigationPage.HasNavigationBar="True">
+
+    <ContentPage.BindingContext>
+        <local:SettingsViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+
+        <StackLayout Grid.Row="0" Orientation="Vertical" Padding="20">
+            
+            <StackLayout Orientation="Vertical">
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Money File" Margin="0,0,40,0" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
+                    <Button x:Name="AddSourceFolder" Text="Change" HorizontalOptions="EndAndExpand"/>
+                </StackLayout>
+                <Label x:Name="PathToDataBase" FontSize="Small"  Margin="10"/>
+            </StackLayout>
+
+            <BoxView   VerticalOptions="Center" HeightRequest="1" HorizontalOptions="FillAndExpand" Color="#5b5d68" Margin="0,20,0,20"></BoxView>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" >
+                <Label Text="Show closed accounts" VerticalTextAlignment="Center"/>
+                <CheckBox x:Name="checkBoxShowClosedAccounts" CheckedChanged="CheckBoxShowClosedAccounts_CheckedChanged"/>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" >
+                <Label Text="Show loan projection" VerticalTextAlignment="Center"/>
+                <CheckBox x:Name="checkBoxShowLoanProjection" CheckedChanged="CheckBoxShowLoanProjection_CheckedChanged"/>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" >
+                <Label Text="Manage Rental Properties" VerticalTextAlignment="Center"/>
+                <CheckBox x:Name="checkBoxRental" CheckedChanged="CheckBoxRental_CheckedChanged"/>
+            </StackLayout>
+
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
