@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<d:Page xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:local="clr-namespace:XMoney"             
+             xmlns:d="clr-namespace: XMoney.Views"
+             x:Class="XMoney.Views.PageAccounts"  
+             >
+
+    <Grid x:Name="TheGrid" RowSpacing="0" ColumnSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <local:ViewButtonList Grid.Row="1" x:Name="columBarTop"/>
+
+        <ListView x:Name="MyListView"
+                  Grid.Row="2"                   
+                  BackgroundColor="White"
+                  ItemTapped="OnItemTapped"
+                  HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand"
+                  SeparatorVisibility="None"                  
+                  RowHeight="50"
+                  >
+            
+            <ListView.ItemTemplate>
+                <DataTemplate>                    
+                    <ViewCell>
+                        <Grid
+                              Padding="0,0,15,0"
+                              BackgroundColor="{Binding . , 
+                                    Converter={StaticResource AlternatingHighlightColorConverter},
+                                    ConverterParameter={x:Reference Name=MyListView}}">
+                              
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40*" />
+                                <ColumnDefinition Width="20*" />
+                                <ColumnDefinition Width="20*" />
+                                <ColumnDefinition Width="20*" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <Label Grid.Column="0" Text="{Binding Name}" TextColor="Black" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Left" VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="1" Text="{Binding TypeAsText}" TextColor="Black" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Left" VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="2" Text="{Binding Count}" TextColor="Black" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="3" Text="{Binding BalanceAsText}" TextColor="{Binding BalanceColor}" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</d:Page>

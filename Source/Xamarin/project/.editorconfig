@@ -1,0 +1,28 @@
+[*.{cs,vb}]
+
+# IDE0003: Remove qualification
+dotnet_diagnostic.IDE0003.severity = none
+
+# IDE0005: Remove unnecessary usings/imports
+dotnet_diagnostic.IDE0005.severity = none
+
+# IDE0008: Use explicit type
+dotnet_diagnostic.IDE0008.severity = none
+
+# IDE0025: Use expression body for properties
+dotnet_diagnostic.IDE0025.severity = none
+
+# IDE0027: Use expression body for accessors
+dotnet_diagnostic.IDE0027.severity = none
+
+# IDE0045: Convert to conditional expression
+dotnet_diagnostic.IDE0045.severity = none
+
+# IDE0046: Convert to conditional expression
+dotnet_diagnostic.IDE0046.severity = none
+
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = none
+
+# IDE0066: Convert switch statement to expression
+dotnet_diagnostic.IDE0066.severity = none

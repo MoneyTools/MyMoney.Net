@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<d:Page xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:XMoney"
+             xmlns:d="clr-namespace: XMoney.Views"
+             x:Class="XMoney.Views.PageCategories"
+             Title="Categories">
+
+    <Grid x:Name="TheGrid" RowSpacing="0" ColumnSpacing="0">
+        <Grid.RowDefinitions>
+            <!-- Search Bar -->
+            <RowDefinition Height="Auto" />
+            <!-- Top button row -->
+            <RowDefinition Height="Auto" />
+            <!-- List -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <local:ViewButtonList Grid.Row="1" x:Name="columBarTop"/>
+
+        <ListView x:Name="MyListView" Grid.Row="2"                   
+                  BackgroundColor="White"
+                  RowHeight="80"
+                  ItemTapped="OnItemTapped"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="FillAndExpand">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid
+                            Padding="15"
+                            BackgroundColor="{Binding . , 
+                                    Converter={StaticResource AlternatingHighlightColorConverter},
+                                    ConverterParameter={x:Reference Name=MyListView}}">
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="35*" />
+                                <ColumnDefinition Width="20*" />
+                                <ColumnDefinition Width="20*" />
+                                <ColumnDefinition Width="25*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4" Text="{Binding Name}" TextColor="Black" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Left" VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding TypeAsText}" TextColor="{Binding TypeAsColor}"  HorizontalOptions="EndAndExpand" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="2" Grid.Row="1" Text="{Binding Quantity}" TextColor="Black" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="3" Grid.Row="1" Text="{Binding AmountAsText}" TextColor="{Binding AmountColor}" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ActivityIndicator x:Name="WorkingSpinner" Color="Blue" Grid.Row="2" VerticalOptions="Center" HorizontalOptions="Center" IsRunning="True" HeightRequest="50" WidthRequest="50"/>
+    </Grid>
+</d:Page>

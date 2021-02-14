@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Xamarin.Forms.5.0.0.1931\build\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.5.0.0.1931\build\Xamarin.Forms.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5539B4B8-BBCD-46F8-A5D4-3706B40069EE}</ProjectGuid>
+    <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>XMoney</RootNamespace>
+    <AssemblyName>XMoneyMacOS</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
+    <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <Description>MacOS version of xMoney application</Description>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
+    <ReleaseVersion>0.2</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <CodeSigningKey>Mac Developer</CodeSigningKey>
+    <CreatePackage>false</CreatePackage>
+    <EnablePackageSigning>false</EnablePackageSigning>
+    <IncludeMonoRuntime>false</IncludeMonoRuntime>
+    <UseSGen>true</UseSGen>
+    <UseRefCounting>true</UseRefCounting>
+    <HttpClientHandler>
+    </HttpClientHandler>
+    <LinkMode>None</LinkMode>
+    <XamMacArch>
+    </XamMacArch>
+    <AOTMode>None</AOTMode>
+    <PackageSigningKey>3rd Party Mac Developer Installer</PackageSigningKey>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <CreatePackage>true</CreatePackage>
+    <EnablePackageSigning>false</EnablePackageSigning>
+    <IncludeMonoRuntime>true</IncludeMonoRuntime>
+    <UseSGen>true</UseSGen>
+    <UseRefCounting>true</UseRefCounting>
+    <LinkMode>SdkOnly</LinkMode>
+    <HttpClientHandler>
+    </HttpClientHandler>
+    <XamMacArch>
+    </XamMacArch>
+    <AOTMode>None</AOTMode>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="netstandard" />
+    <Reference Include="OpenTK" />
+    <Reference Include="SQLite-net, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\sqlite-net-pcl.1.8.0-beta\lib\netstandard2.0\SQLite-net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics.Vectors" />
+    <Reference Include="Xamarin.Mac" />
+    <Reference Include="System.Buffers">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.core">
+      <HintPath>..\packages\SQLitePCLRaw.core.2.0.5-pre20210119130047\lib\netstandard2.0\SQLitePCLRaw.core.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.batteries_v2">
+      <HintPath>..\packages\SQLitePCLRaw.bundle_green.2.0.5-pre20210119130047\lib\netstandard2.0\SQLitePCLRaw.batteries_v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Essentials">
+      <HintPath>..\packages\Xamarin.Essentials.1.6.1\lib\xamarinmac20\Xamarin.Essentials.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Core">
+      <HintPath>..\packages\Xamarin.Forms.5.0.0.1931\lib\Xamarin.Mac\Xamarin.Forms.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Platform">
+      <HintPath>..\packages\Xamarin.Forms.5.0.0.1931\lib\Xamarin.Mac\Xamarin.Forms.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Platform.macOS">
+      <HintPath>..\packages\Xamarin.Forms.5.0.0.1931\lib\Xamarin.Mac\Xamarin.Forms.Platform.macOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Xaml">
+      <HintPath>..\packages\Xamarin.Forms.5.0.0.1931\lib\Xamarin.Mac\Xamarin.Forms.Xaml.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.provider.e_sqlite3">
+      <HintPath>..\packages\SQLitePCLRaw.provider.e_sqlite3.2.0.5-pre20210119130047\lib\netstandard2.0\SQLitePCLRaw.provider.e_sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp">
+      <HintPath>..\packages\SkiaSharp.2.80.3-preview.40\lib\xamarinmac2.0\SkiaSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.Views.Mac">
+      <HintPath>..\packages\SkiaSharp.Views.2.80.3-preview.40\lib\xamarinmac2.0\SkiaSharp.Views.Mac.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.Views.Forms">
+      <HintPath>..\packages\SkiaSharp.Views.Forms.2.80.3-preview.40\lib\xamarinmac2.0\SkiaSharp.Views.Forms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-16.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-256.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-32.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-512.png" />
+    <ImageAsset Include="Assets.xcassets\Contents.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Info.plist" />
+    <None Include="Entitlements.plist" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="ViewController.cs" />
+    <Compile Include="ViewController.designer.cs">
+      <DependentUpon>ViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlatformSpecific\MyStorageImplementation.mac.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\XMoney.csproj">
+      <Project>{52EBF4AB-FD33-4C45-9033-4E672B06EBA9}</Project>
+      <Name>xMoney</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="MainMenu.xib" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
+  <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.14\build\Xamarin.Mac20\SQLitePCLRaw.lib.e_sqlite3.osx.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.14\build\Xamarin.Mac20\SQLitePCLRaw.lib.e_sqlite3.osx.targets')" />
+  <Import Project="..\packages\Xamarin.Forms.5.0.0.1931\build\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.5.0.0.1931\build\Xamarin.Forms.targets')" />
+  <Import Project="..\packages\SkiaSharp.2.80.3-preview.40\build\xamarinmac2.0\SkiaSharp.targets" Condition="Exists('..\packages\SkiaSharp.2.80.3-preview.40\build\xamarinmac2.0\SkiaSharp.targets')" />
+</Project>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<d:Page xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:XMoney"
+             xmlns:d="clr-namespace:XMoney.Views"
+             x:Class="XMoney.Views.PageLoans"
+             Title="Loans">
+    
+    <Grid RowSpacing="0" ColumnSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Label x:Name="FilterBar" HorizontalTextAlignment="Center" FontSize="Small"></Label>
+
+        <local:ViewButtonList Grid.Row="1" x:Name="columBarTop" />
+        <ListView x:Name="MyListView" Grid.Row="2" HasUnevenRows="False"
+                  ItemTapped="OnItemTapped"                  
+                  HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand"
+                  BackgroundColor="White"
+                  RowHeight="50">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid
+                            Padding="0,0,15,0"
+                            BackgroundColor="{Binding . , 
+                            Converter={StaticResource AlternatingHighlightColorConverter},
+                            ConverterParameter={x:Reference Name=MyListView}}">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20*" />
+                                <ColumnDefinition Width="20*" />
+                                <ColumnDefinition Width="15*" />
+                                <ColumnDefinition Width="10*" />
+                                <ColumnDefinition Width="10*" />
+                                <ColumnDefinition Width="10*" />
+                                <ColumnDefinition Width="15*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Column="0" Text="{Binding AccountAsText}" TextColor="Black" FontSize="Small" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Left" VerticalTextAlignment="Center" />
+                            <Label Grid.Column="1" Text="{Binding DateAsText}" TextColor="Black" FontSize="Small" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            <Label Grid.Column="2" Text="{Binding Payment, StringFormat='{0:N2}'}" TextColor="Black" FontSize="Small"  HorizontalOptions="EndAndExpand" HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                            <Label Grid.Column="3" Text="{Binding Principale, StringFormat='{0:N2}'}" TextColor="Black" FontSize="Small" HorizontalOptions="EndAndExpand" HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                            <Label Grid.Column="4" Text="{Binding Interest, StringFormat='{0:N2}'}" TextColor="Black" FontSize="Small" HorizontalOptions="EndAndExpand" HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                            <Label Grid.Column="5" Text="{Binding Rate, StringFormat='{0:N4}'}" TextColor="Black" FontSize="Small" HorizontalOptions="EndAndExpand" HorizontalTextAlignment="End" VerticalTextAlignment="Center" />
+                            <Label Grid.Column="6" Text="{Binding Balance, StringFormat='{0:N2}'}" TextColor="{Binding BalanceColor}" FontSize="Small" HorizontalOptions="EndAndExpand" HorizontalTextAlignment="End" VerticalTextAlignment="Center" FontAttributes="Bold" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <ActivityIndicator x:Name="WorkingSpinner" Color="Blue" Grid.Row="2" VerticalOptions="Center" HorizontalOptions="Center" IsRunning="True" HeightRequest="50" WidthRequest="50"/>
+
+        <local:ViewButtonList Grid.Row="3" x:Name="columBarBottom" />
+        
+    </Grid>
+</d:Page>
