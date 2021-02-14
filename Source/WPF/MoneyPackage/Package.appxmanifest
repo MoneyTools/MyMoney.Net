@@ -9,7 +9,7 @@
   <Identity
     Name="43906ChrisLovett.MyMoney.Net"
     Publisher="CN=Chris Lovett, O=Chris Lovett, STREET=18606 201st Ave NE, L=Woodinville, S=WA, PostalCode=98077, C=US"
-    Version="1.1.65.0" />
+    Version="1.1.71.0" />
 
   <Properties>
     <DisplayName>MyMoney.Net</DisplayName>
