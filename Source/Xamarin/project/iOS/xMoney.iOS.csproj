@@ -73,7 +73,7 @@
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.1931" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="SkiaSharp.Views.Forms">
       <Version>2.80.3-preview.40</Version>
     </PackageReference>
