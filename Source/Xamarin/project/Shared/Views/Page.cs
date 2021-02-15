@@ -287,13 +287,19 @@ namespace XMoney.Views
 
             // Caption
             {
+                bool centerTextHorizontally = false;
+                if (caption.StartsWith("^"))
+                {
+                    centerTextHorizontally = true;
+                    caption = caption.TrimStart('^');
+                }
                 var lableCaption = new Label()
                 {
                     Text = caption.TrimStart('#'),
                     TextColor = Color.Black,
                     HorizontalOptions = LayoutOptions.StartAndExpand,
                     VerticalOptions = LayoutOptions.Center,
-                    HorizontalTextAlignment = TextAlignment.Start,
+                    HorizontalTextAlignment = centerTextHorizontally ? TextAlignment.Center : TextAlignment.Start,
                     VerticalTextAlignment = TextAlignment.Center,
                     FontAttributes = bigCaption ? FontAttributes.Bold : FontAttributes.None,
                     HeightRequest = 50,
@@ -315,7 +321,7 @@ namespace XMoney.Views
                     Text = centerText,
                     TextColor = Color.Black,
                     HorizontalOptions = LayoutOptions.StartAndExpand,
-                    VerticalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.StartAndExpand,
                     FontSize = 12
                 };
                 FlexLayout.SetGrow(lableCaption, 3);
@@ -326,8 +332,8 @@ namespace XMoney.Views
             {
                 var buttonValue = new XButton()
                 {
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    HeightRequest = 50,
+                    HorizontalOptions = LayoutOptions.EndAndExpand,
+                    //HeightRequest = 50,
                 };
                 FlexLayout.SetGrow(buttonValue, 2);
                 if (bigCaption)
@@ -339,6 +345,7 @@ namespace XMoney.Views
                 {
                     buttonValue.Text = ((decimal)value).ToString("C");
                     buttonValue.TextColor = MyColors.GetCurrencyColor((decimal)value);
+                    buttonValue.SetAsCurrenty();
                 }
                 else
                 {

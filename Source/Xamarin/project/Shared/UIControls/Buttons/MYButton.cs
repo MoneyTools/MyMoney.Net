@@ -65,6 +65,19 @@ namespace XMoney
             }
         }
 
+        public void SetAsCurrenty()
+        {
+            this._label.HorizontalOptions = LayoutOptions.EndAndExpand;
+            this._label.HorizontalTextAlignment = TextAlignment.End;
+        }
+
+
+        public TextAlignment TextAlignment
+        {
+            get { return this._label.HorizontalTextAlignment; }
+            set { this._label.HorizontalTextAlignment = value; }
+        }
+
         public double FontSize { get { return _label.FontSize; } set { _label.FontSize = value; } }
 
         public FontAttributes FontAttributes { get { return _label.FontAttributes; } set { _label.FontAttributes = value; } }

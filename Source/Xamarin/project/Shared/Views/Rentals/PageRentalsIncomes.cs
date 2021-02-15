@@ -31,7 +31,7 @@ namespace XMoney.Views
             }
         }
 
-        private void SortPayements(Dictionary<int, List<RentPayment>> map)
+        private void SortByDateDescending(Dictionary<int, List<RentPayment>> map)
         {
             foreach (var kvp in map)
             {
@@ -41,6 +41,9 @@ namespace XMoney.Views
 
         private async void LoadList()
         {
+            var isSmallDevice = App.IsSmallDevice();
+            var isDeviceLarge = !isSmallDevice;
+
             var stackList = new StackLayout
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand
@@ -51,7 +54,7 @@ namespace XMoney.Views
             await Task.Run(() =>
             {
                 map = GetIncomesByYears();
-                this.SortPayements(map);
+                this.SortByDateDescending(map);
             })
             .ContinueWith(t =>
             {
@@ -73,8 +76,9 @@ namespace XMoney.Views
                 // Roll up total Header          
                 var caption = "#\"" + building.Name + "\" " + (maxYear - minYear).ToString() + " years " + minYear.ToString() + "-" + maxYear.ToString();
                 var viewHeader = this.CreateViewCaptionValue(caption, null, total);
-                viewHeader.Margin = new Thickness(10, 0, 0, 0);
+                viewHeader.Margin = new Thickness(10, 0, 20, 0);
                 stackList.Children.Add(viewHeader);
+
 
                 // Details
                 foreach (var kvp in map.Reverse())
@@ -110,18 +114,31 @@ namespace XMoney.Views
                         rows.Children.Add(rowCardTitle);
                     }
 
-                    // All Payments for that year
+                    // All incomes for that year
+                    var currenMonth = "";
+
                     foreach (var income in kvp.Value)
                     {
-                        var lastRow = CreateViewCaptionValue(income.DateAsText, income.Payee, income.Amount);
-                        lastRow.HeightRequest = 30;
+                        if (currenMonth != income.Date.ToString("MMMM"))
+                        {
+                            currenMonth = income.Date.ToString("MMMM");
+                            rows.Children.Add(new Label { Text = currenMonth, TextColor = Color.DarkBlue });
+                        }
+
+                        var lastRow = CreateViewCaptionValue("^"+income.Date.Day.ToString(), income.Payee + " \n" + income.CategoryAsText, income.Amount);
+                        if (!isSmallDevice)
+                        {
+                            lastRow.HeightRequest = 50;
+                        }
                         rows.Children.Add(lastRow);
                     }
                 }
 
                 this.Content = new ScrollView
                 {
-                    Content = stackList
+                    Content = stackList,
+                    Padding = new Thickness(0, 0, isSmallDevice ? 0 : 15, 0)
+
                 };
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
@@ -136,7 +153,7 @@ namespace XMoney.Views
                 var category = Categories.Get(t.Category);
                 if (category != null && category.IsDescedantOrMatching(this.building.CategoryForIncome))
                 {
-                    AddPayement(map, t.DateTime, t.Amount, t.PayeeAsText);
+                    AddPayement(map, t.DateTime, t.Amount, t.PayeeAsText, t.CategoryAsText);
                 }
                 else
                 {
@@ -146,7 +163,7 @@ namespace XMoney.Views
                         var categorySplit = Categories.Get(split.Category);
                         if (categorySplit != null && categorySplit.IsDescedantOrMatching(this.building.CategoryForIncome))
                         {
-                            AddPayement(map, t.DateTime, split.Amount, split.Memo);
+                            AddPayement(map, t.DateTime, split.Amount, split.Memo, split.CategoryAsText == "" ? t.CategoryAsText : split.CategoryAsText);
                         }
                     }
                 }
@@ -154,14 +171,14 @@ namespace XMoney.Views
             return map;
         }
 
-        private static void AddPayement(Dictionary<int, List<RentPayment>> map, DateTime dateTime, decimal amount, string memo)
-        { 
+        private static void AddPayement(Dictionary<int, List<RentPayment>> map, DateTime dateTime, decimal amount, string memo, string categoryAsText)
+        {
             if (!map.TryGetValue(dateTime.Year, out List<RentPayment> listForThisYear))
             {
                 listForThisYear = new List<RentPayment>();
                 map.Add(dateTime.Year, listForThisYear);
             }
-            listForThisYear.Add(new RentPayment(dateTime, amount, memo));
+            listForThisYear.Add(new RentPayment(dateTime, amount, memo, false, categoryAsText));
         }
     }
 
@@ -172,13 +189,15 @@ namespace XMoney.Views
         public decimal Amount { get; set; }
         public string Payee { get; set; }
         public bool PartOfSplit { get; set; }
+        public string CategoryAsText { get; set; }
 
-        public RentPayment(DateTime date, decimal amount, string payee = "", bool partOfSplit = false)
+        public RentPayment(DateTime date, decimal amount, string payee = "", bool partOfSplit = false, string categoryAsText = "")
         {
             this.Date = date;
             this.Amount = amount;
             this.Payee = payee;
             this.PartOfSplit = partOfSplit;
+            this.CategoryAsText = categoryAsText;
         }
     }
 }
