@@ -47,7 +47,7 @@ namespace XMoney
             {
                 if (!seenOnce)
                 {
-                    setupPage();
+                    SetupPage();
 
                     this.Content = this.grid;
                     seenOnce = true;
@@ -55,7 +55,7 @@ namespace XMoney
             }
         }
 
-        private void setupPage()
+        private void SetupPage()
         {
             this.AddToolBarButtonSetting();
 

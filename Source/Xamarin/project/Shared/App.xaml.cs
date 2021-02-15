@@ -80,7 +80,7 @@ namespace XMoney
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                var thisRunningApp = (XMoney.App)App.Current;
+                var thisRunningApp = (App)Current;
                 await thisRunningApp.MainPage.DisplayAlert(title, content, confirmButton);
                 callback?.DynamicInvoke();
             });
