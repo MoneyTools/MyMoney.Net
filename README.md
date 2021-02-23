@@ -7,11 +7,11 @@ proprietary format, it is yours to do with as you like.
 ## Install
 
 You can simply click the [ClickOnce
-Installer](http://lovettsoftware.com/Downloads/MyMoney/publish.htm) to install the app, it requires
+Installer](https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/publish.htm) to install the app, it requires
 .NET 4.0.
 
 You can also install using the new [MSIX
-Installer](http://lovettsoftware.com/Downloads/MyMoney.Net/index.html) for Windows 10.
+Installer](https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney.Net/index.html) for Windows 10.
 
 ## Help
 

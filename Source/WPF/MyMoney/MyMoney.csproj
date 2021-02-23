@@ -34,7 +34,7 @@
     <ExpressionBlendVersion>4.0.20901.0</ExpressionBlendVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <PublishUrl>ftp://lovettsoftware.com/lovettsoftware.com/Downloads/MyMoney/</PublishUrl>
+    <PublishUrl>d:\git\clovett\MyMoney.Net\Source\WPF\publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -44,14 +44,14 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://lovettsoftware.com/Downloads/MyMoney/</InstallUrl>
+    <InstallUrl>https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/</InstallUrl>
     <SupportUrl>https://github.com/clovett/MyMoney.Net/wiki</SupportUrl>
     <ProductName>MyMoney</ProductName>
     <PublisherName>Chris Lovett</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <DisallowUrlActivation>true</DisallowUrlActivation>
-    <ApplicationRevision>72</ApplicationRevision>
+    <ApplicationRevision>73</ApplicationRevision>
     <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

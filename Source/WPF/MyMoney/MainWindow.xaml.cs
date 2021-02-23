@@ -54,7 +54,7 @@ namespace Walkabout
     {
         #region PROPERTIES PRIVATE
 
-        internal static Uri DownloadSite = new Uri("http://www.lovettsoftware.com/Downloads/MyMoney/");
+        internal static Uri DownloadSite = new Uri("https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/");
         internal static string InstallUrl = "https://github.com/clovett/myMoney.Net";
 
         private Settings settings;
