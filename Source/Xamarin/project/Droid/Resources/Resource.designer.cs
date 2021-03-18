@@ -16183,28 +16183,34 @@ namespace XMoney
 			public const int view_offset_helper = 2131231082;
 			
 			// aapt resource value: 0x7F08016B
-			public const int view_tree_saved_state_registry_owner = 2131231083;
+			public const int view_tree_lifecycle_owner = 2131231083;
 			
 			// aapt resource value: 0x7F08016C
-			public const int visible = 2131231084;
+			public const int view_tree_saved_state_registry_owner = 2131231084;
 			
 			// aapt resource value: 0x7F08016D
-			public const int visible_removing_fragment_view_tag = 2131231085;
+			public const int view_tree_view_model_store_owner = 2131231085;
 			
 			// aapt resource value: 0x7F08016E
-			public const int volume_item_container = 2131231086;
-			
-			// aapt resource value: 0x7F080170
-			public const int withinBounds = 2131231088;
+			public const int visible = 2131231086;
 			
 			// aapt resource value: 0x7F08016F
-			public const int withText = 2131231087;
+			public const int visible_removing_fragment_view_tag = 2131231087;
 			
-			// aapt resource value: 0x7F080171
-			public const int wrap_content = 2131231089;
+			// aapt resource value: 0x7F080170
+			public const int volume_item_container = 2131231088;
 			
 			// aapt resource value: 0x7F080172
-			public const int zero_corner_chip = 2131231090;
+			public const int withinBounds = 2131231090;
+			
+			// aapt resource value: 0x7F080171
+			public const int withText = 2131231089;
+			
+			// aapt resource value: 0x7F080173
+			public const int wrap_content = 2131231091;
+			
+			// aapt resource value: 0x7F080174
+			public const int zero_corner_chip = 2131231092;
 			
 			static Id()
 			{
