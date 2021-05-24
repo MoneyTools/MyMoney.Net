@@ -193,11 +193,9 @@ namespace Walkabout.Migrate
             {
                 t.Account.Unaccepted++;
             }
-            if (t.Status == TransactionStatus.Reconciled)
-            {
-                // do not copy & paste reconciled status.
-                t.Status = TransactionStatus.Cleared;
-            }
+
+            // do not copy & paste any status.
+            t.Status = TransactionStatus.None;
 
             long originalId = t.Id;
             t.Id = -1;

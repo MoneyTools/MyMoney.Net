@@ -1,17 +1,13 @@
-﻿using System;
+﻿// #define DEBUG_DATABASE
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Win32;
 using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Linq.Expressions;
-using Walkabout.Utilities;
-using System.Reflection;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.Data.SqlTypes;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 namespace Walkabout.Data
 {
@@ -411,6 +407,9 @@ namespace Walkabout.Data
             try
             {
                 Connect();
+#if DEBUG_DATABASE
+                Debug.WriteLine(string.Format("ExecuteScalar {0}", cmd));
+#endif
                 using (DbCommand command = new SQLiteCommand(cmd, this.sqliteConnection))
                 {
                     result = command.ExecuteScalar();
@@ -465,6 +464,9 @@ namespace Walkabout.Data
             try
             {
                 Connect();
+#if DEBUG_DATABASE
+                Debug.WriteLine(string.Format("ExecuteNonQuery {0}", cmd));
+#endif
                 using (DbCommand command = new SQLiteCommand(cmd, this.sqliteConnection))
                 {
                     command.ExecuteNonQuery();
@@ -485,6 +487,9 @@ namespace Walkabout.Data
             try
             {
                 Connect();
+#if DEBUG_DATABASE
+                Debug.WriteLine(string.Format("ExecuteReader {0}", cmd));
+#endif
                 using (DbCommand command = new SQLiteCommand(cmd, this.sqliteConnection))
                 {
                     return command.ExecuteReader();
