@@ -14,9 +14,9 @@ namespace XMoney.Views
         public Page()
         {
             this.BackgroundColor = Color.White;
-            
+
             Xamarin.Forms.NavigationPage.SetHasNavigationBar(this, true);
-            
+
             //NavigationPage.SetTitleFont(this, Font.SystemFontOfSize(NamedSize.Micro));
 
         }
@@ -439,10 +439,10 @@ namespace XMoney.Views
             WidthRequest = 60,
             Color = Color.Blue,
             IsRunning = true,
-            
+
         };
 
-        public void ShowPageAsBusy(string optionalText="")
+        public void ShowPageAsBusy(string optionalText = "")
         {
             var view = new StackLayout() { Margin = new Thickness(20) };
             view.Children.Add(new Label() { Text = optionalText });

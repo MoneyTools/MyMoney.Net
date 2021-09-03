@@ -24,7 +24,7 @@
     <MtouchArch>x86_64</MtouchArch>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
-    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>    
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <CodesignProvision>VS: WildCard Development</CodesignProvision>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchArch>ARM64</MtouchArch>
-    <ConsolePause>false</ConsolePause>    
+    <ConsolePause>false</ConsolePause>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <MtouchLink>SdkOnly</MtouchLink>
     <LangVersion>9.0</LangVersion>
@@ -73,12 +73,12 @@
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2083" />
     <PackageReference Include="SkiaSharp.Views.Forms">
-      <Version>2.80.3-preview.40</Version>
+      <Version>2.88.0-preview.127</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Essentials">
-      <Version>1.6.1</Version>
+      <Version>1.7.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

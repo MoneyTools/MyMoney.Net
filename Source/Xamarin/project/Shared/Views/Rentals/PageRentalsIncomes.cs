@@ -125,7 +125,7 @@ namespace XMoney.Views
                             rows.Children.Add(new Label { Text = currenMonth, TextColor = Color.DarkBlue });
                         }
 
-                        var lastRow = CreateViewCaptionValue("^"+income.Date.Day.ToString(), income.Payee + " \n" + income.CategoryAsText, income.Amount);
+                        var lastRow = CreateViewCaptionValue("^" + income.Date.Day.ToString(), income.Payee + " \n" + income.CategoryAsText, income.Amount);
                         if (!isSmallDevice)
                         {
                             lastRow.HeightRequest = 50;

@@ -24,7 +24,7 @@ namespace XMoney
             //NavigationPage.SetTitleView(this, CreateTitleView());
 
             MainPage = navPage;
-            
+
             MainPage.Navigation.PushAsync(new PageMain());
         }
 
