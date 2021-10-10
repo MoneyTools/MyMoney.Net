@@ -83,7 +83,7 @@ namespace XMoney
 
         private async void LoadAndShowPage()
         {
-            this.ShowPageAsBusy("Loading "+ Settings.SourceDatabase);
+            this.ShowPageAsBusy("Loading " + Settings.SourceDatabase);
 
             await Task.Run(() =>
             {
