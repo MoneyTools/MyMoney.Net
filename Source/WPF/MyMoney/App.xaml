@@ -7,7 +7,6 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-
                 <!--<ResourceDictionary Source="Themes/generic.xaml"/>
                 <ResourceDictionary Source="Themes/Theme-VS2010.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>

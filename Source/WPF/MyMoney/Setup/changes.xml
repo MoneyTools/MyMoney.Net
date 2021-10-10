@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.74" date="5/23/2021">
+    Fix bug in auto-categorization.
+  </change>
   <change version="1.1.0.73" date="5/23/2021">
     Clear status field when copy/paste a transaction.
   </change>

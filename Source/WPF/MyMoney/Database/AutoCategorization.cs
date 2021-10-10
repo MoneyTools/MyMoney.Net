@@ -84,7 +84,7 @@ namespace Walkabout.Data
                         }
                     }
                 }
-                else
+                else if (u.Amount != 0)
                 {
                     AddPossibility(t, u, payeeOrTransferCaption);
                 }
@@ -146,23 +146,21 @@ namespace Walkabout.Data
                 {
                     foreach (var s in u.Splits)
                     {
-                        if (s.Payee == null && s.Category != null)
+                        if (s.Payee == null && s.Category != null && s.Amount != 0)
                         {
                             singleNeighbors.Add(s, s.Category, Math.Abs(s.Amount));
                         }
                     }
-
                     splitNeighbors.Add(u, u.Category, Math.Abs(u.Amount));
                     splitCount++;
                 }
                 else
                 {
                     normalCount++;
+                    // absolute value because for this purpose of categorization we don't care if it was 
+                    // a purchase or refund on that category.
+                    singleNeighbors.Add(u, u.Category, Math.Abs(u.Amount));
                 }
-
-                // absolute value because for this purpose of categorization we don't care if it was 
-                // a purchase or refund on that category.
-                singleNeighbors.Add(u, u.Category, Math.Abs(u.Amount));
             }
         }
     }
