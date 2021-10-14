@@ -7277,6 +7277,7 @@ namespace Walkabout.Data
         ETF, // electronically traded fund
         Reit, // Real estate investment trust
         Futures, // Futures (a type of commodity investment)
+        Private, // Investment in a private company.
     }
 
     public enum YesNo
@@ -7515,6 +7516,9 @@ namespace Walkabout.Data
                     break;
                 case SecurityType.Futures:
                     caption = "Futures";
+                    break;
+                case SecurityType.Private:
+                    caption = "Private";
                     break;
                 default:
                     caption = "Other";

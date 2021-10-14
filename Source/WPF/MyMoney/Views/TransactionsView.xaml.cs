@@ -940,6 +940,17 @@ namespace Walkabout.Views
                 {
                     this.committed.Splits.AmountMinusSalesTax = null;
                 }
+
+                if (this.committed.Investment != null)
+                {
+                    Security s = this.committed.InvestmentSecurity;
+                    if (s != null && s.Price == 0 && this.committed.InvestmentUnitPrice != 0)
+                    {
+                        // This might be a new security, so as a convenience we can initialize the price for the user here.
+                        s.Price = this.committed.InvestmentUnitPrice;
+                    }
+                }
+
                 // Note: this must be DispatcherPriority.Background otherwise Rebalance() happens too soon and
                 // doesn't see the new value!
                 this.Dispatcher.BeginInvoke(new Action(Rebalance), DispatcherPriority.Background);

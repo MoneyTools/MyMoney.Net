@@ -226,7 +226,7 @@ namespace Walkabout.Reports
             {
                 foreach (SecurityType st in new SecurityType[] { SecurityType.Bond,
                     SecurityType.MutualFund, SecurityType.Equity, SecurityType.MoneyMarket, SecurityType.ETF, SecurityType.Reit, SecurityType.Futures,
-                    SecurityType.None })
+                    SecurityType.Private, SecurityType.None })
                 {
                     decimal sb = 0;
                     if (byType.TryGetValue(st, out sb))

@@ -260,7 +260,7 @@ namespace Walkabout.StockQuotes
             List<string> batch = new List<string>();
             foreach (Security s in toFetch)
             {
-                if (string.IsNullOrEmpty(s.Symbol))
+                if (string.IsNullOrEmpty(s.Symbol) || s.SecurityType == SecurityType.Private)
                 {
                     continue; // skip it.
                 }
