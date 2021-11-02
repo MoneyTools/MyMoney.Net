@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.76" date="11/1/2021">
+    Fix another bug in auto-categorization.
+  </change>
   <change version="1.1.0.74" date="10/14/2021">
     Add "Private" SecurityType and initialize a Security Price from unit price on
     the transaction that first creates that security.
