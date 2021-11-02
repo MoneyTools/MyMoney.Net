@@ -34,10 +34,6 @@ namespace Walkabout.Utilities
         /// <param name="value">The value</param>
         public void Add(object data, T label, decimal value)
         {
-            if ((double)Math.Abs(value) < 0.1)
-            {
-                System.Diagnostics.Debug.WriteLine(value);
-            }
             Feature<T> feature = null;
             if (!features.TryGetValue(label, out feature))
             {
@@ -60,14 +56,12 @@ namespace Walkabout.Utilities
             public object Data;
             public decimal Score;
             public U Label;
-            public int Count;
 
             public DataScore(object data, U label, decimal score)
             {
                 this.Data = data;
                 this.Score = score;
                 this.Label = label;
-                this.Count = 1;
             }
 
             public int CompareTo(DataScore<T> other)
@@ -87,21 +81,13 @@ namespace Walkabout.Utilities
             {
                 return Label.ToString() + ": " + Score;
             }
-
-            internal void Normalize()
-            {
-                this.Score /= this.Count;
-            }
         }
 
         public IEnumerable<Tuple<object, T>> GetNearestNeighbors(int k, decimal value)
         {
-            // This is computing distance and a score in one loop, weighted 
-            // by the inverse of the distance from our test value, and that way
-            // we favor training with lots of nearby values.  But a small number
-            // of nearby values could be beaten by a large number of not super close
-            // values.
-            Dictionary<T, DataScore<T>> scores = new Dictionary<T, DataScore<T>>();
+            // Compute the "score" which is distance of each transaction from our given 'value'
+            // grouped by category.
+            Dictionary<T, SortedSet<DataScore<T>>> byCategory = new Dictionary<T, SortedSet<DataScore<T>>>();
             foreach (var pair in features)
             {
                 T label = pair.Key;
@@ -113,27 +99,25 @@ namespace Walkabout.Utilities
                     // negate the score, so that SortedSet puts the smallest values
                     // (cloest distance) on the top of the list.
                     decimal score = -Math.Abs(item - value);                        
-                    if (scores.TryGetValue(label, out DataScore<T> s))
+                    if (!byCategory.TryGetValue(label, out SortedSet<DataScore<T>> s))
                     {
-                        s.Score += score;
-                        s.Count++;
+                        byCategory[label] = s = new SortedSet<DataScore<T>>();
                     }
-                    else
-                    {
-                        scores[label] = new DataScore<T>(data, label, score);
-                    }
+                    s.Add(new DataScore<T>(data, label, score));
                 }
             }
 
-            // Normalize score based on # transactions so that a lot of transactions doesn't end up winning.
-            // What we want is the label with the closest "average" score.
-            foreach (var label in scores.Keys)
+            SortedSet<DataScore<T>> combined = new SortedSet<DataScore<T>>();
+            foreach (var item in byCategory)
             {
-                scores[label].Normalize();
+                foreach(var pick in (from i in item.Value.Take(k) select i))
+                {
+                    combined.Add(pick);
+                }
             }
 
-            SortedSet<DataScore<T>> sorted = new SortedSet<DataScore<T>>(scores.Values);
-            return from i in sorted.Take(k) select new Tuple<object,T>(i.Data, i.Label);
+            // now from the combined set take the best 'k' values.
+            return from i in combined.Take(k) select new Tuple<object,T>(i.Data, i.Label);
         }
 
     }

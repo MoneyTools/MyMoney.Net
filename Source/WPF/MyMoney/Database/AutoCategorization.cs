@@ -148,10 +148,10 @@ namespace Walkabout.Data
                     {
                         if (s.Payee == null && s.Category != null && s.Amount != 0)
                         {
-                            singleNeighbors.Add(s, s.Category, Math.Abs(s.Amount));
+                            singleNeighbors.Add(s, s.Category, s.Amount);
                         }
                     }
-                    splitNeighbors.Add(u, u.Category, Math.Abs(u.Amount));
+                    splitNeighbors.Add(u, u.Category, u.Amount);
                     splitCount++;
                 }
                 else
@@ -159,7 +159,7 @@ namespace Walkabout.Data
                     normalCount++;
                     // absolute value because for this purpose of categorization we don't care if it was 
                     // a purchase or refund on that category.
-                    singleNeighbors.Add(u, u.Category, Math.Abs(u.Amount));
+                    singleNeighbors.Add(u, u.Category, u.Amount);
                 }
             }
         }
