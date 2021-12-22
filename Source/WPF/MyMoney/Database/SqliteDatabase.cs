@@ -510,7 +510,7 @@ namespace Walkabout.Data
 
 
         public override void CreateOrUpdateTable(TableMapping mapping)
-        {
+        {            
             if (!this.TableExists(mapping.TableName))
             {
                 // this is the easy case, we need to create the table

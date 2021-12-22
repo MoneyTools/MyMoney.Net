@@ -112,6 +112,14 @@ namespace Walkabout.Dialogs
             else if (frm.Cancel)
             {
                 return null;
+            } 
+            else if (a != null)
+            {
+                if (a.AccountId != accountTemplate.AccountId)
+                {
+                    // then make an alias for this account so we don't have to ask again next time.
+                    money.AccountAliases.AddAlias(new AccountAlias() { AliasType = AliasType.None, Pattern = accountTemplate.AccountId, AccountId = a.AccountId });
+                }
             }
             return a;
         }

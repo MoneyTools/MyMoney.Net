@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.77" date="12/21/2021">
+    Add account alias feature so a OFX account number like 'XXXXXXXXXXXX12345' can be matched
+    with the real account number, and then have it remember this choice so it doesn't keep prompting.
+  </change>
   <change version="1.1.0.76" date="11/1/2021">
     Fix another bug in auto-categorization.
   </change>

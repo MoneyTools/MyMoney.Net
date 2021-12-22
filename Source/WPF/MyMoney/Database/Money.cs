@@ -652,6 +652,7 @@ namespace Walkabout.Data
         private OnlineAccounts onlineAccounts;
         private Payees payees;
         private Aliases aliases;
+        private AccountAliases accountAliases;
         private Currencies currencies;
         private Categories categories;
         private Transactions transactions;
@@ -666,6 +667,7 @@ namespace Walkabout.Data
             OnlineAccounts = new OnlineAccounts(this);
             Payees = new Payees(this);
             Aliases = new Aliases(this);
+            AccountAliases = new AccountAliases(this);
             Categories = new Categories(this);
             Currencies = new Currencies(this);
             Transactions = new Transactions(this);
@@ -717,6 +719,13 @@ namespace Walkabout.Data
         {
             get { return aliases; }
             set { aliases = value; aliases.Parent = this; }
+        }
+
+        [DataMember]
+        public AccountAliases AccountAliases
+        {
+            get { return accountAliases; }
+            set { accountAliases = value; accountAliases.Parent = this; }
         }
 
         [DataMember]
@@ -1840,6 +1849,7 @@ namespace Walkabout.Data
             foreach (Category c in this.Categories) { c.OnUpdated(); }
             foreach (Payee p in this.Payees) { p.OnUpdated(); }
             foreach (Alias a in this.Aliases) { a.OnUpdated(); }
+            foreach (AccountAlias a in this.AccountAliases) { a.OnUpdated(); }
             foreach (Security s in this.Securities) { s.OnUpdated(); }
             foreach (Currency c in this.Currencies) { c.OnUpdated(); }
             foreach (StockSplit s in this.StockSplits) { s.OnUpdated(); }
@@ -1858,6 +1868,7 @@ namespace Walkabout.Data
             this.Accounts.MarkAllNew();
             this.Payees.MarkAllNew();
             this.Aliases.MarkAllNew();
+            this.AccountAliases.MarkAllNew();
             this.Categories.MarkAllNew();
             this.Securities.MarkAllNew();
             this.StockSplits.MarkAllNew();
@@ -3403,8 +3414,6 @@ namespace Walkabout.Data
         }
     }
 
-
-
     //================================================================================
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Aliases : PersistentContainer, ICollection<Alias>
@@ -3609,6 +3618,234 @@ namespace Walkabout.Data
         public new IEnumerator<Alias> GetEnumerator()
         {
             foreach (Alias a in this.aliases.Values)
+            {
+                yield return a;
+            }
+        }
+        #endregion
+
+        protected override IEnumerator<PersistentObject> InternalGetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+
+    //================================================================================
+    [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
+    public class AccountAliases : PersistentContainer, ICollection<AccountAlias>
+    {
+        int nextAlias;
+        Hashtable<int, AccountAlias> aliases = new Hashtable<int, AccountAlias>();
+
+        public AccountAliases()
+        {
+            // for serialization
+        }
+
+        public AccountAliases(PersistentObject parent)
+            : base(parent)
+        {
+        }
+
+        public override void Add(object child)
+        {
+            AddAlias((AccountAlias)child);
+        }
+
+        public override void RemoveChild(PersistentObject pe)
+        {
+            RemoveAlias((AccountAlias)pe);
+        }
+
+        // Aliases
+        public AccountAlias AddAlias(int id)
+        {
+            AccountAlias result = new AccountAlias(this);
+            lock (this.aliases)
+            {
+                result.Id = id;
+                if (this.nextAlias <= id) this.nextAlias = id + 1;
+                this.aliases[id] = result;
+            }
+            this.FireChangeEvent(this, result, null, ChangeType.Inserted);
+
+            return result;
+        }
+
+        public void AddAlias(AccountAlias a)
+        {
+            foreach(var alias in this.aliases.Values)
+            {
+                if (alias.Pattern == a.Pattern)
+                {
+                    // duplicate! so perhaps user is trying to move
+                    // this alias to a different account!
+                    alias.AccountId = a.AccountId;
+                    this.FireChangeEvent(this, alias, null, ChangeType.Changed);
+                    return;
+                }
+            }
+
+            lock (this.aliases)
+            {
+                if (a.Id == -1)
+                {
+                    a.Id = this.nextAlias++;
+                    a.OnInserted();
+                }
+                else if (this.nextAlias <= a.Id)
+                {
+                    this.nextAlias = a.Id + 1;
+                }
+                a.Parent = this;
+                a.OnInserted();
+                this.aliases[a.Id] = a;
+            }
+
+            this.FireChangeEvent(this, a, null, ChangeType.Inserted);
+        }
+
+        public AccountAlias FindAlias(string pattern)
+        {
+            if (pattern == null) return null;
+            lock (this.aliases)
+            {
+                foreach (var a in this.aliases.Values)
+                {
+                    if (a.Pattern == pattern)
+                    {
+                        return a;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public AccountAlias FindMatchingAlias(string accoundId)
+        {
+            if (string.IsNullOrEmpty(accoundId)) return null;
+            lock (this.aliases)
+            {
+                foreach (var a in this.aliases.Values)
+                {
+                    if (a.AccountId == accoundId)
+                    {
+                        return a;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public bool RemoveAlias(AccountAlias a)
+        {
+            lock (this.aliases)
+            {
+                if (a.IsInserted)
+                {
+                    // then we can remove it immediately.
+                    if (this.aliases.ContainsKey(a.Id))
+                        this.aliases.Remove(a.Id);
+                }
+            }
+            // mark it for deletion on next save
+            a.OnDelete();
+            return true;
+        }
+
+        public void RemoveAliasesOf(string accountId)
+        {
+            foreach (var a in this.GetAliases())
+            {
+                if (a.AccountId == accountId)
+                {
+                    RemoveAlias(a);
+                }
+
+            }
+        }
+
+        public IList<AccountAlias> GetAliases()
+        {
+            List<AccountAlias> list = new List<AccountAlias>(this.aliases.Count);
+            lock (this.aliases)
+            {
+                foreach (var a in this.aliases.Values)
+                {
+                    if (!a.IsDeleted)
+                    {
+                        list.Add(a);
+                    }
+                }
+            }
+            return list;
+        }
+
+        public void RemoveDeletedAliases()
+        {
+            // Cleanup deleted objects
+            List<AccountAlias> list = new List<AccountAlias>();
+            foreach (AccountAlias a in this.aliases.Values)
+            {
+                if (a.IsDeleted)
+                    list.Add(a);
+            }
+            foreach (var a in list)
+            {
+                this.aliases.Remove(a.Id);
+            }
+        }
+
+        #region ICollection
+
+        public void Add(AccountAlias item)
+        {
+            AddAlias(item);
+        }
+
+        public void Clear()
+        {
+            if (this.nextAlias != 0 || this.aliases.Count != 0)
+            {
+                this.nextAlias = 0;
+                this.aliases = new Hashtable<int, AccountAlias>();
+                this.FireChangeEvent(this, this, null, ChangeType.Reloaded);
+            }
+        }
+
+        public bool Contains(AccountAlias item)
+        {
+            return this.aliases.ContainsKey(item.Id);
+        }
+
+        public void CopyTo(AccountAlias[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Count
+        {
+            get { return this.aliases.Count; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
+
+        public bool Remove(AccountAlias item)
+        {
+            if (this.aliases.ContainsKey(item.Id))
+            {
+                this.aliases.Remove(item.Id);
+                return true;
+            }
+            return false;
+        }
+
+        public new IEnumerator<AccountAlias> GetEnumerator()
+        {
+            foreach (var a in this.aliases.Values)
             {
                 yield return a;
             }
@@ -4489,6 +4726,85 @@ namespace Walkabout.Data
         internal void PostDeserializeFixup(MyMoney myMoney)
         {
             this.Payee = myMoney.Payees.FindPayeeAt(this.PayeeId);
+        }
+    }
+
+    //================================================================================
+    [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
+    [TableMapping(TableName = "AccountAliases")]
+    public class AccountAlias : PersistentObject
+    {
+        int id = -1;
+        string pattern;
+        AliasType type;
+        string accountId;
+        Regex regex;
+
+        public AccountAlias()
+        { // for serialization only
+        }
+
+        public AccountAlias(PersistentContainer container) : base(container) { }
+
+        [DataMember]
+        [ColumnMapping(ColumnName = "Id", IsPrimaryKey = true)]
+        public int Id { get { return id; } set { id = value; } }
+
+        [DataMember]
+        [ColumnMapping(ColumnName = "Pattern", MaxLength = 255)]
+        public string Pattern
+        {
+            get { return this.pattern; }
+            set
+            {
+                if (this.pattern != value)
+                {
+                    string old = this.pattern;
+                    this.pattern = value;
+                    OnChanged("Pattern");
+                }
+            }
+        }
+
+        public override void OnChanged(string name)
+        {
+            if (this.regex == null && this.AliasType == AliasType.Regex && this.pattern != null)
+            {
+                this.regex = new Regex(this.pattern);
+            }
+            base.OnChanged(name);
+        }
+
+        [DataMember]
+        [ColumnMapping(ColumnName = "Flags", SqlType = typeof(SqlInt32))]
+        public AliasType AliasType
+        {
+            get { return this.type; }
+            set
+            {
+                if (this.type != value)
+                {
+                    this.type = value; OnChanged("AliasType");
+                }
+            }
+        }
+
+        // for storage.
+        [DataMember]
+        [ColumnMapping(ColumnName = "AccountId", MaxLength = 20)]
+        public string AccountId
+        {
+            get { return this.accountId; }
+            set { this.accountId = value; }
+        }
+
+        internal void PostDeserializeFixup(MyMoney myMoney)
+        {
+        }
+
+        public override string ToString()
+        {
+            return this.pattern;
         }
     }
 

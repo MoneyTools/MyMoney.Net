@@ -28,7 +28,10 @@ namespace Walkabout.Data
         {
             get
             {
-                Debug.Assert(columns != null, "ObjectType should have been set by now");
+                if (columns == null)
+                {
+                    Debug.Assert(columns != null, "ObjectType should have been set by now");
+                }
                 return columns;
             }
             set { columns = value; }

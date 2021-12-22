@@ -500,6 +500,13 @@ namespace Walkabout.Data
             }
         }
 
+        public virtual bool DropTable(string name)
+        {
+            object result = ExecuteScalar("DROP TABLE '" + name + "'");
+            return (result != null);
+        }
+
+
         public TableMapping LoadTableMetadata(string tableName)
         {
             TableMapping table = new TableMapping();
@@ -556,7 +563,8 @@ namespace Walkabout.Data
                 this.ReadCategories(money.Categories, money);  // Must populate the Categories before the Account, since the Account now have 2 fields pointing to Categories
                 this.ReadAccounts(money.Accounts, money);
                 this.ReadPayees(money.Payees, money);
-                this.ReadAliases(money.Payees, money);
+                this.ReadAliases(money.Aliases, money);
+                this.ReadAccountAliases(money.AccountAliases, money);
 
                 this.ReadSecurities(money.Securities, money);
                 this.ReadStockSplits(money.StockSplits, money);
@@ -597,6 +605,7 @@ namespace Walkabout.Data
                     UpdateAccounts(money.Accounts);
                     UpdatePayees(money.Payees);
                     UpdateAliases(money.Aliases);
+                    UpdateAccountAliases(money.AccountAliases);
                     UpdateCategories(money.Categories);
                     UpdateCurrencies(money.Currencies);
                     UpdateTransactions(money.Transactions);
@@ -613,6 +622,7 @@ namespace Walkabout.Data
                 }
             }
         }
+
         #endregion
 
 
@@ -1256,11 +1266,11 @@ namespace Walkabout.Data
             reader.Close();
         }
 
-        public void ReadAliases(Payees payees, MyMoney money)
+        public void ReadAliases(Aliases aliases, MyMoney money)
         {
-            Aliases aliases = money.Aliases;
+            Payees payees = money.Payees;
             IDataReader reader = ExecuteReader("SELECT Id,Pattern,Payee,Flags FROM Aliases");
-            payees.BeginUpdate(false);
+            aliases.BeginUpdate(false);
             while (reader.Read())
             {
                 IncrementProgress("Aliases");
@@ -1282,12 +1292,41 @@ namespace Walkabout.Data
                 }
                 a.OnUpdated();
             }
-            payees.EndUpdate();
-            payees.FireChangeEvent(payees, payees, null, ChangeType.Reloaded);
+            aliases.EndUpdate();
+            aliases.FireChangeEvent(aliases, aliases, null, ChangeType.Reloaded);
             reader.Close();
         }
 
 
+        private void ReadAccountAliases(AccountAliases accountAliases, MyMoney money)
+        {
+            IDataReader reader = ExecuteReader("SELECT Id,Pattern,AccountId,Flags FROM AccountAliases");
+            accountAliases.BeginUpdate(false);
+            while (reader.Read())
+            {
+                IncrementProgress("Aliases");
+                int id = reader.GetInt32(0);
+                AccountAlias a = accountAliases.AddAlias(id);
+                string pattern = ReadDbString(reader, 1);
+                a.Pattern = pattern;
+                string accountId = ReadDbString(reader, 2);
+                a.AccountId = accountId;
+                Debug.Assert(accountId != null);
+                try
+                {
+                    a.AliasType = (AliasType)reader.GetInt32(3);
+                }
+                catch
+                {
+                    // don't blow up if bad alias type got saved to DB.
+                    a.AliasType = AliasType.None;
+                }
+                a.OnUpdated();
+            }
+            accountAliases.EndUpdate();
+            accountAliases.FireChangeEvent(accountAliases, accountAliases, null, ChangeType.Reloaded);
+            reader.Close();
+        }
 
 
         public void UpdatePayees(Payees payees)
@@ -1390,6 +1429,56 @@ namespace Walkabout.Data
             }
 
             aliases.RemoveDeleted();
+        }
+
+        private void UpdateAccountAliases(AccountAliases accountAliases)
+        {
+            if (accountAliases.Count == 0) return;
+            StringBuilder sb = new StringBuilder();
+            foreach (AccountAlias a in accountAliases)
+            {
+                if (a.IsChanged)
+                {
+                    sb.AppendLine("-- updating account alias: " + a.Pattern);
+                    sb.Append("UPDATE AccountAliases SET ");
+                    sb.Append(String.Format("Pattern='{0}'", DBString(a.Pattern)));
+                    sb.Append(String.Format(",AccountId='{0}'", a.AccountId));
+                    sb.Append(String.Format(",Flags='{0}'", ((int)a.AliasType).ToString()));
+                    sb.AppendLine(String.Format(" WHERE Id={0};", a.Id));
+                }
+                else if (a.IsInserted)
+                {
+                    sb.AppendLine("-- inserting alias: " + a.Pattern);
+                    sb.Append("INSERT INTO AccountAliases (Id, Pattern, AccountId, Flags) VALUES (");
+                    sb.Append(String.Format("{0}", a.Id));
+                    sb.Append(String.Format(",'{0}'", DBString(a.Pattern)));
+                    sb.Append(String.Format(",'{0}'", DBString(a.AccountId)));
+                    sb.Append(String.Format(",{0}", ((int)a.AliasType).ToString()));
+                    sb.AppendLine(");");
+                }
+                else if (a.IsDeleted)
+                {
+                    sb.AppendLine("-- deleting account alias: " + a.Pattern);
+                    sb.AppendLine(string.Format("DELETE FROM AccountAliases WHERE Id='{0}';", a.Id));
+                }
+
+                if (!this.SupportsBatchUpdate)
+                {
+                    ExecuteScalar(sb.ToString());
+                    sb.Length = 0;
+                }
+            }
+
+            if (this.SupportsBatchUpdate)
+            {
+                ExecuteScalar(sb.ToString());
+            }
+            foreach (AccountAlias a in accountAliases)
+            {
+                a.OnUpdated();
+            }
+
+            accountAliases.RemoveDeleted();
         }
 
         #endregion

@@ -6,7 +6,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Local.testsettings = Local.testsettings
 		MyMoney.vsmdi = MyMoney.vsmdi
+		publish.cmd = publish.cmd
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+		Version\Version.cs = Version\Version.cs
+		Version\Version.props = Version\Version.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyMoney", "MyMoney\MyMoney.csproj", "{6B0B9232-88CF-41B0-84AB-186D2F467184}"

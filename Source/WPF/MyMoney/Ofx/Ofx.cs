@@ -3417,6 +3417,18 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     }
                 }
 
+                foreach (var alias in this.myMoney.AccountAliases.GetAliases())
+                {
+                    if (alias.Pattern == accountId)
+                    {
+                        var acct = this.myMoney.Accounts.FindAccountByAccountId(alias.AccountId);
+                        if (acct != null)
+                        {
+                            return acct;
+                        }
+                    }
+                }
+
                 return AccountIdFuzzyMatch(accountId);
             }
             return null;

@@ -59,6 +59,18 @@ namespace Walkabout.Dialogs
 
             comboBoxOnlineAccount.ItemsSource = onlineAccounts;
 
+            foreach(var alias in money.AccountAliases)
+            {
+                if (alias.AccountId == a.AccountId && ! alias.IsDeleted)
+                {
+                    comboBoxAccountAliases.Items.Add(alias);
+                }
+            }
+            if (comboBoxAccountAliases.Items.Count > 0)
+            {
+                comboBoxAccountAliases.SelectedIndex = 0;
+            }
+
             UpdateUI();
 
             money.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
@@ -427,5 +439,41 @@ namespace Walkabout.Dialogs
             UpdateRateText();
         }
 
+        private void OnAccountAliaseDeleted(object sender, RoutedEventArgs args)
+        {
+            if (sender is FrameworkElement e && e.DataContext is AccountAlias a)
+            {
+                if (a.Parent is AccountAliases container)
+                {
+                    container.RemoveAlias(a);
+                    comboBoxAccountAliases.Items.Remove(a);
+                }
+            }
+        }
+
+        private void OnAccountAliasesKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && sender is ComboBox cb)
+            {
+                e.Handled = true; // don't let it close the dialog.
+                string text = cb.Text.Trim();
+                if (!string.IsNullOrEmpty(text))
+                {
+                    // create new alias?
+                    var a = this.money.AccountAliases.FindAlias(text);
+                    if (a == null)
+                    {
+                        a = new AccountAlias() { AliasType = AliasType.None, Pattern = text, AccountId = theAccount.AccountId };
+                        money.AccountAliases.AddAlias(a);
+                        comboBoxAccountAliases.Items.Add(a);                        
+                    }
+                    else if (a.AccountId != theAccount.AccountId)
+                    {
+                        // user is moving the alias?
+                        a.AccountId = theAccount.AccountId;
+                    }
+                }
+            }
+        }
     }
 }

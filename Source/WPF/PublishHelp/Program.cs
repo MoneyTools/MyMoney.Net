@@ -16,7 +16,7 @@ namespace PublishHelp
         UniqueFileNames uniqueNames = new UniqueFileNames();
         Dictionary<string, PageInfo> pageIdMap;
         static string PublishPath;
-        static string GitHubRoot = "https://github.com/clovett/MyMoney.Net/wiki/";
+        static string GitHubRoot = "";
 
         static void PrintUsage()
         {
@@ -209,14 +209,21 @@ namespace PublishHelp
                                     FileName = fileName
                                 };
 
-                                pageIdMap[pageName] = info;
-
-                                if (File.Exists(fileName))
+                                if (pageIdMap.ContainsKey(pageName))
                                 {
-                                    File.Delete(fileName);
+                                    Console.WriteLine("### SKIPPING DUPLICATE PAGE NAME " + pageName);
                                 }
-                                app.Publish(pageId, fileName, PublishFormat.pfMHTML, "");
-                                Console.WriteLine("done");
+                                else
+                                {
+                                    pageIdMap[pageName] = info;
+
+                                    if (File.Exists(fileName))
+                                    {
+                                        File.Delete(fileName);
+                                    }
+                                    app.Publish(pageId, fileName, PublishFormat.pfMHTML, "");
+                                    Console.WriteLine("done");
+                                }
                             }                            
                         }
                     }
