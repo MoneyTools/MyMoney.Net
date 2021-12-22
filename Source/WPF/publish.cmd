@@ -22,6 +22,7 @@ set /p response=Please publish github release named %VERSION% using the above bi
 copy /y MyMoney\Setup\changes.xml publish
 echo Uploading ClickOnce installer 
 call AzurePublishClickOnce %~dp0publish downloads/MyMoney "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
+call AzurePublishClickOnce %~dp0MoneyPackage\AppPackages downloads/MyMoney.Net "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
 
 echo ============ Done publishing ClickOnce installer ==============
 
