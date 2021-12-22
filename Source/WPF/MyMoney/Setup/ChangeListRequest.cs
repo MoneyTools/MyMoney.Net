@@ -74,30 +74,18 @@ namespace Walkabout.Setup
             try
             {
                 Uri host = (Uri)state;
-                XDocument manifest = GetDocument(new Uri(host, "MyMoney.application"));
-                if (manifest == null || manifest.Root == null)
+                XDocument changelist = GetDocument(new Uri(host, "changes.xml"));
+                if (changelist == null || changelist.Root == null)
                 {
                     OnCompleted(null);
                     return;
                 }
-
-                XElement root = manifest.Root;
-                XElement assemblyIdentity = root.Element(asmNamespace + "assemblyIdentity");
-                if (assemblyIdentity == null || assemblyIdentity.Attribute("version") == null)
-                {
-                    OnCompleted(null);
-                    return;
-                }
-
-                string version = (string)assemblyIdentity.Attribute("version");
-
-                string folder = "MyMoney_" + version.Replace(".", "_");
-
-                XDocument changelist = GetDocument(new Uri(host, "Application Files/" + folder + "/Setup/changes.xml.deploy"));
 
                 string exe = ProcessHelper.MainExecutable;
                 string currentVersion = NativeMethods.GetFileVersion(exe);
 
+                XElement first = changelist.Root.Element("change");
+                string version = (string)(first?.Attribute("version"));
                 Version latest = Version.Parse(version);
                 Version current = Version.Parse(currentVersion);
                 
