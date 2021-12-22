@@ -3,7 +3,7 @@
 cd %~dp0
 SET ROOT=%~dp0
 set WINGET_SRC=D:\git\lovettchris\winget-pkgs
-for /f "usebackq" %%i in (`xsl -e -s src\Version\version.xsl src\Version\version.props`) do (
+for /f "usebackq" %%i in (`xsl -e -s Version\version.xsl Version\version.props`) do (
     set VERSION=%%i
 )
 
@@ -13,7 +13,6 @@ set WINGET=1
 if "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%" == "" goto :nokey
 if not EXIST publish goto :nobits
 
-D:\git\clovett\MyMoney.Net\Source\WPF\
 if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :noappx
 
 echo Binaries to publish:
@@ -22,7 +21,7 @@ set /p response=Please publish github release named %VERSION% using the above bi
 
 copy /y MyMoney\Setup\changes.xml publish
 echo Uploading ClickOnce installer 
-AzurePublishClickOnce %~dp0publish downloads/MyMoney "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
+call AzurePublishClickOnce %~dp0publish downloads/MyMoney "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
 
 echo ============ Done publishing ClickOnce installer ==============
 
@@ -43,8 +42,8 @@ popd
 echo Preparing winget package
 set TARGET=%WINGET_SRC%\manifests\l\LovettSoftware\MyMoney\Net\%VERSION%
 if not exist %TARGET% mkdir %TARGET%
-copy /y tools\Microsoft.XMLNotepad*.yaml  %TARGET%
-wingetcreate update Microsoft.XMLNotepad --version %VERSION% -o %WINGET_SRC% -u https://github.com/clovett/MyMoney.Net/releases/download/%VERSION%/MoneyPackage_%VERSION%_AnyCPU.msixbundle
+copy /y WinGetTemplate\LovettSoftware*.yaml  %TARGET%
+wingetcreate update LovettSoftware.MyMoney.Net --version %VERSION% -o %WINGET_SRC% -u https://github.com/clovett/MyMoney.Net/releases/download/%VERSION%/MoneyPackage_%VERSION%_AnyCPU.msixbundle
 if ERRORLEVEL 1 goto :eof
 
 pushd %TARGET%
