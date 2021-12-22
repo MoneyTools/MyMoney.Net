@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <Import Project="$(SolutionDir)/Version/Version.props" />
+  <UsingTask TaskName="MyMoneyBuildTasks.SyncVersions" AssemblyFile="$(SolutionDir)tools\MyMoneyBuildTasks.dll" />
   <PropertyGroup>
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\</SolutionDir>
     <ProjectType>Local</ProjectType>
@@ -50,9 +52,7 @@
     <PublisherName>Chris Lovett</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <DisallowUrlActivation>true</DisallowUrlActivation>
-    <ApplicationRevision>78</ApplicationRevision>
-    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
+    <DisallowUrlActivation>true</DisallowUrlActivation>    
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -1108,6 +1108,15 @@
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent />
+  </PropertyGroup>
+
+  <Target Name="SyncVersionsTarget">
+    <SyncVersions MasterVersionFile="$(SolutionDir)Version\Version.props" CSharpVersionFile="$(SolutionDir)Version\Version.cs" 
+                  ApplicationProjectFile="$(ProjectPath)" AppManifestFile="$(SolutionDir)MoneyPackage\Package.appxmanifest" 
+                  UpdatesFile="$(SolutionDir)MyMoney\Setup\changes.xml" />
+  </Target>
+  <PropertyGroup>
+    <CoreBuildDependsOn>$(CoreBuildDependsOn);SyncVersionsTarget</CoreBuildDependsOn>
   </PropertyGroup>
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
