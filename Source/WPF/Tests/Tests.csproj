@@ -107,7 +107,7 @@
     <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="Microsoft.VisualStudio.Diagnostics.PerformanceProvider">
-        <HintPath>$(DevEnvDir)PrivateAssemblies\Microsoft.VisualStudio.Diagnostics.PerformanceProvider.dll</HintPath>
+        <HintPath>$(SolutionDir)tools\Microsoft.VisualStudio.Diagnostics.PerformanceProvider.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

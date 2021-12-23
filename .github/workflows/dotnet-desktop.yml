@@ -86,7 +86,7 @@ jobs:
         Configuration: ${{ matrix.configuration }}
 
     # Build te application.
-    - name: Restore the application
+    - name: Build the application
       run: msbuild $env:Solution_Name /p:Configuration=$env:Configuration "/p:Platform=$env:Platform"
       env:
         Configuration: ${{ matrix.configuration }}
