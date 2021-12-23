@@ -74,9 +74,9 @@ jobs:
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
-
-    - uses: actions/checkout@v2
-    - uses: fbactions/setup-winsdk@v1
+      
+    - name: Install Windows SDK 10.0.18362
+      uses: fbactions/setup-winsdk@v1
       with:
         winsdk-build-version: 18362
 
