@@ -75,6 +75,11 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
 
+    - uses: actions/checkout@v2
+    - uses: fbactions/setup-winsdk@v1
+      with:
+        winsdk-build-version: 18362
+
     # Execute all unit tests in the solution
     # - name: Execute unit tests
     #  run: dotnet test
