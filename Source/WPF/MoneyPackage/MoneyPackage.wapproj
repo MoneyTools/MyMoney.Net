@@ -65,7 +65,7 @@
     <AppxBundlePlatforms>neutral</AppxBundlePlatforms>
     <HoursBetweenUpdateChecks>24</HoursBetweenUpdateChecks>
     <AppxPackageSigningTimestampServerUrl>http://timestamp.sectigo.com</AppxPackageSigningTimestampServerUrl>
-    <AppInstallerUri>https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney.Net/$(ApplicationVersion)/</AppInstallerUri>
+    <AppInstallerUri>https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney.Net/</AppInstallerUri>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AppxBundle>Always</AppxBundle>
