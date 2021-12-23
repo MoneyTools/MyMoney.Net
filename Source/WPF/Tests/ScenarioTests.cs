@@ -108,12 +108,17 @@ namespace Walkabout.Tests
             string path = new Uri(this.GetType().Assembly.Location).LocalPath;
 
             // walk up to TestResults.
-            while (System.IO.Path.GetFileName(path) != "TestResults")
+            while (path != null)
             {
+                var file = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), filename);
+                if (File.Exists(file))
+                {
+                    return file;
+                }
                 path = System.IO.Path.GetDirectoryName(path);
             }
 
-            return System.IO.Path.Combine(System.IO.Path.GetDirectoryName(path), "Tests", filename);
+            throw new Exception(filename + " not found");
         }
 
         #region Model State

@@ -4,10 +4,7 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B36D70C8-6ABA-42FE-9C5E-8DD125E59288}"
 	ProjectSection(SolutionItems) = preProject
-		Local.testsettings = Local.testsettings
-		MyMoney.vsmdi = MyMoney.vsmdi
 		publish.cmd = publish.cmd
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 		Version\Version.cs = Version\Version.cs
 		Version\Version.props = Version\Version.props
 	EndProjectSection
@@ -31,6 +28,8 @@ EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "MoneyPackage", "MoneyPackage\MoneyPackage.wapproj", "{9CBFA246-8C43-4480-A604-FED4FFA077A9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildTasks", "BuildTasks\BuildTasks.csproj", "{0D55350A-19E7-46AE-A710-81DA9CEAE76A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{BB095525-DBC5-4D53-A390-2F6D587EF021}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -280,6 +279,30 @@ Global
 		{0D55350A-19E7-46AE-A710-81DA9CEAE76A}.Release|x64.Build.0 = Release|Any CPU
 		{0D55350A-19E7-46AE-A710-81DA9CEAE76A}.Release|x86.ActiveCfg = Release|Any CPU
 		{0D55350A-19E7-46AE-A710-81DA9CEAE76A}.Release|x86.Build.0 = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|ARM.Build.0 = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|x64.Build.0 = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Debug|x86.Build.0 = Debug|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|ARM.ActiveCfg = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|ARM.Build.0 = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|ARM64.Build.0 = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|x64.ActiveCfg = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|x64.Build.0 = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|x86.ActiveCfg = Release|Any CPU
+		{BB095525-DBC5-4D53-A390-2F6D587EF021}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
