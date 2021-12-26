@@ -110,7 +110,7 @@ namespace Walkabout
                 if (stockService == null)
                 {
                     settings.StockServiceSettings = new List<StockServiceSettings>();
-                    settings.StockServiceSettings.Add(IEXTrading.GetDefaultSettings());
+                    settings.StockServiceSettings.Add(IEXCloud.GetDefaultSettings());
                 }
 
                 Walkabout.Utilities.UiDispatcher.CurrentDispatcher = this.Dispatcher;
@@ -4330,7 +4330,7 @@ namespace Walkabout
             {
                 version = this.GetType().Assembly.GetName().Version.ToString();
             }
-            var msg = string.Format("MyMoney, Version {0}\r\n\r\nData provided by iextrading.com and alphavantage.com.", version);
+            var msg = string.Format("MyMoney, Version {0}\r\n\r\nData provided by https://iexcloud.io/ and https://www.alphavantage.co/.", version);
             MessageBoxEx.Show(msg, "About", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 

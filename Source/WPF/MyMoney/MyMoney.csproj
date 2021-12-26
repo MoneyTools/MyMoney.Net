@@ -221,7 +221,7 @@
       <DependentUpon>StockQuoteServiceDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="StockQuotes\AlphaVantage.cs" />
-    <Compile Include="StockQuotes\IEXTrading.cs" />
+    <Compile Include="StockQuotes\IEXCloud.cs" />
     <Compile Include="StockQuotes\IStockQuoteService.cs" />
     <Compile Include="StockQuotes\StockQuoteThrottle.cs" />
     <Compile Include="Utilities\AnimatedMessage.cs" />

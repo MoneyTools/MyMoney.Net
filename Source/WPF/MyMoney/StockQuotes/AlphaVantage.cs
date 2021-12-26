@@ -20,7 +20,7 @@ namespace Walkabout.StockQuotes
     /// </summary>
     class AlphaVantage : IStockQuoteService
     {
-        static string FriendlyName = "AlphaVantage.com";
+        static string FriendlyName = "https://www.alphavantage.co/";
         const string address = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={0}&apikey={1}";
         char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
         StockServiceSettings _settings;
@@ -50,6 +50,7 @@ namespace Walkabout.StockQuotes
             return new StockServiceSettings()
             {
                 Name = FriendlyName,
+                OldName = "AlphaVantage.com",
                 ApiKey = "",
                 ApiRequestsPerMinuteLimit = 5,
                 ApiRequestsPerDayLimit = 500,

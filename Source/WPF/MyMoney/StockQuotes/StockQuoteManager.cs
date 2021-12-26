@@ -108,9 +108,9 @@ namespace Walkabout.StockQuotes
                 {
                     service = new AlphaVantage(item, this.LogPath);
                 }
-                else if (IEXTrading.IsMySettings(item))
+                else if (IEXCloud.IsMySettings(item))
                 {
-                    service = new IEXTrading(item, this.LogPath);
+                    service = new IEXCloud(item, this.LogPath);
                 }
 
                 if (service != null)
@@ -173,7 +173,7 @@ namespace Walkabout.StockQuotes
         public List<StockServiceSettings> GetDefaultSettingsList()
         {
             List<StockServiceSettings> result = new List<StockServiceSettings>();
-            result.Add(IEXTrading.GetDefaultSettings());
+            result.Add(IEXCloud.GetDefaultSettings());
             result.Add(AlphaVantage.GetDefaultSettings());
             return result;
         }

@@ -14,9 +14,9 @@ using Walkabout.Utilities;
 
 namespace Walkabout.StockQuotes
 {
-    class IEXTrading : IStockQuoteService
+    class IEXCloud : IStockQuoteService
     {
-        static string FriendlyName = "iexcloud.io";
+        static string FriendlyName = "https://iexcloud.io/";
         // See https://iextrading.com/developer/docs/#batch-requests
         const string address = "https://cloud.iexapis.com/stable/stock/market/batch?symbols={0}&types=quote&range=1m&last=1&token={1}";
         char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
@@ -31,7 +31,7 @@ namespace Walkabout.StockQuotes
         bool _downloadError;
         StockQuoteThrottle _throttle;
 
-        public IEXTrading(StockServiceSettings settings, string logPath)
+        public IEXCloud(StockServiceSettings settings, string logPath)
         {
             _settings = settings;
             settings.Name = FriendlyName;
@@ -116,6 +116,7 @@ namespace Walkabout.StockQuotes
             return new StockServiceSettings()
             {
                 Name = FriendlyName,
+                OldName = "iexcloud.io",
                 ApiKey = "",
                 ApiRequestsPerMinuteLimit = 60,
                 ApiRequestsPerDayLimit = 0,
@@ -225,11 +226,11 @@ namespace Walkabout.StockQuotes
                                 if (ms > 1000)
                                 {
                                     int seconds = ms / 1000;
-                                    OnError("IEXTrading service needs to sleep for " + seconds + " seconds");
+                                    OnError("IEXCloud service needs to sleep for " + seconds + " seconds");
                                 }
                                 else
                                 {
-                                    OnError("IEXTrading service needs to sleep for " + ms.ToString() + " ms");
+                                    OnError("IEXCloud service needs to sleep for " + ms.ToString() + " ms");
                                 }
                                 OnSuspended(true);
                                 while (!_cancelled && ms > 0)
@@ -329,11 +330,11 @@ namespace Walkabout.StockQuotes
             }
             if (PendingCount == 0)
             {
-                OnComplete(true, "IEXTrading download complete");
+                OnComplete(true, "IEXCloud download complete");
             }
             else
             {
-                OnComplete(false, "IEXTrading download cancelled");
+                OnComplete(false, "IEXCloud download cancelled");
             }
             _downloadThread = null;
             _current = null;
@@ -407,7 +408,7 @@ namespace Walkabout.StockQuotes
             if (!_downloadError)
             {
                 _downloadError = true;
-                OnComplete(true, "Download history is not supported by IEXTrading service");
+                OnComplete(true, "Download history is not supported by IEXCloud service");
             }
             await Task.Delay(0);
             return false;

@@ -436,6 +436,8 @@ namespace Walkabout.StockQuotes
             }
         }
 
+        public string OldName { get; internal set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string name)

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Walkabout.StockQuotes;
+using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs
 {
@@ -43,20 +44,20 @@ namespace Walkabout.Dialogs
         {
             this.ComboServiceName.SelectionChanged -= ComboServiceName_SelectionChanged;
             var list = _stockQuotes.GetDefaultSettingsList();
-            var current = _stockQuotes.Settings;
-            if (current == null)
-            {
-                current = new List<StockServiceSettings>();
-            }
+            var current = new List<StockServiceSettings>();
+            // find the settings that match the current list of stock quote services.
             for (int i = 0; i < list.Count(); i++)
             {
                 bool found = false;
                 var item = list[i];
-                foreach (var c in current)
+                foreach (var c in _stockQuotes.Settings)
                 {
-                    if (c.Name == item.Name)
+                    if (c.Name == item.Name || c.OldName == item.Name || c.Name == item.OldName)
                     {
+                        c.Name = item.Name; // in case it was renamed.
+                        current.Add(c);
                         found = true;
+                        break;
                     }
                 }
                 if (!found)
@@ -64,6 +65,7 @@ namespace Walkabout.Dialogs
                     current.Add(item);
                 }
             }
+
             foreach (var item in current)
             {
                 this.ComboServiceName.Items.Add(item.Name);
@@ -106,6 +108,14 @@ namespace Walkabout.Dialogs
         {
             this.DialogResult = false;
             this.Close();
+        }
+
+        private void OnBrowse(object sender, RoutedEventArgs e)
+        {
+            if (this.ComboServiceName.SelectedItem is string s && Uri.TryCreate(s, UriKind.Absolute, out Uri uri))
+            {
+                InternetExplorer.OpenUrl(IntPtr.Zero, uri);
+            }
         }
     }
 }
