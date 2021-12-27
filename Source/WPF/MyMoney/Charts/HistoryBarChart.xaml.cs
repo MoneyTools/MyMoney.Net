@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -458,5 +459,20 @@ namespace Walkabout.Charts
             collection.Add(column);
         }
 
+        private void OnExport(object sender, RoutedEventArgs e)
+        {
+            string name = System.IO.Path.GetTempFileName() + ".csv";
+            TempFilesManager.AddTempFile(name);
+            using (StreamWriter writer = new StreamWriter(name))
+            {
+                writer.WriteLine("Label, Amount");
+                foreach (var column in collection)
+                {
+                    writer.WriteLine("{0}, {1}", column.Label, column.Amount);
+                }
+            }
+            int SW_SHOWNORMAL = 1;
+            NativeMethods.ShellExecute(IntPtr.Zero, "Open", name, "", "", SW_SHOWNORMAL);
+        }
     }
 }

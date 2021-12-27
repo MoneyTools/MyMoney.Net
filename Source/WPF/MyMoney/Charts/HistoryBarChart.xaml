@@ -55,6 +55,11 @@
             <Setter Property="StrokeThickness" Value="2"/>
         </Style>
     </UserControl.Resources>
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Export..." Click="OnExport"/>
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <Grid>
         <ComboBox x:Name="RangeCombo" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" />
         <charting:Chart   x:Name="BarChart" >
