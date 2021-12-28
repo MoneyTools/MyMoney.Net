@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.78" date="12/27/2021">
+    Modernize the history bar chart UI.
+    Add Export context menu option to the history bar chart.
+    Add Uri and browse button to stock quote service dialog.
+    Fix unit tests.
+  </change>
   <change version="1.1.0.77" date="12/21/2021">
     Add account alias feature so a OFX account number like 'XXXXXXXXXXXX12345' can be matched
     with the real account number, and then have it remember this choice so it doesn't keep prompting.
