@@ -12,7 +12,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>Icons\App.ico</ApplicationIcon>
-    <AssemblyKeyContainerName></AssemblyKeyContainerName>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
     <AssemblyName>MyMoney</AssemblyName>
     <AssemblyOriginatorKeyFile>$(MyKeyFile)</AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -22,15 +23,19 @@
     <RootNamespace>Walkabout</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>Walkabout.App</StartupObject>
-    <FileUpgradeFlags></FileUpgradeFlags>
-    <UpgradeBackupLocation></UpgradeBackupLocation>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkProfile></TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <Utf8Output>true</Utf8Output>
     <ExpressionBlendVersion>4.0.20901.0</ExpressionBlendVersion>
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>d:\git\clovett\MyMoney.Net\Source\WPF\publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -58,13 +63,16 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
     <DefineConstants>TRACE;DEBUG;PerformanceBlocks</DefineConstants>
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -83,13 +91,16 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
     <DefineConstants>TRACE;PerformanceBlocks</DefineConstants>
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -104,7 +115,8 @@
     <ManifestCertificateThumbprint>AFFF93C9E6AD77B2519D1778A820B789F9F1E31D</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile></ManifestKeyFile>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -132,7 +144,8 @@
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core"></Reference>
+    <Reference Include="System.Core">
+    </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -158,7 +171,8 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="System.Xml.Linq"></Reference>
+    <Reference Include="System.Xml.Linq">
+    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +184,9 @@
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Charts\AnimatingBarChart.xaml.cs">
+      <DependentUpon>AnimatingBarChart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Charts\HistoryBarChart.xaml.cs">
       <DependentUpon>HistoryBarChart.xaml</DependentUpon>
@@ -228,6 +245,7 @@
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\FileHash.cs" />
     <Compile Include="Utilities\KNearestNeighbor.cs" />
+    <Compile Include="Utilities\PointCollectionAnimation.cs" />
     <Compile Include="Utilities\QuickFilterParser.cs" />
     <Compile Include="Utilities\RecentFilesMenu.cs" />
     <Compile Include="Utilities\UsHolidays.cs" />
@@ -403,10 +421,6 @@
     <Compile Include="System\Windows\Controls\DataVisualization\ValueHelper.cs" />
     <Compile Include="System\Windows\Controls\DataVisualization\WeakEventListener.cs" />
     <Compile Include="System\Windows\Controls\DataVisualization\WeakReferenceBag.cs" />
-    <Compile Include="Charts\BudgetChart.xaml.cs">
-      <DependentUpon>BudgetChart.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Reports\BudgetData.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -576,7 +590,8 @@
     <Compile Include="Reports\Reports.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utilities\Clipboard.cs"></Compile>
+    <Compile Include="Utilities\Clipboard.cs">
+    </Compile>
     <Compile Include="Database\SqlDatabase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -766,6 +781,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Charts\AnimatingBarChart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Charts\HistoryBarChart.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -866,10 +885,6 @@
     <Page Include="System\Windows\Controls\DataVisualization\Themes\generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Charts\BudgetChart.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Charts\CategoryChart.xaml">
       <SubType>Designer</SubType>
@@ -1067,8 +1082,10 @@
   <ItemGroup>
     <PublishFile Include="Setup\changes.xml">
       <Visible>False</Visible>
-      <Group></Group>
-      <TargetPath></TargetPath>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
       <PublishState>Include</PublishState>
       <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
@@ -1082,10 +1099,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
-    <PostBuildEvent></PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
-  <PropertyGroup></PropertyGroup>
+  <PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent />
   </PropertyGroup>

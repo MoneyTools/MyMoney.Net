@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -2962,41 +2961,6 @@ namespace Walkabout
                 view.ViewTransactionsForCategory(data.Category, data.Transactions);
             }
         }
-
-        private void BudgetChartSelectionChanged(object sender, EventArgs e)
-        {
-            BudgetChart chart = (BudgetChart)sender;
-            BudgetData data = chart.Selection;
-            if (data != null)
-            {
-                TransactionsView view = SetCurrentView<TransactionsView>();
-                if (chart.CategoryFilter != null)
-                {
-                    view.ViewTransactionsForCategory(chart.CategoryFilter, data.Budgeted);
-                }
-                else
-                {
-                    view.ViewTransactions(data.Budgeted);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Work around for removing Debug output message of missing data bindings
-        /// </summary>
-        protected static readonly DependencyProperty ActualLegendItemStyleProperty = DependencyProperty.Register("ActualLegendItemStyle", typeof(Style), typeof(DataPointSeries), null);
-        protected Style ActualLegendItemStyle
-        {
-            get
-            {
-                return (base.GetValue(ActualLegendItemStyleProperty) as Style);
-            }
-            set
-            {
-                base.SetValue(ActualLegendItemStyleProperty, value);
-            }
-        }
-
 
         #endregion
 

@@ -18,7 +18,6 @@ using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 namespace Walkabout.Charts
 {
     /// <summary>
-    /// This is an old chart that doesn't use System.Windows.Controls.DataVisualization.Charting.
     /// It is used by the TrendGraph to create stacked translucent area graphs, with interactive mouse pointer
     /// for selecting specific points.  There is one area graph per "ChartSeries".
     /// </summary>

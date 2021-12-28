@@ -12,7 +12,7 @@ using Walkabout.Data;
 namespace Walkabout.Charts
 {
     /// <summary>
-    /// Interaction logic for BudgetChart.xaml
+    /// Interaction logic for LoanChart.xaml
     /// </summary>
     public partial class LoanChart : UserControl
     {

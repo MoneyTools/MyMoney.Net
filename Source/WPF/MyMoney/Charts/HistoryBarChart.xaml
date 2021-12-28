@@ -3,57 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:charting="clr-namespace:System.Windows.Controls.DataVisualization.Charting"
-             xmlns:datavis="clr-namespace:System.Windows.Controls.DataVisualization"
-             xmlns:chartingprimitives="clr-namespace:System.Windows.Controls.DataVisualization.Charting.Primitives" 
+             xmlns:local="clr-namespace:Walkabout.Charts"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
-        <!--  Chart -->
-        <Style TargetType="{x:Type charting:Chart}">
-            <Setter Property="Padding" Value="10,0,0,0"/>
-            <Setter Property="BorderBrush" Value="{x:Null}"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="charting:Chart">
-                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-
-                                <datavis:Title Content="{TemplateBinding Title}" Style="{TemplateBinding TitleStyle}" />
-
-                                <!-- Use a nested Grid to avoid possible clipping behavior resulting from ColumnSpan+Width=Auto -->
-                                <Grid Grid.Row="1" Margin="0,15,0,15">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <chartingprimitives:EdgePanel x:Name="ChartArea" Style="{TemplateBinding ChartAreaStyle}">
-                                        <Grid Canvas.ZIndex="-1" Style="{TemplateBinding PlotAreaStyle}" />
-                                        <Border Canvas.ZIndex="10" BorderBrush="#FF919191" BorderThickness="1" />
-                                    </chartingprimitives:EdgePanel>
-                                </Grid>
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="AmountStyle" TargetType="{x:Type charting:ColumnDataPoint}">
-            <Setter Property="Background" Value="{Binding Brush}"/>
-        </Style>
-        <Style TargetType="{x:Type charting:AxisLabel}">
-            <Setter Property="FontSize" Value="8"/>
-        </Style>
-        <Style x:Key="PolylineStyle" TargetType="{x:Type Polyline}">
-            <Setter Property="Stroke" Value="Green"/>
-            <Setter Property="StrokeThickness" Value="2"/>
-        </Style>
     </UserControl.Resources>
     <UserControl.ContextMenu>
         <ContextMenu>
@@ -61,24 +14,8 @@
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid>
+        <local:AnimatingBarChart x:Name="Chart" Foreground="#767676" LineBrush="#E0E0E0" Margin="10" ColumnHover="OnColumnHover" ColumnClicked="OnColumnClicked"/>
         <ComboBox x:Name="RangeCombo" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" />
-        <charting:Chart   x:Name="BarChart" >
-            <charting:ColumnSeries x:Name="SeriesAmount" 
-                            DataPointStyle="{StaticResource AmountStyle}" 
-                            DependentValuePath="Amount"  
-                            Title="Amount"
-                            IndependentValuePath="Label"                                                                
-                            IsSelectionEnabled="True">
-            </charting:ColumnSeries>
-
-            <charting:LineSeries x:Name="AverageSeries" DependentValuePath="Average" IndependentValuePath="Label" Title="Average"
-                                 PolylineStyle="{StaticResource PolylineStyle}">
-
-            </charting:LineSeries>
-            <charting:Chart.Axes>
-                <charting:LinearAxis x:Name="BarChartAxis" Orientation="Y" />
-            </charting:Chart.Axes>
-        </charting:Chart>
-
     </Grid>
+    
 </UserControl>

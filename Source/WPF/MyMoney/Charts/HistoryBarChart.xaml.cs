@@ -72,7 +72,7 @@ namespace Walkabout.Charts
 
 
     /// <summary>
-    /// Interaction logic for BudgetChart.xaml
+    /// Interaction logic for HistoryBarChart.xaml
     /// </summary>
     public partial class HistoryBarChart : UserControl
     {
@@ -91,9 +91,19 @@ namespace Walkabout.Charts
             RangeCombo.Items.Add(HistoryRange.Day);
             RangeCombo.SelectedIndex = 0;
             RangeCombo.SelectionChanged += new SelectionChangedEventHandler(RangeCombo_SelectionChanged);
-            BarChart.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(BarChart_PreviewMouseLeftButtonDown);
+            // BarChart.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(BarChart_PreviewMouseLeftButtonDown);
 
             this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(HistoryBarChart_IsVisibleChanged);
+
+            Chart.ToolTipGenerator = OnGenerateTip;
+        }
+
+        private UIElement OnGenerateTip(BarChartDataValue value)
+        {
+            var tip = new StackPanel() { Orientation = Orientation.Vertical };
+            tip.Children.Add(new TextBlock() { Text = value.Label, FontWeight = FontWeights.Bold });
+            tip.Children.Add(new TextBlock() { Text = value.Value.ToString("C0") });
+            return tip;
         }
 
         void HistoryBarChart_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -145,38 +155,24 @@ namespace Walkabout.Charts
             }
         }
 
-
-        void BarChart_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnColumnHover(object sender, BarChartDataValue e)
         {
-            DependencyObject d = e.OriginalSource as DependencyObject;
-            if (e == null)
-            {
-                return;
-            }
-            while (d != null)
-            {
-                FrameworkElement f = d as FrameworkElement;
-                if (f != null && f.DataContext != null)
-                {
-                    HistoryChartColumn data = f.DataContext as HistoryChartColumn;
-                    if (data != null)
-                    {
-                        this.selection = data;
-                        OnSelectionChanged();
-                        return;
-                    }
-                    ColumnLabel label = f.DataContext as ColumnLabel;
-                    if (label != null)
-                    {
-                        this.selection = label.Data;
-                        OnSelectionChanged();
-                        return;
-                    }
-                }
-                d = VisualTreeHelper.GetParent(d);
-            }
+
         }
 
+        private void OnColumnClicked(object sender, BarChartDataValue e)
+        {
+            if (e.UserData is HistoryChartColumn data)
+            {
+                this.selection = data;
+                OnSelectionChanged();
+            }
+            else if (e.UserData is ColumnLabel label)
+            {
+                this.selection = label.Data;
+                OnSelectionChanged();
+            }
+        }
 
         void RangeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -195,7 +191,6 @@ namespace Walkabout.Charts
 
             try
             {
-                SeriesAmount.ItemsSource = null;
                 collection.Clear();
 
                 if (this.Selection == null)
@@ -324,13 +319,18 @@ namespace Walkabout.Charts
 
                 ComputeLinearRegression();
 
-                BarChartAxis.Minimum = ComputeMinimumYAxis();
+                List<BarChartDataValue> cols = new List<BarChartDataValue>();
+                foreach(var column in this.collection)
+                {
+                    cols.Add(new BarChartDataValue() { Label = column.Label.ToString(), Value = (double)column.Amount, UserData = column });
+                }
 
-                ObservableCollection<HistoryChartColumn> copy = new ObservableCollection<HistoryChartColumn>(this.collection);
+                Chart.Series = cols;
 
-                SeriesAmount.ItemsSource = copy;
-                AverageSeries.ItemsSource = copy;
-                BarChart.InvalidateArrange();
+                if (brush is SolidColorBrush sc)
+                {
+                    Chart.FillColor = sc.Color;
+                }
             }
             catch (Exception ex)
             {
@@ -474,5 +474,6 @@ namespace Walkabout.Charts
             int SW_SHOWNORMAL = 1;
             NativeMethods.ShellExecute(IntPtr.Zero, "Open", name, "", "", SW_SHOWNORMAL);
         }
+
     }
 }
