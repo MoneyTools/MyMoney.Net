@@ -136,7 +136,8 @@ namespace Walkabout.Charts
 
         private void OnSeriesChanged(object newValue)
         {
-            if (newValue == null) {
+            if (newValue == null)
+            {
                 ResetVisuals();
             }
             else
@@ -259,7 +260,7 @@ namespace Walkabout.Charts
         {
             var pos = e.GetPosition(this);
             var i = FindColumn(pos);
-            if (i >= 0 && i < Series.Count) 
+            if (i >= 0 && i < Series.Count)
             {
                 OnEnterColumn(i);
                 var tip = this.ToolTip as ToolTip;
@@ -306,7 +307,7 @@ namespace Walkabout.Charts
                         }
                     };
                     this.mouseOverAnimationCompleted = false;
-                    brush.BeginAnimation(SolidColorBrush.ColorProperty, mouseOverAnimation );
+                    brush.BeginAnimation(SolidColorBrush.ColorProperty, mouseOverAnimation);
                     inside = r;
                 }
             }
@@ -380,7 +381,7 @@ namespace Walkabout.Charts
             return minMax;
         }
 
-        private Size AddAxisLabels(out NiceScale scale)
+        private Size AddAxisLabels(out AxisTickSpacer scale)
         {
             double maxValue = 0;
             double minValue = 0;
@@ -392,7 +393,7 @@ namespace Walkabout.Charts
             }
 
             Size minMax = new Size();
-            scale = new NiceScale(minValue, maxValue);
+            scale = new AxisTickSpacer(minValue, maxValue);
             var spacing = scale.GetTickSpacing();
             var min = scale.GetNiceMin();
             var max = scale.GetNiceMax();
@@ -440,7 +441,7 @@ namespace Walkabout.Charts
 
             Size labelSize = CreateColumnInfos();
 
-            Size axisLabelSize = AddAxisLabels(out NiceScale scale);
+            Size axisLabelSize = AddAxisLabels(out AxisTickSpacer scale);
 
             var min = scale.GetNiceMin();
             var max = scale.GetNiceMax();
@@ -499,7 +500,7 @@ namespace Walkabout.Charts
             foreach (var item in Series)
             {
                 double s = (item.Value * w / range);
-                
+
                 ColumnInfo info = bars[index];
                 Polygon polygon = info.Shape;
                 SolidColorBrush brush = null;
@@ -594,7 +595,7 @@ namespace Walkabout.Charts
             double w = this.ActualWidth;
             double h = this.ActualHeight;
 
-            Size axisLabelSize = AddAxisLabels(out NiceScale scale);
+            Size axisLabelSize = AddAxisLabels(out AxisTickSpacer scale);
 
             var min = scale.GetNiceMin();
             var max = scale.GetNiceMax();
@@ -730,7 +731,7 @@ namespace Walkabout.Charts
                 poly.Add(new Point() { X = x, Y = y });
                 poly.Add(new Point() { X = x, Y = y - s });
                 x += columnWidth;
-                poly.Add(new Point() { X = x, Y = y - s});
+                poly.Add(new Point() { X = x, Y = y - s });
                 poly.Add(new Point() { X = x, Y = y });
                 x += gap;
 
@@ -748,139 +749,6 @@ namespace Walkabout.Charts
                 if (item.Label != null) ChartCanvas.Children.Remove(item.Label);
                 bars.RemoveAt(index);
             }
-        }
-    }
-
-    class NiceScale
-    {
-        private double minPoint;
-        private double maxPoint;
-        private double maxTicks = 10;
-        private double tickSpacing;
-        private double range;
-        private double niceMin;
-        private double niceMax;
-
-        /**
-        * Instantiates a new instance of the NiceScale class.
-        *
-        * @param min the minimum data point on the axis
-        * @param max the maximum data point on the axis
-*/
-        public NiceScale(double min, double max)
-        {
-            this.minPoint = min;
-            this.maxPoint = max;
-            Calculate();
-        }
-
-        /**
-        * Calculate and update values for tick spacing and nice
-        * minimum and maximum data points on the axis.
-*/
-        private void Calculate()
-        {
-            this.range = GetNiceNum(maxPoint - minPoint, false);
-            this.tickSpacing = GetNiceNum(range / (maxTicks - 1), true);
-            this.niceMin = Math.Floor(minPoint / tickSpacing) * tickSpacing;
-            this.niceMax = Math.Ceiling(maxPoint / tickSpacing) * tickSpacing;
-        }
-
-        /**
-        * Returns a "nice" number approximately equal to range Rounds
-        * the number if round = true Takes the ceiling if round = false.
-        *
-        * @param range the data range
-        * @param round whether to round the result
-        * @return a "nice" number to be used for the data range
-*/
-        private double GetNiceNum(double range, bool round)
-        {
-            double exponent; /** exponent of range */
-            double fraction; /** fractional part of range */
-            double niceFraction; /** nice, rounded fraction */
-
-            exponent = Math.Floor(Math.Log10(range));
-            fraction = range / Math.Pow(10, exponent);
-
-            if (round)
-            {
-                if (fraction < 1.5)
-                    niceFraction = 1;
-                else if (fraction < 3)
-                    niceFraction = 2;
-                else if (fraction < 7)
-                    niceFraction = 5;
-                else
-                    niceFraction = 10;
-            }
-            else
-            {
-                if (fraction <= 1)
-                    niceFraction = 1;
-                else if (fraction <= 2)
-                    niceFraction = 2;
-                else if (fraction <= 5)
-                    niceFraction = 5;
-                else
-                    niceFraction = 10;
-            }
-
-            return niceFraction * Math.Pow(10, exponent);
-        }
-
-        /**
-        * Sets the minimum and maximum data points for the axis.
-        *
-        * @param minPoint the minimum data point on the axis
-        * @param maxPoint the maximum data point on the axis
-*/
-        public void SetMinMaxPoints(double minPoint, double maxPoint)
-        {
-            this.minPoint = minPoint;
-            this.maxPoint = maxPoint;
-            Calculate();
-        }
-
-        /**
-        * Sets maximum number of tick marks we're comfortable with
-        *
-        * @param maxTicks the maximum number of tick marks for the axis
-*/
-        public void SetMaxTicks(double maxTicks)
-        {
-            this.maxTicks = maxTicks;
-            Calculate();
-        }
-
-        /**
-        * Gets the tick spacing.
-        *
-        * @return the tick spacing
-*/
-        public double GetTickSpacing()
-        {
-            return tickSpacing;
-        }
-
-        /**
-        * Gets the "nice" minimum data point.
-        *
-        * @return the new minimum data point for the axis scale
-*/
-        public double GetNiceMin()
-        {
-            return niceMin;
-        }
-
-        /**
-        * Gets the "nice" maximum data point.
-        *
-        * @return the new maximum data point for the axis scale
-*/
-        public double GetNiceMax()
-        {
-            return niceMax;
         }
     }
 }

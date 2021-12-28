@@ -242,6 +242,7 @@
     <Compile Include="StockQuotes\IStockQuoteService.cs" />
     <Compile Include="StockQuotes\StockQuoteThrottle.cs" />
     <Compile Include="Utilities\AnimatedMessage.cs" />
+    <Compile Include="Utilities\AxisTicker.cs" />
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\FileHash.cs" />
     <Compile Include="Utilities\KNearestNeighbor.cs" />
