@@ -4,18 +4,26 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Walkabout.Charts"
-             mc:Ignorable="d" 
+             mc:Ignorable="d" Background="Transparent"
              d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
     </UserControl.Resources>
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem Header="Export..." Click="OnExport"/>
+            <MenuItem Header="Rotate" Click="Rotate"/>
         </ContextMenu>
     </UserControl.ContextMenu>
-    <Grid>
-        <local:AnimatingBarChart x:Name="Chart" Foreground="#767676" LineBrush="#E0E0E0" Margin="10" ColumnHover="OnColumnHover" ColumnClicked="OnColumnClicked"/>
-        <ComboBox x:Name="RangeCombo" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" />
+    <Grid Margin="5,10,10,5">
+        <local:AnimatingBarChart x:Name="Chart" 
+                                 Foreground="#767676" 
+                                 LineBrush="#E0E0E0" 
+                                 AnimationGrowthMilliseconds="150" 
+                                 AnimationRippleMilliseconds="15"
+                                 AnimationColorMilliseconds="120"
+                                 ColumnHover="OnColumnHover" 
+                                 ColumnClicked="OnColumnClicked"/>
+        <ComboBox x:Name="RangeCombo" HorizontalAlignment="Right" VerticalAlignment="Top" />
     </Grid>
     
 </UserControl>

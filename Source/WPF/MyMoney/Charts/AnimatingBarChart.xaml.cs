@@ -629,12 +629,12 @@ namespace Walkabout.Charts
             int i = 0;
             for (var r = min; r <= max; r += spacing)
             {
-                double ypos = (h - (r * h / range)) + labelMargin;
+                double ypos = (h - zero) - (r * h / range);
                 var label = axisLabels[i];
                 var line = axisLines[i];
                 var mid = label.DesiredSize.Height / 2;
                 Canvas.SetLeft(label, labelGap);
-                Canvas.SetTop(label, ypos > mid ? ypos - mid : ypos + labelGap);
+                Canvas.SetTop(label, ypos - mid);
 
                 PointCollection poly = new PointCollection();
                 poly.Add(new Point() { X = axisLabelGap, Y = ypos });

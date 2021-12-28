@@ -475,5 +475,9 @@ namespace Walkabout.Charts
             NativeMethods.ShellExecute(IntPtr.Zero, "Open", name, "", "", SW_SHOWNORMAL);
         }
 
+        private void Rotate(object sender, RoutedEventArgs e)
+        {
+            this.Chart.Orientation = this.Chart.Orientation == Orientation.Vertical ? Orientation.Horizontal : Orientation.Vertical;
+        }
     }
 }
