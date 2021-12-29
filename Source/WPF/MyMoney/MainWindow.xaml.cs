@@ -1133,42 +1133,61 @@ namespace Walkabout
 
         #region Mouse & Keyboard Handling
 
-        object lastFocus = null;
+        IClipboardClient currentFocus = null;
 
         void OnKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
         {
+            currentFocus = null;
             IInputElement f = e.NewFocus;
-            if (f is TextBox || Keyboard.FocusedElement is TextBox)
+            if (f == null)
+            {
+                currentFocus = null;
+                return;
+            }
+            
+            if (f is TextBox box)
             {
                 // text edit mode, so disable row level copy/paste command.
-                lastFocus = f;
+                currentFocus = new TextBoxClipboardClient(box);
             }
-            else if (f == this.TransactionView.QueryPanel)
+            else if (f is RichTextBox rbox)
             {
-                lastFocus = this.TransactionView.QueryPanel;
+                currentFocus = new RichTextBoxClipboardClient(rbox);
+            }
+            else if (f is IClipboardClient client)
+            {
+                currentFocus = client;
             }
             else if (f == this.TransactionGraph)
             {
-                lastFocus = this.TransactionGraph;
-            }
-            else if (f is Inline)
-            {
-                // skip inlines, they cause VisualTreeHelper.GetParent to blow up!!!???
+                // todo: do we want to be able to copy stuff from this graph?
+                // currentFocus = this.TransactionGraph;
+                currentFocus = null;
             }
             else
             {
+                currentFocus = null;
                 DependencyObject d = e.NewFocus as DependencyObject;
                 while (d != null)
                 {
-                    if (d == TransactionView)
+                    if (d is IClipboardClient c)
                     {
-                        lastFocus = TransactionView;
+                        currentFocus = c;
+                        break;
                     }
-                    else if (d is FlowDocumentView)
+                    else if (d is FlowDocumentView view)
                     {
-                        lastFocus = d;
+                        currentFocus = new FlowDocumentViewClipboardClient(view);
+                        break;
                     }
-                    d = VisualTreeHelper.GetParent(d);
+                    else if (d is Inline inline)
+                    {
+                        d = inline.Parent;
+                    }
+                    else
+                    {
+                        d = VisualTreeHelper.GetParent(d);
+                    }
                 }
             }
         }
@@ -3144,34 +3163,27 @@ namespace Walkabout
 
         #endregion
 
-        #region Edit Menu
+        #region Edit Menu        
 
         private IClipboardClient ActiveClipboardClient
         {
             get
             {
-                if (lastFocus == TransactionView)
+                if (this.currentFocus != null)
                 {
-                    return TransactionView;
+                    return this.currentFocus;
                 }
-                else if (lastFocus == toolBox)
+                else if (Keyboard.FocusedElement is IClipboardClient client)
                 {
-                    if (toolBox.Selected == accountsControl)
-                    {
-                        return accountsControl;
-                    }
-                    else if (toolBox.Selected == categoriesControl)
-                    {
-                        return categoriesControl;
-                    }
-                    else if (toolBox.Selected == payeesControl)
-                    {
-                        return payeesControl;
-                    }
-                    else if (toolBox.Selected == rentsControl)
-                    {
-                        return rentsControl;
-                    }
+                    return client;
+                }
+                else if (Keyboard.FocusedElement is TextBox tb)
+                {
+                    return new TextBoxClipboardClient(tb);
+                }
+                else if (Keyboard.FocusedElement is RichTextBox rbox)
+                {
+                    return new RichTextBoxClipboardClient(rbox);
                 }
                 return null;
             }
@@ -3223,6 +3235,7 @@ namespace Walkabout
                 e.Handled = true;
             }
         }
+
         private void OnCommandCopy(object sender, ExecutedRoutedEventArgs e)
         {
             IClipboardClient c = ActiveClipboardClient;
