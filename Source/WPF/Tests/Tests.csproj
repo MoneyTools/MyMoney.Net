@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Walkabout.Tests</RootNamespace>
     <AssemblyName>MyMoneyTests</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <AssemblyOriginatorKeyFile>$(MyKeyFile)</AssemblyOriginatorKeyFile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -107,7 +107,7 @@
     <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="Microsoft.VisualStudio.Diagnostics.PerformanceProvider">
-        <HintPath>$(SolutionDir)tools\Microsoft.VisualStudio.Diagnostics.PerformanceProvider.dll</HintPath>
+      <HintPath>$(SolutionDir)tools\Microsoft.VisualStudio.Diagnostics.PerformanceProvider.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
