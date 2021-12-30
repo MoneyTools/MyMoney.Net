@@ -2,7 +2,7 @@
 
 cd %~dp0
 SET ROOT=%~dp0
-set WINGET_SRC=D:\git\lovettchris\winget-pkgs
+set WINGET_SRC=D:\git\clovett\winget-pkgs
 for /f "usebackq" %%i in (`xsl -e -s Version\version.xsl Version\version.props`) do (
     set VERSION=%%i
 )
