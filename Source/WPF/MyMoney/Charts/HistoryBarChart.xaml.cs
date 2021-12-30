@@ -319,18 +319,25 @@ namespace Walkabout.Charts
 
                 ComputeLinearRegression();
 
+                Color c = Colors.Black;
+                if (brush is SolidColorBrush sc)
+                {
+                    c = sc.Color;
+                }
+                
+                if (c == Colors.Transparent || c == Colors.White)
+                {
+                    // not defined on the category, so use gray.
+                    c = Colors.Gray;
+                }
+
                 List<BarChartDataValue> cols = new List<BarChartDataValue>();
                 foreach(var column in this.collection)
                 {
-                    cols.Add(new BarChartDataValue() { Label = column.Label.ToString(), Value = (double)column.Amount, UserData = column });
+                    cols.Add(new BarChartDataValue() { Label = column.Label.ToString(), Value = (double)column.Amount, UserData = column, Color = c });
                 }
 
                 Chart.Series = cols;
-
-                if (brush is SolidColorBrush sc)
-                {
-                    Chart.FillColor = sc.Color;
-                }
             }
             catch (Exception ex)
             {
@@ -340,20 +347,6 @@ namespace Walkabout.Charts
             {
                 updating = false;
             }
-        }
-
-        private double ComputeMinimumYAxis()
-        {
-            double minimum = double.MaxValue;
-            foreach (HistoryChartColumn c in collection)
-            {
-                double y = (double)c.Amount;
-                if (y < minimum)
-                {
-                    minimum = y;
-                }
-            }
-            return minimum > 0 ? 0 : minimum;
         }
 
         private void ComputeLinearRegression()

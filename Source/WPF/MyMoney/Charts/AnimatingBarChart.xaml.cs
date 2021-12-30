@@ -15,6 +15,8 @@ namespace Walkabout.Charts
         public string Label;
         public double Value;
         public object UserData;
+
+        public Color Color { get; internal set; }
     }
 
     public delegate UIElement ToolTipGenerator(BarChartDataValue value);
@@ -25,11 +27,9 @@ namespace Walkabout.Charts
     public partial class AnimatingBarChart : UserControl
     {
         DelayedActions actions = new DelayedActions();
-        Color fill;
-        Color mouseOverColor;
         int tipColumn = -1;
         Point movePos;
-        Polygon inside;
+        ColumnInfo inside;
         bool mouseOverAnimationCompleted = false;
 
         class ColumnInfo
@@ -37,6 +37,7 @@ namespace Walkabout.Charts
             public TextBlock Label;
             public Rect Bounds;
             public Polygon Shape;
+            public Color Color;
         }
 
         // this is maintained for hit testing only since the mouse events don't seem to be 
@@ -56,12 +57,6 @@ namespace Walkabout.Charts
             this.AnimationColorMilliseconds = 120;
         }
 
-        public Color FillColor
-        {
-            get => fill;
-            set { fill = value; OnColorChanged(); }
-        }
-
         /// <summary>
         /// Time to animate growth of the columns.
         /// </summary>
@@ -77,18 +72,16 @@ namespace Walkabout.Charts
         /// </summary>
         public int AnimationColorMilliseconds { get; set; }
 
-        private void OnColorChanged()
+        private Color GetMouseOverColor(Color c)
         {
-            var hls = new HlsColor(fill);
+            var hls = new HlsColor(c);
             hls.Lighten(0.25f);
-            mouseOverColor = hls.Color;
+            return hls.Color;
         }
 
         public int HoverDelayMilliseconds { get; set; }
 
         public ToolTipGenerator ToolTipGenerator { get; set; }
-
-
 
         public Brush LineBrush
         {
@@ -288,27 +281,31 @@ namespace Walkabout.Charts
         {
             if (i < bars.Count)
             {
-                Polygon r = bars[i].Shape;
-                if (r != inside)
+                var info = bars[i];
+                var color = info.Color;
+                Polygon r = info.Shape;
+                if (inside == null || r != inside.Shape)
                 {
                     if (inside != null)
                     {
                         OnExitColumn();
                     }
+
                     var duration = new Duration(TimeSpan.FromMilliseconds(AnimationColorMilliseconds));
                     var brush = r.Fill as SolidColorBrush;
-                    var mouseOverAnimation = new ColorAnimation() { To = this.mouseOverColor, Duration = duration };
+                    var highlight = GetMouseOverColor(color);
+                    var mouseOverAnimation = new ColorAnimation() { To = highlight, Duration = duration };
                     mouseOverAnimation.Completed += (s, e) =>
                     {
                         this.mouseOverAnimationCompleted = true;
-                        if (r != inside)
+                        if (info != inside)
                         {
-                            brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = this.fill, Duration = duration });
+                            brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = color, Duration = duration });
                         }
                     };
                     this.mouseOverAnimationCompleted = false;
                     brush.BeginAnimation(SolidColorBrush.ColorProperty, mouseOverAnimation);
-                    inside = r;
+                    inside = info;
                 }
             }
         }
@@ -318,8 +315,8 @@ namespace Walkabout.Charts
             if (inside != null && this.mouseOverAnimationCompleted)
             {
                 var duration = new Duration(TimeSpan.FromMilliseconds(AnimationColorMilliseconds));
-                var brush = inside.Fill as SolidColorBrush;
-                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = this.fill, Duration = duration });
+                var brush = inside.Shape.Fill as SolidColorBrush;
+                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = inside.Color, Duration = duration });
             }
             inside = null;
         }
@@ -354,6 +351,7 @@ namespace Walkabout.Charts
                     info = new ColumnInfo();
                     bars.Add(info);
                 }
+                info.Color = item.Color;
 
                 if (!string.IsNullOrEmpty(item.Label))
                 {
@@ -581,7 +579,7 @@ namespace Walkabout.Charts
                 ChartCanvas.Children.Add(polygon);
 
                 polygon.BeginAnimation(Polygon.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration, BeginTime = start });
-                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = this.FillColor, Duration = duration, BeginTime = start });
+                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = item.Color, Duration = duration, BeginTime = start });
                 index++;
             }
         }
@@ -737,17 +735,9 @@ namespace Walkabout.Charts
 
                 ChartCanvas.Children.Add(polygon);
                 polygon.BeginAnimation(Polygon.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration, BeginTime = start });
-                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = this.FillColor, Duration = duration, BeginTime = start });
+                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = item.Color, Duration = duration, BeginTime = start });
 
                 index++;
-            }
-
-            while (index < bars.Count)
-            {
-                var item = bars[index];
-                if (item.Shape != null) ChartCanvas.Children.Remove(item.Shape);
-                if (item.Label != null) ChartCanvas.Children.Remove(item.Label);
-                bars.RemoveAt(index);
             }
         }
     }

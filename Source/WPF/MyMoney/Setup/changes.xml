@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.80" date="12/29/2021">
+    Fix history chart color in the case where category has no color defined (default to boring gray).
+  </change>
   <change version="1.1.0.79" date="12/29/2021">
     Fix copy to clipboard from the Output pane and cleanup the clipboard
     implementation a bit.
