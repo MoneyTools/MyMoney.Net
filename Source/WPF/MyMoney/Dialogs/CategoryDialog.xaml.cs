@@ -276,9 +276,10 @@ namespace Walkabout.Dialogs
 
                 try
                 {
-                    if (!string.IsNullOrEmpty(category.InheritedColor))
+                    string ic = category.InheritedColor;
+                    if (!string.IsNullOrEmpty(ic))
                     {
-                        ColorPicker.Color = ColorAndBrushGenerator.GenerateNamedColor(category.InheritedColor);
+                        ColorPicker.Color = ColorAndBrushGenerator.GenerateNamedColor(ic);
                     }
                 }
                 catch

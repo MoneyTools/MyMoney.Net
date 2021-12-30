@@ -147,7 +147,7 @@ namespace Walkabout.Utilities
             {
                 return Brushes.Transparent;
             }
-            return ColorAndBrushGenerator.GetOrCreateNamedGradientBrush(colorString, 45);
+            return new SolidColorBrush(color);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

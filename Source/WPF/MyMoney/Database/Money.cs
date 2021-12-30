@@ -6906,8 +6906,15 @@ namespace Walkabout.Data
                 if (string.IsNullOrWhiteSpace(s)) // database sometimes loads the string "        ".
                 {
                     s = null;
+                } else
+                {
+                    s = s.Trim();
                 }
                 this.colorString = s;
+                if (this.colorString == "#00FFFFFF")
+                {
+                    this.colorString = null;
+                }
                 OnChanged("Color");
                 NotifySubcategoriesChanged("InheritedColor");
             }
