@@ -150,6 +150,8 @@
       <Name>System.Drawing</Name>
     </Reference>
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Services" />
@@ -610,6 +612,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Views\ViewState.cs" />
+    <EmbeddedResource Include="Database\SampleStockQuotes.zip" />
     <None Include="Service References\RestfulWebServices\CurrencyService.wsdl" />
     <None Include="Service References\RestfulWebServices\CurrencyService.xsd">
       <SubType>Designer</SubType>
@@ -640,6 +643,7 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <Resource Include="Database\StripSampleStockQuotes.xslt" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

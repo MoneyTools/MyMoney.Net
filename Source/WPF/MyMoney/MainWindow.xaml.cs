@@ -529,11 +529,7 @@ namespace Walkabout
 
                 if (this.quotes != null)
                 {
-                    using (this.quotes)
-                    {
-                        this.quotes.DownloadComplete -= new EventHandler<EventArgs>(OnStockDownloadComplete);
-                        this.quotes.HistoryAvailable -= OnStockQuoteHistoryAvailable;
-                    }
+                    CleanupStockQuoteManager();
                 }
                 if (settings.RentalManagement)
                 {
@@ -547,10 +543,7 @@ namespace Walkabout
                     if (this.database != null)
                     {
                         string path = this.database.DatabasePath;
-
-                        this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings, Path.Combine(Path.GetDirectoryName(path), "StockQuotes"));
-                        this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
-                        this.quotes.HistoryAvailable += OnStockQuoteHistoryAvailable;
+                        SetupStockQuoteManager();
                         OfxRequest.OfxLogPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
                     }
 
@@ -620,6 +613,19 @@ namespace Walkabout
 
                 this.Dispatcher.BeginInvoke(new Action(AfterLoadChecks), DispatcherPriority.Background);
             }
+        }
+
+        private void SetupStockQuoteManager()
+        {
+            this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings, GetStockQuotePath());
+            this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
+            this.quotes.HistoryAvailable += OnStockQuoteHistoryAvailable;
+        }
+
+        private string GetStockQuotePath()
+        {
+            string path = this.database.DatabasePath;
+            return Path.Combine(Path.GetDirectoryName(path), "StockQuotes");
         }
 
         private void ClearOfxDownloads()
@@ -3930,8 +3936,11 @@ namespace Walkabout
                     return;
                 }
             }
-            SampleDatabase sample = new SampleDatabase(this.myMoney);
+
+            CleanupStockQuoteManager();
+            SampleDatabase sample = new SampleDatabase(this.myMoney, GetStockQuotePath());
             sample.Create();
+            SetupStockQuoteManager();
 
             this.toolBox.Selected = this.accountsControl;
             Account a = this.myMoney.Accounts.GetFirstAccount();
@@ -3944,7 +3953,7 @@ namespace Walkabout
         private void MenuExportSampleData_Click(object sender, RoutedEventArgs e)
         {
             string temp = Path.Combine(Path.GetTempPath(), "SampleData.xml");
-            SampleDatabase sample = new SampleDatabase(this.myMoney);
+            SampleDatabase sample = new SampleDatabase(this.myMoney, GetStockQuotePath());
             sample.Export(temp);
             InternetExplorer.OpenUrl(IntPtr.Zero, temp);
         }
@@ -4267,11 +4276,7 @@ namespace Walkabout
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-
-            using (this.quotes)
-            {
-                this.quotes = null;
-            }
+            CleanupStockQuoteManager();
 
             this.exchangeRates.Dispose();
 
@@ -4294,6 +4299,16 @@ namespace Walkabout
                 Trace.WriteLine("SaveConfig failed: " + ex.Message);
             }
             TempFilesManager.Shutdown();
+        }
+
+        private void CleanupStockQuoteManager()
+        {
+            using (this.quotes)
+            {
+                this.quotes.DownloadComplete -= new EventHandler<EventArgs>(OnStockDownloadComplete);
+                this.quotes.HistoryAvailable -= OnStockQuoteHistoryAvailable;
+                this.quotes = null;
+            }
         }
 
         private void OnCommandHelpAbout(object sender, ExecutedRoutedEventArgs e)

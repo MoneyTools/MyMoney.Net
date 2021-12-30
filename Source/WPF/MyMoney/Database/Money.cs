@@ -8421,11 +8421,11 @@ namespace Walkabout.Data
                         if (t.Unaccepted)
                             unaccepted++;
 
-                        if (t.IsDeleted || t.Status == TransactionStatus.Void)
-                            continue;
-
-                        // current account balance 
-                        balance += t.Amount;
+                        if (!t.IsDeleted && t.Status != TransactionStatus.Void)
+                        {
+                            // current account balance 
+                            balance += t.Amount;
+                        }
 
                         // snapshot the current running balance value
                         t.Balance = balance;

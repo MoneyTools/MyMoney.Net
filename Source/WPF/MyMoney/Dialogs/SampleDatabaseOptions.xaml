@@ -50,7 +50,7 @@
                  ToolTip="Enter name of ficticious employer to use in generating paycheck data"/>
 
         <TextBlock Text="Bi-weekly Paycheck:" Grid.Row="6" Style="{StaticResource TextPromptStyle}"/>
-        <TextBox x:Name="TextBoxPaycheck" Grid.Row="6" Grid.Column="1" TextChanged="TextBoxPaycheck_TextChanged" TabIndex="1" Text="1000.00"
+        <TextBox x:Name="TextBoxPaycheck" Grid.Row="6" Grid.Column="1" TextChanged="TextBoxPaycheck_TextChanged" TabIndex="1" Text="2000.00"
                  ToolTip="Enter amount of ficticious paychecks"/>
 
         <TextBlock Text="Inflation:" Grid.Row="8" Style="{StaticResource TextPromptStyle}"/>

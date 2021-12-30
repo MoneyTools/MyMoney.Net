@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
@@ -8,6 +9,7 @@ using Walkabout.Data;
 using System.IO;
 using Walkabout.Utilities;
 using System.Windows;
+using Walkabout.StockQuotes;
 
 namespace Walkabout.Assitance
 {
@@ -19,16 +21,22 @@ namespace Walkabout.Assitance
         private MyMoney money;
         private const int Years = 10;
         private Account checking;
+        private string stockQuotePath;
         Random rand = new Random();
+        Dictionary<string, StockQuoteHistory> quotes = new Dictionary<string, StockQuoteHistory>();
 
-        public SampleDatabase(MyMoney money)
+        public SampleDatabase(MyMoney money, string stockQuotePath)
         {
             this.money = money;
+            this.stockQuotePath = stockQuotePath;
         }
 
         public void Create()
         {
-            string path = Path.Combine(Path.GetTempPath(), "SampleData.xml");
+            string temp = Path.Combine(Path.GetTempPath(), "MyMoney");
+            Directory.CreateDirectory(temp);
+
+            string path = Path.Combine(temp, "SampleData.xml");
             ProcessHelper.ExtractEmbeddedResourceAsFile("Walkabout.Database.SampleData.xml", path);
 
             SampleDatabaseOptions options = new SampleDatabaseOptions();
@@ -38,6 +46,25 @@ namespace Walkabout.Assitance
             {
                 return;
             }
+
+            string zipPath = Path.Combine(temp, "SampleStockQuotes.zip");
+            ProcessHelper.ExtractEmbeddedResourceAsFile("Walkabout.Database.SampleStockQuotes.zip", zipPath);
+
+            string quoteFolder = Path.Combine(temp, "StockQuotes");
+            if (Directory.Exists(quoteFolder))
+            {
+                Directory.Delete(quoteFolder, true);
+            }
+            System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, temp);
+            foreach(var file in Directory.GetFiles(quoteFolder))
+            {
+                var target = Path.Combine(this.stockQuotePath, Path.GetFileName(file));
+                if (!File.Exists(target))
+                {
+                    File.Copy(file, target, true);
+                }
+            }
+
             path = options.SampleData;
 
             double inflation = options.Inflation;
@@ -49,9 +76,18 @@ namespace Walkabout.Assitance
                 data = (SampleData)s.Deserialize(reader);
             }
 
+            foreach (SampleSecurity ss in data.Securities)
+            {
+                var history = StockQuoteHistory.Load(quoteFolder, ss.Symbol);
+                if (history != null)
+                {
+                    this.quotes[ss.Symbol] = history;
+                }
+            }
             int totalFrequency = data.GetTotalFrequency();
 
             List<SampleTransaction> list = new List<SampleTransaction>();
+            List<Account> brokerageAccounts = new List<Account>();
 
             foreach (SampleAccount sa in data.Accounts)
             {
@@ -77,7 +113,7 @@ namespace Walkabout.Assitance
 
                 if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
                 {
-                    CreateInvestmentSamples(data, a);
+                    brokerageAccounts.Add(a);
                 }
                 else
                 {
@@ -85,6 +121,23 @@ namespace Walkabout.Assitance
                     List<SamplePayee> payees = new List<SamplePayee>();
                     foreach (SamplePayee payee in data.Payees)
                     {
+                        switch (payee.Type)
+                        {
+                            case PaymentType.Debit:
+                            case PaymentType.Check:
+                                if (sa.Type != AccountType.Checking)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case PaymentType.Credit:
+                                if (sa.Type != AccountType.Credit)
+                                {
+                                    continue;
+                                }
+                                break;
+                        }
+
                         foreach (SampleCategory sc in payee.Categories)
                         {
                             int newFrequency = (int)(sc.Frequency * ratio);
@@ -106,96 +159,233 @@ namespace Walkabout.Assitance
             CreateRandomTransactions(list, inflation);
 
             AddPaychecks(options.Employer, options.PayCheck, inflation);
+
+            // now with any spare cash we can buy stocks.
+            CreateInvestmentSamples(data, brokerageAccounts);
+
+            // only have to do this because we hid all update events earlier by doing BeginUpdate/EndUpdate on money object.
+            // trigger payee update 
+            money.Payees.BeginUpdate(false);
+            money.Payees.EndUpdate();
+
+            // trigger category update
+            money.Categories.BeginUpdate(false);
+            money.Categories.EndUpdate();
+
+            money.OnLoaded();
         }
 
-
-
-
-
-
-        private void CreateInvestmentSamples(SampleData data, Account a)
+        private decimal GetStockMoney(decimal balance)
         {
-            money.BeginUpdate(this);
-            Transactions transactions = money.Transactions;
-
-            for (int year = DateTime.Now.Year-10; year <= DateTime.Now.Year; year++)
+            if (balance < 0)
             {
-                
+                return 0;
+            }
+            decimal hundreds = Math.Floor(balance / 100);
+            return hundreds * 100;
+        }
 
-                foreach (SampleSecurity ss in data.Securities)
+        private decimal GetClosingPrice(string symbol, DateTime date)
+        {
+            if (this.quotes.TryGetValue(symbol, out StockQuoteHistory history))
+            {
+                foreach (var quote in history.History)
                 {
+                    if (quote.Date > date)
+                    {
+                        return quote.Close;
+                    }
+                }
+            }
+            return rand.Next(100);
+        }
+
+        class Ownership
+        {
+            // how much of each stock is owned in each account.
+            Dictionary<Account, Dictionary<string, decimal>> owned = new Dictionary<Account, Dictionary<string, decimal>>();
+
+            public void AddUnits(Account a, string symbol, decimal units)
+            {
+                if (!owned.TryGetValue(a, out Dictionary<string, decimal> map)) {
+                    map = new Dictionary<string, decimal>();
+                    owned[a] = map;
+                }
+                decimal tally = 0;
+                map.TryGetValue(symbol, out tally);
+                map[symbol] = tally + units;
+            }
+
+            public decimal GetUnits(Account a, string symbol) {
+                decimal result = 0;
+                if (owned.TryGetValue(a, out Dictionary<string, decimal> map)) {
+                    map.TryGetValue(symbol, out result);
+                }
+                return result;
+            }
+        }
+
+        private void CreateInvestmentSamples(SampleData data, List<Account> brokerageAccounts)
+        {
+            if (brokerageAccounts.Count == 0)
+            {
+                return;
+            }
+            
+            // now balance the accounts.
+            foreach (Account a in money.Accounts.GetAccounts())
+            {
+                money.Rebalance(a);
+            }
+
+            // first figure out how much we can spend each year.
+            int year = DateTime.Now.Year - 10;
+            DateTime start = new DateTime(year, 1, 1); // start in January
+            DateTime end = start.AddYears(1);
+            Dictionary<int, decimal> cash = new Dictionary<int, decimal>();
+            Ownership ownership = new Ownership();
+            decimal removed = 0;
+
+            foreach (var t in money.Transactions.GetTransactionsFrom(this.checking))
+            {
+                if (t.Date > end)
+                {
+                    cash[year] = GetStockMoney(t.Balance);
+                    end = end.AddYears(1);
+                    year++;
+                }
+            }
+
+            money.BeginUpdate(this);
+
+            Dictionary<Account, decimal> cashBalance = new Dictionary<Account, decimal>();
+            foreach (var a in brokerageAccounts)
+            {
+                cashBalance[a] = 0;
+            }
+
+            Transactions transactions = money.Transactions;
+            for (year = DateTime.Now.Year-10; year <= DateTime.Now.Year; year++)
+            {
+                cash.TryGetValue(year, out decimal balance);
+                balance -= removed;
+                if (balance < 100) {
+                    continue; // not enough.
+                }
+                decimal startBalance = balance;
+
+                int numberOfTransactionForThatYear = rand.Next(5, 100); // up to 100 transactions max per year.
+
+                // keep track of how much we own so we never go negative.
+                IList<int> selectedDays = GetRandomDaysInTheYearForTransactions(numberOfTransactionForThatYear);
+
+                foreach (var day in selectedDays)
+                {
+                    // select random security.
+                    SampleSecurity ss = data.Securities[rand.Next(0, data.Securities.Count)];
                     // Get or Create the security
                     Security stock = money.Securities.FindSecurity(ss.Name, true);
                     stock.SecurityType = ss.SecurityType;
                     stock.Symbol = ss.Symbol;
 
-                    // keep track of how much we own so we never go negative.
-                    decimal owned = 0;
+                    // select a random brokerage.
+                    Account a = brokerageAccounts[rand.Next(brokerageAccounts.Count)];
 
-
-                    IList<int> selectedDays = GetRandomDaysInTheYearForTransactions();
-
-                    foreach (var day in selectedDays)
+                    var canSpend = balance + cashBalance[a];
+                    if (canSpend < 100)
                     {
+                        break;
+                    }
+
+                    // the date the purchase or sale was done
+                    var date = new DateTime(year, 1, 1).AddDays(day);
+
+                    // How many unit bought or sold
+                    var quote = GetClosingPrice(ss.Symbol, date);
+
+                    Transaction t = null;
+                    decimal owned = ownership.GetUnits(a, ss.Symbol);
+                    if (owned > 4 && rand.Next(3) == 1)
+                    {
+                        // make this a sell transaction.
                         // Create a new Transaction
-                        Transaction t = money.Transactions.NewTransaction(a);
-
-
-                        // the date the purchase or sale was done
-                        t.Date = new DateTime(year,1,1).AddDays(day);
-
-
+                        t = money.Transactions.NewTransaction(a);
+                        t.Date = date;
                         //-----------------------------------------------------
                         // Create the matching Investment transaction
                         Investment i = t.GetOrCreateInvestment();
                         i.Transaction = t;
                         i.Security = stock;
-
-                        // Is this a BUY or SELL
-                        i.Type = InvestmentType.Buy;
-                        // How many unit bought or sold
-                        i.Units = rand.Next(1000);
-
-                        if (owned > 0 && rand.Next(2) == 1)
-                        {
-                            i.Type = InvestmentType.Sell;
-                            i.Units = rand.Next((int)owned); // don't sell more than we currently own.
-                            owned -= i.Units;
-                        }
-                        else
-                        {
-                            owned += i.Units;
-                        }
-
-                        
-                        // What price
-                        i.UnitPrice = Convert.ToDecimal(rand.Next(ss.PriceRangeLow, ss.PriceRangeHight));
-                        
-                        // add some pennies (decimal value) 
-                        decimal penies = rand.Next(99);
-                        penies /= 100;
-                        i.UnitPrice = i.UnitPrice + penies;
-
+                        i.UnitPrice = quote;
+                        i.Price = quote;
+                        i.Type = InvestmentType.Sell;
+                        // Create the a SELL transaction
+                        i.Units = rand.Next(1, (int)(owned / 2));
+                        ownership.AddUnits(a, ss.Symbol, -i.Units);
                         // Calculate the Payment or Deposit amount
-                        t.Amount = i.Units * i.UnitPrice * (i.Type == InvestmentType.Buy ? -1 : 1);
+                        t.Amount = i.Units * i.UnitPrice;
+                    }
+                    else
+                    {
+                        int max = (int)(canSpend / quote);
+                        if (max > 0)
+                        {
+                            // Create a new Transaction
+                            t = money.Transactions.NewTransaction(a);
+                            t.Date = date;
+
+                            //-----------------------------------------------------
+                            // Create the matching Investment transaction
+                            Investment i = t.GetOrCreateInvestment();
+                            i.Transaction = t;
+                            i.Security = stock;
+                            i.UnitPrice = quote;
+                            i.Price = quote;
+                            i.Type = InvestmentType.Buy;
+                            i.Units = rand.Next(1, max);
+                            ownership.AddUnits(a, ss.Symbol, i.Units);
+                            // Calculate the Payment or Deposit amount
+                            t.Amount = i.Units * i.UnitPrice * -1;
+                        }
+                    }
+
+                    if (t != null)
+                    {
                         t.Payee = money.Payees.FindPayee(ss.Name, true);
                         t.Category = money.Categories.InvestmentStocks;
-
-                        if (i.Type == InvestmentType.Sell)
-                        {
-                            t.Amount = t.Amount * 1.10M; // Improve the outcome of profit, sell at the 10% higher random 
-                        }
-
-                        //-----------------------------------------------------
+                        balance += t.Amount;
+                        cashBalance[a] += t.Amount;
                         // Finally add the new transaction
                         money.Transactions.AddTransaction(t);
                     }
                 }
+
+                foreach (var acct in brokerageAccounts)
+                {
+                    var amount = cashBalance[acct];
+                    if (amount < 0)
+                    {
+                        // then we need to transfer money to cover the cost of the stock purchases.
+                        Transaction payment = transactions.NewTransaction(checking);
+                        payment.Date = new DateTime(year, 1, 1);
+                        payment.Amount = amount;
+                        transactions.AddTransaction(payment);
+                        money.Transfer(payment, acct);
+                        removed += -amount;
+                        cashBalance[acct] += -amount;
+                    }
+                }
             }
             money.EndUpdate();
+
+            // now balance the accounts again!
+            foreach (Account a in money.Accounts.GetAccounts())
+            {
+                money.Rebalance(a);
+            }
         }
 
-        private IList<int> GetRandomDaysInTheYearForTransactions()
+        private IList<int> GetRandomDaysInTheYearForTransactions(int count)
         {
             List<int> allDaysInYear = new List<int>();
             for (int day = 0; day < 365; day++)
@@ -203,11 +393,9 @@ namespace Walkabout.Assitance
                 allDaysInYear.Add(day);
             }
 
-            int numberOfTransactionForThatYear = rand.Next(0, 20); // From 0 to 20
-
             SortedList<int,int> selectedDays = new SortedList<int,int>();
 
-            for (int populateCount = 0; populateCount < numberOfTransactionForThatYear; populateCount++)
+            for (int populateCount = 0; populateCount < count; populateCount++)
             {
                 int takeThisDay = rand.Next(allDaysInYear.Count - 1);
 
@@ -217,9 +405,6 @@ namespace Walkabout.Assitance
             }
             return selectedDays.Values;
         }
-
-
-
 
         private void AddPaychecks(string employer, decimal paycheck, double inflation)
         {
@@ -274,6 +459,7 @@ namespace Walkabout.Assitance
             Accounts accounts = money.Accounts;
             Payees payees = money.Payees;
             Categories categories = money.Categories;
+            int nextCheck = 2800;
 
             while (list.Count > 0)
             {
@@ -319,26 +505,47 @@ namespace Walkabout.Assitance
                 t.Category = c;
                 t.Date = date;
                 t.Amount = amount;
+                if (st.Payee.Type == PaymentType.Check)
+                {
+                    t.Number = nextCheck.ToString();
+                    nextCheck++;
+                }
                 transactions.AddTransaction(t);
             }
-            money.EndUpdate();
 
-            // now trigger UI update
-            foreach (Account a in money.Accounts.GetAccounts())
+            // now pay the credit cards once a month from a checking account.
+            Account checking = this.checking;
+            if (checking != null)
             {
-                money.Rebalance(a);
+                foreach (var acct in accounts.GetAccounts())
+                {
+                    if (acct.Type == AccountType.Credit)
+                    {
+                        // here we know transactions are sorted by date.
+                        DateTime endOfMonth = start.AddMonths(1);
+                        decimal balance = 0;
+                        foreach (var t in money.Transactions.GetTransactionsFrom(acct))
+                        {
+                            balance += t.Amount;
+                            if (t.Date >= endOfMonth)
+                            {
+                                if (balance != 0)
+                                {
+                                    Transaction payment = transactions.NewTransaction(checking);
+                                    payment.Date = endOfMonth;
+                                    payment.Amount = balance;
+                                    transactions.AddTransaction(payment);
+                                    money.Transfer(payment, acct);
+                                    balance = 0;
+                                    endOfMonth = endOfMonth.AddMonths(1);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
-            // only have to do this because we hid all update events earlier by doing BeginUpdate/EndUpdate on money object.
-            // trigger payee update 
-            money.Payees.BeginUpdate(false);
-            money.Payees.EndUpdate();
-
-            // trigger category update
-            money.Categories.BeginUpdate(false);
-            money.Categories.EndUpdate();
-
-            money.OnLoaded();
+            money.EndUpdate();
         }
 
         private decimal Inflate(decimal amount, int months, decimal monthlyInflation)
@@ -507,6 +714,13 @@ namespace Walkabout.Assitance
         public int Frequency { get; set; }
     }
 
+    public enum PaymentType
+    {
+        Debit,
+        Check,
+        Credit
+    }
+
     public class SamplePayee
     {
         public SamplePayee()
@@ -517,6 +731,9 @@ namespace Walkabout.Assitance
 
         [XmlAttribute]
         public int Frequency { get; set; }
+
+        [XmlAttribute]
+        public PaymentType Type { get; set; }
 
         public List<SampleCategory> Categories { get; set; }
 
