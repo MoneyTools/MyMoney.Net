@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Walkabout.Data;
+using LovettSoftware.Charts;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -42,11 +43,21 @@ namespace Walkabout.Charts
                 unassigned = new Category() { Name = "Unknown", Type = Data.CategoryType.None };
                 transferredIn = new Category() { Name = "Transferred In", Type = Data.CategoryType.Transfer };
                 transferredOut = new Category() { Name = "Transferred Out", Type = Data.CategoryType.Transfer };
-                PieChart.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(PieChart_MouseLeftButtonDown);
 
+                this.PieChart.PieSliceClicked += OnPieSliceClicked;
+                this.PieChart.PieSliceHover += OnPieSliceHovered;
+                this.PieChart.ToolTipGenerator = OnGenerateTip;
 #if PerformanceBlocks
             }
 #endif
+        }
+
+        private UIElement OnGenerateTip(ChartDataValue value)
+        {
+            var tip = new StackPanel() { Orientation = Orientation.Vertical };
+            tip.Children.Add(new TextBlock() { Text = value.Label, FontWeight = FontWeights.Bold });
+            tip.Children.Add(new TextBlock() { Text = value.Value.ToString("C0") });
+            return tip;
         }
 
         void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -87,25 +98,15 @@ namespace Walkabout.Charts
             }
         }
 
-        void PieChart_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnPieSliceHovered(object sender, ChartDataValue e)
         {
-            DependencyObject d = e.OriginalSource as DependencyObject;
-            if (e == null)
+        }
+
+        private void OnPieSliceClicked(object sender, ChartDataValue e)
+        {
+            if (e.UserData is CategoryData data)
             {
-                return;
-            }
-            while (d != null) {
-                FrameworkElement f = d as FrameworkElement ;
-                if (f != null && f.DataContext != null)
-                {
-                    CategoryData data = f.DataContext as CategoryData;
-                    if (data != null)
-                    {
-                        Selection = data;
-                        return;
-                    }
-                }
-                d = VisualTreeHelper.GetParent(d);
+                Selection = data;
             }
         }
 
@@ -289,7 +290,13 @@ namespace Walkabout.Charts
 
         public void SetObservaleCollection(ObservableCollection<CategoryData> categoryDataCollection)
         {
-            PieSeries.ItemsSource = categoryDataCollection;
+            List<ChartDataValue> data = new List<ChartDataValue>();
+            foreach(var item in categoryDataCollection)
+            {
+                data.Add(new ChartDataValue() { Label = item.Name, Value = item.Total, Color = item.Color, UserData = item });
+            }
+
+            PieChart.Series = data;
         }
 
         bool WillTally(Transaction t, Category c, decimal total, bool expense)

@@ -25,6 +25,20 @@ namespace Walkabout.Charts
     {
         NumberFormatInfo nfi;
         ChartData data;
+        Size controlSize = new Size(1000, 200);
+        double graphMin = 0;
+        double graphMax = 0;
+        double graphWidth = 0;
+        List<Geometry> geometries = new List<Geometry>();
+        ScaleTransform scale;
+        TransformGroup transform;
+        Shape pointer;
+        Border tooltip;
+        TextBlock label;
+        ChartSeries selectedSeries;
+        StackPanel legend;
+
+
 
         public AreaChart()
         {
@@ -34,6 +48,8 @@ namespace Walkabout.Charts
         {
             this.Data = data;
         }
+
+        public ChartValue Selected { get; set; }
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -79,12 +95,6 @@ namespace Walkabout.Charts
             InvalidateArrange();
         }
 
-        Size controlSize = new Size(1000,200);
-        double graphMin = 0;
-        double graphMax = 0;
-        double graphWidth = 0;
-        List<Geometry> geometries = new List<Geometry>();
-
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
@@ -98,9 +108,6 @@ namespace Walkabout.Charts
             Size result = base.MeasureOverride(constraint);
             return result;
         }
-
-        ScaleTransform scale;
-        TransformGroup transform;
 
         void TransformGraph()
         {
@@ -121,14 +128,6 @@ namespace Walkabout.Charts
                 }
             }
         }
-
-        Shape pointer;
-        Border tooltip;
-        TextBlock label;
-
-        public ChartValue Selected { get; set;  }
-
-        ChartSeries selectedSeries;
 
         public ChartSeries SelectedSeries { get { return selectedSeries; } set { selectedSeries = value; OnSelectedSeriesChanged(); } }
 
@@ -258,8 +257,6 @@ namespace Walkabout.Charts
             base.OnMouseMove(e);
         }
         
-        StackPanel legend;
-
         void ShowAreaGraph()
         {
             graphMin = 0;

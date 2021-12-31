@@ -38,6 +38,7 @@ namespace Walkabout.StockQuotes
         DelayedActions delayedActions = new DelayedActions();
         HistoryDownloader _downloader;
         string _logPath;
+        bool _firstError = true;
 
         public StockQuoteManager(IServiceProvider provider, List<StockServiceSettings> settings, string logPath)
         {
@@ -245,6 +246,7 @@ namespace Walkabout.StockQuotes
 
         void BeginGetQuotes(HashSet<Security> toFetch)
         {
+            _firstError = true;
             if (_services.Count == 0 || toFetch.Count == 0)
             {
                 return;
@@ -567,7 +569,11 @@ namespace Walkabout.StockQuotes
             }
             OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
             output.AppendParagraph(p);
-            output.Show();
+            if (_firstError)
+            {
+                _firstError = false;
+                output.Show();
+            }
             errorLog = new StringBuilder();
         }
 
@@ -618,6 +624,7 @@ namespace Walkabout.StockQuotes
 
         internal void BeginDownloadHistory(string symbol)
         {
+            _firstError = true;
             var service = GetHistoryService();
             if (service != null)
             {

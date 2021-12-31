@@ -176,6 +176,9 @@
     <Compile Include="Charts\AnimatingBarChart.xaml.cs">
       <DependentUpon>AnimatingBarChart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Charts\AnimatingPieChart.xaml.cs">
+      <DependentUpon>AnimatingPieChart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Charts\HistoryBarChart.xaml.cs">
       <DependentUpon>HistoryBarChart.xaml</DependentUpon>
     </Compile>
@@ -773,6 +776,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Charts\AnimatingBarChart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Charts\AnimatingPieChart.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

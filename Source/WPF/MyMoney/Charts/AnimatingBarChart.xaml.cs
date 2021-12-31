@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Walkabout.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,11 +7,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using Walkabout.Utilities;
 
-namespace Walkabout.Charts
+namespace LovettSoftware.Charts
 {
-    public class BarChartDataValue
+    public class ChartDataValue
     {
         public string Label;
         public double Value;
@@ -19,7 +19,7 @@ namespace Walkabout.Charts
         public Color Color { get; internal set; }
     }
 
-    public delegate UIElement ToolTipGenerator(BarChartDataValue value);
+    public delegate UIElement ToolTipGenerator(ChartDataValue value);
 
     /// <summary>
     /// Interaction logic for AnimatingBarChart.xaml
@@ -47,15 +47,26 @@ namespace Walkabout.Charts
         List<Polygon> axisLines = new List<Polygon>();
         List<TextBlock> axisLabels = new List<TextBlock>();
 
-
         public AnimatingBarChart()
         {
             InitializeComponent();
-            HoverDelayMilliseconds = 250;
+            this.HoverDelayMilliseconds = 250;
             this.AnimationGrowthMilliseconds = 250;
             this.AnimationRippleMilliseconds = 20;
             this.AnimationColorMilliseconds = 120;
+            this.IsVisibleChanged += OnVisibleChanged;
         }
+
+        private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.Visibility != Visibility.Visible)
+            {
+                HideTip();
+            }
+            OnDelayedUpdate();
+        }
+
+        public int HoverDelayMilliseconds { get; set; }
 
         /// <summary>
         /// Time to animate growth of the columns.
@@ -78,8 +89,6 @@ namespace Walkabout.Charts
             hls.Lighten(0.25f);
             return hls.Color;
         }
-
-        public int HoverDelayMilliseconds { get; set; }
 
         public ToolTipGenerator ToolTipGenerator { get; set; }
 
@@ -113,14 +122,14 @@ namespace Walkabout.Charts
             ((AnimatingBarChart)d).OnDelayedUpdate();
         }
 
-        public List<BarChartDataValue> Series
+        public List<ChartDataValue> Series
         {
-            get { return (List<BarChartDataValue>)GetValue(PointsProperty); }
-            set { SetValue(PointsProperty, value); }
+            get { return (List<ChartDataValue>)GetValue(SeriesProperty); }
+            set { SetValue(SeriesProperty, value); }
         }
 
-        public static readonly DependencyProperty PointsProperty =
-            DependencyProperty.Register("Series", typeof(List<BarChartDataValue>), typeof(AnimatingBarChart), new PropertyMetadata(null, OnSeriesChanged));
+        public static readonly DependencyProperty SeriesProperty =
+            DependencyProperty.Register("Series", typeof(List<ChartDataValue>), typeof(AnimatingBarChart), new PropertyMetadata(null, OnSeriesChanged));
 
         private static void OnSeriesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -155,12 +164,12 @@ namespace Walkabout.Charts
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            actions.StartDelayedAction("update", UpdateChart, TimeSpan.FromMilliseconds(10));
+            OnDelayedUpdate();
             return base.ArrangeOverride(arrangeBounds);
         }
 
-        public event EventHandler<BarChartDataValue> ColumnHover;
-        public event EventHandler<BarChartDataValue> ColumnClicked;
+        public event EventHandler<ChartDataValue> ColumnHover;
+        public event EventHandler<ChartDataValue> ColumnClicked;
 
 
         private void UpdateChart()
@@ -171,7 +180,7 @@ namespace Walkabout.Charts
             {
                 ResetVisuals();
             }
-            else
+            else if (this.Visibility == Visibility.Visible)
             {
                 if (this.Orientation == Orientation.Horizontal)
                 {
@@ -200,8 +209,7 @@ namespace Walkabout.Charts
                 return;
             }
 
-            BarChartDataValue value = Series[i];
-            var s = this.PointToScreen(this.movePos);
+            ChartDataValue value = Series[i];
             var tip = this.ToolTip as ToolTip;
             var content = ToolTipGenerator != null ? ToolTipGenerator(value) : new TextBlock() { Text = value.Label + "\r\n" + value.Value };
             if (tip == null)
@@ -221,7 +229,7 @@ namespace Walkabout.Charts
             }
             tip.Measure(new Size(100, 100));
             tip.HorizontalOffset = 0;
-            tip.VerticalOffset = -tip.DesiredSize.Height;
+            tip.VerticalOffset = -tip.ActualHeight;
 
             // notify any interested listeners
             var h = this.ColumnHover;
@@ -249,6 +257,17 @@ namespace Walkabout.Charts
             return -1;
         }
 
+        private void HideTip()
+        {
+            var tip = this.ToolTip as ToolTip;
+            if (tip != null)
+            {
+                tip.IsOpen = false;
+                this.ToolTip = null;
+            }
+            this.tipColumn = -1;
+        }
+
         protected override void OnPreviewMouseMove(MouseEventArgs e)
         {
             var pos = e.GetPosition(this);
@@ -256,12 +275,7 @@ namespace Walkabout.Charts
             if (i >= 0 && i < Series.Count)
             {
                 OnEnterColumn(i);
-                var tip = this.ToolTip as ToolTip;
-                if (tip != null)
-                {
-                    tip.IsOpen = false;
-                    this.ToolTip = null;
-                }
+                HideTip();
                 this.movePos = pos;
                 this.tipColumn = i;
                 actions.StartDelayedAction("hover", () =>
@@ -327,7 +341,7 @@ namespace Walkabout.Charts
             var i = FindColumn(pos);
             if (i >= 0 && i < Series.Count)
             {
-                BarChartDataValue value = Series[i];
+                ChartDataValue value = Series[i];
                 if (ColumnClicked != null)
                 {
                     ColumnClicked(this, value);

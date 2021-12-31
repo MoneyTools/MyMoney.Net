@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Walkabout.Charts"
+             xmlns:c="clr-namespace:LovettSoftware.Charts"
              mc:Ignorable="d" Background="Transparent"
              d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
@@ -15,14 +15,14 @@
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid Margin="5,10,10,5">
-        <local:AnimatingBarChart x:Name="Chart" 
-                                 Foreground="#767676" 
-                                 LineBrush="#E0E0E0" 
-                                 AnimationGrowthMilliseconds="150" 
-                                 AnimationRippleMilliseconds="15"
-                                 AnimationColorMilliseconds="120"
-                                 ColumnHover="OnColumnHover" 
-                                 ColumnClicked="OnColumnClicked"/>
+        <c:AnimatingBarChart x:Name="Chart" 
+                             Foreground="#767676" 
+                             LineBrush="#E0E0E0" 
+                             AnimationGrowthMilliseconds="150" 
+                             AnimationRippleMilliseconds="15"
+                             AnimationColorMilliseconds="120"
+                             ColumnHover="OnColumnHover" 
+                             ColumnClicked="OnColumnClicked"/>
         <ComboBox x:Name="RangeCombo" HorizontalAlignment="Right" VerticalAlignment="Top" />
     </Grid>
     

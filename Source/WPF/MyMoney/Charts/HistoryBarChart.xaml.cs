@@ -12,6 +12,8 @@ using System.Windows.Media;
 using Walkabout.Data;
 using Walkabout.Utilities;
 using Walkabout.Views;
+using LovettSoftware.Charts;
+
 
 namespace Walkabout.Charts
 {
@@ -98,7 +100,7 @@ namespace Walkabout.Charts
             Chart.ToolTipGenerator = OnGenerateTip;
         }
 
-        private UIElement OnGenerateTip(BarChartDataValue value)
+        private UIElement OnGenerateTip(ChartDataValue value)
         {
             var tip = new StackPanel() { Orientation = Orientation.Vertical };
             tip.Children.Add(new TextBlock() { Text = value.Label, FontWeight = FontWeights.Bold });
@@ -155,12 +157,12 @@ namespace Walkabout.Charts
             }
         }
 
-        private void OnColumnHover(object sender, BarChartDataValue e)
+        private void OnColumnHover(object sender, ChartDataValue e)
         {
 
         }
 
-        private void OnColumnClicked(object sender, BarChartDataValue e)
+        private void OnColumnClicked(object sender, ChartDataValue e)
         {
             if (e.UserData is HistoryChartColumn data)
             {
@@ -331,10 +333,10 @@ namespace Walkabout.Charts
                     c = Colors.Gray;
                 }
 
-                List<BarChartDataValue> cols = new List<BarChartDataValue>();
+                List<ChartDataValue> cols = new List<ChartDataValue>();
                 foreach(var column in this.collection)
                 {
-                    cols.Add(new BarChartDataValue() { Label = column.Label.ToString(), Value = (double)column.Amount, UserData = column, Color = c });
+                    cols.Add(new ChartDataValue() { Label = column.Label.ToString(), Value = (double)column.Amount, UserData = column, Color = c });
                 }
 
                 Chart.Series = cols;
