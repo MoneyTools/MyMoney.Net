@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using LovettSoftware.Charts;
 using Walkabout.Data;
 
 namespace Walkabout.Charts
@@ -23,8 +24,6 @@ namespace Walkabout.Charts
             public string Label { get; set; }
         };
 
-        public ObservableCollection<Payment> collection;
-
         public ObservableCollection<LoanPaymentAggregation> LoanPayements
         {
             get;
@@ -35,12 +34,17 @@ namespace Walkabout.Charts
         {
             InitializeComponent();
             IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnIsVisibleChanged);
-
-            collection = new ObservableCollection<Payment>();
-            SeriePrincipal.ItemsSource = collection;
-            SerieInterest.ItemsSource = collection;
+            Chart.ToolTipGenerator = OnGenerateToolTip;
         }
 
+        private UIElement OnGenerateToolTip(ChartDataValue value)
+        {
+            var tip = new StackPanel() { Orientation = Orientation.Vertical };
+            tip.Children.Add(new TextBlock() { Text = (string)value.UserData, FontWeight = FontWeights.Bold });
+            tip.Children.Add(new TextBlock() { Text = value.Label });
+            tip.Children.Add(new TextBlock() { Text = value.Value.ToString("C0") });
+            return tip;
+        }
 
         void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -62,27 +66,27 @@ namespace Walkabout.Charts
 
                 Dictionary<int, Payment> cumulatedPayementsPerYear = CumulatePayementsPerYear();
 
-                collection.Clear();
+                ChartDataSeries interestSeries = new ChartDataSeries();
+                ChartDataSeries principalSeries = new ChartDataSeries();
 
-                foreach (Payment payment in cumulatedPayementsPerYear.Values)
+                List<int> years = new List<int>(cumulatedPayementsPerYear.Keys);
+                years.Sort();
+                foreach (var year in years)
                 {
-                    collection.Add(
-                        new Payment()
-                            {
-                                Principal = Math.Abs(payment.Principal),
-                                Interest = Math.Abs(payment.Interest),
-                                Label = payment.Label
-                            }
-                        );
-
+                    var payment = cumulatedPayementsPerYear[year];
                     totalPrincipal += payment.Principal;
                     totalInterest += payment.Interest;
+                    interestSeries.Data.Add(new ChartDataValue() { Label = payment.Label, Value = (double)payment.Interest, UserData = "interest" });
+                    principalSeries.Data.Add(new ChartDataValue() { Label = payment.Label, Value = (double)payment.Principal, UserData = "principal" });
                 }
 
-                SeriePrincipal.Title = string.Format("Principal {0:C}", Math.Abs(totalPrincipal));
-                SerieInterest.Title = string.Format("Interest {0:C}", Math.Abs(totalInterest));
+                Chart.Series = new List<ChartDataSeries>()
+                {
+                    interestSeries, principalSeries
+                };
 
-                AreaChart.InvalidateArrange();
+                principalSeries.Name = string.Format("Principal {0:C}", Math.Abs(totalPrincipal));
+                interestSeries.Name = string.Format("Interest {0:C}", Math.Abs(totalInterest));
             }
             catch (Exception ex)
             {
@@ -91,6 +95,16 @@ namespace Walkabout.Charts
         }
 
 
+
+        private void OnColumnHover(object sender, LovettSoftware.Charts.ChartDataValue e)
+        {
+
+        }
+
+        private void OnColumnClicked(object sender, LovettSoftware.Charts.ChartDataValue e)
+        {
+            // todo: any kind of drill down or pivot possible here?
+        }
 
 
         private Dictionary<int, Payment> CumulatePayementsPerYear()
@@ -125,6 +139,5 @@ namespace Walkabout.Charts
             }
             return cumulatePerYear;
         }
-
     }
 }

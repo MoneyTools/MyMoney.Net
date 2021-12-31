@@ -25,7 +25,7 @@ namespace Walkabout.Views
 
         public FlowDocumentView()
         {
-            InitializeComponent();                   
+            InitializeComponent();
         }
 
         public void FocusQuickFilter()

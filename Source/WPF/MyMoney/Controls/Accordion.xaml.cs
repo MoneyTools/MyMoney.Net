@@ -30,23 +30,23 @@ namespace Walkabout.Controls
         {
             InitializeComponent();
 
-            if (DesignerProperties.GetIsInDesignMode(this))
-            {
-                ListBox A = new ListBox();
-                Add("First", "First", A);
+            //if (DesignerProperties.GetIsInDesignMode(this))
+            //{
+            //    ListBox A = new ListBox();
+            //    Add("First", "First", A);
 
-                ListBox B = new ListBox();
-                B.Items.Add("First list box item");
-                B.Items.Add("Second list box item");
-                B.SelectedIndex = 1;
-                B.Items.Add("Third list box item");
-                Add("Second", "Second", B);
+            //    ListBox B = new ListBox();
+            //    B.Items.Add("First list box item");
+            //    B.Items.Add("Second list box item");
+            //    B.SelectedIndex = 1;
+            //    B.Items.Add("Third list box item");
+            //    Add("Second", "Second", B);
 
-                ListBox C = new ListBox();
-                Add("Third", "Third", C);
+            //    ListBox C = new ListBox();
+            //    Add("Third", "Third", C);
 
-                Selected = B;
-            }
+            //    Selected = B;
+            //}
 
         }
 

@@ -1,26 +1,14 @@
 #define ALL
 #define XAML
 
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Xml;
-using System.Xml.Linq;
-using Walkabout.Data;
-using Walkabout.Utilities;
-using Walkabout.Configuration;
-using Walkabout.Taxes;
-using System.Windows;
-using System.Windows.Controls.DataVisualization.Charting;
-using System.Windows.Data;
-using Walkabout.Interfaces.Reports;
-using Walkabout.Controls;
 using Microsoft.Win32;
+using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Walkabout.Data;
+using Walkabout.Interfaces.Reports;
+using Walkabout.Utilities;
 
 namespace Walkabout.Reports
 {

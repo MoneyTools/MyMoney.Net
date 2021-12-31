@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Data;
-using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows;
 using System.Windows.Data;
 using Walkabout.Taxes;
 using System.Windows.Controls;
+using LovettSoftware.Charts;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace Walkabout.Reports
 {
@@ -17,28 +19,23 @@ namespace Walkabout.Reports
     public class NetWorthReport : IReport
     {
         MyMoney myMoney;
+        Random rand = new Random(Environment.TickCount);
 
         public NetWorthReport(MyMoney money)
         {
             this.myMoney = money;
         }
 
-        class PieData
-        {
-            public decimal Total { get; set; }
-            public string Name { get; set; }
-        }
-
         public void Generate(IReportWriter writer)
         {
             writer.WriteHeading("Net Worth Statement");
 
-            List<PieData> data = new List<PieData>();
+            List<ChartDataValue> data = new List<ChartDataValue>();
 
             // outer table contains 2 columns, left is the summary table, right is the pie chart.
             writer.StartTable();
             writer.StartColumnDefinitions();
-            writer.WriteColumnDefinition("420", 420, 420);
+            writer.WriteColumnDefinition("450", 450, 450);
             writer.WriteColumnDefinition("620", 620, 620);
             writer.EndColumnDefinitions();
             writer.StartRow();
@@ -47,6 +44,7 @@ namespace Walkabout.Reports
             // inner table contains the "data"
             writer.StartTable();
             writer.StartColumnDefinitions();
+            writer.WriteColumnDefinition("30", 30, 30);
             foreach (double width in new double[] { 300, 100 })
             {
                 writer.WriteColumnDefinition(width.ToString(), width, width);
@@ -81,14 +79,16 @@ namespace Walkabout.Reports
                 balance += a.BalanceNormalized;
             }
 
-            if (balance > 0) data.Add(new PieData() { Name = "Cash", Total = balance });
-            WriteRow(writer, "Cash", balance);
+            var color = GetRandomColor();
+            if (balance > 0) data.Add(new ChartDataValue() { Label = "Cash", Value = (double)balance, Color = color });
+            WriteRow(writer, color, "Cash", balance);
 
             totalBalance += balance;
             balance = this.myMoney.GetInvestmentCashBalance(new Predicate<Account>((a) => { return !a.IsClosed && (a.Type == AccountType.Brokerage); }));
 
-            if (balance > 0) data.Add(new PieData() { Name = "Investment Cash", Total = balance });
-            WriteRow(writer, "Investment Cash", balance);
+            color = GetRandomColor();
+            if (balance > 0) data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance, Color = color });
+            WriteRow(writer, color, "Investment Cash", balance);
             totalBalance += balance;
 
             bool hasNoneRetirement = false;
@@ -96,9 +96,9 @@ namespace Walkabout.Reports
             {
                 WriteHeader(writer, "Retirement Assets");
                 balance = this.myMoney.GetInvestmentCashBalance(new Predicate<Account>((a) => { return !a.IsClosed && a.Type == AccountType.Retirement; }));
-            
-                if (balance > 0) data.Add(new PieData() { Name = "Retirement Cash", Total = balance });
-                WriteRow(writer, "Retirement Cash", balance);
+                color = GetRandomColor();
+                if (balance > 0) data.Add(new ChartDataValue() { Label = "Retirement Cash", Value = (double)balance, Color = color });
+                WriteRow(writer, color, "Retirement Cash", balance);
                 totalBalance += balance;
 
                 totalBalance += WriteSecurities(writer, data, "Retirement ", new Predicate<Account>((a) => { return a.Type == AccountType.Retirement; }), out hasNoneRetirement);
@@ -119,8 +119,9 @@ namespace Walkabout.Reports
             {
                 if ((a.Type == AccountType.Loan || a.Type == AccountType.Asset) && a.Balance > 0) // then this is a loan out to someone else...
                 {
-                    if (a.BalanceNormalized > 0) data.Add(new PieData() { Name = a.Name, Total = a.BalanceNormalized });
-                    WriteRow(writer, a.Name, a.BalanceNormalized);
+                    color = GetRandomColor();
+                    if (a.BalanceNormalized > 0) data.Add(new ChartDataValue() { Label = a.Name, Value = (double)a.BalanceNormalized, Color = color });
+                    WriteRow(writer, color, a.Name, a.BalanceNormalized);
                     totalBalance += a.BalanceNormalized;
                 }
             }
@@ -141,23 +142,25 @@ namespace Walkabout.Reports
             }
             totalBalance += balance;
 
-            if (balance > 0) data.Add(new PieData() { Name = "Credit", Total = balance });
-            WriteRow(writer, "Credit", balance);
+            color = GetRandomColor();
+            if (balance > 0) data.Add(new ChartDataValue() { Label = "Credit", Value = (double)balance, Color = color });
+            WriteRow(writer, color, "Credit", balance);
             balance = 0;
             foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
             {
                 if (a.Type == AccountType.Loan && a.BalanceNormalized < 0)
                 {
                     balance += a.BalanceNormalized;
-                    if (a.BalanceNormalized > 0) data.Add(new PieData() { Name = a.Name, Total = a.BalanceNormalized });
-                    WriteRow(writer, a.Name, a.BalanceNormalized);
+                    color = GetRandomColor();
+                    if (a.BalanceNormalized > 0) data.Add(new ChartDataValue() { Label = a.Name, Value = (double)a.BalanceNormalized, Color = color });
+                    WriteRow(writer, color, a.Name, a.BalanceNormalized);
                 }
             }
             totalBalance += balance;
 
             writer.StartFooterRow();
 
-            writer.StartCell();
+            writer.StartCell(1,2);
             writer.WriteParagraph("Total");
             writer.EndCell();
 
@@ -173,17 +176,13 @@ namespace Walkabout.Reports
 
 
             // pie chart
-            Chart chart = new Chart();
-            chart.MinWidth = 600;
-            chart.MinHeight = 400;
+            AnimatingPieChart chart = new AnimatingPieChart();
+            chart.Width = 600;
+            chart.Height = 400;
             chart.BorderThickness = new Thickness(0);
             chart.VerticalAlignment = VerticalAlignment.Top;
-
-            PieSeries series = new PieSeries();
-            series.IndependentValueBinding = new Binding("Name");
-            series.DependentValueBinding = new Binding("Total");
-            chart.Series.Add(series);
-            series.ItemsSource = data;
+            chart.Series = data;
+            chart.ToolTipGenerator = OnGenerateToolTip;
 
             writer.WriteElement(chart);
 
@@ -200,7 +199,15 @@ namespace Walkabout.Reports
             writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
         }
 
-        private decimal WriteSecurities(IReportWriter writer, List<PieData> data, string prefix, Predicate<Account> filter, out bool hasNoneType)
+        private UIElement OnGenerateToolTip(ChartDataValue value)
+        {
+            var tip = new StackPanel() { Orientation = Orientation.Vertical };
+            tip.Children.Add(new TextBlock() { Text = value.Label, FontWeight = FontWeights.Bold });
+            tip.Children.Add(new TextBlock() { Text = value.Value.ToString("C0") });
+            return tip;
+        }
+
+        private decimal WriteSecurities(IReportWriter writer, List<ChartDataValue> data, string prefix, Predicate<Account> filter, out bool hasNoneType)
         {
             hasNoneType = false;
             decimal balance = 0;
@@ -231,24 +238,25 @@ namespace Walkabout.Reports
                     decimal sb = 0;
                     if (byType.TryGetValue(st, out sb))
                     {
+                        var color = GetRandomColor();
                         string caption = prefix + Security.GetSecurityTypeCaption(st);
                         if (sb > 0)
                         {
-                            data.Add(new PieData() { Name = caption, Total = sb });
+                            data.Add(new ChartDataValue() { Label = caption, Value = (double)sb, Color = color });
                             if (st == SecurityType.None)
                             {
                                 hasNoneType = true;
                                 caption += "*";
                             }
                         }
-                        WriteRow(writer, caption, sb);
+                        WriteRow(writer, color, caption, sb);
                         balance += sb;
                     }
                 }
             }
             else
             {
-                WriteRow(writer, "N/A", 0);
+                WriteRow(writer, GetRandomColor(), "N/A", 0);
             }
             return balance;
         }
@@ -256,15 +264,19 @@ namespace Walkabout.Reports
         private static void WriteHeader(IReportWriter writer, string caption)
         {
             writer.StartHeaderRow();
-            writer.StartCell(1, 2);
+            writer.StartCell(1, 3);
             writer.WriteParagraph(caption);
             writer.EndCell();
             writer.EndRow();
         }
 
-        private static void WriteRow(IReportWriter writer, string name, decimal balance)
+        private static void WriteRow(IReportWriter writer, Color color, string name, decimal balance)
         {
             writer.StartRow();
+
+            writer.StartCell();
+            writer.WriteElement(new Rectangle() { Width = 20, Height = 16, Fill = new SolidColorBrush(color) });
+            writer.EndCell();
             writer.StartCell();
             writer.WriteParagraph(name);
             writer.EndCell();
@@ -276,11 +288,16 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-
         public void Export(string filename)
         {
             throw new NotImplementedException();
         }
+
+        private Color GetRandomColor()
+        {
+            return Color.FromRgb((byte)rand.Next(80, 200), (byte)rand.Next(80, 200), (byte)rand.Next(80, 200));
+        }
+
     }
 
 }

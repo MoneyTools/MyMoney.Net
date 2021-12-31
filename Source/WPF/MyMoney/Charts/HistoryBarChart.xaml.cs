@@ -333,13 +333,13 @@ namespace Walkabout.Charts
                     c = Colors.Gray;
                 }
 
-                List<ChartDataValue> cols = new List<ChartDataValue>();
+                var series = new ChartDataSeries() { Name = "History" };
                 foreach(var column in this.collection)
                 {
-                    cols.Add(new ChartDataValue() { Label = column.Label.ToString(), Value = (double)column.Amount, UserData = column, Color = c });
+                    series.Data.Add(new ChartDataValue() { Label = column.Label.ToString(), Value = (double)column.Amount, UserData = column, Color = c });
                 }
 
-                Chart.Series = cols;
+                Chart.Series = new List<ChartDataSeries>() { series };
             }
             catch (Exception ex)
             {

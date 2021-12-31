@@ -12,7 +12,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>Icons\App.ico</ApplicationIcon>
-    <AssemblyKeyContainerName></AssemblyKeyContainerName>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
     <AssemblyName>MyMoney</AssemblyName>
     <AssemblyOriginatorKeyFile>$(MyKeyFile)</AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -22,15 +23,19 @@
     <RootNamespace>Walkabout</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>Walkabout.App</StartupObject>
-    <FileUpgradeFlags></FileUpgradeFlags>
-    <UpgradeBackupLocation></UpgradeBackupLocation>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkProfile></TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <Utf8Output>true</Utf8Output>
     <ExpressionBlendVersion>4.0.20901.0</ExpressionBlendVersion>
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>d:\git\clovett\MyMoney.Net\Source\WPF\publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -58,13 +63,16 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
     <DefineConstants>TRACE;DEBUG;PerformanceBlocks</DefineConstants>
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -83,13 +91,16 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
     <DefineConstants>TRACE;PerformanceBlocks</DefineConstants>
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn></NoWarn>
+    <NoWarn>
+    </NoWarn>
     <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -104,7 +115,8 @@
     <ManifestCertificateThumbprint>AFFF93C9E6AD77B2519D1778A820B789F9F1E31D</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile></ManifestKeyFile>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -132,7 +144,8 @@
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core"></Reference>
+    <Reference Include="System.Core">
+    </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -160,7 +173,8 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="System.Xml.Linq"></Reference>
+    <Reference Include="System.Xml.Linq">
+    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -307,90 +321,6 @@
     <Compile Include="Setup\ChangeListRequest.cs" />
     <Compile Include="Setup\DirectorySetup.cs" />
     <Compile Include="StockQuotes\ExchangeRates.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\AggregatedObservableCollection.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\AnimationSequence.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\Axis.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\AxisIntervalType.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\AxisLabel.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\AxisLocation.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\AxisOrientation.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\CategoryAxis.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\CategorySortOrder.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\DateTimeAxis.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\DateTimeAxisLabel.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\DateTimeIntervalType.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\DisplayAxis.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\DisplayAxisGridLines.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IAnchoredToOrigin.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IAxis.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IAxisListener.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\ICategoryAxis.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IDataConsumer.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IDataProvider.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IRangeAxis.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IRangeConsumer.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IRangeProvider.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IValueMarginConsumer.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\IValueMarginProvider.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\LinearAxis.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\NullableConverter.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\NumericAxis.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\NumericAxisLabel.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\OrientedAxisGridLines.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\RangeAxis.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Axis\ValueMargin.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Chart\Chart.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Chart\SeriesHostAxesCollection.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\AreaDataPoint.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\BarDataPoint.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\BubbleDataPoint.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\ColumnDataPoint.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\DataPoint.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\DataPointState.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\LineDataPoint.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\PieDataPoint.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\DataPoint\ScatterDataPoint.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\FrameworkElementExtensions.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\IRequireSeriesHost.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ISeriesHost.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ISeriesHostExtensions.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Primitives\Edge.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Primitives\EdgePanel.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ResourceDictionaryDispensedEventArgs.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ResourceDictionaryDispenser.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ResourceDictionaryEnumerator.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\AreaSeries.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\BarSeries.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\BubbleSeries.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\ColumnBarBaseSeries.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\ColumnSeries.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\DataPointSeries.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\DataPointSeriesWithAxes.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\DataPointSingleSeriesWithAxes.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\IRequireGlobalSeriesIndex.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\ISeries.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\LegendItem.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\LineAreaBaseSeries.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\LineSeries.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\PieSeries.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\ScatterSeries.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\Series\Series.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Charting\ValueMarginCoordinateAndOverlap.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Collections\LeftLeaningRedBlackTree.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Collections\MultipleDictionary.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Collections\OrderedMultipleDictionary.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\DependencyPropertyAnimationHelper.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\DesignerProperties.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\EnumerableFunctions.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\GenericEqualityComparer.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\GlobalSuppressions.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\GridExtensions.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\IResourceDictionaryDispenser.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\LayoutTransformControl.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Legend\Legend.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\NoResetObservableCollection.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\ObjectPool.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\ObservableCollectionListAdapter.cs" />
     <Compile Include="Charts\AreaChart.cs" />
     <Compile Include="Charts\ChartData.cs" />
     <Compile Include="Charts\ExponentialDoubleAnimation.cs" />
@@ -398,22 +328,6 @@
     <Compile Include="Charts\SelectionRectVisual.cs" />
     <Compile Include="Charts\Serialization.cs" />
     <Compile Include="Charts\Styles.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\OrientedPanel.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Range.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\RangeEnumerableFunctions.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\ReadOnlyObservableCollection.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\ResourceDictionaryCollection.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\ResourceDictionaryExtensions.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\StoryboardQueue.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\StringFormatConverter.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Title\Title.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Tuple.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\UniqueObservableCollection.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Unit.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\UnitValue.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\ValueHelper.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\WeakEventListener.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\WeakReferenceBag.cs" />
     <Compile Include="Reports\BudgetData.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -555,11 +469,6 @@
     </Compile>
     <Compile Include="Ofx\OfxInstitutionInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="System\Windows\Controls\DataVisualization\Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Utilities\adorners.cs" />
     <Compile Include="Utilities\DescendingComparer.cs" />
     <Compile Include="Database\Mapping.cs" />
@@ -583,7 +492,8 @@
     <Compile Include="Reports\Reports.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utilities\Clipboard.cs"></Compile>
+    <Compile Include="Utilities\Clipboard.cs">
+    </Compile>
     <Compile Include="Database\SqlDatabase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -672,11 +582,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Ofx\ofx160.dtd" />
-    <EmbeddedResource Include="System\Windows\Controls\DataVisualization\Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>System.Windows.Controls.DataVisualization.Properties</CustomToolNamespace>
-    </EmbeddedResource>
     <Resource Include="Dialogs\Icons\CheckMark.png" />
     <Resource Include="Dialogs\Icons\Warning.png" />
     <Resource Include="Icons\Back.png" />
@@ -692,8 +597,6 @@
     </EmbeddedResource>
     <Resource Include="Icons\Help.png" />
     <Resource Include="Icons\Error.png" />
-    <Resource Include="System\Windows\Controls\DataVisualization\Icons\grab.cur" />
-    <Resource Include="System\Windows\Controls\DataVisualization\Icons\grabbing.cur" />
     <EmbeddedResource Include="Charts\Icons\grab.cur" />
     <EmbeddedResource Include="Charts\Icons\grabbing.cur" />
     <Resource Include="Dialogs\Icons\ZoomOut.png" />
@@ -880,10 +783,6 @@
       <SubType>Designer</SubType>
       <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
     </Page>
-    <Page Include="System\Windows\Controls\DataVisualization\Themes\generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Charts\CategoryChart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1053,9 +952,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="System\Windows\Controls\DataVisualization\OldStuff\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <COMReference Include="WIA">
       <Guid>{94A0E92D-43C0-494E-AC29-FD45948A5221}</Guid>
@@ -1080,8 +977,10 @@
   <ItemGroup>
     <PublishFile Include="Setup\changes.xml">
       <Visible>False</Visible>
-      <Group></Group>
-      <TargetPath></TargetPath>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
       <PublishState>Include</PublishState>
       <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
@@ -1095,10 +994,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
-    <PostBuildEvent></PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
-  <PropertyGroup></PropertyGroup>
+  <PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent />
   </PropertyGroup>

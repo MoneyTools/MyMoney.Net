@@ -1,5 +1,6 @@
 ﻿using Walkabout.Utilities;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +17,16 @@ namespace LovettSoftware.Charts
         public double Value;
         public object UserData;
 
-        public Color Color { get; internal set; }
+        public Color? Color { get; internal set; }
+    }
+
+    public class ChartDataSeries
+    {
+        public String Name { get; set; }
+
+        public List<ChartDataValue> Data{ get; set; }
+
+        public ChartDataSeries() { Data = new List<ChartDataValue>(); }
     }
 
     public delegate UIElement ToolTipGenerator(ChartDataValue value);
@@ -27,10 +37,11 @@ namespace LovettSoftware.Charts
     public partial class AnimatingBarChart : UserControl
     {
         DelayedActions actions = new DelayedActions();
-        int tipColumn = -1;
+        ColumnInfo tipColumn;
         Point movePos;
         ColumnInfo inside;
         bool mouseOverAnimationCompleted = false;
+        Random rand = new Random(Environment.TickCount);
 
         class ColumnInfo
         {
@@ -38,6 +49,7 @@ namespace LovettSoftware.Charts
             public Rect Bounds;
             public Polygon Shape;
             public Color Color;
+            public ChartDataValue Data;
         }
 
         // this is maintained for hit testing only since the mouse events don't seem to be 
@@ -59,11 +71,21 @@ namespace LovettSoftware.Charts
 
         private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (this.Visibility != Visibility.Visible)
+            if (e.NewValue is bool b && !b)
             {
-                HideTip();
+                HideToolTip();
             }
             OnDelayedUpdate();
+        }
+
+        private void HideToolTip()
+        {
+            var tip = this.ToolTip as ToolTip;
+            if (tip != null)
+            {
+                tip.IsOpen = false;
+                this.ToolTip = null;
+            }
         }
 
         public int HoverDelayMilliseconds { get; set; }
@@ -122,14 +144,17 @@ namespace LovettSoftware.Charts
             ((AnimatingBarChart)d).OnDelayedUpdate();
         }
 
-        public List<ChartDataValue> Series
+        /// <summary>
+        /// Note that if there are multiple ChartSeries we assume the X-axis labels are the same across all series.
+        /// </summary>
+        public List<ChartDataSeries> Series
         {
-            get { return (List<ChartDataValue>)GetValue(SeriesProperty); }
+            get { return (List<ChartDataSeries>)GetValue(SeriesProperty); }
             set { SetValue(SeriesProperty, value); }
         }
 
         public static readonly DependencyProperty SeriesProperty =
-            DependencyProperty.Register("Series", typeof(List<ChartDataValue>), typeof(AnimatingBarChart), new PropertyMetadata(null, OnSeriesChanged));
+            DependencyProperty.Register("Series", typeof(List<ChartDataSeries>), typeof(AnimatingBarChart), new PropertyMetadata(null, OnSeriesChanged));
 
         private static void OnSeriesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -138,12 +163,38 @@ namespace LovettSoftware.Charts
 
         private void OnSeriesChanged(object newValue)
         {
+            HideToolTip();
             if (newValue == null)
             {
                 ResetVisuals();
             }
-            else
+            else if (newValue is List<ChartDataSeries> s)
             {
+                if (s.Count > 0)
+                {
+                    var first = s[0].Data;
+                    int cols = first.Count;
+                    foreach(var series in s)
+                    {
+                        var seriesDefaultColor = GetRandomColor();
+                        if (series.Data.Count != cols)
+                        {
+                            throw new Exception("All series must have the same number of columns");
+                        }
+                        for (int i = 0; i < series.Data.Count; i++)
+                        {
+                            var d = series.Data[i];
+                            if (!d.Color.HasValue)
+                            {
+                                d.Color = seriesDefaultColor;
+                            }
+                            if (d.Label != first[i].Label)
+                            {
+                                throw new Exception("All series must have the same label on each column");
+                            }
+                        }
+                    }
+                }
                 OnDelayedUpdate();
             }
         }
@@ -152,7 +203,7 @@ namespace LovettSoftware.Charts
         {
             ChartCanvas.Children.Clear();
             bars.Clear();
-            tipColumn = -1;
+            tipColumn = null;
             inside = null;
             mouseOverAnimationCompleted = false;
         }
@@ -196,20 +247,20 @@ namespace LovettSoftware.Charts
         protected override void OnMouseLeave(MouseEventArgs e)
         {
             actions.CancelDelayedAction("hover");
-            tipColumn = -1;
+            tipColumn = null;
             OnExitColumn();
             base.OnMouseLeave(e);
         }
 
         private void OnHover()
         {
-            var i = this.tipColumn;
-            if (i < 0 || i >= Series.Count)
+            var info = this.tipColumn;
+            if (info == null)
             {
                 return;
             }
 
-            ChartDataValue value = Series[i];
+            ChartDataValue value = info.Data;
             var tip = this.ToolTip as ToolTip;
             var content = ToolTipGenerator != null ? ToolTipGenerator(value) : new TextBlock() { Text = value.Label + "\r\n" + value.Value };
             if (tip == null)
@@ -240,44 +291,34 @@ namespace LovettSoftware.Charts
 
         }
 
-        int FindColumn(Point pos)
+        ColumnInfo FindColumn(Point pos)
         {
             for (int i = 0, n = bars.Count; i < n; i++)
             {
-                var r = this.bars[i].Bounds;
+                var info = this.bars[i];
+                var r = info.Bounds;
                 if (pos.X >= r.Left && pos.X <= r.Right)
                 {
                     if (pos.Y >= r.Top && pos.Y <= r.Bottom)
                     {
                         // found it!
-                        return i;
+                        return info;
                     }
                 }
             }
-            return -1;
-        }
-
-        private void HideTip()
-        {
-            var tip = this.ToolTip as ToolTip;
-            if (tip != null)
-            {
-                tip.IsOpen = false;
-                this.ToolTip = null;
-            }
-            this.tipColumn = -1;
+            return null;
         }
 
         protected override void OnPreviewMouseMove(MouseEventArgs e)
         {
             var pos = e.GetPosition(this);
-            var i = FindColumn(pos);
-            if (i >= 0 && i < Series.Count)
+            var info = FindColumn(pos);
+            if (info != null)
             {
-                OnEnterColumn(i);
-                HideTip();
+                OnEnterColumn(info);
+                HideToolTip();
                 this.movePos = pos;
-                this.tipColumn = i;
+                this.tipColumn = info;
                 actions.StartDelayedAction("hover", () =>
                 {
                     OnHover();
@@ -285,17 +326,16 @@ namespace LovettSoftware.Charts
             }
             else
             {
-                this.tipColumn = -1;
+                this.tipColumn = null;
                 OnExitColumn();
             }
             base.OnPreviewMouseMove(e);
         }
 
-        private void OnEnterColumn(int i)
+        private void OnEnterColumn(ColumnInfo info)
         {
-            if (i < bars.Count)
+            if (info != null)
             {
-                var info = bars[i];
                 var color = info.Color;
                 Polygon r = info.Shape;
                 if (inside == null || r != inside.Shape)
@@ -338,10 +378,10 @@ namespace LovettSoftware.Charts
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             var pos = e.GetPosition(this);
-            var i = FindColumn(pos);
-            if (i >= 0 && i < Series.Count)
+            var info = FindColumn(pos);
+            if (info != null)
             {
-                ChartDataValue value = Series[i];
+                ChartDataValue value = info.Data;
                 if (ColumnClicked != null)
                 {
                     ColumnClicked(this, value);
@@ -353,39 +393,49 @@ namespace LovettSoftware.Charts
         {
             int index = 0;
             Size minMax = new Size();
-            foreach (var item in Series)
+            bool firstSeries = true;
+            foreach (var series in Series)
             {
-                ColumnInfo info = null;
-                if (index < bars.Count)
+                foreach (var item in series.Data)
                 {
-                    info = bars[index];
-                }
-                else
-                {
-                    info = new ColumnInfo();
-                    bars.Add(info);
-                }
-                info.Color = item.Color;
-
-                if (!string.IsNullOrEmpty(item.Label))
-                {
-                    var block = info.Label;
-                    if (block == null)
+                    ColumnInfo info = null;
+                    if (index < bars.Count)
                     {
-                        block = new TextBlock() { Foreground = this.Foreground };
-                        info.Label = block;
+                        info = bars[index];
                     }
-                    block.Text = item.Label;
-                    block.BeginAnimation(TextBlock.OpacityProperty, null);
-                    block.Opacity = 0;
-                    ChartCanvas.Children.Add(block); // so it measures properly.
-                    block.Measure(new Size(100, 100));
-                    ChartCanvas.Children.Remove(block);
-                    var size = block.DesiredSize;
-                    minMax.Width = Math.Max(minMax.Width, size.Width);
-                    minMax.Height = Math.Max(minMax.Height, size.Height);
+                    else
+                    {
+                        info = new ColumnInfo();
+                        bars.Add(info);
+                    }
+                    info.Data = item;
+                    info.Color = item.Color.Value;
+
+                    if (firstSeries && !string.IsNullOrEmpty(item.Label))
+                    {
+                        var block = info.Label;
+                        if (block == null)
+                        {
+                            block = new TextBlock() { Foreground = this.Foreground };
+                            info.Label = block;
+                        }
+                        block.Text = item.Label;
+                        block.BeginAnimation(TextBlock.OpacityProperty, null);
+                        block.Opacity = 0;
+                        ChartCanvas.Children.Add(block); // so it measures properly.
+                        block.Measure(new Size(100, 100));
+                        ChartCanvas.Children.Remove(block);
+                        var size = block.DesiredSize;
+                        minMax.Width = Math.Max(minMax.Width, size.Width);
+                        minMax.Height = Math.Max(minMax.Height, size.Height);
+                    }
+                    else
+                    {
+                        info.Label = null;
+                    }
+                    index++;
                 }
-                index++;
+                firstSeries = false;
             }
 
             bars.RemoveRange(index, bars.Count - index);
@@ -393,15 +443,21 @@ namespace LovettSoftware.Charts
             return minMax;
         }
 
+        /// <summary>
+        /// Add the range axis labels.
+        /// </summary>
         private Size AddAxisLabels(out AxisTickSpacer scale)
         {
             double maxValue = 0;
             double minValue = 0;
-            foreach (var item in Series)
+            foreach (var series in Series)
             {
-                var v = item.Value;
-                maxValue = Math.Max(maxValue, v);
-                minValue = Math.Min(minValue, v);
+                foreach (var item in series.Data)
+                {
+                    var v = item.Value;
+                    maxValue = Math.Max(maxValue, v);
+                    minValue = Math.Min(minValue, v);
+                }
             }
 
             Size minMax = new Size();
@@ -447,17 +503,18 @@ namespace LovettSoftware.Charts
             ChartCanvas.Children.Clear();
 
             var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationGrowthMilliseconds));
-            double steps = Series.Count;
+
+            int columns = (from series in Series select series.Data.Count).Max();
             double w = this.ActualWidth;
             double h = this.ActualHeight;
-
-            Size labelSize = CreateColumnInfos();
 
             Size axisLabelSize = AddAxisLabels(out AxisTickSpacer scale);
 
             var min = scale.GetNiceMin();
             var max = scale.GetNiceMax();
             var spacing = scale.GetTickSpacing();
+
+            Size labelSize = CreateColumnInfos();
 
             double labelGap = 10;
             double labelMargin = labelSize.Width + labelGap + labelGap;
@@ -468,10 +525,14 @@ namespace LovettSoftware.Charts
             w -= labelMargin; // allocate space at the left column labels.
             h -= axisLabelSize.Height + labelGap + labelGap;
 
-            double columnHeight = h / steps;
-            // make the gap between columns 1/3 of the column width.
-            double gap = columnHeight / 3;
-            columnHeight -= gap;
+            double seriesHeight = h / columns;
+            double innerGap = Series.Count > 1 ? 2 : 0; // gap between columns in a series
+            double seriesGap = seriesHeight / (3 * Series.Count); // gap between series
+            seriesHeight -= seriesGap;
+
+            double columnHeight = seriesHeight / Series.Count;
+            columnHeight -= innerGap;
+
             double range = (max - min);
             double zero = 0;
             if (min < 0)
@@ -479,7 +540,7 @@ namespace LovettSoftware.Charts
                 zero = Math.Abs(min) * w / range;
             }
 
-            // layout the axis labels and lines
+            // layout the range axis labels and lines
             int i = 0;
             for (var r = min; r <= max; r += spacing)
             {
@@ -506,95 +567,103 @@ namespace LovettSoftware.Charts
 
             double y = 0;
             double x = labelMargin + zero;
-            int index = 0;
             Rect previousLabel = new Rect() { X = -1000, Y = 0, Width = 0, Height = 0 };
+
             // layout the columns.
-            foreach (var item in Series)
+            for (int col = 0; col < columns; col++)
             {
-                double s = (item.Value * w / range);
-
-                ColumnInfo info = bars[index];
-                Polygon polygon = info.Shape;
-                SolidColorBrush brush = null;
-                if (polygon != null)
+                int index = 0;
+                foreach (var series in this.Series)
                 {
-                    brush = polygon.Fill as SolidColorBrush;
-                }
-                else
-                {
-                    // make initial bars grow from zero.
-                    PointCollection initial = new PointCollection();
-                    initial.Add(new Point() { X = x, Y = y });
-                    initial.Add(new Point() { X = x, Y = y, });
-                    initial.Add(new Point() { X = x, Y = y + columnHeight });
-                    initial.Add(new Point() { X = x, Y = y + columnHeight });
-                    brush = new SolidColorBrush() { Color = Colors.Transparent };
-                    polygon = new Polygon() { Fill = brush, Points = initial };
-                    info.Shape = polygon;
-                }
+                    var dataValue = series.Data[col];
+                    double s = (dataValue.Value * w / range); 
+                    Color color = dataValue.Color.Value;
 
-                var start = TimeSpan.FromMilliseconds(index * AnimationRippleMilliseconds);
+                    ColumnInfo info = this.bars[col + (index * columns)];
+                    Polygon polygon = info.Shape;
+                    SolidColorBrush brush = null;
+                    if (polygon != null)
+                    {
+                        brush = polygon.Fill as SolidColorBrush;
+                    }
+                    else
+                    {
+                        // make initial bars grow from zero.
+                        PointCollection initial = new PointCollection();
+                        initial.Add(new Point() { X = x, Y = y });
+                        initial.Add(new Point() { X = x, Y = y, });
+                        initial.Add(new Point() { X = x, Y = y + columnHeight });
+                        initial.Add(new Point() { X = x, Y = y + columnHeight });
+                        brush = new SolidColorBrush() { Color = Colors.Transparent };
+                        polygon = new Polygon() { Fill = brush, Points = initial };
+                        info.Shape = polygon;
+                    }
 
-                if (info.Label != null)
-                {
-                    var block = info.Label;
-                    var size = block.DesiredSize;
-                    double xpos = 0;
+                    var start = TimeSpan.FromMilliseconds(index * AnimationRippleMilliseconds);
+
+                    if (info.Label != null)
+                    {
+                        var block = info.Label;
+                        var size = block.DesiredSize;
+                        double xpos = 0;
+                        if (s < 0)
+                        {
+                            // right of the negative sized column
+                            xpos = x + labelGap;
+                        }
+                        else
+                        {
+                            xpos = x - labelGap - size.Width;
+                        }
+
+                        Rect bounds = new Rect() { X = xpos, Y = y + (seriesHeight - size.Height) / 2, Width = size.Width, Height = size.Height };
+                        Rect inflated = bounds;
+                        inflated.Inflate(this.FontSize / 2, 0);
+                        if (inflated.IntersectsWith(previousLabel))
+                        {
+                            // skip it!
+                        }
+                        else
+                        {
+                            previousLabel = inflated;
+                            Canvas.SetLeft(block, bounds.X);
+                            Canvas.SetTop(block, bounds.Y);
+
+                            block.BeginAnimation(TextBlock.OpacityProperty, new DoubleAnimation()
+                            {
+                                From = 0,
+                                To = 1,
+                                Duration = duration,
+                                BeginTime = start
+                            });
+
+                            ChartCanvas.Children.Add(block);
+                        }
+                    }
+
                     if (s < 0)
                     {
-                        // right of the negative sized column
-                        xpos = x + labelGap;
+                        info.Bounds = new Rect() { X = x + s, Y = y, Width = -s, Height = columnHeight };
                     }
                     else
                     {
-                        xpos = x - labelGap - size.Width;
+                        info.Bounds = new Rect() { X = x, Y = y, Width = s, Height = columnHeight };
                     }
 
-                    Rect bounds = new Rect() { X = xpos, Y = y + (columnHeight - size.Height) / 2, Width = size.Width, Height = size.Height };
-                    Rect inflated = bounds;
-                    inflated.Inflate(this.FontSize / 2, 0);
-                    if (inflated.IntersectsWith(previousLabel))
-                    {
-                        // skip it!
-                    }
-                    else
-                    {
-                        previousLabel = inflated;
-                        Canvas.SetLeft(block, bounds.X);
-                        Canvas.SetTop(block, bounds.Y);
+                    PointCollection poly = new PointCollection();
+                    poly.Add(new Point() { X = x, Y = y });
+                    poly.Add(new Point() { X = x + s, Y = y, });
+                    y += columnHeight;
+                    poly.Add(new Point() { X = x + s, Y = y });
+                    poly.Add(new Point() { X = x, Y = y, });
+                    ChartCanvas.Children.Add(polygon);
 
-                        block.BeginAnimation(TextBlock.OpacityProperty, new DoubleAnimation()
-                        {
-                            From = 0,
-                            To = 1,
-                            Duration = duration,
-                            BeginTime = start
-                        });
-
-                        ChartCanvas.Children.Add(block);
-                    }
+                    polygon.BeginAnimation(Polygon.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration, BeginTime = start });
+                    brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = color, Duration = duration, BeginTime = start });
+                    index++;
+                    y += innerGap;
                 }
-                if (s < 0)
-                {
-                    info.Bounds = new Rect() { X = x + s, Y = y, Width = -s, Height = columnHeight };
-                }
-                else
-                {
-                    info.Bounds = new Rect() { X = x, Y = y, Width = s, Height = columnHeight };
-                }
-
-                PointCollection poly = new PointCollection();
-                poly.Add(new Point() { X = x, Y = y });
-                poly.Add(new Point() { X = x + s, Y = y, });
-                y += columnHeight;
-                poly.Add(new Point() { X = x + s, Y = y });
-                poly.Add(new Point() { X = x, Y = y, });
-                y += gap;
-                ChartCanvas.Children.Add(polygon);
-
-                polygon.BeginAnimation(Polygon.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration, BeginTime = start });
-                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = item.Color, Duration = duration, BeginTime = start });
-                index++;
+                y += seriesGap;
             }
         }
 
@@ -603,7 +672,8 @@ namespace LovettSoftware.Charts
             ChartCanvas.Children.Clear();
 
             var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationGrowthMilliseconds));
-            double steps = Series.Count;
+
+            int columns = (from series in Series select series.Data.Count).Max();
             double w = this.ActualWidth;
             double h = this.ActualHeight;
 
@@ -625,10 +695,13 @@ namespace LovettSoftware.Charts
             double axisLabelGap = axisLabelSize.Width + labelGap + labelGap;
             w -= axisLabelGap; // allocate space for axis labels.
 
-            double columnWidth = w / steps;
-            // make the gap between columns 1/3 of the column width.
-            double gap = columnWidth / 3;
-            columnWidth -= gap;
+            double seriesWidth = w / columns;
+            double innerGap = Series.Count > 1 ? 2 : 0; // gap between columns in a series
+            double seriesGap = seriesWidth / (3 * Series.Count); // gap between series
+            seriesWidth -= seriesGap;
+
+            double columnWidth = seriesWidth / Series.Count;
+            columnWidth -= innerGap;
 
             double range = (max - min);
             double zero = 0;
@@ -664,96 +737,111 @@ namespace LovettSoftware.Charts
             }
 
             Rect previousLabel = new Rect() { X = -1000, Y = 0, Width = 0, Height = 0 };
-            int index = 0;
             double x = axisLabelGap;
             double y = h - zero;
-            foreach (var item in Series)
-            {
-                double s = (item.Value * h / range);
-                var start = TimeSpan.FromMilliseconds(index * AnimationRippleMilliseconds);
-                ColumnInfo info = this.bars[index];
-                Polygon polygon = info.Shape;
-                SolidColorBrush brush = null;
-                if (polygon != null)
-                {
-                    brush = polygon.Fill as SolidColorBrush;
-                }
-                else
-                {
-                    // make initial bars grow from zero.
-                    PointCollection initial = new PointCollection();
-                    initial.Add(new Point() { X = x, Y = y });
-                    initial.Add(new Point() { X = x, Y = y, });
-                    initial.Add(new Point() { X = x + columnWidth, Y = y });
-                    initial.Add(new Point() { X = x + columnWidth, Y = y });
-                    brush = new SolidColorBrush() { Color = Colors.Transparent };
-                    polygon = new Polygon() { Fill = brush, Points = initial };
-                    info.Shape = polygon;
-                }
 
-                if (info.Label != null)
+            // layout the columns.
+            for (int col = 0; col < columns; col++)
+            {
+                int index = 0;
+                foreach (var series in this.Series)
                 {
-                    var block = info.Label;
-                    var size = block.DesiredSize;
-                    double ypos = 0;
+                    var dataValue = series.Data[col];
+                    double s = (dataValue.Value * h / range);
+                    Color color = dataValue.Color.Value;
+
+                    var start = TimeSpan.FromMilliseconds(index * AnimationRippleMilliseconds);
+                    ColumnInfo info = this.bars[col + (index * columns)];
+                    Polygon polygon = info.Shape;
+                    SolidColorBrush brush = null;
+                    if (polygon != null)
+                    {
+                        brush = polygon.Fill as SolidColorBrush;
+                    }
+                    else
+                    {
+                        // make initial bars grow from zero.
+                        PointCollection initial = new PointCollection();
+                        initial.Add(new Point() { X = x, Y = y });
+                        initial.Add(new Point() { X = x, Y = y, });
+                        initial.Add(new Point() { X = x + columnWidth, Y = y });
+                        initial.Add(new Point() { X = x + columnWidth, Y = y });
+                        brush = new SolidColorBrush() { Color = Colors.Transparent };
+                        polygon = new Polygon() { Fill = brush, Points = initial };
+                        info.Shape = polygon;
+                    }
+
+                    if (info.Label != null)
+                    {
+                        var block = info.Label;
+                        var size = block.DesiredSize;
+                        double ypos = 0;
+                        if (s < 0)
+                        {
+                            // above the downward pointing column then.
+                            ypos = y - labelGap - size.Height;
+                        }
+                        else
+                        {
+                            ypos = y + labelGap;
+                        }
+
+                        Rect bounds = new Rect() { X = x + (seriesWidth - size.Width) / 2, Y = ypos, Width = size.Width, Height = size.Height };
+                        Rect inflated = bounds;
+                        inflated.Inflate(this.FontSize / 2, 0);
+                        if (inflated.IntersectsWith(previousLabel))
+                        {
+                            // skip it!
+                        }
+                        else
+                        {
+                            previousLabel = inflated;
+                            Canvas.SetLeft(block, bounds.X);
+                            Canvas.SetTop(block, bounds.Y);
+
+                            block.BeginAnimation(TextBlock.OpacityProperty, new DoubleAnimation()
+                            {
+                                From = 0,
+                                To = 1,
+                                Duration = duration,
+                                BeginTime = start
+                            });
+                            ChartCanvas.Children.Add(block);
+                        }
+                    }
+
                     if (s < 0)
                     {
-                        // above the downward pointing column then.
-                        ypos = y - labelGap - size.Height;
+                        info.Bounds = new Rect() { X = x, Y = y, Width = columnWidth, Height = -s };
                     }
                     else
                     {
-                        ypos = y + labelGap;
+                        info.Bounds = new Rect() { X = x, Y = y - s, Width = columnWidth, Height = s };
                     }
 
-                    Rect bounds = new Rect() { X = x + (columnWidth - size.Width) / 2, Y = ypos, Width = size.Width, Height = size.Height };
-                    Rect inflated = bounds;
-                    inflated.Inflate(this.FontSize / 2, 0);
-                    if (inflated.IntersectsWith(previousLabel))
-                    {
-                        // skip it!
-                    }
-                    else
-                    {
-                        previousLabel = inflated;
-                        Canvas.SetLeft(block, bounds.X);
-                        Canvas.SetTop(block, bounds.Y);
+                    PointCollection poly = new PointCollection();
+                    poly.Add(new Point() { X = x, Y = y });
+                    poly.Add(new Point() { X = x, Y = y - s });
+                    x += columnWidth;
+                    poly.Add(new Point() { X = x, Y = y - s });
+                    poly.Add(new Point() { X = x, Y = y });
 
-                        block.BeginAnimation(TextBlock.OpacityProperty, new DoubleAnimation()
-                        {
-                            From = 0,
-                            To = 1,
-                            Duration = duration,
-                            BeginTime = start
-                        });
-                        ChartCanvas.Children.Add(block);
-                    }
+                    ChartCanvas.Children.Add(polygon);
+                    polygon.BeginAnimation(Polygon.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration, BeginTime = start });
+                    brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = color, Duration = duration, BeginTime = start });
+                    index++;
+                    x += innerGap;
                 }
 
-                if (s < 0)
-                {
-                    info.Bounds = new Rect() { X = x, Y = y, Width = columnWidth, Height = -s };
-                }
-                else
-                {
-                    info.Bounds = new Rect() { X = x, Y = y - s, Width = columnWidth, Height = s };
-                }
-
-                PointCollection poly = new PointCollection();
-                poly.Add(new Point() { X = x, Y = y });
-                poly.Add(new Point() { X = x, Y = y - s });
-                x += columnWidth;
-                poly.Add(new Point() { X = x, Y = y - s });
-                poly.Add(new Point() { X = x, Y = y });
-                x += gap;
-
-                ChartCanvas.Children.Add(polygon);
-                polygon.BeginAnimation(Polygon.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration, BeginTime = start });
-                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = item.Color, Duration = duration, BeginTime = start });
-
-                index++;
+                x += seriesGap;
             }
         }
+
+        private Color GetRandomColor()
+        {
+            return Color.FromRgb((byte)rand.Next(80, 200), (byte)rand.Next(80, 200), (byte)rand.Next(80, 200));
+        }
+
     }
 }
 

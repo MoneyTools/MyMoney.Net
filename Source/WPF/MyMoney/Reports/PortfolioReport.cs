@@ -1,18 +1,14 @@
-﻿using System;
+﻿using LovettSoftware.Charts;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Walkabout.Interfaces.Reports;
-using Walkabout.Data;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Controls.DataVisualization.Charting;
-using System.Windows.Controls.Primitives;
+using System.Windows.Controls;
 using System.Windows.Documents;
-using Walkabout.Views;
-using Walkabout.Taxes;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
+using Walkabout.Data;
+using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
 
 namespace Walkabout.Reports
@@ -29,6 +25,7 @@ namespace Walkabout.Reports
         Paragraph mouseDownPara;
         Point downPos;
         DateTime reportDate;
+        Random rand = new Random(Environment.TickCount);
 
         /// <summary>
         /// Create new PortfolioReport.  
@@ -66,18 +63,15 @@ namespace Walkabout.Reports
         }
 
 
-        class SecurityPieData
-        {
-            public decimal Total { get; set; }
-            public string Name { get; set; }
-        }
-
         decimal totalMarketValue;
         decimal totalGainLoss;
 
 
-        private void WriteSummaryRow(IReportWriter writer, String col1, String col2, String col3)
+        private void WriteSummaryRow(IReportWriter writer, Color c, String col1, String col2, String col3)
         {
+            writer.StartCell();
+            writer.WriteElement(new Rectangle() { Width = 20, Height = 16, Fill = new SolidColorBrush(c) });
+            writer.EndCell();
             writer.StartCell();
             writer.WriteParagraph(col1);
             writer.EndCell();
@@ -90,10 +84,19 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        private void WriteheaderRow(IReportWriter writer, String col1, String col2, String col3)
+        private void WriteHeaderRow(IReportWriter writer, String col1, String col2, String col3)
         {
             writer.StartHeaderRow();
-            WriteSummaryRow(writer, col1, col2, col3);
+            writer.StartCell(1,2);
+            writer.WriteParagraph(col1);
+            writer.EndCell();
+            writer.StartCell();
+            writer.WriteNumber(col2);
+            writer.EndCell();
+            writer.StartCell();
+            writer.WriteNumber(col3);
+            writer.EndCell();
+            writer.EndRow();
         }
 
         public void Generate(IReportWriter writer)
@@ -130,6 +133,7 @@ namespace Walkabout.Reports
             writer.StartTable();
             writer.StartColumnDefinitions();
 
+            writer.WriteColumnDefinition("30", 30, 30);
             foreach (double minWidth in new double[] { 300, 100, 100 })
             {
                 writer.WriteColumnDefinition("Auto", minWidth, double.MaxValue);
@@ -138,7 +142,7 @@ namespace Walkabout.Reports
 
 
 
-            List<SecurityPieData> data = new List<SecurityPieData>();
+            List<ChartDataValue> data = new List<ChartDataValue>();
 
             if (account == null)
             {
@@ -171,25 +175,21 @@ namespace Walkabout.Reports
                 WriteSummary(writer, data, taxableIncomeType, "", new Predicate<Account>((a) => { return a == account; }), false);
             }
 
-            WriteheaderRow(writer, "Total", totalMarketValue.ToString("C"), totalGainLoss.ToString("C"));
+            WriteHeaderRow(writer, "Total", totalMarketValue.ToString("C"), totalGainLoss.ToString("C"));
             writer.EndTable();
 
             writer.EndCell();
             // pie chart
-            Chart chart = new Chart();
-            chart.MinWidth = 400;
-            chart.MinHeight = 300;
+            AnimatingPieChart chart = new AnimatingPieChart();
+            chart.Width = 400;
+            chart.Height = 300;
             chart.BorderThickness = new Thickness(0);
             chart.Padding = new Thickness(0);
             chart.Margin = new Thickness(0, 00, 0, 0);
             chart.VerticalAlignment = VerticalAlignment.Top;
             chart.HorizontalAlignment = HorizontalAlignment.Left;
-
-            PieSeries series = new PieSeries();
-            series.IndependentValueBinding = new Binding("Name");
-            series.DependentValueBinding = new Binding("Total");
-            chart.Series.Add(series);
-            series.ItemsSource = data;
+            chart.Series = data;
+            chart.ToolTipGenerator = OnGenerateToolTip;
 
             writer.StartCell();
             writer.WriteElement(chart);
@@ -223,6 +223,14 @@ namespace Walkabout.Reports
             {
                 WriteDetails(writer, "", new Predicate<Account>((a) => { return a == account; }));
             }            
+        }
+
+        private UIElement OnGenerateToolTip(ChartDataValue value)
+        {
+            var tip = new StackPanel() { Orientation = Orientation.Vertical };
+            tip.Children.Add(new TextBlock() { Text = value.Label, FontWeight = FontWeights.Bold });
+            tip.Children.Add(new TextBlock() { Text = value.Value.ToString("C0") });
+            return tip;
         }
 
         /// <summary>
@@ -374,7 +382,7 @@ namespace Walkabout.Reports
             }
         }
 
-        private void WriteSummary(IReportWriter writer, List<SecurityPieData> data, TaxableIncomeType taxableIncomeType, string prefix, Predicate<Account> filter, bool subtotal)
+        private void WriteSummary(IReportWriter writer, List<ChartDataValue> data, TaxableIncomeType taxableIncomeType, string prefix, Predicate<Account> filter, bool subtotal)
         {
             bool wroteSectionHeader = false;
             string caption = prefix + "Investments";
@@ -389,15 +397,17 @@ namespace Walkabout.Reports
 
             if (cash > 0)
             {
-                WriteheaderRow(writer, caption, "Market Value", "Taxable");
+                WriteHeaderRow(writer, caption, "Market Value", "Taxable");
                 wroteSectionHeader = true;
-                WriteSummaryRow(writer, "    Cash", cash.ToString("C"), totalSectionGainValue.ToString("C"));
+                var color = GetRandomColor();
+                WriteSummaryRow(writer, color, "    Cash", cash.ToString("C"), totalSectionGainValue.ToString("C"));
                 caption = prefix + "Cash";
 
-                data.Add(new SecurityPieData()
+                data.Add(new ChartDataValue()
                 {
-                    Total = RoundToNearestCent(cash),
-                    Name = caption
+                    Value = (double)RoundToNearestCent(cash),
+                    Label = caption,
+                    Color = color
                 });
             }
 
@@ -428,19 +438,21 @@ namespace Walkabout.Reports
                 {
                     if (!wroteSectionHeader)
                     {
-                        WriteheaderRow(writer, caption, "Market Value", "Taxable");
+                        WriteHeaderRow(writer, caption, "Market Value", "Taxable");
                         wroteSectionHeader = true;
                     }
 
+                    var color = GetRandomColor();
                     caption = prefix + Security.GetSecurityTypeCaption(st);
-                    data.Add(new SecurityPieData()
+                    data.Add(new ChartDataValue()
                     {
-                        Total = RoundToNearestCent(marketValue),
-                        Name = caption
+                        Value = (double)RoundToNearestCent(marketValue),
+                        Label = caption,
+                        Color = color
                     });
 
                     caption = "    " + Security.GetSecurityTypeCaption(st);
-                    WriteSummaryRow(writer, caption, marketValue.ToString("C"), gainLoss.ToString("C"));
+                    WriteSummaryRow(writer, color, caption, marketValue.ToString("C"), gainLoss.ToString("C"));
                     rowCount++;
                 }
 
@@ -450,7 +462,7 @@ namespace Walkabout.Reports
 
             if (wroteSectionHeader && subtotal && rowCount > 1)
             {
-                WriteSummaryRow(writer, "    SubTotal", totalSectionMarketValue.ToString("C"), totalSectionGainValue.ToString("C"));
+                WriteSummaryRow(writer, Colors.Transparent, "    SubTotal", totalSectionMarketValue.ToString("C"), totalSectionGainValue.ToString("C"));
             }
 
             totalMarketValue += totalSectionMarketValue;
@@ -615,5 +627,11 @@ namespace Walkabout.Reports
         {
             throw new NotImplementedException();
         }
+
+        private Color GetRandomColor()
+        {
+            return Color.FromRgb((byte)rand.Next(80, 200), (byte)rand.Next(80, 200), (byte)rand.Next(80, 200));
+        }
+
     }
 }
