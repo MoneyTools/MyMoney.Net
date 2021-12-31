@@ -66,8 +66,8 @@ namespace Walkabout.Charts
 
                 Dictionary<int, Payment> cumulatedPayementsPerYear = CumulatePayementsPerYear();
 
-                ChartDataSeries interestSeries = new ChartDataSeries();
-                ChartDataSeries principalSeries = new ChartDataSeries();
+                ChartDataSeries interestSeries = new ChartDataSeries() { Name = "Interest" };
+                ChartDataSeries principalSeries = new ChartDataSeries() { Name = "Principal" };
 
                 List<int> years = new List<int>(cumulatedPayementsPerYear.Keys);
                 years.Sort();
@@ -85,8 +85,8 @@ namespace Walkabout.Charts
                     interestSeries, principalSeries
                 };
 
-                principalSeries.Name = string.Format("Principal {0:C}", Math.Abs(totalPrincipal));
-                interestSeries.Name = string.Format("Interest {0:C}", Math.Abs(totalInterest));
+                this.TextBoxPrincipal.Text = string.Format("Principal {0:C}", Math.Abs(totalPrincipal));
+                this.TextBoxInterest.Text = string.Format("Interest {0:C}", Math.Abs(totalInterest));
             }
             catch (Exception ex)
             {

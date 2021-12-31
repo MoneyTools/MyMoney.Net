@@ -15,5 +15,16 @@
                              AnimationColorMilliseconds="120"
                              ColumnHover="OnColumnHover" 
                              ColumnClicked="OnColumnClicked"/>
+
+        <Grid VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="Principal: " FontWeight="Bold"/>
+            <TextBlock Grid.Column="1" Grid.Row="0" Text="" x:Name="TextBoxPrincipal" />
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="Interest: " FontWeight="Bold"/>
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="" x:Name="TextBoxInterest" />
+        </Grid>
     </Grid>
 </UserControl>
