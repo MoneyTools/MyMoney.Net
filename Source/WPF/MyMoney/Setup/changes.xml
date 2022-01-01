@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.81" date="12/31/2021">
+    Move to .NET Framework 4.8, which seems to be a bit snappier.
+    Add Animating Pie Chart and remove dependency on WpfToolkit DataVisualization library.
+    Add drill down to portfolio and network reports pie charts.
+    Fix bugs in LoanChart.    
+    Remove dead code.
+  </change>
   <change version="1.1.0.80" date="12/29/2021">
     Fix history chart color in the case where category has no color defined (default to boring gray).
   </change>

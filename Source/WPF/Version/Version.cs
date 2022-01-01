@@ -6,5 +6,5 @@ using System.Reflection;
 // And also sync this with the MSIX package manifest in
 // ~\MyMoney.Net\Source\WPF\MoneyPackage\Package.appxmanifest
 
-[assembly: AssemblyVersion("1.1.0.80")]
-[assembly: AssemblyFileVersion("1.1.0.80")]
+[assembly: AssemblyVersion("1.1.0.81")]
+[assembly: AssemblyFileVersion("1.1.0.81")]
