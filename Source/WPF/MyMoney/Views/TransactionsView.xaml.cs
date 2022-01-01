@@ -2172,12 +2172,31 @@ namespace Walkabout.Views
             layout = "InvestmentPortfolioView";
 
             FlowDocumentView view = this.InvestmentPortfolioView;
+            HelpService.SetHelpKeyword(view, "Investment Portfolio");
             SetActiveAccount(account, null, null, null, null);
             // if we are reconciling then show the positions held at statement date so the stock balances can be reconciled also.
             DateTime reportDate = this.IsReconciling ? GetReconiledExclusiveEndDate() : DateTime.Now;
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, account, this.ServiceProvider, reportDate);
+            PortfolioReport report = new PortfolioReport(view, this.myMoney, account, this.ServiceProvider, reportDate, null);
+            report.DrillDown += OnReportDrillDown;
             view.Generate(report);
             portfolioReport = report;
+            FireAfterViewStateChanged(SelectedRowId);
+        }
+
+        private void OnReportDrillDown(object sender, SecurityGroup e)
+        {
+            // create new report just for this drill down in security group.
+            // TODO: add these to navigation history too.
+            FireBeforeViewStateChanged();
+
+            currentDisplayName = TransactionViewName.Portfolio;
+            layout = "InvestmentPortfolioView";
+
+            FlowDocumentView view = this.InvestmentPortfolioView;
+            HelpService.SetHelpKeyword(view, "Investment Portfolio");
+            DateTime reportDate = this.IsReconciling ? GetReconiledExclusiveEndDate() : DateTime.Now;
+            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this.ServiceProvider, reportDate, e);
+            view.Generate(report);
             FireAfterViewStateChanged(SelectedRowId);
         }
 

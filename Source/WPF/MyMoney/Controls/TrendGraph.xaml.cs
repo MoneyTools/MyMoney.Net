@@ -105,7 +105,7 @@ namespace Walkabout.Views.Controls
         public object SelectedItem
         {
             get {
-                ChartValue v = this.Chart.Selected;
+                ChartDataValue v = this.Chart.Selected;
                 return v != null ? v.UserData : null;
             }
         }
@@ -332,13 +332,12 @@ namespace Walkabout.Views.Controls
                 cat.Name = start.ToShortDateString();
             }
 
-            TrendGraphSeries s = new TrendGraphSeries(cat.Name, cat.Name);            
+            TrendGraphSeries s = new TrendGraphSeries(cat.Name);            
             chartData.AddSeries(s);
 
             s.Flipped = generator.IsFlipped;
 
-            IList<ChartValue> timeData = s.Values;
-            s.BeginUpdate();
+            IList<ChartDataValue> timeData = s.Values;
 
             TrendValue emptyTrendValue = new TrendValue();
             emptyTrendValue.Value = 0;
@@ -370,7 +369,6 @@ namespace Walkabout.Views.Controls
             // Put the last item on the graph
             AddDatum(lastv, last, end.AddDays(1), timeData);
             
-            s.EndUpdate();
             //s.Accumulate = false;
             //s.Color = color;
             s.Category = cat;
@@ -380,7 +378,7 @@ namespace Walkabout.Views.Controls
             return s;
         }
 
-        void AddDatum(TrendValue v, DateTime start, DateTime end, IList<ChartValue> timeData)
+        void AddDatum(TrendValue v, DateTime start, DateTime end, IList<ChartDataValue> timeData)
         {
             // for this math to work, we have to ignore "time" in the dates.
             start = start.Date;
@@ -390,7 +388,7 @@ namespace Walkabout.Views.Controls
             while (start < end)
             {
                 string label = this.generator.GetLabel(v);
-                timeData.Add(new ChartValue(label, (double)v.Value, v.UserData));
+                timeData.Add(new ChartDataValue(label, (double)v.Value, v.UserData));
                 start = start.AddDays(1);
             }
             return;
@@ -586,12 +584,12 @@ namespace Walkabout.Views.Controls
     }
 
 
-    public class TrendGraphSeries : ChartSeries
+    public class TrendGraphSeries : ChartDataSeries
     {
         DateTime start;
 
-        public TrendGraphSeries(string title, string key)
-            : base(title, key)
+        public TrendGraphSeries(string title)
+            : base(title)
         {
         }
 

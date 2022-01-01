@@ -7,6 +7,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Walkabout.Charts;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
@@ -25,20 +26,24 @@ namespace Walkabout.Reports
         Paragraph mouseDownPara;
         Point downPos;
         DateTime reportDate;
+        SecurityGroup selectedGroup;
         Random rand = new Random(Environment.TickCount);
+
+        public event EventHandler<SecurityGroup> DrillDown;
 
         /// <summary>
         /// Create new PortfolioReport.  
         /// </summary>
         /// <param name="money">The money data</param>
         /// <param name="account">The account, or null to get complete portfolio</param>
-        public PortfolioReport(FrameworkElement view, MyMoney money, Account account, IServiceProvider serviceProvider, DateTime asOfDate)
+        public PortfolioReport(FrameworkElement view, MyMoney money, Account account, IServiceProvider serviceProvider, DateTime asOfDate, SecurityGroup g)
         {
             this.myMoney = money;
             this.account = account;
             this.serviceProvider = serviceProvider;
             this.view = view;
             this.reportDate = asOfDate;
+            this.selectedGroup = g;
             view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
         }
 
@@ -54,7 +59,6 @@ namespace Walkabout.Reports
                 nav.ViewTransactionsBySecurity(this.myMoney.Securities.FindSecurity(name, false));
             }
         }
-
 
         private void OnReportCellMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -106,6 +110,10 @@ namespace Walkabout.Reports
             calc = new CostBasisCalculator(this.myMoney, this.reportDate);
 
             string heading = "Investment Portfolio Summary";
+            if (this.selectedGroup != null)
+            {
+                heading = "Investment Portfolio - " + this.selectedGroup.Type;
+            }
             if (this.account != null)
             {
                 heading += " for " + account.Name + " (" + account.AccountId + ")";
@@ -140,16 +148,20 @@ namespace Walkabout.Reports
             }
             writer.EndColumnDefinitions();
 
-
-
             List<ChartDataValue> data = new List<ChartDataValue>();
-
             if (account == null)
             {
-                WriteSummary(writer, data, TaxableIncomeType.None,  "Retirement Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Retirement; }), true);
-                WriteSummary(writer, data, TaxableIncomeType.All,   "Retirement ",          new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Retirement; }), true);
-                WriteSummary(writer, data, TaxableIncomeType.All,   "Tax Deferred ",        new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Brokerage; }), true);
-                WriteSummary(writer, data, TaxableIncomeType.Gains, "",                     new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Brokerage; }), true);
+                if (this.selectedGroup != null)
+                {
+                    WriteSummary(writer, data, TaxableIncomeType.None, null, null, true);
+                }
+                else
+                {
+                    WriteSummary(writer, data, TaxableIncomeType.None, "Retirement Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Retirement; }), true);
+                    WriteSummary(writer, data, TaxableIncomeType.All, "Retirement ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Retirement; }), true);
+                    WriteSummary(writer, data, TaxableIncomeType.All, "Tax Deferred ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Brokerage; }), true);
+                    WriteSummary(writer, data, TaxableIncomeType.Gains, "", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Brokerage; }), true);
+                }
             }
             else
             {
@@ -190,6 +202,7 @@ namespace Walkabout.Reports
             chart.HorizontalAlignment = HorizontalAlignment.Left;
             chart.Series = data;
             chart.ToolTipGenerator = OnGenerateToolTip;
+            chart.PieSliceClicked += OnPieSliceClicked;
 
             writer.StartCell();
             writer.WriteElement(chart);
@@ -201,28 +214,44 @@ namespace Walkabout.Reports
             totalMarketValue = 0;
             totalGainLoss = 0;
 
-            List<SecuritySale> errors = new List<SecuritySale>(calc.GetPendingSales(new Predicate<Account>((a) => { return a == account; })));
-            if (errors.Count > 0)
+            if (this.selectedGroup != null)
             {
-                writer.WriteSubHeading("Pending Sales");
-
-                foreach (var sp in errors) 
+                WriteDetails(writer, "", this.selectedGroup);
+            }
+            else
+            {
+                List<SecuritySale> errors = new List<SecuritySale>(calc.GetPendingSales(new Predicate<Account>((a) => { return a == account; })));
+                if (errors.Count > 0)
                 {
-                    writer.WriteParagraph(string.Format("Pending sale of {1} units of '{2}' from account '{0}' recorded on {3}", sp.Account.Name, sp.UnitsSold, sp.Security.Name, sp.DateSold.ToShortDateString()));
+                    writer.WriteSubHeading("Pending Sales");
+
+                    foreach (var sp in errors)
+                    {
+                        writer.WriteParagraph(string.Format("Pending sale of {1} units of '{2}' from account '{0}' recorded on {3}", sp.Account.Name, sp.UnitsSold, sp.Security.Name, sp.DateSold.ToShortDateString()));
+                    }
+                }
+
+                if (account == null)
+                {
+                    WriteDetails(writer, "Retirement Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
+                    WriteDetails(writer, "Retirement ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
+                    WriteDetails(writer, "Tax Deferred ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
+                    WriteDetails(writer, "", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
+                }
+                else
+                {
+                    WriteDetails(writer, "", new Predicate<Account>((a) => { return a == account; }));
                 }
             }
+        }
 
-            if (account == null)
+        private void OnPieSliceClicked(object sender, ChartDataValue e)
+        {
+            if (e.UserData is SecurityGroup g && DrillDown != null)
             {
-                WriteDetails(writer, "Retirement Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
-                WriteDetails(writer, "Retirement ",          new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
-                WriteDetails(writer, "Tax Deferred ",        new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
-                WriteDetails(writer, "",                     new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
+                // now we can drill down and show a report on just this group of investments.
+                DrillDown(this, g);
             }
-            else 
-            {
-                WriteDetails(writer, "", new Predicate<Account>((a) => { return a == account; }));
-            }            
         }
 
         private UIElement OnGenerateToolTip(ChartDataValue value)
@@ -236,7 +265,7 @@ namespace Walkabout.Reports
         /// <summary>
         /// write out the securities in the given list starting with an expandable/collapsable group header.
         /// </summary>
-        private void WriteSecurities(IReportWriter writer, List<SecurityPurchase> bySecurity, ref decimal totalMarketValue, ref decimal totalCostBasis, ref decimal totalGainLoss)
+        private void WriteSecurities(IReportWriter writer, IList<SecurityPurchase> bySecurity, ref decimal totalMarketValue, ref decimal totalCostBasis, ref decimal totalGainLoss)
         {
             if (bySecurity.Count == 0)
             {
@@ -281,7 +310,6 @@ namespace Walkabout.Reports
             decimal averageUnitPrice = currentQuantity == 0 ? 0 : costBasis / currentQuantity;
             WriteRow(writer, false, false, FontWeights.Bold, null, current.Name, current.Name, currentQuantity, price, marketValue, averageUnitPrice, costBasis, gainLoss);
 
-
             foreach (SecurityPurchase i in bySecurity)
             {                
                 // for tax reporting we need to report the real GainLoss, but if CostBasis is zero then it doesn't make sense to report something
@@ -308,32 +336,31 @@ namespace Walkabout.Reports
                 flowwriter.CollapseAll();
             }
         }
+
         private void WriteDetails(IReportWriter writer, string prefix, Predicate<Account> filter)
         {
             // compute summary
             foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(filter))
             {
-                decimal marketValue = 0;
-                decimal costBasis = 0;
-                decimal gainLoss = 0;
+                WriteDetails(writer, prefix, securityTypeGroup);
+            }
+        }
 
-                SecurityType st = securityTypeGroup.Key;
+        private void WriteDetails(IReportWriter writer, string prefix, SecurityGroup securityTypeGroup)
+        {
+            decimal marketValue = 0;
+            decimal costBasis = 0;
+            decimal gainLoss = 0;
+            bool foundSecuritiesInGroup = false;
+            SecurityType st = securityTypeGroup.Type;
 
-                string caption = prefix + Security.GetSecurityTypeCaption(st);
+            string caption = prefix + Security.GetSecurityTypeCaption(st);
 
-                bool foundSecuritiesInGroup = false;
-                Security current = null;
-                List<SecurityPurchase> bySecurity = new List<SecurityPurchase>();
-
-                foreach (SecurityPurchase i in securityTypeGroup.Value)
+            IList<SecurityGroup> groups = calc.RegroupBySecurity(securityTypeGroup);
+            foreach (SecurityGroup g in groups)
+            {
+                foreach (var i in g.Purchases)
                 {
-                    if (current != null && current != i.Security)
-                    {
-                        WriteSecurities(writer, bySecurity, ref marketValue, ref costBasis, ref gainLoss);
-                        bySecurity.Clear();
-                    }
-                    current = i.Security;
-
                     // only report the security group header if it has some units left in it.
                     if (i.UnitsRemaining > 0)
                     {
@@ -356,40 +383,42 @@ namespace Walkabout.Reports
                                 100,       // Cost Basis
                                 100,       // Gain/Loss
                                 50,        // %
-                                 })      
+                                 })
                             {
                                 writer.WriteColumnDefinition("Auto", minwidth, double.MaxValue);
                             }
                             writer.EndColumnDefinitions();
                             WriteRowHeaders(writer);
+                            break;
                         }
-                        bySecurity.Add(i);
                     }
                 }
-
                 if (foundSecuritiesInGroup)
                 {
-                    // write the final group of securities.
-                    WriteSecurities(writer, bySecurity, ref marketValue, ref costBasis, ref gainLoss);
-
-                    writer.StartFooterRow();
-                    
-                    WriteRow(writer, true, true, FontWeights.Bold, null, "Total", null, null, null, marketValue, null, costBasis, gainLoss);
-
-                    // only close the table 
-                    writer.EndTable();
+                    WriteSecurities(writer, g.Purchases, ref marketValue, ref costBasis, ref gainLoss);
                 }
             }
+
+            writer.StartFooterRow();
+            WriteRow(writer, true, true, FontWeights.Bold, null, "Total", null, null, null, marketValue, null, costBasis, gainLoss);
+            // only close the table 
+            writer.EndTable();
         }
+
 
         private void WriteSummary(IReportWriter writer, List<ChartDataValue> data, TaxableIncomeType taxableIncomeType, string prefix, Predicate<Account> filter, bool subtotal)
         {
             bool wroteSectionHeader = false;
             string caption = prefix + "Investments";
-            decimal totalSectionMarketValue;
+            decimal totalSectionMarketValue = 0;
             decimal totalSectionGainValue = 0;
 
-            decimal cash = RoundToNearestCent(this.myMoney.GetInvestmentCashBalance(filter));
+            decimal cash = 0;
+
+            if (this.selectedGroup == null)
+            {
+                cash = RoundToNearestCent(this.myMoney.GetInvestmentCashBalance(filter));
+            }
 
             if (taxableIncomeType == TaxableIncomeType.None) totalSectionGainValue = 0;
             if (taxableIncomeType == TaxableIncomeType.All) totalSectionGainValue = cash;
@@ -412,16 +441,25 @@ namespace Walkabout.Reports
             }
 
             int rowCount = 0;
+            IList<SecurityGroup> groups = null;
+            if (this.selectedGroup != null)
+            {
+                groups = calc.RegroupBySecurity(this.selectedGroup);
+            }
+            else
+            {
+                groups = calc.GetHoldingsBySecurityType(filter);
+            }
 
             // compute summary
-            foreach (var securityGroup in calc.GetHoldingsBySecurityType(filter))
+            foreach (var securityGroup in groups)
             {
                 decimal marketValue = 0;
                 decimal gainLoss = 0;
 
-                SecurityType st = securityGroup.Key;
+                SecurityType st = securityGroup.Type;
                 int count = 0;
-                foreach (SecurityPurchase i in securityGroup.Value)
+                foreach (SecurityPurchase i in securityGroup.Purchases)
                 {
                     if (i.UnitsRemaining > 0)
                     {
@@ -443,15 +481,26 @@ namespace Walkabout.Reports
                     }
 
                     var color = GetRandomColor();
-                    caption = prefix + Security.GetSecurityTypeCaption(st);
+                    if (securityGroup.Security != null)
+                    {
+                        caption = securityGroup.Security.Name;
+                    }
+                    else
+                    {
+                        caption = prefix + Security.GetSecurityTypeCaption(st);
+                    }
                     data.Add(new ChartDataValue()
                     {
                         Value = (double)RoundToNearestCent(marketValue),
                         Label = caption,
-                        Color = color
+                        Color = color, 
+                        UserData = securityGroup
                     });
 
-                    caption = "    " + Security.GetSecurityTypeCaption(st);
+                    if (securityGroup.Security == null)
+                    {
+                        caption = "    " + Security.GetSecurityTypeCaption(st);
+                    }
                     WriteSummaryRow(writer, color, caption, marketValue.ToString("C"), gainLoss.ToString("C"));
                     rowCount++;
                 }

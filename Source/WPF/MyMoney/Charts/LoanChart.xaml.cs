@@ -24,10 +24,16 @@ namespace Walkabout.Charts
             public string Label { get; set; }
         };
 
-        public ObservableCollection<LoanPaymentAggregation> LoanPayements
+        ObservableCollection<LoanPaymentAggregation> payments;
+
+        public ObservableCollection<LoanPaymentAggregation> LoanPayments
         {
-            get;
-            set;
+            get => payments;
+            set
+            {
+                payments = value;
+                UpdateChart();
+            }
         }
 
         public LoanChart()
@@ -54,8 +60,9 @@ namespace Walkabout.Charts
 
         public void UpdateChart()
         {
-            if (!this.IsVisible || LoanPayements == null)
+            if (!this.IsVisible || LoanPayments == null)
             {
+                Chart.Data = null;
                 return;
             }
 
@@ -76,17 +83,17 @@ namespace Walkabout.Charts
                     var payment = cumulatedPayementsPerYear[year];
                     totalPrincipal += payment.Principal;
                     totalInterest += payment.Interest;
-                    interestSeries.Data.Add(new ChartDataValue() { Label = payment.Label, Value = (double)payment.Interest, UserData = "interest" });
-                    principalSeries.Data.Add(new ChartDataValue() { Label = payment.Label, Value = (double)payment.Principal, UserData = "principal" });
+                    interestSeries.Values.Add(new ChartDataValue() { Label = payment.Label, Value = (double)payment.Interest, UserData = "interest" });
+                    principalSeries.Values.Add(new ChartDataValue() { Label = payment.Label, Value = (double)payment.Principal, UserData = "principal" });
                 }
 
-                Chart.Series = new List<ChartDataSeries>()
-                {
-                    interestSeries, principalSeries
-                };
+                var data = new ChartData();
+                data.AddSeries(interestSeries);
+                data.AddSeries(principalSeries);
+                Chart.Data = data;
 
-                this.TextBoxPrincipal.Text = string.Format("Principal {0:C}", Math.Abs(totalPrincipal));
-                this.TextBoxInterest.Text = string.Format("Interest {0:C}", Math.Abs(totalInterest));
+                this.TextBoxPrincipal.Text = string.Format("{0:C}", Math.Abs(totalPrincipal));
+                this.TextBoxInterest.Text = string.Format("{0:C}", Math.Abs(totalInterest));
             }
             catch (Exception ex)
             {
@@ -96,12 +103,12 @@ namespace Walkabout.Charts
 
 
 
-        private void OnColumnHover(object sender, LovettSoftware.Charts.ChartDataValue e)
+        private void OnColumnHover(object sender, ChartDataValue e)
         {
 
         }
 
-        private void OnColumnClicked(object sender, LovettSoftware.Charts.ChartDataValue e)
+        private void OnColumnClicked(object sender, ChartDataValue e)
         {
             // todo: any kind of drill down or pivot possible here?
         }
@@ -113,7 +120,7 @@ namespace Walkabout.Charts
 
             bool discardFirstItem = true;
 
-            foreach (LoanPaymentAggregation payment in LoanPayements)
+            foreach (LoanPaymentAggregation payment in LoanPayments)
             {
                 if (discardFirstItem)
                 {

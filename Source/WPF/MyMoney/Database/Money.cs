@@ -1889,9 +1889,9 @@ namespace Walkabout.Data
 
             CostBasisCalculator calc = new CostBasisCalculator(this, DateTime.Now);
 
-            foreach (var pair in calc.GetHoldingsBySecurityType(null))
+            foreach (var group in calc.GetHoldingsBySecurityType(null))
             {
-                foreach (SecurityPurchase sp in pair.Value)
+                foreach (SecurityPurchase sp in group.Purchases)
                 {
                     unique.Add(sp.Security);
                 }

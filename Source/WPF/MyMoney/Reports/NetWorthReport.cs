@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using LovettSoftware.Charts;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Walkabout.Charts;
 
 namespace Walkabout.Reports
 {
@@ -20,6 +21,8 @@ namespace Walkabout.Reports
     {
         MyMoney myMoney;
         Random rand = new Random(Environment.TickCount);
+
+        public event EventHandler<SecurityGroup> DrillDown;
 
         public NetWorthReport(MyMoney money)
         {
@@ -183,6 +186,7 @@ namespace Walkabout.Reports
             chart.VerticalAlignment = VerticalAlignment.Top;
             chart.Series = data;
             chart.ToolTipGenerator = OnGenerateToolTip;
+            chart.PieSliceClicked += OnPieSliceClicked;
 
             writer.WriteElement(chart);
 
@@ -198,6 +202,14 @@ namespace Walkabout.Reports
 
             writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
         }
+        private void OnPieSliceClicked(object sender, ChartDataValue e)
+        {
+            if (e.UserData is SecurityGroup g && DrillDown != null)
+            {
+                // now we can drill down and show a report on just this group of investments.
+                DrillDown(this, g);
+            }
+        }
 
         private UIElement OnGenerateToolTip(ChartDataValue value)
         {
@@ -212,21 +224,23 @@ namespace Walkabout.Reports
             hasNoneType = false;
             decimal balance = 0;
             Dictionary<SecurityType, decimal> byType = new Dictionary<SecurityType, decimal>();
+            Dictionary<SecurityType, SecurityGroup> groupsByType = new Dictionary<SecurityType, SecurityGroup>();
 
             CostBasisCalculator calc = new CostBasisCalculator(this.myMoney, DateTime.Now);
 
             // compute summary
             foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(filter))
             {
-                SecurityType stype = securityTypeGroup.Key;
+                SecurityType stype = securityTypeGroup.Type;
                 decimal sb = 0;
                 byType.TryGetValue(stype, out sb);
 
-                foreach (SecurityPurchase sp in securityTypeGroup.Value)
+                foreach (SecurityPurchase sp in securityTypeGroup.Purchases)
                 {                    
                     sb += sp.MarketValue;
                 }
                 byType[stype] = sb;
+                groupsByType[stype] = securityTypeGroup;
             }
 
             if (byType.Count > 0)
@@ -242,7 +256,7 @@ namespace Walkabout.Reports
                         string caption = prefix + Security.GetSecurityTypeCaption(st);
                         if (sb > 0)
                         {
-                            data.Add(new ChartDataValue() { Label = caption, Value = (double)sb, Color = color });
+                            data.Add(new ChartDataValue() { Label = caption, Value = (double)sb, Color = color, UserData = groupsByType[st] });
                             if (st == SecurityType.None)
                             {
                                 hasNoneType = true;

@@ -2807,12 +2807,8 @@ namespace Walkabout
                         TabStock.Visibility = System.Windows.Visibility.Collapsed;
                         TabHistory.Visibility = System.Windows.Visibility.Collapsed;
 
-                        if (this.LoanChart.IsVisible)
-                        {
-                            LoansView loandView = CurrentView as LoansView;
-                            this.LoanChart.LoanPayements = loandView.LoanPayements;
-                            this.LoanChart.UpdateChart();
-                        }
+                        LoansView loandView = CurrentView as LoansView;
+                        this.LoanChart.LoanPayments = loandView.LoanPayements;
                     }
                     else if (CurrentView is RentSummaryView)
                     {
@@ -3324,6 +3320,7 @@ namespace Walkabout
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Networth Report");
             NetWorthReport report = new NetWorthReport(this.myMoney);
+            report.DrillDown += OnReportDrillDown;
             view.Generate(report);
         }
 
@@ -3338,7 +3335,20 @@ namespace Walkabout
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio");
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now);
+            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now, null);
+            report.DrillDown += OnReportDrillDown;
+            view.Generate(report);
+        }
+
+        private void OnReportDrillDown(object sender, SecurityGroup e)
+        {
+            // create new report just for this drill down in security group.
+            // TODO: add these to navigation history too.
+            FlowDocumentView view = SetCurrentView<FlowDocumentView>();
+            view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
+            view.Closed += new EventHandler(OnFlowDocumentViewClosed);
+            HelpService.SetHelpKeyword(view, "Investment Portfolio - " + e.Type);
+            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now, e);
             view.Generate(report);
         }
 

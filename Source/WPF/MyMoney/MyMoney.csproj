@@ -250,6 +250,7 @@
     <Compile Include="Utilities\AxisTicker.cs" />
     <Compile Include="Utilities\ClipboardClients.cs" />
     <Compile Include="Utilities\DelayedAction.cs" />
+    <Compile Include="Utilities\ExponentialDoubleAnimation.cs" />
     <Compile Include="Utilities\FileHash.cs" />
     <Compile Include="Utilities\KNearestNeighbor.cs" />
     <Compile Include="Utilities\PointCollectionAnimation.cs" />
@@ -323,10 +324,8 @@
     <Compile Include="StockQuotes\ExchangeRates.cs" />
     <Compile Include="Charts\AreaChart.cs" />
     <Compile Include="Charts\ChartData.cs" />
-    <Compile Include="Charts\ExponentialDoubleAnimation.cs" />
     <Compile Include="Charts\FormattingConverter.cs" />
     <Compile Include="Charts\SelectionRectVisual.cs" />
-    <Compile Include="Charts\Serialization.cs" />
     <Compile Include="Charts\Styles.cs" />
     <Compile Include="Reports\BudgetData.cs">
       <SubType>Code</SubType>

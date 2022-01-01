@@ -2,7 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace Walkabout.Charts
+namespace Walkabout.Utilities
 {
 
     public enum EdgeBehavior

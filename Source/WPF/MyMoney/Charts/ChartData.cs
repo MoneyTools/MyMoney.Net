@@ -1,68 +1,31 @@
 using System;
 using System.Collections.Generic;
+using System.Windows.Media;
 
 namespace Walkabout.Charts
 {
 
     public class ChartData
     {
-        IList<ChartSeries> allSeries = new List<ChartSeries>();
-        IDictionary<object, ChartSeries> index = new Dictionary<object, ChartSeries>();
-        IList<ChartCategory> categories = new List<ChartCategory>();
-        IDictionary<string, ChartCategory> catindex = new Dictionary<string, ChartCategory>();
-        string title;
+        IList<ChartDataSeries> allSeries = new List<ChartDataSeries>();
 
         public ChartData()
         {
         }
 
-        public string Title { get { return title; } set { title = value; } }
+        public string Title { get; set; }
 
-        public ChartCategory AddCategory(string name, int color)
-        {
-            return AddCategory(new ChartCategory(name, color));
-        }
-
-        public ChartCategory AddCategory(ChartCategory cat)
-        {
-            categories.Add(cat);
-            catindex[cat.Name] = cat;
-            return cat;
-        }
-
-        public ChartCategory FindCategory(string name)
-        {
-            ChartCategory result = null;
-            catindex.TryGetValue(name, out result);
-            return result;
-        }
-
-        public IList<ChartSeries> AllSeries
+        public IList<ChartDataSeries> Series
         {
             get { return allSeries; }
         }
 
-        public IList<ChartCategory> Categories
-        {
-            get { return categories; }
-        }
-
-        public ChartSeries AddSeries(string title, object key)
-        {
-            return AddSeries(new ChartSeries(title, key));
-        }
-
-        public ChartSeries AddSeries(ChartSeries s)
+        public ChartDataSeries AddSeries(ChartDataSeries s)
         {
             return InsertSeries(allSeries.Count, s);
         }
 
-        public ChartSeries InsertSeries(ChartSeries s)
-        {
-            return InsertSeries(0, s);
-        }
-
-        public ChartSeries InsertSeries(int i, ChartSeries s)
+        public ChartDataSeries InsertSeries(int i, ChartDataSeries s)
         {
             if (i >= allSeries.Count)
             {
@@ -72,173 +35,47 @@ namespace Walkabout.Charts
             {
                 allSeries.Insert(i, s);
             }
-            object key = s.Key;
-            if (key == null) key = s.Title;
-            index[key] = s;
             return s;
-        }
-
-        public ChartSeries GetSeries(object key)
-        {
-            if (!index.ContainsKey(key)) return null;
-            return index[key];
         }
     }
 
-    public class ChartSeries
+    public class ChartDataSeries
     {
-        IList<ChartValue> values = new List<ChartValue>();
-        string title;
-        double min;
-        double max;
-        bool dirty;
-        double total;
-        object key;
-        ChartCategory cat;
-        Dictionary<object, ChartValue> index = new Dictionary<object, ChartValue>();
-
-        public event EventHandler Changed;
-
-        public ChartSeries()
+        public ChartDataSeries()
         {
+            Values = new List<ChartDataValue>();
         }
 
-        public ChartSeries(string title, object key)
+        public ChartDataSeries(string name)
         {
-            this.title = title;
-            this.key = key;
+            this.Name = name;
+            Values = new List<ChartDataValue>();
         }
 
-        public ChartCategory Category
-        {
-            get { return this.cat; }
-            set { this.cat = value; }
-        }
+        public string Name { get; set; }
 
-        public string Title { get { return title; } set { this.title = value; } }
-        public object Key { get { return key; } }
+        public IList<ChartDataValue> Values { get; set; }
 
-        public double Total { get { return total; } }
+        public ChartCategory Category { get; set; }
 
-        public IList<ChartValue> Values
-        {
-            get { return values; }
-        }
-
-        public object Tag { get; set; }
-
-        public void AddColumn(object key, string label)
-        {
-            if (!index.ContainsKey(key))
-            {
-                AddColumn(key, label, 0);
-            }
-        }
-
-        public void AddColumn(object key, string label, double value)
-        {
-            ChartValue cv = null;
-            if (!index.ContainsKey(key))
-            {
-                cv = new ChartValue(label, value, key);
-                values.Add(cv);
-                index[key] = cv;
-            }
-            else
-            {
-                cv = index[key];
-                cv.Value += value;
-            }
-            total += value;
-            this.dirty = true;
-        }
-
-        public bool HasColumn(object key)
-        {
-            return index.ContainsKey(key);
-        }
-
-        public void IncrementValue(object key, double v)
-        {
-            total += v;
-            ChartValue cv = index[key];
-            cv.Value += v;
-            this.dirty = true;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public void BeginUpdate()
-        {
-        }
-
-        public void EndUpdate()
-        {
-            this.dirty = true;
-            if (Changed != null) Changed(this, EventArgs.Empty);
-        }
-
-        public double Minimum
-        {
-            get
-            {
-                if (dirty) Recalc();
-                return min;
-            }
-        }
-        public double Maximum
-        {
-            get
-            {
-                if (dirty) Recalc();
-                return max;
-            }
-        }
-        public double Range
-        {
-            get
-            {
-                if (dirty) Recalc();
-                return Math.Max(Math.Abs(max), Math.Abs(min));
-            }
-        }
+        public object UserData { get; set; }
 
         public bool Flipped { get; set; }
 
-        void Recalc()
-        {
-            min = max = total = 0;
-            bool first = true;
-            foreach (ChartValue cv in values)
-            {
-                double v = cv.Value;
-                total += v;
-                if (first)
-                {
-                    min = max = v;
-                }
-                else
-                {
-                    if (v < min) min = v;
-                    if (v > max) max = v;
-                }
-                first = false;
-            }
-            dirty = false;
-        }
-
     }
 
-    public class ChartValue
+    public class ChartDataValue
     {
         double value;
         string label;
         object userdata;
+        Color? color;
 
-        public ChartValue()
+        public ChartDataValue()
         {
         }
 
-        public ChartValue(string label, double value, object userdata)
+        public ChartDataValue(string label, double value, object userdata)
         {
             this.label = label;
             this.value = value;
@@ -255,6 +92,12 @@ namespace Walkabout.Charts
         {
             get { return this.label; }
             set { this.label = value; }
+        }
+
+        public Color? Color
+        {
+            get { return this.color; }
+            set { this.color = value; }
         }
 
         public object UserData

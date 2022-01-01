@@ -183,6 +183,14 @@ namespace Walkabout.Data
         }
     }
 
+    public class SecurityGroup
+    {
+        public Security Security { get; set; }
+        public SecurityType Type { get ;set; }
+        public IList<SecurityPurchase> Purchases { get; set; }
+    }
+
+
     /// <summary>
     /// We implement a first-in first-out FIFO queue for securities, the assumption is that when
     /// securities are sold you will first sell the security you have been holding the longest
@@ -361,26 +369,25 @@ namespace Walkabout.Data
         /// Get all non-zero holdings remaining for the accounts we have analyzed and return them grouped by security.
         /// </summary>
         /// <returns></returns>
-        public IDictionary<Security, List<SecurityPurchase>> GetHoldingsBySecurity()
+        public IList<SecurityGroup> GetHoldingsBySecurity()
         {
-            SortedDictionary<Security, List<SecurityPurchase>> holdingsBySecurity = new SortedDictionary<Security, List<SecurityPurchase>>(new SecurityComparer());
+            SortedDictionary<Security, SecurityGroup> holdingsBySecurity = new SortedDictionary<Security, SecurityGroup>(new SecurityComparer());
 
             // Sort all add, remove, buy, sell transactions by date and by security.
             foreach (SecurityPurchase sp in GetHoldings())
             {
                 Security s = sp.Security;
-                List<SecurityPurchase> list = null;
-                if (!holdingsBySecurity.TryGetValue(s, out list))
+                SecurityGroup group = null;
+                if (!holdingsBySecurity.TryGetValue(s, out group))
                 {
-                    list = new List<SecurityPurchase>();
-                    holdingsBySecurity[s] = list;
+                    group = new SecurityGroup() { Security = s, Type = s.SecurityType, Purchases = new List<SecurityPurchase>() };
+                    holdingsBySecurity[s] = group;
                 }
-                list.Add(sp);
+                group.Purchases.Add(sp);
             }
 
-            return holdingsBySecurity;
+            return new List<SecurityGroup>(holdingsBySecurity.Values);
         }
-
 
         /// <summary>
         /// Record an Add or Buy for a given security.
@@ -520,9 +527,9 @@ namespace Walkabout.Data
         /// </summary>
         /// <param name="account">Specified account or null for all accounts.</param>
         /// <returns></returns>
-        public IDictionary<SecurityType, IList<SecurityPurchase>> GetHoldingsBySecurityType(Predicate<Account> filter)
+        public IList<SecurityGroup> GetHoldingsBySecurityType(Predicate<Account> filter)
         {
-            Dictionary<SecurityType, IList<SecurityPurchase>> result = new Dictionary<SecurityType, IList<SecurityPurchase>>();
+            Dictionary<SecurityType, SecurityGroup> result = new Dictionary<SecurityType, SecurityGroup>();
 
             foreach (var accountHolding in byAccount.Values)
             {
@@ -531,17 +538,43 @@ namespace Walkabout.Data
                     foreach (var sp in accountHolding.GetHoldings())
                     {
                         var type = sp.Security.SecurityType;
-                        IList<SecurityPurchase> group = null;
+                        SecurityGroup group = null;
                         if (!result.TryGetValue(type, out group))
                         {
-                            group = new List<SecurityPurchase>();
+                            group = new SecurityGroup() { Type = type, Purchases = new List<SecurityPurchase>() };
                             result[type] = group;
                         }
-                        group.Add(sp);
+                        group.Purchases.Add(sp);
                     }
                 }
             }
-            return result;
+            return new List<SecurityGroup>(result.Values);
+        }
+
+
+        /// <summary>
+        /// Get all non-zero holdings remaining for the purchases listed in the given groupByType and
+        /// group them be individual security.
+        /// </summary>
+        /// <returns></returns>
+        public IList<SecurityGroup> RegroupBySecurity(SecurityGroup groupByType)
+        {
+            SortedDictionary<Security, SecurityGroup> holdingsBySecurity = new SortedDictionary<Security, SecurityGroup>(new SecurityComparer());
+
+            // Sort all add, remove, buy, sell transactions by date and by security.
+            foreach (SecurityPurchase sp in groupByType.Purchases)
+            {
+                Security s = sp.Security;
+                SecurityGroup group = null;
+                if (!holdingsBySecurity.TryGetValue(s, out group))
+                {
+                    group = new SecurityGroup() { Security = s, Type = s.SecurityType, Purchases = new List<SecurityPurchase>() };
+                    holdingsBySecurity[s] = group;
+                }
+                group.Purchases.Add(sp);
+            }
+
+            return new List<SecurityGroup>(holdingsBySecurity.Values);
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 #define TRACE
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
@@ -35,9 +36,8 @@ namespace Walkabout.Charts
         Shape pointer;
         Border tooltip;
         TextBlock label;
-        ChartSeries selectedSeries;
+        ChartDataSeries selectedSeries;
         StackPanel legend;
-
 
 
         public AreaChart()
@@ -49,7 +49,7 @@ namespace Walkabout.Charts
             this.Data = data;
         }
 
-        public ChartValue Selected { get; set; }
+        public ChartDataValue Selected { get; set; }
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -76,7 +76,8 @@ namespace Walkabout.Charts
             get { return data; }
             set
             {
-                data = value; Relayout();
+                data = value; 
+                Relayout();
             }
         }
 
@@ -129,14 +130,14 @@ namespace Walkabout.Charts
             }
         }
 
-        public ChartSeries SelectedSeries { get { return selectedSeries; } set { selectedSeries = value; OnSelectedSeriesChanged(); } }
+        public ChartDataSeries SelectedSeries { get { return selectedSeries; } set { selectedSeries = value; OnSelectedSeriesChanged(); } }
 
         void UpdatePointer(Point pos)
         {
-            if (data != null && data.AllSeries.Count > 0 && scale != null && scale.ScaleX > 0)
+            if (data != null && data.Series.Count > 0 && scale != null && scale.ScaleX > 0)
             {
                 if (selectedSeries == null) {
-                    selectedSeries = data.AllSeries[data.AllSeries.Count-1];
+                    selectedSeries = data.Series[data.Series.Count-1];
                 }
 
                 Point legendPos = this.TransformToDescendant(legend).Transform(pos);
@@ -177,13 +178,13 @@ namespace Walkabout.Charts
                     this.Children.Add(tooltip);
                 }
 
-                ChartSeries series = selectedSeries;
+                ChartDataSeries series = selectedSeries;
                 var values = series.Values;
 
                 int i = (int)(pos.X / scale.ScaleX);
                 if (i >= 0 && i < values.Count)
                 {
-                    ChartValue v = values[i];
+                    ChartDataValue v = values[i];
                     Selected = v;
                     label.Text = v.Label;
 
@@ -290,7 +291,7 @@ namespace Walkabout.Charts
         {
             selectedSeries = null;
 
-            foreach (ChartSeries s in data.AllSeries)
+            foreach (ChartDataSeries s in data.Series)
             {
                 if (s.Values.Count > 0)
                 {
@@ -299,8 +300,8 @@ namespace Walkabout.Charts
                     path.Figures.Add(figure);
                     figure.IsClosed = true;
                     double x = 0;
-                    double min = s.Minimum;
-                    double max = s.Maximum;
+                    double min = (from i in s.Values select i.Value).Min();
+                    double max = (from i in s.Values select i.Value).Max();
 
                     bool flip = false;
                     if (s.Flipped)
@@ -316,7 +317,7 @@ namespace Walkabout.Charts
                     figure.StartPoint = new Point(0, 0);
 
                     // Add the grid column labels along the bottom row.
-                    foreach (ChartValue cv in s.Values)
+                    foreach (ChartDataValue cv in s.Values)
                     {
                         double v = cv.Value;
                         if (flip) v = -v;
@@ -350,7 +351,7 @@ namespace Walkabout.Charts
             }
         }
 
-        void AddLengenEntry(StackPanel legend, ChartSeries s, Path shape)
+        void AddLengenEntry(StackPanel legend, ChartDataSeries s, Path shape)
         {
             StackPanel legendEntry = new StackPanel();
             legendEntry.Margin = new Thickness(2);
@@ -363,7 +364,7 @@ namespace Walkabout.Charts
             legendEntry.MouseLeave += OnLegendEntryMouseLeave; 
             legend.Children.Add(legendEntry);
 
-            s.Tag = shape;
+            s.UserData = shape;
             
             Rectangle swatch = new Rectangle();
             swatch.Margin = new Thickness(4,1,2,1);
@@ -397,15 +398,15 @@ namespace Walkabout.Charts
         {
             // bring this legend entry to the front so user can see item values.
             StackPanel legendEntry = (StackPanel)sender;
-            ChartSeries series = (ChartSeries)legendEntry.Tag;
+            ChartDataSeries series = (ChartDataSeries)legendEntry.Tag;
             this.SelectedSeries = series;
         }
 
         private void OnSelectedSeriesChanged()
         {
-            ChartSeries selected = this.SelectedSeries;
+            ChartDataSeries selected = this.SelectedSeries;
             // bring the "Path" shape for this series to the front.
-            Path shape = (Path)selected.Tag;
+            Path shape = (Path)selected.UserData;
 
             DoubleAnimation fadeOut = new DoubleAnimation() { To = 0.0, Duration = new Duration(TimeSpan.FromMilliseconds(200)) };
             Storyboard sb = new Storyboard();
@@ -418,8 +419,8 @@ namespace Walkabout.Charts
 
         private void OnFadeCompleted(object sender, EventArgs e)
         {
-            ChartSeries selected = this.SelectedSeries;
-            Path shape = (Path)selected.Tag;
+            ChartDataSeries selected = this.SelectedSeries;
+            Path shape = (Path)selected.UserData;
 
             // bring the "Path" shape for this series to the front.
             this.Children.Remove(shape);
@@ -436,17 +437,20 @@ namespace Walkabout.Charts
 
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        void AddSeries(Grid grid, ChartSeries s, double availableHeight)
+        void AddSeries(Grid grid, ChartDataSeries s, double availableHeight)
         {
             int index = 0;
             // Add the actual grid columns
-            foreach (ChartValue cv in s.Values)
+            foreach (ChartDataValue cv in s.Values)
             {
 
                 // create new column object.
                 Color c1 = ChartColors.GetColor(index);
                 double colWidth = grid.ColumnDefinitions[index].Width.Value;
-                ChartColumn col = new ChartColumn(cv, nfi, c1, colWidth - 1, availableHeight, s.Range);
+                var min = (from i in s.Values select i.Value).Min();
+                var max = (from i in s.Values select i.Value).Min();
+                var range = max - min;
+                ChartColumn col = new ChartColumn(cv, nfi, c1, colWidth - 1, availableHeight, range);
                 Grid.SetColumn(col, index++);
                 Grid.SetRow(col, 1);
                 col.VerticalAlignment = VerticalAlignment.Bottom;
@@ -458,7 +462,7 @@ namespace Walkabout.Charts
 
     public class ChartColumn : StackPanel
     {
-        ChartValue value;
+        ChartDataValue value;
         Rectangle r;
         double currentValue;
         double availableHeight;
@@ -467,7 +471,7 @@ namespace Walkabout.Charts
 
         static DependencyProperty ColumnValueProperty = DependencyProperty.Register("ColumnValue", typeof(double), typeof(ChartColumn));
 
-        public ChartColumn(ChartValue cv, NumberFormatInfo nfi, Color c1, double colWidth, double availableHeight, double range)
+        public ChartColumn(ChartDataValue cv, NumberFormatInfo nfi, Color c1, double colWidth, double availableHeight, double range)
         {
             this.availableHeight = availableHeight;
             if (range == 0)
@@ -515,7 +519,7 @@ namespace Walkabout.Charts
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
-        public ChartValue Value
+        public ChartDataValue Value
         {
             get { return this.value; }
             set

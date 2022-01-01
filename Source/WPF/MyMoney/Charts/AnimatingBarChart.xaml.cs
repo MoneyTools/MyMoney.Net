@@ -8,26 +8,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Walkabout.Charts;
 
 namespace LovettSoftware.Charts
 {
-    public class ChartDataValue
-    {
-        public string Label;
-        public double Value;
-        public object UserData;
-
-        public Color? Color { get; internal set; }
-    }
-
-    public class ChartDataSeries
-    {
-        public String Name { get; set; }
-
-        public List<ChartDataValue> Data{ get; set; }
-
-        public ChartDataSeries() { Data = new List<ChartDataValue>(); }
-    }
 
     public delegate UIElement ToolTipGenerator(ChartDataValue value);
 
@@ -147,43 +131,44 @@ namespace LovettSoftware.Charts
         /// <summary>
         /// Note that if there are multiple ChartSeries we assume the X-axis labels are the same across all series.
         /// </summary>
-        public List<ChartDataSeries> Series
+        public ChartData Data
         {
-            get { return (List<ChartDataSeries>)GetValue(SeriesProperty); }
-            set { SetValue(SeriesProperty, value); }
+            get { return (ChartData)GetValue(ChartDataProperty); }
+            set { SetValue(ChartDataProperty, value); }
         }
 
-        public static readonly DependencyProperty SeriesProperty =
-            DependencyProperty.Register("Series", typeof(List<ChartDataSeries>), typeof(AnimatingBarChart), new PropertyMetadata(null, OnSeriesChanged));
+        public static readonly DependencyProperty ChartDataProperty =
+            DependencyProperty.Register("ChartData", typeof(ChartData), typeof(AnimatingBarChart), new PropertyMetadata(null, OnDataChanged));
 
-        private static void OnSeriesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AnimatingBarChart)d).OnSeriesChanged(e.NewValue);
+            ((AnimatingBarChart)d).OnDataChanged(e.NewValue);
         }
 
-        private void OnSeriesChanged(object newValue)
+        private void OnDataChanged(object newValue)
         {
             HideToolTip();
             if (newValue == null)
             {
                 ResetVisuals();
             }
-            else if (newValue is List<ChartDataSeries> s)
+            else if (newValue is ChartData data)
             {
+                var s = data.Series;
                 if (s.Count > 0)
                 {
-                    var first = s[0].Data;
+                    var first = s[0].Values;
                     int cols = first.Count;
                     foreach(var series in s)
                     {
                         var seriesDefaultColor = GetRandomColor();
-                        if (series.Data.Count != cols)
+                        if (series.Values.Count != cols)
                         {
                             throw new Exception("All series must have the same number of columns");
                         }
-                        for (int i = 0; i < series.Data.Count; i++)
+                        for (int i = 0; i < series.Values.Count; i++)
                         {
-                            var d = series.Data[i];
+                            var d = series.Values[i];
                             if (!d.Color.HasValue)
                             {
                                 d.Color = seriesDefaultColor;
@@ -227,7 +212,7 @@ namespace LovettSoftware.Charts
         {
             double w = this.ActualWidth;
             double h = this.ActualHeight;
-            if (Series == null || Series.Count == 0 || w == 0 || h == 0)
+            if (Data == null || Data.Series.Count == 0 || w == 0 || h == 0)
             {
                 ResetVisuals();
             }
@@ -394,9 +379,9 @@ namespace LovettSoftware.Charts
             int index = 0;
             Size minMax = new Size();
             bool firstSeries = true;
-            foreach (var series in Series)
+            foreach (var series in Data.Series)
             {
-                foreach (var item in series.Data)
+                foreach (var item in series.Values)
                 {
                     ColumnInfo info = null;
                     if (index < bars.Count)
@@ -450,9 +435,9 @@ namespace LovettSoftware.Charts
         {
             double maxValue = 0;
             double minValue = 0;
-            foreach (var series in Series)
+            foreach (var series in Data.Series)
             {
-                foreach (var item in series.Data)
+                foreach (var item in series.Values)
                 {
                     var v = item.Value;
                     maxValue = Math.Max(maxValue, v);
@@ -504,7 +489,7 @@ namespace LovettSoftware.Charts
 
             var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationGrowthMilliseconds));
 
-            int columns = (from series in Series select series.Data.Count).Max();
+            int columns = (from series in Data.Series select series.Values.Count).Max();
             double w = this.ActualWidth;
             double h = this.ActualHeight;
 
@@ -525,12 +510,13 @@ namespace LovettSoftware.Charts
             w -= labelMargin; // allocate space at the left column labels.
             h -= axisLabelSize.Height + labelGap + labelGap;
 
+            int numSeries = Data.Series.Count;
             double seriesHeight = h / columns;
-            double innerGap = Series.Count > 1 ? 2 : 0; // gap between columns in a series
-            double seriesGap = seriesHeight / (3 * Series.Count); // gap between series
+            double innerGap = numSeries > 1 ? 2 : 0; // gap between columns in a series
+            double seriesGap = seriesHeight / (3 * numSeries); // gap between series
             seriesHeight -= seriesGap;
 
-            double columnHeight = seriesHeight / Series.Count;
+            double columnHeight = seriesHeight / numSeries;
             columnHeight -= innerGap;
 
             double range = (max - min);
@@ -573,9 +559,9 @@ namespace LovettSoftware.Charts
             for (int col = 0; col < columns; col++)
             {
                 int index = 0;
-                foreach (var series in this.Series)
+                foreach (var series in this.Data.Series)
                 {
-                    var dataValue = series.Data[col];
+                    var dataValue = series.Values[col];
                     double s = (dataValue.Value * w / range); 
                     Color color = dataValue.Color.Value;
 
@@ -673,7 +659,7 @@ namespace LovettSoftware.Charts
 
             var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationGrowthMilliseconds));
 
-            int columns = (from series in Series select series.Data.Count).Max();
+            int columns = (from series in Data.Series select series.Values.Count).Max();
             double w = this.ActualWidth;
             double h = this.ActualHeight;
 
@@ -695,12 +681,13 @@ namespace LovettSoftware.Charts
             double axisLabelGap = axisLabelSize.Width + labelGap + labelGap;
             w -= axisLabelGap; // allocate space for axis labels.
 
+            int numSeries = Data.Series.Count;
             double seriesWidth = w / columns;
-            double innerGap = Series.Count > 1 ? 2 : 0; // gap between columns in a series
-            double seriesGap = seriesWidth / (3 * Series.Count); // gap between series
+            double innerGap = numSeries > 1 ? 2 : 0; // gap between columns in a series
+            double seriesGap = seriesWidth / (3 * numSeries); // gap between series
             seriesWidth -= seriesGap;
 
-            double columnWidth = seriesWidth / Series.Count;
+            double columnWidth = seriesWidth / numSeries;
             columnWidth -= innerGap;
 
             double range = (max - min);
@@ -744,9 +731,9 @@ namespace LovettSoftware.Charts
             for (int col = 0; col < columns; col++)
             {
                 int index = 0;
-                foreach (var series in this.Series)
+                foreach (var series in this.Data.Series)
                 {
-                    var dataValue = series.Data[col];
+                    var dataValue = series.Values[col];
                     double s = (dataValue.Value * h / range);
                     Color color = dataValue.Color.Value;
 
