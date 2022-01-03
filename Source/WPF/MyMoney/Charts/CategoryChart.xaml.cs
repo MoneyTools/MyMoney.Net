@@ -421,5 +421,14 @@ namespace Walkabout.Charts
             return true;
         }
 
+        private void OnExport(object sender, RoutedEventArgs e)
+        {
+            if (PieChart.Series != null && PieChart.Series.Count > 0)
+            {
+                ChartData data = new ChartData();
+                data.AddSeries(new ChartDataSeries() { Values = PieChart.Series, Name = "Categories" });
+                data.Export();
+            }
+        }
     }
 }
