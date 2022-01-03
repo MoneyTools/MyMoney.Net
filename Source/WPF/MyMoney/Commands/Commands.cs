@@ -61,6 +61,20 @@ namespace Walkabout.Commands
         public readonly static RoutedUICommand CommandTroubleshootCheckTransfer;
         public readonly static RoutedUICommand CommandViewChanges;
 
+        // ContextMenu on Graphs & Charts
+        public readonly static RoutedUICommand CommandYearToDate;
+        public readonly static RoutedUICommand CommandNext;
+        public readonly static RoutedUICommand CommandPrevious;
+        public readonly static RoutedUICommand CommandSetRange;
+        public readonly static RoutedUICommand CommandShowAll;
+        public readonly static RoutedUICommand CommandZoomIn;
+        public readonly static RoutedUICommand CommandZoomOut;
+        public readonly static RoutedUICommand CommandAddSeries;
+        public readonly static RoutedUICommand CommandRemoveSeries;
+        public readonly static RoutedUICommand CommandShowBudget;
+        public readonly static RoutedUICommand CommandExportData;
+
+
         static AppCommands()
         {
 
@@ -115,6 +129,18 @@ namespace Walkabout.Commands
             CommandTroubleshootCheckTransfer = new RoutedUICommand("TroubleshootCheckTransfer", "Check Transfer", typeof(AppCommands));
             CommandViewChanges = new RoutedUICommand("CommandViewChanges", "View Changes", typeof(AppCommands));
 
+            // Cusrtom Report range dialog
+            CommandYearToDate = new RoutedUICommand("Year to date", "CommandYearToDate", typeof(AppCommands));
+            CommandNext = new RoutedUICommand("Next", "CommandNext", typeof(AppCommands));
+            CommandPrevious = new RoutedUICommand("Previous", "CommandPrevious", typeof(AppCommands));
+            CommandSetRange = new RoutedUICommand("Set range", "CommandSetRange", typeof(AppCommands));
+            CommandShowAll = new RoutedUICommand("Show all", "CommandShowAll", typeof(AppCommands));
+            CommandZoomIn = new RoutedUICommand("Zoom in", "CommandZoomIn", typeof(AppCommands));
+            CommandZoomOut = new RoutedUICommand("Zoom out", "CommandZoomOut", typeof(AppCommands));
+            CommandAddSeries = new RoutedUICommand("Add series", "CommandAddSeries", typeof(AppCommands));
+            CommandRemoveSeries = new RoutedUICommand("Remove series", "CommandRemoveSeries", typeof(AppCommands));
+            CommandShowBudget = new RoutedUICommand("Show budget", "CommandShowBudget", typeof(AppCommands));
+            CommandExportData = new RoutedUICommand("Export...", "CommandExportData", typeof(AppCommands));            
         }
     }
 }

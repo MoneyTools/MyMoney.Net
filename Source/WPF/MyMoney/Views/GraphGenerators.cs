@@ -81,11 +81,6 @@ namespace Walkabout.Views
                 }
             }
         }
-
-        public string GetLabel(TrendValue item)
-        {
-            return item.Value.ToString("n", nfi) + "\r\n" + item.Date.ToShortDateString();
-        }
     }
 
 

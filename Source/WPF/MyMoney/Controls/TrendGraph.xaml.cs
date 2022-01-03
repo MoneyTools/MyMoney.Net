@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LovettSoftware.Charts;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -30,7 +31,6 @@ namespace Walkabout.Views.Controls
     {
         IEnumerable<TrendValue> Generate();
         bool IsFlipped { get; }
-        string GetLabel(TrendValue v);
     }
 
     /// <summary>
@@ -48,31 +48,6 @@ namespace Walkabout.Views.Controls
         IServiceProvider sp;
         DelayedActions delayedActions = new DelayedActions();
 
-        public readonly static RoutedUICommand CommandYearToDate;
-        public readonly static RoutedUICommand CommandNext;
-        public readonly static RoutedUICommand CommandPrevious;
-        public readonly static RoutedUICommand CommandSetRange;
-        public readonly static RoutedUICommand CommandShowAll;
-        public readonly static RoutedUICommand CommandZoomIn;
-        public readonly static RoutedUICommand CommandZoomOut;
-        public readonly static RoutedUICommand CommandAddSeries;
-        public readonly static RoutedUICommand CommandRemoveSeries;
-        public readonly static RoutedUICommand CommandShowBudget;
-
-        static TrendGraph()
-        {
-            CommandYearToDate = new RoutedUICommand("Year to date", "CommandYearToDate", typeof(TrendGraph));
-            CommandNext = new RoutedUICommand("Next", "CommandNext", typeof(TrendGraph));
-            CommandPrevious = new RoutedUICommand("Previous", "CommandPrevious", typeof(TrendGraph));
-            CommandSetRange = new RoutedUICommand("Set range", "CommandSetRange", typeof(TrendGraph));
-            CommandShowAll = new RoutedUICommand("Show all", "CommandShowAll", typeof(TrendGraph));
-            CommandZoomIn = new RoutedUICommand("Zoom in", "CommandZoomIn", typeof(TrendGraph));
-            CommandZoomOut = new RoutedUICommand("Zoom out", "CommandZoomOut", typeof(TrendGraph));
-            CommandAddSeries = new RoutedUICommand("Add series", "CommandAddSeries", typeof(TrendGraph));
-            CommandRemoveSeries = new RoutedUICommand("Remove series", "CommandRemoveSeries", typeof(TrendGraph));
-            CommandShowBudget = new RoutedUICommand("Show budget", "CommandShowBudget", typeof(TrendGraph));
-        }
-
         public TrendGraph()
         {
             this.Focusable = true;
@@ -80,8 +55,16 @@ namespace Walkabout.Views.Controls
             this.start = Step(end, this.range, this.years, -1);
             InitializeComponent();
             this.MouseWheel += new MouseWheelEventHandler(TrendGraph_MouseWheel);
-
             this.IsVisibleChanged += TransactionGraph_IsVisibleChanged;
+            Chart.ToolTipGenerator = OnGenerateTip;
+        }
+
+        private UIElement OnGenerateTip(ChartDataValue value)
+        {
+            var tip = new StackPanel() { Orientation = Orientation.Vertical };
+            tip.Children.Add(new TextBlock() { Text = value.Label, FontWeight = FontWeights.Bold });
+            tip.Children.Add(new TextBlock() { Text = value.Value.ToString("C0") });
+            return tip;
         }
 
         private void TransactionGraph_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -387,7 +370,7 @@ namespace Walkabout.Views.Controls
             // duplicate the items across a range to fill the gaps so the graph spans the whole time span.
             while (start < end)
             {
-                string label = this.generator.GetLabel(v);
+                string label = v.Date.ToShortDateString();
                 timeData.Add(new ChartDataValue(label, (double)v.Value, v.UserData));
                 start = start.AddDays(1);
             }
@@ -481,6 +464,7 @@ namespace Walkabout.Views.Controls
             frm.Title = "Graph Range";
             frm.StartDate = this.start;
             frm.EndDate = this.end;
+            frm.ShowInterval = false;
             frm.Owner = App.Current.MainWindow;
             if (frm.ShowDialog() == true)
             {
@@ -580,6 +564,19 @@ namespace Walkabout.Views.Controls
             this.menuItemYearToDate.IsChecked = this.yearToDate;
             this.menuItemShowAll.IsChecked = this.showAll;
             GenerateGraph();
+        }
+
+        private void OnExportData(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (chartData != null && chartData.Series != null && chartData.Series.Count > 0)
+            {
+                chartData.Export();
+            }
+        }
+
+        private void CanExecute_ExportData(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = chartData != null && chartData.Series != null && chartData.Series.Count > 0;
         }
     }
 

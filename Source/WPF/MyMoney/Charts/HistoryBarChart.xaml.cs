@@ -458,18 +458,11 @@ namespace Walkabout.Charts
 
         private void OnExport(object sender, RoutedEventArgs e)
         {
-            string name = System.IO.Path.GetTempFileName() + ".csv";
-            TempFilesManager.AddTempFile(name);
-            using (StreamWriter writer = new StreamWriter(name))
+            var data = Chart.Data;
+            if (data != null && data.Series != null && data.Series.Count > 0)
             {
-                writer.WriteLine("Label, Amount");
-                foreach (var column in collection)
-                {
-                    writer.WriteLine("{0}, {1}", column.Label, column.Amount);
-                }
+                data.Export();
             }
-            int SW_SHOWNORMAL = 1;
-            NativeMethods.ShellExecute(IntPtr.Zero, "Open", name, "", "", SW_SHOWNORMAL);
         }
 
         private void Rotate(object sender, RoutedEventArgs e)

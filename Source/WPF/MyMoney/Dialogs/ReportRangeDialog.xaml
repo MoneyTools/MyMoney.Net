@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Walkabout.Controls"
         Title="Report" 
-        Height="420"
+        Height="300"
         Width="300"
         MinHeight="260"
         MinWidth="300"
@@ -81,8 +81,8 @@
                 <local:MoneyDatePicker x:Name="dateTimePicker2" SelectedDateFormat="Short" Grid.Column="1" Grid.Row="2" />
 
                 <!-- Interval -->
-                <Label Grid.Column="0" Grid.Row="4"  HorizontalAlignment="Right" VerticalAlignment="Center">_Interval:</Label>
-                <local:ComboBox2 x:Name="comboBox1"  Grid.Column="1" Grid.Row="4" Height="24" >
+                <Label x:Name="intervalPrompt" Grid.Column="0" Grid.Row="4"  HorizontalAlignment="Right" VerticalAlignment="Center">_Interval:</Label>
+                <local:ComboBox2 x:Name="comboBoxInterval"  Grid.Column="1" Grid.Row="4" Height="24" >
                 </local:ComboBox2>
 
             </Grid >

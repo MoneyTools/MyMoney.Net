@@ -11,12 +11,13 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Walkabout.Utilities;
+using Walkabout.Charts;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 #endif
 
-namespace Walkabout.Charts
+namespace LovettSoftware.Charts
 {
     /// <summary>
     /// It is used by the TrendGraph to create stacked translucent area graphs, with interactive mouse pointer
@@ -35,7 +36,6 @@ namespace Walkabout.Charts
         TransformGroup transform;
         Shape pointer;
         Border tooltip;
-        TextBlock label;
         ChartDataSeries selectedSeries;
         StackPanel legend;
 
@@ -48,6 +48,8 @@ namespace Walkabout.Charts
         {
             this.Data = data;
         }
+
+        public ToolTipGenerator ToolTipGenerator { get; set; }
 
         public ChartDataValue Selected { get; set; }
 
@@ -172,9 +174,6 @@ namespace Walkabout.Charts
                     tooltip.BorderBrush = Brushes.Black;
                     tooltip.BorderThickness = new Thickness(1);
                     tooltip.Background = Brushes.White;
-                    label = new TextBlock();
-                    label.Foreground = Brushes.Black;
-                    tooltip.Child = label;
                     this.Children.Add(tooltip);
                 }
 
@@ -186,8 +185,20 @@ namespace Walkabout.Charts
                 {
                     ChartDataValue v = values[i];
                     Selected = v;
-                    label.Text = v.Label;
 
+                    UIElement content = null;
+                    if (this.ToolTipGenerator != null)
+                    {
+                        content = this.ToolTipGenerator(v);
+                    }
+                    else
+                    {
+                        var label = new TextBlock();
+                        label.Foreground = Brushes.Black;
+                        label.Text = v.Label;
+                        content = label;
+                    }
+                    tooltip.Child = content;
 
                     if (insideLegend)
                     {
@@ -202,7 +213,7 @@ namespace Walkabout.Charts
                         {
                             tipPositionX = this.ActualWidth - tooltip.ActualWidth;
                         }
-                        double tipPositionY = pos.Y - label.ActualHeight - 4;
+                        double tipPositionY = pos.Y - tooltip.ActualHeight - 4;
                         if (tipPositionY < 0)
                         {
                             tipPositionY = 0;

@@ -28,8 +28,8 @@ namespace Walkabout.Dialogs
 
         public ReportInterval Interval
         {
-            get { return (ReportInterval)comboBox1.SelectedItem; }
-            set { comboBox1.SelectedItem = value; }
+            get { return (ReportInterval)comboBoxInterval.SelectedItem; }
+            set { comboBoxInterval.SelectedItem = value; }
         }
 
         public bool EnableCategoriesSelection
@@ -79,8 +79,6 @@ namespace Walkabout.Dialogs
         }
         #endregion
 
-
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -89,14 +87,32 @@ namespace Walkabout.Dialogs
             InitializeComponent();
             this.Owner = Application.Current.MainWindow;
 
-            comboBox1.Items.Add(ReportInterval.Days);
-            comboBox1.Items.Add(ReportInterval.Months);
-            comboBox1.Items.Add(ReportInterval.Years);
-            comboBox1.SelectedIndex = 2;
+            comboBoxInterval.Visibility = Visibility.Visible;
+            comboBoxInterval.Items.Add(ReportInterval.Days);
+            comboBoxInterval.Items.Add(ReportInterval.Months);
+            comboBoxInterval.Items.Add(ReportInterval.Years);
+            comboBoxInterval.SelectedIndex = 2;
 
             okButton.Click += new RoutedEventHandler(OnOkButton_Click);
         }
 
+        bool showInterval;
+
+        public bool ShowInterval { 
+            get => this.showInterval;
+            set {
+                if (!value)
+                {
+                    intervalPrompt.Visibility = Visibility.Collapsed;
+                    comboBoxInterval.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    intervalPrompt.Visibility = Visibility.Visible;
+                }
+                this.showInterval = value;
+            }
+        }
 
 
         void OnOkButton_Click(object sender, RoutedEventArgs e)

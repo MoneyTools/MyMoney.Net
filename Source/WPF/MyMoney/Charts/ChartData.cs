@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Media;
+using Walkabout.Utilities;
 
 namespace Walkabout.Charts
 {
@@ -36,6 +38,47 @@ namespace Walkabout.Charts
                 allSeries.Insert(i, s);
             }
             return s;
+        }
+
+        internal void Export()
+        {
+            if (this.Series != null && this.Series.Count > 0)
+            {
+                string name = System.IO.Path.GetTempFileName() + ".csv";
+                TempFilesManager.AddTempFile(name);
+                using (StreamWriter writer = new StreamWriter(name))
+                {
+                    writer.Write("Label");
+                    foreach(var series in this.Series)
+                    {
+                        writer.Write(", {0}", series.Name);
+                    }
+                    writer.WriteLine();
+
+                    int columns = this.Series[0].Values.Count;
+                    for(int i = 0; i < columns; i++)
+                    {
+                        for(int j = 0, n = this.Series.Count; j < n; j++)
+                        {
+                            var s = this.Series[j];
+                            var item = s.Values[i];
+                            if (j == 0)
+                            {
+                                writer.Write("{0}, ", item.Label);
+                            }
+                            else
+                            {
+                                writer.Write(", ");
+                            }
+                            writer.Write("{0}", item.Value);
+                        }
+                        writer.WriteLine();
+                    }
+                }
+
+                int SW_SHOWNORMAL = 1;
+                NativeMethods.ShellExecute(IntPtr.Zero, "Open", name, "", "", SW_SHOWNORMAL);
+            }
         }
     }
 
