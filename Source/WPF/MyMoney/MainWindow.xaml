@@ -58,8 +58,6 @@
         <CommandBinding Command="p:AppCommands.CommandViewCurrencies" Executed="OnCommandViewCurrencies"/>
         <CommandBinding Command="p:AppCommands.CommandViewAliases"  Executed="OnCommandViewViewAliases"/>
         <CommandBinding Command="p:AppCommands.CommandViewOptions" Executed="OnCommandViewOptions" />
-        <CommandBinding Command="p:AppCommands.CommandViewThemeVS2010" Executed="OnCommandViewThemeVS2010" />
-        <CommandBinding Command="p:AppCommands.CommandViewThemeFlat" Executed="OnCommandViewThemeFlat" />
 
         <!-- REPORTS  -->
         <CommandBinding Command="p:AppCommands.CommandReportNetWorth" Executed="OnCommandNetWorth"/>
@@ -103,8 +101,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-
 
         <!-- TOP MENU -->
         <Grid Grid.Row="0" Background="{DynamicResource MenuBackgroundBrush}" Style="{DynamicResource WalkaboutToolBarMenuFocusVisual}" >
@@ -177,12 +173,7 @@
                         <MenuItem x:Name="MenuViewCurrencies" Header="_Currencies" Command="p:AppCommands.CommandViewCurrencies"/>
                         <MenuItem x:Name="MenuViewOnlineAliases" Header="_Aliases" Command="p:AppCommands.CommandViewAliases"/>
                         <Separator/>
-                        <MenuItem x:Name="MenuViewOnlineOptions" Header="_Options" Command="p:AppCommands.CommandViewOptions"/>
-                        <Separator/>
-                        <MenuItem Header="_Theme">
-                            <MenuItem x:Name="MenuViewThemeVS2010" Header="_1 Light" Command="p:AppCommands.CommandViewThemeVS2010"/>
-                            <MenuItem x:Name="MenuViewThemeFlat" Header="_2 Dark" Command="p:AppCommands.CommandViewThemeFlat"/>
-                        </MenuItem>
+                        <MenuItem x:Name="MenuViewOnlineOptions" Header="_Options..." Command="p:AppCommands.CommandViewOptions"/>
                     </MenuItem>
 
                     <MenuItem x:Name="MenuViewReports" Header="_Reports">
@@ -382,6 +373,9 @@
                 </Grid>
             </Grid>
         </Border>
+
+        <c:AppSettings x:Name="AppSettingsPanel" Grid.Row="1" Width="300" HorizontalAlignment="Right" Visibility="Collapsed">
+        </c:AppSettings>
 
         <StatusBar Grid.Row="2" Height="23" Background="{DynamicResource WalkaboutStatusBarBrush}" Foreground="{DynamicResource WalkaboutStatusBarTextBrush}">
             <StatusBarItem x:Name="StatusMessage" HorizontalAlignment="Left"/>

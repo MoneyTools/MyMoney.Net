@@ -325,6 +325,53 @@ namespace Walkabout.Attachments
                 Stop();
             }
         }
+
+        internal bool MoveAttachments(string path)
+        {
+            bool exists = false;
+            string existing = this.AttachmentDirectory;
+            bool hasValue = !string.IsNullOrEmpty(path);
+            if (hasValue)
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(existing) && Directory.Exists(existing) &&
+                        string.Compare(path, existing, StringComparison.OrdinalIgnoreCase) != 0 &&
+                        !Directory.Exists(path))
+                    {
+                        if (MessageBox.Show(Application.Current.MainWindow, "Would you like to move the existing attachments directory to this new path?", "Rename Directory", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
+                        {
+                            Directory.Move(existing, path);
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
+                    exists = Directory.Exists(path);
+                    if (!exists)
+                    {
+                        if (MessageBox.Show(Application.Current.MainWindow, "The storage location does not exist, would you like to create it?", "Create Directory", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    this.AttachmentDirectory = path;
+                }
+                catch (Exception ex)
+                {
+                    exists = false;
+                    MessageBox.Show(Application.Current.MainWindow, "Unexpected error: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     class AttachmentWatcher 

@@ -224,7 +224,10 @@ namespace Walkabout.StockQuotes
                 args = args.Next;
             }
 
-            BeginGetQuotes(newSecurities);
+            if (newSecurities.Count > 0)
+            {
+                BeginGetQuotes(newSecurities);
+            }
         }
 
         public void UpdateQuotes()
@@ -702,11 +705,7 @@ namespace Walkabout.StockQuotes
                 {
                     try
                     {
-                        history = StockQuoteHistory.Load(this._logFolder, symbol);
-                        if (symbol == "GE")
-                        {
-                            Debug.WriteLine("debug me");
-                        }
+                        history = StockQuoteHistory.Load(this._logFolder, symbol);                        
                         if (history.RemoveDuplicates())
                         {
                             changedHistory = true;
@@ -982,6 +981,7 @@ namespace Walkabout.StockQuotes
                 Thread.Sleep(1000); // wait for download to finish.
             }
             _downloadingHistory = false;
+            OnError("Download history complete");
         }
 
         void OnError(string message)

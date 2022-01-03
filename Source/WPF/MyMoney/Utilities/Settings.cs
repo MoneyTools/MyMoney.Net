@@ -15,6 +15,7 @@ using Walkabout.Utilities;
 using Walkabout.Views;
 using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
+using System.ComponentModel;
 
 namespace Walkabout.Configuration
 {
@@ -24,8 +25,9 @@ namespace Walkabout.Configuration
     /// This class encapsulates the bag of settings used by various components in this application
     /// and knows how to serialize and deserialize them between application sessions.
     /// </summary>
-    public class Settings : IXmlSerializable
+    public class Settings : IXmlSerializable, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
         //
         // This is the global singleton Settings instance used by the everywhere in MyMoney
         // it is initialized by App.Xaml.cs
@@ -42,7 +44,10 @@ namespace Walkabout.Configuration
                 object value = map["WindowLocation"];
                 return value is Point ? (Point)value : new Point(0, 0);
             }
-            set { map["WindowLocation"] = value;  }
+            set { 
+                map["WindowLocation"] = value;
+                OnPropertyChanged("WindowLocation");
+            }
         }
 
         public Size WindowSize
@@ -52,7 +57,10 @@ namespace Walkabout.Configuration
                 object value = map["WindowSize"];
                 return value is Size ? (Size)value : new Size(0, 0);
             }
-            set { map["WindowSize"] = value; }
+            set { 
+                map["WindowSize"] = value;
+                OnPropertyChanged("WindowSize");
+            }
         }
 
         public Size AttachmentDialogSize
@@ -69,7 +77,10 @@ namespace Walkabout.Configuration
                 value = map["AttachmentDialogSize"];
                 return value is Size ? (Size)value : new Size(0, 0);
             }
-            set { map["AttachmentDialogSize"] = value; }
+            set { 
+                map["AttachmentDialogSize"] = value;
+                OnPropertyChanged("AttachmentDialogSize");
+            }
         }
 
         public string AttachmentDirectory
@@ -86,7 +97,10 @@ namespace Walkabout.Configuration
                 value = map["AttachmentDirectory"];
                 return value is string ? (string)value : null;
             }
-            set { map["AttachmentDirectory"] = value; }
+            set { 
+                map["AttachmentDirectory"] = value;
+                OnPropertyChanged("AttachmentDirectory");
+            }
         }
 
         public string[] RecentFiles
@@ -96,7 +110,10 @@ namespace Walkabout.Configuration
                 object value = map["RecentFiles"];
                 return value is string[] ? (string[])value : null;
             }
-            set { map["RecentFiles"] = value; }
+            set { 
+                map["RecentFiles"] = value;
+                OnPropertyChanged("RecentFiles");
+            }
         }
 
         public int ToolBoxWidth
@@ -106,7 +123,10 @@ namespace Walkabout.Configuration
                 object value = map["ToolBoxWidth"];
                 return value is int ? (int)value : 0;
             }
-            set { map["ToolBoxWidth"] = value; }
+            set { 
+                map["ToolBoxWidth"] = value;
+                OnPropertyChanged("ToolBoxWidth");
+            }
         }
 
         public int GraphHeight
@@ -116,7 +136,10 @@ namespace Walkabout.Configuration
                 object value = map["GraphHeight"];
                 return value is int ? (int)value : 0;
             }
-            set { map["GraphHeight"] = value; }
+            set { 
+                map["GraphHeight"] = value;
+                OnPropertyChanged("GraphHeight");
+            }
         }
 
         /// <summary>
@@ -129,9 +152,25 @@ namespace Walkabout.Configuration
                 object value = map["Database"];
                 return value is string ? (string)value : null;
             }
-            set { map["Database"] = value; }
+            set { 
+                map["Database"] = value;
+            }
         }
-        
+
+        public int FiscalYearStart
+        {
+            get
+            {
+                object value = map["FiscalYearStart"];
+                return value is int i ? i : 0;
+            }
+            set
+            {
+                map["FiscalYearStart"] = value;
+                OnPropertyChanged("FiscalYearStart");
+            }
+        }
+
         public string Connection
         {
             set 
@@ -183,7 +222,9 @@ namespace Walkabout.Configuration
                 object value = map["Server"];
                 return value is string ? (string)value : null;
             }
-            set { map["Server"] = value; }
+            set { 
+                map["Server"] = value; 
+            }
         }
 
         public string BackupPath
@@ -193,7 +234,10 @@ namespace Walkabout.Configuration
                 object value = map["BackupPath"];
                 return value is string ? (string)value : null;
             }
-            set { map["BackupPath"] = value; }
+            set { 
+                map["BackupPath"] = value;
+                OnPropertyChanged("BackupPath");
+            }
         }
 
         public string UserId
@@ -203,7 +247,10 @@ namespace Walkabout.Configuration
                 object value = map["UserId"];
                 return value is string ? (string)value : null;
             }
-            set { map["UserId"] = value; }
+            set { 
+                map["UserId"] = value;
+                OnPropertyChanged("UserId");
+            }
         }
 
         public bool DisplayClosedAccounts
@@ -213,7 +260,10 @@ namespace Walkabout.Configuration
                 object value = map["DisplayClosedAccounts"];
                 return value is bool ? (bool)value : false;
             }
-            set { map["DisplayClosedAccounts"] = value; }
+            set { 
+                map["DisplayClosedAccounts"] = value;
+                OnPropertyChanged("DisplayClosedAccounts");
+            }
         }
 
         public bool PlaySounds
@@ -223,7 +273,10 @@ namespace Walkabout.Configuration
                 object value = map["PlaySounds"];
                 return value is bool ? (bool)value : false;
             }
-            set { map["PlaySounds"] = value; }
+            set { 
+                map["PlaySounds"] = value;
+                OnPropertyChanged("PlaySounds");
+            }
         }
 
         public bool RentalManagement
@@ -233,7 +286,10 @@ namespace Walkabout.Configuration
                 object value = map["RentalManagement"];
                 return value is bool ? (bool)value : false;
             }
-            set { map["RentalManagement"] = value; }
+            set { 
+                map["RentalManagement"] = value;
+                OnPropertyChanged("RentalManagement");
+            }
         }
 
         public List<StockServiceSettings> StockServiceSettings
@@ -246,6 +302,7 @@ namespace Walkabout.Configuration
             set
             {
                 map["StockServiceSettings"] = value;
+                OnPropertyChanged("StockServiceSettings");
             }
         }
 
@@ -256,7 +313,10 @@ namespace Walkabout.Configuration
                 object value = map["Query"];
                 return value is QueryRow[] ? (QueryRow[])value : null;
             }
-            set { map["Query"] = value; }
+            set { 
+                map["Query"] = value;
+                OnPropertyChanged("Query");
+            }
         }
         
         public GraphState GraphState
@@ -266,7 +326,10 @@ namespace Walkabout.Configuration
                 object value = map["GraphState"];
                 return value is GraphState ? (GraphState)value : null;
             }
-            set { map["GraphState"] = value; }
+            set { 
+                map["GraphState"] = value;
+                OnPropertyChanged("GraphState");
+            }
         }
 
         public DateTime StartDate
@@ -296,7 +359,10 @@ namespace Walkabout.Configuration
                 object value = map["LastStockRequest"];
                 return value is DateTime ? (DateTime)value : DateTime.MinValue;
             }
-            set { map["LastStockRequest"] = value; }
+            set { 
+                map["LastStockRequest"] = value;
+                OnPropertyChanged("LastStockRequest");
+            }
         }
 
         
@@ -307,7 +373,10 @@ namespace Walkabout.Configuration
                 object value = map["Theme"];
                 return value is string ? (string)value : null;
             }
-            set { map["Theme"] = value; }
+            set {
+                map["Theme"] = value;
+                OnPropertyChanged("Theme");
+            }
         }
 
         public string ExeVersion
@@ -346,7 +415,10 @@ namespace Walkabout.Configuration
                 object value = map["DuplicateRange"];
                 return value is TimeSpan ? (TimeSpan)value : TimeSpan.FromDays(60);
             }
-            set { map["DuplicateRange"] = value; }
+            set { 
+                map["DuplicateRange"] = value;
+                OnPropertyChanged("DuplicateRange");
+            }
         }
         
         #endregion
@@ -821,6 +893,7 @@ namespace Walkabout.Configuration
 
         private Dictionary<Type, XmlElement> viewStateNodes = new Dictionary<Type, XmlElement>();
 
+
         internal ViewState GetViewState(Type viewType)
         {
             ViewState state = null;
@@ -845,6 +918,13 @@ namespace Walkabout.Configuration
             viewStateNodes[viewType] = xmlElement;
         }
 
+        private void OnPropertyChanged(string name)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+            }
+        }
     }
 
     public class GraphState : IXmlSerializable

@@ -153,7 +153,7 @@ namespace Walkabout.Reports
             {
                 if (this.selectedGroup != null)
                 {
-                    WriteSummary(writer, data, TaxableIncomeType.None, null, null, true);
+                    WriteSummary(writer, data, TaxableIncomeType.None, null, null, false);
                 }
                 else
                 {
@@ -414,6 +414,7 @@ namespace Walkabout.Reports
             decimal totalSectionGainValue = 0;
 
             decimal cash = 0;
+            int rowCount = 0;
 
             if (this.selectedGroup == null)
             {
@@ -438,9 +439,9 @@ namespace Walkabout.Reports
                     Label = caption,
                     Color = color
                 });
+                rowCount++;
             }
 
-            int rowCount = 0;
             IList<SecurityGroup> groups = null;
             if (this.selectedGroup != null)
             {

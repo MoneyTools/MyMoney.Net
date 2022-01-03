@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -95,6 +96,23 @@ namespace Walkabout.Controls
             Add(header, id, content, false);
         }
 
+        Dictionary<string, Expander> tabs = new Dictionary<string, Expander>();
+
+        public bool ContainsTab(string name)
+        {
+            return tabs.ContainsKey(name);
+        }
+
+        public void RemoveTab(string name)
+        {
+            if (tabs.ContainsKey(name))
+            {
+                Expander expander = tabs[name];
+                tabs.Remove(name);
+                this.MainGrid.Children.Remove(expander);
+            }
+        }
+
         public void Add(string header, string id, object content, bool searchBox)
         {
 
@@ -102,6 +120,7 @@ namespace Walkabout.Controls
             // The new accordion section is build using an Expander
             //
             Expander expanderToAdd = new Expander();
+            tabs[header] = expanderToAdd;
 
             // Set dynamic reference to style so theme can be switched.
             expanderToAdd.SetResourceReference(FrameworkElement.StyleProperty, "AccordionExpander");

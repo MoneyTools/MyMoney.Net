@@ -12,6 +12,8 @@
     <SolidColorBrush x:Key="WalkaboutAccountClosedTextBrush" Color="Gray"/>
     <SolidColorBrush x:Key="WalkaboutAccountEnabledTextBrush" Color="Black"/>
     <SolidColorBrush x:Key="WalkaboutSelectedTextBrush" Color="Black"/>
+    <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="Black"/>
+    <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="#F6F4F2"/>
 
     <SolidColorBrush x:Key="DialogWindowBackgroundBrush" Color="#F6F4F2"/>
     

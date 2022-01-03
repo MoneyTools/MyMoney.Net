@@ -20,7 +20,6 @@ namespace Walkabout.Utilities
             return result;
         }
 
-
         /// <summary>
         /// The nice thing about XPath is you can do a deep query just to see if the element exists,
         /// that is a but cumbersome in XLinq because you have to check for null at each stage along the way.

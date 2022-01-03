@@ -439,15 +439,9 @@ namespace Walkabout.StockQuotes
                         while (ms > 0)
                         {
                             string message = null;
-                            if (ms > 1000)
-                            {
-                                int seconds = ms / 1000;
-                                message = string.Format("AlphaVantage history service needs to sleep for {0} seconds", seconds);
-                            }
-                            else
-                            {
-                                message = string.Format("AlphaVantage history service needs to sleep for {0} ms", ms.ToString());
-                            }
+                            string suffix = (ms > 1000) ? "seconds" : "ms";
+                            int amount = (ms > 1000) ? ms / 1000 : ms;
+                            message = string.Format("AlphaVantage history service needs to sleep for {0} {1}", suffix, amount);
 
                             OnComplete(PendingCount == 0, message);
                             while (!_cancelled && ms > 0)

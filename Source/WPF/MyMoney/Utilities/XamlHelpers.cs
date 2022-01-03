@@ -8,6 +8,7 @@ using Walkabout.Data;
 using System.Windows.Controls.Primitives;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 
 namespace Walkabout.Utilities
 {
@@ -301,6 +302,19 @@ namespace Walkabout.Utilities
             }
         }
 
+        public static void Flyout(this FrameworkElement e)
+        {
+            e.Visibility = Visibility.Visible;
+            e.UpdateLayout();
+            double width = e.ActualWidth;
+            TranslateTransform transform = new TranslateTransform(width, 0);
+            e.RenderTransform = transform;
+            transform.BeginAnimation(TranslateTransform.XProperty,
+                new DoubleAnimation(0, new Duration(TimeSpan.FromSeconds(0.2)))
+                {
+                    EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut }
+                });
+        }
 
     }
 

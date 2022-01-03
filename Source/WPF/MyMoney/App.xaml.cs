@@ -121,6 +121,8 @@ namespace Walkabout
             Settings s = new Settings(!noSettings);
             try
             {
+                SetDefaultSettings(s);
+
                 if (s.ConfigFile == null || File.Exists(s.ConfigFile) == false)
                 {
                     s.ConfigFile = ProcessHelper.ConfigFile;
@@ -141,6 +143,12 @@ namespace Walkabout
 
             Settings.TheSettings = s;
             return s;
+        }
+
+        private static void SetDefaultSettings(Settings s)
+        {
+            s.Theme = "Themes\\Theme-VS2010.xaml"; // Default to this theme on the first ever run
+            s.PlaySounds = true; // default true.
         }
 
         /// <summary>

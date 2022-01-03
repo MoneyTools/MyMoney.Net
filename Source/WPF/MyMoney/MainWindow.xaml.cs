@@ -64,7 +64,6 @@ namespace Walkabout
         private ChangeTracker tracker;
         private DispatcherTimer timer;
         private bool chartsDirty;
-        private Dictionary<string, MenuItem> menuToThemeMapping = new Dictionary<string, MenuItem>();
 
         //---------------------------------------------------------------------
         // The Toolbox controls
@@ -101,6 +100,7 @@ namespace Walkabout
 #endif
                 UiDispatcher.CurrentDispatcher = this.Dispatcher;
                 this.settings = settings;
+                this.settings.PropertyChanged += OnSettingsChanged;
 
                 this.attachmentManager = new AttachmentManager(this.myMoney);
                 this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
@@ -166,21 +166,12 @@ namespace Walkabout
                 this.securitiesControl.Name = "SecuritiesControl";
                 this.securitiesControl.MyMoney = this.myMoney;
 
-                if (settings.RentalManagement)
-                {
-                    //-----------------------------------------------------------------
-                    // RENTAL CONTROL
-                    this.rentsControl = new RentsControl();
-                    this.rentsControl.TabIndex = 5;
-                    this.rentsControl.Name = "RentsControl";
-                    this.rentsControl.MyMoney = this.myMoney;
-                }
+                UpdateRentalManagement();
 
                 //-----------------------------------------------------------------
                 // Set the default view to be the Transaction view
                 SetCurrentView<TransactionsView>();
                 this.navigator.Pop();
-
 
                 //-----------------------------------------------------------------
                 // These events must be set after view.ServiceProvider is set
@@ -191,14 +182,6 @@ namespace Walkabout
                 this.categoriesControl.SelectedTransactionChanged += new EventHandler(CategoriesControl_SelectedTransactionChanged);
                 this.payeesControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Payees);
                 this.securitiesControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Securities);
-
-                if (rentsControl != null)
-                {
-                    //-----------------------------------------------------------------
-                    // Setup the Rental module
-                    //
-                    this.rentsControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Rents);
-                }
 
                 this.exchangeRates = new ExchangeRates();
 
@@ -219,10 +202,7 @@ namespace Walkabout
                 this.toolBox.Add("PAYEES", "PayeesSelector", this.payeesControl, true);
                 this.toolBox.Add("SECURITIES", "SecuritiesSelector", this.securitiesControl, true);
 
-                if (rentsControl != null)
-                {
-                    this.toolBox.Add("RENTS", "RentsSelector", this.rentsControl);
-                }
+                OnAddRentalTab();
 
                 this.toolBox.Expanded += new RoutedEventHandler(OnToolBoxItemsExpanded);
                 this.toolBox.FilterUpdated += new Accordion.FilterEventHandler(OnToolBoxFilterUpdated);
@@ -276,11 +256,64 @@ namespace Walkabout
                 this.recentFilesMenu.RecentFileSelected += OnRecentFileSelected;
 
                 this.TransactionGraph.ServiceProvider = this;
+                this.AppSettingsPanel.Closed += OnAppSettingsPanelClosed;
 
 #if PerformanceBlocks
             }
 #endif
         }
+
+        private void OnSettingsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName) {
+                case "RentalManagement":
+                    UpdateRentalManagement();
+                    break;
+                case "Theme":
+                    SetTheme(settings.Theme);
+                    break;
+            }
+        }
+
+        private void UpdateRentalManagement()
+        {
+            if (settings.RentalManagement)
+            {
+                //-----------------------------------------------------------------
+                // RENTAL CONTROL
+                if (this.rentsControl == null)
+                {
+                    this.rentsControl = new RentsControl();
+                    this.rentsControl.TabIndex = 5;
+                    this.rentsControl.Name = "RentsControl";
+                    this.rentsControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Rents);
+                }
+                this.rentsControl.MyMoney = this.myMoney;
+                OnAddRentalTab();
+            }
+            else
+            {
+                this.rentsControl = null;
+                OnRemoveRentalTab();
+            }
+        }
+
+        private void OnRemoveRentalTab()
+        {
+            if (this.toolBox.ContainsTab("RENTS"))
+            {
+                this.toolBox.RemoveTab("RENTS");
+            }
+        }
+
+        private void OnAddRentalTab()
+        {
+            if (this.rentsControl != null && !this.toolBox.ContainsTab("RENTS"))
+            {
+                this.toolBox.Add("RENTS", "RentsSelector", this.rentsControl);
+            }
+        }
+
 
         private void OnStockQuoteHistoryAvailable(object sender, StockQuoteHistory history)
         {
@@ -531,10 +564,7 @@ namespace Walkabout
                 {
                     CleanupStockQuoteManager();
                 }
-                if (settings.RentalManagement)
-                {
-                    this.rentsControl.MyMoney = this.myMoney;
-                }
+                UpdateRentalManagement();
                 UpdateCaption(null);
 
                 myMoney.BeginUpdate(this);
@@ -992,6 +1022,10 @@ namespace Walkabout
 
         private void OnSelectionChangeFor_Rents(object sender, EventArgs e)
         {
+            if (this.rentsControl == null)
+            {
+                return;
+            }
             object currentlySelected = this.rentsControl.Selected;
 
             if (currentlySelected is RentBuilding)
@@ -1241,6 +1275,14 @@ namespace Walkabout
                     this.Forward();
                 }
             }
+            else
+            {
+                var pos = e.GetPosition(this.AppSettingsPanel);
+                if (pos.X < 0 || pos.Y < 0)
+                {
+                    this.AppSettingsPanel.Visibility = Visibility.Collapsed;
+                }
+            }
             base.OnPreviewMouseDown(e);
         }
 
@@ -1363,10 +1405,6 @@ namespace Walkabout
 
             LoadConfig();
 
-            // Menu association to themes 
-            this.menuToThemeMapping.Add("Themes/Theme-VS2010.xaml", MenuViewThemeVS2010);
-            this.menuToThemeMapping.Add("Themes/Theme-Flat.xaml", MenuViewThemeFlat);
-
             this.TransactionView.QueryPanel.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnQueryPanelIsVisibleChanged);
 
             TempFilesManager.Initialize();
@@ -1374,28 +1412,16 @@ namespace Walkabout
 
         public bool HasDatabase { get { return this.database != null || isLoading; } }
 
+        string currentTheme;
+
         void SetTheme(string themeToApply)
         {
             if (!string.IsNullOrEmpty(themeToApply))
             {
-
-                if (settings.Theme != themeToApply)
+                if (currentTheme != themeToApply)
                 {
                     ProcessHelper.SetTheme(2, themeToApply);
-                    settings.Theme = themeToApply;
-                }
-
-                // Turn on the correct check mark of the menu View/Theme 
-                foreach (KeyValuePair<string, MenuItem> mt in menuToThemeMapping)
-                {
-                    if (mt.Key == themeToApply)
-                    {
-                        mt.Value.IsChecked = true;
-                    }
-                    else
-                    {
-                        mt.Value.IsChecked = false;
-                    }
+                    currentTheme = themeToApply;
                 }
             }
         }
@@ -1414,7 +1440,6 @@ namespace Walkabout
                 }
                 this.TransactionView.ViewAllSplits = false;
                 this.TransactionView.OneLineView = false;
-                this.settings.Theme = "Themes\\Theme-VS2010.xaml"; // Default to this theme on the first ever run
             }
             else
             {
@@ -1578,7 +1603,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
-                MessageBoxEx.Show("Error while attempting to import", null, ex.Message);
+                MessageBoxEx.Show(ex.Message, "Error while attempting to import", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             // Refresh the Transaction view in case the imported file has modified the data currently being displayed
@@ -2127,12 +2152,15 @@ namespace Walkabout
                 SetDirty(false);
                 UpdatePendingChangePopupState();
 
-                Sounds.PlaySound("Walkabout.Icons.Ding.wav");
+                if (settings.PlaySounds)
+                {
+                    Sounds.PlaySound("Walkabout.Icons.Ding.wav");
+                }
                 return true;
             }
             catch (Exception e)
             {
-                MessageBoxEx.Show("Error saving data\n" + e.Message);
+                MessageBoxEx.Show(e.Message, "Error saving data", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             finally
@@ -2537,8 +2565,11 @@ namespace Walkabout
                 }
                 else if (view.ActiveRental != null)
                 {
-                    rentsControl.Selected = view.ActiveRental;
-                    this.toolBox.Selected = this.rentsControl;
+                    if (this.rentsControl != null)
+                    {
+                        rentsControl.Selected = view.ActiveRental;
+                        this.toolBox.Selected = this.rentsControl;
+                    }
                 }
                 else if (view.ActiveSecurity != null)
                 {
@@ -3463,6 +3494,7 @@ namespace Walkabout
                         SaveAsSqlCe(fname);
                         break;
                     case ".db":
+                    case ".mmdb":
                         SaveAsSqlite(fname);
                         break;
                     case ".xml":
@@ -3632,7 +3664,7 @@ namespace Walkabout
             }
             catch (Exception exp)
             {
-                MessageBoxEx.Show(exp.Message);
+                MessageBoxEx.Show(exp.Message, "Error changing file associations", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -3834,42 +3866,33 @@ namespace Walkabout
 
         private void OnCommandViewOptions(object sender, ExecutedRoutedEventArgs e)
         {
-            SettingsDialog dialog = new SettingsDialog();
-            dialog.Owner = this;
-
             if (this.database != null)
             {
-                dialog.Password = this.database.Password;
+                this.AppSettingsPanel.Password = this.database.Password;
             }
 
-            if (dialog.ShowDialog() == true)
+            WpfHelper.Flyout(this.AppSettingsPanel);
+        }
+
+        private void OnAppSettingsPanelClosed(object sender, EventArgs e)
+        {
+            var newPassword = this.AppSettingsPanel.Password;
+            if (database != null && database.Password != newPassword)
             {
-                if (database != null)
+                try
                 {
-                    database.Password = dialog.Password;
+                    if (this.database != null)
+                    {
+                        this.database.Password = newPassword;
+                    }
                     DatabaseSecurity.SaveDatabasePassword(database.DatabasePath, database.Password);
-                }
-
-                // this setting might have changed.
-                if (attachmentManager.AttachmentDirectory != settings.AttachmentDirectory)
+                } 
+                catch (Exception ex)
                 {
-                    attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
-                    attachmentManager.Stop();
-                    attachmentManager.Start();
+                    MessageBoxEx.Show(ex.Message, "Error changing password on database", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
-
-        private void OnCommandViewThemeVS2010(object sender, ExecutedRoutedEventArgs e)
-        {
-            SetTheme("Themes/Theme-VS2010.xaml");
-        }
-
-        private void OnCommandViewThemeFlat(object sender, ExecutedRoutedEventArgs e)
-        {
-            SetTheme("Themes/Theme-Flat.xaml");
-        }
-
 
         private void OnSynchronizeOnlineAccounts(object sender, ExecutedRoutedEventArgs e)
         {
