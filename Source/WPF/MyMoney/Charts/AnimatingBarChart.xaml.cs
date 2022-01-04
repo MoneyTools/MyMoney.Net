@@ -177,6 +177,14 @@ namespace LovettSoftware.Charts
                             {
                                 throw new Exception("All series must have the same label on each column");
                             }
+                            if (d.Hidden)
+                            {
+                                // then we must hide all columns at this index
+                                foreach (var t in s)
+                                {
+                                    t.Values[i].Hidden = true;
+                                }
+                            }
                         }
                     }
                 }
@@ -383,6 +391,10 @@ namespace LovettSoftware.Charts
             {
                 foreach (var item in series.Values)
                 {
+                    if (item.Hidden)
+                    {
+                        continue;
+                    }
                     ColumnInfo info = null;
                     if (index < bars.Count)
                     {
@@ -439,6 +451,10 @@ namespace LovettSoftware.Charts
             {
                 foreach (var item in series.Values)
                 {
+                    if (item.Hidden)
+                    {
+                        continue;
+                    }
                     var v = item.Value;
                     maxValue = Math.Max(maxValue, v);
                     minValue = Math.Min(minValue, v);
@@ -489,7 +505,7 @@ namespace LovettSoftware.Charts
 
             var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationGrowthMilliseconds));
 
-            int columns = (from series in Data.Series select series.Values.Count).Max();
+            int columns = GetVisibleColumns();
             double w = this.ActualWidth;
             double h = this.ActualHeight;
 
@@ -562,6 +578,10 @@ namespace LovettSoftware.Charts
                 foreach (var series in this.Data.Series)
                 {
                     var dataValue = series.Values[col];
+                    if (dataValue.Hidden)
+                    {
+                        continue;
+                    }
                     double s = (dataValue.Value * w / range); 
                     Color color = dataValue.Color.Value;
 
@@ -653,13 +673,23 @@ namespace LovettSoftware.Charts
             }
         }
 
+        private int GetVisibleColumns()
+        {
+            int count = 0;
+            if (Data.Series.Count > 0)
+            {
+                count = (from i in Data.Series[0].Values where !i.Hidden select i).Count();
+            }
+            return count;
+        }
+
         private void HorizontalLayout()
         {
             ChartCanvas.Children.Clear();
 
             var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationGrowthMilliseconds));
 
-            int columns = (from series in Data.Series select series.Values.Count).Max();
+            int columns = GetVisibleColumns();
             double w = this.ActualWidth;
             double h = this.ActualHeight;
 
@@ -734,6 +764,10 @@ namespace LovettSoftware.Charts
                 foreach (var series in this.Data.Series)
                 {
                     var dataValue = series.Values[col];
+                    if (dataValue.Hidden)
+                    {
+                        continue;
+                    }
                     double s = (dataValue.Value * h / range);
                     Color color = dataValue.Color.Value;
 

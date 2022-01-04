@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:LovettSoftware.Charts"
+             xmlns:cc="clr-namespace:Walkabout.Charts"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -13,11 +14,19 @@
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid Background="Transparent">
-        <c:AnimatingPieChart x:Name="PieChart" Padding="10"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">            
+        <c:AnimatingPieChart x:Name="PieChart" Padding="10"/>
+
+        <StackPanel Grid.Column="1"  Orientation="Horizontal" HorizontalAlignment="Right" Margin="24,10">            
             <TextBlock Text="Total: " FontWeight="Bold"/>
             <TextBlock Text="" x:Name="TotalAmount" />
         </StackPanel>
+        
+        <cc:ChartLegend x:Name="Legend" Grid.Column="1" HorizontalAlignment="Right" Margin="0,30,0,0" Width="300"/>
+                        
     </Grid>
 </UserControl>

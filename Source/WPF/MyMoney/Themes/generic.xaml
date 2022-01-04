@@ -16,7 +16,7 @@
     <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="#F6F4F2"/>
 
     <SolidColorBrush x:Key="DialogWindowBackgroundBrush" Color="#F6F4F2"/>
-    
+
     <!-- was 7BD1AA -->
     <SolidColorBrush x:Key="WalkaboutReconciledRowBackgroundBrush" Color="#A1EFC9"/>
 
@@ -44,13 +44,13 @@
     <SolidColorBrush x:Key="ButtonMouseOverBackground" Color="#FFE8A6"/>
     <SolidColorBrush x:Key="ButtonMouseOverForeground" Color="Black"/>
     <SolidColorBrush x:Key="ButtonMouseOverBorder" Color="Black"/>
-    
+
     <s:Double x:Key="MainTransactionAreaFontSize">12</s:Double>
     <s:Double x:Key="LegendItemSwatchWidth">16</s:Double>
     <s:Double x:Key="LegendItemSwatchHeight">16</s:Double>
 
     <SolidColorBrush x:Key="TextBrush" Color="Black" />
-    
+
     <SolidColorBrush x:Key="TransactionConnectorBrush" Color="DarkSlateBlue" />
 
     <FontFamily x:Key="DataGridFont">Segoe UI</FontFamily>
@@ -72,7 +72,7 @@
     </LinearGradientBrush>
 
     <SolidColorBrush x:Key="ValidDropTargetFeedbackBrush" Color="Navy"/>
-    
+
     <Style x:Key="SmoothFadeIn" TargetType="FrameworkElement" >
         <Style.Triggers>
             <Trigger Property="Visibility" Value="Visible">
@@ -233,7 +233,7 @@
 								           Visibility="{Binding Prefix, Converter={StaticResource NullOrEmptyStringToVisible}}"/>
                                 <TextBlock Text="{Binding Path=Label}" FontSize="12" FontWeight="Medium" VerticalAlignment="Center" TextAlignment="Left"/>
                             </StackPanel>
-                            
+
                             <Border Background="Gray" Width="16" Margin="-2,0,3,0"  Grid.Column="1">
                                 <TextBlock Text="{Binding Type, Converter={StaticResource CategoryTypeLetterConverter}}" Margin="2,0,2,0" FontWeight="DemiBold" FontStyle="Italic" FontSize="11" Foreground="White" TextAlignment="Center"/>
                             </Border>
@@ -773,7 +773,6 @@
         <GradientStop Color="#010180" Offset="1" />
     </LinearGradientBrush>
 
-
     <!-- This resource dictionary contains default themes for Windows 8 -->
     <ControlTemplate x:Key="DropDownControlTemplate" TargetType="{x:Type ToggleButton}">
         <Border BorderThickness="{TemplateBinding Border.BorderThickness}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" Name="border" SnapsToDevicePixels="True">
@@ -859,7 +858,7 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    
+
     <!-- Define a Drawing as a resource that can be used as content for a Tiled DrawingBrush to get the Blend backdop effect. -->
     <DrawingGroup x:Key="CheckerBoxBackground">
         <GeometryDrawing Brush="#5B5B5B">
@@ -898,7 +897,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <!-- The following are used in toolbar icons -->
     <SolidColorBrush x:Key="ToolbarIconBrush" Color="#2C5BC1"/>
 

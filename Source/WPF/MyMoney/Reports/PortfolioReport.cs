@@ -148,7 +148,8 @@ namespace Walkabout.Reports
             }
             writer.EndColumnDefinitions();
 
-            List<ChartDataValue> data = new List<ChartDataValue>();
+            var series = new ChartDataSeries() { Name = "Portfolio" };
+            IList<ChartDataValue> data = series.Values;
             if (account == null)
             {
                 if (this.selectedGroup != null)
@@ -200,7 +201,7 @@ namespace Walkabout.Reports
             chart.Margin = new Thickness(0, 00, 0, 0);
             chart.VerticalAlignment = VerticalAlignment.Top;
             chart.HorizontalAlignment = HorizontalAlignment.Left;
-            chart.Series = data;
+            chart.Series = series;
             chart.ToolTipGenerator = OnGenerateToolTip;
             chart.PieSliceClicked += OnPieSliceClicked;
 
@@ -406,7 +407,7 @@ namespace Walkabout.Reports
         }
 
 
-        private void WriteSummary(IReportWriter writer, List<ChartDataValue> data, TaxableIncomeType taxableIncomeType, string prefix, Predicate<Account> filter, bool subtotal)
+        private void WriteSummary(IReportWriter writer, IList<ChartDataValue> data, TaxableIncomeType taxableIncomeType, string prefix, Predicate<Account> filter, bool subtotal)
         {
             bool wroteSectionHeader = false;
             string caption = prefix + "Investments";

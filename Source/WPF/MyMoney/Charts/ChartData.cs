@@ -113,6 +113,7 @@ namespace Walkabout.Charts
         string label;
         object userdata;
         Color? color;
+        bool hidden; // for filtering out values.
 
         public ChartDataValue()
         {
@@ -141,6 +142,12 @@ namespace Walkabout.Charts
         {
             get { return this.color; }
             set { this.color = value; }
+        }
+
+        public bool Hidden
+        {
+            get { return this.hidden; }
+            set { this.hidden = value; }
         }
 
         public object UserData

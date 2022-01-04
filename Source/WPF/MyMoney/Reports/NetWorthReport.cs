@@ -33,7 +33,8 @@ namespace Walkabout.Reports
         {
             writer.WriteHeading("Net Worth Statement");
 
-            List<ChartDataValue> data = new List<ChartDataValue>();
+            var series = new ChartDataSeries() { Name = "Net Worth" };
+            IList<ChartDataValue> data = series.Values;
 
             // outer table contains 2 columns, left is the summary table, right is the pie chart.
             writer.StartTable();
@@ -184,7 +185,7 @@ namespace Walkabout.Reports
             chart.Height = 400;
             chart.BorderThickness = new Thickness(0);
             chart.VerticalAlignment = VerticalAlignment.Top;
-            chart.Series = data;
+            chart.Series = series;
             chart.ToolTipGenerator = OnGenerateToolTip;
             chart.PieSliceClicked += OnPieSliceClicked;
 
@@ -219,7 +220,7 @@ namespace Walkabout.Reports
             return tip;
         }
 
-        private decimal WriteSecurities(IReportWriter writer, List<ChartDataValue> data, string prefix, Predicate<Account> filter, out bool hasNoneType)
+        private decimal WriteSecurities(IReportWriter writer, IList<ChartDataValue> data, string prefix, Predicate<Account> filter, out bool hasNoneType)
         {
             hasNoneType = false;
             decimal balance = 0;

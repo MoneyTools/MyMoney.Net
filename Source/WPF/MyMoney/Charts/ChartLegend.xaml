@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="Walkabout.Charts.ChartLegend"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Walkabout.Charts"                  
+             xmlns:s="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="300">
+    <UserControl.Resources>
+
+        <ControlTemplate x:Key="ChartLegendFilterControlTemplate" TargetType="{x:Type ToggleButton}">
+            <Border BorderThickness="1" BorderBrush="Transparent" Background="{TemplateBinding Background}" 
+                Name="border" SnapsToDevicePixels="True">
+                <TextBlock Name="eye" Text="&#xE18B;" FontFamily="Segoe UI Symbol" 
+                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                       Padding="0" Margin="0" Visibility="Collapsed"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <DataTrigger Binding="{Binding Path=Hidden}" Value="false">
+                    <Setter Property="Visibility" TargetName="eye" Value="Hidden"/>
+                </DataTrigger>
+                <Trigger Property="IsMouseOver">
+                    <Setter Property="BorderBrush" TargetName="border">
+                        <Setter.Value>
+                            <SolidColorBrush>Black</SolidColorBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <Trigger.Value>
+                        <s:Boolean>True</s:Boolean>
+                    </Trigger.Value>
+                </Trigger>
+                <Trigger Property="IsPressed">
+                    <Setter Property="Visibility" TargetName="eye" Value="Visible"/>
+                    <Setter Property="BorderBrush" TargetName="border">
+                        <Setter.Value>
+                            <SolidColorBrush>Black</SolidColorBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <Trigger.Value>
+                        <s:Boolean>True</s:Boolean>
+                    </Trigger.Value>
+                </Trigger>
+                <Trigger Property="IsChecked">
+                    <Setter Property="Visibility" TargetName="eye" Value="Visible"/>
+                    <Trigger.Value>
+                        <s:Boolean>True</s:Boolean>
+                    </Trigger.Value>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <Grid x:Name="LegendGrid" Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!--<ToggleButton Template="{StaticResource ChartLegendFilterControlTemplate}" Width="16" Height="16" Background="Green" IsChecked="True"></ToggleButton>-->
+        </Grid>
+    </ScrollViewer>
+</UserControl>

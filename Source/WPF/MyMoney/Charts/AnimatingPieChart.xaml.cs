@@ -19,7 +19,6 @@ namespace LovettSoftware.Charts
     {
         DelayedActions actions = new DelayedActions();
         List<PieSlice> slices = new List<PieSlice>();
-        int tipSlice = -1;
         Point movePos;
         PieSlice inside;
         bool mouseOverAnimationCompleted = false;
@@ -74,14 +73,19 @@ namespace LovettSoftware.Charts
             }
         }
 
-        public List<ChartDataValue> Series
+        public void Update()
         {
-            get { return (List<ChartDataValue>)GetValue(PieSeriesProperty); }
+            this.UpdateChart();
+        }
+
+        public ChartDataSeries Series
+        {
+            get { return (ChartDataSeries)GetValue(PieSeriesProperty); }
             set { SetValue(PieSeriesProperty, value); }
         }
 
         public static readonly DependencyProperty PieSeriesProperty =
-            DependencyProperty.Register("PieSeries", typeof(List<ChartDataValue>), typeof(AnimatingPieChart), new PropertyMetadata(null, OnSeriesChanged));
+            DependencyProperty.Register("PieSeries", typeof(ChartDataSeries), typeof(AnimatingPieChart), new PropertyMetadata(null, OnSeriesChanged));
 
         private static void OnSeriesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -91,13 +95,13 @@ namespace LovettSoftware.Charts
         private void OnSeriesChanged(object newValue)
         {
             HideToolTip();
-            if (newValue == null || this.Series.Count == 0)
+            if (newValue == null || this.Series.Values.Count == 0)
             {
                 ResetVisuals();
             }
             else 
             {
-                foreach (var dv in this.Series)
+                foreach (var dv in this.Series.Values)
                 {
                     if (!dv.Color.HasValue)
                     {
@@ -112,7 +116,6 @@ namespace LovettSoftware.Charts
         {
             ChartCanvas.Children.Clear();
             slices.Clear();
-            tipSlice = -1;
             inside = null;
             mouseOverAnimationCompleted = false;
         }
@@ -141,7 +144,7 @@ namespace LovettSoftware.Charts
             double m = Math.Min(w, h);
             double c = Math.Floor(m / 2);
 
-            double total = (from d in this.Series select d.Value).Sum();
+            double total = (from d in this.Series.Values where !d.Hidden select d.Value).Sum();
 
             Point center = new Point(c + (w - m) / 2, c + (h - m) / 2);
             Size size = new Size(c, c);
@@ -151,7 +154,7 @@ namespace LovettSoftware.Charts
             int i = 0;
             double oldStart = 0;
             double oldEnd = 0;
-            foreach (var item in this.Series)
+            foreach (var item in this.Series.Values)
             {
                 PieSlice slice = null;
                 if (i < slices.Count)
@@ -168,6 +171,18 @@ namespace LovettSoftware.Charts
                     slices.Add(slice);
                 }
 
+                if (item.Hidden)
+                {
+                    // we need the slice to be added, but it needs to be hidden.
+                    slice.Visibility = Visibility.Collapsed;
+                    continue;
+                }
+                else
+                {
+                    slice.Visibility = Visibility.Visible;
+                }
+
+                slice.Data = item;
                 slice.Color = item.Color.Value;
                 double start = (sum * 360) / total;
                 double end = ((sum + item.Value) * 360) / total;
@@ -233,20 +248,19 @@ namespace LovettSoftware.Charts
         protected override void OnMouseLeave(MouseEventArgs e)
         {
             actions.CancelDelayedAction("hover");
-            tipSlice = -1;
             OnExitSlice();
             base.OnMouseLeave(e);
         }
 
         private void OnHover()
         {
-            var i = this.tipSlice;
-            if (i < 0 || i >= Series.Count)
+            var slice = this.inside;
+            if (slice == null)
             {
                 return;
             }
 
-            ChartDataValue value = Series[i];
+            ChartDataValue value = slice.Data;
             var tip = this.ToolTip as ToolTip;
             var content = ToolTipGenerator != null ? ToolTipGenerator(value) : new TextBlock() { Text = value.Label + "\r\n" + value.Value };
             if (tip == null)
@@ -277,29 +291,29 @@ namespace LovettSoftware.Charts
 
         }
 
-        int FindSlice(Point pos)
+        PieSlice FindSlice(Point pos)
         {
             for (int i = 0, n = slices.Count; i < n; i++)
             {
-                var p = this.slices[i].Path;
-                if (p.Data.FillContains(pos))
+                var slice = this.slices[i];
+                var p = slice.Path;
+                if (p.Data.FillContains(pos) && p.Visibility == Visibility.Visible)
                 {
-                    return i;
+                    return slice;
                 }
             }
-            return -1;
+            return null;
         }
 
         protected override void OnPreviewMouseMove(MouseEventArgs e)
         {
             var pos = e.GetPosition(ChartCanvas);
-            var i = FindSlice(pos);
-            if (i >= 0 && i < Series.Count)
+            var slice = FindSlice(pos);
+            if (slice != null)
             {
-                OnEnterSlice(i);
+                OnEnterSlice(slice);
                 HideToolTip();
                 this.movePos = pos;
-                this.tipSlice = i;
                 actions.StartDelayedAction("hover", () =>
                 {
                     OnHover();
@@ -307,17 +321,15 @@ namespace LovettSoftware.Charts
             }
             else
             {
-                this.tipSlice = -1;
                 OnExitSlice();
             }
             base.OnPreviewMouseMove(e);
         }
 
-        private void OnEnterSlice(int i)
+        private void OnEnterSlice(PieSlice slice)
         {
-            if (i < slices.Count)
+            if (slice != null)
             {
-                var slice = slices[i];
                 var brush = (SolidColorBrush)slice.Path.Fill;
                 var color = slice.Color;
                 if (inside == null || slice != inside)
@@ -359,17 +371,16 @@ namespace LovettSoftware.Charts
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             var pos = e.GetPosition(ChartCanvas);
-            var i = FindSlice(pos);
-            if (i >= 0 && i < Series.Count)
+            var slice = FindSlice(pos);
+            if (slice != null)
             {
-                ChartDataValue value = Series[i];
+                ChartDataValue value = slice.Data;
                 if (PieSliceClicked != null)
                 {
                     PieSliceClicked(this, value);
                 }
             }
         }
-
 
         class PieSlice : DependencyObject
         {
@@ -378,6 +389,7 @@ namespace LovettSoftware.Charts
             LineSegment line1;
             LineSegment line2;
             ArcSegment arc;
+            
 
             public PieSlice(Canvas owner, Color color, Point center, Size size)
             {
@@ -392,9 +404,18 @@ namespace LovettSoftware.Charts
                 this.Center = center;
             }
 
+            public Visibility Visibility
+            {
+                get => path.Visibility;
+                set { path.Visibility = value; }
+            }
+
             public Color Color { get; set; }
 
             public Path Path => path;
+
+            public ChartDataValue Data { get; set; }
+
 
             public double StartAngle
             {

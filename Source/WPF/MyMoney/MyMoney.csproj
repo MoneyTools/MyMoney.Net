@@ -192,6 +192,9 @@
       <DependentUpon>RentalChartColumn.xaml</DependentUpon>
     </Compile>
     <Compile Include="Charts\RentalData.cs" />
+    <Compile Include="Charts\ChartLegend.xaml.cs">
+      <DependentUpon>ChartLegend.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Commands\Commands.cs" />
     <Compile Include="Controls\ColorPickerPanel.xaml.cs">
       <DependentUpon>ColorPickerPanel.xaml</DependentUpon>
@@ -689,6 +692,10 @@
     <Page Include="Charts\Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Charts\ChartLegend.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ColorPickerPanel.xaml">
       <SubType>Designer</SubType>

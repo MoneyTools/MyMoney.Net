@@ -47,9 +47,17 @@ namespace Walkabout.Charts
                 this.PieChart.PieSliceClicked += OnPieSliceClicked;
                 this.PieChart.PieSliceHover += OnPieSliceHovered;
                 this.PieChart.ToolTipGenerator = OnGenerateTip;
+
+                this.Legend.Toggled += OnLegendToggledd;
 #if PerformanceBlocks
             }
 #endif
+        }
+
+        private void OnLegendToggledd(object sender, ChartDataValue e)
+        {
+            // filtering out a category.
+            FilterChartData();
         }
 
         private UIElement OnGenerateTip(ChartDataValue value)
@@ -267,8 +275,6 @@ namespace Walkabout.Charts
 
             dataDirty = false;
 
-            TotalAmount.Text = string.Format("{0:C2}", Math.Abs(total));
-
             ShowChart();
         }
 
@@ -278,26 +284,37 @@ namespace Walkabout.Charts
             if (this.IsVisible && chartDirty)
             {
                 chartDirty = false;
-                ObservableCollection<CategoryData> data = new ObservableCollection<CategoryData>();
-                foreach (CategoryData cd in from c in map.Values orderby c.Total descending select c)
+
+                ChartDataSeries series = new ChartDataSeries() { Name = CategoryType.ToString() };
+
+                foreach (CategoryData item in from c in map.Values orderby c.Total descending select c)
                 {
-                    data.Add(cd);
+                    series.Values.Add(new ChartDataValue() { Label = item.Name, Value = item.Total, Color = item.Color, UserData = item });
                 }
 
-                SetObservaleCollection(data);
+                TotalAmount.Text = string.Format("{0:C2}", Math.Abs(NetAmount));
+                PieChart.Series = series;
+                Legend.DataSeries = series;
             }
-        }        
-
-        public void SetObservaleCollection(ObservableCollection<CategoryData> categoryDataCollection)
-        {
-            List<ChartDataValue> data = new List<ChartDataValue>();
-            foreach(var item in categoryDataCollection)
-            {
-                data.Add(new ChartDataValue() { Label = item.Name, Value = item.Total, Color = item.Color, UserData = item });
-            }
-
-            PieChart.Series = data;
         }
+
+        private void FilterChartData()
+        {
+            var data = PieChart.Series;
+            double total = 0;
+            foreach (var dv in data.Values)
+            {
+                if (!dv.Hidden)
+                {
+                    total += dv.Value;
+                }
+            }
+
+            PieChart.Update();
+            NetAmount = (decimal)total;
+            TotalAmount.Text = string.Format("{0:C2}", Math.Abs(NetAmount));
+        }
+
 
         bool WillTally(Transaction t, Category c, decimal total, bool expense)
         {
@@ -423,10 +440,10 @@ namespace Walkabout.Charts
 
         private void OnExport(object sender, RoutedEventArgs e)
         {
-            if (PieChart.Series != null && PieChart.Series.Count > 0)
+            if (PieChart.Series != null && PieChart.Series.Values.Count > 0)
             {
                 ChartData data = new ChartData();
-                data.AddSeries(new ChartDataSeries() { Values = PieChart.Series, Name = "Categories" });
+                data.AddSeries(new ChartDataSeries() { Values = PieChart.Series.Values, Name = "Categories" });
                 data.Export();
             }
         }
