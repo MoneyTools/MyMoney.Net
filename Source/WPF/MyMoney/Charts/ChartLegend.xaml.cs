@@ -144,19 +144,13 @@ namespace Walkabout.Charts
                 if (dv.Color.HasValue)
                 {
                     var c = dv.Color.Value;
-                    HlsColor hls = new HlsColor(c);
                     ToggleButton colorSwatch = new ToggleButton();
                     colorSwatch.Template = swatchTemplate;
-                    colorSwatch.Background = new SolidColorBrush(c);
                     colorSwatch.Margin = new Thickness(2);
                     colorSwatch.Width = 16;
                     colorSwatch.Height = 16;
                     colorSwatch.DataContext = dv;
                     ui.button = colorSwatch;
-                    if (hls.Luminance < 0.5)
-                    {
-                        colorSwatch.Foreground = Brushes.White;
-                    }
                 }
 
                 TextBlock label = new TextBlock() { Text = dv.Label, Margin = new Thickness(5, 2, 5, 2) };
@@ -164,10 +158,25 @@ namespace Walkabout.Charts
 
                 TextBlock total = new TextBlock() { Text = dv.Value.ToString("C0"), Margin = new Thickness(5, 2, 5, 2), HorizontalAlignment = HorizontalAlignment.Right };
                 ui.value = total;
+
+                this.elements.Add(ui);
             }
+
+            ui.item = dv;
 
             if (ui.button != null)
             {
+                var c = dv.Color.Value;
+                HlsColor hls = new HlsColor(c);
+                ui.button.Background = new SolidColorBrush(c);
+                if (hls.Luminance < 0.5)
+                {
+                    ui.button.Foreground = Brushes.White;
+                } else
+                {
+                    ui.button.Foreground = Brushes.Black;
+                }
+
                 ui.button.DataContext = dv;
                 Grid.SetRow(ui.button, index);
                 Grid.SetColumn(ui.button, 0);
@@ -179,10 +188,12 @@ namespace Walkabout.Charts
                 ui.button.Unchecked += OnColorSwatchToggled;
             }
 
+            ui.label.Text = dv.Label;
             Grid.SetRow(ui.label, index);
             Grid.SetColumn(ui.label, 1);
             LegendGrid.Children.Add(ui.label);
 
+            ui.value.Text = dv.Value.ToString("C0");
             Grid.SetRow(ui.value, index);
             Grid.SetColumn(ui.value, 2);
             LegendGrid.Children.Add(ui.value);

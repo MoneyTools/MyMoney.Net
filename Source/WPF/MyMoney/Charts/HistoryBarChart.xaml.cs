@@ -270,7 +270,7 @@ namespace Walkabout.Charts
                     // This is a while loop because sometimes we don't have the requested
                     // number of years in the history, so this does a quick "catch up" to
                     // the year where the data actually starts.
-                    while (t.Date >= endDate || t == lastItem)
+                    while (t.Date >= endDate)
                     {
                         if (t == lastItem && t.Date < endDate)
                         {
@@ -296,10 +296,6 @@ namespace Walkabout.Charts
                         }
                         total = 0;
                         bucket = new List<HistoryDataValue>();
-                        if (t == lastItem)
-                        {
-                            break;
-                        }
                     }
                     if (t.Date < endDate)
                     {
@@ -307,7 +303,12 @@ namespace Walkabout.Charts
                         bucket.Add(t);
                     }
                 }
-                
+
+                if (bucket.Count > 0 || started)
+                {
+                    AddColumn(startDate, range, total, bucket, brush);
+                }
+
                 while (collection.Count > maxColumns)
                 {
                     collection.RemoveAt(0);

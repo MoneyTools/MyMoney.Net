@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.82" date="1/5/2022">
+    Happy New Year!  This update adds a new Option called "Fiscal Year Start"
+    which allows you to configure the month that starts you fiscal year which is
+    currently used in the History Chart yearly column tabulation.  For example,
+    if the start month is July then the FY2021 year column will include transactions
+    from 7/1/2020 to 6/30/2021.
+  </change>
   <change version="1.1.0.81" date="12/31/2021">
     Move to .NET Framework 4.8, which seems to be a bit snappier.
     Add Animating Pie Chart and remove dependency on WpfToolkit DataVisualization library.

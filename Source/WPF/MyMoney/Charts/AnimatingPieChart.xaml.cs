@@ -103,7 +103,7 @@ namespace LovettSoftware.Charts
             {
                 foreach (var dv in this.Series.Values)
                 {
-                    if (!dv.Color.HasValue)
+                    if (!dv.Color.HasValue || dv.Color.Value == Colors.Transparent)
                     {
                         dv.Color = GetRandomColor();
                     }
@@ -184,8 +184,8 @@ namespace LovettSoftware.Charts
 
                 slice.Data = item;
                 slice.Color = item.Color.Value;
-                double start = (sum * 360) / total;
-                double end = ((sum + item.Value) * 360) / total;
+                double start = total == 0 ? 0 : (sum * 360) / total;
+                double end = total == 0 ? 360 : ((sum + item.Value) * 360) / total;
                 if (end == 360)
                 {
                     end = 359.99;
