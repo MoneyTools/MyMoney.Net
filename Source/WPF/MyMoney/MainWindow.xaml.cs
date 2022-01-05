@@ -56,14 +56,13 @@ namespace Walkabout
         internal static Uri DownloadSite = new Uri("https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/");
         internal static string InstallUrl = "https://github.com/clovett/myMoney.Net";
 
+        private DelayedActions delayedActions = new DelayedActions();
         private Settings settings;
         private UndoManager navigator;
         private UndoManager manager;
         private AttachmentManager attachmentManager;
         internal MyMoney myMoney = new MyMoney();
         private ChangeTracker tracker;
-        private DispatcherTimer timer;
-        private bool chartsDirty;
 
         //---------------------------------------------------------------------
         // The Toolbox controls
@@ -272,6 +271,9 @@ namespace Walkabout
                 case "Theme":
                     SetTheme(settings.Theme);
                     break;
+                case "FiscalYearStart":
+                    HistoryChart.FiscalYearStart = settings.FiscalYearStart;
+                    break;
             }
         }
 
@@ -339,24 +341,6 @@ namespace Walkabout
             if (data != null && data.Added != null && data.Added.Count > 0)
             {
                 navigator.ViewTransactions(data.Added);
-            }
-        }
-
-        private void StartTimer()
-        {
-            if (timer == null)
-            {
-                timer = new DispatcherTimer(TimeSpan.FromMilliseconds(100), DispatcherPriority.Background, new EventHandler(OnTick), this.Dispatcher);
-                timer.Start();
-            }
-        }
-
-        private void StopTimer()
-        {
-            if (timer != null)
-            {
-                timer.Stop();
-                timer = null;
             }
         }
 
@@ -727,29 +711,6 @@ namespace Walkabout
             }
         }
 
-        int tickCount;
-
-        void OnTick(object sender, EventArgs e)
-        {
-            if (this.chartsDirty && !this.myMoney.IsUpdating)
-            {
-                this.chartsDirty = false;
-                UpdateCharts();
-            }
-            tickCount++;
-
-            // try cleanup temp files once a minute.
-            if (tickCount % (60 / timer.Interval.TotalSeconds) == 0)
-            {
-                TempFilesManager.Cleanup();
-            }
-
-            if (!this.chartsDirty && !TempFilesManager.HasTempFiles)
-            {
-                StopTimer();
-            }
-        }
-        
         void OnToolBoxFilterUpdated(object sender, string filter)
         {
             if (sender is CategoriesControl)
@@ -1051,10 +1012,20 @@ namespace Walkabout
 
         private void SetChartsDirty()
         {
-            this.chartsDirty = true;
-            StartTimer();
+            delayedActions.StartDelayedAction("updateCharts", TryUpdateCharts, TimeSpan.FromMilliseconds(10));
         }
 
+        private void TryUpdateCharts()
+        {
+            if (!this.myMoney.IsUpdating)
+            {
+                UpdateCharts();
+            }
+            else
+            {
+                SetChartsDirty();
+            }
+        }
 
         #endregion
 
@@ -2707,10 +2678,10 @@ namespace Walkabout
 
         private void HistoryChart_SelectionChanged(object sender, EventArgs e)
         {
-            HistoryChartColumn c = HistoryChart.Selection;
-            if (c != null)
+            HistoryChartColumn selection = HistoryChart.Selection;
+            if (selection != null)
             {
-                List<Transaction> list = new List<Transaction>(from v in c.Values select (Transaction)v.UserData);
+                List<Transaction> list = new List<Transaction>(from v in selection.Values select (Transaction)v.UserData);
                 this.TransactionView.QuickFilter = ""; // need to clear this as they might conflict.
                 var view = SetCurrentView<TransactionsView>();
                 if (this.TransactionView.ActiveCategory != null)
@@ -2907,6 +2878,8 @@ namespace Walkabout
             {
                 return;
             }
+            HistoryChart.FiscalYearStart = settings.FiscalYearStart;
+
             // pick a color based on selected category or payee.
             Category cat = this.TransactionView.ActiveCategory;
             Payee payee = this.TransactionView.ActivePayee;
@@ -2928,6 +2901,7 @@ namespace Walkabout
             if (selection == null)
             {
                 selection = new Charts.HistoryChartColumn();
+                selection.Range = HistoryRange.Year;
             }
             List<HistoryDataValue> rows = new List<Charts.HistoryDataValue>();
             foreach (var transaction in this.TransactionView.ViewModel)
@@ -2975,7 +2949,8 @@ namespace Walkabout
                     Value = amount
                 });
             }
-            selection.Values = rows;// this.TransactionView.ViewModel;
+
+            selection.Values = rows;
             selection.Brush = brush;
             HistoryChart.Selection = selection;
         }
@@ -4315,7 +4290,7 @@ namespace Walkabout
 
             StopTracking();
 
-            StopTimer();
+            delayedActions.CancelAll();
 
             using (attachmentManager)
             {
@@ -4331,6 +4306,7 @@ namespace Walkabout
             {
                 Trace.WriteLine("SaveConfig failed: " + ex.Message);
             }
+
             TempFilesManager.Shutdown();
         }
 

@@ -11,8 +11,15 @@ namespace Walkabout.Utilities
     /// This class takes care of cleaning up temp files, and if files are locked even during process
     /// termination - it saves a list of those files so the app can clean them up on next launch.
     /// </summary>
-    public static class TempFilesManager
+    public class TempFilesManager
     {
+        private DelayedActions actions = new DelayedActions();
+        private static TempFilesManager Instance = new TempFilesManager();
+
+        public TempFilesManager()
+        {
+        }
+
         public static string TempFileList
         {
             get
@@ -22,12 +29,16 @@ namespace Walkabout.Utilities
             }
         }
 
-
         /// <summary>
         /// Resilient file delete 
         /// </summary>
         /// <param name="fileToDelete"></param>
         public static void DeleteFile(string fileToDelete)
+        {
+            Instance.TryDeleteFile(fileToDelete);
+        }
+
+        private void TryDeleteFile(string fileToDelete)
         {
             try
             {
@@ -42,21 +53,31 @@ namespace Walkabout.Utilities
             }
             catch (Exception)
             {
-                AddTempFile(fileToDelete);
+                Add(fileToDelete);
             }
         }
 
 
-        static List<string> files = new List<string>();
+        List<string> files = new List<string>();
 
         public static void AddTempFile(string file)
         {
-            files.Add(file);
+            Instance.Add(file);
+        }
+
+        private void Add(string file) 
+        { 
+            lock (files)
+            {
+                files.Add(file);
+            }
+
+            actions.StartDelayedAction("Cleanup", DeleteAll, TimeSpan.FromSeconds(30));
         }
 
         public static bool HasTempFiles
         {
-            get { return files.Count > 0; }
+            get { return Instance.files.Count > 0; }
         }
 
         /// <summary>
@@ -66,40 +87,58 @@ namespace Walkabout.Utilities
         /// <param name="newFileName">The file name to remove from the list</param>
         internal static void RemoveTempFile(string newFileName)
         {
-            lock (files)
+            lock (Instance.files)
             {
-                foreach (string path in files)
+                foreach (string path in Instance.files)
                 {
                     if (string.Compare(path, newFileName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        files.Remove(path);
-                        return;
+                        Instance.files.Remove(path);
                     }
                 }
             }
         }
 
         public static void Cleanup()
-        {            
-            foreach (string file in files.ToArray())
+        {
+            Instance.DeleteAll();
+        }
+
+        public void DeleteAll()
+        { 
+            foreach (string file in this.files.ToArray())
             {
-                files.Remove(file);
+                lock (this.files)
+                {
+                    this.files.Remove(file);
+                }
                 DeleteFile(file);
             }
         }
 
         public static void Shutdown()
         {
+            Instance.SaveTempFileList();
+        }
+
+        internal static void Initialize()
+        {
+            Instance.LoadTempFileList();
+        }
+
+        private void SaveTempFileList()
+        {
+            this.actions.CancelAll();
             XDocument doc = new XDocument(new XElement("Files"));
-            foreach (string file in files.ToArray())
+            foreach (string file in this.files.ToArray())
             {
                 doc.Root.Add(new XElement("File", new XAttribute("Name", file)));
             }
             doc.Save(TempFileList);
         }
 
-        internal static void Initialize()
-        {
+        private void LoadTempFileList() 
+        { 
             string fname = TempFileList;
             if (File.Exists(fname))
             {
@@ -109,13 +148,13 @@ namespace Walkabout.Utilities
                     string name = (string)file.Attribute("Name");
                     if (!string.IsNullOrEmpty(name) && File.Exists(name))
                     {
-                        files.Add(name);
+                        Instance.files.Add(name);
                     }
                 }
             }
+
             // now try and delete them!
             Cleanup();
         }
-
     }
 }

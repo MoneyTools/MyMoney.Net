@@ -19,7 +19,6 @@ namespace Walkabout.Charts
 {
     public enum HistoryRange
     {
-        All,
         Year,
         Month,
         Day
@@ -40,6 +39,7 @@ namespace Walkabout.Charts
         {
             this.label = label;
         }
+
         public override string ToString()
         {
             return label;
@@ -54,12 +54,21 @@ namespace Walkabout.Charts
     }
 
     public class HistoryChartColumn
-    {
+    { 
+        public IEnumerable<HistoryDataValue> Values { get; set; }
+        public HistoryRange Range { get; internal set; }
         public Brush Brush { get; set; }
         public decimal Amount { get; set; }
         public ColumnLabel Label { get; set; }
         public decimal Average { get; set; }
-        public bool Partial { get; set; } // whether this column has partial data (doesn't seem to be a full set of transactions in this date range).
+        public DateTime StartDate
+        {
+            get
+            {
+                HistoryDataValue first = Values != null ? Values.FirstOrDefault() : null;
+                return (first != null) ? first.Date : DateTime.Now;
+            }
+        }
         public DateTime EndDate
         {
             get
@@ -68,32 +77,29 @@ namespace Walkabout.Charts
                 return (last != null) ? last.Date : DateTime.Now;
             }
         }
-        public HistoryRange Range { get; set; }
-        public IEnumerable<HistoryDataValue> Values { get; set; }
-    };
 
+    }
 
     /// <summary>
     /// Interaction logic for HistoryBarChart.xaml
     /// </summary>
     public partial class HistoryBarChart : UserControl
     {
+        private DelayedActions delayedActions = new DelayedActions();
         ObservableCollection<HistoryChartColumn> collection = new ObservableCollection<HistoryChartColumn>();
-
         bool invert;
+        int fiscalYearStart;
         HistoryChartColumn selection;
 
         public HistoryBarChart()
         {
             InitializeComponent();
 
-            RangeCombo.Items.Add(HistoryRange.All);
             RangeCombo.Items.Add(HistoryRange.Year);
             RangeCombo.Items.Add(HistoryRange.Month);
             RangeCombo.Items.Add(HistoryRange.Day);
             RangeCombo.SelectedIndex = 0;
             RangeCombo.SelectionChanged += new SelectionChangedEventHandler(RangeCombo_SelectionChanged);
-            // BarChart.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(BarChart_PreviewMouseLeftButtonDown);
 
             this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(HistoryBarChart_IsVisibleChanged);
 
@@ -110,10 +116,12 @@ namespace Walkabout.Charts
 
         void HistoryBarChart_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                UpdateChart(false);
-            }));
+            DelayedUpdate();
+        }
+
+        void DelayedUpdate()
+        { 
+            delayedActions.StartDelayedAction("update", UpdateChart, TimeSpan.FromMilliseconds(1));
         }
 
         /// <summary>
@@ -125,7 +133,20 @@ namespace Walkabout.Charts
             set
             {
                 selection = value;
-                UpdateChart(false);
+                DelayedUpdate();
+            }
+        }
+
+        public int FiscalYearStart
+        { 
+            get => fiscalYearStart;
+            set
+            {
+                if (fiscalYearStart != value)
+                {
+                    fiscalYearStart = value;
+                    DelayedUpdate();
+                }
             }
         }
 
@@ -137,29 +158,6 @@ namespace Walkabout.Charts
             {
                 SelectionChanged(this, EventArgs.Empty);
             }
-        }
-
-        HistoryRange range = HistoryRange.All;
-
-        public HistoryRange SelectedRange
-        {
-            get { return this.range; }
-            set { this.range = value; OnRangeChanged(); }
-        }
-
-        public event EventHandler RangeChanged;
-
-        private void OnRangeChanged()
-        {
-            if (RangeChanged != null)
-            {
-                RangeChanged(this, EventArgs.Empty);
-            }
-        }
-
-        private void OnColumnHover(object sender, ChartDataValue e)
-        {
-
         }
 
         private void OnColumnClicked(object sender, ChartDataValue e)
@@ -178,12 +176,16 @@ namespace Walkabout.Charts
 
         void RangeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateChart(true);
+            if (selection != null && e.AddedItems.Count > 0 && e.AddedItems[0] is HistoryRange newRange)
+            {
+                selection.Range = newRange;
+            }
+            UpdateChart();
         }
 
         bool updating;
 
-        public void UpdateChart(bool rangeFixed)
+        public void UpdateChart()
         {
             if (updating)
             {
@@ -197,123 +199,115 @@ namespace Walkabout.Charts
 
                 if (this.Selection == null)
                 {
+                    Chart.Data = null;
                     return;
                 }
+
+                RangeCombo.SelectedItem = this.Selection.Range;
 
                 IEnumerable<HistoryDataValue> rows = this.Selection.Values;
 
-                if (rows == null || !this.IsVisible)
+                if (rows == null || !this.IsVisible || !rows.Any())
                 {
+                    Chart.Data = null;
                     return;
                 }
 
-                HistoryRange range = HistoryRange.Year;
-                if (this.RangeCombo.SelectedItem != null)
-                {
-                    string value = this.RangeCombo.SelectedItem.ToString();
-                    Enum.TryParse<HistoryRange>(value, out range);
-                }
-
+                HistoryRange range = this.Selection.Range;
+                
                 Brush brush = this.Selection.Brush;
                 if (brush == null)
                 {
                     brush = Brushes.DarkSlateBlue;
                 }
 
-                TimeSpan dateRange = ComputeChartParameters(rows);
-                if (!rangeFixed)
-                {
-                    if (dateRange <= TimeSpan.FromDays(31))
-                    {
-                        range = HistoryRange.Day;
-                        this.RangeCombo.SelectedItem = range;
-                    }
-                    else if (dateRange <= TimeSpan.FromDays(365))
-                    {
-                        range = HistoryRange.Month;
-                        this.RangeCombo.SelectedItem = range;
-                    }
-                    else
-                    {
-                        range = HistoryRange.Year;
-                        this.RangeCombo.SelectedItem = range;
-                    }
-                }
+                ComputeInversion(rows);
 
+                var lastItem = rows.LastOrDefault();
                 DateTime startDate = DateTime.Now;
+                DateTime endDate = startDate;
                 int maxColumns = 20;
                 if (range == HistoryRange.Month)
                 {
                     maxColumns = 24;
                     startDate = this.selection.EndDate.AddMonths(-maxColumns);
+                    endDate = startDate.AddMonths(1);
                 }
                 else if (range == HistoryRange.Day)
                 {
                     maxColumns = 31;
                     startDate = this.selection.EndDate.AddDays(-maxColumns);
+                    endDate = startDate.AddDays(1);
                 }
                 else 
                 {
-                    maxColumns = 20;
-                    startDate = this.selection.EndDate.AddYears(-maxColumns);
+                    maxColumns = 24;
+                    DateTime yearStart = new DateTime(this.selection.EndDate.Year, this.fiscalYearStart + 1, 1);
+                    if (yearStart > this.selection.EndDate)
+                    {
+                        yearStart = yearStart.AddYears(-1);
+                    }
+                    startDate = yearStart.AddYears(-maxColumns);
+                    endDate = startDate.AddYears(1);
                 }
 
+                bool started = false;
                 decimal total = 0;
-                DateTime start = DateTime.MinValue;
                 // the current column fills this bucket until the next column date boundary is reached
                 List<HistoryDataValue> bucket = new List<HistoryDataValue>();
-
                 foreach (HistoryDataValue t in rows)
                 {
+                    if (t.Date < startDate)
+                    {
+                        continue;
+                    }
                     decimal amount = t.Value;
                     if (invert)
                     {
                         amount = -amount;
                     }
                     DateTime td = t.Date;
-                    while (start == DateTime.MinValue || start.Year < td.Year || 
-                        (range == HistoryRange.Month && start.Month < td.Month) ||
-                        (range == HistoryRange.Day && start.Day < td.Day ))
+                    // This is a while loop because sometimes we don't have the requested
+                    // number of years in the history, so this does a quick "catch up" to
+                    // the year where the data actually starts.
+                    while (t.Date >= endDate || t == lastItem)
                     {
-                        if (start != DateTime.MinValue)
+                        if (t == lastItem && t.Date < endDate)
                         {
-                            AddColumn(start, range, total, bucket, brush);
+                            bucket.Add(t);
                         }
-                        if (start == DateTime.MinValue)
+                        if (bucket.Count > 0 || started)
                         {
-                            start = new DateTime(td.Year, (range == HistoryRange.Month || range == HistoryRange.Day) ? td.Month : 1,
-                                range == HistoryRange.Day ? td.Day : 1);
+                            started = true;
+                            AddColumn(startDate, range, total, bucket, brush);
                         }
-                        else
+                        startDate = endDate;
+                        switch (range)
                         {
-                            switch (range)
-                            {
-                                case HistoryRange.All:
-                                case HistoryRange.Year:
-                                    start = start.AddYears(1);
-                                    break;
-                                case HistoryRange.Month:
-                                    start = start.AddMonths(1);
-                                    break;
-                                case HistoryRange.Day:
-                                    start = start.AddDays(1);
-                                    break;
-                            }
+                            case HistoryRange.Year:
+                                endDate = endDate.AddYears(1);
+                                break;
+                            case HistoryRange.Month:
+                                endDate = endDate.AddMonths(1);
+                                break;
+                            case HistoryRange.Day:
+                                endDate = endDate.AddDays(1);
+                                break;
                         }
                         total = 0;
                         bucket = new List<HistoryDataValue>();
+                        if (t == lastItem)
+                        {
+                            break;
+                        }
                     }
-                    if (t.Date < start)
+                    if (t.Date < endDate)
                     {
-                        continue;
+                        total += amount;
+                        bucket.Add(t);
                     }
-                    total += amount;
-                    bucket.Add(t);
                 }
-                if (total != 0)
-                {
-                    AddColumn(start, range, total, bucket, brush);
-                }
+                
                 while (collection.Count > maxColumns)
                 {
                     collection.RemoveAt(0);
@@ -333,6 +327,7 @@ namespace Walkabout.Charts
                     c = Colors.Gray;
                 }
 
+                // Send data to the animating bar chart.
                 var data = new ChartData(); 
                 var series = new ChartDataSeries() { Name = "History" };
                 foreach(var column in this.collection)
@@ -395,25 +390,15 @@ namespace Walkabout.Charts
             }
         }
 
-        private TimeSpan ComputeChartParameters(IEnumerable<HistoryDataValue> rows)
+        private void ComputeInversion(IEnumerable<HistoryDataValue> rows)
         {
             int count = 0;
             int negatives = 0;
-            DateTime startDate = DateTime.MinValue;
-            DateTime endDate = DateTime.MinValue;
             foreach (HistoryDataValue t in rows)
             {
                 if (t.Value == 0)
                 {
                     continue;
-                }
-                if (startDate == DateTime.MinValue)
-                {
-                    startDate = t.Date;
-                }
-                else
-                {
-                    endDate = t.Date;
                 }
                 count++;
                 if (t.Value < 0)
@@ -426,7 +411,6 @@ namespace Walkabout.Charts
             {
                 invert = true;
             }
-            return (endDate == startDate) ? TimeSpan.FromDays(0) : endDate - startDate;
         }
 
         private void AddColumn(DateTime start, HistoryRange range, decimal total, List<HistoryDataValue> bucket, Brush brush)
@@ -434,24 +418,34 @@ namespace Walkabout.Charts
             int century = start.Year / 100;
             int year = start.Year;
 
+            HistoryRange columnRange = HistoryRange.Year;
             string label = null;
             switch (range)
             {
-                case HistoryRange.All:
                 case HistoryRange.Year:
-                    label = start.Year.ToString();
+                    if (this.fiscalYearStart > 0)
+                    {
+                        label = "FY" + (start.Year + 1).ToString("00");
+                    }
+                    else
+                    {
+                        label = start.Year.ToString();
+                    }
+                    columnRange = HistoryRange.Month;
                     break;
                 case HistoryRange.Month:
                     year = year - (100 * century);
                     label = string.Format("{0:00}/{1:00}", start.Month, year);
+                    columnRange = HistoryRange.Day;
                     break;
                 case HistoryRange.Day:
                     label = string.Format("{0:00}", start.Day);
+                    columnRange = HistoryRange.Day;
                     break;
             }
             ColumnLabel clabel = new Charts.ColumnLabel(label);
 
-            HistoryChartColumn column = new HistoryChartColumn() { Amount = total, Label = clabel, Values = bucket, Brush = brush };
+            HistoryChartColumn column = new HistoryChartColumn() { Amount = total, Range = columnRange, Label = clabel, Values = bucket, Brush = brush };
             clabel.Data = column;
             collection.Add(column);
         }

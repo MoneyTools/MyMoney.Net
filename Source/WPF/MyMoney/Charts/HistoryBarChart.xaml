@@ -21,7 +21,6 @@
                              AnimationGrowthMilliseconds="150" 
                              AnimationRippleMilliseconds="15"
                              AnimationColorMilliseconds="120"
-                             ColumnHover="OnColumnHover" 
                              ColumnClicked="OnColumnClicked"/>
         <ComboBox x:Name="RangeCombo" HorizontalAlignment="Right" VerticalAlignment="Top" />
     </Grid>
