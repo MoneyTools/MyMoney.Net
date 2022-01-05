@@ -6,6 +6,9 @@
     currently used in the History Chart yearly column tabulation.  For example,
     if the start month is July then the FY2021 year column will include transactions
     from 7/1/2020 to 6/30/2021.
+    Also added Export and an interactive Legend to the Pie Charts where you can click 
+    the color swatch to temporarily hide/show that category in the chart.
+    Add Export command to Trend graph
   </change>
   <change version="1.1.0.81" date="12/31/2021">
     Move to .NET Framework 4.8, which seems to be a bit snappier.
