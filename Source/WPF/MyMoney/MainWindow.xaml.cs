@@ -2900,8 +2900,7 @@ namespace Walkabout
             HistoryChartColumn selection = HistoryChart.Selection;
             if (selection == null)
             {
-                selection = new Charts.HistoryChartColumn();
-                selection.Range = HistoryRange.Year;
+                selection = new Charts.HistoryChartColumn() { Range = HistoryRange.Year };
             }
             List<HistoryDataValue> rows = new List<Charts.HistoryDataValue>();
             foreach (var transaction in this.TransactionView.ViewModel)
