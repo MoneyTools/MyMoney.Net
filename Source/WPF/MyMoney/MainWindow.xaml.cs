@@ -291,7 +291,6 @@ namespace Walkabout
                     this.rentsControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Rents);
                 }
                 this.rentsControl.MyMoney = this.myMoney;
-                OnAddRentalTab();
             }
             else
             {
