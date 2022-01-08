@@ -201,7 +201,7 @@ namespace Walkabout
                 this.toolBox.Add("PAYEES", "PayeesSelector", this.payeesControl, true);
                 this.toolBox.Add("SECURITIES", "SecuritiesSelector", this.securitiesControl, true);
 
-                OnAddRentalTab();
+                OnUpdateRentalTab();
 
                 this.toolBox.Expanded += new RoutedEventHandler(OnToolBoxItemsExpanded);
                 this.toolBox.FilterUpdated += new Accordion.FilterEventHandler(OnToolBoxFilterUpdated);
@@ -267,6 +267,7 @@ namespace Walkabout
             switch (e.PropertyName) {
                 case "RentalManagement":
                     UpdateRentalManagement();
+                    OnUpdateRentalTab(); // in case tab needs to be added back.
                     break;
                 case "Theme":
                     SetTheme(settings.Theme);
@@ -295,26 +296,26 @@ namespace Walkabout
             else
             {
                 this.rentsControl = null;
-                OnRemoveRentalTab();
             }
         }
 
-        private void OnRemoveRentalTab()
+        private void OnUpdateRentalTab()
         {
-            if (this.toolBox.ContainsTab("RENTS"))
+            if (this.rentsControl != null)
             {
-                this.toolBox.RemoveTab("RENTS");
+                if (!this.toolBox.ContainsTab("RENTS"))
+                {
+                    this.toolBox.Add("RENTS", "RentsSelector", this.rentsControl);
+                }
+            }
+            else
+            {
+                if (this.toolBox.ContainsTab("RENTS"))
+                {
+                    this.toolBox.RemoveTab("RENTS");
+                }
             }
         }
-
-        private void OnAddRentalTab()
-        {
-            if (this.rentsControl != null && !this.toolBox.ContainsTab("RENTS"))
-            {
-                this.toolBox.Add("RENTS", "RentsSelector", this.rentsControl);
-            }
-        }
-
 
         private void OnStockQuoteHistoryAvailable(object sender, StockQuoteHistory history)
         {
