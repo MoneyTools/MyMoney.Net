@@ -1,14 +1,13 @@
 
-MyMoney.Net is a rich client .NET 4.0 application for managing your personal finances. It is
+MyMoney.Net is a rich client .NET 4.8 application for managing your personal finances. It is
 written entirely in C# and is designed for programmers who want easy access to their data and who
 want to quickly and easily add their own features. Your data will not be locked up in some
 proprietary format, it is yours to do with as you like.
 
 ## Install
 
-You can simply click the [ClickOnce
-Installer](https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/publish.htm) to install the app, it requires
-.NET 4.0.
+Once you have [.NET 4.8 installed](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) you can simply click the [ClickOnce
+Installer](https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/publish.htm) to install the app. 
 You can also install using the new `winget install MyMoney.Net` for Windows 10 or 11.
 You can also download and install the latest release from [github releases](https://github.com/clovett/MyMoney.Net/releases/).
 
@@ -37,7 +36,7 @@ boundaries from your scanner, especially useful for receipts. It also contains a
 generator that uses the [Microsoft OneNote API](http://dev.onenote.com/) to generate HTML and from
 HTML it generates Markdown format for the github Wiki.
 
-Lastly the app is built entirely in C#, using .NET 4.0 and Visual Studio, and WPF. UnitTests are written and executed from a DGML test Model using
+Lastly the app is built entirely in C#, using .NET 4.8 and Visual Studio, and WPF. UnitTests are written and executed from a DGML test Model using
 [DgmlTestModeling](http://www.lovettsoftware.com/Downloads/DgmlTestModel/Readme.htm).
 
 --Enjoy!

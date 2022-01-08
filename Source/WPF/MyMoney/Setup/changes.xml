@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
   <change version="1.1.0.83" date="1/8/2022">
-    Minor fix - move the RENTS account group back to the bottom of the list
+    Minor fix - move the RENTS account group back to the bottom of the list.
+    Hook up "Fiscal Year Start" to cash flow report.
   </change>
   <change version="1.1.0.82" date="1/5/2022">
     Happy New Year!  This update adds a new Option called "Fiscal Year Start"
