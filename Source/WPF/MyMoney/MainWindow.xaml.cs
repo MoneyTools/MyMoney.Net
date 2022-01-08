@@ -3388,7 +3388,7 @@ namespace Walkabout
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportCashFlow");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
-            CashFlowReport report = new CashFlowReport(view, this.myMoney, this);
+            CashFlowReport report = new CashFlowReport(view, this.myMoney, this, settings.FiscalYearStart);
             report.Regenerate();
         }
 

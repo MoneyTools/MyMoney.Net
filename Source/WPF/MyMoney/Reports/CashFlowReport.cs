@@ -93,25 +93,34 @@ namespace Walkabout.Reports
     {
         FlowDocumentView view;
         MyMoney myMoney;
-        int year;
-        int month;
         bool byYear;
-        int columnCount;
+        int fiscalYearStart;
+        DateTime startDate;
+        DateTime endDate;
         Dictionary<Category, CashFlowColumns> byCategory;
         Dictionary<string, int> monthMap;
         List<string> columns;
         IServiceProvider serviceProvider;
 
-        public CashFlowReport(FlowDocumentView view, MyMoney money, IServiceProvider sp)
+        public CashFlowReport(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart)
         {
             this.myMoney = money;
-            this.year = DateTime.Now.Year;
-            this.month = DateTime.Now.Month;
+            this.fiscalYearStart = fiscalYearStart;
+            this.startDate = new DateTime(DateTime.Now.Year, 1, 1);
             this.byYear = true;
-            this.columnCount = 3;
+            if (this.fiscalYearStart > 0)
+            {
+                this.startDate = new DateTime(DateTime.Now.Year, this.fiscalYearStart, 1);
+                if (this.startDate > DateTime.Today)
+                {
+                    this.startDate = this.startDate.AddYears(-1); 
+                }
+            }
+
+            this.endDate = this.startDate.AddYears(1);
+            this.startDate = this.startDate.AddYears(-4); // show 5 years by default.
             this.view = view;
             this.serviceProvider = sp;
-
             view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
         }
 
@@ -192,65 +201,71 @@ namespace Walkabout.Reports
 
             ICollection<Transaction> transactions = this.myMoney.Transactions.GetAllTransactionsByDate();
 
-            int startYear = year;
-            int lastYear = year;
-
+            DateTime firstTransactionDate = DateTime.Now;
             Transaction first = transactions.FirstOrDefault();
             if (first != null)
             {
-                startYear = first.Date.Year;
-            }
-            Transaction last = transactions.LastOrDefault();
-            if (last != null)
-            {
-                lastYear = last.Date.Year;
+                firstTransactionDate = first.Date;
             }
 
             columns = new List<string>();
 
-            DateTime date = new DateTime(year, month, 1);
-
-            for (int i = columnCount - 1; i >= 0; i--)
+            DateTime start = this.startDate;
+            while(start < this.endDate)
             {
+                DateTime end = (byYear) ? start.AddYears(1) : start.AddMonths(1);
+                string columnName = start.ToString("MM/yyyy");
                 if (byYear)
                 {
-                    int y = year - i;
-                    string columnName = y.ToString();
-                    columns.Add(columnName);
-                    GenerateColumn(writer, columnName, transactions, 0, y);
+                    columnName = (this.fiscalYearStart == 0) ? start.Year.ToString() : "FY" + start.Year.ToString();
                 }
-                else
-                {
-                    int m = month - i;
-                    DateTime md = date.AddMonths(-i);
-                    string columnName = md.ToString("MM/yyyy");
-                    columns.Add(columnName);
-                    GenerateColumn(writer, columnName, transactions, md.Month, md.Year);
-                }
+                columns.Add(columnName);
+                GenerateColumn(writer, columnName, transactions, start, end);
+                start = end;
             }
-
 
             Paragraph heading = fwriter.CurrentParagraph;
 
             monthMap = new Dictionary<string, int>();
+            heading.Inlines.Add(" - from ");
 
-            heading.Inlines.Add(" including ");
-            
-            ComboBox countCombo = new ComboBox();
-            countCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            for (int i = 1; i <= 12; i++)
-            {
-                countCombo.Items.Add(i.ToString());
-            }
-            countCombo.SelectedIndex = this.columnCount - 1;
-            countCombo.SelectionChanged += OnColumnCountChanged;
-            heading.Inlines.Add(new InlineUIContainer(countCombo));
+            var previousButton = new Button();
+            previousButton.Content = "\uE100";
+            previousButton.ToolTip = "Previous year";
+            previousButton.FontFamily = new FontFamily("Segoe UI Symbol");
+            previousButton.Click += OnPreviousClick;
+            previousButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+            heading.Inlines.Add(new InlineUIContainer(previousButton));
+
+            DatePicker fromPicker = new DatePicker();
+            fromPicker.DisplayDateStart = firstTransactionDate;
+            fromPicker.SelectedDate = this.startDate;
+            fromPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+            fromPicker.SelectedDateChanged += OnSelectedFromDateChanged;
+            heading.Inlines.Add(new InlineUIContainer(fromPicker));
+
+            heading.Inlines.Add(" to ");
+
+            DatePicker toPicker = new DatePicker();
+            toPicker.DisplayDateStart = firstTransactionDate;
+            toPicker.SelectedDate = this.endDate;
+            toPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+            toPicker.SelectedDateChanged += OnSelectedToDateChanged; ;
+            heading.Inlines.Add(new InlineUIContainer(toPicker));
+
+            var nextButton = new Button();
+            nextButton.Content = "\uE101";
+            nextButton.ToolTip = "Next year";
+            nextButton.FontFamily = new FontFamily("Segoe UI Symbol");
+            nextButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+            nextButton.Click += OnNextClick;
+            heading.Inlines.Add(new InlineUIContainer(nextButton));
+
 
             ComboBox byYearMonthCombo = new ComboBox();
             byYearMonthCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            byYearMonthCombo.Items.Add("Years");
-            byYearMonthCombo.Items.Add("Months");
-
+            byYearMonthCombo.Items.Add("by years");
+            byYearMonthCombo.Items.Add("by month");
             byYearMonthCombo.SelectedIndex = (byYear ? 0 : 1);
             byYearMonthCombo.SelectionChanged += OnByYearMonthChanged;
 
@@ -292,6 +307,55 @@ namespace Walkabout.Reports
 
             writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
 
+        }
+
+        private void OnNextClick(object sender, RoutedEventArgs e)
+        {
+            this.startDate = this.startDate.AddYears(1);
+            this.endDate = this.endDate.AddYears(1);
+            Regenerate();
+        }
+
+        private void OnPreviousClick(object sender, RoutedEventArgs e)
+        {
+            this.startDate = this.startDate.AddYears(-1);
+            this.endDate = this.endDate.AddYears(-1);
+            Regenerate();
+        }
+
+
+        private void OnSelectedFromDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is DatePicker picker && picker.SelectedDate.HasValue)
+            {
+                this.startDate = picker.SelectedDate.Value;
+                Regenerate();
+            }
+        }
+
+        private void OnSelectedToDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is DatePicker picker && picker.SelectedDate.HasValue)
+            {
+                this.endDate = picker.SelectedDate.Value;
+                Regenerate();
+            }
+        }
+
+        private void OnByYearMonthChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox combo = (ComboBox)sender;
+            string selected = (string)combo.SelectedItem;
+            if (selected == "by years")
+            {
+                byYear = true;
+            }
+            else
+            {
+                byYear = false;
+            }
+
+            Regenerate();
         }
 
         private Button CreateExportReportButton()
@@ -374,16 +438,16 @@ namespace Walkabout.Reports
             return result;
         }
 
-        private void GenerateColumn(IReportWriter writer, string columnName, ICollection<Transaction> transactions, int month, int year)
+        private void GenerateColumn(IReportWriter writer, string columnName, ICollection<Transaction> transactions, DateTime startDate, DateTime endDate)
         {
             foreach (Transaction t in transactions)
             {
-                if (t.Status == TransactionStatus.Void || t.IsDeleted || t.Date.Year != year || t.Transfer != null || t.Account == null || t.Account.Type == AccountType.Asset)
+                if (t.Status == TransactionStatus.Void || t.IsDeleted || t.Transfer != null || t.Account == null || t.Account.Type == AccountType.Asset)
                 {
                     continue;
                 }
 
-                if (!this.byYear && (t.Date.Month != month))
+                if (t.Date < startDate || t.Date >= endDate)
                 {
                     continue;
                 }
@@ -412,34 +476,6 @@ namespace Walkabout.Reports
                     TallyCategory(t, this.myMoney.Categories.Unknown, t, columnName, t.AmountMinusTax);
                 }
             }
-        }
-
-        private void OnColumnCountChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox combo = (ComboBox)sender;
-            string selected = (string)combo.SelectedItem;
-            int c = 0;
-            if (int.TryParse(selected, out c))
-            {
-                this.columnCount = c;
-            }
-            Regenerate();
-        }
-
-        private void OnByYearMonthChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox combo = (ComboBox)sender;
-            string selected = (string)combo.SelectedItem;
-            if (selected == "Years")
-            {
-                byYear = true;
-            }
-            else
-            {
-                byYear = false;
-            }
-
-            Regenerate();
         }
 
         private static void WriteRow(IReportWriter writer, bool header, bool addExpanderCell, string name, IEnumerable<string> values)
