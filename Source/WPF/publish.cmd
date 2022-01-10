@@ -10,6 +10,8 @@ for /f "usebackq" %%i in (`xsl -e -s Version\version.xsl Version\version.props`)
 echo ### Publishing version %VERSION%...
 set WINGET=1
 
+if "%1"=="/nowinget" set WINGET=0
+
 if "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%" == "" goto :nokey
 if not EXIST publish goto :nobits
 
@@ -54,7 +56,7 @@ if ERRORLEVEL 1 goto :installfailed
 
 git checkout -b "clovett/mymoney_%VERSION%"
 git add *
-git commit -m "new Money version %VERSION%"
+git commit -m "new Money.Net version %VERSION%"
 git push -u origin "clovett/mymoney_%VERSION%"
 
 echo =============================================================================================================
