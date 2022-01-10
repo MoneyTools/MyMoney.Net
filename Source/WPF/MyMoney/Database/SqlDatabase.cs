@@ -565,6 +565,7 @@ namespace Walkabout.Data
                 this.ReadPayees(money.Payees, money);
                 this.ReadAliases(money.Aliases, money);
                 this.ReadAccountAliases(money.AccountAliases, money);
+                this.ReadTransactionExtras(money.TransactionExtras, money);
 
                 this.ReadSecurities(money.Securities, money);
                 this.ReadStockSplits(money.StockSplits, money);
@@ -613,6 +614,7 @@ namespace Walkabout.Data
                     UpdateStockSplits(money.StockSplits);
                     UpdateBuildings(money.Buildings);
                     UpdateLoanPayments(money.LoanPayments);
+                    UpdateTransactionExtras(money.TransactionExtras);
 
                     tran.Commit();
                 }
@@ -1328,6 +1330,25 @@ namespace Walkabout.Data
             reader.Close();
         }
 
+        private void ReadTransactionExtras(TransactionExtras extras, MyMoney money)
+        {
+            IDataReader reader = ExecuteReader("SELECT [Id],[Transaction],[TaxYear] FROM TransactionExtras");
+            extras.BeginUpdate(false);
+            while (reader.Read())
+            {
+                IncrementProgress("Aliases");
+                int id = reader.GetInt32(0);
+                var a = extras.AddExtra(id);
+                int transaction = reader.GetInt32(1);
+                a.Transaction = transaction;
+                int taxYear = reader.GetInt32(2);
+                a.TaxYear = taxYear;
+                a.OnUpdated();
+            }
+            extras.EndUpdate();
+            extras.FireChangeEvent(extras, extras, null, ChangeType.Reloaded);
+            reader.Close();
+        }
 
         public void UpdatePayees(Payees payees)
         {
@@ -1459,7 +1480,7 @@ namespace Walkabout.Data
                 else if (a.IsDeleted)
                 {
                     sb.AppendLine("-- deleting account alias: " + a.Pattern);
-                    sb.AppendLine(string.Format("DELETE FROM AccountAliases WHERE Id='{0}';", a.Id));
+                    sb.AppendLine(string.Format("DELETE FROM AccountAliases WHERE Id={0};", a.Id));
                 }
 
                 if (!this.SupportsBatchUpdate)
@@ -1480,6 +1501,56 @@ namespace Walkabout.Data
 
             accountAliases.RemoveDeleted();
         }
+
+
+        private void UpdateTransactionExtras(TransactionExtras extras)
+        {
+            if (extras.Count == 0) return;
+            StringBuilder sb = new StringBuilder();
+            foreach (TransactionExtra e in extras)
+            {
+                if (e.IsChanged)
+                {
+                    sb.AppendLine("-- updating transaction extra: " + e.Transaction);
+                    sb.Append("UPDATE TransactionExtras SET ");
+                    sb.Append(String.Format("[Transaction]={0}", e.Transaction));
+                    sb.Append(String.Format(",[TaxYear]={0}", e.TaxYear));
+                    sb.AppendLine(String.Format(" WHERE Id={0};", e.Id));
+                }
+                else if (e.IsInserted)
+                {
+                    sb.AppendLine("-- inserting transaction extra: " + e.Transaction);
+                    sb.Append("INSERT INTO TransactionExtras ([Id], [Transaction], [TaxYear]) VALUES (");
+                    sb.Append(String.Format("{0}", e.Id));
+                    sb.Append(String.Format(",{0}", e.Transaction));
+                    sb.Append(String.Format(",{0}", e.TaxYear));
+                    sb.AppendLine(");");
+                }
+                else if (e.IsDeleted)
+                {
+                    sb.AppendLine("-- deleting transaction extra: " + e.Transaction);
+                    sb.AppendLine(string.Format("DELETE FROM TransactionExtras WHERE Id={0};", e.Id));
+                }
+
+                if (!this.SupportsBatchUpdate)
+                {
+                    ExecuteScalar(sb.ToString());
+                    sb.Length = 0;
+                }
+            }
+
+            if (this.SupportsBatchUpdate)
+            {
+                ExecuteScalar(sb.ToString());
+            }
+            foreach (TransactionExtra e in extras)
+            {
+                e.OnUpdated();
+            }
+
+            extras.RemoveDeleted();
+        }
+
 
         #endregion
 

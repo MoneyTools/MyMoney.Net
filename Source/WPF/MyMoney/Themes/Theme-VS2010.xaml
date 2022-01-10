@@ -1973,17 +1973,19 @@ Look and feel of VS 2010
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TreeView}">
-                    <Grid>
+                    <Grid HorizontalAlignment="Stretch">
                         <Border x:Name="Border" 
-                                Background="White"
+                                Background="White" 
+                                HorizontalAlignment="Stretch"
                                 BorderBrush="#BCC7D8" 
                                 BorderThickness="0,1,0,0">
 
                             <ScrollViewer   Focusable="False" Padding="4" 
                                             HorizontalScrollBarVisibility="Disabled" 
                                             VerticalScrollBarVisibility="Auto" 
+                                            HorizontalContentAlignment="Stretch"
                                             CanContentScroll="False">
-                                <ItemsPresenter/>
+                                <ItemsPresenter HorizontalAlignment="Stretch"/>
                             </ScrollViewer>
                         </Border>
                     </Grid>
@@ -2044,7 +2046,6 @@ Look and feel of VS 2010
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MinWidth="19" Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
@@ -2072,7 +2073,7 @@ Look and feel of VS 2010
 
                             </Grid>
                         </Border>
-                        <ItemsPresenter Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" x:Name="ItemsHost"/>
+                        <ItemsPresenter Grid.Column="1" Grid.Row="1" x:Name="ItemsHost"/>
                     </Grid>
 
                     <ControlTemplate.Triggers>

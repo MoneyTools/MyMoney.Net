@@ -2008,7 +2008,6 @@ Dark Theme
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MinWidth="19" Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
@@ -2033,10 +2032,9 @@ Dark Theme
 
                                 <ContentPresenter HorizontalAlignment="Stretch" x:Name="PART_Header" ContentSource="Header" d:LayoutOverrides="Width" Margin="3,2,3,2"/>
 
-
                             </Grid>
                         </Border>
-                        <ItemsPresenter Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" x:Name="ItemsHost"/>
+                        <ItemsPresenter Grid.Column="1" Grid.Row="1" x:Name="ItemsHost"/>
                     </Grid>
 
                     <ControlTemplate.Triggers>

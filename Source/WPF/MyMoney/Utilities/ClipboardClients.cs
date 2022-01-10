@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using Walkabout.Views;
 
@@ -75,6 +76,59 @@ namespace Walkabout.Utilities
         public void Paste()
         {
             this.box.Paste();
+        }
+    }
+
+    class ComboBoxClipboardClient : IClipboardClient
+    {
+        ComboBox box;
+        public ComboBoxClipboardClient(ComboBox b)
+        {
+            this.box = b;
+        }
+
+        public bool CanCut => box.IsEditable;
+
+        public bool CanCopy => true;
+
+        public bool CanPaste => box.IsEditable;
+
+        public bool CanDelete => box.IsEditable;
+
+        public void Copy()
+        {
+            var text = GetTextBox();
+            if (text != null)
+            {
+                text.Copy();
+            } else
+            {
+                Clipboard.SetText(this.box.Text);
+            }
+        }
+
+        private TextBox GetTextBox()
+        {
+            return this.box.Template.FindName("PART_EditableTextBox", this.box) as TextBox;
+        }
+
+        public void Cut()
+        {
+            GetTextBox()?.Cut();
+        }
+
+        public void Delete()
+        {
+            var text = GetTextBox();
+            if (text != null)
+            {
+                text.SelectedText = string.Empty;
+            }
+        }
+
+        public void Paste()
+        {
+            GetTextBox()?.Paste();
         }
     }
 

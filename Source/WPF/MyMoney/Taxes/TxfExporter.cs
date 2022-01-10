@@ -21,26 +21,25 @@ namespace Walkabout.Migrate
             this.money = money;
         }
 
-        public void Export(string txfFile, int year, bool cpitalGainsOnly, bool consolidateOnDateSold)
+        public void Export(string txfFile, DateTime startDate, DateTime endDate, bool cpitalGainsOnly, bool consolidateOnDateSold)
         {
             using (StreamWriter sw = new StreamWriter(txfFile))
             {
                 WriteHeader(sw);
                 if (!cpitalGainsOnly)
                 {
-                    ExportCategories(sw, year);
+                    ExportCategories(sw, startDate, endDate);
                 }
 
-                DateTime toDate = new DateTime(year + 1, 1, 1);
-                CapitalGainsTaxCalculator calculator = new CapitalGainsTaxCalculator(this.money, toDate, consolidateOnDateSold, true);
-                ExportCapitalGains(calculator, null, year, sw);                
+                CapitalGainsTaxCalculator calculator = new CapitalGainsTaxCalculator(this.money, endDate, consolidateOnDateSold, true);
+                ExportCapitalGains(calculator, null, startDate, endDate, sw);                
             }
         }
 
-        private void ExportCategories(TextWriter writer, int year)
+        private void ExportCategories(TextWriter writer, DateTime startDate, DateTime endDate)
         {
             TaxCategoryCollection taxCategories = new TaxCategoryCollection();
-            List<TaxCategory> list = taxCategories.GenerateGroups(money, year);
+            List<TaxCategory> list = taxCategories.GenerateGroups(money, startDate, endDate);
             if (list != null)
             {
                 foreach (TaxCategory tc in list)
@@ -136,18 +135,17 @@ namespace Walkabout.Migrate
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "year+1")]
-        public void ExportCapitalGains(Account a, TextWriter writer, int year, bool consolidateSecuritiesOnDateSold)
+        public void ExportCapitalGains(Account a, TextWriter writer, DateTime startDate, DateTime endDate, bool consolidateSecuritiesOnDateSold)
         {
-            DateTime toDate = new DateTime(year + 1, 1, 1);
-            CapitalGainsTaxCalculator calculator = new CapitalGainsTaxCalculator(this.money, toDate, consolidateSecuritiesOnDateSold, true);
-            ExportCapitalGains(calculator, a, year, writer);
+            CapitalGainsTaxCalculator calculator = new CapitalGainsTaxCalculator(this.money, endDate, consolidateSecuritiesOnDateSold, true);
+            ExportCapitalGains(calculator, a, startDate, endDate, writer);
         }
 
-        private void ExportCapitalGains(CapitalGainsTaxCalculator calculator, Account a, int year, TextWriter writer)
+        private void ExportCapitalGains(CapitalGainsTaxCalculator calculator, Account a, DateTime startDate, DateTime endDate, TextWriter writer)
         {
             foreach (var data in calculator.Unknown)
             {
-                if (data.DateSold.Year == year)
+                if (data.DateSold >= startDate && data.DateSold < endDate)
                 {
                     if (a == null || data.Account == a)
                     {
@@ -159,7 +157,7 @@ namespace Walkabout.Migrate
 
             foreach (var data in calculator.ShortTerm)
             {
-                if (data.DateSold.Year == year)
+                if (data.DateSold >= startDate && data.DateSold < endDate)
                 {
                     if (a == null || data.Account == a)
                     {
@@ -171,7 +169,7 @@ namespace Walkabout.Migrate
             
             foreach (var data in calculator.LongTerm)
             {
-                if (data.DateSold.Year == year)
+                if (data.DateSold >= startDate && data.DateSold < endDate)
                 {
                     if (a == null || data.Account == a)
                     {

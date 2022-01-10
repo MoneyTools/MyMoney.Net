@@ -279,7 +279,7 @@ namespace Walkabout.Data
                     SendEvent(this, new ChangeEventArgs(this, null, ChangeType.Changed));
                 }
                 this.head = this.tail = null;
-            }            
+            }
         }
 
         public virtual void OnNameChanged(object o, string oldName, string newName)
@@ -518,7 +518,7 @@ namespace Walkabout.Data
                 this.head = this.tail = null;
             }
         }
-    
+
 
         internal void FlushUpdates()
         {
@@ -659,6 +659,7 @@ namespace Walkabout.Data
         private Securities securities;
         private StockSplits stockSplits;
         private RentBuildings buildings;
+        private TransactionExtras extras;
         internal PayeeIndex payeeAccountIndex;
 
         public MyMoney()
@@ -676,16 +677,22 @@ namespace Walkabout.Data
             Buildings = new RentBuildings(this);
             LoanPayments = new LoanPayments(this);
             payeeAccountIndex = new PayeeIndex(this);
+            extras = new TransactionExtras(this);
 
             EventHandler<ChangeEventArgs> handler = new EventHandler<ChangeEventArgs>(OnChanged);
             Accounts.Changed += handler;
             OnlineAccounts.Changed += handler;
             Payees.Changed += handler;
+            Aliases.Changed += handler;
+            AccountAliases.Changed += handler;
             Categories.Changed += handler;
             Currencies.Changed += handler;
             Transactions.Changed += handler;
             Securities.Changed += handler;
+            StockSplits.Changed += handler;
             Buildings.Changed += handler;
+            LoanPayments.Changed += handler;
+            TransactionExtras.Changed += handler;
         }
 
         [DataMember]
@@ -726,6 +733,13 @@ namespace Walkabout.Data
         {
             get { return accountAliases; }
             set { accountAliases = value; accountAliases.Parent = this; }
+        }
+
+        [DataMember]
+        public TransactionExtras TransactionExtras
+        {
+            get { return extras; }
+            set { extras = value; extras.Parent = this; }
         }
 
         [DataMember]
@@ -1527,7 +1541,7 @@ namespace Walkabout.Data
             }
             to.Category = from.Category;
         }
-        
+
         public IEnumerable<PersistentObject> FindAliasMatches(Alias alias, IEnumerable<Transaction> transactions)
         {
             Payee np = alias.Payee;
@@ -3610,6 +3624,7 @@ namespace Walkabout.Data
             if (this.aliases.ContainsKey(item.Id))
             {
                 this.aliases.Remove(item.Id);
+                item.OnDelete();
                 return true;
             }
             return false;
@@ -3674,7 +3689,7 @@ namespace Walkabout.Data
 
         public void AddAlias(AccountAlias a)
         {
-            foreach(var alias in this.aliases.Values)
+            foreach (var alias in this.aliases.Values)
             {
                 if (alias.Pattern == a.Pattern)
                 {
@@ -4759,7 +4774,6 @@ namespace Walkabout.Data
             {
                 if (this.pattern != value)
                 {
-                    string old = this.pattern;
                     this.pattern = value;
                     OnChanged("Pattern");
                 }
@@ -4806,6 +4820,277 @@ namespace Walkabout.Data
         {
             return this.pattern;
         }
+    }
+
+    //================================================================================
+    // Additional information we want to associatge with transactions on very rare occasions
+    // that doesn't need to be in the Transaction table.
+    [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
+    [TableMapping(TableName = "TransactionExtras")]
+    public class TransactionExtra : PersistentObject
+    {
+        int id = -1;
+        long transaction = -1;
+        int taxYear = -1;
+
+        public TransactionExtra()
+        { // for serialization only
+        }
+
+        public TransactionExtra(PersistentContainer container) : base(container) { }
+
+        [DataMember]
+        [ColumnMapping(ColumnName = "Id", IsPrimaryKey = true)]
+        public int Id { get { return id; } set { id = value; } }
+
+        [DataMember]
+        [ColumnMapping(ColumnName = "Transaction", SqlType = typeof(SqlInt64))]
+        public long Transaction
+        {
+            get { return this.transaction; }
+            set
+            {
+                if (this.transaction != value)
+                {
+                    if (this.Parent is TransactionExtras extras)
+                    {
+                        // fix up the index.
+                        extras.OnTransactionIdChanged(this.transaction, value, this);
+                    }
+                    this.transaction = value;
+                    OnChanged("Pattern");
+                }
+            }
+        }
+
+        [DataMember]
+        [ColumnMapping(ColumnName = "TaxYear", SqlType = typeof(SqlInt32))]
+        public int TaxYear
+        {
+            get { return this.taxYear; }
+            set
+            {
+                if (this.taxYear != value)
+                {
+                    this.taxYear = value;
+                    OnChanged("TaxYear");
+                }
+            }
+        }
+
+        internal void PostDeserializeFixup(MyMoney myMoney)
+        {
+        }
+    }
+
+    [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
+    public class TransactionExtras : PersistentContainer, ICollection<TransactionExtra>
+    {
+        int nextId;
+        Hashtable<int, TransactionExtra> items = new Hashtable<int, TransactionExtra>();
+        Hashtable<long, TransactionExtra> byTransactionId = new Hashtable<long, TransactionExtra>();
+
+        public TransactionExtras()
+        {
+            // for serialization
+        }
+
+        public TransactionExtras(PersistentObject parent)
+            : base(parent)
+        {
+        }
+
+        public override void Add(object child)
+        {
+            AddExtra((TransactionExtra)child);
+        }
+
+        public override void RemoveChild(PersistentObject pe)
+        {
+            RemoveExtra((TransactionExtra)pe);
+        }
+
+        public bool RemoveExtra(TransactionExtra e)
+        {
+            lock (this.items)
+            {
+                if (e.IsInserted)
+                {
+                    lock (this.byTransactionId)
+                    {
+                        if (this.byTransactionId.Contains(e.Transaction))
+                        {
+                            this.byTransactionId.Remove(e.Transaction);
+                        }
+                    }
+                    // then we can remove it immediately.
+                    if (this.items.ContainsKey(e.Id))
+                    {
+                        this.items.Remove(e.Id);
+                    }
+                }
+            }
+            // mark it for deletion on next save
+            e.OnDelete();
+            return true;
+        }
+
+        public TransactionExtra AddExtra(int id)
+        {
+            TransactionExtra result = new TransactionExtra(this);
+            lock (this.items)
+            {
+                result.Id = id;
+                if (this.nextId <= id) this.nextId = id + 1;
+                this.items[id] = result;
+            }
+            this.FireChangeEvent(this, result, null, ChangeType.Inserted);
+            return result;
+        }
+
+        public void AddExtra(TransactionExtra extra)
+        {
+            lock (this.items)
+            {
+                if (extra.Id == -1)
+                {
+                    extra.Id = this.nextId++;
+                    extra.OnInserted();
+                }
+                else if (this.nextId <= extra.Id)
+                {
+                    this.nextId = extra.Id + 1;
+                }
+                OnTransactionIdChanged(-1, extra.Transaction, extra);
+
+                extra.Parent = this;
+                extra.OnInserted();
+                this.items[extra.Id] = extra;
+            }
+
+            this.FireChangeEvent(this, extra, null, ChangeType.Inserted);
+        }
+
+        public TransactionExtra FindByTransaction(long transactionId)
+        {
+            lock (this.byTransactionId)
+            {
+                if (byTransactionId.TryGetValue(transactionId, out TransactionExtra result))
+                {
+                    return result;
+                }
+            }
+            return null;
+        }
+
+        public IList<TransactionExtra> GetExtras()
+        {
+            List<TransactionExtra> list = new List<TransactionExtra>(this.items.Count);
+            lock (this.items)
+            {
+                foreach (var a in this.items.Values)
+                {
+                    if (!a.IsDeleted)
+                    {
+                        list.Add(a);
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        protected override IEnumerator<PersistentObject> InternalGetEnumerator()
+        {
+            foreach (var i in ToArray())
+            {
+                yield return i;
+            }
+        }
+
+        internal void OnTransactionIdChanged(long transaction, long value, TransactionExtra extra)
+        {
+            lock (this.byTransactionId)
+            {
+                if (this.byTransactionId.ContainsKey(transaction))
+                {
+                    var e = this.byTransactionId[transaction];
+                    if (e != extra)
+                    {
+                        throw new Exception("Internal Error: Transaction doesn't match for TransactionExtra!");
+                    }
+                    this.byTransactionId.Remove(transaction);
+                }
+
+                if (value != -1)
+                {
+                    if (byTransactionId.TryGetValue(value, out TransactionExtra e) && e != extra)
+                    {
+                        throw new Exception("Cannot add a duplicate TransactionExtra for transaction " + extra.Transaction);
+                    }
+                    this.byTransactionId[value] = extra;
+                }
+            }
+        }
+
+        #region ICollection
+        public int Count => items.Count;
+
+        public bool IsReadOnly => false;
+
+        public void Add(TransactionExtra item)
+        {
+            AddExtra(item);
+        }
+
+        public void Clear()
+        {
+            if (this.nextId != 0 || this.items.Count != 0)
+            {
+                this.nextId = 0;
+                this.items = new Hashtable<int, TransactionExtra>();
+                this.byTransactionId = new Hashtable<long, TransactionExtra>();
+                this.FireChangeEvent(this, this, null, ChangeType.Reloaded);
+            }
+        }
+
+        public bool Contains(TransactionExtra item)
+        {
+            lock (this.items)
+            {
+                return this.items.ContainsKey(item.Id);
+            }
+        }
+
+        public void CopyTo(TransactionExtra[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Remove(TransactionExtra item)
+        {
+            throw new NotImplementedException("Please use RemoveExtra() instead");
+        }
+
+        IEnumerator<TransactionExtra> IEnumerable<TransactionExtra>.GetEnumerator()
+        {
+            foreach(var i in ToArray())
+            {
+                yield return i;
+            }
+        }
+
+        private TransactionExtra[] ToArray()
+        {
+            TransactionExtra[] a = null;
+            lock (this.items)
+            {
+                a = this.items.Values.ToArray();
+            }
+            return a;
+        }
+
+        #endregion
     }
 
     public class PayeeComparer : IComparer<Payee>
@@ -6906,7 +7191,8 @@ namespace Walkabout.Data
                 if (string.IsNullOrWhiteSpace(s)) // database sometimes loads the string "        ".
                 {
                     s = null;
-                } else
+                }
+                else
                 {
                     s = s.Trim();
                 }
@@ -8539,7 +8825,7 @@ namespace Walkabout.Data
                         else
                         {
                             balance += t.CurrencyNormalizedAmount(t.Amount);
-                        }                        
+                        }
                     }
                     else
                     {
@@ -8807,7 +9093,7 @@ namespace Walkabout.Data
                 if (t.Investment.Security.SecurityType == SecurityType.Futures)
                 {
                     factor = 100;
-                }                                                                               
+                }
                 t.RunningBalance = factor * t.RunningUnits * runningUnitPrice;
             }
 
@@ -9262,7 +9548,8 @@ namespace Walkabout.Data
                 toFake = t.Payee;
             }
             // we want a disconnected Payee so we don't corrupt the real Payee book keeping.
-            if (toFake != null) { 
+            if (toFake != null)
+            {
                 this.payee = new Data.Payee() { Name = toFake.Name, Id = toFake.Id };
             }
             this.Memo = s.Memo;
@@ -10750,7 +11037,7 @@ namespace Walkabout.Data
                     throw new ApplicationException("Cannot merge when both transactions are transfered to a different place");
                 }
             }
-            
+
             if (string.IsNullOrEmpty(this.fitid) && !string.IsNullOrEmpty(t.fitid))
             {
                 this.FITID = t.fitid;
@@ -10764,20 +11051,20 @@ namespace Walkabout.Data
             }
 
             if (string.IsNullOrEmpty(this.number) && !string.IsNullOrEmpty(t.number))
-            { 
+            {
                 this.Number = t.number;
                 rc = true;
             }
 
             if (this.Payee == null && t.Payee != null)
             {
-                this.Payee = money.Payees.ImportPayee(t.Payee); 
+                this.Payee = money.Payees.ImportPayee(t.Payee);
                 rc = true;
             }
 
             if (this.category == null && t.category != null)
             {
-                this.Category = money.Categories.ImportCategory(t.category); 
+                this.Category = money.Categories.ImportCategory(t.category);
                 rc = true;
             }
 
@@ -11351,7 +11638,7 @@ namespace Walkabout.Data
         {
             if (map.TryGetValue(payeeOrTransferCaption, out var set))
             {
-                foreach(var a in set)
+                foreach (var a in set)
                 {
                     if (money.Accounts.Contains(a)) // make sure index is ok
                     {
@@ -11457,7 +11744,7 @@ namespace Walkabout.Data
         public Transaction Transaction
         {
             get { return this.transaction; }
-            set {  this.transaction = value; }
+            set { this.transaction = value; }
         }
 
         [XmlIgnore]
@@ -11515,7 +11802,7 @@ namespace Walkabout.Data
                     if (this.amountMinusSalesTax != null)
                     {
                         this.Unassigned = this.AmountMinusSalesTax.Value - total;
-                    } 
+                    }
                     else
                     {
                         this.Unassigned = this.Transaction.AmountMinusTax - total;
@@ -11997,7 +12284,7 @@ namespace Walkabout.Data
 
         internal bool Merge(MyMoney money, Splits other)
         {
-            bool changed = false; 
+            bool changed = false;
             foreach (Split o in other)
             {
                 if (o.CategoryName == money.Categories.TransferToDeletedAccount.Name ||
@@ -12005,7 +12292,7 @@ namespace Walkabout.Data
                 {
                     // hmmm, the imported database has deleted account!
                     // so best we can do is skip this one.
-                    continue;    
+                    continue;
                 }
 
                 Split s = this.FindSplit(o.Id);
@@ -12903,10 +13190,10 @@ namespace Walkabout.Data
             }
         }
 
-        public decimal MarketValue 
-        { 
-            get 
-            { 
+        public decimal MarketValue
+        {
+            get
+            {
                 decimal factor = 1;
 
                 // futures prices are always listed by the instance.  But wen you buy 1 contract, you always get 100 futures in that contract
@@ -12914,7 +13201,7 @@ namespace Walkabout.Data
                 {
                     factor = 100;
                 }
-                return factor * CurrentUnits * this.Security.Price; 
+                return factor * CurrentUnits * this.Security.Price;
             }
         }
 
@@ -13024,7 +13311,7 @@ namespace Walkabout.Data
         /// </summary>
         internal void RemoveEmptySplits()
         {
-            for (int i = this.Count - 1; i >= 0; )
+            for (int i = this.Count - 1; i >= 0;)
             {
                 StockSplit s = this[i];
                 // only do this if the Split looks totally empty

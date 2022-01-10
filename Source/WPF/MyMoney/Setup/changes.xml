@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.74" date="1/9/2022">
+    Hook up "Fiscal Year Start" to W2 tax report and add "Set Tax Year" feature.
+    Fix layout of color swatch in categories panel so they are on the right.
+    Copy/Paste was still not 100% correct.  Release bits behaved differently.
+    When a text box or combo box is being edited, cut/copy/paste will only
+    operate on the contents of that box instead of the whole transaction.
+    When in a Report which is a FlowDocument, Copy will copy the selected text.
+  </change>
   <change version="1.1.0.83" date="1/8/2022">
     Minor fix - move the RENTS account group back to the bottom of the list.
     Hook up "Fiscal Year Start" to cash flow report.

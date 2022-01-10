@@ -636,8 +636,8 @@ namespace Walkabout.Data
                                             sb.Append(", ");
                                             select.Append(", ");
                                         }
-                                        sb.Append(c.ColumnName);
-                                        select.Append(c.OldColumnName);
+                                        sb.Append("[" + c.ColumnName + "]");
+                                        select.Append("[" + c.OldColumnName + "]");
                                         first = false;
                                     }
                                     else
@@ -658,8 +658,8 @@ namespace Walkabout.Data
                                     sb.Append(", ");
                                     select.Append(", ");
                                 }
-                                sb.Append(c.ColumnName);
-                                select.Append(c.ColumnName);
+                                sb.Append("[" + c.ColumnName + "]");
+                                select.Append("[" + c.ColumnName + "]");
                                 first = false;
                             }
                         }

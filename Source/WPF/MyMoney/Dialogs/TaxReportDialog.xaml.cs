@@ -14,10 +14,11 @@ using System.Windows.Shapes;
 namespace Walkabout.Dialogs
 {
     /// <summary>
-    /// Interaction logic for PickYearDialog.xaml
+    /// Interaction logic for TaxReportDialog.xaml
     /// </summary>
     public partial class TaxReportDialog : Window
     {
+        List<string> months = new List<string>();
         public TaxReportDialog()
         {
             InitializeComponent();
@@ -25,6 +26,14 @@ namespace Walkabout.Dialogs
             this.Year = DateTime.Now.Year;
 
             this.Loaded += new RoutedEventHandler(OnLoaded);
+
+            for (int i = 0; i < 12; i++)
+            {
+                var month = new DateTime(this.Year, i + 1, 1);
+                var label = month.ToString("MMMM");
+                this.months.Add(label);
+                this.FiscalStartMonthCombo.Items.Add(label);
+            }
         }
 
         void OnLoaded(object sender, RoutedEventArgs e)
@@ -62,6 +71,11 @@ namespace Walkabout.Dialogs
             }
         }
 
+        public int Month
+        {
+            get { return this.FiscalStartMonthCombo.SelectedIndex; }
+            set { this.FiscalStartMonthCombo.SelectedIndex = Math.Min(11, Math.Max(0, value)); }
+        }
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {

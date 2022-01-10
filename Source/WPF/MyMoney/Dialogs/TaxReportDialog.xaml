@@ -1,8 +1,11 @@
 ﻿<Window x:Class="Walkabout.Dialogs.TaxReportDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Tax Report Options" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        Title="Tax Report Options" mc:Ignorable="d" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         Background="{DynamicResource DialogWindowBackgroundBrush}"
+        d:DesignHeight="250" d:DesignWidth="300"
         SizeToContent="WidthAndHeight">
     
     <Grid Margin="10">
@@ -10,6 +13,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -22,16 +26,23 @@
         <TextBox Margin="10,0,10,5" x:Name="YearText" Grid.Row="1" Background="LemonChiffon" TextChanged="YearText_TextChanged"/>
 
         <StackPanel Margin="10,5,10,5"  Grid.Row="2" Orientation="Horizontal">
-            <TextBlock Text="Consolidate securities by: " Background="Transparent"/>
+            <TextBlock Text="Fiscal Start Month: " Background="Transparent" VerticalAlignment="Center"/>
+            <ComboBox x:Name="FiscalStartMonthCombo">
+            </ComboBox>
+        </StackPanel>
+        
+        <StackPanel Margin="10,5,10,5"  Grid.Row="3" Orientation="Horizontal">
+            <TextBlock Text="Consolidate securities by: " Background="Transparent"  VerticalAlignment="Center"/>
             <ComboBox x:Name="ConsolidateSecuritiesCombo" SelectedIndex="0">
                 <ComboBoxItem>Date Acquired</ComboBoxItem>
                 <ComboBoxItem>Date Sold</ComboBoxItem>
             </ComboBox>
         </StackPanel>
+        
 
-        <CheckBox Margin="10,5,10,5" x:Name="CapitalGainsOnlyCheckBox" Grid.Row="3">Capital Gains Only</CheckBox>
+        <CheckBox Margin="10,5,10,5" x:Name="CapitalGainsOnlyCheckBox" Grid.Row="4">Capital Gains Only</CheckBox>
 
-        <StackPanel Margin="10,20,10,5" Orientation="Horizontal" Grid.Row="5"  HorizontalAlignment="Right">
+        <StackPanel Margin="10,20,10,5" Orientation="Horizontal" Grid.Row="6"  HorizontalAlignment="Right">
             <Button Margin="5,0,5,0" MinWidth="50" IsDefault="True" x:Name="OK" Click="OK_Click">_Ok</Button>
             <Button Margin="5,0,5,0" MinWidth="50" IsCancel="True" x:Name="Cancel" Click="Cancel_Click">_Cancel</Button>
         </StackPanel>

@@ -19,6 +19,7 @@ using System.IO;
 using System.Windows.Media.Imaging;
 using Walkabout.Help;
 using Walkabout.Commands;
+using Walkabout.Configuration;
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 #endif
@@ -523,13 +524,21 @@ namespace Walkabout.Views.Controls
             if (filename.ToLowerInvariant().EndsWith(".txf"))
             {
                 TaxReportDialog options = new TaxReportDialog();
+                options.Month = Settings.TheSettings.FiscalYearStart;
                 options.Owner = App.Current.MainWindow;
                 if (options.ShowDialog() == true)
                 {
                     TxfExporter e = new TxfExporter(this.myMoney);
                     using (StreamWriter sw = new StreamWriter(filename))
                     {
-                        e.ExportCapitalGains(a, sw, options.Year, options.ConsolidateSecuritiesOnDateSold);
+                        DateTime startDate = new DateTime(options.Year, options.Month + 1, 1);
+                        if (options.Month > 0)
+                        {
+                            // then the FY year ends on the specified year.
+                            startDate = startDate.AddYears(-1);
+                        }
+                        DateTime endDate = startDate.AddYears(1);
+                        e.ExportCapitalGains(a, sw, startDate, endDate, options.ConsolidateSecuritiesOnDateSold);
                     }
                 }
             }

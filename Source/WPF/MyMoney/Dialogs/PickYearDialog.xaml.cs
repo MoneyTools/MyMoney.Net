@@ -22,31 +22,68 @@ namespace Walkabout.Dialogs
         {
             InitializeComponent();
 
-            this.Year = DateTime.Now.Year;
+            int now = DateTime.Now.Year;
+
+            for(int year = now - 10; year < now + 1; year++)
+            {
+                this.YearCombo.Items.Add(year);
+                if (year == now)
+                {
+                    this.YearCombo.SelectedItem = year;
+                }
+            }
 
             this.Loaded += new RoutedEventHandler(OnLoaded);
         }
 
-        void OnLoaded(object sender, RoutedEventArgs e)
+        public void SetPrompt(string text)
         {
-            this.YearText.Focus();
-            this.YearText.SelectionStart = YearText.Text.Length;
+            this.Prompt.Text = text;
         }
 
-        public int Year
+        public void SetTitle(string title)
+        {
+            this.Title = title;
+        }
+
+        void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            this.YearCombo.Focus();
+        }
+
+        public int SelectedYear
         {
             get
             {
-                int result = 0;
-                if (int.TryParse(YearText.Text, out result) && result < 100)
+                if (YearCombo.SelectedItem is int year)
                 {
-                    result += 2000;
-                }                
-                return result;
+                    return year;
+                }
+                return -1;
             }
             set
             {
-                YearText.Text = value.ToString();
+                if (!YearCombo.Items.Contains(value))
+                {
+                    if (value < (int)this.YearCombo.Items[0])
+                    {
+                        // prepend more values!
+                        for (int year = (int)this.YearCombo.Items[0] - 1; year > value - 5; year--)
+                        {
+                            this.YearCombo.Items.Insert(0, year);
+                        }
+                    }
+                    else
+                    {
+                        // append more values!
+                        for(int year = (int)this.YearCombo.Items[this.YearCombo.Items.Count - 1]; year <= value + 1; year++)
+                        {
+                            this.YearCombo.Items.Add(year);
+                        }
+                    }
+                    
+                }
+                YearCombo.SelectedItem = value;
             }
         }
 
@@ -61,12 +98,6 @@ namespace Walkabout.Dialogs
         {
             this.DialogResult = false;
             this.Close();
-        }
-
-        private void YearText_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            int result = 0;
-            this.OK.IsEnabled = int.TryParse(YearText.Text, out result);
         }
     }
 }

@@ -1144,52 +1144,49 @@ namespace Walkabout
 
         #region Mouse & Keyboard Handling
 
-        IClipboardClient currentFocus = null;
-
-        void OnKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
+        IClipboardClient GetClipboardClient(IInputElement f)
         {
-            currentFocus = null;
-            IInputElement f = e.NewFocus;
             if (f == null)
             {
-                currentFocus = null;
-                return;
+                return null;
             }
-            
+
             if (f is TextBox box)
             {
                 // text edit mode, so disable row level copy/paste command.
-                currentFocus = new TextBoxClipboardClient(box);
+                return new TextBoxClipboardClient(box);
+            }
+            if (f is ComboBox combo)
+            {
+                // text edit mode, so disable row level copy/paste command.
+                return new ComboBoxClipboardClient(combo);
             }
             else if (f is RichTextBox rbox)
             {
-                currentFocus = new RichTextBoxClipboardClient(rbox);
+                return new RichTextBoxClipboardClient(rbox);
             }
             else if (f is IClipboardClient client)
             {
-                currentFocus = client;
+                return client;
             }
             else if (f == this.TransactionGraph)
             {
                 // todo: do we want to be able to copy stuff from this graph?
                 // currentFocus = this.TransactionGraph;
-                currentFocus = null;
+                return null;
             }
             else
             {
-                currentFocus = null;
-                DependencyObject d = e.NewFocus as DependencyObject;
+                DependencyObject d = f as DependencyObject;
                 while (d != null)
                 {
                     if (d is IClipboardClient c)
                     {
-                        currentFocus = c;
-                        break;
+                        return c;
                     }
                     else if (d is FlowDocumentView view)
                     {
-                        currentFocus = new FlowDocumentViewClipboardClient(view);
-                        break;
+                        return new FlowDocumentViewClipboardClient(view);
                     }
                     else if (d is Inline inline)
                     {
@@ -1201,6 +1198,11 @@ namespace Walkabout
                     }
                 }
             }
+            return null;
+        }
+
+        void OnKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
+        {            
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -3172,30 +3174,6 @@ namespace Walkabout
 
         #region Edit Menu        
 
-        private IClipboardClient ActiveClipboardClient
-        {
-            get
-            {
-                if (this.currentFocus != null)
-                {
-                    return this.currentFocus;
-                }
-                else if (Keyboard.FocusedElement is IClipboardClient client)
-                {
-                    return client;
-                }
-                else if (Keyboard.FocusedElement is TextBox tb)
-                {
-                    return new TextBoxClipboardClient(tb);
-                }
-                else if (Keyboard.FocusedElement is RichTextBox rbox)
-                {
-                    return new RichTextBoxClipboardClient(rbox);
-                }
-                return null;
-            }
-        }
-
         private void OnCommandCanUndo(object sender, CanExecuteRoutedEventArgs e)
         {
             // not implemented yet
@@ -3218,7 +3196,7 @@ namespace Walkabout
         }
         private void OnCommandCanCut(object sender, CanExecuteRoutedEventArgs e)
         {
-            IClipboardClient c = ActiveClipboardClient;
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 e.CanExecute = c.CanCut;
@@ -3227,7 +3205,7 @@ namespace Walkabout
         }
         private void OnCommandCut(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = ActiveClipboardClient;
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
             if (c != null)
             {
                 c.Cut();
@@ -3235,7 +3213,7 @@ namespace Walkabout
         }
         private void OnCommandCanCopy(object sender, CanExecuteRoutedEventArgs e)
         {
-            IClipboardClient c = ActiveClipboardClient;
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
             if (c != null)
             {
                 e.CanExecute = c.CanCopy;
@@ -3245,7 +3223,7 @@ namespace Walkabout
 
         private void OnCommandCopy(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = ActiveClipboardClient;
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);  
             if (c != null)
             {
                 try
@@ -3261,7 +3239,7 @@ namespace Walkabout
         }
         private void OnCommandCanPaste(object sender, CanExecuteRoutedEventArgs e)
         {
-            IClipboardClient c = ActiveClipboardClient;
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
             if (c != null)
             {
                 e.CanExecute = c.CanPaste;
@@ -3270,7 +3248,7 @@ namespace Walkabout
         }
         private void OnCommandPaste(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = ActiveClipboardClient;
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
             if (c != null)
             {
                 try
@@ -3286,7 +3264,7 @@ namespace Walkabout
         }
         private void OnCommandCanDelete(object sender, CanExecuteRoutedEventArgs e)
         {
-            IClipboardClient c = ActiveClipboardClient;
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
             if (c != null)
             {
                 e.CanExecute = c.CanDelete;
@@ -3295,7 +3273,7 @@ namespace Walkabout
         }
         private void OnCommandDelete(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = ActiveClipboardClient;
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
             if (c != null)
             {
                 try
@@ -3363,7 +3341,7 @@ namespace Walkabout
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportTaxes");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Tax Report");
-            TaxReport report = new TaxReport(view, this.myMoney);
+            TaxReport report = new TaxReport(view, this.myMoney, this.settings.FiscalYearStart);
             view.Generate(report);
         }
 
@@ -3373,7 +3351,7 @@ namespace Walkabout
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportW2");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "W2 Report");
-            W2Report report = new W2Report(view, this.myMoney, this);
+            W2Report report = new W2Report(view, this.myMoney, this, settings.FiscalYearStart);
             view.Generate(report);
         }
 

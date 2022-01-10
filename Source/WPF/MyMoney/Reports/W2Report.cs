@@ -23,22 +23,41 @@ namespace Walkabout.Taxes
     {
         FlowDocumentView view;
         MyMoney myMoney;
-        int year;
+        DateTime startDate;
+        DateTime endDate;
         IServiceProvider serviceProvider;
         Point downPos;
+        int fiscalYearStart;
         Category selectedCategory;
         TaxCategoryCollection taxCategories;
         Dictionary<Category, List<Transaction>> transactionsByCategory;
+        const string FiscalPrefix = "FY ";
 
-        public W2Report(FlowDocumentView view, MyMoney money, IServiceProvider sp)
+        public W2Report(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart)
         {
             this.myMoney = money;
-            this.year = DateTime.Now.Year;
+            this.fiscalYearStart = fiscalYearStart;
+            SetStartDate(DateTime.Now.Year);
             this.view = view;
             this.serviceProvider = sp;
             view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
             this.taxCategories = new TaxCategoryCollection();
+        }
 
+        private void SetStartDate(int year)
+        {
+            this.startDate = new DateTime(year, fiscalYearStart + 1, 1);
+            if (fiscalYearStart > 0)
+            {
+                // Note: "FY2020" means July 2019 to July 2020, in other words
+                // it is the end date that represents the year.
+                this.startDate = this.startDate.AddYears(-1);
+            }
+            if (this.startDate > DateTime.Today)
+            {
+                this.startDate = this.startDate.AddYears(-1);
+            }
+            this.endDate = this.startDate.AddYears(1);
         }
 
         private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -117,13 +136,13 @@ namespace Walkabout.Taxes
 
             ICollection<Transaction> transactions = this.myMoney.Transactions.GetAllTransactionsByDate();
 
-            int startYear = year;
-            int lastYear = year;
+            int firstYear = DateTime.Now.Year;
+            int lastYear = DateTime.Now.Year;
 
             Transaction first = transactions.FirstOrDefault();
             if (first != null)
             {
-                startYear = first.Date.Year;
+                firstYear = first.Date.Year;
             }
             Transaction last = transactions.LastOrDefault();
             if (last != null)
@@ -135,16 +154,32 @@ namespace Walkabout.Taxes
             ComboBox byYearCombo = new ComboBox();
             byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
             int selected = -1;
-            for (int i = startYear; i <= lastYear; i++)
+            int index = 0;
+            for (int i = firstYear; i <= lastYear; i++)
             {
-                if (i == this.year)
+                if (this.fiscalYearStart > 0 && i == this.endDate.Year)
                 {
-                    selected = i;
+                    selected = index;
                 }
-                byYearCombo.Items.Add(i);
+                else if (this.fiscalYearStart == 0 && i == this.startDate.Year)
+                {
+                    selected = index;
+                }
+                if (this.fiscalYearStart > 0)
+                {
+                    byYearCombo.Items.Add("FY " + i);
+                }
+                else
+                {
+                    byYearCombo.Items.Add(i.ToString());
+                }
+                index++;
             }
 
-            byYearCombo.SelectedItem = selected != -1 ? selected : lastYear;
+            if (selected != -1)
+            {
+                byYearCombo.SelectedIndex = selected;
+            }
             byYearCombo.SelectionChanged += OnYearChanged;
             byYearCombo.Margin = new Thickness(10, 0, 0, 0);
 
@@ -200,7 +235,25 @@ namespace Walkabout.Taxes
             // summarize the year.
             foreach (Transaction t in transactions)
             {
-                if (t.Date.Year == this.year)
+                if (t.Transfer != null || t.IsDeleted || t.Status == TransactionStatus.Void)
+                {
+                    continue;
+                }
+                bool include = t.Date >= this.startDate && t.Date < this.endDate;
+                var extra = myMoney.TransactionExtras.FindByTransaction(t.Id);
+                if (extra != null && extra.TaxYear != -1)
+                {
+                    var taxYearStartDate = new DateTime(extra.TaxYear, fiscalYearStart + 1, 1);
+                    if (fiscalYearStart > 0)
+                    {
+                        // Note: "FY2020" means July 2019 to July 2020, in other words
+                        // it is the end date that represents the year.
+                        taxYearStartDate = taxYearStartDate.AddYears(-1);
+                    }
+                    var taxYearEndDate = taxYearStartDate.AddYears(1);
+                    include = taxYearStartDate >= this.startDate && taxYearEndDate <= this.endDate;
+                }
+                if (include)
                 {
                     found |= Summarize(byCategory, t);
                 }
@@ -308,8 +361,16 @@ namespace Walkabout.Taxes
         private void OnYearChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox box = (ComboBox)sender;
-            this.year = (int)box.SelectedItem;
-            this.Regenerate();
+            string label = (string)box.SelectedItem;
+            if (label.StartsWith(FiscalPrefix))
+            {
+                label = label.Substring(FiscalPrefix.Length);
+            }
+            if (int.TryParse(label, out int year))
+            {
+                SetStartDate(year);
+                Regenerate();
+            }
         }
 
         string GetCategoryCaption(Category c)

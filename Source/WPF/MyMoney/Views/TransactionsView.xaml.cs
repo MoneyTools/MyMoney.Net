@@ -3791,6 +3791,7 @@ namespace Walkabout.Views
         public readonly static RoutedUICommand CommandRenamePayee = new RoutedUICommand("RenamePayee", "CommandRenamePayee", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandLookupPayee = new RoutedUICommand("LookupPayee", "CommandLookupPayee", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandRecategorize = new RoutedUICommand("Recategorize", "CommandRecategorize", typeof(TransactionsView));
+        public readonly static RoutedUICommand CommandSetTaxYear = new RoutedUICommand("SetTaxYear", "CommandSetTaxYear", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandGotoRelatedTransaction = new RoutedUICommand("GotoRelatedTransaction", "CommandGotoRelatedTransaction", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewTransactionsByAccount = new RoutedUICommand("ViewTransactionsByAccount", "CommandViewTransactionsByAccount", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewSimilarTransactions = new RoutedUICommand("ViewSimilarTransactions", "CommandViewSimilarTransactions", typeof(TransactionsView));
@@ -3874,6 +3875,13 @@ namespace Walkabout.Views
             e.CanExecute = true;
             e.Handled = true;
         }
+
+        private void CanExecute_SetTaxYear(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = HasNonReadonlySelectedTransaction;
+            e.Handled = true;
+        }
+
         private void CanExecute_GotoRelatedTransaction(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = this.SelectedTransaction != null;
@@ -4061,7 +4069,7 @@ namespace Walkabout.Views
             dialog.ShowDialog();
         }
 
-        void OnRecategorizeAll(object sender, RoutedEventArgs e)
+        private void OnRecategorizeAll(object sender, RoutedEventArgs e)
         {
             this.TheActiveGrid.CommitEdit();
             RecategorizeDialog dialog = new Dialogs.RecategorizeDialog(this.myMoney);
@@ -4093,6 +4101,49 @@ namespace Walkabout.Views
                     finally
                     {
                         this.myMoney.EndUpdate();
+                    }
+                }
+            }
+        }
+
+        private void OnSetTaxYear(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.TheActiveGrid.CommitEdit();
+            Transaction t = this.SelectedTransaction;
+            if (t != null && !t.IsReadOnly)
+            {
+                var extra = this.myMoney.TransactionExtras.FindByTransaction(t.Id);
+                var dialog = new PickYearDialog();
+                dialog.Owner = Application.Current.MainWindow;
+                dialog.SetTitle("Select Tax Year");
+                dialog.SetPrompt("Set the tax year for which this transaction applies:");
+                if (extra != null && extra.TaxYear != -1)
+                {
+                    dialog.SelectedYear = extra.TaxYear;
+                }
+                else
+                {
+                    dialog.SelectedYear = t.Date.Year;
+                }
+
+                if (dialog.ShowDialog() == true && dialog.SelectedYear != -1)
+                {
+                    int year = dialog.SelectedYear;    
+                    if (year != t.Date.Year)
+                    {
+                        if (extra == null)
+                        {
+                            extra = new TransactionExtra()
+                            {
+                                Transaction = t.Id
+                            };
+                            this.myMoney.TransactionExtras.AddExtra(extra);
+                        }
+                        extra.TaxYear = year;
+                    }
+                    else if (extra != null)
+                    {
+                        this.myMoney.TransactionExtras.RemoveExtra(extra);
                     }
                 }
             }

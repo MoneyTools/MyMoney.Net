@@ -1,21 +1,18 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Walkabout.Reports;
-using Walkabout.Data;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Migrate;
-using Microsoft.Win32;
-using Walkabout.Controls;
-using System.Windows.Controls;
+using Walkabout.Taxes;
 using Walkabout.Utilities;
 using Walkabout.Views;
-using System.Windows.Documents;
-using System.Diagnostics;
 
-namespace Walkabout.Taxes
+namespace Walkabout.Reports
 {
 
     //=========================================================================================
@@ -23,15 +20,35 @@ namespace Walkabout.Taxes
     {
         FlowDocumentView view;
         MyMoney money;
-        int year;
+        DateTime startDate;
+        DateTime endDate;
         bool consolidateOnDateSold;
         bool capitalGainsOnly;
+        int fiscalYearStart;
+        const string FiscalPrefix = "FY ";
 
-        public TaxReport(FlowDocumentView view, MyMoney money)
+        public TaxReport(FlowDocumentView view, MyMoney money, int fiscalYearStart)
         {
+            this.fiscalYearStart = fiscalYearStart;
             this.view = view;
-            this.year = DateTime.Now.Year;
+            SetStartDate(DateTime.Now.Year);
             this.money = money;
+        }
+
+        private void SetStartDate(int year)
+        {
+            this.startDate = new DateTime(year, fiscalYearStart + 1, 1);
+            if (fiscalYearStart > 0)
+            {
+                // Note: "FY2020" means July 2019 to July 2020, in other words
+                // it is the end date that represents the year.
+                this.startDate = this.startDate.AddYears(-1);
+            }
+            if (this.startDate > DateTime.Today)
+            {
+                this.startDate = this.startDate.AddYears(-1);
+            }
+            this.endDate = this.startDate.AddYears(1);
         }
 
         public override void Generate(IReportWriter writer)
@@ -39,35 +56,65 @@ namespace Walkabout.Taxes
             FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
             writer.WriteHeading("Tax Report For ");
 
-            int startYear = year;
-            int lastYear = year;
+            int firstYear = DateTime.Now.Year;
+            int lastYear = DateTime.Now.Year;
 
             ICollection<Transaction> transactions = this.money.Transactions.GetAllTransactionsByDate();
             Transaction first = transactions.FirstOrDefault();
             if (first != null)
             {
-                startYear = first.Date.Year;
+                firstYear = first.Date.Year;
             }
             Transaction last = transactions.LastOrDefault();
             if (last != null)
             {
                 lastYear = last.Date.Year;
+                if (this.fiscalYearStart > 0 && last.Date.Month > this.fiscalYearStart + 1)
+                {
+                    lastYear++;
+                }
+                // don't show a report containing zero data.  Scroll back to the last year
+                // of data and show that.
+                if (this.fiscalYearStart > 0 && lastYear > this.endDate.Year)
+                {
+                    SetStartDate(lastYear);
+                }
+                else if (this.fiscalYearStart == 0 && this.startDate.Year > lastYear)
+                {
+                    SetStartDate(lastYear);
+                }
             }
             Paragraph heading = fwriter.CurrentParagraph;
 
             ComboBox byYearCombo = new ComboBox();
             byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
             int selected = -1;
-            for (int i = startYear; i <= lastYear; i++)
+            int index = 0;
+            for (int i = firstYear; i <= lastYear; i++)
             {
-                if (i == this.year)
+                if (this.fiscalYearStart > 0 && i == this.endDate.Year)
                 {
-                    selected = i;
+                    selected = index;
                 }
-                byYearCombo.Items.Add(i);
+                else if (this.fiscalYearStart == 0 && i == this.startDate.Year)
+                {
+                    selected = index;
+                }
+                if (this.fiscalYearStart > 0)
+                {
+                    byYearCombo.Items.Add("FY " + i);
+                }
+                else
+                {
+                    byYearCombo.Items.Add(i.ToString());
+                }
+                index++;
             }
 
-            byYearCombo.SelectedItem = selected != -1 ? selected : lastYear;
+            if (selected != -1)
+            {
+                byYearCombo.SelectedIndex = selected;
+            }
             byYearCombo.SelectionChanged += OnYearChanged;
             byYearCombo.Margin = new Thickness(10, 0, 0, 0);
 
@@ -174,8 +221,21 @@ namespace Walkabout.Taxes
         private void OnYearChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox box = (ComboBox)sender;
-            this.year = (int)box.SelectedItem;
-            view.Generate(this);
+            string label = (string)box.SelectedItem;
+            if (label.StartsWith(FiscalPrefix))
+            {
+                label = label.Substring(FiscalPrefix.Length);
+            }
+            if (int.TryParse(label, out int year))
+            {
+                SetStartDate(year);
+                view.Generate(this);
+            }
+        }
+
+        private bool InRange(DateTime date)
+        {
+            return date >= this.startDate && date < this.endDate;
         }
 
         private decimal GetSalesTax()
@@ -184,7 +244,7 @@ namespace Walkabout.Taxes
 
             foreach (Transaction t in money.Transactions)
             {
-                if (t.Date.Year == this.year && !t.IsDeleted && t.Status != TransactionStatus.Void)
+                if (InRange(t.Date) && !t.IsDeleted && t.Status != TransactionStatus.Void)
                 {
                     total += t.NetSalesTax;
                 }
@@ -195,27 +255,26 @@ namespace Walkabout.Taxes
 
         private void GenerateCapitalGains(IReportWriter writer)
         {
-            DateTime toDate = new DateTime(year + 1, 1, 1);
-            var calculator = new CapitalGainsTaxCalculator(this.money, toDate, this.consolidateOnDateSold, true);
+            var calculator = new CapitalGainsTaxCalculator(this.money, this.endDate, this.consolidateOnDateSold, true);
 
             List<SecuritySale> errors = new List<SecuritySale>(from s in calculator.GetSales() where s.Error != null select s);
 
-            if (errors.Count > 0) 
+            if (errors.Count > 0)
             {
                 writer.WriteHeading("Errors Found");
-                foreach (SecuritySale error in errors) 
+                foreach (SecuritySale error in errors)
                 {
                     writer.WriteParagraph(error.Error.Message);
                 }
             }
 
-            if ((from u in calculator.Unknown where u.DateSold.Year == this.year select u).Any())
+            if ((from u in calculator.Unknown where InRange(u.DateSold) select u).Any())
             {
                 writer.WriteHeading("Capital Gains with Unknown Cost Basis");
 
                 writer.StartTable();
                 writer.StartColumnDefinitions();
-                for(int i = 0; i < 4; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     writer.WriteColumnDefinition("Auto", 100, double.MaxValue);
                 }
@@ -241,7 +300,7 @@ namespace Walkabout.Taxes
 
                 foreach (var data in calculator.Unknown)
                 {
-                    if (data.DateSold.Year != this.year) continue;
+                    if (!InRange(data.DateSold)) continue;
                     writer.StartRow();
                     writer.StartCell();
                     writer.WriteParagraph(data.Security.Name);
@@ -274,7 +333,7 @@ namespace Walkabout.Taxes
                 WriteHeaders(writer);
                 foreach (var data in calculator.ShortTerm)
                 {
-                    if (data.DateSold.Year != this.year) continue;
+                    if (!InRange(data.DateSold)) continue;
                     WriteCapitalGains(writer, data);
                     total += data.TotalGain;
                 }
@@ -289,7 +348,7 @@ namespace Walkabout.Taxes
                 WriteHeaders(writer);
                 foreach (var data in calculator.LongTerm)
                 {
-                    if (data.DateSold.Year != this.year) continue;
+                    if (!InRange(data.DateSold)) continue;
                     WriteCapitalGains(writer, data);
                     total += data.TotalGain;
                 }
@@ -335,7 +394,6 @@ namespace Walkabout.Taxes
 
         void WriteCapitalGains(IReportWriter writer, SecuritySale data)
         {
-
             writer.StartRow();
             writer.StartCell();
             writer.WriteParagraph(data.Security.Name);
@@ -387,7 +445,7 @@ namespace Walkabout.Taxes
         private void GenerateCategories(IReportWriter writer)
         {
             TaxCategoryCollection taxCategories = new TaxCategoryCollection();
-            List<TaxCategory> list = taxCategories.GenerateGroups(money, year);
+            List<TaxCategory> list = taxCategories.GenerateGroups(money, this.startDate, this.endDate);
 
             if (list == null)
             {
@@ -425,7 +483,7 @@ namespace Walkabout.Taxes
             writer.StartCell();
             writer.WriteNumber(tax.ToString("C"), FontStyles.Normal, FontWeights.Bold, null);
             writer.EndCell();
-            writer.EndRow();            
+            writer.EndRow();
 
             foreach (TaxCategory tc in list)
             {
@@ -516,7 +574,7 @@ namespace Walkabout.Taxes
         public override void Export(string filename)
         {
             TxfExporter exporter = new TxfExporter(this.money);
-            exporter.Export(filename, year, this.capitalGainsOnly, this.consolidateOnDateSold);
+            exporter.Export(filename, this.startDate, this.endDate, this.capitalGainsOnly, this.consolidateOnDateSold);
         }
 
 
@@ -536,13 +594,18 @@ namespace Walkabout.Taxes
 
         private void OnExportTaxInfoAsTxf()
         {
-            int year = this.year;
-
             SaveFileDialog fd = new SaveFileDialog();
             fd.CheckPathExists = true;
             fd.AddExtension = true;
             fd.Filter = "TXF File (.txf)|*.txf";
-            fd.FileName = "Tax" + year;
+            if (this.fiscalYearStart > 0)
+            {
+                fd.FileName = "TaxFY" + this.startDate.Year;
+            } 
+            else
+            {
+                fd.FileName = "Tax" + this.startDate.Year;
+            }
 
             if (fd.ShowDialog(App.Current.MainWindow) == true)
             {

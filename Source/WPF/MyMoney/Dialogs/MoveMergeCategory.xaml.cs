@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 namespace Walkabout.Dialogs
 {
     /// <summary>
-    /// Interaction logic for PickYearDialog.xaml
+    /// Interaction logic for MoveMergeCategoryDialog.xaml
     /// </summary>
     public partial class MoveMergeCategoryDialog : Window
     {
