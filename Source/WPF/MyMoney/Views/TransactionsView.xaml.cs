@@ -2231,7 +2231,7 @@ namespace Walkabout.Views
                 this.lastQuery = null;
                 SwitchLayout("TheGrid_TransactionFromDetails");
                 this.SetActiveAccount(null, null, null, null, contextToView.Building);
-                IList<Transaction> data = myMoney.Transactions.GetTransactionsByCategory(contextToView.DepartmentCategory, contextToView.Year, true);
+                IList<Transaction> data = myMoney.Transactions.GetTransactionsByCategory(contextToView.DepartmentCategory, contextToView.Year, false);
                 this.Display(new TransactionCollection(myMoney, null, data, true, false, this.QuickFilter),
                     TransactionViewName.Rental, string.Format("{0} {1}", contextToView.Building.Name, contextToView.Year), SelectedRowId);
                 this.FireAfterViewStateChanged(SelectedRowId);
