@@ -34,6 +34,9 @@ Dark Theme
 
     <SolidColorBrush x:Key="TextBrush" Color="Black"/>
 
+    <SolidColorBrush x:Key="LeftPanelBackground" Color="#444444" />
+    <SolidColorBrush x:Key="LeftPanelForeground" Color="#eeeeee" />
+    
     <Color x:Key="NormalBrushGradient1">#FF398FDF</Color>
     <Color x:Key="NormalBrushGradient2">#FF398FDF</Color>
     <Color x:Key="NormalBrushGradient3">#FF398FDF</Color>
@@ -59,12 +62,14 @@ Dark Theme
     <Color x:Key="WindowBackgroundBrushGradient1">#FFD1D1D1</Color>
     <Color x:Key="WindowBackgroundBrushGradient2">#FFD1D1D1</Color>
 
-    
+    <SolidColorBrush x:Key="WalkaboutAccountClosedTextBrush" Color="Gray"/>
+    <SolidColorBrush x:Key="WalkaboutAccountEnabledTextBrush" Color="White"/>
+    <SolidColorBrush x:Key="WalkaboutSelectedTextBrush" Color="White"/>
+
     <LinearGradientBrush x:Key="WalkaboutAccordionBackgroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="#FF353553" Offset="0" />
         <GradientStop Color="#FF191919" Offset="1" />
     </LinearGradientBrush>
-
 
     <LinearGradientBrush x:Key="MenuBackgroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="#FF2C2C2C" Offset="0" />
@@ -78,8 +83,8 @@ Dark Theme
 
     <LinearGradientBrush x:Key="NormalBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="{StaticResource NormalBrushGradient1}" Offset="0" />
-        <GradientStop Color="{StaticResource NormalBrushGradient2}" Offset="0.41800001263618469" />
-        <GradientStop Color="{StaticResource NormalBrushGradient3}" Offset="0.418" />
+        <GradientStop Color="{StaticResource NormalBrushGradient2}" Offset="0.5" />
+        <GradientStop Color="{StaticResource NormalBrushGradient3}" Offset="0.5" />
         <GradientStop Color="{StaticResource NormalBrushGradient4}" Offset="1" />
     </LinearGradientBrush>
 
@@ -90,8 +95,8 @@ Dark Theme
 
     <LinearGradientBrush x:Key="NormalBorderBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="{StaticResource NormalBorderBrushGradient1}" />
-        <GradientStop Color="{StaticResource NormalBorderBrushGradient2}" Offset="0.38" />
-        <GradientStop Color="{StaticResource NormalBorderBrushGradient3}" Offset="0.384" />
+        <GradientStop Color="{StaticResource NormalBorderBrushGradient2}" Offset="0.5" />
+        <GradientStop Color="{StaticResource NormalBorderBrushGradient3}" Offset="0.5" />
         <GradientStop Color="{StaticResource NormalBorderBrushGradient4}" Offset="1" />
     </LinearGradientBrush>
 
@@ -124,8 +129,8 @@ Dark Theme
     <LinearGradientBrush x:Key="SelectedBackgroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="#FFFBED" Offset="0" />
         <GradientStop Color="#FFFBED" Offset="0.4999" />
-        <GradientStop Color="#FFECB5" Offset="0.50" />
-        <GradientStop Color="#FFECB5" Offset="1"/>
+        <GradientStop Color="red" Offset="0.50" />
+        <GradientStop Color="red" Offset="1"/>
     </LinearGradientBrush>
 
     <RadialGradientBrush x:Key="HoverBrush">
@@ -187,8 +192,8 @@ Dark Theme
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="WalkaboutToolBoxListBoxItemBrushWhenSelected" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#FFF9F366" />
-        <GradientStop Color="#FFF9F366" Offset="1" />
+        <GradientStop Color="Black" />
+        <GradientStop Color="Black" Offset="1" />
     </LinearGradientBrush>
 
 
@@ -283,11 +288,11 @@ Dark Theme
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="WalkaboutAccountSubSectionBrush" StartPoint="0.5,0" EndPoint="0.5,1">
-        <GradientStop Color="#D7DCE4" Offset="0" />
-        <GradientStop Color="#D7DCE4" Offset="1" />
+        <GradientStop Color="#FF525B70" Offset="0" />
+        <GradientStop Color="#FF525B70" Offset="1" />
     </LinearGradientBrush>
     
-    <SolidColorBrush x:Key="WalkaboutAccountSubSectionTextBrush" Color="Black"/>
+    <SolidColorBrush x:Key="WalkaboutAccountSubSectionTextBrush" Color="White"/>
     
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter" />
 
@@ -491,6 +496,7 @@ Dark Theme
             </Setter.Value>
         </Setter>
     </Style>
+    
     <Style x:Key="QuickFilterBorder" TargetType="{x:Type Border}">
         <Setter Property="CornerRadius" Value="0"/>
         <Setter Property="Padding" Value="4,0,4,0"/>
@@ -982,7 +988,7 @@ Dark Theme
                                           DockPanel.Dock="Top" />
 
                             <Grid Visibility="Collapsed" x:Name="grid">
-                                <Border x:Name="border" BorderBrush="#FFE8A6" BorderThickness="1,0,1,1" CornerRadius="0,0,3,3">
+                                <Border x:Name="border">
                                     <ContentPresenter Focusable="false" HorizontalAlignment="Stretch"  x:Name="ExpandSite" VerticalAlignment="Stretch" DockPanel.Dock="Bottom" />
                                 </Border>
                             </Grid>
@@ -1273,12 +1279,12 @@ Dark Theme
                     <Grid Width="15" Height="13" Background="Transparent">
                         <Path Visibility="Collapsed" HorizontalAlignment="Left" Margin="1,1,1,1" x:Name="IsExpandedPath" VerticalAlignment="Center" Data="M 0 4 L 8 4 L 4 8 Z">
                             <Path.Fill>
-                                <SolidColorBrush Color="{DynamicResource BlackColor}"/>
+                                <SolidColorBrush Color="DimGray"/>
                             </Path.Fill>
                         </Path>
                         <Path HorizontalAlignment="Left" Margin="1,1,1,1" x:Name="ExpandPath" VerticalAlignment="Center" Data="M 4 0 L 8 4 L 4 8 Z">
                             <Path.Fill>
-                                <SolidColorBrush Color="{DynamicResource BlackColor}"/>
+                                <SolidColorBrush Color="DimGray"/>
                             </Path.Fill>
                         </Path>
                     </Grid>
@@ -1862,7 +1868,7 @@ Dark Theme
     <!-- List Box -->
     <Style x:Key="WalkaboutToolBoxList" TargetType="{x:Type ListBox}">
         <Setter Property="BorderThickness" Value="0,1,0,0"/>
-        <Setter Property="Background" Value="White"/>
+        <Setter Property="Background" Value="{DynamicResource LeftPanelBackground}"/>
         <Setter Property="BorderBrush" Value="#BCC7D8"/>
     </Style>
 
@@ -1897,7 +1903,7 @@ Dark Theme
                         <Trigger Property="IsSelected" Value="true">
                             <Setter Property="Background" Value="{StaticResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="TheItemBorder" />
                             <Setter Property="BorderBrush" Value="{StaticResource SelectedItemBorderBrush}" TargetName="TheItemBorder" />
-                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="Foreground" Value="White"/>
                         </Trigger>
 
                         <MultiTrigger>
@@ -1907,7 +1913,7 @@ Dark Theme
                             </MultiTrigger.Conditions>
 
                             <Setter Property="Background" Value="{StaticResource MouseOverBrush}" TargetName="TheItemBorder" />
-                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="Foreground" Value="Firebrick"/>
                         </MultiTrigger>
 
                         <Trigger Property="IsEnabled" Value="false">
@@ -1933,15 +1939,12 @@ Dark Theme
 
     <!-- TREEVIEW -->
     <Style x:Key="WalkaboutToolBoxTreeView" TargetType="{x:Type TreeView}">
-        <Setter Property="Background" Value="White"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TreeView}">
                     <Grid>
                         <Border x:Name="Border" 
-                                Background="White"
-                                BorderBrush="#BCC7D8" 
-                                BorderThickness="0,1,0,0">
+                                Background="{DynamicResource LeftPanelBackground}">
 
                             <ScrollViewer   Focusable="False" Padding="4" 
                                             HorizontalScrollBarVisibility="Disabled" 
@@ -1960,8 +1963,8 @@ Dark Theme
     <!--Tree View Item-->
     <Style d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
-        <Setter Property="Foreground" Value="Black"/>
         <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="White"/>
         <!--<Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>-->
         <Setter Property="Padding" Value="0,0,0,0"/>

@@ -566,7 +566,7 @@ namespace Walkabout.WpfConverters
                     return Brushes.Red;
                 }
             }
-            return Brushes.Black;
+            return Application.Current.TryFindResource("WalkaboutAccountEnabledTextBrush") as Brush;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

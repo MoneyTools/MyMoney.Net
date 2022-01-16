@@ -26,7 +26,6 @@ namespace Walkabout.Views.Controls
 
         #endregion
 
-
         #region PROPERTIES
 
         private MyMoney myMoney;
@@ -213,8 +212,6 @@ namespace Walkabout.Views.Controls
         }
         #endregion
 
-
-
         #region CLIPBOARD SUPPORT
 
         public bool CanCut
@@ -256,10 +253,6 @@ namespace Walkabout.Views.Controls
         }
 
         #endregion
-
-
-
-
     }
 
 

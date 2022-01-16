@@ -306,6 +306,11 @@ Look and feel of VS 2010
         <GradientStop Color="#CED4DF" Offset="1" />
     </LinearGradientBrush>
     <SolidColorBrush x:Key="WalkaboutAccountSubSectionTextBrush" Color="Black"/>
+
+    <SolidColorBrush x:Key="LeftPanelBackground" Color="White" />
+    <SolidColorBrush x:Key="LeftPanelForeground" Color="Black" />
+
+
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter" />
 
     <Style x:Key="MainAppClientArea" TargetType="Border">

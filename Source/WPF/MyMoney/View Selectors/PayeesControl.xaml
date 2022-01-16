@@ -27,6 +27,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True"
+                           Foreground="{DynamicResource LeftPanelForeground}"
                            FontWeight="{Binding Flags, Converter={StaticResource PayeeFontWeightConverter}}"/>
 
                 <!-- [Chris] there is no "TotalTransactions" property on Payee?
