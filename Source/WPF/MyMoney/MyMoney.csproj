@@ -625,9 +625,9 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -953,10 +953,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MyMoneyAdmin\MyMoneyAdmin.csproj">
-      <Project>{D97DDD85-B5E5-445A-8971-AA2171031990}</Project>
-      <Name>MyMoneyAdmin</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PerformanceEventProvider\PerformanceEventProvider.csproj">
       <Project>{6E3CDBAA-7DF1-4413-8501-58ACBBEA8034}</Project>
       <Name>PerformanceEventProvider</Name>
