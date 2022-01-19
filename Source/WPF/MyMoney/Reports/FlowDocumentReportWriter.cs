@@ -17,6 +17,7 @@ namespace Walkabout.Reports
         Stack<NestedTableState> nested = new Stack<NestedTableState>();
         List<ToggleButton> expandableRowGroups = new List<ToggleButton>();
         List<TableRow> groupedRows;
+        double pixelsPerDip;
 
         class NestedTableState
         {
@@ -28,8 +29,9 @@ namespace Walkabout.Reports
         }
 
 
-        public FlowDocumentReportWriter(FlowDocument document)
+        public FlowDocumentReportWriter(FlowDocument document, double pixelsPerDip)
         {
+            this.pixelsPerDip = pixelsPerDip;
             document.ClearValue(FlowDocument.MinPageWidthProperty);
             this.doc = document;
             this.doc.Blocks.Clear();
@@ -467,7 +469,7 @@ namespace Walkabout.Reports
                                 string text = range.Text;
                                 if (!string.IsNullOrEmpty(text))
                                 {
-                                    FormattedText ft = new FormattedText(text, System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tface, fontSize, brush);
+                                    FormattedText ft = new FormattedText(text, System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tface, fontSize, brush, this.pixelsPerDip);
                                     maxWidths[i] = Math.Max(maxWidths[i], ft.Width);
                                 }
                             }

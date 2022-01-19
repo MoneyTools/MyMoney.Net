@@ -867,7 +867,7 @@ namespace Walkabout.Views.Controls
             return returnSource;
         }
 
-        private static Border CreateFrameworkElementForBalanceDragDrop(Category category)
+        private Border CreateFrameworkElementForBalanceDragDrop(Category category)
         {
             double margin = 5;
             Border categoryBalance = new Border();
@@ -882,9 +882,10 @@ namespace Walkabout.Views.Controls
             amountValue.VerticalAlignment = VerticalAlignment.Center;
             amountValue.TextAlignment = TextAlignment.Center;
 
+            var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             FormattedText ft = new FormattedText(amountValue.Text, System.Globalization.CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight, new Typeface(amountValue.FontFamily, amountValue.FontStyle, amountValue.FontWeight,
-                amountValue.FontStretch), amountValue.FontSize, amountValue.Foreground);
+                amountValue.FontStretch), amountValue.FontSize, amountValue.Foreground, pixelsPerDip);
 
             Rect bounds = new Rect(0, 0, ft.Width, ft.Height);
             bounds.Inflate(margin, margin);

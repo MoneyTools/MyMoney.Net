@@ -3375,7 +3375,8 @@ namespace Walkabout
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportUnaccepted");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
-            FlowDocumentReportWriter writer = new FlowDocumentReportWriter(view.DocumentViewer.Document);
+            var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            FlowDocumentReportWriter writer = new FlowDocumentReportWriter(view.DocumentViewer.Document, pixelsPerDip);
             UnacceptedReport report = new UnacceptedReport(this.myMoney);
             report.Generate(writer);
         }

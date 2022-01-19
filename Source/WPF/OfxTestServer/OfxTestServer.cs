@@ -18,7 +18,6 @@ namespace OfxTestServer
     {
         private bool _terminated;
         private string _prefix;
-        private IAsyncResult _pending;
         private HttpListener _http;
         private List<SamplePayee> _payees;
         private int _delay;

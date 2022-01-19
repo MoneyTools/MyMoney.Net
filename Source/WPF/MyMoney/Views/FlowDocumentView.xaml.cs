@@ -61,7 +61,8 @@ namespace Walkabout.Views
 
             this.Viewer.Dispatcher.BeginInvoke(new Action(() =>
             {
-                FlowDocumentReportWriter writer = new FlowDocumentReportWriter(this.Viewer.Document);
+                var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+                FlowDocumentReportWriter writer = new FlowDocumentReportWriter(this.Viewer.Document, pixelsPerDip);
                 report.Generate(writer);
                 this.writer = writer;
                 ResetExpandAllToggleButton();

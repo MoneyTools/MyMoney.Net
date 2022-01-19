@@ -329,6 +329,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
 
             int digits = GetDigits(zoom);
+            var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
 
             for (double i = 0; i < span; i += ticksPerLabel)
             {
@@ -339,9 +340,10 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 {
                     label = units;
                 }
+
                 FormattedText ft = new FormattedText(label,
                         CultureInfo.CurrentCulture, System.Windows.FlowDirection.LeftToRight,
-                        typeface, 10, Brushes.Black);
+                        typeface, 10, Brushes.Black, pixelsPerDip);
                 drawingContext.DrawText(ft, new Point(x - (ft.Width / 2), maxy + 10));
                 unit += unitStep;
             }

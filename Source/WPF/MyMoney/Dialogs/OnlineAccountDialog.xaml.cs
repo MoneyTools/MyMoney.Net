@@ -1151,9 +1151,9 @@ namespace Walkabout.Dialogs
                     (FontWeight)OnlineResultList.GetValue(ListView.FontWeightProperty),
                     (FontStretch)OnlineResultList.GetValue(ListView.FontStretchProperty));
             }
-
+            var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             FormattedText ft = new FormattedText(s, System.Globalization.CultureInfo.CurrentCulture, System.Windows.FlowDirection.LeftToRight,
-                typeface, fontSize, Brushes.Black);
+                typeface, fontSize, Brushes.Black, pixelsPerDip);
             return ft.Width;
         }
 
