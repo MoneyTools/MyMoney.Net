@@ -39,6 +39,8 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -87,10 +89,7 @@
     </When>
   </Choose>
   <ItemGroup>
-    <Reference Include="LovettSoftware.DgmlTestModeling, Version=3.8.1.0, Culture=neutral, PublicKeyToken=ab3ea86545595e2b, processorArchitecture=MSIL">
-      <HintPath>..\packages\LovettSoftware.DgmlTestModeling.2019.dll.3.8.1\lib\net472\LovettSoftware.DgmlTestModeling.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -164,7 +163,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="TestModel.dgml">
       <SubType>Designer</SubType>
     </None>
@@ -192,6 +190,17 @@
     <Content Include="docit\Microsoft.VisualStudio.DgmlTestModeling.xml" />
     <Content Include="docit\System.Compiler.dll" />
     <Content Include="Package\Dgml.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="LovettSoftware.DgmlTestModeling.2019.dll">
+      <Version>3.8.1</Version>
+    </PackageReference>
+    <PackageReference Include="MSTest.TestAdapter">
+      <Version>2.2.8</Version>
+    </PackageReference>
+    <PackageReference Include="System.Data.SQLite">
+      <Version>1.0.108</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
