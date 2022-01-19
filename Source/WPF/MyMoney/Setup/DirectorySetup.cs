@@ -63,13 +63,10 @@ namespace Walkabout.Setup
             if (!userHasControl)
             {
                 // then we need to elevate to admin...
-                if (MessageBoxEx.Show("SQL Server (NETWORK SERVICE account) does not have permission to write to this directory, " +
-                    "and the current user does not have permission to give SQL server permission, so we need to elevate to administrator account." +
-                    "  Are you ready to elevate as administrator?", "Need to Elevate", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
+                if (MessageBoxEx.Show("SQL Server (\"NT AUTHORITY\\NETWORK SERVICE\" account) does not have permission to write to this directory, " +
+                    "so please give this account full permission to this folder using Windows Explorer Security tab and then click Ok.",
+                    "Missing Account Permission", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
                 {
-                    // here we have to do the work in a separate process that is elevated.
-                    Walkabout.Admin.Program.AddPermissions(dir, accountName, FileSystemRights.FullControl);
-
                     // now make sure we're good.
                     AddWritePermission(accountName, path);
                     return;

@@ -16,7 +16,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using Walkabout.Setup;
 using Walkabout.Dialogs;
-using Ofx;
 using System.Xml.Linq;
 
 namespace Walkabout.Tests
@@ -138,6 +137,25 @@ namespace Walkabout.Tests
 
         const string OfxServerUrl = "http://localhost:3000/ofx/test/";
 
+        string FindFileInParent(string start, string name)
+        {
+            do
+            {
+                string path = Path.Combine(start, name);
+                if (File.Exists(path))
+                {
+                    return path;
+                }
+
+                var parent = Path.GetDirectoryName(start);
+                if (parent == start)
+                {
+                    throw new FileNotFoundException(name);
+                }
+                start = parent;
+            } while (true);
+        }
+
         void Start()
         {
             if (testProcess == null)
@@ -147,8 +165,12 @@ namespace Walkabout.Tests
 
                 ResignAssembly(exe);
 
+                // find the ofx test server, this file is created by the OfxTestServer project.
+                string path = FindFileInParent(Path.GetDirectoryName(exe), "ServerConfig.txt");
+                string serverExePath = File.ReadAllText(path).Trim();
+
                 // start ofx test server
-                string serverExe = typeof(OfxTestServer).Assembly.Location;
+                string serverExe = Path.Combine(Path.GetDirectoryName(serverExePath), Path.GetFileNameWithoutExtension(serverExePath) + ".exe");
                 serverProcess = Process.Start(new ProcessStartInfo(serverExe));
                 serverProcess.WaitForInputIdle();
                 ofxServerWindow = OfxServerWindowWrapper.FindMainWindow(serverProcess.Id);
@@ -577,7 +599,7 @@ namespace Walkabout.Tests
         {
             challengeDialog.SetUserDefinedField("MFA13", "1234");
             challengeDialog.SetUserDefinedField("123", "Newcastle");
-            challengeDialog.SetUserDefinedField("MFA16", "Aston");
+            challengeDialog.SetUserDefinedField("MFA16", "HigginBothum");
 
             challengeDialog.ClickOk();
             challengeDialog = null;

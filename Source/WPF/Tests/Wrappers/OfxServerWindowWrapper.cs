@@ -30,7 +30,7 @@ namespace Walkabout.Tests.Wrappers
         {
             for (int i = 0; i < 10; i++)
             {
-                AutomationElement e = Win32.FindWindow(processId, "OFXTestServer");
+                AutomationElement e = Win32.FindWindow(processId, "OFXTestServerWindow");
                 if (e != null)
                 {
                     return new OfxServerWindowWrapper(e);

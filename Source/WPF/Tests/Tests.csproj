@@ -162,10 +162,6 @@
       <Project>{6B0B9232-88CF-41B0-84AB-186D2F467184}</Project>
       <Name>MyMoney</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OfxTestServer\OfxTestServer.vbproj">
-      <Project>{5342A794-8B08-40E8-B874-B02F903AF7D5}</Project>
-      <Name>OfxTestServer</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
