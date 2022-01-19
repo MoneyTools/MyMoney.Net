@@ -209,3 +209,4 @@ $RECYCLE.BIN/
 *.lock.json
 /Source/.vs/config
 /Source/Docs
+/Source/WPF/Tests/ServerConfig.txt
