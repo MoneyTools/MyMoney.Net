@@ -428,7 +428,7 @@ namespace Walkabout.Reports
 
             if (cash > 0)
             {
-                WriteHeaderRow(writer, caption, "Market Value", "Taxable");
+                WriteHeaderRow(writer, caption, "Market Value", "Taxable Gains");
                 wroteSectionHeader = true;
                 var color = GetRandomColor();
                 WriteSummaryRow(writer, color, "    Cash", cash.ToString("C"), totalSectionGainValue.ToString("C"));
@@ -478,7 +478,7 @@ namespace Walkabout.Reports
                 {
                     if (!wroteSectionHeader)
                     {
-                        WriteHeaderRow(writer, caption, "Market Value", "Taxable");
+                        WriteHeaderRow(writer, caption, "Market Value", "Taxable Gains");
                         wroteSectionHeader = true;
                     }
 

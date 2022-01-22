@@ -17,12 +17,17 @@ if not EXIST publish goto :nobits
 
 if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :noappx
 
-echo Binaries to publish:
-echo %ROOT%MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundl
-set /p response=Please publish github release named %VERSION% using the above binaries and press ENTER to continue...
+echo Creating new tag for version %VERSION%
+git tag %VERSION%
+git push origin --tags
 
+echo Creating new release for version %VERSION%
+xsl -e -s MyMoney\Setup\LatestVersion.xslt MyMoney\Setup\changes.xml > notes.txt
+gh release create %VERSION% %ROOT%MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle --notes-file notes.txt --title "MyMoney.Net %VERSION%"
+del notes.txt
+
+echo Uploading ClickOnce installer
 copy /y MyMoney\Setup\changes.xml publish
-echo Uploading ClickOnce installer 
 call AzurePublishClickOnce %~dp0publish downloads/MyMoney "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
 call AzurePublishClickOnce %~dp0MoneyPackage\AppPackages downloads/MyMoney.Net "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
 
@@ -65,7 +70,7 @@ echo Please create Pull Request for the new "clovett/mymoney_%VERSION%" branch.
 call gitweb
 goto :eof
 
- 
+
 
 goto :eof
 
