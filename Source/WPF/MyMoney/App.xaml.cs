@@ -137,8 +137,9 @@ namespace Walkabout
                 }
 
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine("### Error reading settings: " + ex.Message);
             }
 
             Settings.TheSettings = s;

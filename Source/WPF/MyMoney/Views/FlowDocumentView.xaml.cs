@@ -137,15 +137,6 @@ namespace Walkabout.Views
             set { selectedRow = value; }
         }
 
-        class ReportViewState : ViewState {
-            public IReport report;
-
-            public ReportViewState(IReport report)
-            {
-                this.report = report;
-            }
-        }
-
         public ViewState ViewState
         {
             get { return new ReportViewState(this.report); }
@@ -280,4 +271,18 @@ namespace Walkabout.Views
 
 
     }
+
+    /// <summary>
+    /// Todo: serialize this if we can, so restart can show the same report.
+    /// </summary>
+    class ReportViewState : ViewState
+    {
+        public IReport report;
+
+        public ReportViewState(IReport report)
+        {
+            this.report = report;
+        }
+    }
+
 }
