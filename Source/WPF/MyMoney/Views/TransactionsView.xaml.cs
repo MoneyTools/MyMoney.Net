@@ -86,6 +86,7 @@ namespace Walkabout.Views
 
         private const int PortfolioTab = 1;
         private const int CashTab = 0;
+        private int selectedTab = 0;
         private bool reconciling;
 
         private string caption;
@@ -1378,13 +1379,20 @@ namespace Walkabout.Views
                 {
                     vs.SelectedRow = this.SelectedRowId;
                 }
+
                 if (this.ActiveAccount != null) vs.Account = this.ActiveAccount.Name;
                 if (this.ActiveCategory != null) vs.Category = this.ActiveCategory.Name;
                 if (this.ActivePayee != null) vs.Payee = this.ActivePayee.Name;
                 if (this.ActiveSecurity != null) vs.Security = this.ActiveSecurity.Name;
                 if (this.ActiveRental != null) vs.Rental = this.ActiveRental.Name;
 
-                vs.TabIndex = this.InvestmentAccountTabs.SelectedIndex;
+                if (vs.Account == null && vs.Category == null && vs.Payee == null && vs.Security == null && vs.Rental == null)
+                {
+                    // then this is an uninitialized TransactionView, so return null!
+                    return null;
+                }
+
+                vs.TabIndex = this.selectedTab;
                 return vs;
             }
 
@@ -1398,7 +1406,7 @@ namespace Walkabout.Views
                     this.ViewAllSplits = state.ViewAllSplits;
                     this.QuickFilterUX.FilterText = this.quickFilter = state.QuickFilter;
                     SetTransactionFilterNoUpdate(state.TransactionFilter);
-                    this.InvestmentAccountTabs.SelectedIndex = state.TabIndex;
+                    this.InvestmentAccountTabs.SelectedIndex = this.selectedTab = state.TabIndex;
 
                     Account account = this.myMoney.Accounts.FindAccount(state.Account);
                     Payee payee = this.myMoney.Payees.FindPayee(state.Payee, false);
@@ -1736,7 +1744,7 @@ namespace Walkabout.Views
                         if (this.InvestmentAccountTabs.SelectedIndex == PortfolioTab)
                         {
                             layout = "InvestmentPortfolioView";
-                            ShowInvestmentPortfolio(this.ActiveAccount);
+                            UpdatePortfolio(this.ActiveAccount);
                         }
                         else
                         {
@@ -2167,7 +2175,12 @@ namespace Walkabout.Views
         internal void ShowInvestmentPortfolio(Account account)
         {
             FireBeforeViewStateChanged();
+            UpdatePortfolio(account);
+            FireAfterViewStateChanged(SelectedRowId);
+        }
 
+        private void UpdatePortfolio(Account account)
+        { 
             currentDisplayName = TransactionViewName.Portfolio;
             layout = "InvestmentPortfolioView";
 
@@ -2180,13 +2193,11 @@ namespace Walkabout.Views
             report.DrillDown += OnReportDrillDown;
             view.Generate(report);
             portfolioReport = report;
-            FireAfterViewStateChanged(SelectedRowId);
         }
 
         private void OnReportDrillDown(object sender, SecurityGroup e)
         {
             // create new report just for this drill down in security group.
-            // TODO: add these to navigation history too.
             FireBeforeViewStateChanged();
 
             currentDisplayName = TransactionViewName.Portfolio;
@@ -3322,6 +3333,8 @@ namespace Walkabout.Views
             ShowBalance();
             quickFilterValueChanging = false;
             this.TheActiveGrid.Focus();
+            // Must update this field After we fire FireBeforeViewStateChanged.
+            this.selectedTab = this.InvestmentAccountTabs.SelectedIndex;
         }
 
 

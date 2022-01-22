@@ -21,6 +21,7 @@ namespace Walkabout.Views
     /// </summary>
     public partial class FlowDocumentView : UserControl, IView
     {
+        IReport report;
         IReportWriter writer;
 
         public FlowDocumentView()
@@ -46,12 +47,13 @@ namespace Walkabout.Views
         }
 
         public void AddControl(Control control)
-        {           
+        {
             ButtonStrip.Children.Add(control);
         }
 
         public void Generate(IReport report)
         {
+            this.report = report;
             this.Viewer.Document.Blocks.Clear();
 
             Paragraph p = new Paragraph();
@@ -66,6 +68,7 @@ namespace Walkabout.Views
                 report.Generate(writer);
                 this.writer = writer;
                 ResetExpandAllToggleButton();
+                OnAfterViewStateChanged();
             }), DispatcherPriority.ContextIdle);
         }
 
@@ -118,7 +121,7 @@ namespace Walkabout.Views
         }
 
         public void Commit()
-        {           
+        {
         }
 
         public string Caption
@@ -134,15 +137,26 @@ namespace Walkabout.Views
             set { selectedRow = value; }
         }
 
-        public ViewState ViewState
-        {
-            get { return new ViewState(); }
-            set 
-            { 
-                // todo:
+        class ReportViewState : ViewState {
+            public IReport report;
+
+            public ReportViewState(IReport report)
+            {
+                this.report = report;
             }
         }
 
+        public ViewState ViewState
+        {
+            get { return new ReportViewState(this.report); }
+            set 
+            { 
+                if (value is ReportViewState r)
+                {
+                    this.Generate(r.report);
+                }
+            }
+        }
 
         public ViewState DeserializeViewState(System.Xml.XmlReader reader)
         {

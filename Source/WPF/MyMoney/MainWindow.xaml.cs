@@ -843,6 +843,7 @@ namespace Walkabout
             {
                 if (a.Type == AccountType.Loan)
                 {
+                    this.SaveViewStateOfCurrentView();
                     bool isLoanViewAlready = CurrentView is LoansView;
                     LoansView view = SetCurrentView<LoansView>();
                     view.AccountSelected = a;
@@ -991,11 +992,13 @@ namespace Walkabout
 
             if (currentlySelected is RentBuilding)
             {
+                this.SaveViewStateOfCurrentView();
                 RentSummaryView summary = SetCurrentView<RentSummaryView>();
                 summary.SetViewToRentBuilding(currentlySelected as RentBuilding);
             }
             else if (currentlySelected is RentalBuildingSingleYear)
             {
+                this.SaveViewStateOfCurrentView();
                 RentSummaryView summary = SetCurrentView<RentSummaryView>();
                 summary.SetViewToRentalBuildingSingleYear(currentlySelected as RentalBuildingSingleYear);
             }
@@ -1103,18 +1106,6 @@ namespace Walkabout
         private T SetCurrentView<T>() where T : IView
         {
             IView newView = GetOrCreateView<T>();
-
-            if (newView != CurrentView)
-            {
-                //
-                // Since the type of view is about to change
-                // we need to notify the current type of view 
-                // because the other type that is about to get activated
-                // will not trigger a "Save State" for the previous view
-                //
-                OnBeforeViewStateChanged(null, null);
-            }
-
             CurrentView = newView;
             CurrentView.ActivateView();
             return (T)CurrentView;
@@ -3298,6 +3289,7 @@ namespace Walkabout
 
         private void OnCommandNetWorth(object sender, ExecutedRoutedEventArgs e)
         {
+            this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportNetworth");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
@@ -3314,6 +3306,7 @@ namespace Walkabout
 
         private void ViewInvestmentPortfolio()
         {
+            this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
@@ -3326,7 +3319,7 @@ namespace Walkabout
         private void OnReportDrillDown(object sender, SecurityGroup e)
         {
             // create new report just for this drill down in security group.
-            // TODO: add these to navigation history too.
+            this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
@@ -3337,6 +3330,7 @@ namespace Walkabout
 
         private void OnTaxReport(object sender, ExecutedRoutedEventArgs e)
         {
+            this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportTaxes");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
@@ -3347,6 +3341,7 @@ namespace Walkabout
 
         private void OnCommandW2Report(object sender, ExecutedRoutedEventArgs e)
         {
+            this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportW2");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
@@ -3363,6 +3358,7 @@ namespace Walkabout
 
         private void OnCommandReportCashFlow(object sender, ExecutedRoutedEventArgs e)
         {
+            this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportCashFlow");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
@@ -3372,6 +3368,7 @@ namespace Walkabout
 
         private void OnCommandReportUnaccepted(object sender, ExecutedRoutedEventArgs e)
         {
+            this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportUnaccepted");
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
@@ -3786,6 +3783,7 @@ namespace Walkabout
 
         private SecuritiesView ViewSecurities()
         {
+            this.SaveViewStateOfCurrentView();
             bool initialized = this.cacheViews.ContainsKey(typeof(SecuritiesView));
             SecuritiesView view = SetCurrentView<SecuritiesView>();
             if (!initialized)
@@ -3808,11 +3806,13 @@ namespace Walkabout
 
         private void OnCommandViewViewAliases(object sender, ExecutedRoutedEventArgs e)
         {
+            this.SaveViewStateOfCurrentView();
             SetCurrentView<AliasesView>();
         }
 
         private void OnCommandViewCurrencies(object sender, ExecutedRoutedEventArgs e)
         {
+            this.SaveViewStateOfCurrentView();
             SetCurrentView<CurrenciesView>();
         }
 
@@ -4189,6 +4189,7 @@ namespace Walkabout
             }
             if (changeList != null)
             {
+                this.SaveViewStateOfCurrentView();
                 FlowDocumentView view = SetCurrentView<FlowDocumentView>();
                 view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportUpdates");
                 view.Closed += new EventHandler(OnFlowDocumentViewClosed);

@@ -154,7 +154,7 @@ namespace Walkabout.Reports
             {
                 if (this.selectedGroup != null)
                 {
-                    WriteSummary(writer, data, TaxableIncomeType.None, null, null, false);
+                    WriteSummary(writer, data, TaxableIncomeType.Gains, null, null, false);
                 }
                 else
                 {
