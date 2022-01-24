@@ -9,12 +9,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="24" d:DesignWidth="128">
 
-
-
     <Grid x:Name="LayoutRoot">
-        <Border x:Name="QuickFilter" Style="{DynamicResource QuickFilderBorder}" 
+        <Border x:Name="QuickFilter"
                 Background="#55aaaaaa"
-                Height="20"
                 SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -24,14 +21,14 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- MAGNIFY GLASS -->
-                <Viewbox Height="12" Width="12">
-                    <Grid Opacity="0.5" VerticalAlignment="Center">
-                        <Ellipse Fill="Transparent"  Stroke="{DynamicResource GlyphBrush}"
+                <Viewbox Height="14" Width="14" Margin="4 0 0 0">
+                    <Grid Opacity="0.5">
+                        <Ellipse Fill="Transparent"  Stroke="Black"
                                  HorizontalAlignment="Left" 
                                  Height="14" Width="14"  
                                  VerticalAlignment="Top" StrokeThickness="3" />
                         <Path Data="M10,10 L16,16" 
-                              Stroke="{DynamicResource GlyphBrush}" StrokeThickness="3.5" StrokeEndLineCap="Round" StrokeStartLineCap="Triangle" />
+                              Stroke="Black" StrokeThickness="3.5" StrokeEndLineCap="Round" StrokeStartLineCap="Triangle" />
                     </Grid>
                 </Viewbox>
 
