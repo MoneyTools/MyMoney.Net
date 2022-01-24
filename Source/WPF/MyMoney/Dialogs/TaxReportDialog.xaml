@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         Title="Tax Report Options" mc:Ignorable="d" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-        Background="{DynamicResource DialogWindowBackgroundBrush}"
         d:DesignHeight="250" d:DesignWidth="300"
         SizeToContent="WidthAndHeight">
     

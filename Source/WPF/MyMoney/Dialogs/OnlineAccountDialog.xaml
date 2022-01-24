@@ -216,8 +216,8 @@
 
             <ProgressBar x:Name="Progress" IsIndeterminate="True"  Grid.Column="1" Height="20" HorizontalAlignment="Stretch" Margin="10,2,10,0" VerticalAlignment="Top" />
 
-            <Button x:Name="ButtonOk" Grid.Column="2" IsDefault="True" MinWidth="72" MinHeight="23" Margin="0,0,0,0" Click="OnButtonOk">OK</Button>
-            <Button x:Name="ButtonCancel" Grid.Column="3" IsCancel="True" MinWidth="72" MinHeight="23" Margin="12,0,0,0" Click="OnButtonCancel">Cancel</Button>
+            <Button x:Name="ButtonOk" Grid.Column="2" IsDefault="True" MinWidth="72" Margin="0,0,0,0" Click="OnButtonOk">OK</Button>
+            <Button x:Name="ButtonCancel" Grid.Column="3" IsCancel="True" MinWidth="72" Margin="12,0,0,0" Click="OnButtonCancel">Cancel</Button>
         </Grid>
 
     </Grid>

@@ -10,8 +10,6 @@
     <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="Black"/>
     <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="#F6F4F2"/>
 
-    <SolidColorBrush x:Key="DialogWindowBackgroundBrush" Color="#F6F4F2"/>
-
     <!-- was 7BD1AA -->
     <SolidColorBrush x:Key="WalkaboutReconciledRowBackgroundBrush" Color="#A1EFC9"/>
 
@@ -108,8 +106,8 @@
                           Path=(Validation.Errors)[0].ErrorContent}"/>
             </Trigger>
         </Style.Triggers>
-
     </Style>
+    
     <Style x:Key="ComboBoxItemSecurity" TargetType="ComboBoxItem">
         <Setter Property="Template">
             <Setter.Value>

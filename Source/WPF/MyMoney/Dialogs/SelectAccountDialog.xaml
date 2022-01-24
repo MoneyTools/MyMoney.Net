@@ -4,7 +4,7 @@
         xmlns:localData="clr-namespace:Walkabout.Data"
         xmlns:c="clr-namespace:Walkabout.WpfConverters"
         Title="Select Account" Height="400" MinHeight="400" Width="500" MinWidth="500" 
-        Background="{DynamicResource DialogWindowBackgroundBrush}">
+        >
     
     <Window.Resources>
         <c:BoolToBrushConverter x:Key="BoolToBrushConverter"/>

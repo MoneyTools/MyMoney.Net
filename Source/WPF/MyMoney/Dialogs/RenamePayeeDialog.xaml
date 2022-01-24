@@ -10,7 +10,7 @@
         ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner" 
-        Background="{DynamicResource DialogWindowBackgroundBrush}" WindowStyle="ToolWindow"
+        WindowStyle="ToolWindow"
         FocusManager.FocusedElement="{Binding ElementName=comboBox1}">
 
     <Window.Resources>

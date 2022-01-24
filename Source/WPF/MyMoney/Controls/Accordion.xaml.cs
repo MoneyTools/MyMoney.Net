@@ -120,6 +120,7 @@ namespace Walkabout.Controls
             //
             TextBlock headerText = new TextBlock();
             headerText.Text = header;
+            headerText.VerticalAlignment = VerticalAlignment.Center;
             Grid.SetColumn(headerText, 0);
             expanderHeader.Children.Add(headerText);
 

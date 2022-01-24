@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         WindowStartupLocation="CenterOwner" 
         SizeToContent="Height" Width="300"
-        Title="Which Year ?"        
-        Background="{DynamicResource DialogWindowBackgroundBrush}">
+        Title="Which Year ?"       
+        >
   <Grid Margin="10">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*"/>

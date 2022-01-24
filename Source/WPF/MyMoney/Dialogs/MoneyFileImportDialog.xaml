@@ -7,7 +7,7 @@
         xmlns:c="clr-namespace:Walkabout.WpfConverters"
         mc:Ignorable="d"
         Title="Money File Import" Height="500" Width="800"
-        Background="{DynamicResource DialogWindowBackgroundBrush}" >
+        >
     <Window.Resources>
         <local:DemoList x:Key="DemoList"/>
         <c:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>

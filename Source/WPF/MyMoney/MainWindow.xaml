@@ -390,7 +390,7 @@
         <c:AppSettings x:Name="AppSettingsPanel" Grid.Row="1" Width="300" HorizontalAlignment="Right" Visibility="Collapsed">
         </c:AppSettings>
 
-        <StatusBar Grid.Row="2" Height="23">
+        <StatusBar Grid.Row="2">
             <StatusBarItem x:Name="StatusMessage" HorizontalAlignment="Left"/>
             <StatusBarItem HorizontalAlignment="Right">
                 <Grid >

@@ -62,7 +62,7 @@
         <TextBlock Text="Confirm Password:" Grid.Row="3" TextAlignment="Right" Margin="3"/>
         <PasswordBox x:Name="ConfirmPasswordBox" Margin="2" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5" Background="LemonChiffon"/>
         
-        <Button x:Name="buttonOk" Click="buttonOk_Click" Grid.Row="5" Grid.Column="2" MinWidth="74" MinHeight="23" Margin="3" IsDefault="True">_OK</Button>
-        <Button x:Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="5" Grid.Column="3" MinWidth="74" MinHeight="23" Margin="3" IsCancel="True">_Cancel</Button>
+        <Button x:Name="buttonOk" Click="buttonOk_Click" Grid.Row="5" Grid.Column="2" MinWidth="74" Margin="3" IsDefault="True">_OK</Button>
+        <Button x:Name="buttonCancel" Click="buttonCancel_Click" Grid.Row="5" Grid.Column="3" MinWidth="74" Margin="3" IsCancel="True">_Cancel</Button>
     </Grid>
 </Window>

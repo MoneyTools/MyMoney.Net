@@ -732,7 +732,7 @@
 
             <!-- QUICK SEARCH BUTTON AREA -->
             <Border Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"  SizeChanged="Border_SizeChanged">
-                <Grid>
+                <Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
@@ -798,8 +798,7 @@
                         <local:QuickFilterControl x:Name="QuickFilterUX"  Width="200" FilterValueChanged="OnQuickFilterValueChanged" HorizontalAlignment="Left"/>
 
                         <!-- ADVANCE & CLOSE -->
-                        <Expander x:Name="AdvancedSearch" Margin="4,0,0,0" HorizontalAlignment="Right"
-                                   ToolTip="Show advanced query"
+                        <Expander x:Name="AdvancedSearch" HorizontalAlignment="Right" Margin="8 0 0 0" VerticalAlignment="Center" ToolTip="Show advanced query"
                               IsExpanded="{Binding IsQueryPanelDisplayed, Mode=TwoWay}">
                         </Expander>
 

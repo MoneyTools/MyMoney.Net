@@ -5,7 +5,6 @@
         Title="Recategorize All" Height="242" Width="415"
         ShowInTaskbar="False"  
         WindowStartupLocation="CenterOwner" 
-        Background="{DynamicResource DialogWindowBackgroundBrush}" 
         WindowStyle="ToolWindow" SizeToContent="WidthAndHeight">
     <Window.Resources>
 
@@ -46,8 +45,8 @@
         </local:FilteringComboBox>
 
         <StackPanel Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
-            <Button Content="_OK" MinHeight="23" Name="ButtonOk" MinWidth="75" Click="buttonOk_Click"/>
-            <Button Content="_Cancel" MinHeight="23" Name="ButtonCacnel" MinWidth="75" Click="buttonCancel_Click" />
+            <Button Content="_OK" Name="ButtonOk" MinWidth="75" Click="buttonOk_Click"/>
+            <Button Content="_Cancel" Name="ButtonCacnel" MinWidth="75" Click="buttonCancel_Click" />
         </StackPanel>
     </Grid>
 </Window>

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:c="clr-namespace:Walkabout.Controls"
         Title="Login" Height="187" Width="381" WindowStyle="ToolWindow" ShowInTaskbar="False"
-        Background="{DynamicResource DialogWindowBackgroundBrush}">
+        >
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

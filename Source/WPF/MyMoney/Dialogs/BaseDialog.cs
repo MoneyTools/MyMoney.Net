@@ -8,7 +8,8 @@ namespace Walkabout.Dialogs
     {
         public BaseDialog()
         {
-            this.SetResourceReference(Window.BackgroundProperty, "DialogWindowBackgroundBrush");
+            this.SetResourceReference(Window.BackgroundProperty, "SystemControlPageBackgroundChromeMediumLowBrush");
+            this.SetResourceReference(Window.ForegroundProperty, "SystemControlPageTextBaseHighBrush");
         }
     }
 }
