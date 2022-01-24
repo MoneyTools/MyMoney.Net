@@ -501,7 +501,7 @@
         </Grid.RowDefinitions>
 
         <!-- QUICK SEARCH BUTTON AREA -->
-        <Border CornerRadius="3,3,0,0" Height="30" Background="{DynamicResource WalkaboutToolbarExpanderBrushSelected}" >
+        <Border>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

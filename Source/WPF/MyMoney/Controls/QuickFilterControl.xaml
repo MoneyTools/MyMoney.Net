@@ -12,7 +12,10 @@
 
 
     <Grid x:Name="LayoutRoot">
-        <Border x:Name="QuickFilter" Style="{DynamicResource QuickFilderBorder}" BorderBrush="{DynamicResource NormalBorderBrush}"   Background="{DynamicResource QuickFilterBackgroundBrush}" SnapsToDevicePixels="True">
+        <Border x:Name="QuickFilter" Style="{DynamicResource QuickFilderBorder}" 
+                Background="#55aaaaaa"
+                Height="20"
+                SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -20,19 +23,27 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-
-
                 <!-- MAGNIFY GLASS -->
-                <Viewbox Height="16" Width="16">
+                <Viewbox Height="12" Width="12">
                     <Grid Opacity="0.5" VerticalAlignment="Center">
-                        <Ellipse Fill="Transparent"  Stroke="{DynamicResource GlyphBrush}" HorizontalAlignment="Left" Height="14" Width="14"  VerticalAlignment="Top" StrokeThickness="3" />
-                        <Path Data="M10,10 L16,16" Stroke="{DynamicResource GlyphBrush}" StrokeThickness="3.5" StrokeEndLineCap="Round" StrokeStartLineCap="Triangle" />
+                        <Ellipse Fill="Transparent"  Stroke="{DynamicResource GlyphBrush}"
+                                 HorizontalAlignment="Left" 
+                                 Height="14" Width="14"  
+                                 VerticalAlignment="Top" StrokeThickness="3" />
+                        <Path Data="M10,10 L16,16" 
+                              Stroke="{DynamicResource GlyphBrush}" StrokeThickness="3.5" StrokeEndLineCap="Round" StrokeStartLineCap="Triangle" />
                     </Grid>
                 </Viewbox>
 
                 <!-- TEXT BOX GLASS -->
-                <TextBox Name="InputFilterText" Grid.Column="1" BorderThickness="0" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Stretch"  
-                         KeyUp="OnTextBox_KeyUp" TextChanged="OnInputFilterText_TextChanged" Margin="2,0,2,0" FontSize="12" Padding="2" />
+                <TextBox Name="InputFilterText" Grid.Column="1" BorderThickness="0" 
+                         Background="Transparent"
+                         VerticalAlignment="Center" 
+                         HorizontalAlignment="Stretch"  
+                         KeyUp="OnTextBox_KeyUp" 
+                         TextChanged="OnInputFilterText_TextChanged" 
+                         Margin="2,0,2,0" 
+                         />
 
                 <!-- CANCEL BUTTON -->
                 <c:CloseBox x:Name="ClearFilter" Click="OnClearFilterButton_Closed"  Visibility="Collapsed" VerticalAlignment="Center" Grid.Column="2"/>

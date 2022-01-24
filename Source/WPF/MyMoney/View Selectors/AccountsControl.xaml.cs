@@ -776,13 +776,12 @@ namespace Walkabout.Views.Controls
             {
                 if (a.IsClosed)
                 {
-                    textBrush = Application.Current.TryFindResource("WalkaboutAccountClosedTextBrush") as Brush;
-                    
+                    textBrush = Brushes.LightGray;
                 }
             }
             if (textBrush == null)
             {
-                textBrush = Application.Current.TryFindResource("WalkaboutAccountEnabledTextBrush") as Brush;
+                textBrush = Application.Current.TryFindResource("SystemControlPageTextBaseHighBrush") as Brush;
             }
 
             if (textBrush == null)

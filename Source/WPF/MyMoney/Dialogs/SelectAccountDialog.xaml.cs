@@ -20,11 +20,6 @@ namespace Walkabout.Dialogs
             InitializeComponent();
 
             ButtonOk.IsEnabled = false;
-
-            // TO DO - THEME ALL DIALOG BOX
-            //ResourceDictionary theme = new ResourceDictionary();
-            //theme.Source = new Uri("Themes/Theme-Flat.xaml", UriKind.Relative);
-            //Resources.MergedDictionaries.Add(theme);
         }
 
         private void ButtonOk_Click(object sender, RoutedEventArgs e)

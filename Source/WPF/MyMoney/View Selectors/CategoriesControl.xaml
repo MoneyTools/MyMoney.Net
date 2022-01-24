@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
              xmlns:local="clr-namespace:Walkabout.Views.Controls"
-             xmlns:controls="clr-namespace:Walkabout.Controls"
              xmlns:localData="clr-namespace:Walkabout.Data"  
              xmlns:help="clr-namespace:Walkabout.Help"
              help:HelpService.HelpKeyword="Categories"
@@ -127,7 +126,7 @@
         <KeyBinding Command="local:CategoriesControl.CommandRenameCategory" Key="F2" />
     </UserControl.InputBindings>
 
-    <Grid Background="White" >
+    <Grid Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}">
 
 
         <Grid.RowDefinitions>
@@ -135,13 +134,13 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
         <TreeView Name="treeView" ItemsSource="{Binding}" Grid.Row="2"
-                  Style="{DynamicResource WalkaboutToolBoxTreeView}"
-                  VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" 
-                   PreviewMouseRightButtonDown="treeView_PreviewMouseRightButtonDown"
-                  AllowDrop="True" HorizontalAlignment="Stretch">
-        </TreeView>
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling" 
+                  HorizontalContentAlignment="Stretch"
+                  PreviewMouseRightButtonDown="treeView_PreviewMouseRightButtonDown"
+                  AllowDrop="True" 
+                  HorizontalAlignment="Stretch"/>
 
     </Grid>
 

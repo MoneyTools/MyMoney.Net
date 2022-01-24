@@ -24,21 +24,25 @@
         <local:AccountLastTransactionTooltipConverter x:Key="AccountLastTransactionTooltipConverter"/>
 
         <DataTemplate DataType="{x:Type localData:AccountSectionHeader}">
+            <Border BorderThickness="0 0 0 1" BorderBrush="Gray" Margin="0 10 0 0">
+                    <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-            <Border Style="{DynamicResource WalkaboutAccountSubSectionBorderStyle}" Margin="0,10,0,0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                    <TextBlock Text="{Binding Title}" Foreground="{DynamicResource WalkaboutAccountSubSectionTextBrush}"/>
+                    <TextBlock Grid.Column="0" Text="{Binding Title}"
+                               FontSize="20"/>
 
-                    <TextBlock Text="{Binding BalanceInNormalizedCurrencyValue, StringFormat={}{0:C}}"  
-                               Foreground="{DynamicResource WalkaboutAccountSubSectionTextBrush}"
+                    <TextBlock Grid.Column="1" Text="{Binding BalanceInNormalizedCurrencyValue, StringFormat={}{0:C}}"  
 							   HorizontalAlignment="Right" 
-                               Margin="10,0,10,0"/>
-                </StackPanel>
+                               />
+                    </Grid>
             </Border>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type localData:Account}">
-            <Grid Name="ItemInTheList" >
+            <Grid Name="ItemInTheList">
                 <Grid.ToolTip>
                     <StackPanel Orientation="Vertical">
                         <TextBlock Text="{Binding Name}"/>
@@ -53,16 +57,18 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <Image Source="{Binding Path=., Converter={StaticResource AccountWarningIconConverter}}" Width="16" Height="16"
-                       Visibility="{Binding Path=., Converter={StaticResource AccountWarningVisibilityConverter}}" Margin="0,0,5,0" 
+                <Image Source="{Binding Path=., Converter={StaticResource AccountWarningIconConverter}}"
+                       Width="16" Height="16"
+                       Visibility="{Binding Path=., Converter={StaticResource AccountWarningVisibilityConverter}}"
+                       Margin="0,0,5,0" 
                        ToolTip="{Binding Path=., Converter={StaticResource AccountWarningTooltipConverter}}"/>
 
                 <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True" Grid.Column="1" 
-                           Foreground="{Binding ., Converter={StaticResource AccountNameColorConverter}}"
+                           Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
                            FontWeight="{Binding ., Converter={StaticResource AccountFontWeightConverter}}"/>
-
+                
                 <TextBlock Text="{Binding BalanceNormalized, StringFormat={}{0:C}}"  Grid.Column="2" 
-                           HorizontalAlignment="Right" Margin="8,0,10,0"
+                           HorizontalAlignment="Right"
                            Foreground="{Binding BalanceNormalized, Converter={StaticResource MoneyColorConverter}}"
                            FontWeight="{Binding ., Converter={StaticResource AccountFontWeightConverter}}"/>
             </Grid>
@@ -82,17 +88,26 @@
         <CommandBinding  Command="local:AccountsControl.CommandDeleteAccount" Executed="OnDeleteAccount" CanExecute="CanDeleteAccount"/>
         <CommandBinding  Command="local:AccountsControl.CommandViewTransfers" Executed="OnViewTransfers" CanExecute="CanViewTransfers"/>
         <CommandBinding  Command="local:AccountsControl.CommandExportAccount" Executed="OnExportAccount" CanExecute="CanExportAccount"/>
-        <CommandBinding  Command="local:AccountsControl.CommandToggleClosedAccounts" Executed="OnToggleShowClosedAccounts" CanExecute="CanToggleShowClosedAccounts"/>        
+        <CommandBinding  Command="local:AccountsControl.CommandToggleClosedAccounts" Executed="OnToggleShowClosedAccounts" CanExecute="CanToggleShowClosedAccounts"/>
     </UserControl.CommandBindings>
 
-    <Grid>
-        <ListBox    Name="listBox1" ItemsSource="{Binding}" 
-                    Style="{DynamicResource WalkaboutToolBoxList}"
-                    HorizontalContentAlignment="Stretch" 
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
 
+    <ListBox Name="listBox1" 
+             ItemsSource="{Binding}" 
+             HorizontalAlignment="Stretch" 
+             HorizontalContentAlignment="Stretch"
+             Grid.IsSharedSizeScope="True"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+             UseLayoutRounding="True"
+             >
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="ListBoxItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            </Style>
+        </ListBox.ItemContainerStyle>
 
-        <Grid.ContextMenu>
+        <ListBox.ContextMenu>
             <ContextMenu Name="AccountsControlContextMenu">
                 <MenuItem AutomationProperties.AutomationId="Properties" Header="_Properties..." Command="local:AccountsControl.CommandFileImport"  />
                 <MenuItem AutomationProperties.AutomationId="SynchronizeAccount" Name="MenuSync" Header="_Synchronize Account" Command="local:AccountsControl.CommandSynchronize" />
@@ -108,7 +123,7 @@
                 <Separator />
                 <MenuItem AutomationProperties.AutomationId="DisplayClosedAccounts" Name="MenuDisplayClosedAccounts" Header="Display _Closed Accounts" Command="local:AccountsControl.CommandToggleClosedAccounts"/>
             </ContextMenu>
-        </Grid.ContextMenu>
+        </ListBox.ContextMenu>
 
-    </Grid>
+    </ListBox>
 </UserControl>

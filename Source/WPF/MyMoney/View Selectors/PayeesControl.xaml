@@ -4,9 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
-             xmlns:local="clr-namespace:Walkabout.Views.Controls"
              xmlns:localData="clr-namespace:Walkabout.Data"
-             xmlns:help="clr-namespace:Walkabout.Help"
+             xmlns:help="clr-namespace:Walkabout.Help" d:DataContext="{d:DesignInstance Type=localData:Payees}"
              help:HelpService.HelpKeyword="Payees"
              mc:Ignorable="d"              
              d:DesignHeight="300" d:DesignWidth="300">
@@ -14,42 +13,49 @@
 
     <UserControl.Resources>
         <c:NonzeroToFontBoldConverter x:Key="PayeeFontWeightConverter"/>
-        
-        <DataTemplate DataType="{x:Type localData:Payee}">
-            <Grid Name="ItemInTheList" >
-                <Grid.ToolTip>
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Text="{Binding Name}"/>
-                    </StackPanel>
-                </Grid.ToolTip>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True"
-                           Foreground="{DynamicResource LeftPanelForeground}"
-                           FontWeight="{Binding Flags, Converter={StaticResource PayeeFontWeightConverter}}"/>
-
-                <!-- [Chris] there is no "TotalTransactions" property on Payee?
-                <TextBlock Text="{Binding TotalTransactions, StringFormat={}{0:N}}"  Grid.Column="1" 
-                           HorizontalAlignment="Right" Margin="8,0,10,0"/>-->
-            </Grid>
-        </DataTemplate>
     </UserControl.Resources>
 
-    <Grid>
 
-        <ListBox Name="listbox1" DataContext="{Binding}"  Style="{DynamicResource WalkaboutToolBoxList}"
-                 HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" SnapsToDevicePixels="True" 
+    <ListBox Name="listbox1" DataContext="{Binding}"
+                 HorizontalContentAlignment="Stretch" 
+                 VerticalContentAlignment="Stretch" 
                  AllowDrop="True"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+        
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="ListBoxItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            </Style>
+        </ListBox.ItemContainerStyle>
 
-        <Grid.ContextMenu>
+        <ListBox.ItemTemplate >
+            <DataTemplate DataType="{x:Type localData:Payee}">
+                <Grid Name="ItemInTheList" >
+                    <Grid.ToolTip>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </Grid.ToolTip>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True"
+                           FontWeight="{Binding Flags, Converter={StaticResource PayeeFontWeightConverter}}"/>
+
+                    <!-- [Chris] there is no "TotalTransactions" property on Payee?
+                     <TextBlock Text="{Binding TotalTransactions, StringFormat={}{0:N}}"  Grid.Column="1" 
+                           HorizontalAlignment="Right" Margin="8,0,10,0"/>-->
+                </Grid>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+        
+        <ListBox.ContextMenu>
             <ContextMenu Name="cm">
                 <MenuItem Header="_Rename" Click="OnMenuItem_Rename" />
                 <MenuItem Header="_Delete Payee" Click="OnMenuItem_Delete" />
             </ContextMenu>
-        </Grid.ContextMenu>
-
-    </Grid>
+        </ListBox.ContextMenu>
+    </ListBox>
 </UserControl>

@@ -12,63 +12,67 @@
              d:DesignHeight="300" d:DesignWidth="300">
 
 
-    <UserControl.Resources>
-        
-        <DataTemplate DataType="{x:Type localData:Security}">
-            <Grid Name="ItemInTheList" >
-                <Grid.ToolTip>
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Text="{Binding Id}"/>
-                        <TextBlock Text="{Binding CuspId}"/>
-                        <TextBlock Text="{Binding Name}"/>
-                        <TextBlock Text="{Binding SecurityType}"/>
-                        
-                    </StackPanel>
-                </Grid.ToolTip>
-                
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                
-                <TextBlock Text="{Binding Name}"
-                           Grid.Column="0"
-                           Foreground="{DynamicResource LeftPanelForeground}"
-                           TextTrimming="CharacterEllipsis" 
-                           ClipToBounds="True"/>
-                
-                <TextBlock Text="{Binding Symbol}" 
-                           Grid.Column="1"
-                           Foreground="{DynamicResource LeftPanelForeground}" 
-                           Opacity="0.5"
-                           TextTrimming="CharacterEllipsis" 
-                           ClipToBounds="True"/>
-            </Grid>
-        </DataTemplate>
-    </UserControl.Resources>
-    
     <UserControl.CommandBindings>
         <CommandBinding Command="local:SecuritiesControl.CommandDeletePayee" CanExecute="OnCanDeleteCommand" Executed="OnExecuteDelete" />
     </UserControl.CommandBindings>
     <UserControl.InputBindings>
         <KeyBinding Command="local:SecuritiesControl.CommandDeletePayee" Key="Delete"/>
     </UserControl.InputBindings>
-    
-    <Grid>
 
-        <ListBox Name="listbox1" DataContext="{Binding}"  Style="{DynamicResource WalkaboutToolBoxList}"
-                 HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" SnapsToDevicePixels="True" 
+    <ListBox Name="listbox1" 
+                 DataContext="{Binding}"
+                 HorizontalContentAlignment="Stretch" 
+                 HorizontalAlignment="Stretch" 
+                 VerticalContentAlignment="Stretch"
                  AllowDrop="True"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+                 >
+        
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="ListBoxItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            </Style>
+        </ListBox.ItemContainerStyle>
+        
+        <ListBox.ItemTemplate >
+            <DataTemplate DataType="{x:Type localData:Security}" >
+                <Grid Name="ItemInTheList" HorizontalAlignment="Stretch" >
+                    <Grid.ToolTip>  
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{Binding Id}"/>
+                            <TextBlock Text="{Binding CuspId}"/>
+                            <TextBlock Text="{Binding Name}"/>
+                            <TextBlock Text="{Binding SecurityType}"/>
+                        </StackPanel>
+                    </Grid.ToolTip>
 
-         
-        <Grid.ContextMenu>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="{Binding Name}"
+                           Grid.Column="0"
+                           TextTrimming="CharacterEllipsis" 
+                           ClipToBounds="True"/>
+
+                    <TextBlock Text="{Binding Symbol}" 
+                           Margin="10,0,0,0"
+                           Grid.Column="1"
+                           Opacity="0.5"
+                           HorizontalAlignment="Right"
+                           TextTrimming="CharacterEllipsis" 
+                           ClipToBounds="True"/>
+                </Grid>
+            </DataTemplate>
+
+        </ListBox.ItemTemplate>
+        <ListBox.ContextMenu>
             <ContextMenu Name="cm">
                 <!--<MenuItem Header="_Rename" Click="OnMenuItem_Rename" />-->
                 <MenuItem Header="_Delete" Command="local:SecuritiesControl.CommandDeletePayee" InputGestureText="Del"/>
             </ContextMenu>
-        </Grid.ContextMenu>
-        
+        </ListBox.ContextMenu>
+    </ListBox>
 
-    </Grid>
 </UserControl>

@@ -77,10 +77,9 @@
 
 
 
-    <Grid >
+    <Grid Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}">
 
         <TreeView Name="treeView1" ItemsSource="{Binding}" 
-                  Style="{DynamicResource WalkaboutToolBoxTreeView}"
                   VirtualizingStackPanel.IsVirtualizing="True" 
                   VirtualizingStackPanel.VirtualizationMode="Recycling"/>
 

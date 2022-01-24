@@ -11,7 +11,7 @@
         MinHeight="320" MaxHeight="600" MinWidth="400"  
         ShowInTaskbar="False"  
         WindowStartupLocation="CenterOwner" 
-        Background="{DynamicResource DialogWindowBackgroundBrush}"  WindowStyle="ToolWindow" SizeToContent="WidthAndHeight"
+        WindowStyle="ToolWindow" SizeToContent="WidthAndHeight"
         KeyboardNavigation.TabNavigation="Cycle">
     <local:BaseDialog.Resources>
         <DataTemplate x:Key="AccountAliasItemTemplate">

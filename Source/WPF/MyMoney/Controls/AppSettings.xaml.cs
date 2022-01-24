@@ -15,8 +15,8 @@ namespace Walkabout.Controls
     {
         private Settings settings;
         private IDictionary<string, string> themes = new SortedDictionary<string, string>() { 
-            { "Light", "Themes/Theme-VS2010.xaml" },
-            { "Dark", "Themes/Theme-Flat.xaml" }
+            { "Light", "Light" },
+            { "Dark", "Dark" }
         };
 
         /// <summary>
@@ -41,6 +41,8 @@ namespace Walkabout.Controls
             {
                 comboBoxTheme.Items.Add(theme);
             }
+            comboBoxTheme.SelectedItem = settings.Theme;
+
         }
 
         public event EventHandler Closed;
@@ -118,6 +120,7 @@ namespace Walkabout.Controls
                 if (themes.TryGetValue(name, out string theme))
                 {
                     settings.Theme = theme;
+                    ModernWpf.ThemeManager.Current.ApplicationTheme = theme == "Dark" ? ModernWpf.ApplicationTheme.Dark : ModernWpf.ApplicationTheme.Light;
                 }
             }
         }

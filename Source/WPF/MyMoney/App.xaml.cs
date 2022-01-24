@@ -71,33 +71,9 @@ namespace Walkabout
                     return;
                 }
 
-                // this is a fallback theme for things not specified in more specific themes.
-                ProcessHelper.SetTheme(0, "Themes/Generic.xaml");
-
-                if (Environment.OSVersion.Version >= new Version(6, 2))
-                {
-                    // windows 8
-                    ProcessHelper.SetTheme(1, "Themes/GenericWindows8.xaml");
-                }
-                else
-                {
-                    // windows 7
-                    ProcessHelper.SetTheme(1, "Themes/GenericWindows7.xaml");
-                }
 
                 // Load the application settings
                 settings = LoadSettings(noSettings);
-
-                if (string.IsNullOrEmpty(settings.Theme))
-                {
-                    // this theme is the most tested right now...
-                    ProcessHelper.SetTheme(2, "Themes/Theme-VS2010.xaml");
-                }
-                else
-                {
-                    // set the user selected theme
-                    ProcessHelper.SetTheme(2, settings.Theme);
-                }
 
 #if PerformanceBlocks
             }
@@ -148,7 +124,7 @@ namespace Walkabout
 
         private static void SetDefaultSettings(Settings s)
         {
-            s.Theme = "Themes\\Theme-VS2010.xaml"; // Default to this theme on the first ever run
+            s.Theme = "Light"; // Default to this theme on the first ever run
             s.PlaySounds = true; // default true.
         }
 

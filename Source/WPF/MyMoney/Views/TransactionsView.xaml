@@ -8,14 +8,11 @@
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
              xmlns:p="clr-namespace:Walkabout.Commands"
              xmlns:views="clr-namespace:Walkabout.Views"
-             xmlns:data="clr-namespace:Walkabout.Data"
-             xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework"
-             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-             xmlns:help="clr-namespace:Walkabout.Help"
+             xmlns:help="clr-namespace:Walkabout.Help" xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d"
              FontFamily="{StaticResource DataGridFont}"
              FontSize="{DynamicResource MainTransactionAreaFontSize}"
-             d:DesignHeight="300" d:DesignWidth="400">
+             d:DesignHeight="300" d:DesignWidth="600">
 
     <UserControl.ContextMenu>
         <ContextMenu>
@@ -715,7 +712,7 @@
         <Grid.RowDefinitions>
 
             <!-- Top Search area -->
-            <RowDefinition x:Name="SearchAreaRow" Height="30"/>
+            <RowDefinition x:Name="SearchAreaRow" Height="Auto"/>
 
             <!-- Splitter -->
             <RowDefinition x:Name="QuerySplitterGridRowHeight" Height="0" />
@@ -734,7 +731,7 @@
             </Grid.RowDefinitions>
 
             <!-- QUICK SEARCH BUTTON AREA -->
-            <Border Style="{DynamicResource TransactionHeaderBorder}" Height="30"  SizeChanged="Border_SizeChanged">
+            <Border Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"  SizeChanged="Border_SizeChanged">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -742,10 +739,10 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Margin="5,0,3,0" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
 
                         <!-- COMBO BOX STATE FILTERS -->
-                        <ComboBox x:Name="TransactionViewMode"  SelectionChanged="ComboBox_SelectionChanged"  HorizontalAlignment="Left" VerticalAlignment="Center" Opacity=".70">
+                        <ComboBox x:Name="TransactionViewMode"  SelectionChanged="ComboBox_SelectionChanged" Width="140">
                             <ComboBoxItem x:Name="FilterByNothing" >
                                 <TextBlock Text="All" />
                             </ComboBoxItem>
@@ -773,21 +770,18 @@
                         </ComboBox>
 
                         <!-- Toggle view for OneLine -->
-                        <ToggleButton x:Name="ToggleShowLines" Margin="10,0,0,0"  VerticalAlignment="Center" ToolTip="Toggle One Line View (Ctrl-T)" Checked="OnToggleLines_Checked" Unchecked="OnToggleLines_Unchecked" >
-                            <Image x:Name="ToggleShowLinesImage" Width="14" Height="12" Source="{DynamicResource ThreeLines}" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" 
-                                   Margin="1,2,1,2"/>                            
-                        </ToggleButton>
+                        <Button x:Name="ToggleShowLines" Margin="10,0,0,0"  VerticalAlignment="Center" ToolTip="Toggle One Line View (Ctrl-T)" Click="OnToggleLines" >
+                            <ui:SymbolIcon Symbol="ShowResults" x:Name="ToggleShowLinesImage" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Button>
 
                         <!-- Toggle view for Show splits -->
-                        <ToggleButton x:Name="ToggleShowSplits" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show All Splits (Alt-T)" Checked="OnToggleShowSplits_Checked" Unchecked="OnToggleShowSplits_Unchecked" >
-                            <Image x:Name="ToggleShowSplitsImage" Width="10" Height="8" Source="{DynamicResource SplitIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" 
-                                   Margin="3,4,3,4"/>
-                        </ToggleButton>
+                        <Button x:Name="ToggleShowSplits" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show All Splits (Alt-T)" Click="OnToggleShowSplits" >
+                            <ui:SymbolIcon Symbol="ShowBcc" x:Name="ToggleShowSplitsImage" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Button>
                         
                         <!-- Toggle view for expand all in portfolio view -->
-                        <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show Details" Checked="OnToggleShowSecurities_Checked" Unchecked="OnToggleShowSecurities_Unchecked" >
-                            <Image x:Name="ToggleExpandAllImage" Width="16" Height="16" Source="{DynamicResource ExpandAllIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" 
-                                   />
+                        <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Width="26" Height="26" Margin="5,0,0,0" ToolTip="Show Details" Checked="OnToggleShowSecurities_Checked" Unchecked="OnToggleShowSecurities_Unchecked" >
+                            <Image x:Name="ToggleExpandAllImage" Source="{DynamicResource ExpandAllIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" />
                         </ToggleButton>
                     </StackPanel>
 

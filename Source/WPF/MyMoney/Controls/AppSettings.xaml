@@ -4,65 +4,45 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"     
              xmlns:c="clr-namespace:Walkabout.Controls"         
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d" 
-             BorderBrush="{DynamicResource FlyoutBorderThemeBrush}" BorderThickness="1"
-             Background="{DynamicResource FlyoutBackgroundThemeBrush}"
+             Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <Grid>
-        <Grid.Resources>
-            <Style TargetType="{x:Type Label}">
-                <Setter Property="Margin" Value="0,5,5,0" />
-                <Setter Property="HorizontalAlignment" Value="Left"/>
-            </Style>
-            <Style TargetType="{x:Type TextBox}">
-                <Style.Triggers>
-                    <Trigger Property="Validation.HasError" Value="true">
-                        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </Grid.Resources>
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <StackPanel>
 
         <!-- back button header -->
-        <Grid Grid.Row="0"  Background="#007ACC">
+        <Grid Background="#007ACC">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="BackButton" IsEnabled="True" Style="{DynamicResource BackButton}"  Click="OnCloseClicked"
-                    VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="4,4,0,0"></Button>
-            <Label FontSize="18" Grid.Column="1" VerticalAlignment="Center" Foreground="White" FontWeight="DemiBold">Settings</Label>
+            <Button x:Name="BackButton" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}"  Click="OnCloseClicked"   VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="4,4,0,0"></Button>
+            <TextBlock FontSize="18" Grid.Column="1" VerticalAlignment="Center" Foreground="White" FontWeight="DemiBold">Settings</TextBlock>
         </Grid>
 
-        <!-- Password -->
-        <Label Grid.Row="1" >Database Password:</Label>
-        <c:PasswordControl x:Name="editPasswordBox" Grid.Row="2" Margin="5,0" Background="#80FFFFC0" PasswordChanged="OnPasswordChanged" MinHeight="20"/>
 
-        <Label Grid.Column="0" Grid.Row="3">Theme:</Label>
-        <ComboBox x:Name="comboBoxTheme"  Margin="5,0" Grid.Row="4" SelectionChanged="OnThemeChanged" />
+        <ui:SimpleStackPanel Spacing="20" Margin="10">
+            <!-- Password -->
+            <TextBlock >Database Password:</TextBlock>
+            <c:PasswordControl x:Name="editPasswordBox" Background="#80FFFFC0" PasswordChanged="OnPasswordChanged" MinHeight="20"/>
 
-        <Label Grid.Column="0" Grid.Row="5">Fiscal Year Start:</Label>
-        <ComboBox x:Name="comboBoxFiscalYear"  Margin="5,0" Grid.Row="6" SelectionChanged="OnFiscalYearChanged" />
+            <StackPanel>
+                <TextBlock Grid.Column="0" >Theme:</TextBlock>
+                <ComboBox x:Name="comboBoxTheme"  SelectionChanged="OnThemeChanged" />
+            </StackPanel>
 
-        <CheckBox x:Name="checkBoxRentalSupport" Margin="5,5" Grid.Row="7" Checked="OnRentalSupportChanged" Unchecked="OnRentalSupportChanged">Rental management</CheckBox>
+            <StackPanel>
+                <TextBlock Grid.Column="0" >Fiscal Year Start:</TextBlock>
+                <ComboBox x:Name="comboBoxFiscalYear"  SelectionChanged="OnFiscalYearChanged" />
+            </StackPanel>
 
-        <CheckBox x:Name="checkBoxPlaySounds" Margin="5,5" Grid.Row="8" Checked="OnPlaySoundsChanged" Unchecked="OnPlaySoundsChanged">Play sounds</CheckBox>
+            <CheckBox x:Name="checkBoxRentalSupport" Checked="OnRentalSupportChanged" Unchecked="OnRentalSupportChanged">Rental management</CheckBox>
 
-    </Grid>
+            <CheckBox x:Name="checkBoxPlaySounds"  Checked="OnPlaySoundsChanged" Unchecked="OnPlaySoundsChanged">Play sounds</CheckBox>
+
+        </ui:SimpleStackPanel>
+
+    </StackPanel>
 </UserControl>

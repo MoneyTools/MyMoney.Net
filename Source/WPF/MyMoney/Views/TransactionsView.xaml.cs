@@ -32,6 +32,7 @@ using Walkabout.Configuration;
 using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
 using System.Windows.Media.Animation;
+using ModernWpf.Controls;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -182,8 +183,7 @@ namespace Walkabout.Views
 
         private void OnOneLineViewChanged()
         {
-            ToggleShowLines.IsChecked = !OneLineView;
-            ToggleShowLinesImage.Source = (OneLineView) ? (ImageSource)FindResource("ThreeLines") : (ImageSource)FindResource("OneLine");
+            ToggleShowLinesImage.Symbol = (OneLineView) ? Symbol.List : Symbol.ShowResults;
             FireBeforeViewStateChanged();
             if (OneLineViewChanged != null)
             {
@@ -206,24 +206,14 @@ namespace Walkabout.Views
 
         public event EventHandler OneLineViewChanged;
 
-        private void OnToggleLines_Checked(object sender, RoutedEventArgs e)
+        private void OnToggleLines(object sender, RoutedEventArgs e)
         {
-            OneLineView = false;
+            OneLineView = !OneLineView ;
         }
 
-        private void OnToggleLines_Unchecked(object sender, RoutedEventArgs e)
+        private void OnToggleShowSplits(object sender, RoutedEventArgs e)
         {
-            OneLineView = true;
-        }
-
-        private void OnToggleShowSplits_Checked(object sender, RoutedEventArgs e)
-        {
-            ViewAllSplits = true;
-        }
-
-        private void OnToggleShowSplits_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ViewAllSplits = false;
+            ViewAllSplits = !ViewAllSplits;
         }
 
         private void OnToggleShowSecurities_Checked(object sender, RoutedEventArgs e)
@@ -306,11 +296,11 @@ namespace Walkabout.Views
             {
                 SetValue(ViewAllSplitsProperty, value);
 
-                ToggleShowSplits.IsChecked = value;
+                //ToggleShowSplits.IsChecked = value;
 
                 ToggleShowSplits.ToolTip = value ? "Hide All Splits" : "Show All Splits";
 
-                ToggleShowSplitsImage.Source = value ? (ImageSource)FindResource("SplitIconFilled") : (ImageSource)FindResource("SplitIcon");
+                ToggleShowSplitsImage.Symbol = value ? Symbol.ShowBcc : Symbol.HideBcc;
             }
         }
 

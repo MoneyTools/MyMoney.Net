@@ -11,7 +11,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml;
 using Microsoft.Win32;
@@ -33,11 +32,11 @@ using Walkabout.Setup;
 using System.Xml.Linq;
 using Walkabout.Help;
 using Walkabout.Ofx;
-using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
 using System.Deployment.Application;
 using System.Threading.Tasks;
-using System.Security.Policy;
+using ModernWpf;
+
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -125,9 +124,6 @@ namespace Walkabout
                 App.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(OnDispatcherUnhandledException);
                 TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-                // Make sure the menu check boxes are initialized correctly.
-                SetTheme(settings.Theme);
-
                 InitializeComponent();
 
                 //-----------------------------------------------------------------
@@ -213,7 +209,7 @@ namespace Walkabout
                 //
                 PieChartExpenses.SelectionChanged += new EventHandler(PieChartSelectionChanged);
                 PieChartIncomes.SelectionChanged += new EventHandler(PieChartSelectionChanged);
-                
+
                 //-----------------------------------------------------------------
                 // Setup the Loan area
                 //
@@ -264,13 +260,11 @@ namespace Walkabout
 
         private void OnSettingsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            switch (e.PropertyName) {
+            switch (e.PropertyName)
+            {
                 case "RentalManagement":
                     UpdateRentalManagement();
                     OnUpdateRentalTab(); // in case tab needs to be added back.
-                    break;
-                case "Theme":
-                    SetTheme(settings.Theme);
                     break;
                 case "FiscalYearStart":
                     HistoryChart.FiscalYearStart = settings.FiscalYearStart;
@@ -1193,7 +1187,7 @@ namespace Walkabout
         }
 
         void OnKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
-        {            
+        {
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -1340,7 +1334,7 @@ namespace Walkabout
                     // now we only want one view.
                     this.navigator.Pop();
 
-                    PendingChangeDropDown.IsChecked = false;
+                    //PendingChangeDropDown.IsChecked = false;
                 }));
         }
 
@@ -1371,22 +1365,24 @@ namespace Walkabout
 
             this.TransactionView.QueryPanel.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnQueryPanelIsVisibleChanged);
 
+
             TempFilesManager.Initialize();
+
+
         }
 
         public bool HasDatabase { get { return this.database != null || isLoading; } }
 
-        string currentTheme;
-
         void SetTheme(string themeToApply)
         {
-            if (!string.IsNullOrEmpty(themeToApply))
+            if (themeToApply == "Dark")
             {
-                if (currentTheme != themeToApply)
-                {
-                    ProcessHelper.SetTheme(2, themeToApply);
-                    currentTheme = themeToApply;
-                }
+                ModernWpf.ThemeManager.Current.ApplicationTheme = ModernWpf.ApplicationTheme.Dark;
+            }
+            else
+            {
+                ModernWpf.ThemeManager.Current.ApplicationTheme = ModernWpf.ApplicationTheme.Light;
+
             }
         }
 
@@ -1690,48 +1686,48 @@ namespace Walkabout
                 this.ShowMessage("Loading data base...");
 
                 try
+                {
+                    string path = this.settings.Database;
+                    string name = ("" + path).Trim().ToLowerInvariant();
+                    string password = null;
+                    bool error = false;
+                    try
                     {
-                        string path = this.settings.Database;
-                        string name = ("" + path).Trim().ToLowerInvariant();
-                        string password = null;
-                        bool error = false;
-                        try
+                        password = DatabaseSecurity.LoadDatabasePassword(name);
+                    }
+                    catch
+                    {
+                        error = true;
+                    }
+                    if (error)
+                    {
+                        // hmmm, no password saved, so we need to prompt for one.
+                        PasswordWindow pw = new PasswordWindow();
+                        pw.UserName = Environment.GetEnvironmentVariable("USERNAME");
+                        pw.Owner = Application.Current.MainWindow;
+                        pw.Optional = true;
+                        if (pw.ShowDialog() == true)
                         {
-                            password = DatabaseSecurity.LoadDatabasePassword(name);
-                        }
-                        catch
-                        {
-                            error = true;
-                        }
-                        if (error)
-                        {
-                            // hmmm, no password saved, so we need to prompt for one.
-                            PasswordWindow pw = new PasswordWindow();
-                            pw.UserName = Environment.GetEnvironmentVariable("USERNAME");
-                            pw.Owner = Application.Current.MainWindow;
-                            pw.Optional = true;
-                            if (pw.ShowDialog() == true)
-                            {
-                                password = pw.PasswordConfirmation;
-                            }
-                            else
-                            {
-                                // don't open it then...
-                                this.settings.Database = null;
-                            }
-                        }
-
-                        if (!string.IsNullOrEmpty(this.settings.Database))
-                        {
-                            isLoading = true;
-                            ThreadPool.QueueUserWorkItem(new WaitCallback(LoadDatabase), password);
+                            password = pw.PasswordConfirmation;
                         }
                         else
                         {
-                            this.NewDatabase();
-                            StartTracking();
+                            // don't open it then...
+                            this.settings.Database = null;
                         }
                     }
+
+                    if (!string.IsNullOrEmpty(this.settings.Database))
+                    {
+                        isLoading = true;
+                        ThreadPool.QueueUserWorkItem(new WaitCallback(LoadDatabase), password);
+                    }
+                    else
+                    {
+                        this.NewDatabase();
+                        StartTracking();
+                    }
+                }
                 catch (Exception e)
                 {
                     MessageBoxEx.Show(e.Message, "Error Loading Database", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -2114,7 +2110,6 @@ namespace Walkabout
                 ShowMessage("Saved to " + label + " in " + (int)watch.Elapsed.TotalMilliseconds + " milliseconds");
 
                 SetDirty(false);
-                UpdatePendingChangePopupState();
 
                 if (settings.PlaySounds)
                 {
@@ -2377,45 +2372,20 @@ namespace Walkabout
             public string EventData { get; set; }
         }
 
-        private void PendingChangePopupOpened(object sender, EventArgs e)
-        {
-            UpdatePendingChangePopupState();
-        }
 
-        private void UpdatePendingChangePopupState()
+        private void OnOpeningPendingChangeFlyout(object sender, object e)
         {
-            Border border = (Border)PendingChangeDropDown.Popup.Child;
-            Grid grid = (Grid)border.Child;
-            if (grid.Children.Count == 2)
-            {
-                grid.Children.RemoveAt(1);
-            }
-            Button button = (Button)grid.Children[0];
-            button.CommandTarget = this;
+            this.pendingStack.Children.Clear();
 
             System.Windows.Input.CommandManager.InvalidateRequerySuggested();
 
             if (tracker != null)
             {
-                grid.Children.Add(tracker.GetSummary());
+                this.pendingStack.Children.Add(tracker.GetSummary());
             }
         }
 
-        private void PendingChangeDropDown_MouseEnter(object sender, MouseEventArgs e)
-        {
-            PendingChangeDropDown.IsChecked = true;
-        }
-
-        private void PendingChangeDropDown_MouseLeave(object sender, MouseEventArgs e)
-        {
-            if (!PendingChangeDropDown.Popup.IsMouseOver)
-            {
-                PendingChangeDropDown.IsChecked = false;
-                PendingChangeDropDown.Popup.IsOpen = false;
-            }
-        }
-
-        private void PendingChangeDropDown_MouseDown(object sender, MouseButtonEventArgs e)
+        private void PendingChangeClicked(object sender, object args)
         {
             Save();
         }
@@ -2541,7 +2511,7 @@ namespace Walkabout
                     this.toolBox.Selected = this.securitiesControl;
                     StockGraph.Generator = null; // wait for stock history to load.
                 }
-            
+
             }
             else
             {
@@ -2760,7 +2730,7 @@ namespace Walkabout
                         PieChartExpenses.CategoryFilter = parent;
                         PieChartExpenses.Unknown = myMoney.Categories.Unknown;
                         PieChartExpenses.Transactions = rows;
-                        TabExpensesHeaderText.Foreground = (PieChartExpenses.NetAmount != 0) ? (Brush)FindResource("TextBrush") : (Brush)FindResource("DisabledForegroundBrush");
+                       // TabExpensesHeaderText.Foreground = (PieChartExpenses.NetAmount != 0) ? (Brush)FindResource("TextBrush") : (Brush)FindResource("DisabledForegroundBrush");
 
                         // income categories
                         TabIncomes.Visibility = System.Windows.Visibility.Visible;
@@ -2768,7 +2738,7 @@ namespace Walkabout
                         PieChartIncomes.CategoryFilter = parent;
                         PieChartIncomes.Unknown = myMoney.Categories.Unknown;
                         PieChartIncomes.Transactions = rows;
-                        TabIncomesHeaderText.Foreground = (PieChartIncomes.NetAmount != 0) ? (Brush)FindResource("TextBrush") : (Brush)FindResource("DisabledForegroundBrush");
+                       // TabIncomesHeaderText.Foreground = (PieChartIncomes.NetAmount != 0) ? (Brush)FindResource("TextBrush") : (Brush)FindResource("DisabledForegroundBrush");
 
                         // view the stock history
                         if (TransactionView.ActiveSecurity != null)
@@ -2919,7 +2889,7 @@ namespace Walkabout
                     default:
                         amount = transaction.Amount;
                         break;
-                }            
+                }
                 // Todo Trend graph is inconsistent with the below ...
                 if (transaction.Investment != null)
                 {
@@ -3196,7 +3166,7 @@ namespace Walkabout
         }
         private void OnCommandCut(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 c.Cut();
@@ -3204,7 +3174,7 @@ namespace Walkabout
         }
         private void OnCommandCanCopy(object sender, CanExecuteRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 e.CanExecute = c.CanCopy;
@@ -3214,7 +3184,7 @@ namespace Walkabout
 
         private void OnCommandCopy(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);  
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 try
@@ -3230,7 +3200,7 @@ namespace Walkabout
         }
         private void OnCommandCanPaste(object sender, CanExecuteRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 e.CanExecute = c.CanPaste;
@@ -3239,7 +3209,7 @@ namespace Walkabout
         }
         private void OnCommandPaste(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 try
@@ -3255,7 +3225,7 @@ namespace Walkabout
         }
         private void OnCommandCanDelete(object sender, CanExecuteRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 e.CanExecute = c.CanDelete;
@@ -3264,7 +3234,7 @@ namespace Walkabout
         }
         private void OnCommandDelete(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement); 
+            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 try
@@ -3839,7 +3809,7 @@ namespace Walkabout
                         this.database.Password = newPassword;
                     }
                     DatabaseSecurity.SaveDatabasePassword(database.DatabasePath, database.Password);
-                } 
+                }
                 catch (Exception ex)
                 {
                     MessageBoxEx.Show(ex.Message, "Error changing password on database", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -4165,11 +4135,6 @@ namespace Walkabout
             XDocument changes = e.Changes;
             if (changes != null && e.NewVersionAvailable)
             {
-                Brush brush = (Brush)this.FindResource("WalkaboutToolbarExpanderBrushSelected");
-                if (brush != null)
-                {
-                    ButtonShowUpdateInfo.Background = brush;
-                }
                 ButtonShowUpdateInfoCaption.Text = "View Updates";
                 ButtonShowUpdateInfo.Visibility = System.Windows.Visibility.Visible;
             }
@@ -4334,5 +4299,7 @@ namespace Walkabout
         }
 
         #endregion
+
+
     }
 }

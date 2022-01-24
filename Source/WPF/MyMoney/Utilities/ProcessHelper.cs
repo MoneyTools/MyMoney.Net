@@ -122,37 +122,5 @@ namespace Walkabout.Utilities
                 return folder;
             }
         }
-
-        /// <summary>
-        /// Set theme with ordering
-        ///   index [0] is for Generic.xaml 
-        ///   index [1] is for Aero*.xaml OS specific theme
-        ///   index [2] is for the currently user selected theme
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="themeToAdd"></param>
-        static public void SetTheme(int index, string themeToAdd)
-        {
-            if (themeToAdd != null)
-            {
-                Uri themeUri = new Uri(themeToAdd, UriKind.Relative);
-                try
-                {
-                    ResourceDictionary theme = (ResourceDictionary)Application.LoadComponent(themeUri);
-                    if (Application.Current.Resources.MergedDictionaries.Count - 1 < index)
-                    {
-                        Application.Current.Resources.MergedDictionaries.Add(theme);
-                    }
-                    else
-                    {
-                        Application.Current.Resources.MergedDictionaries[index] = theme;
-                    }
-                }
-                catch
-                {
-                    // Survive not find the theme set by the user
-                }
-            }
-        }
     }
 }
