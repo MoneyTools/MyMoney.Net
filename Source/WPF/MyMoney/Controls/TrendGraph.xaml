@@ -19,7 +19,6 @@
         <CommandBinding Command="cmd:AppCommands.CommandAddSeries" Executed="OnAddSeries"  CanExecute="CanExecute_AddSeries"/>
         <CommandBinding Command="cmd:AppCommands.CommandRemoveSeries" Executed="OnRemoveSeries" CanExecute="CanExecute_RemoveSeries" />
         <CommandBinding Command="cmd:AppCommands.CommandExportData" Executed="OnExportData" CanExecute="CanExecute_ExportData" />
-        
     </UserControl.CommandBindings>
     <UserControl.InputBindings>
         <KeyBinding Command="cmd:AppCommands.CommandNext" Key="F2" Modifiers="Control"/>
@@ -46,6 +45,7 @@
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid>
-        <c:AreaChart x:Name="Chart" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  />
+        <c:AreaChart x:Name="Chart" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                     />
     </Grid>
 </UserControl>

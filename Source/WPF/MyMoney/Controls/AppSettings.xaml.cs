@@ -120,7 +120,6 @@ namespace Walkabout.Controls
                 if (themes.TryGetValue(name, out string theme))
                 {
                     settings.Theme = theme;
-                    ModernWpf.ThemeManager.Current.ApplicationTheme = theme == "Dark" ? ModernWpf.ApplicationTheme.Dark : ModernWpf.ApplicationTheme.Light;
                 }
             }
         }

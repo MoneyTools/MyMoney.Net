@@ -112,7 +112,7 @@ namespace Walkabout
 
                 Walkabout.Utilities.UiDispatcher.CurrentDispatcher = this.Dispatcher;
                 this.mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-
+                OnThemeChanged(settings.Theme);
                 ParseCommandLine();
 
                 this.navigator = new UndoManager(1000); // view state stack
@@ -268,6 +268,9 @@ namespace Walkabout
                     break;
                 case "FiscalYearStart":
                     HistoryChart.FiscalYearStart = settings.FiscalYearStart;
+                    break;
+                case "Theme":
+                    OnThemeChanged(this.settings.Theme);
                     break;
             }
         }
@@ -1373,16 +1376,17 @@ namespace Walkabout
 
         public bool HasDatabase { get { return this.database != null || isLoading; } }
 
-        void SetTheme(string themeToApply)
+        void OnThemeChanged(string themeToApply)
         {
             if (themeToApply == "Dark")
             {
                 ModernWpf.ThemeManager.Current.ApplicationTheme = ModernWpf.ApplicationTheme.Dark;
+                AppTheme.SetTheme("Themes/Dark.xaml");
             }
             else
             {
                 ModernWpf.ThemeManager.Current.ApplicationTheme = ModernWpf.ApplicationTheme.Light;
-
+                AppTheme.SetTheme("Themes/Light.xaml");
             }
         }
 

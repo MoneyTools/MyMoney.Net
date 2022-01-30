@@ -1,0 +1,17 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:Walkabout.WpfConverters"
+                    xmlns:controls="clr-namespace:Walkabout.Controls"
+                    xmlns:local="clr-namespace:Walkabout.Utilities"
+                    xmlns:views="clr-namespace:Walkabout.Views"                    
+                    xmlns:s="clr-namespace:System;assembly=mscorlib"
+                    >
+    <Color x:Key="AreaChartColor1" >#565CAF</Color>
+    <Color x:Key="AreaChartColor2" >#7D3787</Color>
+    <Color x:Key="AreaChartColor3" >#63622E</Color>
+    <Color x:Key="AreaChartColor4" >#603628</Color>
+    <Color x:Key="AreaChartColor5" >#2D5E33</Color>
+    <Color x:Key="AreaChartColor6" >#505B55</Color>
+    <Color x:Key="AreaChartColor7" >#185944</Color>
+    <Color x:Key="AreaChartColor8" >#6B4841</Color>
+</ResourceDictionary>

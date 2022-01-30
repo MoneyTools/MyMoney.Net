@@ -328,7 +328,15 @@
 
                         <TabItem x:Name="TabTrends" Header="Trends">
                             <vc:TrendGraph x:Name="TransactionGraph" 
-                            ShowBalance="False"
+                                ShowBalance="False"
+                                 Series1Color="{DynamicResource AreaChartColor1}"
+                                 Series2Color="{DynamicResource AreaChartColor2}"
+                                 Series3Color="{DynamicResource AreaChartColor3}"
+                                 Series4Color="{DynamicResource AreaChartColor4}"
+                                 Series5Color="{DynamicResource AreaChartColor5}"
+                                 Series6Color="{DynamicResource AreaChartColor6}"
+                                 Series7Color="{DynamicResource AreaChartColor7}"
+                                 Series8Color="{DynamicResource AreaChartColor8}"
                             />
                         </TabItem>
 
@@ -352,6 +360,14 @@
 
                         <TabItem x:Name="TabStock" Header="Stock">
                             <vc:TrendGraph x:Name="StockGraph"  ShowBalance="False"
+                                 Series1Color="{DynamicResource AreaChartColor1}"
+                                 Series2Color="{DynamicResource AreaChartColor2}"
+                                 Series3Color="{DynamicResource AreaChartColor3}"
+                                 Series4Color="{DynamicResource AreaChartColor4}"
+                                 Series5Color="{DynamicResource AreaChartColor5}"
+                                 Series6Color="{DynamicResource AreaChartColor6}"
+                                 Series7Color="{DynamicResource AreaChartColor7}"
+                                 Series8Color="{DynamicResource AreaChartColor8}"
                             />
                         </TabItem>
                         
