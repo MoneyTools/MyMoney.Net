@@ -1,9 +1,13 @@
-﻿<Window x:Class="Walkabout.Dialogs.CategoryDialog"
+﻿<local:BaseDialog 
+        x:Class="Walkabout.Dialogs.CategoryDialog"
+        xmlns:local="clr-namespace:Walkabout.Dialogs"
+        xmlns:local2="clr-namespace:Walkabout.Controls"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:Walkabout.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
+        Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
         Title="Category"  
         ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False"
@@ -23,6 +27,7 @@
                     <Style TargetType="{x:Type Label}">
                         <Setter Property="Margin" Value="0,3,5,5" />
                         <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
                     </Style>
                     <Style TargetType="{x:Type TextBox}">
                         <Setter Property="VerticalAlignment" Value="Center" />
@@ -32,9 +37,9 @@
                             </Trigger>
                         </Style.Triggers>
                     </Style>
-                    <Style TargetType="{x:Type local:ComboBox2}">
-                      <Setter Property="VerticalAlignment" Value="Center" />
-                      <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
+                    <Style TargetType="{x:Type local2:ComboBox2}">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
                     </Style>
                     <Style TargetType="{x:Type StackPanel}">
                         <Setter Property="Orientation" Value="Horizontal" />
@@ -71,30 +76,30 @@
                 <!-- Category -->
                 <Label Grid.Column="0" Grid.Row="0"  HorizontalAlignment="Right">_Category:</Label>
 
-                <local:ComboBox2 x:Name="comboBoxCategory" Grid.Column="1" Grid.ColumnSpan="5" IsEditable="True" SelectionChanged="comboBoxCategory_SelectionChanged" />
+                <local2:ComboBox2 x:Name="comboBoxCategory" Grid.Column="1" Grid.ColumnSpan="5" IsEditable="True" SelectionChanged="comboBoxCategory_SelectionChanged" />
 
                 <!-- MESSAGE -->
                 <TextBlock Name="labelMessage" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="6" Foreground="#FF08BCDC" TextWrapping="Wrap" MaxWidth="400" MinHeight="20"/>
-                
+
                 <!-- Type -->
                 <Label Grid.Column="0" Grid.Row="2"  HorizontalAlignment="Right">_Type:</Label>
-                <local:ComboBox2 MinWidth="100" x:Name="comboBoxType" Grid.Column="1" Grid.Row="2" SelectionChanged="comboBoxType_SelectionChanged" />
+                <local2:ComboBox2 MinWidth="100" x:Name="comboBoxType" Grid.Column="1" Grid.Row="2" SelectionChanged="comboBoxType_SelectionChanged" />
 
                 <Label Grid.Column="2" Grid.Row="2" >Color:</Label>
-                <local:DropDownButton Width="50" Height="24" VerticalAlignment="Center" Grid.Column="3" Grid.Row="2" x:Name="ColorDropDown">
-                    <local:DropDownButton.Popup>
+                <local2:DropDownButton Width="50" Height="24" VerticalAlignment="Center" Grid.Column="3" Grid.Row="2" x:Name="ColorDropDown">
+                    <local2:DropDownButton.Popup>
                         <Popup Width="300" Height="300" >
-                            <local:ColorPickerPanel Background="White" BorderBrush="Gray" BorderThickness="1" ColorChanged="ColorPickerPanel_ColorChanged" Focusable="true"/>
+                            <local2:ColorPickerPanel Background="White" BorderBrush="Gray" BorderThickness="1" ColorChanged="ColorPickerPanel_ColorChanged" Focusable="true"/>
                         </Popup>
-                    </local:DropDownButton.Popup>
+                    </local2:DropDownButton.Popup>
                     <Rectangle Width="30" Height="20">
                     </Rectangle>
-                </local:DropDownButton>
-                
+                </local2:DropDownButton>
+
                 <!-- Tax association-->
                 <Label Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right">Tax Category:</Label>
 
-                <local:FilteringComboBox  x:Name="comboTaxCategory" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="1"
+                <local2:FilteringComboBox  x:Name="comboTaxCategory" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="1"
                         ItemContainerStyle="{StaticResource ComboBoxItemTaxCategory}"
                         FilterChanged="ComboBoxForTaxCategory_FilterChanged" Padding="0" MaxDropDownHeight="450"
                         IsEditable="True" StaysOpenOnEdit="True" IsTextSearchCaseSensitive="False">
@@ -103,45 +108,42 @@
                             <VirtualizingStackPanel />
                         </ItemsPanelTemplate>
                     </ComboBox.ItemsPanel>
-                </local:FilteringComboBox>
+                </local2:FilteringComboBox>
 
 
                 <!-- Budget -->
                 <Label Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right">_Budget $:</Label>
 
                 <TextBox x:Name="textBoxBudget"  Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="1" 
-                         local:CalculatorPopup.CalculatorEnabled="true"/>
+                         local2:CalculatorPopup.CalculatorEnabled="true"/>
 
                 <Label Grid.Column="2" Grid.Row="6" Grid.ColumnSpan="3">per month</Label>
-                
+
                 <!-- Budget Actual -->
                 <Label Grid.Column="0" Grid.Row="8" HorizontalAlignment="Right">_Actual $:</Label>
 
                 <TextBox x:Name="textBoxBudgetActual"  Grid.Column="1" Grid.Row="8" Grid.ColumnSpan="1" IsReadOnly="True" 
-                         local:CalculatorPopup.CalculatorEnabled="true"/>
+                         local2:CalculatorPopup.CalculatorEnabled="true"/>
 
                 <Label Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="3">from</Label>
 
-                <local:ComboBox2 x:Name="PastRange" Grid.Row="8" Grid.Column="3" SelectedIndex="0" SelectionChanged="PastRange_SelectionChanged">
-                    
-                </local:ComboBox2>
-                
+                <local2:ComboBox2 x:Name="PastRange" Grid.Row="8" Grid.Column="3" SelectedIndex="0" SelectionChanged="PastRange_SelectionChanged">
+
+                </local2:ComboBox2>
+
                 <!-- Description -->
                 <Label Grid.Column="0" Grid.Row="10" >Description:</Label>
 
                 <TextBox Name="textBoxDescription"  Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="10" Height="50"  />
-                
+
             </Grid >
 
         </Border>
 
         <!-- OK or Cancel -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom" Margin="10,0,10,10">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Bottom" Margin="10">
             <Button Name="okButton" Width="72" Margin="12,0,0,0" IsDefault="True">OK</Button>
             <Button Name="cancelButton" Width="72" Margin="12,0,0,0" IsCancel="True">Cancel</Button>
         </StackPanel>
-
     </DockPanel>
-
-
-</Window>
+</local:BaseDialog>

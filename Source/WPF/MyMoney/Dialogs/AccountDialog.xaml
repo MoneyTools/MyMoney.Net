@@ -1,9 +1,10 @@
-﻿<local:BaseDialog x:Class="Walkabout.Dialogs.AccountDialog"
+﻿<local:BaseDialog 
+        x:Class="Walkabout.Dialogs.AccountDialog"
+        xmlns:local="clr-namespace:Walkabout.Dialogs"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-        xmlns:local="clr-namespace:Walkabout.Dialogs"
         xmlns:help="clr-namespace:Walkabout.Help"
         xmlns:c="clr-namespace:Walkabout.Controls"
         help:HelpService.HelpKeyword="Setup Accounts"
@@ -153,6 +154,5 @@
             <Button x:Name="ButtonOk"  IsDefault="True" Width="72" Margin="0,0,0,0" Click="OnButtonOk">OK</Button>
             <Button x:Name="ButtonCancel" IsCancel="True" Width="72" Margin="12,0,0,0" Click="OnCancel">Cancel</Button>
         </StackPanel>
-
     </StackPanel>
 </local:BaseDialog>

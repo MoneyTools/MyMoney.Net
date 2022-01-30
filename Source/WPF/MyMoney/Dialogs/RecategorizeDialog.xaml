@@ -1,11 +1,13 @@
 ﻿<Window x:Class="Walkabout.Dialogs.RecategorizeDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Walkabout.Controls"
-        Title="Recategorize All" Height="242" Width="415"
+        xmlns:local="clr-namespace:Walkabout.Controls"
+        Title="Recategorize All" 
+        Height="242" Width="415"
         ShowInTaskbar="False"  
         WindowStartupLocation="CenterOwner" 
-        WindowStyle="ToolWindow" SizeToContent="WidthAndHeight">
+        WindowStyle="ToolWindow"
+        SizeToContent="WidthAndHeight">
     <Window.Resources>
 
         <Style x:Key="ComboStyle" TargetType="{x:Type ComboBox}">

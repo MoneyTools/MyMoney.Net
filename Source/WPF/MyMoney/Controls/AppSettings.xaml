@@ -6,7 +6,7 @@
              xmlns:c="clr-namespace:Walkabout.Controls"         
              xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d" 
-             Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
+             Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
              d:DesignHeight="300" d:DesignWidth="300">
 
     <StackPanel>

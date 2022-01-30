@@ -2,7 +2,10 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:c="clr-namespace:Walkabout.Controls"
-        Title="Login" Height="187" Width="381" WindowStyle="ToolWindow" ShowInTaskbar="False"
+        Title="Login" 
+        Height="187" Width="381"
+        WindowStyle="ToolWindow" 
+        ShowInTaskbar="False"
         >
     <Grid Margin="10">
         <Grid.RowDefinitions>

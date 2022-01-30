@@ -19,7 +19,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for StockQuoteServiceDialog.xaml
     /// </summary>
-    public partial class StockQuoteServiceDialog : Window
+    public partial class StockQuoteServiceDialog : BaseDialog
     {
         StockQuoteManager _stockQuotes;
         List<StockServiceSettings> _list;

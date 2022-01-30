@@ -74,7 +74,7 @@
 
     <Grid Style="{DynamicResource SmoothFadeIn}" MouseLeftButtonDown="DragWindow">
 
-        <Border Margin="20,20,30,30" BorderBrush="DarkGray" CornerRadius="13" Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}" BorderThickness="2" >
+        <Border Margin="20,20,30,30" BorderBrush="DarkGray" CornerRadius="13" Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}" BorderThickness="2" >
             <Border.Effect>
                 <DropShadowEffect Direction="310" ShadowDepth="16" BlurRadius="12" RenderingBias="Performance" Opacity="0.5"/>
             </Border.Effect>
@@ -121,7 +121,7 @@
                     <!-- MAIN MESSAGE -->
                     <FlowDocumentScrollViewer MaxWidth="800" Grid.Column="1"  Grid.Row="0" Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="20 10 20 10" >
 
-                        <FlowDocument x:Name="FlowDocument" Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
+                        <FlowDocument x:Name="FlowDocument" Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
                                  FontFamily="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=FontFamily}"
                                  FontSize="14" TextAlignment="Left"/>
 

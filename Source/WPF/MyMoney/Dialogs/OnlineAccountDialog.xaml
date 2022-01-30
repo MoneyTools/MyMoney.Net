@@ -1,17 +1,19 @@
 ﻿<local:BaseDialog x:Class="Walkabout.Dialogs.OnlineAccountDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:ofx="clr-namespace:Walkabout.Ofx"
         xmlns:data="clr-namespace:Walkabout.Data"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:local="clr-namespace:Walkabout.Dialogs"
         xmlns:help="clr-namespace:Walkabout.Help"
+        mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         help:HelpService.HelpKeyword="Online Banking"
         xmlns:c="clr-namespace:Walkabout.WpfConverters"
         Title="Online Account"  
         WindowStartupLocation="CenterOwner" 
-        WindowStyle="ToolWindow" SizeToContent="WidthAndHeight" d:DesignHeight="520" d:DesignWidth="859">
+        WindowStyle="ToolWindow"
+        SizeToContent="WidthAndHeight" 
+        d:DesignHeight="520" d:DesignWidth="859">
 
     <Window.Resources>
         <c:BoolToBrushConverter x:Key="BoolToBrushConverter"/>

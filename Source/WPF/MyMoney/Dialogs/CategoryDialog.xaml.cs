@@ -18,7 +18,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for CategoryDialog.xaml
     /// </summary>
-    public partial class CategoryDialog : Window
+    public partial class CategoryDialog : BaseDialog
     {
         #region PROPERTIES
 

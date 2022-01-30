@@ -15,7 +15,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for AccountDialog.xaml
     /// </summary>
-    public partial class LoanDialog : Window
+    public partial class LoanDialog : BaseDialog
     {
        
         public MyMoney Money { get; set; }

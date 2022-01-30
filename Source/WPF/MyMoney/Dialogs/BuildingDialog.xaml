@@ -4,12 +4,16 @@
         mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:dialog="clr-namespace:Walkabout.Dialogs"
+        Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
+        Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
         Title="Rental Property" 
         MinHeight="430" MinWidth="400"  Width="500" 
         ShowInTaskbar="False"  
         WindowStartupLocation="CenterOwner" 
         WindowStyle="ToolWindow"
-        ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" Height="Auto">
+        ResizeMode="CanResizeWithGrip" 
+        SizeToContent="WidthAndHeight" 
+        >
 
     <Grid Name="MainDialogSurface" Margin="20,20,20,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
@@ -46,8 +50,8 @@
             <TextBox Grid.Column="2" Grid.Row="4" HorizontalAlignment="Stretch" MinHeight="50"  Grid.ColumnSpan="2"
                      Text="{Binding Path=Note, Mode=TwoWay}" />
 
-            <TabControl Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="6"  >
-                
+            <TabControl Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="6" Background="Transparent">
+
                 <!-- Owners -->
                 <TabItem Header="Owners" >
                     <Grid >
@@ -81,7 +85,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
-                
+
                 <!-- Categories -->
                 <TabItem Header="Categories" >
                     <Grid Margin="10,0,10,0">
