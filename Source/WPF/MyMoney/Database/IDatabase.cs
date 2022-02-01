@@ -17,6 +17,8 @@ namespace Walkabout.Data
         string UserId { get; }
         string Password { get; set;  }
         string BackupPath { get; }
+        bool SupportsUserLogin { get; }
+
         DbFlavor DbFlavor { get; }
 
         bool Exists { get; }

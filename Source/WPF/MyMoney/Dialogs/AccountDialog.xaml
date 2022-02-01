@@ -30,6 +30,9 @@
         <Style x:Key="ComboBoxStretchStyle" TargetType="ComboBoxItem">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
         </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
     </local:BaseDialog.Resources>
 
     <StackPanel Margin="20,20,20,20">

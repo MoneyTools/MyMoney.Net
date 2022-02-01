@@ -5,7 +5,7 @@
     xmlns:help="clr-namespace:Walkabout.Help"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Sample Database Options"
-    Height="260" Width="422" 
+    Height="305" Width="422" 
     ShowInTaskbar="False" 
     WindowStyle="ToolWindow" 
     Loaded="Window_Loaded"

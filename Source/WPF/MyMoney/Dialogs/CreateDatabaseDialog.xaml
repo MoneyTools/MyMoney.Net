@@ -51,9 +51,9 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="ButtonOpen" Grid.Column="0" IsDefault="True" MinWidth="80"  Margin="3" Click="ButtonOpen_Click" Visibility="Hidden">_Open</Button>
-            <Button x:Name="ButtonCreate" Grid.Column="2" IsDefault="True" MinWidth="80"  Margin="3" Click="ButtonCreate_Click">C_reate</Button>
-            <Button x:Name="ButtonCancel" Grid.Column="3" IsCancel="True" MinWidth="80" Margin="3">_Cancel</Button>
+            <Button x:Name="ButtonOpen" Grid.Column="0" IsDefault="True" MinWidth="80"  Margin="10" Click="ButtonOpen_Click" Visibility="Hidden">_Open</Button>
+            <Button x:Name="ButtonCreate" Grid.Column="2" IsDefault="True" MinWidth="80"  Margin="10,10,5,10" Click="ButtonCreate_Click">C_reate</Button>
+            <Button x:Name="ButtonCancel" Grid.Column="3" IsCancel="True" MinWidth="80" Margin="5,10,10,10">_Cancel</Button>
         </Grid>
 
     </Grid>

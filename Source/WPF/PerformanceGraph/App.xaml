@@ -3,15 +3,5 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary x:Key="Light">
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/MyMoney;component/Themes/Light.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-        <ResourceDictionary x:Key="Dark">
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/MyMoney;component/Themes/Dark.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
     </Application.Resources>
 </Application>

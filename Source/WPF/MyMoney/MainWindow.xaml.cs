@@ -1896,6 +1896,7 @@ namespace Walkabout
                 UiDispatcher.BeginInvoke(new Action(() =>
                 {
                     this.database = database;
+                    MenuFileAddUser.Visibility = database.SupportsUserLogin ? Visibility.Visible : Visibility.Collapsed;
                     CreateAttachmentDirectory();
                     this.DataContext = newMoney;
                     canSave = true;

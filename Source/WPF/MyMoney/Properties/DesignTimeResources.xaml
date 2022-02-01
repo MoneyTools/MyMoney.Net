@@ -1,7 +1,0 @@
-﻿<ResourceDictionary
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/MyMoney;component/Themes/generic.xaml"/>
-        <ResourceDictionary Source="/MyMoney;component/Charts/Styles.xaml" />
-    </ResourceDictionary.MergedDictionaries>
-</ResourceDictionary>
