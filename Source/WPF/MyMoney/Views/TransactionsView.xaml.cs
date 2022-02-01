@@ -5530,7 +5530,6 @@ namespace Walkabout.Views
             }
             else if (isReconciling)
             {
-                this.SetResourceReference(Border.BackgroundProperty, "WalkaboutReconciledRowBackgroundBrush");
             }
             else
             {
@@ -6805,6 +6804,7 @@ namespace Walkabout.Views
             this.button.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(OnStatusButtonClick);
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
             this.button.Content = label = new TextBlock();
+            label.Foreground = Brushes.Black;
             this.button.BorderBrush = Brushes.Transparent;
             this.button.Background = Brushes.Transparent;
         }

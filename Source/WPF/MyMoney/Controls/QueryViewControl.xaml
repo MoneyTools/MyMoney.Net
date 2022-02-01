@@ -10,8 +10,6 @@
 
     <UserControl.Resources>
         <Style TargetType="{x:Type DataGridCell}">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -36,13 +34,10 @@
         <Style x:Key="MyDataGridStyle" TargetType="DataGrid">
             <Setter Property="ItemsSource" Value="{Binding}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="AlternatingRowBackground" Value="#E0F1FF"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
-            <!--<Setter Property="VerticalGridLinesBrush" Value="{StaticResource GridLineBrush}"/>-->
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
-            <!--<Setter Property="RowDetailsTemplate" Value="{StaticResource myDataGridDetailView}"/>-->
             <Setter Property="ClipboardCopyMode" Value="None"/>
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
@@ -139,9 +134,15 @@
 
     </UserControl.Resources>
 
-    <controls:MoneyDataGrid x:Name="dataGrid1" Style="{StaticResource MyDataGridStyle}" RowHeaderWidth="20"
-                  CanUserAddRows="True" CanUserDeleteRows="True" CanUserResizeRows="False" AutoGenerateColumns="False"
-                  PreviewKeyDown="OnDataGrid_PreviewKeyDown">
+    <controls:MoneyDataGrid 
+        x:Name="dataGrid1" 
+        Style="{StaticResource MyDataGridStyle}" 
+        RowHeaderWidth="20"
+        CanUserAddRows="True" 
+        CanUserDeleteRows="True" 
+        CanUserResizeRows="False" 
+        AutoGenerateColumns="False"
+        PreviewKeyDown="OnDataGrid_PreviewKeyDown">
         <DataGrid.Columns>
             <DataGridTemplateColumn Header="And/Or" MinWidth="50" CellTemplate="{StaticResource myTemplateConjunction}" CellEditingTemplate="{StaticResource myTemplateConjunctionEdit}" SortMemberPath="Conjunction"/>
             <DataGridTemplateColumn Header="Field" MinWidth="200" CellTemplate="{StaticResource myTemplateField}" CellEditingTemplate="{StaticResource myTemplateFieldEdit}" SortMemberPath="Field"/>

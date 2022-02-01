@@ -73,9 +73,6 @@
                            FontWeight="{Binding ., Converter={StaticResource AccountFontWeightConverter}}"/>
             </Grid>
         </DataTemplate>
-
-
-
     </UserControl.Resources>
 
     <UserControl.CommandBindings>
@@ -98,6 +95,7 @@
              HorizontalContentAlignment="Stretch"
              Grid.IsSharedSizeScope="True"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+             Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"             
              UseLayoutRounding="True"
              >
         <ListBox.ItemContainerStyle>

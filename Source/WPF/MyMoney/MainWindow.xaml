@@ -243,14 +243,14 @@
                               Grid.Row="2"
                               Margin="10,0,0,0" 
                               Padding="1"
-                              Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
+                              Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
                               Click="PendingChangeClicked"
                               >
                 <TextBlock Text="Save" Margin="5,0,5,0"/>
 
                 <ui:SplitButton.Flyout>
                     <ui:Flyout x:Name="pendingChangeFlyout" Opening="OnOpeningPendingChangeFlyout">
-                        <Border Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}">
+                        <Border Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}">
                             <Grid >
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>

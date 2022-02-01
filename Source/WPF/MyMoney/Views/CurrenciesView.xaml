@@ -10,14 +10,11 @@
              d:DesignHeight="300" d:DesignWidth="300">
   <UserControl.Resources>
 
-    <SolidColorBrush x:Key="GridLineBrush" Color="#FFDFDFEF"/>
-
     <Style x:Key="MyCurrenciesDataGridStyle" TargetType="DataGrid">
       <Setter Property="ItemsSource" Value="{Binding}"/>
       <Setter Property="AutoGenerateColumns" Value="False"/>
       <Setter Property="AlternatingRowBackground" Value="#E0F1FF"/>
       <Setter Property="GridLinesVisibility" Value="Vertical"/>
-      <Setter Property="VerticalGridLinesBrush" Value="{StaticResource GridLineBrush}"/>
       <Setter Property="CanUserResizeRows" Value="False"/>
       <Setter Property="SelectionMode" Value="Single"/>
       <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>

@@ -20,6 +20,7 @@
                  HorizontalContentAlignment="Stretch" 
                  VerticalContentAlignment="Stretch" 
                  AllowDrop="True"
+                 Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
         
         <ListBox.ItemContainerStyle>

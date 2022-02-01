@@ -8,9 +8,9 @@
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
              xmlns:p="clr-namespace:Walkabout.Commands"
              xmlns:views="clr-namespace:Walkabout.Views"
-             xmlns:help="clr-namespace:Walkabout.Help" xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:help="clr-namespace:Walkabout.Help" 
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d"
-             FontFamily="{StaticResource DataGridFont}"
              FontSize="{DynamicResource MainTransactionAreaFontSize}"
              d:DesignHeight="300" d:DesignWidth="600">
 
@@ -491,23 +491,10 @@
         DETAIL MINI VIEW 
         -->
         <DataTemplate x:Key="myDataGridDetailMiniView">
-
             <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent">
-
-                <Border.Resources>
-
-                    <Style TargetType="{x:Type ListBox}">
-                        <Style.Resources>
-                            <!--{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=IsSelected}-->
-                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
-                        </Style.Resources>
-                    </Style>
-                </Border.Resources>
-
                 <StackPanel Orientation="Horizontal">
-                    <ListBox x:Name="TheMiniListForAmountSplit" Style="{DynamicResource TransactionMiniDetailPreview}"
+                    <ListBox x:Name="TheMiniListForAmountSplit" 
                              Background="Transparent"
-                             FontStyle="Italic"
                              BorderThickness="0"
                              IsEnabled="False"
                              Padding="0"
@@ -517,16 +504,15 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Width="200" Text="{Binding Payee}" TextAlignment="Left" FontSize="10"/>
-                                    <TextBlock MinWidth="200" Margin="10,0,0,0" Text="{Binding Category}" TextAlignment="Left" FontSize="10"/>
-                                    <TextBlock MinWidth="100" Margin="10,0,0,0" Text="{Binding Amount, StringFormat={}{0:N}}" TextAlignment="Right" FontSize="10"/>
+                                    <TextBlock Width="200" Text="{Binding Payee}" TextAlignment="Left" FontSize="10" Foreground="Black"/>
+                                    <TextBlock MinWidth="200" Margin="10,0,0,0" Text="{Binding Category}" TextAlignment="Left" FontSize="10" Foreground="Black"/>
+                                    <TextBlock MinWidth="100" Margin="10,0,0,0" Text="{Binding Amount, StringFormat={}{0:N}}" TextAlignment="Right" FontSize="10" Foreground="Black"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <TextBlock Text="{Binding Path=NonNullSplits.TotalSplitAmount, StringFormat={}{0:N}}" Width="60" FontSize="11" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center" TextAlignment="Right" IsEnabled="False"/>
                 </StackPanel>
-
             </Border>
         </DataTemplate>
 
@@ -627,7 +613,6 @@
             <Setter Property="RowBackground" Value="{StaticResource GridNormalBackgroundBrush}"/>
             <Setter Property="AlternatingRowBackground" Value="{StaticResource GridAlternateBackgroundBrush}"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
-            <Setter Property="VerticalGridLinesBrush" Value="{StaticResource GridLineBrush}"/>
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
@@ -731,7 +716,7 @@
             </Grid.RowDefinitions>
 
             <!-- QUICK SEARCH BUTTON AREA -->
-            <Border Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"  SizeChanged="Border_SizeChanged">
+            <Border Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"  SizeChanged="Border_SizeChanged">
                 <Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -874,7 +859,6 @@
                 </DataGrid.Columns>
             </local:MoneyDataGrid>
 
-
             <!-- BY CATEGORY -->
             <!-- Note the SecondarySortOrder has to match the Transaction SortByDate method -->
             <local:MoneyDataGrid x:Name="TheGrid_TransactionFromDetails" Grid.Row="1" CellStyle="{StaticResource MyDataGridCellStyle}"
@@ -921,12 +905,15 @@
                 </DataGrid.Columns>
             </local:MoneyDataGrid>
 
-
             <!-- ACCOUNT OF TYPE INVESTMENT -->
             <!-- Note the SecondarySortOrder has to match the Transaction SortByDate method -->
-            <local:MoneyDataGrid x:Name="TheGrid_InvestmentActivity"  Grid.Row="1" Style="{StaticResource MyDataGridStyle}"  RowStyle="{StaticResource MyDataGridRowStyle}" 
-                  RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
-                  CellStyle="{StaticResource MyDataGridCellStyle}" SecondarySortOrder="Date,NegativeAmount,Id">
+            <local:MoneyDataGrid 
+                x:Name="TheGrid_InvestmentActivity"  
+                Grid.Row="1" Style="{StaticResource MyDataGridStyle}"  
+                RowStyle="{StaticResource MyDataGridRowStyle}" 
+                RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
+                CellStyle="{StaticResource MyDataGridCellStyle}" 
+                SecondarySortOrder="Date,NegativeAmount,Id">
 
 
                 <DataGrid.Columns>
@@ -980,16 +967,19 @@
                 </DataGrid.Columns>
             </local:MoneyDataGrid>
 
-
             <!-- VIEW SECURITY ACCROSS ALL ACCOUNT -->
             <!-- Note the SecondarySortOrder has to match the Transaction SortByDate method -->
-            <local:MoneyDataGrid x:Name="TheGrid_BySecurity" Grid.Row="1" Style="{StaticResource MyDataGridStyle}"  RowStyle="{StaticResource MyDataGridRowStyle}" 
+            <local:MoneyDataGrid 
+                  x:Name="TheGrid_BySecurity" 
+                  Grid.Row="1" 
+                  Style="{StaticResource MyDataGridStyle}"
+                  RowStyle="{StaticResource MyDataGridRowStyle}" 
                   RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
                   CellStyle="{StaticResource MyDataGridCellStyle}"
-                  CanUserAddRows="False" SecondarySortOrder="Date,NegativeAmount,Id">
+                  CanUserAddRows="False" 
+                  SecondarySortOrder="Date,NegativeAmount,Id">
 
                 <DataGrid.Columns>
-
 
                     <!-- ACCOUNT -->
                     <DataGridTextColumn Header="Account" Binding="{Binding Account.Name, Converter={StaticResource NullableValueConverter}}" IsReadOnly="True" />                    
@@ -1011,7 +1001,6 @@
                     <!-- FIFO TRACKING -->
                     <DataGridTemplateColumn Header="FIFO"  CellTemplate="{StaticResource myTemplateFifo}" 
                                         SortMemberPath="RoutingPath" />
-
 
                     <!-- UNITS -->
                     <views:TransactionNumericColumn Header="Units" SortMemberPath="InvestmentUnits" />

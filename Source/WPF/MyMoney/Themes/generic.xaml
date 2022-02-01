@@ -10,9 +10,6 @@
     <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="Black"/>
     <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="#F6F4F2"/>
 
-    <!-- was 7BD1AA -->
-    <SolidColorBrush x:Key="WalkaboutReconciledRowBackgroundBrush" Color="#A1EFC9"/>
-
     <!-- for hyperlinks in reports -->
     <SolidColorBrush x:Key="HyperlinkForeground" Color="SlateBlue"/>
 
@@ -42,8 +39,6 @@
     <SolidColorBrush x:Key="TextBrush" Color="Black" />
 
     <SolidColorBrush x:Key="TransactionConnectorBrush" Color="DarkSlateBlue" />
-
-    <FontFamily x:Key="DataGridFont">Segoe UI</FontFamily>
 
     <SolidColorBrush x:Key="GridNormalBackgroundBrush" Color="#EFF7FF"/>
     <SolidColorBrush x:Key="GridAlternateBackgroundBrush" Color="#E0F1FF"/>
