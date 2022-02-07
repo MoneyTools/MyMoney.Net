@@ -689,191 +689,33 @@ namespace FindUnusedStyles
                             yield return "DataGridRowHeader";
                             yield return "DataGridTextColumn";
                             break;
-                        case "DataGridRow":
-                        case "DataGridCell":
-                        case "DataGridColumn":
-                        case "DataGridRowHeader":
-                        case "DataGridTemplateColumn":
-                        case "DataGridTextColumn":
-                        case "DataGridRowsPresenter":
-                            break;
                         case "ListBox":
                             yield return "ListBoxItem";
                             break;
-                        case "ListBoxItem":
                             break;
                         case "ListView":
                             yield return "ListViewItem";
                             break;
-                        case "ListViewItem":
                             break;
                         case "GridView":
                             yield return "GridViewItem";
                             yield return "GridViewColumn";
                             break;
-                        case "GridViewItem":
-                        case "GridViewColumn":
                             break;
                         case "ComboBox":
                             yield return "ComboBoxItem";
-                            break;
-                        case "ComboBoxItem":
                             break;
                         case "ContextMenu":
                         case "Menu":
                             yield return "MenuItem";
                             yield return "Separator";
                             break;
-                        case "MenuItem":
-                        case "Separator":
-                            break;
                         case "ToolBar":
                             yield return "ToolBarItem";
                             yield return "ToolBarTray";
                             break;
-                        case "ToolBarItem":
-                        case "ToolBarTray":
-                            break;
                         case "TabControl":
                             yield return "TabItem";
-                            break;
-                        case "TabItem":
-                            break;
-                        case "StatusBar":
-                            yield return "StatusBarItem";
-                            break;
-                        case "StatusBarItem":
-                            break;
-                        case "TreeView":
-                            yield return "TreeViewItem";
-                            break;
-                        case "TreeViewItem":
-                            break;
-
-
-                        case "Application":
-                            break;
-                        case "CommandBinding":
-                        case "KeyBinding":
-                            break;
-                        case "Window":
-                        case "DockPanel":
-                        case "Grid":
-                        case "Canvas":
-                        case "ScrollViewer":
-                        case "UserControl":
-                        case "Border":
-                        case "StackPanel":
-                        case "WrapPanel":
-                        case "Viewbox":
-                        case "Popup":
-                        case "GroupBox":
-                        case "Expander":
-                        case "WebBrowser":
-                        case "VirtualizingStackPanel":
-                            break;
-                        case "Button":
-                        case "ToggleButton":
-                        case "CheckBox":
-                        case "RadioButton":
-                        case "TextBox":
-                        case "SplitButton":
-                        case "TextBlock":
-                        case "GridSplitter":
-                        case "ProgressBar":
-                        case "Slider":
-                        case "PasswordBox":
-                        case "Label":
-                        case "Image":
-                            break;
-                        case "RichTextBox":
-                        case "FlowDocument":
-                        case "FlowDocumentView":
-                        case "Hyperlink":
-                        case "TextDecorationCollection":
-                        case "TextDecoration":
-                        case "Paragraph":
-                        case "FlowDocumentScrollViewer":
-                            break;
-                        case "ResourceDictionary":
-                            break;
-                        case "RowDefinition":
-                            break;
-                        case "ColumnDefinition":
-                            break;
-                        case "RotateTransform":
-                        case "TranslateTransform":
-                        case "ScaleTransform":
-                        case "TransformGroup":
-                            break;
-                        case "ControlTemplate":
-                        case "ContentControl":
-                        case "ContentPresenter":
-                        case "ItemsPresenter":
-                        case "CollectionViewSource":
-                            break;
-                        case "TrendGraph":
-                            break;
-                        case "Ellipse":
-                        case "Path":
-                        case "Line":
-                        case "Rectangle":
-                            break;
-
-                        case "Style":
-                        case "GroupStyle":
-                        case "Setter":
-                        case "EventSetter":
-                            break;
-                        case "Color":
-                        case "SolidColorBrush":
-                        case "LinearGradientBrush":
-                        case "RadialGradientBrush":
-                        case "Pen":
-                            break;
-                        case "Trigger":
-                        case "DataTrigger":
-                        case "EventTrigger":
-                            break;
-                        case "Boolean":
-                            break;
-                        case "GradientStop":
-                            break;
-                        case "DrawingBrush":
-                            break;
-                        case "DrawingGroup":
-                        case "GeometryDrawing":
-                        case "DrawingImage":
-                            break;
-                        case "GeometryGroup":
-                        case "RectangleGeometry":
-                        case "EllipseGeometry":
-                            break;
-                        case "PathGeometry":
-                        case "PathFigure":
-                        case "ArcSegment":
-                        case "LineSegment":
-                        case "BezierSegment":
-                            break;
-                        case "DataTemplate":
-                        case "HierarchicalDataTemplate":
-                        case "PropertyGroupDescription":
-                            break;
-                        case "ItemsPanelTemplate":
-                            break;
-                        case "BeginStoryboard":
-                        case "Storyboard":
-                        case "ColorAnimation":
-                        case "DoubleAnimation":
-                        case "DoubleAnimationUsingKeyFrames":
-                        case "SplineDoubleKeyFrame":
-                            break;
-                        case "DropShadowEffect":
-                            break;
-                        case "AlternationConverter":
-                            break;
-                        default:
-                            Console.WriteLine("no children " + typeName);
                             break;
                     }
                 }

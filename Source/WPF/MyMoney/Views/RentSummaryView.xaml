@@ -23,7 +23,7 @@
         </Style>
 
         <Style x:Key="Expense" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="Red"/>
+            <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
         </Style>
 
         <Style x:Key="Bucket" TargetType="Border">

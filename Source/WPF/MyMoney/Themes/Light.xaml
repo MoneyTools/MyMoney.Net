@@ -16,6 +16,7 @@
     <Color x:Key="AreaChartColor7" >PaleGreen</Color>
     <Color x:Key="AreaChartColor8" >Wheat</Color>
 
+    
     <!-- colors for list selection -->
     <SolidColorBrush x:Key="ListItemForegroundBrush" Color="black"/>
     <SolidColorBrush x:Key="ListItemSelectedForegroundBrush" Color="white"/>
@@ -27,4 +28,8 @@
     <SolidColorBrush x:Key="GridAlternateBackgroundBrush" Color="#e0e0e0"/>
     <SolidColorBrush x:Key="GridLineBrush" Color="#E0e0e0"/>
 
+    <!-- color in accounts and categories balance fields -->
+    <SolidColorBrush x:Key="NegativeCurrencyForegroundBrush" Color="Red"/>
+    <SolidColorBrush x:Key="PositiveCurrencyForegroundBrush" Color="#99000000"/>
+    
 </ResourceDictionary>

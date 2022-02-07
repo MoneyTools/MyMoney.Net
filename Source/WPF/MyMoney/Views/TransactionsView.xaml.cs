@@ -5395,7 +5395,7 @@ namespace Walkabout.Views
                 </DataTrigger>
 
                 <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
-                    <Setter Property="Foreground" Value="Red"/>
+                    <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
                 </DataTrigger>
 
                 <DataTrigger Binding="{Binding Path=IsReadOnly}" Value="True">
@@ -5553,7 +5553,7 @@ namespace Walkabout.Views
                     <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                 </Trigger>
                 <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
-                    <Setter Property="Foreground" Value="Red"/>
+                    <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
                 </DataTrigger>
 
                 <DataTrigger Binding="{Binding Path=IsReadOnly}" Value="True">

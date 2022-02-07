@@ -11,6 +11,7 @@ using System.IO;
 using System.Windows.Media.Imaging;
 using Walkabout.Configuration;
 using Walkabout.Charts;
+using Walkabout.Utilities;
 
 namespace Walkabout.WpfConverters
 {
@@ -563,10 +564,10 @@ namespace Walkabout.WpfConverters
                 decimal c = (decimal)value;
                 if (c < 0)
                 {
-                    return Brushes.Red;
+                    return AppTheme.Instance.GetThemedBrush("NegativeCurrencyForegroundBrush");
                 }
             }
-            return Brushes.Gray;
+            return AppTheme.Instance.GetThemedBrush("PositiveCurrencyForegroundBrush");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
