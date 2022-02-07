@@ -29,8 +29,6 @@
             <Setter Property="HorizontalContentAlignment" Value="Right"/>
         </Style>
 
-
-
         <Style TargetType="{x:Type FrameworkElement}" 
 				x:Key="GridEditStyle">
             <Setter Property="VerticalAlignment" Value="Center" />
