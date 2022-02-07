@@ -197,6 +197,9 @@
       <DependentUpon>ChartLegend.xaml</DependentUpon>
     </Compile>
     <Compile Include="Commands\Commands.cs" />
+    <Compile Include="Controls\ColorPalette.xaml.cs">
+      <DependentUpon>ColorPalette.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ColorPickerPanel.xaml.cs">
       <DependentUpon>ColorPickerPanel.xaml</DependentUpon>
     </Compile>
@@ -252,6 +255,7 @@
     <Compile Include="Utilities\QuickFilterParser.cs" />
     <Compile Include="Utilities\RecentFilesMenu.cs" />
     <Compile Include="Utilities\UsHolidays.cs" />
+    <Compile Include="Utilities\WpfAnnotations.cs" />
     <Compile Include="Views\ChangeTracker.cs" />
     <Compile Include="Database\CostBasis.cs" />
     <Compile Include="Database\SqliteDatabase.cs" />
@@ -316,7 +320,6 @@
     <Compile Include="Charts\AreaChart.cs" />
     <Compile Include="Charts\ChartData.cs" />
     <Compile Include="Charts\FormattingConverter.cs" />
-    <Compile Include="Charts\SelectionRectVisual.cs" />
     <Compile Include="Charts\Styles.cs" />
     <Compile Include="Charts\CategoryData.cs" />
     <Compile Include="Charts\CategoryChart.xaml.cs">
@@ -689,11 +692,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Charts\Styles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Charts\ChartLegend.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ColorPalette.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

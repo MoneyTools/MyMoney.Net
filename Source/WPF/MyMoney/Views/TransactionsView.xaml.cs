@@ -5380,8 +5380,8 @@ namespace Walkabout.Views
                 </DataTrigger>
 
                 <Trigger Property="IsSelected" Value="true">
-                    <Setter Property="Background" Value="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="CellBorder"/>
-                    <Setter Property="Foreground" Value="{DynamicResource WalkaboutSelectedTextBrush}"/>
+                    <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
+                    <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                 </Trigger>
 
                 <DataTrigger Binding="{Binding Path=Unaccepted}" Value="True">
@@ -5514,7 +5514,7 @@ namespace Walkabout.Views
                 </DataTrigger>
 
                 <Trigger Property="IsSelected" Value="true">
-                    <Setter Property="Background" Value="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="CellBorder"/>
+                    <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
                 </Trigger>
              */
             bool isReconciling = false;
@@ -5526,14 +5526,14 @@ namespace Walkabout.Views
             }
             if (isSelected)
             {
-                this.SetResourceReference(Border.BackgroundProperty, "WalkaboutToolBoxListBoxItemBrushWhenSelected");
+                this.SetResourceReference(Border.BackgroundProperty, "ListItemSelectedBackgroundBrush");
             }
             else if (isReconciling)
             {
             }
             else
             {
-                //this.SetResourceReference(Border.BackgroundProperty, null);
+                // allow to go back to "AlternatingColor" mode.
                 this.ClearValue(Border.BackgroundProperty);
             }
         }
@@ -5550,7 +5550,7 @@ namespace Walkabout.Views
         {
             /* 
                <Trigger Property="IsSelected" Value="true">
-                    <Setter Property="Foreground" Value="{DynamicResource WalkaboutSelectedTextBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                 </Trigger>
                 <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
                     <Setter Property="Foreground" Value="Red"/>
@@ -5589,19 +5589,18 @@ namespace Walkabout.Views
             else if (isSelected)
             {
                 ClearValue(TextBlock.ForegroundProperty);
-                this.SetResourceReference(TextBlock.ForegroundProperty, "WalkaboutSelectedTextBrush");
+                this.SetResourceReference(TextBlock.ForegroundProperty, "ListItemSelectedForegroundBrush");
                 if (cell != null)
                 {
-                    cell.SetResourceReference(DataGridCell.ForegroundProperty, "WalkaboutSelectedTextBrush");
+                    cell.SetResourceReference(DataGridCell.ForegroundProperty, "ListItemSelectedForegroundBrush");
                 }
             }
             else
             {
-                ClearValue(TextBlock.ForegroundProperty);
-                //this.SetResourceReference(TextBlock.ForegroundProperty, null);
+                this.SetResourceReference(TextBlock.ForegroundProperty, "ListItemForegroundBrush");
                 if (cell != null)
                 {
-                    cell.ClearValue(DataGridCell.ForegroundProperty);
+                    cell.SetResourceReference(DataGridCell.ForegroundProperty, "ListItemForegroundBrush");
                 }
             }
         }

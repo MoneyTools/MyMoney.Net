@@ -126,8 +126,8 @@
             </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsSelected" Value="true">
-                <Setter Property="Background" Value="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="CellBorder"/>
-                <Setter Property="Foreground" Value="{DynamicResource WalkaboutSelectedTextBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
+                <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>

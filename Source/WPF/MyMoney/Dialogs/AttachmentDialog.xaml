@@ -2,12 +2,14 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Walkabout.Dialogs"
+        xmlns:u="clr-namespace:Walkabout.Utilities"
         xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" 
         Title="Attachments" Height="425" Width="660" 
         xmlns:help="clr-namespace:Walkabout.Help"
         help:HelpService.HelpKeyword="Attachments">
     <Window.Resources>
-        <SolidColorBrush x:Key="ResizerThumbBrush" Color="#E07070A0"/>
+        <SolidColorBrush x:Key="ResizerThumbBrush" Color="#E07070A0" 
+                     u:WpfAnnotations.CodeRef="ResizerThumbBrush" />
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="Cut" Executed="Cut" CanExecute="HasSelectedItem"/>

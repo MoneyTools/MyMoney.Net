@@ -521,7 +521,7 @@
         -->
         <DataTemplate x:Key="myDataGridDetailView">
 
-            <Border Background="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" >
+            <Border Background="{DynamicResource ListItemSelectedBackgroundBrush}" >
 
                 <Border  x:Name="MainBorderForSplitterView" Margin="8,0,13,13" 
                          Style="{DynamicResource MainBorderForSplitterViewStyle}">
@@ -587,15 +587,13 @@
             </Border>
         </DataTemplate>
 
-        <SolidColorBrush x:Key="GridLineBrush" Color="#FFDFDFEF"/>
-
         <Style x:Key="MyDataGridStyle" TargetType="{x:Type local:MoneyDataGrid}">
             <Setter Property="ItemsSource" Value="{Binding}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="RowBackground" Value="{StaticResource GridNormalBackgroundBrush}"/>
-            <Setter Property="AlternatingRowBackground" Value="{StaticResource GridAlternateBackgroundBrush}"/>
+            <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
-            <Setter Property="VerticalGridLinesBrush" Value="{StaticResource GridLineBrush}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
@@ -610,8 +608,8 @@
         <Style x:Key="MyDataGridStyle2" TargetType="DataGrid">
             <Setter Property="ItemsSource" Value="{Binding}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="RowBackground" Value="{StaticResource GridNormalBackgroundBrush}"/>
-            <Setter Property="AlternatingRowBackground" Value="{StaticResource GridAlternateBackgroundBrush}"/>
+            <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
@@ -661,8 +659,8 @@
                             </DataTrigger>
 
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Background" Value="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="CellBorder"/>
-                                <Setter Property="Foreground" Value="{DynamicResource WalkaboutSelectedTextBrush}"/>
+                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
+                                <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                             </Trigger>
 
                             <DataTrigger Binding="{Binding Path=Unaccepted}" Value="True">

@@ -5,6 +5,7 @@
                     xmlns:local="clr-namespace:Walkabout.Utilities"
                     xmlns:views="clr-namespace:Walkabout.Views"                    
                     xmlns:s="clr-namespace:System;assembly=mscorlib"
+                    xmlns:m="http://schemas.modernwpf.com/2019"
                     >
     <Color x:Key="AreaChartColor1" >#565CAF</Color>
     <Color x:Key="AreaChartColor2" >#7D3787</Color>
@@ -14,4 +15,18 @@
     <Color x:Key="AreaChartColor6" >#505B55</Color>
     <Color x:Key="AreaChartColor7" >#185944</Color>
     <Color x:Key="AreaChartColor8" >#6B4841</Color>
+
+
+    <!-- colors for list selection -->
+    <SolidColorBrush x:Key="ListItemForegroundBrush" Color="white"/>
+    <SolidColorBrush x:Key="ListItemSelectedForegroundBrush" Color="white"/>
+    <SolidColorBrush x:Key="ListItemSelectedBackgroundBrush" Color="{m:DynamicColor SystemAccentColor}"/>
+    <SolidColorBrush x:Key="ListItemSelectedBorderBrush" Color="Transparent"/>
+    <SolidColorBrush x:Key="ListItemSelectedHoverBrush" Color="#3e3e3e"/>
+
+    <SolidColorBrush x:Key="GridNormalBackgroundBrush" Color="#2e2e2e"/>
+    <SolidColorBrush x:Key="GridAlternateBackgroundBrush" Color="#1e1e1e"/>
+    <SolidColorBrush x:Key="GridLineBrush" Color="{m:StaticColor SystemChromeBlackLowColor}"/>
+
+
 </ResourceDictionary>

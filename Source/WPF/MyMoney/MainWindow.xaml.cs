@@ -1381,12 +1381,12 @@ namespace Walkabout
             if (themeToApply == "Dark")
             {
                 ModernWpf.ThemeManager.Current.ApplicationTheme = ModernWpf.ApplicationTheme.Dark;
-                AppTheme.SetTheme("Themes/Dark.xaml");
+                AppTheme.Instance.SetTheme("Themes/Dark.xaml");
             }
             else
             {
                 ModernWpf.ThemeManager.Current.ApplicationTheme = ModernWpf.ApplicationTheme.Light;
-                AppTheme.SetTheme("Themes/Light.xaml");
+                AppTheme.Instance.SetTheme("Themes/Light.xaml");
             }
         }
 
@@ -3802,6 +3802,11 @@ namespace Walkabout
             WpfHelper.Flyout(this.AppSettingsPanel);
         }
 
+        private void OnCommandColorPalette(object sender, ExecutedRoutedEventArgs e)
+        {
+            SetCurrentView<ColorPalette>();
+        }
+
         private void OnAppSettingsPanelClosed(object sender, EventArgs e)
         {
             var newPassword = this.AppSettingsPanel.Password;
@@ -4303,8 +4308,8 @@ namespace Walkabout
             }
         }
 
-        #endregion
 
+        #endregion
 
     }
 }

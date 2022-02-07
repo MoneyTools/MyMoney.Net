@@ -40,10 +40,6 @@
                             </Trigger>
                         </Style.Triggers>
                     </Style>
-                    <Style TargetType="{x:Type StackPanel}">
-                        <Setter Property="Orientation" Value="Horizontal" />
-                        <Setter Property="HorizontalAlignment" Value="Right" />
-                    </Style>
 
                     <Style TargetType="{x:Type local:ComboBox2}">
                         <Setter Property="Margin" Value="0,0,0,5" />

@@ -6,10 +6,6 @@
              xmlns:local="clr-namespace:Walkabout.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="20" d:DesignWidth="800">
-    <UserControl.Resources>
-        <ExponentialEase EasingMode="EaseOut" Exponent="1" x:Key="ProgressBarEaseOut"/>
-        <ExponentialEase EasingMode="EaseIn" Exponent="1" x:Key="ProgressBarEaseIn"/>
-    </UserControl.Resources>
     <Grid MinHeight="14" MinWidth="200" Background="{Binding Background}" x:Name="Root">
         <Grid x:Name="IndeterminateRoot">
             <Ellipse Fill="{Binding DotBrush}" Height="4" IsHitTestVisible="False" Width="4" x:Name="R1" HorizontalAlignment="Left">

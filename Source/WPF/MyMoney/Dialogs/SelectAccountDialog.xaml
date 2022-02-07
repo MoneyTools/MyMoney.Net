@@ -40,7 +40,6 @@
         </StackPanel>
         
         <ListBox x:Name="ListBoxAccounts" Grid.Row="1" BorderThickness="1"  Grid.IsSharedSizeScope="True"
-                 Style="{DynamicResource WalkaboutToolBoxList}" 
                  SelectionChanged="ListBoxAccounts_SelectionChanged"/>
 
         <Grid  Grid.Row="2" >

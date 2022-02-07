@@ -776,17 +776,17 @@ namespace Walkabout.Views.Controls
             {
                 if (a.IsClosed)
                 {
-                    textBrush = Brushes.LightGray;
+                    textBrush = AppTheme.Instance.GetThemedBrush("SystemControlDisabledBaseMediumLowBrush");
                 }
             }
             if (textBrush == null)
             {
-                textBrush = Application.Current.TryFindResource("SystemControlPageTextBaseHighBrush") as Brush;
+                textBrush = AppTheme.Instance.GetThemedBrush("SystemControlPageTextBaseHighBrush");
             }
 
             if (textBrush == null)
             {
-                textBrush = Brushes.DarkBlue;
+                throw new Exception("Resource not found!");
             }
 
             return textBrush;

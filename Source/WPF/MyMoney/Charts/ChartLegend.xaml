@@ -5,12 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Walkabout.Charts"                  
              xmlns:s="clr-namespace:System;assembly=mscorlib"
+             xmlns:u="clr-namespace:Walkabout.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="300">
     <UserControl.Resources>
-
         <ControlTemplate x:Key="ChartLegendFilterControlTemplate" TargetType="{x:Type ToggleButton}">
             <Border BorderThickness="1" BorderBrush="Transparent" Background="{TemplateBinding Background}" 
+                     u:WpfAnnotations.CodeRef="ChartLegendFilterControlTemplate" 
                 Name="border" SnapsToDevicePixels="True">
                 <TextBlock Name="eye" Text="&#xE18B;" FontFamily="Segoe UI Symbol" 
                        VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -51,7 +52,7 @@
         </ControlTemplate>
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-    <Grid x:Name="LegendGrid" Background="White">
+    <Grid x:Name="LegendGrid" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>

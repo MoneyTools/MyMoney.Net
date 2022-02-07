@@ -91,9 +91,7 @@ namespace FindUnusedStyles
                     var doc = LoadXaml(path);
                     if (doc != null)
                     {
-                        // don't record import file name as a signal we don't care about
-                        // unreferenced styles in that import.
-                        FindStyles(null, doc.Root, null, global, false);
+                        FindStyles(null, doc.Root, null, global);
                     }
                 }
             }
@@ -102,18 +100,18 @@ namespace FindUnusedStyles
             FindXamlFiles(dir, files);
 
             List<XDocument> documents = new List<XDocument>();
-            
 
             // Load global resource dictionaries first.
             foreach (var xaml in files)
-            {
+            {             
                 var doc = LoadXaml(xaml);
                 if (doc != null)
                 {
                     Console.WriteLine("{0}: {1}", doc.Root.Name.LocalName, xaml);
                     if (doc.Root.Name.LocalName == "ResourceDictionary")
                     {
-                        FindStyles(xaml, doc.Root, null, global, true);
+                        FindStyles(xaml, doc.Root, null, global);
+                        CheckStyleReferences(xaml, doc.Root, null, global);
                     }
                     else
                     {
@@ -131,7 +129,6 @@ namespace FindUnusedStyles
                     var a = doc.Root.Attribute(XName.Get("Class", "http://schemas.microsoft.com/winfx/2006/xaml"));
                     Styles local = new Styles(global);
                     var location = doc.Annotation<string>();
-                    FindStyles(location, doc.Root, null, local, true);
                     WalkResources(location, doc.Root, null, local);
                     local.ReportUnreferenced();
                 }
@@ -308,7 +305,7 @@ namespace FindUnusedStyles
             return root.Name;
         }
 
-        private void FindStyles(string filePath, XElement root, NamespaceScope scope, Styles styles, bool checkRefs)
+        private void FindStyles(string filePath, XElement root, NamespaceScope scope, Styles styles)
         {
             var local = new NamespaceScope(scope);
             XName targetType = null;
@@ -330,10 +327,6 @@ namespace FindUnusedStyles
                 {
                     // todo: check DataType references.
                 }
-                else if (checkRefs && a.Name.LocalName != "xmlns" && a.Name.Namespace != XmlNsUri && checkRefs)
-                {
-                    CheckReferences(GetTargetTypeName(root, a), a.Value, local, styles);
-                }
             }
 
             if (key != null || targetType != null)
@@ -341,15 +334,46 @@ namespace FindUnusedStyles
                 styles.AddStyle(filePath, key, targetType, root);
             }
 
-            bool isDict = root.Name.LocalName == "ResourceDictionary" || root.Name.LocalName.EndsWith(".Resources");
+            // Check for any nested styles first.
+            foreach (var e in root.Elements())
+            {
+                FindStyles(filePath, e, local, styles);
+            }
+        }
+
+
+        private void CheckStyleReferences(string filePath, XElement root, NamespaceScope scope, Styles styles)
+        {
+            var local = new NamespaceScope(scope);
+            XName targetType = null;
+            XName key = null;
+
+            AddNamespaces(root, local);
+
+            foreach (var a in root.Attributes())
+            {
+                if (a.Name.LocalName == "TargetType")
+                {
+                    targetType = ParseTargetType(a.Value, local);
+                }
+                else if (a.Name.LocalName == "Key" && a.Name.Namespace == XamlNsUri)
+                {
+                    key = ParseTargetType(a.Value, local);
+                }
+                else if (a.Name.LocalName == "DataType")
+                {
+                    // todo: check DataType references.
+                }
+                else if (a.Name.LocalName != "xmlns" && a.Name.Namespace != XmlNsUri)
+                {
+                    CheckReferences(GetTargetTypeName(root, a), a.Value, local, styles);
+                }
+            }
 
             // Check for any nested styles first.
             foreach (var e in root.Elements())
             {
-                if (isDict || e.Name.LocalName == "ResourceDictionary" || e.Name.LocalName.EndsWith(".Resources"))
-                {
-                    FindStyles(filePath, e, local, styles, checkRefs);
-                }
+                CheckStyleReferences(filePath, e, local, styles);
             }
         }
 
@@ -396,9 +420,44 @@ namespace FindUnusedStyles
                 {
                     // todo: check type references
                 }
+                else if (a.Name.LocalName.Contains("CodeRef"))
+                {
+                    // ah then this style is referenced from code, so record that fact
+                    XName reference = a.Value;
+                    var style = styles.FindStyle(null, reference);
+                    if (style == null)
+                    {
+                        // might have been a TargetTyped resource
+                        XName targetType = styles.FindTargetType(reference);
+                        if (targetType != null)
+                        {
+                            style = styles.FindStyle(targetType, reference);
+                        }
+                        if (style == null)
+                        {
+                            Program.WriteError("CodeRef {0} not found", reference.ToString());
+                        }
+                    }
+                }
                 else if (a.Name.LocalName != "xmlns" && a.Name.Namespace != XmlNsUri)
                 {
                     CheckReferences(GetTargetTypeName(root, a), a.Value, local, styles);
+                }
+            }
+
+            Styles localStyles = null;
+            // see if this element contains local styles
+            foreach (var e in root.Elements())
+            {
+                // find any local styles.
+                if (e.Name.LocalName.EndsWith(".Resources"))
+                {
+                    if (localStyles == null)
+                    {
+                        localStyles = new Styles(styles);
+                        styles = localStyles;
+                    }
+                    FindStyles(fileName, e, local, localStyles);
                 }
             }
 
@@ -408,27 +467,13 @@ namespace FindUnusedStyles
             // Now we have the "usage" of styles, either something in a UserControl, or a ControlTemplate in a ResourceDictionary.
             foreach (var e in root.Elements())
             {
-                // find any local styles.
-                if (e.Name.LocalName.EndsWith(".Resources"))
-                {
-                    FindStyles(fileName, e, local, styles, true);
-                }
+                // create local scope for any resources defined in these controls.
+                WalkResources(fileName, e, local, styles);                
             }
 
-            // Now we have the "usage" of styles, either something in a UserControl, or a ControlTemplate in a ResourceDictionary.
-            foreach (var e in root.Elements())
+            if (localStyles != null)
             {
-                // create local scope for any resources defined in these controls.
-                var localStyles = styles;
-                if (!e.Name.LocalName.EndsWith(".Resources"))
-                {
-                    localStyles = new Styles(styles);
-                }
-                WalkResources(fileName, e, local, localStyles);
-                if (localStyles != styles)
-                {
-                    localStyles.ReportUnreferenced();
-                }
+                localStyles.ReportUnreferenced();
             }
         }
 
@@ -451,7 +496,8 @@ namespace FindUnusedStyles
                     }
                     else
                     {
-                        var reference = ParseTargetType(value.Substring(i).Trim(), local); 
+                        var resourceName = value.Substring(i).Trim();
+                        var reference = ParseTargetType(resourceName, local); 
                         var style = localStyles.FindStyle(element, reference);
                         if (style == null)
                         {
@@ -532,8 +578,6 @@ namespace FindUnusedStyles
 
         class NamespaceScope
         {
-            public string Prefix;
-            public string Namespace;
             public NamespaceScope Parent;
             public Dictionary<string, string> Namespaces = new Dictionary<string, string>();
 
@@ -628,6 +672,210 @@ namespace FindUnusedStyles
                         Key = key,
                         RefCount = 0
                     };
+                }
+            }
+
+            private IEnumerable<XName> GetWpfChildTypes(XName typeName)
+            {
+                var type = GetWpfType(typeName.LocalName);
+                if (type != null)
+                {
+                    switch (type.Name)
+                    {
+                        case "DataGrid":
+                            yield return "DataGridRow";
+                            yield return "DataGridCell";
+                            yield return "DataGridColumn";
+                            yield return "DataGridRowHeader";
+                            yield return "DataGridTextColumn";
+                            break;
+                        case "DataGridRow":
+                        case "DataGridCell":
+                        case "DataGridColumn":
+                        case "DataGridRowHeader":
+                        case "DataGridTemplateColumn":
+                        case "DataGridTextColumn":
+                        case "DataGridRowsPresenter":
+                            break;
+                        case "ListBox":
+                            yield return "ListBoxItem";
+                            break;
+                        case "ListBoxItem":
+                            break;
+                        case "ListView":
+                            yield return "ListViewItem";
+                            break;
+                        case "ListViewItem":
+                            break;
+                        case "GridView":
+                            yield return "GridViewItem";
+                            yield return "GridViewColumn";
+                            break;
+                        case "GridViewItem":
+                        case "GridViewColumn":
+                            break;
+                        case "ComboBox":
+                            yield return "ComboBoxItem";
+                            break;
+                        case "ComboBoxItem":
+                            break;
+                        case "ContextMenu":
+                        case "Menu":
+                            yield return "MenuItem";
+                            yield return "Separator";
+                            break;
+                        case "MenuItem":
+                        case "Separator":
+                            break;
+                        case "ToolBar":
+                            yield return "ToolBarItem";
+                            yield return "ToolBarTray";
+                            break;
+                        case "ToolBarItem":
+                        case "ToolBarTray":
+                            break;
+                        case "TabControl":
+                            yield return "TabItem";
+                            break;
+                        case "TabItem":
+                            break;
+                        case "StatusBar":
+                            yield return "StatusBarItem";
+                            break;
+                        case "StatusBarItem":
+                            break;
+                        case "TreeView":
+                            yield return "TreeViewItem";
+                            break;
+                        case "TreeViewItem":
+                            break;
+
+
+                        case "Application":
+                            break;
+                        case "CommandBinding":
+                        case "KeyBinding":
+                            break;
+                        case "Window":
+                        case "DockPanel":
+                        case "Grid":
+                        case "Canvas":
+                        case "ScrollViewer":
+                        case "UserControl":
+                        case "Border":
+                        case "StackPanel":
+                        case "WrapPanel":
+                        case "Viewbox":
+                        case "Popup":
+                        case "GroupBox":
+                        case "Expander":
+                        case "WebBrowser":
+                        case "VirtualizingStackPanel":
+                            break;
+                        case "Button":
+                        case "ToggleButton":
+                        case "CheckBox":
+                        case "RadioButton":
+                        case "TextBox":
+                        case "SplitButton":
+                        case "TextBlock":
+                        case "GridSplitter":
+                        case "ProgressBar":
+                        case "Slider":
+                        case "PasswordBox":
+                        case "Label":
+                        case "Image":
+                            break;
+                        case "RichTextBox":
+                        case "FlowDocument":
+                        case "FlowDocumentView":
+                        case "Hyperlink":
+                        case "TextDecorationCollection":
+                        case "TextDecoration":
+                        case "Paragraph":
+                        case "FlowDocumentScrollViewer":
+                            break;
+                        case "ResourceDictionary":
+                            break;
+                        case "RowDefinition":
+                            break;
+                        case "ColumnDefinition":
+                            break;
+                        case "RotateTransform":
+                        case "TranslateTransform":
+                        case "ScaleTransform":
+                        case "TransformGroup":
+                            break;
+                        case "ControlTemplate":
+                        case "ContentControl":
+                        case "ContentPresenter":
+                        case "ItemsPresenter":
+                        case "CollectionViewSource":
+                            break;
+                        case "TrendGraph":
+                            break;
+                        case "Ellipse":
+                        case "Path":
+                        case "Line":
+                        case "Rectangle":
+                            break;
+
+                        case "Style":
+                        case "GroupStyle":
+                        case "Setter":
+                        case "EventSetter":
+                            break;
+                        case "Color":
+                        case "SolidColorBrush":
+                        case "LinearGradientBrush":
+                        case "RadialGradientBrush":
+                        case "Pen":
+                            break;
+                        case "Trigger":
+                        case "DataTrigger":
+                        case "EventTrigger":
+                            break;
+                        case "Boolean":
+                            break;
+                        case "GradientStop":
+                            break;
+                        case "DrawingBrush":
+                            break;
+                        case "DrawingGroup":
+                        case "GeometryDrawing":
+                        case "DrawingImage":
+                            break;
+                        case "GeometryGroup":
+                        case "RectangleGeometry":
+                        case "EllipseGeometry":
+                            break;
+                        case "PathGeometry":
+                        case "PathFigure":
+                        case "ArcSegment":
+                        case "LineSegment":
+                        case "BezierSegment":
+                            break;
+                        case "DataTemplate":
+                        case "HierarchicalDataTemplate":
+                        case "PropertyGroupDescription":
+                            break;
+                        case "ItemsPanelTemplate":
+                            break;
+                        case "BeginStoryboard":
+                        case "Storyboard":
+                        case "ColorAnimation":
+                        case "DoubleAnimation":
+                        case "DoubleAnimationUsingKeyFrames":
+                        case "SplineDoubleKeyFrame":
+                            break;
+                        case "DropShadowEffect":
+                            break;
+                        case "AlternationConverter":
+                            break;
+                        default:
+                            Console.WriteLine("no children " + typeName);
+                            break;
+                    }
                 }
             }
 
@@ -754,6 +1002,16 @@ namespace FindUnusedStyles
                 // Check more specific target type match first.
                 if (typename != null)
                 {
+                    if (key == Program.emptyName)
+                    {
+                        // then this type reference might imply some child type references,
+                        // for example a <DataGrid> implies we will be using styles defined
+                        // for <DataGridRow>, <DataGridCell>, etc.
+                        foreach (XName childType in GetWpfChildTypes(typename))
+                        {
+                            FindStyle(childType, Program.emptyName);
+                        }
+                    }
                     XElement e = FindTargetType(typename, key);
                     if (e != null)
                     {
@@ -796,6 +1054,23 @@ namespace FindUnusedStyles
                         }
                     }
                 }
+            }
+
+            internal XName FindTargetType(XName key)
+            {
+                foreach (var targetType in targetTypes.Keys)
+                {
+                    var map = targetTypes[targetType];
+                    if (map.ContainsKey(key))
+                    {
+                        return targetType;
+                    }
+                }
+                if (Parent != null)
+                {
+                    return Parent.FindTargetType(key);
+                }
+                return null;
             }
         }
     }

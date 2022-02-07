@@ -220,8 +220,8 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Background" Value="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="CellBorder"/>
-                                <Setter Property="Foreground" Value="{DynamicResource WalkaboutSelectedTextBrush}"/>
+                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
+                                <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                             </Trigger>
                             <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
                                 <Setter Property="Foreground" Value="Red"/>
@@ -426,7 +426,7 @@
         -->
         <DataTemplate x:Key="StockSplitDetailView">
 
-            <Border Background="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" >
+            <Border Background="{DynamicResource ListItemSelectedBackgroundBrush}" >
 
                 <Border  x:Name="MainBorderForSplitterView" Margin="8,0,13,13" BorderThickness="2" CornerRadius="4"  BorderBrush="Gray"  Background="White">
 

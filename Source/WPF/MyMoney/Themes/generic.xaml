@@ -5,8 +5,21 @@
                     xmlns:local="clr-namespace:Walkabout.Utilities"
                     xmlns:views="clr-namespace:Walkabout.Views"                    
                     xmlns:s="clr-namespace:System;assembly=mscorlib"
+                    xmlns:m="http://schemas.modernwpf.com/2019"
                     >
-    <SolidColorBrush x:Key="WalkaboutSelectedTextBrush" Color="Black"/>
+
+
+    <!-- CONVERTERS -->
+    <local:CategoryToBrush x:Key="CategoryToBrush" />
+    <c:SqlDecimalToDecimalConverter x:Key="SqlDecimalToDecimalConverter" />
+    <c:DecimalToDecimalConverter x:Key="DecimalToDecimalConverter" />
+    <c:NullOrEmptyStringToVisible x:Key="NullOrEmptyStringToVisible" />
+    <c:CategoryTypeLetterConverter x:Key="CategoryTypeLetterConverter"/>
+
+    <!-- ============================================================================================= -->
+    <!-- Everything above this point has been Modernized and tested to work with Light and Dark themes -->
+    <!-- ============================================================================================= -->
+    
     <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="Black"/>
     <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="#F6F4F2"/>
 
@@ -40,16 +53,10 @@
 
     <SolidColorBrush x:Key="TransactionConnectorBrush" Color="DarkSlateBlue" />
 
-    <SolidColorBrush x:Key="GridNormalBackgroundBrush" Color="#EFF7FF"/>
-    <SolidColorBrush x:Key="GridAlternateBackgroundBrush" Color="#E0F1FF"/>
-
     <LinearGradientBrush x:Key="MouseOverBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="LightBlue" />
         <GradientStop Color="LightBlue" Offset="1" />
     </LinearGradientBrush>
-
-    <c:NullOrEmptyStringToVisible x:Key="NullOrEmptyStringToVisible" />
-    <c:CategoryTypeLetterConverter x:Key="CategoryTypeLetterConverter"/>
 
     <SolidColorBrush x:Key="ValidDropTargetFeedbackBrush" Color="Navy"/>
 
@@ -68,13 +75,6 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
-
-
-    <!-- CONVERTERS -->
-    <local:CategoryToBrush x:Key="CategoryToBrush" />
-    <c:SqlDecimalToDecimalConverter x:Key="SqlDecimalToDecimalConverter" />
-    <c:DecimalToDecimalConverter x:Key="DecimalToDecimalConverter" />
 
 
     <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type TextBox}">
@@ -123,9 +123,8 @@
                     </ControlTemplate.Resources>
 
                     <Grid SnapsToDevicePixels="true">
-                        <Rectangle x:Name="BackgroundGradientOver" Fill="{DynamicResource MouseOverBrush}" Stroke="{DynamicResource hoverStroke}" RadiusX="2" RadiusY="2"  Opacity="0"/>
-                        <Rectangle x:Name="BackgroundGradientSelected" Fill="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" Stroke="{DynamicResource SelectedItemBorderBrush}" RadiusX="2" RadiusY="2" Opacity="0"/>
-                        <Rectangle x:Name="BackgroundHighlight" Margin="1" Stroke="#A0FFFFFF" RadiusX="1" RadiusY="1"/>
+                        <Rectangle x:Name="BackgroundGradientOver" Fill="{DynamicResource ListItemSelectedHoverBrush}" RadiusX="2" RadiusY="2"  Opacity="0"/>
+                        <Rectangle x:Name="BackgroundGradientSelected" Fill="{DynamicResource ListItemSelectedBackgroundBrush}" Stroke="{DynamicResource ListItemSelectedBorderBrush}" RadiusX="2" RadiusY="2" Opacity="0"/>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding Path=Name}" Margin="2,0,5,0" FontWeight="Medium" TextAlignment="Center"/>
                             <TextBlock x:Name="S1" Text=" (" FontWeight="DemiBold" TextAlignment="Left" />
@@ -189,8 +188,8 @@
                     </ControlTemplate.Resources>
 
                     <Grid SnapsToDevicePixels="true">
-                        <Rectangle x:Name="BackgroundGradientOver" Fill="{DynamicResource MouseOverBrush}" Stroke="{DynamicResource hoverStroke}" RadiusX="2" RadiusY="2"  Opacity="0"/>
-                        <Rectangle x:Name="BackgroundGradientSelected" Fill="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" Stroke="{DynamicResource SelectedItemBorderBrush}" RadiusX="2" RadiusY="2" Opacity="0"/>
+                        <Rectangle x:Name="BackgroundGradientOver" Fill="{DynamicResource ListItemSelectedHoverBrush}" RadiusX="2" RadiusY="2"  Opacity="0"/>
+                        <Rectangle x:Name="BackgroundGradientSelected" Fill="{DynamicResource ListItemSelectedBackgroundBrush}" Stroke="{DynamicResource ListItemSelectedBorderBrush}" RadiusX="2" RadiusY="2" Opacity="0"/>
                         <Rectangle x:Name="BackgroundHighlight" Margin="1" Stroke="#A0FFFFFF" RadiusX="1" RadiusY="1"/>
                         <Grid Background="{TemplateBinding Background}" Width="400" >
                             <Grid.ColumnDefinitions>
@@ -264,7 +263,7 @@
 
                     <Grid SnapsToDevicePixels="true">
                         <Rectangle x:Name="BackgroundGradientOver" Fill="{DynamicResource MouseOverBrush}" Stroke="{DynamicResource hoverStroke}" RadiusX="2" RadiusY="2"  Opacity="0"/>
-                        <Rectangle x:Name="BackgroundGradientSelected" Fill="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" Stroke="{DynamicResource SelectedItemBorderBrush}" RadiusX="2" RadiusY="2" Opacity="0"/>
+                        <Rectangle x:Name="BackgroundGradientSelected" Fill="{DynamicResource ListItemSelectedBackgroundBrush}" Stroke="{DynamicResource ListItemSelectedBorderBrush}" RadiusX="2" RadiusY="2" Opacity="0"/>
                         <Rectangle x:Name="BackgroundHighlight" Margin="1" Stroke="#A0FFFFFF" RadiusX="1" RadiusY="1"/>
 
                         <StackPanel Orientation="Horizontal">
@@ -787,14 +786,6 @@
 
 
     <!-- Color Resources -->
-    <Color x:Key="MainColor">#293955</Color>
-    <Color x:Key="SelectedItemBorderColor">#E5C365</Color>
-    <SolidColorBrush x:Key="SelectedItemBorderBrush" Color="#E5C365"/>
-
-    <Color x:Key="BlackColor">Black</Color>
-
-    <Color x:Key="WhiteColor">White</Color>
-
 
     <Color x:Key="NormalBrushGradient1">#FFBAE4FF</Color>
     <Color x:Key="NormalBrushGradient2">#FF398FDF</Color>
@@ -865,11 +856,6 @@
         <GradientStop Color="{StaticResource ShadeBrushGradient3}" Offset="1" />
     </LinearGradientBrush>
 
-
-    <LinearGradientBrush x:Key="WalkaboutToolBoxListBoxItemBrushWhenSelected" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#FFEFBB" />
-        <GradientStop Color="#FFEFBB" Offset="1" />
-    </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="LightBrush" EndPoint="0,1" StartPoint="0,0">
         <GradientStop Color="#FFF" Offset="0.0"/>

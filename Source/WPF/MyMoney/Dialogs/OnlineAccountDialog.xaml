@@ -16,8 +16,6 @@
         d:DesignHeight="520" d:DesignWidth="859">
 
     <Window.Resources>
-        <c:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
-
         <SolidColorBrush x:Key="TextBrush" Color="Black"/>
 
         <SolidColorBrush x:Key="GridViewHeaderBrush" Color="#C9BDAF"/>

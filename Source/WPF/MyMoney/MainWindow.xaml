@@ -24,7 +24,6 @@
     <Window.Resources>
     </Window.Resources>
 
-
     <Window.InputBindings>
         <KeyBinding Command="p:AppCommands.CommandBack" Key="Left" Modifiers="Alt" />
         <KeyBinding Command="p:AppCommands.CommandForward" Key="Right" Modifiers="Alt"/>
@@ -63,6 +62,7 @@
         <CommandBinding Command="p:AppCommands.CommandViewCurrencies" Executed="OnCommandViewCurrencies"/>
         <CommandBinding Command="p:AppCommands.CommandViewAliases"  Executed="OnCommandViewViewAliases"/>
         <CommandBinding Command="p:AppCommands.CommandViewOptions" Executed="OnCommandViewOptions" />
+        <CommandBinding Command="p:AppCommands.CommandColorPalette" Executed="OnCommandColorPalette" />
 
         <!-- REPORTS  -->
         <CommandBinding Command="p:AppCommands.CommandReportNetWorth" Executed="OnCommandNetWorth"/>
@@ -184,6 +184,9 @@
                         <MenuItem x:Name="MenuViewOnlineAliases" Header="_Aliases" Command="p:AppCommands.CommandViewAliases"/>
                         <Separator/>
                         <MenuItem x:Name="MenuViewOnlineOptions" Header="_Options..." Command="p:AppCommands.CommandViewOptions"/>
+                        <Separator/>
+                        <MenuItem x:Name="MenuViewColorPalette" Header="Color Palette..." Command="p:AppCommands.CommandColorPalette"/>
+                        
                     </MenuItem>
 
                     <MenuItem x:Name="MenuViewReports" Header="_Reports">

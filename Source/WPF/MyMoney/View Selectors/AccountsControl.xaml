@@ -64,7 +64,7 @@
                        ToolTip="{Binding Path=., Converter={StaticResource AccountWarningTooltipConverter}}"/>
 
                 <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True" Grid.Column="1" 
-                           Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                           Foreground="{Binding ., Converter={StaticResource AccountNameColorConverter}}"
                            FontWeight="{Binding ., Converter={StaticResource AccountFontWeightConverter}}"/>
                 
                 <TextBlock Text="{Binding BalanceNormalized, StringFormat={}{0:C}}"  Grid.Column="2" 
