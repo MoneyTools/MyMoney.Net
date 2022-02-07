@@ -61,12 +61,6 @@
                                 <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
                                 <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                             </Trigger>
-
-                            <!--<DataTrigger Binding="{Binding Path=IsReadOnly}" Value="True">
-								<Setter Property="Foreground" Value="Gray"/>
-															   <Setter Property="IsEnabled" Value="False"/>
-							</DataTrigger>-->
-
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>

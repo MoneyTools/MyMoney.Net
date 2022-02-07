@@ -28,6 +28,7 @@
         <KeyBinding Command="p:AppCommands.CommandBack" Key="Left" Modifiers="Alt" />
         <KeyBinding Command="p:AppCommands.CommandForward" Key="Right" Modifiers="Alt"/>
         <KeyBinding Command="Find" Key="F" Modifiers="Control"/>
+        <KeyBinding Command="p:AppCommands.CommandToggleTheme" Key="L" Modifiers="Control"/>
     </Window.InputBindings>
 
     <Window.CommandBindings>
@@ -63,6 +64,7 @@
         <CommandBinding Command="p:AppCommands.CommandViewAliases"  Executed="OnCommandViewViewAliases"/>
         <CommandBinding Command="p:AppCommands.CommandViewOptions" Executed="OnCommandViewOptions" />
         <CommandBinding Command="p:AppCommands.CommandColorPalette" Executed="OnCommandColorPalette" />
+        <CommandBinding Command="p:AppCommands.CommandToggleTheme" Executed="OnCommandToggleTheme" />
 
         <!-- REPORTS  -->
         <CommandBinding Command="p:AppCommands.CommandReportNetWorth" Executed="OnCommandNetWorth"/>

@@ -3807,6 +3807,18 @@ namespace Walkabout
             SetCurrentView<ColorPalette>();
         }
 
+        private void OnCommandToggleTheme(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (this.settings.Theme == "Light")
+            {
+                this.settings.Theme = "Dark";
+            }
+            else
+            {
+                this.settings.Theme = "Light";
+            }
+        }
+
         private void OnAppSettingsPanelClosed(object sender, EventArgs e)
         {
             var newPassword = this.AppSettingsPanel.Password;
@@ -3984,6 +3996,7 @@ namespace Walkabout
         {
             this.myMoney.Categories.ComputeCategoryBalance();
         }
+
 
         #endregion
 

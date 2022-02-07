@@ -25,16 +25,21 @@
 
         <ui:SimpleStackPanel Spacing="20" Margin="10">
             <!-- Password -->
-            <TextBlock >Database Password:</TextBlock>
-            <c:PasswordControl x:Name="editPasswordBox" Background="#80FFFFC0" PasswordChanged="OnPasswordChanged" MinHeight="20"/>
-
             <StackPanel>
-                <TextBlock Grid.Column="0" >Theme:</TextBlock>
+                <TextBlock >Database Password:</TextBlock>
+                <c:PasswordControl x:Name="editPasswordBox" PasswordChanged="OnPasswordChanged"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <StackPanel>
+                    <TextBlock Width="120px">Theme:</TextBlock>
+                    <TextBlock Margin="10 0 0 0" FontSize="10">Ctrl-L</TextBlock>
+                </StackPanel>
                 <ComboBox x:Name="comboBoxTheme"  SelectionChanged="OnThemeChanged" />
             </StackPanel>
 
-            <StackPanel>
-                <TextBlock Grid.Column="0" >Fiscal Year Start:</TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="120px">Fiscal Year Start:</TextBlock>
                 <ComboBox x:Name="comboBoxFiscalYear"  SelectionChanged="OnFiscalYearChanged" />
             </StackPanel>
 
