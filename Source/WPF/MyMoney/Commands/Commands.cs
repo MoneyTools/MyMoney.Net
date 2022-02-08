@@ -25,6 +25,7 @@ namespace Walkabout.Commands
         public readonly static RoutedUICommand CommandViewAliases;
         public readonly static RoutedUICommand CommandViewOptions;
         public readonly static RoutedUICommand CommandColorPalette;
+        public readonly static RoutedUICommand CommandToggleTheme;
 
         public readonly static RoutedUICommand CommandViewThemeVS2010;
         public readonly static RoutedUICommand CommandViewThemeFlat;
@@ -96,6 +97,7 @@ namespace Walkabout.Commands
             CommandViewAliases = new RoutedUICommand("View Aliases", "ViewAliases", typeof(AppCommands));
             CommandViewOptions = new RoutedUICommand("View Options", "ViewOptions", typeof(AppCommands));
             CommandColorPalette = new RoutedUICommand("Color Palette", "Color Palette", typeof(AppCommands));
+            CommandToggleTheme = new RoutedUICommand("Toggle Theme", "ToggleTheme", typeof(AppCommands));
             CommandViewThemeVS2010 = new RoutedUICommand("View Theme VS2010", "ViewThemeVS2010", typeof(AppCommands));
             CommandViewThemeFlat = new RoutedUICommand("View Theme Flat", "ViewThemeFlat", typeof(AppCommands));
 

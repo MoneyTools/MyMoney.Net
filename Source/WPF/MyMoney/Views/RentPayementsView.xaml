@@ -3,10 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework" 
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
-             xmlns:local="clr-namespace:Walkabout.Views.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -99,7 +97,7 @@
                                            TextAlignment="Right" Margin="4,0,10,0"
                                            VerticalAlignment="Center"
                                            FontSize="12"
-                                           Text="{Binding Path=Items, Converter={StaticResource sumConverter}, StringFormat={}{0:C}}"
+                                           Text="{Binding Path=Items, StringFormat={}{0:C}}"
                                            />
                                     </DockPanel>
                                 </Border>
@@ -155,13 +153,6 @@
             </DataGrid.Columns>
 
         </DataGrid>
-
-
-        <!--<Grid.ContextMenu>
-            <ContextMenu Name="cm">
-                <MenuItem Header="_Add New Year" Click="MenuItem_Click" />
-            </ContextMenu>
-        </Grid.ContextMenu>-->
 
     </Grid>
 
