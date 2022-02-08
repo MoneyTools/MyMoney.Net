@@ -52,7 +52,7 @@
         </ControlTemplate>
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-    <Grid x:Name="LegendGrid" >
+    <Grid x:Name="LegendGrid" Margin="0,0,20,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
