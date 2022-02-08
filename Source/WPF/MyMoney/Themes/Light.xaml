@@ -35,4 +35,16 @@
     <!-- The following are used in toolbar icons -->
     <SolidColorBrush x:Key="ToolbarIconBrush" Color="#2C5BC1"/>
 
+    <!-- for hyperlinks in reports -->
+    <SolidColorBrush x:Key="HyperlinkForeground" Color="Blue"/>
+    
+    <!-- The row headers and footers -->
+    <SolidColorBrush x:Key="ReportHeaderBackground" Color="#33000000"/>
+    <SolidColorBrush x:Key="ReportHeaderForeground" Color="black"/>
+    <SolidColorBrush x:Key="ReportHeadingForeground" Color="{m:DynamicColor SystemAccentColorLight1}"/>
+    <SolidColorBrush x:Key="ReportSubHeadingForeground" Color="{m:DynamicColor SystemAccentColorLight2}"/>
+    <Color x:Key="TriangleExpanderIconColor">#33000000</Color>
+    <Color x:Key="TriangleExpanderIconMouseOverColor">#2C5BC1</Color>
+    <Color x:Key="TriangleExpanderIconPressedColor">#00A7FF</Color>
+    
 </ResourceDictionary>

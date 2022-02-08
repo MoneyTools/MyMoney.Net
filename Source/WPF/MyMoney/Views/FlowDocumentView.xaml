@@ -95,13 +95,13 @@
                         <Setter Property="Foreground" Value="{DynamicResource ReportHeaderForeground}"/>
                         <Setter Property="FontWeight" Value="Bold"/>
                     </Style>
-                    <Style x:Key="HeadingStyle" TargetType="{x:Type Paragraph}">
-                        <Setter Property="Foreground" Value="Teal"/>
-                        <Setter Property="FontSize" Value="18"/>
+                    <Style x:Key="ReportHeadingStyle" TargetType="{x:Type Paragraph}">
+                        <Setter Property="Foreground" Value="{DynamicResource ReportHeadingForeground}"/>
+                        <Setter Property="FontSize" Value="20"/>
                     </Style>
-                    <Style x:Key="SubHeadingStyle" TargetType="{x:Type Paragraph}">
-                        <Setter Property="Foreground" Value="Teal"/>
-                        <Setter Property="FontSize" Value="14"/>
+                    <Style x:Key="ReportSubHeadingStyle" TargetType="{x:Type Paragraph}">
+                        <Setter Property="Foreground" Value="{DynamicResource ReportSubHeadingForeground}"/>
+                        <Setter Property="FontSize" Value="16"/>
                     </Style>
                     
                     <Style x:Key="NumericStyle" TargetType="{x:Type Paragraph}">
