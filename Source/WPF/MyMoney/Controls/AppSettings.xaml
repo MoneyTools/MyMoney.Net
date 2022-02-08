@@ -12,14 +12,14 @@
     <StackPanel>
 
         <!-- back button header -->
-        <Grid Background="#007ACC">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <Button x:Name="BackButton" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}"  Click="OnCloseClicked"   VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="4,4,0,0"></Button>
-            <TextBlock FontSize="18" Grid.Column="1" VerticalAlignment="Center" Foreground="White" FontWeight="DemiBold">Settings</TextBlock>
+            <TextBlock FontSize="18" Grid.Column="1" VerticalAlignment="Center" FontWeight="DemiBold">Settings</TextBlock>
         </Grid>
 
 
