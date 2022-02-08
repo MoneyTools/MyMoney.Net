@@ -111,15 +111,16 @@
 
 
         <!-- TOP MENU -->
-        <Grid Grid.Row="0" >
+        <Grid Grid.Row="0">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <!-- Menu -->
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <!-- spacer -->
                 <ColumnDefinition Width="*" />
+                <!--Toolbar buttons on the right side-->
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -127,11 +128,11 @@
 
             <Button x:Name="BackButton" Grid.Column="0" Command="p:AppCommands.CommandBack" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}"/>
             <Button x:Name="ForwardButton" Grid.Column="1" Command="p:AppCommands.CommandForward" IsEnabled="True" Style="{DynamicResource  NavigationBackButtonNormalStyle}">
-                    <Button.LayoutTransform>
-                        <RotateTransform CenterX="0.5" CenterY="0.5" Angle="180"/>
-                    </Button.LayoutTransform>
-                </Button>
-   
+                <Button.LayoutTransform>
+                    <RotateTransform CenterX="0.5" CenterY="0.5" Angle="180"/>
+                </Button.LayoutTransform>
+            </Button>
+
             <!-- REGULAR MENU -->
             <Border Grid.Column="2" VerticalAlignment="Center">
 
@@ -188,7 +189,7 @@
                         <MenuItem x:Name="MenuViewOnlineOptions" Header="_Options..." Command="p:AppCommands.CommandViewOptions"/>
                         <Separator/>
                         <MenuItem x:Name="MenuViewColorPalette" Header="Color Palette..." Command="p:AppCommands.CommandColorPalette"/>
-                        
+
                     </MenuItem>
 
                     <MenuItem x:Name="MenuViewReports" Header="_Reports">
@@ -196,7 +197,7 @@
                         <Separator/>
                         <MenuItem x:Name="MenuReportsInvestment" Header="_Investment Portfolio" Command="p:AppCommands.CommandReportInvestment"/>
                         <MenuItem x:Name="MenuReportsTaxReport" Header="Income _Tax Report" Command="p:AppCommands.CommandTaxReport"/>
-                        <MenuItem x:Name="MenuReportsW2Report" Header="W2 and_ Other Tax Forms" Command="p:AppCommands.CommandW2Report"/>                        
+                        <MenuItem x:Name="MenuReportsW2Report" Header="W2 and_ Other Tax Forms" Command="p:AppCommands.CommandW2Report"/>
                         <Separator/>
                         <MenuItem x:Name="MenuReportsCashFlow" Header="Cash _Flow" Command="p:AppCommands.CommandReportCashFlow"/>
                         <MenuItem x:Name="MenuReportsUnaccepted" Header="_Unaccepted" Command="p:AppCommands.CommandReportUnaccepted"/>
@@ -233,49 +234,51 @@
                 </Menu>
             </Border>
 
-            <!-- TOOLBAR BUTTON -->
-            <Button x:Name="ButtonSynchronize" Command="p:AppCommands.CommandOnlineSyncAccount" Grid.Column="3" 
-                    VerticalAlignment="Center" Margin="10,0,0,0" Padding="1">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="Icons\Synchronize.png" Height="14" Width="14"/>
-                    <TextBlock Margin="5,0,5,0" Text="Download" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
+            <!-- TOOLBAR BUTTONS -->
+            <StackPanel Orientation="Horizontal" Grid.Column="4" Margin="10,0,10,0">
 
-            <ui:SplitButton x:Name="PendingChangeDropDown" 
-                              VerticalAlignment="Center" 
-                              Grid.Column="4" 
-                              Grid.Row="2"
-                              Margin="10,0,0,0" 
-                              Padding="1"
-                              Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
-                              Click="PendingChangeClicked"
-                              >
-                <TextBlock Text="Save" Margin="5,0,5,0"/>
+                <Button x:Name="ButtonSynchronize" Command="p:AppCommands.CommandOnlineSyncAccount" >
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Download" Margin="0,0,4,0"/>
+                        <TextBlock Text="Download"/>
+                    </StackPanel>
+                </Button>
 
-                <ui:SplitButton.Flyout>
-                    <ui:Flyout x:Name="pendingChangeFlyout" Opening="OnOpeningPendingChangeFlyout">
-                        <Border Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}">
-                            <Grid >
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <StackPanel x:Name="pendingStack" Grid.Row="0"></StackPanel>
-                                <Button Grid.Row="1" Command="p:AppCommands.CommandRevertChanges" HorizontalAlignment="Right" Margin="3">Revert Changes</Button>
-                            </Grid>
-                        </Border>
-                    </ui:Flyout>
-                </ui:SplitButton.Flyout>
-            </ui:SplitButton>
+                <Separator Visibility="Hidden" Width="10"/>
 
+                <ui:SplitButton x:Name="PendingChangeDropDown" VerticalAlignment="Center" Click="PendingChangeClicked">
 
-            <Button x:Name="ButtonShowUpdateInfo" Grid.Column="5" VerticalAlignment="Center" Margin="10,0,5,0" Height="22" Padding="1" HorizontalAlignment="right" Click="OnButtonShowUpdateInfoClick">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="Icons\Setup.ico" />
-                    <TextBlock x:Name="ButtonShowUpdateInfoCaption" Margin="3,0,0,0" Text="View Changes" VerticalAlignment="Center" FontSize="10"/>
-                </StackPanel>
-            </Button>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Save" Margin="0,0,4,0"/>
+                        <TextBlock Text="Save"/>
+                    </StackPanel>
+
+                    <ui:SplitButton.Flyout>
+                        <ui:Flyout x:Name="pendingChangeFlyout" Opening="OnOpeningPendingChangeFlyout">
+                            <Border>
+                                <Grid >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel x:Name="pendingStack" Grid.Row="0"></StackPanel>
+                                    <Button Grid.Row="1" Command="p:AppCommands.CommandRevertChanges" HorizontalAlignment="Right" Margin="3">Revert Changes</Button>
+                                </Grid>
+                            </Border>
+                        </ui:Flyout>
+                    </ui:SplitButton.Flyout>
+                </ui:SplitButton>
+
+                <Separator Visibility="Hidden" Width="10"/>
+
+                <Button x:Name="ButtonShowUpdateInfo" Click="OnButtonShowUpdateInfoClick">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="AllApps" Margin="0,0,4,0"/>
+                        <TextBlock x:Name="ButtonShowUpdateInfoCaption" Text="View Changes"/>
+                    </StackPanel>
+                </Button>
+
+            </StackPanel>
         </Grid>
 
 
@@ -375,7 +378,7 @@
                                  Series8Color="{DynamicResource AreaChartColor8}"
                             />
                         </TabItem>
-                        
+
                         <TabItem x:Name="TabLoan" Header="Payments">
                             <cc:LoanChart x:Name="LoanChart" />
                         </TabItem>

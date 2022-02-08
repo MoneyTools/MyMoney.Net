@@ -555,7 +555,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Icons\setup.ico" />
-    <Resource Include="Icons\CropImage.png" />
+    <Resource Include="Dialogs\Icons\CropImage.png" />
     <Resource Include="Icons\Filter.png" />
     <Content Include="Setup\changes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -575,12 +575,6 @@
     <EmbeddedResource Include="Ofx\ofx160.dtd" />
     <Resource Include="Dialogs\Icons\CheckMark.png" />
     <Resource Include="Dialogs\Icons\Warning.png" />
-    <Resource Include="Icons\Back.png" />
-    <Resource Include="Icons\Synchronize.png" />
-    <Resource Include="Icons\Forwards.png" />
-    <Resource Include="Icons\Print.png" />
-    <Resource Include="Icons\Save.png" />
-    <Resource Include="Icons\Search.png" />
     <Resource Include="Icons\App.ico" />
     <Resource Include="Dialogs\Icons\QuestionMark.png" />
     <EmbeddedResource Include="Database\SampleData.xml">
@@ -608,10 +602,8 @@
     <Resource Include="Icons\TurboTax.png" />
     <Resource Include="Dialogs\Icons\RotateLeft.png" />
     <Resource Include="Dialogs\Icons\RotateRight.png" />
-    <Resource Include="Icons\Pencil.png" />
     <Resource Include="Dialogs\Icons\printer.png" />
     <Resource Include="Dialogs\Icons\scanner.png" />
-    <Resource Include="Icons\SmallScanner.png" />
     <Resource Include="Dialogs\Icons\delete_16x.png" />
     <EmbeddedResource Include="Icons\Ding.wav" />
     <Resource Include="Icons\Excel.png" />

@@ -5662,17 +5662,6 @@ namespace Walkabout.Views
 
     }
 
-    /*
-      <DataTemplate x:Key="myTemplateAttachment">
-          <Image Source="{Binding HasAttachment, Converter={StaticResource AttachmentIconConverter}}" VerticalAlignment="Top" Width="16" Height="16"/>
-      </DataTemplate>
-
-      <DataTemplate x:Key="myTemplateAttachmentEdit">
-            <Button Command="views:TransactionsView.CommandScanAttachment" Padding="0" Focusable="False">
-                <Image Source="/MyMoney;component/Icons/SmallScanner.png" Width="16" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            </Button>
-      </DataTemplate>
-    */
     public class TransactionAttachmentColumn : DataGridColumn
     {
 
@@ -5683,13 +5672,12 @@ namespace Walkabout.Views
                 Command = TransactionsView.CommandScanAttachment,
                 Padding = new Thickness(0),
                 Focusable = false,
-                Content = new Image()
+                Background = Brushes.White,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Content = new SymbolIcon()
                 {
-                    Width = 16,
-                    Height = 16,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Source = BitmapFrame.Create(new Uri("pack://application:,,,/MyMoney;component/Icons/SmallScanner.png"))
+                    Symbol = Symbol.Scan,
+                    Foreground = Brushes.Black
                 }
             };
         }
