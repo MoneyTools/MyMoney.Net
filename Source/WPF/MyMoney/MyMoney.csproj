@@ -594,7 +594,6 @@
     <Resource Include="Dialogs\Icons\Paste.png" />
     <Resource Include="Dialogs\Icons\PasteHS.png" />
     <Resource Include="Dialogs\Icons\CopyHS.png" />
-    <Resource Include="Dialogs\Icons\Attachment.png" />
     <EmbeddedResource Include="Ofx\OfxProviderList.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

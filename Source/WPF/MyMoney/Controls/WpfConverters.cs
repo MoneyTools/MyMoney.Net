@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using Walkabout.Configuration;
 using Walkabout.Charts;
 using Walkabout.Utilities;
+using ModernWpf.Controls;
 
 namespace Walkabout.WpfConverters
 {
@@ -119,31 +120,10 @@ namespace Walkabout.WpfConverters
 
     public class AttachmentIconConverter : IValueConverter
     {
-        ImageSource cachedIcon;
 
         public AttachmentIconConverter()
         {
             
-        }
-
-        private ImageSource Icon
-        {
-            get
-            {
-                if (cachedIcon == null)
-                {
-                    try
-                    {
-                        BitmapDecoder decoder = BitmapDecoder.Create(new Uri("pack://application:,,,/MyMoney;component/Dialogs/Icons/Attachment.png"), BitmapCreateOptions.IgnoreImageCache, BitmapCacheOption.None);
-                        cachedIcon = decoder.Frames[0];
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Cannot find Attachment.png icon", "Internal Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-                return cachedIcon;
-            }
         }
 
         public string AttachmentPath
@@ -158,9 +138,9 @@ namespace Walkabout.WpfConverters
         {            
             if (value is bool && (bool)value)
             {
-                return this.Icon;
+                return 1;
             }
-            return null;
+            return 0.1;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -208,7 +208,7 @@ namespace Walkabout.Views
 
         private void OnToggleLines(object sender, RoutedEventArgs e)
         {
-            OneLineView = !OneLineView ;
+            OneLineView = !OneLineView;
         }
 
         private void OnToggleShowSplits(object sender, RoutedEventArgs e)
@@ -1010,7 +1010,7 @@ namespace Walkabout.Views
                 {
                     StringBuilder sb = new StringBuilder();
                     var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                    foreach (var file in files) 
+                    foreach (var file in files)
                     {
                         var extension = Path.GetExtension(file);
 
@@ -2170,7 +2170,7 @@ namespace Walkabout.Views
         }
 
         private void UpdatePortfolio(Account account)
-        { 
+        {
             currentDisplayName = TransactionViewName.Portfolio;
             layout = "InvestmentPortfolioView";
 
@@ -2495,7 +2495,7 @@ namespace Walkabout.Views
                         encoder.Save(stream);
                     }
                     selected.HasAttachment = true;
-                } 
+                }
                 catch (Exception ex)
                 {
                     MessageBoxEx.Show(ex.Message, "Paste Attachment Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -4131,7 +4131,7 @@ namespace Walkabout.Views
 
                 if (dialog.ShowDialog() == true && dialog.SelectedYear != -1)
                 {
-                    int year = dialog.SelectedYear;    
+                    int year = dialog.SelectedYear;
                     if (year != t.Date.Year)
                     {
                         if (extra == null)
@@ -5676,7 +5676,7 @@ namespace Walkabout.Views
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new SymbolIcon()
                 {
-                    Symbol = Symbol.Scan,
+                    Symbol = Symbol.Attach,
                     Foreground = Brushes.Black
                 }
             };
@@ -5684,18 +5684,24 @@ namespace Walkabout.Views
 
         protected override FrameworkElement GenerateElement(DataGridCell cell, object dataItem)
         {
-            Image img = new Image()
+            var t = dataItem as Transaction;
+            if (t == null)
             {
-                VerticalAlignment = VerticalAlignment.Top,
-                Width = 16,
-                Height = 16
+                return null;
+            }
+            SymbolIcon element = new SymbolIcon()
+            {
+                Symbol = Symbol.Attach,
+                Opacity = t.HasAttachment ? 1 : 0.1
             };
 
-            img.SetBinding(Image.SourceProperty, new Binding("HasAttachment")
+            element.SetBinding(SymbolIcon.OpacityProperty, new Binding("HasAttachment")
             {
                 Converter = new AttachmentIconConverter()
             });
-            return img;
+
+            return element;
+
         }
     }
 
