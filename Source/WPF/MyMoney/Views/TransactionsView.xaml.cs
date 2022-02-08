@@ -6799,11 +6799,10 @@ namespace Walkabout.Views
         /// </summary>
         public TransactionStatusButton()
         {
-            this.Child = this.button = new Button();
+            this.Child = this.button = new Button() { Padding = new Thickness(8, 0, 8, 0) };
             this.button.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(OnStatusButtonClick);
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
             this.button.Content = label = new TextBlock();
-            label.Foreground = Brushes.Black;
             this.button.BorderBrush = Brushes.Transparent;
             this.button.Background = Brushes.Transparent;
         }

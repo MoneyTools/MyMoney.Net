@@ -24,7 +24,7 @@
             </Grid.RowDefinitions>
 
             <!-- QUICK SEARCH BUTTON AREA -->
-            <Border Background="LightGray" >
+            <Border Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -35,7 +35,8 @@
                     <StackPanel x:Name="ButtonStrip" Margin="5,0,3,0" Orientation="Horizontal">
 
                         <!-- Toggle view for expand all in portfolio view -->
-                        <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show Details" Checked="OnToggleExpandAll_Checked" Unchecked="OnToggleExpandAll_Unchecked" >
+                        <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show Details" Checked="OnToggleExpandAll_Checked" Unchecked="OnToggleExpandAll_Unchecked" 
+                                      Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
                             <Image x:Name="ToggleExpandAllImage" Width="16" Height="16" Source="{DynamicResource ExpandAllIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" 
                                    />
                         </ToggleButton>

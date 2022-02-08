@@ -31,5 +31,8 @@
     <!-- color in accounts and categories balance fields -->
     <SolidColorBrush x:Key="NegativeCurrencyForegroundBrush" Color="Red"/>
     <SolidColorBrush x:Key="PositiveCurrencyForegroundBrush" Color="#99000000"/>
-    
+
+    <!-- The following are used in toolbar icons -->
+    <SolidColorBrush x:Key="ToolbarIconBrush" Color="#2C5BC1"/>
+
 </ResourceDictionary>

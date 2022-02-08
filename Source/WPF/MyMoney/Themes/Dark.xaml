@@ -32,4 +32,7 @@
     <SolidColorBrush x:Key="PositiveCurrencyForegroundBrush" Color="#99FFFFFF"/>
     <SolidColorBrush x:Key="NegativeCurrencyForegroundBrush" Color="Firebrick"/>
 
+    <!-- The following are used in toolbar icons -->
+    <SolidColorBrush x:Key="ToolbarIconBrush" Color="#1C3B91"/>
+    
 </ResourceDictionary>

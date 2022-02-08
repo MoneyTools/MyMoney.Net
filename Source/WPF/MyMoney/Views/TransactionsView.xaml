@@ -847,7 +847,7 @@
                     <!-- TAX -->
                     <views:TransactionNumericColumn Header="Sales Tax" SortMemberPath="SalesTax"/>
 
-                    <!-- PAYEMENT-->
+                    <!-- PAYMENT-->
                     <views:TransactionAmountColumn Header="Payment" SortMemberPath="Debit"/>
 
                     <!-- DEPOSIT -->

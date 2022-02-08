@@ -569,9 +569,6 @@
         </Setter>
     </Style>
 
-    <!-- The following are used in toolbar icons -->
-    <SolidColorBrush x:Key="ToolbarIconBrush" Color="#2C5BC1"/>
-
     <DrawingImage x:Key="SplitIcon" >
         <DrawingImage.Drawing>
             <DrawingGroup >
@@ -643,7 +640,7 @@
                 </GeometryDrawing>
                 <GeometryDrawing >
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{StaticResource ToolbarIconBrush}" Thickness="2" />
+                        <Pen Brush="{DynamicResource ToolbarIconBrush}" Thickness="2" />
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
                         <LineGeometry StartPoint="2,14" EndPoint="14,14"/>
@@ -704,7 +701,7 @@
                 </GeometryDrawing>
                 <GeometryDrawing >
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{StaticResource ToolbarIconBrush}" Thickness="2"  />
+                        <Pen Brush="{DynamicResource ToolbarIconBrush}" Thickness="2"  />
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
                         <RectangleGeometry Rect="-.5,4.5,8,8" />
@@ -757,7 +754,7 @@
                 </GeometryDrawing>
                 <GeometryDrawing >
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{StaticResource ToolbarIconBrush}" Thickness="2"  />
+                        <Pen Brush="{DynamicResource ToolbarIconBrush}" Thickness="2"  />
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
                         <RectangleGeometry Rect="-.5,4.5,8,8" />
