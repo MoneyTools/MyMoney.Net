@@ -1,18 +1,17 @@
-﻿<UserControl x:Class="Walkabout.Views.LoansView"
+﻿<UserControl 
+    x:Class="Walkabout.Views.LoansView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework" 
     xmlns:control="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework" 
-    xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:c="clr-namespace:Walkabout.WpfConverters"
     xmlns:local="clr-namespace:Walkabout.Controls"
     xmlns:views="clr-namespace:Walkabout.Views"
     xmlns:help="clr-namespace:Walkabout.Help"
     help:HelpService.HelpKeyword="Loans"
     mc:Ignorable="d" 
-    d:DesignHeight="300" d:DesignWidth="300">
+    d:DesignHeight="300" d:DesignWidth="700">
 
     <UserControl.Resources>
 
@@ -21,11 +20,21 @@
         <views:ZeroToOpacityConverter x:Key="ZeroToOpacityConverter"/>
 
         <!--STYLE FOR COLUMNHEADER -->
+        <Style x:Key="ColumnHeaderStyleLeft" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+
         <Style x:Key="ColumnHeaderStyleCenter"  TargetType="control:DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
         </Style>
 
         <Style x:Key="ColumnHeaderStyleRight"  TargetType="control:DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
             <Setter Property="HorizontalContentAlignment" Value="Right"/>
         </Style>
 
@@ -44,7 +53,7 @@
         <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type DataGridCell}">
@@ -58,7 +67,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
+                                <Setter Property="Background" Value="{DynamicResource GridNormalBackgroundBrush}" TargetName="CellBorder"/>
                                 <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -66,6 +75,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
 
 
         <!-- GROUPING LOGIC for the LISTVIEW -->
@@ -81,18 +91,11 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type GroupItem}">
 
-                        <!--<Expander IsExpanded="True">
-                            <Expander.Header>-->
-                        <Border CornerRadius="5,5,0,0" BorderBrush="Black" BorderThickness=".5" SnapsToDevicePixels="False" Margin="3,3,3,0" Padding="3">
-                            <StackPanel Background="White">
-                                <TextBlock Text="{Binding Items[0].Year}" TextAlignment="Left" FontSize="20" Margin="8,8,0,3"/>
-
-                                <ItemsPresenter />
-                            </StackPanel>
-                        </Border>
-                        <!--</Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Items[0].Year}" TextAlignment="Left" FontSize="20" Margin="8,8,0,3"/>
+                            <Separator Opacity="0.5"/>
                             <ItemsPresenter />
-                        </Expander>-->
+                        </StackPanel>
 
                     </ControlTemplate>
                 </Setter.Value>
@@ -176,7 +179,6 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-
                 <TextBox    Grid.Column="1" Style="{StaticResource NumericTextBoxStyle}"
 							Text="{Binding Interest, StringFormat={}{0:N}, Mode=TwoWay}"
 							FontSize="14"
@@ -239,12 +241,19 @@
         <KeyBinding Command="views:LoansView.CommandGotoRelatedTransaction" Key="F12" />
     </UserControl.InputBindings>
 
-    <Grid  >
 
-        <DataGrid x:Name="TheDataGrid" 
+
+    <DataGrid x:Name="TheDataGrid" 
+            Padding="5"
             ItemsSource="{Binding Source={StaticResource ByYear}}"
             RowHeaderWidth="0"
-            CanUserSortColumns="False"
+            VerticalGridLinesBrush="Transparent"
+            ColumnHeaderStyle="{DynamicResource ColumnHeaderStyleLeft}"
+            Background="{StaticResource BackgroundPageMediumLowBrush}"
+            RowBackground="{DynamicResource GridNormalBackgroundBrush}"
+            AlternatingRowBackground="{DynamicResource GridAlternateBackgroundBrush}"
+            Foreground="{DynamicResource ListItemForegroundBrush}"
+            CanUserSortColumns="True"
             CellStyle="{StaticResource MyDataGridCellStyle}"
             AutoGenerateColumns="False"  
             InitializingNewItem="TheDataGrid_InitializingNewItem" 
@@ -253,73 +262,67 @@
             CommandManager.PreviewExecuted="TheDataGrid_PreviewExecuted"
             KeyDown="TheDataGrid_KeyDown" >
 
-            <DataGrid.GroupStyle>
-                <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
-                    <GroupStyle.Panel>
-                        <ItemsPanelTemplate>
-                            <DataGridRowsPresenter/>
-                        </ItemsPanelTemplate>
-                    </GroupStyle.Panel>
-                </GroupStyle>
-            </DataGrid.GroupStyle>
+        <DataGrid.GroupStyle>
+            <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                <GroupStyle.Panel>
+                    <ItemsPanelTemplate>
+                        <DataGridRowsPresenter/>
+                    </ItemsPanelTemplate>
+                </GroupStyle.Panel>
+            </GroupStyle>
+        </DataGrid.GroupStyle>
 
-            <DataGrid.Columns>
+        <DataGrid.Columns>
 
-                <!-- DATE -->
-                <DataGridTemplateColumn Header="Date"  CellTemplate="{StaticResource myTemplateDate}" CellEditingTemplate="{StaticResource myTemplateDateEdit}"
-										SortMemberPath="Date" SortDirection="Ascending"/>
+            <!-- DATE -->
+            <DataGridTemplateColumn Header="Date"  CellTemplate="{StaticResource myTemplateDate}" CellEditingTemplate="{StaticResource myTemplateDateEdit}"
+                                    HeaderStyle="{StaticResource ColumnHeaderStyleLeft}"
+									SortMemberPath="Date" SortDirection="Ascending"/>
 
-                <!-- SOURCE -->
-                <DataGridTemplateColumn Header="Source"  
-										HeaderStyle="{StaticResource ColumnHeaderStyleCenter}"
-										CellTemplate="{StaticResource myTemplateSource}" CellEditingTemplate="{StaticResource myTemplateSourceEdit}"
-										MinWidth="150"
-										SortMemberPath="Payment"/>
+            <!-- SOURCE -->
+            <DataGridTemplateColumn Header="Source"  
+									HeaderStyle="{StaticResource ColumnHeaderStyleLeft}"
+									CellTemplate="{StaticResource myTemplateSource}" CellEditingTemplate="{StaticResource myTemplateSourceEdit}"
+									MinWidth="150"
+									SortMemberPath="Payment"/>
 
-                <!-- Payment -->
-                <DataGridTemplateColumn Header="Payment"
-										HeaderStyle="{StaticResource ColumnHeaderStyleRight}" 
-										CellTemplate="{StaticResource myTemplatePayment}" CellEditingTemplate="{StaticResource myTemplatePaymentlEdit}"
-										MinWidth="100"
-										SortMemberPath="Payment"/>
+            <!-- Payment -->
+            <DataGridTemplateColumn Header="Payment"
+									HeaderStyle="{StaticResource ColumnHeaderStyleRight}" 
+									CellTemplate="{StaticResource myTemplatePayment}" CellEditingTemplate="{StaticResource myTemplatePaymentlEdit}"
+									MinWidth="100"
+									SortMemberPath="Payment"/>
 
-                <!-- PRINCIPAL -->
-                <DataGridTemplateColumn Header="Principal"  
-										HeaderStyle="{StaticResource ColumnHeaderStyleRight}"
-										CellTemplate="{StaticResource myTemplatePrincipal}" CellEditingTemplate="{StaticResource myTemplatePrincipalEdit}"
-										MinWidth="80"
-										SortMemberPath="Principal"/>
+            <!-- PRINCIPAL -->
+            <DataGridTemplateColumn Header="Principal"  
+									HeaderStyle="{StaticResource ColumnHeaderStyleRight}"
+									CellTemplate="{StaticResource myTemplatePrincipal}" CellEditingTemplate="{StaticResource myTemplatePrincipalEdit}"
+									MinWidth="80"
+									SortMemberPath="Principal"/>
 
-                <!-- INTEREST -->
-                <DataGridTemplateColumn Header="Interest"  
-										HeaderStyle="{StaticResource ColumnHeaderStyleRight}"
-										CellTemplate="{StaticResource myTemplateInterest}" CellEditingTemplate="{StaticResource myTemplateInterestEdit}"
-										MinWidth="80"
-										SortMemberPath="Interest"/>
+            <!-- INTEREST -->
+            <DataGridTemplateColumn Header="Interest"  
+									HeaderStyle="{StaticResource ColumnHeaderStyleRight}"
+									CellTemplate="{StaticResource myTemplateInterest}" CellEditingTemplate="{StaticResource myTemplateInterestEdit}"
+									MinWidth="80"
+									SortMemberPath="Interest"/>
 
-                <!-- % -->
-                <DataGridTemplateColumn Header="%" HeaderStyle="{StaticResource ColumnHeaderStyleCenter}"  CellTemplate="{StaticResource myTemplatePercentage}" CellEditingTemplate="{StaticResource myTemplatePercentageEdit}"
-										MinWidth="60"
-										SortMemberPath="Percentage"/>
+            <!-- % -->
+            <DataGridTemplateColumn Header="%"   
+                                    HeaderStyle="{StaticResource ColumnHeaderStyleCenter}"
+                                    CellTemplate="{StaticResource myTemplatePercentage}" CellEditingTemplate="{StaticResource myTemplatePercentageEdit}"										
+                                    MinWidth="60"
+									SortMemberPath="Percentage"/>
 
+            <!-- BALANCE -->
+            <DataGridTemplateColumn Header="Balance"  IsReadOnly="True" 
+									HeaderStyle="{StaticResource ColumnHeaderStyleRight}"
+									CellTemplate="{StaticResource myTemplateBalance}" MinWidth="100"
+									/>
 
-                <!-- BALANCE -->
-                <DataGridTemplateColumn Header="Balance"  IsReadOnly="True" 
-										HeaderStyle="{StaticResource ColumnHeaderStyleRight}"
-										CellTemplate="{StaticResource myTemplateBalance}" MinWidth="100"
-										/>
+        </DataGrid.Columns>
 
-            </DataGrid.Columns>
+    </DataGrid>
 
-        </DataGrid>
-
-
-        <!--<Grid.ContextMenu>
-			<ContextMenu Name="cm">
-				<MenuItem Header="_Add New Year" Click="MenuItem_Click" />
-			</ContextMenu>
-		</Grid.ContextMenu>-->
-
-    </Grid>
 
 </UserControl>
