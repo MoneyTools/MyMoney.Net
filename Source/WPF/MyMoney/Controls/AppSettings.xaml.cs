@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System;
-using System.IO;
 using Walkabout.Configuration;
 using System.Windows.Controls;
 using System.Collections.Generic;
@@ -13,8 +12,8 @@ namespace Walkabout.Controls
     /// </summary>
     public partial class AppSettings : UserControl
     {
-        private Settings settings;
-        private IDictionary<string, string> themes = new SortedDictionary<string, string>() { 
+        private readonly Settings settings;
+        private readonly IDictionary<string, string> themes = new SortedDictionary<string, string>() { 
             { "Light", "Light" },
             { "Dark", "Dark" }
         };
@@ -53,7 +52,6 @@ namespace Walkabout.Controls
             {
                 if (b)
                 {
-
                     this.checkBoxRentalSupport.IsChecked = settings.RentalManagement;
                     this.checkBoxPlaySounds.IsChecked = settings.PlaySounds;
                     this.comboBoxFiscalYear.SelectedIndex = settings.FiscalYearStart;

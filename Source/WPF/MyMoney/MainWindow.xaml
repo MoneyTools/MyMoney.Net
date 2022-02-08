@@ -127,7 +127,7 @@
             <!-- BACK and FORWARD button -->
 
             <Button x:Name="BackButton" Grid.Column="0" Command="p:AppCommands.CommandBack" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}"/>
-            <Button x:Name="ForwardButton" Grid.Column="1" Command="p:AppCommands.CommandForward" IsEnabled="True" Style="{DynamicResource  NavigationBackButtonNormalStyle}">
+            <Button x:Name="ForwardButton" Grid.Column="1" Command="p:AppCommands.CommandForward" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}">
                 <Button.LayoutTransform>
                     <RotateTransform CenterX="0.5" CenterY="0.5" Angle="180"/>
                 </Button.LayoutTransform>
@@ -411,8 +411,7 @@
             </Grid>
         </Border>
 
-        <c:AppSettings x:Name="AppSettingsPanel" Grid.Row="1" Width="300" HorizontalAlignment="Right" Visibility="Collapsed">
-        </c:AppSettings>
+        <c:AppSettings x:Name="AppSettingsPanel" Grid.Row="1" Width="300" HorizontalAlignment="Right" Visibility="Collapsed"/>
 
         <StatusBar Grid.Row="2">
             <StatusBarItem x:Name="StatusMessage" HorizontalAlignment="Left"/>

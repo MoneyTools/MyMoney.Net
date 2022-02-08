@@ -692,15 +692,12 @@ namespace FindUnusedStyles
                         case "ListBox":
                             yield return "ListBoxItem";
                             break;
-                            break;
                         case "ListView":
                             yield return "ListViewItem";
-                            break;
                             break;
                         case "GridView":
                             yield return "GridViewItem";
                             yield return "GridViewColumn";
-                            break;
                             break;
                         case "ComboBox":
                             yield return "ComboBoxItem";
