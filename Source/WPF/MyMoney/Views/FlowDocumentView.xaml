@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
 
         <!-- SEARCH AREA -->
-        <Grid Grid.Row="0" x:Name="SearchArea" Height="30">
+        <Grid Grid.Row="0" x:Name="SearchArea">
 
             <Grid.RowDefinitions >
                 <RowDefinition Height="Auto" />
