@@ -16,7 +16,11 @@
         <Style x:Key="MySecuritiesDataGridStyle" TargetType="{x:Type local:MoneyDataGrid}">
             <Setter Property="ItemsSource" Value="{Binding}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="AlternatingRowBackground" Value="#E0F1FF"/>
+            <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
+            <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
@@ -29,7 +33,11 @@
         <Style x:Key="MyStockSplitDataGridStyle" TargetType="DataGrid">
             <Setter Property="ItemsSource" Value="{Binding}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="AlternatingRowBackground" Value="#E0F1FF"/>
+            <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
+            <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
@@ -224,7 +232,7 @@
                                 <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                             </Trigger>
                             <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
-                                <Setter Property="Foreground" Value="Red"/>
+                                <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
                             </DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

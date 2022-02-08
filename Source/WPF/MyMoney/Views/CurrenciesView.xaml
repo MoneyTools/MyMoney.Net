@@ -13,7 +13,11 @@
     <Style x:Key="MyCurrenciesDataGridStyle" TargetType="DataGrid">
       <Setter Property="ItemsSource" Value="{Binding}"/>
       <Setter Property="AutoGenerateColumns" Value="False"/>
-      <Setter Property="AlternatingRowBackground" Value="#E0F1FF"/>
+      <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
+      <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+      <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
+      <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
       <Setter Property="GridLinesVisibility" Value="Vertical"/>
       <Setter Property="CanUserResizeRows" Value="False"/>
       <Setter Property="SelectionMode" Value="Single"/>

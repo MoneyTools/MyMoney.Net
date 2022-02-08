@@ -116,7 +116,7 @@
             <Grid ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}},
                         Path=(Validation.Errors),
                         Converter={StaticResource ValidationErrorGetErrorMessageConverter}}" 
-                   Background="Yellow" Margin="-1,-1,-1,-1">
+                   Background="{DynamicResource SystemControlErrorTextForegroundBrush}" Margin="-1,-1,-1,-1">
                 <Image Width="16" Height="16" Source="/MyMoney;component/Icons/Error.png"/>
             </Grid>
         </ControlTemplate>
@@ -550,6 +550,7 @@
                         <local:MoneyDataGrid  x:Name="TheGridForAmountSplit"
                                   Loaded="TheGridForAmountSplit_Loaded"
                                   Unloaded="TheGridForAmountSplit_Unloaded"
+                                  Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
                                   ItemsSource="{Binding Path=NonNullSplits.ObservableCollection}"
                                   RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
                                   RowEditEnding="TheGridForAmountSplit_RowEditEnding"
@@ -590,10 +591,12 @@
         <Style x:Key="MyDataGridStyle" TargetType="{x:Type local:MoneyDataGrid}">
             <Setter Property="ItemsSource" Value="{Binding}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
             <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
             <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
             <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
@@ -608,8 +611,10 @@
         <Style x:Key="MyDataGridStyle2" TargetType="DataGrid">
             <Setter Property="ItemsSource" Value="{Binding}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
             <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
             <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
@@ -674,7 +679,7 @@
                             </DataTrigger>
 
                             <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
-                                <Setter Property="Foreground" Value="Red"/>
+                                <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
                             </DataTrigger>
 
                             <DataTrigger Binding="{Binding Path=IsReadOnly}" Value="True">
