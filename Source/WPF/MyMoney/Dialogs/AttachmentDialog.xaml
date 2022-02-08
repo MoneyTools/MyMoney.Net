@@ -4,12 +4,15 @@
         xmlns:local="clr-namespace:Walkabout.Dialogs"
         xmlns:u="clr-namespace:Walkabout.Utilities"
         xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" 
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        ui:ThemeManager.IsThemeAware="True"
         Title="Attachments" Height="425" Width="660" 
         xmlns:help="clr-namespace:Walkabout.Help"
         help:HelpService.HelpKeyword="Attachments">
+    
     <Window.Resources>
-        <SolidColorBrush x:Key="ResizerThumbBrush" Color="#E07070A0" 
-                     u:WpfAnnotations.CodeRef="ResizerThumbBrush" />
+        <SolidColorBrush x:Key="ResizerThumbBrush" Color="#E07070A0" u:WpfAnnotations.CodeRef="ResizerThumbBrush" />
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="Cut" Executed="Cut" CanExecute="HasSelectedItem"/>
@@ -55,47 +58,60 @@
             </MenuItem>
         </ContextMenu>
     </Window.ContextMenu>
+    
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top" >
-            <ToolBar Height="46" HorizontalAlignment="Stretch">
+            <ToolBar>
                 <Button x:Name="ScanButton" Click="Scan" BorderThickness="0">
-                    <Image Source="Icons\Scanner.png" Width="32" Height="32" ToolTip="Click here to scan a document" />
+                    <ui:SymbolIcon Symbol="Scan" ToolTip="Click here to scan a document"/>
                 </Button>
+                
+                <Separator Width="30" Background="Transparent"/>
+
                 <Button x:Name="ZoomInButton" Click="ZoomIn" BorderThickness="0">
-                    <Image Source="Icons\ZoomIn.png" Width="32" Height="32" ToolTip="Zoom in" />
+                    <ui:SymbolIcon Symbol="ZoomIn" ToolTip="Zoom in"/>
                 </Button>
                 <Button x:Name="ZoomOutButton" Click="ZoomOut" BorderThickness="0">
-                    <Image Source="Icons\ZoomOut.png" Width="32" Height="32" ToolTip="Zoom out" />
+                    <ui:SymbolIcon Symbol="ZoomOut" ToolTip="Zoom out"/>
                 </Button>
+                
+                <Separator Width="30" Background="Transparent"/>
+
                 <Button x:Name="SaveButton" Command="Save" BorderThickness="0">
-                    <Image Source="Icons\Save.png" Width="32" Height="32" ToolTip="Save attachment" />
+                    <ui:SymbolIcon Symbol="Save" ToolTip="Save attachment"/>
                 </Button>
                 <Button x:Name="RotateLeftButton" Command="local:AttachmentDialog.CommandRotateLeft" BorderThickness="0">
-                    <Image Source="Icons\RotateLeft.png" Width="32" Height="32" ToolTip="Rotate counter-clockwise 90 degrees" />
+                    <ui:SymbolIcon Symbol="Rotate" ToolTip="Rotate counter-clockwise 90 degrees"/>
+                    <Button.LayoutTransform>
+                        <ScaleTransform ScaleX="-1" />
+                    </Button.LayoutTransform>
                 </Button>
                 <Button x:Name="RotateRightButton" Command="local:AttachmentDialog.CommandRotateRight" BorderThickness="0">
-                    <Image Source="Icons\RotateRight.png" Width="32" Height="32" ToolTip="Rotate clockwise 90 degrees" />
+                    <ui:SymbolIcon Symbol="Rotate" ToolTip="Rotate clockwise 90 degrees"/>
                 </Button>
                 <Button x:Name="CropImageButton" Command="local:AttachmentDialog.CommandCropImage" BorderThickness="0">
-                    <Image Source="/MyMoney;component/Icons/CropImage.png" Width="32" Height="32" ToolTip="Find image bounds and crop image" />
+                    <ui:SymbolIcon Symbol="Crop" ToolTip="Find image bounds and crop image"/>
                 </Button>
-                <Grid Width="100">
-
-                </Grid>
+                
+                <Separator Width="30" Background="Transparent"/>
+                
                 <Button x:Name="CutButton" Command="Cut" BorderThickness="0">
-                    <Image Source="/MyMoney;component/Dialogs/Icons/cut.png" Width="32" Height="32" ToolTip="Cut selected attachment" />
+                    <ui:SymbolIcon Symbol="Cut" ToolTip="Cut selected attachment"/>
                 </Button>
                 <Button x:Name="CopyButton" Command="Copy" BorderThickness="0">
-                    <Image Source="/MyMoney;component/Dialogs/Icons/copy.png" Width="32" Height="32" ToolTip="Copy selected attachment" />
+                    <ui:SymbolIcon Symbol="Copy" ToolTip="Copy selected attachment"/>
                 </Button>
                 <Button x:Name="PasteButton" Command="Paste" BorderThickness="0">
-                    <Image Source="/MyMoney;component/Dialogs/Icons/Paste.png" Width="32" Height="32" ToolTip="Paste a new attachment" />
+                    <ui:SymbolIcon Symbol="Paste" ToolTip="Paste a new attachment"/>
                 </Button>
                 <Button x:Name="DeleteButton" Command="Delete" BorderThickness="0">
-                    <Image Source="Icons\Delete.png" Width="32" Height="32" ToolTip="Delete selected attachment" />
+                    <ui:SymbolIcon Symbol="Delete" ToolTip="Delete selected attachment"/>
                 </Button>
+
+                <Separator Width="30" Background="Transparent"/>
+
                 <Button x:Name="PrintButton" Command="Print" BorderThickness="0">
-                    <Image Source="Icons\Printer.png" Width="32" Height="32" ToolTip="Click here to print the selected attachment" />
+                    <ui:SymbolIcon Symbol="Print" ToolTip="Click here to print the selected attachment"/>
                 </Button>
             </ToolBar>
         </ToolBarTray>

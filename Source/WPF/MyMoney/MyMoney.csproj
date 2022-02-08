@@ -584,14 +584,8 @@
     <Resource Include="Icons\Error.png" />
     <EmbeddedResource Include="Charts\Icons\grab.cur" />
     <EmbeddedResource Include="Charts\Icons\grabbing.cur" />
-    <Resource Include="Dialogs\Icons\ZoomOut.png" />
-    <Resource Include="Dialogs\Icons\ZoomIn.png" />
-    <Resource Include="Dialogs\Icons\Save.png" />
     <Resource Include="Dialogs\Icons\Delete.png" />
     <Resource Include="Dialogs\Icons\CutHS.png" />
-    <Resource Include="Dialogs\Icons\cut.png" />
-    <Resource Include="Dialogs\Icons\copy.png" />
-    <Resource Include="Dialogs\Icons\Paste.png" />
     <Resource Include="Dialogs\Icons\PasteHS.png" />
     <Resource Include="Dialogs\Icons\CopyHS.png" />
     <EmbeddedResource Include="Ofx\OfxProviderList.xml">
@@ -599,10 +593,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Ofx\OfxErrorTemplate.htm" />
     <Resource Include="Icons\TurboTax.png" />
-    <Resource Include="Dialogs\Icons\RotateLeft.png" />
-    <Resource Include="Dialogs\Icons\RotateRight.png" />
-    <Resource Include="Dialogs\Icons\printer.png" />
-    <Resource Include="Dialogs\Icons\scanner.png" />
     <Resource Include="Dialogs\Icons\delete_16x.png" />
     <EmbeddedResource Include="Icons\Ding.wav" />
     <Resource Include="Icons\Excel.png" />
