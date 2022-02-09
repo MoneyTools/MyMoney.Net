@@ -2296,7 +2296,7 @@ namespace Walkabout.Views
                 case TransactionFilter.Categorized:
                     filter = new Predicate<Transaction>((t) =>
                     {
-                        if (t.Status != TransactionStatus.Void)
+                        if (t.Status == TransactionStatus.Void)
                         {
                             return false; // no point seeing these
                         }
@@ -2308,13 +2308,13 @@ namespace Walkabout.Views
                         {
                             return t.Splits.Unassigned == 0; // then all splits are good!
                         }
-                        return t.Category != null || t.Transfer != null;
+                        return t.Category != null;
                     });
                     break;
                 case TransactionFilter.Uncategorized:
                     filter = new Predicate<Transaction>((t) =>
                     {
-                        if (t.Status != TransactionStatus.Void)
+                        if (t.Status == TransactionStatus.Void)
                         {
                             return false; // no point seeing these
                         }
@@ -2326,7 +2326,7 @@ namespace Walkabout.Views
                         {
                             return t.Splits.Unassigned > 0; // then there is more to categorize in the splits!
                         }
-                        return (t.Category == null && t.Transfer == null);
+                        return (t.Category == null);
                     });
                     break;
             }
@@ -2940,11 +2940,11 @@ namespace Walkabout.Views
             }
             else if (selected == FilterByCategorized)
             {
-                this.TransactionFilter = TransactionFilter.Uncategorized;
-            }
-            else if (selected == FilterByCategorized)
-            {
                 this.TransactionFilter = TransactionFilter.Categorized;
+            }
+            else if (selected == FilterByUncategorized)
+            {
+                this.TransactionFilter = TransactionFilter.Uncategorized;
             }
             else if (selected == FilterByCustom)
             {
