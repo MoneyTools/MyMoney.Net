@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.86" date="2/8/2022">
+	- Fix Categorized/Uncategoried filter.
+  </change>
   <change version="1.1.0.85" date="1/22/2022">
 	- Implement back/forwards history for report &amp; portfolio views.
 	- Fix bug in taxable column in drill down reports.
