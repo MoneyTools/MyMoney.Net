@@ -110,7 +110,7 @@ namespace Walkabout.Reports
             this.byYear = true;
             if (this.fiscalYearStart > 0)
             {
-                this.startDate = new DateTime(DateTime.Now.Year, this.fiscalYearStart, 1);
+                this.startDate = new DateTime(DateTime.Now.Year, this.fiscalYearStart + 1, 1);
                 if (this.startDate > DateTime.Today)
                 {
                     this.startDate = this.startDate.AddYears(-1); 
@@ -142,7 +142,10 @@ namespace Walkabout.Reports
             // let the category bubble up as high as it can go while not flipping from income to expense.
             // For example: the category "Investments" might contain sub-categories of type income (Investments:Dividends)
             // and expenses (like Investments:Fees).  
-
+            if (data.Date.Year == 2020 && data.Date.Month == 12 && data.Date.Day == 12)
+            {
+                Debug.WriteLine("debug me");
+            }
             if (c.ParentCategory == null || (c.Type != CategoryType.None && c.Type != c.ParentCategory.Type))
             {
                 CashFlowColumns columns = null;
@@ -217,7 +220,7 @@ namespace Walkabout.Reports
                 string columnName = start.ToString("MM/yyyy");
                 if (byYear)
                 {
-                    columnName = (this.fiscalYearStart == 0) ? start.Year.ToString() : "FY" + start.Year.ToString();
+                    columnName = (this.fiscalYearStart == 0) ? start.Year.ToString() : "FY" + end.Year.ToString();
                 }
                 columns.Add(columnName);
                 GenerateColumn(writer, columnName, transactions, start, end);
