@@ -236,31 +236,6 @@ namespace Walkabout.Views
             }
         }
 
-
-        public static readonly DependencyProperty BalancingBudgetProperty = DependencyProperty.Register("BalancingBudget", typeof(bool), typeof(TransactionsView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnBalancingBudgetChanged)));
-
-        static void OnBalancingBudgetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            TransactionsView view = (TransactionsView)d;
-            view.OnBalancingBudgetChanged();
-        }
-
-        private void OnBalancingBudgetChanged()
-        {
-            if (BalancingBudgetChanged != null)
-            {
-                BalancingBudgetChanged(this, EventArgs.Empty);
-            }
-        }
-
-        public bool BalancingBudget
-        {
-            get { return (bool)GetValue(BalancingBudgetProperty); }
-            set { SetValue(BalancingBudgetProperty, value); }
-        }
-
-        public event EventHandler BalancingBudgetChanged;
-
         public DateTime BudgetDate { get; set; }
 
         public static readonly DependencyProperty ViewAllSplitsProperty = DependencyProperty.Register("ViewAllSplits", typeof(bool), typeof(TransactionsView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnViewAllSplitsChanged)));
@@ -6772,11 +6747,6 @@ namespace Walkabout.Views
                             PreviewMouseLeftButtonDown="OnButtonClick_StatusColumn">
                     <TextBlock Text="{Binding StatusString}"/>
                 </Button>
-                <CheckBox Style="{DynamicResource SimpleCheckBox}" IsChecked="{Binding IsBudgeted}"    
-                              Checked="OnBudgetCheckboxChecked"
-                              Unchecked="OnBudgetCheckboxUnchecked"
-                              ToolTip="Whether transaction is included in the budget or not" 
-                              Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=BalancingBudget, Converter={StaticResource TrueToVisible}}"/>
         </StackPanel>
      */
     /// </summary>  
@@ -6786,7 +6756,6 @@ namespace Walkabout.Views
         TextBlock label;
         Transaction context;
         TransactionsView view;
-        CheckBox checkbox;
 
         /// <summary>
         /// This button presents the transaction status
@@ -6809,108 +6778,8 @@ namespace Walkabout.Views
 
         void SetView(TransactionsView newView)
         {
-            if (this.view != null)
-            {
-                this.view.BalancingBudgetChanged -= new EventHandler(OnBalancingBudgetChanged);
-            }
             this.view = newView;
-            if (this.view != null)
-            {
-                this.view.BalancingBudgetChanged += new EventHandler(OnBalancingBudgetChanged);
-
-                if (this.view.BalancingBudget)
-                {
-                    OnBalancingBudget();
-                }
-            }
         }
-
-        void OnBalancingBudgetChanged(object sender, EventArgs e)
-        {
-            if (this.view != null && this.view == sender)
-            {
-                OnBalancingBudget();
-            }
-            else
-            {
-                this.Child = this.button;
-            }
-        }
-
-        void OnBalancingBudget()
-        {
-            if (this.view.BalancingBudget)
-            {
-                if (this.checkbox == null)
-                {
-                    /*
-                     *  <CheckBox Style="{DynamicResource SimpleCheckBox}" IsChecked="{Binding IsBudgeted}"    
-                          Checked="OnBudgetCheckboxChecked"
-                          Unchecked="OnBudgetCheckboxUnchecked"
-                          ToolTip="Whether transaction is included in the budget or not" 
-                          Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=BalancingBudget, 
-                               Converter={StaticResource TrueToVisible}}"/>
-                     */
-                    this.checkbox = new CheckBox();
-                    this.checkbox.SetResourceReference(CheckBox.StyleProperty, "SimpleCheckBox");
-                    this.checkbox.ToolTip = "Whether transaction is included in the budget or not";
-                    this.checkbox.Margin = new Thickness(1, 2, 0, 0);
-                    RegisterCheckboxEvents(true);
-                }
-                this.Child = this.checkbox;
-                UpdateCheckbox();
-            }
-            else
-            {
-                this.Child = this.button;
-            }
-        }
-
-        private void RegisterCheckboxEvents(bool register)
-        {
-            if (register)
-            {
-                this.checkbox.Checked += OnBudgetCheckboxChecked;
-                this.checkbox.Unchecked += OnBudgetCheckboxUnchecked;
-            }
-            else
-            {
-                this.checkbox.Checked -= OnBudgetCheckboxChecked;
-                this.checkbox.Unchecked -= OnBudgetCheckboxUnchecked;
-            }
-        }
-
-        private void OnBudgetCheckboxChecked(object sender, RoutedEventArgs e)
-        {
-            CheckBox box = (CheckBox)sender;
-            Transaction t = box.DataContext as Transaction;
-            if (t != null)
-            {
-                t.BeginUpdate(this);
-                if (!t.IsBudgeted)
-                {
-                    t.IsBudgeted = true;
-                    if (this.view != null && this.view.BalancingBudget)
-                    {
-                        // user is manually adding this transaction into this month's budget for
-                        // whatever reason, independent of transaction date.
-                        t.BudgetBalanceDate = this.view.BudgetDate;
-                    }
-                }
-                t.EndUpdate();
-            }
-        }
-
-        private void OnBudgetCheckboxUnchecked(object sender, RoutedEventArgs e)
-        {
-            CheckBox box = (CheckBox)sender;
-            Transaction t = box.DataContext as Transaction;
-            if (t != null)
-            {
-                t.IsBudgeted = false;
-            }
-        }
-
 
         void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -6930,7 +6799,6 @@ namespace Walkabout.Views
             }
 
             UpdateLabel();
-            UpdateCheckbox();
         }
 
         void ClearContext()
@@ -6957,9 +6825,6 @@ namespace Walkabout.Views
             {
                 case "StatusString":
                     UpdateLabel();
-                    break;
-                case "IsBudgeted":
-                    UpdateCheckbox();
                     break;
             }
         }
@@ -6990,16 +6855,6 @@ namespace Walkabout.Views
                     default:
                         break;
                 }
-            }
-        }
-
-        void UpdateCheckbox()
-        {
-            if (this.checkbox != null)
-            {
-                RegisterCheckboxEvents(false); // don't let this trigger a model change, we are trying to update the UI to reflect the model...
-                this.checkbox.IsChecked = (this.context != null) ? this.context.IsBudgeted : false;
-                RegisterCheckboxEvents(true);
             }
         }
 

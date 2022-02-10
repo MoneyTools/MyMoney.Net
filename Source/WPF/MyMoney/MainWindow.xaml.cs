@@ -905,10 +905,6 @@ namespace Walkabout
             bool isTransactionViewAlready = CurrentView is TransactionsView;
             TransactionsView view = SetCurrentView<TransactionsView>();
             long selectedId = -1;
-            if (view.BalancingBudget)
-            {
-                selectedId = GetFirstTransactionInCategory(view, c, view.BudgetDate);
-            }
             view.ViewTransactionsForCategory(c, selectedId);
             if (!isTransactionViewAlready)
             {
