@@ -32,7 +32,7 @@
             <Separator/>
             <MenuItem Name="menuItemDelete" Header="_Delete" Command="Delete"/>
             <Separator/>
-            
+
             <MenuItem x:Name="MenuViewToggleOneLineView" Header="_One Line View" Command="views:TransactionsView.CommandViewToggleOneLineView" InputGestureText="Ctrl-T" IsChecked="{Binding OneLineView}"/>
             <MenuItem x:Name="MenuViewToggleSplitViews" Header="_Show All Splits" Command="views:TransactionsView.CommandViewToggleAllSplits" InputGestureText="Alt-T"  IsChecked="{Binding ViewAllSplits}"/>
             <Separator/>
@@ -60,7 +60,7 @@
         <CommandBinding Command="views:TransactionsView.CommandLookupPayee" Executed="OnCommandLookupPayee" CanExecute="CanExecute_LookupPayee"/>
         <CommandBinding Command="views:TransactionsView.CommandRecategorize" Executed="OnRecategorizeAll" CanExecute="CanExecute_Recategorize" />
         <CommandBinding Command="views:TransactionsView.CommandSetTaxYear" Executed="OnSetTaxYear" CanExecute="CanExecute_SetTaxYear" />
-        
+
         <CommandBinding Command="views:TransactionsView.CommandGotoRelatedTransaction" Executed="OnCommandGotoRelatedTransaction"  CanExecute="CanExecute_GotoRelatedTransaction"/>
         <CommandBinding Command="views:TransactionsView.CommandViewTransactionsByAccount" Executed="OnCommandViewTransactionsByAccount" CanExecute="CanExecute_ViewTransactionsByAccount" />
         <CommandBinding Command="views:TransactionsView.CommandViewSimilarTransactions" Executed="OnCommandViewSimilarTransactions" CanExecute="CanExecute_ViewSimilarTransactions" />
@@ -86,10 +86,10 @@
         <KeyBinding Command="views:TransactionsView.CommandViewTransactionsByPayee" Key="F6"/>
         <KeyBinding Command="views:TransactionsView.CommandViewTransactionsBySecurity" Key="F5"/>
         <KeyBinding Command="views:TransactionsView.CommandLookupPayee" Key="F3"/>
-   </UserControl.InputBindings>
+    </UserControl.InputBindings>
 
-    <UserControl.Resources>        
-        
+    <UserControl.Resources>
+
         <ContextMenu x:Key="SplitViewContextMenu">
             <ContextMenu.Resources>
                 <views:TransactionFilterToBooleanConverter x:Key="TransactionFilterToBoolean"/>
@@ -101,15 +101,15 @@
             <MenuItem Name="menuItemCopySplits" Header="_Copy All Splits" Command="views:TransactionsView.CommandCopySplits"/>
             <MenuItem Name="menuItemPasteSplits" Header="_Paste All Splits" Command="views:TransactionsView.CommandPasteSplits"/>
             <Separator/>
-            <MenuItem Name="menuItemGotoRelated2" Header="_Go to related transaction" Command="views:TransactionsView.CommandGotoRelatedTransaction" InputGestureText="F12"/>            
+            <MenuItem Name="menuItemGotoRelated2" Header="_Go to related transaction" Command="views:TransactionsView.CommandGotoRelatedTransaction" InputGestureText="F12"/>
             <Separator/>
             <MenuItem Name="menuItemByAccount2" Header="_View Transactions by Account" Command="views:TransactionsView.CommandViewTransactionsByAccount" InputGestureText="F8"/>
             <MenuItem Name="menuItemByCategory2" Header="View Transactions by _Category" Command="views:TransactionsView.CommandViewTransactionsByCategory" InputGestureText="F7"/>
-            <MenuItem Name="menuItemByPayee2" Header="View Transactions by _Payee" Command="views:TransactionsView.CommandViewTransactionsByPayee" InputGestureText="F6"/>            
+            <MenuItem Name="menuItemByPayee2" Header="View Transactions by _Payee" Command="views:TransactionsView.CommandViewTransactionsByPayee" InputGestureText="F6"/>
         </ContextMenu>
 
         <c:MoneyColorConverter x:Key="MoneyColorConverter"/>
-        
+
         <views:ValidationErrorGetErrorMessageConverter x:Key="ValidationErrorGetErrorMessageConverter" />
 
         <ControlTemplate x:Key="RowValidationErrorTemplate">
@@ -153,14 +153,14 @@
             <Setter Property="Opacity" Value=".55"/>
             <Setter Property="FontStyle" Value="Italic"/>
         </Style>
-        
+
         <Style x:Key="RunningUnitStyle" TargetType="{x:Type TextBlock}">
             <Setter Property="Opacity" Value=".55"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="FontStyle" Value="Italic"/>
             <Setter Property="Foreground" Value="{Binding RunningUnits, Converter={StaticResource MoneyColorConverter}}"/>
         </Style>
-        
+
         <Style x:Key="EmptyCheckBoxFocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -197,7 +197,8 @@
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="SnapsToDevicePixels" Value="true"/>
             <Setter Property="Content" Value="{Binding Path=Splits.Count}"/>
-            <Setter Property="Margin" Value="-2,2,3,0"/>
+            <Setter Property="Margin" Value="-7,3,0,0"/>
+            <Setter Property="Foreground" Value="{StaticResource ButtonNormalForeground}" />
             <Setter Property="Height" Value="13"/>
             <Setter Property="Width" Value="Auto"/>
             <Setter Property="MinWidth" Value="13"/>
@@ -207,19 +208,18 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Grid SnapsToDevicePixels="True">
-
                             <Path   Name="ThePath"
-                                    Fill="Transparent" Stretch="Fill" Stroke="{Binding Splits.Unassigned, Converter={StaticResource ZeroToBrushConverter }}"
+                                    Fill="Gray" Stretch="Fill" Stroke="{Binding Splits.Unassigned, Converter={StaticResource ZeroToBrushConverter }}"
                                     Data="M0,0 L10,0 10,5 5,8 0,5z" StrokeThickness="0.5"
                                     StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeDashCap="Round" />
-
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Top"  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" RecognizesAccessKey="True"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsFocused" Value="True"/>
                             <Trigger Property="IsDefaulted" Value="True"/>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Fill" Value="LightGray" TargetName="ThePath"/>
+                                <Setter Property="Foreground" Value="{StaticResource ButtonMouseOverForeground}" />
+                                <Setter Property="Fill" Value="{StaticResource ButtonMouseOverBackground}" TargetName="ThePath"/>
                                 <Setter Property="Effect" TargetName="ThePath" >
                                     <Setter.Value>
                                         <DropShadowEffect ShadowDepth="1" />
@@ -228,7 +228,7 @@
                             </Trigger>
 
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Fill" Value="Gray" TargetName="ThePath"/>
+                                <Setter Property="Fill" Value="{StaticResource ButtonMousePressedBackground}" TargetName="ThePath"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False"/>
                         </ControlTemplate.Triggers>
@@ -241,7 +241,7 @@
         <DataTemplate x:Key="myTemplateFifo">
             <ContentPresenter Content="{Binding RoutingPath, Converter={StaticResource RoutingLines}}" SnapsToDevicePixels="True"/>
         </DataTemplate>
-        
+
         <!-- PAYMENT USED IN DETAILED SPLIT VIEW -->
         <DataTemplate x:Key="myTemplateSplitPayment">
             <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0" 
@@ -376,12 +376,12 @@
                     PreviewLostKeyboardFocus="ComboBoxSymbol_PreviewLostKeyboardFocus"  
                     FilterChanged="ComboBoxForSymbols_FilterChanged"
                     ItemContainerStyle="{DynamicResource ComboBoxItemSecurity}"   >
-                    <ComboBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel />
-                        </ItemsPanelTemplate>
-                    </ComboBox.ItemsPanel>
-                </local:FilteringComboBox>
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </local:FilteringComboBox>
         </DataTemplate>
 
         <!-- MARKET PRICE BASIS (binds to Investment) -->
@@ -420,24 +420,29 @@
             <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent">
                 <StackPanel Orientation="Horizontal">
                     <ListBox x:Name="TheMiniListForAmountSplit" 
-                             Background="Transparent"
                              BorderThickness="0"
                              IsEnabled="False"
-                             Padding="0"
+                             Padding="0"                             
                              Margin="0"
                              ItemsSource="{Binding Path=NonNullSplits.ObservableCollection}">
+
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Height" Value="22" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
 
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Width="200" Text="{Binding Payee}" TextAlignment="Left" FontSize="10" Foreground="Black"/>
-                                    <TextBlock MinWidth="200" Margin="10,0,0,0" Text="{Binding Category}" TextAlignment="Left" FontSize="10" Foreground="Black"/>
-                                    <TextBlock MinWidth="100" Margin="10,0,0,0" Text="{Binding Amount, StringFormat={}{0:N}}" TextAlignment="Right" FontSize="10" Foreground="Black"/>
+                                    <TextBlock Width="200" Text="{Binding Payee}" TextAlignment="Left"/>
+                                    <TextBlock Width="350" Text="{Binding Category}" TextAlignment="Left"/>
+                                    <TextBlock Width="60" Text="{Binding Amount, StringFormat={}{0:N}}" TextAlignment="Right"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <TextBlock Text="{Binding Path=NonNullSplits.TotalSplitAmount, StringFormat={}{0:N}}" Width="60" FontSize="11" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center" TextAlignment="Right" IsEnabled="False"/>
+                    <TextBlock Text="{Binding Path=NonNullSplits.TotalSplitAmount, StringFormat={}{0:N}}" Width="60"  FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center" TextAlignment="Right" IsEnabled="False"/>
                 </StackPanel>
             </Border>
         </DataTemplate>
@@ -640,7 +645,7 @@
                         <Button x:Name="ToggleShowSplits" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show All Splits (Alt-T)" Click="OnToggleShowSplits" >
                             <ui:SymbolIcon Symbol="ShowBcc" x:Name="ToggleShowSplitsImage" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Button>
-                        
+
                         <!-- Toggle view for expand all in portfolio view -->
                         <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Width="26" Height="26" Margin="5,0,0,0" ToolTip="Show Details" Checked="OnToggleShowSecurities_Checked" Unchecked="OnToggleShowSecurities_Unchecked" >
                             <Image x:Name="ToggleExpandAllImage" Source="{DynamicResource ExpandAllIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" />
@@ -714,7 +719,7 @@
 
                     <!-- PAYEE - CATEGORY - MEMO -->
                     <views:TransactionPayeeCategoryMemoColumn Header="Payee/Category/Memo" SortMemberPath="PayeeOrTransferCaption"/>
-                    
+
                     <!-- STATUS -->
                     <views:TransactionStatusColumn  Header="S" IsReadOnly="True" SortMemberPath="StatusString"/>
 
@@ -766,8 +771,8 @@
 
                     <!-- PAYEE - CATEGORY - MEMO -->
                     <views:TransactionPayeeCategoryMemoColumn Header="Payee/Category/Memo" SortMemberPath="PayeeOrTransferCaption"/>
-                    
-                    <!-- STATUS -->                    
+
+                    <!-- STATUS -->
                     <views:TransactionStatusColumn  Header="S" IsReadOnly="True" SortMemberPath="StatusString"/>
 
                     <!-- PAYEMENT-->
@@ -778,7 +783,7 @@
 
                     <!-- ANCHOR -->
                     <views:TransactionAnchorColumn IsReadOnly="True"/>
-                    
+
                 </DataGrid.Columns>
             </local:MoneyDataGrid>
 
@@ -805,11 +810,11 @@
                     <views:TransactionDateColumn Header="Date" SortMemberPath="Date" SortDirection="Ascending"/>
 
                     <!-- Category Color -->
-                    <views:TransactionCategoryColorColumn Header="C" MaxWidth="20" SortMemberPath="CategoryFullName" IsReadOnly="True"/>                    
+                    <views:TransactionCategoryColorColumn Header="C" MaxWidth="20" SortMemberPath="CategoryFullName" IsReadOnly="True"/>
 
                     <!-- PAYEE - CATEGORY - MEMO -->
                     <views:TransactionPayeeCategoryMemoColumn Header="Payee/Category/Memo" SortMemberPath="PayeeOrTransferCaption"/>
-                    
+
                     <!-- ACTIVITY -->
                     <DataGridTemplateColumn Header="Activity"  CellTemplate="{StaticResource myTemplateActivity}" CellEditingTemplate="{StaticResource myTemplateActivityEdit}"
                                         SortMemberPath="InvestmentType"/>
@@ -820,7 +825,7 @@
 
 
                     <views:TransactionNumericColumn Header="Units" SortMemberPath="InvestmentUnits" />
-                    
+
                     <!-- Price per unit -->
                     <views:TransactionNumericColumn Header="Unit Price" SortMemberPath="InvestmentUnitPrice" />
 
@@ -838,7 +843,7 @@
 
                     <!-- BALANCE -->
                     <views:TransactionNumericColumn Header="Balance" SortMemberPath="Balance" IsReadOnly="True"/>
-                    
+
                     <!-- ANCHOR -->
                     <views:TransactionAnchorColumn IsReadOnly="True"/>
                 </DataGrid.Columns>
@@ -859,14 +864,14 @@
                 <DataGrid.Columns>
 
                     <!-- ACCOUNT -->
-                    <DataGridTextColumn Header="Account" Binding="{Binding Account.Name, Converter={StaticResource NullableValueConverter}}" IsReadOnly="True" />                    
+                    <DataGridTextColumn Header="Account" Binding="{Binding Account.Name, Converter={StaticResource NullableValueConverter}}" IsReadOnly="True" />
 
                     <!-- DATE -->
                     <views:TransactionDateColumn Header="Date" SortMemberPath="Date" SortDirection="Ascending"/>
 
                     <!-- PAYEE - CATEGORY - MEMO -->
                     <views:TransactionPayeeCategoryMemoColumn Header="Payee/Category/Memo" SortMemberPath="PayeeOrTransferCaption"/>
-                    
+
                     <!-- SECURITY -->
                     <DataGridTemplateColumn Header="Security"  CellTemplate="{StaticResource myTemplateSymbol}" CellEditingTemplate="{StaticResource myTemplateSymbolEdit}"
                                         SortMemberPath="InvestmentSecuritySymbol"/>
@@ -882,13 +887,13 @@
                     <!-- UNITS -->
                     <views:TransactionNumericColumn Header="Units" SortMemberPath="InvestmentUnits" />
 
-                    <!-- UNITS  AFTER SPLITS -->                    
+                    <!-- UNITS  AFTER SPLITS -->
                     <views:TransactionNumericColumn Header="Units A.S." SortMemberPath="CurrentUnits" IsReadOnly="True"
                                                     TextBlockStyle="{StaticResource CurrentUnitStyle}"/>
 
                     <!-- RUNNING TOTAL UNITS -->
                     <views:TransactionNumericColumn Header="Holding" SortMemberPath="RunningUnits" IsReadOnly="true" 
-                                                    TextBlockStyle="{StaticResource RunningUnitStyle}"/>                           
+                                                    TextBlockStyle="{StaticResource RunningUnitStyle}"/>
 
                     <!-- Price per unit -->
                     <views:TransactionNumericColumn Header="Unit Price" SortMemberPath="InvestmentUnitPrice" IsReadOnly="true" />
@@ -908,7 +913,7 @@
 
                     <!-- RUNNING BALANCE -->
                     <views:TransactionNumericColumn Header="Balance" SortMemberPath="RunningBalance" IsReadOnly="True"/>
-                    
+
                     <!-- ANCHOR -->
                     <views:TransactionAnchorColumn IsReadOnly="True"/>
                 </DataGrid.Columns>
