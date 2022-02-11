@@ -452,22 +452,6 @@
                 <Border  x:Name="MainBorderForSplitterView" Margin="8,0,13,13" 
                          Style="{DynamicResource MainBorderForSplitterViewStyle}">
 
-                    <!-- Tiny animation to show the expanding of the split view editor 
-                    [Chris: removed because fixed size of 100 below doesn't work... and stops autosizing from working.
-                    <Border.Triggers>
-                        <EventTrigger RoutedEvent="Border.Loaded">
-                            <EventTrigger.Actions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="MainBorderForSplitterView"
-                                             Storyboard.TargetProperty="Height"
-                                             From="10" To="100" Duration="0:0:0.3"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger.Actions>
-                        </EventTrigger>
-                    </Border.Triggers>-->
-
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -578,42 +562,6 @@
                         <views:TransactionCell BorderThickness="0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Margin="0,-2,0,2">
                             <ContentPresenter  SnapsToDevicePixels="True"/>
                         </views:TransactionCell>
-                        <!--
-                            ### The following was removed for performance reasons.-->
-                        
-                        <!--<Border x:Name="CellBorder">
-                            <ContentPresenter  SnapsToDevicePixels="True"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <DataTrigger Binding="{Binding Path=IsReconciling}" Value="True">                                
-                                <Setter Property="Background" Value="{DynamicResource WalkaboutReconciledRowBackgroundBrush}" TargetName="CellBorder"/>
-                            </DataTrigger>
-
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
-                                <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
-                            </Trigger>
-
-                            <DataTrigger Binding="{Binding Path=Unaccepted}" Value="True">
-                                <Setter Property="FontWeight" Value="Bold"/>
-                                <Setter Property="TextBlock.FontWeight" Value="Bold"/>
-                            </DataTrigger>
-
-                            <DataTrigger Binding="{Binding Path=Unaccepted}" Value="False">
-                                <Setter Property="FontWeight" Value="Normal"/>
-                                <Setter Property="TextBlock.FontWeight" Value="Normal"/>
-                            </DataTrigger>
-
-                            <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
-                                <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
-                            </DataTrigger>
-
-                            <DataTrigger Binding="{Binding Path=IsReadOnly}" Value="True">
-                                <Setter Property="Foreground" Value="Gray"/>
-                            </DataTrigger>
-
-                        </ControlTemplate.Triggers>-->
-                        
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
