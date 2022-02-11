@@ -5,7 +5,8 @@
                     xmlns:local="clr-namespace:Walkabout.Utilities"
                     xmlns:views="clr-namespace:Walkabout.Views"                    
                     xmlns:s="clr-namespace:System;assembly=mscorlib"
-                    xmlns:m="http://schemas.modernwpf.com/2019"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:ui="http://schemas.modernwpf.com/2019"
                     >
 
 
@@ -16,10 +17,166 @@
     <c:NullOrEmptyStringToVisible x:Key="NullOrEmptyStringToVisible" />
     <c:CategoryTypeLetterConverter x:Key="CategoryTypeLetterConverter"/>
 
+    <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#FF636363"/>
+
+    <sys:Double x:Key="DataGridRowMinHeight">32</sys:Double>
+    <sys:String x:Key="SortIconAscending">&#xE74A;</sys:String>
+    <sys:String x:Key="SortIconDescending">&#xE74B;</sys:String>
+    <sys:String x:Key="RowGroupHeaderIconClosed">&#xE0E3;</sys:String>
+    <sys:String x:Key="RowGroupHeaderIconOpened">&#xE0E5;</sys:String>
+
+    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridColumnHeader">
+                    <Grid x:Name="ColumnHeaderRoot">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="Unfocused" />
+                                <VisualState x:Name="Focused">
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="FocusVisual"
+                                            Storyboard.TargetProperty="Opacity"
+                                            To="1"
+                                            Duration="0" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SortStates">
+                                <VisualState x:Name="Unsorted" />
+                                <VisualState x:Name="SortAscending">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SortIcon" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="SortDescending">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SortIcon" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SortIcon" Storyboard.TargetProperty="Glyph">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SortIconDescending}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Rectangle
+                            x:Name="BackgroundRectangle"
+                            Stretch="Fill"
+                            Fill="{TemplateBinding Background}"
+                            Grid.ColumnSpan="2" />
+
+                        <Grid
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Margin="{TemplateBinding Padding}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition x:Name="SortIconColumn" MinWidth="32" Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <ContentPresenter
+                                Content="{TemplateBinding Content}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+
+                            <ui:FontIcon
+                                Grid.Column="1"
+                                x:Name="SortIcon"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="{StaticResource SortIconAscending}"
+                                FontSize="12"
+                                Foreground="{DynamicResource DataGridColumnHeaderForegroundBrush}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Visibility="Collapsed" />
+                        </Grid>
+                        <Rectangle
+                            x:Name="VerticalSeparator"
+                            Grid.Column="1"
+                            Width="1"
+                            VerticalAlignment="Stretch"
+                            Fill="{TemplateBinding SeparatorBrush}"
+                            Visibility="{TemplateBinding SeparatorVisibility}" />
+
+                        <Grid
+                            x:Name="FocusVisual"
+                            IsHitTestVisible="False"
+                            Opacity="0">
+                            <Rectangle
+                                x:Name="FocusVisualPrimary"
+                                Stroke="{DynamicResource DataGridCellFocusVisualPrimaryBrush}"
+                                StrokeThickness="2"
+                                Fill="Transparent"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                IsHitTestVisible="False" />
+                            <Rectangle
+                                x:Name="FocusVisualSecondary"
+                                Stroke="{DynamicResource DataGridCellFocusVisualSecondaryBrush}"
+                                StrokeThickness="1"
+                                Fill="Transparent"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                IsHitTestVisible="False"
+                                Margin="2" />
+                        </Grid>
+
+                        <Thumb
+                            x:Name="PART_LeftHeaderGripper"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Left"
+                            Style="{StaticResource ColumnHeaderGripperStyle}" />
+                        <Thumb
+                            x:Name="PART_RightHeaderGripper"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource ColumnHeaderGripperStyle}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridColumnHeaderHoveredBackgroundBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridColumnHeaderPressedBackgroundBrush}" />
+                        </Trigger>
+                        <Trigger Property="SortDirection" Value="{x:Null}">
+                            <Setter TargetName="SortIconColumn" Property="MinWidth" Value="0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="SortDirection" Value="{x:Null}">
+                <Setter Property="Padding" Value="12,0" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+
     <!-- ============================================================================================= -->
     <!-- Everything above this point has been Modernized and tested to work with Light and Dark themes -->
     <!-- ============================================================================================= -->
-    
+
     <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="Black"/>
     <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="#F6F4F2"/>
 
@@ -41,6 +198,7 @@
     <SolidColorBrush x:Key="ButtonMouseOverBackground" Color="#FFE8A6"/>
     <SolidColorBrush x:Key="ButtonMouseOverForeground" Color="Black"/>
     <SolidColorBrush x:Key="ButtonMouseOverBorder" Color="Black"/>
+
 
     <s:Double x:Key="MainTransactionAreaFontSize">12</s:Double>
     <s:Double x:Key="LegendItemSwatchWidth">16</s:Double>
@@ -99,7 +257,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
     <Style x:Key="ComboBoxItemSecurity" TargetType="ComboBoxItem">
         <Setter Property="Template">
             <Setter.Value>
@@ -844,7 +1002,6 @@
         <GradientStop Color="#EEE" Offset="1.0"/>
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#FF636363"/>
 
     <SolidColorBrush x:Key="DisabledBorderBrush" Color="#ADB2B5"/>
 
@@ -1035,7 +1192,7 @@
     </Style>
 
     <GridLength x:Key="WalkAboutSplitterSize">5</GridLength>
-    
+
     <Style  TargetType="{x:Type GridSplitter}">
         <Setter Property="Panel.Background" Value="#77aaaaaa" />
         <Setter Property="UIElement.SnapsToDevicePixels" Value="True" />
@@ -1089,7 +1246,8 @@
                                             <EasingColorKeyFrame KeyTime="0"
                                                   Value="{DynamicResource TriangleExpanderIconPressedColor}" />
                                         </ColorAnimationUsingKeyFrames>
-                                    </Storyboard></VisualState>
+                                    </Storyboard>
+                                </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CheckStates">
                                 <VisualState x:Name="Checked">
@@ -1102,7 +1260,8 @@
                                     <Storyboard>
                                         <DoubleAnimation Duration="0:0:0.5" To="0" Storyboard.TargetProperty="Angle"
                                                          Storyboard.TargetName="ArrowRotation"/>
-                                    </Storyboard></VisualState>
+                                    </Storyboard>
+                                </VisualState>
                                 <VisualState x:Name="Indeterminate" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
@@ -1117,5 +1276,5 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
 </ResourceDictionary>

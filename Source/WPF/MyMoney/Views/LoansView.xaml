@@ -248,8 +248,7 @@
             ItemsSource="{Binding Source={StaticResource ByYear}}"
             RowHeaderWidth="0"
             VerticalGridLinesBrush="Transparent"
-            ColumnHeaderStyle="{DynamicResource ColumnHeaderStyleLeft}"
-            Background="{StaticResource BackgroundPageMediumLowBrush}"
+            Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
             RowBackground="{DynamicResource GridNormalBackgroundBrush}"
             AlternatingRowBackground="{DynamicResource GridAlternateBackgroundBrush}"
             Foreground="{DynamicResource ListItemForegroundBrush}"
@@ -276,47 +275,40 @@
 
             <!-- DATE -->
             <DataGridTemplateColumn Header="Date"  CellTemplate="{StaticResource myTemplateDate}" CellEditingTemplate="{StaticResource myTemplateDateEdit}"
-                                    HeaderStyle="{StaticResource ColumnHeaderStyleLeft}"
 									SortMemberPath="Date" SortDirection="Ascending"/>
 
             <!-- SOURCE -->
             <DataGridTemplateColumn Header="Source"  
-									HeaderStyle="{StaticResource ColumnHeaderStyleLeft}"
 									CellTemplate="{StaticResource myTemplateSource}" CellEditingTemplate="{StaticResource myTemplateSourceEdit}"
 									MinWidth="150"
 									SortMemberPath="Payment"/>
 
             <!-- Payment -->
             <DataGridTemplateColumn Header="Payment"
-									HeaderStyle="{StaticResource ColumnHeaderStyleRight}" 
 									CellTemplate="{StaticResource myTemplatePayment}" CellEditingTemplate="{StaticResource myTemplatePaymentlEdit}"
 									MinWidth="100"
 									SortMemberPath="Payment"/>
 
             <!-- PRINCIPAL -->
             <DataGridTemplateColumn Header="Principal"  
-									HeaderStyle="{StaticResource ColumnHeaderStyleRight}"
 									CellTemplate="{StaticResource myTemplatePrincipal}" CellEditingTemplate="{StaticResource myTemplatePrincipalEdit}"
 									MinWidth="80"
 									SortMemberPath="Principal"/>
 
             <!-- INTEREST -->
             <DataGridTemplateColumn Header="Interest"  
-									HeaderStyle="{StaticResource ColumnHeaderStyleRight}"
 									CellTemplate="{StaticResource myTemplateInterest}" CellEditingTemplate="{StaticResource myTemplateInterestEdit}"
 									MinWidth="80"
 									SortMemberPath="Interest"/>
 
             <!-- % -->
             <DataGridTemplateColumn Header="%"   
-                                    HeaderStyle="{StaticResource ColumnHeaderStyleCenter}"
                                     CellTemplate="{StaticResource myTemplatePercentage}" CellEditingTemplate="{StaticResource myTemplatePercentageEdit}"										
                                     MinWidth="60"
 									SortMemberPath="Percentage"/>
 
             <!-- BALANCE -->
             <DataGridTemplateColumn Header="Balance"  IsReadOnly="True" 
-									HeaderStyle="{StaticResource ColumnHeaderStyleRight}"
 									CellTemplate="{StaticResource myTemplateBalance}" MinWidth="100"
 									/>
 

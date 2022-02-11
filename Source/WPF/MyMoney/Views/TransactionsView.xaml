@@ -715,7 +715,7 @@
                     <views:TransactionDateColumn Header="Date" SortMemberPath="Date" SortDirection="Ascending"/>
 
                     <!-- Category Color -->
-                    <views:TransactionCategoryColorColumn Header="C" MaxWidth="20" SortMemberPath="CategoryFullName" IsReadOnly="True"/>
+                    <views:TransactionCategoryColorColumn Header="C" SortMemberPath="CategoryFullName" IsReadOnly="True"/>
 
                     <!-- PAYEE - CATEGORY - MEMO -->
                     <views:TransactionPayeeCategoryMemoColumn Header="Payee/Category/Memo" SortMemberPath="PayeeOrTransferCaption"/>
@@ -791,7 +791,8 @@
             <!-- Note the SecondarySortOrder has to match the Transaction SortByDate method -->
             <local:MoneyDataGrid 
                 x:Name="TheGrid_InvestmentActivity"  
-                Grid.Row="1" Style="{StaticResource MyDataGridStyle}"  
+                Grid.Row="1" 
+                Style="{StaticResource MyDataGridStyle}"  
                 RowStyle="{StaticResource MyDataGridRowStyle}" 
                 RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
                 CellStyle="{StaticResource MyDataGridCellStyle}" 
