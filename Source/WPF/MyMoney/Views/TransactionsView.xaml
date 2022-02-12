@@ -198,7 +198,7 @@
             <Setter Property="SnapsToDevicePixels" Value="true"/>
             <Setter Property="Content" Value="{Binding Path=Splits.Count}"/>
             <Setter Property="Margin" Value="-7,3,0,0"/>
-            <Setter Property="Foreground" Value="{StaticResource ButtonNormalForeground}" />
+            <Setter Property="Foreground" Value="{StaticResource ButtonForeground}" />
             <Setter Property="Height" Value="13"/>
             <Setter Property="Width" Value="Auto"/>
             <Setter Property="MinWidth" Value="13"/>
@@ -218,8 +218,8 @@
                             <Trigger Property="IsFocused" Value="True"/>
                             <Trigger Property="IsDefaulted" Value="True"/>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground" Value="{StaticResource ButtonMouseOverForeground}" />
-                                <Setter Property="Fill" Value="{StaticResource ButtonMouseOverBackground}" TargetName="ThePath"/>
+                                <Setter Property="Foreground" Value="{StaticResource ButtonForegroundPointerOver}" />
+                                <Setter Property="Fill" Value="{StaticResource ButtonBackgroundPointerOver}" TargetName="ThePath"/>
                                 <Setter Property="Effect" TargetName="ThePath" >
                                     <Setter.Value>
                                         <DropShadowEffect ShadowDepth="1" />
@@ -228,7 +228,7 @@
                             </Trigger>
 
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Fill" Value="{StaticResource ButtonMousePressedBackground}" TargetName="ThePath"/>
+                                <Setter Property="Fill" Value="{StaticResource ButtonBackgroundPressed}" TargetName="ThePath"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False"/>
                         </ControlTemplate.Triggers>

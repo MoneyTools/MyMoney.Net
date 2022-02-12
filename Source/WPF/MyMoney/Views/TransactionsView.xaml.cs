@@ -6022,28 +6022,29 @@ namespace Walkabout.Views
         protected override Size ArrangeOverride(Size finalSize)
         {
             Brush stroke = (Brush)FindResource("TransactionConnectorBrush");
-            Brush background = Brushes.LightGray;
-            Brush pressed = new SolidColorBrush(Color.FromRgb(0xc4, 0xe5, 0xf6));
+            Brush foreground = (Brush)FindResource("TransactionConnectorForegroundBrush");
+            Brush background = (Brush)FindResource("TransactionConnectorButtonBackground"); 
+            Brush pressed = (Brush)FindResource("TransactionConnectorButtonPressedBackground");
+            Brush mouseOver = (Brush)FindResource("TransactionConnectorButtonMouseOverBackground");
 
             mainButton.Background = background;
             mainButton.BorderBrush = stroke;
             mainButton.Foreground = stroke;
             mainButton.BorderThickness = new Thickness(strokeThickness);
-            mainButton.MouseOverForeground = Brushes.Black;
-            mainButton.MouseOverBackground = Brushes.White;
+            mainButton.MouseOverBackground = mouseOver;
             mainButton.MouseOverBorder = stroke;
-
-            mainButton.MousePressedForeground = Brushes.Black;
+            mainButton.MouseOverForeground = foreground;
             mainButton.MousePressedBackground = pressed;
             mainButton.MousePressedBorder = stroke;
+            mainButton.MousePressedForeground = foreground;
 
             closeBox.Foreground = stroke;
             closeBox.BorderThickness = new Thickness(1);
-            closeBox.Background = Brushes.LightGray;
-            closeBox.MouseOverBackground = Brushes.White;
-            closeBox.MouseOverForeground = Brushes.Black;
+            closeBox.Background = background;
+            closeBox.MouseOverBackground = mouseOver;
+            closeBox.MouseOverForeground = foreground;
             closeBox.MousePressedBackground = pressed;
-            closeBox.MousePressedForeground = Brushes.Black;
+            closeBox.MousePressedForeground = foreground;
 
             CreateConnectorGeometry();
 

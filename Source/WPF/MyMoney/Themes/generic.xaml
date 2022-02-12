@@ -180,40 +180,16 @@
     <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="Black"/>
     <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="#F6F4F2"/>
 
-    <!-- CloseBox -->
-    <SolidColorBrush x:Key="CloseBoxNormalBackground" Color="Gray"/>
-    <SolidColorBrush x:Key="CloseBoxNormalForeground" Color="White"/>
-    <SolidColorBrush x:Key="CloseBoxMousePressedBackground" Color="#DBC790"/>
-    <SolidColorBrush x:Key="CloseBoxMousePressedForeground" Color="Black"/>
-    <SolidColorBrush x:Key="CloseBoxMouseOverBackground" Color="#FFF7DE"/>
-    <SolidColorBrush x:Key="CloseBoxMouseOverForeground" Color="Black"/>
-
-    <!-- RoundedButton uses these, and some of these colors are also used by some other control templates -->
-    <SolidColorBrush x:Key="ButtonNormalBackground" Color="Gray"/>
-    <SolidColorBrush x:Key="ButtonNormalForeground" Color="White"/>
-    <SolidColorBrush x:Key="ButtonNormalBorder" Color="Gray"/>
-    <SolidColorBrush x:Key="ButtonMousePressedBackground" Color="#FFAD60"/>
-    <SolidColorBrush x:Key="ButtonMousePressedForeground" Color="Black"/>
-    <SolidColorBrush x:Key="ButtonMousePressedBorder" Color="Black"/>
-    <SolidColorBrush x:Key="ButtonMouseOverBackground" Color="#FFE8A6"/>
-    <SolidColorBrush x:Key="ButtonMouseOverForeground" Color="Black"/>
-    <SolidColorBrush x:Key="ButtonMouseOverBorder" Color="Black"/>
-
-
     <s:Double x:Key="MainTransactionAreaFontSize">12</s:Double>
     <s:Double x:Key="LegendItemSwatchWidth">16</s:Double>
     <s:Double x:Key="LegendItemSwatchHeight">16</s:Double>
 
     <SolidColorBrush x:Key="TextBrush" Color="Black" />
 
-    <SolidColorBrush x:Key="TransactionConnectorBrush" Color="DarkSlateBlue" />
-
     <LinearGradientBrush x:Key="MouseOverBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="LightBlue" />
         <GradientStop Color="LightBlue" Offset="1" />
     </LinearGradientBrush>
-
-    <SolidColorBrush x:Key="ValidDropTargetFeedbackBrush" Color="Navy"/>
 
     <Style x:Key="SmoothFadeIn" TargetType="FrameworkElement" >
         <Style.Triggers>
@@ -640,7 +616,7 @@
                 </Trigger.Value>
             </Trigger>
             <Trigger Property="ButtonBase.IsPressed">
-                <Setter Property="Panel.Background" TargetName="border" Value="{DynamicResource ButtonMousePressedBackground}"/>
+                <Setter Property="Panel.Background" TargetName="border" Value="{DynamicResource ButtonBackgroundPointerOver}"/>
                 <Setter Property="Border.BorderBrush" TargetName="border">
                     <Setter.Value>
                         <SolidColorBrush>#FF2C628B</SolidColorBrush>

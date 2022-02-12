@@ -51,4 +51,15 @@
     <!-- drag drop feedback addorner brush -->
     <SolidColorBrush x:Key="DragDropFeedbackBrush" Color="{m:DynamicColor SystemAccentColor}"/>
 
+    <SolidColorBrush x:Key="ValidDropTargetFeedbackBrush" Color="{m:DynamicColor SystemAccentColor}"/>
+
+
+    <!-- the merge transaction connector -->
+    <SolidColorBrush x:Key="TransactionConnectorBrush" Color="{m:DynamicColor SystemAccentColor}" />
+    <SolidColorBrush x:Key="TransactionConnectorForegroundBrush" Color="MintCream" /> 
+    <SolidColorBrush x:Key="TransactionConnectorButtonBackground" Color="#2e2e2e" />
+    <SolidColorBrush x:Key="TransactionConnectorButtonPressedBackground" Color="#1e1e1e" />
+    <SolidColorBrush x:Key="TransactionConnectorButtonMouseOverBackground" Color="#3e3e3e" />
+
+
 </ResourceDictionary>
