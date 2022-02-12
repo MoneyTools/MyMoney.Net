@@ -20,7 +20,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for MoneyFileImportDialog.xaml
     /// </summary>
-    public partial class MoneyFileImportDialog : Window, IStatusService
+    public partial class MoneyFileImportDialog : BaseDialog, IStatusService
     {
         MyMoney myMoney;
         string loadingStatusPrompt;
@@ -99,7 +99,8 @@ namespace Walkabout.Dialogs
 
             try
             {
-                if (file.EndsWith(".db", StringComparison.OrdinalIgnoreCase))
+                if (file.EndsWith(".db", StringComparison.OrdinalIgnoreCase) ||
+                    file.EndsWith(".mmdb", StringComparison.OrdinalIgnoreCase))
                 {
                     string userName = null;
                     string password = null;

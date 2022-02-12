@@ -68,7 +68,7 @@
                         IsEditable="True"                
                         ItemContainerStyle="{DynamicResource ComboBoxItemCategory}"        
                         SelectedItem="{Binding CategoryForPrincipal, Mode=TwoWay}"
-                        ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type dialog:LoanDialog}}, Path=Money.Categories}"
+                        ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type dialog:LoanDialog}}, Path=Money.Categories.SortedCategories}"
                         FilterChanged="ComboBoxForCategory_FilterChanged"
                         />
 
@@ -79,7 +79,7 @@
                         IsEditable="True"                
                         ItemContainerStyle="{DynamicResource ComboBoxItemCategory}"        
                         SelectedItem="{Binding CategoryForInterest, Mode=TwoWay}"
-                        ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type dialog:LoanDialog}}, Path=Money.Categories}"
+                        ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type dialog:LoanDialog}}, Path=Money.Categories.SortedCategories}"
                         FilterChanged="ComboBoxForCategory_FilterChanged"
                         />
 

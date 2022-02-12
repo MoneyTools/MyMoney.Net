@@ -3487,6 +3487,7 @@ namespace Walkabout
                                     totalTransactions += ImportXml(file);
                                     break;
                                 case ".db":
+                                case ".mmdb":
                                     moneyFiles.Add(file);
                                     break;
                                 default:

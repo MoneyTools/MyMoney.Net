@@ -231,6 +231,9 @@
                                 <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
                                 <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                             </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundMouseOverBrush}" TargetName="CellBorder"/>
+                            </Trigger>
                             <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
                                 <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
                             </DataTrigger>

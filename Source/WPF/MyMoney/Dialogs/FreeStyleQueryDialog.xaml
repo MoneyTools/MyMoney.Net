@@ -1,6 +1,7 @@
-﻿<Window x:Class="Walkabout.Dialogs.FreeStyleQueryDialog"
+﻿<local:BaseDialog x:Class="Walkabout.Dialogs.FreeStyleQueryDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Walkabout.Dialogs"
         Title="Free style query"
         Height="400" 
         Width="600" 
@@ -39,6 +40,7 @@
         </Menu>
         <TextBox x:Name="textBoxQuery" Grid.Row="1"/>
         <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch"  ResizeBehavior="PreviousAndNext" />
-        <DataGrid Name="dataGrid1"  AutoGenerateColumns="True" Grid.Row="3" />
+        <DataGrid Name="dataGrid1"  AutoGenerateColumns="True" Grid.Row="3" 
+                  Style="{StaticResource DefaultDataGridStyle}"/>
     </Grid>
-</Window>
+</local:BaseDialog>

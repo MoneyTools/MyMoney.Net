@@ -166,20 +166,33 @@ namespace Walkabout.Views.Controls
                 {
                     returnSource = new DragDropSource();
                     returnSource.DataSource = payee;
-                    returnSource.VisualForDraginSource = listBoxItemControl;
+                    returnSource.VisualForDraginSource = CreateDragVisual(payee);
                 }
             }
 
             return returnSource;
         }
 
-
-        Payee OnDropTarget(object source, object target, DragDropEffects dropEfffect)
+        private FrameworkElement CreateDragVisual(Payee p)
         {
-            ContentControl listBoxItemControl = WpfHelper.FindAncestor<ContentControl>((DependencyObject)target);
+            Border visual = new Border();
+            visual.SetResourceReference(Window.BackgroundProperty, "SystemControlHighlightAccent3RevealBackgroundBrush");
+            visual.SetResourceReference(Window.ForegroundProperty, "SystemControlPageTextBaseHighBrush");
+            var label = new TextBlock() { Text = p.Name, Margin = new Thickness(5), FontSize = this.FontSize, FontFamily = this.FontFamily };
+            visual.Child = label;
+            return visual;
+        }
+
+        DragDropTarget OnDropTarget(object source, object target, DragDropEffects dropEfffect)
+        {
+            ListBoxItem listBoxItemControl = WpfHelper.FindAncestor<ListBoxItem>((DependencyObject)target);
             if (listBoxItemControl != null)
             {
-                return listBoxItemControl.Content as Payee;
+                return new DragDropTarget()
+                {
+                    DataSource = listBoxItemControl.Content as Payee,
+                    TargetElement = listBoxItemControl
+                };
             }
 
             return null;

@@ -5388,6 +5388,7 @@ namespace Walkabout.Views
 
         Transaction context;
         DataGridCell cell;
+        bool mouseOver;
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
@@ -5439,6 +5440,20 @@ namespace Walkabout.Views
             UpdateForeground();
             UpdateFontWeight();
             UpdateBorder();
+        }
+
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            mouseOver = true;
+            UpdateBackground();
+            base.OnMouseEnter(e);
+        }
+
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            mouseOver = false;
+            UpdateBackground();
+            base.OnMouseLeave(e);
         }
 
         void ClearContext()
@@ -5501,7 +5516,14 @@ namespace Walkabout.Views
             }
             if (isSelected)
             {
-                this.SetResourceReference(Border.BackgroundProperty, "ListItemSelectedBackgroundBrush");
+                if (mouseOver)
+                {
+                    this.SetResourceReference(Border.BackgroundProperty, "ListItemSelectedBackgroundMouseOverBrush");
+                }
+                else
+                {
+                    this.SetResourceReference(Border.BackgroundProperty, "ListItemSelectedBackgroundBrush");
+                }
             }
             else if (isReconciling)
             {

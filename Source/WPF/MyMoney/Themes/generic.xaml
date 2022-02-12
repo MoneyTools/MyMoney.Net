@@ -1277,4 +1277,19 @@
         </Setter>
     </Style>
 
+
+    <Style x:Key="DragDropWindowStyle" TargetType="Window">
+        <Setter Property="WindowStyle" Value="None"/>
+        <Setter Property="AllowsTransparency" Value="true"/>
+        <Setter Property="AllowDrop" Value="false"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="IsHitTestVisible" Value="false"/>
+        <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        <Setter Property="Topmost" Value="true"/>
+        <Setter Property="ShowInTaskbar" Value="false"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+
+
 </ResourceDictionary>

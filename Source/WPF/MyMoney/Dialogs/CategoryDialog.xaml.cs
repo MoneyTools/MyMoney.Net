@@ -255,7 +255,6 @@ namespace Walkabout.Dialogs
             }
         }
 
-
         void SetTransfer(Account a)
         {
             this.transfer = a;

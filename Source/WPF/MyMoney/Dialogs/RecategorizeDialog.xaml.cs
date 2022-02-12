@@ -19,7 +19,7 @@ namespace Walkabout.Dialogs
             InitializeComponent();
             this.myMoney = money;
 
-            var source = new ListCollectionView(((List<Category>)myMoney.Categories.AllCategories).ToArray()); 
+            var source = new ListCollectionView(((List<Category>)myMoney.Categories.SortedCategories).ToArray()); 
             ComboToCategory.ItemsSource = source;
         }
 

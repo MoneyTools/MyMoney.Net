@@ -44,7 +44,6 @@ namespace Walkabout.Dialogs
             this.Loaded += new RoutedEventHandler(OnLoaded);
 
             UserNamePrompt = "";
-            IntroMessagePrompt.Visibility = System.Windows.Visibility.Collapsed;
             PasswordPrompt = Properties.Resources.PasswordPrompt;
 
             this.SizeChanged += PasswordWindow_SizeChanged;

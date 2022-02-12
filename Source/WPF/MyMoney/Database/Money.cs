@@ -6607,6 +6607,8 @@ namespace Walkabout.Data
             return true;
         }
 
+        public IList<Category> SortedCategories => GetCategories();
+
         public IList<Category> GetCategories()
         {
             List<Category> list = new List<Category>(this.categories.Count);
@@ -6684,14 +6686,6 @@ namespace Walkabout.Data
             if (n == null && m != null) return -1;
             if (n != null && m == null) return 1;
             return n.CompareTo(m);
-        }
-
-        public IList<Category> AllCategories
-        {
-            get
-            {
-                return GetCategories();
-            }
         }
 
         void AddParents(Category c)
@@ -11607,7 +11601,7 @@ namespace Walkabout.Data
         {
             get
             {
-                return this.MyMoney.Categories.AllCategories;
+                return this.MyMoney.Categories.SortedCategories;
             }
         }
 
@@ -12886,7 +12880,7 @@ namespace Walkabout.Data
         {
             get
             {
-                return new List<Category>(this.MyMoney.Categories.AllCategories);
+                return new List<Category>(this.MyMoney.Categories.SortedCategories);
             }
         }
 

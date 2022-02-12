@@ -21,7 +21,6 @@
             <EventSetter Event="KeyDown" Handler="RenameEditBox_KeyDown"/>
         </Style>
 
-
         <Style x:Key="EditableCategoryItem" TargetType="{x:Type ContentControl}">
 
             <Setter Property="ContentTemplate">
@@ -106,6 +105,7 @@
             <MenuItem Header="_Add New Category..." Command="local:CategoriesControl.CommandAddCategory"/>
             <MenuItem Name="MenuRename" Header="_Rename" Command="local:CategoriesControl.CommandRenameCategory" InputGestureText="F2"/>
             <MenuItem Header="_Delete" Command="local:CategoriesControl.CommandDeleteCategory" />
+            <MenuItem Header="_Merge" Command="local:CategoriesControl.CommandMergeCategory"/>
             <Separator />
             <MenuItem Header="_Expand all" Command="local:CategoriesControl.CommandExpandAll" />
             <MenuItem Header="_Collapse all" Command="local:CategoriesControl.CommandCollapseAll" />
@@ -119,6 +119,7 @@
         <CommandBinding Command="local:CategoriesControl.CommandAddCategory" Executed="OnAddCategory" />
         <CommandBinding Command="local:CategoriesControl.CommandRenameCategory" Executed="OnExecutedRename" CanExecute="IsCategorySelected" />
         <CommandBinding Command="local:CategoriesControl.CommandDeleteCategory" Executed="OnDeleteCategory" CanExecute="IsCategorySelected" />
+        <CommandBinding Command="local:CategoriesControl.CommandMergeCategory" Executed="OnMergeCategory" CanExecute="IsCategorySelected" />
         <CommandBinding Command="local:CategoriesControl.CommandExpandAll" Executed="OnExpandAll"  />
         <CommandBinding Command="local:CategoriesControl.CommandCollapseAll" Executed="OnCollapseAll"  />
     </UserControl.CommandBindings>

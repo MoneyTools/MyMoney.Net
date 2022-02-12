@@ -11,7 +11,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for FreeStyleQueryDialog.xaml
     /// </summary>
-    public partial class FreeStyleQueryDialog : Window
+    public partial class FreeStyleQueryDialog : BaseDialog
     {
         IDatabase database;
         MyMoney myMoney;

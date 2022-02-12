@@ -20,7 +20,8 @@
     <!-- colors for list selection -->
     <SolidColorBrush x:Key="ListItemForegroundBrush" Color="white"/>
     <SolidColorBrush x:Key="ListItemSelectedForegroundBrush" Color="white"/>
-    <SolidColorBrush x:Key="ListItemSelectedBackgroundBrush" Color="{m:DynamicColor SystemAccentColor}"/>
+    <SolidColorBrush x:Key="ListItemSelectedBackgroundBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.6"/>
+    <SolidColorBrush x:Key="ListItemSelectedBackgroundMouseOverBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.8"/>
     <SolidColorBrush x:Key="ListItemSelectedBorderBrush" Color="Transparent"/>
     <SolidColorBrush x:Key="ListItemSelectedHoverBrush" Color="#3e3e3e"/>
 
@@ -47,5 +48,7 @@
     <Color x:Key="TriangleExpanderIconMouseOverColor">#00A7FF</Color>
     <Color x:Key="TriangleExpanderIconPressedColor">#00A7FF</Color>
     
+    <!-- drag drop feedback addorner brush -->
+    <SolidColorBrush x:Key="DragDropFeedbackBrush" Color="{m:DynamicColor SystemAccentColor}"/>
 
 </ResourceDictionary>

@@ -34,6 +34,7 @@ namespace Walkabout.Views.Controls
         public static RoutedUICommand CommandAddCategory;
         public static RoutedUICommand CommandRenameCategory;
         public static RoutedUICommand CommandDeleteCategory;
+        public static RoutedUICommand CommandMergeCategory;
         public static RoutedUICommand CommandExpandAll;
         public static RoutedUICommand CommandCollapseAll;
         public static RoutedUICommand CommandResetBudget;
@@ -44,6 +45,7 @@ namespace Walkabout.Views.Controls
             CommandAddCategory = new RoutedUICommand("Add", "CommandAddCategory", typeof(AccountsControl));
             CommandRenameCategory = new RoutedUICommand("Rename", "CommandRenameCategory", typeof(AccountsControl));
             CommandDeleteCategory = new RoutedUICommand("Delete", "CommandDeleteCategory", typeof(AccountsControl));
+            CommandMergeCategory = new RoutedUICommand("Merge", "CommandMergeCategory", typeof(AccountsControl));
             CommandExpandAll = new RoutedUICommand("Expand All", "CommandExpandAll", typeof(AccountsControl));
             CommandCollapseAll = new RoutedUICommand("Collapse All", "CommandCollapseAll", typeof(AccountsControl));
             CommandResetBudget = new RoutedUICommand("Reset Budget", "CommandResetBudget", typeof(AccountsControl));
@@ -170,7 +172,7 @@ namespace Walkabout.Views.Controls
                 }
                 else
                 {
-                    roots = GetDeepFilteredRootCategories(); 
+                    roots = GetDeepFilteredRootCategories();
                 }
 
                 //--------------------------------------------------------------
@@ -430,7 +432,7 @@ namespace Walkabout.Views.Controls
             TreeViewItem childNode = parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
             if (childNode != null && !childNode.IsExpanded)
             {
-                childNode.IsExpanded = true;                
+                childNode.IsExpanded = true;
                 // Update layout is needed so that items can be selected in this newly visible list.
                 // This is to work around a wierd bug in WPF where selecting items in a newly expanded list
                 // doesn't work unless we call UpdateLayout here even though that can be wickedly slow.
@@ -685,60 +687,20 @@ namespace Walkabout.Views.Controls
             if (c != null)
             {
                 IList<Transaction> data = this.MyMoney.Transactions.GetTransactionsByCategory(c, null);
-                Category nc = null;
                 if (data.Count > 0)
                 {
-                    CategoryDialog dialog = CategoryDialog.ShowDialogCategory(this.MyMoney, c.Name);
+                    var dialog = new MergeCategoryDialog() { Money = this.MyMoney, SourceCategory = c };
+                    dialog.FontSize = this.FontSize;
                     dialog.Owner = App.Current.MainWindow;
                     dialog.Title = "Delete Category";
-                    dialog.Message = "Please select a new category for the transactions that are still using the category '" + c.Name + "'";
 
-                    if (dialog.ShowDialog() == false)
+                    if (dialog.ShowDialog() == false || dialog.SelectedCategory == null)
                     {
                         return;
                     }
 
-                    // the onmoneychanged event should have fired, and the list is now updated.
-
-                    nc = dialog.Category;
-                    Account account = dialog.Transfer;
-                    foreach (Transaction t in data)
-                    {
-                        if (t.Category == c)
-                        {
-                            if (account != null)
-                            {
-                                this.MyMoney.Transfer(t, account);
-                                this.MyMoney.Rebalance(account);
-                            }
-                            else
-                            {
-                                t.Category = nc;
-                            }
-                        }
-                        else if (t.IsSplit)
-                        {
-                            foreach (Split s in t.Splits.Items)
-                            {
-                                if (s.Category == c)
-                                {
-                                    if (account != null)
-                                    {
-                                        this.MyMoney.Transfer(s, account);
-                                    }
-                                    else
-                                    {
-                                        s.Category = nc;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    Merge(c, dialog.SelectedCategory);
                 }
-
-                Category category = this.Selected;
-
-                category.OnDelete();
             }
         }
 
@@ -826,94 +788,52 @@ namespace Walkabout.Views.Controls
 
         Walkabout.Utilities.DragDropSource OnDragDropObjectSource(object source)
         {
-
-            Walkabout.Utilities.DragDropSource returnSource = null;
-
             if (IsEditing)
             {
                 // turn off drag when in editing mode
             }
-            else
+            else if (source is FrameworkElement fe && fe.DataContext is Category c)
             {
-                TreeViewItem treeViewItem = WpfHelper.FindAncestor<TreeViewItem>((DependencyObject)source);
+                return new DragDropSource()
+                {
+                    DataSource = c,
+                    VisualForDraginSource = CreateDragVisual(c)
+                };
+            }
+            return null;
+        }
+
+        private FrameworkElement CreateDragVisual(Category c)
+        {
+            Grid visual = new Grid();
+            visual.SetResourceReference(Window.BackgroundProperty, "SystemControlHighlightAccent3RevealBackgroundBrush");
+            visual.SetResourceReference(Window.ForegroundProperty, "SystemControlPageTextBaseHighBrush");
+            visual.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+            visual.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+            var label = new TextBlock() { Text = c.Name, Margin = new Thickness(5), FontSize = this.FontSize, FontFamily = this.FontFamily };
+            var swatch = new Border() { Margin=new Thickness(5), Width = 8, Height = 8, Background = new SolidColorBrush() { Color = ColorAndBrushGenerator.GenerateNamedColor(c.InheritedColor) } };
+            visual.Children.Add(label);
+            visual.Children.Add(swatch);
+            Grid.SetColumn(swatch, 1);
+            return visual;
+        }
+
+        DragDropTarget OnDragDropObjectTarget(object source, object target, DragDropEffects dropEfffect)
+        {
+            if (IsEditing)
+            {
+                // turn off drag when in editing mode
+
+            }
+            else {
+                TreeViewItem treeViewItem = WpfHelper.FindAncestor<TreeViewItem>((DependencyObject)target);
                 if (treeViewItem != null)
                 {
-                    // First child of a TreeViewItem seems to always be a Grid in all Themes
-                    FrameworkElement grid = VisualTreeHelper.GetChild(treeViewItem, 0) as FrameworkElement;
-                    if (grid != null)
+                    return new DragDropTarget()
                     {
-                        //
-                        // The grid has 2 child
-                        // 0 = Expander
-                        // 1 = Tree Node visual
-                        //
-                        //
-                        // We want the TreeNode visual without the Expander
-                        FrameworkElement representationOfTheTreeNodeToDrag = VisualTreeHelper.GetChild(grid, 1) as FrameworkElement;
-                        if (representationOfTheTreeNodeToDrag != null)
-                        {
-                            Category category = treeViewItem.Header as Category;
-                            if (category != null)
-                            {
-                                returnSource = new DragDropSource();
-                                returnSource.DataSource = category;
-                                returnSource.VisualForDraginSource = representationOfTheTreeNodeToDrag;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return returnSource;
-        }
-
-        private Border CreateFrameworkElementForBalanceDragDrop(Category category)
-        {
-            double margin = 5;
-            Border categoryBalance = new Border();
-            categoryBalance.Padding = new Thickness(margin);
-            categoryBalance.Background = new SolidColorBrush(Color.FromArgb(0x80, 0xc1, 0xc1, 0x60));
-
-            TextBlock amountValue = new TextBlock();
-            amountValue.Text = string.Format("{0:C}", category.Balance);
-            amountValue.Foreground = Brushes.Black;
-            amountValue.FontSize = 12;
-            amountValue.HorizontalAlignment = HorizontalAlignment.Center;
-            amountValue.VerticalAlignment = VerticalAlignment.Center;
-            amountValue.TextAlignment = TextAlignment.Center;
-
-            var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-            FormattedText ft = new FormattedText(amountValue.Text, System.Globalization.CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight, new Typeface(amountValue.FontFamily, amountValue.FontStyle, amountValue.FontWeight,
-                amountValue.FontStretch), amountValue.FontSize, amountValue.Foreground, pixelsPerDip);
-
-            Rect bounds = new Rect(0, 0, ft.Width, ft.Height);
-            bounds.Inflate(margin, margin);
-
-            categoryBalance.Child = amountValue;
-
-            categoryBalance.Width = bounds.Width;
-            categoryBalance.Height = bounds.Height;
-            categoryBalance.Arrange(bounds);
-
-            return categoryBalance;
-        }
-
-
-
-        Category OnDragDropObjectTarget(object source, object target, DragDropEffects dropEfffect)
-        {
-            if (IsEditing)
-            {
-                // turn off drag when in editing mode
-
-            }
-            else
-            {
-                ContentControl listBoxItemControl = WpfHelper.FindAncestor<ContentControl>((DependencyObject)target);
-                if (listBoxItemControl != null)
-                {
-                    return listBoxItemControl.Content as Category;
+                        DataSource = treeViewItem.DataContext as Category,
+                        TargetElement = treeViewItem
+                    };
                 }
             }
 
@@ -922,76 +842,63 @@ namespace Walkabout.Views.Controls
 
 
         private void OnDragDropSourceOnTarget(object source, object target, DragDropEffects dropEffect)
-        {         
+        {
             try
             {
-                MoveOrMergeItem(source as Category, target as Category);                
+                MoveCategory(source as Category, target as Category);
             }
             catch (Exception)
             {
             }
         }
 
-        private void MoveOrMergeItem(Category categorySource, Category categoryTarget)
+        private void MoveCategory(Category categorySource, Category categoryTarget)
         {
             if (categorySource == null || categoryTarget == null)
             {
                 return;
             }
 
-            // Asking the user if they want to merge or add
-
-
-            MoveMergeCategoryDialog choiceDialog = new MoveMergeCategoryDialog();
-            choiceDialog.Owner = Application.Current.MainWindow;
-            
             // Move
             string newName = Category.Combine(categoryTarget.Name, categorySource.Label);
-            choiceDialog.TextForMoveSource.Text = categorySource.ToString();
-            choiceDialog.TextForMoveTarget.Text = newName;
-
-            
-            // Merge
-            choiceDialog.TextForMergeSource.Text = categorySource.ToString();
-            choiceDialog.TextForMergeTarget.Text = categoryTarget.ToString();
-
-
-            if (choiceDialog.ShowDialog() == true)
+            if (newName == categorySource.GetFullName())
             {
-                try
-                {
-                    if (choiceDialog.Choice == MoveMergeCategoryDialog.DragDropChoice.Move)
-                    {
-                        // Create new category under target and move all transactions to that
-                        categoryTarget = MyMoney.Categories.GetOrCreateCategory(newName, categorySource.Type);
-                    }
-
-                    var sourceTransactions = MyMoney.Transactions.GetTransactionsByCategory(categorySource, null);
-                    foreach (Transaction t in sourceTransactions)
-                    {
-                        t.ReCategorize(categorySource, categoryTarget);
-                    }
-
-                    // source category should now be unused.
-                    categorySource.OnDelete();
-
-                    treeView.Items.Refresh();
-
-                    // Change the selection to the drop target, since the source target is about to be deleted
-                    this.Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        // Now select the new subcategory and enter Rename mode
-                        this.Selected = categoryTarget;
-
-                    }), DispatcherPriority.ContextIdle);
-
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBoxEx.Show("Please send this string to JP or Chris\n" + ex.ToString(), "Internal error merging categories", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                return; // no op!
             }
+
+            try
+            {
+                // Create new category under target and move all transactions to that
+                categoryTarget = MyMoney.Categories.GetOrCreateCategory(newName, categorySource.Type);
+
+                this.Merge(categorySource, categoryTarget);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxEx.Show("Please send this string to JP or Chris\n" + ex.ToString(), "Internal error merging categories", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        void Merge(Category source, Category target)
+        {
+            var sourceTransactions = MyMoney.Transactions.GetTransactionsByCategory(source, null);
+            foreach (Transaction t in sourceTransactions)
+            {
+                t.ReCategorize(source, target);
+            }
+
+            // source category should now be unused.
+            source.OnDelete();
+
+            treeView.Items.Refresh();
+
+            // Change the selection to the drop target, since the source target is about to be deleted
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                // Now select the new subcategory
+                this.Selected = target;
+
+            }), DispatcherPriority.ContextIdle);
 
         }
 
@@ -1046,7 +953,7 @@ namespace Walkabout.Views.Controls
 
                 OnRenameNode_StopEditing();
 
-                if ( string.Compare(renameTo, categoryToRename.Label, true) == 0)
+                if (string.Compare(renameTo, categoryToRename.Label, true) == 0)
                 {
                     // The label has not changed, the user either typed the same name or did not really want to change the name
                     // so we have nothing to do
@@ -1109,7 +1016,7 @@ namespace Walkabout.Views.Controls
 
         private void OnShowProperties(object sender, ExecutedRoutedEventArgs e)
         {
-            ShowDetails();       
+            ShowDetails();
         }
 
         private void OnAddCategory(object sender, ExecutedRoutedEventArgs e)
@@ -1124,7 +1031,7 @@ namespace Walkabout.Views.Controls
             CategoryDialog dialog = CategoryDialog.ShowDialogCategory(this.MyMoney, name);
             dialog.Owner = App.Current.MainWindow;
             dialog.Title = "Add Category";
-            dialog.Message = this.Selected != null ? "Please edit your new sub-category name or edit the whole string to add a new top level category" 
+            dialog.Message = this.Selected != null ? "Please edit your new sub-category name or edit the whole string to add a new top level category"
                 : "Please edit your new category name";
 
             dialog.Select("New Category");
@@ -1146,6 +1053,21 @@ namespace Walkabout.Views.Controls
 
         }
 
+        private void OnMergeCategory(object sender, ExecutedRoutedEventArgs e)
+        {
+            Category c = this.Selected;
+            if (c != null)
+            {
+                var d = new MergeCategoryDialog() { Money = this.money, SourceCategory = c };
+                d.Owner = App.Current.MainWindow;
+                d.FontSize = this.FontSize;
+                if (d.ShowDialog() == true && d.SelectedCategory != null)
+                {
+                    Merge(c, d.SelectedCategory);
+                }
+            }
+        }
+
         private void OnDeleteCategory(object sender, ExecutedRoutedEventArgs e)
         {
             Delete();
@@ -1161,7 +1083,8 @@ namespace Walkabout.Views.Controls
             this.ExpandAll(treeView, false);
         }
 
-        #endregion 
+        #endregion
+
     }
 
 
@@ -1180,7 +1103,7 @@ namespace Walkabout.Views.Controls
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ObservableCollection<Category> Subcategories { get; set; }
 
-     
+
     }
 
     public class CategoryBalance : CategoryGroup

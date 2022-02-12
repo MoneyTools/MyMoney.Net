@@ -121,6 +121,9 @@
                                 <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
                                 <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                             </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundMouseOverBrush}" TargetName="CellBorder"/>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
