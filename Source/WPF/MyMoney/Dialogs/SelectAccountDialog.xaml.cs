@@ -12,7 +12,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for SelectAccountDialog.xaml
     /// </summary>
-    public partial class SelectAccountDialog : Window
+    public partial class SelectAccountDialog : BaseDialog
     {
 
         public SelectAccountDialog()

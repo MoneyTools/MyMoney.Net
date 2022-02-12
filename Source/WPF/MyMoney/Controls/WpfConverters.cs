@@ -58,12 +58,18 @@ namespace Walkabout.WpfConverters
             if (value is bool)
             {
                 bool rc = (bool)value;
-                if (rc && parameter != null)
+                if (parameter != null)
                 {
                     try
                     {
-                        Color c = (Color)ColorConverter.ConvertFromString(parameter.ToString());
-                        return new SolidColorBrush(c);
+                        var parts = parameter.ToString().Split('+');
+                        var name = parts[0];
+                        if (rc && parts.Length > 1)
+                        {
+                            name = parts[1];
+                        }
+                        Brush brush = App.Current.MainWindow.FindResource(name) as Brush;
+                        return brush;
                     }
                     catch
                     {
