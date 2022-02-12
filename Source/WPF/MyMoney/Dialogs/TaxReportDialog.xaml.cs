@@ -16,7 +16,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for TaxReportDialog.xaml
     /// </summary>
-    public partial class TaxReportDialog : Window
+    public partial class TaxReportDialog : BaseDialog
     {
         List<string> months = new List<string>();
         public TaxReportDialog()
