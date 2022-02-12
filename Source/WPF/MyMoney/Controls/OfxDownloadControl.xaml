@@ -23,15 +23,15 @@
                     <Image Width="16" Height="16" Source="/MyMoney;component/Icons/Synchronize.png" Visibility="{Binding IsDownloading, Converter={StaticResource BoolToVisibilityConverter}}"
                            Loaded="OnSynchronizeImageLoaded"/>
                 </Grid>
-                <TextBlock Text="{Binding Path=Caption}" FontWeight="Bold" Margin="0,0,10,0" VerticalAlignment="Center" />
-                <TextBlock Text="{Binding Path=Message}" Margin="0,0,10,0"  VerticalAlignment="Center"/>
-                <TextBlock Visibility="{Binding Path=ErrorVisibility}"  VerticalAlignment="Center">
-                    <Hyperlink Click="OnDetailsClick"><TextBlock Text="{Binding Path=LinkCaption}"/></Hyperlink>
+                <TextBlock Text="{Binding Path=Caption}" FontWeight="Bold" Margin="0,0,10,0" VerticalAlignment="Center" Foreground="{DynamicResource ListItemForegroundBrush}"/>
+                <TextBlock Text="{Binding Path=Message}" Margin="0,0,10,0"  VerticalAlignment="Center"  Foreground="{DynamicResource ListItemForegroundBrush}"/>
+                <TextBlock Visibility="{Binding Path=ErrorVisibility}"  VerticalAlignment="Center"  Foreground="{DynamicResource ListItemForegroundBrush}">
+                <Hyperlink Click="OnDetailsClick"><TextBlock Text="{Binding Path=LinkCaption}"/></Hyperlink>
                 </TextBlock>
             </StackPanel>            
         </HierarchicalDataTemplate>
         
-        <Style x:Key="TreeViewStyle" TargetType="{x:Type TreeViewItem}">
+        <Style x:Key="TreeViewStyle" TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource DefaultTreeViewItemStyle}">
             <Setter Property="IsExpanded" Value="True"/>
         </Style>
         
