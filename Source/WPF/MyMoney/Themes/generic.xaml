@@ -306,7 +306,6 @@
                     <Grid SnapsToDevicePixels="true">
                         <Rectangle x:Name="BackgroundGradientOver" Fill="{DynamicResource ListItemSelectedHoverBrush}" RadiusX="2" RadiusY="2"  Opacity="0"/>
                         <Rectangle x:Name="BackgroundGradientSelected" Fill="{DynamicResource ListItemSelectedBackgroundBrush}" Stroke="{DynamicResource ListItemSelectedBorderBrush}" RadiusX="2" RadiusY="2" Opacity="0"/>
-                        <Rectangle x:Name="BackgroundHighlight" Margin="1" Stroke="#A0FFFFFF" RadiusX="1" RadiusY="1"/>
                         <Grid Background="{TemplateBinding Background}" Width="400" >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -317,11 +316,15 @@
                                 <TextBlock Text="{Binding Path=Prefix}"  Opacity=".7" FontSize="10" VerticalAlignment="Center" 
 								           Margin="4,0,4,0"
 								           Visibility="{Binding Prefix, Converter={StaticResource NullOrEmptyStringToVisible}}"/>
-                                <TextBlock Text="{Binding Path=Label}" FontSize="12" FontWeight="Medium" VerticalAlignment="Center" TextAlignment="Left"/>
+                                <TextBlock Text="{Binding Path=Label}" FontSize="12" FontWeight="Medium" VerticalAlignment="Center" 
+                                           TextAlignment="Left"/>
                             </StackPanel>
 
                             <Border Background="Gray" Width="16" Margin="-2,0,3,0"  Grid.Column="1">
-                                <TextBlock Text="{Binding Type, Converter={StaticResource CategoryTypeLetterConverter}}" Margin="2,0,2,0" FontWeight="DemiBold" FontStyle="Italic" FontSize="11" Foreground="White" TextAlignment="Center"/>
+                                <TextBlock Text="{Binding Type, Converter={StaticResource CategoryTypeLetterConverter}}" Margin="2,0,2,0" 
+                                           FontWeight="DemiBold" FontStyle="Italic" FontSize="11" 
+                                           Foreground="{DynamicResource ListItemForegroundBrush}" 
+                                           TextAlignment="Center"/>
                             </Border>
 
                         </Grid>

@@ -9,7 +9,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for CategoryTransferDialog.xaml
     /// </summary>
-    public partial class RecategorizeDialog : Window
+    public partial class RecategorizeDialog : BaseDialog
     {
         MyMoney myMoney;
         Category from;
@@ -39,7 +39,7 @@ namespace Walkabout.Dialogs
         public Category FromCategory
         {
             get { return from; }
-            set { from = value; ComboFromCategory.Text = value.GetFullName(); }
+            set { from = value; ComboFromCategory.Text = value?.GetFullName(); }
         }
 
         public Category ToCategory

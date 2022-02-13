@@ -16,7 +16,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for PickYearDialog.xaml
     /// </summary>
-    public partial class PickYearDialog : Window
+    public partial class PickYearDialog : BaseDialog
     {
         public PickYearDialog()
         {
