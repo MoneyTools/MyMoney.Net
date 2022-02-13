@@ -403,17 +403,20 @@ namespace Walkabout.Views.Controls
 
         void SetColor(FrameworkElement e, decimal d)
         {
+            Brush brush = d >= 0 ? AppTheme.Instance.GetThemedBrush("PositiveCurrencyForegroundBrush") :
+                AppTheme.Instance.GetThemedBrush("NegativeCurrencyForegroundBrush");
+
             Control c = e as Control;
             if (c != null)
             {
-                c.Foreground = (d >= 0) ? Brushes.Black : Brushes.Red;
+                c.Foreground = brush;
             }
             else
             {
                 TextBlock t = e as TextBlock;
                 if (t != null)
                 {
-                    t.Foreground = (d >= 0) ? Brushes.Black : Brushes.Red;
+                    t.Foreground = brush;
                 }
             }
 

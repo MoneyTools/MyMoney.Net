@@ -208,21 +208,6 @@
     </Style>
 
 
-    <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type TextBox}">
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="controls:CalculatorPopup.CalculatorEnabled" Value="True" />
-        <Style.Triggers>
-            <Trigger Property="Validation.HasError" Value="True">
-                <Setter Property="Background" Value="Red"/>
-                <Setter Property="ToolTip" 
-                          Value="{Binding RelativeSource={RelativeSource Self},
-                          Path=(Validation.Errors)[0].ErrorContent}"/>
-            </Trigger>
-        </Style.Triggers>
-
-    </Style>
-
     <Style x:Key="DataTextBlockStyle" TargetType="{x:Type TextBlock}">
         <Style.Triggers>
             <Trigger Property="Validation.HasError" Value="True">

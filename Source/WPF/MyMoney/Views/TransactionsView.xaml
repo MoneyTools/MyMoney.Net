@@ -548,7 +548,7 @@
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=TransactionDropTarget}" Value="True">
                     <Setter Property="BorderBrush" Value="{StaticResource ValidDropTargetFeedbackBrush}"/>
-                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="BorderThickness" Value="2"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Path=TransactionDropTarget}" Value="False">
                     <Setter Property="BorderThickness" Value="0"/>

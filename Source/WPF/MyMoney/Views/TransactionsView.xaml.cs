@@ -1119,6 +1119,7 @@ namespace Walkabout.Views
         private void OnDataGridRowDragEnter(object sender, DragEventArgs e)
         {
             e.Effects = DragDropEffects.None;
+            e.Handled = true;
 
             DataGridRow row = (DataGridRow)sender;
             if (!row.IsEditing)
@@ -1146,21 +1147,10 @@ namespace Walkabout.Views
 
                         if (files.Length == 1 && IsValidAttachmentExtension(files[0]))
                         {
-                            proceed = true;
                             SetDragDropStyles(row, DropType.File);
                             e.Effects = DragDropEffects.Copy;
                         }
                     }
-
-                    if (!proceed)
-                    {
-                        e.Effects = DragDropEffects.None;
-                        e.Handled = true;
-                    }
-                }
-                else
-                {
-                    e.Handled = true;
                 }
             }
         }
@@ -5509,29 +5499,35 @@ namespace Walkabout.Views
              */
             bool isReconciling = false;
             bool isSelected = IsSelected;
-
             if (this.context != null)
             {
                 isReconciling = this.context.IsReconciling;
             }
+            Brush backgroundBrush = null;
             if (isSelected)
             {
                 if (mouseOver)
                 {
-                    this.SetResourceReference(Border.BackgroundProperty, "ListItemSelectedBackgroundMouseOverBrush");
+                    backgroundBrush = AppTheme.Instance.GetThemedBrush("ListItemSelectedBackgroundMouseOverBrush");
                 }
                 else
                 {
-                    this.SetResourceReference(Border.BackgroundProperty, "ListItemSelectedBackgroundBrush");
+                    backgroundBrush = AppTheme.Instance.GetThemedBrush("ListItemSelectedBackgroundBrush");
                 }
             }
             else if (isReconciling)
             {
+                backgroundBrush = AppTheme.Instance.GetThemedBrush("ListItemReconcilingBackgroundBrush");
             }
-            else
+            
+            if (backgroundBrush == null)
             {
                 // allow to go back to "AlternatingColor" mode.
                 this.ClearValue(Border.BackgroundProperty);
+            }
+            else
+            {
+                this.SetValue(Border.BackgroundProperty, backgroundBrush);
             }
         }
 
@@ -5561,44 +5557,46 @@ namespace Walkabout.Views
             bool isSelected = IsSelected;
             bool isDown = false;
             bool isReadOnly = false;
+            bool isUnaccepted = false;
 
             if (this.context != null)
             {
                 isDown = this.context.IsDown;
                 isReadOnly = this.context.IsReadOnly;
+                isUnaccepted = this.context.Unaccepted;
             }
+            string foregroundBrushName = "ListItemForegroundLowBrush";
+
             if (isReadOnly)
             {
-                this.SetValue(TextBlock.ForegroundProperty, Brushes.Gray);
-                if (cell != null)
-                {
-                    cell.SetValue(DataGridCell.ForegroundProperty, Brushes.Gray);
-                }
+                foregroundBrushName = "ListItemSelectedForegroundDisabledBrush";
             }
             else if (isDown)
             {
-                this.SetValue(TextBlock.ForegroundProperty, Brushes.Red);
-                if (cell != null)
-                {
-                    cell.SetValue(DataGridCell.ForegroundProperty, Brushes.Red);
-                }
+                foregroundBrushName = "ListItemSelectedForegroundNegativeBrush";
             }
             else if (isSelected)
             {
-                ClearValue(TextBlock.ForegroundProperty);
-                this.SetResourceReference(TextBlock.ForegroundProperty, "ListItemSelectedForegroundBrush");
-                if (cell != null)
+                if (isUnaccepted)
                 {
-                    cell.SetResourceReference(DataGridCell.ForegroundProperty, "ListItemSelectedForegroundBrush");
+                    foregroundBrushName = "ListItemSelectedForegroundBrush";
+                } 
+                else
+                {
+                    foregroundBrushName = "ListItemSelectedForegroundLowBrush";
                 }
             }
-            else
+            else if (isUnaccepted)
             {
-                this.SetResourceReference(TextBlock.ForegroundProperty, "ListItemForegroundBrush");
-                if (cell != null)
-                {
-                    cell.SetResourceReference(DataGridCell.ForegroundProperty, "ListItemForegroundBrush");
-                }
+                foregroundBrushName = "ListItemForegroundBrush";
+            }
+
+            // establish the new color.
+            var brush = AppTheme.Instance.GetThemedBrush(foregroundBrushName);
+            SetValue(TextBlock.ForegroundProperty, brush);
+            if (cell != null)
+            {
+                cell.SetValue(TextBlock.ForegroundProperty, brush);
             }
         }
 
@@ -5646,7 +5644,8 @@ namespace Walkabout.Views
                 {
                     if (this.context.AttachmentDropTarget)
                     {
-                        this.SetResourceReference(DataGridCell.BorderBrushProperty, "ValidDropTargetFeedbackBrush");
+                        var brush = AppTheme.Instance.GetThemedBrush("ValidDropTargetFeedbackBrush");
+                        this.SetValue(DataGridCell.BorderBrushProperty, brush);
                         this.BorderThickness = new Thickness(1);
                     }
                     else
