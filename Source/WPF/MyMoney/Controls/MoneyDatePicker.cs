@@ -23,7 +23,7 @@ namespace Walkabout.Controls
 
         public MoneyDatePicker()
         {
-            
+            this.SetResourceReference(StyleProperty, "DefaultDatePickerStyle");
         }
 
         private void AutoCompleteDate()

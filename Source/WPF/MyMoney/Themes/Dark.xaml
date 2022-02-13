@@ -16,6 +16,8 @@
     <Color x:Key="AreaChartColor7" >#185944</Color>
     <Color x:Key="AreaChartColor8" >#6B4841</Color>
 
+    <!-- MessageBox border -->
+    <SolidColorBrush x:Key="MessageBoxBorder" Color="{m:DynamicColor SystemAccentColor}"/>
 
     <!-- colors for list selection -->
     <SolidColorBrush x:Key="ListItemForegroundBrush" Color="White"/>

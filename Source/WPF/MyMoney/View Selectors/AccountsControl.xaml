@@ -99,9 +99,10 @@
              UseLayoutRounding="True"
              >
         <ListBox.ItemContainerStyle>
-            <Style TargetType="ListBoxItem">
+            <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="Padding" Value="10,5"/>
             </Style>
         </ListBox.ItemContainerStyle>
 

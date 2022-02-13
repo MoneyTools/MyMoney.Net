@@ -74,7 +74,8 @@
 
     <Grid Style="{DynamicResource SmoothFadeIn}" MouseLeftButtonDown="DragWindow">
 
-        <Border Margin="20,20,30,30" BorderBrush="DarkGray" CornerRadius="13" Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}" BorderThickness="2" >
+        <Border Margin="20,20,30,30" BorderBrush="{DynamicResource MessageBoxBorder}" CornerRadius="10" 
+                Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}" BorderThickness="1" >
             <Border.Effect>
                 <DropShadowEffect Direction="310" ShadowDepth="16" BlurRadius="12" RenderingBias="Performance" Opacity="0.5"/>
             </Border.Effect>
@@ -91,13 +92,13 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="40" />
                         </Grid.ColumnDefinitions>
 
 
-                        <Button x:Name="ImageHolder"  Margin="3,3,0,3" Height="34" Width="34"  Style="{StaticResource MessageBoxImage}" Focusable="False" IsHitTestVisible="False" HorizontalAlignment="Center" >
+                        <Button x:Name="ImageHolder"  Margin="10" Height="34" Width="34"  Style="{StaticResource MessageBoxImage}" Focusable="False" IsHitTestVisible="False" HorizontalAlignment="Center" >
                             <Button.Effect>
                                 <DropShadowEffect BlurRadius="7" Direction="300" Opacity="0.295" ShadowDepth="8" />
                             </Button.Effect>

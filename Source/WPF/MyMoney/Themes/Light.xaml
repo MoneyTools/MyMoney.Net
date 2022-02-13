@@ -16,17 +16,19 @@
     <Color x:Key="AreaChartColor7" >PaleGreen</Color>
     <Color x:Key="AreaChartColor8" >Wheat</Color>
 
-    
+    <!-- MessageBox border -->
+    <SolidColorBrush x:Key="MessageBoxBorder" Color="{m:DynamicColor SystemAccentColor}"/>
+
     <!-- colors for list selection -->
     <SolidColorBrush x:Key="ListItemForegroundBrush" Color="#1e1e1e"/>
     <SolidColorBrush x:Key="ListItemForegroundLowBrush" Color="black"/>
     <SolidColorBrush x:Key="ListItemSelectedForegroundDisabledBrush" Color="Gray"/>
     <SolidColorBrush x:Key="ListItemSelectedForegroundNegativeBrush" Color="Red"/>
-    <SolidColorBrush x:Key="ListItemSelectedForegroundBrush" Color="white"/>
-    <SolidColorBrush x:Key="ListItemSelectedForegroundLowBrush" Color="#F0F0F0"/>
+    <SolidColorBrush x:Key="ListItemSelectedForegroundBrush" Color="#1e1e1e"/>
+    <SolidColorBrush x:Key="ListItemSelectedForegroundLowBrush" Color="black"/>
     
     <SolidColorBrush x:Key="ListItemSelectedBackgroundBrush" Color="{m:DynamicColor SystemAccentColor}"  Opacity="0.6"/>
-    <SolidColorBrush x:Key="ListItemSelectedBackgroundMouseOverBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.8"/>
+    <SolidColorBrush x:Key="ListItemSelectedBackgroundMouseOverBrush" Color="{m:DynamicColor SystemAccentColor}"  Opacity="0.8"/>
     <SolidColorBrush x:Key="ListItemSelectedBorderBrush" Color="Transparent"/>
     <SolidColorBrush x:Key="ListItemSelectedHoverBrush" Color="#F0F0F0"/>
     <SolidColorBrush x:Key="ListItemReconcilingBackgroundBrush" Color="#A0419441"/>

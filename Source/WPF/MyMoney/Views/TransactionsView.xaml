@@ -180,19 +180,21 @@
             </Setter>
         </Style>
 
-        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}">
+        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
             <Setter Property="IsEditable" Value="True"/>
             <Setter Property="StaysOpenOnEdit" Value="True"/>
             <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
         </Style>
-        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}">
+        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}"  BasedOn="{StaticResource DefaultTextBoxStyle}">
             <Setter Property="Padding" Value="0"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
         </Style>
 
-        <Style x:Key="ButtonStyleSplitAmount" TargetType="{x:Type Button}">
+        <Style x:Key="ButtonStyleSplitAmount" TargetType="{x:Type Button}"  BasedOn="{StaticResource DefaultButtonStyle}">
             <Setter Property="VerticalAlignment" Value="Top"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -609,7 +611,8 @@
                     <StackPanel Orientation="Horizontal">
 
                         <!-- COMBO BOX STATE FILTERS -->
-                        <ComboBox x:Name="TransactionViewMode"  SelectionChanged="ComboBox_SelectionChanged" Width="140">
+                        <ComboBox x:Name="TransactionViewMode" Margin="5,0,0,0" SelectionChanged="ComboBox_SelectionChanged" Width="140"
+                                  VerticalAlignment="Center" >
                             <ComboBoxItem x:Name="FilterByNothing" >
                                 <TextBlock Text="All" />
                             </ComboBoxItem>
@@ -637,17 +640,17 @@
                         </ComboBox>
 
                         <!-- Toggle view for OneLine -->
-                        <Button x:Name="ToggleShowLines" Margin="10,0,0,0"  VerticalAlignment="Center" ToolTip="Toggle One Line View (Ctrl-T)" Click="OnToggleLines" >
+                        <Button x:Name="ToggleShowLines" Margin="5,2,0,2"  VerticalAlignment="Center" ToolTip="Toggle One Line View (Ctrl-T)" Click="OnToggleLines" >
                             <ui:SymbolIcon Symbol="ShowResults" x:Name="ToggleShowLinesImage" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Button>
 
                         <!-- Toggle view for Show splits -->
-                        <Button x:Name="ToggleShowSplits" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show All Splits (Alt-T)" Click="OnToggleShowSplits" >
+                        <Button x:Name="ToggleShowSplits" VerticalAlignment="Center" Margin="5,2,0,2" ToolTip="Show All Splits (Alt-T)" Click="OnToggleShowSplits" >
                             <ui:SymbolIcon Symbol="ShowBcc" x:Name="ToggleShowSplitsImage" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Button>
 
                         <!-- Toggle view for expand all in portfolio view -->
-                        <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Width="26" Height="26" Margin="5,0,0,0" ToolTip="Show Details" Checked="OnToggleShowSecurities_Checked" Unchecked="OnToggleShowSecurities_Unchecked" >
+                        <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Width="26" Height="26" Margin="5,2,0,2" ToolTip="Show Details" Checked="OnToggleShowSecurities_Checked" Unchecked="OnToggleShowSecurities_Unchecked" >
                             <Image x:Name="ToggleExpandAllImage" Source="{DynamicResource ExpandAllIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" />
                         </ToggleButton>
                     </StackPanel>

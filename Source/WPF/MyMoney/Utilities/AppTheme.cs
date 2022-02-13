@@ -36,10 +36,14 @@ namespace Walkabout.Utilities
                 try
                 {
                     ResourceDictionary theme = (ResourceDictionary)Application.LoadComponent(themeUri);
-                    if (_theme != null){
+                    Application.Current.Resources.MergedDictionaries.Add(theme);
+                    if (_theme != null)
+                    {
+                        // Note: must remove the old theme AFTER adding the new one because some update
+                        // events trigger when removing this theme and we don't want that code to hit
+                        // brush not found exceptions.
                         Application.Current.Resources.MergedDictionaries.Remove(_theme);
                     }
-                    Application.Current.Resources.MergedDictionaries.Add(theme);
                     _theme = theme;
                     _name = name;
                     UpdateDynamicBrushes();
@@ -94,7 +98,7 @@ namespace Walkabout.Utilities
             if (brush is SolidColorBrush solid)
             {
                 // make sure it's not frozen!
-                SolidColorBrush clone = new SolidColorBrush() { Color = solid.Color };
+                SolidColorBrush clone = new SolidColorBrush() { Color = solid.Color, Opacity = solid.Opacity };
                 this.dynamicBrushes[name] = clone;
                 return clone;
             }
