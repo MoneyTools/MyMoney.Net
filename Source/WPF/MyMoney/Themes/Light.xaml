@@ -69,20 +69,4 @@
     <SolidColorBrush x:Key="TransactionConnectorButtonMouseOverBackground" Color="white" />
 
 
-    <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Foreground" Value="black"/>
-        <Setter Property="controls:CalculatorPopup.CalculatorEnabled" Value="True" />
-        <Style.Triggers>
-            <Trigger Property="Validation.HasError" Value="True">
-                <Setter Property="Background" Value="Red"/>
-                <Setter Property="ToolTip" 
-                          Value="{Binding RelativeSource={RelativeSource Self},
-                          Path=(Validation.Errors)[0].ErrorContent}"/>
-            </Trigger>
-        </Style.Triggers>
-
-    </Style>
-
 </ResourceDictionary>

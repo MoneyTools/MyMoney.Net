@@ -1139,7 +1139,6 @@ namespace Walkabout.Views
                 }
                 else if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
-                    var proceed = false;
                     var transaction = row.Item as Transaction;
                     if (transaction != null && transaction.HasAttachment == false)
                     {

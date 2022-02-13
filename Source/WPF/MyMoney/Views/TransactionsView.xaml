@@ -195,34 +195,36 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
         </Style>
 
-        <Style x:Key="ButtonStyleSplitAmount" TargetType="{x:Type Button}"  BasedOn="{StaticResource DefaultButtonStyle}">
+        <Style x:Key="ButtonStyleSplitAmount" TargetType="{x:Type Button}" >
             <Setter Property="VerticalAlignment" Value="Top"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="SnapsToDevicePixels" Value="true"/>
             <Setter Property="Content" Value="{Binding Path=Splits.Count}"/>
             <Setter Property="Margin" Value="-7,3,0,0"/>
             <Setter Property="Foreground" Value="{StaticResource ButtonForeground}" />
-            <Setter Property="Height" Value="13"/>
+            <Setter Property="Height" Value="15"/>
             <Setter Property="Width" Value="Auto"/>
             <Setter Property="MinWidth" Value="13"/>
-            <Setter Property="FontSize" Value="8"/>
+            <Setter Property="FontSize" Value="9"/>
             <Setter Property="ToolTip" Value="Show or edit the splits for this transaction"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Grid SnapsToDevicePixels="True">
                             <Path   Name="ThePath"
-                                    Fill="Gray" Stretch="Fill" Stroke="{Binding Splits.Unassigned, Converter={StaticResource ZeroToBrushConverter }}"
-                                    Data="M0,0 L10,0 10,5 5,8 0,5z" StrokeThickness="0.5"
+                                    Fill="Gray" Stretch="Fill" Stroke="{DynamicResource GridNormalBackgroundBrush}"
+                                    Data="M0,0 L15,0 15,11 7.5,15 0,10z" StrokeThickness="0.5"
                                     StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeDashCap="Round" />
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Top"  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" RecognizesAccessKey="True"/>
                         </Grid>
                         <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Splits.HasUnassigned}" Value="True"  >
+                                <Setter TargetName="ThePath" Property="Stroke" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
+                            </DataTrigger>
                             <Trigger Property="IsFocused" Value="True"/>
                             <Trigger Property="IsDefaulted" Value="True"/>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground" Value="{StaticResource ButtonForegroundPointerOver}" />
-                                <Setter Property="Fill" Value="{StaticResource ButtonBackgroundPointerOver}" TargetName="ThePath"/>
+                                <Setter Property="Fill" Value="{StaticResource ListItemSelectedBackgroundMouseOverBrush}" TargetName="ThePath"/>
                                 <Setter Property="Effect" TargetName="ThePath" >
                                     <Setter.Value>
                                         <DropShadowEffect ShadowDepth="1" />
@@ -231,7 +233,7 @@
                             </Trigger>
 
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Fill" Value="{StaticResource ButtonBackgroundPressed}" TargetName="ThePath"/>
+                                <Setter Property="Fill" Value="{StaticResource ListItemSelectedBackgroundBrush}" TargetName="ThePath"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False"/>
                         </ControlTemplate.Triggers>
@@ -421,7 +423,7 @@
         -->
         <DataTemplate x:Key="myDataGridDetailMiniView">
             <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent">
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Vertical">
                     <ListBox x:Name="TheMiniListForAmountSplit" 
                              BorderThickness="0"
                              IsEnabled="False"
@@ -430,7 +432,7 @@
                              ItemsSource="{Binding Path=NonNullSplits.ObservableCollection}">
 
                         <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
+                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
                                 <Setter Property="Height" Value="22" />
                             </Style>
                         </ListBox.ItemContainerStyle>
@@ -445,7 +447,10 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <TextBlock Text="{Binding Path=NonNullSplits.TotalSplitAmount, StringFormat={}{0:N}}" Width="60"  FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center" TextAlignment="Right" IsEnabled="False"/>
+                    <TextBlock Text="{Binding Path=NonNullSplits.TotalSplitAmount, StringFormat={}{0:N}}" Width="60"  
+                               Foreground="{DynamicResource ListItemForegroundBrush}"
+                               FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center" TextAlignment="Right" 
+                               />
                 </StackPanel>
             </Border>
         </DataTemplate>

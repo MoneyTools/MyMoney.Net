@@ -9,6 +9,35 @@
                     xmlns:ui="http://schemas.modernwpf.com/2019"
                     >
 
+    <!-- PORTED TO MODERN WPF -->
+
+    <Style x:Key="MainBorderForSplitterViewStyle" TargetType="{x:Type Border}">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="3"/>
+        <Setter Property="Background" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Opacity="0.5" ShadowDepth="10" BlurRadius="13" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Foreground" Value="white"/>
+        <Setter Property="controls:CalculatorPopup.CalculatorEnabled" Value="True" />
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="True">
+                <Setter Property="Background" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
+                <Setter Property="ToolTip" 
+                          Value="{Binding RelativeSource={RelativeSource Self},
+                          Path=(Validation.Errors)[0].ErrorContent}"/>
+            </Trigger>
+        </Style.Triggers>
+
+    </Style>
 
     <!-- CONVERTERS -->
     <local:CategoryToBrush x:Key="CategoryToBrush" />
@@ -16,8 +45,6 @@
     <c:DecimalToDecimalConverter x:Key="DecimalToDecimalConverter" />
     <c:NullOrEmptyStringToVisible x:Key="NullOrEmptyStringToVisible" />
     <c:CategoryTypeLetterConverter x:Key="CategoryTypeLetterConverter"/>
-
-    <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#FF636363"/>
 
     <sys:Double x:Key="DataGridRowMinHeight">32</sys:Double>
     <sys:String x:Key="SortIconAscending">&#xE74A;</sys:String>
@@ -177,6 +204,8 @@
     <!-- ============================================================================================= -->
     <!-- Everything above this point has been Modernized and tested to work with Light and Dark themes -->
     <!-- ============================================================================================= -->
+
+    <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#FF636363"/>
 
     <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="Black"/>
     <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="#F6F4F2"/>
@@ -664,18 +693,6 @@
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
     </DrawingGroup>
-
-    <Style x:Key="MainBorderForSplitterViewStyle" TargetType="{x:Type Border}">
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="3"/>
-        <Setter Property="BorderBrush" Value="Gray"/>
-        <Setter Property="Background" Value="White"/>
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect Opacity="0.5" ShadowDepth="10" BlurRadius="13"/>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <DrawingImage x:Key="SplitIcon" >
         <DrawingImage.Drawing>

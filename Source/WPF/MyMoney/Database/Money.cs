@@ -11832,6 +11832,11 @@ namespace Walkabout.Data
             }
         }
 
+        public bool HasUnassigned
+        {
+            get {  return this.unassigned != 0; }
+        }
+
         public decimal Unassigned
         {
             get
