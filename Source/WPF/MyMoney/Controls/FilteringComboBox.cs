@@ -32,8 +32,6 @@ namespace Walkabout.Controls
         public override void OnApplyTemplate()
         {            
             base.OnApplyTemplate();
-            this.SetValue(ForegroundProperty, AppTheme.Instance.GetThemedBrush("SystemControlPageTextBaseHighBrush"));
-            this.SetValue(BackgroundProperty, AppTheme.Instance.GetThemedBrush("SystemControlPageBackgroundChromeLowBrush"));
             TextBox edit = this.Template.FindName("PART_EditableTextBox", this) as TextBox;
             if (edit != null)
             {

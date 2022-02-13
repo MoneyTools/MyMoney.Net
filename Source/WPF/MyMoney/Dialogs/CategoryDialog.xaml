@@ -4,118 +4,98 @@
         xmlns:local2="clr-namespace:Walkabout.Controls"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-        Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
-        Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
         Title="Category"  
-        ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False"
-        SizeToContent="Height"
         WindowStartupLocation="CenterOwner" 
         WindowStyle="ToolWindow"
-        Width="350" 
-        mc:Ignorable="d" >
+        SizeToContent="WidthAndHeight">
     <local:BaseDialog.Resources>
-        <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="HorizontalAlignment" Value="Right" />
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
-        </Style>
-        <Style TargetType="{x:Type Label}">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Right" />
-            <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
-        </Style>
-        <Style TargetType="{x:Type TextBox}">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="true">
-                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style TargetType="{x:Type ComboBox}">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
-        </Style>
-        <Style TargetType="{x:Type StackPanel}">
-            <Setter Property="Orientation" Value="Horizontal" />
-            <Setter Property="HorizontalAlignment" Value="Right" />
-            <Setter Property="Margin" Value="10" />
+        <Style TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
     </local:BaseDialog.Resources>
 
-    <DockPanel>
-        <Border DockPanel.Dock="Top" Margin="10">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+    <StackPanel Margin="20" Orientation="Vertical">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="200"/>
+            </Grid.ColumnDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <!-- 0 Message-->
+                <RowDefinition Height="Auto" />
+                <!-- 1 Category -->
+                <RowDefinition Height="Auto" />
+                <!-- 2 Type -->
+                <RowDefinition Height="Auto" />
+                <!-- 3 Color -->
+                <RowDefinition Height="Auto" />
+                <!-- 4 Taxe Category -->
+                <RowDefinition Height="Auto" />
+                <!-- 5 Description -->
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-                <!-- MESSAGE -->
-                <TextBlock Name="labelMessage" Margin="10" HorizontalAlignment="Left" Text="This is a test of the message label field." Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" TextWrapping="Wrap" 
-                           Foreground="{DynamicResource SystemAccentColorLight1Brush}"/>
+            <!-- MESSAGE -->
+            <TextBlock Name="labelMessage" Margin="10" HorizontalAlignment="Left" Text="This is a test of the message label field." Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" TextWrapping="Wrap" Foreground="{DynamicResource SystemAccentColorLight1Brush}"/>
 
-                <!-- Category -->
-                <Label Grid.Column="0" Grid.Row="1" >_Category:</Label>
-                <ComboBox x:Name="comboBoxCategory" Grid.Column="1" Grid.Row="1" Margin="10"  IsEditable="True" SelectionChanged="comboBoxCategory_SelectionChanged" />
+            <!-- Category -->
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="Category:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <ComboBox x:Name="comboBoxCategory" Grid.Column="1" Grid.Row="1" IsEditable="True" SelectionChanged="comboBoxCategory_SelectionChanged" IsTextSearchCaseSensitive="True" Margin="10" MinWidth="200"/>
 
-                <!-- Type -->
-                <Label Grid.Column="0" Grid.Row="2" >_Type:</Label>
-                <ComboBox MinWidth="100" x:Name="comboBoxType" Margin="10"  Grid.Column="1" Grid.Row="2" SelectionChanged="comboBoxType_SelectionChanged" />
+            <!-- Type -->
+            <TextBlock Grid.Column="0" Grid.Row="2" Text="Type:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <ComboBox x:Name="comboBoxType" Grid.Column="1" Grid.Row="2" IsTextSearchCaseSensitive="True" Margin="10" MinWidth="200"/>
 
-                <Label Grid.Column="0" Grid.Row="3" >Color:</Label>
-                <local2:DropDownButton VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10"  Grid.Column="1" Grid.Row="3" x:Name="ColorDropDown">
-                    <local2:DropDownButton.Popup>
-                        <Popup Width="300" Height="300" >
-                            <local2:ColorPickerPanel Background="White" BorderBrush="Gray" BorderThickness="1" ColorChanged="ColorPickerPanel_ColorChanged" Focusable="true"/>
-                        </Popup>
-                    </local2:DropDownButton.Popup>
-                    <Rectangle Width="30" Height="20">
-                    </Rectangle>
-                </local2:DropDownButton>
+            <!-- Color -->
+            <TextBlock Grid.Column="0" Grid.Row="3" Text="Color:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <local2:DropDownButton VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="3" x:Name="ColorDropDown" Margin="10">
+                <local2:DropDownButton.Popup>
+                    <Popup MinWidth="300" Height="300" >
+                        <local2:ColorPickerPanel Background="White" BorderBrush="Gray" BorderThickness="1" ColorChanged="ColorPickerPanel_ColorChanged" Focusable="true"/>
+                    </Popup>
+                </local2:DropDownButton.Popup>
+                <Rectangle Width="30" Height="20">
+                </Rectangle>
+            </local2:DropDownButton>
 
-                <!-- Tax association-->
-                <Label Grid.Column="0" Grid.Row="4">Tax Category:</Label>
+            <!-- Tax association-->
+            <TextBlock Grid.Column="0" Grid.Row="4" Text="Tax Category:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <local2:FilteringComboBox 
+                x:Name="comboTaxCategory" 
+                Grid.Column="1" 
+                Grid.Row="4" 
+                Margin="10" 
+                MinHeight="24" 
+                MinWidth="200"
+                ItemContainerStyle="{StaticResource ComboBoxItemTaxCategory}"
+                FilterChanged="ComboBoxForTaxCategory_FilterChanged" 
+                Padding="0" 
+                MaxDropDownHeight="450"
+                IsEditable="True" StaysOpenOnEdit="True" 
+                IsTextSearchCaseSensitive="False">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </local2:FilteringComboBox>
 
-                <local2:FilteringComboBox  x:Name="comboTaxCategory" Grid.Column="1" Grid.Row="4"  Margin="10" MinHeight="24"
-                        ItemContainerStyle="{StaticResource ComboBoxItemTaxCategory}"
-                        FilterChanged="ComboBoxForTaxCategory_FilterChanged" Padding="0" MaxDropDownHeight="450"
-                        IsEditable="True" StaysOpenOnEdit="True" IsTextSearchCaseSensitive="False">
-                    <ComboBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel />
-                        </ItemsPanelTemplate>
-                    </ComboBox.ItemsPanel>
-                </local2:FilteringComboBox>
+            <!-- Description -->
+            <TextBlock Grid.Column="0" Grid.Row="5" Text="Description:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBox Name="textBoxDescription"  Grid.Column="1"  Grid.Row="5" Height="80" Margin="10"/>
 
-                <!-- Description -->
-                <Label Grid.Column="0" Grid.Row="5" >Description:</Label>
+        </Grid >
 
-                <TextBox Name="textBoxDescription"  Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="5" Height="80"  Margin="10" />
-
-            </Grid >
-
-        </Border>
 
         <!-- OK or Cancel -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+        <StackPanel Margin="0,14,0,0" Orientation="Horizontal" HorizontalAlignment="Right" >
             <Button Name="okButton" Width="72" Margin="12,0,0,0" IsDefault="True">OK</Button>
             <Button Name="cancelButton" Width="72" Margin="12,0,0,0" IsCancel="True">Cancel</Button>
         </StackPanel>
-    </DockPanel>
+    </StackPanel>
 </local:BaseDialog>
