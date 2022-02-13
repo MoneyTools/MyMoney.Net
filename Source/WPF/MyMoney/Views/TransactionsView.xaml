@@ -422,35 +422,39 @@
         DETAIL MINI VIEW 
         -->
         <DataTemplate x:Key="myDataGridDetailMiniView">
-            <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent">
+            <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent"
+                    BorderBrush="{DynamicResource ListItemForegroundLowBrush}" BorderThickness="1" CornerRadius="5" Margin="10">
+                <Border.Resources>
+                </Border.Resources>
                 <StackPanel Orientation="Vertical">
-                    <ListBox x:Name="TheMiniListForAmountSplit" 
+                    <ListView x:Name="TheMiniListForAmountSplit" 
                              BorderThickness="0"
                              IsEnabled="False"
                              Padding="0"                             
                              Margin="0"
                              ItemsSource="{Binding Path=NonNullSplits.ObservableCollection}">
-
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="Height" Value="22" />
+                        <ListView.Resources>
+                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                <Setter Property="Visibility" Value="Collapsed" />
                             </Style>
-                        </ListBox.ItemContainerStyle>
-
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Width="200" Text="{Binding Payee}" TextAlignment="Left"/>
-                                    <TextBlock Width="350" Text="{Binding Category}" TextAlignment="Left"/>
-                                    <TextBlock Width="60" Text="{Binding Amount, StringFormat={}{0:N}}" TextAlignment="Right"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <TextBlock Text="{Binding Path=NonNullSplits.TotalSplitAmount, StringFormat={}{0:N}}" Width="60"  
-                               Foreground="{DynamicResource ListItemForegroundBrush}"
-                               FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center" TextAlignment="Right" 
-                               />
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundLowBrush}" />
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="Auto" x:Name="Payee" DisplayMemberBinding="{Binding Path=PayeeName}"/>
+                                <GridViewColumn Width="Auto" x:Name="Category" DisplayMemberBinding="{Binding Path=Category}"/>
+                                <GridViewColumn Width="Auto" x:Name="Amount" DisplayMemberBinding="{Binding Amount, StringFormat={}{0:N}}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <StackPanel Orientation="Horizontal" x:Name="UnassignedGrid" Margin="24,10"
+                                Visibility="{Binding Splits.HasUnassigned, Converter={StaticResource TrueToVisible}}"
+                                TextBlock.Foreground="{DynamicResource NegativeCurrencyForegroundBrush}">
+                        <TextBlock Text="Unassigned amount: " />
+                        <TextBlock Text="{Binding Path=NonNullSplits.TotalSplitAmount, StringFormat={}{0:N}}" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </DataTemplate>
