@@ -16,6 +16,9 @@
     <Color x:Key="AreaChartColor7" >#185944</Color>
     <Color x:Key="AreaChartColor8" >#6B4841</Color>
 
+    <Color x:Key="GridNormalBackgroundColor">#2e2e2e</Color>
+    <Color x:Key="GridAlternateBackgroundColor">#1e1e1e</Color>
+
     <!-- MessageBox border -->
     <SolidColorBrush x:Key="MessageBoxBorder" Color="{m:DynamicColor SystemAccentColor}"/>
 
@@ -31,10 +34,10 @@
     <SolidColorBrush x:Key="ListItemSelectedBackgroundMouseOverBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.8"/>
     <SolidColorBrush x:Key="ListItemSelectedBorderBrush" Color="Transparent"/>
     <SolidColorBrush x:Key="ListItemSelectedHoverBrush" Color="#3e3e3e"/>
-    <SolidColorBrush x:Key="ListItemReconcilingBackgroundBrush" Color="#A0275627"/> 
+    <SolidColorBrush x:Key="ListItemReconcilingBackgroundBrush" Color="#A0275627"/>
 
-    <SolidColorBrush x:Key="GridNormalBackgroundBrush" Color="#2e2e2e"/>
-    <SolidColorBrush x:Key="GridAlternateBackgroundBrush" Color="#1e1e1e"/>
+    <SolidColorBrush x:Key="GridNormalBackgroundBrush" Color="{StaticResource GridNormalBackgroundColor}"/>
+    <SolidColorBrush x:Key="GridAlternateBackgroundBrush" Color="{StaticResource GridAlternateBackgroundColor}"/>
     <SolidColorBrush x:Key="GridLineBrush" Color="Gray"/>
 
     <!-- color in accounts and categories balance fields -->
@@ -42,7 +45,7 @@
     <SolidColorBrush x:Key="NegativeCurrencyForegroundBrush" Color="Firebrick"/>
 
     <!-- The following are used in toolbar icons -->
-    <SolidColorBrush x:Key="ToolbarIconBrush" Color="#1C3B91"/>
+    <SolidColorBrush x:Key="ToolbarIconBrush" Color="#99FFFFFF"/>
 
     <!-- for hyperlinks in reports -->
     <SolidColorBrush x:Key="HyperlinkForeground" Color="#00A7FF"/>

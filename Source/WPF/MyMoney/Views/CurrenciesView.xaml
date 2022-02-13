@@ -26,14 +26,6 @@
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
         </Style>
 
-        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}">
-            <Setter Property="IsEditable" Value="True"/>
-            <Setter Property="StaysOpenOnEdit" Value="True"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
-        </Style>
-
         <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}">
             <Setter Property="Padding" Value="0"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -144,57 +136,6 @@
 
 
         <views:ValidationErrorGetErrorMessageConverter x:Key="ValidationErrorGetErrorMessageConverter" />
-
-        <c:TrueToVisible x:Key="TrueToVisible" />
-
-        <ControlTemplate x:Key="RowValidationErrorTemplate">
-            <Grid ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}},
-                        Path=(Validation.Errors),
-                        Converter={StaticResource ValidationErrorGetErrorMessageConverter}}" 
-                   Background="Yellow" Margin="-1,-1,-1,-1">
-                <Image Width="16" Height="16" Source="/MyMoney;component/Icons/Error.png" 
-                       
-                      />
-            </Grid>
-        </ControlTemplate>
-
-
-
-
-
-
-        <!-- DATE -->
-        <DataTemplate x:Key="myTemplateDate">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding Date,StringFormat={}{0:d}}" MinWidth="100" VerticalAlignment="Top"/>
-            </Border>
-        </DataTemplate>
-
-        <DataTemplate x:Key="myTemplateDateEdit">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <local:MoneyDatePicker SelectedDate="{Binding Date}" SelectedDateFormat="Short" MinWidth="100" VerticalAlignment="Top"/>
-            </Border>
-        </DataTemplate>
-
-
-        <!-- Numerator -->
-        <DataTemplate x:Key="myTemplateNumerator">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding Numerator,StringFormat={}{0:N}}" TextAlignment="Right" VerticalAlignment="Top"/>
-            </Border>
-        </DataTemplate>
-
-        <DataTemplate x:Key="myTemplateNumeratorEdit">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Numerator, StringFormat={}{0:N}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" VerticalAlignment="Top"/>
-            </Border>
-        </DataTemplate>
-
-
 
 
     </UserControl.Resources>

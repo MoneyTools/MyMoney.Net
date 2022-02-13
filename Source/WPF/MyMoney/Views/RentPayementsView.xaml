@@ -37,28 +37,6 @@
                         ConverterParameter=True}" />
         </Style>
 
-        <DataTemplate x:Key="myCellTemplateMonth">
-            <Grid>
-                <TextBlock TextAlignment="Left" Text="{Binding Month}"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="myCellTemplateMoney">
-            <Grid>
-                <TextBlock Text="{Binding Amount, StringFormat={}{0:C} }" TextAlignment="Right" Style="{StaticResource GridBlockStyle}"/>
-                <TextBox Text="{Binding Amount, Mode=TwoWay}" Style="{StaticResource GridEditStyle}" />
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="myCellTemplateAppartment">
-            <Grid>
-                <TextBlock TextAlignment="Right" Text="{Binding Appartment}"/>
-            </Grid>
-        </DataTemplate>
-
-
-
-
         <!-- GROUPING LOGIC for the LISTVIEW -->
         <CollectionViewSource x:Key="MyGroupView" Source="{Binding}">
             <CollectionViewSource.SortDescriptions>

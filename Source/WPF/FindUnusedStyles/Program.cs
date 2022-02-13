@@ -331,7 +331,10 @@ namespace FindUnusedStyles
 
             if (key != null || targetType != null)
             {
-                styles.AddStyle(filePath, key, targetType, root);
+                if (root.Name.LocalName != "ControlTemplate")
+                {
+                    styles.AddStyle(filePath, key, targetType, root);
+                }
             }
 
             // Check for any nested styles first.
@@ -406,6 +409,8 @@ namespace FindUnusedStyles
             var local = new NamespaceScope(scope);
             AddNamespaces(root, local);
 
+            string codeRef = null;
+
             foreach (var a in root.Attributes())
             {
                 if (a.Name.LocalName == "TargetType")
@@ -422,22 +427,7 @@ namespace FindUnusedStyles
                 }
                 else if (a.Name.LocalName.Contains("CodeRef"))
                 {
-                    // ah then this style is referenced from code, so record that fact
-                    XName reference = a.Value;
-                    var style = styles.FindStyle(null, reference);
-                    if (style == null)
-                    {
-                        // might have been a TargetTyped resource
-                        XName targetType = styles.FindTargetType(reference);
-                        if (targetType != null)
-                        {
-                            style = styles.FindStyle(targetType, reference);
-                        }
-                        if (style == null)
-                        {
-                            Program.WriteError("CodeRef {0} not found", reference.ToString());
-                        }
-                    }
+                    codeRef = a.Value;
                 }
                 else if (a.Name.LocalName != "xmlns" && a.Name.Namespace != XmlNsUri)
                 {
@@ -458,6 +448,29 @@ namespace FindUnusedStyles
                         styles = localStyles;
                     }
                     FindStyles(fileName, e, local, localStyles);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(codeRef))
+            {
+                // ah then the named styles are referenced from code, so record that fact
+                foreach (var part in codeRef.Split(','))
+                {
+                    XName reference = part.Trim();
+                    var style = styles.FindStyle(null, reference);
+                    if (style == null)
+                    {
+                        // might have been a TargetTyped resource
+                        XName targetType = styles.FindTargetType(reference);
+                        if (targetType != null)
+                        {
+                            style = styles.FindStyle(targetType, reference);
+                        }
+                        if (style == null)
+                        {
+                            Program.WriteError("CodeRef {0} not found", reference.ToString());
+                        }
+                    }
                 }
             }
 
@@ -487,7 +500,7 @@ namespace FindUnusedStyles
                 value = value.Trim(BindingChars);
                 string[] parts = value.Split(WhitespaceChars, StringSplitOptions.RemoveEmptyEntries);
                 var name = QualifyName(parts[0], local);
-                if (name == "DynamicResource" || name == "StaticResource" || name == "{http://schemas.microsoft.com/winfx/2006/xaml}Static")
+                if (name == "DynamicResource" ||  name == "{http://schemas.modernwpf.com/2019}DynamicColor" || name == "StaticResource" || name == "{http://schemas.microsoft.com/winfx/2006/xaml}Static")
                 {
                     int i = value.IndexOfAny(WhitespaceChars);
                     if (i < 0)

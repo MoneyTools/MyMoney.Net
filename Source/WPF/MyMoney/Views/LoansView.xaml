@@ -8,7 +8,7 @@
     xmlns:c="clr-namespace:Walkabout.WpfConverters"
     xmlns:local="clr-namespace:Walkabout.Controls"
     xmlns:views="clr-namespace:Walkabout.Views"
-    xmlns:help="clr-namespace:Walkabout.Help"
+    xmlns:help="clr-namespace:Walkabout.Help"   
     help:HelpService.HelpKeyword="Loans"
     mc:Ignorable="d" 
     d:DesignHeight="300" d:DesignWidth="700">
@@ -16,39 +16,7 @@
     <UserControl.Resources>
 
         <!-- CONVERTERS -->
-        <c:BoolToVisibilityConverter x:Key="boolToVis" />
         <views:ZeroToOpacityConverter x:Key="ZeroToOpacityConverter"/>
-
-        <!--STYLE FOR COLUMNHEADER -->
-        <Style x:Key="ColumnHeaderStyleLeft" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="{DynamicResource GridNormalBackgroundBrush}"/>
-            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-        </Style>
-
-        <Style x:Key="ColumnHeaderStyleCenter"  TargetType="control:DataGridColumnHeader">
-            <Setter Property="Background" Value="{DynamicResource GridNormalBackgroundBrush}"/>
-            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        </Style>
-
-        <Style x:Key="ColumnHeaderStyleRight"  TargetType="control:DataGridColumnHeader">
-            <Setter Property="Background" Value="{DynamicResource GridNormalBackgroundBrush}"/>
-            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
-            <Setter Property="HorizontalContentAlignment" Value="Right"/>
-        </Style>
-
-        <Style TargetType="{x:Type FrameworkElement}" 
-				x:Key="GridEditStyle">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Visibility" 
-				Value="{Binding Path=IsSelected, 
-						RelativeSource={RelativeSource FindAncestor, 
-						AncestorType={x:Type ListViewItem}},
-						Converter={StaticResource boolToVis}, 
-						ConverterParameter=True}" />
-        </Style>
-
 
         <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
             <Setter Property="Background" Value="Transparent" />

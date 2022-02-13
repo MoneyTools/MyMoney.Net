@@ -265,18 +265,12 @@
             <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent">
 
                 <Border.Resources>
-                    <Style TargetType="{x:Type ListBox}">
-                        <Style.Resources>
-                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
-                        </Style.Resources>
-                    </Style>
-                    
                     <AlternationConverter x:Key="BackgroundConverter">
-                        <SolidColorBrush>#B0E6F2EC</SolidColorBrush>
-                        <SolidColorBrush>#E0D5EAE0</SolidColorBrush>
+                        <SolidColorBrush Color="{DynamicResource GridNormalBackgroundColor}"/>
+                        <SolidColorBrush Color="{DynamicResource GridAlternateBackgroundColor}"/>
                     </AlternationConverter>
 
-                    <Style x:Key="StockSplitAlternationItemStyle" TargetType="{x:Type ListBoxItem}">
+                    <Style x:Key="StockSplitAlternationItemStyle" TargetType="{x:Type ListViewItem}">
                         <Setter Property="Background" 
                             Value="{Binding RelativeSource={RelativeSource Self},
                             Path=(ItemsControl.AlternationIndex),
@@ -286,27 +280,40 @@
                 </Border.Resources>
 
                 <StackPanel Orientation="Horizontal">
-                    <ListBox x:Name="TheGridForStockSplit" 
+                    <ListView x:Name="TheGridForStockSplit" 
                              Background="Transparent" AlternationCount="2"
                              FontStyle="Italic"
                              BorderThickness="0"
                              IsEnabled="False"
-                             Padding="0"
-                             Margin="0"
+                             Padding="0"                             
+                             Margin="0"                              
                              ItemContainerStyle="{StaticResource StockSplitAlternationItemStyle}"
                              ItemsSource="{Binding Path=StockSplits}">
-
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" >
-                                    <TextBlock Width="100" Text="{Binding Date,StringFormat={}{0:d}}" TextAlignment="Left" FontSize="10" Margin="20,0,0,0"/>
-                                    <TextBlock MinWidth="50" Margin="10,0,0,0" Text="{Binding Numerator}" FontSize="10" HorizontalAlignment="Right" TextAlignment="Right"/>
-                                    <TextBlock Text=" for "/>
-                                    <TextBlock MinWidth="50" Margin="10,0,0,0" Text="{Binding Denominator}" FontSize="10"/>
-                                </StackPanel>
+                        <ListView.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundLowBrush}" />
+                            </Style>
+                            <DataTemplate x:Key="StaticForTextTemplate">
+                                <TextBlock Text="for"/>
                             </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                            <DataTemplate x:Key="StaticSpaceTemplate">
+                                
+                            </DataTemplate>
+                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </Style>
+                        </ListView.Resources>
+
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="30" CellTemplate="{StaticResource StaticSpaceTemplate}"/>
+                                <GridViewColumn Width="Auto" x:Name="Date" DisplayMemberBinding="{Binding Path=Date,StringFormat={}{0:d}}"/>
+                                <GridViewColumn Width="Auto" x:Name="Numerator" DisplayMemberBinding="{Binding Path=Numerator}"/>
+                                <GridViewColumn Width="Auto" x:Name="For" CellTemplate="{StaticResource StaticForTextTemplate}"/>
+                                <GridViewColumn Width="Auto" x:Name="Denominator" DisplayMemberBinding="{Binding Path=Denominator}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
                 </StackPanel>
 
             </Border>

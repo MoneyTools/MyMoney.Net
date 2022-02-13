@@ -554,8 +554,6 @@
                       Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[2].(Color)"/>
     </Storyboard>
 
-    <views:ZeroToBrushConverter x:Key="ZeroToBrushConverter" />
-
     <Style x:Key="RentalChartExpenseDistribution" TargetType="{x:Type Border}">
         <Setter Property="CornerRadius" Value="0"/>
         <Setter Property="BorderBrush" Value="Black"/>
@@ -739,52 +737,6 @@
                         </PathGeometry>
                     </GeometryDrawing.Geometry>
 
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingImage.Drawing>
-    </DrawingImage>
-
-    <DrawingImage x:Key="ThreeLines" >
-        <DrawingImage.Drawing>
-            <DrawingGroup >
-                <GeometryDrawing  >
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource ToolbarIconBrush}" Thickness="2" />
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <LineGeometry StartPoint="2,2" EndPoint="14,2" />
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing >
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource ToolbarIconBrush}" Thickness="2" />
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <LineGeometry StartPoint="2,8" EndPoint="14,8"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing >
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource ToolbarIconBrush}" Thickness="2" />
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <LineGeometry StartPoint="2,14" EndPoint="14,14"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingImage.Drawing>
-    </DrawingImage>
-
-    <DrawingImage x:Key="OneLine">
-        <DrawingImage.Drawing>
-            <DrawingGroup>
-                <GeometryDrawing >
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource ToolbarIconBrush}" Thickness="2" />
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <LineGeometry StartPoint="2,8" EndPoint="14,8"/>
-                    </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingImage.Drawing>

@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Walkabout.Views"
-             xmlns:c="clr-namespace:Walkabout.Controls"
+             xmlns:c="clr-namespace:Walkabout.Controls"             
+             xmlns:u="clr-namespace:Walkabout.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="600">
     <Grid x:Name="Grid">
@@ -72,7 +73,9 @@
                         FontSize="{Binding FontSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}"
                         Foreground="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}"
                         FontWeight="{Binding FontWeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}"
-                        FontStyle="{Binding FontStyle, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}" PagePadding="10"
+                        FontStyle="{Binding FontStyle, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}" 
+                        PagePadding="10"
+                        u:WpfAnnotations.CodeRef="Table, TableCell, RowHeaderStyle, RowFooterStyle, ReportHeadingStyle, ReportSubHeadingStyle, NumericStyle" 
                  >
                 <FlowDocument.Resources>
                     <Style TargetType="{x:Type Table}">

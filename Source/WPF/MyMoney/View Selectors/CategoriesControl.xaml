@@ -14,8 +14,6 @@
 
     <UserControl.Resources>
 
-        <c:MoneyColorConverter x:Key="MoneyColorConverter"/>
-
         <Style x:Key="EditBoxRename" TargetType="{x:Type TextBox}">
             <EventSetter Event="Loaded" Handler="OnTextEditorForRenaming_Loaded"/>
             <EventSetter Event="KeyDown" Handler="RenameEditBox_KeyDown"/>

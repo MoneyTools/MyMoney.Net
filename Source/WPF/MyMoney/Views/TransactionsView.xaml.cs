@@ -7483,27 +7483,6 @@ namespace Walkabout.Views
         }
     }
 
-
-
-    public class ZeroToBrushConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            decimal currentValue = (decimal)value;
-            if (currentValue == 0)
-            {
-                return Brushes.Gray;
-            }
-            return Brushes.Red;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            // Not a valid method to call
-            return 0;
-        }
-    }
-
     public class ValidationErrorGetErrorMessageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

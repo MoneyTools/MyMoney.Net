@@ -201,7 +201,7 @@
             <Setter Property="SnapsToDevicePixels" Value="true"/>
             <Setter Property="Content" Value="{Binding Path=Splits.Count}"/>
             <Setter Property="Margin" Value="-7,3,0,0"/>
-            <Setter Property="Foreground" Value="{StaticResource ButtonForeground}" />
+            <Setter Property="Foreground" Value="{StaticResource ListItemForegroundBrush}" />
             <Setter Property="Height" Value="15"/>
             <Setter Property="Width" Value="Auto"/>
             <Setter Property="MinWidth" Value="13"/>
