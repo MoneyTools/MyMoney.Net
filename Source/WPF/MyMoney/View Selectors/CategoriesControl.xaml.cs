@@ -845,7 +845,14 @@ namespace Walkabout.Views.Controls
         {
             try
             {
-                MoveCategory(source as Category, target as Category);
+                if (dropEffect == DragDropEffects.Move)
+                {
+                    MoveCategory(source as Category, target as Category);
+                }
+                else
+                {
+                    Merge(source as Category, target as Category);
+                }
             }
             catch (Exception)
             {
@@ -968,7 +975,7 @@ namespace Walkabout.Views.Controls
 
                     if (this.money.Categories.FindCategory(newNameForCategory) == null)
                     {
-                        // The new name is available let rename now
+                        // The new name is available let's rename now
                         categoryToRename.Label = renameTo;
                     }
                     else

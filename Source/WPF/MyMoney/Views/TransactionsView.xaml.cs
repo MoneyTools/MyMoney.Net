@@ -3057,6 +3057,15 @@ namespace Walkabout.Views
                         Account a = args.Item as Account;
                         Category c = args.Item as Category;
 
+                        if (c != null)
+                        {
+                            if (args.Name == "Label" || args.Name == "Color" || args.ChangeType == ChangeType.Deleted)
+                            {
+                                // then any transactions using this category need to be refreshed..
+                                refresh = true;
+                            }
+                        }
+
                         if (s != null && !string.IsNullOrEmpty(s.Name))
                         {
                             // ok, this might be the GetStock auto-update, see if there is anything to copy to 
@@ -3140,7 +3149,7 @@ namespace Walkabout.Views
                 isDisplayInvalid = true;
                 if (!IsEditing)
                 {
-                    Dispatcher.BeginInvoke(new Action(() =>
+                    delayedUpdates.StartDelayedAction("Refresh", new Action(() =>
                     {
                         if (!IsEditing)
                         {
@@ -3153,7 +3162,7 @@ namespace Walkabout.Views
                             }
                             isDisplayInvalid = false;
                         }
-                    }), DispatcherPriority.Render);
+                    }), TimeSpan.FromMilliseconds(10));
                 }
             }
         }

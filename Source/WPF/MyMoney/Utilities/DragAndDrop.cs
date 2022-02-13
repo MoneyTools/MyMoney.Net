@@ -82,22 +82,16 @@ namespace Walkabout.Utilities
                 this.isMouseDown = true;
                 this.dragStartPoint = e.GetPosition(this.mainControl);
                 this.dragSourceStartedFrom = e.OriginalSource;
-                this.captured = this.mainControl.CaptureMouse();
             }
         }
 
         object dragSourceStartedFrom;
-        private bool captured;
 
         void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             this.isDragging = false;
             this.isMouseDown = false;
             DestroyDragDropWindow();
-            if (this.captured)
-            {
-                this.mainControl.ReleaseMouseCapture();
-            }
         }
 
         void OnPreviewMouseMove(object sender, MouseEventArgs e)
@@ -157,11 +151,6 @@ namespace Walkabout.Utilities
             DragDropRemoveAnyAdorner();
         }
 
-
-
-
-
-
         /// <summary>
         /// Update the position of the transparent drag/drop feedback window
         /// </summary>
@@ -173,6 +162,11 @@ namespace Walkabout.Utilities
             {
                 e.UseDefaultCursors = true;
                 UpdateWindowLocation();
+                if (e.Effects == DragDropEffects.None)
+                {
+                    DragDropRemoveAnyAdorner();
+                }
+                UpdateInstructions(e.Effects);
             }
         }
 
@@ -219,6 +213,7 @@ namespace Walkabout.Utilities
 
                 this.isDragging = false;
                 DestroyDragDropWindow();
+                DragDropRemoveAnyAdorner();
                 this.mainControl.GiveFeedback -= feedbackHandler;
                 this.mainControl.QueryContinueDrag -= queryContinueHandler;
             }
@@ -252,6 +247,7 @@ namespace Walkabout.Utilities
         }
 
         object previousPossibleDropTarget;
+        DragDropEffects currentEffect = DragDropEffects.None;
 
         private bool UpdateEffects(DragEventArgs e)
         {
@@ -330,18 +326,21 @@ namespace Walkabout.Utilities
                 DragDropRemoveAnyAdorner();
             }
 
-
-
             if (((e.AllowedEffects & DragDropEffects.Copy) == DragDropEffects.Copy) ||
                 ((e.AllowedEffects & DragDropEffects.Move) == DragDropEffects.Move))
             {
                 if ((e.KeyStates & DragDropKeyStates.ControlKey) == DragDropKeyStates.ControlKey)
                 {
+
                     e.Effects = DragDropEffects.Copy;
                 }
                 else
                 {
                     e.Effects = DragDropEffects.Move;
+                }
+                if (e.Effects != currentEffect)
+                {
+                    currentEffect = e.Effects;
                 }
             }
             else
@@ -425,9 +424,9 @@ namespace Walkabout.Utilities
         }
 
 
-
-
         #region DRAG WINDOW
+
+        TextBlock instruction;
 
         public void CreateDragDropWindow(FrameworkElement dragVisual)
         {
@@ -451,7 +450,18 @@ namespace Walkabout.Utilities
 
                 });
 
-            this.dragdropWindow.Content = dragVisual;
+            Grid visual = new Grid();
+            visual.SetResourceReference(Window.BackgroundProperty, "SystemControlHighlightAccent3RevealBackgroundBrush");
+            visual.SetResourceReference(Window.ForegroundProperty, "SystemControlPageTextBaseHighBrush");
+            visual.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            visual.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            this.instruction = new TextBlock() { Margin = new Thickness(5), FontSize = App.Current.MainWindow.FontSize, FontFamily = App.Current.MainWindow.FontFamily };
+            UpdateInstructions(DragDropEffects.Move);
+            visual.Children.Add(dragVisual);
+            visual.Children.Add(instruction);
+            Grid.SetRow(instruction, 1);
+
+            this.dragdropWindow.Content = visual;
             this.dragdropWindow.UpdateLayout();
 
             // Show the window at the current mouse position
@@ -459,7 +469,14 @@ namespace Walkabout.Utilities
             this.dragdropWindow.Show();
         }
 
-
+        private void UpdateInstructions(DragDropEffects effects)
+        {
+            if (instruction != null)
+            {
+                string label = ((effects & DragDropEffects.Copy) != 0) ? "Merge (-Ctrl to Move)" : "Move (+Ctrl to Merge)";
+                instruction.Text = label;
+            }
+        }
 
         /// <summary>
         /// Place the drag/drop main window at location of the mouse
