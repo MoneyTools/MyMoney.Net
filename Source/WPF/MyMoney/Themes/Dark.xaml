@@ -35,7 +35,7 @@
 
     <SolidColorBrush x:Key="GridNormalBackgroundBrush" Color="#2e2e2e"/>
     <SolidColorBrush x:Key="GridAlternateBackgroundBrush" Color="#1e1e1e"/>
-    <SolidColorBrush x:Key="GridLineBrush" Color="{m:StaticColor SystemChromeBlackLowColor}"/>
+    <SolidColorBrush x:Key="GridLineBrush" Color="Gray"/>
 
     <!-- color in accounts and categories balance fields -->
     <SolidColorBrush x:Key="PositiveCurrencyForegroundBrush" Color="#99FFFFFF"/>

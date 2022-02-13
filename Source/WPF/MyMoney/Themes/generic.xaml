@@ -93,6 +93,7 @@
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                                 <ContentPresenter.Resources>
                                     <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}" />
                                         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
                                     </Style>
                                 </ContentPresenter.Resources>
@@ -104,7 +105,7 @@
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Glyph="{StaticResource SortIconAscending}"
                                 FontSize="12"
-                                Foreground="{DynamicResource DataGridColumnHeaderForegroundBrush}"
+                                Foreground="{DynamicResource ListItemForegroundBrush}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed" />
@@ -114,7 +115,7 @@
                             Grid.Column="1"
                             Width="1"
                             VerticalAlignment="Stretch"
-                            Fill="{TemplateBinding SeparatorBrush}"
+                            Fill="{DynamicResource GridLineBrush}"
                             Visibility="{TemplateBinding SeparatorVisibility}" />
 
                         <Grid
