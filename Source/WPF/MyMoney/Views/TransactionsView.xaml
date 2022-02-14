@@ -122,7 +122,6 @@
         </ControlTemplate>
 
         <c:NullableValueConverter x:Key="NullableValueConverter" />
-        <c:AttachmentIconConverter x:Key="AttachmentIconConverter"/>
 
         <c:TrueToVisible x:Key="TrueToVisible" />
         <c:FalseToVisible x:Key="FalseToVisible" />

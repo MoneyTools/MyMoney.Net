@@ -9,45 +9,47 @@
              Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <StackPanel>
+    <Border BorderThickness="1" BorderBrush="{DynamicResource MessageBoxBorder}">
+        <StackPanel>
 
-        <!-- back button header -->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <!-- back button header -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-            <Button x:Name="BackButton" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}"  Click="OnCloseClicked"   VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="4,4,0,0"></Button>
-            <TextBlock FontSize="18" Grid.Column="1" VerticalAlignment="Center" FontWeight="DemiBold">Settings</TextBlock>
-        </Grid>
+                <Button x:Name="BackButton" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}"  Click="OnCloseClicked"   VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="4,4,0,0"></Button>
+                <TextBlock FontSize="18" Grid.Column="1" VerticalAlignment="Center" FontWeight="DemiBold">Settings</TextBlock>
+            </Grid>
 
 
-        <ui:SimpleStackPanel Spacing="20" Margin="10">
-            <!-- Password -->
-            <StackPanel>
-                <TextBlock >Database Password:</TextBlock>
-                <c:PasswordControl x:Name="editPasswordBox" PasswordChanged="OnPasswordChanged"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal">
+            <ui:SimpleStackPanel Spacing="20" Margin="10">
+                <!-- Password -->
                 <StackPanel>
-                    <TextBlock Width="120px">Theme:</TextBlock>
-                    <TextBlock Margin="10 0 0 0" FontSize="10">Ctrl-L</TextBlock>
+                    <TextBlock >Database Password:</TextBlock>
+                    <c:PasswordControl x:Name="editPasswordBox" PasswordChanged="OnPasswordChanged"/>
                 </StackPanel>
-                <ComboBox x:Name="comboBoxTheme"  SelectionChanged="OnThemeChanged" />
-            </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Width="120px">Fiscal Year Start:</TextBlock>
-                <ComboBox x:Name="comboBoxFiscalYear"  SelectionChanged="OnFiscalYearChanged" />
-            </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <TextBlock Width="120px">Theme:</TextBlock>
+                        <TextBlock Margin="10 0 0 0" FontSize="10">Ctrl-L</TextBlock>
+                    </StackPanel>
+                    <ComboBox x:Name="comboBoxTheme"  SelectionChanged="OnThemeChanged" />
+                </StackPanel>
 
-            <CheckBox x:Name="checkBoxRentalSupport" Checked="OnRentalSupportChanged" Unchecked="OnRentalSupportChanged">Rental management</CheckBox>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Width="120px">Fiscal Year Start:</TextBlock>
+                    <ComboBox x:Name="comboBoxFiscalYear"  SelectionChanged="OnFiscalYearChanged" />
+                </StackPanel>
 
-            <CheckBox x:Name="checkBoxPlaySounds"  Checked="OnPlaySoundsChanged" Unchecked="OnPlaySoundsChanged">Play sounds</CheckBox>
+                <CheckBox x:Name="checkBoxRentalSupport" Checked="OnRentalSupportChanged" Unchecked="OnRentalSupportChanged">Rental management</CheckBox>
 
-        </ui:SimpleStackPanel>
+                <CheckBox x:Name="checkBoxPlaySounds"  Checked="OnPlaySoundsChanged" Unchecked="OnPlaySoundsChanged">Play sounds</CheckBox>
 
-    </StackPanel>
+            </ui:SimpleStackPanel>
+
+        </StackPanel>
+    </Border>
 </UserControl>

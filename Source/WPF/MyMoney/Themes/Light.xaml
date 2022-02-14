@@ -23,8 +23,8 @@
     <SolidColorBrush x:Key="MessageBoxBorder" Color="{m:DynamicColor SystemAccentColor}"/>
 
     <!-- colors for list selection -->
-    <SolidColorBrush x:Key="ListItemForegroundBrush" Color="#1e1e1e"/>
-    <SolidColorBrush x:Key="ListItemForegroundLowBrush" Color="black"/>
+    <SolidColorBrush x:Key="ListItemForegroundBrush" Color="black"/>
+    <SolidColorBrush x:Key="ListItemForegroundLowBrush" Color="#1e1e1e"/>
     <SolidColorBrush x:Key="ListItemSelectedForegroundDisabledBrush" Color="Gray"/>
     <SolidColorBrush x:Key="ListItemSelectedForegroundNegativeBrush" Color="Red"/>
     <SolidColorBrush x:Key="ListItemSelectedForegroundBrush" Color="#1e1e1e"/>

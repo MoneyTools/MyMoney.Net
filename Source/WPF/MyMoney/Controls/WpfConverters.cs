@@ -123,41 +123,6 @@ namespace Walkabout.WpfConverters
 
     }
 
-
-    public class AttachmentIconConverter : IValueConverter
-    {
-
-        public AttachmentIconConverter()
-        {
-            
-        }
-
-        public string AttachmentPath
-        {
-            get
-            {
-                return Settings.TheSettings.AttachmentDirectory;
-            }
-        }
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {            
-            if (value is bool && (bool)value)
-            {
-                return 1;
-            }
-            return 0.1;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value;
-        }
-
-    }
-
-
-
     public class RoutingLines : IValueConverter
     {
 

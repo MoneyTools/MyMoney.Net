@@ -5663,7 +5663,64 @@ namespace Walkabout.Views
                 }
             }
         }
+    }
 
+    public class TransactionAttachmentIcon : Border
+    {
+        Transaction context;
+
+        public TransactionAttachmentIcon()
+        {
+            this.DataContextChanged += OnDataContextChanged;
+        }
+
+        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue != this.context)
+            {
+                // WPF is recycling this object for a different row!
+                SetContext(e.NewValue as Transaction);
+                UpdateIcon();
+            }
+        }
+
+        void SetContext(Transaction t)
+        {
+            if (this.context != t && this.context != null)
+            {
+                this.context.PropertyChanged -= OnContextPropertyChanged;
+            }
+            this.context = t;
+            if (this.context != null)
+            {
+                this.context.PropertyChanged += OnContextPropertyChanged;
+            }
+            UpdateIcon();
+        }
+
+        private void OnContextPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "HasAttachment")
+            {
+                UpdateIcon();
+            }
+        }
+
+        void UpdateIcon() 
+        {
+            if (this.context == null || !this.context.HasAttachment)
+            {
+                this.Child = null;
+            }
+            else if (this.Child == null)
+            {
+                this.Child = new SymbolIcon()
+                {
+                    Symbol = Symbol.Attach,
+                    Foreground = AppTheme.Instance.GetThemedBrush("ListItemForegroundBrush")
+                };
+            }
+        }
     }
 
     public class TransactionAttachmentColumn : DataGridColumn
@@ -5688,24 +5745,7 @@ namespace Walkabout.Views
 
         protected override FrameworkElement GenerateElement(DataGridCell cell, object dataItem)
         {
-            var t = dataItem as Transaction;
-            if (t == null)
-            {
-                return null;
-            }
-            SymbolIcon element = new SymbolIcon()
-            {
-                Symbol = Symbol.Attach,
-                Opacity = t.HasAttachment ? 1 : 0.1
-            };
-
-            element.SetBinding(SymbolIcon.OpacityProperty, new Binding("HasAttachment")
-            {
-                Converter = new AttachmentIconConverter()
-            });
-
-            return element;
-
+            return new TransactionAttachmentIcon();
         }
     }
 
