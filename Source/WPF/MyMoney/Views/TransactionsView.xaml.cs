@@ -394,9 +394,16 @@ namespace Walkabout.Views
                 InitializeComponent();
 
                 TheGrid_BankTransactionDetails.ParentMenu = this.ContextMenu;
+                TheGrid_BankTransactionDetails.CustomBeginEdit += OnCustomBeginEdit;
+
                 TheGrid_TransactionFromDetails.ParentMenu = this.ContextMenu;
+                TheGrid_TransactionFromDetails.CustomBeginEdit += OnCustomBeginEdit;
+
                 TheGrid_InvestmentActivity.ParentMenu = this.ContextMenu;
+                TheGrid_TransactionFromDetails.CustomBeginEdit += OnCustomBeginEdit;
+
                 TheGrid_BySecurity.ParentMenu = this.ContextMenu;
+                TheGrid_BySecurity.CustomBeginEdit += OnCustomBeginEdit;
 
                 TheActiveGrid = TheGrid_BankTransactionDetails;
 
@@ -434,6 +441,66 @@ namespace Walkabout.Views
 #if PerformanceBlocks
             }
 #endif
+        }
+
+        private void OnCustomBeginEdit(object sender, DataGridCustomEditEventArgs e)
+        {
+            DataGridRow row = e.Row;
+            RoutedEventArgs args = e.EditingEventArgs;
+            if (row.IsSelected && args is MouseButtonEventArgs mouseArgs)
+            {
+                DataGridColumn column = e.Column;
+                string name = GetHitFieldName(column, row, mouseArgs);
+                if (!string.IsNullOrEmpty(name))
+                {
+                    e.Handled = true;
+                    // lazy disptach to allow the actual editors to be created.
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        OnStartEdit(column, row, name);
+                    }), System.Windows.Threading.DispatcherPriority.Background);
+                }
+            }
+        }
+
+        private string GetHitFieldName(DataGridColumn column, DataGridRow row, MouseButtonEventArgs args)
+        {
+            FrameworkElement contentPresenter = column.GetCellContent(row);
+            HitTestResult result = VisualTreeHelper.HitTest(contentPresenter, args.GetPosition(contentPresenter));
+            if (result != null && result.VisualHit is TransactionTextField field)
+            {
+                return field.FieldName;
+            }
+            return null;
+        }
+
+        private void OnStartEdit(DataGridColumn column, DataGridRow row, string fieldName)
+        {
+            // Special handling for the fact that we have a column containing 3 separate editors (Payee, Category, Memo).
+            // This method is called before these editors show up because otherwise the mouse event args
+            // could be OFF if the editors are larger than the non-editable cells.  So we find out what was hit,
+            // then let the editors be created, then we put the matching editor into edit mode so the user doesn't
+            // have to click twice!
+            FrameworkElement contentPresenter = column.GetCellContent(row);
+            var grid = WpfHelper.FindAncestor<MoneyDataGrid>(contentPresenter);
+            if (grid == null)
+            {
+                return;
+            }
+            List<Control> editors = new List<Control>();
+            WpfHelper.FindEditableControls(contentPresenter, editors);
+            if (editors.Count > 0)
+            {
+                // find the editor with the matching field name.
+                string editorName = "EditorFor" + fieldName;
+                foreach(var editor in editors)
+                {
+                    if (editor.Name == editorName)
+                    {
+                        grid.OnStartEdit(editor);
+                    }
+                }
+            }
         }
 
         private void OnTransactionViewUnloaded(object sender, RoutedEventArgs e)
@@ -6605,6 +6672,8 @@ namespace Walkabout.Views
             SetContext(dataItem as Transaction);
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
         }
+
+        public string FieldName => this.fieldName;
 
         void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {

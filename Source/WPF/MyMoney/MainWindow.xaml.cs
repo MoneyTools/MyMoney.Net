@@ -4168,7 +4168,6 @@ namespace Walkabout
 
         private void ShowChangeInfo(string previousVersion, XDocument changeList, bool installButton)
         {
-            return;
             if (changeList == null)
             {
                 changeList = GetBuiltInList();

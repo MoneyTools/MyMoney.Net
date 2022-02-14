@@ -63,7 +63,7 @@
     <Thickness x:Key="TimePickerHostPadding">0,1,0,2</Thickness>
     <Thickness x:Key="DatePickerHostPadding">0,1,0,2</Thickness>
     <Thickness x:Key="DatePickerHostMonthPadding">9,0,0,1</Thickness>
-    <Thickness x:Key="ComboBoxEditableTextPadding">10,0,30,0</Thickness>
+    <Thickness x:Key="ComboBoxEditableTextPadding">4,0,30,0</Thickness>
     <sys:Double x:Key="ComboBoxMinHeight">24</sys:Double>
     <Thickness x:Key="ComboBoxPadding">12,1,0,3</Thickness>
     <sys:Double x:Key="NavigationViewItemOnLeftMinHeight">32</sys:Double>

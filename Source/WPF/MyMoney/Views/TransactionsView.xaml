@@ -318,7 +318,7 @@
         <DataTemplate x:Key="myTemplatePayeeCategoryMemoEdit">
             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Focusable="false">
                 <!-- PAYEE -->
-                <local:FilteringComboBox Style="{StaticResource GridComboStyle}" x:Name="ComboBoxForPayee"
+                <local:FilteringComboBox Style="{StaticResource GridComboStyle}" x:Name="EditorForPayeeOrTransferCaption"
                         SelectedItem="{Binding PayeeOrTransferCaption, Mode=TwoWay}"
                         ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=PayeesAndTransferNames}" 
                         PreviewLostKeyboardFocus="ComboBoxForPayee_PreviewLostKeyboardFocus" 
@@ -331,7 +331,7 @@
                     </ComboBox.ItemsPanel>
                 </local:FilteringComboBox >
                 <!-- CATEGORY -->
-                <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
+                <local:FilteringComboBox Style="{StaticResource GridComboStyle}" x:Name="EditorForCategoryName"
                             SelectedItem="{Binding Category, Mode=TwoWay}"
                             ItemsSource="{Binding Categories}" 
                             PreviewLostKeyboardFocus="ComboBoxForCategory_PreviewLostKeyboardFocus"
@@ -348,7 +348,7 @@
                 </local:FilteringComboBox >
                 <!-- MEMO -->
                 <TextBox Text="{Binding Memo, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" FontStyle="Italic" 
-                            Style="{StaticResource GridTextBoxStyle}" BorderThickness="0"/>
+                            Style="{StaticResource GridTextBoxStyle}" BorderThickness="0" x:Name="EditorForMemo"/>
             </StackPanel>
         </DataTemplate>
 
