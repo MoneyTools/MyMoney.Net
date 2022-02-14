@@ -199,7 +199,7 @@
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="SnapsToDevicePixels" Value="true"/>
             <Setter Property="Content" Value="{Binding Path=Splits.Count}"/>
-            <Setter Property="Margin" Value="-7,3,0,0"/>
+            <Setter Property="Margin" Value="1,3,0,0"/>
             <Setter Property="Foreground" Value="{StaticResource ListItemForegroundBrush}" />
             <Setter Property="Height" Value="15"/>
             <Setter Property="Width" Value="Auto"/>
@@ -211,10 +211,13 @@
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Grid SnapsToDevicePixels="True">
                             <Path   Name="ThePath"
-                                    Fill="Gray" Stretch="Fill" Stroke="{DynamicResource GridNormalBackgroundBrush}"
+                                    Fill="{DynamicResource GridAlternateBackgroundBrush}" Stretch="Fill" 
+                                    Stroke="{DynamicResource ListItemForegroundLowBrush}"
                                     Data="M0,0 L15,0 15,11 7.5,15 0,10z" StrokeThickness="0.5"
                                     StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeDashCap="Round" />
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Top"  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" RecognizesAccessKey="True"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Top"  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                              RecognizesAccessKey="True"
+                                              TextBlock.Foreground="{DynamicResource ListItemForegroundLowBrush}"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <DataTrigger Binding="{Binding Splits.HasUnassigned}" Value="True"  >
@@ -223,7 +226,7 @@
                             <Trigger Property="IsFocused" Value="True"/>
                             <Trigger Property="IsDefaulted" Value="True"/>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Fill" Value="{StaticResource ListItemSelectedBackgroundMouseOverBrush}" TargetName="ThePath"/>
+                                <Setter Property="Fill" Value="{DynamicResource ListItemSelectedBackgroundMouseOverBrush}" TargetName="ThePath"/>
                                 <Setter Property="Effect" TargetName="ThePath" >
                                     <Setter.Value>
                                         <DropShadowEffect ShadowDepth="1" />
@@ -232,7 +235,7 @@
                             </Trigger>
 
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Fill" Value="{StaticResource ListItemSelectedBackgroundBrush}" TargetName="ThePath"/>
+                                <Setter Property="Fill" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="ThePath"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False"/>
                         </ControlTemplate.Triggers>
