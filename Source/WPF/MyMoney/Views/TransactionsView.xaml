@@ -425,13 +425,26 @@
             <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent"
                     BorderBrush="{DynamicResource ListItemForegroundLowBrush}" BorderThickness="1" CornerRadius="5" Margin="10">
                 <Border.Resources>
+
+                    <AlternationConverter x:Key="BackgroundConverter">
+                        <SolidColorBrush Color="{DynamicResource GridNormalBackgroundColor}"/>
+                        <SolidColorBrush Color="{DynamicResource GridAlternateBackgroundColor}"/>
+                    </AlternationConverter>
+
+                    <Style x:Key="GridViewAlternationItemStyle" TargetType="{x:Type ListViewItem}">
+                        <Setter Property="Background" 
+                            Value="{Binding RelativeSource={RelativeSource Self}, Path=(ItemsControl.AlternationIndex),
+                            Converter={StaticResource BackgroundConverter}}"/>
+                    </Style>
                 </Border.Resources>
                 <StackPanel Orientation="Vertical">
                     <ListView x:Name="TheMiniListForAmountSplit" 
                              BorderThickness="0"
+                             AlternationCount="2"
                              IsEnabled="False"
                              Padding="0"                             
-                             Margin="0"
+                             Margin="0" 
+                             ItemContainerStyle="{StaticResource GridViewAlternationItemStyle}"
                              ItemsSource="{Binding Path=NonNullSplits.ObservableCollection}">
                         <ListView.Resources>
                             <Style TargetType="{x:Type GridViewColumnHeader}">
@@ -440,16 +453,29 @@
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundLowBrush}" />
                             </Style>
+                            <DataTemplate x:Key="RightAlignedCell">
+                                <TextBlock Text="{Binding .}" HorizontalAlignment="Right"/>
+                            </DataTemplate>
                         </ListView.Resources>
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Width="Auto" x:Name="Payee" DisplayMemberBinding="{Binding Path=PayeeName}"/>
                                 <GridViewColumn Width="Auto" x:Name="Category" DisplayMemberBinding="{Binding Path=Category}"/>
-                                <GridViewColumn Width="Auto" x:Name="Amount" DisplayMemberBinding="{Binding Amount, StringFormat={}{0:N}}" />
+                                <GridViewColumn Width="Auto" x:Name="Amount" >
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Amount, StringFormat={}{0:N}}"  
+                                                       Width="100" 
+                                                       Foreground="{DynamicResource ListItemForegroundLowBrush}"
+                                                       HorizontalAlignment="Right"
+                                                       TextAlignment="Right" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <StackPanel Orientation="Horizontal" x:Name="UnassignedGrid" Margin="24,10"
+                    <StackPanel Orientation="Horizontal" x:Name="UnassignedGrid" Margin="24,5,10,10"
                                 Visibility="{Binding Splits.HasUnassigned, Converter={StaticResource TrueToVisible}}"
                                 TextBlock.Foreground="{DynamicResource NegativeCurrencyForegroundBrush}">
                         <TextBlock Text="Unassigned amount: " />
