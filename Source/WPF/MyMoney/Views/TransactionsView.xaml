@@ -190,9 +190,8 @@
         </Style>
         
         <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}"  BasedOn="{StaticResource DefaultTextBoxStyle}">
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
         </Style>
 
         <Style x:Key="ButtonStyleSplitAmount" TargetType="{x:Type Button}" >
@@ -352,7 +351,8 @@
 
                 <Border BorderThickness="0,0,0,1" BorderBrush="#FFDFDFEF" Focusable="false">
                     <!-- MEMO -->
-                    <TextBox Text="{Binding Memo, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" FontStyle="Italic" Style="{StaticResource GridTextBoxStyle}"/>
+                    <TextBox Text="{Binding Memo, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" FontStyle="Italic" 
+                             Style="{StaticResource GridTextBoxStyle}"/>
                 </Border>
             </StackPanel>
         </DataTemplate>

@@ -6469,8 +6469,10 @@ namespace Walkabout.Views
             TextBox box = new TextBox()
             {
                 VerticalAlignment = VerticalAlignment.Top,
-                TextAlignment = TextAlignment.Right
+                TextAlignment = TextAlignment.Right,
+                Style = (Style)cell.FindResource("DefaultTextBoxStyle")
             };
+            ModernWpf.Controls.Primitives.TextBoxHelper.SetIsEnabled(box, false);
 
             if (this.SortMemberPath == "Debit" || this.SortMemberPath == "Credit")
             {

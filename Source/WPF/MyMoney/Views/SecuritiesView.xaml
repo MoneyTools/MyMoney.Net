@@ -7,6 +7,7 @@
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
              xmlns:views="clr-namespace:Walkabout.Views"
              xmlns:help="clr-namespace:Walkabout.Help"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              help:HelpService.HelpKeyword="Securities"
              mc:Ignorable="d" 
              d:DesignHeight="333" d:DesignWidth="685">
@@ -47,8 +48,7 @@
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Standard"/>
         </Style>
 
-
-        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}">
+        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}"  BasedOn="{StaticResource DefaultComboBoxStyle}">
             <Setter Property="IsEditable" Value="True"/>
             <Setter Property="StaysOpenOnEdit" Value="True"/>
             <Setter Property="Padding" Value="0"/>
@@ -56,15 +56,17 @@
             <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
         </Style>
 
-        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}">
-            <Setter Property="Padding" Value="0"/>
+        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}"  BasedOn="{StaticResource DefaultTextBoxStyle}">
+            <Setter Property="Padding" Value="2, 0"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
         </Style>
 
-        <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type TextBox}">
-            <Setter Property="Padding" Value="0"/>
+        <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
+            <Setter Property="Padding" Value="2, 0"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="local:CalculatorPopup.CalculatorEnabled" Value="True" />
+            <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
         </Style>
 
         <c:NullableValueConverter x:Key="NullableValueConverter" />
@@ -396,8 +398,8 @@
         <!-- DATE -->
         <DataTemplate x:Key="myTemplateDate">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding Date,StringFormat={}{0:d}}" MinWidth="100" VerticalAlignment="Top"/>
+            <Border BorderThickness="0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="4,0">
+                <TextBlock Text="{Binding Date,StringFormat={}{0:d}}" MinWidth="100" VerticalAlignment="Top" />
             </Border>
         </DataTemplate>
 
@@ -412,14 +414,14 @@
         <!-- Numerator -->
         <DataTemplate x:Key="myTemplateNumerator">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch"  Padding="4,0">
                 <TextBlock Text="{Binding Numerator,StringFormat={}{0:N3}}" TextAlignment="Right" VerticalAlignment="Top"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateNumeratorEdit">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch"  Padding="4,0">
                 <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Numerator, Converter={StaticResource DecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" VerticalAlignment="Top"/>
             </Border>
         </DataTemplate>

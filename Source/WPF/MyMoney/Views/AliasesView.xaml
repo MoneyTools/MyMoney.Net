@@ -8,6 +8,7 @@
              xmlns:views="clr-namespace:Walkabout.Views"
              xmlns:help="clr-namespace:Walkabout.Help"
              help:HelpService.HelpKeyword="Aliases"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -30,7 +31,7 @@
         </Style>
 
 
-        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}">
+        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
             <Setter Property="IsEditable" Value="True"/>
             <Setter Property="StaysOpenOnEdit" Value="True"/>
             <Setter Property="Padding" Value="0"/>
@@ -38,9 +39,10 @@
             <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
         </Style>
 
-        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}">
+        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
             <Setter Property="Padding" Value="0"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
         </Style>
 
         <c:NullableValueConverter x:Key="NullableValueConverter" />
