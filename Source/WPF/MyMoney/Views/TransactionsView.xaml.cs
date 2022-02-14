@@ -5867,7 +5867,7 @@ namespace Walkabout.Views
             this.MinWidth = 300;
             this.VerticalAlignment = VerticalAlignment.Top;
             this.Focusable = false;
-            this.Margin = new Thickness(2, 0, 0, 0);
+            this.Margin = new Thickness(2, 1, 0, 0);
 
             this.payeeField = new TransactionTextField("PayeeOrTransferCaption", payee, dataItem);
 
@@ -6593,6 +6593,7 @@ namespace Walkabout.Views
 
         public TransactionTextField(string name, Binding binding, object dataItem)
         {
+            this.Margin = new Thickness(2, 1, 3, 0);
             this.fieldName = name;
             this.binding = binding;
             if (binding != null)
@@ -6802,9 +6803,9 @@ namespace Walkabout.Views
             }
             return new TransactionTextField("Date", binding, dataItem)
             {
+                Margin = new Thickness(2, 1, 0, 0),
                 VerticalAlignment = VerticalAlignment.Top,
-                MinWidth = 100,
-                Margin = new Thickness(4, 0, 0, 0)
+                MinWidth = 100
             };
         }
     }
@@ -7248,7 +7249,7 @@ namespace Walkabout.Views
                 {
                     label = new TextBlock()
                     {
-                        Margin = new Thickness(0, 0, 2, 0),
+                        Margin = new Thickness(10, 1, 3, 0), // ensures room for the split button.
                         TextAlignment = TextAlignment.Right,
                         VerticalAlignment = VerticalAlignment.Top
                     };
