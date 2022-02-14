@@ -5882,7 +5882,7 @@ namespace Walkabout.Views
                 }
             }
 
-            return new TransactionTextField("Number", binding, dataItem)
+            return new TransactionTextField("Number", (t) => t.Number, binding, dataItem)
             {
                 VerticalAlignment = VerticalAlignment.Top
             };
@@ -5956,7 +5956,7 @@ namespace Walkabout.Views
             this.Focusable = false;
             this.Margin = new Thickness(2, 1, 0, 0);
 
-            this.payeeField = new TransactionTextField("PayeeOrTransferCaption", payee, dataItem);
+            this.payeeField = new TransactionTextField("PayeeOrTransferCaption", (t) => t.PayeeOrTransferCaption, payee, dataItem);
 
             this.Children.Add(new Border()
             {
@@ -6000,8 +6000,8 @@ namespace Walkabout.Views
         {
             if (this.categoryField == null)
             {
-                this.categoryField = new TransactionTextField("CategoryName", category, dataItem);
-                this.memoField = new TransactionTextField("Memo", memo, dataItem);
+                this.categoryField = new TransactionTextField("CategoryName", (t) => t.Category == null ? "" : t.Category.Name, null, dataItem);
+                this.memoField = new TransactionTextField("Memo", (t) => t.Memo, null, dataItem);
 
                 this.Children.Add(new Border()
                 {
@@ -6630,13 +6630,62 @@ namespace Walkabout.Views
                 };
             }
 
-            return new TransactionTextField(this.SortMemberPath, binding, dataItem)
+            Func<Transaction, string> f = null;
+            switch(this.SortMemberPath)
+            {
+                case "SalesTax":
+                    f = (t) => GetStringValue(t.SalesTax);
+                    break;
+                case "Balance":
+                    f = (t) => t.Balance.ToString("N"); // show zeros
+                    break;
+                case "InvestmentUnits":
+                    f = (t) => GetStringValue(t.InvestmentUnits);
+                    break;
+                case "InvestmentUnitPrice":
+                    f = (t) => GetStringValue(t.InvestmentUnitPrice);
+                    break;
+                case "CurrentUnits":
+                    f = (t) => t.Investment == null ? "" : GetStringValue(t.Investment.CurrentUnits);
+                    break;
+                case "RunningUnits":
+                    f = (t) => GetStringValue(t.RunningUnits, "N0");
+                    break;
+                case "CurrentUnitPrice":
+                    f = (t) => t.Investment == null ? "" : GetStringValue(t.Investment.CurrentUnitPrice);
+                    break;
+                case "RunningBalance":
+                    f = (t) => GetStringValue(t.RunningBalance);
+                    break;
+                default:
+                    throw new NotImplementedException("unexpected name " + this.SortMemberPath);
+            }
+
+            return new TransactionTextField(this.SortMemberPath, f, binding, dataItem)
             {
                 TextAlignment = TextAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Top,
                 Style = this.TextBlockStyle
             };
 
+        }
+
+        private static string GetStringValue(SqlDecimal s)
+        {
+            if (s.IsNull)
+            {
+                return "";
+            }
+            return GetStringValue(s.Value);
+        }
+
+        private string GetStringValue(decimal d, string format = "N")
+        {
+            if (d == 0)
+            {
+                return "";
+            }
+            return d.ToString(format);
         }
 
         public Style TextBlockStyle
@@ -6677,9 +6726,11 @@ namespace Walkabout.Views
         Transaction context;
         string fieldName;
         Binding binding;
+        Func<Transaction, string> getter;
 
-        public TransactionTextField(string name, Binding binding, object dataItem)
+        public TransactionTextField(string name, Func<Transaction, string> getter, Binding binding, object dataItem)
         {
+            this.getter = getter;
             this.Margin = new Thickness(2, 1, 3, 0);
             this.fieldName = name;
             this.binding = binding;
@@ -6744,24 +6795,6 @@ namespace Walkabout.Views
             }
         }
 
-        private string GetStringValue(SqlDecimal s)
-        {
-            if (s.IsNull)
-            {
-                return "";
-            }
-            return GetStringValue(s.Value);
-        }
-
-        private string GetStringValue(decimal d, string format = "N")
-        {
-            if (d == 0)
-            {
-                return "";
-            }
-            return d.ToString(format);
-        }
-
         private void UpdateLabel()
         {
             if (this.binding != null)
@@ -6771,64 +6804,7 @@ namespace Walkabout.Views
             }
             if (this.context != null)
             {
-                string value = string.Empty;
-                var investment = this.context.Investment;
-
-                switch (this.fieldName)
-                {
-                    case "Number":
-                        value = this.context.Number;
-                        break;
-                    case "Date":
-                        value = this.context.Date.ToString("d");
-                        break;
-                    case "SalesTax":
-                        value = GetStringValue(this.context.SalesTax);
-                        break;
-                    case "Debit":
-                        value = GetStringValue(this.context.Debit);
-                        break;
-                    case "Credit":
-                        value = GetStringValue(this.context.Credit);
-                        break;
-                    case "Balance":
-                        value = this.context.Balance.ToString("N"); // show zeros
-                        break;
-                    case "PayeeOrTransferCaption":
-                        value = this.context.PayeeOrTransferCaption;
-                        break;
-                    case "CategoryName":
-                        value = this.context.Category == null ? "" : this.context.Category.Name;
-                        break;
-                    case "Memo":
-                        value = this.context.Memo;
-                        break;
-                    case "RunningBalance":
-                        value = GetStringValue(this.context.RunningBalance);
-                        break;
-                    case "InvestmentUnitPrice":
-                        value = GetStringValue(this.context.InvestmentUnitPrice);
-                        break;
-                    case "RunningUnits":
-                        value = GetStringValue(this.context.RunningUnits, "N0");
-                        break;
-                    case "InvestmentUnits":
-                        value = GetStringValue(this.context.InvestmentUnits);
-                        break;
-                    case "CurrentUnitPrice":
-                        if (investment != null)
-                        {
-                            value = GetStringValue(investment.CurrentUnitPrice);
-                        }
-                        break;
-                    case "CurrentUnits":
-                        if (investment != null)
-                        {
-                            value = GetStringValue(investment.CurrentUnits);
-                        }
-                        break;
-
-                }
+                string value = this.getter(this.context);
                 if (value == null)
                 {
                     value = string.Empty;
@@ -6890,7 +6866,7 @@ namespace Walkabout.Views
                     StringFormat = "d"
                 };
             }
-            return new TransactionTextField("Date", binding, dataItem)
+            return new TransactionTextField("Date", (t) => t.Date.ToString("d"), binding, dataItem)
             {
                 Margin = new Thickness(2, 1, 0, 0),
                 VerticalAlignment = VerticalAlignment.Top,
@@ -7139,6 +7115,7 @@ namespace Walkabout.Views
         TextBox editbox;
         string editedValue;
         bool? editFieldEmpty;
+        bool isDebit;
 
         /// <summary>
         /// This button presents the transaction status
@@ -7187,6 +7164,7 @@ namespace Walkabout.Views
             set
             {
                 type = value;
+                isDebit = value == "Debit";
                 editFieldEmpty = null;
                 FinishConstruction();
             }
@@ -7297,7 +7275,7 @@ namespace Walkabout.Views
             }
             else
             {
-                SqlDecimal value = (this.type == "Debit") ? this.context.Debit : this.context.Credit;
+                SqlDecimal value = (this.isDebit) ? this.context.Debit : this.context.Credit;
                 if (!value.IsNull)
                 {
                     return value.Value.ToString("N");
@@ -7393,13 +7371,13 @@ namespace Walkabout.Views
                     {
                         // restore opposing field to it's value
                         opposition.Restore();
-                        SwitchTransferCaption(opposition.Type == "Debit" ? false : true);
+                        SwitchTransferCaption(opposition.isDebit ? false : true);
                     }
                     else
                     {
                         // clear opposing field.   
                         opposition.Clear();
-                        SwitchTransferCaption(opposition.Type == "Debit" ? true : false);
+                        SwitchTransferCaption(opposition.isDebit ? true : false);
                     }
                 }
             }
@@ -7407,7 +7385,7 @@ namespace Walkabout.Views
 
         private TransactionAmountControl GetOpposingField()
         {
-            string oppositeName = (type == "Debit") ? "Credit" : "Debit";
+            string oppositeName = (this.isDebit) ? "Credit" : "Debit";
             MoneyDataGrid grid = WpfHelper.FindAncestor<MoneyDataGrid>(this);
             if (grid != null)
             {
@@ -7472,8 +7450,8 @@ namespace Walkabout.Views
 
         private void UpdateButton()
         {
-            if ((this.type == "Debit" && context != null && context.HasDebitAndIsSplit) ||
-                (this.type == "Credit" && context != null && context.HasCreditAndIsSplit))
+            if ((this.isDebit && context != null && context.HasDebitAndIsSplit) ||
+                (!this.isDebit && context != null && context.HasCreditAndIsSplit))
             {
                 if (this.button == null)
                 {
@@ -7528,8 +7506,8 @@ namespace Walkabout.Views
         private void OnCreateButton(object sender, EventArgs e)
         {
             StopLazyButtonTimer();
-            if ((this.Type == "Debit" && context != null && context.HasDebitAndIsSplit) ||
-                (this.Type == "Credit" && context != null && context.HasCreditAndIsSplit))
+            if ((this.isDebit && context != null && context.HasDebitAndIsSplit) ||
+                (!this.isDebit && context != null && context.HasCreditAndIsSplit))
             {
                 if (button == null)
                 {
