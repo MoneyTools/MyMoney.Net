@@ -425,7 +425,7 @@
         -->
         <DataTemplate x:Key="myDataGridDetailMiniView">
             <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent"
-                    BorderBrush="{DynamicResource ListItemForegroundLowBrush}" BorderThickness="1" CornerRadius="5" Margin="10">
+                    BorderBrush="{DynamicResource ListItemForegroundLowBrush}" BorderThickness="1" CornerRadius="5" Margin="10,-1,10,10">
                 <Border.Resources>
 
                     <AlternationConverter x:Key="BackgroundConverter">
