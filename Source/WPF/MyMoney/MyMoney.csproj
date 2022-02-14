@@ -233,6 +233,7 @@
     <Compile Include="Utilities\AppTheme.cs" />
     <Compile Include="Utilities\AxisTicker.cs" />
     <Compile Include="Utilities\ClipboardClients.cs" />
+    <Compile Include="Utilities\CompiledPropertySetter.cs" />
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\ExponentialDoubleAnimation.cs" />
     <Compile Include="Utilities\FileHash.cs" />

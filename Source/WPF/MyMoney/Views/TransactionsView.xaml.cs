@@ -33,6 +33,7 @@ using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
 using System.Windows.Media.Animation;
 using ModernWpf.Controls;
+using System.Reflection;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -493,7 +494,7 @@ namespace Walkabout.Views
             {
                 // find the editor with the matching field name.
                 string editorName = "EditorFor" + fieldName;
-                foreach(var editor in editors)
+                foreach (var editor in editors)
                 {
                     if (editor.Name == editorName)
                     {
@@ -5594,7 +5595,7 @@ namespace Walkabout.Views
             {
                 backgroundBrush = AppTheme.Instance.GetThemedBrush("ListItemReconcilingBackgroundBrush");
             }
-            
+
             if (backgroundBrush == null)
             {
                 // allow to go back to "AlternatingColor" mode.
@@ -5655,7 +5656,7 @@ namespace Walkabout.Views
                 if (isUnaccepted)
                 {
                     foregroundBrushName = "ListItemSelectedForegroundBrush";
-                } 
+                }
                 else
                 {
                     foregroundBrushName = "ListItemSelectedForegroundLowBrush";
@@ -5773,7 +5774,7 @@ namespace Walkabout.Views
             }
         }
 
-        void UpdateIcon() 
+        void UpdateIcon()
         {
             if (this.context == null || !this.context.HasAttachment)
             {
@@ -5781,12 +5782,29 @@ namespace Walkabout.Views
             }
             else if (this.Child == null)
             {
-                this.Child = new SymbolIcon()
+                var icon = new SymbolIcon()
                 {
                     Symbol = Symbol.Attach,
                     Foreground = AppTheme.Instance.GetThemedBrush("ListItemForegroundBrush")
                 };
+
+                SymbolIconHackery.SetFontSize(icon, 16.0); // reduce fontsize from default 20.0.
+                this.Child = icon;
             }
+        }
+    }
+
+    internal static class SymbolIconHackery {
+        internal static Action<SymbolIcon, double> setter;
+
+        internal static void SetFontSize(SymbolIcon icon, double fontSize)
+        {
+            if (setter == null)
+            {
+                setter = CompiledPropertySetter.CompileSetter<SymbolIcon, double>("FontSize",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            }
+            setter(icon, fontSize);
         }
     }
 
@@ -5795,6 +5813,12 @@ namespace Walkabout.Views
 
         protected override FrameworkElement GenerateEditingElement(DataGridCell cell, object dataItem)
         {
+            var icon = new SymbolIcon()
+            {
+                Symbol = Symbol.Attach,
+                Foreground = AppTheme.Instance.GetThemedBrush("ListItemForegroundBrush")
+            };
+            SymbolIconHackery.SetFontSize(icon, 16.0); // reduce fontsize from default 20.0.
             return new Button()
             {
                 Command = TransactionsView.CommandScanAttachment,
@@ -5802,11 +5826,7 @@ namespace Walkabout.Views
                 Focusable = false,
                 Style = (Style)cell.FindResource("DefaultButtonStyle"),
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Content = new SymbolIcon()
-                {
-                    Symbol = Symbol.Attach,
-                    Foreground = AppTheme.Instance.GetThemedBrush("ListItemForegroundBrush")
-                }
+                Content = icon
             };
         }
 
