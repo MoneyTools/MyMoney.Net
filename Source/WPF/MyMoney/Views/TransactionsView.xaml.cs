@@ -5723,7 +5723,7 @@ namespace Walkabout.Views
         </DataTemplate>
     */
     public class TransactionNumberColumn : DataGridColumn
-    {
+    {       
         protected override FrameworkElement GenerateEditingElement(DataGridCell cell, object dataItem)
         {
             TextBox box = new TextBox()

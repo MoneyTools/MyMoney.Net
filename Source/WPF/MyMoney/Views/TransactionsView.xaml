@@ -315,7 +315,7 @@
         <!-- This editing template is instantiated from code. -->
         <DataTemplate x:Key="myTemplatePayeeCategoryMemoEdit">
             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Focusable="false">
-                <Border BorderThickness="0,0,0,1" BorderBrush="#FFDFDFEF" Focusable="false">
+                <Border BorderThickness="0" Focusable="false">
                     <!-- PAYEE -->
                     <local:FilteringComboBox Style="{StaticResource GridComboStyle}" x:Name="ComboBoxForPayee"
                           SelectedItem="{Binding PayeeOrTransferCaption, Mode=TwoWay}"
@@ -330,7 +330,7 @@
                         </ComboBox.ItemsPanel>
                     </local:FilteringComboBox >
                 </Border>
-                <Border BorderThickness="0,0,0,1" BorderBrush="#FFDFDFEF" Focusable="false">
+                <Border BorderThickness="0"  Focusable="false">
                     <!-- CATEGORY -->
                     <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
                                 SelectedItem="{Binding Category, Mode=TwoWay}"
@@ -349,10 +349,10 @@
                     </local:FilteringComboBox >
                 </Border>
 
-                <Border BorderThickness="0,0,0,1" BorderBrush="#FFDFDFEF" Focusable="false">
+                <Border BorderThickness="0" Focusable="false">
                     <!-- MEMO -->
                     <TextBox Text="{Binding Memo, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" FontStyle="Italic" 
-                             Style="{StaticResource GridTextBoxStyle}"/>
+                             Style="{StaticResource GridTextBoxStyle}" BorderThickness="0"/>
                 </Border>
             </StackPanel>
         </DataTemplate>
