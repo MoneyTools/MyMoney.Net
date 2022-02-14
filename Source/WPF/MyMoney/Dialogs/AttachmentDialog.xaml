@@ -7,12 +7,16 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
         ui:ThemeManager.IsThemeAware="True"
-        Title="Attachments" Height="425" Width="660" 
+        Title="Attachments" Height="425" Width="800" 
         xmlns:help="clr-namespace:Walkabout.Help"
         help:HelpService.HelpKeyword="Attachments">
     
     <Window.Resources>
         <SolidColorBrush x:Key="ResizerThumbBrush" Color="#E07070A0" u:WpfAnnotations.CodeRef="ResizerThumbBrush" />
+        <Style TargetType="{x:Type ui:AppBarButton}">
+            <Setter Property="IsCompact" Value="True"/>
+            <Setter Property="LabelPosition" Value="Collapsed"/>
+        </Style>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="Cut" Executed="Cut" CanExecute="HasSelectedItem"/>
@@ -58,63 +62,40 @@
             </MenuItem>
         </ContextMenu>
     </Window.ContextMenu>
-    
+
     <DockPanel>
-        <ToolBarTray DockPanel.Dock="Top" >
-            <ToolBar>
-                <Button x:Name="ScanButton" Click="Scan" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="Scan" ToolTip="Click here to scan a document"/>
-                </Button>
+        <ui:CommandBar DockPanel.Dock="top" HorizontalAlignment="Left" >
+            <ui:AppBarButton x:Name="ScanButton" Click="Scan" Icon="Scan" ToolTip="Click here to scan a document"
+                             />
+            <!--<Separator Width="30" Background="Transparent"/>-->
+            <ui:AppBarButton x:Name="ZoomInButton" Click="ZoomIn" Icon="ZoomIn" ToolTip="Zoom in"/>
+            <ui:AppBarButton x:Name="ZoomOutButton" Click="ZoomOut"  Icon="ZoomOut" ToolTip="Zoom out"/>
+            <!--<Separator Width="30" Background="Transparent"/>-->
+            <ui:AppBarButton x:Name="SaveButton" Command="Save" Icon="Save" ToolTip="Save attachment"/>
+            <ui:AppBarButton x:Name="RotateLeftButton" Command="local:AttachmentDialog.CommandRotateLeft" Icon="Rotate"
+                             ToolTip="Rotate counter-clockwise 90 degrees">
+                <ui:AppBarButton.LayoutTransform>
+                    <ScaleTransform ScaleX="-1"/>
+                </ui:AppBarButton.LayoutTransform>
+            </ui:AppBarButton>
+            <ui:AppBarButton x:Name="RotateRightButton" Command="local:AttachmentDialog.CommandRotateRight" Icon="Rotate"
+                             ToolTip="Rotate clockwise 90 degrees"/>
+            <ui:AppBarButton x:Name="CropImageButton" Command="local:AttachmentDialog.CommandCropImage" Icon="Crop" 
+                             ToolTip="Find image bounds and crop image"/>
                 
-                <Separator Width="30" Background="Transparent"/>
+            <!--<Separator Width="30" Background="Transparent"/>-->
 
-                <Button x:Name="ZoomInButton" Click="ZoomIn" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="ZoomIn" ToolTip="Zoom in"/>
-                </Button>
-                <Button x:Name="ZoomOutButton" Click="ZoomOut" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="ZoomOut" ToolTip="Zoom out"/>
-                </Button>
-                
-                <Separator Width="30" Background="Transparent"/>
+            <ui:AppBarButton x:Name="CutButton" Command="Cut" Icon="Cut"  ToolTip="Cut selected attachment"/>
+            <ui:AppBarButton x:Name="CopyButton" Command="Copy" Icon="Copy"  ToolTip="Copy selected attachment"/>
+            <ui:AppBarButton x:Name="PasteButton" Command="Paste" Icon="Paste"  ToolTip="Paste a new attachment"/>
+            <ui:AppBarButton x:Name="DeleteButton" Command="Delete" Icon="Delete"  ToolTip="Delete selected attachment"/>
 
-                <Button x:Name="SaveButton" Command="Save" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="Save" ToolTip="Save attachment"/>
-                </Button>
-                <Button x:Name="RotateLeftButton" Command="local:AttachmentDialog.CommandRotateLeft" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="Rotate" ToolTip="Rotate counter-clockwise 90 degrees"/>
-                    <Button.LayoutTransform>
-                        <ScaleTransform ScaleX="-1" />
-                    </Button.LayoutTransform>
-                </Button>
-                <Button x:Name="RotateRightButton" Command="local:AttachmentDialog.CommandRotateRight" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="Rotate" ToolTip="Rotate clockwise 90 degrees"/>
-                </Button>
-                <Button x:Name="CropImageButton" Command="local:AttachmentDialog.CommandCropImage" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="Crop" ToolTip="Find image bounds and crop image"/>
-                </Button>
-                
-                <Separator Width="30" Background="Transparent"/>
-                
-                <Button x:Name="CutButton" Command="Cut" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="Cut" ToolTip="Cut selected attachment"/>
-                </Button>
-                <Button x:Name="CopyButton" Command="Copy" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="Copy" ToolTip="Copy selected attachment"/>
-                </Button>
-                <Button x:Name="PasteButton" Command="Paste" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="Paste" ToolTip="Paste a new attachment"/>
-                </Button>
-                <Button x:Name="DeleteButton" Command="Delete" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="Delete" ToolTip="Delete selected attachment"/>
-                </Button>
+            <!--<Separator Width="30" Background="Transparent"/>-->
 
-                <Separator Width="30" Background="Transparent"/>
-
-                <Button x:Name="PrintButton" Command="Print" BorderThickness="0">
-                    <ui:SymbolIcon Symbol="Print" ToolTip="Click here to print the selected attachment"/>
-                </Button>
-            </ToolBar>
-        </ToolBarTray>
+            <ui:AppBarButton x:Name="PrintButton" Command="Print" Icon="Print" 
+                             ToolTip="Click here to print the selected attachment"
+                              IsCompact="True"/>
+        </ui:CommandBar>
         <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Auto" x:Name="Scroller">
             <Grid x:Name="CanvasGrid" Margin="0">
                 <Grid.Background>

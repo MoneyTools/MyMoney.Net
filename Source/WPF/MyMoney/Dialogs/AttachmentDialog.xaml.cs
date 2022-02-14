@@ -20,6 +20,7 @@ using Walkabout.Data;
 using Walkabout.Configuration;
 using System.Threading.Tasks;
 using System.Threading;
+using ModernWpf.Controls;
 
 namespace Walkabout.Dialogs
 {
@@ -193,7 +194,14 @@ namespace Walkabout.Dialogs
                     {
                         globalDialog = new WIA.CommonDialog();
                     }
-                    device = globalDialog.ShowSelectDevice(DeviceType: WIA.WiaDeviceType.ScannerDeviceType, AlwaysSelectDevice: true);
+                    try
+                    {
+                        device = globalDialog.ShowSelectDevice(DeviceType: WIA.WiaDeviceType.ScannerDeviceType, AlwaysSelectDevice: true);
+                    } 
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                    }
                 }));
 
                 task.Start();
@@ -210,6 +218,7 @@ namespace Walkabout.Dialogs
         {
             try
             {
+                AppBarButton button = sender as AppBarButton;
                 // hmmm, reusing the device doesn't work because it somehow resets itself to capture higher resolution images.
                 bool hasDevice = false; //  device != null;
 
