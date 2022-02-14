@@ -5731,14 +5731,14 @@ namespace Walkabout.Views
             return new Button()
             {
                 Command = TransactionsView.CommandScanAttachment,
-                Padding = new Thickness(0),
+                Padding = new Thickness(1),
                 Focusable = false,
-                Background = Brushes.White,
+                Style = (Style)cell.FindResource("DefaultButtonStyle"),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new SymbolIcon()
                 {
                     Symbol = Symbol.Attach,
-                    Foreground = Brushes.Black
+                    Foreground = AppTheme.Instance.GetThemedBrush("ListItemForegroundBrush")
                 }
             };
         }
