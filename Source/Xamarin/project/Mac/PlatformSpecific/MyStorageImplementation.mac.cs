@@ -39,12 +39,13 @@ namespace VTeamWidgets
         {
             // for consistency with other platforms, only allow selecting of a single file.
             // would be nice if we passed a "file options" to override picking multiple files & directories
-            var openPanel = new NSOpenPanel
+            NSOpenPanel nSOpenPanel = new()
             {
                 CanChooseFiles = true,
                 AllowsMultipleSelection = false,
                 CanChooseDirectories = false
             };
+            var openPanel = nSOpenPanel;
 
             // macOS allows the file types to contain UTIs, filename extensions or a combination of the two.
             // If no types are specified, all files are selectable.
@@ -94,12 +95,13 @@ namespace VTeamWidgets
         {
             // for consistency with other platforms, only allow selecting of a single file.
             // would be nice if we passed a "file options" to override picking multiple files & directories
-            using (var nSOpenPanel = new NSOpenPanel
+            NSOpenPanel nSOpenPanel1 = new()
             {
                 CanChooseFiles = false,
                 AllowsMultipleSelection = false,
                 CanChooseDirectories = true
-            })
+            };
+            using (var nSOpenPanel = nSOpenPanel1)
             {
                 NSOpenPanel openPanel = nSOpenPanel;
 
