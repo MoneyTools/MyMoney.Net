@@ -187,7 +187,7 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
         </Style>
-        
+
         <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}"  BasedOn="{StaticResource DefaultTextBoxStyle}">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
@@ -731,10 +731,16 @@
 
             <!-- BANK -->
             <!-- Note the SecondarySortOrder has to match the Transaction SortByDate method -->
-            <local:MoneyDataGrid x:Name="TheGrid_BankTransactionDetails" Grid.Row="1" CellStyle="{StaticResource MyDataGridCellStyle}"
-              Style="{StaticResource MyDataGridStyle}" RowStyle="{StaticResource MyDataGridRowStyle}"
-              RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
-              RowDetailsVisibilityMode="Visible" SecondarySortOrder="Date,NegativeAmount,Id">
+            <local:MoneyDataGrid 
+                x:Name="TheGrid_BankTransactionDetails" 
+                Grid.Row="1" 
+                CellStyle="{StaticResource MyDataGridCellStyle}"
+                Style="{StaticResource MyDataGridStyle}" 
+                RowStyle="{StaticResource MyDataGridRowStyle}"
+                RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
+                RowDetailsVisibilityMode="Visible" 
+                SecondarySortOrder="Date,NegativeAmount,Id"
+                >
 
                 <DataGrid.Columns>
 
@@ -776,11 +782,16 @@
 
             <!-- BY CATEGORY -->
             <!-- Note the SecondarySortOrder has to match the Transaction SortByDate method -->
-            <local:MoneyDataGrid x:Name="TheGrid_TransactionFromDetails" Grid.Row="1" CellStyle="{StaticResource MyDataGridCellStyle}"
-              Style="{StaticResource MyDataGridStyle}"  RowStyle="{StaticResource MyDataGridRowStyle}"
-              RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
-              CanUserAddRows="False" SecondarySortOrder="Date,NegativeAmount,Id">
-
+            <local:MoneyDataGrid 
+                x:Name="TheGrid_TransactionFromDetails" 
+                Grid.Row="1" 
+                CellStyle="{StaticResource MyDataGridCellStyle}"
+                Style="{StaticResource MyDataGridStyle}"  
+                RowStyle="{StaticResource MyDataGridRowStyle}"
+                RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
+                CanUserAddRows="False" 
+                SecondarySortOrder="Date,NegativeAmount,Id"
+                >
 
                 <DataGrid.Columns>
 
@@ -829,8 +840,8 @@
                 RowStyle="{StaticResource MyDataGridRowStyle}" 
                 RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
                 CellStyle="{StaticResource MyDataGridCellStyle}" 
-                SecondarySortOrder="Date,NegativeAmount,Id">
-
+                SecondarySortOrder="Date,NegativeAmount,Id"
+                >
 
                 <DataGrid.Columns>
 
@@ -893,7 +904,8 @@
                   RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
                   CellStyle="{StaticResource MyDataGridCellStyle}"
                   CanUserAddRows="False" 
-                  SecondarySortOrder="Date,NegativeAmount,Id">
+                  SecondarySortOrder="Date,NegativeAmount,Id"
+                  >
 
                 <DataGrid.Columns>
 
