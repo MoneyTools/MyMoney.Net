@@ -167,20 +167,34 @@ namespace Walkabout.Views.Controls
                 {
                     returnSource = new DragDropSource();
                     returnSource.DataSource = x;
-                    returnSource.VisualForDraginSource = listBoxItemControl;
+                    returnSource.VisualForDraginSource = CreateDragVisual(x);
                 }
             }
 
             return returnSource;
         }
 
-
-        Security OnDropTarget(object source, object target, DragDropEffects dropEfffect)
+        private FrameworkElement CreateDragVisual(Security s)
         {
-            ContentControl listBoxItemControl = WpfHelper.FindAncestor<ContentControl>((DependencyObject)target);
+            Border visual = new Border();
+            visual.SetResourceReference(Window.BackgroundProperty, "SystemControlHighlightAccent3RevealBackgroundBrush");
+            visual.SetResourceReference(Window.ForegroundProperty, "SystemControlPageTextBaseHighBrush");
+            var label = new TextBlock() { Text = s.Name, Margin = new Thickness(5), FontSize = this.FontSize, FontFamily = this.FontFamily };
+            visual.Child = label;
+            return visual;
+        }
+
+
+        DragDropTarget OnDropTarget(object source, object target, DragDropEffects dropEfffect)
+        {
+            ListBoxItem listBoxItemControl = WpfHelper.FindAncestor<ListBoxItem>((DependencyObject)target);
             if (listBoxItemControl != null)
             {
-                return listBoxItemControl.Content as Security;
+                return new DragDropTarget()
+                {
+                    DataSource = listBoxItemControl.Content as Security,
+                    TargetElement = listBoxItemControl
+                };
             }
 
             return null;

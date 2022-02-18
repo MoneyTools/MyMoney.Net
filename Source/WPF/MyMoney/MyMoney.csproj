@@ -114,7 +114,13 @@
     <SignAssembly Condition="'$(AssemblyOriginatorKeyFile)'!=''">true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestTimestampUrl>http://timestamp.comodoca.com/authenticode</ManifestTimestampUrl>
+    <ManifestTimestampUrl>http://timestamp.sectigo.com</ManifestTimestampUrl>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -197,9 +203,6 @@
     <Compile Include="Controls\TabCloseBox.xaml.cs">
       <DependentUpon>TabCloseBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DropDownButton.xaml.cs">
-      <DependentUpon>DropDownButton.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Resizer.cs" />
     <Compile Include="Controls\WpfConverters.cs" />
     <Compile Include="Database\AutoCategorization.cs" />
@@ -221,8 +224,10 @@
     <Compile Include="StockQuotes\IStockQuoteService.cs" />
     <Compile Include="StockQuotes\StockQuoteThrottle.cs" />
     <Compile Include="Utilities\AnimatedMessage.cs" />
+    <Compile Include="Utilities\AppTheme.cs" />
     <Compile Include="Utilities\AxisTicker.cs" />
     <Compile Include="Utilities\ClipboardClients.cs" />
+    <Compile Include="Utilities\CompiledPropertySetter.cs" />
     <Compile Include="Utilities\DelayedAction.cs" />
     <Compile Include="Utilities\ExponentialDoubleAnimation.cs" />
     <Compile Include="Utilities\FileHash.cs" />
@@ -231,6 +236,7 @@
     <Compile Include="Utilities\QuickFilterParser.cs" />
     <Compile Include="Utilities\RecentFilesMenu.cs" />
     <Compile Include="Utilities\UsHolidays.cs" />
+    <Compile Include="Utilities\WpfAnnotations.cs" />
     <Compile Include="Views\ChangeTracker.cs" />
     <Compile Include="Database\CostBasis.cs" />
     <Compile Include="Database\SqliteDatabase.cs" />
@@ -248,8 +254,8 @@
     <Compile Include="Dialogs\BaseDialog.cs" />
     <Compile Include="Dialogs\ChangePasswordDialog.cs" />
     <Compile Include="Dialogs\MfaChallengeDialog.cs" />
-    <Compile Include="Dialogs\MoveMergeCategory.xaml.cs">
-      <DependentUpon>MoveMergeCategory.xaml</DependentUpon>
+    <Compile Include="Dialogs\MergeCategoryDialog.xaml.cs">
+      <DependentUpon>MergeCategoryDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\OfxLoginDialog.cs" />
     <Compile Include="Dialogs\PasswordWindow.xaml.cs">
@@ -295,7 +301,6 @@
     <Compile Include="Charts\AreaChart.cs" />
     <Compile Include="Charts\ChartData.cs" />
     <Compile Include="Charts\FormattingConverter.cs" />
-    <Compile Include="Charts\SelectionRectVisual.cs" />
     <Compile Include="Charts\Styles.cs" />
     <Compile Include="Charts\CategoryData.cs" />
     <Compile Include="Charts\CategoryChart.xaml.cs">
@@ -400,9 +405,6 @@
     <Compile Include="Dialogs\BuildingDialog.xaml.cs">
       <DependentUpon>BuildingDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\CategoryTransferDialog.xaml.cs">
-      <DependentUpon>CategoryTransferDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\CategoryDialog.xaml.cs">
       <DependentUpon>CategoryDialog.xaml</DependentUpon>
     </Compile>
@@ -414,9 +416,6 @@
     </Compile>
     <Compile Include="Dialogs\ReportRangeDialog.xaml.cs">
       <DependentUpon>ReportRangeDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\LoginDialog.xaml.cs">
-      <DependentUpon>LoginDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\OnlineAccountDialog.xaml.cs">
       <DependentUpon>OnlineAccountDialog.xaml</DependentUpon>
@@ -530,7 +529,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Icons\setup.ico" />
-    <Resource Include="Icons\CropImage.png" />
+    <Resource Include="Dialogs\Icons\CropImage.png" />
     <Resource Include="Icons\Filter.png" />
     <Content Include="Setup\changes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -550,12 +549,6 @@
     <EmbeddedResource Include="Ofx\ofx160.dtd" />
     <Resource Include="Dialogs\Icons\CheckMark.png" />
     <Resource Include="Dialogs\Icons\Warning.png" />
-    <Resource Include="Icons\Back.png" />
-    <Resource Include="Icons\Synchronize.png" />
-    <Resource Include="Icons\Forwards.png" />
-    <Resource Include="Icons\Print.png" />
-    <Resource Include="Icons\Save.png" />
-    <Resource Include="Icons\Search.png" />
     <Resource Include="Icons\App.ico" />
     <Resource Include="Dialogs\Icons\QuestionMark.png" />
     <EmbeddedResource Include="Database\SampleData.xml">
@@ -565,28 +558,15 @@
     <Resource Include="Icons\Error.png" />
     <EmbeddedResource Include="Charts\Icons\grab.cur" />
     <EmbeddedResource Include="Charts\Icons\grabbing.cur" />
-    <Resource Include="Dialogs\Icons\ZoomOut.png" />
-    <Resource Include="Dialogs\Icons\ZoomIn.png" />
-    <Resource Include="Dialogs\Icons\Save.png" />
     <Resource Include="Dialogs\Icons\Delete.png" />
     <Resource Include="Dialogs\Icons\CutHS.png" />
-    <Resource Include="Dialogs\Icons\cut.png" />
-    <Resource Include="Dialogs\Icons\copy.png" />
-    <Resource Include="Dialogs\Icons\Paste.png" />
     <Resource Include="Dialogs\Icons\PasteHS.png" />
     <Resource Include="Dialogs\Icons\CopyHS.png" />
-    <Resource Include="Dialogs\Icons\Attachment.png" />
     <EmbeddedResource Include="Ofx\OfxProviderList.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Ofx\OfxErrorTemplate.htm" />
     <Resource Include="Icons\TurboTax.png" />
-    <Resource Include="Dialogs\Icons\RotateLeft.png" />
-    <Resource Include="Dialogs\Icons\RotateRight.png" />
-    <Resource Include="Icons\Pencil.png" />
-    <Resource Include="Dialogs\Icons\printer.png" />
-    <Resource Include="Dialogs\Icons\scanner.png" />
-    <Resource Include="Icons\SmallScanner.png" />
     <Resource Include="Dialogs\Icons\delete_16x.png" />
     <EmbeddedResource Include="Icons\Ding.wav" />
     <Resource Include="Icons\Excel.png" />
@@ -667,10 +647,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Charts\Styles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Charts\ChartLegend.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -699,10 +675,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\DropDownButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Dialogs\PickYearDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -719,11 +691,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Compact.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Utilities\MessageBox\MessageBoxEx.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\MoveMergeCategory.xaml">
+    <Page Include="Dialogs\MergeCategoryDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -747,26 +727,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Properties\DesignTimeResources.xaml" Condition="'$(DesignTime)'=='true' OR ('$(SolutionPath)'!='' AND Exists('$(SolutionPath)') AND '$(BuildingInsideVisualStudio)'!='true' AND '$(BuildingInsideExpressionBlend)'!='true')">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
-    </Page>
     <Page Include="Charts\CategoryChart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\GenericWindows7.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\GenericWindows8.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Theme-Flat.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="View Selectors\SecuritiesControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -820,10 +783,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\LoginDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Dialogs\RenamePayeeDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -840,11 +799,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\generic.xaml">
+    <Page Include="Themes\Light.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\Theme-VS2010.xaml">
+    <Page Include="Themes\Dark.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -908,10 +867,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\CategoryTransferDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Dialogs\OnlineAccountDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -922,6 +877,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="ModernWpfUI">
+      <Version>0.9.4</Version>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>
     </PackageReference>

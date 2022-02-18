@@ -53,14 +53,6 @@ namespace Walkabout.Controls
 
             for (int i = 1; i < index; i++)
             {
-                /*
-                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00.0" Storyboard.TargetProperty="X" Storyboard.TargetName="R1TT">
-                        <LinearDoubleKeyFrame KeyTime="00:00:00.0" Value="0.1"/>
-                        <EasingDoubleKeyFrame KeyTime="00:00:00.8" Value="33" EasingFunction="{StaticResource ProgressBarEaseOut}"/>
-                        <LinearDoubleKeyFrame KeyTime="00:00:02.0" Value="66"/>
-                        <EasingDoubleKeyFrame KeyTime="00:00:02.5" Value="100" EasingFunction="{StaticResource ProgressBarEaseIn}"/>
-                    </DoubleAnimationUsingKeyFrames>
-                 */
                 DoubleAnimationUsingKeyFrames animation = new DoubleAnimationUsingKeyFrames() { BeginTime = start };
                 Storyboard.SetTargetName(animation, string.Format("RTT{0}", i));
                 Storyboard.SetTargetProperty(animation, new PropertyPath("X"));

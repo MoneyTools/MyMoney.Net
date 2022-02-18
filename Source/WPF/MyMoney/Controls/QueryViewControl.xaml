@@ -9,9 +9,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
-        <Style TargetType="{x:Type DataGridCell}">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderBrush" Value="Transparent" />
+        <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource DefaultDataGridCellStyle}">
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -24,7 +22,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Background" Value="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="CellBorder"/>
+                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
                                 <Setter Property="Foreground" Value="Black"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -33,22 +31,19 @@
             </Setter>
         </Style>
 
-        <Style x:Key="MyDataGridStyle" TargetType="DataGrid">
+        <Style x:Key="MyDataGridStyle" TargetType="DataGrid" BasedOn="{StaticResource DefaultDataGridStyle}">
             <Setter Property="ItemsSource" Value="{Binding}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="AlternatingRowBackground" Value="#E0F1FF"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
-            <!--<Setter Property="VerticalGridLinesBrush" Value="{StaticResource GridLineBrush}"/>-->
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
-            <!--<Setter Property="RowDetailsTemplate" Value="{StaticResource myDataGridDetailView}"/>-->
             <Setter Property="ClipboardCopyMode" Value="None"/>
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
         </Style>
 
-        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}">
+        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
             <Setter Property="IsEditable" Value="True"/>
             <Setter Property="StaysOpenOnEdit" Value="True"/>
             <Setter Property="Padding" Value="2,0"/>
@@ -139,9 +134,15 @@
 
     </UserControl.Resources>
 
-    <controls:MoneyDataGrid x:Name="dataGrid1" Style="{StaticResource MyDataGridStyle}" RowHeaderWidth="20"
-                  CanUserAddRows="True" CanUserDeleteRows="True" CanUserResizeRows="False" AutoGenerateColumns="False"
-                  PreviewKeyDown="OnDataGrid_PreviewKeyDown">
+    <controls:MoneyDataGrid 
+        x:Name="dataGrid1" 
+        Style="{StaticResource MyDataGridStyle}" 
+        RowHeaderWidth="20"
+        CanUserAddRows="True" 
+        CanUserDeleteRows="True" 
+        CanUserResizeRows="False" 
+        AutoGenerateColumns="False"
+        PreviewKeyDown="OnDataGrid_PreviewKeyDown">
         <DataGrid.Columns>
             <DataGridTemplateColumn Header="And/Or" MinWidth="50" CellTemplate="{StaticResource myTemplateConjunction}" CellEditingTemplate="{StaticResource myTemplateConjunctionEdit}" SortMemberPath="Conjunction"/>
             <DataGridTemplateColumn Header="Field" MinWidth="200" CellTemplate="{StaticResource myTemplateField}" CellEditingTemplate="{StaticResource myTemplateFieldEdit}" SortMemberPath="Field"/>

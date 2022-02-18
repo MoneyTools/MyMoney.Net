@@ -15,7 +15,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for RenamePayeeDialog.xaml
     /// </summary>
-    public partial class RenamePayeeDialog : Window
+    public partial class RenamePayeeDialog : BaseDialog
     {
         #region PROPERTIES
 

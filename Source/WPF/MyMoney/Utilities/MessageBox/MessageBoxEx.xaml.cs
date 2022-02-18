@@ -48,6 +48,11 @@ namespace Walkabout.Utilities
                     System.Windows.Clipboard.SetDataObject(content, true);
                 }
             }
+            else if (e.Key == Key.Escape) 
+            {
+                this.Result = MessageBoxResult.Cancel;
+                this.Close();
+            }
         }
 
         public void DisplayWindow()
@@ -262,33 +267,38 @@ namespace Walkabout.Utilities
 
         void SetButtonVisibility(MessageBoxButton buttonOption)
         {
+            Button defaultButton = null;
             switch (buttonOption)
             {
                 case MessageBoxButton.YesNo:
                     ButtonYes.Visibility = Visibility.Visible;
                     ButtonNo.Visibility = Visibility.Visible;
-                    ButtonNo.IsDefault = true;
+                    defaultButton = ButtonYes;
                     break;
 
                 case MessageBoxButton.YesNoCancel:
                     ButtonYes.Visibility = Visibility.Visible;
                     ButtonNo.Visibility = Visibility.Visible;
-                    ButtonCancel.Visibility = Visibility.Visible;
-                    ButtonCancel.IsDefault = true;
+                    defaultButton = ButtonYes;
                     break;
 
                 case MessageBoxButton.OKCancel:
                     ButtonOK.Visibility = Visibility.Visible;
                     ButtonCancel.Visibility = Visibility.Visible;
-                    ButtonCancel.IsDefault = true;
+                    defaultButton = ButtonOK;
                     break;
 
                 case MessageBoxButton.OK:
                 default:
                     ButtonOK.Visibility = Visibility.Visible;
-                    ButtonOK.IsDefault = true;
+                    defaultButton = ButtonOK;
                     break;
+            }
 
+            if (defaultButton != null)
+            {
+                ButtonYes.IsDefault = true;
+                ButtonYes.Background = AppTheme.Instance.GetThemedBrush("ListItemSelectedBackgroundBrush");
             }
         }
 

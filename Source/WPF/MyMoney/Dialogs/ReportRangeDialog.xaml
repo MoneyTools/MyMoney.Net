@@ -1,16 +1,17 @@
-﻿<Window x:Class="Walkabout.Dialogs.ReportRangeDialog"
+﻿<d:BaseDialog x:Class="Walkabout.Dialogs.ReportRangeDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Walkabout.Controls"
-        Title="Report" 
-        Height="300"
+        xmlns:d="clr-namespace:Walkabout.Dialogs"
+        Title="Report"
         Width="300"
         MinHeight="260"
         MinWidth="300"
         ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False"
+        SizeToContent="Height"
         WindowStartupLocation="CenterOwner" 
-        Background="{DynamicResource DialogWindowBackgroundBrush}" WindowStyle="ToolWindow"
+        WindowStyle="ToolWindow"
         FocusManager.FocusedElement="{Binding ElementName=comboBox1}">
 
     <Window.Resources>
@@ -21,42 +22,30 @@
             </StackPanel>
         </DataTemplate>
 
+        <Style TargetType="{x:Type Grid}">
+            <Setter Property="Margin" Value="10" />
+        </Style>
+        <Style TargetType="{x:Type Label}" BasedOn="{StaticResource DefaultLabelStyle}">
+            <Setter Property="Margin" Value="0,3,10,5" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="{x:Type StackPanel}">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+
     </Window.Resources>
 
-    <Grid DockPanel.Dock="Top" Margin="8">
+    <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="12" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <GroupBox Header="Enter range of dates" Grid.Row="0" >
 
             <Grid>
-                <Grid.Resources>
-                    <Style TargetType="{x:Type Grid}">
-                        <Setter Property="Margin" Value="10" />
-                    </Style>
-                    <Style TargetType="{x:Type Label}">
-                        <Setter Property="Margin" Value="0,3,5,5" />
-                        <Setter Property="Padding" Value="0,0,0,5" />
-                    </Style>
-                    <Style TargetType="{x:Type TextBox}">
-                        <Setter Property="Margin" Value="0,0,0,5" />
-                        <Style.Triggers>
-                            <Trigger Property="Validation.HasError" Value="true">
-                                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                    <Style TargetType="{x:Type StackPanel}">
-                        <Setter Property="Orientation" Value="Horizontal" />
-                        <Setter Property="HorizontalAlignment" Value="Right" />
-                    </Style>
-
-                </Grid.Resources>
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -74,16 +63,17 @@
 
                 <!-- FROM -->
                 <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center">_From:</Label>
-                <local:MoneyDatePicker x:Name="dateTimePicker1" SelectedDateFormat="Short" Grid.Column="1" Grid.Row="0" />
+                <local:MoneyDatePicker x:Name="dateTimePicker1" SelectedDateFormat="Short" Grid.Column="1" Grid.Row="0" 
+                                       Style="{StaticResource DefaultDatePickerStyle}"/>
 
                 <!-- TO -->
                 <Label Grid.Column="0" Grid.Row="2"  HorizontalAlignment="Right" VerticalAlignment="Center">_To:</Label>
-                <local:MoneyDatePicker x:Name="dateTimePicker2" SelectedDateFormat="Short" Grid.Column="1" Grid.Row="2" />
+                <local:MoneyDatePicker x:Name="dateTimePicker2" SelectedDateFormat="Short" Grid.Column="1" Grid.Row="2" 
+                                       Style="{StaticResource DefaultDatePickerStyle}"/>
 
                 <!-- Interval -->
                 <Label x:Name="intervalPrompt" Grid.Column="0" Grid.Row="4"  HorizontalAlignment="Right" VerticalAlignment="Center">_Interval:</Label>
-                <local:ComboBox2 x:Name="comboBoxInterval"  Grid.Column="1" Grid.Row="4" Height="24" >
-                </local:ComboBox2>
+                <ComboBox x:Name="comboBoxInterval"  Grid.Column="1" Grid.Row="4" Height="24" />
 
             </Grid >
 
@@ -98,7 +88,7 @@
         <!-- OK or Cancel -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom" Margin="10,0,10,10">
             <StackPanel.Resources>
-                <Style TargetType="{x:Type Button}">
+                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource DefaultButtonStyle}">
                     <Setter Property="MinWidth" Value="70" />
                     <Setter Property="MinHeight" Value="25" />
                     <Setter Property="Margin" Value="5,0,0,0" />
@@ -110,4 +100,4 @@
 
     </Grid>
 
-</Window>
+</d:BaseDialog>

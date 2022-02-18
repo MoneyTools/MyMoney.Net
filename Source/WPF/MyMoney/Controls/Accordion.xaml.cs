@@ -30,28 +30,7 @@ namespace Walkabout.Controls
         public Accordion()
         {
             InitializeComponent();
-
-            //if (DesignerProperties.GetIsInDesignMode(this))
-            //{
-            //    ListBox A = new ListBox();
-            //    Add("First", "First", A);
-
-            //    ListBox B = new ListBox();
-            //    B.Items.Add("First list box item");
-            //    B.Items.Add("Second list box item");
-            //    B.SelectedIndex = 1;
-            //    B.Items.Add("Third list box item");
-            //    Add("Second", "Second", B);
-
-            //    ListBox C = new ListBox();
-            //    Add("Third", "Third", C);
-
-            //    Selected = B;
-            //}
-
         }
-
-
 
 
         public static Brush GetGlyphBrush(DependencyObject obj)
@@ -122,8 +101,6 @@ namespace Walkabout.Controls
             Expander expanderToAdd = new Expander();
             tabs[header] = expanderToAdd;
 
-            // Set dynamic reference to style so theme can be switched.
-            expanderToAdd.SetResourceReference(FrameworkElement.StyleProperty, "AccordionExpander");
 
             expanderToAdd.Name = id;
             expanderToAdd.IsExpanded = false;
@@ -143,6 +120,7 @@ namespace Walkabout.Controls
             //
             TextBlock headerText = new TextBlock();
             headerText.Text = header;
+            headerText.VerticalAlignment = VerticalAlignment.Center;
             Grid.SetColumn(headerText, 0);
             expanderHeader.Children.Add(headerText);
 
@@ -190,7 +168,7 @@ namespace Walkabout.Controls
             // Now set the content of the expander
             //
             expanderToAdd.Content = content as UIElement;
-
+            
             expanderToAdd.Expanded += new RoutedEventHandler(OnExpanderExpanded);
             expanderToAdd.Collapsed += new RoutedEventHandler(OnExpanderCollapsed);
             expanderToAdd.SizeChanged += new SizeChangedEventHandler(OnExpanderToAdd_SizeChanged);

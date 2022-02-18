@@ -98,13 +98,6 @@ namespace Walkabout.Setup
             bool found = false;
             bool first = true;
            
-            var style = new Style(typeof(Paragraph));
-            style.Setters.Add(new Setter(Paragraph.BackgroundProperty, Brushes.Teal));
-            style.Setters.Add(new Setter(Paragraph.ForegroundProperty, Brushes.White));
-            style.Setters.Add(new Setter(Paragraph.FontSizeProperty, 18.0));
-            document.Resources.Remove("HeadingStyle");
-            document.Resources.Add("HeadingStyle", style);
-                
             foreach (XElement change in doc.Root.Elements("change"))
             {
                 string version = (string)change.Attribute("version");

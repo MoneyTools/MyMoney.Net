@@ -36,8 +36,16 @@ namespace Walkabout.Views
             SetupGrid(this.SecuritiesDataGrid);
         }
 
+        public event EventHandler<SecuritySelectionEventArgs> SecurityNavigated;
         public event EventHandler<SecuritySelectionEventArgs> SecuritySelected;
 
+        internal void OnSecurityNavigated(Security s)
+        {
+            if (SecurityNavigated != null)
+            {
+                SecurityNavigated(this, new SecuritySelectionEventArgs(s));
+            }
+        }
         internal void OnSecuritySelected(Security s)
         {
             if (SecuritySelected != null)
@@ -165,20 +173,9 @@ namespace Walkabout.Views
 
         void OnSelectionChanged(Security security)
         {
-            if (security != null)
-            {
-                TrendGraph graph = (TrendGraph)ServiceProvider.GetService(typeof(TrendGraph));
-                if (graph != null)
-                {
-                    UpdateGraph(graph, security);
-                }
-            }
+            OnSecuritySelected(security);
         }
 
-        private void UpdateGraph(TrendGraph graph, Security security)
-        {
-            // todo: need to make TrendGraph more general.  It should not know about Transactions directly.
-        }
 
         DataGrid FindDataGridContainingFocus()
         {
@@ -527,7 +524,10 @@ namespace Walkabout.Views
         public object SelectedRow
         {
             get { return this.SecuritiesDataGrid.SelectedItem; }
-            set { this.SecuritiesDataGrid.SelectedItem = value; }
+            set
+            {
+                this.SecuritiesDataGrid.SelectedItem = value;
+            }
         }
 
         public ViewState ViewState
@@ -612,7 +612,7 @@ namespace Walkabout.Views
             if (s != null)
             {
                 // navigate to transaction view showing all transactions involving the selected security
-                OnSecuritySelected(s);
+                OnSecurityNavigated(s);
             }
         }
 
@@ -878,7 +878,7 @@ namespace Walkabout.Views
                 {
                     if (MessageBoxEx.Show("This security is being used, do you want to see which transactions are using it?", "Security in use", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
                     {
-                        view.OnSecuritySelected(security);
+                        view.OnSecurityNavigated(security);
                     }
                     return;
                 }

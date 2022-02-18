@@ -27,6 +27,7 @@ namespace Walkabout.Data
             this.password = password;
         }
 
+        public virtual bool SupportsUserLogin => false;
         public virtual string Server { get; set; }
 
         public virtual string DatabasePath { get { return filename; } }

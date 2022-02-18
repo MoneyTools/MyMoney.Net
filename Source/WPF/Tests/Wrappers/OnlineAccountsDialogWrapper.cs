@@ -175,13 +175,13 @@ namespace Walkabout.Tests.Wrappers
         // OnlineResultList datagrid
         public IEnumerable<OnlineAccountItem> GetOnlineAccounts()
         {
+            List<OnlineAccountItem> list = new List<OnlineAccountItem>();
             AutomationElement grid = this.Element.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "OnlineResultList"));
             if (grid == null)
             {
-                throw new Exception("DataGrid 'OnlineResultList' not found");
+                return list;
             }
 
-            List<OnlineAccountItem> list = new List<OnlineAccountItem>();
             foreach (AutomationElement e in grid.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
             {
                 list.Add(new OnlineAccountItem(e));

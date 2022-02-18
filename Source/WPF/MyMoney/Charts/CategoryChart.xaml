@@ -13,7 +13,7 @@
             <MenuItem Header="Export..." Click="OnExport"/>
         </ContextMenu>
     </UserControl.ContextMenu>
-    <Grid Background="Transparent">
+    <Grid  Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>

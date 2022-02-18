@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -21,7 +22,6 @@ namespace Walkabout.Utilities
         string formatName;
         bool isDragging = false;
 
-
         Window dragdropWindow;
         AdornerLayer adornerLayer;
         Adorner lastAdornerUsed;
@@ -34,9 +34,6 @@ namespace Walkabout.Utilities
 
         #endregion
 
-
-
-      
 
         /// <summary>
         /// Constructor
@@ -58,7 +55,7 @@ namespace Walkabout.Utilities
             this.calledBackForValidatingSource = validateDragSource;
             this.calledBackForValidatingTarget = validDropTarget;
             this.calledBackFinalDropOperation = finalDragDropOperation;
-
+            
             //-----------------------------------------------------------------
             // Drag Drop gesture hooks applied to the users supplied Framework Control
             this.mainControl.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(OnPreviewMouseLeftButtonDown);
@@ -67,10 +64,16 @@ namespace Walkabout.Utilities
             this.mainControl.PreviewDragEnter += new DragEventHandler(OnPreviewDragEnter);
 
             this.mainControl.Drop += new DragEventHandler(OnDrop);
-
+            this.mainControl.PreviewKeyDown += MainControl_PreviewKeyDown;
         }
 
-
+        private void MainControl_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape && this.isDragging)
+            {
+                this.isDragging = false;
+            }
+        }
 
         void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -86,6 +89,7 @@ namespace Walkabout.Utilities
 
         void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            this.isDragging = false;
             this.isMouseDown = false;
             DestroyDragDropWindow();
         }
@@ -125,20 +129,20 @@ namespace Walkabout.Utilities
 
         void OnDrop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(formatName))
+            if (this.isDragging && e.Data.GetDataPresent(formatName))
             {
                 object dragSource = e.Data.GetData(formatName);
                 if (dragSource != null)
                 {
-                    object dropTarget = this.calledBackForValidatingTarget(dragSource, e.OriginalSource, e.Effects);
+                    DragDropTarget dropTarget = this.calledBackForValidatingTarget(dragSource, e.OriginalSource, e.Effects);
                     if (dropTarget != null)
                     {
-                        if (dragSource != dropTarget)
+                        if (dragSource != dropTarget.DataSource)
                         {
                             e.Handled = true;
                             UpdateEffects(e);
                             DestroyDragDropWindow();
-                            this.calledBackFinalDropOperation(dragSource, dropTarget, e.Effects);
+                            this.calledBackFinalDropOperation(dragSource, dropTarget.DataSource, e.Effects);
                         }
                     }
                 }
@@ -146,11 +150,6 @@ namespace Walkabout.Utilities
 
             DragDropRemoveAnyAdorner();
         }
-
-
-
-
-
 
         /// <summary>
         /// Update the position of the transparent drag/drop feedback window
@@ -163,6 +162,11 @@ namespace Walkabout.Utilities
             {
                 e.UseDefaultCursors = true;
                 UpdateWindowLocation();
+                if (e.Effects == DragDropEffects.None)
+                {
+                    DragDropRemoveAnyAdorner();
+                }
+                UpdateInstructions(e.Effects);
             }
         }
 
@@ -173,9 +177,6 @@ namespace Walkabout.Utilities
                 UpdateWindowLocation();
             }
         }
-
-
-
 
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "e")]
@@ -194,26 +195,25 @@ namespace Walkabout.Utilities
 
             try
             {
-                if (objectBeenDragged.VisualForDraginSource == null)
+                if (objectBeenDragged.VisualForDraginSource != null)
                 {
-                    objectBeenDragged.VisualForDraginSource = new Rectangle();
+                    CreateDragDropWindow(objectBeenDragged.VisualForDraginSource);
                 }
-
-                CreateDragDropWindow(objectBeenDragged.VisualForDraginSource);
-
 
                 // Initialize the drag & drop operation
                 DataObject dragData = new DataObject(formatName, objectBeenDragged.DataSource);
-                DragDrop.DoDragDrop(this.mainControl, dragData, DragDropEffects.Move | DragDropEffects.Copy);
+                DragDrop.DoDragDrop(this.mainControl, dragData, DragDropEffects.Move | DragDropEffects.Copy);                
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.ToString());
             }
             finally
             {
 
                 this.isDragging = false;
                 DestroyDragDropWindow();
+                DragDropRemoveAnyAdorner();
                 this.mainControl.GiveFeedback -= feedbackHandler;
                 this.mainControl.QueryContinueDrag -= queryContinueHandler;
             }
@@ -246,18 +246,25 @@ namespace Walkabout.Utilities
             }
         }
 
+        object previousPossibleDropTarget;
+        DragDropEffects currentEffect = DragDropEffects.None;
 
         private bool UpdateEffects(DragEventArgs e)
         {
+            if (!this.isDragging)
+            {
+                DragDropRemoveAnyAdorner();
+                e.Effects = DragDropEffects.None;
+                return true;
+            }
 
             object dragSource = e.Data.GetData(formatName);
             if (dragSource == null)
             {
+                DragDropRemoveAnyAdorner();
                 e.Effects = DragDropEffects.None;
                 return false;
             }
-
-            DragDropRemoveAnyAdorner();
 
             const int dragScrollMarginSpeedSlow = 30;
             const int dragScrollMarginFast = 10;
@@ -266,7 +273,6 @@ namespace Walkabout.Utilities
             HitTestResult result = VisualTreeHelper.HitTest(this.mainControl, pt);
             if (result != null)
             {
-
                 if (pt.Y < dragScrollMarginSpeedSlow)
                 {
                     // The user is close to the bottom of the container (ListBox or TreeView)
@@ -296,32 +302,45 @@ namespace Walkabout.Utilities
                 FrameworkElement ctrl = result.VisualHit as FrameworkElement;
                 if (ctrl != null)
                 {
-                    object possibleDropTarget = this.calledBackForValidatingTarget(dragSource, ctrl, e.Effects);
+                    DragDropTarget possibleDropTarget = this.calledBackForValidatingTarget(dragSource, ctrl, e.Effects);
 
-                    if (possibleDropTarget != null)
+                    if (possibleDropTarget != null && possibleDropTarget.DataSource != previousPossibleDropTarget)
                     {
-                        if (possibleDropTarget != dragSource)
+                        if (possibleDropTarget.DataSource != dragSource)
                         {
-                            this.adornerLayer = AdornerLayer.GetAdornerLayer(ctrl);
-                            lastAdornerUsed = new AdornerDropTarget(ctrl);
+                            DragDropRemoveAnyAdorner();
+                            previousPossibleDropTarget = possibleDropTarget.DataSource;
+                            this.adornerLayer = AdornerLayer.GetAdornerLayer(possibleDropTarget.TargetElement);
+                            lastAdornerUsed = new AdornerDropTarget(possibleDropTarget.TargetElement);
                             this.adornerLayer.Add(lastAdornerUsed);
                         }
                     }
+                } 
+                else
+                {
+                    DragDropRemoveAnyAdorner();
                 }
             }
-
-
+            else
+            {
+                DragDropRemoveAnyAdorner();
+            }
 
             if (((e.AllowedEffects & DragDropEffects.Copy) == DragDropEffects.Copy) ||
                 ((e.AllowedEffects & DragDropEffects.Move) == DragDropEffects.Move))
             {
                 if ((e.KeyStates & DragDropKeyStates.ControlKey) == DragDropKeyStates.ControlKey)
                 {
+
                     e.Effects = DragDropEffects.Copy;
                 }
                 else
                 {
                     e.Effects = DragDropEffects.Move;
+                }
+                if (e.Effects != currentEffect)
+                {
+                    currentEffect = e.Effects;
                 }
             }
             else
@@ -350,12 +369,14 @@ namespace Walkabout.Utilities
         /// <returns>A visual for drag/drop transparent window</returns>
         static Visual BuildDragDropVisual(FrameworkElement dragElement)
         {
-            
-
-            
-
+            dragElement.Measure(new Size(1000, 1000));
+            dragElement.Arrange(new Rect(0, 0, 200, 50));
             Rect bounds = GetVisualBounds(dragElement);
-            if ((bounds.Width > 0) == false)
+            if (bounds == Rect.Empty)
+            {
+                bounds = new Rect(0, 0, 0, 0);
+            }
+            if (bounds.Width <= 0 || double.IsNaN(bounds.Width) || double.IsInfinity(bounds.Width))
             {
                 bounds.Width = dragElement.ActualWidth;
             }
@@ -364,7 +385,7 @@ namespace Walkabout.Utilities
 //                bounds.Width = 40;
             }
 
-            if ((bounds.Height > 0) == false)
+            if (bounds.Height <= 0 || double.IsNaN(bounds.Height) || double.IsInfinity(bounds.Height))
             {
                 bounds.Height = dragElement.ActualHeight;
             }
@@ -403,21 +424,15 @@ namespace Walkabout.Utilities
         }
 
 
-
-
         #region DRAG WINDOW
 
-        public void CreateDragDropWindow(FrameworkElement dragElements)
+        TextBlock instruction;
+
+        public void CreateDragDropWindow(FrameworkElement dragVisual)
         {
             dragdropWindow = new Window();
-            dragdropWindow.WindowStyle = WindowStyle.None;
-            dragdropWindow.AllowsTransparency = true;
-            dragdropWindow.AllowDrop = false;
-            dragdropWindow.Background = null;
-            dragdropWindow.IsHitTestVisible = false;
-            dragdropWindow.SizeToContent = SizeToContent.WidthAndHeight;
-            dragdropWindow.Topmost = true;
-            dragdropWindow.ShowInTaskbar = false;
+            object style = this.mainControl.TryFindResource("DragDropWindowStyle");
+            dragdropWindow.Style = (Style)style;
             
 
             dragdropWindow.SourceInitialized += new EventHandler(
@@ -435,7 +450,18 @@ namespace Walkabout.Utilities
 
                 });
 
-            this.dragdropWindow.Content = BuildDragDropVisual(dragElements);
+            Grid visual = new Grid();
+            visual.SetResourceReference(Window.BackgroundProperty, "SystemControlHighlightAccent3RevealBackgroundBrush");
+            visual.SetResourceReference(Window.ForegroundProperty, "SystemControlPageTextBaseHighBrush");
+            visual.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            visual.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            this.instruction = new TextBlock() { Margin = new Thickness(5), FontSize = App.Current.MainWindow.FontSize, FontFamily = App.Current.MainWindow.FontFamily };
+            UpdateInstructions(DragDropEffects.Move);
+            visual.Children.Add(dragVisual);
+            visual.Children.Add(instruction);
+            Grid.SetRow(instruction, 1);
+
+            this.dragdropWindow.Content = visual;
             this.dragdropWindow.UpdateLayout();
 
             // Show the window at the current mouse position
@@ -443,7 +469,14 @@ namespace Walkabout.Utilities
             this.dragdropWindow.Show();
         }
 
-
+        private void UpdateInstructions(DragDropEffects effects)
+        {
+            if (instruction != null)
+            {
+                string label = ((effects & DragDropEffects.Copy) != 0) ? "Merge (-Ctrl to Move)" : "Move (+Ctrl to Merge)";
+                instruction.Text = label;
+            }
+        }
 
         /// <summary>
         /// Place the drag/drop main window at location of the mouse
@@ -475,7 +508,7 @@ namespace Walkabout.Utilities
     }
     
     public delegate DragDropSource OnIsDragSourceValid(object source);
-    public delegate object OnIsValidDropTarget(object source, object target, DragDropEffects dropEfffect);
+    public delegate DragDropTarget OnIsValidDropTarget(object source, object target, DragDropEffects dropEfffect);
     public delegate void OnApplyDragDrop(object source, object target, DragDropEffects dropEfffect);
 
 
@@ -483,6 +516,13 @@ namespace Walkabout.Utilities
     {
         public object DataSource { get; set; }
         public FrameworkElement VisualForDraginSource { get; set; }
+    }
+
+
+    public class DragDropTarget
+    {
+        public object DataSource { get; set; }
+        public FrameworkElement TargetElement { get; set; }
     }
 
 }

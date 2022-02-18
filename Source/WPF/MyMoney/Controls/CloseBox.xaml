@@ -4,12 +4,12 @@
              xmlns:c="clr-namespace:Walkabout.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             Background="{DynamicResource CloseBoxNormalBackground}" 
-             Foreground="{DynamicResource CloseBoxNormalForeground}" 
-             MousePressedBackground="{DynamicResource CloseBoxMousePressedBackground}" 
-             MousePressedForeground="{DynamicResource CloseBoxMousePressedForeground}" 
-             MouseOverBackground="{DynamicResource CloseBoxMouseOverBackground}" 
-             MouseOverForeground="{DynamicResource CloseBoxMouseOverForeground}" 
+             Background="{DynamicResource ButtonBackground}" 
+             Foreground="{DynamicResource ButtonForeground}" 
+             MousePressedBackground="{DynamicResource ButtonBackgroundPressed}" 
+             MousePressedForeground="{DynamicResource ButtonForegroundPressed}" 
+             MouseOverBackground="{DynamicResource ButtonBackgroundPointerOver}" 
+             MouseOverForeground="{DynamicResource ButtonForegroundPointerOver}" 
              mc:Ignorable="d" Width="16" Height="16"
              d:DesignHeight="16" d:DesignWidth="16">
     <Button.Template>

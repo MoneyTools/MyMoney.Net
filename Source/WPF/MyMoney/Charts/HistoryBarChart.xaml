@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:LovettSoftware.Charts"
-             mc:Ignorable="d" Background="Transparent"
+             mc:Ignorable="d"  
+             Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
              d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
     </UserControl.Resources>

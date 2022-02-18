@@ -20,6 +20,8 @@ namespace Walkabout.Data
             this.rows = rows;
         }
 
+        public virtual bool SupportsUserLogin => false;
+
         public virtual string Server { get; set; }
 
         public virtual string DatabasePath { get { return fileName; } }

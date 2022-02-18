@@ -8,18 +8,21 @@
              xmlns:views="clr-namespace:Walkabout.Views"
              xmlns:help="clr-namespace:Walkabout.Help"
              help:HelpService.HelpKeyword="Aliases"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
 
-        <SolidColorBrush x:Key="GridLineBrush" Color="#FFDFDFEF"/>
 
         <Style x:Key="MyDataGridStyle" TargetType="{x:Type local:MoneyDataGrid}">
             <Setter Property="ItemsSource" Value="{Binding}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="AlternatingRowBackground" Value="#E0F1FF"/>
+            <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
+            <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
-            <Setter Property="VerticalGridLinesBrush" Value="{StaticResource GridLineBrush}"/>
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
@@ -28,7 +31,7 @@
         </Style>
 
 
-        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}">
+        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
             <Setter Property="IsEditable" Value="True"/>
             <Setter Property="StaysOpenOnEdit" Value="True"/>
             <Setter Property="Padding" Value="0"/>
@@ -36,9 +39,10 @@
             <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
         </Style>
 
-        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}">
+        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
             <Setter Property="Padding" Value="0"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
         </Style>
 
         <c:NullableValueConverter x:Key="NullableValueConverter" />
@@ -103,6 +107,7 @@
         <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -115,8 +120,11 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Background" Value="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="CellBorder"/>
-                                <Setter Property="Foreground" Value="{DynamicResource WalkaboutSelectedTextBrush}"/>
+                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
+                                <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundMouseOverBrush}" TargetName="CellBorder"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

@@ -10,7 +10,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for AddLoginDialog.xaml
     /// </summary>
-    public partial class AddLoginDialog : Window
+    public partial class AddLoginDialog : BaseDialog
     {
         SqlServerDatabase database;
 
@@ -18,15 +18,21 @@ namespace Walkabout.Dialogs
         {
             InitializeComponent();
             UserNameBox.GotFocus += new RoutedEventHandler(OnTextBoxGotFocus);
-            PasswordBox.GotFocus += new RoutedEventHandler(OnTextBoxGotFocus);
-            ConfirmPasswordBox.GotFocus += new RoutedEventHandler(OnTextBoxGotFocus);
+            PasswordBox.GotFocus += new RoutedEventHandler(OnPasswordBoxGotFocus);
+            ConfirmPasswordBox.GotFocus += new RoutedEventHandler(OnPasswordBoxGotFocus);
         }
 
         void OnTextBoxGotFocus(object sender, RoutedEventArgs e)
         {
             TextBox textBox = (TextBox)sender;
             textBox.SelectAll();
-        }        
+        }
+
+        void OnPasswordBoxGotFocus(object sender, RoutedEventArgs e)
+        {
+            PasswordBox textBox = (PasswordBox)sender;
+            textBox.SelectAll();
+        }
 
         public SqlServerDatabase Database
         {

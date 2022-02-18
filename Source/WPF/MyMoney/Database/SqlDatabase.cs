@@ -893,6 +893,8 @@ namespace Walkabout.Data
             }
         }
 
+        public virtual bool SupportsUserLogin => true;
+
         public void AddLogin(string userName, string password)
         {
             ExecuteScalar("sp_addLogin '" + userName + "','" + password + "'");

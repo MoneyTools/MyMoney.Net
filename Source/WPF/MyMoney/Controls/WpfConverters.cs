@@ -11,6 +11,8 @@ using System.IO;
 using System.Windows.Media.Imaging;
 using Walkabout.Configuration;
 using Walkabout.Charts;
+using Walkabout.Utilities;
+using ModernWpf.Controls;
 
 namespace Walkabout.WpfConverters
 {
@@ -56,12 +58,18 @@ namespace Walkabout.WpfConverters
             if (value is bool)
             {
                 bool rc = (bool)value;
-                if (rc && parameter != null)
+                if (parameter != null)
                 {
                     try
                     {
-                        Color c = (Color)ColorConverter.ConvertFromString(parameter.ToString());
-                        return new SolidColorBrush(c);
+                        var parts = parameter.ToString().Split('+');
+                        var name = parts[0];
+                        if (rc && parts.Length > 1)
+                        {
+                            name = parts[1];
+                        }
+                        Brush brush = App.Current.MainWindow.FindResource(name) as Brush;
+                        return brush;
                     }
                     catch
                     {
@@ -114,62 +122,6 @@ namespace Walkabout.WpfConverters
         }
 
     }
-
-
-    public class AttachmentIconConverter : IValueConverter
-    {
-        ImageSource cachedIcon;
-
-        public AttachmentIconConverter()
-        {
-            
-        }
-
-        private ImageSource Icon
-        {
-            get
-            {
-                if (cachedIcon == null)
-                {
-                    try
-                    {
-                        BitmapDecoder decoder = BitmapDecoder.Create(new Uri("pack://application:,,,/MyMoney;component/Dialogs/Icons/Attachment.png"), BitmapCreateOptions.IgnoreImageCache, BitmapCacheOption.None);
-                        cachedIcon = decoder.Frames[0];
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Cannot find Attachment.png icon", "Internal Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-                return cachedIcon;
-            }
-        }
-
-        public string AttachmentPath
-        {
-            get
-            {
-                return Settings.TheSettings.AttachmentDirectory;
-            }
-        }
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {            
-            if (value is bool && (bool)value)
-            {
-                return this.Icon;
-            }
-            return null;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value;
-        }
-
-    }
-
-
 
     public class RoutingLines : IValueConverter
     {
@@ -563,10 +515,10 @@ namespace Walkabout.WpfConverters
                 decimal c = (decimal)value;
                 if (c < 0)
                 {
-                    return Brushes.Red;
+                    return AppTheme.Instance.GetThemedBrush("NegativeCurrencyForegroundBrush");
                 }
             }
-            return Application.Current.TryFindResource("WalkaboutAccountEnabledTextBrush") as Brush;
+            return AppTheme.Instance.GetThemedBrush("PositiveCurrencyForegroundBrush");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

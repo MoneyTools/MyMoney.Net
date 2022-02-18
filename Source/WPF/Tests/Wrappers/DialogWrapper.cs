@@ -29,17 +29,17 @@ namespace Walkabout.Tests.Wrappers
 
         public void Close()
         {
-            ClickButton("Close");
+            ClickButton("CloseButton");
         }
 
         public void Minimize()
         {
-            ClickButton("Minimize-Restore");
+            ClickButton("MinimizeButton");
         }
 
         public void Maximize()
         {
-            ClickButton("Maximize-Restore");
+            ClickButton("MaximizeRestoreButton");
         }
 
         public bool IsButtonEnabled(string name)

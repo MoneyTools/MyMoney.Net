@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -19,6 +17,22 @@ using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 
 namespace Walkabout.Controls
 {
+    // Summary:
+    //     Provides data for the System.Windows.Controls.DataGrid.BeginningEdit event.
+    public class DataGridCustomEditEventArgs : EventArgs
+    {
+        public bool Handled { get; set; }
+        public DataGridColumn Column { get; internal set; }
+        public DataGridRow Row { get; internal set; }
+        public RoutedEventArgs EditingEventArgs { get; internal set; }
+        public DataGridCustomEditEventArgs(DataGridColumn column, DataGridRow row, RoutedEventArgs editingEventArgs)
+        {
+            this.Column = column;
+            this.Row = row;
+            this.EditingEventArgs = editingEventArgs;
+        }
+    }
+
     /// <summary>
     /// This class provides a bunch of helper functionality that makes the DataGrid more user friendly.
     /// </summary>
@@ -674,6 +688,9 @@ namespace Walkabout.Controls
             }
         }
 
+
+        public event EventHandler<DataGridCustomEditEventArgs> CustomBeginEdit;
+
         protected override void OnBeginningEdit(DataGridBeginningEditEventArgs e)
         {
             base.OnBeginningEdit(e);
@@ -684,6 +701,15 @@ namespace Walkabout.Controls
                 DataGridColumn column = e.Column;
                 DataGridRow row = e.Row;
                 RoutedEventArgs args = e.EditingEventArgs;
+                if (CustomBeginEdit != null)
+                {
+                    var ce = new DataGridCustomEditEventArgs(column, row, args);
+                    CustomBeginEdit(this, ce);
+                    if (ce.Handled)
+                    {
+                        return;
+                    }
+                }
                 if (row.IsSelected)
                 {
                     Dispatcher.BeginInvoke(new Action(() =>
@@ -714,7 +740,7 @@ namespace Walkabout.Controls
             }
         }
 
-        public Control GetCellEditor(DataGridColumn column, DataGridRow row, RoutedEventArgs args)
+        public virtual Control GetCellEditor(DataGridColumn column, DataGridRow row, RoutedEventArgs args)
         {
             FrameworkElement contentPresenter = column.GetCellContent(row);
             Control editor = null;

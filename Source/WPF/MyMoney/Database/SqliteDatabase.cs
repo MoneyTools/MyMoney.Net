@@ -119,6 +119,8 @@ namespace Walkabout.Data
             }
         }
 
+        public override bool SupportsUserLogin => false;
+
         public override void Upgrade()
         {
             // TBD

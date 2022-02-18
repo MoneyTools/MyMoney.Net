@@ -78,9 +78,10 @@
                 </Rectangle.Fill>
             </Rectangle>
 
-            <TextBlock Text="Color:" Grid.Column="1"  Margin="4,6"/>
+            <TextBlock Text="Color:" Grid.Column="1"  Margin="4,6" VerticalAlignment="top" />
             
-            <TextBox x:Name="ColorName" MinWidth="70" Text="{Binding Color}" Grid.Column="2" VerticalAlignment="top" Background="LemonChiffon" Margin="4"/>
+            <TextBox x:Name="ColorName" MinWidth="70" Text="{Binding Color}" Grid.Column="2" VerticalAlignment="top" 
+                     Margin="4"/>
 
         </Grid>
         

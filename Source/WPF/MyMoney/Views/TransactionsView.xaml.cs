@@ -32,6 +32,8 @@ using Walkabout.Configuration;
 using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
 using System.Windows.Media.Animation;
+using ModernWpf.Controls;
+using System.Reflection;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -182,8 +184,7 @@ namespace Walkabout.Views
 
         private void OnOneLineViewChanged()
         {
-            ToggleShowLines.IsChecked = !OneLineView;
-            ToggleShowLinesImage.Source = (OneLineView) ? (ImageSource)FindResource("ThreeLines") : (ImageSource)FindResource("OneLine");
+            ToggleShowLinesImage.Symbol = (OneLineView) ? Symbol.List : Symbol.ShowResults;
             FireBeforeViewStateChanged();
             if (OneLineViewChanged != null)
             {
@@ -206,24 +207,14 @@ namespace Walkabout.Views
 
         public event EventHandler OneLineViewChanged;
 
-        private void OnToggleLines_Checked(object sender, RoutedEventArgs e)
+        private void OnToggleLines(object sender, RoutedEventArgs e)
         {
-            OneLineView = false;
+            OneLineView = !OneLineView;
         }
 
-        private void OnToggleLines_Unchecked(object sender, RoutedEventArgs e)
+        private void OnToggleShowSplits(object sender, RoutedEventArgs e)
         {
-            OneLineView = true;
-        }
-
-        private void OnToggleShowSplits_Checked(object sender, RoutedEventArgs e)
-        {
-            ViewAllSplits = true;
-        }
-
-        private void OnToggleShowSplits_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ViewAllSplits = false;
+            ViewAllSplits = !ViewAllSplits;
         }
 
         private void OnToggleShowSecurities_Checked(object sender, RoutedEventArgs e)
@@ -245,31 +236,6 @@ namespace Walkabout.Views
                 ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
             }
         }
-
-
-        public static readonly DependencyProperty BalancingBudgetProperty = DependencyProperty.Register("BalancingBudget", typeof(bool), typeof(TransactionsView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnBalancingBudgetChanged)));
-
-        static void OnBalancingBudgetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            TransactionsView view = (TransactionsView)d;
-            view.OnBalancingBudgetChanged();
-        }
-
-        private void OnBalancingBudgetChanged()
-        {
-            if (BalancingBudgetChanged != null)
-            {
-                BalancingBudgetChanged(this, EventArgs.Empty);
-            }
-        }
-
-        public bool BalancingBudget
-        {
-            get { return (bool)GetValue(BalancingBudgetProperty); }
-            set { SetValue(BalancingBudgetProperty, value); }
-        }
-
-        public event EventHandler BalancingBudgetChanged;
 
         public DateTime BudgetDate { get; set; }
 
@@ -306,11 +272,11 @@ namespace Walkabout.Views
             {
                 SetValue(ViewAllSplitsProperty, value);
 
-                ToggleShowSplits.IsChecked = value;
+                //ToggleShowSplits.IsChecked = value;
 
                 ToggleShowSplits.ToolTip = value ? "Hide All Splits" : "Show All Splits";
 
-                ToggleShowSplitsImage.Source = value ? (ImageSource)FindResource("SplitIconFilled") : (ImageSource)FindResource("SplitIcon");
+                ToggleShowSplitsImage.Symbol = value ? Symbol.ShowBcc : Symbol.HideBcc;
             }
         }
 
@@ -429,9 +395,16 @@ namespace Walkabout.Views
                 InitializeComponent();
 
                 TheGrid_BankTransactionDetails.ParentMenu = this.ContextMenu;
+                TheGrid_BankTransactionDetails.CustomBeginEdit += OnCustomBeginEdit;
+
                 TheGrid_TransactionFromDetails.ParentMenu = this.ContextMenu;
+                TheGrid_TransactionFromDetails.CustomBeginEdit += OnCustomBeginEdit;
+
                 TheGrid_InvestmentActivity.ParentMenu = this.ContextMenu;
+                TheGrid_TransactionFromDetails.CustomBeginEdit += OnCustomBeginEdit;
+
                 TheGrid_BySecurity.ParentMenu = this.ContextMenu;
+                TheGrid_BySecurity.CustomBeginEdit += OnCustomBeginEdit;
 
                 TheActiveGrid = TheGrid_BankTransactionDetails;
 
@@ -469,6 +442,66 @@ namespace Walkabout.Views
 #if PerformanceBlocks
             }
 #endif
+        }
+
+        private void OnCustomBeginEdit(object sender, DataGridCustomEditEventArgs e)
+        {
+            DataGridRow row = e.Row;
+            RoutedEventArgs args = e.EditingEventArgs;
+            if (row.IsSelected && args is MouseButtonEventArgs mouseArgs)
+            {
+                DataGridColumn column = e.Column;
+                string name = GetHitFieldName(column, row, mouseArgs);
+                if (!string.IsNullOrEmpty(name))
+                {
+                    e.Handled = true;
+                    // lazy disptach to allow the actual editors to be created.
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        OnStartEdit(column, row, name);
+                    }), System.Windows.Threading.DispatcherPriority.Background);
+                }
+            }
+        }
+
+        private string GetHitFieldName(DataGridColumn column, DataGridRow row, MouseButtonEventArgs args)
+        {
+            FrameworkElement contentPresenter = column.GetCellContent(row);
+            HitTestResult result = VisualTreeHelper.HitTest(contentPresenter, args.GetPosition(contentPresenter));
+            if (result != null && result.VisualHit is TransactionTextField field)
+            {
+                return field.FieldName;
+            }
+            return null;
+        }
+
+        private void OnStartEdit(DataGridColumn column, DataGridRow row, string fieldName)
+        {
+            // Special handling for the fact that we have a column containing 3 separate editors (Payee, Category, Memo).
+            // This method is called before these editors show up because otherwise the mouse event args
+            // could be OFF if the editors are larger than the non-editable cells.  So we find out what was hit,
+            // then let the editors be created, then we put the matching editor into edit mode so the user doesn't
+            // have to click twice!
+            FrameworkElement contentPresenter = column.GetCellContent(row);
+            var grid = WpfHelper.FindAncestor<MoneyDataGrid>(contentPresenter);
+            if (grid == null)
+            {
+                return;
+            }
+            List<Control> editors = new List<Control>();
+            WpfHelper.FindEditableControls(contentPresenter, editors);
+            if (editors.Count > 0)
+            {
+                // find the editor with the matching field name.
+                string editorName = "EditorFor" + fieldName;
+                foreach (var editor in editors)
+                {
+                    if (editor.Name == editorName)
+                    {
+                        grid.OnStartEdit(editor);
+                    }
+                }
+            }
         }
 
         private void OnTransactionViewUnloaded(object sender, RoutedEventArgs e)
@@ -1020,7 +1053,7 @@ namespace Walkabout.Views
                 {
                     StringBuilder sb = new StringBuilder();
                     var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                    foreach (var file in files) 
+                    foreach (var file in files)
                     {
                         var extension = Path.GetExtension(file);
 
@@ -1154,6 +1187,7 @@ namespace Walkabout.Views
         private void OnDataGridRowDragEnter(object sender, DragEventArgs e)
         {
             e.Effects = DragDropEffects.None;
+            e.Handled = true;
 
             DataGridRow row = (DataGridRow)sender;
             if (!row.IsEditing)
@@ -1173,7 +1207,6 @@ namespace Walkabout.Views
                 }
                 else if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
-                    var proceed = false;
                     var transaction = row.Item as Transaction;
                     if (transaction != null && transaction.HasAttachment == false)
                     {
@@ -1181,21 +1214,10 @@ namespace Walkabout.Views
 
                         if (files.Length == 1 && IsValidAttachmentExtension(files[0]))
                         {
-                            proceed = true;
                             SetDragDropStyles(row, DropType.File);
                             e.Effects = DragDropEffects.Copy;
                         }
                     }
-
-                    if (!proceed)
-                    {
-                        e.Effects = DragDropEffects.None;
-                        e.Handled = true;
-                    }
-                }
-                else
-                {
-                    e.Handled = true;
                 }
             }
         }
@@ -2180,7 +2202,7 @@ namespace Walkabout.Views
         }
 
         private void UpdatePortfolio(Account account)
-        { 
+        {
             currentDisplayName = TransactionViewName.Portfolio;
             layout = "InvestmentPortfolioView";
 
@@ -2505,7 +2527,7 @@ namespace Walkabout.Views
                         encoder.Save(stream);
                     }
                     selected.HasAttachment = true;
-                } 
+                }
                 catch (Exception ex)
                 {
                     MessageBoxEx.Show(ex.Message, "Paste Attachment Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -3102,6 +3124,15 @@ namespace Walkabout.Views
                         Account a = args.Item as Account;
                         Category c = args.Item as Category;
 
+                        if (c != null)
+                        {
+                            if (args.Name == "Label" || args.Name == "Color" || args.ChangeType == ChangeType.Deleted)
+                            {
+                                // then any transactions using this category need to be refreshed..
+                                refresh = true;
+                            }
+                        }
+
                         if (s != null && !string.IsNullOrEmpty(s.Name))
                         {
                             // ok, this might be the GetStock auto-update, see if there is anything to copy to 
@@ -3185,7 +3216,7 @@ namespace Walkabout.Views
                 isDisplayInvalid = true;
                 if (!IsEditing)
                 {
-                    Dispatcher.BeginInvoke(new Action(() =>
+                    delayedUpdates.StartDelayedAction("Refresh", new Action(() =>
                     {
                         if (!IsEditing)
                         {
@@ -3198,7 +3229,7 @@ namespace Walkabout.Views
                             }
                             isDisplayInvalid = false;
                         }
-                    }), DispatcherPriority.Render);
+                    }), TimeSpan.FromMilliseconds(10));
                 }
             }
         }
@@ -3812,6 +3843,7 @@ namespace Walkabout.Views
         public readonly static RoutedUICommand CommandViewTransactionsByPayee = new RoutedUICommand("ViewTransactionsByPayee", "CommandViewTransactionsByPayee", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewTransactionsBySecurity = new RoutedUICommand("ViewTransactionsBySecurity", "CommandViewTransactionsBySecurity", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewSecurity = new RoutedUICommand("CommandViewSecurity", "CommandViewSecurity", typeof(TransactionsView));
+        public readonly static RoutedUICommand CommandViewCategory = new RoutedUICommand("CommandViewCategory", "CommandViewCategory", typeof(TransactionsView));
 
         public readonly static RoutedUICommand CommandViewToggleOneLineView = new RoutedUICommand("View ToggleOneLineView", "ViewToggleOneLineView", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewToggleAllSplits = new RoutedUICommand("View Toggle View All Splits", "ViewToggleViewAllSplits", typeof(TransactionsView));
@@ -4141,7 +4173,7 @@ namespace Walkabout.Views
 
                 if (dialog.ShowDialog() == true && dialog.SelectedYear != -1)
                 {
-                    int year = dialog.SelectedYear;    
+                    int year = dialog.SelectedYear;
                     if (year != t.Date.Year)
                     {
                         if (extra == null)
@@ -4317,6 +4349,28 @@ namespace Walkabout.Views
             {
                 e.CanExecute = i.Security != null;
                 return;
+            }
+        }
+
+        private void CanExecute_ViewCategory(object sender, CanExecuteRoutedEventArgs e)
+        {
+            Transaction t = this.SelectedTransaction;
+            if (t != null)
+            {
+                e.CanExecute = (t.Category != null) && t.Transfer == null && !t.IsSplit;
+                return;
+            }
+        }
+
+        private void OnCommandViewCategory(object sender, ExecutedRoutedEventArgs e)
+        {
+            Transaction t = this.SelectedTransaction;
+            if (t != null && t.Category != null && t.Transfer == null && !t.IsSplit)
+            {
+                Category c = t.Category;
+                CategoryDialog dialog = CategoryDialog.ShowDialogCategory(this.myMoney, c.Name);
+                dialog.Owner = App.Current.MainWindow;
+                dialog.ShowDialog();
             }
         }
 
@@ -5390,8 +5444,8 @@ namespace Walkabout.Views
                 </DataTrigger>
 
                 <Trigger Property="IsSelected" Value="true">
-                    <Setter Property="Background" Value="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="CellBorder"/>
-                    <Setter Property="Foreground" Value="{DynamicResource WalkaboutSelectedTextBrush}"/>
+                    <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
+                    <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                 </Trigger>
 
                 <DataTrigger Binding="{Binding Path=Unaccepted}" Value="True">
@@ -5405,7 +5459,7 @@ namespace Walkabout.Views
                 </DataTrigger>
 
                 <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
-                    <Setter Property="Foreground" Value="Red"/>
+                    <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
                 </DataTrigger>
 
                 <DataTrigger Binding="{Binding Path=IsReadOnly}" Value="True">
@@ -5423,6 +5477,7 @@ namespace Walkabout.Views
 
         Transaction context;
         DataGridCell cell;
+        bool mouseOver;
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
@@ -5476,6 +5531,20 @@ namespace Walkabout.Views
             UpdateBorder();
         }
 
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            mouseOver = true;
+            UpdateBackground();
+            base.OnMouseEnter(e);
+        }
+
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            mouseOver = false;
+            UpdateBackground();
+            base.OnMouseLeave(e);
+        }
+
         void ClearContext()
         {
             if (this.context != null)
@@ -5524,28 +5593,40 @@ namespace Walkabout.Views
                 </DataTrigger>
 
                 <Trigger Property="IsSelected" Value="true">
-                    <Setter Property="Background" Value="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="CellBorder"/>
+                    <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
                 </Trigger>
              */
             bool isReconciling = false;
             bool isSelected = IsSelected;
-
             if (this.context != null)
             {
                 isReconciling = this.context.IsReconciling;
             }
+            Brush backgroundBrush = null;
             if (isSelected)
             {
-                this.SetResourceReference(Border.BackgroundProperty, "WalkaboutToolBoxListBoxItemBrushWhenSelected");
+                if (mouseOver)
+                {
+                    backgroundBrush = AppTheme.Instance.GetThemedBrush("ListItemSelectedBackgroundMouseOverBrush");
+                }
+                else
+                {
+                    backgroundBrush = AppTheme.Instance.GetThemedBrush("ListItemSelectedBackgroundBrush");
+                }
             }
             else if (isReconciling)
             {
-                this.SetResourceReference(Border.BackgroundProperty, "WalkaboutReconciledRowBackgroundBrush");
+                backgroundBrush = AppTheme.Instance.GetThemedBrush("ListItemReconcilingBackgroundBrush");
+            }
+
+            if (backgroundBrush == null)
+            {
+                // allow to go back to "AlternatingColor" mode.
+                this.ClearValue(Border.BackgroundProperty);
             }
             else
             {
-                //this.SetResourceReference(Border.BackgroundProperty, null);
-                this.ClearValue(Border.BackgroundProperty);
+                this.SetValue(Border.BackgroundProperty, backgroundBrush);
             }
         }
 
@@ -5561,10 +5642,10 @@ namespace Walkabout.Views
         {
             /* 
                <Trigger Property="IsSelected" Value="true">
-                    <Setter Property="Foreground" Value="{DynamicResource WalkaboutSelectedTextBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                 </Trigger>
                 <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
-                    <Setter Property="Foreground" Value="Red"/>
+                    <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
                 </DataTrigger>
 
                 <DataTrigger Binding="{Binding Path=IsReadOnly}" Value="True">
@@ -5575,45 +5656,46 @@ namespace Walkabout.Views
             bool isSelected = IsSelected;
             bool isDown = false;
             bool isReadOnly = false;
+            bool isUnaccepted = false;
 
             if (this.context != null)
             {
                 isDown = this.context.IsDown;
                 isReadOnly = this.context.IsReadOnly;
+                isUnaccepted = this.context.Unaccepted;
             }
+            string foregroundBrushName = "ListItemForegroundLowBrush";
+
             if (isReadOnly)
             {
-                this.SetValue(TextBlock.ForegroundProperty, Brushes.Gray);
-                if (cell != null)
-                {
-                    cell.SetValue(DataGridCell.ForegroundProperty, Brushes.Gray);
-                }
+                foregroundBrushName = "ListItemSelectedForegroundDisabledBrush";
             }
             else if (isDown)
             {
-                this.SetValue(TextBlock.ForegroundProperty, Brushes.Red);
-                if (cell != null)
-                {
-                    cell.SetValue(DataGridCell.ForegroundProperty, Brushes.Red);
-                }
+                foregroundBrushName = "ListItemSelectedForegroundNegativeBrush";
             }
             else if (isSelected)
             {
-                ClearValue(TextBlock.ForegroundProperty);
-                this.SetResourceReference(TextBlock.ForegroundProperty, "WalkaboutSelectedTextBrush");
-                if (cell != null)
+                if (isUnaccepted)
                 {
-                    cell.SetResourceReference(DataGridCell.ForegroundProperty, "WalkaboutSelectedTextBrush");
+                    foregroundBrushName = "ListItemSelectedForegroundBrush";
+                }
+                else
+                {
+                    foregroundBrushName = "ListItemSelectedForegroundLowBrush";
                 }
             }
-            else
+            else if (isUnaccepted)
             {
-                ClearValue(TextBlock.ForegroundProperty);
-                //this.SetResourceReference(TextBlock.ForegroundProperty, null);
-                if (cell != null)
-                {
-                    cell.ClearValue(DataGridCell.ForegroundProperty);
-                }
+                foregroundBrushName = "ListItemForegroundBrush";
+            }
+
+            // establish the new color.
+            var brush = AppTheme.Instance.GetThemedBrush(foregroundBrushName);
+            SetValue(TextBlock.ForegroundProperty, brush);
+            if (cell != null)
+            {
+                cell.SetValue(TextBlock.ForegroundProperty, brush);
             }
         }
 
@@ -5661,7 +5743,8 @@ namespace Walkabout.Views
                 {
                     if (this.context.AttachmentDropTarget)
                     {
-                        this.SetResourceReference(DataGridCell.BorderBrushProperty, "ValidDropTargetFeedbackBrush");
+                        var brush = AppTheme.Instance.GetThemedBrush("ValidDropTargetFeedbackBrush");
+                        this.SetValue(DataGridCell.BorderBrushProperty, brush);
                         this.BorderThickness = new Thickness(1);
                     }
                     else
@@ -5671,55 +5754,108 @@ namespace Walkabout.Views
                 }
             }
         }
-
     }
 
-    /*
-      <DataTemplate x:Key="myTemplateAttachment">
-          <Image Source="{Binding HasAttachment, Converter={StaticResource AttachmentIconConverter}}" VerticalAlignment="Top" Width="16" Height="16"/>
-      </DataTemplate>
+    public class TransactionAttachmentIcon : Border
+    {
+        Transaction context;
 
-      <DataTemplate x:Key="myTemplateAttachmentEdit">
-            <Button Command="views:TransactionsView.CommandScanAttachment" Padding="0" Focusable="False">
-                <Image Source="/MyMoney;component/Icons/SmallScanner.png" Width="16" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            </Button>
-      </DataTemplate>
-    */
+        public TransactionAttachmentIcon()
+        {
+            this.DataContextChanged += OnDataContextChanged;
+        }
+
+        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue != this.context)
+            {
+                // WPF is recycling this object for a different row!
+                SetContext(e.NewValue as Transaction);
+                UpdateIcon();
+            }
+        }
+
+        void SetContext(Transaction t)
+        {
+            if (this.context != t && this.context != null)
+            {
+                this.context.PropertyChanged -= OnContextPropertyChanged;
+            }
+            this.context = t;
+            if (this.context != null)
+            {
+                this.context.PropertyChanged += OnContextPropertyChanged;
+            }
+            UpdateIcon();
+        }
+
+        private void OnContextPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "HasAttachment")
+            {
+                UpdateIcon();
+            }
+        }
+
+        void UpdateIcon()
+        {
+            if (this.context == null || !this.context.HasAttachment)
+            {
+                this.Child = null;
+            }
+            else if (this.Child == null)
+            {
+                var icon = new SymbolIcon()
+                {
+                    Symbol = Symbol.Attach,
+                    Foreground = AppTheme.Instance.GetThemedBrush("ListItemForegroundBrush")
+                };
+
+                SymbolIconHackery.SetFontSize(icon, 16.0); // reduce fontsize from default 20.0.
+                this.Child = icon;
+            }
+        }
+    }
+
+    internal static class SymbolIconHackery {
+        internal static Action<SymbolIcon, double> setter;
+
+        internal static void SetFontSize(SymbolIcon icon, double fontSize)
+        {
+            if (setter == null)
+            {
+                setter = CompiledPropertySetter.CompileSetter<SymbolIcon, double>("FontSize",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            }
+            setter(icon, fontSize);
+        }
+    }
+
     public class TransactionAttachmentColumn : DataGridColumn
     {
 
         protected override FrameworkElement GenerateEditingElement(DataGridCell cell, object dataItem)
         {
+            var icon = new SymbolIcon()
+            {
+                Symbol = Symbol.Attach,
+                Foreground = AppTheme.Instance.GetThemedBrush("ListItemForegroundBrush")
+            };
+            SymbolIconHackery.SetFontSize(icon, 16.0); // reduce fontsize from default 20.0.
             return new Button()
             {
                 Command = TransactionsView.CommandScanAttachment,
-                Padding = new Thickness(0),
+                Padding = new Thickness(1),
                 Focusable = false,
-                Content = new Image()
-                {
-                    Width = 16,
-                    Height = 16,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Source = BitmapFrame.Create(new Uri("pack://application:,,,/MyMoney;component/Icons/SmallScanner.png"))
-                }
+                Style = (Style)cell.FindResource("DefaultButtonStyle"),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Content = icon
             };
         }
 
         protected override FrameworkElement GenerateElement(DataGridCell cell, object dataItem)
         {
-            Image img = new Image()
-            {
-                VerticalAlignment = VerticalAlignment.Top,
-                Width = 16,
-                Height = 16
-            };
-
-            img.SetBinding(Image.SourceProperty, new Binding("HasAttachment")
-            {
-                Converter = new AttachmentIconConverter()
-            });
-            return img;
+            return new TransactionAttachmentIcon();
         }
     }
 
@@ -5737,7 +5873,7 @@ namespace Walkabout.Views
         </DataTemplate>
     */
     public class TransactionNumberColumn : DataGridColumn
-    {
+    {       
         protected override FrameworkElement GenerateEditingElement(DataGridCell cell, object dataItem)
         {
             TextBox box = new TextBox()
@@ -5769,7 +5905,7 @@ namespace Walkabout.Views
                 }
             }
 
-            return new TransactionTextField("Number", binding, dataItem)
+            return new TransactionTextField("Number", (t) => t.Number, binding, dataItem)
             {
                 VerticalAlignment = VerticalAlignment.Top
             };
@@ -5841,9 +5977,9 @@ namespace Walkabout.Views
             this.MinWidth = 300;
             this.VerticalAlignment = VerticalAlignment.Top;
             this.Focusable = false;
-            this.Margin = new Thickness(2, 0, 0, 0);
+            this.Margin = new Thickness(2, 1, 0, 0);
 
-            this.payeeField = new TransactionTextField("PayeeOrTransferCaption", payee, dataItem);
+            this.payeeField = new TransactionTextField("PayeeOrTransferCaption", (t) => t.PayeeOrTransferCaption, payee, dataItem);
 
             this.Children.Add(new Border()
             {
@@ -5887,8 +6023,8 @@ namespace Walkabout.Views
         {
             if (this.categoryField == null)
             {
-                this.categoryField = new TransactionTextField("CategoryName", category, dataItem);
-                this.memoField = new TransactionTextField("Memo", memo, dataItem);
+                this.categoryField = new TransactionTextField("CategoryName", (t) => t.Category == null ? "" : t.Category.Name, null, dataItem);
+                this.memoField = new TransactionTextField("Memo", (t) => t.Memo, null, dataItem);
 
                 this.Children.Add(new Border()
                 {
@@ -6043,28 +6179,29 @@ namespace Walkabout.Views
         protected override Size ArrangeOverride(Size finalSize)
         {
             Brush stroke = (Brush)FindResource("TransactionConnectorBrush");
-            Brush background = Brushes.LightGray;
-            Brush pressed = new SolidColorBrush(Color.FromRgb(0xc4, 0xe5, 0xf6));
+            Brush foreground = (Brush)FindResource("TransactionConnectorForegroundBrush");
+            Brush background = (Brush)FindResource("TransactionConnectorButtonBackground"); 
+            Brush pressed = (Brush)FindResource("TransactionConnectorButtonPressedBackground");
+            Brush mouseOver = (Brush)FindResource("TransactionConnectorButtonMouseOverBackground");
 
             mainButton.Background = background;
             mainButton.BorderBrush = stroke;
             mainButton.Foreground = stroke;
             mainButton.BorderThickness = new Thickness(strokeThickness);
-            mainButton.MouseOverForeground = Brushes.Black;
-            mainButton.MouseOverBackground = Brushes.White;
+            mainButton.MouseOverBackground = mouseOver;
             mainButton.MouseOverBorder = stroke;
-
-            mainButton.MousePressedForeground = Brushes.Black;
+            mainButton.MouseOverForeground = foreground;
             mainButton.MousePressedBackground = pressed;
             mainButton.MousePressedBorder = stroke;
+            mainButton.MousePressedForeground = foreground;
 
             closeBox.Foreground = stroke;
             closeBox.BorderThickness = new Thickness(1);
-            closeBox.Background = Brushes.LightGray;
-            closeBox.MouseOverBackground = Brushes.White;
-            closeBox.MouseOverForeground = Brushes.Black;
+            closeBox.Background = background;
+            closeBox.MouseOverBackground = mouseOver;
+            closeBox.MouseOverForeground = foreground;
             closeBox.MousePressedBackground = pressed;
-            closeBox.MousePressedForeground = Brushes.Black;
+            closeBox.MousePressedForeground = foreground;
 
             CreateConnectorGeometry();
 
@@ -6482,8 +6619,10 @@ namespace Walkabout.Views
             TextBox box = new TextBox()
             {
                 VerticalAlignment = VerticalAlignment.Top,
-                TextAlignment = TextAlignment.Right
+                TextAlignment = TextAlignment.Right,
+                Style = (Style)cell.FindResource("DefaultTextBoxStyle")
             };
+            ModernWpf.Controls.Primitives.TextBoxHelper.SetIsEnabled(box, false);
 
             if (this.SortMemberPath == "Debit" || this.SortMemberPath == "Credit")
             {
@@ -6514,13 +6653,62 @@ namespace Walkabout.Views
                 };
             }
 
-            return new TransactionTextField(this.SortMemberPath, binding, dataItem)
+            Func<Transaction, string> f = null;
+            switch(this.SortMemberPath)
+            {
+                case "SalesTax":
+                    f = (t) => GetStringValue(t.SalesTax);
+                    break;
+                case "Balance":
+                    f = (t) => t.Balance.ToString("N"); // show zeros
+                    break;
+                case "InvestmentUnits":
+                    f = (t) => GetStringValue(t.InvestmentUnits);
+                    break;
+                case "InvestmentUnitPrice":
+                    f = (t) => GetStringValue(t.InvestmentUnitPrice);
+                    break;
+                case "CurrentUnits":
+                    f = (t) => t.Investment == null ? "" : GetStringValue(t.Investment.CurrentUnits);
+                    break;
+                case "RunningUnits":
+                    f = (t) => GetStringValue(t.RunningUnits, "N0");
+                    break;
+                case "CurrentUnitPrice":
+                    f = (t) => t.Investment == null ? "" : GetStringValue(t.Investment.CurrentUnitPrice);
+                    break;
+                case "RunningBalance":
+                    f = (t) => GetStringValue(t.RunningBalance);
+                    break;
+                default:
+                    throw new NotImplementedException("unexpected name " + this.SortMemberPath);
+            }
+
+            return new TransactionTextField(this.SortMemberPath, f, binding, dataItem)
             {
                 TextAlignment = TextAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Top,
                 Style = this.TextBlockStyle
             };
 
+        }
+
+        private static string GetStringValue(SqlDecimal s)
+        {
+            if (s.IsNull)
+            {
+                return "";
+            }
+            return GetStringValue(s.Value);
+        }
+
+        private string GetStringValue(decimal d, string format = "N")
+        {
+            if (d == 0)
+            {
+                return "";
+            }
+            return d.ToString(format);
         }
 
         public Style TextBlockStyle
@@ -6561,9 +6749,12 @@ namespace Walkabout.Views
         Transaction context;
         string fieldName;
         Binding binding;
+        Func<Transaction, string> getter;
 
-        public TransactionTextField(string name, Binding binding, object dataItem)
+        public TransactionTextField(string name, Func<Transaction, string> getter, Binding binding, object dataItem)
         {
+            this.getter = getter;
+            this.Margin = new Thickness(2, 1, 3, 0);
             this.fieldName = name;
             this.binding = binding;
             if (binding != null)
@@ -6575,6 +6766,8 @@ namespace Walkabout.Views
             SetContext(dataItem as Transaction);
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
         }
+
+        public string FieldName => this.fieldName;
 
         void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -6625,24 +6818,6 @@ namespace Walkabout.Views
             }
         }
 
-        private string GetStringValue(SqlDecimal s)
-        {
-            if (s.IsNull)
-            {
-                return "";
-            }
-            return GetStringValue(s.Value);
-        }
-
-        private string GetStringValue(decimal d, string format = "N")
-        {
-            if (d == 0)
-            {
-                return "";
-            }
-            return d.ToString(format);
-        }
-
         private void UpdateLabel()
         {
             if (this.binding != null)
@@ -6652,64 +6827,7 @@ namespace Walkabout.Views
             }
             if (this.context != null)
             {
-                string value = string.Empty;
-                var investment = this.context.Investment;
-
-                switch (this.fieldName)
-                {
-                    case "Number":
-                        value = this.context.Number;
-                        break;
-                    case "Date":
-                        value = this.context.Date.ToString("d");
-                        break;
-                    case "SalesTax":
-                        value = GetStringValue(this.context.SalesTax);
-                        break;
-                    case "Debit":
-                        value = GetStringValue(this.context.Debit);
-                        break;
-                    case "Credit":
-                        value = GetStringValue(this.context.Credit);
-                        break;
-                    case "Balance":
-                        value = this.context.Balance.ToString("N"); // show zeros
-                        break;
-                    case "PayeeOrTransferCaption":
-                        value = this.context.PayeeOrTransferCaption;
-                        break;
-                    case "CategoryName":
-                        value = this.context.Category == null ? "" : this.context.Category.Name;
-                        break;
-                    case "Memo":
-                        value = this.context.Memo;
-                        break;
-                    case "RunningBalance":
-                        value = GetStringValue(this.context.RunningBalance);
-                        break;
-                    case "InvestmentUnitPrice":
-                        value = GetStringValue(this.context.InvestmentUnitPrice);
-                        break;
-                    case "RunningUnits":
-                        value = GetStringValue(this.context.RunningUnits, "N0");
-                        break;
-                    case "InvestmentUnits":
-                        value = GetStringValue(this.context.InvestmentUnits);
-                        break;
-                    case "CurrentUnitPrice":
-                        if (investment != null)
-                        {
-                            value = GetStringValue(investment.CurrentUnitPrice);
-                        }
-                        break;
-                    case "CurrentUnits":
-                        if (investment != null)
-                        {
-                            value = GetStringValue(investment.CurrentUnits);
-                        }
-                        break;
-
-                }
+                string value = this.getter(this.context);
                 if (value == null)
                 {
                     value = string.Empty;
@@ -6771,11 +6889,11 @@ namespace Walkabout.Views
                     StringFormat = "d"
                 };
             }
-            return new TransactionTextField("Date", binding, dataItem)
+            return new TransactionTextField("Date", (t) => t.Date.ToString("d"), binding, dataItem)
             {
+                Margin = new Thickness(2, 1, 0, 0),
                 VerticalAlignment = VerticalAlignment.Top,
-                MinWidth = 100,
-                Margin = new Thickness(4, 0, 0, 0)
+                MinWidth = 100
             };
         }
     }
@@ -6790,11 +6908,6 @@ namespace Walkabout.Views
                             PreviewMouseLeftButtonDown="OnButtonClick_StatusColumn">
                     <TextBlock Text="{Binding StatusString}"/>
                 </Button>
-                <CheckBox Style="{DynamicResource SimpleCheckBox}" IsChecked="{Binding IsBudgeted}"    
-                              Checked="OnBudgetCheckboxChecked"
-                              Unchecked="OnBudgetCheckboxUnchecked"
-                              ToolTip="Whether transaction is included in the budget or not" 
-                              Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=BalancingBudget, Converter={StaticResource TrueToVisible}}"/>
         </StackPanel>
      */
     /// </summary>  
@@ -6804,14 +6917,13 @@ namespace Walkabout.Views
         TextBlock label;
         Transaction context;
         TransactionsView view;
-        CheckBox checkbox;
 
         /// <summary>
         /// This button presents the transaction status
         /// </summary>
         public TransactionStatusButton()
         {
-            this.Child = this.button = new Button();
+            this.Child = this.button = new Button() { Padding = new Thickness(8, 0, 8, 0) };
             this.button.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(OnStatusButtonClick);
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
             this.button.Content = label = new TextBlock();
@@ -6827,108 +6939,8 @@ namespace Walkabout.Views
 
         void SetView(TransactionsView newView)
         {
-            if (this.view != null)
-            {
-                this.view.BalancingBudgetChanged -= new EventHandler(OnBalancingBudgetChanged);
-            }
             this.view = newView;
-            if (this.view != null)
-            {
-                this.view.BalancingBudgetChanged += new EventHandler(OnBalancingBudgetChanged);
-
-                if (this.view.BalancingBudget)
-                {
-                    OnBalancingBudget();
-                }
-            }
         }
-
-        void OnBalancingBudgetChanged(object sender, EventArgs e)
-        {
-            if (this.view != null && this.view == sender)
-            {
-                OnBalancingBudget();
-            }
-            else
-            {
-                this.Child = this.button;
-            }
-        }
-
-        void OnBalancingBudget()
-        {
-            if (this.view.BalancingBudget)
-            {
-                if (this.checkbox == null)
-                {
-                    /*
-                     *  <CheckBox Style="{DynamicResource SimpleCheckBox}" IsChecked="{Binding IsBudgeted}"    
-                          Checked="OnBudgetCheckboxChecked"
-                          Unchecked="OnBudgetCheckboxUnchecked"
-                          ToolTip="Whether transaction is included in the budget or not" 
-                          Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=BalancingBudget, 
-                               Converter={StaticResource TrueToVisible}}"/>
-                     */
-                    this.checkbox = new CheckBox();
-                    this.checkbox.SetResourceReference(CheckBox.StyleProperty, "SimpleCheckBox");
-                    this.checkbox.ToolTip = "Whether transaction is included in the budget or not";
-                    this.checkbox.Margin = new Thickness(1, 2, 0, 0);
-                    RegisterCheckboxEvents(true);
-                }
-                this.Child = this.checkbox;
-                UpdateCheckbox();
-            }
-            else
-            {
-                this.Child = this.button;
-            }
-        }
-
-        private void RegisterCheckboxEvents(bool register)
-        {
-            if (register)
-            {
-                this.checkbox.Checked += OnBudgetCheckboxChecked;
-                this.checkbox.Unchecked += OnBudgetCheckboxUnchecked;
-            }
-            else
-            {
-                this.checkbox.Checked -= OnBudgetCheckboxChecked;
-                this.checkbox.Unchecked -= OnBudgetCheckboxUnchecked;
-            }
-        }
-
-        private void OnBudgetCheckboxChecked(object sender, RoutedEventArgs e)
-        {
-            CheckBox box = (CheckBox)sender;
-            Transaction t = box.DataContext as Transaction;
-            if (t != null)
-            {
-                t.BeginUpdate(this);
-                if (!t.IsBudgeted)
-                {
-                    t.IsBudgeted = true;
-                    if (this.view != null && this.view.BalancingBudget)
-                    {
-                        // user is manually adding this transaction into this month's budget for
-                        // whatever reason, independent of transaction date.
-                        t.BudgetBalanceDate = this.view.BudgetDate;
-                    }
-                }
-                t.EndUpdate();
-            }
-        }
-
-        private void OnBudgetCheckboxUnchecked(object sender, RoutedEventArgs e)
-        {
-            CheckBox box = (CheckBox)sender;
-            Transaction t = box.DataContext as Transaction;
-            if (t != null)
-            {
-                t.IsBudgeted = false;
-            }
-        }
-
 
         void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -6948,7 +6960,6 @@ namespace Walkabout.Views
             }
 
             UpdateLabel();
-            UpdateCheckbox();
         }
 
         void ClearContext()
@@ -6975,9 +6986,6 @@ namespace Walkabout.Views
             {
                 case "StatusString":
                     UpdateLabel();
-                    break;
-                case "IsBudgeted":
-                    UpdateCheckbox();
                     break;
             }
         }
@@ -7008,16 +7016,6 @@ namespace Walkabout.Views
                     default:
                         break;
                 }
-            }
-        }
-
-        void UpdateCheckbox()
-        {
-            if (this.checkbox != null)
-            {
-                RegisterCheckboxEvents(false); // don't let this trigger a model change, we are trying to update the UI to reflect the model...
-                this.checkbox.IsChecked = (this.context != null) ? this.context.IsBudgeted : false;
-                RegisterCheckboxEvents(true);
             }
         }
 
@@ -7140,6 +7138,7 @@ namespace Walkabout.Views
         TextBox editbox;
         string editedValue;
         bool? editFieldEmpty;
+        bool isDebit;
 
         /// <summary>
         /// This button presents the transaction status
@@ -7188,6 +7187,7 @@ namespace Walkabout.Views
             set
             {
                 type = value;
+                isDebit = value == "Debit";
                 editFieldEmpty = null;
                 FinishConstruction();
             }
@@ -7298,7 +7298,7 @@ namespace Walkabout.Views
             }
             else
             {
-                SqlDecimal value = (this.type == "Debit") ? this.context.Debit : this.context.Credit;
+                SqlDecimal value = (this.isDebit) ? this.context.Debit : this.context.Credit;
                 if (!value.IsNull)
                 {
                     return value.Value.ToString("N");
@@ -7339,7 +7339,7 @@ namespace Walkabout.Views
                 {
                     label = new TextBlock()
                     {
-                        Margin = new Thickness(0, 0, 2, 0),
+                        Margin = new Thickness(10, 1, 3, 0), // ensures room for the split button.
                         TextAlignment = TextAlignment.Right,
                         VerticalAlignment = VerticalAlignment.Top
                     };
@@ -7394,13 +7394,13 @@ namespace Walkabout.Views
                     {
                         // restore opposing field to it's value
                         opposition.Restore();
-                        SwitchTransferCaption(opposition.Type == "Debit" ? false : true);
+                        SwitchTransferCaption(opposition.isDebit ? false : true);
                     }
                     else
                     {
                         // clear opposing field.   
                         opposition.Clear();
-                        SwitchTransferCaption(opposition.Type == "Debit" ? true : false);
+                        SwitchTransferCaption(opposition.isDebit ? true : false);
                     }
                 }
             }
@@ -7408,7 +7408,7 @@ namespace Walkabout.Views
 
         private TransactionAmountControl GetOpposingField()
         {
-            string oppositeName = (type == "Debit") ? "Credit" : "Debit";
+            string oppositeName = (this.isDebit) ? "Credit" : "Debit";
             MoneyDataGrid grid = WpfHelper.FindAncestor<MoneyDataGrid>(this);
             if (grid != null)
             {
@@ -7473,8 +7473,8 @@ namespace Walkabout.Views
 
         private void UpdateButton()
         {
-            if ((this.type == "Debit" && context != null && context.HasDebitAndIsSplit) ||
-                (this.type == "Credit" && context != null && context.HasCreditAndIsSplit))
+            if ((this.isDebit && context != null && context.HasDebitAndIsSplit) ||
+                (!this.isDebit && context != null && context.HasCreditAndIsSplit))
             {
                 if (this.button == null)
                 {
@@ -7529,8 +7529,8 @@ namespace Walkabout.Views
         private void OnCreateButton(object sender, EventArgs e)
         {
             StopLazyButtonTimer();
-            if ((this.Type == "Debit" && context != null && context.HasDebitAndIsSplit) ||
-                (this.Type == "Credit" && context != null && context.HasCreditAndIsSplit))
+            if ((this.isDebit && context != null && context.HasDebitAndIsSplit) ||
+                (!this.isDebit && context != null && context.HasCreditAndIsSplit))
             {
                 if (button == null)
                 {
@@ -7607,27 +7607,6 @@ namespace Walkabout.Views
                     return filter == TransactionFilter.Custom;
             }
             return false;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            // Not a valid method to call
-            return 0;
-        }
-    }
-
-
-
-    public class ZeroToBrushConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            decimal currentValue = (decimal)value;
-            if (currentValue == 0)
-            {
-                return Brushes.Gray;
-            }
-            return Brushes.Red;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -48,13 +48,13 @@ namespace Walkabout.Charts
                 this.PieChart.PieSliceHover += OnPieSliceHovered;
                 this.PieChart.ToolTipGenerator = OnGenerateTip;
 
-                this.Legend.Toggled += OnLegendToggledd;
+                this.Legend.Toggled += OnLegendToggled;
 #if PerformanceBlocks
             }
 #endif
         }
 
-        private void OnLegendToggledd(object sender, ChartDataValue e)
+        private void OnLegendToggled(object sender, ChartDataValue e)
         {
             // filtering out a category.
             FilterChartData();

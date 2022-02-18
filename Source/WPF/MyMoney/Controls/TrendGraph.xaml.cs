@@ -47,6 +47,7 @@ namespace Walkabout.Views.Controls
         int series = 1;
         IServiceProvider sp;
         DelayedActions delayedActions = new DelayedActions();
+        Random rand = new Random(Environment.TickCount);
 
         public TrendGraph()
         {
@@ -57,6 +58,109 @@ namespace Walkabout.Views.Controls
             this.MouseWheel += new MouseWheelEventHandler(TrendGraph_MouseWheel);
             this.IsVisibleChanged += TransactionGraph_IsVisibleChanged;
             Chart.ToolTipGenerator = OnGenerateTip;
+        }
+
+        public Color Series1Color
+        {
+            get { return (Color)GetValue(Series1ColorProperty); }
+            set { SetValue(Series1ColorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty Series1ColorProperty =
+            DependencyProperty.Register("Series1Color", typeof(Color), typeof(TrendGraph), new PropertyMetadata(Colors.Transparent, new PropertyChangedCallback(OnSeriesColorChanged)));
+
+
+        public Color Series2Color
+        {
+            get { return (Color)GetValue(Series2ColorProperty); }
+            set { SetValue(Series2ColorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty Series2ColorProperty =
+            DependencyProperty.Register("Series2Color", typeof(Color), typeof(TrendGraph), new PropertyMetadata(Colors.Transparent, new PropertyChangedCallback(OnSeriesColorChanged)));
+
+
+        public Color Series3Color
+        {
+            get { return (Color)GetValue(Series3ColorProperty); }
+            set { SetValue(Series3ColorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty Series3ColorProperty =
+            DependencyProperty.Register("Series3Color", typeof(Color), typeof(TrendGraph), new PropertyMetadata(Colors.Transparent, new PropertyChangedCallback(OnSeriesColorChanged)));
+
+        public Color Series4Color
+        {
+            get { return (Color)GetValue(Series4ColorProperty); }
+            set { SetValue(Series4ColorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty Series4ColorProperty =
+            DependencyProperty.Register("Series4Color", typeof(Color), typeof(TrendGraph), new PropertyMetadata(Colors.Transparent, new PropertyChangedCallback(OnSeriesColorChanged)));
+
+
+        public Color Series5Color
+        {
+            get { return (Color)GetValue(Series5ColorProperty); }
+            set { SetValue(Series5ColorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty Series5ColorProperty =
+            DependencyProperty.Register("Series5Color", typeof(Color), typeof(TrendGraph), new PropertyMetadata(Colors.Transparent, new PropertyChangedCallback(OnSeriesColorChanged)));
+
+
+        public Color Series6Color
+        {
+            get { return (Color)GetValue(Series6ColorProperty); }
+            set { SetValue(Series6ColorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty Series6ColorProperty =
+            DependencyProperty.Register("Series6Color", typeof(Color), typeof(TrendGraph), new PropertyMetadata(Colors.Transparent, new PropertyChangedCallback(OnSeriesColorChanged)));
+
+
+        public Color Series7Color
+        {
+            get { return (Color)GetValue(Series7ColorProperty); }
+            set { SetValue(Series7ColorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty Series7ColorProperty =
+            DependencyProperty.Register("Series7Color", typeof(Color), typeof(TrendGraph), new PropertyMetadata(Colors.Transparent, new PropertyChangedCallback(OnSeriesColorChanged)));
+
+        public Color Series8Color
+        {
+            get { return (Color)GetValue(Series8ColorProperty); }
+            set { SetValue(Series8ColorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty Series8ColorProperty =
+            DependencyProperty.Register("Series8Color", typeof(Color), typeof(TrendGraph), new PropertyMetadata(Colors.Transparent, new PropertyChangedCallback(OnSeriesColorChanged)));
+
+        private static void OnSeriesColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((TrendGraph)d).OnSeriesColorChanged();
+        }
+
+        private void OnSeriesColorChanged()
+        {
+            delayedActions.StartDelayedAction("update", Relayout, TimeSpan.FromMilliseconds(10));
+        }
+
+        private void Relayout()
+        {
+            if (this.Visibility == Visibility.Visible)
+            {
+                GenerateGraph();
+            }
         }
 
         private UIElement OnGenerateTip(ChartDataValue value)
@@ -264,27 +368,42 @@ namespace Walkabout.Views.Controls
                         for (int i = 1; i < series; i++)
                         {
                             DateTime next = previous.AddDays(days);
-                            AddSeries(previous, next, favorites[i]);
+                            AddSeries(previous, next, GetColor(i));
                             previous = next;
                         }
                     }
-                    selected = AddSeries(this.start, this.end, favorites[0]);
+                    selected = AddSeries(this.start, this.end, GetColor(0));
                 }
             }
 
             Chart.Data = chartData;
         }
 
-        Color[] favorites = new Color[] { 
-                                                Colors.SkyBlue,
-                                                Colors.Pink,
-                                                Color.FromRgb(0xE8,0xE3,0x95),
-                                                Colors.LightSalmon,
-                                                Colors.DarkSeaGreen,
-                                                Colors.Silver,
-                                                Colors.PaleGreen,
-                                                Colors.Wheat };
-
+        private Color GetColor(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return this.Series1Color;
+                case 1:
+                    return this.Series2Color;
+                case 2:
+                    return this.Series3Color;
+                case 3:
+                    return this.Series4Color;
+                case 4:
+                    return this.Series5Color;
+                case 5:
+                    return this.Series6Color;
+                case 6:
+                    return this.Series7Color;
+                case 7:
+                    return this.Series8Color;
+                default:
+                    return Color.FromRgb((byte)rand.Next(0, 255), (byte)rand.Next(0, 255), (byte)rand.Next(0, 255));
+            }
+        }
+    
         uint ToUint(string s)
         {
             uint v = 0;

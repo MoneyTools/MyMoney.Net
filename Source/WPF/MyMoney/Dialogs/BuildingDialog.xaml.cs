@@ -8,7 +8,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for AccountDialog.xaml
     /// </summary>
-    public partial class BuildingDialog : Window
+    public partial class BuildingDialog : BaseDialog
     {
         MyMoney money;
         RentBuilding editingBuilding = new RentBuilding();
@@ -53,7 +53,7 @@ namespace Walkabout.Dialogs
                     Category na = new Category() { Name = "--N/A--" , Id=-1};
                     categories.Add(na);
 
-                    foreach (Category c in this.money.Categories.AllCategories)
+                    foreach (Category c in this.money.Categories.SortedCategories)
                     {
                         categories.Add(c);
                     }

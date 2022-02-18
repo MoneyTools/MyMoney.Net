@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using Walkabout.Controls;
 using Walkabout.Data;
 using System.Windows.Input;
 using System.Windows.Media;

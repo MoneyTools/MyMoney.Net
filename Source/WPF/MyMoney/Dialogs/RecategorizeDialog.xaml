@@ -1,15 +1,17 @@
-﻿<Window x:Class="Walkabout.Dialogs.RecategorizeDialog"
+﻿<d:BaseDialog x:Class="Walkabout.Dialogs.RecategorizeDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Walkabout.Controls"
-        Title="Recategorize All" Height="242" Width="415"
+        xmlns:local="clr-namespace:Walkabout.Controls"
+        xmlns:d="clr-namespace:Walkabout.Dialogs"
+        Title="Recategorize All" 
+        Height="242" Width="415"
         ShowInTaskbar="False"  
         WindowStartupLocation="CenterOwner" 
-        Background="{DynamicResource DialogWindowBackgroundBrush}" 
-        WindowStyle="ToolWindow" SizeToContent="WidthAndHeight">
+        WindowStyle="ToolWindow"
+        SizeToContent="WidthAndHeight">
     <Window.Resources>
 
-        <Style x:Key="ComboStyle" TargetType="{x:Type ComboBox}">
+        <Style x:Key="ComboStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
             <Setter Property="IsEditable" Value="True"/>
             <Setter Property="StaysOpenOnEdit" Value="True"/>
             <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
@@ -30,12 +32,15 @@
         </Grid.ColumnDefinitions>
         <TextBlock TextWrapping="Wrap" Text="Please enter the new category you would like to use on ALL the transactions in this view:" Grid.ColumnSpan="2" Margin="0,0,0,10"/>
 
-        <TextBlock Grid.Row="1" TextWrapping="Wrap" Text="From category:" Margin="10,2,10,2" TextAlignment="Right"/>
-        <TextBox Grid.Row="1" Grid.Column="1" x:Name="ComboFromCategory" MinWidth="100" Margin="2" IsEnabled="False"/>
-        <TextBlock  Grid.Row="2" TextWrapping="Wrap" Text="To category:" Margin="10,2,10,2"  TextAlignment="Right"/>
+        <TextBlock Grid.Row="1" TextWrapping="Wrap" Text="From category:" Margin="10,2,10,2" TextAlignment="Right"
+                   VerticalAlignment="Center"/>
+        <TextBox Grid.Row="1" Grid.Column="1" x:Name="ComboFromCategory" MinWidth="100" Margin="2" 
+                 IsReadOnly="True"/>
+        <TextBlock  Grid.Row="2" TextWrapping="Wrap" Text="To category:" Margin="10,2,10,2"  TextAlignment="Right"
+                    VerticalAlignment="Center"/>
         <!--<TextBlock Text="{Binding Category.Name, Converter={StaticResource NullableValueConverter}}" />-->
         <local:FilteringComboBox  Grid.Row="2" Grid.Column="1"  x:Name="ComboToCategory" MinWidth="100" Margin="2"  
-                                  Style="{StaticResource ComboStyle}"
+                                  Style="{StaticResource ComboStyle}" HorizontalAlignment="Stretch"
                         ItemContainerStyle="{DynamicResource ComboBoxItemCategory}"        
                         >
             <ComboBox.ItemsPanel>
@@ -46,8 +51,8 @@
         </local:FilteringComboBox>
 
         <StackPanel Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
-            <Button Content="_OK" MinHeight="23" Name="ButtonOk" MinWidth="75" Click="buttonOk_Click"/>
-            <Button Content="_Cancel" MinHeight="23" Name="ButtonCacnel" MinWidth="75" Click="buttonCancel_Click" />
+            <Button Content="_OK" Name="ButtonOk" MinWidth="75" Click="buttonOk_Click"/>
+            <Button Content="_Cancel" Name="ButtonCacnel" MinWidth="75" Click="buttonCancel_Click" Margin="10,0,0,0"/>
         </StackPanel>
     </Grid>
-</Window>
+</d:BaseDialog>

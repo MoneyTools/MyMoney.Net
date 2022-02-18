@@ -55,7 +55,7 @@ namespace Walkabout.Reports
             this.section = new Section();
             doc.Blocks.Add(section); 
             WriteParagraph(title);
-            current.paragraph.Style = doc.Resources["HeadingStyle"] as Style;
+            current.paragraph.Style = doc.Resources["ReportHeadingStyle"] as Style;
         }
 
         public void WriteSubHeading(string subHeading)
@@ -67,7 +67,7 @@ namespace Walkabout.Reports
             this.section = new Section();
             doc.Blocks.Add(section);
             WriteParagraph(subHeading);
-            current.paragraph.Style = doc.Resources["SubHeadingStyle"] as Style;
+            current.paragraph.Style = doc.Resources["ReportSubHeadingStyle"] as Style;
         }
 
         public void WriteElement(UIElement e)
@@ -434,8 +434,6 @@ namespace Walkabout.Reports
         {
             // 'Auto' sized columns in FlowDocument tables suck.
             // This code fixes that.
-            double fontSize = table.FontSize;
-            Typeface tface = new Typeface(table.FontFamily, table.FontStyle, table.FontWeight, table.FontStretch);
             Brush brush = Brushes.Black;
 
             List<TableColumn> columns = new List<TableColumn>(current.table.Columns);
@@ -469,12 +467,13 @@ namespace Walkabout.Reports
                                 string text = range.Text;
                                 if (!string.IsNullOrEmpty(text))
                                 {
-                                    FormattedText ft = new FormattedText(text, System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tface, fontSize, brush, this.pixelsPerDip);
-                                    maxWidths[i] = Math.Max(maxWidths[i], ft.Width);
+                                    Typeface tface = new Typeface(block.FontFamily, block.FontStyle, block.FontWeight, block.FontStretch);
+                                    FormattedText ft = new FormattedText(text, System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tface, block.FontSize, brush, this.pixelsPerDip);
+                                    maxWidths[i] = Math.Max(maxWidths[i], ft.Width + cell.Padding.Left + cell.Padding.Right);
                                 }
                             }
                         }
-                        i++;
+                        i += cell.ColumnSpan;
                     }
                 }
             }

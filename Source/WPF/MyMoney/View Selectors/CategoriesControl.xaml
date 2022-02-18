@@ -5,22 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
              xmlns:local="clr-namespace:Walkabout.Views.Controls"
-             xmlns:controls="clr-namespace:Walkabout.Controls"
              xmlns:localData="clr-namespace:Walkabout.Data"  
              xmlns:help="clr-namespace:Walkabout.Help"
+             Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
              help:HelpService.HelpKeyword="Categories"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
 
-        <c:MoneyColorConverter x:Key="MoneyColorConverter"/>
-
         <Style x:Key="EditBoxRename" TargetType="{x:Type TextBox}">
             <EventSetter Event="Loaded" Handler="OnTextEditorForRenaming_Loaded"/>
             <EventSetter Event="KeyDown" Handler="RenameEditBox_KeyDown"/>
         </Style>
-
 
         <Style x:Key="EditableCategoryItem" TargetType="{x:Type ContentControl}">
 
@@ -53,7 +50,7 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBox BorderThickness="0" Background="LemonChiffon" Text="{Binding Path=Label, Mode=TwoWay}" ToolTip="{Binding Path=Name}"  MinWidth="200" 
+                                    <TextBox BorderThickness="0" Text="{Binding Path=Label, Mode=TwoWay}" ToolTip="{Binding Path=Name}"  MinWidth="200" 
                                              Style="{StaticResource EditBoxRename}"/>
 
                                     <Border Grid.Column="1" Margin="2" BorderThickness="0,0,0,0" Height="8" Width="8" VerticalAlignment="Center"  HorizontalAlignment="Center"                                      
@@ -106,6 +103,7 @@
             <MenuItem Header="_Add New Category..." Command="local:CategoriesControl.CommandAddCategory"/>
             <MenuItem Name="MenuRename" Header="_Rename" Command="local:CategoriesControl.CommandRenameCategory" InputGestureText="F2"/>
             <MenuItem Header="_Delete" Command="local:CategoriesControl.CommandDeleteCategory" />
+            <MenuItem Header="_Merge" Command="local:CategoriesControl.CommandMergeCategory"/>
             <Separator />
             <MenuItem Header="_Expand all" Command="local:CategoriesControl.CommandExpandAll" />
             <MenuItem Header="_Collapse all" Command="local:CategoriesControl.CommandCollapseAll" />
@@ -119,6 +117,7 @@
         <CommandBinding Command="local:CategoriesControl.CommandAddCategory" Executed="OnAddCategory" />
         <CommandBinding Command="local:CategoriesControl.CommandRenameCategory" Executed="OnExecutedRename" CanExecute="IsCategorySelected" />
         <CommandBinding Command="local:CategoriesControl.CommandDeleteCategory" Executed="OnDeleteCategory" CanExecute="IsCategorySelected" />
+        <CommandBinding Command="local:CategoriesControl.CommandMergeCategory" Executed="OnMergeCategory" CanExecute="IsCategorySelected" />
         <CommandBinding Command="local:CategoriesControl.CommandExpandAll" Executed="OnExpandAll"  />
         <CommandBinding Command="local:CategoriesControl.CommandCollapseAll" Executed="OnCollapseAll"  />
     </UserControl.CommandBindings>
@@ -127,21 +126,19 @@
         <KeyBinding Command="local:CategoriesControl.CommandRenameCategory" Key="F2" />
     </UserControl.InputBindings>
 
-    <Grid Background="White" >
-
-
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
         <TreeView Name="treeView" ItemsSource="{Binding}" Grid.Row="2"
-                  Style="{DynamicResource WalkaboutToolBoxTreeView}"
-                  VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" 
-                   PreviewMouseRightButtonDown="treeView_PreviewMouseRightButtonDown"
-                  AllowDrop="True" HorizontalAlignment="Stretch">
-        </TreeView>
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling" 
+                  HorizontalContentAlignment="Stretch"
+                  PreviewMouseRightButtonDown="treeView_PreviewMouseRightButtonDown"
+                  AllowDrop="True" 
+                  HorizontalAlignment="Stretch"/>
 
     </Grid>
 

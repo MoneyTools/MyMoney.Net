@@ -12,6 +12,7 @@ using LovettSoftware.Charts;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Walkabout.Charts;
+using Walkabout.Utilities;
 
 namespace Walkabout.Reports
 {
@@ -21,12 +22,15 @@ namespace Walkabout.Reports
     {
         MyMoney myMoney;
         Random rand = new Random(Environment.TickCount);
+        byte minRandColor, maxRandColor;
 
         public event EventHandler<SecurityGroup> DrillDown;
 
         public NetWorthReport(MyMoney money)
         {
             this.myMoney = money;
+            minRandColor = 20;
+            maxRandColor = (""+AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128: (byte)200;
         }
 
         public void Generate(IReportWriter writer)
@@ -49,10 +53,9 @@ namespace Walkabout.Reports
             writer.StartTable();
             writer.StartColumnDefinitions();
             writer.WriteColumnDefinition("30", 30, 30);
-            foreach (double width in new double[] { 300, 100 })
-            {
-                writer.WriteColumnDefinition(width.ToString(), width, width);
-            }
+            writer.WriteColumnDefinition("300", 300, 300);
+            writer.WriteColumnDefinition("Auto", 100, double.MaxValue);
+            
             writer.EndColumnDefinitions();
 
             WriteHeader(writer, "Liquid Assets");
@@ -310,7 +313,9 @@ namespace Walkabout.Reports
 
         private Color GetRandomColor()
         {
-            return Color.FromRgb((byte)rand.Next(80, 200), (byte)rand.Next(80, 200), (byte)rand.Next(80, 200));
+            return Color.FromRgb((byte)rand.Next(minRandColor, maxRandColor), 
+                (byte)rand.Next(minRandColor, maxRandColor), 
+                (byte)rand.Next(minRandColor, maxRandColor));
         }
 
     }

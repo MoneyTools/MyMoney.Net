@@ -7,19 +7,23 @@
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
              xmlns:views="clr-namespace:Walkabout.Views"
              xmlns:help="clr-namespace:Walkabout.Help"
+             xmlns:ui="http://schemas.modernwpf.com/2019"        
+             xmlns:u="clr-namespace:Walkabout.Utilities"
              help:HelpService.HelpKeyword="Securities"
              mc:Ignorable="d" 
              d:DesignHeight="333" d:DesignWidth="685">
     <UserControl.Resources>
 
-        <SolidColorBrush x:Key="GridLineBrush" Color="#FFDFDFEF"/>
 
         <Style x:Key="MySecuritiesDataGridStyle" TargetType="{x:Type local:MoneyDataGrid}">
             <Setter Property="ItemsSource" Value="{Binding}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="AlternatingRowBackground" Value="#E0F1FF"/>
+            <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
+            <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
-            <Setter Property="VerticalGridLinesBrush" Value="{StaticResource GridLineBrush}"/>
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
@@ -31,19 +35,21 @@
         <Style x:Key="MyStockSplitDataGridStyle" TargetType="DataGrid">
             <Setter Property="ItemsSource" Value="{Binding}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="AlternatingRowBackground" Value="#E0F1FF"/>
+            <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
+            <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
             <Setter Property="GridLinesVisibility" Value="Vertical"/>
-            <Setter Property="VerticalGridLinesBrush" Value="{StaticResource GridLineBrush}"/>
             <Setter Property="CanUserResizeRows" Value="False"/>
             <Setter Property="SelectionMode" Value="Single"/>
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
             <Setter Property="ClipboardCopyMode" Value="None"/>
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
-            <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Standard"/>
+            <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
         </Style>
 
-
-        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}">
+        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}"  BasedOn="{StaticResource DefaultComboBoxStyle}">
             <Setter Property="IsEditable" Value="True"/>
             <Setter Property="StaysOpenOnEdit" Value="True"/>
             <Setter Property="Padding" Value="0"/>
@@ -51,15 +57,17 @@
             <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
         </Style>
 
-        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}">
-            <Setter Property="Padding" Value="0"/>
+        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}"  BasedOn="{StaticResource DefaultTextBoxStyle}">
+            <Setter Property="Padding" Value="2, 0"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
         </Style>
 
-        <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type TextBox}">
-            <Setter Property="Padding" Value="0"/>
+        <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
+            <Setter Property="Padding" Value="2, 0"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="local:CalculatorPopup.CalculatorEnabled" Value="True" />
+            <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
         </Style>
 
         <c:NullableValueConverter x:Key="NullableValueConverter" />
@@ -199,15 +207,7 @@
           <TextBlock Text="{Binding PriceDate, StringFormat={}{0:d}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
         </Border>
       </DataTemplate>
-
-      <DataTemplate x:Key="myTemplatePriceDateEdit" >
-        <!-- the border makes the whole column hittable -->
-        <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-          <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Price, StringFormat={}{0:d}, Mode=TwoWay}" TextAlignment="Right" />
-        </Border>
-      </DataTemplate>
-
-
+        
       <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
@@ -223,11 +223,14 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Background" Value="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" TargetName="CellBorder"/>
-                                <Setter Property="Foreground" Value="{DynamicResource WalkaboutSelectedTextBrush}"/>
+                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
+                                <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundMouseOverBrush}" TargetName="CellBorder"/>
                             </Trigger>
                             <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
-                                <Setter Property="Foreground" Value="Red"/>
+                                <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
                             </DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -254,51 +257,59 @@
         <!--  DETAIL MINI VIEW Show Stock Split information -->
         <DataTemplate x:Key="StockSplitMiniView">
 
-            <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent">
+            <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent"
+                    u:WpfAnnotations.CodeRef="StockSplitMiniView">
 
                 <Border.Resources>
-                    <Style TargetType="{x:Type ListBox}">
-                        <Style.Resources>
-                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
-                        </Style.Resources>
-                    </Style>
-                    
                     <AlternationConverter x:Key="BackgroundConverter">
-                        <SolidColorBrush>#B0E6F2EC</SolidColorBrush>
-                        <SolidColorBrush>#E0D5EAE0</SolidColorBrush>
+                        <SolidColorBrush Color="{DynamicResource GridNormalBackgroundColor}"/>
+                        <SolidColorBrush Color="{DynamicResource GridAlternateBackgroundColor}"/>
                     </AlternationConverter>
 
-                    <Style x:Key="StockSplitAlternationItemStyle" TargetType="{x:Type ListBoxItem}">
+                    <Style x:Key="StockSplitAlternationItemStyle" TargetType="{x:Type ListViewItem}">
                         <Setter Property="Background" 
                             Value="{Binding RelativeSource={RelativeSource Self},
-                            Path=(ItemsControl.AlternationIndex),
-                            Converter={StaticResource BackgroundConverter}}"/>
+                                            Path=(ItemsControl.AlternationIndex), 
+                                            Converter={StaticResource BackgroundConverter}}"/>
                     </Style>
                     
                 </Border.Resources>
 
                 <StackPanel Orientation="Horizontal">
-                    <ListBox x:Name="TheGridForStockSplit" 
+                    <ListView x:Name="TheGridForStockSplit" 
                              Background="Transparent" AlternationCount="2"
                              FontStyle="Italic"
                              BorderThickness="0"
                              IsEnabled="False"
-                             Padding="0"
-                             Margin="0"
+                             Padding="0"                             
+                             Margin="0"                                                           
                              ItemContainerStyle="{StaticResource StockSplitAlternationItemStyle}"
                              ItemsSource="{Binding Path=StockSplits}">
-
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" >
-                                    <TextBlock Width="100" Text="{Binding Date,StringFormat={}{0:d}}" TextAlignment="Left" FontSize="10" Margin="20,0,0,0"/>
-                                    <TextBlock MinWidth="50" Margin="10,0,0,0" Text="{Binding Numerator}" FontSize="10" HorizontalAlignment="Right" TextAlignment="Right"/>
-                                    <TextBlock Text=" for "/>
-                                    <TextBlock MinWidth="50" Margin="10,0,0,0" Text="{Binding Denominator}" FontSize="10"/>
-                                </StackPanel>
+                        <ListView.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundLowBrush}" />
+                            </Style>
+                            <DataTemplate x:Key="StaticForTextTemplate">
+                                <TextBlock Text="for"/>
                             </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                            <DataTemplate x:Key="StaticSpaceTemplate">
+                                
+                            </DataTemplate>
+                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </Style>
+                        </ListView.Resources>
+
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="30" CellTemplate="{StaticResource StaticSpaceTemplate}"/>
+                                <GridViewColumn Width="Auto" x:Name="Date" DisplayMemberBinding="{Binding Path=Date,StringFormat={}{0:d}}"/>
+                                <GridViewColumn Width="Auto" x:Name="Numerator" DisplayMemberBinding="{Binding Path=Numerator}"/>
+                                <GridViewColumn Width="Auto" x:Name="For" CellTemplate="{StaticResource StaticForTextTemplate}"/>
+                                <GridViewColumn Width="Auto" x:Name="Denominator" DisplayMemberBinding="{Binding Path=Denominator}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
                 </StackPanel>
 
             </Border>
@@ -381,8 +392,8 @@
         <!-- DATE -->
         <DataTemplate x:Key="myTemplateDate">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding Date,StringFormat={}{0:d}}" MinWidth="100" VerticalAlignment="Top"/>
+            <Border BorderThickness="0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="4,0">
+                <TextBlock Text="{Binding Date,StringFormat={}{0:d}}" MinWidth="100" VerticalAlignment="Top" />
             </Border>
         </DataTemplate>
 
@@ -397,14 +408,14 @@
         <!-- Numerator -->
         <DataTemplate x:Key="myTemplateNumerator">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch"  Padding="4,0">
                 <TextBlock Text="{Binding Numerator,StringFormat={}{0:N3}}" TextAlignment="Right" VerticalAlignment="Top"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateNumeratorEdit">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch"  Padding="4,0">
                 <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Numerator, Converter={StaticResource DecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" VerticalAlignment="Top"/>
             </Border>
         </DataTemplate>
@@ -429,7 +440,7 @@
         -->
         <DataTemplate x:Key="StockSplitDetailView">
 
-            <Border Background="{DynamicResource WalkaboutToolBoxListBoxItemBrushWhenSelected}" >
+            <Border Background="{DynamicResource ListItemSelectedBackgroundBrush}" >
 
                 <Border  x:Name="MainBorderForSplitterView" Margin="8,0,13,13" BorderThickness="2" CornerRadius="4"  BorderBrush="Gray"  Background="White">
 
@@ -501,7 +512,7 @@
         </Grid.RowDefinitions>
 
         <!-- QUICK SEARCH BUTTON AREA -->
-        <Border CornerRadius="3,3,0,0" Height="30" Background="{DynamicResource WalkaboutToolbarExpanderBrushSelected}" >
+        <Border>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

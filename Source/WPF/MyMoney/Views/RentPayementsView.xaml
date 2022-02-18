@@ -3,63 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework" 
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
-             xmlns:local="clr-namespace:Walkabout.Views.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
 
 
-        <c:BoolToVisibilityConverter x:Key="boolToVis" />
         <c:MonthConverter x:Key="monthConverter" />
-
-
-
-
-        <Style x:Key="GridBlockStyle" TargetType="{x:Type TextBlock}" >
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Visibility" Value="{Binding Path=IsSelected, 
-         											RelativeSource={RelativeSource FindAncestor, 
-             										AncestorType={x:Type ListViewItem}},
-         											Converter={StaticResource boolToVis}, 
-             										ConverterParameter=False}" />
-        </Style>
-
-        <Style TargetType="{x:Type FrameworkElement}" 
-                x:Key="GridEditStyle">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Visibility" 
-                Value="{Binding Path=IsSelected, 
-                        RelativeSource={RelativeSource FindAncestor, 
-                        AncestorType={x:Type ListViewItem}},
-                        Converter={StaticResource boolToVis}, 
-                        ConverterParameter=True}" />
-        </Style>
-
-        <DataTemplate x:Key="myCellTemplateMonth">
-            <Grid>
-                <TextBlock TextAlignment="Left" Text="{Binding Month}"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="myCellTemplateMoney">
-            <Grid>
-                <TextBlock Text="{Binding Amount, StringFormat={}{0:C} }" TextAlignment="Right" Style="{StaticResource GridBlockStyle}"/>
-                <TextBox Text="{Binding Amount, Mode=TwoWay}" Style="{StaticResource GridEditStyle}" />
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="myCellTemplateAppartment">
-            <Grid>
-                <TextBlock TextAlignment="Right" Text="{Binding Appartment}"/>
-            </Grid>
-        </DataTemplate>
-
-
-
 
         <!-- GROUPING LOGIC for the LISTVIEW -->
         <CollectionViewSource x:Key="MyGroupView" Source="{Binding}">
@@ -99,7 +51,7 @@
                                            TextAlignment="Right" Margin="4,0,10,0"
                                            VerticalAlignment="Center"
                                            FontSize="12"
-                                           Text="{Binding Path=Items, Converter={StaticResource sumConverter}, StringFormat={}{0:C}}"
+                                           Text="{Binding Path=Items, StringFormat={}{0:C}}"
                                            />
                                     </DockPanel>
                                 </Border>
@@ -155,13 +107,6 @@
             </DataGrid.Columns>
 
         </DataGrid>
-
-
-        <!--<Grid.ContextMenu>
-            <ContextMenu Name="cm">
-                <MenuItem Header="_Add New Year" Click="MenuItem_Click" />
-            </ContextMenu>
-        </Grid.ContextMenu>-->
 
     </Grid>
 

@@ -1,0 +1,75 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:Walkabout.WpfConverters"
+                    xmlns:controls="clr-namespace:Walkabout.Controls"
+                    xmlns:local="clr-namespace:Walkabout.Utilities"
+                    xmlns:views="clr-namespace:Walkabout.Views"                    
+                    xmlns:s="clr-namespace:System;assembly=mscorlib"
+                    xmlns:m="http://schemas.modernwpf.com/2019"
+                    >
+    <Color x:Key="AreaChartColor1" >#565CAF</Color>
+    <Color x:Key="AreaChartColor2" >#7D3787</Color>
+    <Color x:Key="AreaChartColor3" >#63622E</Color>
+    <Color x:Key="AreaChartColor4" >#603628</Color>
+    <Color x:Key="AreaChartColor5" >#2D5E33</Color>
+    <Color x:Key="AreaChartColor6" >#505B55</Color>
+    <Color x:Key="AreaChartColor7" >#185944</Color>
+    <Color x:Key="AreaChartColor8" >#6B4841</Color>
+
+    <Color x:Key="GridNormalBackgroundColor">#282828</Color>
+    <Color x:Key="GridAlternateBackgroundColor">#1e1e1e</Color>
+
+    <!-- MessageBox border -->
+    <SolidColorBrush x:Key="MessageBoxBorder" Color="{m:DynamicColor SystemAccentColor}"/>
+
+    <!-- colors for list selection -->
+    <SolidColorBrush x:Key="ListItemForegroundBrush" Color="#E0E0E0"/>
+    <SolidColorBrush x:Key="ListItemForegroundLowBrush" Color="White"/> 
+    <SolidColorBrush x:Key="ListItemSelectedForegroundDisabledBrush" Color="Gray"/>
+    <SolidColorBrush x:Key="ListItemSelectedForegroundNegativeBrush" Color="Firebrick"/>
+    <SolidColorBrush x:Key="ListItemSelectedForegroundBrush" Color="white"/>
+    <SolidColorBrush x:Key="ListItemSelectedForegroundLowBrush" Color="white"/>
+    
+    <SolidColorBrush x:Key="ListItemSelectedBackgroundBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.6"/>
+    <SolidColorBrush x:Key="ListItemSelectedBackgroundMouseOverBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.8"/>
+    <SolidColorBrush x:Key="ListItemSelectedBorderBrush" Color="Transparent"/>
+    <SolidColorBrush x:Key="ListItemSelectedHoverBrush" Color="#3e3e3e"/>
+    <SolidColorBrush x:Key="ListItemReconcilingBackgroundBrush" Color="#A0275627"/>
+
+    <SolidColorBrush x:Key="GridNormalBackgroundBrush" Color="{StaticResource GridNormalBackgroundColor}"/>
+    <SolidColorBrush x:Key="GridAlternateBackgroundBrush" Color="{StaticResource GridAlternateBackgroundColor}"/>
+    <SolidColorBrush x:Key="GridLineBrush" Color="#3e3e3e"/>
+
+    <!-- color in accounts and categories balance fields -->
+    <SolidColorBrush x:Key="PositiveCurrencyForegroundBrush" Color="#99FFFFFF"/>
+    <SolidColorBrush x:Key="NegativeCurrencyForegroundBrush" Color="Firebrick"/>
+
+    <!-- The following are used in toolbar icons -->
+    <SolidColorBrush x:Key="ToolbarIconBrush" Color="#99FFFFFF"/>
+
+    <!-- for hyperlinks in reports -->
+    <SolidColorBrush x:Key="HyperlinkForeground" Color="#00A7FF"/>
+
+    <!-- The row headers and footers -->
+    <SolidColorBrush x:Key="ReportHeaderBackground" Color="#33FFFFFF"/>
+    <SolidColorBrush x:Key="ReportHeaderForeground" Color="white"/>
+    <SolidColorBrush x:Key="ReportHeadingForeground" Color="{m:DynamicColor SystemAccentColorLight1}"/>
+    <SolidColorBrush x:Key="ReportSubHeadingForeground" Color="{m:DynamicColor SystemAccentColorLight1}"/>
+    <Color x:Key="TriangleExpanderIconColor">#33FFFFFF</Color>
+    <Color x:Key="TriangleExpanderIconMouseOverColor">#00A7FF</Color>
+    <Color x:Key="TriangleExpanderIconPressedColor">#00A7FF</Color>
+    
+    <!-- drag drop feedback addorner brush -->
+    <SolidColorBrush x:Key="DragDropFeedbackBrush" Color="{m:DynamicColor SystemAccentColor}"/>
+
+    <SolidColorBrush x:Key="ValidDropTargetFeedbackBrush" Color="{m:DynamicColor SystemAccentColor}"/>
+
+
+    <!-- the merge transaction connector -->
+    <SolidColorBrush x:Key="TransactionConnectorBrush" Color="{m:DynamicColor SystemAccentColor}" />
+    <SolidColorBrush x:Key="TransactionConnectorForegroundBrush" Color="MintCream" /> 
+    <SolidColorBrush x:Key="TransactionConnectorButtonBackground" Color="#2e2e2e" />
+    <SolidColorBrush x:Key="TransactionConnectorButtonPressedBackground" Color="#1e1e1e" />
+    <SolidColorBrush x:Key="TransactionConnectorButtonMouseOverBackground" Color="#3e3e3e" />
+
+</ResourceDictionary>

@@ -39,7 +39,6 @@ namespace LovettSoftware.Charts
         ChartDataSeries selectedSeries;
         StackPanel legend;
 
-
         public AreaChart()
         {
         }
@@ -65,8 +64,7 @@ namespace LovettSoftware.Charts
                 nfi.CurrencyDecimalDigits = 0;
                 nfi.CurrencySymbol = string.Empty;
                 nfi.CurrencyNegativePattern = 0;
-
-                this.Background = Brushes.White;
+                this.Background = Brushes.Transparent; // so mouseclicks work.
 
 #if PerformanceBlocks
             }
@@ -171,9 +169,9 @@ namespace LovettSoftware.Charts
                     tooltip.Padding = new Thickness(2);
                     tooltip.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                     tooltip.VerticalAlignment = System.Windows.VerticalAlignment.Top;
-                    tooltip.BorderBrush = Brushes.Black;
+                    tooltip.BorderBrush = AppTheme.Instance.GetThemedBrush("SystemControlForegroundBaseHighBrush");
                     tooltip.BorderThickness = new Thickness(1);
-                    tooltip.Background = Brushes.White;
+                    tooltip.Background = AppTheme.Instance.GetThemedBrush("SystemControlBackgroundBaseLowBrush");
                     this.Children.Add(tooltip);
                 }
 
@@ -239,6 +237,11 @@ namespace LovettSoftware.Charts
             {
                 // todo
             }
+        }
+
+        internal void OnSeriesColorChanged()
+        {
+            throw new NotImplementedException();
         }
 
         void HidePointer()
@@ -388,7 +391,6 @@ namespace LovettSoftware.Charts
 
             TextBlock label = new TextBlock();
             label.Text = s.Category.Name;
-            label.Foreground = Brushes.Black;
             label.Margin = new Thickness(2, 1, 4, 1);
             legendEntry.Children.Add(label);
         }

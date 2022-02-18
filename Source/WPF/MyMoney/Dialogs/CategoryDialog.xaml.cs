@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,7 +18,7 @@ namespace Walkabout.Dialogs
     /// <summary>
     /// Interaction logic for CategoryDialog.xaml
     /// </summary>
-    public partial class CategoryDialog : Window
+    public partial class CategoryDialog : BaseDialog
     {
         #region PROPERTIES
 
@@ -68,6 +68,7 @@ namespace Walkabout.Dialogs
             set
             {
                 this.labelMessage.Text = value;
+                this.labelMessage.Visibility = !string.IsNullOrEmpty(value) ? Visibility.Visible : Visibility.Collapsed;
             }
 
         }
@@ -100,6 +101,7 @@ namespace Walkabout.Dialogs
 
             InitializeComponent();
 
+            labelMessage.Visibility = Visibility.Collapsed;
             this.comboBoxType.Items.Add(CategoryType.None);
             this.comboBoxType.Items.Add(CategoryType.Income);
             this.comboBoxType.Items.Add(CategoryType.Expense);
@@ -213,7 +215,9 @@ namespace Walkabout.Dialogs
         {
             get 
             {
-                return (ColorPickerPanel)this.ColorDropDown.Popup.Child;
+                var flyout = this.ColorDropDown.Flyout; // for some reason the Flyout class with the Content property is not public!
+                var pi = flyout.GetType().GetProperty("Content", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                return ((ColorPickerPanel)pi.GetValue(flyout, null));
             }
         }
 
@@ -227,7 +231,6 @@ namespace Walkabout.Dialogs
                 this.comboBoxCategory.Text = string.Empty;
                 this.textBoxDescription.Text = string.Empty;
                 this.comboBoxType.Text = string.Empty;
-                this.textBoxBudget.Text = string.Empty;
                 this.comboTaxCategory.SelectedItem = null;
                 ColorPicker.Color = Colors.Transparent;
             }
@@ -237,40 +240,6 @@ namespace Walkabout.Dialogs
                 this.comboBoxType.SelectedItem = category.Type;
                 this.comboBoxCategory.Text = c.Name;
 
-                if (c.BudgetRange != CalendarRange.Monthly)
-                {
-                    // convert to monthly since that's all we support right now.
-                    switch (c.BudgetRange)
-                    {
-                        case CalendarRange.Daily:
-                            c.Budget = (c.Budget * 365) / 12;
-                            break;
-                        case CalendarRange.Weekly:
-                            c.Budget = (c.Budget * 52) / 12;
-                            break;
-                        case CalendarRange.BiWeekly:
-                            c.Budget = (c.Budget * 26) / 12;
-                            break;
-                        case CalendarRange.BiMonthly:
-                            c.Budget = (c.Budget / 2);
-                            break;
-                        case CalendarRange.TriMonthly:
-                            c.Budget = (c.Budget / 3);
-                            break;
-                        case CalendarRange.Quarterly:
-                            c.Budget = (c.Budget * 4) / 12;
-                            break;
-                        case CalendarRange.SemiAnnually:
-                            c.Budget = (c.Budget * 2) / 12;
-                            break;
-                        case CalendarRange.Annually:
-                            c.Budget = (c.Budget / 12);
-                            break;
-                    }
-                    c.BudgetRange = CalendarRange.Monthly;
-                }
-
-                this.textBoxBudget.Text = c.Budget.ToString("n", this.nfi);
                 this.comboTaxCategory.SelectedItem = taxCategories.Find(c.TaxRefNum);
                 ColorPicker.Color = Colors.Transparent;
 
@@ -286,11 +255,7 @@ namespace Walkabout.Dialogs
                 {
                 }
             }
-
-            ShowHistoricalRange(c);
-            ShowActual();
         }
-
 
         void SetTransfer(Account a)
         {
@@ -382,8 +347,6 @@ namespace Walkabout.Dialogs
                     PropagateCategoryTypeToChildren(this.category);
                 }
 
-                this.category.Budget = StringHelpers.ParseDecimal(this.textBoxBudget.Text, 0);
-
                 var picker = this.ColorPicker;
                 Color color = picker.Color;
                 this.category.Color = color.ToString();
@@ -393,153 +356,6 @@ namespace Walkabout.Dialogs
             {
                 // if parent categories were added then set their type & color also.            
                 money.Categories.EndUpdate();
-            }
-        }
-
-        private class HistoryRange
-        {
-            string label;
-            Predicate<Transaction> filter;
-
-            public HistoryRange(string label, Predicate<Transaction> filter)
-            {
-                this.label = label;
-                this.filter = filter;
-            }
-
-            public override string ToString()
-            {
-                return this.label;
-            }
-
-            public Predicate<Transaction> Filter { get { return this.filter; } }
-        }
-
-        bool ignorePastRangeChange;
-
-        private void PastRange_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ignorePastRangeChange)
-            {
-                return;
-            }
-            ShowActual();
-        }
-
-        private void ShowHistoricalRange(Category c)
-        {
-            ignorePastRangeChange = true;
-            HistoryRange previous = PastRange.SelectedItem as HistoryRange;
-
-            DateTime first = DateTime.MaxValue;
-            DateTime last = DateTime.MinValue;
-
-            IList<Transaction> data = this.money.Transactions.GetTransactionsByCategory(this.category, null);
-            int count = 0;
-            foreach (Transaction t in data)
-            {
-                count++;
-                DateTime d = t.Date;
-                if (d < first)
-                {
-                    first = d;
-                }
-                if (d > last)
-                {
-                    last = d;
-                }
-            }
-
-            PastRange.Items.Clear();
-            PastRange.Items.Add(new HistoryRange("All history", null));
-            PastRange.SelectedIndex = 0;
-
-            if (count > 0)
-            {
-                TimeSpan span = last - first;
-                foreach (int year in new int[] { 5, 3, 2, 1 })
-                {
-                    if (span.TotalDays > (365 * year))
-                    {
-                        DateTime start = last.AddYears(-year);
-                        string label = year + " year";
-                        if (year > 1) label += "s";
-                        PastRange.Items.Add(new HistoryRange(label, new Predicate<Transaction>((t) => { return t.Date >= start; })));
-                    }
-                }
-                foreach (int m in new int[] { 6, 4, 3, 2, 1 })
-                {
-                    double months = (span.TotalDays * 12) / 365;
-                    if (months > m)
-                    {
-                        DateTime start = last.AddMonths(-m);
-                        string label = m + " month";
-                        if (m > 1) label += "s";
-                        PastRange.Items.Add(new HistoryRange(label, new Predicate<Transaction>((t) => { return t.Date >= start; })));
-                    }
-                }
-            }
-
-            if (previous != null)
-            {
-                foreach (HistoryRange r in PastRange.Items)
-                {
-                    if (previous.ToString() == r.ToString())
-                    {
-                        PastRange.SelectedItem = r; // keep this one selected.
-                        break;
-                    }
-                }
-            }
-            
-            ignorePastRangeChange = false;
-        }
-
-        private void ShowActual()
-        {
-            
-            textBoxBudgetActual.Text = string.Empty;
-            if (this.category != null)
-            {
-                HistoryRange history = PastRange.SelectedItem as HistoryRange;
-                Predicate<Transaction> filter = null;
-                if (history != null)
-                {
-                    filter = history.Filter;
-                }
-
-                CalendarRange range = CalendarRange.Monthly;
-                IList<Transaction> data = this.money.Transactions.GetTransactionsByCategory(this.category, filter);
-                DateTime start = DateTime.Now;
-                DateTime end = DateTime.Now;
-                bool first = true;
-                decimal balance = 0;
-                foreach (Transaction t in data)
-                {
-                    if (!t.IsDeleted && t.Status != TransactionStatus.Void)
-                    {
-                        balance += t.CurrencyNormalizedAmount(t.AmountMinusTax);
-
-                        if (first)
-                        {
-                            start = t.Date;
-                            first = false;
-                        }
-                        end = t.Date;
-                    }
-                }
-
-                TimeSpan span = end - start;
-
-                decimal d = (decimal)span.Days;
-
-                decimal actual = 0;
-                if (d != 0)
-                {
-                    actual = Category.DailyToRange(balance / d, range, 1);
-                    actual = Math.Abs(actual);
-                }
-                textBoxBudgetActual.Text = actual.ToString("n", this.nfi);
             }
         }
 

@@ -4,8 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Walkabout.Views"
-             xmlns:c="clr-namespace:Walkabout.Controls"
-             mc:Ignorable="d"  Background="White"
+             xmlns:c="clr-namespace:Walkabout.Controls"             
+             xmlns:u="clr-namespace:Walkabout.Utilities"
+             mc:Ignorable="d" 
+             u:WpfAnnotations.CodeRef="NuclearTreeViewItemToggleButton"
              d:DesignHeight="400" d:DesignWidth="600">
     <Grid x:Name="Grid">
 
@@ -16,7 +18,7 @@
         </Grid.RowDefinitions>
 
         <!-- SEARCH AREA -->
-        <Grid Grid.Row="0" x:Name="SearchArea" Height="30">
+        <Grid Grid.Row="0" x:Name="SearchArea">
 
             <Grid.RowDefinitions >
                 <RowDefinition Height="Auto" />
@@ -24,7 +26,7 @@
             </Grid.RowDefinitions>
 
             <!-- QUICK SEARCH BUTTON AREA -->
-            <Border CornerRadius="3,3,0,0" Height="30" Background="{DynamicResource WalkaboutToolbarExpanderBrushSelected}" >
+            <Border Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -35,7 +37,8 @@
                     <StackPanel x:Name="ButtonStrip" Margin="5,0,3,0" Orientation="Horizontal">
 
                         <!-- Toggle view for expand all in portfolio view -->
-                        <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show Details" Checked="OnToggleExpandAll_Checked" Unchecked="OnToggleExpandAll_Unchecked" >
+                        <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show Details" Checked="OnToggleExpandAll_Checked" Unchecked="OnToggleExpandAll_Unchecked" 
+                                      Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
                             <Image x:Name="ToggleExpandAllImage" Width="16" Height="16" Source="{DynamicResource ExpandAllIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" 
                                    />
                         </ToggleButton>
@@ -71,16 +74,18 @@
                         FontSize="{Binding FontSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}"
                         Foreground="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}"
                         FontWeight="{Binding FontWeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}"
-                        FontStyle="{Binding FontStyle, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}" PagePadding="10"
+                        FontStyle="{Binding FontStyle, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}" 
+                        PagePadding="10"                                
+                        Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"      
+                        u:WpfAnnotations.CodeRef="RowHeaderStyle, RowFooterStyle, ReportHeadingStyle, ReportSubHeadingStyle, NumericStyle"
+                
                  >
                 <FlowDocument.Resources>
                     <Style TargetType="{x:Type Table}">
-                        <Setter Property="BorderBrush" Value="{DynamicResource ReportTableBorder}"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="CellSpacing" Value="0"/>
                     </Style>
                     <Style TargetType="{x:Type TableCell}">
-                        <Setter Property="BorderBrush" Value="{DynamicResource ReportTableBorder}"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="Padding" Value="2"/>
                     </Style>
@@ -94,15 +99,14 @@
                         <Setter Property="Foreground" Value="{DynamicResource ReportHeaderForeground}"/>
                         <Setter Property="FontWeight" Value="Bold"/>
                     </Style>
-                    <Style x:Key="HeadingStyle" TargetType="{x:Type Paragraph}">
-                        <Setter Property="Foreground" Value="Teal"/>
-                        <Setter Property="FontSize" Value="18"/>
+                    <Style x:Key="ReportHeadingStyle" TargetType="{x:Type Paragraph}">
+                        <Setter Property="Foreground" Value="{DynamicResource ReportHeadingForeground}"/>
+                        <Setter Property="FontSize" Value="20"/>
                     </Style>
-                    <Style x:Key="SubHeadingStyle" TargetType="{x:Type Paragraph}">
-                        <Setter Property="Foreground" Value="Teal"/>
-                        <Setter Property="FontSize" Value="14"/>
+                    <Style x:Key="ReportSubHeadingStyle" TargetType="{x:Type Paragraph}">
+                        <Setter Property="Foreground" Value="{DynamicResource ReportSubHeadingForeground}"/>
+                        <Setter Property="FontSize" Value="16"/>
                     </Style>
-                    
                     <Style x:Key="NumericStyle" TargetType="{x:Type Paragraph}">
                         <Setter Property="TextAlignment" Value="Right"/>
                     </Style>
