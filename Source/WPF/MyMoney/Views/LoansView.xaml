@@ -36,7 +36,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Background" Value="{DynamicResource GridNormalBackgroundBrush}" TargetName="CellBorder"/>
+                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
                                 <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>

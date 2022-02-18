@@ -567,8 +567,8 @@
                     <StackPanel Orientation="Horizontal">
 
                         <!-- COMBO BOX STATE FILTERS -->
-                        <ComboBox x:Name="TransactionViewMode" Margin="5,0,0,0" SelectionChanged="ComboBox_SelectionChanged" Width="140"
-                                  VerticalAlignment="Center" >
+                        <ComboBox x:Name="TransactionViewMode" Margin="5,2,0,2" SelectionChanged="ComboBox_SelectionChanged" Width="140"
+                                  VerticalAlignment="Center" BorderThickness="0" Background="{DynamicResource ButtonBackground}">
                             <ComboBoxItem x:Name="FilterByNothing" >
                                 <TextBlock Text="All" />
                             </ComboBoxItem>

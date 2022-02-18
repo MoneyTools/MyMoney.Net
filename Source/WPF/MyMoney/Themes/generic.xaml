@@ -199,6 +199,87 @@
         </Style.Triggers>
     </Style>
 
+
+    <Style x:Key="NuclearTreeViewItemToggleButton" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Grid Width="16" Height="16" Background="Transparent"
+                          local:WpfAnnotations.CodeRef="NuclearTreeViewItemToggleButton" >
+                        <Path HorizontalAlignment="Left" Margin="1,1,1,1" x:Name="ExpandPath" VerticalAlignment="Center" Data="M 4 1 L 12 8 L 4 15 Z"
+                              >
+                            <Path.Fill>
+                                <SolidColorBrush x:Name="ArrowBrush" Color="{DynamicResource TriangleExpanderIconColor}"/>
+                            </Path.Fill>
+                            <Path.RenderTransform>
+                                <RotateTransform x:Name="ArrowRotation" CenterX="8" CenterY="8"/>
+                            </Path.RenderTransform>
+                        </Path>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="Color"
+                                          Storyboard.TargetName="ArrowBrush">
+                                            <EasingColorKeyFrame KeyTime="0"
+                                                  Value="{DynamicResource TriangleExpanderIconMouseOverColor}" />
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed" >
+                                    <Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="Color"
+                                          Storyboard.TargetName="ArrowBrush">
+                                            <EasingColorKeyFrame KeyTime="0"
+                                                  Value="{DynamicResource TriangleExpanderIconPressedColor}" />
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.5" To="90" Storyboard.TargetProperty="Angle"
+                                                         Storyboard.TargetName="ArrowRotation"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked">
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.5" To="0" Storyboard.TargetProperty="Angle"
+                                                         Storyboard.TargetName="ArrowRotation"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Indeterminate" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                    <!--<ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Visibility" Value="Visible" TargetName="IsExpandedPath"/>
+                            <Setter Property="Visibility" Value="Collapsed" TargetName="ExpandPath"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>-->
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="DragDropWindowStyle" TargetType="Window">
+        <Setter Property="WindowStyle" Value="None"/>
+        <Setter Property="AllowsTransparency" Value="true"/>
+        <Setter Property="AllowDrop" Value="false"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="IsHitTestVisible" Value="false"/>
+        <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        <Setter Property="Topmost" Value="true"/>
+        <Setter Property="ShowInTaskbar" Value="false"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    
     <!-- ============================================================================================= -->
     <!-- Everything above this point has been Modernized and tested to work with Light and Dark themes -->
     <!-- ============================================================================================= -->
@@ -786,85 +867,6 @@
         <Setter Property="SelectionMode" Value="Single"/>
     </Style>
 
-
-    <Style x:Key="NuclearTreeViewItemToggleButton" TargetType="{x:Type ToggleButton}">
-        <Setter Property="Focusable" Value="False"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}">
-                    <Grid Width="16" Height="16" Background="Transparent"
-                          local:WpfAnnotations.CodeRef="NuclearTreeViewItemToggleButton" >
-                        <Path HorizontalAlignment="Left" Margin="1,1,1,1" x:Name="ExpandPath" VerticalAlignment="Center" Data="M 4 1 L 12 8 L 4 15 Z"
-                              >
-                            <Path.Fill>
-                                <SolidColorBrush x:Name="ArrowBrush" Color="{DynamicResource TriangleExpanderIconColor}"/>
-                            </Path.Fill>
-                            <Path.RenderTransform>
-                                <RotateTransform x:Name="ArrowRotation" CenterX="8" CenterY="8"/>
-                            </Path.RenderTransform>
-                        </Path>
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="MouseOver">
-                                    <Storyboard>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="Color"
-                                          Storyboard.TargetName="ArrowBrush">
-                                            <EasingColorKeyFrame KeyTime="0"
-                                                  Value="{DynamicResource TriangleExpanderIconMouseOverColor}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed" >
-                                    <Storyboard>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="Color"
-                                          Storyboard.TargetName="ArrowBrush">
-                                            <EasingColorKeyFrame KeyTime="0"
-                                                  Value="{DynamicResource TriangleExpanderIconPressedColor}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Checked">
-                                    <Storyboard>
-                                        <DoubleAnimation Duration="0:0:0.5" To="90" Storyboard.TargetProperty="Angle"
-                                                         Storyboard.TargetName="ArrowRotation"/>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Unchecked">
-                                    <Storyboard>
-                                        <DoubleAnimation Duration="0:0:0.5" To="0" Storyboard.TargetProperty="Angle"
-                                                         Storyboard.TargetName="ArrowRotation"/>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Indeterminate" />
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                    </Grid>
-                    <!--<ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked" Value="True">
-                            <Setter Property="Visibility" Value="Visible" TargetName="IsExpandedPath"/>
-                            <Setter Property="Visibility" Value="Collapsed" TargetName="ExpandPath"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>-->
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-
-    <Style x:Key="DragDropWindowStyle" TargetType="Window">
-        <Setter Property="WindowStyle" Value="None"/>
-        <Setter Property="AllowsTransparency" Value="true"/>
-        <Setter Property="AllowDrop" Value="false"/>
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="IsHitTestVisible" Value="false"/>
-        <Setter Property="SizeToContent" Value="WidthAndHeight"/>
-        <Setter Property="Topmost" Value="true"/>
-        <Setter Property="ShowInTaskbar" Value="false"/>
-        <Setter Property="BorderThickness" Value="0"/>
-    </Style>
 
 
 

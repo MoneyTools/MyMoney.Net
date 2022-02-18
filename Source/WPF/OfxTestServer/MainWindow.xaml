@@ -4,11 +4,6 @@
     Title="OFX Test Server" Height="400" Width="725"
     x:Name="OFXTestServerWindow"
     Loaded="OnLoaded" >
-    <Window.Resources>
-        <Style TargetType="TextBox" >
-            <Setter Property="Background" Value="LemonChiffon"/>
-        </Style>
-    </Window.Resources>
     <Grid>
         <GroupBox Header="Security Settings" Margin="10">
             <Grid>

@@ -630,30 +630,33 @@ namespace Walkabout.Data
                         {
                             // bugbug; could this ever be a split? Don't think so...
                             Investment add = i.Transaction.Transfer.Transaction.Investment;
-                            Debug.Assert(add.Type == InvestmentType.Add, "Other side of transfer should be an Add transaction");
-
-                            // now instead of doing a simple Add on the other side, we need to remember the cost basis of each purchase
-                            // used to cover the remove
-
-                            foreach (SecuritySale sale in holdings.Sell(i.Security, i.Date, i.Units, 0))
+                            Debug.Assert(add != null, "Other side of the Transfer needs to be an Investment transaction");
+                            if (add != null)
                             {
-                                var targetHoldings = GetHolding(add.Transaction.Account);
-                                if (sale.DateAcquired.HasValue)
+                                Debug.Assert(add.Type == InvestmentType.Add, "Other side of transfer should be an Add transaction");
+
+                                // now instead of doing a simple Add on the other side, we need to remember the cost basis of each purchase
+                                // used to cover the remove
+
+                                foreach (SecuritySale sale in holdings.Sell(i.Security, i.Date, i.Units, 0))
                                 {
-                                    // now transfer the cost basis over to the target account.
-                                    targetHoldings.Buy(s, sale.DateAcquired.Value, sale.UnitsSold, sale.CostBasisPerUnit * sale.UnitsSold);
-                                    foreach (SecuritySale pending in targetHoldings.ProcessPendingSales(s))
+                                    var targetHoldings = GetHolding(add.Transaction.Account);
+                                    if (sale.DateAcquired.HasValue)
                                     {
-                                        sales.Add(pending);
+                                        // now transfer the cost basis over to the target account.
+                                        targetHoldings.Buy(s, sale.DateAcquired.Value, sale.UnitsSold, sale.CostBasisPerUnit * sale.UnitsSold);
+                                        foreach (SecuritySale pending in targetHoldings.ProcessPendingSales(s))
+                                        {
+                                            sales.Add(pending);
+                                        }
                                     }
-                                }
-                                else
-                                {
-                                    // this is the error case, but the error will be re-generated on the target account when needed.
+                                    else
+                                    {
+                                        // this is the error case, but the error will be re-generated on the target account when needed.
+                                    }
                                 }
                             }
                         } 
-
                     }
                 }
 

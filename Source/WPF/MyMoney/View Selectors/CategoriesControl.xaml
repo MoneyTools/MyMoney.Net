@@ -50,7 +50,7 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBox BorderThickness="0" Background="LemonChiffon" Text="{Binding Path=Label, Mode=TwoWay}" ToolTip="{Binding Path=Name}"  MinWidth="200" 
+                                    <TextBox BorderThickness="0" Text="{Binding Path=Label, Mode=TwoWay}" ToolTip="{Binding Path=Name}"  MinWidth="200" 
                                              Style="{StaticResource EditBoxRename}"/>
 
                                     <Border Grid.Column="1" Margin="2" BorderThickness="0,0,0,0" Height="8" Width="8" VerticalAlignment="Center"  HorizontalAlignment="Center"                                      

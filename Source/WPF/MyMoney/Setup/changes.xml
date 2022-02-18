@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.88" date="2/18/2022">
+    - Move to Modern WPF Light/Dark themes.
+  </change>
   <change version="1.1.0.87" date="2/8/2022">
     - Fix one off error in cash flow fiscal year report.
   </change>
