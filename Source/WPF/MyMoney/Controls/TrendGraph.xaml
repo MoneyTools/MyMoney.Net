@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:LovettSoftware.Charts"
-             xmlns:cmd="clr-namespace:Walkabout.Commands"
-             xmlns:local="clr-namespace:Walkabout.Views.Controls"
+             Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
+             xmlns:cmd="clr-namespace:Walkabout.Commands" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.CommandBindings>

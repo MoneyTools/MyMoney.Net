@@ -16,7 +16,7 @@
     <Color x:Key="AreaChartColor7" >#185944</Color>
     <Color x:Key="AreaChartColor8" >#6B4841</Color>
 
-    <Color x:Key="GridNormalBackgroundColor">#2e2e2e</Color>
+    <Color x:Key="GridNormalBackgroundColor">#282828</Color>
     <Color x:Key="GridAlternateBackgroundColor">#1e1e1e</Color>
 
     <!-- MessageBox border -->

@@ -3125,10 +3125,6 @@ namespace Walkabout
             {
                 return this.TransactionView.ViewModel;
             }
-            else if (service == typeof(TrendGraph))
-            {
-                return this.TransactionGraph;
-            }
             return null;
         }
 
@@ -3760,12 +3756,28 @@ namespace Walkabout
             SecuritiesView view = SetCurrentView<SecuritiesView>();
             if (!initialized)
             {
+                view.SecurityNavigated += new EventHandler<SecuritySelectionEventArgs>(OnSecurityNavigated);
                 view.SecuritySelected += new EventHandler<SecuritySelectionEventArgs>(OnSecuritySelected);
             }
+
             return view;
         }
 
-        private void OnSecuritySelected(object sender, SecuritySelectionEventArgs e)
+        private async void OnSecuritySelected(object sender, SecuritySelectionEventArgs e)
+        {
+            if (e.Security != null)
+            {
+                TabStock.Visibility = System.Windows.Visibility.Visible;
+
+                var history = await this.quotes.GetCachedHistory(e.Security.Symbol);
+                if (history != null)
+                {
+                    StockGraph.Generator = new SecurityGraphGenerator(history, e.Security);
+                }
+            }
+        }
+
+        private void OnSecurityNavigated(object sender, SecuritySelectionEventArgs e)
         {
             bool isTransactionViewAlready = this.CurrentView is TransactionViewState;
             TransactionsView view = SetCurrentView<TransactionsView>();

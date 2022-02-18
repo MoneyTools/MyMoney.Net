@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:LovettSoftware.Charts"
              mc:Ignorable="d" 
+             Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"             
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <c:AnimatingBarChart x:Name="Chart" 

@@ -74,7 +74,8 @@
                         Foreground="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}"
                         FontWeight="{Binding FontWeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}"
                         FontStyle="{Binding FontStyle, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowDocumentView}}}" 
-                        PagePadding="10"
+                        PagePadding="10"                                
+                        Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
                         u:WpfAnnotations.CodeRef="Table, TableCell, RowHeaderStyle, RowFooterStyle, ReportHeadingStyle, ReportSubHeadingStyle, NumericStyle" 
                  >
                 <FlowDocument.Resources>

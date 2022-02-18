@@ -17,7 +17,7 @@
     <Color x:Key="AreaChartColor8" >Wheat</Color>
 
     <Color x:Key="GridNormalBackgroundColor">white</Color>
-    <Color x:Key="GridAlternateBackgroundColor">#e0e0e0</Color>
+    <Color x:Key="GridAlternateBackgroundColor">#f0f0f0</Color>
     
     <!-- MessageBox border -->
     <SolidColorBrush x:Key="MessageBoxBorder" Color="{m:DynamicColor SystemAccentColor}"/>
