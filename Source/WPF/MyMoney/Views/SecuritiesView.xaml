@@ -7,7 +7,8 @@
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
              xmlns:views="clr-namespace:Walkabout.Views"
              xmlns:help="clr-namespace:Walkabout.Help"
-             xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:ui="http://schemas.modernwpf.com/2019"        
+             xmlns:u="clr-namespace:Walkabout.Utilities"
              help:HelpService.HelpKeyword="Securities"
              mc:Ignorable="d" 
              d:DesignHeight="333" d:DesignWidth="685">
@@ -206,15 +207,7 @@
           <TextBlock Text="{Binding PriceDate, StringFormat={}{0:d}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
         </Border>
       </DataTemplate>
-
-      <DataTemplate x:Key="myTemplatePriceDateEdit" >
-        <!-- the border makes the whole column hittable -->
-        <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-          <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Price, StringFormat={}{0:d}, Mode=TwoWay}" TextAlignment="Right" />
-        </Border>
-      </DataTemplate>
-
-
+        
       <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
@@ -264,7 +257,8 @@
         <!--  DETAIL MINI VIEW Show Stock Split information -->
         <DataTemplate x:Key="StockSplitMiniView">
 
-            <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent">
+            <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent"
+                    u:WpfAnnotations.CodeRef="StockSplitMiniView">
 
                 <Border.Resources>
                     <AlternationConverter x:Key="BackgroundConverter">
@@ -275,8 +269,8 @@
                     <Style x:Key="StockSplitAlternationItemStyle" TargetType="{x:Type ListViewItem}">
                         <Setter Property="Background" 
                             Value="{Binding RelativeSource={RelativeSource Self},
-                            Path=(ItemsControl.AlternationIndex),
-                            Converter={StaticResource BackgroundConverter}}"/>
+                                            Path=(ItemsControl.AlternationIndex), 
+                                            Converter={StaticResource BackgroundConverter}}"/>
                     </Style>
                     
                 </Border.Resources>
@@ -288,7 +282,7 @@
                              BorderThickness="0"
                              IsEnabled="False"
                              Padding="0"                             
-                             Margin="0"                              
+                             Margin="0"                                                           
                              ItemContainerStyle="{StaticResource StockSplitAlternationItemStyle}"
                              ItemsSource="{Binding Path=StockSplits}">
                         <ListView.Resources>

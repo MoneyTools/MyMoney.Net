@@ -387,7 +387,9 @@ namespace Walkabout
                 }
                 else if (!emptyWindow)
                 {
-                    BeginLoadDatabase();
+                    // windows 11 has a weird behavior where main window does not appear before the 
+                    // Open Database dialog unless we do this delay here.
+                    delayedActions.StartDelayedAction("loaddata", BeginLoadDatabase, TimeSpan.FromMilliseconds(1));
                 }
 #if PerformanceBlocks
             }
@@ -2731,7 +2733,6 @@ namespace Walkabout
                         PieChartExpenses.CategoryFilter = parent;
                         PieChartExpenses.Unknown = myMoney.Categories.Unknown;
                         PieChartExpenses.Transactions = rows;
-                       // TabExpensesHeaderText.Foreground = (PieChartExpenses.NetAmount != 0) ? (Brush)FindResource("TextBrush") : (Brush)FindResource("DisabledForegroundBrush");
 
                         // income categories
                         TabIncomes.Visibility = System.Windows.Visibility.Visible;
@@ -2739,7 +2740,6 @@ namespace Walkabout
                         PieChartIncomes.CategoryFilter = parent;
                         PieChartIncomes.Unknown = myMoney.Categories.Unknown;
                         PieChartIncomes.Transactions = rows;
-                       // TabIncomesHeaderText.Foreground = (PieChartIncomes.NetAmount != 0) ? (Brush)FindResource("TextBrush") : (Brush)FindResource("DisabledForegroundBrush");
 
                         // view the stock history
                         if (TransactionView.ActiveSecurity != null)
@@ -3809,11 +3809,6 @@ namespace Walkabout
             }
 
             WpfHelper.Flyout(this.AppSettingsPanel);
-        }
-
-        private void OnCommandColorPalette(object sender, ExecutedRoutedEventArgs e)
-        {
-            SetCurrentView<ColorPalette>();
         }
 
         private void OnCommandToggleTheme(object sender, ExecutedRoutedEventArgs e)

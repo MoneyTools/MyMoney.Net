@@ -5,5 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <RichTextBox x:Name="OutputTextView" VerticalScrollBarVisibility="Auto"/>
+    <RichTextBox x:Name="OutputTextView" VerticalScrollBarVisibility="Auto" BorderThickness="0"
+                 Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}" />
 </UserControl>

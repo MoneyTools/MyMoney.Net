@@ -63,7 +63,6 @@
         <CommandBinding Command="p:AppCommands.CommandViewCurrencies" Executed="OnCommandViewCurrencies"/>
         <CommandBinding Command="p:AppCommands.CommandViewAliases"  Executed="OnCommandViewViewAliases"/>
         <CommandBinding Command="p:AppCommands.CommandViewOptions" Executed="OnCommandViewOptions" />
-        <CommandBinding Command="p:AppCommands.CommandColorPalette" Executed="OnCommandColorPalette" />
         <CommandBinding Command="p:AppCommands.CommandToggleTheme" Executed="OnCommandToggleTheme" />
 
         <!-- REPORTS  -->
@@ -187,8 +186,6 @@
                         <MenuItem x:Name="MenuViewOnlineAliases" Header="_Aliases" Command="p:AppCommands.CommandViewAliases"/>
                         <Separator/>
                         <MenuItem x:Name="MenuViewOnlineOptions" Header="_Options..." Command="p:AppCommands.CommandViewOptions"/>
-                        <Separator/>
-                        <MenuItem x:Name="MenuViewColorPalette" Header="Color Palette..." Command="p:AppCommands.CommandColorPalette"/>
 
                     </MenuItem>
 

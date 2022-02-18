@@ -11,31 +11,7 @@
     <UserControl.Resources>
 
 
-        <c:BoolToVisibilityConverter x:Key="boolToVis" />
         <c:MonthConverter x:Key="monthConverter" />
-
-
-
-
-        <Style x:Key="GridBlockStyle" TargetType="{x:Type TextBlock}" >
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Visibility" Value="{Binding Path=IsSelected, 
-         											RelativeSource={RelativeSource FindAncestor, 
-             										AncestorType={x:Type ListViewItem}},
-         											Converter={StaticResource boolToVis}, 
-             										ConverterParameter=False}" />
-        </Style>
-
-        <Style TargetType="{x:Type FrameworkElement}" 
-                x:Key="GridEditStyle">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Visibility" 
-                Value="{Binding Path=IsSelected, 
-                        RelativeSource={RelativeSource FindAncestor, 
-                        AncestorType={x:Type ListViewItem}},
-                        Converter={StaticResource boolToVis}, 
-                        ConverterParameter=True}" />
-        </Style>
 
         <!-- GROUPING LOGIC for the LISTVIEW -->
         <CollectionViewSource x:Key="MyGroupView" Source="{Binding}">

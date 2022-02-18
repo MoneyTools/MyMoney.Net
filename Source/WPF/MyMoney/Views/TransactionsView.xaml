@@ -8,6 +8,7 @@
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
              xmlns:p="clr-namespace:Walkabout.Commands"
              xmlns:views="clr-namespace:Walkabout.Views"
+             xmlns:u="clr-namespace:Walkabout.Utilities"
              xmlns:help="clr-namespace:Walkabout.Help" 
              xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d"
@@ -16,9 +17,6 @@
 
     <UserControl.ContextMenu>
         <ContextMenu>
-            <ContextMenu.Resources>
-                <views:TransactionFilterToBooleanConverter x:Key="TransactionFilterToBoolean"/>
-            </ContextMenu.Resources>
 
             <MenuItem Name="menuItemToggleAccept" Header="Toggle _Accept" Command="views:TransactionsView.CommandAccept" InputGestureText="Ctrl-Space"/>
             <MenuItem Name="menuItemToggleVoid" Header="Toggle _Void" Command="views:TransactionsView.CommandVoid"/>
@@ -93,9 +91,6 @@
     <UserControl.Resources>
 
         <ContextMenu x:Key="SplitViewContextMenu">
-            <ContextMenu.Resources>
-                <views:TransactionFilterToBooleanConverter x:Key="TransactionFilterToBoolean"/>
-            </ContextMenu.Resources>
             <MenuItem Name="menuItemCopySplit" Header="_Copy" Command="Copy"/>
             <MenuItem Name="menuItemPasteSplit" Header="_Paste" Command="Paste"/>
             <MenuItem Name="menuItemDeleteSplit" Header="_Delete" Command="Delete"/>
@@ -126,29 +121,8 @@
         <c:NullableValueConverter x:Key="NullableValueConverter" />
 
         <c:TrueToVisible x:Key="TrueToVisible" />
-        <c:FalseToVisible x:Key="FalseToVisible" />
-        <c:TrueToVisibleWhenSelected x:Key="TrueToVisibleWhenSelected" />
-
-        <views:ShowSplitForDebit x:Key="ShowSplitForDebit" />
-        <views:ShowSplitForCredit x:Key="ShowSplitForCredit" />
 
         <c:RoutingLines x:Key="RoutingLines" />
-
-        <Color x:Key="CheckMarkBackground" R="243" G="243" B="249"/>
-        <Color x:Key="CheckMarkPressedBackground" R="197" G="197" B="208"/>
-
-        <SolidColorBrush x:Key="CheckMarkBoxBorder" Color="#DFDFEF"/>
-        <SolidColorBrush x:Key="CheckMarkStroke" Color="#969FFF"/>
-
-        <LinearGradientBrush x:Key="CheckRadioFillNormal">
-            <GradientStop Color="#FFD2D4D2" Offset="0"/>
-            <GradientStop Color="#FFFFFFFF" Offset="1"/>
-        </LinearGradientBrush>
-
-        <LinearGradientBrush x:Key="CheckRadioStrokeNormal">
-            <GradientStop Color="#FF004C94" Offset="0"/>
-            <GradientStop Color="#FF003C74" Offset="1"/>
-        </LinearGradientBrush>
 
         <Style x:Key="CurrentUnitStyle" TargetType="{x:Type TextBlock}">
             <Setter Property="Opacity" Value=".55"/>
@@ -160,25 +134,6 @@
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="FontStyle" Value="Italic"/>
             <Setter Property="Foreground" Value="{Binding RunningUnits, Converter={StaticResource MoneyColorConverter}}"/>
-        </Style>
-
-        <Style x:Key="EmptyCheckBoxFocusVisual">
-            <Setter Property="Control.Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Rectangle SnapsToDevicePixels="true" Margin="1" Stroke="Black" StrokeDashArray="1 2" StrokeThickness="1"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="CheckRadioFocusVisual">
-            <Setter Property="Control.Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Rectangle SnapsToDevicePixels="true" Margin="14,0,0,0" Stroke="Black" StrokeDashArray="1 2" StrokeThickness="1"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
         </Style>
 
         <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
@@ -318,7 +273,8 @@
         <!-- PAYEE / CATEGORY / MEMO -->
         <!-- This editing template is instantiated from code. -->
         <DataTemplate x:Key="myTemplatePayeeCategoryMemoEdit">
-            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Focusable="false">
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Focusable="false"
+                        >
                 <!-- PAYEE -->
                 <local:FilteringComboBox Style="{StaticResource GridComboStyle}" x:Name="EditorForPayeeOrTransferCaption"
                         SelectedItem="{Binding PayeeOrTransferCaption, Mode=TwoWay}"
@@ -386,41 +342,13 @@
             </local:FilteringComboBox>
         </DataTemplate>
 
-        <!-- MARKET PRICE BASIS (binds to Investment) -->
-        <DataTemplate x:Key="myTemplateInvestmentCurrentUnitPrice">
-            <TextBlock Text="{Binding CurrentUnitPrice, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}" TextAlignment="Right" VerticalAlignment="Top"/>
-        </DataTemplate>
-
-
-        <!-- COST BASIS (binds to Investment) -->
-        <DataTemplate x:Key="myTemplateInvestmentCostBasis">
-            <TextBlock Text="{Binding CostBasis, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}" TextAlignment="Right" VerticalAlignment="Top"/>
-        </DataTemplate>
-
-
-        <!-- MARKET VALUE (binds to Investment) -->
-        <DataTemplate x:Key="myTemplateInvestmentMarketValue">
-            <TextBlock Text="{Binding MarketValue, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}" TextAlignment="Right" VerticalAlignment="Top"/>
-        </DataTemplate>
-
-
-        <!-- GAIN (binds to Investment) -->
-        <DataTemplate x:Key="myTemplateInvestmentGain">
-            <TextBlock Text="{Binding Path=GainLoss, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}" TextAlignment="Right" VerticalAlignment="Top"/>
-        </DataTemplate>
-
-        <!-- PERCENTAGE (binds to Investment) -->
-        <DataTemplate x:Key="myTemplateInvestmentPercentage">
-            <TextBlock Text="{Binding PercentGainLoss, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}" TextAlignment="Right" VerticalAlignment="Top"/>
-        </DataTemplate>
-
-
         <!-- 
         DETAIL MINI VIEW 
         -->
         <DataTemplate x:Key="myDataGridDetailMiniView">
             <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent"
-                    BorderBrush="{DynamicResource ListItemForegroundLowBrush}" BorderThickness="1" CornerRadius="5" Margin="10,-1,10,10">
+                    BorderBrush="{DynamicResource ListItemForegroundLowBrush}" BorderThickness="1" CornerRadius="5" Margin="10,-1,10,10"
+                    >
                 <Border.Resources>
 
                     <AlternationConverter x:Key="BackgroundConverter">
@@ -450,9 +378,6 @@
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundLowBrush}" />
                             </Style>
-                            <DataTemplate x:Key="RightAlignedCell">
-                                <TextBlock Text="{Binding .}" HorizontalAlignment="Right"/>
-                            </DataTemplate>
                         </ListView.Resources>
                         <ListView.View>
                             <GridView>
@@ -605,7 +530,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <c:TrueToVisible x:Key="TrueToVisible1" />
 
     </UserControl.Resources>
 
@@ -982,7 +906,9 @@
 
         </Grid>
 
-        <Canvas x:Name="GridOverlayCanvas" Grid.Row="2"></Canvas>
+        <Canvas x:Name="GridOverlayCanvas" Grid.Row="2"
+                 u:WpfAnnotations.CodeRef="ButtonStyleSplitAmount, myTemplatePayeeCategoryMemoEdit, myDataGridDetailMiniView, ListItemSelectedForegroundDisabledBrush, ListItemSelectedForegroundNegativeBrush, ListItemSelectedForegroundLowBrush, ListItemReconcilingBackgroundBrush, PositiveCurrencyForegroundBrush, HyperlinkForeground, DragDropFeedbackBrush, TransactionConnectorBrush, TransactionConnectorForegroundBrush, TransactionConnectorButtonBackground, TransactionConnectorButtonPressedBackground, TransactionConnectorButtonMouseOverBackground, CollapseAllIcon, DragDropWindowStyle"
+                ></Canvas>
     </Grid>
 
 </UserControl>

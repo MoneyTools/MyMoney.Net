@@ -423,13 +423,31 @@ namespace Walkabout.Tests
 
             Save();
 
+            window.WaitForInputIdle(5000);
+
             sampleData = true;
 
             // give database time to flush...
             Thread.Sleep(2000);
-
-            // now load the database and pull out the categories.
-            MyMoney money = Load();
+            int retries = 5;
+            MyMoney money = null;
+            Exception ex = null;
+            while (retries > 0 && money == null)
+            {
+                // now load the database and pull out the categories.
+                retries--;
+                try
+                {
+                    money = Load();
+                } 
+                catch (Exception e)
+                {
+                    // could be that the test process is still writing!
+                    // so try again in a bit.
+                    ex = e;
+                    Thread.Sleep(1000);
+                }
+            }
 
             List<string> categories = new List<string>();
             foreach (Category c in money.Categories)

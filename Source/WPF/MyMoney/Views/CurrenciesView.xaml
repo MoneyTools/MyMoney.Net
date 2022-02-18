@@ -137,10 +137,6 @@
             </Setter>
         </Style>
 
-
-        <views:ValidationErrorGetErrorMessageConverter x:Key="ValidationErrorGetErrorMessageConverter" />
-
-
     </UserControl.Resources>
 
 

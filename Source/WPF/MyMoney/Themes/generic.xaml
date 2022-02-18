@@ -49,41 +49,7 @@
 
     <sys:String x:Key="SortIconAscending">&#xE74A;</sys:String>
     <sys:String x:Key="SortIconDescending">&#xE74B;</sys:String>
-    <sys:String x:Key="RowGroupHeaderIconClosed">&#xE0E3;</sys:String>
-    <sys:String x:Key="RowGroupHeaderIconOpened">&#xE0E5;</sys:String>
 
-    <!-- Some ModernWPF overrides -->
-    <!-- begin D:\git\ModernWpf\ModernWpf\DensityStyles\Compact.xaml -->
-    <sys:Double x:Key="ControlContentThemeFontSize">14</sys:Double>
-    <sys:Double x:Key="ContentControlFontSize">14</sys:Double>
-    <sys:Double x:Key="TextControlThemeMinHeight">24</sys:Double>
-    <Thickness x:Key="TextControlThemePadding">2,2,6,1</Thickness>
-    <sys:Double x:Key="ListViewItemMinHeight">32</sys:Double>
-    <sys:Double x:Key="TreeViewItemMinHeight">24</sys:Double>
-    <Thickness x:Key="TimePickerHostPadding">0,1,0,2</Thickness>
-    <Thickness x:Key="DatePickerHostPadding">0,1,0,2</Thickness>
-    <Thickness x:Key="DatePickerHostMonthPadding">9,0,0,1</Thickness>
-    <Thickness x:Key="ComboBoxEditableTextPadding">4,0,30,0</Thickness>
-    <sys:Double x:Key="ComboBoxMinHeight">24</sys:Double>
-    <Thickness x:Key="ComboBoxPadding">12,1,0,3</Thickness>
-    <sys:Double x:Key="NavigationViewItemOnLeftMinHeight">32</sys:Double>
-    <sys:Double x:Key="GridViewColumnHeaderMinHeight">25</sys:Double>
-    <sys:Double x:Key="GridViewItemContainerMinHeight">24</sys:Double>
-    <sys:Double x:Key="DataGridRowMinHeight">24</sys:Double>
-
-    <!-- CompactDatePickerTimePickerFlyout.xaml -->
-    <sys:Double x:Key="TimePickerFlyoutPresenterItemHeight">32</sys:Double>
-    <sys:Double x:Key="TimePickerFlyoutPresenterHighlightHeight">32</sys:Double>
-    <sys:Double x:Key="TimePickerFlyoutPresenterAcceptDismissHostGridHeight">33</sys:Double>
-    <sys:Double x:Key="TimePickerPopupVerticalOffset">16</sys:Double>
-    <Thickness x:Key="TimePickerFlyoutPresenterItemPadding">0,0,0,1</Thickness>
-    <sys:Double x:Key="DatePickerFlyoutPresenterItemHeight">32</sys:Double>
-    <sys:Double x:Key="DatePickerFlyoutPresenterHighlightHeight">32</sys:Double>
-    <sys:Double x:Key="DatePickerFlyoutPresenterAcceptDismissHostGridHeight">33</sys:Double>
-    <Thickness x:Key="DatePickerFlyoutPresenterItemPadding">0,0,0,1</Thickness>
-    <Thickness x:Key="DatePickerFlyoutPresenterMonthPadding">9,0,0,1</Thickness>
-
-    <!-- end D:\git\ModernWpf\ModernWpf\DensityStyles\Compact.xaml -->
 
     <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}">
         <Setter Property="Template">
@@ -240,18 +206,8 @@
     <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#FF636363"/>
 
     <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="Black"/>
-    <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="#F6F4F2"/>
 
     <s:Double x:Key="MainTransactionAreaFontSize">12</s:Double>
-    <s:Double x:Key="LegendItemSwatchWidth">16</s:Double>
-    <s:Double x:Key="LegendItemSwatchHeight">16</s:Double>
-
-    <SolidColorBrush x:Key="TextBrush" Color="Black" />
-
-    <LinearGradientBrush x:Key="MouseOverBrush" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="LightBlue" />
-        <GradientStop Color="LightBlue" Offset="1" />
-    </LinearGradientBrush>
 
     <Style x:Key="SmoothFadeIn" TargetType="FrameworkElement" >
         <Style.Triggers>
@@ -483,108 +439,6 @@
         </Setter>
     </Style>
 
-    <!-- back forward buttons-->
-    <Storyboard x:Key="AnimPressedColors">
-        <ColorAnimation Duration="0:0:0.1" To="#395CB1" Storyboard.TargetName="OuterRimBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#005546" Storyboard.TargetName="OuterRimBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[1].(Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#0137A5" Storyboard.TargetName="TopLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#7BACE6" Storyboard.TargetName="InnerRimBrush"
-                      Storyboard.TargetProperty="(SolidColorBrush.Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#28E7FF" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#0139C2" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[1].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#001176" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[2].(Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#4073C2" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#3A3A96" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[1].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#206DBA" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[2].(Color)"/>
-    </Storyboard>
-    <Storyboard x:Key="AnimNormalColors">
-        <ColorAnimation Duration="0:0:0.1" To="#798FC1" Storyboard.TargetName="OuterRimBrush"
-                          Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#032C7B" Storyboard.TargetName="OuterRimBrush"
-                          Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[1].(Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#477BBC" Storyboard.TargetName="TopLightBrush"
-                          Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#98BCFF" Storyboard.TargetName="InnerRimBrush"
-                      Storyboard.TargetProperty="(SolidColorBrush.Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#6FDFFF" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#377CC6" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[1].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#123398" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[2].(Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#789CCC" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#2B5592" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[1].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#3190C3" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[2].(Color)"/>
-    </Storyboard>
-    <Storyboard x:Key="AnimMouseOverColors">
-        <ColorAnimation Duration="0:0:0.1" To="#6580BF" Storyboard.TargetName="OuterRimBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#1E5AB2" Storyboard.TargetName="OuterRimBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[1].(Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#64A8FB" Storyboard.TargetName="TopLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#E2F2FF" Storyboard.TargetName="InnerRimBrush"
-                      Storyboard.TargetProperty="(SolidColorBrush.Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#9CFFFF" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#32A9FF" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[1].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#305DD6" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[2].(Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#89B8FF" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#2852BA" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[1].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#4CA8BF" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[2].(Color)"/>
-    </Storyboard>
-    <Storyboard x:Key="AnimDisabledColors">
-        <ColorAnimation Duration="0:0:0.1" To="#ACAEB4" Storyboard.TargetName="OuterRimBrush"
-                          Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#8A8A8A" Storyboard.TargetName="OuterRimBrush"
-                          Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[1].(Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#C2CBD9" Storyboard.TargetName="TopLightBrush"
-                          Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#FFFFFF" Storyboard.TargetName="InnerRimBrush"
-                      Storyboard.TargetProperty="(SolidColorBrush.Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#EFFFFF" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#B3C7D9" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[1].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#C6C9CE" Storyboard.TargetName="BottomLightBrush"
-                      Storyboard.TargetProperty="(RadialGradientBrush.GradientStops)[2].(Color)"/>
-
-        <ColorAnimation Duration="0:0:0.1" To="#CAD0DA" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[0].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#A0A5B0" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[1].(Color)"/>
-        <ColorAnimation Duration="0:0:0.1" To="#ADC6CD" Storyboard.TargetName="ArrowStrokeBrush"
-                      Storyboard.TargetProperty="(LinearGradientBrush.GradientStops)[2].(Color)"/>
-    </Storyboard>
-
     <Style x:Key="RentalChartExpenseDistribution" TargetType="{x:Type Border}">
         <Setter Property="CornerRadius" Value="0"/>
         <Setter Property="BorderBrush" Value="Black"/>
@@ -661,32 +515,6 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
-
-    <DrawingImage x:Key="SplitIconFilled" >
-        <DrawingImage.Drawing>
-            <DrawingGroup >
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconBrush}" >
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource ToolbarIconBrush}" Thickness="1" EndLineCap="Round" StartLineCap="Round" LineJoin="Round" />
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry>
-                            <PathGeometry.Figures>
-                                <PathFigure StartPoint="0,0" IsClosed="True" IsFilled="True" >
-                                    <LineSegment Point="10,0"/>
-                                    <LineSegment Point="10,5"/>
-                                    <LineSegment Point="5,8"/>
-                                    <LineSegment Point="0,5"/>
-                                </PathFigure>
-                            </PathGeometry.Figures>
-                        </PathGeometry>
-                    </GeometryDrawing.Geometry>
-
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingImage.Drawing>
-    </DrawingImage>
-
 
     <DrawingImage x:Key="CollapseAllIcon" >
         <DrawingImage.Drawing>
@@ -803,38 +631,15 @@
     </DrawingImage>
 
 
-
     <!-- Color Resources -->
-
-    <Color x:Key="NormalBrushGradient1">#FFBAE4FF</Color>
-    <Color x:Key="NormalBrushGradient2">#FF398FDF</Color>
-    <Color x:Key="NormalBrushGradient3">#FF006DD4</Color>
-    <Color x:Key="NormalBrushGradient4">#FF0A3E69</Color>
 
     <Color x:Key="NormalBorderBrushGradient1">#FFBBBBBB</Color>
     <Color x:Key="NormalBorderBrushGradient2">#FF737373</Color>
     <Color x:Key="NormalBorderBrushGradient3">#FF646464</Color>
     <Color x:Key="NormalBorderBrushGradient4">#FF000000</Color>
 
-    <Color x:Key="SelectedBackgroundGradient1">#FFFBEF</Color>
-    <Color x:Key="SelectedBackgroundGradient2">#FFFBEF</Color>
-    <Color x:Key="SelectedBackgroundGradient3">#FFE8A6</Color>
-    <Color x:Key="SelectedBackgroundGradient4">#FFE8A6</Color>
-
-    <Color x:Key="SliderBorderGradient1">#FF3F3F3F</Color>
-    <Color x:Key="SliderBorderGradient2">#FFADADAD</Color>
-
-    <Color x:Key="ShadeBrushGradient1">#FF62676A</Color>
     <Color x:Key="ShadeBrushGradient2">#FFD1D4D6</Color>
     <Color x:Key="ShadeBrushGradient3">#FFFFFFFF</Color>
-
-    <Color x:Key="WindowBackgroundBrushGradient1">#FFD1D1D1</Color>
-    <Color x:Key="WindowBackgroundBrushGradient2">#FF8496AA</Color>
-
-    <LinearGradientBrush x:Key="SumarySectionBrush" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="White" Offset="0" />
-        <GradientStop Color="White" Offset="1" />
-    </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="NormalBorderBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="{StaticResource NormalBorderBrushGradient1}" />
@@ -843,87 +648,10 @@
         <GradientStop Color="{StaticResource NormalBorderBrushGradient4}" Offset="1" />
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="White"/>
-
     <LinearGradientBrush x:Key="ShadeBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="{StaticResource ShadeBrushGradient2}" Offset="0" />
         <GradientStop Color="{StaticResource ShadeBrushGradient3}" Offset="0.05" />
         <GradientStop Color="{StaticResource ShadeBrushGradient3}" Offset="1" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="ShadeBrushTop" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="{StaticResource ShadeBrushGradient2}" Offset="0" />
-        <GradientStop Color="{StaticResource ShadeBrushGradient3}" Offset="0.1" />
-        <GradientStop Color="{StaticResource ShadeBrushGradient3}" Offset="1" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="ShadeBrushBottom" EndPoint="0.5,0" StartPoint="0.5,1">
-        <GradientStop Color="{StaticResource ShadeBrushGradient2}" />
-        <GradientStop Color="{StaticResource ShadeBrushGradient3}" Offset="0.1" />
-        <GradientStop Color="{StaticResource ShadeBrushGradient3}" Offset="1" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="ShadeBrushLeft" EndPoint="1,0.5" StartPoint="0,0.5">
-        <GradientStop Color="{StaticResource ShadeBrushGradient2}" />
-        <GradientStop Color="{StaticResource ShadeBrushGradient3}" Offset="0.1" />
-        <GradientStop Color="{StaticResource ShadeBrushGradient3}" Offset="1" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="ShadeBrushRight" EndPoint="0,0.5" StartPoint="1,0.5">
-        <GradientStop Color="{StaticResource ShadeBrushGradient2}" />
-        <GradientStop Color="{StaticResource ShadeBrushGradient3}" Offset="0.1" />
-        <GradientStop Color="{StaticResource ShadeBrushGradient3}" Offset="1" />
-    </LinearGradientBrush>
-
-
-    <LinearGradientBrush x:Key="LightBrush" EndPoint="0,1" StartPoint="0,0">
-        <GradientStop Color="#FFF" Offset="0.0"/>
-        <GradientStop Color="#EEE" Offset="1.0"/>
-    </LinearGradientBrush>
-
-
-    <SolidColorBrush x:Key="DisabledBorderBrush" Color="#ADB2B5"/>
-
-    <LinearGradientBrush x:Key="DefaultedBorderBrush" EndPoint="0,1" StartPoint="0,0">
-        <GradientStop Color="#777" Offset="0.0"/>
-        <GradientStop Color="#000" Offset="1.0"/>
-    </LinearGradientBrush>
-
-    <SolidColorBrush x:Key="SolidBorderBrush" Color="#888"/>
-    <SolidColorBrush x:Key="LightBorderBrush" Color="#AAA"/>
-    <SolidColorBrush x:Key="LightColorBrush" Color="#DDD"/>
-
-
-    <SolidColorBrush x:Key="GlyphBrush" Color="#CED4DD"/>
-    <SolidColorBrush x:Key="ReportTableBorder" Color="#FF8586A9"/>
-    <LinearGradientBrush x:Key="ToolBarHorizontalBackground" EndPoint="0,1" StartPoint="0,0">
-        <GradientStop Color="#FFFFFF" Offset="0"/>
-        <GradientStop Color="#FFFBFF" Offset="0.5"/>
-        <GradientStop Color="#F7F7F7" Offset="1"/>
-    </LinearGradientBrush>
-    <SolidColorBrush x:Key="ToolBarToggleButtonHorizontalBackground" Color="Black" Opacity="0"/>
-    <SolidColorBrush x:Key="ToolBarButtonHover" Color="{StaticResource NormalBrushGradient1}" />
-    <SolidColorBrush x:Key="ToolBarGripper" Color="#FF60728C"/>
-    <SolidColorBrush x:Key="ToolBarSubMenuBackground" Color="#FFFDFDFD"/>
-    <SolidColorBrush x:Key="ToolBarMenuBorder" Color="#FFFFFFFF"/>
-    <LinearGradientBrush x:Key="ToolBarToggleButtonVerticalBackground" EndPoint="1,0" StartPoint="0,0">
-        <GradientStop Color="#ECECEC" Offset="0"/>
-        <GradientStop Color="#DDDDDD" Offset="0.5"/>
-        <GradientStop Color="#A0A0A0" Offset="1"/>
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ToolBarVerticalBackground" EndPoint="1,0" StartPoint="0,0">
-        <GradientStop Color="#FFFFFF" Offset="0"/>
-        <GradientStop Color="#FFFBFF" Offset="0.5"/>
-        <GradientStop Color="#F7F7F7" Offset="1"/>
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="WalkaboutToolbarExpanderBrushNormal" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#4D6082" Offset="0" />
-        <GradientStop Color="#3D5277" Offset="1" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="WalkaboutToolbarExpanderBrushSelected" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="gray" Offset="0" />
-        <GradientStop Color="gray" Offset="1" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="WalkaboutAccountSubSectionBrush" StartPoint="0.5,0" EndPoint="0.5,1">
@@ -932,42 +660,11 @@
         <GradientStop Color="#CED4DF" Offset="0.5" />
         <GradientStop Color="#CED4DF" Offset="1" />
     </LinearGradientBrush>
-
-    <SolidColorBrush x:Key="LeftPanelBackground" Color="White" />
-    <SolidColorBrush x:Key="LeftPanelForeground" Color="Black" />
-
-
-    <BorderGapMaskConverter x:Key="BorderGapMaskConverter" />
-
+    
     <Style x:Key="MainAppClientArea" TargetType="Border">
         <Setter Property="Padding" Value="3,3,3,0"/>
     </Style>
-
-    <Style x:Key="RadioButtonFocusVisual">
-        <Setter Property="Control.Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Border>
-                        <Rectangle Margin="15,0,0,0" Stroke="#60000000" StrokeThickness="1" StrokeDashArray="1 2"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="CheckBoxFocusVisual">
-        <Setter Property="Control.Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Border>
-                        <Rectangle Margin="15,0,0,0" Stroke="#60000000" StrokeThickness="1" StrokeDashArray="1 2"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-
+    
     <Style TargetType="{x:Type ProgressBar}">
         <Setter Property="Template">
             <Setter.Value>

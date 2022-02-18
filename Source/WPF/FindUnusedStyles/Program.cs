@@ -129,8 +129,8 @@ namespace FindUnusedStyles
                 if (doc.Root.Name.LocalName != "ResourceDictionary")
                 {
                     var a = doc.Root.Attribute(XName.Get("Class", "http://schemas.microsoft.com/winfx/2006/xaml"));
-                    Styles local = new Styles(global);
                     var location = doc.Annotation<string>();
+                    Styles local = new Styles(location, global);
                     WalkResources(location, doc.Root, null, local);
                     local.ReportUnreferenced();
                 }
@@ -309,6 +309,17 @@ namespace FindUnusedStyles
             return root.Name;
         }
 
+        private bool HasParent(XElement e, string parentName)
+        {
+            var p = e.Parent;
+            while (p != null)
+            {
+                if (p.Name.LocalName == parentName) return true;
+                p = p.Parent;
+            }
+            return false;
+        }
+
         private void FindStyles(string filePath, XElement root, NamespaceScope scope, Styles styles)
         {
             var local = new NamespaceScope(scope);
@@ -335,7 +346,13 @@ namespace FindUnusedStyles
 
             if (key != null || targetType != null)
             {
-                if (root.Name.LocalName != "ControlTemplate")
+                if (root.Name.LocalName == "ControlTemplate" && targetType != null && key == null
+                    && HasParent(root, "Style"))
+                {
+                    // If this control template is inside a <Style> then it is not an independently
+                    // addressable resource. 
+                } 
+                else
                 {
                     styles.AddStyle(filePath, key, targetType, root);
                 }
@@ -344,7 +361,12 @@ namespace FindUnusedStyles
             // Check for any nested styles first.
             foreach (var e in root.Elements())
             {
-                FindStyles(filePath, e, local, styles);
+                // If we find a nested .Resources within a resource then it's styles
+                // are not global, we will create localstyles for this one later.
+                if (!e.Name.LocalName.EndsWith(".Resources"))
+                {
+                    FindStyles(filePath, e, local, styles);
+                }
             }
         }
 
@@ -376,11 +398,31 @@ namespace FindUnusedStyles
                     CheckReferences(GetTargetTypeName(root, a), a.Value, local, styles);
                 }
             }
+            Styles localStyles = null;
+            // see if this element contains local styles
+            foreach (var e in root.Elements())
+            {
+                // find any local styles.
+                if (e.Name.LocalName.EndsWith(".Resources"))
+                {
+                    if (localStyles == null)
+                    {
+                        localStyles = new Styles(filePath + "+" + e.Name, styles);
+                        styles = localStyles;
+                    }
+                    FindStyles(filePath, e, local, localStyles);
+                }
+            }
 
             // Check for any nested styles first.
             foreach (var e in root.Elements())
             {
                 CheckStyleReferences(filePath, e, local, styles);
+            }
+
+            if (localStyles != null)
+            {
+                localStyles.ReportUnreferenced();
             }
         }
 
@@ -414,7 +456,6 @@ namespace FindUnusedStyles
             AddNamespaces(root, local);
 
             string codeRef = null;
-
             foreach (var a in root.Attributes())
             {
                 if (a.Name.LocalName == "TargetType")
@@ -448,7 +489,7 @@ namespace FindUnusedStyles
                 {
                     if (localStyles == null)
                     {
-                        localStyles = new Styles(styles);
+                        localStyles = new Styles(fileName + "+" + e.Name, styles);
                         styles = localStyles;
                     }
                     FindStyles(fileName, e, local, localStyles);
@@ -460,7 +501,11 @@ namespace FindUnusedStyles
                 // ah then the named styles are referenced from code, so record that fact
                 foreach (var part in codeRef.Split(','))
                 {
-                    XName reference = part.Trim();
+                    if (string.IsNullOrWhiteSpace(part))
+                    {
+                        continue;
+                    }
+                    XName reference = QualifyName(part.Trim(), local);
                     var style = styles.FindStyle(null, reference);
                     if (style == null)
                     {
@@ -469,6 +514,11 @@ namespace FindUnusedStyles
                         if (targetType != null)
                         {
                             style = styles.FindStyle(targetType, reference);
+                            if (style == null)
+                            {
+                                // might be a unnamed key TargetType only match
+                                style = styles.FindStyle(targetType, emptyName);
+                            }
                         }
                         if (style == null)
                         {
@@ -484,7 +534,6 @@ namespace FindUnusedStyles
             // Now we have the "usage" of styles, either something in a UserControl, or a ControlTemplate in a ResourceDictionary.
             foreach (var e in root.Elements())
             {
-                // create local scope for any resources defined in these controls.
                 WalkResources(fileName, e, local, styles);                
             }
 
@@ -494,75 +543,233 @@ namespace FindUnusedStyles
             }
         }
 
+        class BindingInfo
+        {
+            public XName Path;
+            public string RelativeSource;
+            public XName Converter;
+            public string ConverterParameter;
+            public string Mode;
+            public string ElementName;
+            public string FallbackValue;
+            public string StringFormat;
+            public string AncestorType;
+            public string Source;
+        }
+
+        XName ParseResourceReference(string value, NamespaceScope scope)
+        {
+            value = value.Trim(BindingChars).Trim();
+            string[] parts = value.Split(WhitespaceChars, StringSplitOptions.RemoveEmptyEntries);
+            var name = QualifyName(parts[0], scope);
+            if (name == "DynamicResource" || name == "{http://schemas.modernwpf.com/2019}DynamicColor" ||
+                name == "StaticResource" || name == XamlStaticName)
+            {
+                int i = value.IndexOfAny(WhitespaceChars);
+                if (i < 0)
+                {
+                    Console.WriteLine("???");
+                }
+                else
+                {
+                    var resourceName = value.Substring(i).Trim();
+                    return ParseTargetType(resourceName, scope);
+                }
+            }
+            else if (name == "Binding" || name == "TemplateBinding")
+            {
+                var args = value.Split(',');
+                foreach (var arg in args)
+                {
+                    var nameValue = arg.Trim().Split('=');
+                    if (nameValue.Length == 2 && nameValue[0] != "StringFormat")
+                    {
+                        if (nameValue[0] == "AncestorType")
+                        {
+                            // todo: check type references.
+                        }
+                        else
+                        {
+                            // CheckReferences(element, nameValue[1], local, localStyles);
+                        }
+                    }
+                }
+            }
+            else if (name == "RelativeSource")
+            {
+                if (parts.Length == 2)
+                {
+                    string reference = parts[1];
+                    if (reference != "Self" && reference != "TemplatedParent" && reference != "FindAncestor")
+                    {
+                        Console.WriteLine("???");
+                    }
+                }
+            }
+            else if (name == "{http://schemas.microsoft.com/winfx/2006/xaml}Null")
+            {
+                // do nothing
+            }
+            else if (name == "{http://schemas.microsoft.com/expression/blend/2008}DesignInstance")
+            {
+                // todo?
+            }
+            else
+            {
+                Console.WriteLine("???");
+            }
+            return null;
+        }
+
+        XName QualifyPath(string value, NamespaceScope scope)
+        {
+            if (value.StartsWith("(")){
+                value = value.Trim('(', ')').Trim();
+            }
+            var pos = value.LastIndexOf('.');
+            if (pos >= 0)
+            {
+                value = value.Substring(pos + 1);
+            }
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+            return QualifyName(value, scope);
+        }
+
+        BindingInfo ParseBinding(string value, NamespaceScope scope)
+        {
+            BindingInfo bindingInfo = new BindingInfo();
+            value = value.Trim(BindingChars).Trim();
+            var parts = value.Split(',');
+            foreach(var part in parts)
+            {
+                string trimmed = part.Trim();
+                if (trimmed.StartsWith("Binding"))
+                {
+                    trimmed = trimmed.Substring("Binding".Length).Trim();
+                }
+                else if (trimmed.StartsWith("TemplateBinding"))
+                {
+                    trimmed = trimmed.Substring("TemplateBinding".Length).Trim();
+                }
+
+                if (string.IsNullOrEmpty(trimmed))
+                {
+                    continue;
+                }
+
+                var nameValue = trimmed.Split('=');
+                if (nameValue.Length == 1)
+                {
+                    // {Binding IsClosed,
+                    bindingInfo.Path = QualifyPath(nameValue[0], scope);
+                }
+                else
+                {
+                    switch (nameValue[0])
+                    {
+                        case "Path":
+                            if (nameValue.Length > 1)
+                            {
+                                bindingInfo.Path = QualifyPath(nameValue[1].Trim(), scope);
+                            }
+                            break;
+                        case "Converter":
+                            if (nameValue.Length > 1)
+                            {
+                                bindingInfo.Converter = ParseResourceReference(nameValue[1].Trim(), scope);
+                            }
+                            break;
+                        case "ConverterParameter":
+                            if (nameValue.Length > 1)
+                            {
+                                bindingInfo.ConverterParameter = nameValue[1];
+                            }
+                            break;
+                        case "RelativeSource":
+                            if (nameValue.Length > 1)
+                            {
+                                bindingInfo.RelativeSource = nameValue[1];
+                            }
+                            break;
+                        case "Mode":
+                            if (nameValue.Length > 1)
+                            {
+                                bindingInfo.Mode = nameValue[1];
+                            }
+                            break;
+                        case "ElementName":
+                            if (nameValue.Length > 1)
+                            {
+                                bindingInfo.ElementName = nameValue[1];
+                            }
+                            break;
+                        case "FallbackValue":
+                            if (nameValue.Length > 1)
+                            {
+                                bindingInfo.FallbackValue = nameValue[1];
+                            }
+                            break;
+                        case "StringFormat":
+                            if (nameValue.Length > 1)
+                            {
+                                bindingInfo.StringFormat = nameValue[1];
+                            }
+                            break;
+                        case "AncestorType":
+                            if (nameValue.Length > 1)
+                            {
+                                bindingInfo.AncestorType = nameValue[1];
+                            }
+                            break;
+                        case "Source":
+                            if (nameValue.Length > 1)
+                            {
+                                bindingInfo.Source = nameValue[1];
+                            }
+                            break;
+                        case "ValidatesOnDataErrors":
+                        case "ValidatesOnExceptions":
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            return bindingInfo;
+        }
+
         static char[] BindingChars = new char[] { '{', '}' };
         static char[] WhitespaceChars = new char[] { ' ', '\t', '\r', '\n' };
 
         private void CheckReferences(XName element, string value, NamespaceScope local, Styles localStyles)
         {
-            if (value.StartsWith("{"))
+            XName reference = null;
+            if (value.StartsWith("{Binding") || value.StartsWith("{TemplateBinding"))
             {
-                value = value.Trim(BindingChars);
-                string[] parts = value.Split(WhitespaceChars, StringSplitOptions.RemoveEmptyEntries);
-                var name = QualifyName(parts[0], local);
-                if (name == "DynamicResource" ||  name == "{http://schemas.modernwpf.com/2019}DynamicColor" || name == "StaticResource" || name == "{http://schemas.microsoft.com/winfx/2006/xaml}Static")
+                var binding = ParseBinding(value, local);
+                reference = binding.Converter;
+                if (binding.Source != null)
                 {
-                    int i = value.IndexOfAny(WhitespaceChars);
-                    if (i < 0)
+                    var sourceRef = ParseResourceReference(binding.Source, local);
+                    var style = localStyles.FindStyle(element, sourceRef);
+                    if (style == null && !Whitelisted(sourceRef))
                     {
-                        Console.WriteLine("???");
-                    }
-                    else
-                    {
-                        var resourceName = value.Substring(i).Trim();
-                        var reference = ParseTargetType(resourceName, local); 
-                        var style = localStyles.FindStyle(element, reference);
-                        if (style == null && !Whitelisted(reference))
-                        {
-                            Program.WriteError("Resource {0} not found", reference.ToString());
-                        }
+                        Program.WriteError("Resource {0} not found", sourceRef.ToString());
                     }
                 }
-                else if (name == "Binding" || name == "TemplateBinding")
+            }
+            else if (value.StartsWith('{')) {
+                reference = ParseResourceReference(value, local);
+            }
+            if (reference != null)
+            {
+                var style = localStyles.FindStyle(element, reference);
+                if (style == null && !Whitelisted(reference))
                 {
-                    var args = value.Split(',');
-                    foreach(var arg in args)
-                    {
-                        var nameValue = arg.Trim().Split('=');
-                        if (nameValue.Length == 2 && nameValue[0] != "StringFormat")
-                        {
-                            if (nameValue[0] == "AncestorType")
-                            {
-                                // todo: check type references.
-                            }
-                            else
-                            {
-                                CheckReferences(element, nameValue[1], local, localStyles);
-                            }
-                        }
-                    }
-                }
-                else if (name == "RelativeSource")
-                {
-                    if (parts.Length == 2)
-                    {
-                        string reference = parts[1];
-                        if (reference != "Self" && reference != "TemplatedParent" && reference != "FindAncestor")
-                        {
-                            Console.WriteLine("???");
-                        }
-                    }
-                }
-                else if (name == "{http://schemas.microsoft.com/winfx/2006/xaml}Null")
-                {
-                    // do nothing
-                }
-                else if (name == "{http://schemas.microsoft.com/expression/blend/2008}DesignInstance")
-                {
-                    // todo?
-                }
-                else
-                {
-                    Console.WriteLine("???");
+                    Program.WriteError("Resource {0} not found", reference.ToString());
                 }
             }
         }
@@ -577,6 +784,15 @@ namespace FindUnusedStyles
                 case "DefaultDataGridColumnHeaderStyle":
                 case "SymbolThemeFontFamily":
                 case "SystemAccentColorDark1":
+                case "DefaultTreeViewItemStyle":
+                case "DefaultDataGridCellStyle":
+                case "DefaultDataGridStyle":
+                case "DefaultComboBoxStyle":
+                case "DefaultButtonStyle":
+                case "DefaultLabelStyle":
+                case "DefaultDatePickerStyle":
+                case "DefaultListBoxItemStyle":
+                case "Visibility.Visible":
                     return true;
                 default:
                     break;
@@ -652,14 +868,16 @@ namespace FindUnusedStyles
         class Styles
         {
             public Styles Parent;
+            public string FileName;
             public Dictionary<XName, StyleInfo> keys = new Dictionary<XName, StyleInfo>();
             public Dictionary<XName, Dictionary<XName, StyleInfo>> targetTypes = new Dictionary<XName, Dictionary<XName, StyleInfo>>();
             Dictionary<string, Type> cache;
 
             public Styles(Dictionary<string, Type> cache) { this.cache = cache; }
 
-            public Styles(Styles parent)
+            public Styles(string fileName, Styles parent)
             {
+                this.FileName = fileName;
                 this.Parent = parent;
                 this.cache = parent.cache;
             }
@@ -722,6 +940,7 @@ namespace FindUnusedStyles
                             yield return "DataGridColumn";
                             yield return "DataGridRowHeader";
                             yield return "DataGridTextColumn";
+                            yield return "DataGridColumnHeader";
                             break;
                         case "ListBox":
                             yield return "ListBoxItem";
@@ -732,6 +951,7 @@ namespace FindUnusedStyles
                         case "GridView":
                             yield return "GridViewItem";
                             yield return "GridViewColumn";
+                            yield return "GridViewColumnHeader";
                             break;
                         case "ComboBox":
                             yield return "ComboBoxItem";
@@ -747,6 +967,14 @@ namespace FindUnusedStyles
                             break;
                         case "TabControl":
                             yield return "TabItem";
+                            break;
+                        case "FlowDocument":
+                            yield return "Table";
+                            yield return "TableCell";
+                            yield return "TextBlock";
+                            break;
+                        case "ContentPresenter":
+                            yield return "TextBlock";
                             break;
                     }
                 }
@@ -909,9 +1137,9 @@ namespace FindUnusedStyles
                 foreach (var key in keys.Keys)
                 {
                     var si = keys[key];
-                    if (si.RefCount == 0 && si.FileName != null)
+                    if (si.RefCount == 0 && si.FileName != null && !WhiteListResource(si.FileName))
                     {
-                        Program.WriteWarning("Unreferenced style '{0}' from {1}", si.Key.ToString(), si.FileName);
+                        Program.WriteWarning("Unreferenced style {0} from {1}", si.Key.ToString(), si.FileName);
                     }
                 }
 
@@ -921,12 +1149,38 @@ namespace FindUnusedStyles
                     foreach(var key in map.Keys)
                     {
                         var si = map[key];
-                        if (si.RefCount == 0 && si.FileName != null)
+                        if (si.RefCount == 0 && si.FileName != null && !WhiteListResource(si.FileName))
                         {
-                            Program.WriteWarning("Unreferenced style '{0}' for target type '{1}' from {2}", si.Key.ToString(), si.TargetType.ToString(), si.FileName);
+                            if (si.Key == emptyName && WhiteListType(si.TargetType))
+                            {
+                                // skip it.
+                            } else { 
+                                Program.WriteWarning("Unreferenced style {0} for target type {1} from {2}", si.Key.ToString(), si.TargetType.ToString(), si.FileName);
+                            }
                         }
                     }
                 }
+            }
+
+            private bool WhiteListType(XName targetType)
+            {
+                switch (targetType.LocalName)
+                {
+                    case "TextBlock":
+                        return true;
+                }
+                return false;
+            }
+
+            private bool WhiteListResource(string filePath)
+            {
+                string filename = System.IO.Path.GetFileName(filePath);
+                switch (filename)
+                {
+                    case "Compact.xaml":
+                        return true;
+                }
+                return false;
             }
 
             internal XName FindTargetType(XName key)
