@@ -2,7 +2,7 @@
   "profiles": {
     "FindUnusedStyles": {
       "commandName": "Project",
-      "commandLineArgs": "--import \\git\\clovett\\ModernWpf\\ModernWpf\\Styles --import \\git\\clovett\\ModernWpf\\ModernWpf\\ThemeResources d:\\git\\clovett\\MyMoney.Net\\Source\\WPF"
+      "commandLineArgs": "--import \"d:\\git\\ModernWpf\\ModernWpf\\Styles\" --import \"d:\\git\\ModernWpf\\ModernWpf\\ThemeResources\" \"d:\\git\\clovett\\MyMoney.Net\\Source\\WPF\""
     }
   }
 }

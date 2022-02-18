@@ -3843,6 +3843,7 @@ namespace Walkabout.Views
         public readonly static RoutedUICommand CommandViewTransactionsByPayee = new RoutedUICommand("ViewTransactionsByPayee", "CommandViewTransactionsByPayee", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewTransactionsBySecurity = new RoutedUICommand("ViewTransactionsBySecurity", "CommandViewTransactionsBySecurity", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewSecurity = new RoutedUICommand("CommandViewSecurity", "CommandViewSecurity", typeof(TransactionsView));
+        public readonly static RoutedUICommand CommandViewCategory = new RoutedUICommand("CommandViewCategory", "CommandViewCategory", typeof(TransactionsView));
 
         public readonly static RoutedUICommand CommandViewToggleOneLineView = new RoutedUICommand("View ToggleOneLineView", "ViewToggleOneLineView", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewToggleAllSplits = new RoutedUICommand("View Toggle View All Splits", "ViewToggleViewAllSplits", typeof(TransactionsView));
@@ -4348,6 +4349,28 @@ namespace Walkabout.Views
             {
                 e.CanExecute = i.Security != null;
                 return;
+            }
+        }
+
+        private void CanExecute_ViewCategory(object sender, CanExecuteRoutedEventArgs e)
+        {
+            Transaction t = this.SelectedTransaction;
+            if (t != null)
+            {
+                e.CanExecute = (t.Category != null) && t.Transfer == null && !t.IsSplit;
+                return;
+            }
+        }
+
+        private void OnCommandViewCategory(object sender, ExecutedRoutedEventArgs e)
+        {
+            Transaction t = this.SelectedTransaction;
+            if (t != null && t.Category != null && t.Transfer == null && !t.IsSplit)
+            {
+                Category c = t.Category;
+                CategoryDialog dialog = CategoryDialog.ShowDialogCategory(this.myMoney, c.Name);
+                dialog.Owner = App.Current.MainWindow;
+                dialog.ShowDialog();
             }
         }
 

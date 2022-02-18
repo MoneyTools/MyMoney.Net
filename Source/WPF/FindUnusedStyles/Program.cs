@@ -51,6 +51,8 @@ namespace FindUnusedStyles
                 return 1;
             }
 
+            Console.WriteLine("Checking folder: [{0}]", dir);
+
             Grid g = new Grid(); // ensure WPF types are loaded.
             new Program().Process(imports, dir);
 
@@ -284,6 +286,8 @@ namespace FindUnusedStyles
                                 return "ComboBoxItem";
                             case "ListBox":
                                 return "ListBoxItem";
+                            case "ListView":
+                                return "ListViewItem";
                             default:
                                 Console.WriteLine("???");
                                 break;
@@ -512,7 +516,7 @@ namespace FindUnusedStyles
                         var resourceName = value.Substring(i).Trim();
                         var reference = ParseTargetType(resourceName, local); 
                         var style = localStyles.FindStyle(element, reference);
-                        if (style == null)
+                        if (style == null && !Whitelisted(reference))
                         {
                             Program.WriteError("Resource {0} not found", reference.ToString());
                         }
@@ -561,6 +565,23 @@ namespace FindUnusedStyles
                     Console.WriteLine("???");
                 }
             }
+        }
+
+        private bool Whitelisted(XName reference)
+        {
+            switch (reference.LocalName)
+            {
+                case "SystemAccentColor":
+                case "SystemAccentColorLight1":
+                case "DefaultTextBoxStyle":
+                case "DefaultDataGridColumnHeaderStyle":
+                case "SymbolThemeFontFamily":
+                case "SystemAccentColorDark1":
+                    return true;
+                default:
+                    break;
+            }
+            return false;
         }
 
         public static void WriteError(string msg, params string[] args)

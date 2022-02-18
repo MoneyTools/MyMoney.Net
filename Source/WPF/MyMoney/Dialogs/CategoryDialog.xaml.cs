@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -215,7 +215,9 @@ namespace Walkabout.Dialogs
         {
             get 
             {
-                return (ColorPickerPanel)this.ColorDropDown.Popup.Child;
+                var flyout = this.ColorDropDown.Flyout; // for some reason the Flyout class with the Content property is not public!
+                var pi = flyout.GetType().GetProperty("Content", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                return ((ColorPickerPanel)pi.GetValue(flyout, null));
             }
         }
 

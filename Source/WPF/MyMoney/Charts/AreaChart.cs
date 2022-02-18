@@ -169,9 +169,9 @@ namespace LovettSoftware.Charts
                     tooltip.Padding = new Thickness(2);
                     tooltip.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                     tooltip.VerticalAlignment = System.Windows.VerticalAlignment.Top;
-                    tooltip.BorderBrush = Brushes.Black;
+                    tooltip.BorderBrush = AppTheme.Instance.GetThemedBrush("SystemControlForegroundBaseHighBrush");
                     tooltip.BorderThickness = new Thickness(1);
-                    tooltip.Background = Brushes.White;
+                    tooltip.Background = AppTheme.Instance.GetThemedBrush("SystemControlBackgroundBaseLowBrush");
                     this.Children.Add(tooltip);
                 }
 

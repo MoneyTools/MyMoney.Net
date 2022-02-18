@@ -84,7 +84,7 @@
     <Thickness x:Key="DatePickerFlyoutPresenterMonthPadding">9,0,0,1</Thickness>
 
     <!-- end D:\git\ModernWpf\ModernWpf\DensityStyles\Compact.xaml -->
-    
+
     <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}">
         <Setter Property="Template">
             <Setter.Value>
@@ -232,7 +232,6 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
 
     <!-- ============================================================================================= -->
     <!-- Everything above this point has been Modernized and tested to work with Light and Dark themes -->
@@ -610,92 +609,6 @@
         <GradientStop Color="#7676BB" />
         <GradientStop Color="#010180" Offset="1" />
     </LinearGradientBrush>
-
-    <!-- This resource dictionary contains default themes for Windows 8 -->
-    <ControlTemplate x:Key="DropDownControlTemplate" TargetType="{x:Type ToggleButton}">
-        <Border BorderThickness="{TemplateBinding Border.BorderThickness}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" Name="border" SnapsToDevicePixels="True">
-            <Grid >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <ContentPresenter RecognizesAccessKey="True" Content="{TemplateBinding ContentControl.Content}" 
-                                  ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" 
-                                  ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}"                                   
-                                  HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                  Margin="{TemplateBinding Padding}"
-                                  SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" 
-                                  Focusable="False" x:Name="contentPresenter"/>
-
-                <Polygon Margin="4,0,4,0" Points="0,0 7,0 3.5,4" VerticalAlignment="Center" Grid.Column="1" SnapsToDevicePixels="True"
-                       HorizontalAlignment="Right">
-                    <Polygon.Fill>
-                        <SolidColorBrush x:Name="ArrowHeadBrush" Color="#FF000000"/>
-                    </Polygon.Fill>
-                </Polygon>
-            </Grid>
-
-        </Border>
-        <ControlTemplate.Triggers>
-            <Trigger Property="Button.IsDefaulted">
-                <Setter Property="Border.BorderBrush" TargetName="border">
-                    <Setter.Value>
-                        <DynamicResource ResourceKey="{x:Static SystemColors.HighlightBrushKey}" />
-                    </Setter.Value>
-                </Setter>
-                <Trigger.Value>
-                    <s:Boolean>True</s:Boolean>
-                </Trigger.Value>
-            </Trigger>
-            <Trigger Property="UIElement.IsMouseOver">
-                <Setter Property="Panel.Background" TargetName="border">
-                    <Setter.Value>
-                        <SolidColorBrush>#FFBEE6FD</SolidColorBrush>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="Border.BorderBrush" TargetName="border">
-                    <Setter.Value>
-                        <SolidColorBrush>#FF3C7FB1</SolidColorBrush>
-                    </Setter.Value>
-                </Setter>
-                <Trigger.Value>
-                    <s:Boolean>True</s:Boolean>
-                </Trigger.Value>
-            </Trigger>
-            <Trigger Property="ButtonBase.IsPressed">
-                <Setter Property="Panel.Background" TargetName="border" Value="{DynamicResource ButtonBackgroundPointerOver}"/>
-                <Setter Property="Border.BorderBrush" TargetName="border">
-                    <Setter.Value>
-                        <SolidColorBrush>#FF2C628B</SolidColorBrush>
-                    </Setter.Value>
-                </Setter>
-                <Trigger.Value>
-                    <s:Boolean>True</s:Boolean>
-                </Trigger.Value>
-            </Trigger>
-            <Trigger Property="UIElement.IsEnabled">
-                <Setter Property="Panel.Background" TargetName="border">
-                    <Setter.Value>
-                        <SolidColorBrush>#FFF4F4F4</SolidColorBrush>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="Border.BorderBrush" TargetName="border">
-                    <Setter.Value>
-                        <SolidColorBrush>#FFADB2B5</SolidColorBrush>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="TextElement.Foreground" TargetName="contentPresenter">
-                    <Setter.Value>
-                        <SolidColorBrush>#FF838383</SolidColorBrush>
-                    </Setter.Value>
-                </Setter>
-                <Trigger.Value>
-                    <s:Boolean>False</s:Boolean>
-                </Trigger.Value>
-            </Trigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>
 
     <!-- Define a Drawing as a resource that can be used as content for a Tiled DrawingBrush to get the Blend backdop effect. -->
     <DrawingGroup x:Key="CheckerBoxBackground">

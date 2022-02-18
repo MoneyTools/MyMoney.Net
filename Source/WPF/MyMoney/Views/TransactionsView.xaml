@@ -27,23 +27,24 @@
             <MenuItem Name="menuItemRenamePayee" Header="_Rename Payee" Command="views:TransactionsView.CommandRenamePayee"/>
             <MenuItem Name="menuItemLookupPayee" Header="_Lookup Payee " Command="views:TransactionsView.CommandLookupPayee" InputGestureText="F3"/>
             <MenuItem Name="menuItemCategories" Header="Recategori_ze all..." Command="views:TransactionsView.CommandRecategorize"/>
-            <MenuItem Name="menuItemSetTaxYear" Header="Set Tax Year..." Command="views:TransactionsView.CommandSetTaxYear"/>
+            <MenuItem Name="menuItemSetTaxYear" Header="Set _Tax Year..." Command="views:TransactionsView.CommandSetTaxYear"/>
 
             <Separator/>
             <MenuItem Name="menuItemDelete" Header="_Delete" Command="Delete"/>
             <Separator/>
 
             <MenuItem x:Name="MenuViewToggleOneLineView" Header="_One Line View" Command="views:TransactionsView.CommandViewToggleOneLineView" InputGestureText="Ctrl-T" IsChecked="{Binding OneLineView}"/>
-            <MenuItem x:Name="MenuViewToggleSplitViews" Header="_Show All Splits" Command="views:TransactionsView.CommandViewToggleAllSplits" InputGestureText="Alt-T"  IsChecked="{Binding ViewAllSplits}"/>
+            <MenuItem x:Name="MenuViewToggleSplitViews" Header="S_how All Splits" Command="views:TransactionsView.CommandViewToggleAllSplits" InputGestureText="Alt-T"  IsChecked="{Binding ViewAllSplits}"/>
             <Separator/>
             <MenuItem Name="menuItemGotoRelated" Header="_Go to related transaction" Command="views:TransactionsView.CommandGotoRelatedTransaction" InputGestureText="F12"/>
             <!--<MenuItem Name="menuItemViewSimilar" Header="View _Similar Transactions" Command="views:TransactionsView.CommandViewSimilarTransactions"/>-->
             <Separator/>
-            <MenuItem Name="menuItemByAccount" Header="_View Transactions by Account" Command="views:TransactionsView.CommandViewTransactionsByAccount" InputGestureText="F8"/>
+            <MenuItem Name="menuItemByAccount" Header="V_iew Transactions by Account" Command="views:TransactionsView.CommandViewTransactionsByAccount" InputGestureText="F8"/>
             <MenuItem Name="menuItemByCategory" Header="View Transactions by _Category" Command="views:TransactionsView.CommandViewTransactionsByCategory" InputGestureText="F7"/>
             <MenuItem Name="menuItemByPayee" Header="View Transactions by _Payee" Command="views:TransactionsView.CommandViewTransactionsByPayee" InputGestureText="F6"/>
-            <MenuItem Name="menuItemBySecurity" Header="View Transactions by _Security" Command="views:TransactionsView.CommandViewTransactionsBySecurity" InputGestureText="F5"/>
+            <MenuItem Name="menuItemBySecurity" Header="View Transactions by S_ecurity" Command="views:TransactionsView.CommandViewTransactionsBySecurity" InputGestureText="F5"/>
             <MenuItem Name="menuItemViewSecurity" Header="View _Security" Command="views:TransactionsView.CommandViewSecurity"/>
+            <MenuItem Name="menuItemViewCategory" Header="Categor_y Properties..." Command="views:TransactionsView.CommandViewCategory"/>
             <Separator/>
             <MenuItem Name="menuItemExport" Header="Export..." Command="views:TransactionsView.CommandViewExport"/>
         </ContextMenu>
@@ -68,6 +69,7 @@
         <CommandBinding Command="views:TransactionsView.CommandViewTransactionsByPayee" Executed="OnCommandViewTransactionsByPayee" CanExecute="CanExecute_ViewTransactionsByPayee" />
         <CommandBinding Command="views:TransactionsView.CommandViewTransactionsBySecurity" Executed="OnCommandViewTransactionsBySecurity" CanExecute="CanExecute_ViewTransactionsBySecurity" />
         <CommandBinding Command="views:TransactionsView.CommandViewSecurity" Executed="OnCommandViewSecurity" CanExecute="CanExecute_ViewSecurity"  />
+        <CommandBinding Command="views:TransactionsView.CommandViewCategory" Executed="OnCommandViewCategory" CanExecute="CanExecute_ViewCategory"  />
 
         <CommandBinding Command="views:TransactionsView.CommandViewToggleOneLineView" Executed="OnCommandViewToggleOneLineView" CanExecute="CanExecute_ToggleOneLineView" />
         <CommandBinding Command="views:TransactionsView.CommandViewToggleAllSplits" Executed="OnCommandViewToggleAllSplits" CanExecute="CanExecute_ToggleViewsAllSplits"/>
