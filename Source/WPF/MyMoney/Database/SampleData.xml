@@ -8,7 +8,8 @@
     <SampleAccount Name="Visa" Type="Credit" Frequency="450" />
     <SampleAccount Name="Discover Card" Type="Credit" Frequency="2163" />
     <SampleAccount Name="Ameritrade" Type="Brokerage" Frequency="10" />
-    <SampleAccount Name="Fidelity" Type="Retirement" Frequency="10" />
+    <SampleAccount Name="Fidelity" Type="Brokerage" TaxStatus="TaxDeferred" Frequency="10" />
+    <SampleAccount Name="Fidelity IRA" Type="Brokerage" TaxStatus="TaxFree" Frequency="10" />
   </Accounts>
 
   <Securities>

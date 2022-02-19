@@ -99,11 +99,11 @@ namespace Walkabout.Assitance
                     a = accounts.AddAccount(sa.Name);
                 }
                 a.Type = sa.Type;
-                a.IsBudgeted = true;
                 if (a.Type == AccountType.Checking)
                 {
                     this.checking = a;
                 }
+                a.TaxStatus = sa.TaxStatus;
 
                 // Create this many transactions
                 int count = sa.Frequency;
@@ -709,6 +709,9 @@ namespace Walkabout.Assitance
 
         [XmlAttribute]
         public AccountType Type { get; set; }
+
+        [XmlAttribute]
+        public TaxStatus TaxStatus { get; set; }
 
         [XmlAttribute]
         public int Frequency { get; set; }
