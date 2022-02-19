@@ -83,15 +83,16 @@ namespace Walkabout.Reports
                 balance += a.BalanceNormalized;
             }
 
+            // Non-investment Cash
             var color = GetRandomColor();
             if (balance > 0) data.Add(new ChartDataValue() { Label = "Cash", Value = (double)balance, Color = color });
             WriteRow(writer, color, "Cash", balance);
-
             totalBalance += balance;
-            balance = this.myMoney.GetInvestmentCashBalance(new Predicate<Account>((a) => { return !a.IsClosed && IsInvestmentAccount(a) && !a.IsTaxDeferred && !a.IsTaxFree; ; }));
 
+            // Investment Cash
+            balance = this.myMoney.GetInvestmentCashBalance(new Predicate<Account>((a) => { return !a.IsClosed && IsInvestmentAccount(a); }));
             color = GetRandomColor();
-            if (balance > 0) data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance, Color = color });
+            data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance, Color = color });
             WriteRow(writer, color, "Investment Cash", balance);
             totalBalance += balance;
 
@@ -248,10 +249,12 @@ namespace Walkabout.Reports
                     if (byType.TryGetValue(st, out sb))
                     {
                         var color = GetRandomColor();
-                        string caption = prefix + Security.GetSecurityTypeCaption(st);
+                        string caption = Security.GetSecurityTypeCaption(st);
                         if (sb > 0)
                         {
-                            data.Add(new ChartDataValue() { Label = caption, Value = (double)sb, Color = color, UserData = groupsByType[st] });
+                            string tooltip = caption;
+                            if (!string.IsNullOrEmpty(prefix)) tooltip = prefix + " " + tooltip;
+                            data.Add(new ChartDataValue() { Label = tooltip, Value = (double)sb, Color = color, UserData = groupsByType[st] });
                             if (st == SecurityType.None)
                             {
                                 hasNoneType = true;

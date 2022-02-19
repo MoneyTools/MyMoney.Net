@@ -402,34 +402,8 @@ namespace Walkabout.Reports
             bool wroteSectionHeader = false;
             string caption = prefix + "Investments";
             decimal totalSectionMarketValue = 0;
-
-            decimal cash = 0;
+            decimal totalSectionGainValue = 0;
             int rowCount = 0;
-
-            if (this.selectedGroup == null)
-            {
-                cash = RoundToNearestCent(this.myMoney.GetInvestmentCashBalance(filter));
-            }
-
-            decimal totalSectionGainValue = taxStatus == TaxStatus.TaxFree ? 0 : cash;
-            totalSectionMarketValue = cash;
-
-            if (cash > 0)
-            {
-                WriteHeaderRow(writer, caption, "Market Value", "Taxable Gains");
-                wroteSectionHeader = true;
-                var color = GetRandomColor();
-                WriteSummaryRow(writer, color, "    Cash", cash.ToString("C"), totalSectionGainValue.ToString("C"));
-                caption = prefix + "Cash";
-
-                data.Add(new ChartDataValue()
-                {
-                    Value = (double)RoundToNearestCent(cash),
-                    Label = caption,
-                    Color = color
-                });
-                rowCount++;
-            }
 
             IList<SecurityGroup> groups = null;
             if (this.selectedGroup != null)
