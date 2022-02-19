@@ -2453,6 +2453,12 @@ namespace Walkabout.Data
             StringBuilder sb = new StringBuilder();
             foreach (Transaction t in transactions)
             {
+                if (t.Account == null)
+                {
+                    // ignore dangling transactions, user migth be just messing around
+                    // with a new database that has no accounts yet.
+                    continue;
+                }
                 if (t.IsChanged)
                 {
                     sb.AppendLine("-- updating Transaction : " + t.Number);

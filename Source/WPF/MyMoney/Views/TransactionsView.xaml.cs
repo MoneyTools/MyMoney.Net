@@ -374,6 +374,10 @@ namespace Walkabout.Views
 
             if (!programaticFilterChange)
             {
+                if (this.currentDisplayName == TransactionViewName.Custom && this.activeAccount != null)
+                {
+                    this.currentDisplayName = TransactionViewName.Account;
+                }
                 Refresh();
             }
         }
@@ -447,6 +451,26 @@ namespace Walkabout.Views
         private void OnCustomBeginEdit(object sender, DataGridCustomEditEventArgs e)
         {
             DataGridRow row = e.Row;
+            if (row.DataContext is Transaction t && t.Account == null)
+            {
+                // user is messing around with a new database, and they have not created
+                // any bank account yet.
+                var accountTemplate = new Account() { Type = AccountType.Checking };
+                AccountDialog newAccountDialog = new AccountDialog(this.myMoney, accountTemplate, this.site);
+                newAccountDialog.Owner = App.Current.MainWindow;
+                if (newAccountDialog.ShowDialog() == true)
+                {
+                    t.Account = newAccountDialog.TheAccount;
+                    this.myMoney.Accounts.Add(t.Account);
+                    TransactionCollection tc = this.TheActiveGrid.ItemsSource as TransactionCollection;
+                    tc.Account = t.Account;
+                }
+                else
+                {
+                    // well we tried, but it is ok to continue, it just means the transaction
+                    // will not be saved.
+                }
+            }
             RoutedEventArgs args = e.EditingEventArgs;
             if (row.IsSelected && args is MouseButtonEventArgs mouseArgs)
             {
@@ -853,10 +877,10 @@ namespace Walkabout.Views
             }
 
 
-            //// We want to insert the transaction after the one currently selected one
-            //// TODO most of the transaction date are set to 00:00:00 
-            //// in the future we need to "reSort" all the seconds of all the transaction for that date for this account
-            //// For now we add 1 second to ensure that it is placed after the Date selected
+            // We want to insert the transaction after the one currently selected one
+            // TODO most of the transaction date are set to 00:00:00 
+            // in the future we need to "reSort" all the seconds of all the transaction for that date for this account
+            // For now we add 1 second to ensure that it is placed after the Date selected
             Transaction insertThisTransaction = this.myMoney.Transactions.NewTransaction(ActiveAccount);
             insertThisTransaction.Date = dateForNewTransaction.AddSeconds(1);
             this.myMoney.Transactions.AddTransaction(insertThisTransaction);
@@ -1376,7 +1400,8 @@ namespace Walkabout.Views
             this.lastQuery = null;
             SwitchLayout("TheGrid_TransactionFromDetails");
             SetActiveAccount(null, null, null, null, null);
-            IList data = new TransactionCollection(myMoney, null, dangling, true, false, null);
+            Account danglingAccount = new Account() { Type = AccountType.Cash };
+            IList data = new TransactionCollection(myMoney, danglingAccount, dangling, true, false, null);
             Display(data, TransactionViewName.DanglingTransfers, "Dangling transfers", SelectedRowId);
             FireAfterViewStateChanged(SelectedRowId);
         }
@@ -1820,6 +1845,7 @@ namespace Walkabout.Views
                                         {
                                             exists = true;
                                             selectedRowId = currentRowId;
+                                            break;
                                         }
                                     }
                                     if (!exists)
@@ -5341,6 +5367,8 @@ namespace Walkabout.Views
             get { return this.prompt; }
             set { this.prompt = value; }
         }
+
+        public Account Account { get => account; set => account = value; }
 
         protected override void InsertItem(int index, Transaction t)
         {

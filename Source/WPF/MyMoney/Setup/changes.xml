@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
   <change version="1.1.0.88" date="2/18/2022">
+    - Fix cash flow report so it shows uncategorized transactions unassigned amounts.
+    - Fix some issues with pie charts not showing a breakdown when viewing transactions from a cash flow report.  
+    - Fix ACCOUNTS tab so if you left click an account that is showing a "custom" view it goes back to "All" view for that account.
+    - Fix a bug where if you add a transaction and you have no accounts yet, it prompts to create an account.    
+  </change>
+  <change version="1.1.0.88" date="2/18/2022">
     - Move to Modern WPF Light/Dark themes.
   </change>
   <change version="1.1.0.87" date="2/8/2022">

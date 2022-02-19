@@ -181,6 +181,12 @@ namespace Walkabout.Reports
             return (c.Type == CategoryType.Income || c.Type == CategoryType.Savings);
         }
 
+        private bool IsUnknown(Category c)
+        {
+            return (c == null || c.Type == CategoryType.None || c.Name == "Unknown") && 
+                (c.ParentCategory == null || IsUnknown(c.ParentCategory));
+        }
+
         private bool IsInvestment(Category c)
         {
             if (c.Type == CategoryType.None && c.ParentCategory != null)
@@ -298,6 +304,9 @@ namespace Walkabout.Reports
             GenerateGroup(writer, byCategory, columnTotals, "Expenses", (c) => { return IsExpense(c); });
 
             GenerateGroup(writer, byCategory, columnTotals, "Investments", (c) => { return IsInvestment(c); });
+
+            GenerateGroup(writer, byCategory, columnTotals, "Unknown", (c) => { return IsUnknown(c); });
+
 
             List<decimal> totals = columnTotals.GetOrderedValues(this.columns);
             decimal balance = (from d in totals select d).Sum();
@@ -456,18 +465,25 @@ namespace Walkabout.Reports
                 }
 
                 if (t.IsSplit)
-                {                    
+                {
                     foreach (Split s in t.Splits)
-                    {                        
-                        if (s.Category != null && s.Transfer == null)
+                    {
+                        if (s.Transfer == null) 
                         {
-                            Category c = s.Category.Root;
-                            TallyCategory(t, c, new Transaction(t,s), columnName, s.Amount);
+                            if (s.Category != null)
+                            {
+                                Category c = s.Category.Root;
+                                TallyCategory(t, c, new Transaction(t, s), columnName, s.Amount);
+                            }
+                            else if (s.Category == null && s.Amount != 0)
+                            {
+                                TallyCategory(t, this.myMoney.Categories.Unknown, new Transaction(t, s), columnName, s.Amount);
+                            }
                         }
                     }
                     if (t.Splits.Unassigned != 0)
                     {
-                        TallyCategory(t, this.myMoney.Categories.Unknown, t, columnName, t.Splits.Unassigned);
+                        TallyCategory(t, this.myMoney.Categories.UnassignedSplit, t, columnName, t.Splits.Unassigned);
                     }
                 }
                 else if (t.Category != null)

@@ -856,10 +856,8 @@ namespace Walkabout
                 {
                     bool isTransactionViewAlready = CurrentView is TransactionsView;
                     TransactionsView view = SetCurrentView<TransactionsView>();
-                    if (view.ActiveAccount != a)
-                    {
-                        view.ViewTransactionsForSingleAccount(a, TransactionSelection.Current, 0);
-                    }
+                    view.ViewTransactionsForSingleAccount(a, TransactionSelection.Current, 0);
+                    
                     if (!isTransactionViewAlready)
                     {
                         this.navigator.Pop();
@@ -2729,6 +2727,13 @@ namespace Walkabout
                         {
                             rows = myMoney.Transactions.GetTransactionsByCategory(parent, TransactionView.GetTransactionIncludePredicate());
                         }
+                        if (parent == null)
+                        {
+                            // sometimes we have custom rows from a report, like cash flow report that is
+                            // a categorized group, but we didn't get a "filter" for it, but we can find this out here
+                            // so we get a nice pie chart breakdown of the reported rows.
+                            parent = FindCommonParent(rows);
+                        }
 
                         PieChartExpenses.CategoryFilter = parent;
                         PieChartExpenses.Unknown = myMoney.Categories.Unknown;
@@ -2834,6 +2839,33 @@ namespace Walkabout
 #if PerformanceBlocks
             }
 #endif
+        }
+
+        private Category FindCommonParent(IList<Transaction> rows)
+        {
+            Category c = null;
+            if (rows == null)
+            {
+                return null;
+            }
+            foreach(var t in rows)
+            {
+                Category tc = t.Category;
+                if (tc == null)
+                {
+                    return null; // cannot have a common root in this case.
+                }
+                if (c == null)
+                {
+                    c = tc.Root;
+                } 
+                else if (c != tc.Root)
+                {
+                    return null;
+                }
+            }
+            // ah ha, then we do have a common root!
+            return c;
         }
 
         private void UpdateHistoryChart()

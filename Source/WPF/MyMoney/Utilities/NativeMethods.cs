@@ -192,6 +192,10 @@ namespace Walkabout.Utilities
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetCursorPos(out POINT lpPoint);
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.U4)]
+        public static extern uint GetDoubleClickTime();
+
         /// <summary>
         /// http://msdn2.microsoft.com/en-us/library/ms536119(VS.85).aspx
         /// </summary>

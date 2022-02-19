@@ -61,6 +61,8 @@ namespace Walkabout.Views.Controls
 
         #region PROPERTIES
 
+        private DelayedActions delayedActions = new DelayedActions();
+
         public IServiceProvider Site { get; set; }
 
         private MyMoney myMoney;
@@ -126,7 +128,6 @@ namespace Walkabout.Views.Controls
         #region EVENTS
 
         public event EventHandler SelectionChanged;
-
         public event EventHandler<ChangeEventArgs> BalanceAccount;
         public event EventHandler<ChangeEventArgs> SyncAccount;
         public event EventHandler<ChangeEventArgs> ShowTransfers;
@@ -241,10 +242,20 @@ namespace Walkabout.Views.Controls
 
         void listBox1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            uint delay = NativeMethods.GetDoubleClickTime();
+            delayedActions.StartDelayedAction("NotDoubleClick", OnShowAllTransactions, TimeSpan.FromMilliseconds(delay + 100));
+        }
+
+        private void OnShowAllTransactions()
+        {
+            // ok, we have a single click, time to tell the transaction view to show all transactions
+            // (undo any filtering user has selected, or "custom" view created from a report).
+            RaiseSelectionEvent(this.selected, true);
         }
 
         void OnListBoxMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            delayedActions.CancelDelayedAction("NotDoubleClick");
             object item = GetElementFromPoint(listBox1, e.GetPosition(listBox1));
 
             if (item != null)
@@ -426,12 +437,16 @@ namespace Walkabout.Views.Controls
             this.listBox1.ScrollIntoView(item);
             this.selected = item;
         }
-        
+
 
         void OnListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             object selected = (e.AddedItems.Count > 0) ? e.AddedItems[0] : null;
+            RaiseSelectionEvent(selected, false);
+        }
 
+        void RaiseSelectionEvent(object selected, bool force) 
+        { 
             AccountSectionHeader ash = selected as AccountSectionHeader;
 
             if (ash != null)
@@ -439,7 +454,7 @@ namespace Walkabout.Views.Controls
                 ash.OnClick();
             }
 
-            if (this.selected != selected && SelectionChanged != null)
+            if ((force || this.selected != selected) && SelectionChanged != null)
             {
                 this.selected = selected;
                 SelectionChanged(this, EventArgs.Empty);

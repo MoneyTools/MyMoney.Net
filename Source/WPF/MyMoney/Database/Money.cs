@@ -6522,6 +6522,13 @@ namespace Walkabout.Data
             get { return this.GetOrCreateCategory("Unknown", CategoryType.None); }
         }
 
+
+        [XmlIgnore]
+        public Category UnassignedSplit
+        {
+            get { return this.GetOrCreateCategory("UnassignedSplit", CategoryType.None); }
+        }
+
         public void Clear()
         {
             if (this.nextCategory != 0 || this.categories.Count != 0 || this.categoryIndex.Count != 0)
