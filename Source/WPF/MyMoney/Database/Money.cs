@@ -2298,18 +2298,22 @@ namespace Walkabout.Data
         CreditLine = 11
     }
 
-    public enum TaxableIncomeType
-    {
-        All = 0,
-        None = 1,
-        Gains = 2
+    [Flags]
+    public enum TaxStatus
+    { 
+        Taxable = 0,
+        TaxDeferred = 1,
+        TaxFree = 2
     }
+
+    [Flags]
     public enum AccountFlags
     {
         None = 0,
         Budgeted = 1,
         Closed = 2,
-        TaxDeferred = 4
+        TaxDeferred = 4,
+        TaxFree = 8
     }
 
 
@@ -2428,13 +2432,40 @@ namespace Walkabout.Data
         public bool IsTaxDeferred
         {
             get { return (this.flags & AccountFlags.TaxDeferred) != 0; }
+        }
+
+        [XmlIgnore]
+        public bool IsTaxFree
+        {
+            get { return (this.flags & AccountFlags.TaxFree) != 0; }
+        }
+
+        [XmlIgnore]
+        public TaxStatus TaxStatus
+        {
+            get
+            {
+                return (IsTaxDeferred) ? TaxStatus.TaxDeferred :
+                    (IsTaxFree ? TaxStatus.TaxFree : TaxStatus.Taxable);
+            }
             set
             {
-                if (this.IsTaxDeferred != value)
+                switch (value)
                 {
-                    if (value) flags |= AccountFlags.TaxDeferred;
-                    else flags = flags & ~AccountFlags.TaxDeferred;
-                    OnChanged("IsTaxDeferred");
+                    case TaxStatus.Taxable:
+                        // remove any TaxDeferred or TaxFree flag.
+                        this.flags = this.flags & ~(AccountFlags.TaxDeferred | AccountFlags.TaxFree);
+                        break;
+                    case TaxStatus.TaxDeferred:
+                        // remove mututally exclusive TaxFree flag and add TaxDeferred
+                        this.flags = (this.flags & ~(AccountFlags.TaxFree)) | AccountFlags.TaxDeferred;
+                        break;
+                    case TaxStatus.TaxFree:
+                        // remove mututally exclusive TaxDeferred flag and add TaxFree
+                        this.flags = (this.flags & ~(AccountFlags.TaxDeferred)) | AccountFlags.TaxFree;
+                        break;
+                    default:
+                        break;
                 }
             }
         }

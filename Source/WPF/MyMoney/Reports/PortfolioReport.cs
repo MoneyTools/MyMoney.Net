@@ -83,8 +83,11 @@ namespace Walkabout.Reports
             writer.WriteNumber(col2);
             writer.EndCell();
             writer.StartCell();
-            writer.WriteNumber(col3);
-            writer.EndCell();
+            if (col3 != null)
+            {
+                writer.WriteNumber(col3);
+                writer.EndCell();
+            }
             writer.EndRow();
         }
 
@@ -98,8 +101,11 @@ namespace Walkabout.Reports
             writer.WriteNumber(col2);
             writer.EndCell();
             writer.StartCell();
-            writer.WriteNumber(col3);
-            writer.EndCell();
+            if (col3 != null)
+            {
+                writer.WriteNumber(col3);
+                writer.EndCell();
+            }
             writer.EndRow();
         }
 
@@ -154,38 +160,18 @@ namespace Walkabout.Reports
             {
                 if (this.selectedGroup != null)
                 {
-                    WriteSummary(writer, data, TaxableIncomeType.Gains, null, null, false);
+                    WriteSummary(writer, data, TaxStatus.Taxable, null, null, false);
                 }
                 else
                 {
-                    WriteSummary(writer, data, TaxableIncomeType.None, "Retirement Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Retirement; }), true);
-                    WriteSummary(writer, data, TaxableIncomeType.All, "Retirement ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Retirement; }), true);
-                    WriteSummary(writer, data, TaxableIncomeType.All, "Tax Deferred ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Brokerage; }), true);
-                    WriteSummary(writer, data, TaxableIncomeType.Gains, "", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Brokerage; }), true);
+                    WriteSummary(writer, data, TaxStatus.TaxFree, "Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxFree && IsInvestmentAccount(a); }), true);
+                    WriteSummary(writer, data, TaxStatus.TaxDeferred, "Tax Deferred ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && IsInvestmentAccount(a);  }), true);
+                    WriteSummary(writer, data, TaxStatus.Taxable, "Taxable ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && !a.IsTaxFree && IsInvestmentAccount(a); }), true);
                 }
             }
             else
             {
-                TaxableIncomeType taxableIncomeType;
-
-                if (account.IsTaxDeferred)
-                {
-                    taxableIncomeType = TaxableIncomeType.All;
-                }
-                else
-                {
-                    if (account.Type == AccountType.Retirement)
-                    {
-                        // Currently treating this combination as tax free
-                        taxableIncomeType = TaxableIncomeType.None;
-                    }
-                    else
-                    {
-                        taxableIncomeType = TaxableIncomeType.Gains;
-                    }
-                }
-                
-                WriteSummary(writer, data, taxableIncomeType, "", new Predicate<Account>((a) => { return a == account; }), false);
+                WriteSummary(writer, data, account.TaxStatus, "", new Predicate<Account>((a) => { return a == account; }), false);
             }
 
             WriteHeaderRow(writer, "Total", totalMarketValue.ToString("C"), totalGainLoss.ToString("C"));
@@ -234,16 +220,20 @@ namespace Walkabout.Reports
 
                 if (account == null)
                 {
-                    WriteDetails(writer, "Retirement Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
-                    WriteDetails(writer, "Retirement ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Retirement; }));
-                    WriteDetails(writer, "Tax Deferred ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
-                    WriteDetails(writer, "", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && a.Type == AccountType.Brokerage; }));
+                    WriteDetails(writer, "Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxFree && IsInvestmentAccount(a);}));
+                    WriteDetails(writer, "Tax Deferred ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && IsInvestmentAccount(a); }));
+                    WriteDetails(writer, "Taxable ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxFree && !a.IsTaxDeferred && IsInvestmentAccount(a); }));
                 }
                 else
                 {
                     WriteDetails(writer, "", new Predicate<Account>((a) => { return a == account; }));
                 }
             }
+        }
+
+        bool IsInvestmentAccount(Account a)
+        {
+            return a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement;
         }
 
         private void OnPieSliceClicked(object sender, ChartDataValue e)
@@ -407,12 +397,11 @@ namespace Walkabout.Reports
         }
 
 
-        private void WriteSummary(IReportWriter writer, IList<ChartDataValue> data, TaxableIncomeType taxableIncomeType, string prefix, Predicate<Account> filter, bool subtotal)
+        private void WriteSummary(IReportWriter writer, IList<ChartDataValue> data, TaxStatus taxStatus, string prefix, Predicate<Account> filter, bool subtotal)
         {
             bool wroteSectionHeader = false;
             string caption = prefix + "Investments";
             decimal totalSectionMarketValue = 0;
-            decimal totalSectionGainValue = 0;
 
             decimal cash = 0;
             int rowCount = 0;
@@ -422,8 +411,7 @@ namespace Walkabout.Reports
                 cash = RoundToNearestCent(this.myMoney.GetInvestmentCashBalance(filter));
             }
 
-            if (taxableIncomeType == TaxableIncomeType.None) totalSectionGainValue = 0;
-            if (taxableIncomeType == TaxableIncomeType.All) totalSectionGainValue = cash;
+            decimal totalSectionGainValue = taxStatus == TaxStatus.TaxFree ? 0 : cash;
             totalSectionMarketValue = cash;
 
             if (cash > 0)
@@ -471,8 +459,7 @@ namespace Walkabout.Reports
                     }
                 }
 
-                if (taxableIncomeType == TaxableIncomeType.None) gainLoss = 0;
-                if (taxableIncomeType == TaxableIncomeType.All) gainLoss = marketValue;
+                if (taxStatus == TaxStatus.TaxFree) gainLoss = 0;
 
                 if (count > 0)
                 {

@@ -90,7 +90,7 @@
             <TextBox x:Name="TextBoxDescription" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Stretch" MinHeight="50"  Text="{Binding Path=Description, Mode=TwoWay}" Grid.ColumnSpan="2" Margin="0,0,0,7.105427357601E-15" TabIndex="3"/>
 
             <TextBlock Text="Account Type:" Grid.Column="0" Grid.Row="8" HorizontalAlignment="Right" />
-            <ComboBox x:Name="AccountTypeCombo" Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="2" VerticalAlignment="Top"   Text="{Binding Path=Type, Mode=TwoWay}" TabIndex="4">
+            <ComboBox x:Name="AccountTypeCombo" Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="2" VerticalAlignment="Top" Text="{Binding Path=Type, Mode=TwoWay}" TabIndex="4">
                 <ComboBoxItem Content="Cash" />
                 <ComboBoxItem Content="Checking" />
                 <ComboBoxItem Content="Credit" />
@@ -101,7 +101,8 @@
                 <ComboBoxItem Content="Asset" />
             </ComboBox>
 
-            <CheckBox x:Name="CheckBoxTaxDeferred" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="9" IsChecked="{Binding Path=IsTaxDeferred, Mode=TwoWay}" TabIndex="5" Margin="0,3,0,3">Tax Deferred</CheckBox>
+            <TextBlock Text="Tax Status:" Grid.Column="0" Grid.Row="9" HorizontalAlignment="Right"/>
+            <ComboBox x:Name="ComboBoxTaxStatus" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="9" Text="{Binding Path=TaxStatus, Mode=TwoWay}" TabIndex="5" Margin="0,3,0,3"/>
 
             <TextBlock Text="Opening Balance:" Grid.Column="0" Grid.Row="10" HorizontalAlignment="Right" />
             <TextBox x:Name="TextBoxOpeningBalance" Grid.Column="2" Grid.Row="10"  Text="{Binding Path=OpeningBalance, Mode=TwoWay}" Grid.ColumnSpan="2" TabIndex="6"/>

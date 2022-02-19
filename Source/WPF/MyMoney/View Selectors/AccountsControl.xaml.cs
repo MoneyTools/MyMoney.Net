@@ -243,7 +243,7 @@ namespace Walkabout.Views.Controls
         void listBox1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             uint delay = NativeMethods.GetDoubleClickTime();
-            delayedActions.StartDelayedAction("NotDoubleClick", OnShowAllTransactions, TimeSpan.FromMilliseconds(delay + 100));
+            delayedActions.StartDelayedAction("SingleClick", OnShowAllTransactions, TimeSpan.FromMilliseconds(delay + 100));
         }
 
         private void OnShowAllTransactions()
@@ -255,7 +255,7 @@ namespace Walkabout.Views.Controls
 
         void OnListBoxMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            delayedActions.CancelDelayedAction("NotDoubleClick");
+            delayedActions.CancelDelayedAction("SingleClick");
             object item = GetElementFromPoint(listBox1, e.GetPosition(listBox1));
 
             if (item != null)
@@ -441,6 +441,7 @@ namespace Walkabout.Views.Controls
 
         void OnListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            delayedActions.CancelDelayedAction("SingleClick");
             object selected = (e.AddedItems.Count > 0) ? e.AddedItems[0] : null;
             RaiseSelectionEvent(selected, false);
         }

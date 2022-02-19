@@ -58,25 +58,22 @@ namespace Walkabout.Reports
             
             writer.EndColumnDefinitions();
 
-            WriteHeader(writer, "Liquid Assets");
+            WriteHeader(writer, "Cash");
 
             decimal totalBalance = 0;
             decimal balance = 0;
             bool hasTaxDeferred = false;
-            bool hasRetirement = false;
+            bool hasTaxFree = false;
 
             Transactions transactions = myMoney.Transactions;
             foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
             {
-                if (a.Type == AccountType.Retirement)
-                {
-                    hasRetirement = true;
-                    continue;
-                }
                 if (a.IsTaxDeferred) hasTaxDeferred = true;
+                if (a.IsTaxFree) hasTaxFree = true;
                 if (a.Type == AccountType.Credit || 
                     a.Type == AccountType.Asset ||                     
-                    a.Type == AccountType.Brokerage || 
+                    a.Type == AccountType.Brokerage ||
+                    a.Type == AccountType.Retirement ||
                     a.Type == AccountType.CategoryFund || 
                     a.Type == AccountType.Loan)
                 {
@@ -91,36 +88,30 @@ namespace Walkabout.Reports
             WriteRow(writer, color, "Cash", balance);
 
             totalBalance += balance;
-            balance = this.myMoney.GetInvestmentCashBalance(new Predicate<Account>((a) => { return !a.IsClosed && (a.Type == AccountType.Brokerage); }));
+            balance = this.myMoney.GetInvestmentCashBalance(new Predicate<Account>((a) => { return !a.IsClosed && IsInvestmentAccount(a) && !a.IsTaxDeferred && !a.IsTaxFree; ; }));
 
             color = GetRandomColor();
             if (balance > 0) data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance, Color = color });
             WriteRow(writer, color, "Investment Cash", balance);
             totalBalance += balance;
 
-            bool hasNoneRetirement = false;
-            if (hasRetirement)
-            {
-                WriteHeader(writer, "Retirement Assets");
-                balance = this.myMoney.GetInvestmentCashBalance(new Predicate<Account>((a) => { return !a.IsClosed && a.Type == AccountType.Retirement; }));
-                color = GetRandomColor();
-                if (balance > 0) data.Add(new ChartDataValue() { Label = "Retirement Cash", Value = (double)balance, Color = color });
-                WriteRow(writer, color, "Retirement Cash", balance);
-                totalBalance += balance;
-
-                totalBalance += WriteSecurities(writer, data, "Retirement ", new Predicate<Account>((a) => { return a.Type == AccountType.Retirement; }), out hasNoneRetirement);
-            }
-
             bool hasNoneTypeTaxDeferred = false;
             if (hasTaxDeferred)
             {
                 WriteHeader(writer, "Tax Deferred Assets");
-                totalBalance += WriteSecurities(writer, data, "Tax Deferred ", new Predicate<Account>((a) => { return a.Type == AccountType.Brokerage && a.IsTaxDeferred; }), out hasNoneTypeTaxDeferred);
+                totalBalance += WriteSecurities(writer, data, "Tax Deferred ", new Predicate<Account>((a) => { return a.IsTaxDeferred; }), out hasNoneTypeTaxDeferred);
+            }
+
+            bool hasNoneTypeTaxFree = false;
+            if (hasTaxFree)
+            {
+                WriteHeader(writer, "Tax Free Assets");
+                totalBalance += WriteSecurities(writer, data, "Tax Free ", new Predicate<Account>((a) => { return a.IsTaxFree; }), out hasNoneTypeTaxFree);
             }
 
             balance = 0;
 
-            WriteHeader(writer, "Long Term Assets");
+            WriteHeader(writer, "Other Assets");
 
             foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
             {
@@ -134,7 +125,7 @@ namespace Walkabout.Reports
             }
 
             bool hasNoneType = false;
-            totalBalance += WriteSecurities(writer, data, "", new Predicate<Account>((a) => { return a.Type == AccountType.Brokerage && !a.IsTaxDeferred; }), out hasNoneType);
+            totalBalance += WriteSecurities(writer, data, "", new Predicate<Account>((a) => { return IsInvestmentAccount(a) && !a.IsTaxDeferred && !a.IsTaxFree; }), out hasNoneType);
 
             balance = 0;
             WriteHeader(writer, "Liabilities");
@@ -198,7 +189,7 @@ namespace Walkabout.Reports
             writer.EndRow();
             writer.EndTable();
 
-            if (hasNoneRetirement || hasNoneTypeTaxDeferred || hasNoneType)
+            if (hasNoneTypeTaxDeferred || hasNoneTypeTaxFree || hasNoneType)
             {
                 writer.WriteParagraph("(*) One ore more of your securities has no SecurityType, you can fix this using View/Securities", 
                     System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Maroon);
@@ -277,6 +268,11 @@ namespace Walkabout.Reports
                 WriteRow(writer, GetRandomColor(), "N/A", 0);
             }
             return balance;
+        }
+
+        bool IsInvestmentAccount(Account a)
+        {
+            return a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement;
         }
 
         private static void WriteHeader(IReportWriter writer, string caption)

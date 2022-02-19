@@ -58,9 +58,9 @@ namespace Walkabout.Dialogs
 
             comboBoxOnlineAccount.ItemsSource = onlineAccounts;
 
-            foreach(var alias in money.AccountAliases)
+            foreach (var alias in money.AccountAliases)
             {
-                if (alias.AccountId == a.AccountId && ! alias.IsDeleted)
+                if (alias.AccountId == a.AccountId && !alias.IsDeleted)
                 {
                     comboBoxAccountAliases.Items.Add(alias);
                 }
@@ -68,6 +68,11 @@ namespace Walkabout.Dialogs
             if (comboBoxAccountAliases.Items.Count > 0)
             {
                 comboBoxAccountAliases.SelectedIndex = 0;
+            }
+
+            foreach (var field in typeof(TaxStatus).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)) {
+                var value = (TaxStatus)field.GetValue(null);
+                ComboBoxTaxStatus.Items.Add(value);
             }
 
             UpdateUI();
