@@ -1,5 +1,5 @@
 @echo off
-
+setlocal ENABLEDELAYEDEXPANSION
 cd %~dp0
 SET ROOT=%~dp0
 set WINGET_SRC=D:\git\clovett\winget-pkgs
@@ -45,6 +45,17 @@ git pull
 git fetch upstream master
 git merge upstream/master
 git push
+
+set LATEST=
+for /f "usebackq" %%i in (`dir /b`) do (
+  set LATEST=%%i
+)
+
+if "%LATEST%" == "" goto :prepare
+echo Replacing "%LATEST%" version...
+rd /s /q "%LATEST%"
+
+:prepare
 popd
 
 echo Preparing winget package
