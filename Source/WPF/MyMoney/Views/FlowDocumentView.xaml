@@ -50,7 +50,7 @@
                         <c:QuickFilterControl x:Name="QuickFilterUX"  Width="144" FilterValueChanged="OnQuickFilterValueChanged" HorizontalAlignment="Left"/>
 
                         <!-- ADVANCE & CLOSE -->
-                        <c:TabCloseBox x:Name="CloseReport" Click="OnCloseReport" VerticalAlignment="Center" Margin="5,0,5,0"/>
+                        <c:TabCloseBox x:Name="CloseReport" Click="OnCloseReport" VerticalAlignment="Center" Margin="5,0,2,0"/>
 
                     </StackPanel>
                 </Grid>
