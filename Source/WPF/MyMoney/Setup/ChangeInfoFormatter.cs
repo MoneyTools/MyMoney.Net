@@ -129,8 +129,10 @@ namespace Walkabout.Setup
                     string trimmed = line.Trim();
                     if (!string.IsNullOrEmpty(trimmed)) 
                     {
+                        string brush = found ? "ListItemForegroundBrush" : "ListItemSelectedForegroundBrush";
                         FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
-                        Paragraph p = fwriter.WriteParagraph(trimmed, FontStyles.Normal, FontWeights.Normal, found ? Brushes.Gray : Brushes.Black, null);
+                        Paragraph p = fwriter.WriteParagraph(trimmed, FontStyles.Normal, FontWeights.Normal, 
+                            AppTheme.Instance.GetThemedBrush(brush), null);
                         p.TextIndent = 20;
                         p.Margin = new Thickness(0);
                         p.Padding = new Thickness(0);
