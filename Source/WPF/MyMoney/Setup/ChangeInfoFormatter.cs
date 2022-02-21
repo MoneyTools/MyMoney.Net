@@ -130,7 +130,7 @@ namespace Walkabout.Setup
                     if (!string.IsNullOrEmpty(trimmed)) 
                     {
                         FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
-                        Paragraph p = fwriter.WriteParagraph(trimmed, FontStyles.Normal, FontWeights.Normal, found ? Brushes.Gray : Brushes.Black, 11);
+                        Paragraph p = fwriter.WriteParagraph(trimmed, FontStyles.Normal, FontWeights.Normal, found ? Brushes.Gray : Brushes.Black, null);
                         p.TextIndent = 20;
                         p.Margin = new Thickness(0);
                         p.Padding = new Thickness(0);

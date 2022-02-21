@@ -5692,7 +5692,7 @@ namespace Walkabout.Views
                 isReadOnly = this.context.IsReadOnly;
                 isUnaccepted = this.context.Unaccepted;
             }
-            string foregroundBrushName = "ListItemForegroundLowBrush";
+            string foregroundBrushName = "ListItemForegroundBrush";
 
             if (isReadOnly)
             {
@@ -5715,7 +5715,7 @@ namespace Walkabout.Views
             }
             else if (isUnaccepted)
             {
-                foregroundBrushName = "ListItemForegroundBrush";
+                foregroundBrushName = "ListItemForegroundUnacceptedBrush";
             }
 
             // establish the new color.

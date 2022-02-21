@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -163,7 +164,7 @@ namespace Walkabout.Dialogs
         {
             GetBankListProgress.Visibility = System.Windows.Visibility.Visible;
             ComboBoxName.Visibility = System.Windows.Visibility.Collapsed;
-            ThreadPool.QueueUserWorkItem(new WaitCallback(GetBankList));
+            Task.Run(GetBankList);
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -261,7 +262,7 @@ namespace Walkabout.Dialogs
 
         List<OfxInstitutionInfo> providers;
 
-        void GetBankList(object state)
+        void GetBankList()
         {
             // show the cached list first.
             providers = OfxInstitutionInfo.GetCachedBankList();
@@ -394,7 +395,7 @@ namespace Walkabout.Dialogs
                 return;
             }
 
-            ThreadPool.QueueUserWorkItem(new WaitCallback(GetUpdatedBankInfo), info);            
+            Task.Run(() => GetUpdatedBankInfo(info));
         }
 
         ConcurrentQueue<OfxInstitutionInfo> fetchQueue = new ConcurrentQueue<OfxInstitutionInfo>();
@@ -522,13 +523,11 @@ namespace Walkabout.Dialogs
         }
 
 
-        void GetUpdatedBankInfo(object state)
+        void GetUpdatedBankInfo(OfxInstitutionInfo provider)
         {
-            OfxInstitutionInfo provider = (OfxInstitutionInfo)state;
-
             OfxInstitutionInfo ps = OfxInstitutionInfo.GetProviderInformation(provider);
 
-            if (this.selected != state)
+            if (this.selected != provider)
             {
                 // user has moved on.
                 return;
@@ -726,7 +725,7 @@ namespace Walkabout.Dialogs
         /// Background thread to connect to bank
         /// </summary>
         /// <param name="state"></param>
-        void StartSignup(object state)
+        void StartSignup()
         {
             var id = new object();
             this.pendingSignon = id;
@@ -756,7 +755,7 @@ namespace Walkabout.Dialogs
                 }
                 else
                 {
-                    Signup(null);
+                    Signup();
                 }
             }
             catch (OfxException ex)
@@ -767,7 +766,7 @@ namespace Walkabout.Dialogs
                        Dispatcher.Invoke(new Action(() =>
                     {
                         HandleSignOnErrors(ex, new Action(() => {
-                            ThreadPool.QueueUserWorkItem(new WaitCallback(StartSignup));
+                            Task.Run(StartSignup);
                         }));
                     }));
                 }
@@ -792,7 +791,7 @@ namespace Walkabout.Dialogs
             if (this.editing.MfaChallengeAnswers != null)
             {
                 // back to background thread.
-                ThreadPool.QueueUserWorkItem(new WaitCallback(Signup));
+                Task.Run(Signup);
             }
          
         }
@@ -819,7 +818,7 @@ namespace Walkabout.Dialogs
 
         object signupRequest;
 
-        private void Signup(object state)
+        private void Signup()
         {
             OfxRequest req = new OfxRequest( this.editing, this.money, AccountHelper.PickAccount);
             this.signupRequest = req;
@@ -1327,7 +1326,9 @@ namespace Walkabout.Dialogs
                 }
                 else if (item.IsNew)
                 {
-                    Account a = AccountHelper.PickAccount(this.money, item.Account);
+                    string prompt = string.Format("We found a reference to an unknown account number '{0}'. Please select the account that you want to use or click the Add New Account button at the bottom of this window:",
+                        item.Account.AccountId);
+                    Account a = AccountHelper.PickAccount(this.money, item.Account, prompt);
                     if (a != null)
                     {
                         // user made a choice
@@ -1406,15 +1407,14 @@ namespace Walkabout.Dialogs
                 Progress.IsIndeterminate = true;
                 HideRightHandPanels();
 
-                System.Threading.ThreadPool.QueueUserWorkItem(new WaitCallback(StartVerify));
+                Task.Run(StartVerify);
             }  
         }
 
         /// <summary>
         /// Background thread to connect to bank and verify OFX support
         /// </summary>
-        /// <param name="state"></param>
-        void StartVerify(object state)
+        void StartVerify()
         {            
             if (this.pendingVerify != null)
             {
@@ -1454,7 +1454,7 @@ namespace Walkabout.Dialogs
                         OnGotProfile(ex.Message);
                         HandleSignOnErrors(ex, new Action(() =>
                         {
-                            ThreadPool.QueueUserWorkItem(new WaitCallback(StartVerify), state);
+                            Task.Run(StartVerify);
                         }));
                     }));
                 }
@@ -1642,7 +1642,7 @@ namespace Walkabout.Dialogs
                 {
                     if (retryProfile)
                     {
-                        System.Threading.ThreadPool.QueueUserWorkItem(new WaitCallback(StartVerify));
+                        Task.Run(StartVerify);
                     }
                     else
                     {
@@ -1742,7 +1742,7 @@ namespace Walkabout.Dialogs
                 Progress.IsIndeterminate = true;
                 HideRightHandPanels();
 
-                System.Threading.ThreadPool.QueueUserWorkItem(new WaitCallback(StartSignup));
+                Task.Run(StartSignup);
             }
         }
 

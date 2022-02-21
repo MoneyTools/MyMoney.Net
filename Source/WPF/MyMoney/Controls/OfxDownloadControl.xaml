@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:ofx="clr-namespace:Walkabout.Ofx"
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
+             Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
              mc:Ignorable="d" 
              d:DesignHeight="212" d:DesignWidth="570">
 
@@ -20,17 +21,36 @@
                         <Image Width="16" Height="16"  Source="/MyMoney;component/Icons/Error.png" />
                     </Button>
                     <Image Width="16" Height="16" Source="/MyMoney;component/Dialogs/Icons/CheckMark.png" Visibility="{Binding Success, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <Image Width="16" Height="16" Source="/MyMoney;component/Icons/Synchronize.png" Visibility="{Binding IsDownloading, Converter={StaticResource BoolToVisibilityConverter}}"
-                           Loaded="OnSynchronizeImageLoaded"/>
+                    <TextBlock Text="&#57623;" FontFamily="Segoe UI Symbol" FontSize="15"  Foreground="{DynamicResource SyncronizingIconBrush}"
+                               VerticalAlignment="Center" Width="20" Height="20" 
+                               Visibility="{Binding IsDownloading, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock.RenderTransform>
+                            <RotateTransform x:Name="SynchronizingRotateTransform" Angle="0" 
+                                             CenterX="10" CenterY="10" />
+                        </TextBlock.RenderTransform>
+                        <TextBlock.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="SynchronizingRotateTransform" 
+                                            Storyboard.TargetProperty="Angle" 
+                                            To="360" 
+                                            Duration="0:0:10" 
+                                            RepeatBehavior="Forever"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </TextBlock.Triggers>
+                    </TextBlock>
                 </Grid>
                 <TextBlock Text="{Binding Path=Caption}" FontWeight="Bold" Margin="0,0,10,0" VerticalAlignment="Center" Foreground="{DynamicResource ListItemForegroundBrush}"/>
                 <TextBlock Text="{Binding Path=Message}" Margin="0,0,10,0"  VerticalAlignment="Center"  Foreground="{DynamicResource ListItemForegroundBrush}"/>
                 <TextBlock Visibility="{Binding Path=ErrorVisibility}"  VerticalAlignment="Center"  Foreground="{DynamicResource ListItemForegroundBrush}">
-                <Hyperlink Click="OnDetailsClick"><TextBlock Text="{Binding Path=LinkCaption}"/></Hyperlink>
+                    <Hyperlink Click="OnDetailsClick"><TextBlock Text="{Binding Path=LinkCaption}"/></Hyperlink>
                 </TextBlock>
             </StackPanel>            
         </HierarchicalDataTemplate>
-        
+
         <Style x:Key="TreeViewStyle" TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource DefaultTreeViewItemStyle}">
             <Setter Property="IsExpanded" Value="True"/>
         </Style>

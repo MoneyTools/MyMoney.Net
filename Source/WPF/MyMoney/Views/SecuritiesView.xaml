@@ -30,6 +30,7 @@
             <Setter Property="ClipboardCopyMode" Value="None"/>
             <Setter Property="ContentMargin" Value="0,0,0,30"/>
             <Setter Property="RowDetailsTemplate" Value="{DynamicResource StockSplitDetailView}"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
         </Style>
 
         <Style x:Key="MyStockSplitDataGridStyle" TargetType="DataGrid">
@@ -47,6 +48,7 @@
             <Setter Property="ClipboardCopyMode" Value="None"/>
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
         </Style>
 
         <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}"  BasedOn="{StaticResource DefaultComboBoxStyle}">
@@ -75,7 +77,7 @@
         <!-- Pattern -->
         <DataTemplate x:Key="myTemplateName">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding Path=Name, Converter={StaticResource NullableValueConverter}}" />
             </Border>
         </DataTemplate>
@@ -91,7 +93,7 @@
         <!-- Symbol -->
         <DataTemplate x:Key="myTemplateSymbol">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding Path=Symbol, Converter={StaticResource NullableValueConverter}}" />
             </Border>
         </DataTemplate>
@@ -115,7 +117,7 @@
         <!-- Cusip -->
         <DataTemplate x:Key="myTemplateCusip">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding Path=CuspId, Converter={StaticResource NullableValueConverter}}" />
             </Border>
         </DataTemplate>
@@ -131,7 +133,7 @@
         <!-- SecurityType -->
         <DataTemplate x:Key="myTemplateSecurityType" >
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding SecurityType, Converter={StaticResource NullableValueConverter}}" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
             </Border>
         </DataTemplate>
@@ -148,7 +150,7 @@
         <!-- Taxable -->
         <DataTemplate x:Key="myTemplateTaxable" >
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding Taxable}" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
             </Border>
         </DataTemplate>
@@ -165,7 +167,7 @@
         <!-- Price -->
         <DataTemplate x:Key="myTemplatePrice">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding Price, StringFormat={}{0:N}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
             </Border>
         </DataTemplate>
@@ -180,14 +182,14 @@
         <!-- LastPrice -->
         <DataTemplate x:Key="myTemplateLastPrice">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding LastPrice, StringFormat={}{0:N}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top" />
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateLastPriceEdit" >
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding LastPrice, StringFormat={}{0:N}, Mode=TwoWay}" TextAlignment="Right" />
             </Border>
         </DataTemplate>
@@ -203,7 +205,7 @@
       <!-- PriceDate -->
       <DataTemplate x:Key="myTemplatePriceDate">
         <!-- the border makes the whole column hittable -->
-        <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+        <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
           <TextBlock Text="{Binding PriceDate, StringFormat={}{0:d}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
         </Border>
       </DataTemplate>
@@ -216,7 +218,6 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type DataGridCell}">
                         <Border x:Name="CellBorder"
-                  				BorderBrush="{TemplateBinding BorderBrush}"  
                   				BorderThickness="0" 
                   				SnapsToDevicePixels="True">
                             <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -287,7 +288,7 @@
                              ItemsSource="{Binding Path=StockSplits}">
                         <ListView.Resources>
                             <Style TargetType="{x:Type TextBlock}">
-                                <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundLowBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}" />
                             </Style>
                             <DataTemplate x:Key="StaticForTextTemplate">
                                 <TextBlock Text="for"/>

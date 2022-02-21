@@ -109,6 +109,7 @@
                     </Style>
                     <Style x:Key="NumericStyle" TargetType="{x:Type Paragraph}">
                         <Setter Property="TextAlignment" Value="Right"/>
+                        <Setter Property="FontSize" Value="12"/>
                     </Style>
                 </FlowDocument.Resources>
             </FlowDocument>

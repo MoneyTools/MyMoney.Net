@@ -3,9 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:c="clr-namespace:Walkabout.WpfConverters"
              xmlns:local="clr-namespace:Walkabout.Views.Controls"
-             xmlns:localData="clr-namespace:Walkabout.Data"
              xmlns:help="clr-namespace:Walkabout.Help"
              help:HelpService.HelpKeyword="Bank Accounts"
              mc:Ignorable="d" 
@@ -13,16 +11,7 @@
 
     <UserControl.Resources>
 
-        <c:MoneyColorConverter x:Key="MoneyColorConverter"/>
-        <local:AccountNameColorConverter x:Key="AccountNameColorConverter"/>
-        <local:AccountFontWeightConverter x:Key="AccountFontWeightConverter"/>
-        <local:AccountWarningIconConverter x:Key="AccountWarningIconConverter"/>
-        <local:AccountWarningVisibilityConverter x:Key="AccountWarningVisibilityConverter"/>
-        <local:AccountWarningTooltipConverter x:Key="AccountWarningTooltipConverter"/>
-        <local:AccountLastBalancedTooltipConverter x:Key="AccountLastBalancedTooltipConverter"/>
-        <local:AccountLastTransactionTooltipConverter x:Key="AccountLastTransactionTooltipConverter"/>
-
-        <DataTemplate DataType="{x:Type localData:AccountSectionHeader}">
+        <DataTemplate DataType="{x:Type local:AccountSectionHeader}">
             <Border BorderThickness="0 0 0 1" BorderBrush="Gray" Margin="0 10 0 0">
                     <Grid>
                     <Grid.ColumnDefinitions>
@@ -40,14 +29,13 @@
             </Border>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type localData:Account}">
+        <DataTemplate DataType="{x:Type local:AccountViewModel}">
             <Grid Name="ItemInTheList">
                 <Grid.ToolTip>
                     <StackPanel Orientation="Vertical">
-                        <TextBlock Text="{Binding Name}"/>
-                        <TextBlock Text="{Binding AccountId}"/>
-                        <TextBlock Text="{Binding LastBalance, Converter={StaticResource AccountLastBalancedTooltipConverter}}"/>
-                        <TextBlock Text="{Binding ., Converter={StaticResource AccountLastTransactionTooltipConverter}}"/>
+                        <TextBlock Text="{Binding TooltipRow1}"/>
+                        <TextBlock Text="{Binding TooltipRow2}"/>
+                        <TextBlock Text="{Binding TooltipRow3}"/>
                     </StackPanel>
                 </Grid.ToolTip>
                 <Grid.ColumnDefinitions>
@@ -56,20 +44,20 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <Image Source="{Binding Path=., Converter={StaticResource AccountWarningIconConverter}}"
+                <Image Source="{Binding Path=WarningIcon}"
                        Width="16" Height="16"
-                       Visibility="{Binding Path=., Converter={StaticResource AccountWarningVisibilityConverter}}"
+                       Visibility="{Binding Path=WarningIconVisibility}"
                        Margin="0,0,5,0" 
-                       ToolTip="{Binding Path=., Converter={StaticResource AccountWarningTooltipConverter}}"/>
+                       ToolTip="{Binding Path=WarningIconTooltip}"/>
 
-                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True" Grid.Column="1" 
-                           Foreground="{Binding ., Converter={StaticResource AccountNameColorConverter}}"
-                           FontWeight="{Binding ., Converter={StaticResource AccountFontWeightConverter}}"/>
-                
-                <TextBlock Text="{Binding BalanceNormalized, StringFormat={}{0:C}}"  Grid.Column="2" 
+                <TextBlock x:Name="AccountName" Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True" Grid.Column="1" 
+                           Foreground="{Binding NameForeground}"
+                           FontWeight="{Binding FontWeight}"/>
+
+                <TextBlock  x:Name="AccountBalance"  Text="{Binding Balance, StringFormat={}{0:C}}"  Grid.Column="2" 
                            HorizontalAlignment="Right"
-                           Foreground="{Binding BalanceNormalized, Converter={StaticResource MoneyColorConverter}}"
-                           FontWeight="{Binding ., Converter={StaticResource AccountFontWeightConverter}}"/>
+                           Foreground="{Binding BalanceForeground}"
+                           FontWeight="{Binding FontWeight}"/>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
@@ -87,9 +75,7 @@
         <CommandBinding  Command="local:AccountsControl.CommandToggleClosedAccounts" Executed="OnToggleShowClosedAccounts" CanExecute="CanToggleShowClosedAccounts"/>
     </UserControl.CommandBindings>
 
-
     <ListBox Name="listBox1" 
-             ItemsSource="{Binding}" 
              HorizontalAlignment="Stretch" 
              HorizontalContentAlignment="Stretch"
              Grid.IsSharedSizeScope="True"

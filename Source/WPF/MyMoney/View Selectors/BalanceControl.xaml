@@ -15,7 +15,7 @@
 
         <Style x:Key="NumericTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
             <Setter Property="c:CalculatorPopup.CalculatorEnabled" Value="True" />
-            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundLowBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
         </Style>
 
         <Style x:Key="Rows" TargetType="Border">
@@ -33,7 +33,7 @@
             <Setter Property="TextAlignment" Value="Right"/>
             <Setter Property="IsReadOnly" Value="True"/>
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundLowBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="2"/>
         </Style>

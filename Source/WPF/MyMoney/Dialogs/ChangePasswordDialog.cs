@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using Walkabout.Data;
@@ -71,7 +68,7 @@ namespace Walkabout.Dialogs
                 account.UserId = this.UserName;
                 account.Password = this.PasswordConfirmation;
 
-                ThreadPool.QueueUserWorkItem(new WaitCallback(ChangePassword));
+                Task.Run(ChangePassword);
                 e.Error = "Sending new password information to " + account.Name + ".\nPlease do NOT close this dialog until we get a response.";
                 e.Cancel = true;
 
@@ -94,7 +91,7 @@ namespace Walkabout.Dialogs
         string logFile;
 
         // background thread
-        private void ChangePassword(object state)
+        private void ChangePassword()
         {
             OfxRequest req = new OfxRequest(this.account, this.money, null);
             try

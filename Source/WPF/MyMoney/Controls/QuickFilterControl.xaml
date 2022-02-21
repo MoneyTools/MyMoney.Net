@@ -25,12 +25,12 @@
                 <Viewbox Height="14" Width="14" Margin="4 0 0 0">
                     <Grid Opacity="0.5">
                         <Ellipse Fill="Transparent"                                  
-                                 Stroke="{DynamicResource ListItemForegroundLowBrush}" 
+                                 Stroke="{DynamicResource ListItemForegroundBrush}" 
                                  HorizontalAlignment="Left" 
                                  Height="14" Width="14"  
                                  VerticalAlignment="Top" StrokeThickness="3" />
                         <Path Data="M10,10 L16,16" 
-                              Stroke="{DynamicResource ListItemForegroundLowBrush}" 
+                              Stroke="{DynamicResource ListItemForegroundBrush}" 
                               StrokeThickness="3.5" StrokeEndLineCap="Round" StrokeStartLineCap="Triangle" />
                     </Grid>
                 </Viewbox>

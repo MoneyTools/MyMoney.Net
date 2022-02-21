@@ -13,6 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
@@ -82,7 +83,7 @@ namespace Walkabout.Ofx
 
         public string Message
         {
-            get { return this.message; }
+            get { return (this.Caption == this.message) ? "" : this.message; }
             set { this.message = value; OnPropertyChanged("Message"); }
         }
 
@@ -199,7 +200,6 @@ namespace Walkabout.Ofx
             list.Add(entry);
             return entry;
         }
-
     }
 
     class LogFileInfo
@@ -231,8 +231,7 @@ namespace Walkabout.Ofx
         {
             if (this.files != null)
             {
-                Thread t = new Thread(new ThreadStart(LoadImports));
-                t.Start();
+                Task.Run(LoadImports);
             }
             else
             {
@@ -255,81 +254,90 @@ namespace Walkabout.Ofx
             }
         }
 
-        void FireEventOnMainThread(Delegate d, object[] args)
+        DelayedActions delayedActions = new DelayedActions();
+
+        void UpdateStatusOnUIThread(int min, int max, int value, OfxDownloadEventArgs e)
         {
-            if (d != null)
+            delayedActions.StartDelayedAction("UpdateStatus", () =>
             {
-                UiDispatcher.BeginInvoke(d, args);
-            }
+                if (this.Status != null)
+                {
+                    this.Status(min, max, value, e);
+                }
+            }, TimeSpan.FromMilliseconds(10));
         }
 
         void LoadImports()
         {
             Thread.CurrentThread.Name = "Synchronize";
-            OfxDownloadEventArgs e;
-            int count;
-
-            LoadImportsSameThread(out e, out count);
-
-            this.FireEventOnMainThread(this.Status, new object[4] { 0, count + 1, count + 1, e });
-        }
-
-        public void LoadImportsSameThread(out OfxDownloadEventArgs e, out int count)
-        {
-            e = new OfxDownloadEventArgs();
-
+            var downloadArgs = new OfxDownloadEventArgs();
             OfxRequest ofx = new OfxRequest(null, this.myMoney, this.resolverWhenMissingAccountId);
-            int i = 0;
-            count = this.files.Length;
-            foreach (string fname in this.files)
+            var snapshot = this.files;
+            this.files = null;
+            int count = snapshot.Length;
+            List<OfxDownloadData> entries = new List<OfxDownloadData>();
+            foreach (string fname in snapshot)
             {
+                OfxDownloadData se = downloadArgs.AddEntry(null, null, fname);
+                se.IsDownloading = true;
+                entries.Add(se);
+            }
+
+            this.UpdateStatusOnUIThread(0, count + 1, 0, downloadArgs);
+            Thread.Sleep(250); // give time for synchronizing icons to appear.
+
+            int i = 0;
+            foreach (string fname in snapshot)
+            {
+                OfxDownloadData se = entries[i];
                 i++;
-                this.FireEventOnMainThread(this.Status, new object[4] { 0, count + 1, i, e });
+                this.UpdateStatusOnUIThread(0, count + 1, i, downloadArgs);
+                Thread.Sleep(100); // give time for progress animation to happen.
                 try
                 {
-                    if (File.Exists(fname))
+                    using (FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
-                        using (FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        try
                         {
-                            try
+                            XDocument doc = null;
+                            if (fname.EndsWith(".xml"))
                             {
-                                XDocument doc = null;
-                                if (fname.EndsWith(".xml"))
-                                {
-                                    doc = LoadXmlStream(fs);
-                                    fs.Close();
-                                }
-                                else
-                                {
-                                    doc = ofx.ParseOfxResponse(fs, false);
-                                    fs.Close();
-                                    string file = OfxRequest.SaveLog(doc, Path.GetFileNameWithoutExtension(fname) + ".xml");
-                                    doc.AddAnnotation(new LogFileInfo() { Path = file });
-                                }
-                                OfxDownloadData se = e.AddEntry(null, null, fname);
-                                ofx.ProcessResponse(doc, se);
-                            }                            
-                            catch (OperationCanceledException)
-                            {
-                                // import cancelled by user.
-                                e.AddError(null, fname, "Import cancelled");
+                                doc = LoadXmlStream(fs);
+                                fs.Close();
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                e.AddError(null, fname, "Error loading file").Error = ex;
+                                doc = ofx.ParseOfxResponse(fs, false);
+                                fs.Close();
+                                string file = OfxRequest.SaveLog(doc, Path.GetFileNameWithoutExtension(fname) + ".xml");
+                                doc.AddAnnotation(new LogFileInfo() { Path = file });
                             }
+                            ofx.ProcessResponse(doc, se);
+                            se.Success = true;
+                        }                            
+                        catch (OperationCanceledException ce)
+                        {
+                            // import cancelled by user.
+                            se.Error = ce;
+                            se.Message = "Import cancelled";
                         }
-
-                        // We can now delete the imported file
-                        //Settings.ReallyDeleteFile(fname);
-                    }
+                        catch (Exception ex)
+                        {
+                            se.Error = ex;
+                            se.Message = "Error loading file";
+                        }
+                        se.IsDownloading = false;
+                    }                    
                 }
                 catch (Exception ex)
                 {
+                    se.Error = ex;
+                    se.Message = "Error opening import file";
                     MessageBoxEx.Show("Error opening import file", null, ex.Message, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            this.files = null; // done.
+
+            this.UpdateStatusOnUIThread(0, count + 1, count + 1, downloadArgs);
         }
 
         private static XDocument LoadXmlStream(Stream fs)
@@ -366,7 +374,7 @@ namespace Walkabout.Ofx
             }
 
             // send empty start event
-            FireEventOnMainThread(this.Status, new object[4] { 0, list.Count, 0, downloadEventArgs });
+            this.UpdateStatusOnUIThread( 0, list.Count, 0, downloadEventArgs);
 
             // start one thread for each online account to download so we can do them all at once,
             // this doesn't need Parallel.foreach because we don't need any throttling because we
@@ -374,8 +382,7 @@ namespace Walkabout.Ofx
             // is spent waiting on the server.
             for (i = 0; i < count; i++)
             {
-                Thread t = new Thread(new ThreadStart(SyncAccount));
-                t.Start();
+                Task.Run(SyncAccount);
             }
         }
 
@@ -399,7 +406,7 @@ namespace Walkabout.Ofx
             {
                 f.IsDownloading = true;
 
-                FireEventOnMainThread(this.Status, new object[4] { 0, count + 1, i + 1, this.downloadEventArgs });
+                this.UpdateStatusOnUIThread(0, count + 1, i + 1, this.downloadEventArgs);
 
                 request = new OfxRequest(oa, this.myMoney, this.resolverWhenMissingAccountId);
 
@@ -457,14 +464,13 @@ namespace Walkabout.Ofx
             if (last)
             {
                 // notify that we're done.
-                this.FireEventOnMainThread(this.Status, new object[4] { 0, count + 1, count + 1, this.downloadEventArgs });
+                this.UpdateStatusOnUIThread(0, count + 1, count + 1, this.downloadEventArgs);
             }
             else
             {
-                FireEventOnMainThread(this.Status, new object[4] { 0, count + 1, i + 1, this.downloadEventArgs });
+                this.UpdateStatusOnUIThread(0, count + 1, i + 1, this.downloadEventArgs);
             }
         }
-
 
     }
 
@@ -3218,19 +3224,21 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     t.Amount = amount;
                     if (!string.IsNullOrEmpty(payee))
                     {
-                        t.Payee = this.myMoney.Payees.FindPayee(payee, true);
+                        Alias alias = this.myMoney.Aliases.FindMatchingAlias(payee);
+                        if (alias != null)
+                        {
+                            if (memo == null || memo == string.Empty) memo = payee;
+                            t.Payee = alias.Payee;
+                        }
+                        else
+                        {
+                            t.Payee = this.myMoney.Payees.FindPayee(payee, true);
+                        }
                     }
                     t.Memo = memo;
                     t.Date = dt;
                     t.FITID = fitid;
                     t.Unaccepted = true;
-
-                    Alias alias = this.myMoney.Aliases.FindMatchingAlias(payee);
-                    if (alias != null)
-                    {
-                        if (memo == null || memo == string.Empty) memo = payee;
-                        payee = alias.Payee.Name;
-                    }
 
                     Transaction u = myMoney.Transactions.Merge(this.myMoney.Aliases, t, newTransactions);
                     if (u != null)
@@ -3254,6 +3262,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 }
 
                 myMoney.Rebalance(a);
+                items.Success = true;
             }
             finally
             {
@@ -3314,7 +3323,8 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         bool cancelled = false;
                         UiDispatcher.Invoke(new Action(() =>
                         {
-                            Account picked = callerPickAccount(this.myMoney, temp);
+                            string prompt = string.Format("We found a reference to an unknown account number '{0}'. Please select the account that you want to use or click the Add New Account button at the bottom of this window:", accountid);
+                            Account picked = callerPickAccount(this.myMoney, temp, prompt);
                             if (picked == null)
                             {
                                 // cancelled
@@ -3343,7 +3353,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             return true;
         }
 
-        public delegate Account PickAccountDelegate(MyMoney money, Account accountTemplate);
+        public delegate Account PickAccountDelegate(MyMoney money, Account accountTemplate, string prompt);
 
         static Regex ObfuscatedId = new Regex("([X]+)([0-9]+)");
 
@@ -3648,11 +3658,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         /// </summary>
         public void BeginMFAChallenge()
         {
-            ThreadPool.QueueUserWorkItem(new WaitCallback(BackgroundThread));
+            Task.Run(BackgroundThread);
         }
 
 
-        private void BackgroundThread(object state)
+        private void BackgroundThread()
         {
             try
             {

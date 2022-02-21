@@ -28,6 +28,7 @@
                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Setter Property="HorizontalAlignment" Value="Stretch"/>
                 <Setter Property="Padding" Value="10,5"/>
+                <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}" />
             </Style>
         </ListBox.ItemContainerStyle>
 
@@ -43,7 +44,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True"
+                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True" 
                            FontWeight="{Binding Flags, Converter={StaticResource PayeeFontWeightConverter}}"/>
 
                     <!-- [Chris] there is no "TotalTransactions" property on Payee?

@@ -345,7 +345,10 @@ namespace Walkabout.Dialogs
                 }
                 return;                 
             }
-
+            if (theAccount == null)
+            {
+                theAccount = new Account();
+            }
             theAccount.Name = editingAccount.Name;
             theAccount.AccountId = editingAccount.AccountId;
             theAccount.OfxAccountId = editingAccount.OfxAccountId;

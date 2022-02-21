@@ -17,6 +17,9 @@
     <UserControl.InputBindings>
         <KeyBinding Command="local:SecuritiesControl.CommandDeletePayee" Key="Delete"/>
     </UserControl.InputBindings>
+    <UserControl.Resources>
+        
+    </UserControl.Resources>
 
     <ListBox Name="listbox1" 
                  DataContext="{Binding}"
@@ -32,6 +35,7 @@
                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Setter Property="HorizontalAlignment" Value="Stretch"/>
                 <Setter Property="Padding" Value="10,5"/>
+                <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
             </Style>
         </ListBox.ItemContainerStyle>
         

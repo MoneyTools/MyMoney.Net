@@ -13,7 +13,8 @@ using Walkabout.Interfaces;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Walkabout.Ofx;
-
+using System.Diagnostics;
+using System.Threading;
 
 namespace Walkabout.Views.Controls
 {
@@ -113,22 +114,26 @@ namespace Walkabout.Views.Controls
                 this.Progress.Visibility = Visibility.Collapsed;
             }
 
-            PreprocessEntries(e.Entries);
+            int count = PreprocessEntries(e.Entries);
+            Debug.WriteLine("Found {0} OfxDownloadData entries", count);
 
             this.OfxEventTree.ItemsSource = e.Entries;
         }
 
-        void PreprocessEntries(IEnumerable<OfxDownloadData> list)
+        int PreprocessEntries(IEnumerable<OfxDownloadData> list)
         {
+            int count = 0;
             foreach (OfxDownloadData item in list)
             {
                 //item.OfxError
                 if (item.Children != null)
                 {
-                    PreprocessEntries(item.Children);
+                    count += PreprocessEntries(item.Children);
                 }
                 PreprocessEntry(item);
+                count++;
             }
+            return count;
         }
 
         void PreprocessEntry(OfxDownloadData entry)
@@ -423,39 +428,6 @@ h2 { font-size: 12pt; }";
             {
                 ofxData.OnlineAccount.AuthToken = dialog.AuthorizationToken;
             }
-        }
-
-        private void BeginRotation(Image img)
-        {
-            RotateTransform rt = (RotateTransform)img.RenderTransform;
-            DoubleAnimation animation = new DoubleAnimation(0, 360, new Duration(TimeSpan.FromSeconds(5)));
-            animation.RepeatBehavior = RepeatBehavior.Forever;
-            rt.BeginAnimation(RotateTransform.AngleProperty, animation);
-        }
-
-        private void StopRotation(Image img)
-        {
-            RotateTransform rt = (RotateTransform)img.RenderTransform;
-            rt.BeginAnimation(RotateTransform.AngleProperty, null);
-        }
-
-        private void OnSynchronizeImageLoaded(object sender, RoutedEventArgs e)
-        {
-            Image img = (Image)sender;
-            img.RenderTransform = new RotateTransform(0, 8, 8);
-            BeginRotation(img);
-
-            img.IsVisibleChanged += new DependencyPropertyChangedEventHandler((s, args) =>
-            {
-                if ((bool)args.NewValue)
-                {
-                    BeginRotation((Image)s);
-                }
-                else
-                {
-                    StopRotation((Image)s);
-                }
-            });
         }
 
     }

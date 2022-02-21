@@ -50,7 +50,6 @@
     <sys:String x:Key="SortIconAscending">&#xE74A;</sys:String>
     <sys:String x:Key="SortIconDescending">&#xE74B;</sys:String>
 
-
     <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}">
         <Setter Property="Template">
             <Setter.Value>
@@ -199,7 +198,6 @@
         </Style.Triggers>
     </Style>
 
-
     <Style x:Key="NuclearTreeViewItemToggleButton" TargetType="{x:Type ToggleButton}">
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="Template">
@@ -279,7 +277,7 @@
         <Setter Property="BorderThickness" Value="0"/>
     </Style>
 
-    
+
     <!-- ============================================================================================= -->
     <!-- Everything above this point has been Modernized and tested to work with Light and Dark themes -->
     <!-- ============================================================================================= -->

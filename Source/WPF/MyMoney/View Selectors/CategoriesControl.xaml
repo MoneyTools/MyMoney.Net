@@ -30,7 +30,8 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock  Text="{Binding Path=Label}" ToolTip="{Binding Path=Name}" MinWidth="200"/>
+                            <TextBlock  Text="{Binding Path=Label}" ToolTip="{Binding Path=Name}" MinWidth="200"
+                                        Foreground="{DynamicResource ListItemForegroundBrush}"/>
                             <Border Grid.Column="1" Margin="2" BorderThickness="0,0,0,0" Height="8" Width="8" VerticalAlignment="Center"  HorizontalAlignment="Center"                                     
                                     Background="{Binding InheritedColor, Converter={StaticResource CategoryToBrush}}"
                                     CornerRadius="0" Focusable="false" />
@@ -66,7 +67,7 @@
         </Style>
 
         <HierarchicalDataTemplate DataType="{x:Type local:CategoryGroup}" ItemsSource="{Binding Path=Subcategories}" >
-            <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1">
+            <Border BorderBrush="{DynamicResource GridLineBrush}" BorderThickness="0,0,0,1">
                 <Grid HorizontalAlignment="Stretch" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>

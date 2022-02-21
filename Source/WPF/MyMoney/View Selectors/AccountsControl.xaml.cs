@@ -20,6 +20,8 @@ using System.Windows.Media.Imaging;
 using Walkabout.Help;
 using Walkabout.Commands;
 using Walkabout.Configuration;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 #endif
@@ -67,6 +69,9 @@ namespace Walkabout.Views.Controls
 
         private MyMoney myMoney;
 
+        private ObservableCollection<AccountViewModel> items = new ObservableCollection<AccountViewModel>();
+
+
         public MyMoney MyMoney
         {
             get { return myMoney; }
@@ -75,7 +80,6 @@ namespace Walkabout.Views.Controls
                 if (this.myMoney != null)
                 {
                     myMoney.Accounts.Changed -= new EventHandler<ChangeEventArgs>(OnAccountsChanged);
-                    myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(OnBalanceChanged);
                     myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);                    
                 }
                 myMoney = value;
@@ -83,7 +87,6 @@ namespace Walkabout.Views.Controls
                 if (value != null)
                 {
                     myMoney.Accounts.Changed += new EventHandler<ChangeEventArgs>(OnAccountsChanged);
-                    myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(OnBalanceChanged);
                     myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
                     OnAccountsChanged(this, new ChangeEventArgs(myMoney.Accounts, null, ChangeType.Reloaded));
                 }
@@ -100,7 +103,7 @@ namespace Walkabout.Views.Controls
             {
                 if (args.Item is Account)
                 {
-                    Dispatcher.BeginInvoke(new Action(Rebind));
+                    delayedActions.StartDelayedAction("rebind", Rebind, TimeSpan.FromMilliseconds(30));
                     return;
                 }
                 args = args.Next;
@@ -109,13 +112,24 @@ namespace Walkabout.Views.Controls
 
         public Account SelectedAccount
         {
-            get { return Selected as Account; }
-            set { Select(value); }
+            get { return (this.listBox1.SelectedItem is AccountItemViewModel m) ? m.Account : null; }
+            set {
+                var item = (from i in this.items where i is AccountItemViewModel m && m.Account == value select i).FirstOrDefault();
+                if (item != null)
+                {
+                    this.Selected = item;
+                }
+                else if (!DisplayClosedAccounts)
+                {
+                    DisplayClosedAccounts = true;
+                    this.SelectedAccount = value;
+                }
+            }
         }
 
-        public Object Selected
+        public AccountViewModel Selected
         {
-            get { return this.listBox1.SelectedItem; }
+            get { return this.listBox1.SelectedItem as AccountViewModel; }
             set { Select(value); }
         }
 
@@ -221,20 +235,21 @@ namespace Walkabout.Views.Controls
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AccountsControlInitialize))
             {
 #endif
-            InitializeComponent();
+                InitializeComponent();
 
-            this.listBox1.PreviewMouseDown += new MouseButtonEventHandler(listBox1_PreviewMouseDown);
-            this.listBox1.SelectionChanged += new SelectionChangedEventHandler(OnListBoxSelectionChanged);
-            this.listBox1.MouseDoubleClick += new MouseButtonEventHandler(OnListBoxMouseDoubleClick);
+                this.listBox1.PreviewMouseDown += new MouseButtonEventHandler(listBox1_PreviewMouseDown);
+                this.listBox1.SelectionChanged += new SelectionChangedEventHandler(OnListBoxSelectionChanged);
+                this.listBox1.MouseDoubleClick += new MouseButtonEventHandler(OnListBoxMouseDoubleClick);
 
-            foreach (object o in AccountsControlContextMenu.Items)
-            {
-                MenuItem m = o as MenuItem;
-                if (m != null) {
-                    m.CommandTarget = this;
+                foreach (object o in AccountsControlContextMenu.Items)
+                {
+                    MenuItem m = o as MenuItem;
+                    if (m != null) {
+                        m.CommandTarget = this;
+                    }
                 }
-            }
-      
+
+                this.listBox1.ItemsSource = this.items;
 #if PerformanceBlocks
             }
 #endif  
@@ -258,7 +273,7 @@ namespace Walkabout.Views.Controls
             delayedActions.CancelDelayedAction("SingleClick");
             object item = GetElementFromPoint(listBox1, e.GetPosition(listBox1));
 
-            if (item != null)
+            if (item is AccountViewModel m)
             {
                 if (item is AccountSectionHeader)
                 {
@@ -266,7 +281,7 @@ namespace Walkabout.Views.Controls
                 }
                 else
                 {
-                    this.Selected = item;
+                    this.Selected = m;
                     Account a = this.SelectedAccount;
                     EditDetails(a);
                 }
@@ -298,13 +313,6 @@ namespace Walkabout.Views.Controls
             return null;
         }
 
-
-
-        public void OnBalanceChanged(object sender, ChangeEventArgs e)
-        {
-            //            this.Invalidate();
-        }
-
         public void OnAccountsChanged(object sender, ChangeEventArgs e)
         {
             Rebind();
@@ -316,7 +324,50 @@ namespace Walkabout.Views.Controls
 
             if (myMoney != null)
             {
-                this.Accounts = new List<object>(myMoney.Accounts.GetAccounts(!this.displayClosedAccounts));
+                //---------------------------------------------------------
+                // First make a copy of the collection in order to 
+                // help LINQ do it's magic over the collection
+                List<Account> inputList = new List<Account>(myMoney.Accounts.GetAccounts(!this.displayClosedAccounts));
+
+                this.items.Clear();
+
+                decimal netWorth = 0;
+
+                var accountOfTypeBanking = from a in inputList where a.Type == AccountType.Checking || a.Type == AccountType.Savings || a.Type == AccountType.Cash select a;
+                AccountSectionHeader sh = BundleAccount("Banking", this.items, accountOfTypeBanking);
+                netWorth += sh.BalanceInNormalizedCurrencyValue;
+
+                var accountOfTypeCredit = from a in inputList where a.Type == AccountType.Credit || a.Type == AccountType.CreditLine select a;
+                sh = BundleAccount("Credit", this.items, accountOfTypeCredit);
+                netWorth += sh.BalanceInNormalizedCurrencyValue;
+
+                var accountOfTypeBrokerage = from a in inputList where a.Type == AccountType.Brokerage || a.Type == AccountType.MoneyMarket select a;
+                sh = BundleAccount("Brokerage", this.items, accountOfTypeBrokerage);
+                sh.Clicked += (s, e) => { AppCommands.CommandReportInvestment.Execute(null, this); };
+                netWorth += sh.BalanceInNormalizedCurrencyValue;
+
+                var accountOfTypeRetirement = from a in inputList where a.Type == AccountType.Retirement select a;
+                sh = BundleAccount("Retirement", this.items, accountOfTypeRetirement);
+                sh.Clicked += (s, e) => { AppCommands.CommandReportInvestment.Execute(null, this); };
+                netWorth += sh.BalanceInNormalizedCurrencyValue;
+
+                var accountOfTypeAsset = from a in inputList where a.Type == AccountType.Asset select a;
+                sh = BundleAccount("Assets", this.items, accountOfTypeAsset);
+                netWorth += sh.BalanceInNormalizedCurrencyValue;
+
+                var accountOfTypeLoan = from a in inputList where a.Type == AccountType.Loan select a;
+                sh = BundleAccount("Loans", this.items, accountOfTypeLoan);
+                netWorth += sh.BalanceInNormalizedCurrencyValue;
+
+                if (statusArea != null)
+                {
+                    statusArea.Text = netWorth.ToString("C");
+                }
+
+            }
+            else
+            {
+                this.items.Clear();
             }
         }
 
@@ -331,72 +382,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        public IList<object> Accounts
-        {
-            get { return this.listBox1.DataContext as List<object>; }
-            set
-            {
-                if (value != null)
-                {
-                    //---------------------------------------------------------
-                    // First make a copy of the collection in order to 
-                    // help LINQ do it's magic over the collection
-                    List<Account> inputList = new List<Account>();
-                    foreach (object o in value)
-                    {
-                        Account a = o as Account;
-                        if (a != null)
-                        {
-                            // Assert Section in the List
-                            inputList.Add(a);
-                        }
-                    }
-
-                    List<object> output = new List<object>();
-
-                    decimal netWorth = 0;
-
-                    var accountOfTypeBanking = from a in inputList where a.Type == AccountType.Checking || a.Type == AccountType.Savings || a.Type == AccountType.Cash select a;
-                    AccountSectionHeader sh = BundleAccount("Banking", output, accountOfTypeBanking);
-                    netWorth += sh.BalanceInNormalizedCurrencyValue;
-
-                    var accountOfTypeCredit = from a in inputList where a.Type == AccountType.Credit || a.Type == AccountType.CreditLine select a;
-                    sh = BundleAccount("Credit", output, accountOfTypeCredit);
-                    netWorth += sh.BalanceInNormalizedCurrencyValue;
-
-                    var accountOfTypeBrokerage = from a in inputList where a.Type == AccountType.Brokerage || a.Type == AccountType.MoneyMarket select a;
-                    sh = BundleAccount("Brokerage", output, accountOfTypeBrokerage);
-                    sh.Clicked += (s, e) => { AppCommands.CommandReportInvestment.Execute(null, this); };
-                    netWorth += sh.BalanceInNormalizedCurrencyValue;
-
-                    var accountOfTypeRetirement = from a in inputList where a.Type == AccountType.Retirement select a;
-                    sh = BundleAccount("Retirement", output, accountOfTypeRetirement);
-                    sh.Clicked += (s, e) => { AppCommands.CommandReportInvestment.Execute(null, this); };
-                    netWorth += sh.BalanceInNormalizedCurrencyValue;
-
-                    var accountOfTypeAsset = from a in inputList where a.Type == AccountType.Asset select a;
-                    sh = BundleAccount("Assets", output, accountOfTypeAsset);
-                    netWorth += sh.BalanceInNormalizedCurrencyValue;
-
-                    var accountOfTypeLoan = from a in inputList where a.Type == AccountType.Loan select a;
-                    sh = BundleAccount("Loans", output, accountOfTypeLoan);
-                    netWorth += sh.BalanceInNormalizedCurrencyValue;
-
-                    if (statusArea != null)
-                    {
-                        statusArea.Text = netWorth.ToString("C");
-                    }
-                    this.listBox1.DataContext = output;
-                }
-            }
-        }
-
-        private void Sh_Clicked(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static AccountSectionHeader BundleAccount(string caption, List<object> output, IEnumerable<Account> accountOfTypeBanking)
+        private static AccountSectionHeader BundleAccount(string caption, ObservableCollection<AccountViewModel> output, IEnumerable<Account> accountOfTypeBanking)
         {
             AccountSectionHeader sectionHeader = new AccountSectionHeader();
 
@@ -413,7 +399,7 @@ namespace Walkabout.Views.Controls
                 foreach (Account a in accountOfTypeBanking)
                 {
                     sectionHeader.BalanceInNormalizedCurrencyValue+= a.BalanceNormalized;
-                    output.Add(a);
+                    output.Add(new AccountItemViewModel(a));
                     bundle.Add(a);
                 }
             }
@@ -421,32 +407,39 @@ namespace Walkabout.Views.Controls
         }
 
         // our idea of what is selected.  We only raise SelectionChanged event if this doesn't match.
-        object selected;
+        AccountViewModel selected;
 
-        void Select(object item)
+        void Select(AccountViewModel item)
         {
-            if (item != null && !(item is AccountSectionHeader) && !this.Accounts.Contains(item) && 
-                !DisplayClosedAccounts && myMoney.Accounts.GetAccounts(true).Contains(item))
-            {
-                // then user is trying to jump to a transaction in a hidden closed account, so make the closed
-                // accounts visible otherwise jump will fail.
-                DisplayClosedAccounts = true;
-            }
-
             this.listBox1.SelectedItem = item;
             this.listBox1.ScrollIntoView(item);
-            this.selected = item;
+            SetSelected(item);
         }
 
+        void SetSelected(AccountViewModel item)
+        {
+            if (item != this.selected)
+            {
+                if (this.selected is AccountItemViewModel a)
+                {
+                    a.IsSelected = false;
+                }
+                this.selected = item;
+                if (this.selected is AccountItemViewModel b)
+                {
+                    b.IsSelected = true;
+                }
+            }
+        }
 
         void OnListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             delayedActions.CancelDelayedAction("SingleClick");
             object selected = (e.AddedItems.Count > 0) ? e.AddedItems[0] : null;
-            RaiseSelectionEvent(selected, false);
+            RaiseSelectionEvent(selected as AccountViewModel, false);
         }
 
-        void RaiseSelectionEvent(object selected, bool force) 
+        void RaiseSelectionEvent(AccountViewModel selected, bool force) 
         { 
             AccountSectionHeader ash = selected as AccountSectionHeader;
 
@@ -457,7 +450,7 @@ namespace Walkabout.Views.Controls
 
             if ((force || this.selected != selected) && SelectionChanged != null)
             {
-                this.selected = selected;
+                SetSelected(selected);
                 SelectionChanged(this, EventArgs.Empty);
             }
         }
@@ -472,14 +465,14 @@ namespace Walkabout.Views.Controls
                 return null;
             }
             
-            // figure out which account to select next.
-            List<object> data = (List<object>)this.listBox1.DataContext;
-            Account prev = null;
-            Account next = null;
+            // figure out which account to select next.            
+            AccountViewModel prev = null;
+            AccountViewModel next = null;
             bool found = false;
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 0; i < this.items.Count; i++)
             {
-                Account a = data[i] as Account;
+                AccountViewModel item = this.items[i];
+                Account a = (item is AccountItemViewModel m) ? m.Account : null;
                 if (a != null)
                 {
                     if (a == account)
@@ -488,11 +481,11 @@ namespace Walkabout.Views.Controls
                     }
                     else if (!found)
                     {
-                        prev = a;
+                        prev = item;
                     }
                     else if (next == null)
                     {
-                        next = a;
+                        next = item;
                         break;
                     }
                 }
@@ -574,8 +567,7 @@ namespace Walkabout.Views.Controls
 
         private void OnAccountDetails(object sender, ExecutedRoutedEventArgs e)
         {
-            Account a = this.Selected as Account;
-
+            Account a = this.SelectedAccount;
             if (a != null)
             {
                 EditDetails(a);
@@ -584,7 +576,7 @@ namespace Walkabout.Views.Controls
 
         private void CanShowAccountDetails(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = this.Selected is Account;
+            e.CanExecute = this.Selected is AccountItemViewModel;
             e.Handled = true;
         }
 
@@ -621,7 +613,7 @@ namespace Walkabout.Views.Controls
 
         private void CanBalanceAccount(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = this.Selected is Account;
+            e.CanExecute = this.Selected is AccountItemViewModel;
             e.Handled = true;
         }
 
@@ -698,7 +690,7 @@ namespace Walkabout.Views.Controls
 
         private void CanDeleteAccount(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = this.Selected is Account;
+            e.CanExecute = this.Selected is AccountItemViewModel;
             e.Handled = true;
         }
 
@@ -716,7 +708,7 @@ namespace Walkabout.Views.Controls
 
         private void CanViewTransfers(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = this.Selected is Account;
+            e.CanExecute = this.Selected is AccountItemViewModel;
             e.Handled = true;
         }
 
@@ -750,7 +742,7 @@ namespace Walkabout.Views.Controls
 
         private void CanExportAccount(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = this.Selected is Account;
+            e.CanExecute = this.Selected is AccountItemViewModel;
             e.Handled = true;
         }
 
@@ -776,211 +768,240 @@ namespace Walkabout.Views.Controls
         }
 
         #endregion
-
-
     }
 
-    public class AccountNameColorConverter : IValueConverter
+    public class AccountViewModel : INotifyPropertyChanged
     {
-        #region IValueConverter Members
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        protected void OnPropertyChanged(string name)
         {
-            Brush textBrush = null;
-            Account a = value as Account;
-            if (a != null)
+            if (PropertyChanged != null)
             {
-                if (a.IsClosed)
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+            }
+        }
+    }
+
+
+    public class AccountItemViewModel : AccountViewModel
+    {
+        private Account account;
+        private bool selected;
+
+        public AccountItemViewModel(Account a)
+        {
+            this.account = a;
+            this.account.PropertyChanged += OnPropertyChanged;
+        }
+
+        ~AccountItemViewModel()
+        {
+            this.account.PropertyChanged -= OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            OnPropertyChanged(e.PropertyName);
+            switch (e.PropertyName) {
+                case "Unaccepted":
+                    OnPropertyChanged("NameForeground");
+                    OnPropertyChanged("FontWeight");
+                    break;
+                case "Name":
+                    OnPropertyChanged("TooltipRow1");
+                    break;
+                case "BalanceNormalized":
+                case "Balance":
+                    OnPropertyChanged("BalanceForeground");
+                    break;
+                case "LastBalance":
+                    OnPropertyChanged("TooltipRow2");
+                    OnPropertyChanged("WarningIcon");
+                    OnPropertyChanged("IconTooltip");
+                    OnPropertyChanged("WarningIconVisibility");
+                    OnPropertyChanged("WarningIconTooltip");
+                    break;
+            }
+        }
+
+        public Account Account { get => this.account; }
+
+        public string Name
+        {
+            get => account.Name;
+        }
+
+        public bool IsSelected
+        {
+            get => this.selected;
+            set
+            {
+                if (this.selected != value)
                 {
-                    textBrush = AppTheme.Instance.GetThemedBrush("SystemControlDisabledBaseMediumLowBrush");
+                    this.selected = value;
+                    OnPropertyChanged("NameForeground");
                 }
             }
-            if (textBrush == null)
-            {
-                textBrush = AppTheme.Instance.GetThemedBrush("SystemControlPageTextBaseHighBrush");
-            }
-
-            if (textBrush == null)
-            {
-                throw new Exception("Resource not found!");
-            }
-
-            return textBrush;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public FontWeight FontWeight
         {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-    }
-
-
-    public class AccountFontWeightConverter : IValueConverter
-    {
-        #region IValueConverter Members
-
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            Account a = value as Account;
-            if (a != null)
+            get
             {
-                if (a.Unaccepted > 0)
+                if (this.account.Unaccepted > 0)
                 {
                     return FontWeights.Bold;
                 }
+                return FontWeights.Normal;
             }
-            return FontWeights.Normal;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public Brush NameForeground
         {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-    }
-
-    public class AccountLastBalancedTooltipConverter : IValueConverter
-    {
-        #region IValueConverter Members
-
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value is DateTime)
+            get
             {
-                DateTime dt = (DateTime)value;
+                Account a = this.account;
+                string brush = "SystemControlDisabledBaseMediumLowBrush";
+                if (a.IsClosed)
+                {
+                    brush = "SystemControlDisabledBaseMediumLowBrush";
+                }
+                else if (this.IsSelected)
+                {
+                    brush = "ListItemSelectedForegroundBrush";
+                }
+                else if (a.Unaccepted > 0)
+                {
+                    brush = "ListItemForegroundUnacceptedBrush";
+                }
+                else
+                {
+                    brush = "ListItemForegroundBrush";
+                }
+
+                return AppTheme.Instance.GetThemedBrush(brush);
+            }
+        }
+
+        public Brush BalanceForeground
+        {
+            get
+            {
+                decimal c = (decimal)this.account.BalanceNormalized;
+                if (c < 0)
+                {
+                    return AppTheme.Instance.GetThemedBrush("NegativeCurrencyForegroundBrush");
+                }
+                return AppTheme.Instance.GetThemedBrush("PositiveCurrencyForegroundBrush");
+            }
+        }
+
+        public string TooltipRow1
+        {
+            get
+            {
+                return account.Name + ": " + account.AccountId;
+            }
+        }
+
+        public string TooltipRow2
+        {
+            get
+            {
+                DateTime dt = (DateTime)this.account.LastBalance;
                 if (dt != DateTime.MinValue)
                 {
                     return string.Format("Last Balanced {0}", dt.ToShortDateString());
                 }
+                return "";
             }
-            return "";
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public string TooltipRow3
         {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-    }
-
-    public class AccountLastTransactionTooltipConverter : IValueConverter
-    {
-        #region IValueConverter Members
-
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value is Account)
+            get
             {
-                Account a = (Account)value;
-                if (a.Parent is Accounts)
+                Account a = this.account;
+                if (a.Parent is Accounts s && s.Parent is MyMoney m)
                 {
-                    Accounts s = (Accounts)a.Parent;
-                    if (s.Parent is MyMoney)
+                    Transaction t = m.Transactions.GetLatestTransactionFrom(a);
+                    if (t != null)
                     {
-                        MyMoney m = (MyMoney)s.Parent;
-                        Transaction t = m.Transactions.GetLatestTransactionFrom(a);
-                        if (t != null)
-                        {
-                            return string.Format("Last Transaction\n  Date: {0}\n  Payee: {1}\n  Amount: {2:C2}", t.Date.ToShortDateString(), t.PayeeName, t.Amount);
-                        }
+                        return string.Format("Last Transaction\n  Date: {0}\n  Payee: {1}\n  Amount: {2:C2}", t.Date.ToShortDateString(), t.PayeeName, t.Amount);
                     }
                 }
+                return "";
             }
-            return "";
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public Uri WarningIcon
         {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-    }
-
-    public class AccountWarningConverter : IValueConverter
-    {
-        #region IValueConverter Members
-
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            Account a = value as Account;
-            if (a != null && !a.IsClosed)
+            get
             {
-                if (a.ReconcileWarning > 0 && a.LastBalance < DateTime.Now.AddMonths(-a.ReconcileWarning - 1))
+                if (WarningIconVisibility == Visibility.Visible)
                 {
-                    return GetReconcileWarningObject(a);
+                    return new Uri("pack://application:,,,/MyMoney;component/Dialogs/Icons/Warning.png");
+                }
+                return null;
+            }
+        }
+
+        public Visibility WarningIconVisibility
+        {
+            get
+            {
+                Account a = this.account;
+                if (a != null && !a.IsClosed)
+                {
+                    if (a.ReconcileWarning > 0 && a.LastBalance < DateTime.Now.AddMonths(-a.ReconcileWarning - 1))
+                    {
+                        return Visibility.Visible;
+                    }
+                }
+                return Visibility.Collapsed;
+            }
+        }
+
+        public string WarningIconTooltip
+        {
+            get
+            {
+                var a = this.account;
+                if (a.LastBalance == DateTime.MinValue)
+                {
+                    return string.Format("Reminder: you have not balanced this account yet.\n" +
+                           "You can change this reminder using 'Reconcile Warning' in the account properties",
+                           a.LastBalance.ToShortDateString());
+                }
+                else
+                {
+                    int months = DateTime.Now.Month - a.LastBalance.Month;
+                    int years = DateTime.Now.Year - a.LastBalance.Year;
+                    months += (years * 12);
+                    return string.Format("Reminder: you have not balanced this account in {0} months\n" +
+                           "You can change this reminder using 'Reconcile Warning' in the account properties", months);
                 }
             }
-            return GetNoWarningObject(a);
-        }
-
-        protected virtual object GetNoWarningObject(Account a)
-        {
-            return null;
-        }
-
-        protected virtual object GetReconcileWarningObject(Account a)
-        {
-            return null;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-    }
-
-    public class AccountWarningIconConverter : AccountWarningConverter
-    {
-        static ImageSource WarningIcon = null;
-
-        protected override object GetReconcileWarningObject(Account a)
-        {
-            if (WarningIcon == null)
-            {
-                WarningIcon = BitmapFrame.Create(new Uri("pack://application:,,,/MyMoney;component/Dialogs/Icons/Warning.png"));
-            }
-            return WarningIcon;
-        }
-
-    }
-
-    public class AccountWarningVisibilityConverter : AccountWarningConverter
-    {
-        protected override object GetReconcileWarningObject(Account a)
-        {
-            return Visibility.Visible;
-        }
-
-        protected override object GetNoWarningObject(Account a)
-        {
-            return Visibility.Collapsed;
         }
     }
 
-    public class AccountWarningTooltipConverter : AccountWarningConverter
+
+    public class AccountSectionHeader : AccountViewModel
     {
-        protected override object GetReconcileWarningObject(Account a)
+        public string Title { get; set; }
+
+        public decimal BalanceInNormalizedCurrencyValue { get; set; }
+
+        public List<Account> Accounts { get; set; }
+
+        public event EventHandler Clicked;
+
+        public void OnClick()
         {
-            if (a.LastBalance == DateTime.MinValue)
+            if (Clicked != null)
             {
-                return string.Format("Reminder: you have not balanced this account yet.\n" +
-                       "You can change this reminder using 'Reconcile Warning' in the account properties",
-                       a.LastBalance.ToShortDateString());
-            }
-            else
-            {
-                int months = DateTime.Now.Month - a.LastBalance.Month;
-                int years = DateTime.Now.Year - a.LastBalance.Year;
-                months += (years * 12);
-                return string.Format("Reminder: you have not balanced this account in {0} months\n" +
-                       "You can change this reminder using 'Reconcile Warning' in the account properties", months);
+                Clicked(this, EventArgs.Empty);
             }
         }
     }

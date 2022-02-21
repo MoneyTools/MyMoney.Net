@@ -28,6 +28,7 @@
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
             <Setter Property="ClipboardCopyMode" Value="None"/>
             <Setter Property="ContentMargin" Value="0,0,0,30"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
         </Style>
 
 
@@ -40,7 +41,6 @@
         </Style>
 
         <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
-            <Setter Property="Padding" Value="0"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
         </Style>
@@ -50,7 +50,7 @@
         <!-- Pattern -->
         <DataTemplate x:Key="myTemplatePattern">
             <!-- the border makes the whole column hitable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding Path=Pattern, Converter={StaticResource NullableValueConverter}}" />
             </Border>
         </DataTemplate>
@@ -58,7 +58,7 @@
 
         <DataTemplate x:Key="myTemplatePatternEdit">
             <!-- the border makes the whole column hitable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" >
                 <TextBox Text="{Binding Path=Pattern, Converter={StaticResource NullableValueConverter}}" Style="{StaticResource GridTextBoxStyle}"/>
             </Border>
         </DataTemplate>
@@ -66,7 +66,7 @@
         <!-- Type -->
         <DataTemplate x:Key="myTemplateType">
             <!-- the border makes the whole column hitable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding Path=AliasType, Converter={StaticResource NullableValueConverter}}" />
             </Border>
         </DataTemplate>
@@ -82,7 +82,7 @@
         <!-- Payee -->
         <DataTemplate x:Key="myTemplatePayee">
             <!-- the border makes the whole column hitable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding Path=Payee, Converter={StaticResource NullableValueConverter}}" />
             </Border>
         </DataTemplate>

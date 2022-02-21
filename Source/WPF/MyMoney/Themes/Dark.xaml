@@ -22,9 +22,12 @@
     <!-- MessageBox border -->
     <SolidColorBrush x:Key="MessageBoxBorder" Color="{m:DynamicColor SystemAccentColor}"/>
 
+    <!-- OFX download panel -->
+    <SolidColorBrush x:Key="SyncronizingIconBrush" Color="{m:DynamicColor SystemAccentColor}"/>
+
     <!-- colors for list selection -->
-    <SolidColorBrush x:Key="ListItemForegroundBrush" Color="#E0E0E0"/>
-    <SolidColorBrush x:Key="ListItemForegroundLowBrush" Color="White"/> 
+    <SolidColorBrush x:Key="ListItemForegroundUnacceptedBrush" Color="#D7BA7D"/>
+    <SolidColorBrush x:Key="ListItemForegroundBrush" Color="#80FFFFFF"/> 
     <SolidColorBrush x:Key="ListItemSelectedForegroundDisabledBrush" Color="Gray"/>
     <SolidColorBrush x:Key="ListItemSelectedForegroundNegativeBrush" Color="Firebrick"/>
     <SolidColorBrush x:Key="ListItemSelectedForegroundBrush" Color="white"/>
@@ -71,5 +74,5 @@
     <SolidColorBrush x:Key="TransactionConnectorButtonBackground" Color="#2e2e2e" />
     <SolidColorBrush x:Key="TransactionConnectorButtonPressedBackground" Color="#1e1e1e" />
     <SolidColorBrush x:Key="TransactionConnectorButtonMouseOverBackground" Color="#3e3e3e" />
-
+    
 </ResourceDictionary>

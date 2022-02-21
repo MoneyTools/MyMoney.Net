@@ -168,12 +168,12 @@
                         <Grid SnapsToDevicePixels="True">
                             <Path   Name="ThePath"
                                     Fill="{DynamicResource GridAlternateBackgroundBrush}" Stretch="Fill" 
-                                    Stroke="{DynamicResource ListItemForegroundLowBrush}"
+                                    Stroke="{DynamicResource ListItemForegroundBrush}"
                                     Data="M0,0 L15,0 15,11 7.5,15 0,10z" StrokeThickness="0.5"
                                     StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeDashCap="Round" />
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Top"  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
                                               RecognizesAccessKey="True"
-                                              TextBlock.Foreground="{DynamicResource ListItemForegroundLowBrush}"/>
+                                              TextBlock.Foreground="{DynamicResource ListItemForegroundBrush}"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <DataTrigger Binding="{Binding Splits.HasUnassigned}" Value="True"  >
@@ -347,7 +347,7 @@
         -->
         <DataTemplate x:Key="myDataGridDetailMiniView">
             <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent"
-                    BorderBrush="{DynamicResource ListItemForegroundLowBrush}" BorderThickness="1" CornerRadius="5" Margin="10,-1,10,10"
+                    BorderBrush="{DynamicResource ListItemForegroundBrush}" BorderThickness="1" CornerRadius="5" Margin="10,-1,10,10"
                     >
                 <Border.Resources>
 
@@ -376,7 +376,7 @@
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </Style>
                             <Style TargetType="{x:Type TextBlock}">
-                                <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundLowBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}" />
                             </Style>
                         </ListView.Resources>
                         <ListView.View>
@@ -388,7 +388,7 @@
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Amount, StringFormat={}{0:N}}"  
                                                        Width="100" 
-                                                       Foreground="{DynamicResource ListItemForegroundLowBrush}"
+                                                       Foreground="{DynamicResource ListItemForegroundBrush}"
                                                        HorizontalAlignment="Right"
                                                        TextAlignment="Right" />
                                         </DataTemplate>
@@ -429,6 +429,7 @@
                                   ItemsSource="{Binding Path=NonNullSplits.ObservableCollection}"
                                   RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
                                   RowEditEnding="TheGridForAmountSplit_RowEditEnding"
+                                  RowHeaderWidth="0"
                                   CellStyle="{DynamicResource MyDataGridCellStyle}"
                                   Style="{DynamicResource MyDataGridStyle2}" 
                                   help:HelpService.HelpKeyword="Splits"
@@ -480,6 +481,7 @@
             <Setter Property="ContentMargin" Value="0,0,0,30"/>
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
         </Style>
 
         <Style x:Key="MyDataGridStyle2" TargetType="DataGrid">
@@ -496,6 +498,7 @@
             <Setter Property="ClipboardCopyMode" Value="None"/>
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
         </Style>
 
         <Style x:Key="MyDataGridRowStyle" TargetType="DataGridRow">

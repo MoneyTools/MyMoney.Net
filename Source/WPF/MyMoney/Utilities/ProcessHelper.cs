@@ -27,14 +27,12 @@ namespace Walkabout.Utilities
             }
         }
 
-        public static string GetAndUnsureLocalUserAppDataPath
+        public static string ImportFileListFolder
         {
             get
             {
-                string appdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                appdata = Path.Combine(appdata, "Walkabout\\MyMoney");
-
-                if (Directory.Exists(appdata) == false)
+                var appdata = Path.Combine(AppDataPath, "Imports");
+                if (!Directory.Exists(appdata))
                 {
                     Directory.CreateDirectory(appdata);
                 }
@@ -42,6 +40,27 @@ namespace Walkabout.Utilities
                 return appdata;
             }
         }
+
+        internal static bool IsFileQIF(string fileName)
+        {
+            string extension = Path.GetExtension(fileName).ToLower();
+            if (extension == ".qif")
+            {
+                return true;
+            }
+            return false;
+        }
+
+        internal static bool IsFileOFX(string fileName)
+        {
+            string extension = Path.GetExtension(fileName).ToLower();
+            if (extension == ".qfx" || extension == ".ofx")
+            {
+                return true;
+            }
+            return false;
+        }
+
 
         public static string GetEmbeddedResource(string name)
         {

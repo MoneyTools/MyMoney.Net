@@ -10,6 +10,7 @@ using Walkabout.Configuration;
 using System.Diagnostics;
 using System.IO;
 using Walkabout.Utilities;
+using System.Threading.Tasks;
 using System.Threading;
 
 #if PerformanceBlocks
@@ -439,7 +440,7 @@ namespace Walkabout.Attachments
             {
                 threadRunning = true;
                 threadStopEvent.Reset();
-                ThreadPool.QueueUserWorkItem(new WaitCallback(ScanDirectory));
+                Task.Run(ScanDirectory);
             }
         }
 
@@ -448,7 +449,7 @@ namespace Walkabout.Attachments
         /// flag on all transactions.
         /// </summary>
         /// <param name="state"></param>
-        public void ScanDirectory(object state)
+        public void ScanDirectory()
         {
             // set of transactions that have attachments.
             Thread.Sleep(1000); // give app time to startup...

@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
 using System.Windows;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Windows.Data;
-using System.Windows.Media;
-using System.Globalization;
-using Walkabout.Data;
 using Walkabout.Utilities;
-using Walkabout.Charts;
-using Walkabout.Controls;
 using Walkabout.Configuration;
+using System.Xml.Linq;
 using System.Xml;
 using Walkabout.Help;
 
@@ -28,7 +19,7 @@ namespace Walkabout
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    
+
     public partial class App : Application
     {
         
@@ -42,11 +33,9 @@ namespace Walkabout
 #endif
                 HelpService.Initialize();
 
-                CleanUpOlderSpecialImportFile();
-
                 Process currentRunningInstanceOfMyMoney = null;
 
-                if (IsCommandLineContainingValidImportFile())
+                if (SaveImportArgs())
                 {
                     // Application is running Process command line args
                     currentRunningInstanceOfMyMoney = BringToFrontApplicationIfAlreadyRunning();
@@ -145,147 +134,63 @@ namespace Walkabout
             if (currentRunningInstanceOfMyMoney != null)
             {
                 // The application is already running so bring it to the foreground
-                NativeMethods.ShowWindow(currentRunningInstanceOfMyMoney.MainWindowHandle, NativeMethods.SW_SHOWMAXIMIZED);
+                NativeMethods.ShowWindow(currentRunningInstanceOfMyMoney.MainWindowHandle, NativeMethods.SW_SHOWNORMAL);
                 NativeMethods.SetForegroundWindow(currentRunningInstanceOfMyMoney.MainWindowHandle);
             }
 
             return currentRunningInstanceOfMyMoney;
         }
 
-        static void CleanUpOlderSpecialImportFile()
-        {
-            try
-            {
-                // bugbug: what if two downloads are done in quick succession and running Money app is blocked on a message box
-                // such that it cannot process the file immediately.  We could lose data here.
-                TempFilesManager.DeleteFile(FullPathToSpecialImportFileQIF);
-                TempFilesManager.DeleteFile(FullPathToSpecialImportFileOFX);
-            }
-            catch (Exception ex)
-            {
-                // Be resilient if we throw and exception the application would not start
-
-                //
-                // We can't use MessageBoxEX here because this method is called before the main window get created
-                //
-                MessageBox.Show("Error cleaning up old IMPORT FILES:" + Environment.NewLine + ex.Message);
-            }
-
-        }
-
 
         /// <summary>
-        /// If the process was invoke with a QIF file as argument
-        /// we copy the file to the "well-known" folder where MyMoney.exe will be listening on
-        /// If there's already a instance of MyMoney running we bring it to the foreground
+        /// If the process was invoked with a QIF or QFX filename while MyMoney is already
+        /// running then user double clicked an import file, so we copy the filename to
+        /// a special file list of pending imports which the already a instance of MyMoney 
+        /// is watching for changes.  
         /// </summary>
         /// <returns></returns>
-        private static bool IsCommandLineContainingValidImportFile()
+        private static bool SaveImportArgs()
         {
-
-            string fileToImport = IsValidImportingFileType();
-            if (string.IsNullOrEmpty(fileToImport) == false)
+            bool found = false;
+            XDocument imports = LoadImportFileList();
+            foreach (var fileToImport in GetValidImportFiles())
             {
-                return CopySuppliedImportFileToListeningFolder(fileToImport);
+                imports.Root.Add(new XElement("Import", new XAttribute("Path", fileToImport)));
+                found = true;
             }
-
-            return false;
+            if (found)
+            {
+                imports.Save(Walkabout.MainWindow.ImportFileListPath);
+            }
+            return found;
         }
 
-        private static string FullPathToSpecialImportFileQIF
+        internal static XDocument LoadImportFileList()
         {
-            get
+            var path = Walkabout.MainWindow.ImportFileListPath;
+            if (File.Exists(path))
             {
-                return Path.Combine(ProcessHelper.GetAndUnsureLocalUserAppDataPath, Walkabout.MainWindow.SpecialImportFileNameQif);
-            }
-        }
-
-        private static string FullPathToSpecialImportFileOFX
-        {
-            get
-            {
-                return Path.Combine(ProcessHelper.GetAndUnsureLocalUserAppDataPath, Walkabout.MainWindow.SpecialImportFileNameOfx);
-            }
-        }
-
-        private static bool CopySuppliedImportFileToListeningFolder(string fileToImport)
-        {
-            //-------------------------------------------------------------
-            // Copy the file passed on the command line to a well know folder that will be picked up by the application for importing
-            //
-            string fileToUseAsImport = null;
-
-            if (IsFileQIF(fileToImport))
-            {
-                fileToUseAsImport = FullPathToSpecialImportFileQIF;
-            }
-
-            if (IsFileOFX(fileToImport))
-            {
-                fileToUseAsImport = FullPathToSpecialImportFileOFX;
-            }
-
-            if (String.IsNullOrEmpty(fileToUseAsImport) == false)
-            {
-                // Lets queue up the file by copying it in the folder where the main App will look for it
-                if (File.Exists(fileToImport))
+                try
                 {
-                    try
-                    {
-                        File.Copy(fileToImport, fileToUseAsImport, true);
-                        return true;
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBoxEx.Show("Error importing file> " + fileToImport + Environment.NewLine + e.Message);
-                    }
-
+                    return XDocument.Load(path);
                 }
+                catch { }
             }
-            return false;
+            return new XDocument(new XElement("Imports"));
         }
 
-        private static string IsValidImportingFileType()
+        private static IEnumerable<string> GetValidImportFiles()
         {
             string[] args = Environment.GetCommandLineArgs();
 
-            if (args.Length == 2)
+            for(int i = 1; i < args.Length; i++)
             {
-                string importFile = args[1];
-
-
-                if (IsFileQIF(importFile))
+                string importFile = args[i];
+                if (ProcessHelper.IsFileQIF(importFile) || ProcessHelper.IsFileOFX(importFile))
                 {
-                    return importFile;
+                    yield return importFile;
                 }
-
-                if (IsFileOFX(importFile))
-                {
-                    return importFile;
-                }
-
             }
-            return string.Empty;
-        }
-
-        static bool IsFileQIF(string fileName)
-        {
-            string extension = Path.GetExtension(fileName).ToLower();
-            if (extension == ".qif")
-            {
-                return true;
-            }
-            return false;
-        }
-
-        static bool IsFileOFX(string fileName)
-        {
-            string extension = Path.GetExtension(fileName).ToLower();
-            if (extension == ".qfx" || extension == ".ofx")
-            {
-                return true;
-            }
-            return false;
         }
 
         private static Process FindCurrentRunningMoneyApplication()

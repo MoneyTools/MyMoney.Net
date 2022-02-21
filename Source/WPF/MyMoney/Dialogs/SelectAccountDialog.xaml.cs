@@ -82,10 +82,17 @@ namespace Walkabout.Dialogs
 
     static class AccountHelper
     {
-        static public Account PickAccount(MyMoney money, Account accountTemplate)
+        static public Account PickAccount(MyMoney money, Account accountTemplate, string prompt)
         {
             SelectAccountDialog frm = new SelectAccountDialog();
-            frm.Title = "Select Account for: " + accountTemplate.AccountId;
+            if (accountTemplate != null)
+            {
+                frm.Title = "Select Account for: " + accountTemplate.AccountId;
+            }
+            if (!string.IsNullOrEmpty(prompt))
+            {
+                frm.SetUnknownAccountPrompt(prompt);
+            }
             frm.SetAccounts(money.Accounts.GetAccounts());
             frm.Owner = App.Current.MainWindow;
             Account a = null;
@@ -108,7 +115,7 @@ namespace Walkabout.Dialogs
             {
                 return null;
             } 
-            else if (a != null)
+            else if (a != null && accountTemplate != null)
             {
                 if (a.AccountId != accountTemplate.AccountId)
                 {

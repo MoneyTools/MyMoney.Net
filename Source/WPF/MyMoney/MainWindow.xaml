@@ -331,7 +331,7 @@
                     <!-- THE MAIN GRAPH AREA -->
                     <TabControl Name="TabForGraphs" Grid.Row="2" TabIndex="3">
 
-                        <TabItem x:Name="TabTrends" Header="Trends">
+                        <TabItem x:Name="TabTrends" Header="Trends" Visibility="Collapsed">
                             <vc:TrendGraph x:Name="TransactionGraph" 
                                 ShowBalance="False"
                                  Series1Color="{DynamicResource AreaChartColor1}"
@@ -345,25 +345,25 @@
                             />
                         </TabItem>
 
-                        <TabItem x:Name="TabHistory" Header="History">
+                        <TabItem x:Name="TabHistory" Header="History"  Visibility="Collapsed">
                             <cc:HistoryBarChart x:Name="HistoryChart"  />
                         </TabItem>
 
-                        <TabItem x:Name="TabIncomes" >
+                        <TabItem x:Name="TabIncomes"  Visibility="Collapsed">
                             <TabItem.Header>
                                 <TextBlock x:Name="TabIncomesHeaderText" Text="Incomes"/>
                             </TabItem.Header>
                             <cc:CategoryChart x:Name="PieChartIncomes" CategoryType="Income"/>
                         </TabItem>
 
-                        <TabItem x:Name="TabExpenses" >
+                        <TabItem x:Name="TabExpenses"  Visibility="Collapsed">
                             <TabItem.Header>
                                 <TextBlock x:Name="TabExpensesHeaderText" Text="Expenses"/>
                             </TabItem.Header>
                             <cc:CategoryChart x:Name="PieChartExpenses" CategoryType="Expense"/>
                         </TabItem>
 
-                        <TabItem x:Name="TabStock" Header="Stock">
+                        <TabItem x:Name="TabStock" Header="Stock" Visibility="Collapsed">
                             <vc:TrendGraph x:Name="StockGraph"  ShowBalance="False"
                                  Series1Color="{DynamicResource AreaChartColor1}"
                                  Series2Color="{DynamicResource AreaChartColor2}"
@@ -376,15 +376,15 @@
                             />
                         </TabItem>
 
-                        <TabItem x:Name="TabLoan" Header="Payments">
+                        <TabItem x:Name="TabLoan" Header="Payments" Visibility="Collapsed">
                             <cc:LoanChart x:Name="LoanChart" />
                         </TabItem>
 
-                        <TabItem x:Name="TabRental" Header="Profits and Loss">
+                        <TabItem x:Name="TabRental" Header="Profits and Loss" Visibility="Collapsed">
                             <cc:RentalChart x:Name="RentalChart" />
                         </TabItem>
 
-                        <TabItem x:Name="TabOutput" AutomationProperties.AutomationId="TabOutput">
+                        <TabItem x:Name="TabOutput" AutomationProperties.AutomationId="TabOutput" Visibility="Collapsed">
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Output" Margin="0,0,5,0"/>
@@ -394,7 +394,7 @@
                             <c:OutputPane x:Name="OutputView"/>
                         </TabItem>
 
-                        <TabItem x:Name="TabDownload" AutomationProperties.AutomationId="TabDownload">
+                        <TabItem x:Name="TabDownload" AutomationProperties.AutomationId="TabDownload" Visibility="Collapsed">
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Download" Margin="0,0,5,0"/>

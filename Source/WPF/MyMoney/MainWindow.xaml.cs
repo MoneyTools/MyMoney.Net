@@ -184,7 +184,7 @@ namespace Walkabout
                 // Setup the "file import" module
                 //
                 FileSystemWatcher fsw = new FileSystemWatcher();
-                fsw.Path = ProcessHelper.GetAndUnsureLocalUserAppDataPath;
+                fsw.Path = ProcessHelper.ImportFileListFolder;
                 fsw.NotifyFilter = NotifyFilters.LastWrite;
                 fsw.Changed += new FileSystemEventHandler(OnImportFolderContentHasChanged);
                 fsw.EnableRaisingEvents = true;
@@ -836,7 +836,7 @@ namespace Walkabout
             //-----------------------------------------------------------------
             // Look for Accounts
             //
-            Account a = this.accountsControl.Selected as Account;
+            Account a = this.accountsControl.SelectedAccount;
 
             if (a != null)
             {
@@ -1535,71 +1535,62 @@ namespace Walkabout
 
         #region Importing
 
-        private DispatcherTimer delay;
-
         // the problem is file change events can generate many of these in a burst, so we need a timer to delay actual loading.
         private void OnImportFolderContentHasChanged(object sender, FileSystemEventArgs e)
         {
-            if (delay == null)
-            {
-                delay = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background, LoadImportFiles, this.Dispatcher);
-            }
-            delay.Stop();
-            delay.Start();
+            this.delayedActions.StartDelayedAction("ImportFiles", LoadImportFiles, TimeSpan.FromMilliseconds(250));
         }
 
-        public static string SpecialImportFileNameQif = "~IMPORT~.QIF";
-        public static string SpecialImportFileNameOfx = "~IMPORT~.OFX";
-
-        private void LoadImportFiles(object sender, EventArgs e)
-        {
-            delay.Stop();
-            delay = null;
+        // Could be on a background thread.
+        private void LoadImportFiles()
+        { 
             try
             {
+                var filename = ImportFileListPath;
+                if (File.Exists(filename))
+                {
+                    XDocument doc = XDocument.Load(filename);
+                    File.Delete(filename);
+                    List<string> qifFiles = new List<string>();
+                    List<string> ofxFiles = new List<string>();
+                    foreach (var e in doc.Root.Elements())
+                    {
+                        var path = (string)e.Attribute("Path");
+                        if (File.Exists(path))
+                        {
+                            if (ProcessHelper.IsFileQIF(path))
+                            {
+                                if (!qifFiles.Contains(path))
+                                {
+                                    qifFiles.Add(path);
+                                }
+                            }
+                            else if (ProcessHelper.IsFileOFX(path))
+                            {
+                                if (!ofxFiles.Contains(path))
+                                {
+                                    ofxFiles.Add(path);
+                                }
+                            }
+                        }
+                    }
+                    if (ofxFiles.Count > 0)
+                    {
+                        delayedActions.StartDelayedAction("ImportOfx", () => { ImportOfx(ofxFiles.ToArray()); }, TimeSpan.FromMilliseconds(1));
+                    }
 
-                TryToImportQIF();
-                TryToImportOFX();
+                    if (qifFiles.Count > 0)
+                    {
+                        delayedActions.StartDelayedAction("ImportQif", () => { ImportQif(qifFiles.ToArray()); }, TimeSpan.FromMilliseconds(1));                        
+                    }
+                }
             }
             catch (Exception ex)
             {
+
                 MessageBoxEx.Show(ex.Message, "Error while attempting to import", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            // Refresh the Transaction view in case the imported file has modified the data currently being displayed
-            // INotifyPropertyChanged and ObservableCollection should take care of this.
-            var view = SetCurrentView<TransactionsView>();
-            view.ViewTransactionsForSingleAccount(view.ActiveAccount, TransactionSelection.Current, 0);
         }
-
-        private void TryToImportOFX()
-        {
-            string pathToImportFileOfx = System.IO.Path.Combine(ProcessHelper.GetAndUnsureLocalUserAppDataPath, SpecialImportFileNameOfx);
-            if (File.Exists(pathToImportFileOfx))
-            {
-                string[] filesToImports = { pathToImportFileOfx };
-                ImportOfx(filesToImports);
-
-            }
-        }
-
-        private void TryToImportQIF()
-        {
-            string pathToImportFileQif = System.IO.Path.Combine(ProcessHelper.GetAndUnsureLocalUserAppDataPath, SpecialImportFileNameQif);
-            if (File.Exists(pathToImportFileQif))
-            {
-                int count;
-                QifImporter importer = new QifImporter(this.myMoney);
-                importer.Import(this.accountsControl.SelectedAccount, pathToImportFileQif, out count);
-                if (count > 0)
-                {
-                    this.ShowMessage(string.Format("Imported {0} records", count));
-                }
-                TempFilesManager.DeleteFile(pathToImportFileQif);
-            }
-        }
-
-
 
         private int ImportQif(string[] files)
         {
@@ -1608,13 +1599,21 @@ namespace Walkabout
             this.Cursor = Cursors.Wait;
             try
             {
-                Account selected = this.accountsControl.SelectedAccount;
                 Account acct = null;
                 int len = files.Length;
                 ShowProgress(0, len, 0, null);
                 for (int i = 0; i < len; i++)
                 {
                     string file = files[i];
+                    var prompt = string.Format("Please select the account that you want to import {0} into or click the Add New Account button at the bottom of this window:",
+                        Path.GetFileName(file));
+                    Account selected = AccountHelper.PickAccount(this.myMoney, null, prompt);
+                    if (selected == null)
+                    {
+                        // user is cancelling!
+                        break;
+                    }
+                    acct = selected;
                     ShowProgress(0, len, i, string.Format("Importing '{0}'", file));
 
                     try
@@ -1629,6 +1628,7 @@ namespace Walkabout
                         MessageBoxEx.Show(ex.Message, "Import Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     }
                 }
+
                 ShowProgress(0, len, -1, string.Format("Loaded {0} transactions", total));
 
                 var view = SetCurrentView<TransactionsView>();
@@ -1720,12 +1720,13 @@ namespace Walkabout
                     if (!string.IsNullOrEmpty(this.settings.Database))
                     {
                         isLoading = true;
-                        ThreadPool.QueueUserWorkItem(new WaitCallback(LoadDatabase), password);
+                        Task.Run(() => LoadDatabase(password));
                     }
                     else
                     {
                         this.NewDatabase();
                         StartTracking();
+                        LoadImportFiles();
                     }
                 }
                 catch (Exception e)
@@ -1757,6 +1758,8 @@ namespace Walkabout
                 UiDispatcher.BeginInvoke(new System.Action(() => { this.Cursor = Cursors.Arrow; }));
 
             }
+
+            LoadImportFiles();
         }
 
         private void ShowNetWorth()
@@ -1926,6 +1929,14 @@ namespace Walkabout
         public IDatabase Database
         {
             get { return this.database; }
+        }
+
+        public static string ImportFileListPath
+        {
+            get
+            {
+                return Path.Combine(ProcessHelper.ImportFileListFolder, "imports.xml");
+            }
         }
 
         private CreateDatabaseDialog InitializeCreateDatabaseDialog()

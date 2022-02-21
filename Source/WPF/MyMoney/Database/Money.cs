@@ -2316,22 +2316,6 @@ namespace Walkabout.Data
         TaxFree = 8
     }
 
-
-    public class AccountSectionHeader
-    {
-        public string Title { get; set; }
-        public decimal BalanceInNormalizedCurrencyValue { get; set; }
-        public List<Account> Accounts { get; set; }
-        public event EventHandler Clicked;
-        public void OnClick()
-        {
-            if (Clicked != null)
-            {
-                Clicked(this, EventArgs.Empty);
-            }
-        }
-    }
-
     //================================================================================
     [TableMapping(TableName = "Accounts")]
     [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
@@ -2357,7 +2341,6 @@ namespace Walkabout.Data
         SqlGuid syncGuid;
         AccountFlags flags;
         Category category; // for category funds.
-
         Category categoryForPrincipal;  // For Loan accounts
         Category categoryForInterest;   // For Loan accounts
 
@@ -2728,6 +2711,7 @@ namespace Walkabout.Data
             get { return this.unaccepted; }
             set { if (this.unaccepted != value) { this.unaccepted = value; OnChanged("Unaccepted"); } }
         }
+
 
         // This is for serialization
         [DataMember]

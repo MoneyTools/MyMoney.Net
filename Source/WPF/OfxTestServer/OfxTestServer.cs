@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using System.Xml;
@@ -184,7 +185,7 @@ namespace OfxTestServer
         {
             _delay = delayInMilliseconds;
             _prefix = prefix;
-            ThreadPool.QueueUserWorkItem(new WaitCallback(RunServer));
+            Task.Run(RunServer);
         }
 
         internal void Terminate()
@@ -201,7 +202,7 @@ namespace OfxTestServer
         }
 
         //========================================================================================
-        private void RunServer(object state)
+        private void RunServer()
         {
             _http = new HttpListener();
             _http.Prefixes.Add(_prefix);

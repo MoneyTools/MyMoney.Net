@@ -8,6 +8,7 @@ using System.Net;
 using System.IO;
 using Walkabout.Utilities;
 using Walkabout.Configuration;
+using System.Threading.Tasks;
 
 namespace Walkabout.Setup
 {
@@ -35,7 +36,7 @@ namespace Walkabout.Setup
 
         public void BeginGetChangeList(Uri setupHost)
         {
-            ThreadPool.QueueUserWorkItem(GetChangeList, setupHost);
+            Task.Run(() => GetChangeList(setupHost));
         }
 
         public event EventHandler<SetupRequestEventArgs> Completed
@@ -69,11 +70,10 @@ namespace Walkabout.Setup
 
         static XNamespace asmNamespace = XNamespace.Get("urn:schemas-microsoft-com:asm.v1");
 
-        private void GetChangeList(object state)
+        private void GetChangeList(Uri host)
         {
             try
             {
-                Uri host = (Uri)state;
                 XDocument changelist = GetDocument(new Uri(host, "changes.xml"));
                 if (changelist == null || changelist.Root == null)
                 {

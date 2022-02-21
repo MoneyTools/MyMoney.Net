@@ -25,6 +25,7 @@
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
             <Setter Property="ClipboardCopyMode" Value="None"/>
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
         </Style>
 
         <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
@@ -47,7 +48,7 @@
         <!-- Symbol -->
         <DataTemplate x:Key="myTemplateSymbol">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding Path=Symbol, Converter={StaticResource NullableValueConverter}}" />
             </Border>
         </DataTemplate>
@@ -64,7 +65,7 @@
         <!-- Name -->
         <DataTemplate x:Key="myTemplateName">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding Path=Name, Converter={StaticResource NullableValueConverter}}" />
             </Border>
         </DataTemplate>
@@ -81,7 +82,7 @@
         <!-- Ratio -->
         <DataTemplate x:Key="myTemplateRatio">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding Ratio, StringFormat={}{0:0.0000}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
             </Border>
         </DataTemplate>
@@ -96,7 +97,7 @@
         <!-- LastRatio -->
         <DataTemplate x:Key="myTemplateLastRatio">
             <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
                 <TextBlock Text="{Binding LastRatio, StringFormat={}{0:0.0000}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top" />
             </Border>
         </DataTemplate>
