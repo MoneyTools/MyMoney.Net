@@ -24,7 +24,7 @@
 
 
     <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
-        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Padding" Value="0,0,4,0"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Foreground" Value="white"/>
         <Setter Property="controls:CalculatorPopup.CalculatorEnabled" Value="True" />

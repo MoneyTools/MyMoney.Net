@@ -226,6 +226,15 @@
             <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Credit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right" />
         </DataTemplate>
 
+        <!-- Memo USED IN DETAILED SPLIT VIEW -->
+        <DataTemplate x:Key="myTemplateSplitMemo">
+            <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0"  Text="{Binding Memo}"    VerticalAlignment="Top" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="myTemplateMemoEditInTheSplitDetailedView" >
+            <TextBox Style="{StaticResource GridTextBoxStyle}" BorderThickness="0" Text="{Binding Memo, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"/>
+        </DataTemplate>
+
         <!-- PAYEE ONLY -->
         <DataTemplate x:Key="myTemplateSplitPayee">
             <TextBlock Text="{Binding PayeeOrTransferCaption, Converter={StaticResource NullableValueConverter}}" />
@@ -451,8 +460,7 @@
                                 <DataGridTemplateColumn Header="Deposit"  CellTemplate="{StaticResource myTemplateSplitDeposit}" CellEditingTemplate="{StaticResource myTemplateDepositEditInTheSplitDetailedView}"/>
 
                                 <!-- MEMO -->
-                                <DataGridTextColumn Header="Memo" Binding="{Binding Memo, Mode=TwoWay}" MinWidth="300"/>
-
+                                <DataGridTemplateColumn Header="Memo" MinWidth="300" CellTemplate="{StaticResource myTemplateSplitMemo}" CellEditingTemplate="{StaticResource myTemplateMemoEditInTheSplitDetailedView}"/>
 
                             </DataGrid.Columns>
                         </local:MoneyDataGrid>

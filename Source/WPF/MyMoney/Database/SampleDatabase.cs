@@ -323,7 +323,7 @@ namespace Walkabout.Assitance
                         i.Units = rand.Next(1, (int)(owned / 2));
                         ownership.AddUnits(a, ss.Symbol, -i.Units);
                         // Calculate the Payment or Deposit amount
-                        t.Amount = i.Units * i.UnitPrice;
+                        t.Amount = RoundCents(i.Units * i.UnitPrice);
                     }
                     else
                     {
@@ -345,7 +345,7 @@ namespace Walkabout.Assitance
                             i.Units = rand.Next(1, max);
                             ownership.AddUnits(a, ss.Symbol, i.Units);
                             // Calculate the Payment or Deposit amount
-                            t.Amount = i.Units * i.UnitPrice * -1;
+                            t.Amount = RoundCents(i.Units * i.UnitPrice * -1);
                         }
                     }
 
@@ -368,7 +368,7 @@ namespace Walkabout.Assitance
                         // then we need to transfer money to cover the cost of the stock purchases.
                         Transaction payment = transactions.NewTransaction(checking);
                         payment.Date = new DateTime(year, 1, 1);
-                        payment.Amount = amount;
+                        payment.Amount = RoundCents(amount);
                         transactions.AddTransaction(payment);
                         money.Transfer(payment, acct);
                         removed += -amount;
@@ -383,6 +383,11 @@ namespace Walkabout.Assitance
             {
                 money.Rebalance(a);
             }
+        }
+
+        private decimal RoundCents(decimal value)
+        {
+            return Math.Round(value, 2);
         }
 
         private IList<int> GetRandomDaysInTheYearForTransactions(int count)
@@ -425,7 +430,7 @@ namespace Walkabout.Assitance
                 t.Payee = payee;
                 t.Category = category;
                 t.Date = date;
-                t.Amount = paycheck;
+                t.Amount = RoundCents(paycheck);
                 transactions.AddTransaction(t);
 
                 // make it a bi-monthly paycheck
@@ -504,7 +509,7 @@ namespace Walkabout.Assitance
                 t.Payee = p;
                 t.Category = c;
                 t.Date = date;
-                t.Amount = amount;
+                t.Amount = RoundCents(amount);
                 if (st.Payee.Type == PaymentType.Check)
                 {
                     t.Number = nextCheck.ToString();
@@ -533,7 +538,7 @@ namespace Walkabout.Assitance
                                 {
                                     Transaction payment = transactions.NewTransaction(checking);
                                     payment.Date = endOfMonth;
-                                    payment.Amount = balance;
+                                    payment.Amount = RoundCents(balance);
                                     transactions.AddTransaction(payment);
                                     money.Transfer(payment, acct);
                                     balance = 0;
