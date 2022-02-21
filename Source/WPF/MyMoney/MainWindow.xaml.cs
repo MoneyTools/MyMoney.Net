@@ -2702,6 +2702,8 @@ namespace Walkabout
 
                         Category filter = this.TransactionView.ActiveCategory;
 
+                        bool pieChartSelected = TabExpenses.IsSelected || TabIncomes.IsSelected;
+
                         if (this.TransactionView.ActiveCategory != null ||
                             this.TransactionView.ActivePayee != null)
                         {
@@ -2711,12 +2713,12 @@ namespace Walkabout
 
                             UpdateHistoryChart();
 
-                            if (historyWasNotVisible || TabLoan.IsSelected || TabRental.IsSelected)
+                            if ((historyWasNotVisible || TabLoan.IsSelected || TabRental.IsSelected) && !pieChartSelected)
                             {
                                 TabHistory.IsSelected = true;
                             }
                         }
-                        else
+                        else if (this.TransactionView.ActiveAccount != null)
                         {
                             TabTrends.Visibility = System.Windows.Visibility.Visible;
                             TabHistory.Visibility = System.Windows.Visibility.Collapsed;
@@ -3810,7 +3812,12 @@ namespace Walkabout
         {
             if (e.Security != null)
             {
+                TabTrends.Visibility = System.Windows.Visibility.Collapsed;
+                TabHistory.Visibility = System.Windows.Visibility.Collapsed;
+                TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
+                TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
                 TabStock.Visibility = System.Windows.Visibility.Visible;
+                TabStock.IsSelected = true;
 
                 var history = await this.quotes.GetCachedHistory(e.Security.Symbol);
                 if (history != null)
@@ -3962,10 +3969,8 @@ namespace Walkabout
                 }
             }
 
-            CleanupStockQuoteManager();
-            SampleDatabase sample = new SampleDatabase(this.myMoney, GetStockQuotePath());
+            SampleDatabase sample = new SampleDatabase(this.myMoney, this.quotes, GetStockQuotePath());
             sample.Create();
-            SetupStockQuoteManager();
 
             this.toolBox.Selected = this.accountsControl;
             Account a = this.myMoney.Accounts.GetFirstAccount();
@@ -3978,7 +3983,7 @@ namespace Walkabout
         private void MenuExportSampleData_Click(object sender, RoutedEventArgs e)
         {
             string temp = Path.Combine(Path.GetTempPath(), "SampleData.xml");
-            SampleDatabase sample = new SampleDatabase(this.myMoney, GetStockQuotePath());
+            SampleDatabase sample = new SampleDatabase(this.myMoney, this.quotes, GetStockQuotePath());
             sample.Export(temp);
             InternetExplorer.OpenUrl(IntPtr.Zero, temp);
         }

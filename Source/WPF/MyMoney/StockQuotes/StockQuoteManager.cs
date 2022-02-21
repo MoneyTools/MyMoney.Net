@@ -64,7 +64,12 @@ namespace Walkabout.StockQuotes
                 }
             }
             _downloadLog = DownloadLog.Load(logPath);
-         }
+        }
+
+        public DownloadLog DownloadLog
+        {
+            get => _downloadLog; 
+        }
 
         public List<StockServiceSettings> Settings
         {

@@ -13,11 +13,32 @@
   </Accounts>
 
   <Securities>
-      <SampleSecurity Symbol="MSFT" Name="Microsoft corp" SecurityType="Equity" />
-      <SampleSecurity Symbol="AAPL" Name="Apple Corp" SecurityType="Equity"/>
+      <SampleSecurity Symbol="MSFT" Name="Microsoft corp" SecurityType="Equity" >
+          <Split Date="2003-02-18" Numerator="2" Denominator="1"/>
+          <Split Date="1999-03-29" Numerator="2" Denominator="1"/>
+          <Split Date="1998-02-23" Numerator="2" Denominator="1"/>
+          <Split Date="1996-12-09" Numerator="2" Denominator="1"/>
+          <Split Date="1996-05-23" Numerator="2" Denominator="1"/>
+          <Split Date="1992-06-15" Numerator="3" Denominator="2"/>
+          <Split Date="1991-06-27" Numerator="3" Denominator="2"/>
+          <Split Date="1990-04-16" Numerator="2" Denominator="1"/>
+          <Split Date="1987-09-21" Numerator="2" Denominator="1"/>
+      </SampleSecurity>
+      <SampleSecurity Symbol="AAPL" Name="Apple Corp" SecurityType="Equity">
+          <Split Date="2020-08-31" Numerator="4" Denominator="1"/>
+          <Split Date="2014-06-09" Numerator="7" Denominator="1"/>
+          <Split Date="2005-02-28" Numerator="2" Denominator="1"/>
+          <Split Date="2000-06-21" Numerator="2" Denominator="1"/>
+          <Split Date="1987-06-16" Numerator="2" Denominator="1"/>
+      </SampleSecurity>
       <SampleSecurity Symbol="GOOG" Name="Google" SecurityType="Equity"/>
-      <SampleSecurity Symbol="IBM" Name="IBM Corp" SecurityType="Equity"/>
-      <SampleSecurity Symbol="F" Name="Ford" SecurityType="Equity"/>
+      <SampleSecurity Symbol="IBM" Name="IBM Corp" SecurityType="Equity">
+          <Split Date="1999-05-27" Numerator="2" Denominator="1"/>
+          <Split Date="1997-05-28" Numerator="2" Denominator="1"/>
+      </SampleSecurity>
+      <SampleSecurity Symbol="F" Name="Ford" SecurityType="Equity">
+          <Split Date="1994-06-06" Numerator="2" Denominator="1"/>
+      </SampleSecurity>
       <SampleSecurity Symbol="GLD" Name="Gold Index" SecurityType="MutualFund"/>
       <SampleSecurity Symbol="VWEHX" Name="Vanguard High Yield Corporate Inv" SecurityType="MutualFund"/>
   </Securities> 

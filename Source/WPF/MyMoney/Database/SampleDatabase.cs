@@ -22,11 +22,13 @@ namespace Walkabout.Assitance
         private const int Years = 10;
         private Account checking;
         private string stockQuotePath;
+        private StockQuoteManager manager;
         Random rand = new Random();
         Dictionary<string, StockQuoteHistory> quotes = new Dictionary<string, StockQuoteHistory>();
 
-        public SampleDatabase(MyMoney money, string stockQuotePath)
+        public SampleDatabase(MyMoney money, StockQuoteManager manager, string stockQuotePath)
         {
+            this.manager = manager;
             this.money = money;
             this.stockQuotePath = stockQuotePath;
         }
@@ -56,7 +58,7 @@ namespace Walkabout.Assitance
                 Directory.Delete(quoteFolder, true);
             }
             System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, temp);
-            foreach(var file in Directory.GetFiles(quoteFolder))
+            foreach (var file in Directory.GetFiles(quoteFolder))
             {
                 var target = Path.Combine(this.stockQuotePath, Path.GetFileName(file));
                 if (!File.Exists(target))
@@ -82,6 +84,7 @@ namespace Walkabout.Assitance
                 if (history != null)
                 {
                     this.quotes[ss.Symbol] = history;
+                    this.manager.DownloadLog.AddHistory(history);
                 }
             }
             int totalFrequency = data.GetTotalFrequency();
@@ -155,6 +158,27 @@ namespace Walkabout.Assitance
                 }
             }
 
+            money.BeginUpdate(this);
+            // create the securities and stock splits
+            foreach (var sec in data.Securities)
+            {
+                Security stock = money.Securities.FindSecurity(sec.Name, true);
+                if (sec.Splits != null)
+                {
+                    foreach (var split in sec.Splits)
+                    {
+                        var exists = money.StockSplits.FindStockSplitByDate(stock, split.Date);
+                        if (exists == null) {
+                            StockSplit stockSplit = money.StockSplits.NewStockSplit();
+                            stockSplit.Security = stock;
+                            stockSplit.Date = split.Date;
+                            stockSplit.Numerator = split.Numerator;
+                            stockSplit.Denominator = split.Denominator;
+                        }
+                    }
+                }
+            }
+            money.EndUpdate();
 
             CreateRandomTransactions(list, inflation);
 
@@ -231,7 +255,7 @@ namespace Walkabout.Assitance
             {
                 return;
             }
-            
+
             // now balance the accounts.
             foreach (Account a in money.Accounts.GetAccounts())
             {
@@ -265,7 +289,7 @@ namespace Walkabout.Assitance
             }
 
             Transactions transactions = money.Transactions;
-            for (year = DateTime.Now.Year-10; year <= DateTime.Now.Year; year++)
+            for (year = DateTime.Now.Year - 10; year <= DateTime.Now.Year; year++)
             {
                 cash.TryGetValue(year, out decimal balance);
                 balance -= removed;
@@ -398,7 +422,7 @@ namespace Walkabout.Assitance
                 allDaysInYear.Add(day);
             }
 
-            SortedList<int,int> selectedDays = new SortedList<int,int>();
+            SortedList<int, int> selectedDays = new SortedList<int, int>();
 
             for (int populateCount = 0; populateCount < count; populateCount++)
             {
@@ -770,6 +794,21 @@ namespace Walkabout.Assitance
 
         [XmlAttribute]
         public SecurityType SecurityType { get; set; }
+
+        [XmlElement("Split")]
+        public SampleSplit[] Splits { get; set; }
+    }
+
+    public class SampleSplit
+    {
+        [XmlAttribute]
+        public DateTime Date { get; set; }
+
+        [XmlAttribute]
+        public int Numerator { get; set; }
+
+        [XmlAttribute]
+        public int Denominator { get; set; }
     }
 
 

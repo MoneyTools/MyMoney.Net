@@ -24,6 +24,7 @@
 
                     <TextBlock Grid.Column="1" Text="{Binding BalanceInNormalizedCurrencyValue, StringFormat={}{0:C}}"  
 							   HorizontalAlignment="Right" 
+                               Foreground="{Binding BalanceForeground}"
                                />
                     </Grid>
             </Border>
@@ -56,8 +57,7 @@
 
                 <TextBlock  x:Name="AccountBalance"  Text="{Binding Balance, StringFormat={}{0:C}}"  Grid.Column="2" 
                            HorizontalAlignment="Right"
-                           Foreground="{Binding BalanceForeground}"
-                           FontWeight="{Binding FontWeight}"/>
+                           Foreground="{Binding BalanceForeground}"/>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>

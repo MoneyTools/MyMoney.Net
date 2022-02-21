@@ -320,7 +320,26 @@ namespace Walkabout.Views.Controls
 
         public void OnAccountsChanged(object sender, ChangeEventArgs e)
         {
-            Rebind();
+            if ((e.ChangeType == ChangeType.TransientChanged || e.ChangeType == ChangeType.Changed) && e.Item is Account && e.Name == "Balance")
+            {
+                // then we only need to rebalance the headers.  The AccountItemViewModel balances are auto-updated by that view model.
+                UpdateSectionHeaderBalances();
+            }
+            else
+            {
+                Rebind();
+            }
+        }
+
+        void UpdateSectionHeaderBalances()
+        {
+            foreach (var item in this.items)
+            {
+                if (item is AccountSectionHeader header)
+                {
+                    header.UpdateBalance();
+                }
+            }
         }
 
         void Rebind()
@@ -403,10 +422,11 @@ namespace Walkabout.Views.Controls
 
                 foreach (Account a in accountOfTypeBanking)
                 {
-                    sectionHeader.BalanceInNormalizedCurrencyValue+= a.BalanceNormalized;
                     output.Add(new AccountItemViewModel(a));
                     bundle.Add(a);
                 }
+
+                sectionHeader.UpdateBalance();
             }
             return sectionHeader;
         }
@@ -425,14 +445,14 @@ namespace Walkabout.Views.Controls
         {
             if (item != this.selected)
             {
-                if (this.selected is AccountItemViewModel a)
+                if (this.selected != null)
                 {
-                    a.IsSelected = false;
+                    this.selected.IsSelected = false;
                 }
                 this.selected = item;
-                if (this.selected is AccountItemViewModel b)
+                if (this.selected != null)
                 {
-                    b.IsSelected = true;
+                    this.selected.IsSelected = true;
                 }
             }
         }
@@ -779,6 +799,24 @@ namespace Walkabout.Views.Controls
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private bool selected;
+
+        public bool IsSelected
+        {
+            get => this.selected;
+            set
+            {
+                if (this.selected != value)
+                {
+                    this.selected = value;
+                    OnSelectedChanged();
+                }
+            }
+        }
+
+        protected virtual void OnSelectedChanged() { }
+
+
         protected void OnPropertyChanged(string name)
         {
             if (PropertyChanged != null)
@@ -792,7 +830,6 @@ namespace Walkabout.Views.Controls
     public class AccountItemViewModel : AccountViewModel
     {
         private Account account;
-        private bool selected;
 
         public AccountItemViewModel(Account a)
         {
@@ -803,6 +840,12 @@ namespace Walkabout.Views.Controls
         ~AccountItemViewModel()
         {
             this.account.PropertyChanged -= OnPropertyChanged;
+        }
+
+        protected override void OnSelectedChanged() 
+        {
+            OnPropertyChanged("NameForeground");
+            OnPropertyChanged("BalanceForeground");
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -819,6 +862,7 @@ namespace Walkabout.Views.Controls
                 case "BalanceNormalized":
                 case "Balance":
                     OnPropertyChanged("BalanceForeground");
+                    OnPropertyChanged("Balance");
                     break;
                 case "LastBalance":
                     OnPropertyChanged("TooltipRow2");
@@ -837,18 +881,11 @@ namespace Walkabout.Views.Controls
             get => account.Name;
         }
 
-        public bool IsSelected
+        public decimal Balance
         {
-            get => this.selected;
-            set
-            {
-                if (this.selected != value)
-                {
-                    this.selected = value;
-                    OnPropertyChanged("NameForeground");
-                }
-            }
+            get => account.Balance;
         }
+
 
         public FontWeight FontWeight
         {
@@ -893,12 +930,16 @@ namespace Walkabout.Views.Controls
         {
             get
             {
-                decimal c = (decimal)this.account.BalanceNormalized;
-                if (c < 0)
+                string brush = "SystemControlDisabledBaseMediumLowBrush";
+                if (this.IsSelected)
                 {
-                    return AppTheme.Instance.GetThemedBrush("NegativeCurrencyForegroundBrush");
+                    brush = "ListItemSelectedForegroundBrush";
                 }
-                return AppTheme.Instance.GetThemedBrush("PositiveCurrencyForegroundBrush");
+                else if (this.account.BalanceNormalized < 0)
+                {
+                    brush = "NegativeCurrencyForegroundBrush";
+                }
+                return AppTheme.Instance.GetThemedBrush(brush);
             }
         }
 
@@ -994,9 +1035,43 @@ namespace Walkabout.Views.Controls
 
     public class AccountSectionHeader : AccountViewModel
     {
+        private decimal balanceNormalized;
+
         public string Title { get; set; }
 
-        public decimal BalanceInNormalizedCurrencyValue { get; set; }
+        public decimal BalanceInNormalizedCurrencyValue {
+            get => balanceNormalized;
+            set {
+                if (balanceNormalized != value)
+                {
+                    balanceNormalized = value;
+                    OnPropertyChanged("BalanceInNormalizedCurrencyValue");
+                    OnPropertyChanged("BalanceForeground");
+                }
+            }
+        }
+
+        protected override void OnSelectedChanged()
+        {
+            OnPropertyChanged("BalanceForeground");
+        }
+
+        public Brush BalanceForeground
+        {
+            get
+            {
+                string brush = "SystemControlDisabledBaseMediumLowBrush";
+                if (this.IsSelected)
+                {
+                    brush = "ListItemSelectedForegroundBrush";
+                }
+                else if (this.balanceNormalized < 0)
+                {
+                    brush = "NegativeCurrencyForegroundBrush";
+                }
+                return AppTheme.Instance.GetThemedBrush(brush);
+            }
+        }
 
         public List<Account> Accounts { get; set; }
 
@@ -1008,6 +1083,19 @@ namespace Walkabout.Views.Controls
             {
                 Clicked(this, EventArgs.Empty);
             }
+        }
+
+        internal void UpdateBalance()
+        {
+            decimal balance = 0;
+            if (Accounts != null)
+            {
+                foreach (Account a in Accounts)
+                {
+                    balance += a.BalanceNormalized;
+                }
+            }
+            this.BalanceInNormalizedCurrencyValue = balance;
         }
     }
     

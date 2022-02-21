@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.91" date="2/21/2022">
+    - Fix bug in showing of AccountView balances.
+    - Add stock split data to Sample Database.
+    - Fix drill down on expenses pie chart so pie chart stays visible.
+  </change>
   <change version="1.1.0.90" date="2/21/2022">
     - Dark Theme improvements.
     - Fix bug in dragging scrollbar thumb in accounts view.

@@ -8079,7 +8079,7 @@ namespace Walkabout.Data
                 {
                     Securities parent = this.Parent as Securities;
                     MyMoney money = parent.Parent as MyMoney;
-                    splits = new ObservableStockSplits(this, money.StockSplits);
+                    splits = new ObservableStockSplits(this, money);
                 }
                 return this.splits;
             }
@@ -13278,6 +13278,8 @@ namespace Walkabout.Data
 
     /// <summary>
     /// This helper class is for maintaining a list of StockSplits associated with a given security.
+    /// It is a cache of the subset of slits in Money.Splits that belong to a given Security and
+    /// this cache is automatically updated so it remains up to date.
     /// </summary>
     public class ObservableStockSplits : ThreadSafeObservableCollection<StockSplit>
     {
@@ -13285,21 +13287,74 @@ namespace Walkabout.Data
         StockSplits splits;
         bool initializing;
 
-        public ObservableStockSplits(Security security, StockSplits splits)
+        public ObservableStockSplits(Security security, MyMoney money)
         {
             initializing = true;
             this.security = security;
-            this.splits = splits;
+            this.splits = money.StockSplits;
             int index = 0;
-            foreach (StockSplit s in splits.GetStockSplitsForSecurity(security))
+            foreach (StockSplit s in this.splits.GetStockSplitsForSecurity(security))
             {
                 this.Insert(index++, s);
             }
             initializing = false;
-            // todo: listen to MyMoney.StocksSplits changes and sync this collection...
+            money.Changed += OnMoneyChanged;
+        }
+
+        private void OnMoneyChanged(object sender, ChangeEventArgs e)
+        {
+            if ((e.Item is Security s && s == this.security) ||
+                (e.Item is StockSplit ss && ss.Security == this.security))
+            {
+                SyncSplits();
+            }
+
         }
 
         public Security Security { get { return this.security; } }
+
+        private void SyncSplits()
+        {
+            initializing = true;
+            HashSet<StockSplit> active = new HashSet<StockSplit>();
+            foreach (StockSplit s in this.splits.GetStockSplitsForSecurity(security))
+            {
+                int index = 0;
+                bool found = false;
+                foreach(var existing in this)
+                {
+                    if (existing == s)
+                    {
+                        // we got it.
+                        active.Add(existing);
+                        found = true;
+                        break;
+                    }
+                    else if (s.Date < existing.Date)
+                    {
+                        InsertItem(index, s);
+                        active.Add(s);
+                        found = true;
+                    }
+                    index++;
+                }
+                if (!found)
+                {
+                    InsertItem(this.Count, s);
+                    active.Add(s);
+                }
+            }
+            
+            foreach (var existing in this)
+            {
+                if (!active.Contains(existing))
+                {
+                    RemoveItem(this.IndexOf(existing));
+                }
+            }
+
+            initializing = false;
+        }
 
         protected override void InsertItem(int index, StockSplit item)
         {
@@ -13313,9 +13368,12 @@ namespace Walkabout.Data
 
         protected override void RemoveItem(int index)
         {
-            StockSplit s = this[index];
             base.RemoveItem(index);
-            splits.RemoveStockSplit(s);
+            if (!initializing)
+            {
+                StockSplit s = this[index];
+                splits.RemoveStockSplit(s);
+            }
         }
 
         protected override void ClearItems()
@@ -13420,6 +13478,11 @@ namespace Walkabout.Data
             return (StockSplit)this.stockSplits[id];
         }
 
+        public StockSplit FindStockSplitByDate(Security s, DateTime date)
+        {
+            return (from t in this.stockSplits.Values where t.Date == date && t.Security == s select t).FirstOrDefault();
+        }
+
         // todo: there should be no references left at this point...
         public bool RemoveStockSplit(StockSplit s)
         {
@@ -13444,6 +13507,10 @@ namespace Walkabout.Data
                     list.Add(split);
                 }
             }
+            list.Sort(new Comparison<StockSplit>((a, b) =>
+            {
+                return a.Date.CompareTo(b.Date);
+            }));
             return list;
         }
 
