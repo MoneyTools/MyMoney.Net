@@ -316,6 +316,17 @@ namespace Walkabout.Utilities
                 });
         }
 
+        public static bool HitScrollBar(this FrameworkElement e, Point pos)
+        {
+            HitTestResult result = VisualTreeHelper.HitTest(e, pos);
+            if (result != null)
+            {
+                var scrollbar = WpfHelper.FindAncestor<ScrollBar>(result.VisualHit);
+                return scrollbar != null;
+            }
+            return false;
+        }
+
     }
 
 

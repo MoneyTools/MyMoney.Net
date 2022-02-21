@@ -250,6 +250,7 @@ namespace Walkabout.Views.Controls
                 }
 
                 this.listBox1.ItemsSource = this.items;
+                UpdateContextMenuView();
 #if PerformanceBlocks
             }
 #endif  
@@ -257,8 +258,12 @@ namespace Walkabout.Views.Controls
 
         void listBox1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            uint delay = NativeMethods.GetDoubleClickTime();
-            delayedActions.StartDelayedAction("SingleClick", OnShowAllTransactions, TimeSpan.FromMilliseconds(delay + 100));
+            Point pos = e.GetPosition(this);
+            if (!this.HitScrollBar(pos))
+            {
+                uint delay = NativeMethods.GetDoubleClickTime();
+                delayedActions.StartDelayedAction("SingleClick", OnShowAllTransactions, TimeSpan.FromMilliseconds(delay + 100));
+            }
         }
 
         private void OnShowAllTransactions()
@@ -764,7 +769,7 @@ namespace Walkabout.Views.Controls
 
         private void UpdateContextMenuView()
         {
-            this.MenuDisplayClosedAccounts.IsChecked = this.DisplayClosedAccounts;
+            this.MenuDisplayClosedAccounts.Header = this.DisplayClosedAccounts ? "Hide Closed Accounts" : "Display Closed Accounts";
         }
 
         #endregion

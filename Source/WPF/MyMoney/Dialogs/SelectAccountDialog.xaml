@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:localData="clr-namespace:Walkabout.Data"
 		xmlns:d="clr-namespace:Walkabout.Dialogs"
-        xmlns:c="clr-namespace:Walkabout.WpfConverters"
+        xmlns:c="clr-namespace:Walkabout.WpfConverters"              
         Title="Select Account" Height="400" MinHeight="400" Width="500" MinWidth="500" 
         >
     

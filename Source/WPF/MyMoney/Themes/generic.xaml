@@ -277,6 +277,10 @@
         <Setter Property="BorderThickness" Value="0"/>
     </Style>
 
+    <Style TargetType="Window">
+        <Setter Property="FontSize" Value="12"/>
+    </Style>
+
 
     <!-- ============================================================================================= -->
     <!-- Everything above this point has been Modernized and tested to work with Light and Dark themes -->
