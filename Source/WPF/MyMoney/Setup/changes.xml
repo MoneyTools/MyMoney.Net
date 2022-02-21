@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="1.1.0.90" date="2/21/2022">
+    - Dark Theme improvements.
+    - Fix bug in dragging scrollbar thumb in accounts view.
+    - Fix bugs in "import" double click so you can double click multiple import files.
+    - Fix report close box colors.
+  </change>
   <change version="1.1.0.88" date="2/18/2022">
     - Fix cash flow report so it shows uncategorized transactions unassigned amounts.
     - Fix some issues with pie charts not showing a breakdown when viewing transactions from a cash flow report.  
