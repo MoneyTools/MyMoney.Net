@@ -8,6 +8,6 @@ You can manage all your Aliases using the **View/Aliases**  menu item:
 
 If you delete a row from this list, it will not "undo" the rename, it will simply remove the alias so that future auto-renames no longer take place.
 
-See also [Payees](Payees).
+See also [Payees](Payees.md).
 
 

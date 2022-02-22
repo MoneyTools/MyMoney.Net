@@ -1,6 +1,6 @@
 # Portfolio Report
 
-If you select the "**Investment Portfolio** " option under the Reports menu you will get a an all up report, and if you click the [Portfolio Tab](../Accounts/InvestmentAccounts.md) on a single [Investment Accounts](Investment%20Accounts) you will get a portfolio
+If you select the "**Investment Portfolio** " option under the Reports menu you will get a an all up report, and if you click the [Portfolio Tab](../Accounts/InvestmentAccounts.md) on a single [Investment Accounts](../Accounts/InvestmentAccounts.md) you will get a portfolio
 report for a single account.
 
  The all up report ignores transfers between your accounts.  This report will not include cash balances from bank accounts, or liabilities from any outstanding Loans or any other [Assets](../Accounts/Assets.md).  See [Networth Report](NetworthReport.md) for that.

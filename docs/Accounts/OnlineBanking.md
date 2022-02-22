@@ -1,6 +1,6 @@
 # Online Banking
 
-Once you have setup online banking, you can download a QFX (Quicken Format) file from your bank and import it using the File/Import… menu.
+Once you have setup online banking, you can download an OFX or QFX (Quicken Format) file from your bank and import it using the File/Import… menu.
 
 When this happens you will see a Download tab appear at the bottom with a summary of what happened.  Here we see 8 new transactions were found and merged in my Citibank VISA account:
 
@@ -8,7 +8,7 @@ When this happens you will see a Download tab appear at the bottom with a summar
 
 You can click the row saying "Downloaded 8 new transactions" and it will change the Transaction view to show you those 8 new transactions only so you can quickly review them, fill in missing category information and double check everything looks good.
 
-For a more automated download MyMoney.NET also supports OFX banking.  When you have configured your OFX information correctly the download button will do the above without having to logging into websites, finding the recent activity, exporting it then importing it into MyMoney.Net.  So it is a lot simpler:
+For a more automated download MyMoney.Net also supports OFX banking.  When you have configured your OFX information correctly the download button will do the above without having to logging into websites, finding the recent activity, exporting it then importing it into MyMoney.Net.  So it is a lot simpler:
 
 ![](../Images/Online%20Banking1.png)
 

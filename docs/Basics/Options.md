@@ -12,7 +12,7 @@ You can use this to:
 * Enable/Disable playing of any      sounds.
 
 
-See also [Keyboard](Keyboard)
+See also [Keyboard](Keyboard.md)
 
 
 

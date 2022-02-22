@@ -36,7 +36,7 @@ If you are opening an existing database using File.Open then you need to ensure 
 
 ![](../Images/Setup1.png)
 
-You can change the password using the View "[Options](Options)" menu item.
+You can change the password using the View "[Options](Options.md)" menu item.
 
 To open a password protected file on another machine you must provide the same password that was used to save it.  The password is saved in your local Windows Credential Store so you don't have to keep typing it in.  But this convenience could also help you forget the password.  If you open your Windows Credential Manager you will see an entry with a name starting with "MyMoney".
 

@@ -18,7 +18,7 @@ The app comes with beautiful modern Light and Dark themes that are accentuated w
 The app provides many handy features:
 
 ![](Images/Home2.png)
-Supports [Banking](Accounts/BankAccounts.md), [Credit Card](Accounts/CreditCardAccounts.md), [Investment](Accounts/InvestmentAccounts.md) and [Assets](Accounts/Assets.md) accounts, with [Auto Categorization](Basics/AutoCategorization.md), and auto identification and [merging](Merging) of duplicate transactions. 
+Supports [Banking](Accounts/BankAccounts.md), [Credit Card](Accounts/CreditCardAccounts.md), [Investment](Accounts/InvestmentAccounts.md) and [Assets](Accounts/Assets.md) accounts, with [Auto Categorization](Basics/AutoCategorization.md), and auto identification and [merging](Basics/Merging.md) of duplicate transactions. 
 
 ![](Images/Home3.png)
 Save a lot of typing using [Online Banking](Accounts/OnlineBanking.md) to download statements from your bank, using OFX over [secure](Accounts/OnlineSecurity.md) HTTPS. No middle man storage of your account information, MyMoney talks directory from your PC to your bank, which is just as secure as if you logged onto your Bank website and downloaded transactions yourself. For banks that don't support OFX, you can download Money or Quicken QFX files and import them.

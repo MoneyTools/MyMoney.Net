@@ -1,9 +1,4 @@
-
-
-Tuesday, October 30, 2012
-12:59 AM
-
-[Home](Home)
+# Known OFX Issues
 
 If you have trouble getting Online Banking working with your bank you may be able to correct the problem by simply opening the Online Account properties and re-connecting.
 
@@ -84,7 +79,7 @@ The result of these errors are harder to debug because the error message is so n
     American Express Brokerage
     Educational Employees CU
 
-**1: Bank of America has completed a planned systems update for accounts opened in California. Please visit** [www.bankofamerica.com/Financialmanagement](http://www.bankofamerica.com/Financialmanagement)**for detailed instructions on how to update your settings and avoid service interruptions.**
+**1: Bank of America has completed a planned systems update for accounts opened in California. Please visit** [www.bankofamerica.com/Financialmanagement](http://www.bankofamerica.com/Financialmanagement)** for detailed instructions on how to update your settings and avoid service interruptions.**
 
     Bank of America (California)
 
@@ -146,11 +141,3 @@ The result of these errors are harder to debug because the error message is so n
 **1: This server does not support the requested InstitutionID**
 
     TIB Bank
-
-[Home](Home)
-
-
-
-
-
-
