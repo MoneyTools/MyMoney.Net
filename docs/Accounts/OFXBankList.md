@@ -1,11 +1,6 @@
+OFX Bank List
 
-
-Tuesday, October 30, 2012
-12:57 AM
-
-[Home](Home)
-
-**We have the OFX URL for the following 338 banks and we can get a valid OFX profile response from them, so theoretically with the right online user id and password you should be able to connect to these banks and download your statements automatically after you follow the** [Online Banking](Online%20Banking)**instructions.**
+**We have the OFX URL for the following 338 banks and we can get a valid OFX profile response from them, so theoretically with the right online user id and password you should be able to connect to these banks and download your statements automatically after you follow the** [Online Banking](OnlineBanking.md)**instructions.**
 
 If your bank is not listed here, you may be able to get it from [http://www.ofxhome.com/](http://www.ofxhome.com/).   Please also check the [Known OFX Issues](KnownOFXIssues.md)**.**
 
@@ -347,9 +342,6 @@ If your bank is not listed here, you may be able to get it from [http://www.ofxh
     Zions Bank
     zWachovia
     ZZZ – U.S. Trust Company, N.A.
-
-[Home](Home)
-
 
 
 

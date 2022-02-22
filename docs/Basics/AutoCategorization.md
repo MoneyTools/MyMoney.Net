@@ -1,9 +1,4 @@
-
-
-Friday, March 23, 2012
-1:49 PM
-
-[Home](Home)
+# Auto Categorization
 
 When transactions are downloaded they will not have any "Category" information.  But often times the category is 1:1 related to the "Payee".  For example, you usually buy "Auto:Fuel" from ARCO, or you normally by "Food:Groceries" from Safeway.
 
@@ -19,10 +14,4 @@ To illustrate how well this works, you can use this to figure out which car was 
 
 This works best if your Payee names are normalized using payee aliasing.
 
-[Home](Home) | [Categories](Categories) | [Aliases](Aliases)
-
-
-
-
-
-
+[Home](../index.md) | [Categories](Categories.md) | [Aliases](Aliases.md)
