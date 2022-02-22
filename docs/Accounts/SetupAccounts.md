@@ -20,9 +20,29 @@ Most of these fields are optional, except Name, and Account Number.  Name is th
 
 The **Description**  is entirely optional.
 
-See **Account Type**  description below.
+The **Account Type** combo shows
 
-The **Tax Deferred** checkbox causes the value of this account to be separated in [Networth](../Reports/NetworthReport.md) and [Investment Portfolio](../Reports/InvestmentPortfolio.md).  For example, you could check this on a 401k or IRA account.  Leave it blank if you have a tax free Roth IRA.
+- The following choices:
+
+  ![image](../Images/Setup%20Accounts2.png)
+
+- **Savings**  and **Checking**  are designed for [Bank Accounts](BankAccounts.md).   MoneyMarket is just another kind of savings account.
+
+- **Cash**  is like a bank account, and can be used to track petty cash,
+
+- **Credit**  is for credit cards but is very similar to bank accounts.  See [Credit Card Accounts](CreditCardAccounts.md).
+
+- **Brokerage** is for brokerage accounts.  See [Investment Accounts](InvestmentAccounts.md).
+
+- **Retirement**  is for retirement accounts like 401k, 403b, and Roth IRA. See [Investment Accounts](InvestmentAccounts.md).
+
+- **Asset**  is an account that you can deposit assets into just so they get added to your net worth statement.  See [Assets](Assets.md)**.**
+
+
+
+The **Tax Status** combo allows you to specify if the account is Taxable, Tax Deferred or Tax Free.  This impacts how
+taxable gains are computed in the [Networth](../Reports/NetworthReport.md) and [Investment Portfolio](../Reports/InvestmentPortfolio.md). 
+For example, create a Tax Deferred 401k account or a Tax Free Roth IRA account.
 
 The **Opening Balance**  is the amount that you need to enter in order to start balancing the account, so whatever month you want start from, grab the ending balance from your previous bank statement.
 
@@ -41,22 +61,5 @@ The **Closed**  checkbox simply removes the account from the default view to cle
 You probably never need to delete any data.  15 years of transactions for a single family is about 15 megabytes.  So with the size of hard drives these days, you can easily store all your transactions for life, including [Attachments](../Basics/Attachments.md).  Of course, I would then recommend the SQL Lite database which will be able to handle bigger databases than the XML file formats.
 
 The **Last Download**  date can be used to reset the Online Account synchronization date. 
-
-The following account types are supported:
-
-![](../Images/Setup%20Accounts2.png)
-
-**Savings**  and **Checking**  are designed for [Bank Accounts](BankAccounts.md).   MoneyMarket is just another kind of savings account.
-
-**Cash**  is like a bank account, and can be used to track petty cash,
-
-**Credit**  is for credit cards but is very similar to bank accounts.  See [Credit Card Accounts](CreditCardAccounts.md).
-
-**Brokerage** is for brokerage accounts.  See [Investment Accounts](InvestmentAccounts.md).
-
-**Retirement**  is for retirement accounts like 401k, 403b, and Roth IRA. See [Investment Accounts](InvestmentAccounts.md).
-
-**Asset**  is an account that you can deposit assets into just so they get added to your net worth statement.  See [Assets](Assets.md)**.**
-
 
 

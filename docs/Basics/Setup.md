@@ -1,8 +1,6 @@
 
 # Setup
 
-[**MyMoney.exe** ](https://lovettsoftwarestorage.blob.core.windows.net/downloads/XmlNotepad/XmlNotepad.application) is a [.NET 4.8](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) application for managing personal finances.  It is automatically [updated](../Updates.md) with the latest features and fixes using a handy ClickOnce installer.
-
 When you first launch the app you will be greeted with a setup dialog where you can choose where to put your SQL lite database and a password to protect it.
 
 ![](../Images/Setup.png)

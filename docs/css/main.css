@@ -127,7 +127,7 @@ outline: none;
 }
 
 .wm-top-title::before {
-  content:  url("https://microsoft.github.io/XmlNotepad/assets/images/icon.png");
+  content:  url("../Images/Home.png");
 }
 
 .wm-top-title   {

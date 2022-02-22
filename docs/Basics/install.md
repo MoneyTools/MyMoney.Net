@@ -24,4 +24,4 @@ Or use this command line if you have the [winget cli](https://github.com/microso
 winget install LovettSoftware.MyMoney.Net
 ```
 
-Once installed see [Setup](Basics/Setup.md) for next steps.
+Once installed see [Setup](Setup.md) for next steps.
