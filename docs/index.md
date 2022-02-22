@@ -3,7 +3,7 @@
 **MyMoney**  is a rich client [.NET 4.8 ClickOnce application](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) for managing your personal finances.  See [Demo Video](https://lovettsoftwarestorage.blob.core.windows.net/videos/MyMoney.mp4).
 
 <div>
-<a href="install.html" class="btn btn-primary mt-20 mr-30" target="_blank">Install</a>
+<a href="Basics/install" class="btn btn-primary mt-20 mr-30" style="color:#EEEEFF" >Install</a>
 <br/>
 <br/>
 </div>

@@ -94,13 +94,13 @@
 if (is_top_frame) { $('body').addClass('wm-top-page'); }
 </script>
 
-<div id="cookie-banner"></div>
 {#
  # Code for the top frame. It should ideally be separate from the index page (which is likely
  # possible once theme_config is released with mkdocs 1.0).
  #}
 {%- if is_top -%}
   {% include 'topbar.html' %}
+
   <div id="main-content" class="wm-page-top-frame">
     {% include 'nav-pane.html' %}
     <div class="wm-content-pane">
@@ -112,34 +112,32 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
 
 {# Code for the main template for all content pages. #}
 
-<div class="wrapper wm-page-content">
-  <div class="container-fluid">
-    <a name="_top"></a>
-    {%- if config.extra.article_nav_top != False %}
-      {% include "article-nav.html" %}
-    {%- endif %}
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+  {%- if config.extra.article_nav_top != False %}
+    {% include "article-nav.html" %}
+  {%- endif %}
 
-    {%- block content %}
-      {% if page and page.meta.source %}
-        <div class="source-links">
-        {% for filename in page.meta.source %}
-            <span class="label label-primary">{{ filename }}</span>
-        {% endfor %}
-        </div>
-      {% endif %}
+  {%- block content %}
+    {% if page and page.meta.source %}
+      <div class="source-links">
+      {% for filename in page.meta.source %}
+          <span class="label label-primary">{{ filename }}</span>
+      {% endfor %}
+      </div>
+    {% endif %}
 
-      {{ page.content }}
-    {%- endblock %}
+    {{ page.content }}
+  {%- endblock %}
 
+  <br>
+  {%- if config.extra.article_nav_bottom != False %}
+    {% include "article-nav.html" %}
     <br>
-    {%- if config.extra.article_nav_bottom != False %}
-      {% include "article-nav.html" %}
-      <br>
-    {%- endif %}
-  </div>
+  {%- endif %}
 </div>
 
-<footer class="wm-page-content">
+<footer class="container-fluid wm-page-content">
 {%- block footer %}
   {%- block repo %}
     {%- if page and page.edit_url %}
@@ -153,11 +151,10 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
     {%- endif %}
   {%- endblock %}
 
-  {% include 'footer.html' %}
+  {%- if config.copyright %}<p>{{ config.copyright }}</p>{%- endif %}
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
 {%- endblock %}
 </footer>
-
-{% include 'scripts.html' %}
 
 </body>
 </html>

@@ -9,18 +9,18 @@ You must first ensure you have [.NET 4.8 installed](https://dotnet.microsoft.com
 When installed using ClickOnce the app will [auto-update](Updates.md).
 
 <div>
-<a href="https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/MyMoney.application" class="btn btn-primary mt-20 mr-30" target="_blank">ClickOnce® installer</a>
+<a href="https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/MyMoney.application" class="btn btn-primary mt-20 mr-30" target="_blank"  style="color:#EEEEFF" >ClickOnce® installer</a>
 <br/>
 <br/>
 </div>
 
 You can also use `winget` to install MyMoney.Net:
 
-<a href="https://winget.run/pkg/LovettSoftware/MyMoney.Net" class="btn btn-primary mt-20 mr-30" target="_blank">winget installer</a>
+<a href="https://winget.run/pkg/LovettSoftware/MyMoney.Net" class="btn btn-primary mt-20 mr-30" target="_blank"  style="color:#EEEEFF" >winget installer</a>
 
 Or use this command line if you have the [winget cli](https://github.com/microsoft/winget-cli) installed:
 
-```shell
+```
 winget install LovettSoftware.MyMoney.Net
 ```
 

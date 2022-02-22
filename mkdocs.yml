@@ -5,7 +5,7 @@ site_url: https://clovett.github.io/MyMoney.Net/
 
 theme:
     name: null
-    custom_dir: docs/windmill_dark
+    custom_dir: docs/windmill
     # default from mkdocs_theme.yml
     static_templates:
         - 404.html
@@ -20,10 +20,6 @@ theme:
 
 markdown_extensions:
     - smarty
-
-extra_css:
-    - css/main.css
-    - css/syntax.css
 
 extra_javascript:
     - https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js
