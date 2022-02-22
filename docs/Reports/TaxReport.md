@@ -4,8 +4,6 @@ You can associate your categories with "Tax Categories" using the field shown in
 
 ![](../Images/Tax%20Report.png)
 
-The tax categories are defined here: [http://turbotax.intuit.com/txf/TXF041.jsp](http://turbotax.intuit.com/txf/TXF041.jsp)
-
 The "Reports" menu contains an "Income Tax Report" and a "W3 and Other Tax Forms" report.
 
 ### Income Tax Report
