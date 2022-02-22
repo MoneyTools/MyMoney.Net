@@ -7,7 +7,7 @@ When you [setup a bank account](SetupAccounts.md) it will be empty, and you can 
 You can add a new transaction by clicking below the last one or by typing ENTER key twice after selecting the last row.  You can add a new transaction right before the selected one by typing the INSERT key on your keyboard, which is handy if you want to give it a date in that general location rather than scrolling to the end.
 
 ### A
-is for [Attachments](../Basics/Attachments).  This is also useful for keeping scanned receipts so you can find them later.   
+is for [Attachments](../Basics/Attachments.md).  This is also useful for keeping scanned receipts so you can find them later.   
 
 ### Num
 Is for check numbers (sometimes your bank assigns numbers to bill payment transactions and those will show up here also).
