@@ -90,7 +90,7 @@ namespace Walkabout.Reports
             totalBalance += balance;
 
             // Investment Cash
-            balance = this.myMoney.GetInvestmentCashBalance(new Predicate<Account>((a) => { return !a.IsClosed && IsInvestmentAccount(a); }));
+            balance = this.myMoney.GetInvestmentCashBalanceNormalized(new Predicate<Account>((a) => { return !a.IsClosed && IsInvestmentAccount(a); }));
             color = GetRandomColor();
             data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance, Color = color });
             WriteRow(writer, color, "Investment Cash", balance);

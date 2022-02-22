@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Win32;
@@ -14,10 +11,7 @@ using Walkabout.Data;
 using Walkabout.Dialogs;
 using Walkabout.Utilities;
 using Walkabout.Migrate;
-using Walkabout.Taxes;
 using System.IO;
-using System.Windows.Media.Imaging;
-using Walkabout.Help;
 using Walkabout.Commands;
 using Walkabout.Configuration;
 using System.ComponentModel;
@@ -883,7 +877,7 @@ namespace Walkabout.Views.Controls
 
         public decimal Balance
         {
-            get => account.Balance;
+            get => this.account.BalanceNormalized;
         }
 
 

@@ -9,14 +9,23 @@ for /f "usebackq" %%i in (`xsl -e -s Version\version.xsl Version\version.props`)
 
 echo ### Publishing version %VERSION%...
 set WINGET=1
+set GITRELEASE=1
 
+:parse
 if "%1"=="/nowinget" set WINGET=0
+if "%1"=="/norelease" set GITRELEASE=0
+if "%1"=="" goto :done
+shift
+goto :parse
+
+:done
 
 if "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%" == "" goto :nokey
 if not EXIST publish goto :nobits
 
 if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :noappx
 
+if "%GITRELEASE%" == "0" goto :upload
 echo Creating new tag for version %VERSION%
 git tag %VERSION%
 git push origin --tags
@@ -26,10 +35,11 @@ xsl -e -s MyMoney\Setup\LatestVersion.xslt MyMoney\Setup\changes.xml > notes.txt
 gh release create %VERSION% %ROOT%MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle --notes-file notes.txt --title "MyMoney.Net %VERSION%"
 del notes.txt
 
+:upload
 echo Uploading ClickOnce installer
 copy /y MyMoney\Setup\changes.xml publish
-call AzurePublishClickOnce %~dp0publish downloads/MyMoney "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
-call AzurePublishClickOnce %~dp0MoneyPackage\AppPackages downloads/MyMoney.Net "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
+call AzurePublishClickOnce %ROOT%publish downloads/MyMoney "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
+call AzurePublishClickOnce %ROOT%MoneyPackage\AppPackages downloads/MyMoney.Net "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
 
 echo ============ Done publishing ClickOnce installer ==============
 
@@ -79,10 +89,6 @@ echo ===========================================================================
 echo Please create Pull Request for the new "clovett/mymoney_%VERSION%" branch.
 
 call gitweb
-goto :eof
-
-
-
 goto :eof
 
 :nokey

@@ -1922,21 +1922,21 @@ namespace Walkabout.Data
         /// </summary>
         /// <param name="account">The account or null</param>
         /// <returns>Cash balance</returns>
-        public decimal GetInvestmentCashBalance(Predicate<Account> filter)
+        public decimal GetInvestmentCashBalanceNormalized(Predicate<Account> filter)
         {
             decimal cash = 0;
             foreach (Account a in this.Accounts.GetAccounts(false))
             {
                 if (filter(a))
                 {
-                    cash += a.OpeningBalance;
+                    decimal balance = a.OpeningBalance;
                     foreach (Transaction t in this.Transactions.GetTransactionsFrom(a))
                     {
-                        cash += t.Amount;
+                        balance += t.Amount;
                     }
+                    cash += a.GetNormalizedAmount(balance);
                 }
             }
-
             return cash;
         }
 
@@ -2530,6 +2530,23 @@ namespace Walkabout.Data
             }
         }
 
+        public decimal GetNormalizedAmount(decimal amount)
+        {
+            MyMoney money = this.Parent.Parent as MyMoney;
+            if (money != null)
+            {
+                Currency c = money.Currencies.FindCurrency(this.currency);
+                if (c != null)
+                {
+                    //-----------------------------------------------------
+                    // Apply ratio of conversion
+                    // for example USA 2,000 * CAN .95 = 1,900 (in USA currency)
+                    return amount * c.Ratio;
+                }
+            }
+            return amount;
+        }
+
 
         /// <summary>
         /// Return the Balance in USD currency
@@ -2539,20 +2556,7 @@ namespace Walkabout.Data
         {
             get
             {
-                MyMoney money = this.Parent.Parent as MyMoney;
-                if (money != null)
-                {
-                    Currency c = money.Currencies.FindCurrency(this.currency);
-                    if (c != null)
-                    {
-                        //-----------------------------------------------------
-                        // Apply ratio of conversion
-                        // for example USA 2,000 * CAN .95 = 1,900 (in USA currency)
-                        return this.Balance * c.Ratio;
-                    }
-
-                }
-                return this.Balance;
+                return GetNormalizedAmount(this.Balance);
             }
         }
 
