@@ -1,6 +1,6 @@
 # W2 Report
 
-The W2 Report from the [Reports](Reports.md) menu shows a summary of all [Categories](../Basics/Categories.md) that have an associated Tax Category.
+The W2 Report from the [Reports](index.md) menu shows a summary of all [Categories](../Basics/Categories.md) that have an associated Tax Category.
 
 The following is an example of what you might see if you setup Tax Categories in each of these areas:
 
@@ -15,6 +15,3 @@ Sometimes an estimated tax payment happens in the wrong year.  For example, the
 ![](../Images/W2%20Report2.png)
 
 Set the tax year for this transaction to the previous year, then re-run the W2 report and it will be correctly counted in the tax year you selected.
-
-
-

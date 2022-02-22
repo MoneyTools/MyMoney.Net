@@ -1,6 +1,6 @@
 # Cash Flow Report
 
-The Cash Flow Report available from the [Reports](Reports.md) menu shows a summary of Income and Expenses over a given date range.   Knowing what is Income and Expense depends on you providing that Category information on your transactions.  See [Categories](../Basics/Categories.md).
+The Cash Flow Report available from the [Reports](index.md) menu shows a summary of Income and Expenses over a given date range.   Knowing what is Income and Expense depends on you providing that Category information on your transactions.  See [Categories](../Basics/Categories.md).
 
 The default range is 5 years.  But you can change this to a monthly comparison over 12 months, or whatever date range you want to see.  Simply change the drop downs shown at the top of the report:
 
@@ -33,9 +33,3 @@ You will also see an export button which you can use to get a .csv file that you
 
 
 The bottom of the report also shows the Net cash flow for the selected period.
-
-
-
-
-
-

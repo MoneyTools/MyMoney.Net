@@ -11,7 +11,7 @@ Once you have completed your database setup you will be welcomed by the followin
 
 The first thing you will want to do is [create your accounts](../Accounts/SetupAccounts.md).
 
-On the left you see four expandable panels for managing [Bank Accounts](../Accounts/BankAccounts.md), [Categories](Categories.md), [Payees](Payees.md) and [Securities](Securities.md).  In the main area on the right will be your banking transactions, and the bottom tabbed section will contain various [charts](../Charts/Charts.md) and download status information. 
+On the left you see four expandable panels for managing [Bank Accounts](../Accounts/BankAccounts.md), [Categories](Categories.md), [Payees](Payees.md) and [Securities](Securities.md).  In the main area on the right will be your banking transactions, and the bottom tabbed section will contain various [charts](../Charts/index.md) and download status information. 
 
 If you just want to play with the app to get a feel for it you can populate your new database with [Sample Data](SampleData.md).
 

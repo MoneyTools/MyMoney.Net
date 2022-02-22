@@ -113,6 +113,22 @@ namespace LovettSoftware.Charts
             ((AnimatingBarChart)d).OnDelayedUpdate();
         }
 
+        public double LineThickness
+        {
+            get { return (double)GetValue(LineThicknessProperty); }
+            set { SetValue(LineThicknessProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for LineThickness.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LineThicknessProperty =
+            DependencyProperty.Register("LineThickness", typeof(double), typeof(AnimatingBarChart), new PropertyMetadata(0.5, new PropertyChangedCallback(OnLineThicknessChanged)));
+
+        private static void OnLineThicknessChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AnimatingBarChart)d).OnDelayedUpdate();
+        }
+
+
         public Orientation Orientation
         {
             get { return (Orientation)GetValue(OrientationProperty); }
@@ -481,7 +497,7 @@ namespace LovettSoftware.Charts
                 {
                     label = new TextBlock() { Foreground = this.Foreground };
                     axisLabels.Add(label);
-                    line = new Polygon() { Stroke = this.LineBrush, StrokeThickness = 1, Points = new PointCollection() };
+                    line = new Polygon() { Stroke = this.LineBrush, StrokeThickness = this.LineThickness, Points = new PointCollection() };
                     axisLines.Add(line);
                 }
                 ChartCanvas.Children.Add(line);

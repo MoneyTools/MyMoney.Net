@@ -1,6 +1,6 @@
 # Unaccepted Report
 
-This Unaccepted report from the [Reports](Reports.md) menu shows you a list of all transactions across all accounts that have not been marked as accepted.
+This Unaccepted report from the [Reports](index.md) menu shows you a list of all transactions across all accounts that have not been marked as accepted.
 
 "Unaccepted" transactions are marked in bold from the time it was download or imported.  You can right click a transaction and select "Toggle Accept" to mark it as accepted, or you can use CTRL+SPACE.
 
@@ -13,5 +13,3 @@ You can also view unaccepted transactions in the selected account using this fil
 And this filter provides some other handy options.
 
 See also [Filtering](../Basics/Filtering.md)
-
-

@@ -31,7 +31,7 @@ Secure storage of your data in a SQL Lite database.  See [Setup](Basics/Setup.m
 
 ![](Images/Home5.png)
 
-Instant  [Charts](Charts/Charts.md) and [Reports](Reports/Reports.md) show everything from current spending trends in your accounts, to pie charts showing spending by category, to bar charts showing historical spending by year or month, to portfolio charts showing your current holdings across stocks, mutual funds, and other investment categories.
+Instant  [Charts](Charts/index.md) and [Reports](Reports/index.md) show everything from current spending trends in your accounts, to pie charts showing spending by category, to bar charts showing historical spending by year or month, to portfolio charts showing your current holdings across stocks, mutual funds, and other investment categories.
 
 ![](Images/Home6.png)
 

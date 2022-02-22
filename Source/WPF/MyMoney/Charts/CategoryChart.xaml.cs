@@ -216,10 +216,10 @@ namespace Walkabout.Charts
             {
                 dataDirty = true;
 
-                TotalAmount.Text = string.Format("{0:C2}", Math.Abs(ComputeNetAmount()));
                 return;
             }
 
+            TotalAmount.Text = string.Format("{0:C2}", Math.Abs(ComputeNetAmount()));
             decimal total = 0;
 
             if (transactions != null)

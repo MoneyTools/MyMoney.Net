@@ -1,6 +1,6 @@
 # History Chart
 
-When you are viewing by category or by payee, you can switch to the "History" tab and see the history by year or by month:
+When you are viewing by category or by payee, you can switch to the "History" tab and see the history by year, month or day:
 
 ![](../Images/History%20Chart.png)
 
@@ -17,8 +17,3 @@ You can also drill down and view all transactions in a given column selecting th
 ![](../Images/History%20Chart2.png)
 
 You can right click to **Export**  the chart data to a .csv spreadsheet.
-
-
-
-
-

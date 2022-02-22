@@ -10,7 +10,7 @@ The Type column can have these values:
 
 The **Private**  type allows you to track other kinds of non-publicly traded investments.  If the [Stock Quote Service](../Accounts/StockQuoteServices.md) doesn't know what it is then you can enter the price details manually. 
 
-The little triangle arrow on the left side expands to show this view where you can enter stock split information.  Click the triangle again to hide the stock splits.
+The little triangle arrow on the left side expands to show the stock split information.  You can edit this grid to add any missing stock splits.  Click the triangle again to hide the stock splits.
 
 ![](../Images/Securities2.png)
 
@@ -20,4 +20,5 @@ You can use the filter button at the top of the view to list only securities tha
 
 ![](../Images/Securities3.png)
 
-Lastly the CUSIP column may be important for automatically finding the right security when you download your statements.  For this to work you need to look up the CUSIP number for your security (you can sometimes find it the memo field or the Payee field - for a new security we haven't seen before).  You can then add the new security with that CUSPID and correct Name and Symbol, then future downloads will match that correctly.
+Lastly the CUSIP column may be important for automatically finding the right security when you download your statements.  For this to work you need to look up the CUSIP number for your security (you can sometimes find it the memo field or the Payee field - for a new security we haven't seen before).  You can then add the new security with that CUSPID and correct Name and Symbol, then future downloads will match that correctly.  If you are using [OFX downloading](../Accounts/OnlineBanking.md) from a brokerage account this should happen automatically, where the download
+will automatically add new Securities with their correct CUSIP number if it did not find them.

@@ -18,7 +18,7 @@
     <Grid Margin="5,10,10,5">
         <c:AnimatingBarChart x:Name="Chart" 
                              Foreground="#767676" 
-                             LineBrush="#E0E0E0" 
+                             LineBrush="{DynamicResource GridLineBrush}" 
                              AnimationGrowthMilliseconds="150" 
                              AnimationRippleMilliseconds="15"
                              AnimationColorMilliseconds="120"
