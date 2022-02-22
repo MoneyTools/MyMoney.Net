@@ -2,7 +2,7 @@
 
 ![](Images/Home.png)
 
-**MyMoney**  is a rich client [.NET 4.8 ClickOnce application](https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/MyMoney.application) for managing your personal finances. You can install it with a ]single click](install.md).  See [Demo Video](https://lovettsoftwarestorage.blob.core.windows.net/videos/MyMoney.mp4).
+**MyMoney**  is a rich client [.NET 4.8 ClickOnce application](https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/MyMoney.application) for managing your personal finances. You can install it with a [single click](install.md).  See [Demo Video](https://lovettsoftwarestorage.blob.core.windows.net/videos/MyMoney.mp4).
 
 
 [![](Images/Home1.png)](https://lovettsoftwarestorage.blob.core.windows.net/videos/MyMoney.mp4)

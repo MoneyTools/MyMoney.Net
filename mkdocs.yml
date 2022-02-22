@@ -1,6 +1,5 @@
 
 site_name: MyMoney.Net
-
 site_url: https://clovett.github.io/MyMoney.Net/
 
 theme:
@@ -32,6 +31,7 @@ plugins:
   - search
 
 extra:
+  base_url: /MyMoney.Net/
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/clovett/MyMoney.Net/
