@@ -6,7 +6,6 @@ site_url: https://clovett.github.io/MyMoney.Net/
 theme:
     name: null
     custom_dir: docs/windmill
-    # default from mkdocs_theme.yml
     static_templates:
         - 404.html
     include_search_page: true
