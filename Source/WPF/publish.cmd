@@ -89,6 +89,8 @@ echo ===========================================================================
 echo Please create Pull Request for the new "clovett/mymoney_%VERSION%" branch.
 
 call gitweb
+
+:skipwinget
 goto :eof
 
 :nokey
