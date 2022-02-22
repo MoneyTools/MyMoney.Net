@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Basics/AutoCategorization/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Auto Categorization - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../css/main.css" rel="stylesheet">
+    <link href="../../css/syntax.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+<div id="cookie-banner"></div>
+
+
+<div class="wrapper wm-page-content">
+  <div class="container-fluid">
+    <a name="_top"></a>
+      
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../SampleData/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../SampleData/" class="btn btn-xs btn-link">
+        Sample Data
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Attachments/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Attachments/" class="btn btn-xs btn-link">
+        Attachments
+      </a>
+    </div>
+    
+  </div>
+
+      
+
+      <p>Friday, March 23, 2012
+1:49 PM</p>
+<p><a href="Home">Home</a></p>
+<p>When transactions are downloaded they will not have any "Category" information.  But often times the category is 1:1 related to the "Payee".  For example, you usually buy "Auto:Fuel" from ARCO, or you normally by "Food:Groceries" from Safeway.</p>
+<p>When you first enter an empty Category field, MyMoney will automatically find the most likely category and enter it for you.  The auto-categorization works best if you have already filled in the "Amount" of the transaction since it uses the following algorithm:</p>
+<ol>
+<li>Find all other transactions      involving this <strong>Payee</strong>  and group them by their categories.</li>
+<li>Find the mean for each group      and find how many standard deviations the new amount is from that mean.</li>
+<li>Pick the group that is      closest.</li>
+<li>Try and avoid picking a      matching transaction that contains a Split unless there's no other choice.</li>
+</ol>
+<p>To illustrate how well this works, you can use this to figure out which car was just filled with gas based on the amount spent (assuming the cars are different - for example, it will easily tell the difference between an SUV and a Hybrid).  Obviously it works better if you fill the car at a consistently empty state.  But the statistical nature of the algorithm can handle some variation here also.</p>
+<p>This works best if your Payee names are normalized using payee aliasing.</p>
+<p><a href="Home">Home</a> | <a href="Categories">Categories</a> | <a href="Aliases">Aliases</a></p>
+
+    <br>
+      
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../SampleData/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../SampleData/" class="btn btn-xs btn-link">
+        Sample Data
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Attachments/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Attachments/" class="btn btn-xs btn-link">
+        Attachments
+      </a>
+    </div>
+    
+  </div>
+
+      <br>
+  </div>
+</div>
+
+<footer class="wm-page-content">
+
+  
+<div class='footer-content'>
+  <div class="container-fluid">
+    <div class="col-sm-8 text-left footnote-copy">
+       MyMoney.Net
+    </div>
+  </div>
+  <li><span id="copyright"></span></li>
+  <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/noraj/mkdocs-windmill-dark">Windmill Dark</a> theme by noraj.</p>
+</div>
+
+</footer>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+      $('table').each(function () {
+        $(this).addClass("table");
+        $(this).addClass("table-bordered");
+        $(this).addClass("table-striped");
+        $(this).addClass("table-condensed");
+      });
+
+    });
+</script>
+
+</body>
+</html>

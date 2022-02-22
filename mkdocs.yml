@@ -1,0 +1,101 @@
+
+site_name: MyMoney.Net
+
+site_url: https://clovett.github.io/MyMoney.Net/
+
+theme:
+    name: null
+    custom_dir: docs/windmill_dark
+    # default from mkdocs_theme.yml
+    static_templates:
+        - 404.html
+    include_search_page: true
+    search_index_only: true
+    history_buttons: true
+    article_nav_top: true
+    article_nav_bottom: true
+    highlightjs: true
+    features:
+    - search.highlight
+
+markdown_extensions:
+    - smarty
+
+extra_css:
+    - css/main.css
+    - css/syntax.css
+
+extra_javascript:
+    - https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js
+
+plugins:
+  - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/clovett/MyMoney.Net/
+  generator: false
+
+markdown_extensions:
+    - toc:
+        permalink: "#"
+
+nav:
+  - Home: index.md
+  - Install: install.md
+  - Basics:
+    - Setup: Basics/Setup.md
+    - Categories: Basics/Categories.md
+    - Payees: Basics/Payees.md
+    - Securities: Basics/Securities.md
+    - Splits: Basics/Splits.md
+    - Transfers: Basics/Transfers.md
+    - Merging: Basics/Merging.md
+    - Options: Basics/Options.md
+    - Keyboard: Basics/Keyboard.md
+    - Navigation: Basics/Navigation.md
+    - Filtering: Basics/Filtering.md
+    - Calculator: Basics/Calculator.md
+    - Clipboard: Basics/Clipboard.md
+    - Quick Search: Basics/QuickSearch.md
+    - Queries: Basics/Queries.md
+    - Aliases: Basics/Aliases.md
+    - Attachments: Basics/Attachments.md
+    - Auto Categorization: Basics/AutoCategorization.md
+    - Sample Data: Basics/SampleData.md
+  - Accounts:
+    - Creating Accounts: Accounts/SetupAccounts.md
+    - Bank Accounts: Accounts/BankAccounts.md
+    - Credit Card Accounts: Accounts/CreditCardAccounts.md
+    - Investment Accounts: Accounts/InvestmentAccounts.md
+    - Loans: Accounts/Loans.md
+    - Online Banking: Accounts/OnlineBanking.md
+    - Online Security: Accounts/OnlineSecurity.md
+    - Account Aliases: Accounts/AccountAliases.md
+    - Balancing Accounts: Accounts/BalancingAccounts.md
+    - Stock Quote Services: Accounts/StockQuoteServices.md
+    - Assets: Accounts/Assets.md
+    - Cost Basis: Accounts/CostBasis.md
+    - OFX Bank List: Accounts/OFXBankList.md
+    - Known OFX Issues: Accounts/KnownOFXIssues.md
+
+  - Charts:
+    - Overview: Charts/Charts.md
+    - History Chart: Charts/HistoryChart.md
+    - Pie Charts: Charts/PieCharts.md
+    - Stock Chart: Charts/StockChart.md
+    - Trend Graph: Charts/TrendGraph.md
+  - Reports:
+    - Overview: Reports/Reports.md
+    - Networth Report: Reports/NetworthReport.md
+    - Investment Portfolio: Reports/InvestmentPortfolio.md
+    - Cash Flow Report: Reports/CashFlowReport.md
+    - Tax Report: Reports/TaxReport.md
+    - W2 Report: Reports/W2Report.md
+    - Unaccepted Report: Reports/UnacceptedReport.md
+
+  - install: install.md
+  - Updates: Updates.md
+  - Development:
+    - Overview: dev/index.md

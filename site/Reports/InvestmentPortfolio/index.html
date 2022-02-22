@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Reports/InvestmentPortfolio/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Investment Portfolio - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../css/main.css" rel="stylesheet">
+    <link href="../../css/syntax.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Portfolio Report", url: "#_top", children: [
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+<div id="cookie-banner"></div>
+
+
+<div class="wrapper wm-page-content">
+  <div class="container-fluid">
+    <a name="_top"></a>
+      
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../CashFlowReport/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../CashFlowReport/" class="btn btn-xs btn-link">
+        Cash Flow Report
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../NetworthReport/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../NetworthReport/" class="btn btn-xs btn-link">
+        Networth Report
+      </a>
+    </div>
+    
+  </div>
+
+      
+
+      <h1 id="portfolio-report">Portfolio Report<a class="headerlink" href="#portfolio-report" title="Permanent link">#</a></h1>
+<p>If you select the "<strong>Investment Portfolio</strong> " option under the Reports menu you will get a an all up report, and if you click the <a href="../../Accounts/InvestmentAccounts/">Portfolio Tab</a> on a single <a href="Investment%20Accounts">Investment Accounts</a> you will get a portfolio
+report for a single account.</p>
+<p>The all up report ignores transfers between your accounts.  This report will not include cash balances from bank accounts, or liabilities from any outstanding Loans or any other <a href="../../Accounts/Assets/">Assets</a>.  See <a href="../NetworthReport/">Networth Report</a> for that.</p>
+<p><img alt="" src="../../Images/Investment%20Portfolio.png" /></p>
+<p>The Gain/Loss is computed from when the stocks were purchased.   If you marked an account as tax deferred in the Account properties, then the securities in that account will be separated out in this pie chart prefixed with "<strong>Tax Deferred</strong> ".  Similarly Retirement accounts are also grouped separately.</p>
+<p>The above summary is followed by a list of all positions still held (after accounting for all Sell/Remove transactions) grouped by the security type.  For example, you will see a summary like this:</p>
+<p><img alt="" src="../../Images/Investment%20Portfolio1.png" /></p>
+<p>Each row here is expandable if you click on the little triangle on the left. For example, if you expand "<strong>Microsoft corp total</strong> " here you will see a list of details like this:</p>
+<p><img alt="" src="../../Images/Investment%20Portfolio2.png" /></p>
+<p>This list contains a row for each unique buy date and unit price when you bought this stock.  So each row then has unique "<a href="../../Accounts/CostBasis/">*cost basis</a>" which is why it is separated this way, and lists only those purchases that still have unsold shares.  Stock sales are matched in First-in First-out (FIFO) order since you usually minimize capital gains taxes that way.  If you sold your stock a different way, then this report will not be correct. </p>
+<p>The <strong>Quantity</strong>  column then is the current number of shares that you own today (taking stock splits into account) rounded to the nearest integer.  If this number is not what you expected, then check the Stock Split history in the Securities View. </p>
+<p>The <strong>Market Value</strong>  then is this Quantity times the current market price.  The Gain/Loss represents your gain or loss since you purchased that security.  The Unit Cost is what you paid for the security and the Cost Basis is what you paid, but adjusted by any stock splits. </p>
+<p>See <a href="../TaxReport/">Tax Report</a> for information on how to export capital gains tax information into Turbo Tax.</p>
+
+    <br>
+      
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../CashFlowReport/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../CashFlowReport/" class="btn btn-xs btn-link">
+        Cash Flow Report
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../NetworthReport/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../NetworthReport/" class="btn btn-xs btn-link">
+        Networth Report
+      </a>
+    </div>
+    
+  </div>
+
+      <br>
+  </div>
+</div>
+
+<footer class="wm-page-content">
+
+  
+<div class='footer-content'>
+  <div class="container-fluid">
+    <div class="col-sm-8 text-left footnote-copy">
+       MyMoney.Net
+    </div>
+  </div>
+  <li><span id="copyright"></span></li>
+  <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/noraj/mkdocs-windmill-dark">Windmill Dark</a> theme by noraj.</p>
+</div>
+
+</footer>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+      $('table').each(function () {
+        $(this).addClass("table");
+        $(this).addClass("table-bordered");
+        $(this).addClass("table-striped");
+        $(this).addClass("table-condensed");
+      });
+
+    });
+</script>
+
+</body>
+</html>

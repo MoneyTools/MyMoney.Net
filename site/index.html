@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="None">
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/">
+    <link rel="shortcut icon" href="./img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>MyMoney.Net</title>
+    <link href="./css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="./css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="./css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/highlight.css">
+    <link href="css/main.css" rel="stylesheet">
+    <link href="css/syntax.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="./js/jquery-3.2.1.min.js"></script>
+    <script src="./js/bootstrap-3.3.7.min.js"></script>
+    <script src="./js/highlight.pack.js"></script>
+    
+      <script src="./js/elasticlunr.min.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '.';
+      var is_top_frame = (window === window.parent);
+        
+        var pageToc = [
+          {title: "Home", url: "#_top", children: [
+          ]},
+        ];
+
+    </script>
+    <script src="./js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+<div id="cookie-banner"></div>
+<nav class="navbar wm-page-top-frame">
+  <div class="container-fluid wm-top-container">
+    
+    <div class="wm-top-tool pull-right wm-vcenter">
+      <form class="dropdown wm-vcentered" id="wm-search-form" action="./search.html">
+        
+        <button id="wm-search-show" class="btn btn-sm btn-default" type="submit"
+          ><i class="fa fa-search" aria-hidden="true"></i></button>
+
+        <div class="input-group input-group-sm wm-top-search">
+          <input type="text" name="q" class="form-control" id="mkdocs-search-query" placeholder="Search" autocomplete="off">
+          <span class="input-group-btn" role="search">
+            
+            <button class="btn btn-default dropdown-toggle collapse" data-toggle="dropdown" type="button"><span class="caret"></span></button>
+            <ul id="mkdocs-search-results" class="dropdown-menu dropdown-menu-right"></ul>
+            <button id="wm-search-go" class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+          </span>
+        </div>
+      </form>
+    </div>
+
+    
+    <div class="wm-top-tool wm-vcenter pull-right wm-small-left">
+      <button id="wm-toc-button" type="button" class="btn btn-sm btn-default wm-vcentered"><i class="fa fa-th-list" aria-hidden="true"></i></button>
+    </div>
+
+    
+    
+
+    
+    <a href="" class="wm-top-brand wm-top-link wm-vcenter">
+      
+      <div class="wm-top-title">
+        MyMoney.Net<br>
+        
+      </div>
+    </a>
+  </div>
+</nav>
+  <div id="main-content" class="wm-page-top-frame">
+    
+<nav class="wm-toc-pane">
+  
+  <ul class="wm-toctree">
+        <li class="wm-toc-li wm-toc-lev1 "><a href="" class="wm-article-link wm-toc-text">Home</a>
+</li>
+        <li class="wm-toc-li wm-toc-lev1 "><a href="install/" class="wm-article-link wm-toc-text">Install</a>
+</li>
+        <li class="wm-toc-li wm-toc-lev1 wm-toc-opener"><span class="wm-toc-text">Basics</span>
+</li>
+<li class="wm-toc-li-nested collapse">
+  <ul class="wm-toctree">
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Setup/" class="wm-article-link wm-toc-text">Setup</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Categories/" class="wm-article-link wm-toc-text">Categories</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Payees/" class="wm-article-link wm-toc-text">Payees</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Securities/" class="wm-article-link wm-toc-text">Securities</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Splits/" class="wm-article-link wm-toc-text">Splits</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Transfers/" class="wm-article-link wm-toc-text">Transfers</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Merging/" class="wm-article-link wm-toc-text">Merging</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Options/" class="wm-article-link wm-toc-text">Options</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Keyboard/" class="wm-article-link wm-toc-text">Keyboard</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Navigation/" class="wm-article-link wm-toc-text">Navigation</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Filtering/" class="wm-article-link wm-toc-text">Filtering</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Calculator/" class="wm-article-link wm-toc-text">Calculator</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Clipboard/" class="wm-article-link wm-toc-text">Clipboard</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/QuickSearch/" class="wm-article-link wm-toc-text">Quick Search</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Queries/" class="wm-article-link wm-toc-text">Queries</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Aliases/" class="wm-article-link wm-toc-text">Aliases</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/Attachments/" class="wm-article-link wm-toc-text">Attachments</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/AutoCategorization/" class="wm-article-link wm-toc-text">Auto Categorization</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Basics/SampleData/" class="wm-article-link wm-toc-text">Sample Data</a>
+</li>
+  </ul>
+</li>
+
+        <li class="wm-toc-li wm-toc-lev1 wm-toc-opener"><span class="wm-toc-text">Accounts</span>
+</li>
+<li class="wm-toc-li-nested collapse">
+  <ul class="wm-toctree">
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/SetupAccounts/" class="wm-article-link wm-toc-text">Creating Accounts</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/BankAccounts/" class="wm-article-link wm-toc-text">Bank Accounts</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/CreditCardAccounts/" class="wm-article-link wm-toc-text">Credit Card Accounts</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/InvestmentAccounts/" class="wm-article-link wm-toc-text">Investment Accounts</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/Loans/" class="wm-article-link wm-toc-text">Loans</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/OnlineBanking/" class="wm-article-link wm-toc-text">Online Banking</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/OnlineSecurity/" class="wm-article-link wm-toc-text">Online Security</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/AccountAliases/" class="wm-article-link wm-toc-text">Account Aliases</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/BalancingAccounts/" class="wm-article-link wm-toc-text">Balancing Accounts</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/StockQuoteServices/" class="wm-article-link wm-toc-text">Stock Quote Services</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/Assets/" class="wm-article-link wm-toc-text">Assets</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/CostBasis/" class="wm-article-link wm-toc-text">Cost Basis</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/OFXBankList/" class="wm-article-link wm-toc-text">OFX Bank List</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Accounts/KnownOFXIssues/" class="wm-article-link wm-toc-text">Known OFX Issues</a>
+</li>
+  </ul>
+</li>
+
+        <li class="wm-toc-li wm-toc-lev1 wm-toc-opener"><span class="wm-toc-text">Charts</span>
+</li>
+<li class="wm-toc-li-nested collapse">
+  <ul class="wm-toctree">
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Charts/Charts/" class="wm-article-link wm-toc-text">Overview</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Charts/HistoryChart/" class="wm-article-link wm-toc-text">History Chart</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Charts/PieCharts/" class="wm-article-link wm-toc-text">Pie Charts</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Charts/StockChart/" class="wm-article-link wm-toc-text">Stock Chart</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Charts/TrendGraph/" class="wm-article-link wm-toc-text">Trend Graph</a>
+</li>
+  </ul>
+</li>
+
+        <li class="wm-toc-li wm-toc-lev1 wm-toc-opener"><span class="wm-toc-text">Reports</span>
+</li>
+<li class="wm-toc-li-nested collapse">
+  <ul class="wm-toctree">
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Reports/Reports/" class="wm-article-link wm-toc-text">Overview</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Reports/NetworthReport/" class="wm-article-link wm-toc-text">Networth Report</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Reports/InvestmentPortfolio/" class="wm-article-link wm-toc-text">Investment Portfolio</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Reports/CashFlowReport/" class="wm-article-link wm-toc-text">Cash Flow Report</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Reports/TaxReport/" class="wm-article-link wm-toc-text">Tax Report</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Reports/W2Report/" class="wm-article-link wm-toc-text">W2 Report</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="Reports/UnacceptedReport/" class="wm-article-link wm-toc-text">Unaccepted Report</a>
+</li>
+  </ul>
+</li>
+
+        <li class="wm-toc-li wm-toc-lev1 "><a href="install/" class="wm-article-link wm-toc-text">install</a>
+</li>
+        <li class="wm-toc-li wm-toc-lev1 "><a href="Updates/" class="wm-article-link wm-toc-text">Updates</a>
+</li>
+        <li class="wm-toc-li wm-toc-lev1 wm-toc-opener"><span class="wm-toc-text">Development</span>
+</li>
+<li class="wm-toc-li-nested collapse">
+  <ul class="wm-toctree">
+      <li class="wm-toc-li wm-toc-lev2 "><a href="dev/" class="wm-article-link wm-toc-text">Overview</a>
+</li>
+  </ul>
+</li>
+
+  </ul>
+</nav>
+
+    <div class="wm-content-pane">
+      <iframe class="wm-article" name="article"></iframe>
+    </div>
+  </div>
+
+<div class="wrapper wm-page-content">
+  <div class="container-fluid">
+    <a name="_top"></a>
+      
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="install/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="install/" class="btn btn-xs btn-link">
+        Install
+      </a>
+    </div>
+    
+  </div>
+
+      
+
+      <h1 id="home">Home<a class="headerlink" href="#home" title="Permanent link">#</a></h1>
+<p><img alt="" src="Images/Home.png" /></p>
+<p><strong>MyMoney</strong>  is a rich client <a href="https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/MyMoney.application">.NET 4.8 ClickOnce application</a> for managing your personal finances. You can install it with a ]single click](install.md).  See <a href="https://lovettsoftwarestorage.blob.core.windows.net/videos/MyMoney.mp4">Demo Video</a>.</p>
+<p><a href="https://lovettsoftwarestorage.blob.core.windows.net/videos/MyMoney.mp4"><img alt="" src="Images/Home1.png" /></a></p>
+<p>The app comes with beautiful modern Light and Dark themes that are accentuated with your chosen Windows Accent color:</p>
+<p><a href="https://lovettsoftwarestorage.blob.core.windows.net/videos/MyMoney.mp4"><img alt="" src="Images/Home_dark.png" /></a></p>
+<p>The app provides many handy features:</p>
+<p><img alt="" src="Images/Home2.png" />
+Supports <a href="Accounts/BankAccounts/">Banking</a>, <a href="Accounts/CreditCardAccounts/">Credit Card</a>, <a href="Accounts/InvestmentAccounts/">Investment</a> and <a href="Accounts/Assets/">Assets</a> accounts, with <a href="Basics/AutoCategorization/">Auto Categorization</a>, and auto identification and <a href="Merging">merging</a> of duplicate transactions. </p>
+<p><img alt="" src="Images/Home3.png" />
+Save a lot of typing using <a href="Accounts/OnlineBanking/">Online Banking</a> to download statements from your bank, using OFX over <a href="Accounts/OnlineSecurity/">secure</a> HTTPS. No middle man storage of your account information, MyMoney talks directory from your PC to your bank, which is just as secure as if you logged onto your Bank website and downloaded transactions yourself. For banks that don't support OFX, you can download Money or Quicken QFX files and import them.</p>
+<p><img alt="" src="Images/Home4.png" />
+Secure storage of your data in a SQL Lite database.  See <a href="Basics/Setup/">Setup</a> for details.</p>
+<p><img alt="" src="Images/Home5.png" />
+Instant  <a href="Charts/Charts/">Charts</a> and <a href="Reports/Reports/">Reports</a> show everything from current spending trends in your accounts, to pie charts showing spending by category, to bar charts showing historical spending by year or month, to portfolio charts showing your current holdings across stocks, mutual funds, and other investment categories.</p>
+<p><img alt="" src="Images/Home6.png" />
+Tax Categories can be assigned so that you can export your tax information to Turbo Tax. This includes a capital gains tax report for investments organized into short term and long term.   See <a href="Reports/TaxReport/">Tax Report</a>.</p>
+<p><img alt="" src="Images/Home7.png" />
+Bug free account reconciliation (<a href="Accounts/BalancingAccounts/">balancing</a>) process that guarantees that once a statement is reconciled it stays that way. MyMoney stops you from making silly mistakes that could destroy years of account balancing.</p>
+<p><img alt="" src="Images/Home8.png" />
+<a href="Basics/QuickSearch/">Quick Search</a> gives you a powerful ability to find anything in many years of historical data almost instantly. For example, type "(costco or arco) and fuel" to find all transactions recording a fuel related purchase from either costco or arco. You can also do more <a href="Basics/Queries/">Advanced Queries</a> to find a specific set of transactions.</p>
+<p><img alt="" src="Images/Home9.png" />
+<a href="Basics/Attachments/">Attachments</a> can be associated with each transaction which is handy for tracking additional information that doesn't fit in the memo field. You can also use this to store a scanned copy of your store receipts so you can find your receipts quickly and easily.</p>
+<p><img alt="" src="Images/Home10.png" />
+Every numeric field in the application pops up a <a href="Basics/Calculator/">calculator</a> so you can enter expressions to compute the value you want in that field. This saves you from having to switch between applications and makes entering data much more efficient.</p>
+<p><img alt="" src="Images/Home11.png" />
+<a href="dev/">Extensibility</a> in the architecture so developers can easily add their own favorite features. For example, one developer added support for managing rental properties and loans while another added support for easily tracking sales tax.</p>
+<p><img alt="" src="Images/Home12.png" />
+Multiple currencies. When you setup an account you can specify the currency used by that account. This is handy if you have overseas accounts. It is then able to handle the fact that transfers between accounts with different currencies will not necessarily have the same amount on either side of those transfers.</p>
+<p><img alt="" src="Images/Home13.png" />
+Lastly, for additional eye candy, the application supports
+beautiful <a href="https://github.com/Kinnara/ModernWpf">Modern WPF</a> light and a dark themes. See <a href="Basics/Options/">Options</a>.</p>
+
+    <br>
+      
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="install/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="install/" class="btn btn-xs btn-link">
+        Install
+      </a>
+    </div>
+    
+  </div>
+
+      <br>
+  </div>
+</div>
+
+<footer class="wm-page-content">
+
+  
+<div class='footer-content'>
+  <div class="container-fluid">
+    <div class="col-sm-8 text-left footnote-copy">
+       MyMoney.Net
+    </div>
+  </div>
+  <li><span id="copyright"></span></li>
+  <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/noraj/mkdocs-windmill-dark">Windmill Dark</a> theme by noraj.</p>
+</div>
+
+</footer>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+      $('table').each(function () {
+        $(this).addClass("table");
+        $(this).addClass("table-bordered");
+        $(this).addClass("table-striped");
+        $(this).addClass("table-condensed");
+      });
+
+    });
+</script>
+
+</body>
+</html>
+<!--
+MkDocs version : 1.2.3
+Build Date UTC : 2022-02-22 09:28:53.694036+00:00
+-->

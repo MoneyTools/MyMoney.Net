@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Accounts/KnownOFXIssues/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Known OFX Issues - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../css/main.css" rel="stylesheet">
+    <link href="../../css/syntax.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+<div id="cookie-banner"></div>
+
+
+<div class="wrapper wm-page-content">
+  <div class="container-fluid">
+    <a name="_top"></a>
+      
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../../Charts/Charts/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../../Charts/Charts/" class="btn btn-xs btn-link">
+        Overview
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../OFXBankList/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../OFXBankList/" class="btn btn-xs btn-link">
+        OFX Bank List
+      </a>
+    </div>
+    
+  </div>
+
+      
+
+      <p>Tuesday, October 30, 2012
+12:59 AM</p>
+<p><a href="Home">Home</a></p>
+<p>If you have trouble getting Online Banking working with your bank you may be able to correct the problem by simply opening the Online Account properties and re-connecting.</p>
+<p>The following known errors are being returned from 74 OFX addresses.  The first 22 are because MyMoney does not yet have an implementation of the OFX TYPE1 security protocol.  Once this work is completed, we should be able to talk to these banks. </p>
+<p>The next 15 are refusing to connect over SSL, which indicates something wrong with the verification of the SSL certificate chain.  This might be resolvable with some work on installing OFX certificates.</p>
+<p>The 10 "Bad Request" responses might be resolvable if we can figure out what kind of OFX request those banks really support.  Sending your OFX logs may help debug this.</p>
+<p>The remaining errors from 14 banks may indicate those banks don't really support OFX, or have shut down their OFX servers.</p>
+<p><strong>22: Did not get the expected response from your financial institution. Your bank requires</strong> <strong>security level 'TYPE1'</strong> <strong>which is not supported.</strong></p>
+<pre><code>Achieva Credit Union
+Affinity Plus Federal Credit Union
+Canyon State Credit Union
+Credit Union 1
+Credit Union ONE
+Denver Community Federal Credit Union
+FAA Credit Union
+Hudson Valley FCU
+IBM Southeast Employees Federal Credit Union
+Insight CU
+JSC Federal Credit Union
+Mercer
+Missoula Federal Credit Union
+Morgan Keegan &amp;Co, Inc.
+Robert W. Baird &amp;Co.
+Sacramento Credit Union
+T. Rowe Price Retirement Plans
+UBS Financial Services Inc.
+Unity One Federal Credit Union
+USAgencies Credit Union
+Velocity Credit Union
+Whatcom Educational CU
+</code></pre>
+<p><strong>15: The underlying connection was closed: Could not establish trust relationship for the</strong> <strong>SSL/TLS secure channel</strong> <strong>.</strong></p>
+<pre><code>121 Financial Credit Union
+Amplify Federal Credit Union
+Continental Federal Credit Union
+CPM Federal Credit Union
+Elevations CU
+Hawthorne Credit Union
+Navy Army Federal Credit Union
+Picatinny Federal Credit Union
+Yakima Valley Credit Union
+Bank One
+Chase
+First USA
+FirstBank of Colorado
+Northern Trust – Banking
+Northern Trust – Investments
+</code></pre>
+<p>The result of these errors are harder to debug because the error message is so non-descript.  Some of the errors may indicate that the bank actually does not talk OFX at all, or they have shut down that gateway, like the “Bank of America (California)” case below.</p>
+<p><strong>10: The remote server returned an error: (400) Bad Request.</strong></p>
+<pre><code>Abbott Laboratories Employee CU
+Andrews Federal Credit Union
+Century Federal Credit Union
+Charlotte State Bank – DC
+Fremont Bank
+Janney Montgomery Scott LLC
+Las Colinas FCU
+Prudential Retirement
+Sterne Agee
+T. Rowe Price
+</code></pre>
+<p><strong>3: The remote server returned an error: (404) Not Found.</strong></p>
+<pre><code>Air Academy FCU
+Allegiance Community Bank
+Citadel Federal Credit Union
+</code></pre>
+<p><strong>2: Error parsing OFX response</strong></p>
+<pre><code>American Express Brokerage
+Educational Employees CU
+</code></pre>
+<p><strong>1: Bank of America has completed a planned systems update for accounts opened in California. Please visit</strong> <a href="http://www.bankofamerica.com/Financialmanagement">www.bankofamerica.com/Financialmanagement</a><strong>for detailed instructions on how to update your settings and avoid service interruptions.</strong></p>
+<pre><code>Bank of America (California)
+</code></pre>
+<p><strong>1: The remote server returned an error: (406) Not Acceptable.</strong></p>
+<pre><code>Bank of Stockton – OLD
+</code></pre>
+<p><strong>2: General Error</strong></p>
+<pre><code>BB&amp; Banking and Bill Payment
+Xceed Financial Credit Union
+</code></pre>
+<p><strong>2: The remote server returned an error: (500) Internal Server Error.</strong></p>
+<pre><code>Capitol Federal Savings Bank
+Technology Credit Union
+</code></pre>
+<p><strong>4: The underlying connection was closed: An unexpected error occurred on a send.</strong></p>
+<pre><code>Dominion Credit Union
+Fort Stewart Georgia Federal Credit Union
+Silver State Schools CU
+Southeastern CU
+</code></pre>
+<p><strong>3: The remote server returned an error: (503) Server Unavailable.</strong></p>
+<pre><code>First Clearing, LLC
+Wachovia Bank
+Wachovia Sec-Wells Fargo Advisors
+</code></pre>
+<p><strong>3: Error returned from server</strong></p>
+<pre><code>First National Bank of St. Louis
+Florida Gulf Bank
+ING Direct
+</code></pre>
+<p><strong>1: We're sorry for the inconvenience. This function is currently not available. Try the function again or call us at 1-888-464-3232 to speak with a Direct Associate. (Error Code: INVALID_PERSONAL_CUSTOMER) (27-Oct-2012 23:11)</strong></p>
+<pre><code>ING DIRECT Canada
+</code></pre>
+<p><strong>2: The operation has timed out</strong></p>
+<pre><code>Premier Bank Rochester
+Private Bank of Buckhead
+</code></pre>
+<p><strong>1: The underlying connection was closed: The connection was closed unexpectedly.</strong></p>
+<pre><code>PSECU
+</code></pre>
+<p><strong>1: The server does not support the PROFMSGSRQV1 request, or a request was made against an invalid organization. Please verify the Organization name and FID and try again. [ref: d43f244c-291c-486d-8d96-8f291689d6ae]</strong></p>
+<pre><code>Simmons First National Bank
+</code></pre>
+<p><strong>2: The remote server returned an error: (501) Not Implemented.</strong></p>
+<pre><code>The Bank of Miami, N.A
+Western National Bank
+</code></pre>
+<p><strong>1: This server does not support the requested InstitutionID</strong></p>
+<pre><code>TIB Bank
+</code></pre>
+<p><a href="Home">Home</a></p>
+
+    <br>
+      
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../../Charts/Charts/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../../Charts/Charts/" class="btn btn-xs btn-link">
+        Overview
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../OFXBankList/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../OFXBankList/" class="btn btn-xs btn-link">
+        OFX Bank List
+      </a>
+    </div>
+    
+  </div>
+
+      <br>
+  </div>
+</div>
+
+<footer class="wm-page-content">
+
+  
+<div class='footer-content'>
+  <div class="container-fluid">
+    <div class="col-sm-8 text-left footnote-copy">
+       MyMoney.Net
+    </div>
+  </div>
+  <li><span id="copyright"></span></li>
+  <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/noraj/mkdocs-windmill-dark">Windmill Dark</a> theme by noraj.</p>
+</div>
+
+</footer>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+      $('table').each(function () {
+        $(this).addClass("table");
+        $(this).addClass("table-bordered");
+        $(this).addClass("table-striped");
+        $(this).addClass("table-condensed");
+      });
+
+    });
+</script>
+
+</body>
+</html>
