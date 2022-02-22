@@ -72,7 +72,7 @@ Find transactions containing the literal string "costco &gas".  So the ampersan
 You can also do more [Advanced Queries](Queries.md) to find a specific set of transactions.
 
 
-See also [Filtering](Filtering).
+See also [Filtering](Filtering.md).
 
 
 
