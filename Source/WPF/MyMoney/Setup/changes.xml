@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.0.1" date="2/22/2022">
+    - Normalize account balances in account view.
+  </change>
   <change version="2.0.0.0" date="2/22/2022">
     - Fix total in pie chart legend.
     - Major version change!
