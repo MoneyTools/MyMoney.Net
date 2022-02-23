@@ -10,10 +10,12 @@ for /f "usebackq" %%i in (`xsl -e -s Version\version.xsl Version\version.props`)
 echo ### Publishing version %VERSION%...
 set WINGET=1
 set GITRELEASE=1
+set UPLOAD=1
 
 :parse
 if "%1"=="/nowinget" set WINGET=0
 if "%1"=="/norelease" set GITRELEASE=0
+if "%1"=="/noupload" set UPLOAD=0
 if "%1"=="" goto :done
 shift
 goto :parse
@@ -36,13 +38,14 @@ gh release create %VERSION% %ROOT%MoneyPackage\AppPackages\MoneyPackage_%VERSION
 del notes.txt
 
 :upload
+if "%UPLOAD%" == "0" goto :dowinget
 echo Uploading ClickOnce installer
 copy /y MyMoney\Setup\changes.xml publish
 call AzurePublishClickOnce %ROOT%publish downloads/MyMoney "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
 call AzurePublishClickOnce %ROOT%MoneyPackage\AppPackages downloads/MyMoney.Net "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
 
 echo ============ Done publishing ClickOnce installer ==============
-
+:dowinget
 if "%WINGET%"=="0" goto :skipwinget
 
 if not exist %WINGET_SRC% goto :nowinget
@@ -51,9 +54,13 @@ if not exist %WINGET_SRC% goto :nowinget
 echo Syncing winget master branch
 pushd %WINGET_SRC%\manifests\l\LovettSoftware\MyMoney\Net
 git checkout master
+if ERRORLEVEL 1 goto :eof
 git pull
+if ERRORLEVEL 1 goto :eof
 git fetch upstream master
+if ERRORLEVEL 1 goto :eof
 git merge upstream/master
+if ERRORLEVEL 1 goto :eof
 git push
 
 set LATEST=
