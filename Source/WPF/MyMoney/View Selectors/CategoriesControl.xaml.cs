@@ -701,6 +701,10 @@ namespace Walkabout.Views.Controls
 
                     Merge(c, dialog.SelectedCategory);
                 }
+                else
+                {
+                    c.OnDelete();
+                }
             }
         }
 
