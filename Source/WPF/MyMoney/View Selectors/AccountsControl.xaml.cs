@@ -37,6 +37,7 @@ namespace Walkabout.Views.Controls
         public static RoutedUICommand CommandDeleteAccount;
         public static RoutedUICommand CommandViewTransfers;
         public static RoutedUICommand CommandExportAccount;
+        public static RoutedUICommand CommandExportList;
         public static RoutedUICommand CommandToggleClosedAccounts;
 
         static AccountsControl()
@@ -50,6 +51,7 @@ namespace Walkabout.Views.Controls
             CommandDeleteAccount = new RoutedUICommand("DeleteAccount", "DeleteAccount", typeof(AccountsControl));
             CommandViewTransfers = new RoutedUICommand("ViewTransfers", "ViewTransfers", typeof(AccountsControl));
             CommandExportAccount = new RoutedUICommand("ExportAccount", "ExportAccount", typeof(AccountsControl));
+            CommandExportList = new RoutedUICommand("ExportList", "ExportList", typeof(AccountsControl));
             CommandToggleClosedAccounts = new RoutedUICommand("ToggleClosedAccounts", "ToggleClosedAccounts", typeof(AccountsControl));
         }
 
@@ -777,16 +779,49 @@ namespace Walkabout.Views.Controls
             e.Handled = true;
         }
 
-        #endregion 
-
-        #region MENU ITEM HANDLERS
-
         private void UpdateContextMenuView()
         {
             this.MenuDisplayClosedAccounts.Header = this.DisplayClosedAccounts ? "Hide Closed Accounts" : "Display Closed Accounts";
         }
 
+        private void OnExportAccountList(object sender, ExecutedRoutedEventArgs e)
+        {
+            SaveFileDialog fd = new SaveFileDialog();
+            fd.CheckPathExists = true;
+            fd.AddExtension = true;
+            fd.Filter = StringHelpers.CreateFileFilter("*.csv|(*.csv)");
+            fd.FileName = "accounts.csv";
+            if (fd.ShowDialog(App.Current.MainWindow) == true)
+            {
+                try
+                {
+                    ExportList(fd.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxEx.Show(ex.Message, "Error Exporting", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void ExportList(string fileName)
+        {
+            using (StreamWriter sw = new StreamWriter(fileName))
+            {
+                sw.WriteLine("Type,Account,Balance");
+                foreach (var item in this.items)
+                {
+                    if (item is AccountItemViewModel vm)
+                    {
+                        sw.WriteLine(vm.Account.Type + "," + vm.Account.Name + "," + vm.Balance);
+                    }
+                }
+            }
+
+            NativeMethods.ShellExecute(IntPtr.Zero, "Open", fileName, "", "", NativeMethods.SW_SHOWNORMAL);
+        }
         #endregion
+
     }
 
     public class AccountViewModel : INotifyPropertyChanged

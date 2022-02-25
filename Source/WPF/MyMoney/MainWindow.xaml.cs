@@ -3586,8 +3586,7 @@ namespace Walkabout
                 string dir = System.IO.Path.GetDirectoryName(path);
                 if (System.IO.Directory.Exists(dir))
                 {
-                    int SW_SHOWNORMAL = 1;
-                    int hr = NativeMethods.ShellExecute(IntPtr.Zero, "explore", dir, "", "", SW_SHOWNORMAL);
+                    int hr = NativeMethods.ShellExecute(IntPtr.Zero, "explore", dir, "", "", NativeMethods.SW_SHOWNORMAL);
                     return;
                 }
             }

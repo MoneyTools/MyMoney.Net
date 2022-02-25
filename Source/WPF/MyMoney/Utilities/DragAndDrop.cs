@@ -12,8 +12,6 @@ namespace Walkabout.Utilities
 {
     public class DragAndDrop
     {
-
-
         #region PROPERTIES
 
         bool isMouseDown = false;
@@ -21,6 +19,7 @@ namespace Walkabout.Utilities
 
         string formatName;
         bool isDragging = false;
+        bool mergePrompt;
 
         Window dragdropWindow;
         AdornerLayer adornerLayer;
@@ -34,7 +33,6 @@ namespace Walkabout.Utilities
 
         #endregion
 
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -47,9 +45,11 @@ namespace Walkabout.Utilities
             string dragDropFormatName,
             OnIsDragSourceValid validateDragSource,
             OnIsValidDropTarget validDropTarget,
-            OnApplyDragDrop finalDragDropOperation
+            OnApplyDragDrop finalDragDropOperation,
+            bool enableMoveMergePrompt
             )
         {
+            this.mergePrompt = enableMoveMergePrompt;
             this.mainControl = mainControl;
             this.formatName = dragDropFormatName;
             this.calledBackForValidatingSource = validateDragSource;
@@ -359,71 +359,6 @@ namespace Walkabout.Utilities
             }
         }
 
-
-
-
-        /// <summary>
-        /// Build grid of selected elements for drag/drop feedback
-        /// </summary>
-        /// <param name="dragElement">The dragged elements</param>
-        /// <returns>A visual for drag/drop transparent window</returns>
-        static Visual BuildDragDropVisual(FrameworkElement dragElement)
-        {
-            dragElement.Measure(new Size(1000, 1000));
-            dragElement.Arrange(new Rect(0, 0, 200, 50));
-            Rect bounds = GetVisualBounds(dragElement);
-            if (bounds == Rect.Empty)
-            {
-                bounds = new Rect(0, 0, 0, 0);
-            }
-            if (bounds.Width <= 0 || double.IsNaN(bounds.Width) || double.IsInfinity(bounds.Width))
-            {
-                bounds.Width = dragElement.ActualWidth;
-            }
-            if (bounds.Width == 0)
-            {
-//                bounds.Width = 40;
-            }
-
-            if (bounds.Height <= 0 || double.IsNaN(bounds.Height) || double.IsInfinity(bounds.Height))
-            {
-                bounds.Height = dragElement.ActualHeight;
-            }
-            if (bounds.Height == 0)
-            {
-   //             bounds.Height = 40;
-            }
-
-            Border border = new Border();
-            border.Width = bounds.Width + 3;
-            border.Height = bounds.Height + 3;
-            border.BorderBrush = Brushes.Gray;
-            border.BorderThickness = new Thickness(0.5, 0.5, 3, 3);
-            border.CornerRadius = new CornerRadius(3,3,0,3);
-            
-            Canvas canvas = new Canvas();
-            canvas.Opacity = 0.80;
-            canvas.Background = new VisualBrush(dragElement);
-            canvas.Width = bounds.Width;
-            canvas.Height = bounds.Height;
-
-            border.Child = canvas;
-            return border;
-        }
-
-      
-
-        /// <summary>
-        /// Get the bounds of the given visual element.
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        static Rect GetVisualBounds(FrameworkElement e)
-        {
-            return VisualTreeHelper.GetDescendantBounds(e);
-        }
-
-
         #region DRAG WINDOW
 
         TextBlock instruction;
@@ -471,10 +406,14 @@ namespace Walkabout.Utilities
 
         private void UpdateInstructions(DragDropEffects effects)
         {
-            if (instruction != null)
+            if (instruction != null && this.mergePrompt)
             {
                 string label = ((effects & DragDropEffects.Copy) != 0) ? "Merge (-Ctrl to Move)" : "Move (+Ctrl to Merge)";
                 instruction.Text = label;
+            }
+            else
+            {
+                instruction.Text = "Merge";
             }
         }
 

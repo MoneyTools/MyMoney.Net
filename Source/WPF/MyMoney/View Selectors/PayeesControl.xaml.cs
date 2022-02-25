@@ -86,7 +86,7 @@ namespace Walkabout.Views.Controls
                 InitializeComponent();
                 this.MouseUp += new MouseButtonEventHandler(OnMouseUp);
                 this.listbox1.SelectionChanged += new SelectionChangedEventHandler(OnSelectionChanged);
-                this.dragDropSupport = new DragAndDrop(listbox1, this.dragDropformatNameForPayee, OnDragSource, OnDropTarget, OnDropSourceOnTarget);
+                this.dragDropSupport = new DragAndDrop(listbox1, this.dragDropformatNameForPayee, OnDragSource, OnDropTarget, OnDropSourceOnTarget, false);
                 this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnIsVisibleChanged);
 
 #if PerformanceBlocks
@@ -225,12 +225,6 @@ namespace Walkabout.Views.Controls
             {
                 GetAllPayees(this.lastActiveFilter);
             }
-        }
-
-
-        private void GetAllPayees()
-        {
-            GetAllPayees(this.lastActiveFilter);
         }
 
         private void GetAllPayees(string filter)

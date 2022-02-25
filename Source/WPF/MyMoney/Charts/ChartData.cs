@@ -76,8 +76,7 @@ namespace Walkabout.Charts
                     }
                 }
 
-                int SW_SHOWNORMAL = 1;
-                NativeMethods.ShellExecute(IntPtr.Zero, "Open", name, "", "", SW_SHOWNORMAL);
+                NativeMethods.ShellExecute(IntPtr.Zero, "Open", name, "", "", NativeMethods.SW_SHOWNORMAL);
             }
         }
     }

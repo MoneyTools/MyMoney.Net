@@ -73,7 +73,8 @@ namespace Walkabout.Views.Controls
                     this.dragDropformatNameForCategory,
                     this.OnDragDropObjectSource,
                     this.OnDragDropObjectTarget,
-                    this.OnDragDropSourceOnTarget
+                    this.OnDragDropSourceOnTarget,
+                    true
                     );
 
 

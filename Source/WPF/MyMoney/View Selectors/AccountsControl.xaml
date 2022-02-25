@@ -72,6 +72,7 @@
         <CommandBinding  Command="local:AccountsControl.CommandDeleteAccount" Executed="OnDeleteAccount" CanExecute="CanDeleteAccount"/>
         <CommandBinding  Command="local:AccountsControl.CommandViewTransfers" Executed="OnViewTransfers" CanExecute="CanViewTransfers"/>
         <CommandBinding  Command="local:AccountsControl.CommandExportAccount" Executed="OnExportAccount" CanExecute="CanExportAccount"/>
+        <CommandBinding  Command="local:AccountsControl.CommandExportList" Executed="OnExportAccountList" />
         <CommandBinding  Command="local:AccountsControl.CommandToggleClosedAccounts" Executed="OnToggleShowClosedAccounts" CanExecute="CanToggleShowClosedAccounts"/>
     </UserControl.CommandBindings>
 
@@ -104,7 +105,8 @@
                 <MenuItem AutomationProperties.AutomationId="DeleteAccount" Header="Delete _Account" Command="local:AccountsControl.CommandDeleteAccount" />
                 <Separator />
                 <MenuItem AutomationProperties.AutomationId="ViewTransfersToThisAccount" Header="View _Transfers To This Account" Command="local:AccountsControl.CommandViewTransfers" />
-                <MenuItem AutomationProperties.AutomationId="Export" Header="E_xport..." Command="local:AccountsControl.CommandExportAccount"/>
+                <MenuItem AutomationProperties.AutomationId="Export" Header="E_xport Account..." Command="local:AccountsControl.CommandExportAccount"/>
+                <MenuItem AutomationProperties.AutomationId="Export" Header="E_xport List..." Command="local:AccountsControl.CommandExportList"/>
                 <Separator />
                 <MenuItem AutomationProperties.AutomationId="DisplayClosedAccounts" Name="MenuDisplayClosedAccounts" Header="Display _Closed Accounts" Command="local:AccountsControl.CommandToggleClosedAccounts"/>
             </ContextMenu>

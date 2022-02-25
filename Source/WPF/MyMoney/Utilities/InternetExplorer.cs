@@ -25,8 +25,7 @@ namespace Walkabout.Utilities
             Uri resolved = new Uri(baseUri, url);
             
             // todo: support showing embedded pack:// resources in a popup page (could be useful for help content).
-            const int SW_SHOWNORMAL = 1;
-            int rc = NativeMethods.ShellExecute(owner, "open", resolved.AbsoluteUri, null, ProcessHelper.StartupPath, SW_SHOWNORMAL);
+            int rc = NativeMethods.ShellExecute(owner, "open", resolved.AbsoluteUri, null, ProcessHelper.StartupPath, NativeMethods.SW_SHOWNORMAL);
         }
 
         public static void OpenUrl(IntPtr owner, string url)
@@ -37,8 +36,7 @@ namespace Walkabout.Utilities
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "rc")]
         public static void EditUrl(IntPtr owner, string url)
         {
-            const int SW_SHOWNORMAL = 1;
-            int rc = NativeMethods.ShellExecute(owner, "edit", url, null, ProcessHelper.StartupPath, SW_SHOWNORMAL);
+            int rc = NativeMethods.ShellExecute(owner, "edit", url, null, ProcessHelper.StartupPath, NativeMethods.SW_SHOWNORMAL);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "rc")]
