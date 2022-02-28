@@ -23,8 +23,8 @@ namespace Walkabout.Views
     {
         bool payeesDirty;
         bool dirty;
-        DispatcherTimer timer;
         Alias rowEdit;
+        DelayedActions delayedActions = new DelayedActions();
 
         public AliasesView()
         {
@@ -35,7 +35,25 @@ namespace Walkabout.Views
 
         void AliasDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
+            // There seems to be a bug in WPF where this is called before the final editing cell is committed!
+            // For example, I change Alias type to Regex, hit ENTER and this is called before Alias.Type is changed to Regex!
             rowEdit = e.Row.DataContext as Alias;
+            delayedActions.StartDelayedAction("FindConflicts", FindConflicts, TimeSpan.FromMilliseconds(30));
+        }
+
+        void FindConflicts() 
+        {
+            if (rowEdit != null)
+            {
+                IEnumerable<Alias> conflicts = this.money.FindSubsumedAliases(rowEdit);
+                foreach (Alias conflict in conflicts)
+                {
+                    if (conflict != rowEdit)
+                    {
+                        conflict.OnDelete();
+                    }
+                }
+            }
         }
 
         void AliasesView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -130,7 +148,7 @@ namespace Walkabout.Views
             MyMoney money;
 
             public AliasCollection(MyMoney money, string filter)
-                :base(money.Aliases.GetAliases(), filter)
+                :base(money.Aliases.GetAliases(true), filter)
             {
                 this.money = money;
             }
@@ -224,40 +242,17 @@ namespace Walkabout.Views
             if (dirty || payeesDirty && this.IsVisible)
             {
                 // start delayed update
-                StartTimer();
+                delayedActions.StartDelayedAction("RefreshList", RefreshList, TimeSpan.FromMilliseconds(50));
             }
         }
         
-        private void StartTimer()
-        {            
-            StopTimer();
-            timer = new DispatcherTimer()
-            {
-                Interval = TimeSpan.FromMilliseconds(50)
-            };
-            timer.Tick += OnTimerTick;
-            timer.Start();
-        }
-
-        private void StopTimer()
-        {
-            if (timer != null)
-            {
-                timer.Stop();
-                timer.Tick -= OnTimerTick;
-                timer = null;
-            }
-        }
-
-        void OnTimerTick(object sender, object e)
+        void RefreshList()
         {
             if (payeesDirty)
             {
                 this.PayeeList = new ListCollectionView(GetPayeesList());
                 payeesDirty = false;
             }
-
-            StopTimer();
 
             if (dirty && this.IsVisible)
             {

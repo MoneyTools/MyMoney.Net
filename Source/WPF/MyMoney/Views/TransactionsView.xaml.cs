@@ -3638,7 +3638,10 @@ namespace Walkabout.Views
                 DataGridRow row = TheActiveGrid.GetRowFromItem(t);
                 if (row != null)
                 {
-                    Transaction u = FindPotentialDuplicate(t);
+                    Settings settings = (Settings)this.site.GetService(typeof(Settings));
+                    TimeSpan range = settings.DuplicateRange;
+                    TransactionCollection tc = this.TheActiveGrid.ItemsSource as TransactionCollection;
+                    Transaction u = Transactions.FindPotentialDuplicate(t, tc, range);
                     if (u != null)
                     {
                         ConnectAnchors(t, u);
@@ -3700,119 +3703,6 @@ namespace Walkabout.Views
                 HideConnector();
                 TheActiveGrid.ClearAutoEdit();
             }
-        }
-
-        private bool IsPotentialDuplicate(Transaction t, Transaction u, int dayRange)
-        {
-            return !u.IsFake && !t.IsFake &&
-                u != t && u.amount == t.amount && u.PayeeName == t.PayeeName &&
-                // they must be in the same account (which they may not be if on the multi-account view).
-                u.Account == t.Account &&
-                // ignore transfers for now
-                (t.Transfer == null && u.Transfer == null) &&
-                // if user has already marked both as not duplicates, then skip it.
-                (!t.NotDuplicate || !u.NotDuplicate) &&
-                // and if they are investment transactions the stock type and unit quanities have to be the same
-                IsPotentialDuplicate(t.Investment, u.Investment) &&
-                // if they both have unique FITID fields, then the bank is telling us these are not duplicates.
-                (string.IsNullOrEmpty(t.FITID) || string.IsNullOrEmpty(u.FITID) || t.FITID == u.FITID) &&
-                // they can't be both reconciled, because then we can't merge them!
-                (u.Status != TransactionStatus.Reconciled || t.Status != TransactionStatus.Reconciled) &&
-                // within specified date range
-                Math.Abs((u.Date - t.Date).Days) < dayRange;
-        }
-
-        private bool IsPotentialDuplicate(Investment u, Investment v)
-        {
-            if (u != null && v == null) return false;
-            if (u == null && v != null) return false;
-            if (u == null && v == null) return true;
-
-            return u.TradeType == v.TradeType &&
-                u.Units == v.Units &&
-                u.UnitPrice == v.UnitPrice &&
-                u.SecurityName == v.SecurityName;
-        }
-
-        private Transaction FindPotentialDuplicate(Transaction t)
-        {
-            Settings settings = (Settings)this.site.GetService(typeof(Settings));
-            TimeSpan range = settings.DuplicateRange;
-            int days = range.Days;
-            int[] indices = new int[2]; // one forward index, and one backward index.
-
-            TransactionCollection tc = this.TheActiveGrid.ItemsSource as TransactionCollection;
-            if (tc != null)
-            {
-                int i = tc.IndexOf(t);
-                if (i > 0)
-                {
-                    int count = tc.Count;
-                    DateTime now = DateTime.Now;
-
-                    // ok, find nearby transactions that have the same amount, searching
-                    // out from closest first, since the closest is the most likely one.
-                    for (int j = 1; j < count; j++)
-                    {
-                        indices[0] = i - j;
-                        indices[1] = i + j;
-
-                        foreach (int k in indices)
-                        {
-                            if (k >= 0 && k < count)
-                            {
-                                Transaction u = tc[j];
-                                if (IsPotentialDuplicate(t, u, days) && !IsRecurring(t, u, tc))
-                                {
-                                    // ok, this is the closest viable duplicate...
-                                    return u;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        private bool IsRecurring(Transaction t, Transaction u, TransactionCollection tc)
-        {
-            // if we find prior transactions that match (or very closely match) that are on the 
-            // same (or similar) TimeSpan then this might be a recurring transaction.
-            TimeSpan span = t.Date - u.Date;
-            int days = (int)Math.Abs(span.TotalDays);
-            if (days == 0)
-            {
-                // unlikely to have a recurring payment on the same day.
-                return false;
-            }
-            int found = 0;
-            int i = Math.Min(tc.IndexOf(t), tc.IndexOf(u));
-            for (--i; i > 0; i--)
-            {
-                Transaction w = tc[i];
-                if (w.amount == 0 || w.Status == TransactionStatus.Void)
-                {
-                    continue;
-                }
-
-                // if they are within 1% of each other and within 3 days of the prior time span
-                // then it is probably a recurring instance.
-                if (w.PayeeName == t.PayeeName && Math.Abs((w.Amount - t.amount) * 100 / w.Amount) < 1)
-                {
-                    TimeSpan spanw = u.Date - w.Date;
-                    int daysw = (int)Math.Abs(spanw.TotalDays);
-                    if (Math.Abs(daysw - days) < 3)
-                    {
-                        found++;
-                        if (found == 3)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
         }
 
         private void RestoreSplitViewMode()
@@ -6161,15 +6051,14 @@ namespace Walkabout.Views
         RoundedButton mainButton;
         CloseBox closeBox;
         Point connectorCenter;
-        double height;
-        double rowHeight;
+        Point startPoint;
+        Point endPoint;
+        bool startOffscreen;
+        bool endOffscreen;
 
-        public TransactionConnectorAdorner(TransactionAnchor visibleAnchor, double height, double rowHeight)
-            : base(visibleAnchor)
+        public TransactionConnectorAdorner(UIElement adornedElement)
+            : base(adornedElement)
         {
-            this.height = height;
-            this.rowHeight = rowHeight;
-
             mainButton = new RoundedButton();
             mainButton.Content = "Merge";
             mainButton.ToolTip = "These transactions appear to be duplicates, click this button to merge them";
@@ -6183,7 +6072,60 @@ namespace Walkabout.Views
             closeBox.Opacity = 1;
         }
 
+        public Point StartPoint
+        {
+            get => this.startPoint;
+            set
+            {
+                if (this.startPoint != value)
+                {
+                    this.startPoint = value;
+                    InvalidateVisual();
+                }
+            }
+        }
+
+        public Point EndPoint
+        {
+            get => this.endPoint;
+            set
+            {
+                if (this.endPoint != value)
+                {
+                    this.endPoint = value;
+                    InvalidateVisual();
+                }
+            }
+        }
+
+        public bool StartOffscreen
+        {
+            get => startOffscreen;
+            set
+            {
+                if (this.startOffscreen != value)
+                {
+                    this.startOffscreen = value;
+                    InvalidateVisual();
+                }
+            }
+        }
+
+        public bool EndOffscreen
+        {
+            get => endOffscreen;
+            set
+            {
+                if (this.endOffscreen != value)
+                {
+                    this.endOffscreen = value;
+                    InvalidateVisual();
+                }
+            }
+        }
+
         internal Button MergeButton { get { return this.mainButton; } }
+
         internal Button CloseBox { get { return this.closeBox; } }
 
         protected override Size MeasureOverride(Size constraint)
@@ -6270,33 +6212,61 @@ namespace Walkabout.Views
 
         private Geometry CreateConnectorGeometry()
         {
-            double offsetY = rowHeight / 2;
             double arcSize = 10;
             double arcY = arcSize;
             double arcAngle = 90;
+            double offsetY = startPoint.Y;
+            double height = endPoint.Y - startPoint.Y;
             SweepDirection direction = SweepDirection.Clockwise;
-            if (height < 0)
+            if (startPoint.Y > endPoint.Y)
             {
+                // then the connector is going up, which means arcs are anti-clockwise.
                 arcY = -arcSize;
                 arcAngle = -90;
                 direction = SweepDirection.Counterclockwise;
             }
             double arcX = arcSize;
-
-            PathFigure connector = new PathFigure(new Point(0, offsetY), new PathSegment[] {
-                new LineSegment(new Point(connectorSize - arcX, offsetY), true),
-                new ArcSegment(new Point(connectorSize, offsetY + arcY), new Size(arcSize, arcSize), arcAngle, false, direction, true),
-                new LineSegment(new Point(connectorSize, height + offsetY - arcY), true),
-                new ArcSegment(new Point(connectorSize - arcX, height + offsetY), new Size(arcSize, arcSize), arcAngle, false, direction, true),
-                new LineSegment(new Point(0, height + offsetY), true),
-            }, false);
+            double x = startPoint.X;
+            PathFigure connector;
+            if (startOffscreen && endOffscreen)
+            {
+                connector = new PathFigure(new Point(x + connectorSize, offsetY), new PathSegment[] {
+                    new LineSegment(new Point(x + connectorSize, height + offsetY - arcY), true)
+                }, false);
+            }
+            else if (startOffscreen)
+            {
+                connector = new PathFigure(new Point(x + connectorSize, offsetY), new PathSegment[] {
+                    new LineSegment(new Point(x + connectorSize, height + offsetY - arcY), true),
+                    new ArcSegment(new Point(x + connectorSize - arcX, height + offsetY), new Size(arcSize, arcSize), arcAngle, false, direction, true),
+                    new LineSegment(new Point(x, height + offsetY), true),
+                }, false);
+            }
+            else if (endOffscreen)
+            {
+                connector = new PathFigure(new Point(x, offsetY), new PathSegment[] {
+                    new LineSegment(new Point(x + connectorSize - arcX, offsetY), true),
+                    new ArcSegment(new Point(x + connectorSize, offsetY + arcY), new Size(arcSize, arcSize), arcAngle, false, direction, true),
+                    new LineSegment(new Point(x + connectorSize, height + offsetY - arcY), true)
+                }, false);
+            }
+            else
+            {
+                connector = new PathFigure(new Point(x, offsetY), new PathSegment[] {
+                    new LineSegment(new Point(x + connectorSize - arcX, offsetY), true),
+                    new ArcSegment(new Point(x + connectorSize, offsetY + arcY), new Size(arcSize, arcSize), arcAngle, false, direction, true),
+                    new LineSegment(new Point(x + connectorSize, height + offsetY - arcY), true),
+                    new ArcSegment(new Point(x + connectorSize - arcX, height + offsetY), new Size(arcSize, arcSize), arcAngle, false, direction, true),
+                    new LineSegment(new Point(x, height + offsetY), true),
+                }, false);
+            }
 
             var path = new PathGeometry();
             path.Figures.Add(connector);
 
             Brush brush = (Brush)FindResource("TransactionConnectorBrush");
 
-            this.connectorCenter = new Point(connectorSize, (height + offsetY + penWidth) / 2);
+            this.connectorCenter = new Point(x + connectorSize, startPoint.Y + (height + penWidth) / 2);
             this.connector = path;
 
             return path;
@@ -6332,33 +6302,27 @@ namespace Walkabout.Views
         public TransactionConnector(MoneyDataGrid grid)
         {
             this.grid = grid;
-            this.grid.UnloadingRow += OnUnloadingRow;
+            this.grid.LoadingRow += OnRowLoadUnload;
+            this.grid.UnloadingRow += OnRowLoadUnload;
+            // we also have to watch scrolling in case the anchor moves too far offscreen
+            // such that it becomes invalid...
+            grid.ScrollChanged += OnGridScrollChanged;
+
         }
 
-        void OnUnloadingRow(object sender, DataGridRowEventArgs e)
+        void OnRowLoadUnload(object sender, DataGridRowEventArgs e)
         {
             if (e.Row == sourceRow || e.Row == targetRow)
             {
-                // then the row we are anchored to is unreliable, so we have to disconnect.
-                Disconnect();
+                // might need to reposition the adorner...
+                Connect(sourceTransaction, targetTransaction);
             }
         }
 
         void OnGridScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             // might need to reposition the adorner...
-            DataGridRow s = this.grid.GetRowFromItem(sourceTransaction);
-            DataGridRow t = this.grid.GetRowFromItem(targetTransaction);
-
-            if (s == null && t == null)
-            {
-                // both rows have been virtualized, so we cannot show anything.
-                Disconnect();
-            }
-            else if (s != sourceRow || t != targetRow)
-            {
-                Connect(sourceTransaction, targetTransaction);
-            }
+            Connect(sourceTransaction, targetTransaction);
         }
 
         public Transaction Source { get { return this.sourceTransaction; } }
@@ -6367,8 +6331,6 @@ namespace Walkabout.Views
 
         public void Connect(Transaction t, Transaction u)
         {
-            Disconnect();
-
             this.sourceTransaction = t;
             this.targetTransaction = u;
 
@@ -6376,91 +6338,94 @@ namespace Walkabout.Views
             int i = tc.IndexOf(this.sourceTransaction);
             int j = tc.IndexOf(this.targetTransaction);
 
+            var visibleRows = this.grid.GetVisibleRows();
+            if ((i < visibleRows.Item1 && j < visibleRows.Item1 ) ||
+                (i > visibleRows.Item2 && j > visibleRows.Item2))
+            {
+                // then the merged range is entirely out of view.
+                if (this.adorner != null)
+                {
+                    this.adorner.Visibility = Visibility.Collapsed;
+                }
+                return;
+            }
+
             sourceRow = this.grid.GetRowFromItem(t);
             targetRow = this.grid.GetRowFromItem(u);
 
-            var visibleAnchor = sourceAnchor;
-            double height = 0;
-            double rowHeight = 0;
+            Point startPoint = (this.adorner != null) ? this.adorner.StartPoint : new Point(0, 0);
+            Point endPoint = (this.adorner != null) ? this.adorner.EndPoint : new Point(0, 0);
+            bool startOffscreen = true;
+            bool endOffscreen = true;
 
-            if (sourceRow != null && targetRow == null)
+            if (sourceRow != null)
             {
                 sourceAnchor = sourceRow.FindFirstDescendantOfType<TransactionAnchor>();
                 if (sourceAnchor != null)
                 {
-                    targetAnchor = CreateFakeAnchor(sourceAnchor, u, j - i);
-                    Point pos = targetAnchor.RenderTransform.Transform(new Point(0, 0));
-                    visibleAnchor = sourceAnchor;
-                    height = pos.Y;
-                    rowHeight = sourceRow.ActualHeight;
+                    startOffscreen = false;
+                    startPoint = sourceAnchor.TransformToAncestor(this.grid).Transform(new Point(0, sourceRow.ActualHeight / 2));
+                    if (startPoint.Y > this.grid.ActualHeight)
+                    {
+                        startOffscreen = true;
+                        startPoint.Y = this.grid.ActualHeight;
+                    }
+                    if (startPoint.Y < 0)
+                    {
+                        startOffscreen = true;
+                        startPoint.Y = 0;
+                    }
+                    endPoint.X = startPoint.X;
                 }
             }
-            else if (sourceRow == null && targetRow != null)
+            if (startOffscreen)
+            {
+                startPoint.Y = (i < j) ? 0 : this.grid.ActualHeight;
+            }
+            if (targetRow != null)
             {
                 targetAnchor = WpfHelper.FindFirstDescendantOfType<TransactionAnchor>(targetRow);
                 if (targetAnchor != null)
                 {
-                    sourceAnchor = CreateFakeAnchor(targetAnchor, t, i - j);
-                    visibleAnchor = targetAnchor;
-                    Point pos = sourceAnchor.RenderTransform.Transform(new Point(0, 0));
-                    height = pos.Y;
-                    rowHeight = targetAnchor.ActualHeight;
+                    endOffscreen = false;
+                    endPoint = targetAnchor.TransformToAncestor(this.grid).Transform(new Point(0, targetRow.ActualHeight / 2));
+
+                    if (endPoint.Y > this.grid.ActualHeight)
+                    {
+                        endOffscreen = true;
+                        endPoint.Y = this.grid.ActualHeight;
+                    }
+                    if (endPoint.Y < 0)
+                    {
+                        endOffscreen = true;
+                        endPoint.Y = 0;
+                    }
+                    if (sourceRow == null)
+                    {
+                        startPoint.X = endPoint.X;
+                    }
                 }
             }
-            else if (sourceRow == null && targetRow == null)
+            if (endOffscreen)
             {
-                // now what? Neither row is really anchored so we can't inject our adorner...
-                return;
-            }
-            else
-            {
-                sourceAnchor = WpfHelper.FindFirstDescendantOfType<TransactionAnchor>(sourceRow);
-                targetAnchor = WpfHelper.FindFirstDescendantOfType<TransactionAnchor>(targetRow);
-                if (sourceAnchor != null && targetAnchor != null)
-                {
-                    Point pos = targetAnchor.TransformToVisual(sourceAnchor).Transform(new Point(0, 0));
-                    visibleAnchor = sourceAnchor;
-                    rowHeight = sourceRow.ActualHeight;
-                    height = pos.Y;
-                }
+                endPoint.Y = (i < j) ? this.grid.ActualHeight : 0;
             }
 
-            if (visibleAnchor != null)
+            if (this.adorner == null)
             {
-                this.adorner = new TransactionConnectorAdorner(visibleAnchor, height, rowHeight);
-
-                layer = AdornerLayer.GetAdornerLayer(visibleAnchor);
+                this.adorner = new TransactionConnectorAdorner(this.grid);
+                layer = AdornerLayer.GetAdornerLayer(this.grid);
                 layer.Add(this.adorner);
-
                 // relay these events up
                 this.adorner.MergeButton.Click += OnMainButtonClick;
                 this.adorner.CloseBox.Click += OnCloseBoxClick;
-
-                // and watch in case adorners are recycled to new row...
-                sourceAnchor.DataContextChanged += OnDataContextChanged;
-                targetAnchor.DataContextChanged += OnDataContextChanged;
-
-                // we also have to watch scrolling in case the anchor moves too far offscreen
-                // such that it becomes invalid...
-                grid.ScrollChanged += OnGridScrollChanged;
             }
-        }
 
-        private TransactionAnchor CreateFakeAnchor(TransactionAnchor realAnchor, Transaction dataContext, int offset)
-        {
-            // the DataGrid is very annoying, it sometimes chooses to return null rows for rows that are
-            // virtualized.  But we need a real anchor even if it is way offscreen otherwise we can't 
-            // draw our connector.  So here we have to fake it.
-            double offsetY = offset * sourceRow.ActualHeight;
-
-            var fakeAnchor = new TransactionAnchor();
-            fakeAnchor.RenderTransform = new TranslateTransform(0, offsetY);
-
-            // we have to put it in the tree so that the connector can get valid transform.
-            realAnchor.Child = fakeAnchor;
-
-            fakeAnchor.DataContext = dataContext;
-            return fakeAnchor;
+            this.adorner.StartOffscreen = startOffscreen;
+            this.adorner.EndOffscreen = endOffscreen;
+            this.adorner.StartPoint = startPoint;
+            this.adorner.EndPoint = endPoint;
+            this.adorner.Visibility = Visibility.Visible;
         }
 
         void OnCloseBoxClick(object sender, RoutedEventArgs e)

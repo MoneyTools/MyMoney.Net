@@ -88,9 +88,14 @@ namespace Walkabout.Data
         // todo: there should be no references left at this point...
         public bool Remove(LoanPayment x)
         {
+            return RemoveLoan(x);
+        }
+
+        internal bool RemoveLoan(LoanPayment x, bool forceRemoveAfterSave = false)
+        { 
             lock (collection)
             {
-                if (x.IsInserted)
+                if (x.IsInserted || forceRemoveAfterSave)
                 {
                     //// nothing to sync then
                     if (this.collection.Contains(x.Id))
@@ -141,9 +146,9 @@ namespace Walkabout.Data
             Add((LoanPayment)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            Remove((LoanPayment)pe);
+            RemoveLoan((LoanPayment)pe, forceRemoveAfterSave);
         }
 
         public bool IsReadOnly

@@ -101,6 +101,41 @@ namespace Walkabout.WpfConverters
         }
     }
 
+    public class DeletedAliasToolTipConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is bool b && b == true)
+        {
+            return "This alias has been subsumed by another and will be deleted when you save your changes";
+        }
+
+        return DependencyProperty.UnsetValue;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return value;
+    }
+}
+
+public class StrikeThroughConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool b && b == true)
+            {
+                return TextDecorations.Strikethrough;
+            }
+
+            return DependencyProperty.UnsetValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
 
     public class NullableValueConverter : IValueConverter
     {
@@ -116,8 +151,6 @@ namespace Walkabout.WpfConverters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            //if (string.IsNullOrEmpty(value.ToString()))
-            //    return null;
             return value;
         }
 

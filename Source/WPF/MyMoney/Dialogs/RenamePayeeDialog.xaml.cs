@@ -20,6 +20,7 @@ namespace Walkabout.Dialogs
         #region PROPERTIES
 
         EventHandler<ChangeEventArgs> handler;
+        DelayedActions delayedActions = new DelayedActions();
 
         private MyMoney money;
 
@@ -41,7 +42,7 @@ namespace Walkabout.Dialogs
 
         public string Pattern
         {
-            get { return this.textBox1.Text; }
+            get { return this.textBox1.Text.Trim(); }
             set { this.textBox1.Text = value; }
         }
 
@@ -127,13 +128,71 @@ namespace Walkabout.Dialogs
             okButton.Click += new RoutedEventHandler(OnOkButton_Click);
 
             comboBox1.TextChanged += new RoutedEventHandler(OnComboBox1_TextChanged);
+            textBox1.TextChanged += OnPatternTextChanged;
+            checkBoxUseRegex.Checked += OnRegexChanged;
+            checkBoxUseRegex.Unchecked += OnRegexChanged;
+            checkBoxAuto.Checked += OnAutoChanged;
+            checkBoxAuto.Unchecked += OnAutoChanged;
+        }
+
+        private void EnableButtons()
+        {
+            this.okButton.IsEnabled = !string.IsNullOrWhiteSpace(this.textBox1.Text) && !string.IsNullOrWhiteSpace(this.comboBox1.Text);
+        }
+
+        private void OnAutoChanged(object sender, RoutedEventArgs e)
+        {
+            CheckState();
+        }
+
+        private void OnRegexChanged(object sender, RoutedEventArgs e)
+        {
+            CheckState();
+        }
+
+        private void OnPatternTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            CheckState();
+        }
+
+        void CheckState() 
+        { 
+            EnableButtons();
+            if (!string.IsNullOrWhiteSpace(this.textBox1.Text))
+            {
+                delayedActions.StartDelayedAction("CheckConflicts", CheckConflicts, TimeSpan.FromMilliseconds(50));
+            }
         }
 
         void OnComboBox1_TextChanged(object sender, RoutedEventArgs e)
         {
-            this.okButton.IsEnabled = string.IsNullOrWhiteSpace(this.comboBox1.Text) == false;
+            EnableButtons();
         }
-     
+
+        private void CheckConflicts()
+        {
+            bool foundConflicts = false;
+            if (this.Alias)
+            {
+                AliasType atype = this.checkBoxUseRegex.IsChecked == true ? AliasType.Regex : AliasType.None;
+                Alias a = new Alias() { Pattern = this.Pattern, AliasType = atype };
+                IEnumerable<Alias> conflicts = this.money.FindSubsumedAliases(a);
+                if (conflicts.Count() > 0)
+                {
+                    foundConflicts = true;
+                    ClashPromp.Visibility = Visibility.Visible;
+                    ClashingAliases.ItemsSource = (from i in conflicts select i.Pattern).ToList();
+                    ClashingAliases.Visibility = Visibility.Visible;
+                }
+            }
+
+            if (!foundConflicts)
+            {
+                ClashPromp.Visibility = Visibility.Collapsed;
+                ClashingAliases.ItemsSource = null;
+                ClashingAliases.Visibility = Visibility.Collapsed;
+            }
+        }
 
         protected override void OnClosed(EventArgs e)
         {
@@ -147,7 +206,9 @@ namespace Walkabout.Dialogs
         {
             Payee q = this.money.Payees.FindPayee(this.Value, true);
             string pattern = this.Pattern;
-            bool close = true;
+            bool cancelled = true;
+            bool added = false;
+            cancelled = false;
             if (pattern != q.Name)
             {
                 AliasType atype = this.checkBoxUseRegex.IsChecked == true ? AliasType.Regex : AliasType.None;
@@ -159,9 +220,9 @@ namespace Walkabout.Dialogs
                     {
                         // map this alias to the payee just chosen by the user.
                         a = new Alias();
-                        this.money.Aliases.AddAlias(a);
                         a.Pattern = pattern;
                         a.Payee = q;
+                        added = true;
                     }
                     else
                     {
@@ -205,21 +266,31 @@ namespace Walkabout.Dialogs
                     {
                         this.textBox1.Focus();
                         this.textBox1.SelectAll();
-                        close = false;
+                        cancelled = true;
                     }
                 }
+                if (!cancelled)
+                {
+                    foreach(var subsumed in this.money.FindSubsumedAliases(a))
+                    {
+                        this.money.Aliases.RemoveAlias(subsumed);
+                    }
 
-                // Now the user really wants to switch all transactions
-                // referencing p over to q, then remove p.
-                int count = this.money.ApplyAlias(a, transactions);
-
+                    if (added)
+                    {
+                        this.money.Aliases.AddAlias(a);
+                    }
+                    // Now the user really wants to switch all transactions
+                    // referencing p over to q, then remove p.
+                    int count = this.money.ApplyAlias(a, transactions);
+                }
             }
             else
             {
                 // warn the user that they changed nothing?
             }
 
-            if (close)
+            if (!cancelled)
             {
                 this.DialogResult = true;
                 this.Close();

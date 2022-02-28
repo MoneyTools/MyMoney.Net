@@ -2,6 +2,9 @@
 <changes>
   <change version="2.0.0.2" date="2/24/2022">
     - Add "Export List" to Accounts panel to generate csv of the current accounts list.
+    - Fix 'merge ui' so the braces always point to the right place even during scrolling.
+    - Resolve issue #32: Better management of Aliases.
+    - Fix color of quick search box caret in dark theme.
   </change>
   <change version="2.0.0.1" date="2/22/2022">
     - Normalize account balances in account view.

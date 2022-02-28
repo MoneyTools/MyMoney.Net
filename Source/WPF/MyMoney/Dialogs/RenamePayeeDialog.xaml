@@ -57,7 +57,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -91,7 +91,15 @@
                         Auto-Rename ( make this an ongoing rename )
                     </CheckBox>
                 </Border>
+
+                <TextBlock x:Name="ClashPromp" Grid.Row="5" Margin="0,10,0,0" Text="These existing aliases will be subsumed by your new alias:"
+                           TextWrapping="Wrap" Grid.ColumnSpan="2" Visibility="Collapsed"/>
+
+                <ListView x:Name="ClashingAliases" Grid.Row="6" Margin="0,0,0,0" ScrollViewer.VerticalScrollBarVisibility="Visible"
+                          MaxHeight="300" Grid.ColumnSpan="2"  Visibility="Collapsed">
+                </ListView>
             </Grid >
+            
 
         </Border>
 
