@@ -271,18 +271,55 @@ namespace Walkabout.Dialogs
                 }
                 if (!cancelled)
                 {
-                    foreach(var subsumed in this.money.FindSubsumedAliases(a))
+                    List<Alias> subsumed = new List<Alias>(this.money.FindSubsumedAliases(a));
+
+                    HashSet<string> conflicts = new HashSet<string>();
+                    foreach (var b in subsumed)
                     {
-                        this.money.Aliases.RemoveAlias(subsumed);
+                        if (b.Payee != a.Payee)
+                        {
+                            conflicts.Add(b.Payee.Name);
+                        }
+                    }
+                    if (conflicts.Count > 0)
+                    {
+                        List<string> sorted = new List<string>(conflicts);
+                        bool truncated = false;
+                        if (sorted.Count > 10) {
+                            sorted.RemoveRange(10, sorted.Count - 10);
+                            truncated = true;
+                        }
+                        sorted.Sort();
+                        if (truncated)
+                        {
+                            sorted.Add("...");
+                        }
+
+                        if (MessageBoxResult.Cancel == MessageBoxEx.Show("There are subsumed Aliases that map to " + conflicts.Count + " different Payees: [" +
+                            string.Join(", ", sorted) + "].  Are you sure you want to continue with this rename?", 
+                            "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning))
+                        {
+                            this.textBox1.Focus();
+                            this.textBox1.SelectAll();
+                            cancelled = true;                                
+                        }
                     }
 
-                    if (added)
+                    if (!cancelled)
                     {
-                        this.money.Aliases.AddAlias(a);
+                        foreach (var b in subsumed)
+                        {
+                            this.money.Aliases.RemoveAlias(b);
+                        }
+
+                        if (added)
+                        {
+                            this.money.Aliases.AddAlias(a);
+                        }
+                        // Now the user really wants to switch all transactions
+                        // referencing p over to q, then remove p.
+                        int count = this.money.ApplyAlias(a, transactions);
                     }
-                    // Now the user really wants to switch all transactions
-                    // referencing p over to q, then remove p.
-                    int count = this.money.ApplyAlias(a, transactions);
                 }
             }
             else
