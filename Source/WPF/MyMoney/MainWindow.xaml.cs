@@ -857,7 +857,7 @@ namespace Walkabout
                     bool isTransactionViewAlready = CurrentView is TransactionsView;
                     TransactionsView view = SetCurrentView<TransactionsView>();
                     view.ViewTransactionsForSingleAccount(a, TransactionSelection.Current, 0);
-                    
+
                     if (!isTransactionViewAlready)
                     {
                         this.navigator.Pop();
@@ -1543,7 +1543,7 @@ namespace Walkabout
 
         // Could be on a background thread.
         private void LoadImportFiles()
-        { 
+        {
             try
             {
                 var filename = ImportFileListPath;
@@ -1581,7 +1581,7 @@ namespace Walkabout
 
                     if (qifFiles.Count > 0)
                     {
-                        delayedActions.StartDelayedAction("ImportQif", () => { ImportQif(qifFiles.ToArray()); }, TimeSpan.FromMilliseconds(1));                        
+                        delayedActions.StartDelayedAction("ImportQif", () => { ImportQif(qifFiles.ToArray()); }, TimeSpan.FromMilliseconds(1));
                     }
                 }
             }
@@ -2273,6 +2273,7 @@ namespace Walkabout
             csv.Save(this.myMoney);
         }
 
+
         private TabItem ShowDownloadTab()
         {
             TabControl tc = TabForGraphs;
@@ -2321,6 +2322,7 @@ namespace Walkabout
             }
             return total;
         }
+
 
         private int ImportMoneyFile(string[] fileNames)
         {
@@ -2861,7 +2863,7 @@ namespace Walkabout
             {
                 return null;
             }
-            foreach(var t in rows)
+            foreach (var t in rows)
             {
                 Category tc = t.Category;
                 if (tc == null)
@@ -2871,7 +2873,7 @@ namespace Walkabout
                 if (c == null)
                 {
                     c = tc.Root;
-                } 
+                }
                 else if (c != tc.Root)
                 {
                     return null;
@@ -3488,6 +3490,7 @@ namespace Walkabout
                 Properties.Resources.QfxFileFilter,
                 Properties.Resources.QifFileFilter,
                 Properties.Resources.XmlFileFilter,
+                Properties.Resources.CsvFileFilter,
                 Properties.Resources.MoneyFileFilter,
                 Properties.Resources.AllFileFilter);
             openFileDialog1.FilterIndex = 1;
@@ -3527,12 +3530,29 @@ namespace Walkabout
                                 case ".xml":
                                     totalTransactions += ImportXml(file);
                                     break;
+                                case ".csv":
+                                    {
+                                        Account acct = AccountHelper.PickAccount(myMoney, null, "Please select Account to import the CSV transactions to.");
+                                        if (acct!=null)
+                                        {
+                                            totalTransactions += CsvStore.ImportCsv(myMoney, acct, file);
+
+                                            myMoney.Rebalance(acct);
+
+                                            var view = SetCurrentView<TransactionsView>();
+                                            if (view.CheckTransfers() && acct != null)
+                                            {
+                                                view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
+                                            }
+                                        }
+                                    }
+                                    break;
                                 case ".db":
                                 case ".mmdb":
                                     moneyFiles.Add(file);
                                     break;
                                 default:
-                                    MessageBox.Show("Unrecognized file extension " + ext + ", expecting .qif, .ofx or .xml");
+                                    MessageBox.Show("Unrecognized file extension " + ext + ", expecting .qif, .ofx, .csv or .xml");
                                     break;
                             }
                         }
