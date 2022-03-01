@@ -159,7 +159,7 @@ namespace Walkabout.Data
         public static int ImportCsv(MyMoney myMoney, Account acct, string file)
         {
             var uri = new Uri(file);
-            var csvReader = new CsvReader(uri, Encoding.Default, null, 4096);
+            var csvReader = new CsvReader(uri, Encoding.UTF8, null, 4096);
             csvReader.Delimiter = ',';
             int total = 0;
             while (csvReader.Read())
