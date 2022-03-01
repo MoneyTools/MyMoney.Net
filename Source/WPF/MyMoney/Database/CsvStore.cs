@@ -4,9 +4,6 @@ using System.Text;
 using System.IO;
 using Walkabout.Utilities;
 using System.Data;
-using Walkabout.Dialogs;
-using Microsoft.VisualBasic.FileIO;
-using Walkabout.Views;
 
 namespace Walkabout.Data
 {
@@ -151,77 +148,64 @@ namespace Walkabout.Data
             return new DataSet();
         }
 
-        private static string[] ParseCSVLine(string csvLine)
-        {
-            using (TextFieldParser TFP = new TextFieldParser(new MemoryStream(Encoding.UTF8.GetBytes(csvLine))))
-            {
-                TFP.HasFieldsEnclosedInQuotes = true;
-                TFP.SetDelimiters(",");
-                return TFP.ReadFields();
-            }
-        }
+
+        /// <summary>
+        /// Import the Transactions & accounts in the given file and return the first account.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
 
         public static int ImportCsv(MyMoney myMoney, Account acct, string file)
         {
+            var uri = new Uri(file);
+            var csvReader = new CsvReader(uri, Encoding.Default, null, 4096);
+            csvReader.Delimiter = ',';
             int total = 0;
-
-            /// <summary>
-            /// Import the Transactions & accounts in the given file and return the first account.
-            /// </summary>
-            /// <param name="file"></param>
-            /// <param name="count"></param>
-            /// <returns></returns>
-            using (var csv = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            while (csvReader.Read())
             {
-                using (var sr = new StreamReader(csv))
+                if (csvReader.FieldCount != 3)
                 {
-                    while (!sr.EndOfStream)
+                    throw new NotSupportedException("Invalid CSV format expecting 3 columns [Date, Payee, Amount]");
+                }
+
+                var field1Date = csvReader[0];
+                var field2Payee = csvReader[1];
+                var field3Amount = csvReader[2];
+                if (total == 0)
+                {
+                    if (field1Date != "Date" || field2Payee != "Payee" || field3Amount != "Amount")
                     {
-                        var columns = ParseCSVLine(sr.ReadLine());
-
-                        if (columns.Length != 3)
-                        {
-                            throw new NotSupportedException("Invalid CSV format expecting 3 columns [Date, Payee, Amount]");
-                        }
-
-                        var field1Date = columns[0];
-                        var field2Payee = columns[1];
-                        var field3Amount = columns[2];
-
-                        if (total == 0)
-                        {
-                            if (field1Date != "Date" || field2Payee != "Payee" || field3Amount != "Amount")
-                            {
-                                throw new NotSupportedException("Invalid CSV format The fist row is expected to be the header [Date, Payee, Amount]");
-                            }
-                        }
-                        else
-                        {
-                            var dateTokens = field1Date.Split('-');
-
-                            if (dateTokens.Length != 3)
-                            {
-                                throw new NotSupportedException("Invalid CSV format The Date needs to be specified in ISO8601 YYYY-MM-DD format : " + field1Date);
-                            }
-
-                            if (dateTokens[0].Length != 4)
-                            {
-                                throw new NotSupportedException("Invalid CSV format The Date Year must be 4 digits : " + field1Date);
-                            }
-
-                            Transaction t = myMoney.Transactions.NewTransaction(acct);
-
-                            t.Id = -1;
-                            t.Date = DateTime.Parse(field1Date);
-                            t.Payee = t.Payee = myMoney.Payees.FindPayee(field2Payee, true);
-                            t.Amount = decimal.Parse(field3Amount);
-
-                            myMoney.Transactions.Add(t);
-                        }
-                        total++;
+                        throw new NotSupportedException("Invalid CSV format The fist row is expected to be the header [Date, Payee, Amount]");
                     }
                 }
+                else
+                {
+                    var dateTokens = field1Date.Split('-');
+
+                    if (dateTokens.Length != 3)
+                    {
+                        throw new NotSupportedException("Invalid CSV format The Date needs to be specified in ISO8601 YYYY-MM-DD format : " + field1Date);
+                    }
+
+                    if (dateTokens[0].Length != 4)
+                    {
+                        throw new NotSupportedException("Invalid CSV format The Date Year must be 4 digits : " + field1Date);
+                    }
+
+                    Transaction t = myMoney.Transactions.NewTransaction(acct);
+
+                    t.Id = -1;
+                    t.Date = DateTime.Parse(field1Date);
+                    t.Payee = t.Payee = myMoney.Payees.FindPayee(field2Payee, true);
+                    t.Amount = decimal.Parse(field3Amount);
+
+                    myMoney.Transactions.Add(t);
+                }
+                total++;
             }
+            csvReader.Close();
+
             return total;
         }
 
