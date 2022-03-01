@@ -8524,8 +8524,18 @@ namespace Walkabout.Data
                 // unlikely to have a recurring payment on the same day or for zero dollars!
                 return false;
             }
-            int found = 0;
-            int i = Math.Min(tc.IndexOf(t), tc.IndexOf(u));
+
+            DateTime startDate = t.Date;
+            int i = tc.IndexOf(t);
+            int j = tc.IndexOf(u);
+            Transaction start = t;
+            if (j < i)
+            {
+                start = u;
+                i = j;
+            }
+
+            List<double> daysBetween = new List<double>();
             for (--i; i > 0; i--)
             {
                 Transaction w = tc[i];
@@ -8538,17 +8548,27 @@ namespace Walkabout.Data
                 // then it is probably a recurring instance.
                 if (w.PayeeName == t.PayeeName && Math.Abs((w.Amount - t.Amount) * 100 / t.Amount) < amountDeltaPercent)
                 {
-                    TimeSpan spanw = u.Date - w.Date;
-                    decimal daysw = (decimal)Math.Abs(spanw.TotalDays);
-                    if (Math.Abs((daysw - days) * 100 / days) < daysDeltaPercent)
-                    {
-                        found++;
-                        if (found == recurringCount)
+                    TimeSpan diff = start.Date - w.Date;
+                    double diffDays = Math.Abs(diff.TotalDays);
+                    if (diffDays > 0)
+                    {  // weed out duplicate payments.
+                        daysBetween.Add(diffDays);
+                        if (daysBetween.Count > 10)
                         {
-                            return true;
+                            // that should be enough to see the pattern.
+                            break; 
                         }
+                        start.Date = w.Date;
                     }
                 }
+            }
+
+            var filtered = MathHelpers.RemoveOutliers(daysBetween, 1);
+            decimal mean = (decimal)MathHelpers.Mean(filtered);
+
+            if (Math.Abs((days - mean) * 100 / days) < daysDeltaPercent)
+            {
+                return true;
             }
             return false;
         }
@@ -8620,8 +8640,13 @@ namespace Walkabout.Data
                                 Transaction u = tc[k];
                                 if (u.PayeeName == t.PayeeName)
                                 {
-                                    if (IsPotentialDuplicate(t, u, days) && !Transactions.IsRecurring(t, u, tc))
+                                    if (IsPotentialDuplicate(t, u, days))
                                     {
+                                        if (Transactions.IsRecurring(t, u, tc))
+                                        {
+                                            return null;
+                                        }
+
                                         // ok, this is the closest viable duplicate...
                                         return u;
                                     }
@@ -9607,6 +9632,7 @@ namespace Walkabout.Data
         public long TransactionId { get { return Transaction.Id; } }
     }
 
+    [Flags]
     public enum TransactionFlags
     {
         None,

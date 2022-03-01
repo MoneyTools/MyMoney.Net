@@ -108,5 +108,19 @@ namespace Walkabout.Utilities
                 a = yMean - (b * xMean);
             }
         }
+
+        public static IEnumerable<double> RemoveOutliers(IEnumerable<double> pts, double numberOfStandardDeviationsFromMeanToAllow)
+        {
+            double mean = Mean(pts);
+            double stddev = StandardDeviation(pts);
+            double allowable = stddev * numberOfStandardDeviationsFromMeanToAllow;
+            foreach (var d in pts)
+            {
+                if (Math.Abs(d - mean) <= allowable)
+                {
+                    yield return d;
+                }
+            }
+        }
     }
 }

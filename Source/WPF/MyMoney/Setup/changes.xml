@@ -5,6 +5,7 @@
     - Fix 'merge ui' so the braces always point to the right place even during scrolling.
     - Resolve issue #32: Better management of Aliases.
     - Fix color of quick search box caret in dark theme.
+    - Add account import .csv supporting format [Date, Payee, Amount] where dates are ISO8601 or YYYY-MM-DD.
   </change>
   <change version="2.0.0.1" date="2/22/2022">
     - Normalize account balances in account view.
