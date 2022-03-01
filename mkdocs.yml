@@ -79,14 +79,14 @@ nav:
     - Known OFX Issues: Accounts/KnownOFXIssues.md
 
   - Charts:
-    - Overview: Charts/Charts.md
+    - Overview: Charts/index.md
     - History Chart: Charts/HistoryChart.md
     - Pie Charts: Charts/PieCharts.md
     - Stock Chart: Charts/StockChart.md
     - Trend Graph: Charts/TrendGraph.md
 
   - Reports:
-    - Overview: Reports/Reports.md
+    - Overview: Reports/index.md
     - Networth Report: Reports/NetworthReport.md
     - Investment Portfolio: Reports/InvestmentPortfolio.md
     - Cash Flow Report: Reports/CashFlowReport.md
