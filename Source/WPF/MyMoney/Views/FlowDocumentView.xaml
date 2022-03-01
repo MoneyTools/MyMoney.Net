@@ -47,7 +47,7 @@
                     <StackPanel x:Name="SearchWidgetArea"  Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,2,2,2" VerticalAlignment="Center" >
 
                         <!-- QUICK FILTER -->
-                        <c:QuickFilterControl x:Name="QuickFilterUX"  Width="144" FilterValueChanged="OnQuickFilterValueChanged" HorizontalAlignment="Left"/>
+                        <c:QuickFilterControl x:Name="QuickFilterUX"  Width="200" FilterValueChanged="OnQuickFilterValueChanged" HorizontalAlignment="Left"/>
 
                         <!-- ADVANCE & CLOSE -->
                         <c:TabCloseBox x:Name="CloseReport" Click="OnCloseReport" VerticalAlignment="Center" Margin="5,0,2,0"/>

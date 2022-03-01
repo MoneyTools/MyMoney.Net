@@ -310,13 +310,13 @@ namespace Walkabout.Data
             }
             foreach (PersistentObject pe in list)
             {
-                this.RemoveChild(pe);
+                this.RemoveChild(pe, true);
             }
         }
 
         public abstract void Add(object child);
 
-        public abstract void RemoveChild(PersistentObject pe);
+        public abstract void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -416,7 +416,7 @@ namespace Walkabout.Data
             if (this.change != ChangeType.Inserted)
             {
                 this.change = ChangeType.Inserted;
-                this.FireChangeEvent(this, null, ChangeType.Inserted);
+                this.FireChangeEvent(this, "IsInserted", ChangeType.Inserted);
             }
         }
 
@@ -425,7 +425,7 @@ namespace Walkabout.Data
             if (this.change != ChangeType.Deleted)
             {
                 this.change = ChangeType.Deleted;
-                this.FireChangeEvent(this, null, ChangeType.Deleted);
+                this.FireChangeEvent(this, "IsDeleted", ChangeType.Deleted);
             }
         }
 
@@ -1542,6 +1542,19 @@ namespace Walkabout.Data
             to.Category = from.Category;
         }
 
+        public IEnumerable<Alias> FindSubsumedAliases(Alias alias)
+        {
+            List<Alias> existingAliases = new List<Alias>();
+            foreach(var a in this.Aliases.GetAliases())
+            {
+                if (a != alias && alias.Matches(a.Pattern))
+                {
+                    existingAliases.Add(a);
+                }
+            }
+            return existingAliases;
+        }
+
         public IEnumerable<PersistentObject> FindAliasMatches(Alias alias, IEnumerable<Transaction> transactions)
         {
             Payee np = alias.Payee;
@@ -2151,14 +2164,14 @@ namespace Walkabout.Data
             Add((Category)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            RemoveAccount((Account)pe);
+            RemoveAccount((Account)pe, forceRemoveAfterSave);
         }
 
-        public bool RemoveAccount(Account a)
+        public bool RemoveAccount(Account a, bool forceRemoveAfterSave = false)
         {
-            if (a.IsInserted)
+            if (a.IsInserted || forceRemoveAfterSave)
             {
                 if (this.accounts.ContainsKey(a.Id))
                     this.accounts.Remove(a.Id);
@@ -2973,12 +2986,15 @@ namespace Walkabout.Data
             return (OnlineAccount)this.onlineAccounts[id];
         }
 
-        public bool RemoveOnlineAccount(OnlineAccount i)
+        public bool RemoveOnlineAccount(OnlineAccount i, bool forceRemoveAfterSave = false)
         {
-            if (this.onlineAccounts.ContainsKey(i.Id))
-                this.onlineAccounts.Remove(i.Id);
-            if (this.instIndex.ContainsKey(i.Name))
-                this.instIndex.Remove(i.Name);
+            if (i.IsInserted || forceRemoveAfterSave)
+            {
+                if (this.onlineAccounts.ContainsKey(i.Id))
+                    this.onlineAccounts.Remove(i.Id);
+                if (this.instIndex.ContainsKey(i.Name))
+                    this.instIndex.Remove(i.Name);
+            }
             i.OnDelete();
             return true;
         }
@@ -3015,9 +3031,9 @@ namespace Walkabout.Data
             Add((OnlineAccount)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            Remove((OnlineAccount)pe);
+            RemoveOnlineAccount((OnlineAccount)pe, forceRemoveAfterSave);
         }
 
         public bool Remove(OnlineAccount item)
@@ -3469,9 +3485,9 @@ namespace Walkabout.Data
             AddAlias((Alias)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            RemoveAlias((Alias)pe);
+            RemoveAlias((Alias)pe, forceRemoveAfterSave);
         }
 
         // Aliases
@@ -3542,15 +3558,18 @@ namespace Walkabout.Data
             return null;
         }
 
-        public bool RemoveAlias(Alias a)
+        public bool RemoveAlias(Alias a, bool forceRemoveAfterSave = false)
         {
             lock (this.aliases)
             {
-                if (a.IsInserted)
+                if (a.IsInserted || forceRemoveAfterSave)
                 {
                     // then we can remove it immediately.
                     if (this.aliases.ContainsKey(a.Id))
+                    {
                         this.aliases.Remove(a.Id);
+                        this.FireChangeEvent(this, a, "IsDeleted", ChangeType.Deleted);
+                    }
                 }
             }
             // mark it for deletion on next save
@@ -3570,14 +3589,14 @@ namespace Walkabout.Data
             }
         }
 
-        public IList<Alias> GetAliases()
+        public IList<Alias> GetAliases(bool includedDeleted = false)
         {
             List<Alias> list = new List<Alias>(this.aliases.Count);
             lock (this.aliases)
             {
                 foreach (Alias a in this.aliases.Values)
                 {
-                    if (!a.IsDeleted)
+                    if (!a.IsDeleted || includedDeleted)
                     {
                         list.Add(a);
                     }
@@ -3686,9 +3705,9 @@ namespace Walkabout.Data
             AddAlias((AccountAlias)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            RemoveAlias((AccountAlias)pe);
+            RemoveAlias((AccountAlias)pe, forceRemoveAfterSave);
         }
 
         // Aliases
@@ -3771,15 +3790,18 @@ namespace Walkabout.Data
             return null;
         }
 
-        public bool RemoveAlias(AccountAlias a)
+        public bool RemoveAlias(AccountAlias a, bool forceRemoveAfterSave = false)
         {
             lock (this.aliases)
             {
-                if (a.IsInserted)
+                if (a.IsInserted || forceRemoveAfterSave)
                 {
                     // then we can remove it immediately.
                     if (this.aliases.ContainsKey(a.Id))
+                    {
                         this.aliases.Remove(a.Id);
+                        this.FireChangeEvent(this, a, "IsDeleted", ChangeType.Deleted);
+                    }
                 }
             }
             // mark it for deletion on next save
@@ -4038,9 +4060,9 @@ namespace Walkabout.Data
             AddCurrency((Currency)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            RemoveCurrency((Currency)pe);
+            RemoveCurrency((Currency)pe, forceRemoveAfterSave);
         }
 
         public Currency AddCurrency(int id)
@@ -4176,9 +4198,22 @@ namespace Walkabout.Data
         }
 
 
-        public bool RemoveCurrency(Currency a)
+        public bool RemoveCurrency(Currency item, bool forceRemoveAfterSave = false)
         {
-            return Remove(a);
+            if (item.IsInserted || forceRemoveAfterSave)
+            {
+                lock (this.currencies)
+                {
+                    if (this.currencies.ContainsKey(item.Id))
+                    {
+                        this.currencies.Remove(item.Id);
+                        this.FireChangeEvent(this, item, "IsDeleted", ChangeType.Deleted);
+                    }
+                }
+            }
+            item.OnDelete();
+            ResetCache();
+            return true;
         }
 
         public IList<Currency> GetCurrencies()
@@ -4232,18 +4267,7 @@ namespace Walkabout.Data
 
         public bool Remove(Currency item)
         {
-            if (item.IsInserted)
-            {
-                lock (this.currencies)
-                {
-                    if (this.currencies.ContainsKey(item.Id))
-                    {
-                        this.currencies.Remove(item.Id);
-                    }
-                }
-            }
-            item.OnDelete();
-            ResetCache();
+            RemoveCurrency(item);
             return true;
         }
 
@@ -4366,15 +4390,17 @@ namespace Walkabout.Data
         }
 
         // todo: there should be no references left at this point...
-        public bool RemovePayee(Payee p)
+        public bool RemovePayee(Payee p, bool forceRemoveAfterSave = false)
         {
             lock (payees)
             {
-                if (p.IsInserted)
+                if (p.IsInserted || forceRemoveAfterSave)
                 {
                     // then we can remove it
-                    if (this.payees.ContainsKey(p.Id))
+                    if (this.payees.ContainsKey(p.Id)) {
                         this.payees.Remove(p.Id);
+                        this.FireChangeEvent(this, p, "IsDeleted", ChangeType.Deleted);
+                    }
                 }
                 if (this.payeeIndex.ContainsKey(p.Name))
                     this.payeeIndex.Remove(p.Name);
@@ -4481,9 +4507,9 @@ namespace Walkabout.Data
             Add((Payee)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            Remove((Payee)pe);
+            RemovePayee((Payee)pe, forceRemoveAfterSave);
         }
 
         public bool IsReadOnly
@@ -4690,9 +4716,13 @@ namespace Walkabout.Data
 
         public override void OnChanged(string name)
         {
-            if (this.regex == null && this.AliasType == AliasType.Regex && this.pattern != null)
+            if (this.AliasType == AliasType.Regex && this.pattern != null)
             {
                 this.regex = new Regex(this.pattern);
+            } 
+            else
+            {
+                this.regex = null;
             }
             base.OnChanged(name);
         }
@@ -4706,7 +4736,8 @@ namespace Walkabout.Data
             {
                 if (this.type != value)
                 {
-                    this.type = value; OnChanged("AliasType");
+                    this.type = value; 
+                    OnChanged("AliasType");
                 }
             }
         }
@@ -4924,16 +4955,16 @@ namespace Walkabout.Data
             AddExtra((TransactionExtra)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            RemoveExtra((TransactionExtra)pe);
+            RemoveExtra((TransactionExtra)pe, forceRemoveAfterSave);
         }
 
-        public bool RemoveExtra(TransactionExtra e)
+        public bool RemoveExtra(TransactionExtra e, bool forceRemoveAfterSave = false)
         {
             lock (this.items)
             {
-                if (e.IsInserted)
+                if (e.IsInserted || forceRemoveAfterSave)
                 {
                     lock (this.byTransactionId)
                     {
@@ -4946,6 +4977,7 @@ namespace Walkabout.Data
                     if (this.items.ContainsKey(e.Id))
                     {
                         this.items.Remove(e.Id);
+                        this.FireChangeEvent(this, e, "IsDeleted", ChangeType.Deleted);
                     }
                 }
             }
@@ -5867,16 +5899,17 @@ namespace Walkabout.Data
         }
 
         // todo: there should be no references left at this point...
-        public bool RemoveBuilding(RentBuilding x)
+        public bool RemoveBuilding(RentBuilding x, bool forceRemoveAfterSave = false)
         {
             lock (rentBuildings)
             {
-                if (x.IsInserted)
+                if (x.IsInserted || forceRemoveAfterSave)
                 {
                     // then we can remove it immediately
                     if (this.rentBuildings.ContainsKey(x.GetUniqueKey()))
                     {
                         this.rentBuildings.Remove(x.GetUniqueKey());
+                        this.FireChangeEvent(this, x, "IsDeleted", ChangeType.Deleted);
                     }
                 }
             }
@@ -6086,9 +6119,9 @@ namespace Walkabout.Data
             Add((RentBuilding)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            Remove((RentBuilding)pe);
+            RemoveBuilding((RentBuilding)pe, forceRemoveAfterSave);
         }
 
         public bool Remove(RentBuilding item)
@@ -6291,17 +6324,27 @@ namespace Walkabout.Data
             }
         }
 
-        public bool Remove(RentUnit x)
+        public bool RemoveRentUnit(RentUnit x, bool forceRemoveAfterSave = false)
         {
             lock (collection)
             {
-                if (this.collection.ContainsKey(x.Id))
+                if (x.IsInserted || forceRemoveAfterSave)
                 {
-                    this.collection.Remove(x.Id);
+                    if (this.collection.ContainsKey(x.Id))
+                    {
+                        this.collection.Remove(x.Id);
+                        this.FireChangeEvent(this, x, "IsDeleted", ChangeType.Deleted);
+                    }
                 }
             }
             x.OnDelete();
             return true;
+        }
+
+        // ICollection.
+        public bool Remove(RentUnit x)
+        {
+            return RemoveRentUnit(x);
         }
 
         public RentUnit Get(int id)
@@ -6345,9 +6388,9 @@ namespace Walkabout.Data
             Add((RentUnit)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            this.Remove((RentUnit)pe);
+            this.RemoveRentUnit((RentUnit)pe, forceRemoveAfterSave);
         }
 
         public bool Contains(RentUnit item)
@@ -6616,13 +6659,16 @@ namespace Walkabout.Data
         }
 
         // todo: there should be no references left at this point...
-        public bool RemoveCategory(Category c)
+        public bool RemoveCategory(Category c, bool forceRemoveAfterSave = false)
         {
-            if (c.IsInserted)
+            if (c.IsInserted || forceRemoveAfterSave)
             {
                 // then we can remove it
                 if (this.categories.ContainsKey(c.Id))
+                {
                     this.categories.Remove(c.Id);
+                    this.FireChangeEvent(this, c, "IsDeleted", ChangeType.Deleted);
+                }
             }
 
             if (this.categoryIndex.ContainsKey(c.Name))
@@ -6797,9 +6843,9 @@ namespace Walkabout.Data
             Add((Category)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            RemoveCategory((Category)pe);
+            RemoveCategory((Category)pe, forceRemoveAfterSave);
         }
 
         public bool Remove(Category item)
@@ -7709,13 +7755,16 @@ namespace Walkabout.Data
         }
 
         // todo: there should be no references left at this point...
-        public bool RemoveSecurity(Security s)
+        public bool RemoveSecurity(Security s, bool forceRemoveAfterSave = false)
         {
-            if (s.IsInserted)
+            if (s.IsInserted || forceRemoveAfterSave)
             {
                 // then we can remove it immediately.
                 if (this.securities.ContainsKey(s.Id))
+                {
                     this.securities.Remove(s.Id);
+                    this.FireChangeEvent(this, s, "IsDeleted", ChangeType.Deleted);
+                }
             }
 
             string name = s.Name;
@@ -7853,9 +7902,9 @@ namespace Walkabout.Data
             Add((Security)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            Remove((Security)pe);
+            RemoveSecurity((Security)pe, forceRemoveAfterSave);
         }
 
         public bool Remove(Security item)
@@ -8411,14 +8460,15 @@ namespace Walkabout.Data
             }
         }
 
-        public bool RemoveTransaction(Transaction t)
+        public bool RemoveTransaction(Transaction t, bool forceRemoveAfterSave = false)
         {
-            if (t.IsInserted)
-            {
+            if (t.IsInserted || forceRemoveAfterSave)
+            { 
                 lock (transactions)
                 {
                     // then we can remove it immediately.
                     this.transactions.Remove(t.Id);
+                    this.FireChangeEvent(this, t, "IsDeleted", ChangeType.Deleted);
                 }
             }
             if (t.Investment != null)
@@ -8448,6 +8498,142 @@ namespace Walkabout.Data
             }
             return null;
         }
+
+        /// <summary>
+        /// Return true if the given pair of transactions represent a recurring event that
+        /// has happened in the past looking back in the given collection of transactions.
+        /// </summary>
+        /// <param name="t">The first transaction of the pair</param>
+        /// <param name="u">The second transaction of the pair</param>
+        /// <param name="tc">The collection to search</param>
+        /// <param name="amountDeltaPercent">The allowable % difference payment amounts</param>
+        /// <param name="daysDeltaPercent">The allowable % difference in # days between payments</param>
+        /// <param name="recurringCount">How many such transactions before we consider it a recurring type</param>
+        /// <returns></returns>
+        public static bool IsRecurring(Transaction t, Transaction u, IList<Transaction> tc, 
+            decimal amountDeltaPercent = 3, 
+            decimal daysDeltaPercent = 10,
+            int recurringCount = 3)
+        {
+            // if we find prior transactions that match (or very closely match) that are on the 
+            // same (or similar) TimeSpan then this might be a recurring transaction.
+            TimeSpan span = t.Date - u.Date;
+            decimal days = (decimal)Math.Abs(span.TotalDays);
+            if (days == 0 || t.Amount == 0)
+            {
+                // unlikely to have a recurring payment on the same day or for zero dollars!
+                return false;
+            }
+            int found = 0;
+            int i = Math.Min(tc.IndexOf(t), tc.IndexOf(u));
+            for (--i; i > 0; i--)
+            {
+                Transaction w = tc[i];
+                if (w.amount == 0 || w.Status == TransactionStatus.Void)
+                {
+                    continue;
+                }
+
+                // if they are within 1% of each other and within 3 days of the prior time span
+                // then it is probably a recurring instance.
+                if (w.PayeeName == t.PayeeName && Math.Abs((w.Amount - t.Amount) * 100 / t.Amount) < amountDeltaPercent)
+                {
+                    TimeSpan spanw = u.Date - w.Date;
+                    decimal daysw = (decimal)Math.Abs(spanw.TotalDays);
+                    if (Math.Abs((daysw - days) * 100 / days) < daysDeltaPercent)
+                    {
+                        found++;
+                        if (found == recurringCount)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static bool IsPotentialDuplicate(Transaction t, Transaction u, int dayRange)
+        {
+            return !u.IsFake && !t.IsFake &&
+                u != t && u.amount == t.amount && u.PayeeName == t.PayeeName &&
+                // they must be in the same account (which they may not be if on the multi-account view).
+                u.Account == t.Account &&
+                // ignore transfers for now
+                (t.Transfer == null && u.Transfer == null) &&
+                // if user has already marked both as not duplicates, then skip it.
+                (!t.NotDuplicate || !u.NotDuplicate) &&
+                // and if they are investment transactions the stock type and unit quanities have to be the same
+                IsPotentialDuplicate(t.Investment, u.Investment) &&
+                // if they both have unique FITID fields, then the bank is telling us these are not duplicates.
+                (string.IsNullOrEmpty(t.FITID) || string.IsNullOrEmpty(u.FITID) || t.FITID == u.FITID) &&
+                // they can't be both reconciled, because then we can't merge them!
+                (u.Status != TransactionStatus.Reconciled || t.Status != TransactionStatus.Reconciled) &&
+                // within specified date range
+                Math.Abs((u.Date - t.Date).Days) < dayRange;
+        }
+
+        private static bool IsPotentialDuplicate(Investment u, Investment v)
+        {
+            if (u != null && v == null) return false;
+            if (u == null && v != null) return false;
+            if (u == null && v == null) return true;
+
+            return u.TradeType == v.TradeType &&
+                u.Units == v.Units &&
+                u.UnitPrice == v.UnitPrice &&
+                u.SecurityName == v.SecurityName;
+        }
+
+        /// <summary>
+        /// Find a potential duplicate transaction in the given collection within the given
+        /// date range.
+        /// </summary>
+        /// <param name="t">The starting transaction to search from</param>
+        /// <param name="tc">The collection to search</param>
+        /// <param name="searchRange">The range of dates to allow duplicate to be</param>
+        /// <returns></returns>
+        public static Transaction FindPotentialDuplicate(Transaction t, IList<Transaction> tc, TimeSpan searchRange)
+        {
+            int days = searchRange.Days;
+            int[] indices = new int[2]; // one forward index, and one backward index.
+
+            if (tc != null)
+            {
+                int i = tc.IndexOf(t);
+                if (i > 0)
+                {
+                    int count = tc.Count;
+                    DateTime now = DateTime.Now;
+
+                    // ok, find nearby transactions that have the same amount, searching
+                    // out from closest first, since the closest is the most likely one.
+                    for (int j = 1; j < count; j++)
+                    {
+                        indices[0] = i - j;
+                        indices[1] = i + j;
+
+                        foreach (int k in indices)
+                        {
+                            if (k >= 0 && k < count)
+                            {
+                                Transaction u = tc[k];
+                                if (u.PayeeName == t.PayeeName)
+                                {
+                                    if (IsPotentialDuplicate(t, u, days) && !Transactions.IsRecurring(t, u, tc))
+                                    {
+                                        // ok, this is the closest viable duplicate...
+                                        return u;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
 
         public Transaction Merge(Aliases aliases, Transaction t, Dictionary<long, Transaction> excluded)
         {
@@ -8769,46 +8955,6 @@ namespace Walkabout.Data
             return changed;
         }
 
-
-        static decimal GetInvestmentValue(System.Collections.IEnumerable data, out decimal taxes)
-        {
-            decimal balance = 0;
-            decimal tax = 0;
-            foreach (object row in data)
-            {
-                Investment it = null;
-                Transaction t = row as Transaction;
-                if (t == null)
-                {
-                    it = row as Investment;
-                }
-                else
-                {
-                    it = t.Investment;
-                }
-                if (it != null)
-                {
-                    tax += it.Taxes;
-                    decimal qty = it.Units;
-                    decimal value = qty == 0 ? 0 : (it.Security == null ? 0 : (it.Security.Price * qty));
-                    if (it.Type == InvestmentType.Add || it.Type == InvestmentType.Buy)
-                    {
-                        balance += value;
-                    }
-                    else
-                    {
-                        balance -= value;
-                    }
-                }
-                else if (t != null)
-                {
-                    balance += t.Amount;
-                }
-            }
-            taxes = tax;
-            return balance;
-        }
-
         public static decimal GetBalance(MyMoney money, System.Collections.IEnumerable data, Account account, bool normalize, bool withoutTax, out int count, out decimal salestax, out decimal investmentValue)
         {
             count = 0;
@@ -8916,23 +9062,6 @@ namespace Walkabout.Data
                 balance += t.Amount;
             }
             return balance;
-        }
-
-        public List<Transaction> GetTransactionsByStatus(Account a, TransactionStatus status)
-        {
-            List<Transaction> view = new List<Transaction>();
-            foreach (Transaction t in transactions.Values)
-            {
-                if (t.IsDeleted || t.Status != status)
-                    continue;
-
-                if (t.Account == a)
-                {
-                    view.Add(t);
-                }
-            }
-            view.Sort(new TransactionComparerByDate());
-            return view;
         }
 
         public IList<Transaction> FindTransfersToAccount(Account a)
@@ -9118,24 +9247,6 @@ namespace Walkabout.Data
             }
 
             return view;
-        }
-
-        private static bool IsLastChar(string currentColumnsStack, char charToCheck)
-        {
-            if (string.IsNullOrEmpty(currentColumnsStack))
-            {
-                return false;
-            }
-            return currentColumnsStack.Last() == charToCheck;
-        }
-
-        private static string PopLastChar(string currentColumnsStack)
-        {
-            if (string.IsNullOrEmpty(currentColumnsStack) == false)
-            {
-                return currentColumnsStack.Remove(currentColumnsStack.Count() - 1);
-            }
-            return string.Empty;
         }
 
         public IList<Transaction> GetTransactionsByCategory(Category c, Predicate<Transaction> include)
@@ -9366,9 +9477,9 @@ namespace Walkabout.Data
             Add((Transaction)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            Remove((Transaction)pe);
+            RemoveTransaction((Transaction)pe, forceRemoveAfterSave);
         }
 
         public bool Remove(Transaction item)
@@ -12131,15 +12242,18 @@ namespace Walkabout.Data
             return null;
         }
 
-        public bool RemoveSplit(Split s)
+        public bool RemoveSplit(Split s, bool forceRemoveAfterSave = false)
         {
             if (this.splits == null) return false;
             s.Transfer = null; // remove the transfer.
-            if (s.IsInserted)
+            if (s.IsInserted || forceRemoveAfterSave)
             {
                 // then we can remove it immedately.
                 if (this.splits.ContainsKey(s.Id))
+                {
                     this.splits.Remove(s.Id);
+                    this.FireChangeEvent(this, s, "IsDeleted", ChangeType.Deleted);
+                }
             }
 
             // mark it for removal on next save.
@@ -12262,9 +12376,9 @@ namespace Walkabout.Data
             Add((Split)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            Remove((Split)pe);
+            RemoveSplit((Split)pe, forceRemoveAfterSave);
         }
 
         public bool Remove(Split item)
@@ -13488,13 +13602,16 @@ namespace Walkabout.Data
         }
 
         // todo: there should be no references left at this point...
-        public bool RemoveStockSplit(StockSplit s)
+        public bool RemoveStockSplit(StockSplit s, bool forceRemoveAfterSave = false)
         {
-            if (s.IsInserted)
+            if (s.IsInserted || forceRemoveAfterSave)
             {
                 // then we can remove it immediately.
                 if (this.stockSplits.ContainsKey(s.Id))
+                {
                     this.stockSplits.Remove(s.Id);
+                    this.FireChangeEvent(this, s, "IsDeleted", ChangeType.Deleted);
+                }
             }
             // mark it for removal on next save
             s.OnDelete();
@@ -13561,9 +13678,9 @@ namespace Walkabout.Data
             Add((StockSplit)child);
         }
 
-        public override void RemoveChild(PersistentObject pe)
+        public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            Remove((StockSplit)pe);
+            RemoveStockSplit((StockSplit)pe, forceRemoveAfterSave);
         }
 
         public bool Remove(StockSplit item)

@@ -1010,7 +1010,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        public Uri WarningIcon
+        public object WarningIcon
         {
             get
             {
@@ -1018,7 +1018,7 @@ namespace Walkabout.Views.Controls
                 {
                     return new Uri("pack://application:,,,/MyMoney;component/Dialogs/Icons/Warning.png");
                 }
-                return null;
+                return DependencyProperty.UnsetValue;
             }
         }
 

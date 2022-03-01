@@ -46,12 +46,16 @@
         </Style>
 
         <c:NullableValueConverter x:Key="NullableValueConverter" />
+        <c:StrikeThroughConverter x:Key="StrikeThroughConverter"/>
+        <c:DeletedAliasToolTipConverter x:Key="DeletedAliasToolTipConverter"/>
 
         <!-- Pattern -->
         <DataTemplate x:Key="myTemplatePattern">
             <!-- the border makes the whole column hitable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Path=Pattern, Converter={StaticResource NullableValueConverter}}" />
+                <TextBlock Text="{Binding Path=Pattern, Converter={StaticResource NullableValueConverter}}"
+                           TextDecorations="{Binding Path=IsDeleted, Converter={StaticResource StrikeThroughConverter }}"
+                           ToolTip="{Binding Path=IsDeleted, Converter={StaticResource DeletedAliasToolTipConverter}}"/>
             </Border>
         </DataTemplate>
 
@@ -67,7 +71,9 @@
         <DataTemplate x:Key="myTemplateType">
             <!-- the border makes the whole column hitable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Path=AliasType, Converter={StaticResource NullableValueConverter}}" />
+                <TextBlock Text="{Binding Path=AliasType, Converter={StaticResource NullableValueConverter}}"
+                           TextDecorations="{Binding Path=IsDeleted, Converter={StaticResource StrikeThroughConverter }}"
+                           ToolTip="{Binding Path=IsDeleted, Converter={StaticResource DeletedAliasToolTipConverter}}"/>
             </Border>
         </DataTemplate>
 
@@ -83,7 +89,9 @@
         <DataTemplate x:Key="myTemplatePayee">
             <!-- the border makes the whole column hitable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Path=Payee, Converter={StaticResource NullableValueConverter}}" />
+                <TextBlock Text="{Binding Path=Payee, Converter={StaticResource NullableValueConverter}}" 
+                           TextDecorations="{Binding Path=IsDeleted, Converter={StaticResource StrikeThroughConverter }}"
+                           ToolTip="{Binding Path=IsDeleted, Converter={StaticResource DeletedAliasToolTipConverter}}"/>
             </Border>
         </DataTemplate>
 
@@ -157,7 +165,7 @@
         <StackPanel x:Name="SearchWidgetArea"  Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,2,2,2" VerticalAlignment="Top" >
 
             <!-- QUICK FILTER -->
-            <local:QuickFilterControl x:Name="QuickFilterUX"  Width="144" FilterValueChanged="OnQuickFilterValueChanged" HorizontalAlignment="Left"/>
+            <local:QuickFilterControl x:Name="QuickFilterUX"  Width="200" FilterValueChanged="OnQuickFilterValueChanged" HorizontalAlignment="Left"/>
 
         </StackPanel>
     </Grid>

@@ -12,7 +12,7 @@
 
     <Grid x:Name="LayoutRoot">
         <Border x:Name="QuickFilter"
-                Background="#55aaaaaa"
+                Background="{DynamicResource AppBarToggleButtonBackground}"
                 SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -37,7 +37,6 @@
 
                 <!-- TEXT BOX GLASS -->
                 <TextBox Name="InputFilterText" Grid.Column="1" BorderThickness="0" 
-                         Background="Transparent"
                          VerticalAlignment="Center" 
                          HorizontalAlignment="Stretch"  
                          KeyUp="OnTextBox_KeyUp" 

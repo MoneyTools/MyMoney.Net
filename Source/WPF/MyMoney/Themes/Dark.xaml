@@ -25,6 +25,9 @@
 
     <!-- OFX download panel -->
     <SolidColorBrush x:Key="SyncronizingIconBrush" Color="{m:DynamicColor SystemAccentColor}"/>
+    
+    <!-- secton headers -->
+    <SolidColorBrush x:Key="SectionHeaderBorder" Color="gray"/>
 
     <!-- colors for list selection -->
     <SolidColorBrush x:Key="ListItemForegroundUnacceptedBrush" Color="#D7BA7D"/>

@@ -538,7 +538,7 @@
                 <StackPanel x:Name="SearchWidgetArea"  Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,2,2,2" VerticalAlignment="Center" >
 
                     <!-- QUICK FILTER -->
-                    <local:QuickFilterControl x:Name="QuickFilterUX"  Width="144" FilterValueChanged="OnQuickFilterValueChanged" HorizontalAlignment="Left"/>
+                    <local:QuickFilterControl x:Name="QuickFilterUX"  Width="200" FilterValueChanged="OnQuickFilterValueChanged" HorizontalAlignment="Left"/>
 
                 </StackPanel>
             </Grid>
