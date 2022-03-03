@@ -32,7 +32,18 @@ But even better, you can select the "**Auto-Rename** " checkbox and next time My
 
 Aliases are important for "[Auto Categorization](AutoCategorization.md)" to work nicely.
 
+If you use the [Regular
+Expression](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference) feature combined with auto-rename you can
+make your auto-categorization more general.  For example, support you enter the following expression to match all Payee names starting with `WAL-MART` like this:
 
+![](../Images/Payees3.png)
+
+Then what happens here is it shows you a bunch of previous Alises you created
+that will be subsumed by your new more general regular expression.  When you
+click OK, all those previous Aliases will be removed and replaced by the one
+more general `Regex` alias `WAL-MART.*`.
+
+You can also do this consolidation in the [Alias View](Aliases.md).
 
 
 

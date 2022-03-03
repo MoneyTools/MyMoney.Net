@@ -32,15 +32,15 @@
                         <VisualState x:Name="MouseOver">
                             <Storyboard >
                                 <ColorAnimation Duration="0:0:0.1" To="{DynamicResource SystemBaseMediumLowColor}" Storyboard.TargetProperty="Color" Storyboard.TargetName="BackgroundFill" />
-                                <ColorAnimation Duration="0:0:0.1" To="Black" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath1" />
-                                <ColorAnimation Duration="0:0:0.1" To="Black" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath2" />
+                                <ColorAnimation Duration="0:0:0.1" To="{DynamicResource ToolbarIconMouseOverColor}" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath1" />
+                                <ColorAnimation Duration="0:0:0.1" To="{DynamicResource ToolbarIconMouseOverColor}" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath2" />
                             </Storyboard>
                         </VisualState>
                         <VisualState x:Name="Pressed" >
                             <Storyboard >
-                                <ColorAnimation Duration="0:0:0.1" To="{DynamicResource SystemBaseHighColor}" Storyboard.TargetProperty="Color" Storyboard.TargetName="BackgroundFill" />
-                                <ColorAnimation Duration="0:0:0.1" To="Black" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath1" />
-                                <ColorAnimation Duration="0:0:0.1" To="Black" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath2" />
+                                <ColorAnimation Duration="0:0:0.1" To="{DynamicResource SystemAltMediumHighColor}" Storyboard.TargetProperty="Color" Storyboard.TargetName="BackgroundFill" />
+                                <ColorAnimation Duration="0:0:0.1" To="{DynamicResource ToolbarIconPressedColor}" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath1" />
+                                <ColorAnimation Duration="0:0:0.1" To="{DynamicResource ToolbarIconPressedColor}" Storyboard.TargetProperty="Color" Storyboard.TargetName="ClosePath2" />
                             </Storyboard>
                         </VisualState>
                     </VisualStateGroup>

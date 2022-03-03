@@ -18,7 +18,12 @@
 
     <Color x:Key="GridNormalBackgroundColor">white</Color>
     <Color x:Key="GridAlternateBackgroundColor">#f0f0f0</Color>
-    
+
+    <Color x:Key="ToolbarIconColor">#1e1e1e</Color>
+    <Color x:Key="ToolbarIconMouseOverColor">white</Color>
+    <Color x:Key="ToolbarIconPressedColor">#CC000000</Color>
+
+
     <!-- MessageBox border -->
     <SolidColorBrush x:Key="MessageBoxBorder" Color="{m:DynamicColor SystemAccentColor}"/>
 
@@ -51,7 +56,7 @@
     <SolidColorBrush x:Key="PositiveCurrencyForegroundBrush" Color="#99000000"/>
 
     <!-- The following are used in toolbar icons -->
-    <SolidColorBrush x:Key="ToolbarIconBrush" Color="#99000000"/>
+    <SolidColorBrush x:Key="ToolbarIconBrush" Color="{StaticResource ToolbarIconColor}"/>
 
     <!-- for hyperlinks in reports -->
     <SolidColorBrush x:Key="HyperlinkForeground" Color="Blue"/>

@@ -18,7 +18,10 @@
 
     <Color x:Key="GridNormalBackgroundColor">#282828</Color>
     <Color x:Key="GridAlternateBackgroundColor">#1e1e1e</Color>
-    <Color x:Key="ToolbarIconColor">#99FFFFFF</Color>
+    
+    <Color x:Key="ToolbarIconColor">#FFFFFF</Color>
+    <Color x:Key="ToolbarIconMouseOverColor">black</Color>
+    <Color x:Key="ToolbarIconPressedColor">#80FFFFFF</Color>
 
     <!-- MessageBox border -->
     <SolidColorBrush x:Key="MessageBoxBorder" Color="{m:DynamicColor SystemAccentColor}"/>

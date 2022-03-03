@@ -361,7 +361,7 @@ namespace Walkabout.Controls
             DataGridRow dgrow = GetRowFromItem(dgci.Item);
             if (dgrow == null)
             {
-                MessageBoxEx.Show("Please debug me", "Internal Error");
+                // MessageBoxEx.Show("Please debug me", "Internal Error");
                 return 0;
             }
             return dgrow.GetIndex();
