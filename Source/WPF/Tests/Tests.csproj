@@ -192,8 +192,8 @@
     <Content Include="Package\Dgml.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="LovettSoftware.DgmlTestModeling.2019.dll">
-      <Version>3.8.1</Version>
+    <PackageReference Include="LovettSoftware.DgmlTestModeling.2022.dll">
+      <Version>3.9.1</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestAdapter">
       <Version>2.2.8</Version>
