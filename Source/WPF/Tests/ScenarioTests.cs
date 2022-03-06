@@ -17,6 +17,8 @@ using System.Windows.Media;
 using Walkabout.Setup;
 using Walkabout.Dialogs;
 using System.Xml.Linq;
+using System.Runtime.Serialization;
+using System.Globalization;
 
 namespace Walkabout.Tests
 {
@@ -1254,7 +1256,13 @@ to make sure attachments work.");
             AreEqual(this.editedValues.Amount, selectedTransaction.GetAmount(), "Amount");
             AreEqual(this.editedValues.Payee, selectedTransaction.GetPayee(), "Payee");
             AreEqual(this.editedValues.Category, selectedTransaction.GetCategory(), "Category");
-            AreEqual(this.editedValues.Date, selectedTransaction.GetDate(), "Category");
+
+            // Ensure that the date is in the same format as we expect it 
+            string dateInTransactionAsString = selectedTransaction.GetDate();
+            string dateTransactionAsNormalizedString = DateTime.Parse(dateInTransactionAsString).ToShortDateString();
+            string dateEditedAsNormalizedString = DateTime.Parse(this.editedValues.Date).ToShortDateString();
+            AreEqual(dateEditedAsNormalizedString, dateTransactionAsNormalizedString, "Category");
+
             AreEqual(this.editedValues.Memo, selectedTransaction.GetMemo(), "Memo");
         }
 
