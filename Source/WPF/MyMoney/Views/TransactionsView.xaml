@@ -325,7 +325,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateActivityEdit">
-            <ComboBox Style="{StaticResource GridComboStyle}"
+            <ComboBox Style="{StaticResource GridComboStyle}"  x:Name="EditorForActivity"
                 SelectedItem="{Binding Path=InvestmentType, Mode=TwoWay}"
                 ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=Activities}" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
         </DataTemplate>
@@ -337,7 +337,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateSymbolEdit">
-            <local:FilteringComboBox Style="{StaticResource GridComboStyle}"  HorizontalAlignment="Stretch"
+            <local:FilteringComboBox Style="{StaticResource GridComboStyle}"  HorizontalAlignment="Stretch" x:Name="EditorForSymbol"
                     SelectedItem="{Binding Path=InvestmentSecurity, Mode=TwoWay}"
                     ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=Securities}" VerticalAlignment="Top"
                     PreviewLostKeyboardFocus="ComboBoxSymbol_PreviewLostKeyboardFocus"  

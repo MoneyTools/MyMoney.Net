@@ -5,6 +5,8 @@ using System.Text;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Globalization;
+using System.Windows;
+using System.Diagnostics;
 
 namespace Walkabout.Controls
 {
@@ -24,6 +26,13 @@ namespace Walkabout.Controls
         public MoneyDatePicker()
         {
             this.SetResourceReference(StyleProperty, "DefaultDatePickerStyle");
+            this.Focusable = true;
+        }
+
+        protected override void OnGotFocus(RoutedEventArgs e)
+        {
+            Debug.WriteLine("MoneyDatePicker: OnGotFocus");
+            base.OnGotFocus(e);
         }
 
         private void AutoCompleteDate()

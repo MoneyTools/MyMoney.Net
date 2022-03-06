@@ -5791,12 +5791,15 @@ namespace Walkabout.Views
         </DataTemplate>
     */
     public class TransactionNumberColumn : DataGridColumn
-    {       
+    {
+        const string FieldName = "Number";
+
         protected override FrameworkElement GenerateEditingElement(DataGridCell cell, object dataItem)
         {
             TextBox box = new TextBox()
             {
-                VerticalAlignment = VerticalAlignment.Top
+                VerticalAlignment = VerticalAlignment.Top,
+                Name = "EditorFor" + FieldName
             };
             box.SetResourceReference(TextBox.StyleProperty, "GridTextBoxStyle");
             box.SetBinding(TextBox.TextProperty, new Binding("Number")
@@ -5823,7 +5826,7 @@ namespace Walkabout.Views
                 }
             }
 
-            return new TransactionTextField("Number", (t) => t.Number, binding, dataItem)
+            return new TransactionTextField(FieldName, (t) => t.Number, binding, dataItem)
             {
                 VerticalAlignment = VerticalAlignment.Top
             };
@@ -6613,7 +6616,8 @@ namespace Walkabout.Views
             {
                 VerticalAlignment = VerticalAlignment.Top,
                 TextAlignment = TextAlignment.Right,
-                Style = (Style)cell.FindResource("DefaultTextBoxStyle")
+                Style = (Style)cell.FindResource("DefaultTextBoxStyle"),
+                Name = this.SortMemberPath
             };
             ModernWpf.Controls.Primitives.TextBoxHelper.SetIsEnabled(box, false);
 
@@ -6865,8 +6869,9 @@ namespace Walkabout.Views
                 VerticalAlignment = VerticalAlignment.Top,
                 MinWidth = 100,
                 BorderThickness = new Thickness(0),
-                Margin = new Thickness(0, -2, 0, 0)
-            };
+                Margin = new Thickness(0, -2, 0, 0),
+                Name = "EditorForDate"
+            };            
             picker.SetBinding(MoneyDatePicker.SelectedDateProperty, new Binding("Date"));
             return picker;
         }
