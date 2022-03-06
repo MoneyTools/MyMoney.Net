@@ -349,6 +349,8 @@ namespace Walkabout.Views.Controls
                 // help LINQ do it's magic over the collection
                 List<Account> inputList = new List<Account>(myMoney.Accounts.GetAccounts(!this.displayClosedAccounts));
 
+                var selected = this.SelectedAccount;
+
                 this.items.Clear();
 
                 decimal netWorth = 0;
@@ -382,6 +384,11 @@ namespace Walkabout.Views.Controls
                 if (statusArea != null)
                 {
                     statusArea.Text = netWorth.ToString("C");
+                }
+
+                if (selected != null)
+                {
+                    this.SelectedAccount = selected;
                 }
 
             }

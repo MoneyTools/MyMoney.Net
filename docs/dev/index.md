@@ -27,7 +27,10 @@ There are integrated unit tests which you can run in Visual Studio using the Tes
 
 The integration tests in `ScenarioTests.cs` are interesting in that they are model based
 tests running from a user model called `TestModel.dgml`.
-This test is fun to watch if you also install the
-[DgmlTestMonitor plugin](https://marketplace.visualstudio.com/items?itemName=ChrisLovett.DgmlTestMonitor2019).
+To run this test you need to first install the
+[DgmlTestMonitor 2022 plugin](https://marketplace.visualstudio.com/items?itemName=ChrisLovett.DgmlTestMonitor2022):
 
 
+![](../Images/DgmlTestMonitorInstall.png)
+
+This installs a new tool window, you can open View/Other Windows/DGML Test Monitor. Here's a [demo video](https://youtu.be/h5cIDTlnN8I) showing the testing running.

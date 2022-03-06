@@ -31,7 +31,7 @@ namespace Walkabout.Tests.Wrappers
                     string name = e.Current.Name;
                     if (!name.Contains("AccountSectionHeader"))
                     {
-                        names.Add(name);
+                        names.Add(e.Current.AutomationId);
                     }
                 }
 
@@ -56,7 +56,7 @@ namespace Walkabout.Tests.Wrappers
                     string name = e.Current.Name;
                     if (!name.Contains("AccountSectionHeader"))
                     {
-                        return name;
+                        return e.Current.AutomationId;
                     }
                 }
                 return null;
@@ -88,14 +88,14 @@ namespace Walkabout.Tests.Wrappers
         {
             AutomationElement item = Select(index);
             string name = item.Current.Name;
-            if (name != "Walkabout.Data.AccountSectionHeader")
+            if (!name.Contains("AccountSectionHeader"))
             {
                 ContextMenu menu = new ContextMenu(item, true);
                 menu.InvokeMenuItem("DeleteAccount");
 
                 MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(Element.Current.ProcessId);
 
-                AutomationElement child = mainWindow.FindChildWindow("Delete Account: " + name, 5);
+                AutomationElement child = mainWindow.FindChildWindow("Delete Account: " + item.Current.AutomationId, 5);
                 if (child != null)
                 {
                     MessageBoxWrapper msg = new MessageBoxWrapper(child);
@@ -116,7 +116,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void SelectAccount(int index)
         {            
-            AutomationElement e = Select(index);            
+            Select(index);            
         }
     }
 }
