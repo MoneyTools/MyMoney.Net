@@ -16,12 +16,12 @@ namespace Walkabout.Tests.Wrappers
 
         public void ClickOk()
         {
-            ClickButton("okButton");
+            window.ClickButton("okButton");
         }
 
         public void ClickCancel()
         {
-            ClickButton("cancelButton");
+            window.ClickButton("cancelButton");
         }
 
 

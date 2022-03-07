@@ -47,7 +47,7 @@ namespace Walkabout.Tests.Wrappers
 
             Thread.Sleep(300);
 
-            AutomationElement child = this.FindChildWindow("Save Changes", 1);
+            AutomationElement child = this.Element.FindChildWindow("Save Changes", 1);
             if (child != null)
             {
                 MessageBoxWrapper msg = new MessageBoxWrapper(child);
@@ -55,7 +55,7 @@ namespace Walkabout.Tests.Wrappers
                 Thread.Sleep(300);
             }
 
-            child = this.FindChildWindow("New Database", 1);
+            child = this.Element.FindChildWindow("New Database", 1);
             if (child != null)
             {
                 MessageBoxWrapper msg = new MessageBoxWrapper(child);
@@ -87,7 +87,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal AccountsWrapper ViewAccounts()
         {
-            accounts = new AccountsWrapper(Expand("AccountsSelector"));
+            accounts = new AccountsWrapper(Element.Expand("AccountsSelector"));
             categories = null;
             payees = null;
             securities = null;
@@ -97,7 +97,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal CategoriesWrapper ViewCategories()
         {
-            categories = new CategoriesWrapper(Expand("CategoriesSelector"));
+            categories = new CategoriesWrapper(Element.Expand("CategoriesSelector"));
             //accounts = null;
             payees = null;
             securities = null;
@@ -107,7 +107,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal PayeesWrapper ViewPayees()
         {
-            payees = new PayeesWrapper(Expand("PayeesSelector"));
+            payees = new PayeesWrapper(Element.Expand("PayeesSelector"));
             //accounts = null;
             categories = null;
             securities = null;
@@ -117,7 +117,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal SecuritiesWrapper ViewSecurities()
         {
-            securities = new SecuritiesWrapper(Expand("SecuritiesSelector"));
+            securities = new SecuritiesWrapper(Element.Expand("SecuritiesSelector"));
             //accounts = null;
             categories = null;
             payees = null;
@@ -213,14 +213,14 @@ namespace Walkabout.Tests.Wrappers
             ContextMenu menu = MainMenu.OpenSubMenu("MenuOnline");
             menu.InvokeMenuItem("MenuOnlineDownloadAccounts");
 
-            AutomationElement window = this.FindChildWindow("Online Account", 5);
+            AutomationElement window = this.Element.FindChildWindow("Online Account", 5);
             return new OnlineAccountsDialogWrapper(window);
         }
 
 
         internal void Synchronize()
         {
-            ClickButton("ButtonSynchronize");
+            Element.ClickButton("ButtonSynchronize");
         }
 
         internal ChartsAreaWrapper GetChartsArea()
@@ -238,7 +238,14 @@ namespace Walkabout.Tests.Wrappers
 
         public void ResetReport()
         {
-            reportOpen = false;
+            if (reportOpen)
+            {
+                AutomationElement closeButton = window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "CloseReport"));
+                if (closeButton == null || closeButton.Current.IsOffscreen)
+                {
+                    reportOpen = false;
+                }
+            }
         }
 
         public void CloseReport()

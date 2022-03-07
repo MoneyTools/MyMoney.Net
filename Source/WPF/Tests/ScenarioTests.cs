@@ -129,6 +129,7 @@ namespace Walkabout.Tests
 
         AccountsWrapper accounts;
         TransactionViewWrapper transactions;
+        QuickFilterWrapper quickFilter;
         int creationTime;
         TransactionViewItem selectedTransaction;
         TransactionDetails editedValues;
@@ -317,7 +318,9 @@ namespace Walkabout.Tests
 
         private MyMoney Load()
         {
-            return database.Load(null);
+            MyMoney result = database.Load(null);
+            database.Disconnect();
+            return result;
         }
 
         string GetFreeDatabase(string baseNamePattern)
@@ -406,14 +409,14 @@ namespace Walkabout.Tests
             ContextMenu subMenu = window.MainMenu.OpenSubMenu("MenuHelp");
             subMenu.InvokeMenuItem("MenuSampleData");
 
-            AutomationElement msgbox = window.FindChildWindow("Add Sample Data", 5);
+            AutomationElement msgbox = window.Element.FindChildWindow("Add Sample Data", 5);
             if (msgbox != null)
             {
                 MessageBoxWrapper mbox = new MessageBoxWrapper(msgbox);
                 mbox.ClickYes();
             }
 
-            AutomationElement child = window.FindChildWindow("Sample Database Options", 10);
+            AutomationElement child = window.Element.FindChildWindow("Sample Database Options", 10);
             if (child != null)
             {
                 SampleDataDialogWrapper cd = new SampleDataDialogWrapper(child);
@@ -450,6 +453,8 @@ namespace Walkabout.Tests
                     Thread.Sleep(1000);
                 }
             }
+
+            Assert.IsNotNull(money, "Could not load money database!");
 
             List<string> categories = new List<string>();
             foreach (Category c in money.Categories)
@@ -546,7 +551,7 @@ namespace Walkabout.Tests
                 onlineAccounts.AppId = "QWIN";
                 onlineAccounts.AppVersion = "1700";
 
-                if (onlineAccounts.IsButtonEnabled("ButtonVerify"))
+                if (onlineAccounts.Element.IsButtonEnabled("ButtonVerify"))
                 {
                     // give connect button time to react...
                     passwordDialog = onlineAccounts.ClickConnect();
@@ -638,13 +643,13 @@ namespace Walkabout.Tests
 
                         string title = "Select Account for: " + item.Id;
                         MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(onlineAccounts.Element.Current.ProcessId);
-                        AutomationElement child = mainWindow.FindChildWindow(title, 5);
+                        AutomationElement child = mainWindow.Element.FindChildWindow(title, 5);
                         if (child != null)
                         {
                             AccountPickerWrapper picker = new AccountPickerWrapper(child);
                             picker.ClickAddNewAccount();
 
-                            AutomationElement child2 = mainWindow.FindChildWindow("Account", 5);
+                            AutomationElement child2 = mainWindow.Element.FindChildWindow("Account", 5);
                             if (child2 != null)
                             {
                                 AccountSettingsWrapper settings = new AccountSettingsWrapper(child2);
@@ -729,8 +734,19 @@ namespace Walkabout.Tests
 
         internal void ViewStock()
         {
-            var charts = window.GetChartsArea();
-            charts.SelectStock();
+            if (IsSecuritySelected)
+            {
+                var charts = window.GetChartsArea();
+                charts.SelectStock();
+            }
+        }
+        internal void ViewHistory()
+        {
+            if (window.IsCategorySelected || window.IsPayeeSelected)
+            {
+                var charts = window.GetChartsArea();
+                charts.SelectHistory();
+            }
         }
         #endregion 
 
@@ -775,7 +791,7 @@ namespace Walkabout.Tests
             attachmentDialog.ClickPaste();
 
             // verify image exists
-            var image = attachmentDialog.FindImage();
+            var image = attachmentDialog.ScrollViewer.FindImage();
 
             Assert.IsNotNull(image);
         }
@@ -785,7 +801,7 @@ namespace Walkabout.Tests
             get
             {
                 Assert.IsNotNull(attachmentDialog);
-                var image = attachmentDialog.FindImage(0);
+                var image = attachmentDialog.ScrollViewer.FindImage(0);
                 return (image != null);
             }
         }
@@ -816,7 +832,7 @@ to make sure attachments work.");
             attachmentDialog.ClickPaste();
 
             // verify RichTextBox
-            var box = attachmentDialog.FindRichText();
+            var box = attachmentDialog.ScrollViewer.FindRichText();
 
             Assert.IsNotNull(box);
         }
@@ -1000,6 +1016,7 @@ to make sure attachments work.");
         {
             window.CloseReport();
             this.transactions = window.FindTransactionGrid();
+            this.quickFilter = null;
             window.WaitForInputIdle(200);
 
             var selection = this.transactions.Selection;
@@ -1173,7 +1190,7 @@ to make sure attachments work.");
             Input.TapKey(System.Windows.Input.Key.Tab);
             Thread.Sleep(30);
 
-            AutomationElement child = window.FindChildWindow("Category", 2);
+            AutomationElement child = window.Element.FindChildWindow("Category", 2);
             categoryDialogVisible = (child != null);
         }
 
@@ -1191,7 +1208,7 @@ to make sure attachments work.");
 
         void CategoryDetails()
         {
-            AutomationElement child = window.FindChildWindow("Category", 4);
+            AutomationElement child = window.Element.FindChildWindow("Category", 4);
             if (child != null)
             {
                 // todo: edit more of the category properties...
@@ -1316,6 +1333,7 @@ to make sure attachments work.");
             get
             {
                 this.transactions = window.FindTransactionGrid();
+                this.quickFilter = null;
                 return this.transactions != null && this.transactions.IsEditable;
             }
         }
@@ -1325,6 +1343,7 @@ to make sure attachments work.");
             get
             {
                 this.transactions = window.FindTransactionGrid();
+                this.quickFilter = null;
                 return this.transactions != null && this.transactions.HasTransactions;
             }
         }
@@ -1373,7 +1392,19 @@ to make sure attachments work.");
 
         void SearchTransactionView()
         {
-            // todo: implement searching
+            if (this.transactions != null && this.quickFilter == null)
+            {
+                this.quickFilter = this.window.Element.FindQuickFilter();
+                Assert.IsNotNull(this.quickFilter, "Cannot find quick filter control");                
+            }
+            if (!string.IsNullOrEmpty(this.quickFilter.GetFilter()))
+            {
+                this.quickFilter.ClearSearch();
+            }
+            else
+            {
+                this.quickFilter.SetFilter("the");
+            }
         }
 
         void ClearTransactionViewState()
@@ -1413,7 +1444,7 @@ to make sure attachments work.");
             // internet is unavailable, or stock quote service is down.
             if (window != null)
             {
-                AutomationElement msgbox = window.FindChildWindow("Error Fetching Stock Quotes", 3);
+                AutomationElement msgbox = window.Element.FindChildWindow("Error Fetching Stock Quotes", 3);
                 if (msgbox != null)
                 {
                     MessageBoxWrapper mbox = new MessageBoxWrapper(msgbox);

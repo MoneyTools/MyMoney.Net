@@ -16,88 +16,88 @@ namespace Walkabout.Tests.Wrappers
 
         public void ClickOk()
         {
-            ClickButton("ButtonOk");
+            window.ClickButton("ButtonOk");
         }
 
         public void ClickCancel()
         {
-            ClickButton("ButtonCancel");
+            window.ClickButton("ButtonCancel");
         }
 
         public void ClickOnlineAccountDetails()
         {
-            ClickButton("buttonOnlineAccountDetails");
+            window.ClickButton("buttonOnlineAccountDetails");
         }
 
         public void ClickGoToWebSite()
         {
-            ClickButton("ButtonGoToWebSite");
+            window.ClickButton("ButtonGoToWebSite");
         }
 
         public string Name
         {
-            get { return GetTextBox("TextBoxName"); }
-            set { SetTextBox("TextBoxName", value); }
+            get { return window.GetTextBox("TextBoxName"); }
+            set { window.SetTextBox("TextBoxName", value); }
         }
 
         public string AccountNumber
         {
-            get { return GetTextBox("TextBoxAccountNumber"); }
-            set { SetTextBox("TextBoxAccountNumber", value); }
+            get { return window.GetTextBox("TextBoxAccountNumber"); }
+            set { window.SetTextBox("TextBoxAccountNumber", value); }
         }
 
         public string Description
         {
-            get { return GetTextBox("TextBoxDescription"); }
-            set { SetTextBox("TextBoxDescription", value); }
+            get { return window.GetTextBox("TextBoxDescription"); }
+            set { window.SetTextBox("TextBoxDescription", value); }
         }
 
         internal string AccountType
         {
-            get { return GetComboBoxSelection("AccountTypeCombo"); }
-            set { SetComboBox("AccountTypeCombo", value); }
+            get { return window.GetComboBoxSelection("AccountTypeCombo"); }
+            set { window.SetComboBox("AccountTypeCombo", value); }
         }
 
         public string OpeningBalance
         {
-            get { return GetTextBox("TextBoxOpeningBalance"); }
-            set { SetTextBox("TextBoxOpeningBalance", value); }
+            get { return window.GetTextBox("TextBoxOpeningBalance"); }
+            set { window.SetTextBox("TextBoxOpeningBalance", value); }
         }
 
         internal string OnlineAccount
         {
-            get { return GetComboBoxSelection("comboBoxOnlineAccount"); }
-            set { SetComboBox("comboBoxOnlineAccount", value); }
+            get { return window.GetComboBoxSelection("comboBoxOnlineAccount"); }
+            set { window.SetComboBox("comboBoxOnlineAccount", value); }
         }
 
         public string Currency
         {
-            get { return GetTextBox("TextBoxCurrency"); }
-            set { SetTextBox("TextBoxCurrency", value); }
+            get { return window.GetTextBox("TextBoxCurrency"); }
+            set { window.SetTextBox("TextBoxCurrency", value); }
         }
 
         public string WebSite
         {
-            get { return GetTextBox("TextBoxWebSite"); }
-            set { SetTextBox("TextBoxWebSite", value); }
+            get { return window.GetTextBox("TextBoxWebSite"); }
+            set { window.SetTextBox("TextBoxWebSite", value); }
         }
 
         public string ReconcileWarning
         {
-            get { return GetTextBox("TextBoxReconcileWarning"); }
-            set { SetTextBox("TextBoxReconcileWarning", value); }
+            get { return window.GetTextBox("TextBoxReconcileWarning"); }
+            set { window.SetTextBox("TextBoxReconcileWarning", value); }
         }
 
         public bool IncludeInBudget
         {
-            get { return IsChecked("CheckBoxIncludeInBudget"); }
-            set { SetChecked("CheckBoxIncludeInBudget", value); }
+            get { return window.IsChecked("CheckBoxIncludeInBudget"); }
+            set { window.SetChecked("CheckBoxIncludeInBudget", value); }
         }
 
         public bool Closed
         {
-            get { return IsChecked("CheckBoxClosed"); }
-            set { SetChecked("CheckBoxClosed", value); }
+            get { return window.IsChecked("CheckBoxClosed"); }
+            set { window.SetChecked("CheckBoxClosed", value); }
         }
     }
 

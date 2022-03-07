@@ -56,7 +56,7 @@ namespace Walkabout.Tests.Wrappers
                 found = false;
                 foreach (string title in new string[] { "Database Exists", "Need to Elevate" })
                 {
-                    AutomationElement child = main.FindChildWindow(title, 2);
+                    AutomationElement child = main.Element.FindChildWindow(title, 2);
                     if (child != null)
                     {
                         MessageBoxWrapper msg = new MessageBoxWrapper(child);

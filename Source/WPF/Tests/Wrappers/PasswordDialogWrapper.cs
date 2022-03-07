@@ -19,31 +19,31 @@ namespace Walkabout.Tests.Wrappers
 
         public string UserName
         {
-            get { return GetComboBoxText("TextBoxUserName"); }
-            set { SetComboBoxText("TextBoxUserName", value); }
+            get { return window.GetComboBoxText("TextBoxUserName"); }
+            set { window.SetComboBoxText("TextBoxUserName", value); }
         }
 
         public string Password
         {
-            get { return GetTextBox("PasswordBox"); }
-            set { SetTextBox("PasswordBox", value); }
+            get { return window.GetTextBox("PasswordBox"); }
+            set { window.SetTextBox("PasswordBox", value); }
         }
 
         internal void SetUserDefinedField(string id, string value)
         {
-            SetTextBox("TextBox" + id, value);
+            window.SetTextBox("TextBox" + id, value);
         }
 
         #endregion 
 
         public void ClickOk()
         {
-            ClickButton("ButtonOk");
+            window.ClickButton("ButtonOk");
         }
 
         public void ClickCancel()
         {
-            ClickButton("ButtonCancel");
+            window.ClickButton("ButtonCancel");
         }
 
 

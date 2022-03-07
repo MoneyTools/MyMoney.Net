@@ -56,7 +56,9 @@ namespace Walkabout.Tests.Interop {
 
         public const int INPUT_MOUSE             = 0;
         public const int INPUT_KEYBOARD          = 1;
-            
+
+        public const int WM_SETFOCUS = 0x0007;
+
         [StructLayout(LayoutKind.Sequential)]
         public struct INPUT {
             public int          type;
@@ -161,6 +163,11 @@ namespace Walkabout.Tests.Interop {
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(Win32.HWND hWnd, int nMsg, IntPtr wParam, IntPtr lParam);
+
+        public static void SetFocus(Win32.HWND hWnd)
+        {
+            SendMessage(hWnd, WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
+        }
 
         // Overload for WM_GETTEXT
         [DllImport("user32.dll", CharSet = CharSet.Auto)]

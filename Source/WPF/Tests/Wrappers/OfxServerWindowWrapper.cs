@@ -44,76 +44,76 @@ namespace Walkabout.Tests.Wrappers
 
         public string UserName
         {
-            get { return GetTextBox("UserName"); }
-            set { SetTextBox("UserName", value); }
+            get { return window.GetTextBox("UserName"); }
+            set { window.SetTextBox("UserName", value); }
         }
 
         public string Password
         {
-            get { return GetTextBox("Password"); }
-            set { SetTextBox("Password", value); }
+            get { return window.GetTextBox("Password"); }
+            set { window.SetTextBox("Password", value); }
         }
 
         public bool UseAdditionalCredentials
         {
-            get { return GetRadioButton("UseAdditionalCredentials"); }
-            set { SetRadioButton("UseAdditionalCredentials", value); }
+            get { return window.GetRadioButton("UseAdditionalCredentials"); }
+            set { window.SetRadioButton("UseAdditionalCredentials", value); }
         }
 
         public bool AuthTokenRequired
         {
-            get { return GetRadioButton("AuthTokenRequired"); }
-            set { SetRadioButton("AuthTokenRequired", value); }
+            get { return window.GetRadioButton("AuthTokenRequired"); }
+            set { window.SetRadioButton("AuthTokenRequired", value); }
         }
 
         public bool MFAChallengeRequired
         {
-            get { return GetRadioButton("MFAChallengeRequired"); }
-            set { SetRadioButton("MFAChallengeRequired", value); }
+            get { return window.GetRadioButton("MFAChallengeRequired"); }
+            set { window.SetRadioButton("MFAChallengeRequired", value); }
         }
 
         public bool ChangePasswordRequired
         {
-            get { return GetRadioButton("ChangePasswordRequired"); }
-            set { SetRadioButton("ChangePasswordRequired", value); }
+            get { return window.GetRadioButton("ChangePasswordRequired"); }
+            set { window.SetRadioButton("ChangePasswordRequired", value); }
         }
 
 
         public string UserCred1Label
         {
-            get { return GetTextBox("UserCred1Label"); }
-            set { SetTextBox("UserCred1Label", value); }
+            get { return window.GetTextBox("UserCred1Label"); }
+            set { window.SetTextBox("UserCred1Label", value); }
         }
 
         public string UserCred1
         {
-            get { return GetTextBox("UserCred1"); }
-            set { SetTextBox("UserCred1", value); }
+            get { return window.GetTextBox("UserCred1"); }
+            set { window.SetTextBox("UserCred1", value); }
         }
 
         public string UserCred2Label
         {
-            get { return GetTextBox("UserCred2Label"); }
-            set { SetTextBox("UserCred2Label", value); }
+            get { return window.GetTextBox("UserCred2Label"); }
+            set { window.SetTextBox("UserCred2Label", value); }
         }
 
         public string UserCred2
         {
-            get { return GetTextBox("UserCred2"); }
-            set { SetTextBox("UserCred2", value); }
+            get { return window.GetTextBox("UserCred2"); }
+            set { window.SetTextBox("UserCred2", value); }
         }
 
 
         public string AuthTokenLabel
         {
-            get { return GetTextBox("AuthTokenLabel"); }
-            set { SetTextBox("AuthTokenLabel", value); }
+            get { return window.GetTextBox("AuthTokenLabel"); }
+            set { window.SetTextBox("AuthTokenLabel", value); }
         }
 
         public string AuthToken
         {
-            get { return GetTextBox("AuthToken"); }
-            set { SetTextBox("AuthToken", value); }
+            get { return window.GetTextBox("AuthToken"); }
+            set { window.SetTextBox("AuthToken", value); }
         }
     }
 }

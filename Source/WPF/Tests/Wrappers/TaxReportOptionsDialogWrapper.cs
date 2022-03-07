@@ -15,30 +15,30 @@ namespace Walkabout.Tests.Wrappers
 
         public void ClickOk()
         {
-            ClickButton("OK");
+            window.ClickButton("OK");
         }
 
         public void ClickCancel()
         {
-            ClickButton("Cancel");
+            window.ClickButton("Cancel");
         }
 
         public string ReportYear
         {
-            get { return GetTextBox("YearText"); }
-            set { SetTextBox("YearText", value); }
+            get { return window.GetTextBox("YearText"); }
+            set { window.SetTextBox("YearText", value); }
         }
 
         public bool CapitalGainsOnly
         {
-            get { return IsChecked("CapitalGainsOnlyCheckBox"); }
-            set { SetChecked("CapitalGainsOnlyCheckBox", value); }
+            get { return window.IsChecked("CapitalGainsOnlyCheckBox"); }
+            set { window.SetChecked("CapitalGainsOnlyCheckBox", value); }
         }
 
         public string ConsolidateBy
         {
-            get { return GetComboBoxSelection("ConsolidateSecuritiesCombo"); }
-            set { SetComboBox("ConsolidateSecuritiesCombo", value); }
+            get { return window.GetComboBoxSelection("ConsolidateSecuritiesCombo"); }
+            set { window.SetComboBox("ConsolidateSecuritiesCombo", value); }
         }
     }
 

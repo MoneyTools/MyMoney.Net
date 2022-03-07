@@ -71,7 +71,7 @@ namespace Walkabout.Tests.Wrappers
             menu.InvokeMenuItem("NewAccount");
 
             MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(Element.Current.ProcessId);
-            AutomationElement child = mainWindow.FindChildWindow("Account", 5);
+            AutomationElement child = mainWindow.Element.FindChildWindow("Account", 5);
             if (child != null)
             {
                 AccountSettingsWrapper settings = new AccountSettingsWrapper(child);
@@ -95,7 +95,7 @@ namespace Walkabout.Tests.Wrappers
 
                 MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(Element.Current.ProcessId);
 
-                AutomationElement child = mainWindow.FindChildWindow("Delete Account: " + item.Current.AutomationId, 5);
+                AutomationElement child = mainWindow.Element.FindChildWindow("Delete Account: " + item.Current.AutomationId, 5);
                 if (child != null)
                 {
                     MessageBoxWrapper msg = new MessageBoxWrapper(child);

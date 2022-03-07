@@ -86,11 +86,11 @@ namespace Walkabout.Tests.Wrappers
 
                     if (!isPopupMenu)
                     {
-                        openMenu = root.FindChildMenuPopup(5);
+                        openMenu = root.Element.FindChildMenuPopup(5);
                     }
                     else
                     {
-                        openMenu = root.FindChildContextMenu(5);
+                        openMenu = root.Element.FindChildContextMenu(5);
                     }
 
                 }

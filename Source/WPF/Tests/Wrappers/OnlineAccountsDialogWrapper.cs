@@ -34,73 +34,73 @@ namespace Walkabout.Tests.Wrappers
 
         public string Name
         {
-            get { return GetComboBoxText("ComboBoxName"); }
-            set { SetComboBoxText("ComboBoxName", value);  }
+            get { return window.GetComboBoxText("ComboBoxName"); }
+            set { window.SetComboBoxText("ComboBoxName", value);  }
         }
 
         public string Institution
         {
-            get { return GetTextBox("TextBoxInstitution"); }
-            set { SetTextBox("TextBoxInstitution", value); }
+            get { return window.GetTextBox("TextBoxInstitution"); }
+            set { window.SetTextBox("TextBoxInstitution", value); }
         }
 
         public string FID
         {
-            get { return GetTextBox("TextBoxFid"); }
-            set { SetTextBox("TextBoxFid", value); }
+            get { return window.GetTextBox("TextBoxFid"); }
+            set { window.SetTextBox("TextBoxFid", value); }
         }
 
         public string BankId
         {
-            get { return GetTextBox("TextBoxBankId"); }
-            set { SetTextBox("TextBoxBankId", value); }
+            get { return window.GetTextBox("TextBoxBankId"); }
+            set { window.SetTextBox("TextBoxBankId", value); }
         }
 
         public string BranchId
         {
-            get { return GetTextBox("TextBoxBranchId"); }
-            set { SetTextBox("TextBoxBranchId", value); }
+            get { return window.GetTextBox("TextBoxBranchId"); }
+            set { window.SetTextBox("TextBoxBranchId", value); }
         }
 
         public string BrokerId
         {
-            get { return GetTextBox("TextBoxBrokerId"); }
-            set { SetTextBox("TextBoxBrokerId", value); }
+            get { return window.GetTextBox("TextBoxBrokerId"); }
+            set { window.SetTextBox("TextBoxBrokerId", value); }
         }
 
         public string OfxAddress
         {
-            get { return GetTextBox("TextBoxOfxAddress"); }
-            set { SetTextBox("TextBoxOfxAddress", value); }
+            get { return window.GetTextBox("TextBoxOfxAddress"); }
+            set { window.SetTextBox("TextBoxOfxAddress", value); }
         }
 
         public string OfxVersion
         {
-            get { return GetComboBoxSelection("OfxVersions"); }
-            set { SetComboBox("OfxVersions", value); }
+            get { return window.GetComboBoxSelection("OfxVersions"); }
+            set { window.SetComboBox("OfxVersions", value); }
         }
 
         public string AppId
         {
-            get { return GetTextBox("TextBoxAppId"); }
-            set { SetTextBox("TextBoxAppId", value); }
+            get { return window.GetTextBox("TextBoxAppId"); }
+            set { window.SetTextBox("TextBoxAppId", value); }
         }
 
         public string AppVersion
         {
-            get { return GetTextBox("TextBoxAppVersion"); }
-            set { SetTextBox("TextBoxAppVersion", value); }
+            get { return window.GetTextBox("TextBoxAppVersion"); }
+            set { window.SetTextBox("TextBoxAppVersion", value); }
         }
 
         public string ClientUid
         {
-            get { return GetTextBox("TextBoxClientUid"); }
-            set { SetTextBox("TextBoxClientUid", value); }
+            get { return window.GetTextBox("TextBoxClientUid"); }
+            set { window.SetTextBox("TextBoxClientUid", value); }
         }
 
         public PasswordDialogWrapper ClickConnect()
         {
-            ClickButton("ButtonVerify");
+            window.ClickButton("ButtonVerify");
 
             AutomationElement pswd = window.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "PasswordDialog"), 10, 500);
             
@@ -117,55 +117,55 @@ namespace Walkabout.Tests.Wrappers
 
         public string ProfileName
         {
-            get { return GetTextBox("TextBoxName"); }
-            set { SetTextBox("TextBoxName", value); }
+            get { return window.GetTextBox("TextBoxName"); }
+            set { window.SetTextBox("TextBoxName", value); }
         }
 
         public string Address
         {
-            get { return GetTextBox("TextBoxAddress"); }
-            set { SetTextBox("TextBoxAddress", value); }
+            get { return window.GetTextBox("TextBoxAddress"); }
+            set { window.SetTextBox("TextBoxAddress", value); }
         }
 
         public string City
         {
-            get { return GetTextBox("TextBoxCity"); }
-            set { SetTextBox("TextBoxCity", value); }
+            get { return window.GetTextBox("TextBoxCity"); }
+            set { window.SetTextBox("TextBoxCity", value); }
         }
 
         public string Phone
         {
-            get { return GetTextBox("TextBoxPhone"); }
-            set { SetTextBox("TextBoxPhone", value); }
+            get { return window.GetTextBox("TextBoxPhone"); }
+            set { window.SetTextBox("TextBoxPhone", value); }
         }
 
         public string Url
         {
-            get { return GetTextBox("TextBoxUrl"); }
-            set { SetTextBox("TextBoxUrl", value); }
+            get { return window.GetTextBox("TextBoxUrl"); }
+            set { window.SetTextBox("TextBoxUrl", value); }
         }
 
         public string Email
         {
-            get { return GetTextBox("TextBoxEmail"); }
-            set { SetTextBox("TextBoxEmail", value); }
+            get { return window.GetTextBox("TextBoxEmail"); }
+            set { window.SetTextBox("TextBoxEmail", value); }
         }
 
         public string UserId
         {
-            get { return GetTextBox("TextBoxUserId"); }
-            set { SetTextBox("TextBoxUserId", value); }
+            get { return window.GetTextBox("TextBoxUserId"); }
+            set { window.SetTextBox("TextBoxUserId", value); }
         }
 
         public string Password
         {
-            get { return GetTextBox("TextBoxPassword"); }
-            set { SetTextBox("TextBoxPassword", value); }
+            get { return window.GetTextBox("TextBoxPassword"); }
+            set { window.SetTextBox("TextBoxPassword", value); }
         }
 
         public void ClickSignOn()
         {
-            ClickButton("ButtonSignOn");
+            window.ClickButton("ButtonSignOn");
         }
 
         #endregion 
@@ -195,12 +195,12 @@ namespace Walkabout.Tests.Wrappers
 
         public void ClickOk()
         {
-            ClickButton("ButtonOk");
+            window.ClickButton("ButtonOk");
         }
 
         public void ClickCancel()
         {
-            ClickButton("ButtonCancel");
+            window.ClickButton("ButtonCancel");
         }
 
     }

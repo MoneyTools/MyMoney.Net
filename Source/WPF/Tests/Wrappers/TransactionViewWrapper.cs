@@ -448,7 +448,7 @@ namespace Walkabout.Tests.Wrappers
                 throw new Exception("Cannot find the Attachment column: " + ex.Message);
             }
 
-            AutomationElement dialog = view.Window.FindChildWindow("Attachments", 5);
+            AutomationElement dialog = view.Window.Element.FindChildWindow("Attachments", 5);
             if (dialog == null)
             {
                 throw new Exception("Cannot find the AttachmentDialog");

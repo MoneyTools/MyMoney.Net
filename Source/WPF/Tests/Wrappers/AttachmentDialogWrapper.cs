@@ -16,62 +16,62 @@ namespace Walkabout.Tests.Wrappers
 
         public void ClickScan()
         {
-            ClickButton("ScanButton");
+            window.ClickButton("ScanButton");
         }
 
         public void ClickZoomIn()
         {
-            ClickButton("ZoomInButton");
+            window.ClickButton("ZoomInButton");
         }
 
         public void ClickZoomOut()
         {
-            ClickButton("ZoomOutButton");
+            window.ClickButton("ZoomOutButton");
         }
 
         public void ClickSave()
         {
-            ClickButton("SaveButton");
+            window.ClickButton("SaveButton");
         }
 
         public void ClickRotateLeft()
         {
-            ClickButton("RotateLeftButton");
+            window.ClickButton("RotateLeftButton");
         }
         
         public void ClickRotateRight()
         {
-            ClickButton("RotateRightButton");
+            window.ClickButton("RotateRightButton");
         }
         
         public void ClickCropImage()
         {
-            ClickButton("CropImageButton");
+            window.ClickButton("CropImageButton");
         }
         
         public void ClickCut()
         {
-            ClickButton("CutButton");
+            window.ClickButton("CutButton");
         }
         
         public void ClickCopy()
         {
-            ClickButton("CopyButton");
+            window.ClickButton("CopyButton");
         }
         
         public void ClickPaste()
         {
-            ClickButton("PasteButton");
+            window.ClickButton("PasteButton");
         }
         
         public void ClickDelete()
         {
-            ClickButton("DeleteButton");
+            window.ClickButton("DeleteButton");
         }
         
         public void ClickPrint()
         {
-            ClickButton("PrintButton");
+            window.ClickButton("PrintButton");
         }
 
         public AutomationElement ScrollViewer
@@ -81,41 +81,5 @@ namespace Walkabout.Tests.Wrappers
                 return this.Element.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, "ScrollViewer"));
             }
         }
-
-        public AutomationElement FindImage(int retries = 5)
-        {
-             
-            for (; retries > 0; retries--)
-            {
-                AutomationElement e = ScrollViewer.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, "Image"));
-                if (e != null)
-                {
-                    return e;
-                }
-                if (retries > 0)
-                {
-                    System.Threading.Thread.Sleep(100);
-                }
-            }
-            return null;
-        }
-
-        public AutomationElement FindRichText(int retries = 5)
-        {
-            for (; retries > 0; retries--)
-            {
-                AutomationElement e = ScrollViewer.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, "RichTextBox"));
-                if (e != null)
-                {
-                    return e;
-                }
-                if (retries > 0)
-                {
-                    System.Threading.Thread.Sleep(100);
-                }
-            }
-            return null;
-        }
-
     }
 }
