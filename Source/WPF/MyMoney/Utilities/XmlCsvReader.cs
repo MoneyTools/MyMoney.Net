@@ -9,11 +9,11 @@
 */
 
 using System;
-using System.Xml;
-using System.IO;
 using System.Collections;
-using System.Text;
+using System.IO;
 using System.Net;
+using System.Text;
+using System.Xml;
 
 namespace Walkabout.Utilities
 {

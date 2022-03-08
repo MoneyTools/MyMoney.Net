@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Diagnostics;
-using Walkabout.Dialogs;
 using Walkabout.Data;
-using System.IO;
-using Walkabout.Utilities;
-using System.Windows;
+using Walkabout.Dialogs;
 using Walkabout.StockQuotes;
+using Walkabout.Utilities;
 
 namespace Walkabout.Assitance
 {

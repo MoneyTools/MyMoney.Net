@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Globalization;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Walkabout.Data;
-using Walkabout.Utilities;
-using Walkabout.Controls;
-using Walkabout.Taxes;
-using System.Windows.Data;
-using System.Text;
 using System.Windows.Threading;
+using Walkabout.Controls;
+using Walkabout.Data;
+using Walkabout.Taxes;
+using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs
 {

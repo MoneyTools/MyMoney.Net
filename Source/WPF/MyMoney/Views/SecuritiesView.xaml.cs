@@ -6,19 +6,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using Walkabout.Configuration;
-using Walkabout.Controls;
-using Walkabout.Data;
-using Walkabout.Interfaces;
 using System.Windows.Threading;
 using System.Xml;
-using Walkabout.Utilities;
-using Walkabout.Help;
+using Walkabout.Controls;
+using Walkabout.Data;
 using Walkabout.Interfaces.Views;
-using Walkabout.Views.Controls;
+using Walkabout.Utilities;
 
 namespace Walkabout.Views
 {

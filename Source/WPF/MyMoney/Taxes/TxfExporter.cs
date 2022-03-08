@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Walkabout.Data;
 using Walkabout.Taxes;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Walkabout.Migrate
 {

@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
-using System.IO;
-using System.Xml.Serialization;
-using System.Runtime.Serialization;
-using System.Diagnostics;
-using System.Security;
-using System.IO.Compression;
 using Walkabout.Utilities;
-using System.Xml.Linq;
-using System.Data;
 
 namespace Walkabout.Data
 {

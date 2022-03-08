@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using System.Threading;
-using System.Net;
 using System.IO;
-using Walkabout.Utilities;
-using Walkabout.Configuration;
+using System.Net;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Walkabout.Configuration;
+using Walkabout.Utilities;
 
 namespace Walkabout.Setup
 {

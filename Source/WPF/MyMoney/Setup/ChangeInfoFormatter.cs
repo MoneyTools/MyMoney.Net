@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media.Imaging;
+using System.Xml.Linq;
+using Walkabout.Interfaces.Reports;
 using Walkabout.Reports;
 using Walkabout.Utilities;
-using System.Xml.Linq;
-using System.Windows.Controls;
-using System.Windows.Media;
-using Walkabout.Controls;
-using System.Windows;
 using Walkabout.Views;
-using Walkabout.Interfaces.Reports;
-using System.Windows.Media.Imaging;
 
 namespace Walkabout.Setup
 {

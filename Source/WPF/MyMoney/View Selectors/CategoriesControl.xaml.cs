@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Xml.Linq;
-using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Dialogs;
 using Walkabout.Utilities;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Walkabout.Help;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;

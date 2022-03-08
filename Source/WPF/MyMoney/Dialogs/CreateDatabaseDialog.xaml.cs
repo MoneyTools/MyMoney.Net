@@ -1,18 +1,12 @@
-﻿using System;
-using System.Data;
-using System.Data.SqlClient;
+﻿using Microsoft.Win32;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Microsoft.Win32;
-using Walkabout.Data;
-using Walkabout.Controls;
-using Walkabout.Utilities;
-using System.Windows.Documents;
 using System.Windows.Media.Animation;
-using System.Windows.Media;
-using System.Collections.Generic;
+using Walkabout.Data;
+using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs
 {

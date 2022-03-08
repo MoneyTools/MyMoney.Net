@@ -8,13 +8,10 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.Xml;
-using Walkabout.Controls;
 using Walkabout.Data;
-using Walkabout.Interfaces;
+using Walkabout.Interfaces.Views;
 using Walkabout.Migrate;
 using Walkabout.Utilities;
-using Walkabout.Help;
-using Walkabout.Interfaces.Views;
 
 namespace Walkabout.Views
 {

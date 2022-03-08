@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Media;
 
 namespace Walkabout.Utilities
-{ 
+{
     internal class AppTheme {
         private string _name;
         private ResourceDictionary _theme;

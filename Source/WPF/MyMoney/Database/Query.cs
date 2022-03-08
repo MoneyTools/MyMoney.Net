@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Text.RegularExpressions;
 
 namespace Walkabout.Data
 {

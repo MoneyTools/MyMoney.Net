@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Walkabout.Data;
-using System.Windows.Controls;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
-using Walkabout.Views;
+using Walkabout.Data;
 using Walkabout.Interfaces.Views;
 
 namespace Walkabout.Views

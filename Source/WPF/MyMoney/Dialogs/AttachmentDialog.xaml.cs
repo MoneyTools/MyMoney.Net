@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using ModernWpf.Controls;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-
-using Walkabout.Controls;
-using Walkabout.Utilities;
 using Walkabout.Attachments;
-using Walkabout.Data;
 using Walkabout.Configuration;
-using System.Threading.Tasks;
-using System.Threading;
-using ModernWpf.Controls;
+using Walkabout.Controls;
+using Walkabout.Data;
+using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs
 {

@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
-using Walkabout.Data;
 using Walkabout.Controls;
-using System.Collections;
+using Walkabout.Data;
 using Walkabout.Utilities;
-using System.Windows.Data;
 
 namespace Walkabout.Dialogs
 {

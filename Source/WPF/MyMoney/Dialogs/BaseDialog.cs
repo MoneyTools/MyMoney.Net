@@ -1,6 +1,4 @@
-﻿using System;
-using Walkabout.Help;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Walkabout.Dialogs
 {

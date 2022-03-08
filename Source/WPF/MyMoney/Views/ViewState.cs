@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
-using Walkabout.Configuration;
 
 namespace Walkabout.Interfaces.Views
 {

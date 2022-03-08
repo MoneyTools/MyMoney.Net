@@ -3,7 +3,6 @@ using System.Collections;
 using System.Windows;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
-using Walkabout.Reports;
 
 namespace Walkabout.Dialogs
 {

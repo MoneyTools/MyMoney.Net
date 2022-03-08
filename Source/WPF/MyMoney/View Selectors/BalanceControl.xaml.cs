@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -9,9 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Walkabout.Data;
-using Walkabout.Controls;
 using Walkabout.Utilities;
-using Walkabout.Help;
 
 namespace Walkabout.Views.Controls
 {

@@ -3,12 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml;
 using System.Xml.Serialization;
@@ -20,7 +18,7 @@ using Walkabout.Utilities;
 
 namespace Walkabout.Views.Controls
 {
- 
+
     /// <summary>
     /// Interaction logic for QueryViewControl.xaml
     /// </summary>

@@ -2,10 +2,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Utilities;
-using Walkabout.Help;
 
 
 namespace Walkabout.Views.Controls

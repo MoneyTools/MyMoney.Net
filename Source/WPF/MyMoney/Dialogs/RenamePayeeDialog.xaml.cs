@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Linq;
-using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using Walkabout.Data;
-using Walkabout.Controls;
 using Walkabout.Utilities;
-using System.Text;
-using System.Collections.Generic;
 using Walkabout.Views;
 
 namespace Walkabout.Dialogs

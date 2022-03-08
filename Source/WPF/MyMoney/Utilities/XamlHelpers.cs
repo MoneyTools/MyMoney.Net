@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using Walkabout.Data;
 using System.Windows.Controls.Primitives;
-using System.Collections.Generic;
-using System.Windows.Media.Imaging;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace Walkabout.Utilities
 {
-   
+
     public static class WpfHelper
     {
         /// <summary>

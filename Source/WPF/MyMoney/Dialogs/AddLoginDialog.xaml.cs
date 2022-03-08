@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using Walkabout.Data;
-using Walkabout.Controls;
 using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs

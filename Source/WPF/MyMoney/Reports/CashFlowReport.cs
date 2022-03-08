@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -10,9 +10,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
-using Walkabout.Views;
 using Walkabout.Interfaces.Views;
-using System.IO;
+using Walkabout.Views;
 
 namespace Walkabout.Reports
 {

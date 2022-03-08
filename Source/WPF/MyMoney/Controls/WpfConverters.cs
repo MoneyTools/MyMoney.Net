@@ -6,13 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using Walkabout.Data;
-using System.Windows.Shapes;
-using System.IO;
-using System.Windows.Media.Imaging;
-using Walkabout.Configuration;
-using Walkabout.Charts;
 using Walkabout.Utilities;
-using ModernWpf.Controls;
 
 namespace Walkabout.WpfConverters
 {

@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
-using Walkabout.Reports;
-using Walkabout.Taxes;
-using Walkabout.Views;
 using Walkabout.Interfaces.Views;
+using Walkabout.Reports;
+using Walkabout.Views;
 
 namespace Walkabout.Taxes
 {

@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -35,12 +34,10 @@ using Walkabout.Ofx;
 using Walkabout.Interfaces.Views;
 using System.Deployment.Application;
 using System.Threading.Tasks;
-using ModernWpf;
 
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
-using System.Globalization;
 #endif
 
 namespace Walkabout

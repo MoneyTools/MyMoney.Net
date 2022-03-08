@@ -2,11 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Walkabout.Utilities;
 
 namespace Walkabout.Controls
 {
-   
+
     public class FilteringComboBox : ComboBox
     {
         public static RoutedEvent FilterChangedEvent = EventManager.RegisterRoutedEvent("FilterChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FilteringComboBox));

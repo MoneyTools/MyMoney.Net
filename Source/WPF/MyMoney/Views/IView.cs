@@ -1,7 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Xml;
 using Walkabout.Data;
-using System.Collections.Generic;
 
 namespace Walkabout.Interfaces.Views
 {
