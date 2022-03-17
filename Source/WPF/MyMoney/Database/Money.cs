@@ -13,7 +13,6 @@ using System.Xml;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Walkabout.Utilities;
-using System.Windows.Forms;
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 #endif

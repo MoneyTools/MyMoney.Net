@@ -1,20 +1,13 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
 using Walkabout.Data;
 using Walkabout.Dialogs;
-using Walkabout.StockQuotes;
-using System.Windows.Documents;
-using Walkabout.Utilities;
-using System;
-using System.IO;
-using Walkabout.Configuration;
-using Walkabout.Interfaces;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 using Walkabout.Ofx;
-using System.Diagnostics;
-using System.Threading;
+using Walkabout.Utilities;
 
 namespace Walkabout.Views.Controls
 {

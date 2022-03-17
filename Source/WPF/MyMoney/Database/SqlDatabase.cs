@@ -1,22 +1,17 @@
+using Microsoft.Win32;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using Microsoft.Win32;
 using Walkabout.Utilities;
-using Walkabout.Controls;
-using Walkabout.Configuration;
-using System.Globalization;
-using System.Security.AccessControl;
-using System.Security.Principal;
-using System.Collections.Generic;
-using Walkabout.Dialogs;
 
 namespace Walkabout.Data
 {

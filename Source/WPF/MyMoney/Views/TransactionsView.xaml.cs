@@ -23,7 +23,6 @@ using Walkabout.Migrate;
 using Walkabout.Reports;
 using Walkabout.Utilities;
 using Walkabout.Help;
-using Walkabout.Views.Controls;
 using System.ComponentModel;
 using System.Data.SqlTypes;
 using Walkabout.WpfConverters;
@@ -33,11 +32,9 @@ using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
 using System.Windows.Media.Animation;
 using ModernWpf.Controls;
-using System.Reflection;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
-using System.Threading.Tasks;
 
 #endif
 

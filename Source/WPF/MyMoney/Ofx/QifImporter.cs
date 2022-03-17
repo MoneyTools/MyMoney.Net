@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using Walkabout.Data;
-using Walkabout.Controls;
-using System.Collections.Generic;
 using Walkabout.Utilities;
 
 namespace Walkabout.Migrate

@@ -3,8 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using Walkabout.Data;
-using Walkabout.Interfaces;
-using Walkabout.Help;
 using Walkabout.Interfaces.Views;
 
 namespace Walkabout.Views

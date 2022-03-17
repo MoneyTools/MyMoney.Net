@@ -6,7 +6,6 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
 

@@ -1,17 +1,13 @@
-﻿using System;
+﻿using LovettSoftware.Charts;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Walkabout.Interfaces.Reports;
-using Walkabout.Data;
 using System.Windows;
-using System.Windows.Data;
-using Walkabout.Taxes;
 using System.Windows.Controls;
-using LovettSoftware.Charts;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Walkabout.Charts;
+using Walkabout.Data;
+using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
 
 namespace Walkabout.Reports

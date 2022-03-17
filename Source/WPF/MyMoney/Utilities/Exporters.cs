@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Xml;
-using Microsoft.Win32;
-using Walkabout.Controls;
-using System.Windows;
-using Walkabout.Data;
 using System.Runtime.Serialization;
+using System.Text;
+using System.Windows;
+using System.Xml;
+using Walkabout.Data;
 using Walkabout.Utilities;
 
 namespace Walkabout.Migrate

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Walkabout.Data;
 using System.Windows;
+using Walkabout.Data;
 
 namespace Walkabout.Database
 {

@@ -1,21 +1,19 @@
+using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
-using Microsoft.Win32;
 using Walkabout.Data;
-using Walkabout.Interfaces;
-using Walkabout.Utilities;
-using Walkabout.Views;
 using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
-using System.ComponentModel;
+using Walkabout.Utilities;
+using Walkabout.Views;
 
 namespace Walkabout.Configuration
 {

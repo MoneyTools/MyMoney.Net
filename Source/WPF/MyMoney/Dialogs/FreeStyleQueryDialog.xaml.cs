@@ -1,9 +1,8 @@
-﻿using System.Data;
-using System.Windows;
-using Microsoft.Win32;
-using Walkabout.Data;
-using Walkabout.Controls;
+﻿using Microsoft.Win32;
 using System;
+using System.Data;
+using System.Windows;
+using Walkabout.Data;
 using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs

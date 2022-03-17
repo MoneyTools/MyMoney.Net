@@ -1,23 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using Walkabout.Configuration;
+using System.Xml;
 using Walkabout.Controls;
 using Walkabout.Data;
-using System.Windows.Threading;
-using System.Xml;
-using Walkabout.Interfaces;
-using Walkabout.Help;
-using Walkabout.Utilities;
 using Walkabout.Interfaces.Views;
+using Walkabout.Utilities;
 
 namespace Walkabout.Views
 {

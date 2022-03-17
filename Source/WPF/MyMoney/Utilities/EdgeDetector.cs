@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Windows.Media.Imaging;
 using System.Windows;
-using System.Diagnostics;
+using System.Windows.Media.Imaging;
 
 
 namespace Walkabout.Utilities

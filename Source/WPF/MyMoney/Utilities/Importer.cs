@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml;
 using System.Runtime.Serialization;
+using System.Xml;
 using Walkabout.Data;
 
 namespace Walkabout.Migrate

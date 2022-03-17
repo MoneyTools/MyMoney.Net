@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using Walkabout.Data;
-using Walkabout.Dialogs;
-using Walkabout.Configuration;
-using System.Diagnostics;
 using System.IO;
 using Walkabout.Utilities;
 using System.Threading.Tasks;

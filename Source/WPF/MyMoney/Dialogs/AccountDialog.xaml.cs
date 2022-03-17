@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using Walkabout.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using Walkabout.Data;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 

@@ -2,7 +2,6 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using Walkabout.Utilities;
-using Walkabout.Help;
 
 namespace Walkabout.Controls
 {

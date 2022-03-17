@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Documents;
-using Walkabout.Interfaces.Reports;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
+using System.Windows.Media;
+using Walkabout.Interfaces.Reports;
 
 namespace Walkabout.Reports
 {

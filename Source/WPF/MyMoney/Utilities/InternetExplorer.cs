@@ -1,16 +1,10 @@
 using System;
 using System.Text;
-using System.Xml;
-using Walkabout.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Windows.Documents;
 using System.Windows;
-using System.Windows.Media;
+using System.Windows.Documents;
 using System.Windows.Input;
-using System.Net.Mail;
-using System.Net.Mime;
-using System.Net;
+using System.Windows.Media;
+using System.Xml;
 
 
 namespace Walkabout.Utilities

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Walkabout.Utilities
+﻿namespace Walkabout.Utilities
 {
     public interface IDirectorySecurity
     {

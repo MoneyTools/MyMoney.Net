@@ -1,15 +1,12 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using Walkabout.Utilities;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Media;
 
 namespace Walkabout.Utilities
 {

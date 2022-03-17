@@ -3,16 +3,13 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using Walkabout.Data;
-using Walkabout.Interfaces;
-using Walkabout.Utilities;
-using Walkabout.Help;
-using Walkabout.Interfaces.Reports;
-using Walkabout.Reports;
-using Walkabout.Interfaces.Views;
-using System.Windows.Threading;
 using System.Windows.Media;
-using Walkabout.Controls;
+using System.Windows.Threading;
+using Walkabout.Data;
+using Walkabout.Interfaces.Reports;
+using Walkabout.Interfaces.Views;
+using Walkabout.Reports;
+using Walkabout.Utilities;
 
 namespace Walkabout.Views
 {

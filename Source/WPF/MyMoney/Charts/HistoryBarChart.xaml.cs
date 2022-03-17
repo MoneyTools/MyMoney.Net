@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
-using Walkabout.Data;
 using Walkabout.Utilities;
-using Walkabout.Views;
-using LovettSoftware.Charts;
 
 
 namespace Walkabout.Charts

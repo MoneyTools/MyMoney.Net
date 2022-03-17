@@ -1,9 +1,8 @@
-﻿using System.Windows;
-using System;
-using Walkabout.Configuration;
-using System.Windows.Controls;
+﻿using System;
 using System.Collections.Generic;
-using System.Windows.Input;
+using System.Windows;
+using System.Windows.Controls;
+using Walkabout.Configuration;
 
 namespace Walkabout.Controls
 {

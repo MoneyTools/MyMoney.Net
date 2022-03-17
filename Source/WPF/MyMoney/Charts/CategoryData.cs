@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Media;
-using Walkabout.Utilities;
 using Walkabout.Data;
-using System.Collections.Generic;
+using Walkabout.Utilities;
 
 namespace Walkabout.Charts
 {
