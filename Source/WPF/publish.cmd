@@ -47,10 +47,8 @@ call AzurePublishClickOnce %ROOT%MoneyPackage\AppPackages downloads/MyMoney.Net 
 echo ============ Done publishing ClickOnce installer ==============
 :dowinget
 if "%WINGET%"=="0" goto :skipwinget
-
 if not exist %WINGET_SRC% goto :nowinget
 
-:winget
 echo Syncing winget master branch
 pushd %WINGET_SRC%\manifests\l\LovettSoftware\MyMoney\Net
 git checkout master
@@ -63,14 +61,15 @@ git merge upstream/master
 if ERRORLEVEL 1 goto :eof
 git push
 
-set LATEST=
+set OLDEST=
 for /f "usebackq" %%i in (`dir /b`) do (
-  set LATEST=%%i
+  if "!OLDEST!" == "" set OLDEST=%%i
 )
 
-if "%LATEST%" == "" goto :prepare
-echo Replacing "%LATEST%" version...
-git mv "%LATEST%" %VERSION%
+if "!OLDEST!" == "" goto :prepare
+echo ======================== Replacing "!OLDEST!" version...
+
+git mv "!OLDEST!" %VERSION%
 
 :prepare
 popd
