@@ -131,29 +131,31 @@ namespace Walkabout.Utilities
 
         void SetImageStyle()
         {
-            if (this.MessageImageSource == MessageBoxImage.Exclamation)
+            // These are blending colors so they don't need to be themed.
+            byte alpha = 0x80;
+            if (this.MessageImageSource == MessageBoxImage.Exclamation) // same value as as MessageBoxImage.Warning
             {
-                ImageHolder.Background = Brushes.Yellow;
+                ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Yellow.R, Colors.Yellow.G, Colors.Yellow.B));
                 TextContent.Text = "!";
             }
             else if (this.MessageImageSource == MessageBoxImage.Question)
             {
-                ImageHolder.Background = Brushes.Orange;
+                ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Orange.R, Colors.Orange.G, Colors.Orange.B));
                 TextContent.Text = "?";
             }
-            else if (this.MessageImageSource == MessageBoxImage.Asterisk)
+            else if (this.MessageImageSource == MessageBoxImage.Asterisk) // same value as MessageBoxImage.Information
             {
-                ImageHolder.Background = Brushes.Green;
+                ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Green.R, Colors.Green.G, Colors.Green.B));
                 TextContent.Text = "*";
             }
-            else if (this.MessageImageSource == MessageBoxImage.Error)
+            else if (this.MessageImageSource == MessageBoxImage.Error) // Sane value as MessageBoxImage.Hand & MessageBoxImage.Stop
             {
-                ImageHolder.Background = Brushes.Red;
+                ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Red.R, Colors.Red.G, Colors.Red.B));
                 TextContent.Text = "*";
             }
-            else if (this.MessageImageSource == MessageBoxImage.None)
+            else
             {
-                ImageHolder.Background = Brushes.Blue;
+                ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Blue.R, Colors.Blue.G, Colors.Blue.B));
                 TextContent.Text = "i";
             }
 
