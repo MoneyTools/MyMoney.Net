@@ -57,6 +57,7 @@ namespace Walkabout
         private UndoManager navigator;
         private UndoManager manager;
         private AttachmentManager attachmentManager;
+        private StatementManager statementManager;
         internal MyMoney myMoney = new MyMoney();
         private ChangeTracker tracker;
 
@@ -99,6 +100,9 @@ namespace Walkabout
 
                 this.attachmentManager = new AttachmentManager(this.myMoney);
                 this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
+
+                this.statementManager = new StatementManager(this.myMoney);
+                this.statementManager.StatementsDirectory = settings.StatementsDirectory;
 
                 var stockService = settings.StockServiceSettings;
                 if (stockService == null)
@@ -516,6 +520,7 @@ namespace Walkabout
             }
             tracker = null;
             this.attachmentManager.Stop();
+            this.statementManager.Stop();
             if (this.myMoney != null)
             {
                 this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnChangedUI);
@@ -528,6 +533,8 @@ namespace Walkabout
             tracker.DirtyChanged += new EventHandler(OnDirtyChanged);
             this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
             this.attachmentManager.Start();
+            this.statementManager.StatementsDirectory = settings.StatementsDirectory;
+            this.statementManager.Start();
             this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnChangedUI);
             this.myMoney.Changed += new EventHandler<ChangeEventArgs>(OnChangedUI);
         }
@@ -565,6 +572,11 @@ namespace Walkabout
                     this.attachmentManager.Stop();
                     this.attachmentManager = new AttachmentManager(this.myMoney);
                     this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
+
+                    this.statementManager.Stop();
+                    this.statementManager = new StatementManager(this.myMoney);
+                    this.statementManager.StatementsDirectory = settings.StatementsDirectory;
+
                 }
                 finally
                 {
@@ -619,7 +631,7 @@ namespace Walkabout
 
                 SetChartsDirty();
 
-                HideBalancePanel(false);
+                HideBalancePanel(false, false);
 
                 this.Dispatcher.BeginInvoke(new Action(AfterLoadChecks), DispatcherPriority.Background);
             }
@@ -1895,6 +1907,7 @@ namespace Walkabout
                     this.database = database;
                     MenuFileAddUser.Visibility = database.SupportsUserLogin ? Visibility.Visible : Visibility.Collapsed;
                     CreateAttachmentDirectory();
+                    CreateStatementsDirectory();
                     this.DataContext = newMoney;
                     canSave = true;
                     isLoading = false;
@@ -1948,23 +1961,16 @@ namespace Walkabout
             if (database != null)
             {
                 string path = database.DatabasePath;
-                string localName = Path.GetFileNameWithoutExtension(path) + ".Attachments";
-                string dir = Path.GetDirectoryName(path);
-                string attachmentpath = Path.Combine(dir, localName);
-                if (!Directory.Exists(attachmentpath))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(attachmentpath);
-                    }
-                    catch (System.UnauthorizedAccessException)
-                    {
-                        // Access to the path 'c:\Program Files\Microsoft SQL Server\MSSQL10.SQLEXPRESS\MSSQL\DATA\Test.Attachments' is denied.
-                        attachmentpath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MyMoney"), localName);
-                        Directory.CreateDirectory(attachmentpath);
-                    }
-                }
-                settings.AttachmentDirectory = attachmentpath;
+                settings.AttachmentDirectory = this.attachmentManager.SetupAttachmentDirectory(path);                
+            }
+        }
+
+        private void CreateStatementsDirectory()
+        {
+            if (database != null)
+            {
+                string path = database.DatabasePath;
+                settings.StatementsDirectory = this.statementManager.SetupStatementsDirectory(path);
             }
         }
 
@@ -1990,6 +1996,7 @@ namespace Walkabout
                 {
                     LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
                     CreateAttachmentDirectory();
+                    CreateStatementsDirectory();
                 }
                 catch (Exception ex)
                 {
@@ -2064,6 +2071,7 @@ namespace Walkabout
                 {
                     this.LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
                     CreateAttachmentDirectory();
+                    CreateStatementsDirectory();
                 }
                 catch (Exception ex)
                 {
@@ -2199,6 +2207,7 @@ namespace Walkabout
                 Save();
 
                 CreateAttachmentDirectory();
+                CreateStatementsDirectory();
                 SetDirty(false);
             }
             catch (Exception ex)
@@ -2331,12 +2340,11 @@ namespace Walkabout
                 MoneyFileImportDialog d = new MoneyFileImportDialog();
                 d.Owner = this;
                 d.Navigator = this;
-                d.Import(this.myMoney, this.attachmentManager, fileNames);
+                d.Import(this.myMoney, this.attachmentManager, this.statementManager, fileNames);
                 d.Show();
             }
             return 0;
         }
-
 
         #endregion
 
@@ -2415,13 +2423,13 @@ namespace Walkabout
         public void BalanceAccount(Account a)
         {
             HideQueryPanel();
-            HideBalancePanel(true);
+            HideBalancePanel(false, false);
 
             SetCurrentView<TransactionsView>();
             TransactionView.OnStartReconcile(a);
 
             this.balanceControl = new BalanceControl();
-            this.balanceControl.Reconcile(this.myMoney, a);
+            this.balanceControl.Reconcile(this.myMoney, a, this.statementManager);
             this.balanceControl.StatementDateChanged += new EventHandler(OnBalanceStatementDateChanged);
             this.toolBox.Add("BALANCE", "BalanceSelector", this.balanceControl);
             this.toolBox.Selected = this.balanceControl;
@@ -2447,19 +2455,20 @@ namespace Walkabout
 
         private void OnButtonBalanceDone(object sender, BalanceEventArgs e)
         {
-            HideBalancePanel(e.Balanced);
+            HideBalancePanel(e.Balanced, e.HasStatement);
         }
 
-        void HideBalancePanel(bool balanced)
+        void HideBalancePanel(bool balanced, bool hasStatement)
         {
             if (this.balanceControl != null)
             {
                 this.balanceControl.Balanced -= new EventHandler<BalanceEventArgs>(OnButtonBalanceDone);
+                this.balanceControl.StatementDateChanged -= new EventHandler(OnBalanceStatementDateChanged);
                 this.toolBox.Remove(this.balanceControl);
                 this.balanceControl = null;
                 this.toolBox.Selected = this.accountsControl;
 
-                TransactionView.OnEndReconcile(!balanced);
+                TransactionView.OnEndReconcile(!balanced, hasStatement);
             }
         }
         #endregion
@@ -3161,6 +3170,10 @@ namespace Walkabout
             else if (service == typeof(AttachmentManager))
             {
                 return this.attachmentManager;
+            }
+            else if (service == typeof(StatementManager))
+            {
+                return this.statementManager;
             }
             else if (service == typeof(OutputPane))
             {

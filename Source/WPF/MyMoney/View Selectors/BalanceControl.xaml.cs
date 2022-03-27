@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Walkabout.Attachments;
 using Walkabout.Data;
 using Walkabout.Utilities;
 
@@ -18,6 +20,7 @@ namespace Walkabout.Views.Controls
     {
         MyMoney myMoney;
         Account account;
+        private StatementManager statements;
         Category interestCategory;
         Transaction interestTransaction;
         bool weAddedInterest;
@@ -74,11 +77,12 @@ namespace Walkabout.Views.Controls
         }
         
 
-        public void Reconcile(MyMoney money, Account a)
+        public void Reconcile(MyMoney money, Account a, StatementManager statementManager)
         {
             this.initializing = true;
             this.myMoney = money;
             this.account = a;
+            this.statements = statementManager;
 
             DateTime oldestUnreconciledDate = DateTime.MaxValue;
 
@@ -109,6 +113,7 @@ namespace Walkabout.Views.Controls
             previous.Add(oldestUnreconciledDate); // Make sure that we have at least one date in the dropdown
 
             previousReconciliations = new List<string>(from d in previous orderby d ascending select d.ToShortDateString());
+            previousReconciliations.Add(""); // add one more so user has to move selection to select a previous statement.
             this.ComboBoxPreviousReconcileDates.ItemsSource = previousReconciliations;
 
             this.AccountInfo.Text = string.Format("{0} ({1})", a.Name, a.AccountId);
@@ -129,7 +134,7 @@ namespace Walkabout.Views.Controls
 
                 this.SelectedPreviousStatement = estdate;
             }
-            this.ComboBoxPreviousReconcileDates.SelectedItem = this.ComboBoxPreviousReconcileDates.Text = this.SelectedPreviousStatement.ToShortDateString();
+            this.ComboBoxPreviousReconcileDates.SelectedIndex = previousReconciliations.Count - 1;
             estdate = this.SelectedPreviousStatement.AddMonths(1);
             this.ComboBoxPreviousReconcileDates.SelectionChanged += new SelectionChangedEventHandler(ComboBoxPreviousReconcileDates_SelectionChanged);
             
@@ -219,6 +224,15 @@ namespace Walkabout.Views.Controls
             this.NewBalance = this.myMoney.EstimatedBalance(this.account, statementDate);
            
             this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, statementDate.AddMonths(1));
+
+            var stmt = this.statements.GetStatement(this.account, statementDate);
+            this.StatementFileName.Text = stmt;
+
+            decimal savedBalance = this.statements.GetStatementBalance(this.account, statementDate);
+            if (savedBalance != 0)
+            {
+                this.NewBalance = savedBalance;
+            }
 
             if (StatementDateChanged != null)
             {
@@ -466,11 +480,24 @@ namespace Walkabout.Views.Controls
 
         void OnDone(bool cancelled)
         {
-            this.myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(Transactions_Changed);
+            bool hasStatement = false;
+            try
+            {
+                this.myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(Transactions_Changed);
+                hasStatement = this.statements.AddStatement(this.account, this.StatementDate, StatementFileName.Text, this.YourNewBalance, true);
+
+            } 
+            catch (Exception ex)
+            {
+                MessageBoxEx.Show(ex.Message, "Error with Statement file", MessageBoxButton.OK, MessageBoxImage.Error);
+                StatementFileName.Focus();
+                StatementFileName.SelectAll();
+                return;
+            }
             this.interestTransaction = null;
             if (Balanced != null)
             {
-                Balanced(this, new BalanceEventArgs(!cancelled));
+                Balanced(this, new BalanceEventArgs(!cancelled, hasStatement));
             }
         }
 
@@ -544,15 +571,22 @@ namespace Walkabout.Views.Controls
             // show the transactions from this selected reconcile date so user can debug why the last balance doesn't match.
             foreach (string item in e.AddedItems)
             {
-                DateTime date = DateTime.Parse(item);
+                if (string.IsNullOrEmpty(item))
+                {
+                    // this is the empty item we added.
+                }
+                else
+                {
+                    DateTime date = DateTime.Parse(item);
 
-                this.SelectedPreviousStatement = date.AddMonths(-1);
+                    this.SelectedPreviousStatement = date.AddMonths(-1);
 
-                //
-                // Setting the StatementDate will fire the event to all listeners
-                //
-                this.StatementDate = date;
-                break;
+                    //
+                    // Setting the StatementDate will fire the event to all listeners
+                    //
+                    this.StatementDate = date;
+                    break;
+                }
             }
         }
 
@@ -604,18 +638,35 @@ namespace Walkabout.Views.Controls
             }
             base.OnMouseLeftButtonUp(e);
         }
+
+        private void OnBrowseStatement(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog od = new OpenFileDialog();
+            od.Filter = "All Files (*.*)|*.*";
+            od.CheckFileExists = true;
+            if (od.ShowDialog() == true)
+            {
+                StatementFileName.Text = od.FileName;
+            }
+        }
     }
 
     public class BalanceEventArgs : EventArgs
     {
         bool balanced;
-        public BalanceEventArgs(bool balanced)
+        bool hasStatement;
+        public BalanceEventArgs(bool balanced, bool hasStatement)
         {
             this.balanced = balanced;
+            this.hasStatement = hasStatement;
         }
         public bool Balanced
         {
             get { return this.balanced; }
+        }
+        public bool HasStatement
+        {
+            get { return this.hasStatement; }
         }
     }
 

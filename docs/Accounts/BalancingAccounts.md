@@ -12,6 +12,14 @@ This will cause a new panel to appear for balancing your account.
 
 Enter the new bank statement date, and the "Ending Balance", in this case it shows "$-275" for the ending balance.
 
+The Statement File field is optional, but it allows you to
+store a .pdf containing your actual bank statement in a
+special *.Statements directory next to your Money database
+file.  If you provide a file then the reconciled transactions
+will have an enabled `Goto statement` context menu item
+that will open this statement file so you can check it
+later.
+
 The Interest Earned field is optional, if it finds an interest transaction it will show you this amount automatically.  If you enter a non-zero number here it will simply create an interest transaction for you.
 
 At the bottom it shows your current balance compared with the ending balance you are expecting.  If there is any difference it will show that in the "**Off by** " field.

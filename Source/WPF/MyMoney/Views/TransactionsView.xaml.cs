@@ -1563,13 +1563,34 @@ namespace Walkabout.Views
             this.ViewTransactionsForSingleAccount(a, TransactionSelection.First, 0);
         }
 
-        public void OnEndReconcile(bool cancelled)
+        public void OnEndReconcile(bool cancelled, bool hasStatement)
         {
             this.reconciling = false;
             this.ViewState = beforeState;
             SetReconciledState(cancelled);
+            if (!cancelled)
+            {
+                SetHasStatement(hasStatement);
+            }
             reconcilingTransactions = null;
             this.StatmentReconcileDateEnd = null;
+        }
+
+        private void SetHasStatement(bool hasStatement)
+        {
+            this.myMoney.Transactions.BeginUpdate(false);
+            try
+            {
+                // Clear reconciling flags and set reconciled date.            
+                foreach (Transaction t in reconcilingTransactions.Keys)
+                {
+                    t.HasStatement = hasStatement;
+                }
+            }
+            finally
+            {
+                this.myMoney.Transactions.EndUpdate();
+            }
         }
 
         private void SetReconciledState(bool cancelled)
@@ -1602,7 +1623,6 @@ namespace Walkabout.Views
         /// </summary>
         private void ShowReconciledState(DateTime statementDate)
         {
-
             SetReconciledState(false);
             reconcilingTransactions = new Dictionary<Transaction, TransactionStatus>();
 
@@ -3750,6 +3770,7 @@ namespace Walkabout.Views
         public readonly static RoutedUICommand CommandRecategorize = new RoutedUICommand("Recategorize", "CommandRecategorize", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandSetTaxYear = new RoutedUICommand("SetTaxYear", "CommandSetTaxYear", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandGotoRelatedTransaction = new RoutedUICommand("GotoRelatedTransaction", "CommandGotoRelatedTransaction", typeof(TransactionsView));
+        public readonly static RoutedUICommand CommandGotoStatement = new RoutedUICommand("GotoStatement", "CommandGotoStatement", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewTransactionsByAccount = new RoutedUICommand("ViewTransactionsByAccount", "CommandViewTransactionsByAccount", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewSimilarTransactions = new RoutedUICommand("ViewSimilarTransactions", "CommandViewSimilarTransactions", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewTransactionsByCategory = new RoutedUICommand("ViewTransactionsByCategory", "CommandViewTransactionsByCategory", typeof(TransactionsView));
@@ -3837,6 +3858,12 @@ namespace Walkabout.Views
         private void CanExecute_SetTaxYear(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = HasNonReadonlySelectedTransaction;
+            e.Handled = true;
+        }
+
+        private void CanExecute_GotoStatement(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = this.SelectedTransaction != null && this.SelectedTransaction.HasStatement;
             e.Handled = true;
         }
 
@@ -4120,6 +4147,20 @@ namespace Walkabout.Views
             }
         }
 
+        private void OnCommandGotoStatement(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (isEditing)
+            {
+                this.Commit();
+                Dispatcher.BeginInvoke(new Action(OpenStatement), DispatcherPriority.Background);
+            }
+            else
+            {
+                OpenStatement();
+            }
+        }
+
+
         private void JumpToRelatedTransaction()
         {
             Split split = lastSelectedItem as Split;
@@ -4133,6 +4174,20 @@ namespace Walkabout.Views
                 if (t != null)
                 {
                     GotoRelated(t);
+                }
+            }
+        }
+
+        private void OpenStatement()
+        {
+            Transaction t = this.SelectedTransaction;
+            StatementManager sm = (StatementManager)this.site.GetService(typeof(StatementManager));
+            if (sm != null && t != null && t.ReconciledDate.HasValue)
+            {
+                var fileName = sm.GetStatement(t.Account, t.ReconciledDate.Value);
+                if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
+                {
+                    InternetExplorer.OpenUrl(IntPtr.Zero, fileName);
                 }
             }
         }

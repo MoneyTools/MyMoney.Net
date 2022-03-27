@@ -9638,7 +9638,8 @@ namespace Walkabout.Data
         Unaccepted = 1,
         Budgeted = 2,
         HasAttachment = 4,
-        NotDuplicate = 8
+        NotDuplicate = 8,
+        HasStatement = 16
     }
 
     //================================================================================
@@ -10414,6 +10415,28 @@ namespace Walkabout.Data
                         ClearFlag(TransactionFlags.HasAttachment);
                     }
                     OnChanged("HasAttachment");
+                }
+            }
+        }
+
+        [XmlIgnore]
+        [IgnoreDataMember]
+        public bool HasStatement
+        {
+            get { return (this.flags & TransactionFlags.HasStatement) != 0; }
+            set
+            {
+                if (this.HasStatement != value)
+                {
+                    if (value)
+                    {
+                        SetFlag(TransactionFlags.HasStatement);
+                    }
+                    else
+                    {
+                        ClearFlag(TransactionFlags.HasStatement);
+                    }
+                    OnChanged("HasStatement");
                 }
             }
         }
