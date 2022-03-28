@@ -16,13 +16,16 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.20*"/>
-            <ColumnDefinition Width="0.60*"/>
-            <ColumnDefinition Width="0.20*"/>
+            <ColumnDefinition Width="0.10*"/>
+            <ColumnDefinition Width="0.80*"/>
+            <ColumnDefinition Width="0.10*"/>
         </Grid.ColumnDefinitions>
 
         <Border x:Name="BarForIncome" Background="{DynamicResource BrushForRentalIncome}" Height="200" VerticalAlignment="Bottom"   Grid.ColumnSpan="2" >
             <!-- INCOME COLUMN -->
+            <Border.ToolTip>
+                <TextBlock Text="{Binding Income, StringFormat={}{0:C}}"/>
+            </Border.ToolTip>
         </Border>
 
         <Border x:Name="BarForExpense" SnapsToDevicePixels="True" Background="{DynamicResource BrushForRentalExpense}" Height="100" VerticalAlignment="Bottom"  Grid.Column="1" Grid.ColumnSpan="2" BorderThickness="0" BorderBrush="{DynamicResource BrushForRentalExpense}" CornerRadius="0" >
@@ -93,18 +96,7 @@
             </Grid>
         </Border>
 
-        <TextBlock Name="Label" Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Label, FallbackValue=1999}"  VerticalAlignment="Bottom" TextAlignment="Center" Foreground="Black" />
+        <TextBlock Name="Label" Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Label, FallbackValue=1999}"  VerticalAlignment="Bottom" TextAlignment="Center" />
 
-        <Ellipse  Grid.RowSpan="2" Grid.ColumnSpan="3" Margin="2,0,0,0" Fill="{DynamicResource BrushForRentalIncome}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="10" Height="10" >
-            <Ellipse.ToolTip>
-                <TextBlock Text="{Binding Income, StringFormat={}{0:C}}"/>
-            </Ellipse.ToolTip>
-        </Ellipse>
-
-        <Ellipse  Grid.RowSpan="2" Grid.ColumnSpan="3" Margin="0,0,2,0" Fill="{DynamicResource BrushForRentalExpense}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="10" Height="10" >
-            <Ellipse.ToolTip>
-                <TextBlock Text="{Binding Expense, StringFormat={}{0:C}}"/>
-            </Ellipse.ToolTip>
-        </Ellipse>
     </Grid>
 </UserControl>
