@@ -99,7 +99,7 @@ namespace Walkabout.Utilities
 
             link.MouseEnter += new MouseEventHandler((s, e) =>
             {
-                link.Foreground = Brushes.Blue;
+                link.Foreground = AppTheme.Instance.GetThemedBrush("HyperlinkForeground");
             });
 
             link.MouseLeave += new MouseEventHandler((s, e) =>

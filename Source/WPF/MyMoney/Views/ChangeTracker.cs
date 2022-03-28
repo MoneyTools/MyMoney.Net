@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Walkabout.Data;
 using Walkabout.Interfaces.Views;
+using Walkabout.Utilities;
 
 namespace Walkabout.Views
 {
@@ -194,7 +195,8 @@ namespace Walkabout.Views
             {
                 if (list.FirstOrDefault() is Transaction)
                 {
-                    block.Foreground = Brushes.Blue;
+                    block.Foreground = AppTheme.Instance.GetThemedBrush("HyperlinkForeground");
+                    block.Background = Brushes.Transparent; // makes the text more hittable.
                     block.MouseEnter += new System.Windows.Input.MouseEventHandler((s, e) =>
                     {
                         block.TextDecorations.Add(TextDecorations.Underline);

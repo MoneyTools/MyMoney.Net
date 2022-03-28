@@ -742,12 +742,13 @@ namespace Walkabout
                 string arg = args[i];
                 if (arg[0] == '-' || arg[0] == '/')
                 {
-                    switch (arg.Substring(1).ToLowerInvariant())
+                    switch (arg.Substring(1).TrimStart('-').ToLowerInvariant())
                     {
                         case "?":
                         case "h":
                         case "help":
                             ShowUsage();
+                            Application.Current.Shutdown();
                             break;
                         case "n":
                             emptyWindow = true;
@@ -786,7 +787,7 @@ namespace Walkabout
 /nd <name> Open new database with given name.  If name ends with '.myMoney.sdf' a CE database is created
 *.ofx     Import the given ofx files
 *.qif     Import the given qif files
-/h        Show this help page", "Command Line Help", MessageBoxButton.OK, MessageBoxImage.Information);
+/h        Show this help page", "Command Line Help", MessageBoxButton.OK, MessageBoxImage.None);
         }
 
         #endregion
@@ -4321,7 +4322,10 @@ namespace Walkabout
             base.OnClosed(e);
             CleanupStockQuoteManager();
 
-            this.exchangeRates.Dispose();
+            if (this.exchangeRates != null) 
+            {
+                this.exchangeRates.Dispose();
+            }
 
             StopTracking();
 
@@ -4349,9 +4353,12 @@ namespace Walkabout
         {
             using (this.quotes)
             {
-                this.quotes.DownloadComplete -= new EventHandler<EventArgs>(OnStockDownloadComplete);
-                this.quotes.HistoryAvailable -= OnStockQuoteHistoryAvailable;
-                this.quotes = null;
+                if (this.quotes != null)
+                {
+                    this.quotes.DownloadComplete -= new EventHandler<EventArgs>(OnStockDownloadComplete);
+                    this.quotes.HistoryAvailable -= OnStockQuoteHistoryAvailable;
+                    this.quotes = null;
+                }
             }
         }
 

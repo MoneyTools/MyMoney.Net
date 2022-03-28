@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.0.3" date="3/23/2022">
+    - A few minor dark theme fixes, the save popup link color and message box icons.
+    - Fix bugs in "auto-select-all" on mouse left click activation of some editable fields in the TransactionView
+    - Fix CloseBox colors.
+    - Add a CSV Import feature.
+  </change>
   <change version="2.0.0.2" date="2/24/2022">
     - Add "Export List" to Accounts panel to generate csv of the current accounts list.
     - Fix 'merge ui' so the braces always point to the right place even during scrolling.
