@@ -538,13 +538,13 @@
     </Style>
 
     <LinearGradientBrush x:Key="BrushForRentalExpense" StartPoint="0.5,0" EndPoint="0.5,1">
-        <GradientStop Color="#BB7676" />
-        <GradientStop Color="#800101" Offset="1" />
+        <GradientStop Color="LightSalmon" />
+        <GradientStop Color="DarkRed" Offset="1" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="BrushForRentalIncome" StartPoint="0.5,0" EndPoint="0.5,1">
-        <GradientStop Color="#7676BB" />
-        <GradientStop Color="#010180" Offset="1" />
+        <GradientStop Color="green" />
+        <GradientStop Color="DarkGreen" Offset="1" />
     </LinearGradientBrush>
 
     <!-- Define a Drawing as a resource that can be used as content for a Tiled DrawingBrush to get the Blend backdop effect. -->
