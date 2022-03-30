@@ -492,19 +492,24 @@ namespace Walkabout.Views.Controls
             bool hasStatement = false;
             try
             {
-                var fileName = StatementFileName.Text.Trim('"');
-                if (!string.IsNullOrEmpty(fileName) && !System.IO.File.Exists(fileName))
-                {
-                    throw new Exception("File not found: " + fileName);
-                }
                 this.myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(Transactions_Changed);
-                if (this.statement != null)
+
+                if (!cancelled)
                 {
-                    hasStatement = this.statements.UpdateStatement(this.account, this.statement, this.StatementDate, fileName, this.YourNewBalance, true);
-                }
-                else
-                {
-                    hasStatement = this.statements.AddStatement(this.account, this.StatementDate, fileName, this.YourNewBalance, true);
+                    var fileName = StatementFileName.Text.Trim('"');
+                    if (!string.IsNullOrEmpty(fileName) && !System.IO.File.Exists(fileName))
+                    {
+                        throw new Exception("File not found: " + fileName);
+                    }
+
+                    if (this.statement != null)
+                    {
+                        hasStatement = this.statements.UpdateStatement(this.account, this.statement, this.StatementDate, fileName, this.YourNewBalance, true);
+                    }
+                    else
+                    {
+                        hasStatement = this.statements.AddStatement(this.account, this.StatementDate, fileName, this.YourNewBalance, true);
+                    }
                 }
             } 
             catch (Exception ex)
