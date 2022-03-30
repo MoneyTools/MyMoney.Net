@@ -164,19 +164,33 @@ namespace Walkabout.Attachments
                 // if the statementFile is already in statementDir then use it.
                 if (string.Compare(Path.GetDirectoryName(statementFile), statementDir, StringComparison.OrdinalIgnoreCase) != 0)
                 {
-                    // File is not already in our statementDir, so make sure we have a unique name for it
-                    // copy the file to our directory (if it's not already there).
-                    var newName = GetUniqueStatementName(statementDir, Path.GetFileName(statementFile));
-                    if (!string.IsNullOrEmpty(item.Filename) && item.Filename != newName)
+                    item.Hash = "";
+                    // File is not already in our statementDir, so see if we can bundle it.
+                    var bundled = FindBundledStatement(statementFile);
+                    if (!string.IsNullOrEmpty(bundled))
                     {
-                        // then the statement is being renamed, which means we might need to cleanup the old one
-                        SafeDeleteFile(index, item);
+                        // then the file is already referenced by another statement, perhaps in a different account,
+                        // so we don't need another copy, instead just keep a reference to this one.
+                        statementFile = bundled;
                     }
-                    File.Copy(statementFile, newName, true);
-                    statementFile = newName;
+                    else
+                    {
+                        // Make sure we have a unique name for it
+                        // copy the file to our directory (if it's not already there).
+                        var newName = GetUniqueStatementName(statementDir, Path.GetFileName(statementFile));                        
+                        File.Copy(statementFile, newName, true);
+                        statementFile = newName;
+                    }
                 }
 
-                item.Filename = FileHelpers.GetRelativePath(statementFile, index.FileName);
+                var relative = FileHelpers.GetRelativePath(statementFile, index.FileName);
+                if (!string.IsNullOrEmpty(item.Filename) && item.Filename != relative)
+                {
+                    // then the statement is being renamed, which means we might need to cleanup the old one
+                    SafeDeleteFile(index, item);
+                }
+
+                item.Filename = relative;
                 item.Hash = hash;
             }
             else
@@ -206,16 +220,6 @@ namespace Walkabout.Attachments
                 };
 
                 statementIndex.Items.Add(statement);
-            }
-
-            // then the file is already in our statement folder, then don't attempt to bundle it.
-            if (string.Compare(Path.GetDirectoryName(statementFile), statementDir, StringComparison.OrdinalIgnoreCase) != 0)
-            {
-                var bundled = FindBundledStatement(statementFile);
-                if (!string.IsNullOrEmpty(bundled))
-                {
-                    statementFile = bundled;
-                }
             }
 
             ComputeHash(statementIndex, statement, statementFile);
