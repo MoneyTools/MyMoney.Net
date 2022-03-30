@@ -14,6 +14,10 @@ namespace Walkabout.Utilities
         /// </summary>
         public static string GetRelativePath(string fileName, string relativeTo)
         {
+            // make sure any redundant '..' segments are resolved.
+            fileName = Path.GetFullPath(fileName);
+            relativeTo = Path.GetFullPath(relativeTo);
+
             var folder = Path.GetDirectoryName(relativeTo).Trim(Path.DirectorySeparatorChar);
             var p1 = fileName.Split(Path.DirectorySeparatorChar);
             var p2 = folder.Split(Path.DirectorySeparatorChar);

@@ -4184,7 +4184,7 @@ namespace Walkabout.Views
             StatementManager sm = (StatementManager)this.site.GetService(typeof(StatementManager));
             if (sm != null && t != null && t.ReconciledDate.HasValue)
             {
-                var fileName = sm.GetStatement(t.Account, t.ReconciledDate.Value);
+                var fileName = sm.GetStatementFullPath(t.Account, t.ReconciledDate.Value);
                 if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
                 {
                     InternetExplorer.OpenUrl(IntPtr.Zero, fileName);

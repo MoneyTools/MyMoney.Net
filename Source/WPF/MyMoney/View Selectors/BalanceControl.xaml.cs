@@ -29,6 +29,7 @@ namespace Walkabout.Views.Controls
         decimal lastBalance;
         List<string> previousReconciliations;
         bool eventWired;
+        private StatementItem statement;
 
         public event EventHandler<BalanceEventArgs> Balanced;
 
@@ -105,12 +106,14 @@ namespace Walkabout.Views.Controls
                 }
             }
 
-            //
-            // In order to include the oldest un-reconciled transaction we need to start at least 1 day before the oldest un-reconciled date
-            //
-            oldestUnreconciledDate = oldestUnreconciledDate.AddDays(-1); 
-
-            previous.Add(oldestUnreconciledDate); // Make sure that we have at least one date in the dropdown
+            if (previous.Count == 0)
+            {
+                // Make sure that we have at least one date in the dropdown
+                // In order to include the oldest un-reconciled transaction we need to start at least 1 day before the
+                // oldest un-reconciled date.
+                oldestUnreconciledDate = oldestUnreconciledDate.AddDays(-1);
+                previous.Add(oldestUnreconciledDate); 
+            }
 
             previousReconciliations = new List<string>(from d in previous orderby d ascending select d.ToShortDateString());
             previousReconciliations.Add(""); // add one more so user has to move selection to select a previous statement.
@@ -221,17 +224,22 @@ namespace Walkabout.Views.Controls
             decimal d = this.myMoney.ReconciledBalance(this.account, statementDate);
             this.LastBalance = d;
 
-            this.NewBalance = this.myMoney.EstimatedBalance(this.account, statementDate);
-           
             this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, statementDate.AddMonths(1));
 
-            var stmt = this.statements.GetStatement(this.account, statementDate);
+            // in case we are re-editing a previously reconciled statement.
+            this.statement = this.statements.GetStatement(this.account, statementDate);
+            var stmt = this.statements.GetStatementFullPath(this.account, statementDate);
             this.StatementFileName.Text = stmt;
 
             decimal savedBalance = this.statements.GetStatementBalance(this.account, statementDate);
             if (savedBalance != 0)
             {
                 this.NewBalance = savedBalance;
+            }
+            else
+            {
+                // try and compute the expected balance.
+                this.NewBalance = this.myMoney.EstimatedBalance(this.account, statementDate);
             }
 
             if (StatementDateChanged != null)
@@ -318,6 +326,7 @@ namespace Walkabout.Views.Controls
                 CheckDone(true);
             }
         }
+
 
         public decimal Delta
         {
@@ -483,9 +492,20 @@ namespace Walkabout.Views.Controls
             bool hasStatement = false;
             try
             {
+                var fileName = StatementFileName.Text.Trim('"');
+                if (!string.IsNullOrEmpty(fileName) && !System.IO.File.Exists(fileName))
+                {
+                    throw new Exception("File not found: " + fileName);
+                }
                 this.myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(Transactions_Changed);
-                hasStatement = this.statements.AddStatement(this.account, this.StatementDate, StatementFileName.Text, this.YourNewBalance, true);
-
+                if (this.statement != null)
+                {
+                    hasStatement = this.statements.UpdateStatement(this.account, this.statement, this.StatementDate, fileName, this.YourNewBalance, true);
+                }
+                else
+                {
+                    hasStatement = this.statements.AddStatement(this.account, this.StatementDate, fileName, this.YourNewBalance, true);
+                }
             } 
             catch (Exception ex)
             {
@@ -546,7 +566,10 @@ namespace Walkabout.Views.Controls
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            this.account.LastBalance = this.StatementDate;
+            if (this.StatementDate > this.account.LastBalance)
+            {
+                this.account.LastBalance = this.StatementDate;
+            }
             OnDone(false);
         }
 

@@ -72,7 +72,7 @@ namespace Walkabout.Attachments
             return statementIndex;
         }
 
-        private StatementItem InternalGetStatement(Account a, DateTime date)
+        public StatementItem GetStatement(Account a, DateTime date)
         {
             var statementIndex = GetOrCreateIndex(a);
             return statementIndex.Items.Where(s => s.Date == date).FirstOrDefault();
@@ -81,7 +81,7 @@ namespace Walkabout.Attachments
         public decimal GetStatementBalance(Account a, DateTime date)
         {
             var statementIndex = GetOrCreateIndex(a);
-            var statement = InternalGetStatement(a, date);
+            var statement = GetStatement(a, date);
             if (statement != null)
             {
                 return statement.StatementBalance;
@@ -89,10 +89,10 @@ namespace Walkabout.Attachments
             return 0;
         }
 
-        public string GetStatement(Account a, DateTime date)
+        public string GetStatementFullPath(Account a, DateTime date)
         {
             var statementIndex = GetOrCreateIndex(a);
-            var statement = InternalGetStatement(a, date);
+            var statement = GetStatement(a, date);
             if (statement != null)
             {
                 if (!string.IsNullOrEmpty(statement.Filename))
@@ -104,57 +104,121 @@ namespace Walkabout.Attachments
             return "";
         }
 
+        public bool UpdateStatement(Account a, StatementItem selected, DateTime date, string statementFile, decimal balance, bool flush = true)
+        {
+            var statementIndex = GetOrCreateIndex(a);
+            if (!statementIndex.Items.Contains(selected))
+            {
+                return false;
+            }
+
+            // update the date, balance, statement file and hash
+            selected.Date = date;
+            selected.StatementBalance = balance;
+            var statementDir = Path.GetDirectoryName(statementIndex.FileName);
+            ComputeHash(statementIndex, selected, statementFile);
+
+            if (flush)
+            {
+                SaveIndex(statementIndex);
+            }
+
+            return true;
+        }
+
+        private void SafeDeleteFile(StatementIndex index, StatementItem item)
+        {
+            var statementDir = Path.GetDirectoryName(index.FileName);
+            var fullPath = Path.Combine(statementDir, item.Filename);
+            if (File.Exists(fullPath))
+            {
+                if (IsBundledStatement(index, item))
+                {
+                    // it is being used elsewhere!
+                    item.Filename = "";
+                    item.Hash = "";
+                }
+                else
+                {
+                    // then it is safe to delete it!
+                    File.Delete(fullPath);
+                    item.Filename = "";
+                    item.Hash = "";
+                }
+            }
+            else
+            {
+                // file is already gone!
+                item.Filename = "";
+                item.Hash = "";
+            }
+        }
+
+        private void ComputeHash(StatementIndex index, StatementItem item, string statementFile)
+        {
+            if (!string.IsNullOrEmpty(statementFile))
+            {
+                var hash = Sha256Hash(statementFile);
+                var statementDir = Path.GetDirectoryName(index.FileName);
+
+                // if the statementFile is already in statementDir then use it.
+                if (string.Compare(Path.GetDirectoryName(statementFile), statementDir, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    // File is not already in our statementDir, so make sure we have a unique name for it
+                    // copy the file to our directory (if it's not already there).
+                    var newName = GetUniqueStatementName(statementDir, Path.GetFileName(statementFile));
+                    if (!string.IsNullOrEmpty(item.Filename) && item.Filename != newName)
+                    {
+                        // then the statement is being renamed, which means we might need to cleanup the old one
+                        SafeDeleteFile(index, item);
+                    }
+                    File.Copy(statementFile, newName, true);
+                    statementFile = newName;
+                }
+
+                item.Filename = FileHelpers.GetRelativePath(statementFile, index.FileName);
+                item.Hash = hash;
+            }
+            else
+            {
+                item.Filename = null;
+                item.Hash = null;
+            }
+        }
+
         public bool AddStatement(Account a, DateTime date, string statementFile, decimal balance, bool flush = true)
         {
             var statementIndex = GetOrCreateIndex(a);
+            var statementDir = Path.GetDirectoryName(statementIndex.FileName);
 
-            var statement = InternalGetStatement(a, date);
+            var statement = GetStatement(a, date);
             if (statement != null)
             {
-                if (!string.IsNullOrEmpty(statement.Filename))
-                {
-                    var existingStatementFile = Path.Combine(statementIndex.FileName, statement.Filename);
-                    if (string.Compare(existingStatementFile, statementFile, StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        statement.StatementBalance = balance;
-                        return true; // already has it!
-                    }
-                    if (File.Exists(existingStatementFile))
-                    {
-                        File.Delete(existingStatementFile);
-                    }
-                    statementIndex.Items.Remove(statement);
-                }
+                throw new InvalidOperationException("Internal Error: should have called UpdateStatement");
             }
 
-            if (!string.IsNullOrEmpty(statementFile))
+            if (statement == null)
             {
-                var statementDir = Path.GetDirectoryName(statementIndex.FileName);
+                statement = new StatementItem()
+                {
+                    Date = date,
+                    StatementBalance = balance
+                };
 
-                var hash = Sha256Hash(statementFile);
-                // see if this hash exists anywhere else.
-                var bundled = FindBundledStatement(statementFile, hash);
+                statementIndex.Items.Add(statement);
+            }
+
+            // then the file is already in our statement folder, then don't attempt to bundle it.
+            if (string.Compare(Path.GetDirectoryName(statementFile), statementDir, StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                var bundled = FindBundledStatement(statementFile);
                 if (!string.IsNullOrEmpty(bundled))
                 {
                     statementFile = bundled;
                 }
-                else if (string.Compare(Path.GetDirectoryName(statementFile), statementDir, StringComparison.OrdinalIgnoreCase) != 0)
-                {
-                    // copy the file to our directory (if it's not already there).
-                    var newName = GetUniqueStatementName(statementDir, Path.GetFileName(statementFile));
-                    File.Copy(statementFile, newName, false);
-                    statementFile = newName;
-                }
-
-                statement = new StatementItem()
-                {
-                    Date = date,
-                    Filename = FileHelpers.GetRelativePath(statementFile, statementIndex.FileName),
-                    StatementBalance = balance,
-                    Hash = hash
-                };
-                statementIndex.Items.Add(statement);
             }
+
+            ComputeHash(statementIndex, statement, statementFile);
 
             if (flush)
             {
@@ -164,24 +228,49 @@ namespace Walkabout.Attachments
             return statement != null;
         }
 
-        private string FindBundledStatement(string fileName, string hash)
+        private string FindBundledStatement(string fileName)
         {
+            var hash = Sha256Hash(fileName);
             // sometimes banks bundle multiple accounts in the same statement.
             // if that happens we don't want to store duplicate statements across
             // all those accounts.  Instead we find the other index that already
             // has the statement and we point to that file instead.
-            foreach(var index in statements.Values)
+            foreach (var index in statements.Values)
             {
                 foreach (var item in index.Items)
                 {
-                    var fullPath = Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename);
-                    if (item.Hash == hash && FileHelpers.FilesIdentical(fullPath, fileName))
+                    if (!string.IsNullOrEmpty(item.Filename))
                     {
-                        return Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename);
+                        var fullPath = Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename);
+                        if (item.Hash == hash && FileHelpers.FilesIdentical(fullPath, fileName))
+                        {
+                            return Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename);
+                        }
                     }
                 }
             }
             return null;
+        }
+
+        private bool IsBundledStatement(StatementIndex parent, StatementItem toFind)
+        {
+            string fileName = Path.Combine(Path.GetDirectoryName(parent.FileName), toFind.Filename);
+            // Return true if a different Statement directory is referencing this statement file.
+            foreach (var index in statements.Values)
+            {
+                if (index != parent)
+                {
+                    foreach (var item in index.Items)
+                    {
+                        var fullPath = Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename);
+                        if (FileHelpers.FilesIdentical(fullPath, fileName))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "AttachmentDirectory")]
@@ -209,6 +298,10 @@ namespace Walkabout.Attachments
 
         private void SaveIndex(StatementIndex index)
         {
+            // sort the items by date.
+            index.Items.Sort((a, b) => {
+                return a.Date.CompareTo(b.Date);
+            });
             var s = new XmlSerializer(typeof(StatementIndex));
             using (var fs = new FileStream(index.FileName, FileMode.Create, FileAccess.Write, FileShare.None))
             {
