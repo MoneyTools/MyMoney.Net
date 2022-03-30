@@ -72,6 +72,17 @@ namespace Walkabout.Attachments
             return statementIndex;
         }
 
+        public IEnumerable<StatementItem> GetStatements(Account a)
+        {
+            if (this.statements.TryGetValue(a.Name, out StatementIndex statementIndex))
+            {
+                foreach (var item in statementIndex.Items)
+                {
+                    yield return item;
+                }
+            }
+        }
+
         public StatementItem GetStatement(Account a, DateTime date)
         {
             var statementIndex = GetOrCreateIndex(a);

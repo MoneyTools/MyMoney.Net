@@ -2725,7 +2725,13 @@ namespace Walkabout.Data
         public int Unaccepted
         {
             get { return this.unaccepted; }
-            set { if (this.unaccepted != value) { this.unaccepted = value; OnChanged("Unaccepted"); } }
+            set { 
+                if (this.unaccepted != value) {
+                    bool notify = (value == 0 && this.unaccepted != 0) || (value != 0 && this.unaccepted == 0);
+                    this.unaccepted = value; 
+                    if (notify) OnChanged("Unaccepted"); 
+                } 
+            }
         }
 
 

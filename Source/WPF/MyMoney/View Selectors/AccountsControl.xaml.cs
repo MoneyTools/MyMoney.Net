@@ -1073,6 +1073,11 @@ namespace Walkabout.Views.Controls
     {
         private decimal balanceNormalized;
 
+        public string Name
+        {
+            get => this.Title;
+        }
+
         public string Title { get; set; }
 
         public decimal BalanceInNormalizedCurrencyValue {

@@ -115,6 +115,11 @@ namespace Walkabout.Views.Controls
                 previous.Add(oldestUnreconciledDate); 
             }
 
+            foreach (var stmt in statementManager.GetStatements(a))
+            {
+                previous.Add(stmt.Date);
+            }
+
             previousReconciliations = new List<string>(from d in previous orderby d ascending select d.ToShortDateString());
             previousReconciliations.Add(""); // add one more so user has to move selection to select a previous statement.
             this.ComboBoxPreviousReconcileDates.ItemsSource = previousReconciliations;
