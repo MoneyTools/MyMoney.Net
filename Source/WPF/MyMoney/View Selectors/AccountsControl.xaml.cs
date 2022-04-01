@@ -255,7 +255,7 @@ namespace Walkabout.Views.Controls
         void listBox1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             Point pos = e.GetPosition(this);
-            if (!this.HitScrollBar(pos))
+            if (!this.HitScrollBar(pos) && e.ChangedButton == MouseButton.Left)
             {
                 uint delay = NativeMethods.GetDoubleClickTime();
                 delayedActions.StartDelayedAction("SingleClick", OnShowAllTransactions, TimeSpan.FromMilliseconds(delay + 100));

@@ -1787,6 +1787,12 @@ namespace Walkabout.Views
         {
             if (a != null)
             {
+                if (a == this.activeAccount && selection == TransactionSelection.Current && this.currentDisplayName == TransactionViewName.Account)
+                {
+                    // already viewing this account.
+                    return; 
+                }
+
 #if PerformanceBlocks
                 using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
                 {
