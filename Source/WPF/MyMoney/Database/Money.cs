@@ -8524,9 +8524,8 @@ namespace Walkabout.Data
             // same (or similar) TimeSpan then this might be a recurring transaction.
             TimeSpan span = t.Date - u.Date;
             decimal days = (decimal)Math.Abs(span.TotalDays);
-            if (days == 0 || t.Amount == 0)
+            if (days == 0)
             {
-                // unlikely to have a recurring payment on the same day or for zero dollars!
                 return false;
             }
 
@@ -8540,7 +8539,8 @@ namespace Walkabout.Data
                 i = j;
             }
 
-            List<double> daysBetween = new List<double>();
+            // create a new list so we can sort by date, since 'tc' is not necessarily yet.
+            List<Transaction> similarTransactions = new List<Transaction>();
             for (--i; i > 0; i--)
             {
                 Transaction w = tc[i];
@@ -8553,19 +8553,34 @@ namespace Walkabout.Data
                 // then it is probably a recurring instance.
                 if (w.PayeeName == t.PayeeName && Math.Abs((w.Amount - t.Amount) * 100 / t.Amount) < amountDeltaPercent)
                 {
-                    TimeSpan diff = start.Date - w.Date;
-                    double diffDays = Math.Abs(diff.TotalDays);
-                    if (diffDays > 0)
-                    {  // weed out duplicate payments.
-                        daysBetween.Add(diffDays);
-                        if (daysBetween.Count > 10)
-                        {
-                            // that should be enough to see the pattern.
-                            break; 
-                        }
-                        start.Date = w.Date;
+                    similarTransactions.Add(w);
+                    if (similarTransactions.Count > 10)
+                    {
+                        break; // should be enough.
                     }
                 }
+            }
+
+            if (similarTransactions.Count < recurringCount)
+            {
+                return false;
+            }
+
+            similarTransactions.Sort((x, y) => { return x.Date.CompareTo(y.Date); });
+
+            List<double> daysBetween = new List<double>();
+            Transaction previous = null;
+            foreach (Transaction s in similarTransactions) {
+                if (previous != null)
+                {
+                    TimeSpan diff = s.Date - previous.Date;
+                    double diffDays = Math.Abs(diff.TotalDays);
+                    if (diffDays > 0)
+                    {  
+                        daysBetween.Add(diffDays);
+                    }
+                }
+                previous = s;
             }
 
             var filtered = MathHelpers.RemoveOutliers(daysBetween, 1);
@@ -8591,7 +8606,6 @@ namespace Walkabout.Data
                 // and if they are investment transactions the stock type and unit quanities have to be the same
                 IsPotentialDuplicate(t.Investment, u.Investment) &&
                 // if they both have unique FITID fields, then the bank is telling us these are not duplicates.
-                (string.IsNullOrEmpty(t.FITID) || string.IsNullOrEmpty(u.FITID) || t.FITID == u.FITID) &&
                 // they can't be both reconciled, because then we can't merge them!
                 (u.Status != TransactionStatus.Reconciled || t.Status != TransactionStatus.Reconciled) &&
                 // within specified date range

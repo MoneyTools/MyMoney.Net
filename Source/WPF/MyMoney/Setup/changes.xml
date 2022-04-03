@@ -3,6 +3,8 @@
   <change version="2.0.0.4" date="3/23/2022">
     - Add a way to link downloaded .pdf bank statements with your reconciled accounts during balancing
     - Add "Goto Statement" on transactions that automatically find and open any linked .pdf statement.    
+    - Fix bugs in finding potential duplicate transactions to merge.
+    - Fix bug in keeping correct selection after merging duplicates.
   </change>
   <change version="2.0.0.3" date="3/23/2022">
     - A few minor dark theme fixes, the save popup link color and message box icons.

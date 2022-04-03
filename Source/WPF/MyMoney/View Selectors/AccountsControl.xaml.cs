@@ -136,7 +136,7 @@ namespace Walkabout.Views.Controls
         #endregion
 
         #region EVENTS
-
+        private bool hideEvents;
         public event EventHandler SelectionChanged;
         public event EventHandler<ChangeEventArgs> BalanceAccount;
         public event EventHandler<ChangeEventArgs> SyncAccount;
@@ -342,6 +342,7 @@ namespace Walkabout.Views.Controls
         {
             UpdateContextMenuView();
 
+            this.hideEvents = true;
             if (myMoney != null)
             {
                 //---------------------------------------------------------
@@ -396,6 +397,7 @@ namespace Walkabout.Views.Controls
             {
                 this.items.Clear();
             }
+            this.hideEvents = false;
         }
 
 
@@ -479,7 +481,13 @@ namespace Walkabout.Views.Controls
             if ((force || this.selected != selected) && SelectionChanged != null)
             {
                 SetSelected(selected);
-                SelectionChanged(this, EventArgs.Empty);
+
+                // checked it really is a different account (could be different object
+                // but the same account because of a rebind).
+                if (!hideEvents)
+                {
+                    SelectionChanged(this, EventArgs.Empty);
+                }
             }
         }
 
@@ -878,6 +886,15 @@ namespace Walkabout.Views.Controls
             this.account.PropertyChanged -= OnPropertyChanged;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is AccountItemViewModel m)
+            {
+                return m.account == this.account;
+            }
+            return false;
+        }
+
         protected override void OnSelectedChanged() 
         {
             OnPropertyChanged("NameForeground");
@@ -1079,6 +1096,16 @@ namespace Walkabout.Views.Controls
         }
 
         public string Title { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is AccountSectionHeader m)
+            {
+                return m.Title == this.Title;
+            }
+            return false;
+        }
+
 
         public decimal BalanceInNormalizedCurrencyValue {
             get => balanceNormalized;
