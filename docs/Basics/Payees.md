@@ -34,7 +34,7 @@ Aliases are important for "[Auto Categorization](AutoCategorization.md)" to work
 
 If you use the [Regular
 Expression](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference) feature combined with auto-rename you can
-make your auto-categorization more general.  For example, support you enter the following expression to match all Payee names starting with `WAL-MART` like this:
+make your auto-categorization more general.  For example, suppose you enter the following expression to match all Payee names starting with `WAL-MART` like this:
 
 ![](../Images/Payees3.png)
 

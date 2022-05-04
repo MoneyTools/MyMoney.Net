@@ -8987,6 +8987,10 @@ namespace Walkabout.Data
                     }
 
                     // Refresh the Account balance value
+                    if (a.Balance != balance)
+                    {
+                        changed = true;
+                    }
                     a.Balance = balance;
                     a.Unaccepted = unaccepted;
 

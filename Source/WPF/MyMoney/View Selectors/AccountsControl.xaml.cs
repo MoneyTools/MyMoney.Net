@@ -76,7 +76,8 @@ namespace Walkabout.Views.Controls
                 if (this.myMoney != null)
                 {
                     myMoney.Accounts.Changed -= new EventHandler<ChangeEventArgs>(OnAccountsChanged);
-                    myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);                    
+                    myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                    myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(OnBalanceChanged);
                 }
                 myMoney = value;
 
@@ -84,6 +85,7 @@ namespace Walkabout.Views.Controls
                 {
                     myMoney.Accounts.Changed += new EventHandler<ChangeEventArgs>(OnAccountsChanged);
                     myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                    myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(OnBalanceChanged);
                     OnAccountsChanged(this, new ChangeEventArgs(myMoney.Accounts, null, ChangeType.Reloaded));
                 }
                 else
@@ -92,6 +94,12 @@ namespace Walkabout.Views.Controls
                 }
             }
         }
+
+        void OnBalanceChanged(object sender, ChangeEventArgs args)
+        {
+            delayedActions.StartDelayedAction("rebind", Rebind, TimeSpan.FromMilliseconds(30));
+        }
+
 
         private void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
@@ -895,6 +903,11 @@ namespace Walkabout.Views.Controls
             return false;
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         protected override void OnSelectedChanged() 
         {
             OnPropertyChanged("NameForeground");
@@ -1106,6 +1119,10 @@ namespace Walkabout.Views.Controls
             return false;
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
 
         public decimal BalanceInNormalizedCurrencyValue {
             get => balanceNormalized;

@@ -317,9 +317,49 @@ namespace Walkabout
 
         private void OnStockQuoteHistoryAvailable(object sender, StockQuoteHistory history)
         {
+            Security s = this.myMoney.Securities.FindSymbol(history.Symbol, false);
+            if (s != null && history.History.Count > 0)
+            {
+                StockQuote quote = history.History[history.History.Count - 1];
+                if (quote.Date > s.PriceDate)
+                {
+                    myMoney.BeginUpdate(this);
+                    try
+                    {
+                        s.LastPrice = s.Price;
+                        s.Price = quote.Close;
+                        s.PriceDate = quote.Date;
+                        delayedActions.StartDelayedAction("updateBalance", UpdateBalance, TimeSpan.FromSeconds(1));
+                    } 
+                    finally
+                    {
+                        myMoney.EndUpdate();
+                    }
+                }
+            }
             if (TransactionView.ActiveSecurity != null && TransactionView.ActiveSecurity.Symbol == history.Symbol)
             {
                 StockGraph.Generator = new SecurityGraphGenerator(history, TransactionView.ActiveSecurity);
+            }
+        }
+
+        private void UpdateBalance()
+        {
+            myMoney.BeginUpdate(this);
+            try
+            {
+                CostBasisCalculator calculator = new CostBasisCalculator(myMoney, DateTime.Now);
+                foreach (Account a in myMoney.Accounts.GetAccounts())
+                {
+                    if (a.Type != AccountType.Loan)
+                    {
+                        myMoney.Rebalance(calculator, a);
+                    }
+                }
+            }
+            finally
+            {
+                myMoney.EndUpdate();
             }
         }
 

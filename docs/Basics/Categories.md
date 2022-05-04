@@ -1,6 +1,6 @@
 # Categories
 
-Entering new categories is easy, simply type in the category name you want.  For example, I might enter "Food:Groceries" for this QFC item:
+Entering new categories is easy, simply type in the category name you want.  For example, I might enter "Food:Groceries" for this Safeway item:
 
 ![](../Images/Categories.png)
 
