@@ -26,6 +26,7 @@
             <Setter Property="ClipboardCopyMode" Value="None"/>
             <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
             <Setter Property="RowHeaderWidth" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
         </Style>
 
         <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">

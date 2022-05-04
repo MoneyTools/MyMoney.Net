@@ -29,6 +29,7 @@
             <Setter Property="ClipboardCopyMode" Value="None"/>
             <Setter Property="ContentMargin" Value="0,0,0,30"/>
             <Setter Property="RowHeaderWidth" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
         </Style>
 
 
