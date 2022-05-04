@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.0.5" date="5/2/2022">
+    - Remove blue border brush around the DataGrid views.
+    - Update stock price if we get a new stock history from AlphaVantage but no direct quote from IEXCloud.
+  </change>
   <change version="2.0.0.4" date="3/23/2022">
     - Add a way to link downloaded .pdf bank statements with your reconciled accounts during balancing
     - Add "Goto Statement" on transactions that automatically find and open any linked .pdf statement.    
