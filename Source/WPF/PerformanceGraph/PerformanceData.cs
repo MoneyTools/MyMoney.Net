@@ -30,7 +30,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         public TimeSpan HistoryLength = TimeSpan.FromSeconds(60);
         public long PerformanceFrequency;
         public int PurgeThreshold = 10000; // start purging after we cross this threshold
-        private int lastCheck;
+        private uint lastCheck;
 
         public void Add(PerformanceEventArrivedEventArgs e)
         {
@@ -47,7 +47,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         private void LazyCleanup(long latest)
         {             
-            int now = Environment.TickCount;
+            uint now = (uint)Environment.TickCount;
             if (now > lastCheck + 1000 && data.Count > PurgeThreshold)
             {
                 double seconds = (double)latest / (double)PerformanceFrequency;

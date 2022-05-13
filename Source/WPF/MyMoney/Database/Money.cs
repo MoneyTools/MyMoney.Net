@@ -10872,8 +10872,8 @@ namespace Walkabout.Data
             if (!value.IsNull)
             {
                 decimal amount = value.Value;
-                int tick = Environment.TickCount;
-                if (amount == 0 && lastSet / 100 == Environment.TickCount / 100)
+                uint tick = NativeMethods.TickCount;
+                if (amount == 0 && lastSet / 100 == tick / 100)
                 {
                     // weirdness with how row is committed, it will commit 0 to Credit field after
                     // it commits a real value to Debit field and/or vice versa, so we check for 0

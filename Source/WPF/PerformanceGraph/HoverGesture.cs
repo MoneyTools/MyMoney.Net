@@ -16,7 +16,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
     class HoverGesture
     {
         DispatcherTimer hover;
-        int lastMoveTime;
+        uint lastMoveTime;
         MouseEventArgs lastMoveEvent;
         FrameworkElement target;
 
@@ -38,14 +38,19 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 hover = new DispatcherTimer(TimeSpan.FromMilliseconds(100), DispatcherPriority.Normal, OnHoverTick, target.Dispatcher);
             }
             lastMoveEvent = e;
-            lastMoveTime = Environment.TickCount;
+            lastMoveTime = TickCount;
             hover.Start();
+        }
+
+        uint TickCount
+        {
+            get { return (uint)Environment.TickCount; }
         }
 
 
         private void OnHoverTick(object sender, EventArgs e)
         {
-            if (lastMoveTime != 0 && Environment.TickCount - lastMoveTime >= 300)
+            if (lastMoveTime != 0 && TickCount - lastMoveTime >= 300)
             {
                 OnHover(lastMoveEvent);
                 if (hover != null)

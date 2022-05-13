@@ -5061,7 +5061,7 @@ namespace Walkabout.Views
 
     public abstract class TypeToFind : IDisposable
     {
-        int start;
+        uint start;
         protected DataGrid grid;
         string typedSoFar;
         int resetDelay;
@@ -5099,7 +5099,7 @@ namespace Walkabout.Views
         {
             if (IsEnabled)
             {
-                int tick = Environment.TickCount;
+                uint tick = NativeMethods.TickCount;
                 string text = e.Text;
                 foreach (char ch in text)
                 {

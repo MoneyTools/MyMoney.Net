@@ -49,7 +49,7 @@ namespace Walkabout.Utilities
         {
             System.Threading.Timer delayTimer;
             Action delayedAction;
-            int startTime;
+            uint startTime;
 
             /// <summary>
             /// Start a count down with the given delay, and fire the given action when it reaches zero.
@@ -59,7 +59,7 @@ namespace Walkabout.Utilities
             /// <param name="delay">The timeout before calling the action</param>
             public void StartDelayTimer(Action action, TimeSpan delay)
             {
-                startTime = Environment.TickCount;
+                startTime = NativeMethods.TickCount;
 
                 // stop any previous timer and start over.
                 StopDelayTimer();
@@ -84,8 +84,8 @@ namespace Walkabout.Utilities
 
             private void OnDelayTimerTick(object state)
             {
-                int endTime = Environment.TickCount;
-                int diff = startTime - endTime;
+                uint endTime = NativeMethods.TickCount;
+                uint diff = startTime - endTime;
                 Action a = this.delayedAction;
 
                 StopDelayTimer();

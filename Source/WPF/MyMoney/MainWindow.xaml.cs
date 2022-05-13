@@ -76,7 +76,7 @@ namespace Walkabout
         private ExchangeRates exchangeRates;
         private StockQuoteManager quotes;
         private int mainThreadId;
-        private int loadTime = Environment.TickCount;
+        private uint loadTime = NativeMethods.TickCount;
         private RecentFilesMenu recentFilesMenu;
         private AnimatedMessage animatedStatus;
         #endregion
@@ -1925,7 +1925,7 @@ namespace Walkabout
 
                     DatabaseSecurity.SaveDatabasePassword(database.DatabasePath, password);
 
-                    this.loadTime = Environment.TickCount;
+                    this.loadTime = NativeMethods.TickCount;
                     watch.Start();
 
                     newMoney = database.Load(this);
@@ -4181,7 +4181,7 @@ namespace Walkabout
 
         public void ShowMessage(string text)
         {
-            if (Environment.TickCount < this.loadTime + 3000)
+            if (NativeMethods.TickCount < this.loadTime + 3000)
             {
                 return;
             }
