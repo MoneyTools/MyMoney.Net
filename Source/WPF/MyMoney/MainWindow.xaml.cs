@@ -2035,8 +2035,6 @@ namespace Walkabout
                 try
                 {
                     LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
-                    CreateAttachmentDirectory();
-                    CreateStatementsDirectory();
                 }
                 catch (Exception ex)
                 {
