@@ -314,7 +314,7 @@ namespace Walkabout.Utilities
         {
             get
             {
-                return (uint)TickCount;
+                return (uint)Environment.TickCount;
             }
         }
     }

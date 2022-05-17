@@ -10865,7 +10865,7 @@ namespace Walkabout.Data
             set { if (!value.IsNull) SetDebitCredit(-value); }
         }
 
-        int lastSet;
+        uint lastSet;
 
         void SetDebitCredit(SqlDecimal value)
         {

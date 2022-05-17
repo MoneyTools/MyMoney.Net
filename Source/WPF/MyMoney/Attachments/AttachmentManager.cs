@@ -49,6 +49,7 @@ namespace Walkabout.Attachments
             string localName = Path.GetFileNameWithoutExtension(databasePath) + ".Attachments";
             string dir = Path.GetDirectoryName(databasePath);
             string attachmentpath = Path.Combine(dir, localName);
+            Directory.CreateDirectory(attachmentpath);
             this.AttachmentDirectory = attachmentpath;
             return attachmentpath;
         }
