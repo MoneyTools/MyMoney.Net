@@ -76,7 +76,8 @@ namespace Walkabout.Views.Controls
                 if (this.myMoney != null)
                 {
                     myMoney.Accounts.Changed -= new EventHandler<ChangeEventArgs>(OnAccountsChanged);
-                    myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);                    
+                    myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                    myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(OnBalanceChanged);
                 }
                 myMoney = value;
 
@@ -84,6 +85,7 @@ namespace Walkabout.Views.Controls
                 {
                     myMoney.Accounts.Changed += new EventHandler<ChangeEventArgs>(OnAccountsChanged);
                     myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                    myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(OnBalanceChanged);
                     OnAccountsChanged(this, new ChangeEventArgs(myMoney.Accounts, null, ChangeType.Reloaded));
                 }
                 else
@@ -92,6 +94,12 @@ namespace Walkabout.Views.Controls
                 }
             }
         }
+
+        void OnBalanceChanged(object sender, ChangeEventArgs args)
+        {
+            delayedActions.StartDelayedAction("rebind", Rebind, TimeSpan.FromMilliseconds(30));
+        }
+
 
         private void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
@@ -136,7 +144,7 @@ namespace Walkabout.Views.Controls
         #endregion
 
         #region EVENTS
-
+        private bool hideEvents;
         public event EventHandler SelectionChanged;
         public event EventHandler<ChangeEventArgs> BalanceAccount;
         public event EventHandler<ChangeEventArgs> SyncAccount;
@@ -255,7 +263,7 @@ namespace Walkabout.Views.Controls
         void listBox1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             Point pos = e.GetPosition(this);
-            if (!this.HitScrollBar(pos))
+            if (!this.HitScrollBar(pos) && e.ChangedButton == MouseButton.Left)
             {
                 uint delay = NativeMethods.GetDoubleClickTime();
                 delayedActions.StartDelayedAction("SingleClick", OnShowAllTransactions, TimeSpan.FromMilliseconds(delay + 100));
@@ -342,6 +350,7 @@ namespace Walkabout.Views.Controls
         {
             UpdateContextMenuView();
 
+            this.hideEvents = true;
             if (myMoney != null)
             {
                 //---------------------------------------------------------
@@ -396,6 +405,7 @@ namespace Walkabout.Views.Controls
             {
                 this.items.Clear();
             }
+            this.hideEvents = false;
         }
 
 
@@ -479,7 +489,13 @@ namespace Walkabout.Views.Controls
             if ((force || this.selected != selected) && SelectionChanged != null)
             {
                 SetSelected(selected);
-                SelectionChanged(this, EventArgs.Empty);
+
+                // checked it really is a different account (could be different object
+                // but the same account because of a rebind).
+                if (!hideEvents)
+                {
+                    SelectionChanged(this, EventArgs.Empty);
+                }
             }
         }
 
@@ -878,6 +894,20 @@ namespace Walkabout.Views.Controls
             this.account.PropertyChanged -= OnPropertyChanged;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is AccountItemViewModel m)
+            {
+                return m.account == this.account;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         protected override void OnSelectedChanged() 
         {
             OnPropertyChanged("NameForeground");
@@ -1073,7 +1103,26 @@ namespace Walkabout.Views.Controls
     {
         private decimal balanceNormalized;
 
+        public string Name
+        {
+            get => this.Title;
+        }
+
         public string Title { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is AccountSectionHeader m)
+            {
+                return m.Title == this.Title;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
 
         public decimal BalanceInNormalizedCurrencyValue {
             get => balanceNormalized;

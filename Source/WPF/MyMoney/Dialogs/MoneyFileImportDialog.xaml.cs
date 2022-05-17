@@ -27,6 +27,7 @@ namespace Walkabout.Dialogs
         bool busy;
         ObservableCollection<AccountImportState> list;
         AttachmentManager myAttachments;
+        StatementManager myStatements;
         Dispatcher dispatcher;
 
         public MoneyFileImportDialog()
@@ -69,10 +70,11 @@ namespace Walkabout.Dialogs
             base.OnClosing(e);
         }
 
-        internal void Import(MyMoney myMoney, AttachmentManager myAttachments, string[] fileNames)
+        internal void Import(MyMoney myMoney, AttachmentManager myAttachments, StatementManager myStatements, string[] fileNames)
         {
             this.myMoney = myMoney;
             this.myAttachments = myAttachments;
+            this.myStatements = myStatements;
             cancelSource = new CancellationTokenSource();
             var token = cancelSource.Token;
             Task.Factory.StartNew(() => {
@@ -135,19 +137,14 @@ namespace Walkabout.Dialogs
                         };
                         database.Create();
 
-                        string attachmentsDir = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + ".Attachments");
-                        if (Directory.Exists(attachmentsDir))
-                        {
-
-                            MyMoney newMoney = database.Load(this);
-                            AttachmentManager importAttachments = new AttachmentManager(newMoney);
-                            importAttachments.AttachmentDirectory = attachmentsDir;
-                            ImportMoneyFile(newMoney, importAttachments);
-                        }
-                        else
-                        {
-                            // todo: prompt user for attachments?
-                        }
+                        // import the database, and any associated attachments or statements.
+                        MyMoney newMoney = database.Load(this);
+                        AttachmentManager importAttachments = new AttachmentManager(newMoney);
+                        importAttachments.SetupAttachmentDirectory(path);
+                        StatementManager importStatements = new StatementManager(newMoney);
+                        importStatements.SetupStatementsDirectory(path);
+                        importStatements.Load();
+                        ImportMoneyFile(newMoney, importAttachments, importStatements);
                     }
                     else
                     {
@@ -169,7 +166,7 @@ namespace Walkabout.Dialogs
         }
 
 
-        private void ImportMoneyFile(MyMoney newMoney, AttachmentManager newAttachments)
+        private void ImportMoneyFile(MyMoney newMoney, AttachmentManager newAttachments, StatementManager importStatements)
         {
             this.dispatcher.Invoke(new Action(() =>
             {
@@ -190,13 +187,13 @@ namespace Walkabout.Dialogs
 
             foreach (AccountImportState a in list)
             {
-                ImportAccount(newMoney, a, newAttachments);
+                ImportAccount(newMoney, a, newAttachments, importStatements);
             }
 
             ShowStatus("Done");
         }
 
-        private void ImportAccount(MyMoney newMoney, AccountImportState a, AttachmentManager newAttachments)
+        private void ImportAccount(MyMoney newMoney, AccountImportState a, AttachmentManager newAttachments, StatementManager importStatements)
         {
             Account acct = a.Account;
             IList<Transaction> transactions = newMoney.Transactions.GetTransactionsFrom(acct);
@@ -267,6 +264,7 @@ namespace Walkabout.Dialogs
                 }
             }
 
+            this.myStatements.ImportStatements(acct, importStatements);
 
             this.myMoney.EndUpdate();
 

@@ -2725,7 +2725,13 @@ namespace Walkabout.Data
         public int Unaccepted
         {
             get { return this.unaccepted; }
-            set { if (this.unaccepted != value) { this.unaccepted = value; OnChanged("Unaccepted"); } }
+            set { 
+                if (this.unaccepted != value) {
+                    bool notify = (value == 0 && this.unaccepted != 0) || (value != 0 && this.unaccepted == 0);
+                    this.unaccepted = value; 
+                    if (notify) OnChanged("Unaccepted"); 
+                } 
+            }
         }
 
 
@@ -8518,9 +8524,8 @@ namespace Walkabout.Data
             // same (or similar) TimeSpan then this might be a recurring transaction.
             TimeSpan span = t.Date - u.Date;
             decimal days = (decimal)Math.Abs(span.TotalDays);
-            if (days == 0 || t.Amount == 0)
+            if (days == 0)
             {
-                // unlikely to have a recurring payment on the same day or for zero dollars!
                 return false;
             }
 
@@ -8534,7 +8539,8 @@ namespace Walkabout.Data
                 i = j;
             }
 
-            List<double> daysBetween = new List<double>();
+            // create a new list so we can sort by date, since 'tc' is not necessarily yet.
+            List<Transaction> similarTransactions = new List<Transaction>();
             for (--i; i > 0; i--)
             {
                 Transaction w = tc[i];
@@ -8547,19 +8553,34 @@ namespace Walkabout.Data
                 // then it is probably a recurring instance.
                 if (w.PayeeName == t.PayeeName && Math.Abs((w.Amount - t.Amount) * 100 / t.Amount) < amountDeltaPercent)
                 {
-                    TimeSpan diff = start.Date - w.Date;
-                    double diffDays = Math.Abs(diff.TotalDays);
-                    if (diffDays > 0)
-                    {  // weed out duplicate payments.
-                        daysBetween.Add(diffDays);
-                        if (daysBetween.Count > 10)
-                        {
-                            // that should be enough to see the pattern.
-                            break; 
-                        }
-                        start.Date = w.Date;
+                    similarTransactions.Add(w);
+                    if (similarTransactions.Count > 10)
+                    {
+                        break; // should be enough.
                     }
                 }
+            }
+
+            if (similarTransactions.Count < recurringCount)
+            {
+                return false;
+            }
+
+            similarTransactions.Sort((x, y) => { return x.Date.CompareTo(y.Date); });
+
+            List<double> daysBetween = new List<double>();
+            Transaction previous = null;
+            foreach (Transaction s in similarTransactions) {
+                if (previous != null)
+                {
+                    TimeSpan diff = s.Date - previous.Date;
+                    double diffDays = Math.Abs(diff.TotalDays);
+                    if (diffDays > 0)
+                    {  
+                        daysBetween.Add(diffDays);
+                    }
+                }
+                previous = s;
             }
 
             var filtered = MathHelpers.RemoveOutliers(daysBetween, 1);
@@ -8585,7 +8606,6 @@ namespace Walkabout.Data
                 // and if they are investment transactions the stock type and unit quanities have to be the same
                 IsPotentialDuplicate(t.Investment, u.Investment) &&
                 // if they both have unique FITID fields, then the bank is telling us these are not duplicates.
-                (string.IsNullOrEmpty(t.FITID) || string.IsNullOrEmpty(u.FITID) || t.FITID == u.FITID) &&
                 // they can't be both reconciled, because then we can't merge them!
                 (u.Status != TransactionStatus.Reconciled || t.Status != TransactionStatus.Reconciled) &&
                 // within specified date range
@@ -8967,6 +8987,10 @@ namespace Walkabout.Data
                     }
 
                     // Refresh the Account balance value
+                    if (a.Balance != balance)
+                    {
+                        changed = true;
+                    }
                     a.Balance = balance;
                     a.Unaccepted = unaccepted;
 
@@ -9638,7 +9662,8 @@ namespace Walkabout.Data
         Unaccepted = 1,
         Budgeted = 2,
         HasAttachment = 4,
-        NotDuplicate = 8
+        NotDuplicate = 8,
+        HasStatement = 16
     }
 
     //================================================================================
@@ -10420,6 +10445,28 @@ namespace Walkabout.Data
 
         [XmlIgnore]
         [IgnoreDataMember]
+        public bool HasStatement
+        {
+            get { return (this.flags & TransactionFlags.HasStatement) != 0; }
+            set
+            {
+                if (this.HasStatement != value)
+                {
+                    if (value)
+                    {
+                        SetFlag(TransactionFlags.HasStatement);
+                    }
+                    else
+                    {
+                        ClearFlag(TransactionFlags.HasStatement);
+                    }
+                    OnChanged("HasStatement");
+                }
+            }
+        }
+
+        [XmlIgnore]
+        [IgnoreDataMember]
         public bool NotDuplicate
         {
             get { return (this.flags & TransactionFlags.NotDuplicate) != 0; }
@@ -10818,15 +10865,15 @@ namespace Walkabout.Data
             set { if (!value.IsNull) SetDebitCredit(-value); }
         }
 
-        int lastSet;
+        uint lastSet;
 
         void SetDebitCredit(SqlDecimal value)
         {
             if (!value.IsNull)
             {
                 decimal amount = value.Value;
-                int tick = Environment.TickCount;
-                if (amount == 0 && lastSet / 100 == Environment.TickCount / 100)
+                uint tick = NativeMethods.TickCount;
+                if (amount == 0 && lastSet / 100 == tick / 100)
                 {
                     // weirdness with how row is committed, it will commit 0 to Credit field after
                     // it commits a real value to Debit field and/or vice versa, so we check for 0

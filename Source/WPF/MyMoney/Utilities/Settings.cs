@@ -85,19 +85,27 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["Receipts"]; 
-                if (value != null)
-                {
-                    // convert to new name
-                    map["AttachmentDirectory"] = value;
-                    map.Remove("Receipts");
-                }
-                value = map["AttachmentDirectory"];
+                object value = map["AttachmentDirectory"];
                 return value is string ? (string)value : null;
             }
-            set { 
+            set 
+            { 
                 map["AttachmentDirectory"] = value;
                 OnPropertyChanged("AttachmentDirectory");
+            }
+        }
+
+        public string StatementsDirectory
+        {
+            get
+            {
+                object value = map["StatementsDirectory"];
+                return value is string ? (string)value : null;
+            }
+            set
+            {
+                map["StatementsDirectory"] = value;
+                OnPropertyChanged("StatementsDirectory");
             }
         }
 

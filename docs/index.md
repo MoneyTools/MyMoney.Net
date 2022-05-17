@@ -1,6 +1,6 @@
 # Home
 
-**MyMoney**  is a rich client [.NET 4.8 ClickOnce application](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) for managing your personal finances.  See [Demo Video](https://lovettsoftwarestorage.blob.core.windows.net/videos/MyMoney.mp4).
+**MyMoney**  is a rich client [.NET 4.8 ClickOnce application](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) for managing your personal finances.  See [Demo Video](https://youtu.be/u6BVF2x9FBA).
 
 <div>
 <a href="Basics/install" class="btn btn-primary mt-20 mr-30" style="color:#EEEEFF" >Install</a>
@@ -9,11 +9,11 @@
 </div>
 
 
-[![](Images/Home1.png)](https://lovettsoftwarestorage.blob.core.windows.net/videos/MyMoney.mp4)
+[![](Images/Home1.png)](https://youtu.be/u6BVF2x9FBA)
 
 The app comes with beautiful modern Light and Dark themes that are accentuated with your chosen Windows Accent color:
 
-[![](Images/Home_dark.png)](https://lovettsoftwarestorage.blob.core.windows.net/videos/MyMoney.mp4)
+[![](Images/Home_dark.png)](https://youtu.be/u6BVF2x9FBA)
 
 The app provides many handy features:
 

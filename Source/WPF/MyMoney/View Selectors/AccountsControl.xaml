@@ -76,6 +76,10 @@
         <CommandBinding  Command="local:AccountsControl.CommandToggleClosedAccounts" Executed="OnToggleShowClosedAccounts" CanExecute="CanToggleShowClosedAccounts"/>
     </UserControl.CommandBindings>
 
+    <UserControl.InputBindings>
+        <KeyBinding Command="local:AccountsControl.CommandBalance" Key="B" Modifiers="Ctrl"/>
+    </UserControl.InputBindings>
+
     <ListBox Name="listBox1" 
              HorizontalAlignment="Stretch" 
              HorizontalContentAlignment="Stretch"
@@ -99,7 +103,7 @@
             <ContextMenu Name="AccountsControlContextMenu">
                 <MenuItem AutomationProperties.AutomationId="Properties" Header="_Properties..." Command="local:AccountsControl.CommandFileImport"  />
                 <MenuItem AutomationProperties.AutomationId="SynchronizeAccount" Name="MenuSync" Header="_Synchronize Account" Command="local:AccountsControl.CommandSynchronize" />
-                <MenuItem AutomationProperties.AutomationId="BalanceAccount" Header="_Balance account" Command="local:AccountsControl.CommandBalance" />
+                <MenuItem AutomationProperties.AutomationId="BalanceAccount" Header="_Balance account" Command="local:AccountsControl.CommandBalance" InputGestureText="Ctrl+B"/>
                 <Separator />
                 <MenuItem AutomationProperties.AutomationId="NewAccount" Header="_New Account..." Command="local:AccountsControl.CommandNewAccount" />
                 <MenuItem AutomationProperties.AutomationId="DownloadAccounts" Header="_Download Accounts..." Command="local:AccountsControl.CommandDownloadAccounts" />

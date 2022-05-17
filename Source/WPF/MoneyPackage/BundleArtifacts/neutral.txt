@@ -1,2 +1,2 @@
-MainPackage=D:\git\clovett\MyMoney.Net\Source\WPF\MoneyPackage\bin\AnyCPU\Release\MoneyPackage_2.0.0.3_AnyCPU.msix
-SymbolPackage=D:\git\clovett\MyMoney.Net\Source\WPF\MoneyPackage\obj\Release\Symbols\MoneyPackage_2.0.0.3_AnyCPU.appxsym
+MainPackage=D:\git\clovett\MyMoney.Net\Source\WPF\MoneyPackage\bin\AnyCPU\Release\MoneyPackage_2.0.0.5_AnyCPU.msix
+SymbolPackage=D:\git\clovett\MyMoney.Net\Source\WPF\MoneyPackage\obj\Release\Symbols\MoneyPackage_2.0.0.5_AnyCPU.appxsym

@@ -310,5 +310,12 @@ namespace Walkabout.Utilities
             return name;
         }
 
+        public static uint TickCount
+        {
+            get
+            {
+                return (uint)Environment.TickCount;
+            }
+        }
     }
 }

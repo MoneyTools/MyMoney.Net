@@ -32,7 +32,7 @@ namespace Walkabout.Utilities
                 hashBuffer = new byte[prefixLength];
             }
             hashCode = 0;
-            hash = ComputeSha1Hash(this.path);
+            hash = ComputeSha256Hash(this.path);
             foreach (byte b in hash)
             {
                 hashCode ^= ~b;
@@ -40,7 +40,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        private byte[] ComputeSha1Hash(string file)
+        private byte[] ComputeSha256Hash(string file)
         {
             using (Stream fs = new FileStream(this.path, FileMode.Open, FileAccess.Read, FileShare.None))
             {

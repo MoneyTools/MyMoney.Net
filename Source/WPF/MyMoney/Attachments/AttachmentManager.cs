@@ -44,6 +44,16 @@ namespace Walkabout.Attachments
             set { myMoney = value; }
         }
 
+        public string SetupAttachmentDirectory(string databasePath)
+        {
+            string localName = Path.GetFileNameWithoutExtension(databasePath) + ".Attachments";
+            string dir = Path.GetDirectoryName(databasePath);
+            string attachmentpath = Path.Combine(dir, localName);
+            Directory.CreateDirectory(attachmentpath);
+            this.AttachmentDirectory = attachmentpath;
+            return attachmentpath;
+        }
+
         public void Stop()
         {
             if (this.myMoney != null)
@@ -292,8 +302,15 @@ namespace Walkabout.Attachments
             {
                 throw new InvalidOperationException("The field 'AttachmentDirectory' is not initialized");
             }
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
             string dir = Path.Combine(path, NativeMethods.GetValidFileName(t.Account.Name));
-            Directory.CreateDirectory(dir);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
 
             int index = 0;
             while (true)
