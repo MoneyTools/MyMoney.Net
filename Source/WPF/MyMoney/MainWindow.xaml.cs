@@ -1738,6 +1738,12 @@ namespace Walkabout
                 try
                 {
                     string path = this.settings.Database;
+                    if (!File.Exists(path))
+                    {
+                        MessageBoxEx.Show("Previous database no longer exists in " + path, "Database Moved", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
                     string name = ("" + path).Trim().ToLowerInvariant();
                     string password = null;
                     bool error = false;

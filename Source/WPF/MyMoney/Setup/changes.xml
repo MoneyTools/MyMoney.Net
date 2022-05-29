@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.0.6" date="5/172022">
+    - Fix initial setup of Attachments folder.
+  </change>
   <change version="2.0.0.5" date="5/2/2022">
     - Remove blue border brush around the DataGrid views.
     - Update stock price if we get a new stock history from AlphaVantage but no direct quote from IEXCloud.
