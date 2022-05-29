@@ -793,6 +793,11 @@ namespace Walkabout.Views.Controls
 
         private void OnToggleShowClosedAccounts(object sender, ExecutedRoutedEventArgs e)
         {
+            if (this.SelectedAccount != null && this.SelectedAccount.IsClosed && DisplayClosedAccounts)
+            {
+                // then de-select it since user doesn't want to see closed accounts any more.
+                this.Selected = null;
+            }
             this.DisplayClosedAccounts = !DisplayClosedAccounts;
         }
 
