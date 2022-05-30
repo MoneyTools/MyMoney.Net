@@ -9846,7 +9846,7 @@ namespace Walkabout.Data
         [ColumnMapping(ColumnName = "Date")]
         public DateTime Date
         {
-            get { return date.Date; }
+            get { return date; }
             set
             {
                 if (this.date != value)
@@ -11774,7 +11774,8 @@ namespace Walkabout.Data
                 return 0;
             }
 
-            if (this.date.Date == compareTo.date.Date)
+            var rc = DateTime.Compare(this.date, compareTo.date);
+            if (rc == 0)
             {
                 // sort deposits first, then withdrawals
                 if (compareTo.amount == this.amount)
@@ -11790,7 +11791,7 @@ namespace Walkabout.Data
                 return -1;
             }
 
-            return DateTime.Compare(this.date, compareTo.date);
+            return rc;
         }
 
         // used in TransactionView.xaml as the SecondarySortOrder

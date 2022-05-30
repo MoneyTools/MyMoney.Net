@@ -10,6 +10,7 @@ using Walkabout.Utilities;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.Collections;
+using System.Diagnostics;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -20,7 +21,7 @@ namespace Walkabout.Controls
     // Summary:
     //     Provides data for the System.Windows.Controls.DataGrid.BeginningEdit event.
     public class DataGridCustomEditEventArgs : EventArgs
-    {
+    {        
         public bool Handled { get; set; }
         public DataGridColumn Column { get; internal set; }
         public DataGridRow Row { get; internal set; }
@@ -40,6 +41,7 @@ namespace Walkabout.Controls
     {
         DataGridColumn sorted;
         bool isEditing;
+        DelayedActions delayedActions = new DelayedActions();
 
         public MoneyDataGrid()
         {
@@ -224,10 +226,10 @@ namespace Walkabout.Controls
                 if (MessageBoxEx.Show(ex.ToString() + "\n\nDo you want to try again?", "Debug Error", MessageBoxButton.OKCancel, MessageBoxImage.Error) == MessageBoxResult.OK)
                 {
                     // and try again later...at low priority so that the UI has a chance to settle down...
-                    Dispatcher.BeginInvoke(new Action(() =>
+                    delayedActions.StartDelayedAction("SetItemsSource", () =>
                     {
                         SetItemsSource(items);
-                    }), DispatcherPriority.Background);
+                    }, TimeSpan.FromMilliseconds(10));
                 }
             }
         }
@@ -248,25 +250,28 @@ namespace Walkabout.Controls
 
         public void AsyncScrollSelectedRowIntoView()
         {
-            object selected = this.SelectedItem;
-            bool hadFocus = this.IsKeyboardFocusWithin;
-            if (selected != null)
+            if (!sorting)
             {
-                Dispatcher.BeginInvoke(new Action(() =>
+                object selected = this.SelectedItem;
+                bool hadFocus = this.IsKeyboardFocusWithin;
+                if (selected != null)
                 {
-                    if (selected == this.SelectedItem)
+                    delayedActions.StartDelayedAction("ScrollIntoView", () =>
                     {
-                        this.ScrollIntoView(selected);
-                        if (hadFocus)
+                        if (selected == this.SelectedItem)
                         {
-                            if (previousCurrentCell != null && previousCurrentCell.Header != null)
+                            this.ScrollIntoView(selected);
+                            if (hadFocus)
                             {
-                                string name = previousCurrentCell.Header.ToString();
-                                this.SetFocusOnSelectedRow(selected, name);
+                                if (previousCurrentCell != null && previousCurrentCell.Header != null)
+                                {
+                                    string name = previousCurrentCell.Header.ToString();
+                                    this.SetFocusOnSelectedRow(selected, name);
+                                }
                             }
                         }
-                    }
-                }));
+                    }, TimeSpan.FromMilliseconds(10));
+                }
             }
         }
         
@@ -477,18 +482,26 @@ namespace Walkabout.Controls
                     //refresh the view which in turn refresh the grid
                     dataView.Refresh();
 
-                    Dispatcher.BeginInvoke(new Action(() =>
+                    delayedActions.StartDelayedAction("Sort", () =>
                     {
-                        foreach (DataGridColumn c in this.Columns)
+                        try
                         {
-                            if (c.SortMemberPath == column)
+                            sorting = true;
+                            foreach (DataGridColumn c in this.Columns)
                             {
-                                // make sure the UI shows our sort direction!
-                                c.SortDirection = direction;
-                                break;
+                                if (c.SortMemberPath == column)
+                                {
+                                    // make sure the UI shows our sort direction!
+                                    c.SortDirection = direction;
+                                    break;
+                                }
                             }
                         }
-                    }));
+                        finally
+                        {
+                            sorting = false;
+                        }
+                    }, TimeSpan.FromMilliseconds(10));
                 }
 
             }
