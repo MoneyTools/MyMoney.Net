@@ -1845,7 +1845,7 @@ NEWFILEUID:{1}
                     XText text = node as XText;
                     if (text != null)
                     {
-                        text.Value = text.Value.Trim();
+                        text.Value = text.Value.Trim().Replace(Environment.NewLine, " ");
                     }
                 }
 
