@@ -1114,32 +1114,6 @@ NEWFILEUID:{1}
             return result;
         }
 
-        private int GetSignOnStatusCode(XElement ofx)
-        {
-            XElement signOnMsgResponse = ofx.Element("SIGNONMSGSRSV1");
-            if (signOnMsgResponse != null)
-            {
-                XElement sonOnResponse = signOnMsgResponse.Element("SONRS");
-                if (sonOnResponse != null)
-                {
-                    XElement status = sonOnResponse.Element("STATUS");
-                    if (status != null)
-                    {
-                        XElement code = sonOnResponse.Element("CODE");
-                        if (code != null)
-                        {
-                            int i = 0;
-                            if (int.TryParse(code.Value, out i))
-                            {
-                                return i;
-                            }
-                        }
-                    }
-                }
-            }
-            return -1;
-        }
-
         public static OFX LoadCachedProfile(MyMoney money, OnlineAccount oa)
         {
             string profilePath = Path.Combine(OfxLogPath, OfxRequest.GetLogfileName(money, oa) + "PROF_RS.xml");
@@ -1838,17 +1812,6 @@ NEWFILEUID:{1}
                 sgml.InputStream = new StringReader(sb.ToString());
 
                 doc = XDocument.Load(sgml);
-
-                //Trim newlines.
-                foreach (XNode node in doc.DescendantNodes())
-                {
-                    XText text = node as XText;
-                    if (text != null)
-                    {
-                        text.Value = text.Value.Trim().Replace(Environment.NewLine, " ");
-                    }
-                }
-
                 sr.Close();
             }
             return doc;
@@ -1894,8 +1857,7 @@ NEWFILEUID:{1}
             
             XElement e = doc.SelectExpectedElement("OFX/SIGNONMSGSRSV1/SONRS/STATUS/CODE");
 
-            int statusCode = 0;
-            int.TryParse(e.Value.Trim(), out statusCode);
+            int statusCode = e.GetElementValueAsInt();
             if (statusCode != 0)
             {
                 OfxErrorCode ec = (OfxErrorCode)statusCode;
@@ -1946,7 +1908,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 statusCode = 0;
                 if (e != null)
                 {
-                    int.TryParse(e.Value.Trim(), out statusCode);
+                    statusCode = e.GetElementValueAsInt();
                 }
                 if (statusCode != 0)
                 {
@@ -2004,7 +1966,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 {
                     throw new OfxException("TRNUID is missing in the response");
                 }
-                string id = idElement.Value.Trim();
+                string id = idElement.Value.GetNormalizedValue();
 
                 // Account can be null if we are loading a .ofx file off disk                
                 Account a = (Account)this.truidMap[id];
@@ -2065,7 +2027,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 {
                     throw new OfxException("TRNUID is missing in the response");
                 }
-                string id = idElement.Value.Trim();
+                string id = idElement.Value.GetNormalizedValue();
 
                 // Account can be null if we are loading a .ofx file off disk                
                 Account a = (Account)this.truidMap[id];
@@ -2127,7 +2089,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 {
                     throw new OfxException("TRNUID is missing in the response");
                 }
-                string id = idElement.Value.Trim();
+                string id = idElement.Value.GetNormalizedValue();
 
                 // Account can be null if we are loading a .ofx file off disk                
                 Account a = (Account)this.truidMap[id];
@@ -2726,10 +2688,10 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             XElement invtran = e.Element("INVTRAN");
             if (invtran != null)
             {
-                t.FITID = invtran.SelectElementValue("FITID");
+                t.FITID = invtran.SelectElementValue("FITID").GetNormalizedValue();
                 t.Date = ParseOfxDate(invtran.SelectElementValue("DTTRADE"));
                 // todo: should use DTSETTLE for stock splits.
-                t.Memo = invtran.SelectElementValue("MEMO");
+                t.Memo = invtran.SelectElementValue("MEMO").GetNormalizedValue();
             }
             t.Amount = e.SelectElementValueAsDecimal("TOTAL");
             return t;
@@ -2839,10 +2801,10 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             XElement s = e.Element("STMTTRN");
             if (s != null)
             {
-                t.FITID = s.SelectElementValue("FITID");
+                t.FITID = s.SelectElementValue("FITID").GetNormalizedValue();
                 t.Date = ParseOfxDate(s.SelectElementValue("DTPOSTED"));
                 t.Amount = s.SelectElementValueAsDecimal("TRNAMT");
-                t.Memo = s.SelectElementValue("MEMO");
+                t.Memo = s.SelectElementValue("MEMO").GetNormalizedValue();
 
                 switch (s.SelectElementValue("TRNTYPE"))
                 {
@@ -2901,7 +2863,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         private static void ProcessCurrency(XElement currency, Transaction t)
         {
             if (currency == null) return;
-            string symbol = currency.SelectElementValue("CURSYM");
+            string symbol = currency.SelectElementValue("CURSYM").GetNormalizedValue();
 
             if (symbol != "USD")
             {
@@ -2912,10 +2874,10 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         Security ProcessSecId(XElement secId)
         {
             if (secId == null) return null;
-            string uniqueId = secId.SelectElementValue("UNIQUEID");
+            string uniqueId = secId.SelectElementValue("UNIQUEID").GetNormalizedValue();
             if (string.IsNullOrEmpty(uniqueId)) return null;
 
-            string idType = secId.SelectElementValue("UNIQUEIDTYPE");
+            string idType = secId.SelectElementValue("UNIQUEIDTYPE").GetNormalizedValue();
             if (string.IsNullOrEmpty(uniqueId)) idType = "CUSIP";
 
             SecurityInfo info = null;
@@ -3021,11 +2983,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     XElement secInfo = e.SelectElement("SECINFO");
                     if (secInfo != null)
                     {
-                        s.UniqueId = secInfo.SelectElementValue("SECID/UNIQUEID");
-                        s.UniqueIdType = secInfo.SelectElementValue("SECID/UNIQUEIDTYPE");
-                        s.Name = secInfo.SelectElementValue("SECNAME");
-                        s.Ticker = secInfo.SelectElementValue("TICKER");
-                        string price = secInfo.SelectElementValue("UNITPRICE");
+                        s.UniqueId = secInfo.SelectElementValue("SECID/UNIQUEID").GetNormalizedValue();
+                        s.UniqueIdType = secInfo.SelectElementValue("SECID/UNIQUEIDTYPE").GetNormalizedValue();
+                        s.Name = secInfo.SelectElementValue("SECNAME").GetNormalizedValue();
+                        s.Ticker = secInfo.SelectElementValue("TICKER").GetNormalizedValue();
+                        string price = secInfo.SelectElementValue("UNITPRICE").GetNormalizedValue();
 
                         Security sec = null;
                         if (!string.IsNullOrEmpty(s.Ticker))
@@ -3132,45 +3094,44 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
                 foreach (XElement sr in transactionList.Elements("STMTTRN"))
                 {
+                    string fitid = sr.SelectExpectedElement("FITID").Value.GetNormalizedValue();
 
-                    string fitid = sr.SelectExpectedElement("FITID").Value.Trim();
-
-                    DateTime dt = ParseOfxDate(sr.SelectExpectedElement("DTPOSTED").Value.Trim());
-                    decimal amount = decimal.Parse(sr.SelectExpectedElement("TRNAMT").Value.Trim());
+                    DateTime dt = ParseOfxDate(sr.SelectExpectedElement("DTPOSTED").Value.GetNormalizedValue());
+                    decimal amount = decimal.Parse(sr.SelectExpectedElement("TRNAMT").Value.GetNormalizedValue());
                     if (amount == 0 && a.Type == AccountType.Credit)
                         continue; // ignore those annoying credit checks.
 
                     string number = null;
 
                     XElement e = sr.Element("CHECKNUM");
-                    if (e != null)
+                    if (e != null && int.TryParse(e.Value.GetNormalizedValue(), out int num))
                     {
-                        number = Int32.Parse(e.Value.Trim()).ToString();
+                        number = num.ToString();
                     }
 
                     string payee = null;
                     if ((e = sr.Element("NAME")) != null)
                     {
-                        payee = e.Value.Trim();
+                        payee = e.Value.GetNormalizedValue();
                     }
                     else if ((e = sr.Element("PAYEE")) != null)
                     {
-                        payee = e.Value.Trim();
+                        payee = e.Value.GetNormalizedValue();
                     }
                     else if ((e = sr.Element("PAYEE2")) != null)
                     {
-                        payee = e.Value.Trim();
+                        payee = e.Value.GetNormalizedValue();
                     }
                     
 
                     string memo = null;
                     if ((e = sr.Element("MEMO")) != null)
                     {
-                        memo = e.Value.Trim();
+                        memo = e.Value.GetNormalizedValue();
                     }
                     else if ((e = sr.Element("MEMO2")) != null)
                     {
-                        memo = e.Value.Trim();
+                        memo = e.Value.GetNormalizedValue();
                     }
 
                     string s = "Bill Payment ";
@@ -3273,7 +3234,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         // process INVACCTFROM
         private bool CheckAccountId(ref Account a, AccountType accountType, XElement from, OfxDownloadData results)
         {
-            string accountid = from.SelectElementValue("ACCTID");
+            string accountid = from.SelectElementValue("ACCTID").GetNormalizedValue();
 
             Account temp = new Account() { Name = accountid, AccountId = accountid, Type = accountType };
 
@@ -3446,7 +3407,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         private static bool CheckUSD(XElement srs, OfxDownloadData results, Account a)
         {
-            string dollar = srs.SelectElementValue("CURDEF");
+            string dollar = srs.SelectElementValue("CURDEF").GetNormalizedValue();
 
             // todo: how to support multi-currency properly...
             //if (dollar != "USD")

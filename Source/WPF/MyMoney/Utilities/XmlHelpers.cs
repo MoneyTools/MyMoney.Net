@@ -116,5 +116,20 @@ namespace Walkabout.Utilities
             }
             return null;
         }
+
+        public static string GetNormalizedValue(this string s)
+        {
+            return s.Trim().Replace("\r\n", " ").Replace('\r', ' ').Replace('\n', ' ');
+        }
+
+        public static int GetElementValueAsInt(this XElement e, int defaultValue = 0)
+        {
+            int i = 0;
+            if (int.TryParse(e.Value.GetNormalizedValue(), out i))
+            {
+                return i;
+            }
+            return defaultValue;
+        }
     }
 }

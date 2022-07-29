@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="2.0.0.6" date="5/172022">
+  <change version="2.0.0.7" date="7/28/2022">
+    - Fix a potential newline SQL injection bug.
+  </change>
+  <change version="2.0.0.6" date="5/17/2022">
     - Fix initial setup of Attachments folder.
   </change>
   <change version="2.0.0.5" date="5/2/2022">

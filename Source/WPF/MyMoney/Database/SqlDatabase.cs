@@ -919,7 +919,7 @@ namespace Walkabout.Data
         static string DBString(string s)
         {
             if (s == null) return null;
-            return s.Replace("'", "''");
+            return s.Replace("'", "''").Replace("\r","\\r").Replace("\n", "\\n");
         }
 
         static string TwoDigit(int i)

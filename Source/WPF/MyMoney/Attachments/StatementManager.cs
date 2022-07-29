@@ -369,7 +369,7 @@ namespace Walkabout.Attachments
             var dir = Path.GetDirectoryName(index.FileName);
             foreach(var item in index.Items)
             {
-                if (string.IsNullOrEmpty(item.Hash))
+                if (string.IsNullOrEmpty(item.Hash) && !string.IsNullOrEmpty(item.Filename))
                 {
                     var statementFile = Path.Combine(dir, item.Filename);
                     item.Hash = Sha256Hash(statementFile);
