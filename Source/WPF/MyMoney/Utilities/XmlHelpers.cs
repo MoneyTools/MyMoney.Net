@@ -119,6 +119,10 @@ namespace Walkabout.Utilities
 
         public static string GetNormalizedValue(this string s)
         {
+            if (string.IsNullOrEmpty(s))
+            {
+                return string.Empty;
+            }
             return s.Trim().Replace("\r\n", " ").Replace('\r', ' ').Replace('\n', ' ');
         }
 

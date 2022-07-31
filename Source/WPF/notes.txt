@@ -1,0 +1,3 @@
+
+- Fix null ref exception while downloading ofx data.
+

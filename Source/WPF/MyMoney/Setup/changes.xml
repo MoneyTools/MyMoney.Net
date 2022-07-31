@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.0.8" date="7/31/2022">
+    - Fix null ref exception while downloading ofx data.
+  </change>
   <change version="2.0.0.7" date="7/28/2022">
     - Fix a potential newline SQL injection bug.
   </change>
