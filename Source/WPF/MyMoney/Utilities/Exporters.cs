@@ -165,6 +165,15 @@ namespace Walkabout.Migrate
         void ExportToCsv(StreamWriter writer, IEnumerable<object> data)
         {
             bool first = true;
+            bool containsInvestmentInfo = false;
+            foreach (object row in data)
+            {
+                if (row is Transaction t && t.Investment != null)
+                {
+                    containsInvestmentInfo = true;
+                }
+            }
+
             foreach (object row in data)
             {
                 Transaction t = row as Transaction;
@@ -173,9 +182,27 @@ namespace Walkabout.Migrate
                     if (first)
                     {
                         first = false;
-                        CsvStore.WriteTransactionHeader(writer);
+                        if (containsInvestmentInfo)
+                        {
+                            CsvStore.WriteInvestmentHeader(writer);
+                        }
+                        else
+                        {
+                            CsvStore.WriteTransactionHeader(writer);
+                        }
                     };
-                    CsvStore.WriteTransaction(writer, t);
+                    if (t.Investment != null)
+                    {
+                        CsvStore.WriteInvestment(writer, t);
+                    }
+                    else if (containsInvestmentInfo)
+                    {
+                        CsvStore.WriteInvestmentTransaction(writer, t);
+                    } 
+                    else 
+                    { 
+                        CsvStore.WriteTransaction(writer, t);
+                    }
                 }
                 else
                 {
@@ -187,7 +214,7 @@ namespace Walkabout.Migrate
                             first = false;
                             CsvStore.WriteInvestmentHeader(writer);
                         };
-                        CsvStore.WriteInvestment(writer, i);
+                        CsvStore.WriteInvestment(writer, i.Transaction);
                     }
                     else
                     {
