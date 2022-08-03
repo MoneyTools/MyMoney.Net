@@ -16,6 +16,7 @@ namespace Walkabout.Attachments
     {
         private MyMoney myMoney;
         private DelayedActions actions = new DelayedActions();
+        private Dictionary<Account, string> nameMap;
         private string statementsDir;
         private bool started;
         private bool loaded;
@@ -25,6 +26,12 @@ namespace Walkabout.Attachments
         public StatementManager(MyMoney myMoney)
         {
             this.myMoney = myMoney;
+            // save the original account names, in case the account is renamed.
+            this.nameMap = new Dictionary<Account, string>();
+            foreach (var item in myMoney.Accounts.GetAccounts())
+            {
+                this.nameMap[item] = item.Name;
+            }
         }
 
         public string StatementsDirectory
@@ -45,12 +52,6 @@ namespace Walkabout.Attachments
         }
 
         public bool IsLoaded => this.loaded;
-
-        public MyMoney MyMoney
-        {
-            get { return myMoney; }
-            set { myMoney = value; }
-        }
 
         private StatementIndex GetOrCreateIndex(Account a)
         {
@@ -169,40 +170,43 @@ namespace Walkabout.Attachments
         {
             if (!string.IsNullOrEmpty(statementFile))
             {
-                var hash = Sha256Hash(statementFile);
-                var statementDir = Path.GetDirectoryName(index.FileName);
-
-                // if the statementFile is already in statementDir then use it.
-                if (string.Compare(Path.GetDirectoryName(statementFile), statementDir, StringComparison.OrdinalIgnoreCase) != 0)
+                if (File.Exists(statementFile))
                 {
-                    item.Hash = "";
-                    // File is not already in our statementDir, so see if we can bundle it.
-                    var bundled = FindBundledStatement(statementFile);
-                    if (!string.IsNullOrEmpty(bundled))
-                    {
-                        // then the file is already referenced by another statement, perhaps in a different account,
-                        // so we don't need another copy, instead just keep a reference to this one.
-                        statementFile = bundled;
-                    }
-                    else
-                    {
-                        // Make sure we have a unique name for it
-                        // copy the file to our directory (if it's not already there).
-                        var newName = GetUniqueStatementName(statementDir, Path.GetFileName(statementFile));                        
-                        File.Copy(statementFile, newName, true);
-                        statementFile = newName;
-                    }
-                }
+                    var hash = Sha256Hash(statementFile);
+                    var statementDir = Path.GetDirectoryName(index.FileName);
 
-                var relative = FileHelpers.GetRelativePath(statementFile, index.FileName);
-                if (!string.IsNullOrEmpty(item.Filename) && item.Filename != relative)
-                {
-                    // then the statement is being renamed, which means we might need to cleanup the old one
-                    SafeDeleteFile(index, item);
-                }
+                    // if the statementFile is already in statementDir then use it.
+                    if (string.Compare(Path.GetDirectoryName(statementFile), statementDir, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        item.Hash = "";
+                        // File is not already in our statementDir, so see if we can bundle it.
+                        var bundled = FindBundledStatement(statementFile);
+                        if (!string.IsNullOrEmpty(bundled))
+                        {
+                            // then the file is already referenced by another statement, perhaps in a different account,
+                            // so we don't need another copy, instead just keep a reference to this one.
+                            statementFile = bundled;
+                        }
+                        else
+                        {
+                            // Make sure we have a unique name for it
+                            // copy the file to our directory (if it's not already there).
+                            var newName = GetUniqueStatementName(statementDir, Path.GetFileName(statementFile));
+                            File.Copy(statementFile, newName, true);
+                            statementFile = newName;
+                        }
+                    }
 
-                item.Filename = relative;
-                item.Hash = hash;
+                    var relative = FileHelpers.GetRelativePath(statementFile, index.FileName);
+                    if (!string.IsNullOrEmpty(item.Filename) && item.Filename != relative)
+                    {
+                        // then the statement is being renamed, which means we might need to cleanup the old one
+                        SafeDeleteFile(index, item);
+                    }
+
+                    item.Filename = relative;
+                    item.Hash = hash;
+                }
             }
             else
             {
@@ -245,21 +249,24 @@ namespace Walkabout.Attachments
 
         private string FindBundledStatement(string fileName)
         {
-            var hash = Sha256Hash(fileName);
-            // sometimes banks bundle multiple accounts in the same statement.
-            // if that happens we don't want to store duplicate statements across
-            // all those accounts.  Instead we find the other index that already
-            // has the statement and we point to that file instead.
-            foreach (var index in statements.Values)
+            if (File.Exists(fileName))
             {
-                foreach (var item in index.Items)
+                var hash = Sha256Hash(fileName);
+                // sometimes banks bundle multiple accounts in the same statement.
+                // if that happens we don't want to store duplicate statements across
+                // all those accounts.  Instead we find the other index that already
+                // has the statement and we point to that file instead.
+                foreach (var index in statements.Values)
                 {
-                    if (!string.IsNullOrEmpty(item.Filename))
+                    foreach (var item in index.Items)
                     {
-                        var fullPath = Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename);
-                        if (item.Hash == hash && FileHelpers.FilesIdentical(fullPath, fileName))
+                        if (!string.IsNullOrEmpty(item.Filename))
                         {
-                            return Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename);
+                            var fullPath = Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename);
+                            if (item.Hash == hash && FileHelpers.FilesIdentical(fullPath, fileName))
+                            {
+                                return Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename);
+                            }
                         }
                     }
                 }
@@ -338,6 +345,11 @@ namespace Walkabout.Attachments
         {
             started = false;
             actions.CancelAll();
+            if (this.myMoney != null)
+            {
+                myMoney.Accounts.Changed -= new EventHandler<ChangeEventArgs>(OnAccountsChanged);
+                myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+            }
         }
 
         public void Start()
@@ -348,12 +360,86 @@ namespace Walkabout.Attachments
             }
             if (myMoney != null)
             {
+                // listen to transaction changed events so that we can cleanup attachments when transactions
+                // are deleted.
+                myMoney.Accounts.Changed += new EventHandler<ChangeEventArgs>(OnAccountsChanged);
+                myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
                 started = true;
                 loaded = false;
                 actions.StartDelayedAction("ScanAccounts", () => LoadIndex(), TimeSpan.FromMilliseconds(100));
             }
         }
 
+        void OnMoneyChanged(object sender, ChangeEventArgs args)
+        {
+            while (args != null)
+            {
+                if (args.Item is Account a)
+                {
+                    if (args.ChangeType == ChangeType.Inserted)
+                    {
+                        actions.StartDelayedAction("LoadAccount" + a.Name, () => LoadIndexFile(a), TimeSpan.FromMilliseconds(100));
+                    }
+                    else if (args.ChangeType == ChangeType.Changed && args.Name == "Name")
+                    {
+                        OnAccountRenamed(a);
+                    }
+                }
+                args = args.Next;
+            }
+        }
+
+        void OnAccountsChanged(object sender, ChangeEventArgs args)
+        {
+            while (args != null)
+            {
+                if (args.Item is Account a)
+                {
+                    if (args.ChangeType == ChangeType.Inserted)
+                    {
+                        actions.StartDelayedAction("LoadAccount" + a.Name, () => LoadIndexFile(a), TimeSpan.FromMilliseconds(100));
+                    }
+                    else if (args.ChangeType == ChangeType.Changed && args.Name == "Name")
+                    {
+                        OnAccountRenamed(a);
+                    }
+                }
+                args = args.Next;
+            }
+        }
+
+        private void OnAccountRenamed(Account a)
+        {
+            if (this.nameMap.TryGetValue(a, out string oldName))
+            {
+                if (oldName != a.Name)
+                {
+                    if (this.statements.TryGetValue(oldName, out StatementIndex value))
+                    {
+                        this.statements[a.Name] = value;
+                        this.statements.TryRemove(oldName, out StatementIndex removed);
+                    }
+                    this.OnRenameAccount(a, oldName);
+                    this.nameMap[a] = a.Name;
+                }
+            }
+        }
+
+        public void OnRenameAccount(Account a, string oldName)
+        {
+            string path = this.StatementsDirectory;
+            if (Directory.Exists(path) && !string.IsNullOrEmpty(a.Name) && !string.IsNullOrEmpty(oldName))
+            {
+                string oldAccountDirectory = Path.Combine(path, NativeMethods.GetValidFileName(oldName));
+                string newAccountDirectory = Path.Combine(path, NativeMethods.GetValidFileName(a.Name));
+                if (Directory.Exists(oldAccountDirectory) && !Directory.Exists(newAccountDirectory))
+                {
+                    Debug.WriteLine($"Account renamed from {oldName} to {a.Name}");
+                    Directory.Move(oldAccountDirectory, newAccountDirectory);
+                }
+            }
+
+        }
         private void LoadIndex()
         {
             Task.Run(this.Load);            
@@ -372,8 +458,11 @@ namespace Walkabout.Attachments
                 if (string.IsNullOrEmpty(item.Hash) && !string.IsNullOrEmpty(item.Filename))
                 {
                     var statementFile = Path.Combine(dir, item.Filename);
-                    item.Hash = Sha256Hash(statementFile);
-                    updated = true;
+                    if (File.Exists(statementFile))
+                    {
+                        item.Hash = Sha256Hash(statementFile);
+                        updated = true;
+                    }
                 }
             }
             if (updated)

@@ -3242,6 +3242,16 @@ namespace Walkabout.Views
                                     rebalance = true;
                                 }
                             }
+                            else if (a != null && args.ChangeType == ChangeType.Inserted)
+                            {
+                                if (this.ActiveAccount == null && this.myMoney.Accounts.Count == 1)
+                                {
+                                    // perhaps it's the first account and it's time to bind the transaction view to an account.
+                                    this.currentDisplayName = TransactionViewName.Account;
+                                    this.activeAccount = a;
+                                    refresh = true;
+                                }
+                            }
                         }
                         args = args.Next;
                     }

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.0.9" date="7/31/2022">
+    - Fix github issue #50: Renaming an account breaks the link to existing statements.
+    - Fix some issue with brand new database.
+  </change>
   <change version="2.0.0.8" date="7/31/2022">
     - Fix null ref exception while downloading ofx data.
   </change>

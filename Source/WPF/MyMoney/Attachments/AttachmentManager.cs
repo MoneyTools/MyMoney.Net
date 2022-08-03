@@ -8,6 +8,7 @@ using System.IO;
 using Walkabout.Utilities;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Diagnostics;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -25,23 +26,24 @@ namespace Walkabout.Attachments
     {
         private MyMoney myMoney;
         private AttachmentWatcher watcher;
+        private Dictionary<Account, string> nameMap;
         
         public AttachmentManager(MyMoney myMoney)
         {
             this.myMoney = myMoney;
             this.watcher = new AttachmentWatcher(myMoney);
+            // save the original account names, in case the account is renamed.
+            this.nameMap = new Dictionary<Account, string>();
+            foreach (var item in myMoney.Accounts.GetAccounts())
+            {
+                this.nameMap[item] = item.Name;
+            }
         }
 
         public string AttachmentDirectory
         {
             get { return this.watcher.AttachmentDirectory; }
             set { this.watcher.AttachmentDirectory = value; }
-        }
-
-        public MyMoney MyMoney
-        {
-            get { return myMoney; }
-            set { myMoney = value; }
         }
 
         public string SetupAttachmentDirectory(string databasePath)
@@ -60,7 +62,7 @@ namespace Walkabout.Attachments
             {
                 myMoney.Accounts.Changed -= new EventHandler<ChangeEventArgs>(OnAccountsChanged);
                 myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(OnTransactionsChanged);
-                myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnTransactionsChanged);
+                myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
                 myMoney.BeforeTransferChanged -= new EventHandler<TransferChangedEventArgs>(OnBeforeTransferChanged);
                 myMoney.BeforeSplitTransferChanged -= new EventHandler<SplitTransferChangedEventArgs>(OnBeforeSplitTransferChanged);
             }
@@ -140,8 +142,7 @@ namespace Walkabout.Attachments
         {
             while (args != null)
             {
-                Transaction t = args.Item as Transaction;
-                if (t != null)
+                if (args.Item is Transaction t)
                 {
                     if (args.ChangeType == ChangeType.Deleted)
                     {
@@ -157,15 +158,18 @@ namespace Walkabout.Attachments
                         }
                     }
                 }
-                else
+                else if (args.Item is Account a)
                 {
-                    Account a = args.Item as Account;
                     if (args.ChangeType == ChangeType.Inserted)
                     {
                         if (watcher != null)
                         {
                             watcher.QueueAccount(a);
                         }
+                    }
+                    else if (args.ChangeType == ChangeType.Changed && args.Name == "Name")
+                    {
+                        OnAccountRenamed(a);
                     }
                 }
                 args = args.Next;
@@ -203,11 +207,30 @@ namespace Walkabout.Attachments
             while (args != null)
             {
                 Account a = args.Item as Account;
-                if (a != null && args.ChangeType == ChangeType.Inserted)
+                if (a != null)
                 {
-                    watcher.QueueAccount(a);
+                    if (args.ChangeType == ChangeType.Inserted)
+                    {
+                        watcher.QueueAccount(a);
+                    }
+                    else if (args.ChangeType == ChangeType.Changed && args.Name == "Name")
+                    {
+                        OnAccountRenamed(a);
+                    }
                 }
                 args = args.Next;
+            }
+        }
+
+        private void OnAccountRenamed(Account a)
+        {
+            if (this.nameMap.TryGetValue(a, out string oldName))
+            {
+                if (oldName != a.Name)
+                {
+                    this.watcher.OnRenameAccount(this.AttachmentDirectory, a, oldName);
+                    this.nameMap[a] = a.Name;
+                }
             }
         }
 
@@ -634,6 +657,21 @@ namespace Walkabout.Attachments
                 }
             }
             return files;
+        }
+
+        public void OnRenameAccount(string path, Account a, string oldName)
+        {
+            if (Directory.Exists(path) && !string.IsNullOrEmpty(a.Name) && !string.IsNullOrEmpty(oldName))
+            {
+                string oldAccountDirectory = Path.Combine(path, NativeMethods.GetValidFileName(oldName));
+                string newAccountDirectory = Path.Combine(path, NativeMethods.GetValidFileName(a.Name));
+                if (Directory.Exists(oldAccountDirectory) && !Directory.Exists(newAccountDirectory))
+                {
+                    Debug.WriteLine($"Account renamed from {oldName} to {a.Name}");
+                    Directory.Move(oldAccountDirectory, newAccountDirectory);
+                }
+            }
+
         }
 
     }

@@ -416,6 +416,7 @@ namespace Walkabout.Dialogs
             else
             {
                 TextBoxName.ClearValue(TextBox.BackgroundProperty);
+                TextBoxName.ToolTip = "";
             }
         }
 
