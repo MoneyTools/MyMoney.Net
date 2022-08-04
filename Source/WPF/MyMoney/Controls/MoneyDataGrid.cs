@@ -56,6 +56,7 @@ namespace Walkabout.Controls
             MainWindow w = Window.GetWindow(this) as MainWindow;
             if (w != null)
             {
+                w.Deactivated -= OnWindowDeactivated;
                 w.Deactivated += OnWindowDeactivated;
             }
         }
@@ -130,7 +131,9 @@ namespace Walkabout.Controls
             ScrollViewer viewer = GetScrollViewer();
             if (viewer != null)
             {
+                viewer.RequestBringIntoView -= OnRequestBringIntoView;
                 viewer.RequestBringIntoView += OnRequestBringIntoView;
+                viewer.ScrollChanged -= OnScrollChanged;
                 viewer.ScrollChanged += OnScrollChanged;
             }
             

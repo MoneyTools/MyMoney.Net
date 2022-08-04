@@ -45,6 +45,7 @@ namespace Walkabout.Dialogs
             Window owner = this.Owner;
             if (owner != null)
             {
+                owner.Closed -= OnOwnerClosed;
                 owner.Closed += OnOwnerClosed;
             }
         }

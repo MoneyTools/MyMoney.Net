@@ -7,9 +7,8 @@ namespace Walkabout.Reports
     /// <summary>
     /// Reports on all unaccepted transactions.
     /// </summary>
-    public class UnacceptedReport : IReport
+    public class UnacceptedReport : Report
     {
-
         MyMoney myMoney;
 
         public UnacceptedReport(MyMoney money)
@@ -17,7 +16,7 @@ namespace Walkabout.Reports
             this.myMoney = money;
         }
 
-        public void Generate(IReportWriter writer)
+        public override void Generate(IReportWriter writer)
         {
             writer.WriteHeading("Unaccepted Transactions");
 
@@ -92,7 +91,7 @@ namespace Walkabout.Reports
 
 
 
-        public void Export(string filename)
+        public override void Export(string filename)
         {
             throw new NotImplementedException();
         }

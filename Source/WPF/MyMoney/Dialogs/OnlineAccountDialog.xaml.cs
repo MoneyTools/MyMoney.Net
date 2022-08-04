@@ -361,6 +361,7 @@ namespace Walkabout.Dialogs
                 editor = this.ComboBoxName.Template.FindName("PART_EditableTextBox", this.ComboBoxName) as TextBox;
                 if (editor != null)
                 {
+                    editor.TextChanged -= new TextChangedEventHandler(OnComboBoxNameChanged);
                     editor.TextChanged += new TextChangedEventHandler(OnComboBoxNameChanged);
                     OnComboBoxNameChanged();
                 }

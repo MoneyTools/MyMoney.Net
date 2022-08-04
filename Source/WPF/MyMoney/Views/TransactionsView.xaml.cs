@@ -5543,6 +5543,7 @@ namespace Walkabout.Views
 
         void SetContext(Transaction transaction)
         {
+            ClearContext();
             this.context = transaction;
             if (this.context != null)
             {
@@ -5962,6 +5963,7 @@ namespace Walkabout.Views
             // Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, 
             //          Path=OneLineView, Converter={StaticResource FalseToVisible}}"
             this.view = view;
+            view.OneLineViewChanged -= new EventHandler(OnOneLineViewChanged);
             view.OneLineViewChanged += new EventHandler(OnOneLineViewChanged);
 
             this.MinWidth = 300;
@@ -6378,8 +6380,7 @@ namespace Walkabout.Views
             this.grid.UnloadingRow += OnRowLoadUnload;
             // we also have to watch scrolling in case the anchor moves too far offscreen
             // such that it becomes invalid...
-            grid.ScrollChanged += OnGridScrollChanged;
-
+            grid.ScrollChanged += OnGridScrollChanged;            
         }
 
         void OnRowLoadUnload(object sender, DataGridRowEventArgs e)
@@ -6848,11 +6849,7 @@ namespace Walkabout.Views
             }
             if (t != this.context)
             {
-                ClearContext();
-                if (t != null)
-                {
-                    SetContext(t);
-                }
+                SetContext(t);
             }
             if (t == null)
             {
@@ -6872,6 +6869,7 @@ namespace Walkabout.Views
 
         void SetContext(Transaction transaction)
         {
+            ClearContext();
             this.context = transaction;
             if (this.context != null)
             {
@@ -7330,9 +7328,11 @@ namespace Walkabout.Views
 
         void SetContext(Transaction transaction)
         {
+            ClearContext();
             this.context = transaction;
             if (this.context != null)
             {
+                this.context.PropertyChanged -= new PropertyChangedEventHandler(OnPropertyChanged);
                 this.context.PropertyChanged += new PropertyChangedEventHandler(OnPropertyChanged);
                 FinishConstruction();
             }

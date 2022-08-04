@@ -15,7 +15,7 @@ using Walkabout.Interfaces.Views;
 namespace Walkabout.Reports
 {
     //=========================================================================================
-    public class PortfolioReport : IReport
+    public class PortfolioReport : Report
     {
         MyMoney myMoney;
         Account account;
@@ -44,7 +44,12 @@ namespace Walkabout.Reports
             this.view = view;
             this.reportDate = asOfDate;
             this.selectedGroup = g;
+            view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
             view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+            view.Unloaded += (s, e) =>
+            {
+                this.view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
+            };
         }
 
         private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -109,7 +114,7 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        public void Generate(IReportWriter writer)
+        public override void Generate(IReportWriter writer)
         {
             flowwriter = writer as FlowDocumentReportWriter;
 
@@ -632,12 +637,6 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.EndRow();
-        }
-
-
-        public void Export(string filename)
-        {
-            throw new NotImplementedException();
         }
 
         private Color GetRandomColor()

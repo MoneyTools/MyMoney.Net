@@ -83,7 +83,11 @@ namespace Walkabout.Views.Controls
                 this.listbox1.SelectionChanged += new SelectionChangedEventHandler(OnSelectionChanged);
                 this.dragDropSupport = new DragAndDrop(listbox1, this.dragDropformatNameForPayee, OnDragSource, OnDropTarget, OnDropSourceOnTarget, false);
                 this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnIsVisibleChanged);
-
+                this.Unloaded += (s, e) =>
+                {
+                    this.dragDropSupport.Disconnect();
+                    this.MyMoney = null;
+                };
 #if PerformanceBlocks
             }
 #endif

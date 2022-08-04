@@ -120,7 +120,12 @@ namespace Walkabout.Reports
             this.startDate = this.startDate.AddYears(-4); // show 5 years by default.
             this.view = view;
             this.serviceProvider = sp;
+            view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
             view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+            view.Unloaded += (s, e) =>
+            {
+                this.view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
+            };
         }
 
         private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -561,7 +566,8 @@ namespace Walkabout.Reports
                     {
                         FlowDocumentReportWriter fw = (FlowDocumentReportWriter)writer;
                         Paragraph p = fw.CurrentParagraph;
-                        p.Tag = cell;                        
+                        p.Tag = cell;
+                        p.PreviewMouseLeftButtonDown -= OnReportCellMouseDown;
                         p.PreviewMouseLeftButtonDown += OnReportCellMouseDown;
                         p.Cursor = Cursors.Arrow;
                         //p.TextDecorations.Add(TextDecorations.Underline);

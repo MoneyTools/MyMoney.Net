@@ -11,7 +11,7 @@ using Walkabout.Views;
 
 namespace Walkabout.Setup
 {
-    internal class ChangeInfoFormatter : IReport
+    internal class ChangeInfoFormatter : Report
     {
         string previousVersion;
         XDocument doc;
@@ -79,12 +79,7 @@ namespace Walkabout.Setup
             return false;
         }
 
-        public void Export(string filename)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Generate(IReportWriter writer) 
+        public override void Generate(IReportWriter writer) 
         {
             if (doc == null) return;
 

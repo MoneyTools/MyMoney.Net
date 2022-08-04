@@ -36,9 +36,15 @@ namespace Walkabout.Taxes
             SetStartDate(DateTime.Now.Year);
             this.view = view;
             this.serviceProvider = sp;
+            view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
             view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+            view.Unloaded += (s, e) =>
+            {
+                view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
+            };
             this.taxCategories = new TaxCategoryCollection();
         }
+
 
         private void SetStartDate(int year)
         {

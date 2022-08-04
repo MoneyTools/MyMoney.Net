@@ -289,6 +289,7 @@ namespace Walkabout.Dialogs
         private void AddItem(AttachmentDialogItem item)
         {
             item.Margin = new Thickness(10);
+            item.ContentChanged -= OnContentChanged;
             item.ContentChanged += OnContentChanged;
             Canvas.Children.Add(item);
         }
@@ -643,7 +644,9 @@ namespace Walkabout.Dialogs
                     App.Current.MainWindow.Activate();
                     AttachmentDialog.scanner = null;                    
                 });
+                App.Current.MainWindow.Closed -= new EventHandler(OnAppClosed);
                 App.Current.MainWindow.Closed += new EventHandler(OnAppClosed);
+                App.Current.MainWindow.StateChanged -= new EventHandler(OnAppWindowStateChanged);
                 App.Current.MainWindow.StateChanged += new EventHandler(OnAppWindowStateChanged);
             }
             

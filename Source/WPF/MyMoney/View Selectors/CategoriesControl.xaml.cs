@@ -71,6 +71,11 @@ namespace Walkabout.Views.Controls
                     true
                     );
 
+                this.Unloaded += (s, e) =>
+                {
+                    this.dragDropSupport.Disconnect();
+                    this.MyMoney = null;
+                };
 
 #if PerformanceBlocks
             }

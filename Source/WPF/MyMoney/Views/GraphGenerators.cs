@@ -116,17 +116,14 @@ namespace Walkabout.Views
 
         private decimal ApplySplits(decimal close, DateTime date)
         {
-            if (this.security.StockSplits != null)
+            foreach (var split in this.security.StockSplitsSnapshot)
             {
-                foreach (var split in this.security.StockSplits)
+                if (date < split.Date && split.Numerator != 0)
                 {
-                    if (date < split.Date && split.Numerator != 0)
-                    {
-                        // reverse the effect of stock split.  For example, if stock split 2 : 1 on 1/10/2010
-                        // and closing price was $20 on 1/1/2010, then the effective value of that stock on 
-                        // 1/1/2010 is now $10 because of the split.
-                        close *= split.Denominator / split.Numerator;
-                    }
+                    // reverse the effect of stock split.  For example, if stock split 2 : 1 on 1/10/2010
+                    // and closing price was $20 on 1/1/2010, then the effective value of that stock on 
+                    // 1/1/2010 is now $10 because of the split.
+                    close *= split.Denominator / split.Numerator;
                 }
             }
             return close;

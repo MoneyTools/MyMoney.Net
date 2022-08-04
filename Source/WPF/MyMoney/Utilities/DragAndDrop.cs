@@ -92,6 +92,16 @@ namespace Walkabout.Utilities
             DestroyDragDropWindow();
         }
 
+        internal void Disconnect()
+        {
+            this.mainControl.PreviewMouseLeftButtonDown -= new MouseButtonEventHandler(OnPreviewMouseLeftButtonDown);
+            this.mainControl.PreviewMouseMove -= new MouseEventHandler(OnPreviewMouseMove);
+            this.mainControl.PreviewMouseLeftButtonUp -= new MouseButtonEventHandler(OnPreviewMouseLeftButtonUp);
+            this.mainControl.PreviewDragEnter -= new DragEventHandler(OnPreviewDragEnter);
+            this.mainControl.Drop -= new DragEventHandler(OnDrop);
+            this.mainControl.PreviewKeyDown -= MainControl_PreviewKeyDown;
+        }
+
         void OnPreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (this.isMouseDown == false)

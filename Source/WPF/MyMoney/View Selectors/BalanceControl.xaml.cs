@@ -144,6 +144,7 @@ namespace Walkabout.Views.Controls
             }
             this.ComboBoxPreviousReconcileDates.SelectedIndex = previousReconciliations.Count - 1;
             estdate = this.SelectedPreviousStatement.AddMonths(1);
+            this.ComboBoxPreviousReconcileDates.SelectionChanged -= new SelectionChangedEventHandler(ComboBoxPreviousReconcileDates_SelectionChanged);
             this.ComboBoxPreviousReconcileDates.SelectionChanged += new SelectionChangedEventHandler(ComboBoxPreviousReconcileDates_SelectionChanged);
             
             this.StatementDate = estdate;
@@ -155,15 +156,20 @@ namespace Walkabout.Views.Controls
 
             FindInterestTransaction(estdate);
 
+            this.StatementDatePicker.KeyDown -= new KeyEventHandler(ChildKeyDown);
             this.StatementDatePicker.KeyDown += new KeyEventHandler(ChildKeyDown);
+            this.StatementDatePicker.SelectedDateChanged -= new EventHandler<SelectionChangedEventArgs>(OnStatementDateChanged);
             this.StatementDatePicker.SelectedDateChanged += new EventHandler<SelectionChangedEventArgs>(OnStatementDateChanged);
+            this.TextBoxStatementBalance.KeyDown -= new KeyEventHandler(ChildKeyDown);
             this.TextBoxStatementBalance.KeyDown += new KeyEventHandler(ChildKeyDown);
+            this.TextBoxInterestEarned.LostFocus -= new RoutedEventHandler(TextBoxInterestEarned_LostFocus);
             this.TextBoxInterestEarned.LostFocus += new RoutedEventHandler(TextBoxInterestEarned_LostFocus);
             this.initializing = false;
 
             // setup initial values.
             UpdateBalances(estdate);
 
+            this.Loaded -= new RoutedEventHandler(OnLoad);
             this.Loaded += new RoutedEventHandler(OnLoad);
         }
 

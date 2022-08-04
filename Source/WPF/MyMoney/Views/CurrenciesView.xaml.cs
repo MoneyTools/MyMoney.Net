@@ -33,6 +33,10 @@ namespace Walkabout.Views
         {
             InitializeComponent();
             SetupGrid(this.CurrenciesDataGrid);
+            this.Unloaded += (s, e) =>
+            {
+                this.Money = null;
+            };
         }
 
         public void FocusQuickFilter()
@@ -279,18 +283,25 @@ namespace Walkabout.Views
 
             set
             {
+                if (this.money != null)
+                {
+                    this.money.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                }
                 this.money = value;
-                this.money.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                if (this.money != null)
+                {
+                    this.money.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                }
                 ShowCurrencies();
             }
 
         }
 
 
-
         public void ActivateView()
         {
             Focus();
+            this.Money.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
             this.Money.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
             ShowCurrencies();
         }

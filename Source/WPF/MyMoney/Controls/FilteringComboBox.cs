@@ -34,6 +34,7 @@ namespace Walkabout.Controls
             TextBox edit = this.Template.FindName("PART_EditableTextBox", this) as TextBox;
             if (edit != null)
             {
+                edit.KeyUp -= new System.Windows.Input.KeyEventHandler(OnEditKeyUp);
                 edit.KeyUp += new System.Windows.Input.KeyEventHandler(OnEditKeyUp);
             }
         }

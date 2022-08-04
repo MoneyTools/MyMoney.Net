@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -26,11 +27,16 @@ namespace Walkabout.Dialogs
             get { return this.money; }
             set
             {
-                if (this.money == null && value != null)
+                if (this.money != null)
                 {
-                    value.Payees.Changed += handler;
+                    this.money.Payees.Changed -= handler;
                 }
                 this.money = value;
+                if (this.money != null)
+                {
+                    this.money.Payees.Changed -= handler;
+                    this.money.Payees.Changed += handler;
+                }
                 LoadPayees();
             }
         }
@@ -193,8 +199,11 @@ namespace Walkabout.Dialogs
 
         protected override void OnClosed(EventArgs e)
         {
-            this.money.Payees.Changed -= handler;
-            this.money = null;
+            if (this.money != null)
+            {
+                this.money.Payees.Changed -= handler;
+                this.money = null;
+            }
 
             base.OnClosed(e);
         }

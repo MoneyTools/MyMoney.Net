@@ -24,6 +24,7 @@ namespace Walkabout.Utilities
         {
             actions.CancelDelayedAction("animate");
             this.handler = null;
+            Application.Current.MainWindow.Closing -= OnMainWindowClosing;
         }
 
         public void Start(string initialValue, string finalValue, TimeSpan delay)

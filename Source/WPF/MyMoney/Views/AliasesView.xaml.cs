@@ -26,6 +26,10 @@ namespace Walkabout.Views
             InitializeComponent();
             this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(AliasesView_IsVisibleChanged);
             this.AliasDataGrid.RowEditEnding += AliasDataGrid_RowEditEnding;
+            this.Unloaded += (s, e) =>
+            {
+                this.Money = null;
+            };
         }
 
         void AliasDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
@@ -197,6 +201,7 @@ namespace Walkabout.Views
             {
                 if (this.money != null)
                 {
+                    this.money.Changed -= OnMoneyChanged;
                 }
 
                 this.money = value;

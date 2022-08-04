@@ -79,6 +79,11 @@ namespace Walkabout.Dialogs
 
             money.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
 
+            this.Unloaded += (s, e) =>
+            {
+                money.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+            };
+
 
             CheckButtonStates();
 

@@ -11,12 +11,14 @@ using Walkabout.Utilities;
 
 namespace Walkabout.Reports
 {
-
     public abstract class Report : IReport
     {
         public abstract void Generate(IReportWriter writer);
 
-        public abstract void Export(string filename);
+        public virtual void Export(string filename)
+        {
+            throw new NotImplementedException();
+        }
 
         protected void ExportReportAsCsv()
         {
@@ -71,7 +73,6 @@ namespace Walkabout.Reports
             button.Content = panel;
             return button;
         }
-
     }
 
 }

@@ -477,6 +477,10 @@ namespace Walkabout.StockQuotes
             {
                 StopThread();
                 ResetServices();
+                if (this.myMoney != null)
+                {
+                    this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                }
             }
         }
 

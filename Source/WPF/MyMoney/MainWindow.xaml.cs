@@ -554,11 +554,14 @@ namespace Walkabout
 
         void StopTracking()
         {
-            if (tracker != null)
+            using (this.tracker)
             {
-                tracker.DirtyChanged -= OnDirtyChanged;
+                if (tracker != null)
+                {
+                    tracker.DirtyChanged -= OnDirtyChanged;
+                }
+                tracker = null;
             }
-            tracker = null;
             this.attachmentManager.Stop();
             this.statementManager.Stop();
             if (this.myMoney != null)
@@ -3361,6 +3364,7 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportNetworth");
+            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Networth Report");
             NetWorthReport report = new NetWorthReport(this.myMoney);
@@ -3378,6 +3382,7 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
+            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio");
             PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now, null);
@@ -3391,6 +3396,7 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
+            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio - " + e.Type);
             PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now, e);
@@ -3402,6 +3408,7 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportTaxes");
+            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Tax Report");
             TaxReport report = new TaxReport(view, this.myMoney, this.settings.FiscalYearStart);
@@ -3413,6 +3420,7 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportW2");
+            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "W2 Report");
             W2Report report = new W2Report(view, this.myMoney, this, settings.FiscalYearStart);
@@ -3430,6 +3438,7 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportCashFlow");
+            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             CashFlowReport report = new CashFlowReport(view, this.myMoney, this, settings.FiscalYearStart);
             report.Regenerate();
@@ -3440,6 +3449,7 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportUnaccepted");
+            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             FlowDocumentReportWriter writer = new FlowDocumentReportWriter(view.DocumentViewer.Document, pixelsPerDip);
@@ -3875,8 +3885,10 @@ namespace Walkabout
             SecuritiesView view = SetCurrentView<SecuritiesView>();
             if (!initialized)
             {
-                view.SecurityNavigated += new EventHandler<SecuritySelectionEventArgs>(OnSecurityNavigated);
-                view.SecuritySelected += new EventHandler<SecuritySelectionEventArgs>(OnSecuritySelected);
+                view.SecurityNavigated -= OnSecurityNavigated;
+                view.SecuritySelected -= OnSecuritySelected;
+                view.SecurityNavigated += OnSecurityNavigated;
+                view.SecuritySelected += OnSecuritySelected;
             }
 
             return view;
@@ -4306,6 +4318,7 @@ namespace Walkabout
                 this.SaveViewStateOfCurrentView();
                 FlowDocumentView view = SetCurrentView<FlowDocumentView>();
                 view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportUpdates");
+                view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
                 view.Closed += new EventHandler(OnFlowDocumentViewClosed);
                 HelpService.SetHelpKeyword(view, "Updates");
                 ChangeInfoFormatter report = new ChangeInfoFormatter(view, installButton, previousVersion, changeList);
@@ -4422,6 +4435,7 @@ namespace Walkabout
         private void OnCommandHelpAbout(object sender, ExecutedRoutedEventArgs e)
         {
             string version;
+            GC.Collect();
             if (ApplicationDeployment.IsNetworkDeployed)
             {
                 version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();

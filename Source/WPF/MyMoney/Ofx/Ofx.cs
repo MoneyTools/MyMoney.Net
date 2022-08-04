@@ -984,6 +984,7 @@ NEWFILEUID:{1}
             Uri uri = new Uri(url);
             pending = (HttpWebRequest)WebRequest.Create(uri);
 
+            ServicePointManager.ServerCertificateValidationCallback -= new RemoteCertificateValidationCallback(AllwaysGoodCertificate);
             ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(AllwaysGoodCertificate);
 
             pending.Method = "POST";

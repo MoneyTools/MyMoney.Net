@@ -1544,7 +1544,7 @@ namespace Walkabout.Data
         public IEnumerable<Alias> FindSubsumedAliases(Alias alias)
         {
             List<Alias> existingAliases = new List<Alias>();
-            foreach(var a in this.Aliases.GetAliases())
+            foreach (var a in this.Aliases.GetAliases())
             {
                 if (a != alias && alias.Matches(a.Pattern))
                 {
@@ -1952,8 +1952,6 @@ namespace Walkabout.Data
             return cash;
         }
 
-
-
         internal void SwitchSecurities(Security fromSecurity, Security moveToSecurity)
         {
             foreach (Transaction t in this.transactions.GetTransactionsBySecurity(fromSecurity, null))
@@ -2312,7 +2310,7 @@ namespace Walkabout.Data
 
     [Flags]
     public enum TaxStatus
-    { 
+    {
         Taxable = 0,
         TaxDeferred = 1,
         TaxFree = 2
@@ -2725,12 +2723,14 @@ namespace Walkabout.Data
         public int Unaccepted
         {
             get { return this.unaccepted; }
-            set { 
-                if (this.unaccepted != value) {
+            set
+            {
+                if (this.unaccepted != value)
+                {
                     bool notify = (value == 0 && this.unaccepted != 0) || (value != 0 && this.unaccepted == 0);
-                    this.unaccepted = value; 
-                    if (notify) OnChanged("Unaccepted"); 
-                } 
+                    this.unaccepted = value;
+                    if (notify) OnChanged("Unaccepted");
+                }
             }
         }
 
@@ -4402,7 +4402,8 @@ namespace Walkabout.Data
                 if (p.IsInserted || forceRemoveAfterSave)
                 {
                     // then we can remove it
-                    if (this.payees.ContainsKey(p.Id)) {
+                    if (this.payees.ContainsKey(p.Id))
+                    {
                         this.payees.Remove(p.Id);
                         this.FireChangeEvent(this, p, "IsDeleted", ChangeType.Deleted);
                     }
@@ -4724,7 +4725,7 @@ namespace Walkabout.Data
             if (this.AliasType == AliasType.Regex && this.pattern != null)
             {
                 this.regex = new Regex(this.pattern);
-            } 
+            }
             else
             {
                 this.regex = null;
@@ -4741,7 +4742,7 @@ namespace Walkabout.Data
             {
                 if (this.type != value)
                 {
-                    this.type = value; 
+                    this.type = value;
                     OnChanged("AliasType");
                 }
             }
@@ -5130,7 +5131,7 @@ namespace Walkabout.Data
 
         IEnumerator<TransactionExtra> IEnumerable<TransactionExtra>.GetEnumerator()
         {
-            foreach(var i in ToArray())
+            foreach (var i in ToArray())
             {
                 yield return i;
             }
@@ -7984,6 +7985,8 @@ namespace Walkabout.Data
         bool expanded;
         SecurityType type;
         YesNo taxable;
+        ObservableStockSplits splits;
+
 
         static Security()
         {
@@ -7997,6 +8000,17 @@ namespace Walkabout.Data
         public Security(Securities container) : base(container) { }
 
         public readonly static Security None;
+
+        public override void OnChanged(string name)
+        {
+            base.OnChanged(name);
+            // Here we have to be able to sync the ObservableStockSplits without using an event handler
+            // otherwise the event handlers create memory leaks.
+            if (this.splits != null)
+            {
+                this.splits.OnSecurityChanged(this);
+            }
+        }
 
         [XmlAttribute]
         [DataMember]
@@ -8124,8 +8138,6 @@ namespace Walkabout.Data
             return "";
         }
 
-        ObservableStockSplits splits;
-
         /// <summary>
         /// Get a non-null list of stock splits related to this Security
         /// </summary>
@@ -8133,13 +8145,36 @@ namespace Walkabout.Data
         {
             get
             {
-                if (splits == null)
+                if (this.splits != null)
                 {
-                    Securities parent = this.Parent as Securities;
-                    MyMoney money = parent.Parent as MyMoney;
-                    splits = new ObservableStockSplits(this, money);
+                    return this.splits;
                 }
+                Securities parent = this.Parent as Securities;
+                MyMoney money = parent.Parent as MyMoney;
+                this.splits = new ObservableStockSplits(this, money);
                 return this.splits;
+            }
+        }
+
+        public bool HasObservableStockSplits
+        {
+            get => this.splits != null;
+        }
+
+        public List<StockSplit> StockSplitsSnapshot
+        {
+            get
+            {
+                // return a non-synchronizing snapshot of stocksplits related
+                // to this security.
+                List<StockSplit> result = new List<StockSplit>();
+                Securities parent = this.Parent as Securities;
+                MyMoney money = parent.Parent as MyMoney;
+                foreach (StockSplit s in money.StockSplits.GetStockSplitsForSecurity(this))
+                {
+                    result.Add(s);
+                }
+                return result;
             }
         }
 
@@ -8236,22 +8271,28 @@ namespace Walkabout.Data
                 this.CuspId = s2.CuspId;
             }
 
-            if (this.splits == null || this.splits.Count == 0)
+            var splits = this.StockSplitsSnapshot;
+            var s2Splits = s2.StockSplitsSnapshot;
+
+            if (splits.Count == 0)
             {
-                if (s2.splits != null)
+                if (s2Splits.Count > 0)
                 {
-                    foreach (StockSplit s in s2.splits)
+                    // then copy the splits across from the security we are merging.
+                    foreach (StockSplit s in s2Splits)
                     {
                         StockSplit copy = new StockSplit();
                         copy.Security = s.Security;
                         copy.Date = s.Date;
                         copy.Numerator = s.Numerator;
                         copy.Denominator = s.Denominator;
-                        this.StockSplits.Add(s);
+                        splits.Add(s);
                         s.OnDelete();
                     }
                 }
             }
+
+            OnChanged("StockSplits");
 
             return true;
         }
@@ -8468,7 +8509,7 @@ namespace Walkabout.Data
         public bool RemoveTransaction(Transaction t, bool forceRemoveAfterSave = false)
         {
             if (t.IsInserted || forceRemoveAfterSave)
-            { 
+            {
                 lock (transactions)
                 {
                     // then we can remove it immediately.
@@ -8515,8 +8556,8 @@ namespace Walkabout.Data
         /// <param name="daysDeltaPercent">The allowable % difference in # days between payments</param>
         /// <param name="recurringCount">How many such transactions before we consider it a recurring type</param>
         /// <returns></returns>
-        public static bool IsRecurring(Transaction t, Transaction u, IList<Transaction> tc, 
-            decimal amountDeltaPercent = 3, 
+        public static bool IsRecurring(Transaction t, Transaction u, IList<Transaction> tc,
+            decimal amountDeltaPercent = 3,
             decimal daysDeltaPercent = 10,
             int recurringCount = 3)
         {
@@ -8570,13 +8611,14 @@ namespace Walkabout.Data
 
             List<double> daysBetween = new List<double>();
             Transaction previous = null;
-            foreach (Transaction s in similarTransactions) {
+            foreach (Transaction s in similarTransactions)
+            {
                 if (previous != null)
                 {
                     TimeSpan diff = s.Date - previous.Date;
                     double diffDays = Math.Abs(diff.TotalDays);
                     if (diffDays > 0)
-                    {  
+                    {
                         daysBetween.Add(diffDays);
                     }
                 }
@@ -12044,7 +12086,7 @@ namespace Walkabout.Data
 
         public bool HasUnassigned
         {
-            get {  return this.unassigned != 0; }
+            get { return this.unassigned != 0; }
         }
 
         public decimal Unassigned
@@ -13477,6 +13519,7 @@ namespace Walkabout.Data
         Security security;
         StockSplits splits;
         bool initializing;
+        bool syncSync;
 
         public ObservableStockSplits(Security security, MyMoney money)
         {
@@ -13489,18 +13532,24 @@ namespace Walkabout.Data
                 this.Insert(index++, s);
             }
             initializing = false;
-            money.Changed += OnMoneyChanged;
         }
 
-        private void OnMoneyChanged(object sender, ChangeEventArgs e)
+        internal void OnSecurityChanged(Security s)
         {
-            if ((e.Item is Security s && s == this.security) ||
-                (e.Item is StockSplit ss && ss.Security == this.security))
+            if (!syncSync && s == this.security)
             {
                 SyncSplits();
             }
-
         }
+
+        internal void OnStockSplitChanged(StockSplit ss)
+        {
+            if (!syncSync && ss.Security == this.security)
+            {
+                SyncSplits();
+            }
+        }
+
 
         public Security Security { get { return this.security; } }
 
@@ -13512,7 +13561,7 @@ namespace Walkabout.Data
             {
                 int index = 0;
                 bool found = false;
-                foreach(var existing in this)
+                foreach (var existing in this)
                 {
                     if (existing == s)
                     {
@@ -13523,9 +13572,15 @@ namespace Walkabout.Data
                     }
                     else if (s.Date < existing.Date)
                     {
+                        if (this.Contains(s))
+                        {
+                            // date order has changed.
+                            this.RemoveItem(this.IndexOf(s));
+                        }
                         InsertItem(index, s);
                         active.Add(s);
                         found = true;
+                        break;
                     }
                     index++;
                 }
@@ -13535,13 +13590,20 @@ namespace Walkabout.Data
                     active.Add(s);
                 }
             }
-            
+
+            List<StockSplit> toRemove = new List<StockSplit>();
+
             foreach (var existing in this)
             {
                 if (!active.Contains(existing))
                 {
-                    RemoveItem(this.IndexOf(existing));
+                    toRemove.Add(existing);
                 }
+            }
+
+            foreach (var split in toRemove)
+            {
+                RemoveItem(this.IndexOf(split));
             }
 
             initializing = false;
@@ -13552,28 +13614,52 @@ namespace Walkabout.Data
             base.InsertItem(index, item);
             if (!initializing)
             {
-                splits.AddStockSplit(item);
-                item.Security = this.security;
+                syncSync = true;
+                try
+                {
+                    splits.AddStockSplit(item);
+                    item.Security = this.security;
+                }
+                finally
+                {
+                    syncSync = false;
+                }
             }
         }
 
         protected override void RemoveItem(int index)
         {
+            StockSplit s = this[index];
             base.RemoveItem(index);
             if (!initializing)
             {
-                StockSplit s = this[index];
-                splits.RemoveStockSplit(s);
+                syncSync = true;
+                try
+                {
+                    splits.RemoveStockSplit(s);
+                }
+                finally
+                {
+                    syncSync = false;
+                }
             }
         }
 
         protected override void ClearItems()
         {
-            foreach (StockSplit s in this)
+            try
             {
-                s.OnDelete();
+                syncSync = true;
+                foreach (StockSplit s in this)
+                {
+                    s.OnDelete();
+                }
+                base.ClearItems();
             }
-            base.ClearItems();
+            finally
+            {
+                syncSync = false;
+            }
         }
 
         /// <summary>
@@ -13581,23 +13667,31 @@ namespace Walkabout.Data
         /// </summary>
         internal void RemoveEmptySplits()
         {
-            for (int i = this.Count - 1; i >= 0;)
+            try
             {
-                StockSplit s = this[i];
-                // only do this if the Split looks totally empty
-                if (s.Date == new DateTime() && s.Numerator == 0 && s.Denominator == 0)
+                syncSync = true;
+                for (int i = this.Count - 1; i >= 0;)
                 {
-                    splits.RemoveStockSplit(s);
-                    RemoveItem(i);
-                    if (i == this.Count)
+                    StockSplit s = this[i];
+                    // only do this if the Split looks totally empty
+                    if (s.Date == new DateTime() && s.Numerator == 0 && s.Denominator == 0)
+                    {
+                        splits.RemoveStockSplit(s);
+                        RemoveItem(i);
+                        if (i == this.Count)
+                        {
+                            i--;
+                        }
+                    }
+                    else
                     {
                         i--;
                     }
                 }
-                else
-                {
-                    i--;
-                }
+            }
+            finally
+            {
+                syncSync = false;
             }
         }
     }
@@ -13797,6 +13891,17 @@ namespace Walkabout.Data
         }
 
         public StockSplit(StockSplits container) : base(container) { }
+
+        public override void OnChanged(string name)
+        {
+            base.OnChanged(name);
+            // Here we have to be able to sync the ObservableStockSplits without using an event handler
+            // otherwise the event handlers create memory leaks.
+            if (this.security != null && this.security.HasObservableStockSplits)
+            {
+                this.security.StockSplits.OnStockSplitChanged(this);
+            }
+        }
 
         [XmlAttribute]
         [DataMember]

@@ -15,7 +15,7 @@ namespace Walkabout.Views
     /// accessors that provide information about those changes and a Summary UI
     /// that shows the changes with links that can navigate to them.
     /// </summary>
-    public class ChangeTracker
+    public class ChangeTracker : IDisposable
     {
         MyMoney myMoney;
         Dictionary<Type, ChangeList> changes;
@@ -28,6 +28,15 @@ namespace Walkabout.Views
             myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
             this.navigator = navigator;
             Clear();
+        }
+
+        public void Dispose()
+        {
+            if (myMoney != null)
+            {
+                myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                myMoney = null;
+            }
         }
 
         public event EventHandler DirtyChanged;

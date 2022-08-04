@@ -71,7 +71,7 @@ namespace Walkabout.Attachments
 
         public void Start()
         {
-            this.watcher.Stop();
+            this.Stop();
             if (myMoney != null)
             {
                 // listen to transaction changed events so that we can cleanup attachments when transactions

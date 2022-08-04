@@ -652,7 +652,7 @@ namespace Walkabout.Views
 
                 if (securityLostSelection != null)
                 {
-                    if (securityLostSelection.StockSplits != null)
+                    if (securityLostSelection.HasObservableStockSplits)
                     {
                         securityLostSelection.StockSplits.RemoveEmptySplits();
                     }

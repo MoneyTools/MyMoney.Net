@@ -358,6 +358,7 @@ namespace Walkabout.Attachments
             {
                 throw new InvalidOperationException("The 'StatementsDirectory' is not initialized");
             }
+            this.Stop();
             if (myMoney != null)
             {
                 // listen to transaction changed events so that we can cleanup attachments when transactions

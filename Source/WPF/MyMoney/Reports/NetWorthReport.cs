@@ -14,7 +14,7 @@ namespace Walkabout.Reports
 {
 
     //=========================================================================================
-    public class NetWorthReport : IReport
+    public class NetWorthReport : Report
     {
         MyMoney myMoney;
         Random rand = new Random(Environment.TickCount);
@@ -29,7 +29,7 @@ namespace Walkabout.Reports
             maxRandColor = (""+AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128: (byte)200;
         }
 
-        public void Generate(IReportWriter writer)
+        public override void Generate(IReportWriter writer)
         {
             writer.WriteHeading("Net Worth Statement");
 
@@ -299,11 +299,6 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.EndRow();
-        }
-
-        public void Export(string filename)
-        {
-            throw new NotImplementedException();
         }
 
         private Color GetRandomColor()
