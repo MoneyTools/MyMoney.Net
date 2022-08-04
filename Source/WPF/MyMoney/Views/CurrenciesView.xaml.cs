@@ -35,7 +35,10 @@ namespace Walkabout.Views
             SetupGrid(this.CurrenciesDataGrid);
             this.Unloaded += (s, e) =>
             {
-                this.Money = null;
+                if (this.money != null)
+                {
+                    this.money.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                }
             };
         }
 
@@ -291,8 +294,8 @@ namespace Walkabout.Views
                 if (this.money != null)
                 {
                     this.money.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                    ShowCurrencies();
                 }
-                ShowCurrencies();
             }
 
         }
@@ -301,9 +304,7 @@ namespace Walkabout.Views
         public void ActivateView()
         {
             Focus();
-            this.Money.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
-            this.Money.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
-            ShowCurrencies();
+            this.Money = this.money;
         }
 
         public event EventHandler BeforeViewStateChanged;

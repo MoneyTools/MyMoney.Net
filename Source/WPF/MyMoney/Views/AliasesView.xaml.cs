@@ -28,7 +28,10 @@ namespace Walkabout.Views
             this.AliasDataGrid.RowEditEnding += AliasDataGrid_RowEditEnding;
             this.Unloaded += (s, e) =>
             {
-                this.Money = null;
+                if (this.money != null)
+                {
+                    this.money.Changed += OnMoneyChanged;
+                }
             };
         }
 
@@ -209,8 +212,8 @@ namespace Walkabout.Views
                 if (this.money != null)
                 {
                     this.money.Changed += OnMoneyChanged;
+                    ShowAliases();
                 }
-                ShowAliases();
             }
         }
 
@@ -269,6 +272,8 @@ namespace Walkabout.Views
         public void ActivateView()
         {
             Focus();
+            // re-wire events
+            this.Money = this.money;
         }
 
         public event EventHandler BeforeViewStateChanged;
