@@ -43,7 +43,7 @@ But the original cost basis information has to flow over to the other account wi
 
 ### FIFO Rule
 
-Now in computing the capital gains the assumption is made that when you sell some stocks you want to sell from your oldest holdings first in order to minimize capital gains taxes.  So the FIFO rule is used in matching sales with purchases.  This is why the above Capital Gains report shows the 250 shares were drawn from the first lot dated 2/8/2001 and the second lot dated 12/5/2001 and after this sale your portfolio report lists the remainder of 50 shares dated 12/5/2001 and the untouched third lot dated 1/7/2013 containing 50 shares.
+Now in computing the capital gains the assumption is made that when you sell some stocks you want to sell from your oldest holdings first, and sometimes this is required by law.  So the FIFO rule is used in matching sales with purchases.  This is why the above Capital Gains report shows the 250 shares were drawn from the first lot dated 2/8/2001 and the second lot dated 12/5/2001 and after this sale your portfolio report lists the remainder of 50 shares dated 12/5/2001 and the untouched third lot dated 1/7/2013 containing 50 shares.
 
 ![](../Images/Cost%20Basis8.png)
 

@@ -2,7 +2,7 @@
 
 If you have setup [Online Banking](../Accounts/OnlineBanking.md) then newly downloaded transactions will be automatically merged with your database.   Even if you rename the payee the merge will still happen because it is based on a hidden "FID" field received from your bank or credit card company.  But sometimes these "FID" fields are reset and this can result in duplicate transactions.
 
-For example, in the following we see a duplicate transaction for $11.73 to Panera.  When you select a transaction the program searches for possible nearby duplicates, in this case it found one and when this happens a dark blue connector appears on the right connecting the possible duplicate transactions.
+For example, in the following we see a duplicate transaction for $11.73 to Target.  When you select a transaction the program searches for possible nearby duplicates, in this case it found one and when this happens a dark blue connector appears on the right connecting the possible duplicate transactions.
 
 ![](../Images/Merging.png)
 

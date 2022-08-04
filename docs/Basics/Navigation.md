@@ -12,16 +12,16 @@ You can pivot to new transaction sets using the following commands on the transa
 ### Goto related transaction (F12)
 navigate between each end of a Transfer using
 
-### View Transactions by Account
+### View Transactions by Account (F8)
 show all transactions in the same Account as the selected transaction
 
-### View Transactions by Category
+### View Transactions by Category (F7)
 show all transactions with the same Category  as the selected transaction
 
-### View Transactions by Payee
+### View Transactions by Payee (F6)
 show all transactions with the same Payee as the selected transaction
 
-### View Transactions by Security
+### View Transactions by Security (F5)
 show all investment transactions with the same Security
 
 You can also navigate using the Categories panel, the Payees panel or by selecting parts of a chart or report.
