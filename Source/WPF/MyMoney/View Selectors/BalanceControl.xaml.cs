@@ -143,7 +143,7 @@ namespace Walkabout.Views.Controls
                 this.SelectedPreviousStatement = estdate;
             }
             this.ComboBoxPreviousReconcileDates.SelectedIndex = previousReconciliations.Count - 1;
-            estdate = this.SelectedPreviousStatement.AddMonths(1);
+            estdate = GetNextStatementDate(this.SelectedPreviousStatement);
             this.ComboBoxPreviousReconcileDates.SelectionChanged -= new SelectionChangedEventHandler(ComboBoxPreviousReconcileDates_SelectionChanged);
             this.ComboBoxPreviousReconcileDates.SelectionChanged += new SelectionChangedEventHandler(ComboBoxPreviousReconcileDates_SelectionChanged);
             
@@ -173,11 +173,21 @@ namespace Walkabout.Views.Controls
             this.Loaded += new RoutedEventHandler(OnLoad);
         }
 
+        DateTime GetNextStatementDate(DateTime date)
+        {
+            if (date.AddDays(1).Month != date.Month)
+            {
+                // then this was the last day of the month, so special case it to become the
+                // last day of the next month.
+                return new DateTime(date.Year, date.Month, 1).AddMonths(2).AddDays(-1);
+            }
+            return date.AddMonths(1);
+        }
 
         void FindInterestTransaction(DateTime date)
         {
             this.interestTransaction = null;
-            DateTime prevMonth = date.AddMonths(-1);
+            DateTime prevMonth = date.AddDays(-31);
             IList<Transaction> list = this.myMoney.Transactions.GetTransactionsByCategory(interestCategory, null);
             for (int i = list.Count - 1; i >= 0; i--)
             { // most likely to be at the end of the list.
@@ -205,7 +215,7 @@ namespace Walkabout.Views.Controls
                 decimal d = this.myMoney.ReconciledBalance(this.account, this.StatementDate);
                 this.LastBalance = d;
                 this.FindInterestTransaction(this.StatementDate);
-                this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, this.StatementDate.AddMonths(1));
+                this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, GetNextStatementDate(this.StatementDate));
             }
             catch (Exception)
             {
@@ -226,7 +236,7 @@ namespace Walkabout.Views.Controls
 
 
         /// <summary>
-        /// Call once a the beginning to initialized the default values
+        /// Call once at the beginning to initialized the default values
         /// and once if the user changes the Statement date
         /// </summary>
         /// <param name="statementDate"></param>
@@ -235,7 +245,7 @@ namespace Walkabout.Views.Controls
             decimal d = this.myMoney.ReconciledBalance(this.account, statementDate);
             this.LastBalance = d;
 
-            this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, statementDate.AddMonths(1));
+            this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, GetNextStatementDate(statementDate));
 
             // in case we are re-editing a previously reconciled statement.
             this.statement = this.statements.GetStatement(this.account, statementDate);

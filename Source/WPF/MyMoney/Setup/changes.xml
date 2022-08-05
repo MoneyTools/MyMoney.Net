@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.0.11" date="8/4/2022">
+    - Fix default date for account balancing so last day of month sticks.
+  </change>
   <change version="2.0.0.10" date="8/3/2022">
     - Fix gradual slow down in the app when balancing lots of accounts due to event handler leaks.
   </change>
