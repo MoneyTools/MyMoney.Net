@@ -58,7 +58,8 @@ namespace Walkabout.Attachments
             string path = this.StatementsDirectory;
             if (string.IsNullOrEmpty(StatementsDirectory))
             {
-                throw new InvalidOperationException("The 'StatementsDirectory' is not initialized");
+                // we have no database loaded!
+                return null;
             }
 
             string dir = Path.Combine(path, NativeMethods.GetValidFileName(a.Name));
@@ -87,12 +88,14 @@ namespace Walkabout.Attachments
         public StatementItem GetStatement(Account a, DateTime date)
         {
             var statementIndex = GetOrCreateIndex(a);
+            if (statementIndex == null) return null;
             return statementIndex.Items.Where(s => s.Date == date).FirstOrDefault();
         }
 
         public decimal GetStatementBalance(Account a, DateTime date)
         {
             var statementIndex = GetOrCreateIndex(a);
+            if (statementIndex == null) return 0;
             var statement = GetStatement(a, date);
             if (statement != null)
             {
@@ -104,6 +107,7 @@ namespace Walkabout.Attachments
         public string GetStatementFullPath(Account a, DateTime date)
         {
             var statementIndex = GetOrCreateIndex(a);
+            if (statementIndex == null) return "";
             var statement = GetStatement(a, date);
             if (statement != null)
             {
@@ -119,7 +123,7 @@ namespace Walkabout.Attachments
         public bool UpdateStatement(Account a, StatementItem selected, DateTime date, string statementFile, decimal balance, bool flush = true)
         {
             var statementIndex = GetOrCreateIndex(a);
-            if (!statementIndex.Items.Contains(selected))
+            if (statementIndex == null || !statementIndex.Items.Contains(selected))
             {
                 return false;
             }
@@ -218,6 +222,7 @@ namespace Walkabout.Attachments
         public bool AddStatement(Account a, DateTime date, string statementFile, decimal balance, bool flush = true)
         {
             var statementIndex = GetOrCreateIndex(a);
+            if (statementIndex == null) return false;
             var statementDir = Path.GetDirectoryName(statementIndex.FileName);
 
             var statement = GetStatement(a, date);
@@ -354,10 +359,6 @@ namespace Walkabout.Attachments
 
         public void Start()
         {
-            if (string.IsNullOrEmpty(StatementsDirectory))
-            {
-                throw new InvalidOperationException("The 'StatementsDirectory' is not initialized");
-            }
             this.Stop();
             if (myMoney != null)
             {
@@ -476,6 +477,11 @@ namespace Walkabout.Attachments
         {
             string name = a.Name;
             string path = this.StatementsDirectory;
+            if (string.IsNullOrEmpty(path))
+            {
+                // we have no database loaded!
+                return;
+            }
             string dir = Path.Combine(path, NativeMethods.GetValidFileName(a.Name));
             string indexFile = Path.Combine(dir, "index.xml");
 
