@@ -106,7 +106,7 @@ namespace Walkabout.Data
 
         public static void WriteTransactionHeader(StreamWriter writer)
         {
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"", "Account", "Date", "Payee", "Category", "Amount");
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\"", "Account", "Date", "Payee", "Category", "Amount");
         }
 
         public static void WriteTransaction(StreamWriter writer, Transaction t)
@@ -116,7 +116,7 @@ namespace Walkabout.Data
             {
                 category = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
             }
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"", t.AccountName, t.Date.ToShortDateString(), t.PayeeName, category, t.Amount.ToString("C2"));
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\"", t.AccountName, t.Date.ToShortDateString(), t.PayeeName, category, t.Amount.ToString("C2"));
         }
 
         public static void WriteInvestmentHeader(StreamWriter writer)
