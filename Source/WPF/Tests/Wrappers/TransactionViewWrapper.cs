@@ -772,7 +772,7 @@ namespace Walkabout.Tests.Wrappers
                         Thread.Sleep(500);
                     }
                 }
-
+                    
                 if (editor == null)
                 {
                     throw new Exception("Editor not found in compound cell at index " + Index);
@@ -807,7 +807,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 name = e.Current.ClassName;
                 e = TreeWalker.RawViewWalker.GetNextSibling(e);
-                if (e.Current.ClassName == "TransactionAmountControl")
+                if (e != null && e.Current.ClassName == "TransactionAmountControl")
                 {
                     e = TreeWalker.RawViewWalker.GetFirstChild(e);
                 }

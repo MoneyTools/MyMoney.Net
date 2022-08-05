@@ -5460,6 +5460,10 @@ namespace Walkabout.Views
         public TransactionCell()
         {
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
+            this.Unloaded += (s, e) =>
+            {
+                this.ClearContext();
+            };
         }
 
         Transaction context;
@@ -5496,8 +5500,6 @@ namespace Walkabout.Views
 
         void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            ClearContext();
-
             Transaction t = e.NewValue as Transaction;
             if (t == null)
             {
@@ -5507,11 +5509,10 @@ namespace Walkabout.Views
                     t = i.Transaction;
                 }
             }
-            if (t != null)
+            if (t != this.context)
             {
                 SetContext(t);
             }
-
             UpdateBackground();
             UpdateForeground();
             UpdateFontWeight();
@@ -5536,18 +5537,21 @@ namespace Walkabout.Views
         {
             if (this.context != null)
             {
-                this.context.PropertyChanged -= new PropertyChangedEventHandler(OnPropertyChanged);
+                this.context.PropertyChanged -= OnPropertyChanged;
             }
             this.context = null;
         }
 
         void SetContext(Transaction transaction)
         {
-            ClearContext();
+            if (this.context != null)
+            {
+                this.context.PropertyChanged -= OnPropertyChanged;
+            }
             this.context = transaction;
             if (this.context != null)
             {
-                this.context.PropertyChanged += new PropertyChangedEventHandler(OnPropertyChanged);
+                this.context.PropertyChanged += OnPropertyChanged;
             }
         }
 
@@ -5751,6 +5755,10 @@ namespace Walkabout.Views
         public TransactionAttachmentIcon()
         {
             this.DataContextChanged += OnDataContextChanged;
+            this.Unloaded += (s, e) =>
+            {
+                SetContext(null);
+            };
         }
 
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -5765,7 +5773,7 @@ namespace Walkabout.Views
 
         void SetContext(Transaction t)
         {
-            if (this.context != t && this.context != null)
+            if (this.context != null)
             {
                 this.context.PropertyChanged -= OnContextPropertyChanged;
             }
@@ -6832,6 +6840,10 @@ namespace Walkabout.Views
 
             SetContext(dataItem as Transaction);
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
+            this.Unloaded += (s, e) =>
+            {
+                ClearContext();
+            };
         }
 
         public string FieldName => this.fieldName;
@@ -6861,19 +6873,21 @@ namespace Walkabout.Views
         {
             if (this.context != null)
             {
-                this.context.PropertyChanged -= new PropertyChangedEventHandler(OnPropertyChanged);
+                this.context.PropertyChanged -= OnPropertyChanged;
             }
             this.context = null;
-            this.binding = null;
         }
 
         void SetContext(Transaction transaction)
         {
-            ClearContext();
+            if (this.context != null)
+            {
+                this.context.PropertyChanged -= OnPropertyChanged;
+            }
             this.context = transaction;
             if (this.context != null)
             {
-                this.context.PropertyChanged += new PropertyChangedEventHandler(OnPropertyChanged);
+                this.context.PropertyChanged += OnPropertyChanged;
                 UpdateLabel();
             }
             else
@@ -6994,6 +7008,10 @@ namespace Walkabout.Views
             this.button.Content = label = new TextBlock();
             this.button.BorderBrush = Brushes.Transparent;
             this.button.Background = Brushes.Transparent;
+            this.Unloaded += (s, e) =>
+            {
+                ClearContext();
+            };
         }
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
@@ -7009,7 +7027,6 @@ namespace Walkabout.Views
 
         void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            ClearContext();
             Transaction t = e.NewValue as Transaction;
             if (t == null)
             {
@@ -7019,7 +7036,7 @@ namespace Walkabout.Views
                     t = i.Transaction;
                 }
             }
-            if (t != null)
+            if (t != this.context)
             {
                 SetContext(t);
             }
@@ -7031,17 +7048,21 @@ namespace Walkabout.Views
         {
             if (this.context != null)
             {
-                this.context.PropertyChanged -= new PropertyChangedEventHandler(OnPropertyChanged);
+                this.context.PropertyChanged -= OnPropertyChanged;
             }
             this.context = null;
         }
 
         void SetContext(Transaction transaction)
         {
+            if (this.context != null)
+            {
+                this.context.PropertyChanged -= OnPropertyChanged;
+            }
             this.context = transaction;
             if (this.context != null)
             {
-                this.context.PropertyChanged += new PropertyChangedEventHandler(OnPropertyChanged);
+                this.context.PropertyChanged += OnPropertyChanged;
             }
         }
 
@@ -7222,6 +7243,10 @@ namespace Walkabout.Views
             this.Content = grid;
 
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
+            this.Unloaded += (s, e) =>
+            {
+                this.ClearContext();
+            };
         }
 
         // whether to show TextBox or TextLabel.
@@ -7303,11 +7328,7 @@ namespace Walkabout.Views
             }
             if (t != this.context)
             {
-                ClearContext();
-                if (t != null)
-                {
-                    SetContext(t);
-                }
+                SetContext(t);
             }
 
             if (t == null)
@@ -7321,19 +7342,21 @@ namespace Walkabout.Views
         {
             if (this.context != null)
             {
-                this.context.PropertyChanged -= new PropertyChangedEventHandler(OnPropertyChanged);
+                this.context.PropertyChanged -= OnPropertyChanged;
             }
             this.context = null;
         }
 
         void SetContext(Transaction transaction)
         {
-            ClearContext();
+            if (this.context != null)
+            {
+                this.context.PropertyChanged -= OnPropertyChanged;
+            }
             this.context = transaction;
             if (this.context != null)
             {
-                this.context.PropertyChanged -= new PropertyChangedEventHandler(OnPropertyChanged);
-                this.context.PropertyChanged += new PropertyChangedEventHandler(OnPropertyChanged);
+                this.context.PropertyChanged += OnPropertyChanged;
                 FinishConstruction();
             }
         }
