@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.0.12" date="8/4/2022">
+    - Fix index out of range error in Export from bank accounts.
+  </change>
   <change version="2.0.0.11" date="8/4/2022">
     - Fix default date for account balancing so last day of month sticks.
     - Fix some more event handling leaks in transaction view.

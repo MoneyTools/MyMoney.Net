@@ -389,6 +389,13 @@ namespace Walkabout.Tests.Wrappers
             throw new Exception("Timeout waiting for F12 to work");
         }
 
+        internal void Export(string name)
+        {
+            this.control = window.FindTransactionGrid().control;
+            this.control.SetFocus();
+            ContextMenu menu = new ContextMenu(this.control, true);
+            menu.InvokeMenuItem("menuItemExport");
+        }
     }
 
     public class TransactionViewItem

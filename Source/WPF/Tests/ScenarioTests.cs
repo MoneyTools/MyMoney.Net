@@ -1107,7 +1107,6 @@ to make sure attachments work.");
                     this.editedValues = new TransactionDetails();
                 }
             }
-
         }
 
         bool CanTransfer
@@ -1434,6 +1433,35 @@ to make sure attachments work.");
             window.PortfolioReport();
             ClearTransactionViewState();
         }
+        #endregion
+
+        #region Export
+        void Export()
+        {
+            FocusTransactionView();
+        }
+
+        void ExportCsv()
+        {
+            if (this.transactions != null)
+            {
+                var name = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "test.csv");
+                DeleteFileWithRetries(name, 10);
+                this.transactions.Export(name);
+
+                AutomationElement child = window.Element.FindChildWindow("Save As", 10);
+                if (child != null)
+                {
+                    SaveAsDialogWrapper sd = new SaveAsDialogWrapper(child);
+                    sd.SetFileName(name);
+                    sd.ClickSave();
+                }
+
+                var excel = ExcelWindowWrapper.FindExcelWindow("test.csv - Excel", 10, true);
+                excel.Close();
+            }
+        }
+
         #endregion
 
         #region Helpers

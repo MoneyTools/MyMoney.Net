@@ -8,7 +8,8 @@ namespace Walkabout.Tests.Interop {
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.Windows.Forms;
-    
+    using System.Threading;
+
     ///<summary>
     ///This class is used to PInvoke for win32 functionality that I have not been
     ///able to find in the managed platform
@@ -250,6 +251,33 @@ namespace Walkabout.Tests.Interop {
                 }
             }
 
+            return null;
+        }
+
+        internal static AutomationElement FindDesktopWindow(string name, int retries = 10)
+        {
+            for (int i = 0; i < retries; i++)
+            {
+                foreach (IntPtr hwnd in SafeNativeMethods.GetDesktopWindows())
+                {
+                    if (SafeNativeMethods.IsWindowVisible(hwnd))
+                    {
+                        try
+                        {
+                            AutomationElement e = AutomationElement.FromHandle(hwnd);
+                            System.Diagnostics.Debug.WriteLine("Found window: " + e.Current.Name);
+                            if (e.Current.Name == name)
+                            {
+                                return e;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                }
+                Thread.Sleep(1000);
+            }
             return null;
         }
 

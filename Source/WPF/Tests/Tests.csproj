@@ -129,6 +129,8 @@
     <Compile Include="Wrappers\AccountSettingsWrapper.cs" />
     <Compile Include="Wrappers\AccountsWrapper.cs" />
     <Compile Include="Wrappers\AccountPickerWrapper.cs" />
+    <Compile Include="Wrappers\ExcelWindowWrapper.cs" />
+    <Compile Include="Wrappers\SaveAsDialogWrapper.cs" />
     <Compile Include="Wrappers\StockChartWrapper.cs" />
     <Compile Include="Wrappers\CategoriesWrapper.cs" />
     <Compile Include="Wrappers\ChartsAreaWrapper.cs" />
@@ -153,7 +155,7 @@
     <Compile Include="Wrappers\CreateDatabaseDialog.cs" />
     <Compile Include="Wrappers\ListViewWrapper.cs" />
     <Compile Include="Wrappers\MainWindowWrapper.cs" />
-    <Compile Include="Wrappers\MessageBox.cs" />
+    <Compile Include="Wrappers\MessageBoxWrapper.cs" />
     <Compile Include="Wrappers\TrendChartWrapper.cs" />
     <Compile Include="Wrappers\QuickFilterWrapper.cs" />
   </ItemGroup>

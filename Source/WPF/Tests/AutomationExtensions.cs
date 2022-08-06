@@ -62,6 +62,32 @@ namespace Walkabout.Tests
             return button;
         }
 
+        public static AutomationElement ClickButtonByName(this AutomationElement parent, string name)
+        {
+            AutomationElement button = null;
+            for (int retries = 5; retries > 0; retries--)
+            {
+                button = parent.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, name));
+                if (button != null && button.Current.IsEnabled)
+                {
+                    break;
+                }
+                Thread.Sleep(250);
+            }
+            if (button == null)
+            {
+                throw new Exception("Button '" + name + "' not found");
+            }
+            if (!button.Current.IsEnabled)
+            {
+                throw new Exception("Cannot invoke disabled button: " + name);
+            }
+
+            InvokePattern invoke = (InvokePattern)button.GetCurrentPattern(InvokePattern.Pattern);
+            invoke.Invoke();
+            return button;
+        }
+
         public static AutomationElement SelectTab(this AutomationElement parent, string name)
         {
             AutomationElement tab = parent.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, name));
@@ -305,11 +331,10 @@ namespace Walkabout.Tests
         {
             for (int i = 0; i < retries; i++)
             {
-                AutomationElement childWindow = parent.FindFirst(TreeScope.Descendants,
-                    new AndCondition(new PropertyCondition(AutomationElement.ClassNameProperty, "Window"),
-                                     new PropertyCondition(AutomationElement.NameProperty, name)));
+                AutomationElement childWindow = parent.FindFirst(TreeScope.Children,
+                                     new PropertyCondition(AutomationElement.NameProperty, name));
 
-                if (childWindow != null)
+                if (childWindow != null && (childWindow.Current.ClassName == "Window" || childWindow.Current.LocalizedControlType == "Dialog"))
                 {
                     return childWindow;
                 }
