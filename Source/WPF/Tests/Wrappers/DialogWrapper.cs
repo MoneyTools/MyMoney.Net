@@ -27,7 +27,7 @@ namespace Walkabout.Tests.Wrappers
 
         public AutomationElement Element { get { return window; } }
 
-        public void Close()
+        public virtual void Close()
         {
             window.ClickButton("CloseButton");
         }

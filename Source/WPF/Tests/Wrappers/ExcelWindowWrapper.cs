@@ -9,15 +9,13 @@ using System.IO;
 
 namespace Walkabout.Tests.Wrappers
 {
-    class ExcelWindowWrapper
+    class ExcelWindowWrapper : DialogWrapper
     {        
-        AutomationElement window;
-
-        private ExcelWindowWrapper(AutomationElement e) 
+        private ExcelWindowWrapper(AutomationElement e) : base(e)
         {
-            window = e;
         }
-        public void Close()
+
+        public override void Close()
         {
             window.ClickButtonByName("Close");
         }
@@ -29,7 +27,9 @@ namespace Walkabout.Tests.Wrappers
                 AutomationElement e = Win32.FindDesktopWindow(name);
                 if (e != null)
                 {
-                    return new ExcelWindowWrapper(e);
+                    var result = new ExcelWindowWrapper(e);
+                    result.WaitForInputIdle(500);
+                    return result;
                 }
 
                 Thread.Sleep(1000);
