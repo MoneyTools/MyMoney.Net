@@ -669,7 +669,6 @@
                 <TabItem Header="Portfolio" />
             </TabControl>
 
-
             <!-- BANK -->
             <!-- Note the SecondarySortOrder has to match the Transaction SortByDate method -->
             <local:MoneyDataGrid 
@@ -760,7 +759,7 @@
                     <!-- STATUS -->
                     <views:TransactionStatusColumn  Header="S" IsReadOnly="True" SortMemberPath="StatusString"/>
 
-                    <!-- PAYEMENT-->
+                    <!-- PAYMENT-->
                     <views:TransactionAmountColumn Header="Payment" SortMemberPath="Debit"/>
 
                     <!-- DEPOSIT -->
@@ -826,9 +825,6 @@
 
                     <!-- DEPOSIT -->
                     <views:TransactionAmountColumn Header="Deposit" SortMemberPath="Credit"/>
-
-                    <!-- BALANCE -->
-                    <views:TransactionNumericColumn Header="Balance" SortMemberPath="Balance" IsReadOnly="True"/>
 
                     <!-- ANCHOR -->
                     <views:TransactionAnchorColumn IsReadOnly="True"/>

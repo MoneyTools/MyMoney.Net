@@ -1,12 +1,14 @@
 # Investment Accounts
 
-When you create an account of type "**Brokerage**" the Transactions View changes to show some additional columns.  You will also see two tabs at the top, the first is the "activity" transactions, that you can edit.  The second provides a [Portfolio Report](../Reports/InvestmentPortfolio.md)
+When you create an account of type "**Brokerage**" the Transactions View changes to show some additional columns.  You will also see two tabs at the top, the first is the "activity" transactions, that you can edit.  The second provides a [Portfolio Report](../Reports/InvestmentPortfolio.md).
+
+If you have configured the [Stock Quote Service](StockQuoteServices.md) and stock history information is available then the [TrendGraph](../Charts/TrendGraph.md) will show your historical account value.
 
 The transaction columns are augmented with the ability to record Buy/Sell/Add/Remove activity with Securities (Stocks, Mutual Funds, etc). The following shows a Sell, a Buy and a deposit from "Dividends" :
 
 ![](../Images/Investment%20Accounts.png)
 
-The quantity of shares bought or sold is the exact number of shares on that date.  Do **NOT**  adjust the numbers based on future stock splits.  That is taken care of automatically via the [Securities](../Basics/Securities.md) view.  The Balance in this view is just the cash balance, not the overall market value of the account.
+The quantity of shares bought or sold is the exact number of shares on that date.  Do **NOT**  adjust the numbers based on future stock splits.  That is taken care of automatically via the [Securities](../Basics/Securities.md) view. 
 
 The "**Activity** "  column provides the following dropdown:
 

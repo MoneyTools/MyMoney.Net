@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.Threading.Tasks;
 using Walkabout.Data;
 using Walkabout.StockQuotes;
 using Walkabout.Views.Controls;
+using Walkabout.Utilities;
+using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 
 namespace Walkabout.Views
 {
@@ -45,7 +50,7 @@ namespace Walkabout.Views
                 {
                     Transaction t = row as Transaction;
                     if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
-                    { 
+                    {
                         switch (this.viewName)
                         {
                             case TransactionViewName.BySecurity:
@@ -74,12 +79,331 @@ namespace Walkabout.Views
                             Value = balance,
                             UserData = t
                         };
-                    }                    
+                    }
                 }
             }
         }
     }
 
+    class BrokerageAccountGraphGenerator : IGraphGenerator
+    {
+        MyMoney myMoney;
+        DownloadLog log;
+        Account account;
+        Dictionary<string, StockQuotesByDate> histories = new Dictionary<string, StockQuotesByDate>();
+        Dictionary<string, List<StockSplit>> pendingSplits = new Dictionary<string, List<StockSplit>>();
+
+        class StockQuotesByDate
+        {
+            Dictionary<DateTime, StockQuote> map = new Dictionary<DateTime, StockQuote>();
+            StockQuote lastQuote;
+
+            public StockQuotesByDate(StockQuoteHistory history)
+            {
+                if (history != null)
+                {
+                    foreach (var quote in history.GetSorted())
+                    {
+                        map[quote.Date] = quote;
+                    }
+                }
+            }
+
+            public void SetQuote(DateTime date, decimal price)
+            {
+                lastQuote = new StockQuote() { Close = price, Date = date };
+            }
+
+            public StockQuote GetQuote(DateTime date)
+            {
+                if (map.Count != 0)
+                {
+                    for (int i = 5; i > 0; i--)
+                    {
+                        if (map.TryGetValue(date, out StockQuote value))
+                        {
+                            lastQuote = value;
+                            return value;
+                        }
+                        // go back at most a week looking for an open stock market!
+                        date = date.AddDays(-1);
+                    }
+                }
+                return lastQuote;
+            }
+        }
+
+        /// <summary>
+        /// Compute capital gains associated with stock sales and whether they are long term or short term gains.
+        /// </summary>
+        /// <param name="money">The transactions</param>
+        /// <param name="year">The year for the report</param>
+        public BrokerageAccountGraphGenerator(MyMoney money, DownloadLog log, Account account)
+        {
+            this.myMoney = money;
+            this.log = log;
+            this.account = account;
+        }
+
+        public async Task Prepare(IStatusService status)
+        {
+#if PerformanceBlocks
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphPrepare))
+            {
+#endif
+                Dictionary<string, Security> toLoad = new Dictionary<string, Security>();
+                foreach (var transaction in this.myMoney.Transactions.GetTransactionsFrom(this.account))
+                {
+                    var symbol = transaction.InvestmentSecuritySymbol;
+                    if (!string.IsNullOrEmpty(symbol) && !toLoad.ContainsKey(symbol))
+                    {
+                        var s = transaction.InvestmentSecurity;
+                        toLoad[symbol] = s;
+                    }
+                }
+
+                var keys = toLoad.Keys.ToArray();
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    status.ShowProgress(0, keys.Length, 1);
+                    var symbol = keys[i];
+                    var s = toLoad[symbol];
+                    StockQuoteHistory history = await this.log.GetHistory(symbol);
+                    histories[symbol] = new StockQuotesByDate(history);
+                    List<StockSplit> splits = new List<StockSplit>(this.myMoney.StockSplits.GetStockSplitsForSecurity(s));
+                    splits.Sort(new Comparison<StockSplit>((a, b) =>
+                    {
+                        return DateTime.Compare(a.Date, b.Date); // ascending
+                    }));
+                    this.pendingSplits[symbol] = splits;
+                }
+                status.ShowProgress(0, 0, 0);
+
+#if PerformanceBlocks
+            }
+#endif
+        }
+
+        public bool IsFlipped => false;
+
+        public IEnumerable<TrendValue> Generate()
+        {
+#if PerformanceBlocks
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphGenerate))
+            {
+#endif
+                var holdings = new AccountHoldings();
+                var date = DateTime.MinValue;
+                var first = true;
+                decimal cashBalance = this.account.OpeningBalance;
+                foreach (var t in this.myMoney.Transactions.GetTransactionsFrom(this.account))
+                {
+                    if (first)
+                    {
+                        first = false;
+                        date = t.Date;
+                    }
+
+                    while (date.Date < t.Date.Date)
+                    {
+                        ApplyPendingSplits(date, holdings);
+                        decimal marketValue = ComputeMarketValue(date, holdings);
+                        yield return new TrendValue() { Date = date, UserData = t, Value = marketValue + cashBalance };
+                        date = date.AddDays(1);
+                    }
+
+                    if (t.IsDeleted || t.Status == TransactionStatus.Void)
+                    {
+                        continue;
+                    }
+
+                    // regular cash transaction then!
+                    cashBalance += t.Amount;
+
+                    if (t.InvestmentSecurity != null)
+                    {
+                        var i = t.Investment;
+                        var s = i.Security;
+
+                        switch (t.InvestmentType)
+                        {
+                            case InvestmentType.Buy:
+                            case InvestmentType.Add:
+                                if (i.Units > 0)
+                                {
+                                    if (i.UnitPrice != 0)
+                                    {
+                                        RecordPrice(i.Date, s, i.UnitPrice);
+                                    }
+                                    holdings.Buy(i.Security, i.Date, i.Units, i.OriginalCostBasis);
+                                    foreach(var sale in holdings.ProcessPendingSales(i.Security))
+                                    {
+                                        // have to pull the yield iterator.
+                                    }
+                                }
+                                break;
+                            case InvestmentType.Remove:
+                            case InvestmentType.Sell:
+                                if (i.Units > 0)
+                                {
+                                    if (i.UnitPrice != 0)
+                                    {
+                                        RecordPrice(i.Date, s, i.UnitPrice);
+                                    }
+                                    if (i.Transaction.Transfer == null)
+                                    {
+                                        foreach(var sale in holdings.Sell(s, i.Date, i.Units, i.OriginalCostBasis))
+                                        {
+                                            // have to pull the yield iterator.
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // bugbug; could this ever be a split? Don't think so...
+                                        Investment add = i.Transaction.Transfer.Transaction.Investment;
+                                        Debug.Assert(add != null, "Other side of the Transfer needs to be an Investment transaction");
+                                        if (add != null)
+                                        {
+                                            Debug.Assert(add.Type == InvestmentType.Add, "Other side of transfer should be an Add transaction");
+
+                                            // now instead of doing a simple Add on the other side, we need to remember the cost basis of each purchase
+                                            // used to cover the remove
+
+                                            foreach (SecuritySale sale in holdings.Sell(s, i.Date, i.Units, 0))
+                                            {
+                                                if (sale.DateAcquired.HasValue)
+                                                {
+                                                    // now transfer the cost basis over to the target account.
+                                                    holdings.Buy(s, sale.DateAcquired.Value, sale.UnitsSold, sale.CostBasisPerUnit * sale.UnitsSold);
+                                                    foreach (var pendingSale in holdings.ProcessPendingSales(s))
+                                                    {
+                                                        // have to pull the yield iterator.
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    // this is the error case, but the error will be re-generated on the target account when needed.
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+#if PerformanceBlocks
+            }
+#endif
+        }
+
+        private decimal ComputeMarketValue(DateTime date, AccountHoldings holding)
+        {
+            decimal total = 0;
+            foreach (var held in holding.GetHoldings())
+            {
+                var value = this.GetSecurityValue(date, held.Security);
+                if (value >= 0)
+                {
+                    total += held.UnitsRemaining * value;
+                }
+                else
+                {
+                    // missing history? Then just take the price recorded.
+                    total += held.TotalCostBasis;
+                }
+            }
+            return total;
+        }
+
+        private void RecordPrice(DateTime date, Security security, decimal price)
+        {
+            if (security != null && histories.TryGetValue(security.Symbol, out StockQuotesByDate history))
+            {
+                history.SetQuote(date, price);
+            }
+        }
+
+        private decimal GetSecurityValue(DateTime date, Security security)
+        {
+            date = date.Date;
+            if (security != null && histories.TryGetValue(security.Symbol, out StockQuotesByDate history))
+            {
+                var quote = history.GetQuote(date);
+                if (quote != null)
+                {
+                    return quote.Close;
+                }
+            }
+            return -1;
+        }
+
+        private void ApplyPendingSplits(DateTime dateTime, AccountHoldings holding)
+        {
+            dateTime = dateTime.Date;
+            foreach (var key in this.pendingSplits.Keys.ToArray())
+            {
+                List<StockSplit> splits = this.pendingSplits[key];
+                StockSplit next = splits.FirstOrDefault();
+                while (next != null && next.Date.Date < dateTime)
+                {
+                    ApplySplit(next, holding);
+                    splits.Remove(next);
+                    next = splits.FirstOrDefault();
+                    if (next == null)
+                    {
+                        this.pendingSplits.Remove(key);
+                    }
+                }
+            }
+        }
+
+        private void ApplySplit(StockSplit split, AccountHoldings holding)
+        {
+            Security s = split.Security;
+            decimal total = 0;
+            foreach (SecurityPurchase purchase in holding.GetPurchases(s))
+            {
+                if (purchase.DatePurchased < split.Date)
+                {
+                    purchase.UnitsRemaining = (purchase.UnitsRemaining * split.Numerator) / split.Denominator;
+                    purchase.CostBasisPerUnit = (purchase.CostBasisPerUnit * split.Denominator) / split.Numerator;
+                    total += purchase.UnitsRemaining;
+                }
+            }
+
+            // yikes also have to split the pending sales...?
+            foreach (SecuritySale pending in holding.GetPendingSalesForSecurity(s))
+            {
+                if (pending.DateSold < split.Date)
+                {
+                    pending.UnitsSold = (pending.UnitsSold * split.Numerator) / split.Denominator;
+                    pending.SalePricePerUnit = (pending.SalePricePerUnit * split.Denominator) / split.Numerator;
+                }
+            }
+
+            if (s.SecurityType == SecurityType.Equity)
+            {
+                // companies don't want to deal with fractional stocks, they usually distribute a "cash in lieu"
+                // transaction in this case to compensate you for the rounding error.
+                decimal floor = Math.Floor(total);
+                if (floor != total)
+                {
+                    decimal diff = total - floor;
+                    decimal adjustment = (total - diff) / total;
+                    // distribute this rounding error back into the units remaining so we remember it.
+                    foreach (SecurityPurchase purchase in holding.GetPurchases(s))
+                    {
+                        purchase.UnitsRemaining = Math.Round(purchase.UnitsRemaining * adjustment, 5);
+                    }
+                }
+            }
+        }
+
+    }
 
     class SecurityGraphGenerator : IGraphGenerator
     {

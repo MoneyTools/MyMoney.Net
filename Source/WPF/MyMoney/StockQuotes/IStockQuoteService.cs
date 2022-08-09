@@ -232,7 +232,7 @@ namespace Walkabout.StockQuotes
 
         public static StockQuoteHistory Load(string logFolder, string symbol)
         {
-            var filename = System.IO.Path.Combine(logFolder, symbol + ".xml");
+            var filename = GetFileName(logFolder, symbol);
             if (System.IO.File.Exists(filename))
             {
                 XmlSerializer s = new XmlSerializer(typeof(StockQuoteHistory));
@@ -246,7 +246,7 @@ namespace Walkabout.StockQuotes
 
         public void Save(string logFolder)
         {
-            var filename = System.IO.Path.Combine(logFolder, Symbol + ".xml");
+            var filename = GetFileName(logFolder, this.Symbol);
             XmlSerializer s = new XmlSerializer(typeof(StockQuoteHistory));
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
@@ -254,6 +254,11 @@ namespace Walkabout.StockQuotes
             {
                 s.Serialize(w, this);
             }
+        }
+
+        public static string GetFileName(string logFolder, string symbol)
+        {
+            return System.IO.Path.Combine(logFolder, symbol + ".xml");
         }
 
         internal void Merge(StockQuoteHistory newHistory)
