@@ -3021,7 +3021,7 @@ namespace Walkabout
 
         async void UpdateTransactionGraph(IEnumerable data, Account account, Category category)
         {
-            if (account.Type == AccountType.Retirement || account.Type == AccountType.Brokerage)
+            if (account != null && (account.Type == AccountType.Retirement || account.Type == AccountType.Brokerage))
             {
                 this.TransactionGraph.Generator = null;
                 var gen = new BrokerageAccountGraphGenerator(this.myMoney, this.quotes.DownloadLog, account);

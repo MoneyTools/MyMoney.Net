@@ -85,6 +85,10 @@ namespace Walkabout.Views
         }
     }
 
+    /// <summary>
+    /// This class computes the TrendGraph for brokerage and retirement accounts by computing the 
+    /// historical daily market value of a given account.  The trick is doing this efficiently...
+    /// </summary>
     class BrokerageAccountGraphGenerator : IGraphGenerator
     {
         MyMoney myMoney;
@@ -93,6 +97,9 @@ namespace Walkabout.Views
         Dictionary<string, StockQuotesByDate> histories = new Dictionary<string, StockQuotesByDate>();
         Dictionary<string, List<StockSplit>> pendingSplits = new Dictionary<string, List<StockSplit>>();
 
+        // We need O(1) Date => StockQuote lookup, so we index the stock quotes in a Dictionary here.
+        // Since the stock market is not open every day, we also keep the "lastQuote" returned to fill
+        // in the gaps and create a smooth graph.
         class StockQuotesByDate
         {
             Dictionary<DateTime, StockQuote> map = new Dictionary<DateTime, StockQuote>();
@@ -133,11 +140,6 @@ namespace Walkabout.Views
             }
         }
 
-        /// <summary>
-        /// Compute capital gains associated with stock sales and whether they are long term or short term gains.
-        /// </summary>
-        /// <param name="money">The transactions</param>
-        /// <param name="year">The year for the report</param>
         public BrokerageAccountGraphGenerator(MyMoney money, DownloadLog log, Account account)
         {
             this.myMoney = money;
@@ -145,6 +147,17 @@ namespace Walkabout.Views
             this.account = account;
         }
 
+        /// <summary>
+        /// We need all the relevant StockQuoteHistory objects loaded from the cached StockQuote logs.
+        /// We only need to load StockQuoteHistory for securites referenced in the given account.
+        /// Since this is loading a bunch of .xml files it could take a while so the method is async
+        /// and we report the progress via the IStatusService.  Note the DownloadLog caches all these
+        /// in memory so the second time this generator is used it will be much faster.
+        /// 
+        /// TODO: but there is a bit too much caching here, if the online security downloaded fetches
+        /// new stock quotes for today, that will not be taken into account in the trend graph until you
+        /// switch accounts.
+        /// </summary>
         public async Task Prepare(IStatusService status)
         {
 #if PerformanceBlocks
@@ -192,6 +205,11 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphGenerate))
             {
 #endif
+                // This code is similar to the CostBasisCalculator with one big difference.  The CostBasisCalculator
+                // computes the market value on a given date.  This one computes the market value for every day starting
+                // with the date of the first transaction.  The trick to making this efficient enough is to have 
+                // and optimized version of ComputeMarketValue.
+
                 var holdings = new AccountHoldings();
                 var date = DateTime.MinValue;
                 var first = true;
@@ -204,8 +222,13 @@ namespace Walkabout.Views
                         date = t.Date;
                     }
 
+                    // This is where we are smoothing the graph by filling in historical market value for every day
+                    // starting with the first transaction all the way to the last.
                     while (date.Date < t.Date.Date)
                     {
+                        // Stock splits are in a "pending" list and when the Date rolls by it can trigger a specific
+                        // stock split.  When that happens all the remaining units and cost bases in the AccountHoldings
+                        // are adjusted accordingly.
                         ApplyPendingSplits(date, holdings);
                         decimal marketValue = ComputeMarketValue(date, holdings);
                         yield return new TrendValue() { Date = date, UserData = t, Value = marketValue + cashBalance };
@@ -217,9 +240,12 @@ namespace Walkabout.Views
                         continue;
                     }
 
-                    // regular cash transaction then!
+                    // all transactions can have a cash amount that contributes to the market value.
                     cashBalance += t.Amount;
 
+                    // and if it is a security transaction (buy, sell, etc) then we have to record these actions
+                    // in the AccountHoldings object so we know how many of each security is remaining at any
+                    // given date.
                     if (t.InvestmentSecurity != null)
                     {
                         var i = t.Investment;
@@ -233,6 +259,9 @@ namespace Walkabout.Views
                                 {
                                     if (i.UnitPrice != 0)
                                     {
+                                        // In case we don't have any online stock quote histories this at least
+                                        // tells our StockQuotesByDate what the unit price was on the date of this
+                                        // transaction.
                                         RecordPrice(i.Date, s, i.UnitPrice);
                                     }
                                     holdings.Buy(i.Security, i.Date, i.Units, i.OriginalCostBasis);
@@ -302,6 +331,8 @@ namespace Walkabout.Views
 
         private decimal ComputeMarketValue(DateTime date, AccountHoldings holding)
         {
+            // The market value of the AccountHoldings is just the sum of the security
+            // units remaining times the stock price for on this given date.
             decimal total = 0;
             foreach (var held in holding.GetHoldings())
             {
@@ -329,6 +360,7 @@ namespace Walkabout.Views
 
         private decimal GetSecurityValue(DateTime date, Security security)
         {
+            // use our optimized StockQuotesByDate object so we can implement this in an O(1) timeframe.
             date = date.Date;
             if (security != null && histories.TryGetValue(security.Symbol, out StockQuotesByDate history))
             {
@@ -343,6 +375,9 @@ namespace Walkabout.Views
 
         private void ApplyPendingSplits(DateTime dateTime, AccountHoldings holding)
         {
+            // When a stock split becomes due we remove it from the pendingSplits
+            // so that this gets faster and faster as we proceed through the transactions
+            // because there will be less and less splits to check each time.
             dateTime = dateTime.Date;
             foreach (var key in this.pendingSplits.Keys.ToArray())
             {

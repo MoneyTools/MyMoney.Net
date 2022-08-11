@@ -18,7 +18,14 @@ Click "Get Your Free API Key Today" button right on the home page, and enter you
 
 AlphaVantage.co supports downloading 20 year stock price history and MyMoney will use this feature to fill in any missing UnitPrice information.  These stock quote histories are stored in the "**StockQuote** " folder next to your money database in an easy to use XML format.
 
+### Cache
 
+The stock quote information is cached in a folder named `StockQuotes`
+next to your *.mmdb money database file.  There is also a special
+`DownloadLog.xml` index file in this folder which keeps tabs on how
+recently the stock quotes were updated and so on.  These cached files
+are used to efficiently compute the historical market value for your
+[investment accounts](InvestmentAccounts.md).
 
 
 

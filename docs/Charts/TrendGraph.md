@@ -1,10 +1,11 @@
 # Trend Graph
 
-Most accounts can show a graph of the balance of that account over time.
+Most accounts can show a graph of the balance of that account over time.  For brokerage and retirement accounts this graph shows the
+historical market value of your account.
 
 ![](../Images/Trend%20Graph.png)
 
-The **Trends**  chart shows the balance of the selected transactions over time.    As you move the mouse a pointer follows showing the balance at that date.   If you click the left mouse button it will scroll to that transaction in your transaction view. 
+The **Trends**  chart shows the balance of the selected transactions over time. As you move the mouse a pointer follows showing the balance at that date. If you click the left mouse button it will scroll to that transaction in your transaction view. 
 
 You can also right click on this view and change the timeframe or add another series:
 
