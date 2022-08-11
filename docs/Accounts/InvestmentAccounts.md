@@ -1,12 +1,12 @@
 # Investment Accounts
 
-When you create an account of type "**Brokerage**" the Transactions View changes to show some additional columns.  You will also see two tabs at the top, the first is the "activity" transactions, that you can edit.  The second provides a [Portfolio Report](../Reports/InvestmentPortfolio.md)
+When you create an account of type "**Brokerage**" the Transactions View changes to show some additional columns.  You will also see two tabs at the top, the first is the "activity" transactions, that you can edit.  The second provides a [Portfolio Report](../Reports/InvestmentPortfolio.md).
 
 The transaction columns are augmented with the ability to record Buy/Sell/Add/Remove activity with Securities (Stocks, Mutual Funds, etc). The following shows a Sell, a Buy and a deposit from "Dividends" :
 
 ![](../Images/Investment%20Accounts.png)
 
-The quantity of shares bought or sold is the exact number of shares on that date.  Do **NOT**  adjust the numbers based on future stock splits.  That is taken care of automatically via the [Securities](../Basics/Securities.md) view.  The Balance in this view is just the cash balance, not the overall market value of the account.
+The quantity of shares bought or sold is the exact number of shares on that date.  Do **NOT**  adjust the numbers based on future stock splits.  That is taken care of automatically via the [Securities](../Basics/Securities.md) view. 
 
 The "**Activity** "  column provides the following dropdown:
 
@@ -49,6 +49,20 @@ The security may be held in multiple Accounts.  The FIFO column shows buy/sell 
 * **Deposit** : the cash deposited for sell      transactions and dividends
 * **Balance** : the running balance of the      market value of stock held in this account.
 
+### Historical Market Value
+
+If you have configured your [Stock Quote Service](StockQuoteServices.md) and stock history information is available then the [TrendGraph](../Charts/TrendGraph.md) will show a nice smooth historical account value.
+The following shows what the TrendGraph will show if you do **not** have daily stock quote history:
+
+![value](../Images/MarketValue.png)
+
+Notice the step functions where market values are only updated when
+individual transactions record new unit prices.
+The following shows the smooth historical market value that you get
+if you have daily stock quote histories already downloaded by the
+[Stock Quote Service](StockQuoteServices.md):
+
+![smooth](../Images/SmoothMarketValue.png)
 
 
 ### Portfolio Tab

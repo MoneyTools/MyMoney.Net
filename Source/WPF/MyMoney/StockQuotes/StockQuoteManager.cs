@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -35,7 +36,6 @@ namespace Walkabout.StockQuotes
         DownloadLog _downloadLog = new DownloadLog();
         List<StockQuote> _batch = new List<StockQuote>();
         HashSet<string> _unknown = new HashSet<string>();
-        DelayedActions delayedActions = new DelayedActions();
         HistoryDownloader _downloader;
         string _logPath;
         bool _firstError = true;
@@ -669,11 +669,11 @@ namespace Walkabout.StockQuotes
     /// </summary>
     public class DownloadLog
     {
-        Dictionary<string, StockQuoteHistory> database = new Dictionary<string, StockQuoteHistory>();
-        Dictionary<string, DownloadInfo> _downloaded = new Dictionary<string, DownloadInfo>();
+        ConcurrentDictionary<string, StockQuoteHistory> database = new ConcurrentDictionary<string, StockQuoteHistory>();
+        ConcurrentDictionary<string, DownloadInfo> _downloaded = new ConcurrentDictionary<string, DownloadInfo>();
         DelayedActions delayedActions = new DelayedActions();
         string _logFolder;
-        Dictionary<string, StockQuote> _downloadedQuotes = new Dictionary<string, StockQuote>();
+        ConcurrentDictionary<string, StockQuote> _downloadedQuotes = new ConcurrentDictionary<string, StockQuote>();
 
         public DownloadLog() { Downloaded = new List<DownloadInfo>(); }
 
@@ -681,25 +681,26 @@ namespace Walkabout.StockQuotes
 
         public DownloadInfo GetInfo(string symbol)
         {
-            DownloadInfo info = null;
-            _downloaded.TryGetValue(symbol, out info);
-            return info;
+            if (_downloaded.TryGetValue(symbol, out DownloadInfo info))
+            {
+                return info;
+            }
+            return null;
         }
 
-        public void OnQuoteAvailable(StockQuote quote)
+        public bool OnQuoteAvailable(StockQuote quote)
         {
             // record downloaded quotes so they can be merged with quote histories.
-            lock (_downloadedQuotes)
-            {
-                _downloadedQuotes[quote.Symbol] = quote;
-            }
+            StockQuote existing = null;
+            _downloadedQuotes.TryGetValue(quote.Symbol, out existing);
+            return _downloadedQuotes.TryUpdate(quote.Symbol, quote, existing);
         }
 
         public async Task<StockQuoteHistory> GetHistory(string symbol)
         {
-            if (database.ContainsKey(symbol))
+            if (database.TryGetValue(symbol, out StockQuoteHistory result))
             {
-                return database[symbol];
+                return result;
             }
 
             StockQuoteHistory history = null;
@@ -727,22 +728,24 @@ namespace Walkabout.StockQuotes
                 });
                 if (history == null)
                 {
-                    this.Downloaded.Remove(info);
-                    this._downloaded.Remove(info.Symbol);
+                    lock (this.Downloaded)
+                    {
+                        this.Downloaded.Remove(info);
+                    }
+
+                    this._downloaded.TryRemove(info.Symbol, out DownloadInfo removed);
                     changed = true;
                 }
                 else
                 {
                     database[symbol] = history;
                 }
-                lock(_downloadedQuotes)
+                
+                if (_downloadedQuotes.TryGetValue(info.Symbol, out StockQuote quote))
                 {
-                    if (_downloadedQuotes.ContainsKey(info.Symbol))
+                    if (history.AddQuote(quote))
                     {
-                        if (history.AddQuote(_downloadedQuotes[info.Symbol]))
-                        {
-                            changedHistory = true;
-                        }
+                        changedHistory = true;
                     }
                 }
             }
@@ -752,7 +755,7 @@ namespace Walkabout.StockQuotes
             }
             if (changedHistory)
             {
-                history.Save(_logFolder);
+                DelayedSaveHistory(history);
             }
             return history;
         }
@@ -765,6 +768,15 @@ namespace Walkabout.StockQuotes
             }
         }
 
+        private void DelayedSaveHistory(StockQuoteHistory history)
+        {
+            if (!string.IsNullOrEmpty(_logFolder))
+            {
+                var key = "Save_" + history.Symbol;
+                delayedActions.StartDelayedAction(key, new Action(() => { history.Save(_logFolder); }), TimeSpan.FromSeconds(0.5));
+            }
+        }
+
         public void AddHistory(StockQuoteHistory history)
         {
             this.database[history.Symbol] = history;
@@ -772,8 +784,11 @@ namespace Walkabout.StockQuotes
             if (info == null)
             {
                 info = new DownloadInfo() { Downloaded = DateTime.Today, Symbol = history.Symbol };
-                this.Downloaded.Add(info);
-                this._downloaded[info.Symbol] = info;
+                lock (this.Downloaded) {
+                    this.Downloaded.Add(info);
+                }
+
+                this._downloaded.TryUpdate(info.Symbol, info, null);
             }
             else
             {
@@ -820,7 +835,9 @@ namespace Walkabout.StockQuotes
                         {
                             log.Downloaded.Add(info);
                         }
+                        log.Downloaded.Sort((a, b) => String.Compare(a.Symbol, b.Symbol));
                     }
+
 #if PerformanceBlocks
                 }
 #endif

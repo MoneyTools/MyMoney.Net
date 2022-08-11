@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.0.13" date="8/9/2022">
+    - Fix TrendGraph for Brokerage accounts so it shows historical account value and make it even smoother if you have the Stock Quote History Service enabled.
+  </change>
   <change version="2.0.0.12" date="8/4/2022">
     - Fix index out of range error in Export from bank accounts.
   </change>
