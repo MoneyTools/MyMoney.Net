@@ -42,46 +42,53 @@ namespace Walkabout.Views
 
         public IEnumerable<TrendValue> Generate()
         {
-            if (data != null)
+#if PerformanceBlocks
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphGenerate))
             {
-                decimal balance = this.account != null ? this.account.OpeningBalance : 0;
-
-                foreach (object row in data)
+#endif
+                if (data != null)
                 {
-                    Transaction t = row as Transaction;
-                    if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
+                    decimal balance = this.account != null ? this.account.OpeningBalance : 0;
+
+                    foreach (object row in data)
                     {
-                        switch (this.viewName)
+                        Transaction t = row as Transaction;
+                        if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
                         {
-                            case TransactionViewName.BySecurity:
-                                // When we build the trend graph for a specific security in the security view,
-                                // we should show the overall value of the securities instead, which is precalculated and stored within each transaction
-                                balance = t.RunningBalance;
-                                break;
+                            switch (this.viewName)
+                            {
+                                case TransactionViewName.BySecurity:
+                                    // When we build the trend graph for a specific security in the security view,
+                                    // we should show the overall value of the securities instead, which is precalculated and stored within each transaction
+                                    balance = t.RunningBalance;
+                                    break;
 
-                            case TransactionViewName.ByCategory:
-                            case TransactionViewName.ByCategoryCustom:
-                                balance += t.CurrencyNormalizedAmount(t.AmountMinusTax);
-                                break;
+                                case TransactionViewName.ByCategory:
+                                case TransactionViewName.ByCategoryCustom:
+                                    balance += t.CurrencyNormalizedAmount(t.AmountMinusTax);
+                                    break;
 
-                            case TransactionViewName.ByPayee:
-                                balance += t.CurrencyNormalizedAmount(t.Amount);
-                                break;
+                                case TransactionViewName.ByPayee:
+                                    balance += t.CurrencyNormalizedAmount(t.Amount);
+                                    break;
 
-                            default:
-                                balance += t.Amount;
-                                break;
+                                default:
+                                    balance += t.Amount;
+                                    break;
+                            }
+
+                            yield return new TrendValue()
+                            {
+                                Date = t.Date,
+                                Value = balance,
+                                UserData = t
+                            };
                         }
-
-                        yield return new TrendValue()
-                        {
-                            Date = t.Date,
-                            Value = balance,
-                            UserData = t
-                        };
                     }
                 }
+#if PerformanceBlocks
             }
+#endif
         }
     }
 
@@ -96,6 +103,7 @@ namespace Walkabout.Views
         Account account;
         Dictionary<string, StockQuotesByDate> histories = new Dictionary<string, StockQuotesByDate>();
         Dictionary<string, List<StockSplit>> pendingSplits = new Dictionary<string, List<StockSplit>>();
+        List<TrendValue> graph = new List<TrendValue>();
 
         // We need O(1) Date => StockQuote lookup, so we index the stock quotes in a Dictionary here.
         // Since the stock market is not open every day, we also keep the "lastQuote" returned to fill
@@ -195,12 +203,8 @@ namespace Walkabout.Views
 #if PerformanceBlocks
             }
 #endif
-        }
 
-        public bool IsFlipped => false;
-
-        public IEnumerable<TrendValue> Generate()
-        {
+            this.graph = new List<TrendValue>();
 #if PerformanceBlocks
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphGenerate))
             {
@@ -231,7 +235,7 @@ namespace Walkabout.Views
                         // are adjusted accordingly.
                         ApplyPendingSplits(date, holdings);
                         decimal marketValue = ComputeMarketValue(date, holdings);
-                        yield return new TrendValue() { Date = date, UserData = t, Value = marketValue + cashBalance };
+                        this.graph.Add(new TrendValue() { Date = date, UserData = t, Value = marketValue + cashBalance });
                         date = date.AddDays(1);
                     }
 
@@ -265,7 +269,7 @@ namespace Walkabout.Views
                                         RecordPrice(i.Date, s, i.UnitPrice);
                                     }
                                     holdings.Buy(i.Security, i.Date, i.Units, i.OriginalCostBasis);
-                                    foreach(var sale in holdings.ProcessPendingSales(i.Security))
+                                    foreach (var sale in holdings.ProcessPendingSales(i.Security))
                                     {
                                         // have to pull the yield iterator.
                                     }
@@ -281,7 +285,7 @@ namespace Walkabout.Views
                                     }
                                     if (i.Transaction.Transfer == null)
                                     {
-                                        foreach(var sale in holdings.Sell(s, i.Date, i.Units, i.OriginalCostBasis))
+                                        foreach (var sale in holdings.Sell(s, i.Date, i.Units, i.OriginalCostBasis))
                                         {
                                             // have to pull the yield iterator.
                                         }
@@ -327,6 +331,13 @@ namespace Walkabout.Views
 #if PerformanceBlocks
             }
 #endif
+        }
+
+        public bool IsFlipped => false;
+
+        public IEnumerable<TrendValue> Generate()
+        {
+            return this.graph;
         }
 
         private decimal ComputeMarketValue(DateTime date, AccountHoldings holding)
@@ -459,18 +470,25 @@ namespace Walkabout.Views
 
         public IEnumerable<TrendValue> Generate()
         {
-            string symbol = history.Symbol;
-            foreach (var item in history.History)
+#if PerformanceBlocks
+            using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphGenerate))
             {
-                decimal adjustedClose = ApplySplits(item.Close, item.Date);
-
-                yield return new TrendValue()
+#endif
+                string symbol = history.Symbol;
+                foreach (var item in history.History)
                 {
-                    Date = item.Date,
-                    Value = adjustedClose,
-                    UserData = symbol
-                };
+                    decimal adjustedClose = ApplySplits(item.Close, item.Date);
+
+                    yield return new TrendValue()
+                    {
+                        Date = item.Date,
+                        Value = adjustedClose,
+                        UserData = symbol
+                    };
+                }
+#if PerformanceBlocks
             }
+#endif
         }
 
         private decimal ApplySplits(decimal close, DateTime date)

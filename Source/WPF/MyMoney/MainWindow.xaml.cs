@@ -3026,6 +3026,7 @@ namespace Walkabout
                 this.TransactionGraph.Generator = null;
                 var gen = new BrokerageAccountGraphGenerator(this.myMoney, this.quotes.DownloadLog, account);
                 var sp = (IServiceProvider)this;
+                // Prepare is slow, but it can be done entirely on a background thread.
                 await Task.Run(async () => await gen.Prepare((IStatusService)sp.GetService(typeof(IStatusService))));
                 if (TransactionView.ActiveAccount == account)
                 {
