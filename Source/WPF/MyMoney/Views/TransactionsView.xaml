@@ -826,6 +826,9 @@
                     <!-- DEPOSIT -->
                     <views:TransactionAmountColumn Header="Deposit" SortMemberPath="Credit"/>
 
+                    <!-- BALANCE -->
+                    <views:TransactionNumericColumn Header="Cash Balance" SortMemberPath="Balance" IsReadOnly="True"/>
+
                     <!-- ANCHOR -->
                     <views:TransactionAnchorColumn IsReadOnly="True"/>
                 </DataGrid.Columns>
