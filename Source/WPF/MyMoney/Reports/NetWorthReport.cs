@@ -134,7 +134,7 @@ namespace Walkabout.Reports
 
                 foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
                 {
-                    if ((a.Type == AccountType.Loan || a.Type == AccountType.Asset) && a.Balance > 0) // then this is a loan out to someone else...(so an asset)
+                    if ((a.Type == AccountType.Loan || a.Type == AccountType.Asset) && a.Balance >= 0) // then this is a loan out to someone else...(so an asset)
                     {
                         color = GetRandomColor();
                         balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (x) => x == a);
