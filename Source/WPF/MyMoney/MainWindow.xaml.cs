@@ -3382,9 +3382,9 @@ namespace Walkabout
             view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Networth Report");
-            NetWorthReport report = new NetWorthReport(this.myMoney);
+            NetWorthReport report = new NetWorthReport(view, this.myMoney, this.quotes.DownloadLog);
             report.DrillDown += OnReportDrillDown;
-            view.Generate(report);
+            _ = view.Generate(report);
         }
 
         private void OnCommandReportInvestment(object sender, ExecutedRoutedEventArgs e)
@@ -3402,7 +3402,7 @@ namespace Walkabout
             HelpService.SetHelpKeyword(view, "Investment Portfolio");
             PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now, null);
             report.DrillDown += OnReportDrillDown;
-            view.Generate(report);
+            _ = view.Generate(report);
         }
 
         private void OnReportDrillDown(object sender, SecurityGroup e)
@@ -3415,7 +3415,7 @@ namespace Walkabout
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio - " + e.Type);
             PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now, e);
-            view.Generate(report);
+            _ = view.Generate(report);
         }
 
         private void OnTaxReport(object sender, ExecutedRoutedEventArgs e)
@@ -3427,7 +3427,7 @@ namespace Walkabout
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Tax Report");
             TaxReport report = new TaxReport(view, this.myMoney, this.settings.FiscalYearStart);
-            view.Generate(report);
+            _ = view.Generate(report);
         }
 
         private void OnCommandW2Report(object sender, ExecutedRoutedEventArgs e)
@@ -3439,7 +3439,7 @@ namespace Walkabout
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "W2 Report");
             W2Report report = new W2Report(view, this.myMoney, this, settings.FiscalYearStart);
-            view.Generate(report);
+            _ = view.Generate(report);
         }
 
         private void HasActiveAccount(object sender, CanExecuteRoutedEventArgs e)
@@ -4338,7 +4338,7 @@ namespace Walkabout
                 HelpService.SetHelpKeyword(view, "Updates");
                 ChangeInfoFormatter report = new ChangeInfoFormatter(view, installButton, previousVersion, changeList);
                 report.InstallButtonClick += OnInstallButtonClick;
-                view.Generate(report);
+                _ = view.Generate(report);
             }
         }
 

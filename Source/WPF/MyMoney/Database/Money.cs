@@ -1929,12 +1929,11 @@ namespace Walkabout.Data
         }
 
         /// <summary>
-        /// Get the cash balance of the given investment account.  If the account is null
-        /// it returns the cash balance of all investment accounts.
+        /// Get the cash balance of the filtered accounts up to the given date.
         /// </summary>
-        /// <param name="account">The account or null</param>
+        /// <param name="filter">The account filter predicate to decide which accounts to include.</param>
         /// <returns>Cash balance</returns>
-        public decimal GetInvestmentCashBalanceNormalized(Predicate<Account> filter)
+        public decimal GetCashBalanceNormalized(DateTime date, Predicate<Account> filter)
         {
             decimal cash = 0;
             foreach (Account a in this.Accounts.GetAccounts(false))
@@ -1944,6 +1943,10 @@ namespace Walkabout.Data
                     decimal balance = a.OpeningBalance;
                     foreach (Transaction t in this.Transactions.GetTransactionsFrom(a))
                     {
+                        if (t.Date > date)
+                        {
+                            break;
+                        }
                         balance += t.Amount;
                     }
                     cash += a.GetNormalizedAmount(balance);

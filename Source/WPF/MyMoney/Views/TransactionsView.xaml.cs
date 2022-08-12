@@ -2263,7 +2263,7 @@ namespace Walkabout.Views
             DateTime reportDate = this.IsReconciling ? GetReconiledExclusiveEndDate() : DateTime.Now;
             PortfolioReport report = new PortfolioReport(view, this.myMoney, account, this.ServiceProvider, reportDate, null);
             report.DrillDown += OnReportDrillDown;
-            view.Generate(report);
+            _ = view.Generate(report);
             portfolioReport = report;
         }
 
@@ -2279,7 +2279,7 @@ namespace Walkabout.Views
             HelpService.SetHelpKeyword(view, "Investment Portfolio");
             DateTime reportDate = this.IsReconciling ? GetReconiledExclusiveEndDate() : DateTime.Now;
             PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this.ServiceProvider, reportDate, e);
-            view.Generate(report);
+            _ = view.Generate(report);
             FireAfterViewStateChanged(SelectedRowId);
         }
 

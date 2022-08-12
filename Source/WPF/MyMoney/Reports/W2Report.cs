@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -80,7 +81,7 @@ namespace Walkabout.Taxes
 
         public void Regenerate()
         {
-            view.Generate(this);
+            _ = view.Generate(this);
         }
 
         private bool Summarize(Dictionary<Category, decimal> byCategory, Transaction t)
@@ -130,7 +131,7 @@ namespace Walkabout.Taxes
             }
         }
 
-        public override void Generate(IReportWriter writer)
+        public override Task Generate(IReportWriter writer)
         {
             this.transactionsByCategory = new Dictionary<Category, List<Transaction>>();
             FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
@@ -202,7 +203,7 @@ namespace Walkabout.Taxes
             }
 
             writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
-
+            return Task.CompletedTask;
         }
 
         bool GenerateForm(TaxForm form, IReportWriter writer, ICollection<Transaction> transactions)

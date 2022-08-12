@@ -1,6 +1,7 @@
 ﻿using LovettSoftware.Charts;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -114,7 +115,7 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        public override void Generate(IReportWriter writer)
+        public override Task Generate(IReportWriter writer)
         {
             flowwriter = writer as FlowDocumentReportWriter;
 
@@ -234,6 +235,7 @@ namespace Walkabout.Reports
                     WriteDetails(writer, "", new Predicate<Account>((a) => { return a == account; }));
                 }
             }
+            return Task.CompletedTask;
         }
 
         bool IsInvestmentAccount(Account a)

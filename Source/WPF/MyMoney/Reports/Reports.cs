@@ -3,6 +3,7 @@
 
 using Microsoft.Win32;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -13,7 +14,7 @@ namespace Walkabout.Reports
 {
     public abstract class Report : IReport
     {
-        public abstract void Generate(IReportWriter writer);
+        public abstract Task Generate(IReportWriter writer);
 
         public virtual void Export(string filename)
         {
