@@ -266,7 +266,7 @@ namespace Walkabout.Data
         public IEnumerable<SecuritySale> Sell(DateTime dateSold, decimal units, decimal amount)
         {
             decimal salePricePerUnit = amount / units;
-
+            List<SecuritySale> result = new List<SecuritySale>();
             foreach (var purchase in list)
             {
                 SecuritySale sale = purchase.Sell(dateSold, units, salePricePerUnit);
@@ -274,7 +274,7 @@ namespace Walkabout.Data
                 {
                     sale.Account = this.Account;
                     units -= sale.UnitsSold;
-                    yield return sale;
+                    result.Add(sale);
 
                     if (units <= 0)
                     {
@@ -296,6 +296,7 @@ namespace Walkabout.Data
                     SalePricePerUnit = salePricePerUnit
                 });
             }
+            return result;
         }
 
         internal IEnumerable<SecuritySale> GetPendingSales()
@@ -308,25 +309,29 @@ namespace Walkabout.Data
             // now that more has arrived, time to see if we can process those pending sales.
             List<SecuritySale> copy = new List<SecuritySale>(this.pending);
             this.pending.Clear();
+            List<SecuritySale> result = new List<SecuritySale>();
             foreach (SecuritySale s in copy)
             {
                 // this will put any remainder back in the pending list if it still can't be covered.
                 foreach (SecuritySale real in Sell(s.DateSold, s.UnitsSold, s.UnitsSold * s.SalePricePerUnit))
                 {
-                    yield return real;
+                    result.Add(real);
                 }
             }
+            return result;
         }
 
         internal IEnumerable<SecurityPurchase> GetHoldings()
         {
+            List<SecurityPurchase> result = new List<SecurityPurchase>();
             foreach (SecurityPurchase sp in list)
             {
                 if (sp.UnitsRemaining > 0)
                 {
-                    yield return sp;
+                    result.Add(sp);
                 }
             }
+            return result;
         }
     }
 
@@ -348,13 +353,15 @@ namespace Walkabout.Data
         /// <returns></returns>
         public IEnumerable<SecurityPurchase> GetHoldings()
         {
+            List<SecurityPurchase> result = new List<SecurityPurchase>();
             foreach (SecurityFifoQueue queue in queues.Values) 
             {
                 foreach (SecurityPurchase p in queue.GetHoldings())
                 {
-                    yield return p;
+                    result.Add(p);
                 }
             }
+            return result;
         }
 
         /// <summary>
@@ -363,14 +370,16 @@ namespace Walkabout.Data
         /// <returns></returns>
         public IEnumerable<SecurityPurchase> GetPurchases(Security security)
         {
+            List<SecurityPurchase> result = new List<SecurityPurchase>();
             SecurityFifoQueue queue = null;
             if (queues.TryGetValue(security, out queue))
             {                
                 foreach (SecurityPurchase p in queue.GetHoldings())
                 {
-                    yield return p;
+                    result.Add(p);
                 }
             }
+            return result;
         }
 
         /// <summary>
@@ -435,25 +444,29 @@ namespace Walkabout.Data
     
         internal IEnumerable<SecuritySale> GetPendingSales()
         {
+            List<SecuritySale> result = new List<SecuritySale>();
             foreach (var queue in this.queues.Values) 
             {
                 foreach (SecuritySale sale in queue.GetPendingSales())
                 {
-                    yield return sale;
+                    result.Add(sale);
                 }
             }
+            return result;
         }
 
         internal IEnumerable<SecuritySale> GetPendingSalesForSecurity(Security s)
         {
+            List<SecuritySale> result = new List<SecuritySale>();
             SecurityFifoQueue queue;
             if (queues.TryGetValue(s, out queue))
             {
                 foreach (SecuritySale sale in queue.GetPendingSales())
                 {
-                    yield return sale;
+                    result.Add(sale);
                 }
             }
+            return result;
         }
     }
 
@@ -705,6 +718,7 @@ namespace Walkabout.Data
 
         public IEnumerable<SecuritySale> GetPendingSales(Predicate<Account> forAccounts)
         {
+            List<SecuritySale> result = new List<SecuritySale>();
             foreach (var pair in byAccount)
             {
                 Account a = pair.Key;
@@ -712,10 +726,11 @@ namespace Walkabout.Data
                 {
                     foreach (SecuritySale pending in pair.Value.GetPendingSales())
                     {
-                        yield return pending;
+                        result.Add(pending);
                     }
                 }
             }
+            return result;
         }
 
     }
