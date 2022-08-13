@@ -1,6 +1,7 @@
 ﻿using LovettSoftware.Charts;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,18 +26,16 @@ namespace Walkabout.Reports
         Random rand = new Random(Environment.TickCount);
         byte minRandColor, maxRandColor;
         DateTime reportDate;
-        DownloadLog log;
-        Dictionary<Security, decimal> cachedPrices = new Dictionary<Security, decimal>();
-        IDictionary<Security, List<Investment>> transactionsBySecurity;
+        StockQuoteCache cache;
         bool generating;
 
         public event EventHandler<SecurityGroup> DrillDown;
 
-        public NetWorthReport(FlowDocumentView view, MyMoney money, DownloadLog log)
+        public NetWorthReport(FlowDocumentView view, MyMoney money, StockQuoteCache cache)
         {
             this.view = view;
             this.myMoney = money;
-            this.log = log;
+            this.cache = cache;
             this.reportDate = DateTime.Today;
             minRandColor = 20;
             maxRandColor = (""+AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128: (byte)200;
@@ -45,172 +44,175 @@ namespace Walkabout.Reports
         public override async Task Generate(IReportWriter writer)
         {
             generating = true;
-            try
+            // the lock locks out any change to the cache from background downloading of stock quotes
+            // while we are generating this report.
+            using (var cacheLock = this.cache.BeginLock())
             {
-                FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
-                writer.WriteHeading("Net Worth Statement");
-                Paragraph heading = fwriter.CurrentParagraph;
-
-                this.transactionsBySecurity = this.myMoney.GetTransactionsGroupedBySecurity((a) => true, this.reportDate.AddDays(1));
-
-                DatePicker picker = new DatePicker();
-                // byYearCombo.SelectionChanged += OnYearChanged;
-                picker.Margin = new Thickness(10, 0, 0, 0);
-                picker.SelectedDate = this.reportDate;
-                picker.DisplayDate = this.reportDate;
-                picker.SelectedDateChanged += Picker_SelectedDateChanged;
-                heading.Inlines.Add(new InlineUIContainer(picker));
-
-                var series = new ChartDataSeries() { Name = "Net Worth" };
-                IList<ChartDataValue> data = series.Values;
-
-                // outer table contains 2 columns, left is the summary table, right is the pie chart.
-                writer.StartTable();
-                writer.StartColumnDefinitions();
-                writer.WriteColumnDefinition("450", 450, 450);
-                writer.WriteColumnDefinition("620", 620, 620);
-                writer.EndColumnDefinitions();
-                writer.StartRow();
-                writer.StartCell();
-
-                // inner table contains the "data"
-                writer.StartTable();
-                writer.StartColumnDefinitions();
-                writer.WriteColumnDefinition("30", 30, 30);
-                writer.WriteColumnDefinition("300", 300, 300);
-                writer.WriteColumnDefinition("Auto", 100, double.MaxValue);
-
-                writer.EndColumnDefinitions();
-
-                WriteHeader(writer, "Cash");
-
-                decimal totalBalance = 0;
-                bool hasTaxDeferred = false;
-                bool hasTaxFree = false;
-
-                foreach (Account a in this.myMoney.Accounts.GetAccounts(false))
+                try
                 {
-                    if (a.IsTaxDeferred) hasTaxDeferred = true;
-                    if (a.IsTaxFree) hasTaxFree = true;
-                }
+                    FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
+                    writer.WriteHeading("Net Worth Statement");
+                    Paragraph heading = fwriter.CurrentParagraph;
 
-                decimal balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => { return IsBankAccount(a); });
+                    DatePicker picker = new DatePicker();
+                    // byYearCombo.SelectionChanged += OnYearChanged;
+                    picker.Margin = new Thickness(10, 0, 0, 0);
+                    picker.SelectedDate = this.reportDate;
+                    picker.DisplayDate = this.reportDate;
+                    picker.SelectedDateChanged += Picker_SelectedDateChanged;
+                    heading.Inlines.Add(new InlineUIContainer(picker));
 
-                // Non-investment Cash
-                var color = GetRandomColor();
-                if (balance > 0) data.Add(new ChartDataValue() { Label = "Cash", Value = (double)balance, Color = color });
-                WriteRow(writer, color, "Cash", balance);
-                totalBalance += balance;
+                    var series = new ChartDataSeries() { Name = "Net Worth" };
+                    IList<ChartDataValue> data = series.Values;
 
-                // Investment Cash
-                balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => { return IsInvestmentAccount(a); });
-                color = GetRandomColor();
-                data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance, Color = color });
-                WriteRow(writer, color, "Investment Cash", balance);
-                totalBalance += balance;
+                    // outer table contains 2 columns, left is the summary table, right is the pie chart.
+                    writer.StartTable();
+                    writer.StartColumnDefinitions();
+                    writer.WriteColumnDefinition("450", 450, 450);
+                    writer.WriteColumnDefinition("620", 620, 620);
+                    writer.EndColumnDefinitions();
+                    writer.StartRow();
+                    writer.StartCell();
 
-                bool hasNoneTypeTaxDeferred = false;
-                Tuple<decimal, bool> r = null;
-                if (hasTaxDeferred)
-                {
-                    WriteHeader(writer, "Tax Deferred Assets");
-                    r = await WriteSecurities(writer, data, "Tax Deferred ", new Predicate<Account>((a) => { return a.IsTaxDeferred; }));
-                    totalBalance += r.Item1;
-                    hasNoneTypeTaxDeferred = r.Item2;
-                }
+                    // inner table contains the "data"
+                    writer.StartTable();
+                    writer.StartColumnDefinitions();
+                    writer.WriteColumnDefinition("30", 30, 30);
+                    writer.WriteColumnDefinition("300", 300, 300);
+                    writer.WriteColumnDefinition("Auto", 100, double.MaxValue);
 
-                bool hasNoneTypeTaxFree = false;
-                if (hasTaxFree)
-                {
-                    WriteHeader(writer, "Tax Free Assets");
-                    r = await WriteSecurities(writer, data, "Tax Free ", new Predicate<Account>((a) => { return a.IsTaxFree; }));
-                    totalBalance += r.Item1;
-                    hasNoneTypeTaxFree = r.Item2;
-                }
+                    writer.EndColumnDefinitions();
 
-                balance = 0;
+                    WriteHeader(writer, "Cash");
 
-                WriteHeader(writer, "Other Assets");
+                    decimal totalBalance = 0;
+                    bool hasTaxDeferred = false;
+                    bool hasTaxFree = false;
 
-                foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
-                {
-                    if ((a.Type == AccountType.Loan || a.Type == AccountType.Asset) && a.Balance >= 0) // then this is a loan out to someone else...(so an asset)
+                    foreach (Account a in this.myMoney.Accounts.GetAccounts(false))
                     {
-                        color = GetRandomColor();
-                        balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (x) => x == a);
-                        if (balance > 0) data.Add(new ChartDataValue() { Label = a.Name, Value = (double)balance, Color = color });
-                        WriteRow(writer, color, a.Name, balance);
-                        totalBalance += balance;
+                        if (a.IsTaxDeferred) hasTaxDeferred = true;
+                        if (a.IsTaxFree) hasTaxFree = true;
                     }
-                }
 
-                r = await WriteSecurities(writer, data, "", new Predicate<Account>((a) => { return IsInvestmentAccount(a) && !a.IsTaxDeferred && !a.IsTaxFree; }));
-                totalBalance += r.Item1;
-                bool hasNoneType = r.Item2;
+                    decimal balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => { return IsBankAccount(a); });
 
-                // liabilities are not included in the pie chart because that would be confusing.
-                balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => a.Type == AccountType.Credit);
-                WriteHeader(writer, "Liabilities");
-                totalBalance += balance;
+                    // Non-investment Cash
+                    var color = GetRandomColor();
+                    if (balance > 0) data.Add(new ChartDataValue() { Label = "Cash", Value = (double)balance, Color = color });
+                    WriteRow(writer, color, "Cash", balance);
+                    totalBalance += balance;
 
-                color = GetRandomColor();
-                WriteRow(writer, color, "Credit", balance);
-                balance = 0;
-                foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
-                {
-                    if (a.Type == AccountType.Loan && a.BalanceNormalized < 0) // loan we owe, so a liability!
+                    // Investment Cash
+                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => { return IsInvestmentAccount(a); });
+                    color = GetRandomColor();
+                    data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance, Color = color });
+                    WriteRow(writer, color, "Investment Cash", balance);
+                    totalBalance += balance;
+
+                    bool hasNoneTypeTaxDeferred = false;
+                    Tuple<decimal, bool> r = null;
+                    if (hasTaxDeferred)
                     {
-                        balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (x) => x == a);
-                        color = GetRandomColor();
-                        WriteRow(writer, color, a.Name, balance);
-                        totalBalance += balance;
+                        WriteHeader(writer, "Tax Deferred Assets");
+                        r = await WriteSecurities(writer, data, TaxStatus.TaxDeferred,new Predicate<Account>((a) => { return a.IsTaxDeferred; }));
+                        totalBalance += r.Item1;
+                        hasNoneTypeTaxDeferred = r.Item2;
                     }
+
+                    bool hasNoneTypeTaxFree = false;
+                    if (hasTaxFree)
+                    {
+                        WriteHeader(writer, "Tax Free Assets");
+                        r = await WriteSecurities(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree; }));
+                        totalBalance += r.Item1;
+                        hasNoneTypeTaxFree = r.Item2;
+                    }
+
+                    balance = 0;
+
+                    WriteHeader(writer, "Other Assets");
+
+                    foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
+                    {
+                        if ((a.Type == AccountType.Loan || a.Type == AccountType.Asset) && a.Balance >= 0) // then this is a loan out to someone else...(so an asset)
+                        {
+                            color = GetRandomColor();
+                            balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (x) => x == a);
+                            if (balance > 0) data.Add(new ChartDataValue() { Label = a.Name, Value = (double)balance, Color = color });
+                            WriteRow(writer, color, a.Name, balance);
+                            totalBalance += balance;
+                        }
+                    }
+
+                    r = await WriteSecurities(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return IsInvestmentAccount(a) && !a.IsTaxDeferred && !a.IsTaxFree; }));
+                    totalBalance += r.Item1;
+                    bool hasNoneType = r.Item2;
+
+                    // liabilities are not included in the pie chart because that would be confusing.
+                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => a.Type == AccountType.Credit);
+                    WriteHeader(writer, "Liabilities");
+                    totalBalance += balance;
+
+                    color = GetRandomColor();
+                    WriteRow(writer, color, "Credit", balance);
+                    balance = 0;
+                    foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
+                    {
+                        if (a.Type == AccountType.Loan && a.BalanceNormalized < 0) // loan we owe, so a liability!
+                        {
+                            balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (x) => x == a);
+                            color = GetRandomColor();
+                            WriteRow(writer, color, a.Name, balance);
+                            totalBalance += balance;
+                        }
+                    }
+
+                    writer.StartFooterRow();
+
+                    writer.StartCell(1, 2);
+                    writer.WriteParagraph("Total");
+                    writer.EndCell();
+
+                    writer.StartCell();
+                    writer.WriteNumber(totalBalance.ToString("C"));
+                    writer.EndCell();
+
+                    writer.EndRow();
+                    writer.EndTable();
+
+                    writer.EndCell();
+                    writer.StartCell();
+
+
+                    // pie chart
+                    AnimatingPieChart chart = new AnimatingPieChart();
+                    chart.Width = 600;
+                    chart.Height = 400;
+                    chart.BorderThickness = new Thickness(0);
+                    chart.VerticalAlignment = VerticalAlignment.Top;
+                    chart.Series = series;
+                    chart.ToolTipGenerator = OnGenerateToolTip;
+                    chart.PieSliceClicked += OnPieSliceClicked;
+
+                    writer.WriteElement(chart);
+
+                    writer.EndCell();
+                    writer.EndRow();
+                    writer.EndTable();
+
+                    if (hasNoneTypeTaxDeferred || hasNoneTypeTaxFree || hasNoneType)
+                    {
+                        writer.WriteParagraph("(*) One ore more of your securities has no SecurityType, you can fix this using View/Securities",
+                            System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Maroon);
+                    }
+
+                    writer.WriteParagraph("Generated for " + this.reportDate.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
                 }
-
-                writer.StartFooterRow();
-
-                writer.StartCell(1, 2);
-                writer.WriteParagraph("Total");
-                writer.EndCell();
-
-                writer.StartCell();
-                writer.WriteNumber(totalBalance.ToString("C"));
-                writer.EndCell();
-
-                writer.EndRow();
-                writer.EndTable();
-
-                writer.EndCell();
-                writer.StartCell();
-
-
-                // pie chart
-                AnimatingPieChart chart = new AnimatingPieChart();
-                chart.Width = 600;
-                chart.Height = 400;
-                chart.BorderThickness = new Thickness(0);
-                chart.VerticalAlignment = VerticalAlignment.Top;
-                chart.Series = series;
-                chart.ToolTipGenerator = OnGenerateToolTip;
-                chart.PieSliceClicked += OnPieSliceClicked;
-
-                writer.WriteElement(chart);
-
-                writer.EndCell();
-                writer.EndRow();
-                writer.EndTable();
-
-                if (hasNoneTypeTaxDeferred || hasNoneTypeTaxFree || hasNoneType)
+                finally
                 {
-                    writer.WriteParagraph("(*) One ore more of your securities has no SecurityType, you can fix this using View/Securities",
-                        System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Maroon);
+                    generating = false;
                 }
-
-                writer.WriteParagraph("Generated for " + this.reportDate.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
-            } 
-            finally
-            {
-                generating = false;
             }
         }
 
@@ -221,7 +223,6 @@ namespace Walkabout.Reports
                 DatePicker picker = (DatePicker)sender;
                 if (picker.SelectedDate.HasValue)
                 {
-                    this.cachedPrices = new Dictionary<Security, decimal>();
                     this.reportDate = picker.SelectedDate.Value;
                     _ = view.Generate(this);
                 }
@@ -245,81 +246,44 @@ namespace Walkabout.Reports
             return tip;
         }
 
-        private async Task<decimal> GetSecurityPrice(DateTime date, Security s)
-        {
-            // return the closing price of the given security for this date.
-            if (date.Date == DateTime.Today.Date)
-            {
-                return s.Price;
-            }
 
-            if (this.cachedPrices.TryGetValue(s, out decimal price))
-            {
-                return price;
-            }
-
-            // find the price in the download log if we have one.
-            var symbol = s.Symbol;
-            if (!string.IsNullOrEmpty(symbol))
-            {
-                var history = await this.log.GetHistory(symbol);
-                if (history != null && history.History != null && history.History.Count > 0)
-                {
-                    foreach (var item in history.History)
-                    {
-                        if (item.Date > date)
-                        {
-                            break;
-                        }
-                        price = item.Close;
-                    }
-                }
-            }
-
-            // hmmm, then we have to search our own transactions for a recorded UnitPrice.
-            if (price == 0 && transactionsBySecurity.TryGetValue(s, out List<Investment> trades) && trades != null)
-            {
-                price = 0;
-                foreach (var t in trades)
-                {
-                    if (t.Date > date)
-                    {
-                        break;
-                    }
-                    if (t.UnitPrice != 0)
-                    {
-                        price = t.UnitPrice;
-                    }
-                }
-            }
-
-            if (price != 0)
-            {
-                this.cachedPrices[s] = price;
-            }
-            return price;
-        }
-
-
-        private async Task<Tuple<decimal, bool>> WriteSecurities(IReportWriter writer, IList<ChartDataValue> data, string prefix, Predicate<Account> filter)
+        private async Task<Tuple<decimal, bool>> WriteSecurities(IReportWriter writer, IList<ChartDataValue> data, TaxStatus status, Predicate<Account> filter)
         {
             bool hasNoneType = false;
             decimal balance = 0;
             Dictionary<SecurityType, decimal> byType = new Dictionary<SecurityType, decimal>();
             Dictionary<SecurityType, SecurityGroup> groupsByType = new Dictionary<SecurityType, SecurityGroup>();
 
+            string prefix = "";
+            switch (status)
+            {
+                case TaxStatus.TaxDeferred:
+                    prefix = "Tax Deferred";
+                    break;
+                case TaxStatus.TaxFree:
+                    prefix = "Tax Free";
+                    break;
+                default:
+                    break;
+            }
+
             CostBasisCalculator calc = new CostBasisCalculator(this.myMoney, this.reportDate);
 
             // compute summary
-            foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(filter))
+            foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(status, filter))
             {
                 SecurityType stype = securityTypeGroup.Type;
                 decimal sb = 0;
                 byType.TryGetValue(stype, out sb);
+                if (securityTypeGroup.Security != null)
+                {
+                    // load the Stock Quote history from the download log. 
+                    await this.cache.LoadHistory(securityTypeGroup.Security);
+                } 
 
                 foreach (SecurityPurchase sp in securityTypeGroup.Purchases)
                 {                    
-                    sb += sp.UnitsRemaining * await GetSecurityPrice(this.reportDate, sp.Security);
+                    sb += sp.FuturesFactor * sp.UnitsRemaining * this.cache.GetSecurityMarketPrice(this.reportDate, sp.Security);
                 }
                 byType[stype] = sb;
                 groupsByType[stype] = securityTypeGroup;

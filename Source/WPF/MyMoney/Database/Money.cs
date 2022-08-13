@@ -1915,7 +1915,7 @@ namespace Walkabout.Data
 
             CostBasisCalculator calc = new CostBasisCalculator(this, DateTime.Now);
 
-            foreach (var group in calc.GetHoldingsBySecurityType(null))
+            foreach (var group in calc.GetHoldingsBySecurityType(TaxStatus.Any, null))
             {
                 foreach (SecurityPurchase sp in group.Purchases)
                 {
@@ -2316,7 +2316,8 @@ namespace Walkabout.Data
     {
         Taxable = 0,
         TaxDeferred = 1,
-        TaxFree = 2
+        TaxFree = 2,
+        Any = 3
     }
 
     [Flags]

@@ -75,6 +75,7 @@ namespace Walkabout
 
         private ExchangeRates exchangeRates;
         private StockQuoteManager quotes;
+        private StockQuoteCache cache;
         private int mainThreadId;
         private uint loadTime = NativeMethods.TickCount;
         private RecentFilesMenu recentFilesMenu;
@@ -603,7 +604,7 @@ namespace Walkabout
                     if (this.database != null)
                     {
                         string path = this.database.DatabasePath;
-                        SetupStockQuoteManager();
+                        SetupStockQuoteManager(money);
                         OfxRequest.OfxLogPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
                     }
 
@@ -680,11 +681,12 @@ namespace Walkabout
             }
         }
 
-        private void SetupStockQuoteManager()
+        private void SetupStockQuoteManager(MyMoney money)
         {
             this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings, GetStockQuotePath());
             this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
             this.quotes.HistoryAvailable += OnStockQuoteHistoryAvailable;
+            this.cache = new StockQuoteCache(money, this.quotes.DownloadLog);
         }
 
         private string GetStockQuotePath()
@@ -3019,18 +3021,32 @@ namespace Walkabout
             HistoryChart.Selection = selection;
         }
 
+        bool generatingTrendGraph;
+
         async void UpdateTransactionGraph(IEnumerable data, Account account, Category category)
         {
             if (account != null && (account.Type == AccountType.Retirement || account.Type == AccountType.Brokerage))
             {
-                this.TransactionGraph.Generator = null;
-                var gen = new BrokerageAccountGraphGenerator(this.myMoney, this.quotes.DownloadLog, account);
-                var sp = (IServiceProvider)this;
-                // Prepare is slow, but it can be done entirely on a background thread.
-                await Task.Run(async () => await gen.Prepare((IStatusService)sp.GetService(typeof(IStatusService))));
-                if (TransactionView.ActiveAccount == account)
+                if (!generatingTrendGraph)
                 {
-                    this.TransactionGraph.Generator = gen;
+                    try
+                    {
+                        // only allow one at a time, since cancellation/restart is not efficient.
+                        generatingTrendGraph = true;
+                        this.TransactionGraph.Generator = null;
+                        var gen = new BrokerageAccountGraphGenerator(this.myMoney, this.cache, account);
+                        var sp = (IServiceProvider)this;
+                        // Prepare is slow, but it can be done entirely on a background thread.
+                        await Task.Run(async () => await gen.Prepare((IStatusService)sp.GetService(typeof(IStatusService))));
+                        if (TransactionView.ActiveAccount == account)
+                        {
+                            this.TransactionGraph.Generator = gen;
+                        }
+                    }
+                    finally
+                    {
+                        generatingTrendGraph = false;
+                    }
                 }
             }
             else
@@ -3204,6 +3220,10 @@ namespace Walkabout
             else if (service == typeof(StockQuoteManager))
             {
                 return this.quotes;
+            }
+            else if (service == typeof(StockQuoteCache))
+            {
+                return this.cache;
             }
             else if (service == typeof(ExchangeRates))
             {
@@ -3382,7 +3402,7 @@ namespace Walkabout
             view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Networth Report");
-            NetWorthReport report = new NetWorthReport(view, this.myMoney, this.quotes.DownloadLog);
+            NetWorthReport report = new NetWorthReport(view, this.myMoney, this.cache);
             report.DrillDown += OnReportDrillDown;
             _ = view.Generate(report);
         }
@@ -3414,7 +3434,7 @@ namespace Walkabout
             view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio - " + e.Type);
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now, e);
+            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, e.Date, e);
             _ = view.Generate(report);
         }
 

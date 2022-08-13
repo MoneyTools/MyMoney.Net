@@ -46,16 +46,22 @@ namespace Walkabout.Data
         { 
             get 
             { 
-                decimal factor = 1;
+                return this.FuturesFactor * UnitsRemaining * Security.Price; 
+            } 
+        }
 
+        public decimal FuturesFactor
+        {
+            get
+            {
+                decimal factor = 1;
                 // futures prices are always listed by the instance.  But wen you buy 1 contract, you always get 100 futures in that contract
                 if (Security.SecurityType == SecurityType.Futures)
                 {
                     factor = 100;
                 }
-
-                return factor * UnitsRemaining * Security.Price; 
-            } 
+                return factor;
+            }
         }
 
         /// <summary>
@@ -185,9 +191,11 @@ namespace Walkabout.Data
 
     public class SecurityGroup
     {
+        public DateTime Date { get; set; }
         public Security Security { get; set; }
         public SecurityType Type { get ;set; }
         public IList<SecurityPurchase> Purchases { get; set; }
+        public TaxStatus TaxStatus { get; set; }
     }
 
 
@@ -366,30 +374,6 @@ namespace Walkabout.Data
         }
 
         /// <summary>
-        /// Get all non-zero holdings remaining for the accounts we have analyzed and return them grouped by security.
-        /// </summary>
-        /// <returns></returns>
-        public IList<SecurityGroup> GetHoldingsBySecurity()
-        {
-            SortedDictionary<Security, SecurityGroup> holdingsBySecurity = new SortedDictionary<Security, SecurityGroup>(new SecurityComparer());
-
-            // Sort all add, remove, buy, sell transactions by date and by security.
-            foreach (SecurityPurchase sp in GetHoldings())
-            {
-                Security s = sp.Security;
-                SecurityGroup group = null;
-                if (!holdingsBySecurity.TryGetValue(s, out group))
-                {
-                    group = new SecurityGroup() { Security = s, Type = s.SecurityType, Purchases = new List<SecurityPurchase>() };
-                    holdingsBySecurity[s] = group;
-                }
-                group.Purchases.Add(sp);
-            }
-
-            return new List<SecurityGroup>(holdingsBySecurity.Values);
-        }
-
-        /// <summary>
         /// Record an Add or Buy for a given security.
         /// </summary>
         ///<param name="s">The security we are buying</param>
@@ -527,7 +511,7 @@ namespace Walkabout.Data
         /// </summary>
         /// <param name="account">Specified account or null for all accounts.</param>
         /// <returns></returns>
-        public IList<SecurityGroup> GetHoldingsBySecurityType(Predicate<Account> filter)
+        public IList<SecurityGroup> GetHoldingsBySecurityType(TaxStatus status, Predicate<Account> filter)
         {
             Dictionary<SecurityType, SecurityGroup> result = new Dictionary<SecurityType, SecurityGroup>();
 
@@ -541,7 +525,7 @@ namespace Walkabout.Data
                         SecurityGroup group = null;
                         if (!result.TryGetValue(type, out group))
                         {
-                            group = new SecurityGroup() { Type = type, Purchases = new List<SecurityPurchase>() };
+                            group = new SecurityGroup() { Date = this.toDate, Security = sp.Security, Type = type, Purchases = new List<SecurityPurchase>(), TaxStatus = status };
                             result[type] = group;
                         }
                         group.Purchases.Add(sp);
@@ -568,7 +552,7 @@ namespace Walkabout.Data
                 SecurityGroup group = null;
                 if (!holdingsBySecurity.TryGetValue(s, out group))
                 {
-                    group = new SecurityGroup() { Security = s, Type = s.SecurityType, Purchases = new List<SecurityPurchase>() };
+                    group = new SecurityGroup() { Date = this.toDate, Security = s, Type = s.SecurityType, Purchases = new List<SecurityPurchase>() };
                     holdingsBySecurity[s] = group;
                 }
                 group.Purchases.Add(sp);
