@@ -106,7 +106,7 @@ namespace Walkabout.Reports
                     // Investment Cash
                     balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => { return IsInvestmentAccount(a); });
                     color = GetRandomColor();
-                    data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance, Color = color });
+                    if (balance > 0) data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance, Color = color });
                     WriteRow(writer, color, "Investment Cash", balance);
                     totalBalance += balance;
 
@@ -189,8 +189,11 @@ namespace Walkabout.Reports
                     AnimatingPieChart chart = new AnimatingPieChart();
                     chart.Width = 600;
                     chart.Height = 400;
+                    chart.HorizontalContentAlignment = HorizontalAlignment.Left;
+                    chart.Padding = new Thickness(20, 0, 100, 0);
                     chart.BorderThickness = new Thickness(0);
                     chart.VerticalAlignment = VerticalAlignment.Top;
+                    chart.HorizontalAlignment = HorizontalAlignment.Left;
                     chart.Series = series;
                     chart.ToolTipGenerator = OnGenerateToolTip;
                     chart.PieSliceClicked += OnPieSliceClicked;

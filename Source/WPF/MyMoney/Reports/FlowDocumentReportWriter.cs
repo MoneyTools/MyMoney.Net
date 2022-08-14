@@ -214,10 +214,15 @@ namespace Walkabout.Reports
                 tableWidth += 100; // give this column a minimum size at least
                 gridLength = new GridLength(0, GridUnitType.Auto);
             }
-            else if (width == "*")
+            else if (width.EndsWith("*"))
             {
+                double w = 1;
+                double.TryParse(width.TrimEnd('*'), out w);
+                if (w < 1) {
+                    w = 1;
+                }
                 tableWidth += 100; // give this column a minimum size at least
-                gridLength = new GridLength(0, GridUnitType.Star);
+                gridLength = new GridLength(w, GridUnitType.Star);
             }
             else
             {

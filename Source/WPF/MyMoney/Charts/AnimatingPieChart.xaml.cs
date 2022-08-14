@@ -21,6 +21,7 @@ namespace LovettSoftware.Charts
         List<PieSlice> slices = new List<PieSlice>();
         Point movePos;
         PieSlice inside;
+        Size previousArrangeBounds = Size.Empty;
         bool mouseOverAnimationCompleted = false;
         Random rand = new Random(Environment.TickCount);
 
@@ -49,7 +50,11 @@ namespace LovettSoftware.Charts
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            OnDelayedUpdate();
+            if (previousArrangeBounds != arrangeBounds)
+            {
+                OnDelayedUpdate();
+                previousArrangeBounds = arrangeBounds;
+            }
             return base.ArrangeOverride(arrangeBounds);
         }
 
@@ -134,8 +139,8 @@ namespace LovettSoftware.Charts
             {
                 return;
             }
-            double w = this.ActualWidth - (this.Padding.Left + this.Padding.Right);
-            double h = this.ActualHeight - (this.Padding.Top + this.Padding.Bottom);
+            double w = this.ActualWidth - (this.Margin.Left + this.Margin.Right);
+            double h = this.ActualHeight - (this.Margin.Top + this.Margin.Bottom);
             if (w < 0 || h < 0 || this.Visibility != Visibility.Visible)
             {
                 return;
@@ -145,8 +150,23 @@ namespace LovettSoftware.Charts
             double c = Math.Floor(m / 2);
 
             double total = (from d in this.Series.Values where !d.Hidden select d.Value).Sum();
-
             Point center = new Point(c + (w - m) / 2, c + (h - m) / 2);
+
+            switch (this.HorizontalContentAlignment)
+            {
+                case HorizontalAlignment.Left:
+                    center = new Point(this.Margin.Left + c, c + (h - m) / 2);
+                    break;
+                case HorizontalAlignment.Right:
+                    center = new Point(this.Width - this.Margin.Left - c, c + (h - m) / 2);
+                    break;
+                case HorizontalAlignment.Center:
+                case HorizontalAlignment.Stretch: // not supported.
+                default:
+                    center = new Point(c + (w - m) / 2, c + (h - m) / 2);
+                    break;
+            }
+
             Size size = new Size(c, c);
             Storyboard sb = new Storyboard();
 

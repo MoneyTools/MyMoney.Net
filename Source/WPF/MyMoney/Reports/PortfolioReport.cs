@@ -193,10 +193,9 @@ namespace Walkabout.Reports
             chart.Width = 400;
             chart.Height = 300;
             chart.BorderThickness = new Thickness(0);
-            chart.Padding = new Thickness(0);
-            chart.Margin = new Thickness(0, 00, 0, 0);
+            chart.Padding = new Thickness(20,0,100,0);
             chart.VerticalAlignment = VerticalAlignment.Top;
-            chart.HorizontalAlignment = HorizontalAlignment.Left;
+            chart.HorizontalContentAlignment = HorizontalAlignment.Left;
             chart.Series = series;
             chart.ToolTipGenerator = OnGenerateToolTip;
             chart.PieSliceClicked += OnPieSliceClicked;
@@ -279,14 +278,16 @@ namespace Walkabout.Reports
             decimal gainLoss = 0;
             decimal currentQuantity = 0;
             decimal price = 0;
+            bool priceFound = false;
             Security current = null;
 
             // compute the totals for the group header row.
             foreach (SecurityPurchase i in bySecurity)
             {
                 current = i.Security;
-                if (price == 0)
+                if (!priceFound)
                 {
+                    priceFound = true;
                     price = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
                 }
                 costBasis += i.TotalCostBasis;
@@ -456,12 +457,20 @@ namespace Walkabout.Reports
 
                 SecurityType st = securityGroup.Type;
                 int count = 0;
+                decimal price = 0;
+                bool hasPrice = false;
                 foreach (SecurityPurchase i in securityGroup.Purchases)
                 {
                     if (i.UnitsRemaining > 0)
                     {
-                        marketValue += i.FuturesFactor * i.UnitsRemaining * this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);       
-                        gainLoss += marketValue - i.TotalCostBasis;
+                        if (!hasPrice)
+                        {
+                            hasPrice = true;
+                            price = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                        }
+                        var value = i.FuturesFactor * i.UnitsRemaining * price;
+                        marketValue += value;
+                        gainLoss += value - i.TotalCostBasis;
                         count++;
                     }
                 }
@@ -485,13 +494,16 @@ namespace Walkabout.Reports
                     {
                         caption = prefix + Security.GetSecurityTypeCaption(st);
                     }
-                    data.Add(new ChartDataValue()
+                    if (marketValue > 0)
                     {
-                        Value = (double)RoundToNearestCent(marketValue),
-                        Label = caption,
-                        Color = color, 
-                        UserData = securityGroup
-                    });
+                        data.Add(new ChartDataValue()
+                        {
+                            Value = (double)RoundToNearestCent(marketValue),
+                            Label = caption,
+                            Color = color,
+                            UserData = securityGroup
+                        });
+                    }
 
                     if (securityGroup.Security == null)
                     {
