@@ -49,8 +49,26 @@ namespace Walkabout.Views
             ButtonStrip.Children.Add(control);
         }
 
+        bool generatingReport;
+
         public async Task Generate(IReport report)
         {
+            if (!generatingReport)
+            {
+                generatingReport = true;
+                try
+                {
+                    await InternalGenerate(report);
+                }
+                finally
+                {
+                    generatingReport = false;
+                }
+            }
+        }
+
+        private async Task InternalGenerate(IReport report)
+        { 
             this.report = report;
             this.Viewer.Document.Blocks.Clear();
             this.writer = null;

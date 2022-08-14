@@ -57,7 +57,7 @@ namespace Walkabout.StockQuotes
             {
                 quoteIndex.Remove(s);
             }
-            if (transactionsBySecurity.ContainsKey(s))
+            if (transactionsBySecurity != null && transactionsBySecurity.ContainsKey(s))
             {
                 transactionsBySecurity.Remove(s);
             }
