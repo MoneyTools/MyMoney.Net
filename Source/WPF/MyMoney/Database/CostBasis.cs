@@ -42,14 +42,13 @@ namespace Walkabout.Data
         /// <summary>
         /// Get market value of remaining units.
         /// </summary>
-        public decimal MarketValue 
-        { 
-            get 
-            { 
-                return this.FuturesFactor * UnitsRemaining * Security.Price; 
-            } 
+        public decimal LatestMarketValue
+        {
+            get
+            {
+                return this.FuturesFactor * UnitsRemaining * Security.Price;
+            }
         }
-
         public decimal FuturesFactor
         {
             get
@@ -63,11 +62,6 @@ namespace Walkabout.Data
                 return factor;
             }
         }
-
-        /// <summary>
-        /// Return the difference between what we paid for the units and what they are worth now.
-        /// </summary>
-        public decimal GainLoss { get { return MarketValue - TotalCostBasis; } }
 
         /// <summary>
         /// Perform a sale of the given number of units.  If we don't have enough return all that we have.

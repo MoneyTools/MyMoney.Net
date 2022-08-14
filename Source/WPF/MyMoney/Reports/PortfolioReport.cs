@@ -285,20 +285,16 @@ namespace Walkabout.Reports
             foreach (SecurityPurchase i in bySecurity)
             {
                 current = i.Security;
-                if (i.Security.Symbol == "CSHIX")
-                {
-                    Debug.WriteLine("debug me");
-                }
                 if (price == 0)
                 {
                     price = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
                 }
+                costBasis += i.TotalCostBasis;
                 // for tax reporting we need to report the real GainLoss, but if CostBasis is zero then it doesn't make sense to report something
                 // as a gain or loss, it will be accounted for under MarketValue, but it will be misleading as a "Gain".  So we tweak the value here.
-                decimal gain = (i.CostBasisPerUnit == 0) ? 0 : i.GainLoss;
-
-                marketValue += i.FuturesFactor * i.UnitsRemaining * price;
-                costBasis += i.TotalCostBasis;
+                var value = i.FuturesFactor * i.UnitsRemaining * price;
+                marketValue += value;
+                decimal gain = (i.CostBasisPerUnit == 0) ? 0 : value - i.TotalCostBasis;
                 gainLoss += gain;
                 currentQuantity += i.UnitsRemaining;
             }
@@ -319,12 +315,13 @@ namespace Walkabout.Reports
             WriteRow(writer, false, false, FontWeights.Bold, null, current.Name, current.Name, currentQuantity, price, marketValue, averageUnitPrice, costBasis, gainLoss);
 
             foreach (SecurityPurchase i in bySecurity)
-            {                
+            {
                 // for tax reporting we need to report the real GainLoss, but if CostBasis is zero then it doesn't make sense to report something
                 // as a gain or loss, it will be accounted for under MarketValue, but it will be misleading as a "Gain".  So we tweak the value here.
-                decimal gain = (i.CostBasisPerUnit == 0) ? 0 : i.GainLoss;
-                marketValue = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
-                WriteRow(writer, false, false, FontWeights.Normal, i.DatePurchased, i.Security.Name, i.Security.Name, i.UnitsRemaining, i.CostBasisPerUnit, marketValue, i.Security.Price, i.TotalCostBasis, gain);
+                marketValue = i.FuturesFactor * i.UnitsRemaining * price;
+                gainLoss = (i.CostBasisPerUnit == 0) ? 0 : marketValue - i.TotalCostBasis;                
+                WriteRow(writer, false, false, FontWeights.Normal, i.DatePurchased, i.Security.Name, i.Security.Name,
+                    i.UnitsRemaining, price, marketValue, i.CostBasisPerUnit, i.TotalCostBasis, gainLoss);
             }
 
             writer.EndExpandableRowGroup();
@@ -463,8 +460,8 @@ namespace Walkabout.Reports
                 {
                     if (i.UnitsRemaining > 0)
                     {
-                        marketValue += i.FuturesFactor * i.UnitsRemaining * this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
-                        gainLoss += i.GainLoss;
+                        marketValue += i.FuturesFactor * i.UnitsRemaining * this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);       
+                        gainLoss += marketValue - i.TotalCostBasis;
                         count++;
                     }
                 }

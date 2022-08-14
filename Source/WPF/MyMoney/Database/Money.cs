@@ -9027,7 +9027,7 @@ namespace Walkabout.Data
                             Security s = sp.Security;
                             if (Math.Floor(sp.UnitsRemaining) > 0)
                             {
-                                balance += sp.MarketValue;
+                                balance += sp.LatestMarketValue;
                             }
                         }
                     }
@@ -9107,7 +9107,7 @@ namespace Walkabout.Data
                     Security s = sp.Security;
                     if (Math.Floor(sp.UnitsRemaining) > 0)
                     {
-                        investmentValue += sp.MarketValue;
+                        investmentValue += sp.LatestMarketValue;
                     }
                 }
             }
