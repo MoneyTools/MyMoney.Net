@@ -19,7 +19,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         
-        <c:AnimatingPieChart x:Name="PieChart" Padding="10"/>
+        <c:AnimatingPieChart x:Name="PieChart" Margin="10"/>
 
         <StackPanel Grid.Column="1"  Orientation="Horizontal" HorizontalAlignment="Right" Margin="24,10">            
             <TextBlock Text="Total: " FontWeight="Bold"/>
