@@ -1,6 +1,7 @@
 ﻿using LovettSoftware.Charts;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -284,13 +285,19 @@ namespace Walkabout.Reports
             foreach (SecurityPurchase i in bySecurity)
             {
                 current = i.Security;
-
-                price = current.Price;
+                if (i.Security.Symbol == "CSHIX")
+                {
+                    Debug.WriteLine("debug me");
+                }
+                if (price == 0)
+                {
+                    price = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                }
                 // for tax reporting we need to report the real GainLoss, but if CostBasis is zero then it doesn't make sense to report something
                 // as a gain or loss, it will be accounted for under MarketValue, but it will be misleading as a "Gain".  So we tweak the value here.
                 decimal gain = (i.CostBasisPerUnit == 0) ? 0 : i.GainLoss;
 
-                marketValue += i.FuturesFactor * i.UnitsRemaining * this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                marketValue += i.FuturesFactor * i.UnitsRemaining * price;
                 costBasis += i.TotalCostBasis;
                 gainLoss += gain;
                 currentQuantity += i.UnitsRemaining;
