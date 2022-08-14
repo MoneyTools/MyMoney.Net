@@ -1,24 +1,18 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
+﻿using LovettSoftware.DgmlTestModeling;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading;
-using Walkabout.Tests.Wrappers;
-using Walkabout.Tests.Interop;
-using System.Windows.Automation;
-using Walkabout.Data;
-using LovettSoftware.DgmlTestModeling;
 using System.Windows;
-using System.Windows.Media.Imaging;
+using System.Windows.Automation;
 using System.Windows.Media;
-using Walkabout.Setup;
-using Walkabout.Dialogs;
-using System.Xml.Linq;
-using System.Runtime.Serialization;
-using System.Globalization;
+using System.Windows.Media.Imaging;
+using Walkabout.Data;
+using Walkabout.Tests.Interop;
+using Walkabout.Tests.Wrappers;
 
 namespace Walkabout.Tests
 {
@@ -756,8 +750,7 @@ namespace Walkabout.Tests
 
         void OpenAttachmentDialog()
         {
-            AssertSelectedTransaction();
-
+            AssertSelectedTransaction();            
             attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
         }
 
@@ -1094,18 +1087,19 @@ to make sure attachments work.");
                 FocusTransactionView();
             }
 
-            // caller is about to operate on this selection, so make sure it's up to date!
+            // caller is about to operate on this selection, so make sure it's up to date!            
+            this.selectedTransaction = transactions.Selection;
             if (this.selectedTransaction == null)
             {
-                this.selectedTransaction = transactions.Selection;
+                SelectTransaction();
                 if (this.selectedTransaction == null)
                 {
                     throw new Exception("No selected transaction");
                 }
-                if (this.editedValues == null)
-                {
-                    this.editedValues = new TransactionDetails();
-                }
+            }
+            if (this.editedValues == null)
+            {
+                this.editedValues = new TransactionDetails();
             }
         }
 
