@@ -224,6 +224,7 @@
     <Compile Include="StockQuotes\AlphaVantage.cs" />
     <Compile Include="StockQuotes\IEXCloud.cs" />
     <Compile Include="StockQuotes\IStockQuoteService.cs" />
+    <Compile Include="StockQuotes\StockQuoteCache.cs" />
     <Compile Include="StockQuotes\StockQuoteThrottle.cs" />
     <Compile Include="Utilities\AnimatedMessage.cs" />
     <Compile Include="Utilities\AppTheme.cs" />

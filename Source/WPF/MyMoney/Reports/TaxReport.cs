@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -51,7 +52,7 @@ namespace Walkabout.Reports
             this.endDate = this.startDate.AddYears(1);
         }
 
-        public override void Generate(IReportWriter writer)
+        public override Task Generate(IReportWriter writer)
         {
             FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
             writer.WriteHeading("Tax Report For ");
@@ -160,6 +161,7 @@ namespace Walkabout.Reports
 
             FlowDocument document = view.DocumentViewer.Document;
             document.Blocks.InsertAfter(document.Blocks.FirstBlock, new BlockUIContainer(CreateExportTxfButton()));
+            return Task.CompletedTask;
         }
 
         void WriteHeaders(IReportWriter writer)
@@ -207,7 +209,7 @@ namespace Walkabout.Reports
         {
             CheckBox checkBox = (CheckBox)sender;
             this.capitalGainsOnly = checkBox.IsChecked == true;
-            view.Generate(this);
+            _ = view.Generate(this);
         }
 
         private void OnConsolidateComboSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -215,7 +217,7 @@ namespace Walkabout.Reports
             ComboBox box = (ComboBox)sender;
             int index = (int)box.SelectedIndex;
             this.consolidateOnDateSold = index == 1;
-            view.Generate(this);
+            _ = view.Generate(this);
         }
 
         private void OnYearChanged(object sender, SelectionChangedEventArgs e)
@@ -229,7 +231,7 @@ namespace Walkabout.Reports
             if (int.TryParse(label, out int year))
             {
                 SetStartDate(year);
-                view.Generate(this);
+                _ = view.Generate(this);
             }
         }
 

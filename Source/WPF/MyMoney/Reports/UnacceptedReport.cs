@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 
@@ -16,7 +17,7 @@ namespace Walkabout.Reports
             this.myMoney = money;
         }
 
-        public override void Generate(IReportWriter writer)
+        public override Task Generate(IReportWriter writer)
         {
             writer.WriteHeading("Unaccepted Transactions");
 
@@ -69,6 +70,7 @@ namespace Walkabout.Reports
             writer.EndTable();
 
             writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
+            return Task.CompletedTask;
         }
 
         private static void WriteRow(IReportWriter writer, string col1, string col2, string col3)

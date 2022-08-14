@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -48,25 +49,42 @@ namespace Walkabout.Views
             ButtonStrip.Children.Add(control);
         }
 
-        public void Generate(IReport report)
+        bool generatingReport;
+
+        public async Task Generate(IReport report)
         {
+            if (!generatingReport)
+            {
+                generatingReport = true;
+                try
+                {
+                    await InternalGenerate(report);
+                }
+                finally
+                {
+                    generatingReport = false;
+                }
+            }
+        }
+
+        private async Task InternalGenerate(IReport report)
+        { 
             this.report = report;
             this.Viewer.Document.Blocks.Clear();
+            this.writer = null;
+            ResetExpandAllToggleButton();
 
             Paragraph p = new Paragraph();
             p.Inlines.Add(new Run() { Text = "Loading..." });
             p.FontSize = 18;
             this.Viewer.Document.Blocks.Add(p);
 
-            this.Viewer.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-                FlowDocumentReportWriter writer = new FlowDocumentReportWriter(this.Viewer.Document, pixelsPerDip);
-                report.Generate(writer);
-                this.writer = writer;
-                ResetExpandAllToggleButton();
-                OnAfterViewStateChanged();
-            }), DispatcherPriority.ContextIdle);
+            var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            FlowDocumentReportWriter writer = new FlowDocumentReportWriter(this.Viewer.Document, pixelsPerDip);
+            await report.Generate(writer);
+            this.writer = writer;
+            ResetExpandAllToggleButton();
+            OnAfterViewStateChanged();
         }
 
         public FlowDocumentScrollViewer DocumentViewer
@@ -141,7 +159,7 @@ namespace Walkabout.Views
             { 
                 if (value is ReportViewState r)
                 {
-                    this.Generate(r.report);
+                    _ = this.Generate(r.report);
                 }
             }
         }
@@ -245,7 +263,7 @@ namespace Walkabout.Views
         {
             if (resetting) return;
             ToggleExpandAll.ToolTip = "Hide Details";
-            writer.ExpandAll();
+            if (writer != null) writer.ExpandAll();
             ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "CollapseAllIcon");
         }
 
@@ -253,13 +271,13 @@ namespace Walkabout.Views
         {
             if (resetting) return;
             ToggleExpandAll.ToolTip = "Show Details";
-            writer.CollapseAll();
+            if (writer != null) writer.CollapseAll();
             ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
         }
         void ResetExpandAllToggleButton()
         {
             resetting = true;
-            this.ToggleExpandAll.IsEnabled = writer.CanExpandCollapse;
+            this.ToggleExpandAll.IsEnabled = (writer != null) ? writer.CanExpandCollapse : false;
             this.ToggleExpandAll.ToolTip = "Show Details";
             this.ToggleExpandAll.IsChecked = false;
             ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");

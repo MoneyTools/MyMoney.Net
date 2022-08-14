@@ -1,11 +1,12 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 
 namespace Walkabout.Interfaces.Reports
 {
     public interface IReport
     {
-        void Generate(IReportWriter writer);
+        Task Generate(IReportWriter writer);
 
         void Export(string filename);
     }

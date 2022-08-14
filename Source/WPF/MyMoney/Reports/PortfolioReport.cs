@@ -1,6 +1,7 @@
 ﻿using LovettSoftware.Charts;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -11,6 +12,7 @@ using Walkabout.Charts;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
+using Walkabout.StockQuotes;
 
 namespace Walkabout.Reports
 {
@@ -26,6 +28,7 @@ namespace Walkabout.Reports
         Paragraph mouseDownPara;
         Point downPos;
         DateTime reportDate;
+        StockQuoteCache cache;
         SecurityGroup selectedGroup;
         Random rand = new Random(Environment.TickCount);
 
@@ -44,6 +47,7 @@ namespace Walkabout.Reports
             this.view = view;
             this.reportDate = asOfDate;
             this.selectedGroup = g;
+            this.cache = (StockQuoteCache)serviceProvider.GetService(typeof(StockQuoteCache));
             view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
             view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
             view.Unloaded += (s, e) =>
@@ -114,7 +118,7 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        public override void Generate(IReportWriter writer)
+        public override Task Generate(IReportWriter writer)
         {
             flowwriter = writer as FlowDocumentReportWriter;
 
@@ -165,13 +169,13 @@ namespace Walkabout.Reports
             {
                 if (this.selectedGroup != null)
                 {
-                    WriteSummary(writer, data, TaxStatus.Taxable, null, null, false);
+                    WriteSummary(writer, data, this.selectedGroup.TaxStatus, null, null, false);
                 }
                 else
                 {
-                    WriteSummary(writer, data, TaxStatus.TaxFree, "Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxFree && IsInvestmentAccount(a); }), true);
-                    WriteSummary(writer, data, TaxStatus.TaxDeferred, "Tax Deferred ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && IsInvestmentAccount(a);  }), true);
-                    WriteSummary(writer, data, TaxStatus.Taxable, "Taxable ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxDeferred && !a.IsTaxFree && IsInvestmentAccount(a); }), true);
+                    WriteSummary(writer, data, TaxStatus.TaxFree, "Tax Free ", new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a); }), true);
+                    WriteSummary(writer, data, TaxStatus.TaxDeferred, "Tax Deferred ", new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a);  }), true);
+                    WriteSummary(writer, data, TaxStatus.Taxable, "Taxable ", new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && IsInvestmentAccount(a); }), true);
                 }
             }
             else
@@ -208,7 +212,7 @@ namespace Walkabout.Reports
 
             if (this.selectedGroup != null)
             {
-                WriteDetails(writer, "", this.selectedGroup);
+                WriteDetails(writer, this.selectedGroup.TaxStatus, this.selectedGroup);
             }
             else
             {
@@ -225,15 +229,16 @@ namespace Walkabout.Reports
 
                 if (account == null)
                 {
-                    WriteDetails(writer, "Tax Free ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxFree && IsInvestmentAccount(a);}));
-                    WriteDetails(writer, "Tax Deferred ", new Predicate<Account>((a) => { return !a.IsClosed && a.IsTaxDeferred && IsInvestmentAccount(a); }));
-                    WriteDetails(writer, "Taxable ", new Predicate<Account>((a) => { return !a.IsClosed && !a.IsTaxFree && !a.IsTaxDeferred && IsInvestmentAccount(a); }));
+                    WriteDetails(writer, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a);}));
+                    WriteDetails(writer, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a); }));
+                    WriteDetails(writer, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxFree && !a.IsTaxDeferred && IsInvestmentAccount(a); }));
                 }
                 else
                 {
-                    WriteDetails(writer, "", new Predicate<Account>((a) => { return a == account; }));
+                    WriteDetails(writer, TaxStatus.Any, new Predicate<Account>((a) => { return a == account; }));
                 }
             }
+            return Task.CompletedTask;
         }
 
         bool IsInvestmentAccount(Account a)
@@ -285,7 +290,7 @@ namespace Walkabout.Reports
                 // as a gain or loss, it will be accounted for under MarketValue, but it will be misleading as a "Gain".  So we tweak the value here.
                 decimal gain = (i.CostBasisPerUnit == 0) ? 0 : i.GainLoss;
 
-                marketValue += i.MarketValue;
+                marketValue += i.FuturesFactor * i.UnitsRemaining * this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
                 costBasis += i.TotalCostBasis;
                 gainLoss += gain;
                 currentQuantity += i.UnitsRemaining;
@@ -311,7 +316,8 @@ namespace Walkabout.Reports
                 // for tax reporting we need to report the real GainLoss, but if CostBasis is zero then it doesn't make sense to report something
                 // as a gain or loss, it will be accounted for under MarketValue, but it will be misleading as a "Gain".  So we tweak the value here.
                 decimal gain = (i.CostBasisPerUnit == 0) ? 0 : i.GainLoss;
-                WriteRow(writer, false, false, FontWeights.Normal, i.DatePurchased, i.Security.Name, i.Security.Name, i.UnitsRemaining, i.CostBasisPerUnit, i.MarketValue, i.Security.Price, i.TotalCostBasis, gain);
+                marketValue = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                WriteRow(writer, false, false, FontWeights.Normal, i.DatePurchased, i.Security.Name, i.Security.Name, i.UnitsRemaining, i.CostBasisPerUnit, marketValue, i.Security.Price, i.TotalCostBasis, gain);
             }
 
             writer.EndExpandableRowGroup();
@@ -333,22 +339,40 @@ namespace Walkabout.Reports
             }
         }
 
-        private void WriteDetails(IReportWriter writer, string prefix, Predicate<Account> filter)
+        private void WriteDetails(IReportWriter writer, TaxStatus status, Predicate<Account> filter)
         {
             // compute summary
-            foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(filter))
+            foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(status, filter))
             {
-                WriteDetails(writer, prefix, securityTypeGroup);
+                WriteDetails(writer, status, securityTypeGroup);
             }
         }
 
-        private void WriteDetails(IReportWriter writer, string prefix, SecurityGroup securityTypeGroup)
+        private void WriteDetails(IReportWriter writer, TaxStatus status, SecurityGroup securityTypeGroup)
         {
             decimal marketValue = 0;
             decimal costBasis = 0;
             decimal gainLoss = 0;
             bool foundSecuritiesInGroup = false;
             SecurityType st = securityTypeGroup.Type;
+
+            string prefix = "";
+            switch (status)
+            {
+                case TaxStatus.Taxable:
+                    prefix = "Taxable ";
+                    break;
+                case TaxStatus.TaxDeferred:
+                    prefix = "Tax Deferred ";
+                    break;
+                case TaxStatus.TaxFree:
+                    prefix = "Tax Free ";
+                    break;
+                case TaxStatus.Any:
+                    break;
+                default:
+                    break;
+            }
 
             string caption = prefix + Security.GetSecurityTypeCaption(st);
 
@@ -417,7 +441,7 @@ namespace Walkabout.Reports
             }
             else
             {
-                groups = calc.GetHoldingsBySecurityType(filter);
+                groups = calc.GetHoldingsBySecurityType(taxStatus, filter);
             }
 
             // compute summary
@@ -432,7 +456,7 @@ namespace Walkabout.Reports
                 {
                     if (i.UnitsRemaining > 0)
                     {
-                        marketValue += i.MarketValue;
+                        marketValue += i.FuturesFactor * i.UnitsRemaining * this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
                         gainLoss += i.GainLoss;
                         count++;
                     }

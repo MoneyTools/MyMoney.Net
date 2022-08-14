@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -198,10 +199,10 @@ namespace Walkabout.Reports
 
         public void Regenerate()
         {
-            view.Generate(this);
+            _ = view.Generate(this);
         }
 
-        public override void Generate(IReportWriter writer)
+        public override Task Generate(IReportWriter writer)
         {            
             byCategory = new Dictionary<Category, CashFlowColumns>();
 
@@ -319,6 +320,7 @@ namespace Walkabout.Reports
 
             writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
 
+            return Task.CompletedTask;
         }
 
         private void OnNextClick(object sender, RoutedEventArgs e)

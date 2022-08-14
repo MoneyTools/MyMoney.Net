@@ -42,6 +42,7 @@
                             <Image x:Name="ToggleExpandAllImage" Width="16" Height="16" Source="{DynamicResource ExpandAllIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" 
                                    />
                         </ToggleButton>
+
                     </StackPanel>
 
                     <StackPanel x:Name="SearchWidgetArea"  Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,2,2,2" VerticalAlignment="Center" >

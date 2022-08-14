@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -79,9 +80,9 @@ namespace Walkabout.Setup
             return false;
         }
 
-        public override void Generate(IReportWriter writer) 
+        public override Task Generate(IReportWriter writer) 
         {
-            if (doc == null) return;
+            if (doc == null) return Task.CompletedTask;
 
             var document = view.DocumentViewer.Document;
 
@@ -134,6 +135,7 @@ namespace Walkabout.Setup
             {
                 document.Blocks.InsertAfter(document.Blocks.FirstBlock, new BlockUIContainer(CreateInstallButton()));
             }
+            return Task.CompletedTask;
         }
 
         private Button CreateInstallButton()
