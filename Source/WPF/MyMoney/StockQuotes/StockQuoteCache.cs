@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -144,7 +145,7 @@ namespace Walkabout.StockQuotes
 
         internal async Task LoadHistory(Security s)
         {
-            if (!quoteIndex.TryGetValue(s, out StockQuoteIndex index))
+            if (s != null && !quoteIndex.TryGetValue(s, out StockQuoteIndex index))
             {
                 StockQuoteHistory history = null;
                 if (!string.IsNullOrEmpty(s.Symbol))

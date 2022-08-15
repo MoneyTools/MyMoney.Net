@@ -314,14 +314,11 @@ namespace Walkabout.Reports
                 SecurityType stype = securityTypeGroup.Type;
                 decimal sb = 0;
                 byType.TryGetValue(stype, out sb);
-                if (securityTypeGroup.Security != null)
-                {
-                    // load the Stock Quote history from the download log. 
-                    await this.cache.LoadHistory(securityTypeGroup.Security);
-                } 
 
                 foreach (SecurityPurchase sp in securityTypeGroup.Purchases)
-                {                    
+                {
+                    // load the Stock Quote history from the download log. 
+                    await this.cache.LoadHistory(sp.Security);
                     sb += sp.FuturesFactor * sp.UnitsRemaining * this.cache.GetSecurityMarketPrice(this.reportDate, sp.Security);
                 }
                 byType[stype] = sb;

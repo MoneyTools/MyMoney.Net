@@ -8203,13 +8203,36 @@ namespace Walkabout.Data
             }
         }
 
+        public override int GetHashCode()
+        {
+            int rc = (!string.IsNullOrEmpty(this.Name) ? this.Name.GetHashCode() : 0);
+            if (!string.IsNullOrEmpty(this.Symbol))
+            {
+                rc += this.symbol.GetHashCode();
+            }
+            return rc;
+        }
+
         public static int Compare(Security a, Security b)
         {
             if (a == null && b != null) return -1;
             if (a != null && b == null) return 1;
             if (a == null && b == null) return 0;
+            if (a == b) return 0;
             string n = a.Name;
             string m = b.Name;
+            if (n == null && m != null) return -1;
+            if (n != null && m == null) return 1;
+            if (n == null && m == null) return 0;
+            
+            var rc = n.CompareTo(m);
+            if (rc != 0)
+            {
+                return rc;
+            }
+
+            n = a.Symbol;
+            m = b.Symbol;
             if (n == null && m != null) return -1;
             if (n != null && m == null) return 1;
             if (n == null && m == null) return 0;

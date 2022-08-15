@@ -335,10 +335,10 @@ namespace Walkabout.Reports
                 marketValue += value;
                 decimal gain = (i.CostBasisPerUnit == 0) ? 0 : value - i.TotalCostBasis;
                 gainLoss += gain;
-                currentQuantity += i.UnitsRemaining;
+                currentQuantity += i.UnitsRemaining.RoundToNearestCent();
             }
 
-            if (current == null)
+            if (current == null || currentQuantity == 0)
             {
                 return;
             }
@@ -506,7 +506,7 @@ namespace Walkabout.Reports
                 bool hasPrice = false;
                 foreach (SecurityPurchase i in securityGroup.Purchases)
                 {
-                    if (i.UnitsRemaining > 0)
+                    if (i.UnitsRemaining.RoundToNearestCent() > 0)
                     {
                         if (!hasPrice || (i.Security != previous))
                         {

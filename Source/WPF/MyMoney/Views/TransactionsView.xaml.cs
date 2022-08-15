@@ -1007,7 +1007,8 @@ namespace Walkabout.Views
                 }
 
                 // Note: this must be DispatcherPriority.Background otherwise Rebalance() happens too soon and
-                // doesn't see the new value!
+                // doesn't see the new value!  BUGBUG: We should optimize this and only trigger rebalance if 
+                // a field that affects the balance was actually changed.
                 this.Dispatcher.BeginInvoke(new Action(Rebalance), DispatcherPriority.Background);
 
                 if (committed.AmountError)
