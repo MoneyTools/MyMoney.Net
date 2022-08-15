@@ -1942,7 +1942,7 @@ namespace Walkabout.Data
                 {
                     if (a.Type == AccountType.Loan)
                     {
-
+                        throw new Exception("Do not use this method for Loan accounts");
                     }
                     decimal balance = a.OpeningBalance;
                     foreach (Transaction t in this.Transactions.GetTransactionsFrom(a))
