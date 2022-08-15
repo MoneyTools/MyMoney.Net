@@ -2850,7 +2850,7 @@ namespace Walkabout
                         TabHistory.Visibility = System.Windows.Visibility.Collapsed;
 
                         LoansView loandView = CurrentView as LoansView;
-                        this.LoanChart.LoanPayments = loandView.LoanPayements;
+                        this.LoanChart.LoanPayments = loandView.LoanPayments;
                     }
                     else if (CurrentView is RentSummaryView)
                     {

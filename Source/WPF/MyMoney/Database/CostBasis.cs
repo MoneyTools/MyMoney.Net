@@ -534,6 +534,10 @@ namespace Walkabout.Data
                         {
                             group = new SecurityGroup() { Date = this.toDate, Security = sp.Security, Type = type, Purchases = new List<SecurityPurchase>(), TaxStatus = status };
                             result[type] = group;
+                        } 
+                        else if (group.Security != sp.Security)
+                        {
+                            group.Security = null; // is a multisecurity group.
                         }
                         group.Purchases.Add(sp);
                     }

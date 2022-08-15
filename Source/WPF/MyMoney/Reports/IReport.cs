@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Walkabout.Interfaces.Reports
@@ -32,6 +33,7 @@ namespace Walkabout.Interfaces.Reports
         void StartCell(int rowSpan, int colSpan);
         void WriteParagraph(string text);
         void WriteParagraph(string text, FontStyle style, FontWeight weight, Brush foreground);
+        void WriteHyperlink(string text, FontStyle style, FontWeight weight, MouseButtonEventHandler clickHandler);
         void WriteNumber(string number);
         void WriteNumber(string number, FontStyle style, FontWeight weight, Brush foreground);
         void EndCell();

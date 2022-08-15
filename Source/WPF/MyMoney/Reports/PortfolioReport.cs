@@ -14,6 +14,7 @@ using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
+using Walkabout.Utilities;
 
 namespace Walkabout.Reports
 {
@@ -128,7 +129,7 @@ namespace Walkabout.Reports
             string heading = "Investment Portfolio Summary";
             if (this.selectedGroup != null)
             {
-                heading = "Investment Portfolio - " + this.selectedGroup.Type;
+                heading = "Investment Portfolio - " + GetTaxStatusPrefix(this.selectedGroup.TaxStatus) + GetSecurityTypeCaption(this.selectedGroup.Type);
             }
             if (this.account != null)
             {
@@ -170,18 +171,18 @@ namespace Walkabout.Reports
             {
                 if (this.selectedGroup != null)
                 {
-                    WriteSummary(writer, data, this.selectedGroup.TaxStatus, null, null, false);
+                    WriteSummary(writer, data, this.selectedGroup.TaxStatus, null, false);
                 }
                 else
                 {
-                    WriteSummary(writer, data, TaxStatus.TaxFree, "Tax Free ", new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a); }), true);
-                    WriteSummary(writer, data, TaxStatus.TaxDeferred, "Tax Deferred ", new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a);  }), true);
-                    WriteSummary(writer, data, TaxStatus.Taxable, "Taxable ", new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && IsInvestmentAccount(a); }), true);
+                    WriteSummary(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a); }), true);
+                    WriteSummary(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a);  }), true);
+                    WriteSummary(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && IsInvestmentAccount(a); }), true);
                 }
             }
             else
             {
-                WriteSummary(writer, data, account.TaxStatus, "", new Predicate<Account>((a) => { return a == account; }), false);
+                WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == account; }), false);
             }
 
             WriteHeaderRow(writer, "Total", totalMarketValue.ToString("C"), totalGainLoss.ToString("C"));
@@ -235,10 +236,45 @@ namespace Walkabout.Reports
                 }
                 else
                 {
-                    WriteDetails(writer, TaxStatus.Any, new Predicate<Account>((a) => { return a == account; }));
+                    WriteDetails(writer, account.TaxStatus, new Predicate<Account>((a) => { return a == account; }));
                 }
             }
             return Task.CompletedTask;
+        }
+
+        private string GetSecurityTypeCaption(SecurityType st)
+        {
+            string caption = "";
+            switch (st)
+            {
+                case SecurityType.Bond:
+                    caption = "Bonds";
+                    break;
+                case SecurityType.MutualFund:
+                    caption = "Mutual Funds";
+                    break;
+                case SecurityType.Equity:
+                    caption = "Equities";
+                    break;
+                case SecurityType.MoneyMarket:
+                    caption = "Money Market";
+                    break;
+                case SecurityType.ETF:
+                    caption = "Exchange Traded Funds";
+                    break;
+                case SecurityType.Reit:
+                    caption = "Reits";
+                    break;
+                case SecurityType.Futures:
+                    caption = "Futures";
+                    break;
+                case SecurityType.Private:
+                    caption = "Private Investments";
+                    break;
+                default:
+                    break;
+            }
+            return caption;
         }
 
         bool IsInvestmentAccount(Account a)
@@ -280,15 +316,17 @@ namespace Walkabout.Reports
             decimal price = 0;
             bool priceFound = false;
             Security current = null;
+            Security previous = null;
 
             // compute the totals for the group header row.
             foreach (SecurityPurchase i in bySecurity)
             {
                 current = i.Security;
-                if (!priceFound)
+                if (!priceFound || (current != previous))
                 {
                     priceFound = true;
                     price = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                    previous = current;
                 }
                 costBasis += i.TotalCostBasis;
                 // for tax reporting we need to report the real GainLoss, but if CostBasis is zero then it doesn't make sense to report something
@@ -353,6 +391,28 @@ namespace Walkabout.Reports
             }
         }
 
+        private string GetTaxStatusPrefix(TaxStatus status)
+        {
+            string label = "";
+            switch (status)
+            {
+                case TaxStatus.Taxable:
+                    label = "Taxable ";
+                    break;
+                case TaxStatus.TaxDeferred:
+                    label = "Tax Deferred ";
+                    break;
+                case TaxStatus.TaxFree:
+                    label = "Tax Free ";
+                    break;
+                case TaxStatus.Any:
+                    break;
+                default:
+                    break;
+            }
+            return label;
+        }
+
         private void WriteDetails(IReportWriter writer, TaxStatus status, SecurityGroup securityTypeGroup)
         {
             decimal marketValue = 0;
@@ -361,24 +421,7 @@ namespace Walkabout.Reports
             bool foundSecuritiesInGroup = false;
             SecurityType st = securityTypeGroup.Type;
 
-            string prefix = "";
-            switch (status)
-            {
-                case TaxStatus.Taxable:
-                    prefix = "Taxable ";
-                    break;
-                case TaxStatus.TaxDeferred:
-                    prefix = "Tax Deferred ";
-                    break;
-                case TaxStatus.TaxFree:
-                    prefix = "Tax Free ";
-                    break;
-                case TaxStatus.Any:
-                    break;
-                default:
-                    break;
-            }
-
+            string prefix = GetTaxStatusPrefix(status);
             string caption = prefix + Security.GetSecurityTypeCaption(st);
 
             IList<SecurityGroup> groups = calc.RegroupBySecurity(securityTypeGroup);
@@ -431,9 +474,10 @@ namespace Walkabout.Reports
         }
 
 
-        private void WriteSummary(IReportWriter writer, IList<ChartDataValue> data, TaxStatus taxStatus, string prefix, Predicate<Account> filter, bool subtotal)
+        private void WriteSummary(IReportWriter writer, IList<ChartDataValue> data, TaxStatus taxStatus, Predicate<Account> filter, bool subtotal)
         {
             bool wroteSectionHeader = false;
+            string prefix = GetTaxStatusPrefix(taxStatus);
             string caption = prefix + "Investments";
             decimal totalSectionMarketValue = 0;
             decimal totalSectionGainValue = 0;
@@ -458,15 +502,17 @@ namespace Walkabout.Reports
                 SecurityType st = securityGroup.Type;
                 int count = 0;
                 decimal price = 0;
+                Security previous = null;
                 bool hasPrice = false;
                 foreach (SecurityPurchase i in securityGroup.Purchases)
                 {
                     if (i.UnitsRemaining > 0)
                     {
-                        if (!hasPrice)
+                        if (!hasPrice || (i.Security != previous))
                         {
                             hasPrice = true;
                             price = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                            previous = i.Security;
                         }
                         var value = i.FuturesFactor * i.UnitsRemaining * price;
                         marketValue += value;
@@ -486,7 +532,7 @@ namespace Walkabout.Reports
                     }
 
                     var color = GetRandomColor();
-                    if (securityGroup.Security != null)
+                    if (securityGroup.Security != null && this.selectedGroup != null)
                     {
                         caption = securityGroup.Security.Name;
                     }
@@ -494,18 +540,16 @@ namespace Walkabout.Reports
                     {
                         caption = prefix + Security.GetSecurityTypeCaption(st);
                     }
-                    if (marketValue > 0)
+                    
+                    data.Add(new ChartDataValue()
                     {
-                        data.Add(new ChartDataValue()
-                        {
-                            Value = (double)RoundToNearestCent(marketValue),
-                            Label = caption,
-                            Color = color,
-                            UserData = securityGroup
-                        });
-                    }
+                        Value = (double)Math.Abs(marketValue).RoundToNearestCent(),
+                        Label = caption,
+                        Color = color,
+                        UserData = securityGroup
+                    });
 
-                    if (securityGroup.Security == null)
+                    if (securityGroup.Security == null && this.selectedGroup != null)
                     {
                         caption = "    " + Security.GetSecurityTypeCaption(st);
                     }
@@ -524,11 +568,6 @@ namespace Walkabout.Reports
 
             totalMarketValue += totalSectionMarketValue;
             totalGainLoss += totalSectionGainValue;
-        }
-
-        private decimal RoundToNearestCent(decimal x)
-        {
-            return Math.Round(x * 100) / 100;
         }
 
         private static void WriteRowHeaders(IReportWriter writer)
@@ -601,17 +640,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteParagraph(description, FontStyles.Normal, weight, null);
-            if (!string.IsNullOrEmpty(descriptionUrl))
-            {
-                FlowDocumentReportWriter fw = (FlowDocumentReportWriter)writer;
-                Paragraph p = fw.CurrentParagraph;
-                p.Tag = descriptionUrl;
-                p.PreviewMouseLeftButtonDown += OnReportCellMouseDown;
-                p.Cursor = Cursors.Arrow;
-                //p.TextDecorations.Add(TextDecorations.Underline);
-                p.SetResourceReference(Paragraph.ForegroundProperty, "HyperlinkForeground");
-            }
+            writer.WriteHyperlink(description, FontStyles.Normal, weight, OnReportCellMouseDown);
             writer.EndCell();
 
             writer.StartCell();

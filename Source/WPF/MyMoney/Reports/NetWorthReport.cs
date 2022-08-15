@@ -28,6 +28,7 @@ namespace Walkabout.Reports
         DateTime reportDate;
         StockQuoteCache cache;
         bool generating;
+        bool filterOutClosedAccounts = true;
 
         public event EventHandler<SecurityGroup> DrillDown;
 
@@ -89,7 +90,7 @@ namespace Walkabout.Reports
                     bool hasTaxDeferred = false;
                     bool hasTaxFree = false;
 
-                    foreach (Account a in this.myMoney.Accounts.GetAccounts(false))
+                    foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
                     {
                         if (a.IsTaxDeferred) hasTaxDeferred = true;
                         if (a.IsTaxFree) hasTaxFree = true;
@@ -99,15 +100,15 @@ namespace Walkabout.Reports
 
                     // Non-investment Cash
                     var color = GetRandomColor();
-                    if (balance > 0) data.Add(new ChartDataValue() { Label = "Cash", Value = (double)balance, Color = color });
-                    WriteRow(writer, color, "Cash", balance);
+                    data.Add(new ChartDataValue() { Label = "Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
+                    WriteRow(writer, color, "Cash", balance, null);
                     totalBalance += balance;
 
                     // Investment Cash
                     balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => { return IsInvestmentAccount(a); });
                     color = GetRandomColor();
-                    if (balance > 0) data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance, Color = color });
-                    WriteRow(writer, color, "Investment Cash", balance);
+                    data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
+                    WriteRow(writer, color, "Investment Cash", balance, null);
                     totalBalance += balance;
 
                     bool hasNoneTypeTaxDeferred = false;
@@ -131,17 +132,35 @@ namespace Walkabout.Reports
 
                     balance = 0;
 
-                    WriteHeader(writer, "Other Assets");
+                    WriteHeader(writer, "Taxable Assets");
 
-                    foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
+                    foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
                     {
-                        if ((a.Type == AccountType.Loan || a.Type == AccountType.Asset) && a.Balance >= 0) // then this is a loan out to someone else...(so an asset)
+                        if (a.Type == AccountType.Loan)
                         {
-                            color = GetRandomColor();
+                            var loan = this.myMoney.GetOrCreateLoanAccount(a);
+                            if (loan != null && !loan.IsLiability)
+                            {
+                                balance = loan.ComputeLoanAccountBalance(this.reportDate);
+                                if (balance != 0)
+                                {
+                                    color = GetRandomColor();
+                                    data.Add(new ChartDataValue() { Label = a.Name, Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
+                                    WriteRow(writer, color, a.Name, balance, null);
+                                    totalBalance += balance;
+                                }
+                            }
+                        }
+                        else if (a.Type == AccountType.Asset)
+                        {
                             balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (x) => x == a);
-                            if (balance > 0) data.Add(new ChartDataValue() { Label = a.Name, Value = (double)balance, Color = color });
-                            WriteRow(writer, color, a.Name, balance);
-                            totalBalance += balance;
+                            if (balance != 0)
+                            {
+                                color = GetRandomColor();
+                                data.Add(new ChartDataValue() { Label = a.Name, Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
+                                WriteRow(writer, color, a.Name, balance, null);
+                                totalBalance += balance;
+                            }
                         }
                     }
 
@@ -155,16 +174,24 @@ namespace Walkabout.Reports
                     totalBalance += balance;
 
                     color = GetRandomColor();
-                    WriteRow(writer, color, "Credit", balance);
+                    WriteRow(writer, color, "Credit", balance, null);
                     balance = 0;
-                    foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
+                    foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
                     {
-                        if (a.Type == AccountType.Loan && a.BalanceNormalized < 0) // loan we owe, so a liability!
+                        if (a.Type == AccountType.Loan)
                         {
-                            balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (x) => x == a);
-                            color = GetRandomColor();
-                            WriteRow(writer, color, a.Name, balance);
-                            totalBalance += balance;
+                            var loan = this.myMoney.GetOrCreateLoanAccount(a);
+                            if (loan != null && loan.IsLiability)
+                            {
+                                balance = loan.ComputeLoanAccountBalance(this.reportDate);
+                                if (balance != 0)
+                                {
+                                    color = GetRandomColor();
+                                    data.Add(new ChartDataValue() { Label = a.Name, Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
+                                    WriteRow(writer, color, a.Name, balance, null);
+                                    totalBalance += balance;
+                                }
+                            }
                         }
                     }
 
@@ -227,6 +254,7 @@ namespace Walkabout.Reports
                 if (picker.SelectedDate.HasValue)
                 {
                     this.reportDate = picker.SelectedDate.Value;
+                    this.filterOutClosedAccounts = (this.reportDate >= DateTime.Today);
                     _ = view.Generate(this);
                 }
             }
@@ -234,7 +262,15 @@ namespace Walkabout.Reports
 
         private void OnPieSliceClicked(object sender, ChartDataValue e)
         {
-            if (e.UserData is SecurityGroup g && DrillDown != null)
+            if (e.UserData is SecurityGroup g)
+            {
+                OnSecurityGroupSelected(g);
+            }
+        }
+
+        private void OnSecurityGroupSelected(SecurityGroup g)
+        {
+            if (DrillDown != null)
             {
                 // now we can drill down and show a report on just this group of investments.
                 DrillDown(this, g);
@@ -303,25 +339,23 @@ namespace Walkabout.Reports
                     {
                         var color = GetRandomColor();
                         string caption = Security.GetSecurityTypeCaption(st);
-                        if (sb > 0)
+                        string tooltip = caption;
+                        if (!string.IsNullOrEmpty(prefix)) tooltip = prefix + " " + tooltip;
+                        SecurityGroup group = groupsByType[st];
+                        data.Add(new ChartDataValue() { Label = tooltip, Value = (double)Math.Abs(sb).RoundToNearestCent(), Color = color, UserData = group });
+                        if (st == SecurityType.None)
                         {
-                            string tooltip = caption;
-                            if (!string.IsNullOrEmpty(prefix)) tooltip = prefix + " " + tooltip;
-                            data.Add(new ChartDataValue() { Label = tooltip, Value = (double)sb, Color = color, UserData = groupsByType[st] });
-                            if (st == SecurityType.None)
-                            {
-                                hasNoneType = true;
-                                caption += "*";
-                            }
+                            hasNoneType = true;
+                            caption += "*";
                         }
-                        WriteRow(writer, color, caption, sb);
+                        WriteRow(writer, color, caption, sb, group);
                         balance += sb;
                     }
                 }
             }
             else
             {
-                WriteRow(writer, GetRandomColor(), "N/A", 0);
+                WriteRow(writer, GetRandomColor(), "N/A", 0, null);
             }
             return new Tuple<decimal, bool>(balance, hasNoneType);
         }
@@ -354,7 +388,7 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        private static void WriteRow(IReportWriter writer, Color color, string name, decimal balance)
+        private void WriteRow(IReportWriter writer, Color color, string name, decimal balance, SecurityGroup group)
         {
             writer.StartRow();
 
@@ -362,7 +396,14 @@ namespace Walkabout.Reports
             writer.WriteElement(new Rectangle() { Width = 20, Height = 16, Fill = new SolidColorBrush(color) });
             writer.EndCell();
             writer.StartCell();
-            writer.WriteParagraph(name);
+            if (group != null)
+            {
+                writer.WriteHyperlink(name, FontStyles.Normal, FontWeights.Normal, (s, e) => OnSecurityGroupSelected(group));
+            }
+            else
+            {
+                writer.WriteParagraph(name);
+            }
             writer.EndCell();
 
             writer.StartCell();
@@ -370,6 +411,11 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.EndRow();
+        }
+
+        private static void OnSelectRow(string name)
+        {
+            throw new NotImplementedException();
         }
 
         private Color GetRandomColor()

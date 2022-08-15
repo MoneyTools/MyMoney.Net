@@ -32,6 +32,8 @@ namespace Walkabout.Views
         }
 
         Account accountSelected;
+        Loan loanAccount;
+
 
         public Account AccountSelected
         {
@@ -46,21 +48,20 @@ namespace Walkabout.Views
                     FireBeforeViewStateChanged();
 
                     accountSelected = value;
-                    loanPayementsView = LoanPaymentAggregation.GetLoanPayementsAggregation(this.Money, this.accountSelected);
+                    loanAccount = this.Money.GetOrCreateLoanAccount(this.accountSelected);
+                    loanAccount.Rebalance();
                     var dataProvider = (CollectionViewSource)FindResource("ByYear");
-                    dataProvider.Source = loanPayementsView;
+                    dataProvider.Source = loanAccount.Payments;
 
                     FireAfterViewStateChanged();
                 }
             }
         }
 
-        ObservableCollection<LoanPaymentAggregation> loanPayementsView;
-
-        public ObservableCollection<LoanPaymentAggregation> LoanPayements
+        public ObservableCollection<LoanPaymentAggregation> LoanPayments
         {
-            get { return loanPayementsView; }
-            set { loanPayementsView = value; }
+            get { return loanAccount.Payments; }
+            set { loanAccount.Payments = value; }
         }
 
 
@@ -128,10 +129,9 @@ namespace Walkabout.Views
             }
         }
 
-
         public void Commit()
         {
-            //to-do
+            this.TheDataGrid.CommitEdit();
         }
 
         public string Caption
@@ -201,7 +201,7 @@ namespace Walkabout.Views
 
         string CreateStatusText()
         {
-            return loanPayementsView.Count.ToString() + " Payments";
+            return LoanPayments.Count.ToString() + " Payments";
         }
 
 
@@ -229,8 +229,6 @@ namespace Walkabout.Views
         public bool IsQueryPanelDisplayed { get; set; }
 
         #endregion
-
-
 
         private void TheDataGrid_InitializingNewItem(object sender, InitializingNewItemEventArgs e)
         {
@@ -266,9 +264,8 @@ namespace Walkabout.Views
         // Used for know what field on the row was edited
         //
         decimal editingPrincipalBefore;
-        decimal editingInterestlBefore;
+        decimal editingInterestBefore;
         decimal editingPercentageBefore;
-        decimal editingPayementBefore;
 
         LoanPaymentAggregation currentEditRow;
 
@@ -276,7 +273,6 @@ namespace Walkabout.Views
         {
             if (e.EditAction == DataGridEditAction.Commit)
             {
-
                 currentEditRow = e.Row.Item as LoanPaymentAggregation;
                 if (currentEditRow != null)
                 {
@@ -287,9 +283,8 @@ namespace Walkabout.Views
                     // that the user just edited
                     // so to work around this we cache the last value, send our self and event and we compare the before and after value
                     //
-                    this.editingPayementBefore = currentEditRow.Payment;
                     this.editingPrincipalBefore = currentEditRow.Principal;
-                    this.editingInterestlBefore = currentEditRow.Interest;
+                    this.editingInterestBefore = currentEditRow.Interest;
                     this.editingPercentageBefore = currentEditRow.Percentage;
 
                     // Note: this must be DispatcherPriority.Background otherwise Updated value are happens too soon and
@@ -307,8 +302,8 @@ namespace Walkabout.Views
                 this.currentEditRow.Interest = 0;
                 this.currentEditRow.Principal = 0;
 
-                //
-                foreach (LoanPaymentAggregation l in loanPayementsView)
+                // have to fix forwards from edited row subsequent
+                foreach (LoanPaymentAggregation l in this.LoanPayments)
                 {
                     if (l.Date >= this.currentEditRow.Date)
                     {
@@ -331,9 +326,9 @@ namespace Walkabout.Views
             }
             else
             {
+                // make sure the 3 values are consistent, depending on what was edited.
                 if (this.currentEditRow.Payment != 0)
                 {
-
                     // Priority 2) to the PRINCIPAL field
                     if (this.editingPrincipalBefore != this.currentEditRow.Principal)
                     {
@@ -342,7 +337,7 @@ namespace Walkabout.Views
                     else
                     {
                         // Priority 3) to the INTEREST field
-                        if (this.editingInterestlBefore != this.currentEditRow.Interest)
+                        if (this.editingInterestBefore != this.currentEditRow.Interest)
                         {
                             this.currentEditRow.Principal = this.currentEditRow.Payment - this.currentEditRow.Interest;
                         }
@@ -350,10 +345,8 @@ namespace Walkabout.Views
                 }
             }
 
-            LoanPaymentAggregation.CalculateTheBalances(Money, this.AccountSelected, loanPayementsView);
+            this.loanAccount.Rebalance();
         }
-
-
 
 
         private void TheDataGrid_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -422,7 +415,7 @@ namespace Walkabout.Views
         {
             Exporters exporter = new Exporters();
             exporter.SupportXml = false;
-            exporter.ExportPrompt(loanPayementsView.ToArray());
+            exporter.ExportPrompt(LoanPayments.ToArray());
         }
 
     }

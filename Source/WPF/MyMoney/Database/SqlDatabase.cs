@@ -1813,10 +1813,7 @@ namespace Walkabout.Data
             {
                 if (a.Type == AccountType.Loan)
                 {
-                    // This will have the side effect of updating the Account.Balance to the latest value
-                    a.BatchMode = true;
-                    LoanPaymentAggregation.GetLoanPayementsAggregation(money, a);
-                    a.BatchMode = false;
+                    money.GetOrCreateLoanAccount(a);
                 }
             }
         }

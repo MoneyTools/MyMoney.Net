@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using Walkabout.Interfaces.Reports;
+using Walkabout.Utilities;
 
 namespace Walkabout.Reports
 {
@@ -124,6 +127,15 @@ namespace Walkabout.Reports
                 section.Blocks.Add(current.paragraph);
             }
             return current.paragraph;
+        }
+
+        public void WriteHyperlink(string text, FontStyle style, FontWeight weight, MouseButtonEventHandler clickHandler)
+        {
+            Paragraph p = WriteParagraph(text, style, weight, AppTheme.Instance.GetThemedBrush("HyperlinkForeground"), null);
+            p.Tag = text;
+            p.PreviewMouseLeftButtonDown += clickHandler;
+            p.Cursor = Cursors.Arrow;
+            //p.TextDecorations.Add(TextDecorations.Underline);
         }
 
         public void WriteNumber(string number)
@@ -473,7 +485,14 @@ namespace Walkabout.Reports
                                 {
                                     Typeface tface = new Typeface(block.FontFamily, block.FontStyle, block.FontWeight, block.FontStretch);
                                     FormattedText ft = new FormattedText(text, System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, tface, block.FontSize, brush, this.pixelsPerDip);
-                                    maxWidths[i] = Math.Max(maxWidths[i], ft.Width + cell.Padding.Left + cell.Padding.Right);
+                                    if (i >= maxWidths.Count)
+                                    {
+                                        Debug.WriteLine($"Column index {i} is out of range!");
+                                    }
+                                    else
+                                    {
+                                        maxWidths[i] = Math.Max(maxWidths[i], ft.Width + cell.Padding.Left + cell.Padding.Right);
+                                    }
                                 }
                             }
                         }

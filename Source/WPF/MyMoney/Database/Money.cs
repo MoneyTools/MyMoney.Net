@@ -1934,12 +1934,16 @@ namespace Walkabout.Data
         /// <param name="filter">The account filter predicate to decide which accounts to include.</param>
         /// <returns>Cash balance</returns>
         public decimal GetCashBalanceNormalized(DateTime date, Predicate<Account> filter)
-        {
+        {            
             decimal cash = 0;
             foreach (Account a in this.Accounts.GetAccounts(false))
             {
                 if (filter(a))
                 {
+                    if (a.Type == AccountType.Loan)
+                    {
+
+                    }
                     decimal balance = a.OpeningBalance;
                     foreach (Transaction t in this.Transactions.GetTransactionsFrom(a))
                     {
@@ -8565,6 +8569,11 @@ namespace Walkabout.Data
             decimal daysDeltaPercent = 10,
             int recurringCount = 3)
         {
+            if (t.Amount == 0)
+            {
+                return false;
+            }
+
             // if we find prior transactions that match (or very closely match) that are on the 
             // same (or similar) TimeSpan then this might be a recurring transaction.
             TimeSpan span = t.Date - u.Date;
@@ -8645,6 +8654,7 @@ namespace Walkabout.Data
                 u != t && u.amount == t.amount && u.PayeeName == t.PayeeName &&
                 // they must be in the same account (which they may not be if on the multi-account view).
                 u.Account == t.Account &&
+                u.Number == t.Number &&
                 // ignore transfers for now
                 (t.Transfer == null && u.Transfer == null) &&
                 // if user has already marked both as not duplicates, then skip it.

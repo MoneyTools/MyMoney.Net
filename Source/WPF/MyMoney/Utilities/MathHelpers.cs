@@ -121,5 +121,11 @@ namespace Walkabout.Utilities
                 }
             }
         }
+
+        public static decimal RoundToNearestCent(this decimal x)
+        {
+            return Math.Round(x * 100) / 100;
+        }
+
     }
 }
