@@ -73,7 +73,7 @@ namespace Walkabout.Data
         /// <param name="toDate"></param>
         internal ObservableCollection<LoanPaymentAggregation> GetLoanPaymentsAggregation(MyMoney money)
         {
-            ObservableCollection<LoanPaymentAggregation> view = new ObservableCollection<LoanPaymentAggregation>();
+            List<LoanPaymentAggregation> view = new List<LoanPaymentAggregation>();
 
             int accountId = this.Account.Id;
             Category categoryPrincipal = this.Account.CategoryForPrincipal;
@@ -197,7 +197,7 @@ namespace Walkabout.Data
         }
 
         private static LoanPaymentAggregation AddPaymentIfMatchingCategoriesForPrincipalOrInterest(
-            ObservableCollection<LoanPaymentAggregation> view,
+            IList<LoanPaymentAggregation> view,
             Category category,
             Category categoryPrincipal,
             Category categoryInterest,
@@ -239,7 +239,7 @@ namespace Walkabout.Data
             }
 
 
-            LoanPaymentAggregation lp = GetLastEntry(view);
+            LoanPaymentAggregation lp = view.LastOrDefault();
 
             if (lp != null && lp.Transaction == t)
             {
@@ -308,17 +308,6 @@ namespace Walkabout.Data
             }
 
             return netAmount;
-        }
-
-
-        static LoanPaymentAggregation GetLastEntry(ObservableCollection<LoanPaymentAggregation> view)
-        {
-            if (view == null || view.Count == 0)
-            {
-                return null;
-            }
-
-            return view.Last();
         }
     }
 
