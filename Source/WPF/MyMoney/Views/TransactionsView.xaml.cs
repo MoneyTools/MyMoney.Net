@@ -3169,26 +3169,41 @@ namespace Walkabout.Views
                     var args = item;
                     while (args != null)
                     {
-                        Security s = args.Item as Security;
-                        Transaction t = args.Item as Transaction;
-                        Investment i = args.Item as Investment;
-                        Account a = args.Item as Account;
-                        Category c = args.Item as Category;
-
-                        if (c != null)
+                        if (args.Item is Transaction t)
                         {
-                            if (args.Name == "Label" || args.Name == "Color" || args.ChangeType == ChangeType.Deleted)
+                            if (t != null && tc != null)
                             {
-                                // then any transactions using this category need to be refreshed..
-                                refresh = true;
+                                if (t.Account == this.ActiveAccount || this.ActiveAccount == null)
+                                {
+                                    if ((args.ChangeType == ChangeType.Deleted || args.ChangeType == ChangeType.Inserted))
+                                    {
+                                        // optimization tor TransactionCollection
+                                        if (args.ChangeSource != null && args.ChangeSource.GetType() == typeof(TransactionCollection))
+                                        {
+                                            // TransactionCollection will already have taken care of inserts and deletes, so we
+                                            // can optimize this case (refresh is slow).
+                                            rebalance = t.Amount != 0;
+                                        }
+                                        else
+                                        {
+                                            // change came from somewhere else (like OFX import) so need a full refresh.
+                                            refresh = true;
+                                            rebalance = true;
+                                        }
+                                    }
+                                    else if (args.ChangeType == ChangeType.Changed && args.Name == "Amount")
+                                    {
+                                        rebalance = true;
+                                    }
+                                }
                             }
                         }
-
-                        if (s != null && !string.IsNullOrEmpty(s.Name))
+                        else if (args.Item is Security s)
                         {
                             // ok, this might be the GetStock auto-update, see if there is anything to copy to 
                             // uncommitted payee.
-                            if (this.SelectedTransaction != null && this.SelectedTransaction.Investment != null &&
+                            if (!string.IsNullOrEmpty(s.Name) && 
+                                this.SelectedTransaction != null && this.SelectedTransaction.Investment != null &&
                                 this.SelectedTransaction.Investment.Security == s)
                             {
                                 string payee = GetUncomittedPayee();
@@ -3198,59 +3213,49 @@ namespace Walkabout.Views
                                 }
                             }
                         }
-
-                        // the "NewPlaceHolder" item may have just been changed into a real Transaction object.
-                        // ChangeType.Changed would have already been handled by the INotifyPropertyChanged events, what we really care
-                        // about here are transactions being inserted or removed which can happen if you do a background 'download'
-                        // for example.
-                        // These two change types are not structural, so the normal data binding update of the UI should be enough.
-                        else if (args.ChangeType != ChangeType.Rebalanced && args.ChangeType != ChangeType.TransientChanged)
+                        else if (args.Item is Category c)
                         {
-                            if (t != null && tc != null)
+                            if (args.Name == "Label" || args.Name == "Color" || args.ChangeType == ChangeType.Deleted)
                             {
-                                if (t.Account == this.ActiveAccount || this.ActiveAccount == null)
+                                // then any transactions using this category need to be refreshed..
+                                refresh = true;
+                            }
+                        }
+                        else if (args.Item is Account a)
+                        {
+                            // the "NewPlaceHolder" item may have just been changed into a real Transaction object.
+                            // ChangeType.Changed would have already been handled by the INotifyPropertyChanged events, what we really care
+                            // about here are transactions being inserted or removed which can happen if you do a background 'download'
+                            // for example.
+                            // These two change types are not structural, so the normal data binding update of the UI should be enough.
+                            if (args.ChangeType != ChangeType.Rebalanced && args.ChangeType != ChangeType.TransientChanged)
+                            {
+                                if (a != null && a == this.ActiveAccount)
                                 {
-                                    if (args.ChangeType == ChangeType.Deleted || args.ChangeType == ChangeType.Inserted)
+                                    if (args.ChangeType == ChangeType.Deleted)
                                     {
-                                        rebalance = true;
-                                        // optimization tor TransactionCollection
-                                        if (args.ChangeSource != null && args.ChangeSource.GetType() == typeof(TransactionCollection))
+                                        // then this account is gone, so we need to clear the display.
+                                        this.TheActiveGrid.ClearItemsSource();
+                                    } 
+                                    else if (args.ChangeType == ChangeType.Changed)
+                                    {
+                                        if (args.Name != "Unaccepted" && args.Name != "LastBalance")
                                         {
-                                            // TransactionCollection will already have taken care of inserts and deletes, so we
-                                            // can optimize this case (refresh is slow).
-                                            rebalance = true;
-                                        }
-                                        else
-                                        {
-                                            // change came from somewhere else (like OFX import) so need a full refresh.
+                                            // then we need a refresh, may have just loaded a bunch of new transactions from OFX.
                                             refresh = true;
                                             rebalance = true;
                                         }
                                     }
                                 }
-                            }
-                            else if (a != null && a == this.ActiveAccount && args.ChangeType == ChangeType.Deleted)
-                            {
-                                // then this account is gone, so we need to clear the display.
-                                this.TheActiveGrid.ClearItemsSource();
-                            }
-                            else if (a != null && a == this.ActiveAccount && args.ChangeType == ChangeType.Changed)
-                            {
-                                if (args.Name != "Unaccepted" && args.Name != "LastBalance")
+                                else if (a != null && args.ChangeType == ChangeType.Inserted)
                                 {
-                                    // then we need a refresh, may have just loaded a bunch of new transactions from OFX.
-                                    refresh = true;
-                                    rebalance = true;
-                                }
-                            }
-                            else if (a != null && args.ChangeType == ChangeType.Inserted)
-                            {
-                                if (this.ActiveAccount == null && this.myMoney.Accounts.Count == 1)
-                                {
-                                    // perhaps it's the first account and it's time to bind the transaction view to an account.
-                                    this.currentDisplayName = TransactionViewName.Account;
-                                    this.activeAccount = a;
-                                    refresh = true;
+                                    if (this.ActiveAccount == null && this.myMoney.Accounts.Count == 1)
+                                    {
+                                        // perhaps it's the first account and it's time to bind the transaction view to an account.
+                                        this.currentDisplayName = TransactionViewName.Account;
+                                        this.activeAccount = a;
+                                        refresh = true;
+                                    }
                                 }
                             }
                         }

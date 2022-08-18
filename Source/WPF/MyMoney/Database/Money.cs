@@ -1915,8 +1915,9 @@ namespace Walkabout.Data
 
             CostBasisCalculator calc = new CostBasisCalculator(this, DateTime.Now);
 
-            foreach (var group in calc.GetHoldingsBySecurityType(TaxStatus.Any, null))
+            foreach (var group in calc.GetHoldingsBySecurityType(null))
             {
+                group.TaxStatus = TaxStatus.Any;
                 foreach (SecurityPurchase sp in group.Purchases)
                 {
                     unique.Add(sp.Security);
@@ -9057,8 +9058,7 @@ namespace Walkabout.Data
                     {
                         foreach (SecurityPurchase sp in calculator.GetHolding(a).GetHoldings())
                         {
-                            Security s = sp.Security;
-                            if (Math.Floor(sp.UnitsRemaining) > 0)
+                            //if (Math.Floor(sp.UnitsRemaining) > 0)
                             {
                                 balance += sp.LatestMarketValue;
                             }

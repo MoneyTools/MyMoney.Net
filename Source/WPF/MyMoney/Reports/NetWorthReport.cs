@@ -28,7 +28,7 @@ namespace Walkabout.Reports
         DateTime reportDate;
         StockQuoteCache cache;
         bool generating;
-        bool filterOutClosedAccounts = true;
+        bool filterOutClosedAccounts = false;
 
         public event EventHandler<SecurityGroup> DrillDown;
 
@@ -37,7 +37,7 @@ namespace Walkabout.Reports
             this.view = view;
             this.myMoney = money;
             this.cache = cache;
-            this.reportDate = DateTime.Today;
+            this.reportDate = DateTime.Now;
             minRandColor = 20;
             maxRandColor = (""+AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128: (byte)200;
         }
@@ -116,7 +116,7 @@ namespace Walkabout.Reports
                     if (hasTaxDeferred)
                     {
                         WriteHeader(writer, "Tax Deferred Assets");
-                        r = await WriteSecurities(writer, data, TaxStatus.TaxDeferred,new Predicate<Account>((a) => { return a.IsTaxDeferred; }));
+                        r = await WriteSecurities(writer, data, TaxStatus.TaxDeferred,new Predicate<Account>((a) => { return IsInvestmentAccount(a) && a.IsTaxDeferred; }));
                         totalBalance += r.Item1;
                         hasNoneTypeTaxDeferred = r.Item2;
                     }
@@ -125,7 +125,7 @@ namespace Walkabout.Reports
                     if (hasTaxFree)
                     {
                         WriteHeader(writer, "Tax Free Assets");
-                        r = await WriteSecurities(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree; }));
+                        r = await WriteSecurities(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return IsInvestmentAccount(a) && a.IsTaxFree; }));
                         totalBalance += r.Item1;
                         hasNoneTypeTaxFree = r.Item2;
                     }
@@ -309,8 +309,9 @@ namespace Walkabout.Reports
             CostBasisCalculator calc = new CostBasisCalculator(this.myMoney, this.reportDate);
 
             // compute summary
-            foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(status, filter))
+            foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(filter))
             {
+                securityTypeGroup.TaxStatus = status; // inherited from the account.
                 SecurityType stype = securityTypeGroup.Type;
                 decimal sb = 0;
                 byType.TryGetValue(stype, out sb);
@@ -327,9 +328,16 @@ namespace Walkabout.Reports
 
             if (byType.Count > 0)
             {
-                foreach (SecurityType st in new SecurityType[] { SecurityType.Bond,
-                    SecurityType.MutualFund, SecurityType.Equity, SecurityType.MoneyMarket, SecurityType.ETF, SecurityType.Reit, SecurityType.Futures,
-                    SecurityType.Private, SecurityType.None })
+                foreach (SecurityType st in new SecurityType[] { 
+                    SecurityType.Bond,
+                    SecurityType.MutualFund, 
+                    SecurityType.Equity, 
+                    SecurityType.MoneyMarket, 
+                    SecurityType.ETF, 
+                    SecurityType.Reit, 
+                    SecurityType.Futures,
+                    SecurityType.Private, 
+                    SecurityType.None })
                 {
                     decimal sb = 0;
                     if (byType.TryGetValue(st, out sb))

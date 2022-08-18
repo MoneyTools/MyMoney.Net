@@ -385,8 +385,9 @@ namespace Walkabout.Reports
         private void WriteDetails(IReportWriter writer, TaxStatus status, Predicate<Account> filter)
         {
             // compute summary
-            foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(status, filter))
+            foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(filter))
             {
+                securityTypeGroup.TaxStatus = status; // inherited from the account types we are filtering here.
                 WriteDetails(writer, status, securityTypeGroup);
             }
         }
@@ -490,7 +491,7 @@ namespace Walkabout.Reports
             }
             else
             {
-                groups = calc.GetHoldingsBySecurityType(taxStatus, filter);
+                groups = calc.GetHoldingsBySecurityType(filter);
             }
 
             // compute summary
@@ -499,6 +500,7 @@ namespace Walkabout.Reports
                 decimal marketValue = 0;
                 decimal gainLoss = 0;
 
+                securityGroup.TaxStatus = taxStatus; // inherited from the accounts we are filtering here.
                 SecurityType st = securityGroup.Type;
                 int count = 0;
                 decimal price = 0;

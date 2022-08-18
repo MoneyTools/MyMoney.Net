@@ -518,7 +518,7 @@ namespace Walkabout.Data
         /// </summary>
         /// <param name="account">Specified account or null for all accounts.</param>
         /// <returns></returns>
-        public IList<SecurityGroup> GetHoldingsBySecurityType(TaxStatus status, Predicate<Account> filter)
+        public IList<SecurityGroup> GetHoldingsBySecurityType(Predicate<Account> filter)
         {
             Dictionary<SecurityType, SecurityGroup> result = new Dictionary<SecurityType, SecurityGroup>();
 
@@ -532,7 +532,7 @@ namespace Walkabout.Data
                         SecurityGroup group = null;
                         if (!result.TryGetValue(type, out group))
                         {
-                            group = new SecurityGroup() { Date = this.toDate, Security = sp.Security, Type = type, Purchases = new List<SecurityPurchase>(), TaxStatus = status };
+                            group = new SecurityGroup() { Date = this.toDate, Security = sp.Security, Type = type, Purchases = new List<SecurityPurchase>() };
                             result[type] = group;
                         } 
                         else if (group.Security != sp.Security)
