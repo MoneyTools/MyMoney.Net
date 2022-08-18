@@ -37,7 +37,9 @@ namespace Walkabout.Utilities
             list.Remove(h);
         }
 
-        public bool HasListeners { get { return list.Count > 0; } }
+        public bool HasListeners => list.Count > 0;
+
+        public int ListenerCount => list.Count;
 
         /// <summary>
         /// The owner of the event uses this method to raise the event to the registered event handlers.        

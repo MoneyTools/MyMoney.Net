@@ -885,9 +885,19 @@ namespace Walkabout
             }
         }
 
+        int lastHandlerCount;
 
         private void OnSelectionChangeFor_Account(object sender, EventArgs e)
         {
+#if DEBUG
+            var count = this.myMoney.TotalChangeListenerCount;
+            if (count != lastHandlerCount)
+            {
+                Debug.WriteLine($"Number of listeners changed from {lastHandlerCount} to {count}");
+                lastHandlerCount = count;
+            }
+#endif 
+
             //-----------------------------------------------------------------
             // Look for Accounts
             //

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.0.17" date="8/17/2022">
+    - Fix some mismatches between networth report totals and account balances.
+    - Add cash balance to single account portfolio reports.
+  </change>
   <change version="2.0.0.16" date="8/14/2022">
     - Add Date selector on Networth Report so you can see historical Networth Report using Stock Quote History if enabled.
     - Fix some pie chart layout issues.

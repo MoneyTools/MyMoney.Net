@@ -186,6 +186,8 @@ namespace Walkabout.Data
             }
         }
 
+        public int ChangeListenerCount => (handlers == null) ? 0 : handlers.ListenerCount;
+
         /// <summary>
         /// Fire a change event 
         /// </summary>
@@ -369,6 +371,8 @@ namespace Walkabout.Data
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        public int ChangeListenerCount => (handlers == null) ? 0 : handlers.ListenerCount;
 
         public event EventHandler<ChangeEventArgs> Changed
         {
@@ -1965,6 +1969,24 @@ namespace Walkabout.Data
             foreach (Transaction t in this.transactions.GetTransactionsBySecurity(fromSecurity, null))
             {
                 t.Investment.Security = moveToSecurity;
+            }
+        }
+
+        public int TotalChangeListenerCount
+        {
+            get
+            {
+                var total = this.ChangeListenerCount;
+                total += this.AccountAliases.ChangeListenerCount;
+                total += this.Accounts.ChangeListenerCount;
+                total += this.Categories.ChangeListenerCount;
+                total += this.Transactions.ChangeListenerCount;
+                total += this.Securities.ChangeListenerCount;
+                total += this.Payees.ChangeListenerCount;
+                total += this.Currencies.ChangeListenerCount;
+                total += this.Aliases.ChangeListenerCount;
+                total += this.StockSplits.ChangeListenerCount;
+                return total;
             }
         }
     }
