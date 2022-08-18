@@ -166,23 +166,24 @@ namespace Walkabout.Reports
             writer.EndColumnDefinitions();
 
             var series = new ChartDataSeries() { Name = "Portfolio" };
+
             IList<ChartDataValue> data = series.Values;
             if (account == null)
             {
                 if (this.selectedGroup != null)
                 {
-                    WriteSummary(writer, data, this.selectedGroup.TaxStatus, null, false);
+                    WriteSummary(writer, data, this.selectedGroup.TaxStatus, null, false, false);
                 }
                 else
                 {
-                    WriteSummary(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a); }), true);
-                    WriteSummary(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a);  }), true);
-                    WriteSummary(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && IsInvestmentAccount(a); }), true);
+                    WriteSummary(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a); }), true, false);
+                    WriteSummary(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a);  }), true, false);
+                    WriteSummary(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && IsInvestmentAccount(a); }), true, false);
                 }
             }
             else
-            {
-                WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == account; }), false);
+            {                
+                WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == account; }), false, true);
             }
 
             WriteHeaderRow(writer, "Total", totalMarketValue.ToString("C"), totalGainLoss.ToString("C"));
@@ -239,6 +240,8 @@ namespace Walkabout.Reports
                     WriteDetails(writer, account.TaxStatus, new Predicate<Account>((a) => { return a == account; }));
                 }
             }
+
+            writer.WriteParagraph("Generated for " + this.reportDate.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
             return Task.CompletedTask;
         }
 
@@ -475,7 +478,7 @@ namespace Walkabout.Reports
         }
 
 
-        private void WriteSummary(IReportWriter writer, IList<ChartDataValue> data, TaxStatus taxStatus, Predicate<Account> filter, bool subtotal)
+        private void WriteSummary(IReportWriter writer, IList<ChartDataValue> data, TaxStatus taxStatus, Predicate<Account> filter, bool subtotal, bool includeCashBalance)
         {
             bool wroteSectionHeader = false;
             string prefix = GetTaxStatusPrefix(taxStatus);
@@ -561,6 +564,23 @@ namespace Walkabout.Reports
 
                 totalSectionMarketValue += marketValue;
                 totalSectionGainValue += gainLoss;
+            }
+
+            if (includeCashBalance)
+            {
+                decimal cashBalance = this.myMoney.GetCashBalanceNormalized(this.reportDate, filter);
+                var color = GetRandomColor();
+                data.Add(new ChartDataValue()
+                {
+                    Value = (double)Math.Abs(cashBalance).RoundToNearestCent(),
+                    Label = "Cash",
+                    Color = color
+                });
+
+                WriteSummaryRow(writer, color, "Cash", cashBalance.ToString("C"), "");
+
+                rowCount++;
+                totalSectionMarketValue += cashBalance;
             }
 
             if (wroteSectionHeader && subtotal && rowCount > 1)
