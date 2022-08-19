@@ -3445,7 +3445,7 @@ namespace Walkabout
             view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio - " + e.Type);
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, e.Date, e);
+            PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
             _ = view.Generate(report);
         }
 
@@ -3458,7 +3458,7 @@ namespace Walkabout
             view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, e.Title);
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, e.Date, e);
+            PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
             _ = view.Generate(report);
         }
 

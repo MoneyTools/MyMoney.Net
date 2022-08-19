@@ -3,6 +3,9 @@
   <change version="2.0.0.17" date="8/17/2022">
     - Fix some mismatches between networth report totals and account balances.
     - Add cash balance to single account portfolio reports.
+    - Add drill down from networth report to see cash and investment cash balance totals by account.
+    - Add date selector to Portfolio Report also.
+    - Update docs.
   </change>
   <change version="2.0.0.16" date="8/14/2022">
     - Add Date selector on Networth Report so you can see historical Networth Report using Stock Quote History if enabled.

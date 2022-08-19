@@ -2279,7 +2279,7 @@ namespace Walkabout.Views
             FlowDocumentView view = this.InvestmentPortfolioView;
             HelpService.SetHelpKeyword(view, "Investment Portfolio");
             DateTime reportDate = this.IsReconciling ? GetReconiledExclusiveEndDate() : DateTime.Now;
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this.ServiceProvider, reportDate, e);
+            PortfolioReport report = new PortfolioReport(view, this.myMoney, this.ServiceProvider, reportDate, e);
             _ = view.Generate(report);
             FireAfterViewStateChanged(SelectedRowId);
         }

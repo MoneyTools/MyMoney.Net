@@ -330,6 +330,7 @@ namespace Walkabout.Reports
             foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(filter))
             {
                 securityTypeGroup.TaxStatus = status; // inherited from the account.
+                securityTypeGroup.Filter = filter;
                 SecurityType stype = securityTypeGroup.Type;
                 decimal sb = 0;
                 byType.TryGetValue(stype, out sb);

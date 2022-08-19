@@ -1,19 +1,20 @@
 # Portfolio Report
 
-If you select the "**Investment Portfolio** " option under the Reports menu you will get a an all up report, and if you click the [Portfolio Tab](../Accounts/InvestmentAccounts.md) on a single [Investment Accounts](../Accounts/InvestmentAccounts.md) you will get a portfolio
+If you select the "**Investment Portfolio** " option under the Reports menu you will get a an all up report, for the selected date, and if you click the [Portfolio Tab](../Accounts/InvestmentAccounts.md) on a single [Investment Accounts](../Accounts/InvestmentAccounts.md) you will get a portfolio
 report for a single account.
 
  The all up report ignores transfers between your accounts.  This report will not include cash balances from bank accounts, or liabilities from any outstanding Loans or any other [Assets](../Accounts/Assets.md).  See [Networth Report](NetworthReport.md) for that.
 
 ![](../Images/Investment%20Portfolio.png)
 
-The Gain/Loss is computed from when the stocks were purchased.   If you marked an account as tax deferred in the Account properties, then the securities in that account will be separated out in this pie chart prefixed with "**Tax Deferred** ".  Similarly Retirement accounts are also grouped separately.
+The Gain/Loss is computed using the cost basis from when the stocks were purchased.   If you marked an account as tax deferred in the Account properties, then the securities in that account will be separated out in this pie chart prefixed with "**Tax Deferred** ".  Similarly Retirement accounts are also grouped separately.
 
 The above summary is followed by a list of all positions still held (after accounting for all Sell/Remove transactions) grouped by the security type.  For example, you will see a summary like this:
 
 ![](../Images/Investment%20Portfolio1.png)
 
-Each row here is expandable if you click on the little triangle on the left. For example, if you expand "**Microsoft corp total** " here you will see a list of details like this:
+Each row here is expandable if you click on the little triangle on the left. For example, if you expand "**IBM corp total** " a list of details will
+appear like this:
 
 ![](../Images/Investment%20Portfolio2.png)
 

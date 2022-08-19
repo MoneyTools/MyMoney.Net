@@ -190,6 +190,7 @@ namespace Walkabout.Data
         public SecurityType Type { get ;set; }
         public IList<SecurityPurchase> Purchases { get; set; }
         public TaxStatus TaxStatus { get; set; }
+        public Predicate<Account> Filter { get; internal set; }
     }
 
 

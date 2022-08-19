@@ -1,6 +1,6 @@
 # Investment Accounts
 
-When you create an account of type "**Brokerage**" the Transactions View changes to show some additional columns.  You will also see two tabs at the top, the first is the "activity" transactions, that you can edit.  The second provides a [Portfolio Report](../Reports/InvestmentPortfolio.md).
+When you create an account of type "**Brokerage**" or "**Retirement**" the Transactions View changes to show some additional columns.  You will also see two tabs at the top, the first is the "activity" transactions, that you can edit.  The second provides a [Portfolio Report](../Reports/InvestmentPortfolio.md).
 
 The transaction columns are augmented with the ability to record Buy/Sell/Add/Remove activity with Securities (Stocks, Mutual Funds, etc). The following shows a Sell, a Buy and a deposit from "Dividends" :
 
@@ -67,6 +67,7 @@ if you have daily stock quote histories already downloaded by the
 
 ### Portfolio Tab
 Once the security information with stock splits is setup using the [Securities](../Basics/Securities.md) view and current prices are available (either downloaded automatically using [Stock Quote Services](StockQuoteServices.md), or entered by hand in the Securities view), you can use the second tab of your Investment account called "Portfolio".  This tab provides a report just for this account listing the holdings in that account (ignoring similar holdings in other accounts).  See [Investment Portfolio](../Reports/InvestmentPortfolio.md) for details on what is in this report.
+You can change the date in the date picker in the heading to see historical values.
 
 ![](../Images/Investment%20Accounts3.png)
 

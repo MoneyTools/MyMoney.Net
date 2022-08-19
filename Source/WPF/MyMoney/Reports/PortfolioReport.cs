@@ -15,6 +15,7 @@ using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;
+using Walkabout.Views;
 
 namespace Walkabout.Reports
 {
@@ -26,7 +27,7 @@ namespace Walkabout.Reports
         FlowDocumentReportWriter flowwriter;
         CostBasisCalculator calc;
         IServiceProvider serviceProvider;
-        FrameworkElement view;
+        FlowDocumentView view;
         Paragraph mouseDownPara;
         Point downPos;
         DateTime reportDate;
@@ -34,22 +35,25 @@ namespace Walkabout.Reports
         SecurityGroup selectedGroup;
         AccountGroup accountGroup;
         Random rand = new Random(Environment.TickCount);
+        bool generating;
 
         public event EventHandler<SecurityGroup> DrillDown;
 
         /// <summary>
-        /// Create new PortfolioReport.  
+        /// Create new PortfolioReport
         /// </summary>
-        /// <param name="money">The money data</param>
-        /// <param name="account">The account, or null to get complete portfolio</param>
-        public PortfolioReport(FrameworkElement view, MyMoney money, Account account, IServiceProvider serviceProvider, DateTime asOfDate, SecurityGroup g = null)
+        /// <param name="view">The FlowDocumentView we are generating the report in</param>
+        /// <param name="money">The money database</param>
+        /// <param name="account">Optional account for single account portfolio</param>
+        /// <param name="serviceProvider">Required to access additional services</param>
+        /// <param name="asOfDate">The date to compute the portfolio balances to</param>
+        public PortfolioReport(FlowDocumentView view, MyMoney money, Account account, IServiceProvider serviceProvider, DateTime asOfDate)
         {
             this.myMoney = money;
             this.account = account;
             this.serviceProvider = serviceProvider;
             this.view = view;
             this.reportDate = asOfDate;
-            this.selectedGroup = g;
             this.cache = (StockQuoteCache)serviceProvider.GetService(typeof(StockQuoteCache));
             view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
             view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
@@ -60,25 +64,21 @@ namespace Walkabout.Reports
         }
 
         /// <summary>
-        /// Create new PortfolioReport.  
+        /// Create new PortfolioReport for a given SecurityGroup we are drilling into from the Networth Report, like "Taxable Mutual Funds".
         /// </summary>
-        /// <param name="money">The money data</param>
-        /// <param name="account">The account, or null to get complete portfolio</param>
-        public PortfolioReport(FrameworkElement view, MyMoney money, Account account, IServiceProvider serviceProvider, DateTime asOfDate, AccountGroup a)
+        public PortfolioReport(FlowDocumentView view, MyMoney money, IServiceProvider serviceProvider, DateTime asOfDate, SecurityGroup a) :
+            this(view, money, null, serviceProvider, asOfDate)
         {
-            this.myMoney = money;
-            this.account = account;
-            this.serviceProvider = serviceProvider;
-            this.view = view;
-            this.reportDate = asOfDate;
+            this.selectedGroup = a;
+        }
+
+        /// <summary>
+        /// Create new PortfolioReport for a given AccountGroup, this will show just the cash balances of these accounts.
+        /// </summary>
+        public PortfolioReport(FlowDocumentView view, MyMoney money, IServiceProvider serviceProvider, DateTime asOfDate, AccountGroup a) :
+            this(view, money, null, serviceProvider, asOfDate)
+        {
             this.accountGroup = a;
-            this.cache = (StockQuoteCache)serviceProvider.GetService(typeof(StockQuoteCache));
-            view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
-            view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
-            view.Unloaded += (s, e) =>
-            {
-                this.view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
-            };
         }
 
         private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -100,10 +100,8 @@ namespace Walkabout.Reports
             downPos = e.GetPosition(this.view);
         }
 
-
         decimal totalMarketValue;
         decimal totalGainLoss;
-
 
         private void WriteSummaryRow(IReportWriter writer, Color c, String col1, String col2, String col3)
         {
@@ -145,9 +143,36 @@ namespace Walkabout.Reports
 
         public override Task Generate(IReportWriter writer)
         {
+            generating = true;
+            try
+            {
+                InternalGenerate(writer);
+            } 
+            finally
+            {
+                generating = false;
+            }
+            return Task.CompletedTask;
+        }
+
+        private void InternalGenerate(IReportWriter writer)
+        { 
             flowwriter = writer as FlowDocumentReportWriter;
 
             calc = new CostBasisCalculator(this.myMoney, this.reportDate);
+            if (this.selectedGroup != null)
+            {
+                // user may have changed the reportDate, so we may need to recompute this.
+                foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(this.selectedGroup.Filter))
+                {
+                    if (securityTypeGroup.Type == this.selectedGroup.Type)
+                    {
+                        securityTypeGroup.TaxStatus = this.selectedGroup.TaxStatus;
+                        securityTypeGroup.Filter = this.selectedGroup.Filter;
+                        this.selectedGroup = securityTypeGroup;
+                    }
+                }
+            }
 
             string heading = null;
             if (this.selectedGroup != null)
@@ -160,10 +185,28 @@ namespace Walkabout.Reports
             }
             else if (this.account != null)
             {
-                heading = "Investment Portfolio Summary for " + account.Name + " (" + account.AccountId + ")";
+                heading = "Investment Portfolio Summary for " + account.Name;
+                if (!string.IsNullOrEmpty(account.AccountId))
+                {
+                    heading += " (" + account.AccountId + ")";
+                }
+            }
+            else
+            {
+                heading = "Investment Portfolio Summary";
             }
 
             writer.WriteHeading(heading);
+
+            Paragraph pheading = flowwriter.CurrentParagraph;
+
+            DatePicker picker = new DatePicker();
+            // byYearCombo.SelectionChanged += OnYearChanged;
+            picker.Margin = new Thickness(10, 0, 0, 0);
+            picker.SelectedDate = this.reportDate;
+            picker.DisplayDate = this.reportDate;
+            picker.SelectedDateChanged += Picker_SelectedDateChanged;
+            pheading.Inlines.Add(new InlineUIContainer(picker));
 
             if (reportDate.Date != DateTime.Today)
             {
@@ -281,7 +324,31 @@ namespace Walkabout.Reports
             }
 
             writer.WriteParagraph("Generated for " + this.reportDate.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
-            return Task.CompletedTask;
+        }
+
+        private void Picker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!generating) 
+            {
+                DatePicker picker = (DatePicker)sender;
+                if (picker.SelectedDate.HasValue)
+                {
+                    var newDate = picker.SelectedDate.Value;
+                    if (newDate != this.reportDate)
+                    {
+                        this.reportDate = newDate;
+                        if (this.selectedGroup != null)
+                        {
+                            this.selectedGroup.Date = newDate;
+                        }
+                        if (this.accountGroup != null)
+                        {
+                            this.accountGroup.Date = newDate;
+                        }
+                        _ = view.Generate(this);
+                    }
+                }
+            }
         }
 
         private string GetSecurityTypeCaption(SecurityType st)
@@ -397,6 +464,13 @@ namespace Walkabout.Reports
 
             foreach (SecurityPurchase i in bySecurity)
             {
+                current = i.Security;
+                if (!priceFound || (current != previous))
+                {
+                    priceFound = true;
+                    price = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                    previous = current;
+                }
                 // for tax reporting we need to report the real GainLoss, but if CostBasis is zero then it doesn't make sense to report something
                 // as a gain or loss, it will be accounted for under MarketValue, but it will be misleading as a "Gain".  So we tweak the value here.
                 marketValue = i.FuturesFactor * i.UnitsRemaining * price;
