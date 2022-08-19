@@ -30,7 +30,8 @@ namespace Walkabout.Reports
         bool generating;
         bool filterOutClosedAccounts = false;
 
-        public event EventHandler<SecurityGroup> DrillDown;
+        public event EventHandler<SecurityGroup> SecurityDrillDown;
+        public event EventHandler<AccountGroup> CashBalanceDrillDown;
 
         public NetWorthReport(FlowDocumentView view, MyMoney money, StockQuoteCache cache)
         {
@@ -96,19 +97,23 @@ namespace Walkabout.Reports
                         if (a.IsTaxFree) hasTaxFree = true;
                     }
 
-                    decimal balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => { return IsBankAccount(a); });
+                    Predicate<Account> bankAccountFilter = (a) => { return IsBankAccount(a); };
+                    decimal balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, bankAccountFilter);
+                    var cashGroup = new AccountGroup() { Filter = bankAccountFilter, Date = this.reportDate, Title = "Bank Account" };
 
                     // Non-investment Cash
                     var color = GetRandomColor();
-                    data.Add(new ChartDataValue() { Label = "Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
-                    WriteRow(writer, color, "Cash", balance, null);
+                    data.Add(new ChartDataValue() { Label = "Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color, UserData = cashGroup });
+                    WriteRow(writer, color, "Cash", balance, () => OnSelectCashGroup(cashGroup));
                     totalBalance += balance;
 
                     // Investment Cash
-                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => { return IsInvestmentAccount(a); });
+                    Predicate<Account> investmentAccountFilter = (a) => { return IsInvestmentAccount(a); };
+                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, investmentAccountFilter);
+                    var investmentCashGroup = new AccountGroup { Filter = investmentAccountFilter, Date = this.reportDate, Title = "Investment Account" };
                     color = GetRandomColor();
-                    data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
-                    WriteRow(writer, color, "Investment Cash", balance, null);
+                    data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color, UserData = investmentCashGroup });
+                    WriteRow(writer, color, "Investment Cash", balance, () => OnSelectCashGroup(investmentCashGroup));
                     totalBalance += balance;
 
                     bool hasNoneTypeTaxDeferred = false;
@@ -116,7 +121,7 @@ namespace Walkabout.Reports
                     if (hasTaxDeferred)
                     {
                         WriteHeader(writer, "Tax Deferred Assets");
-                        r = await WriteSecurities(writer, data, TaxStatus.TaxDeferred,new Predicate<Account>((a) => { return IsInvestmentAccount(a) && a.IsTaxDeferred; }));
+                        r = await WriteSecurities(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return IsInvestmentAccount(a) && a.IsTaxDeferred; }));
                         totalBalance += r.Item1;
                         hasNoneTypeTaxDeferred = r.Item2;
                     }
@@ -134,35 +139,8 @@ namespace Walkabout.Reports
 
                     WriteHeader(writer, "Taxable Assets");
 
-                    foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
-                    {
-                        if (a.Type == AccountType.Loan)
-                        {
-                            var loan = this.myMoney.GetOrCreateLoanAccount(a);
-                            if (loan != null && !loan.IsLiability)
-                            {
-                                balance = loan.ComputeLoanAccountBalance(this.reportDate);
-                                if (balance != 0)
-                                {
-                                    color = GetRandomColor();
-                                    data.Add(new ChartDataValue() { Label = a.Name, Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
-                                    WriteRow(writer, color, a.Name, balance, null);
-                                    totalBalance += balance;
-                                }
-                            }
-                        }
-                        else if (a.Type == AccountType.Asset)
-                        {
-                            balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (x) => x == a);
-                            if (balance != 0)
-                            {
-                                color = GetRandomColor();
-                                data.Add(new ChartDataValue() { Label = a.Name, Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
-                                WriteRow(writer, color, a.Name, balance, null);
-                                totalBalance += balance;
-                            }
-                        }
-                    }
+                    totalBalance += WriteLoanAccountRows(writer, data, color, false);
+                    totalBalance += WriteAssetAccountRows(writer, data);
 
                     r = await WriteSecurities(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return IsInvestmentAccount(a) && !a.IsTaxDeferred && !a.IsTaxFree; }));
                     totalBalance += r.Item1;
@@ -175,25 +153,7 @@ namespace Walkabout.Reports
 
                     color = GetRandomColor();
                     WriteRow(writer, color, "Credit", balance, null);
-                    balance = 0;
-                    foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
-                    {
-                        if (a.Type == AccountType.Loan)
-                        {
-                            var loan = this.myMoney.GetOrCreateLoanAccount(a);
-                            if (loan != null && loan.IsLiability)
-                            {
-                                balance = loan.ComputeLoanAccountBalance(this.reportDate);
-                                if (balance != 0)
-                                {
-                                    color = GetRandomColor();
-                                    data.Add(new ChartDataValue() { Label = a.Name, Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
-                                    WriteRow(writer, color, a.Name, balance, null);
-                                    totalBalance += balance;
-                                }
-                            }
-                        }
-                    }
+                    totalBalance += WriteLoanAccountRows(writer, data, color, true);
 
                     writer.StartFooterRow();
 
@@ -246,6 +206,50 @@ namespace Walkabout.Reports
             }
         }
 
+        private decimal WriteAssetAccountRows(IReportWriter writer, IList<ChartDataValue> data)
+        {
+            decimal totalBalance = 0;
+            foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
+            {
+                if (a.Type == AccountType.Asset)
+                {
+                    var balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (x) => x == a);
+                    if (balance != 0)
+                    {
+                        var color = GetRandomColor();
+                        data.Add(new ChartDataValue() { Label = a.Name, Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
+                        WriteRow(writer, color, a.Name, balance, null);
+                        totalBalance += balance;
+                    }
+                }
+            }
+            return totalBalance;
+        }
+
+        private decimal WriteLoanAccountRows(IReportWriter writer, IList<ChartDataValue> data, Color color, bool liabilities)
+        {
+            decimal totalBalance = 0;
+            foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
+            {
+                if (a.Type == AccountType.Loan)
+                {
+                    var loan = this.myMoney.GetOrCreateLoanAccount(a);
+                    if (loan != null && loan.IsLiability == liabilities)
+                    {
+                        decimal balance = loan.ComputeLoanAccountBalance(this.reportDate);
+                        if (balance != 0)
+                        {
+                            color = GetRandomColor();
+                            data.Add(new ChartDataValue() { Label = a.Name, Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
+                            WriteRow(writer, color, a.Name, balance, null);
+                            totalBalance += balance;
+                        }
+                    }
+                }                
+            }
+            return totalBalance;
+        }
+
         private void Picker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!generating)
@@ -266,16 +270,30 @@ namespace Walkabout.Reports
             {
                 OnSecurityGroupSelected(g);
             }
+            else if (e.UserData is AccountGroup a)
+            {
+                OnSelectCashGroup(a);
+            }
         }
 
         private void OnSecurityGroupSelected(SecurityGroup g)
         {
-            if (DrillDown != null)
+            if (SecurityDrillDown != null)
             {
                 // now we can drill down and show a report on just this group of investments.
-                DrillDown(this, g);
+                SecurityDrillDown(this, g);
             }
         }
+
+        private void OnSelectCashGroup(AccountGroup g)
+        {
+            if (CashBalanceDrillDown != null)
+            {
+                // now we can drill down and show a account cash balances.
+                CashBalanceDrillDown(this, g);
+            }
+        }
+
 
         private UIElement OnGenerateToolTip(ChartDataValue value)
         {
@@ -353,7 +371,7 @@ namespace Walkabout.Reports
                             hasNoneType = true;
                             caption += "*";
                         }
-                        WriteRow(writer, color, caption, sb, group);
+                        WriteRow(writer, color, caption, sb, () => OnSecurityGroupSelected(group));
                         balance += sb;
                     }
                 }
@@ -393,7 +411,7 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        private void WriteRow(IReportWriter writer, Color color, string name, decimal balance, SecurityGroup group)
+        private void WriteRow(IReportWriter writer, Color color, string name, decimal balance, Action hyperlink)
         {
             writer.StartRow();
 
@@ -401,9 +419,9 @@ namespace Walkabout.Reports
             writer.WriteElement(new Rectangle() { Width = 20, Height = 16, Fill = new SolidColorBrush(color) });
             writer.EndCell();
             writer.StartCell();
-            if (group != null)
+            if (hyperlink != null)
             {
-                writer.WriteHyperlink(name, FontStyles.Normal, FontWeights.Normal, (s, e) => OnSecurityGroupSelected(group));
+                writer.WriteHyperlink(name, FontStyles.Normal, FontWeights.Normal, (s, e) => hyperlink());
             }
             else
             {
@@ -418,11 +436,6 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        private static void OnSelectRow(string name)
-        {
-            throw new NotImplementedException();
-        }
-
         private Color GetRandomColor()
         {
             return Color.FromRgb((byte)rand.Next(minRandColor, maxRandColor), 
@@ -432,4 +445,11 @@ namespace Walkabout.Reports
 
     }
 
+
+    public class AccountGroup
+    {
+        public DateTime Date { get; set; }
+        public Predicate<Account> Filter { get; set; }
+        public string Title { get; internal set; }
+    }
 }

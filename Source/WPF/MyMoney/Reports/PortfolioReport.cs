@@ -32,6 +32,7 @@ namespace Walkabout.Reports
         DateTime reportDate;
         StockQuoteCache cache;
         SecurityGroup selectedGroup;
+        AccountGroup accountGroup;
         Random rand = new Random(Environment.TickCount);
 
         public event EventHandler<SecurityGroup> DrillDown;
@@ -41,7 +42,7 @@ namespace Walkabout.Reports
         /// </summary>
         /// <param name="money">The money data</param>
         /// <param name="account">The account, or null to get complete portfolio</param>
-        public PortfolioReport(FrameworkElement view, MyMoney money, Account account, IServiceProvider serviceProvider, DateTime asOfDate, SecurityGroup g)
+        public PortfolioReport(FrameworkElement view, MyMoney money, Account account, IServiceProvider serviceProvider, DateTime asOfDate, SecurityGroup g = null)
         {
             this.myMoney = money;
             this.account = account;
@@ -49,6 +50,28 @@ namespace Walkabout.Reports
             this.view = view;
             this.reportDate = asOfDate;
             this.selectedGroup = g;
+            this.cache = (StockQuoteCache)serviceProvider.GetService(typeof(StockQuoteCache));
+            view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
+            view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+            view.Unloaded += (s, e) =>
+            {
+                this.view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
+            };
+        }
+
+        /// <summary>
+        /// Create new PortfolioReport.  
+        /// </summary>
+        /// <param name="money">The money data</param>
+        /// <param name="account">The account, or null to get complete portfolio</param>
+        public PortfolioReport(FrameworkElement view, MyMoney money, Account account, IServiceProvider serviceProvider, DateTime asOfDate, AccountGroup a)
+        {
+            this.myMoney = money;
+            this.account = account;
+            this.serviceProvider = serviceProvider;
+            this.view = view;
+            this.reportDate = asOfDate;
+            this.accountGroup = a;
             this.cache = (StockQuoteCache)serviceProvider.GetService(typeof(StockQuoteCache));
             view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
             view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
@@ -126,14 +149,18 @@ namespace Walkabout.Reports
 
             calc = new CostBasisCalculator(this.myMoney, this.reportDate);
 
-            string heading = "Investment Portfolio Summary";
+            string heading = null;
             if (this.selectedGroup != null)
             {
                 heading = "Investment Portfolio - " + GetTaxStatusPrefix(this.selectedGroup.TaxStatus) + GetSecurityTypeCaption(this.selectedGroup.Type);
             }
-            if (this.account != null)
+            else if (this.accountGroup != null)
             {
-                heading += " for " + account.Name + " (" + account.AccountId + ")";
+                heading = this.accountGroup.Title + " Cash Balances";
+            }
+            else if (this.account != null)
+            {
+                heading = "Investment Portfolio Summary for " + account.Name + " (" + account.AccountId + ")";
             }
 
             writer.WriteHeading(heading);
@@ -159,7 +186,12 @@ namespace Walkabout.Reports
             writer.StartColumnDefinitions();
 
             writer.WriteColumnDefinition("30", 30, 30);
-            foreach (double minWidth in new double[] { 300, 100, 100 })
+            var columns = new double[] { 300, 100, 100 };
+            if (this.accountGroup != null)
+            {
+                columns = new double[] { 300, 100, 10 };
+            }
+            foreach (double minWidth in columns)
             {
                 writer.WriteColumnDefinition("Auto", minWidth, double.MaxValue);
             }
@@ -174,6 +206,10 @@ namespace Walkabout.Reports
                 {
                     WriteSummary(writer, data, this.selectedGroup.TaxStatus, null, false, false);
                 }
+                else if (this.accountGroup != null)
+                {
+                    WriteCashBalanceSummary(writer, data, this.accountGroup);
+                }
                 else
                 {
                     WriteSummary(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a); }), true, false);
@@ -186,7 +222,7 @@ namespace Walkabout.Reports
                 WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == account; }), false, true);
             }
 
-            WriteHeaderRow(writer, "Total", totalMarketValue.ToString("C"), totalGainLoss.ToString("C"));
+            WriteHeaderRow(writer, "Total", totalMarketValue.ToString("C"), this.accountGroup != null ? "" : totalGainLoss.ToString("C"));
             writer.EndTable();
 
             writer.EndCell();
@@ -209,35 +245,38 @@ namespace Walkabout.Reports
             // end the outer table.
             writer.EndTable();
 
-            totalMarketValue = 0;
-            totalGainLoss = 0;
-
-            if (this.selectedGroup != null)
+            if (this.accountGroup == null)
             {
-                WriteDetails(writer, this.selectedGroup.TaxStatus, this.selectedGroup);
-            }
-            else
-            {
-                List<SecuritySale> errors = new List<SecuritySale>(calc.GetPendingSales(new Predicate<Account>((a) => { return a == account; })));
-                if (errors.Count > 0)
-                {
-                    writer.WriteSubHeading("Pending Sales");
+                totalMarketValue = 0;
+                totalGainLoss = 0;
 
-                    foreach (var sp in errors)
-                    {
-                        writer.WriteParagraph(string.Format("Pending sale of {1} units of '{2}' from account '{0}' recorded on {3}", sp.Account.Name, sp.UnitsSold, sp.Security.Name, sp.DateSold.ToShortDateString()));
-                    }
-                }
-
-                if (account == null)
+                if (this.selectedGroup != null)
                 {
-                    WriteDetails(writer, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a);}));
-                    WriteDetails(writer, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a); }));
-                    WriteDetails(writer, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxFree && !a.IsTaxDeferred && IsInvestmentAccount(a); }));
+                    WriteDetails(writer, this.selectedGroup.TaxStatus, this.selectedGroup);
                 }
                 else
                 {
-                    WriteDetails(writer, account.TaxStatus, new Predicate<Account>((a) => { return a == account; }));
+                    List<SecuritySale> errors = new List<SecuritySale>(calc.GetPendingSales(new Predicate<Account>((a) => { return a == account; })));
+                    if (errors.Count > 0)
+                    {
+                        writer.WriteSubHeading("Pending Sales");
+
+                        foreach (var sp in errors)
+                        {
+                            writer.WriteParagraph(string.Format("Pending sale of {1} units of '{2}' from account '{0}' recorded on {3}", sp.Account.Name, sp.UnitsSold, sp.Security.Name, sp.DateSold.ToShortDateString()));
+                        }
+                    }
+
+                    if (account == null)
+                    {
+                        WriteDetails(writer, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a); }));
+                        WriteDetails(writer, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a); }));
+                        WriteDetails(writer, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxFree && !a.IsTaxDeferred && IsInvestmentAccount(a); }));
+                    }
+                    else
+                    {
+                        WriteDetails(writer, account.TaxStatus, new Predicate<Account>((a) => { return a == account; }));
+                    }
                 }
             }
 
@@ -477,6 +516,34 @@ namespace Walkabout.Reports
             writer.EndTable();
         }
 
+        private void WriteCashBalanceSummary(IReportWriter writer, IList<ChartDataValue> data, AccountGroup group)
+        {
+            decimal total = 0;
+            WriteHeaderRow(writer, "Account", "Cash Balance", null);
+            foreach (var account in this.myMoney.Accounts.GetAccounts())
+            {
+                if (this.accountGroup.Filter(account))
+                {
+                    decimal balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => a == account);
+                    if (balance != 0)
+                    {
+                        var caption = account.Name;
+                        var color = GetRandomColor();
+                        data.Add(new ChartDataValue()
+                        {
+                            Value = (double)Math.Abs(balance).RoundToNearestCent(),
+                            Label = caption,
+                            Color = color,
+                            UserData = account
+                        });
+
+                        WriteSummaryRow(writer, color, caption, balance.ToString("C"), null);
+                        total += balance;
+                    }
+                }
+            }
+            this.totalMarketValue = total;
+        }
 
         private void WriteSummary(IReportWriter writer, IList<ChartDataValue> data, TaxStatus taxStatus, Predicate<Account> filter, bool subtotal, bool includeCashBalance)
         {

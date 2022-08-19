@@ -2262,7 +2262,7 @@ namespace Walkabout.Views
             SetActiveAccount(account, null, null, null, null);
             // if we are reconciling then show the positions held at statement date so the stock balances can be reconciled also.
             DateTime reportDate = this.IsReconciling ? GetReconiledExclusiveEndDate() : DateTime.Now;
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, account, this.ServiceProvider, reportDate, null);
+            PortfolioReport report = new PortfolioReport(view, this.myMoney, account, this.ServiceProvider, reportDate);
             report.DrillDown += OnReportDrillDown;
             _ = view.Generate(report);
             portfolioReport = report;

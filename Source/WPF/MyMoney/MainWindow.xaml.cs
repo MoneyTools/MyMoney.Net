@@ -3413,7 +3413,8 @@ namespace Walkabout
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Networth Report");
             NetWorthReport report = new NetWorthReport(view, this.myMoney, this.cache);
-            report.DrillDown += OnReportDrillDown;
+            report.SecurityDrillDown += OnReportDrillDown;
+            report.CashBalanceDrillDown += OnReportCashDrillDown;
             _ = view.Generate(report);
         }
 
@@ -3430,7 +3431,7 @@ namespace Walkabout
             view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio");
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now, null);
+            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now);
             report.DrillDown += OnReportDrillDown;
             _ = view.Generate(report);
         }
@@ -3444,6 +3445,19 @@ namespace Walkabout
             view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio - " + e.Type);
+            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, e.Date, e);
+            _ = view.Generate(report);
+        }
+
+        private void OnReportCashDrillDown(object sender, AccountGroup e)
+        {
+            // create new report just for this drill down to show specific account cash-only balances.
+            this.SaveViewStateOfCurrentView();
+            FlowDocumentView view = SetCurrentView<FlowDocumentView>();
+            view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
+            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
+            view.Closed += new EventHandler(OnFlowDocumentViewClosed);
+            HelpService.SetHelpKeyword(view, e.Title);
             PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, e.Date, e);
             _ = view.Generate(report);
         }

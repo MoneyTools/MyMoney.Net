@@ -1956,7 +1956,10 @@ namespace Walkabout.Data
                         {
                             break;
                         }
-                        balance += t.Amount;
+                        if (!t.IsDeleted && t.Status != TransactionStatus.Void)
+                        {
+                            balance += t.Amount;
+                        }
                     }
                     cash += a.GetNormalizedAmount(balance);
                 }
@@ -2555,10 +2558,6 @@ namespace Walkabout.Data
         {
             get
             {
-                if (this.IsClosed)
-                {
-                    return 0; // can't owe something on a closed account.
-                }
                 return this.balance;
             }
             set
