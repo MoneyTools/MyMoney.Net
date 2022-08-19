@@ -162,6 +162,7 @@ namespace Walkabout.Reports
             calc = new CostBasisCalculator(this.myMoney, this.reportDate);
             if (this.selectedGroup != null)
             {
+                bool found = false;
                 // user may have changed the reportDate, so we may need to recompute this.
                 foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(this.selectedGroup.Filter))
                 {
@@ -170,7 +171,14 @@ namespace Walkabout.Reports
                         securityTypeGroup.TaxStatus = this.selectedGroup.TaxStatus;
                         securityTypeGroup.Filter = this.selectedGroup.Filter;
                         this.selectedGroup = securityTypeGroup;
+                        found = true;
+                        break;
                     }
+                }
+                if (!found)
+                {
+                    this.selectedGroup.Purchases.Clear();
+                    this.selectedGroup.Date = this.reportDate;
                 }
             }
 
@@ -645,6 +653,7 @@ namespace Walkabout.Reports
                 decimal gainLoss = 0;
 
                 securityGroup.TaxStatus = taxStatus; // inherited from the accounts we are filtering here.
+                securityGroup.Filter = filter;
                 SecurityType st = securityGroup.Type;
                 int count = 0;
                 decimal price = 0;
