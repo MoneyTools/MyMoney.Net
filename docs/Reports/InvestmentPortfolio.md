@@ -18,7 +18,7 @@ appear like this:
 
 ![](../Images/Investment%20Portfolio2.png)
 
-This list contains a row for each unique buy date and unit price when you bought this stock.  So each row then has unique "[*cost basis](../Accounts/CostBasis.md)" which is why it is separated this way, and lists only those purchases that still have unsold shares.  Stock sales are matched in First-in First-out (FIFO) order since you usually minimize capital gains taxes that way.  If you sold your stock a different way, then this report will not be correct. 
+This list contains a row for each unique buy date and unit price when you bought this stock.  So each row then has unique "[*cost basis](../Accounts/CostBasis.md)" which is why it is separated this way, and lists only those purchases that still have unsold shares. Stock sales are matched in First-in First-out (FIFO) order.  If you sold your stock a different way, then this report will not be correct. 
 
 The **Quantity**  column then is the current number of shares that you own today (taking stock splits into account) rounded to the nearest integer.  If this number is not what you expected, then check the Stock Split history in the Securities View. 
 
