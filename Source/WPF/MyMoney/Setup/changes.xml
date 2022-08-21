@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <Change version="2.0.0.18" date="8/20/2022">
+    - Fix github issue #47.
+    - Fix bug in drill down from Portfolio Report so it remembers the security type and account filter.
+  </Change>
   <change version="2.0.0.17" date="8/17/2022">
     - Fix some mismatches between networth report totals and account balances.
     - Add cash balance to single account portfolio reports.

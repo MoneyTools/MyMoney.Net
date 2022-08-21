@@ -885,7 +885,9 @@ namespace Walkabout
             }
         }
 
+#if DEBUG
         int lastHandlerCount;
+#endif
 
         private void OnSelectionChangeFor_Account(object sender, EventArgs e)
         {
@@ -896,7 +898,7 @@ namespace Walkabout
                 Debug.WriteLine($"Number of listeners changed from {lastHandlerCount} to {count}");
                 lastHandlerCount = count;
             }
-#endif 
+#endif
 
             //-----------------------------------------------------------------
             // Look for Accounts
@@ -951,18 +953,6 @@ namespace Walkabout
             {
                 ViewTransactionsByCategoryGroup(g);
             }
-        }
-
-        private long GetFirstTransactionInCategory(TransactionsView view, Category c, DateTime date)
-        {
-            foreach (Transaction t in myMoney.Transactions.GetTransactionsByCategory(c, view.GetTransactionIncludePredicate()))
-            {
-                if (t.Date >= date && t.IsBudgeted)
-                {
-                    return t.Id;
-                }
-            }
-            return -1;
         }
 
         private void ViewTransactionsByCategory(Category c)
@@ -1088,9 +1078,9 @@ namespace Walkabout
             }
         }
 
-        #endregion
+#endregion
 
-        #region View Management
+#region View Management
 
 
         public IView CurrentView
@@ -1189,9 +1179,9 @@ namespace Walkabout
             SetChartsDirty();
         }
 
-        #endregion
+#endregion
 
-        #region Mouse & Keyboard Handling
+#region Mouse & Keyboard Handling
 
         IClipboardClient GetClipboardClient(IInputElement f)
         {
@@ -1310,9 +1300,9 @@ namespace Walkabout
 
 
 
-        #endregion
+#endregion
 
-        #region Navigation History
+#region Navigation History
 
         private void Back()
         {
@@ -1365,7 +1355,7 @@ namespace Walkabout
             Forward();
         }
 
-        #region IViewNavigation
+#region IViewNavigation
 
 
         /// <summary>
@@ -1415,11 +1405,11 @@ namespace Walkabout
                 }));
         }
 
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
-        #region Initialization
+#region Initialization
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -1596,9 +1586,9 @@ namespace Walkabout
         }
 
 
-        #endregion
+#endregion
 
-        #region Importing
+#region Importing
 
         // the problem is file change events can generate many of these in a burst, so we need a timer to delay actual loading.
         private void OnImportFolderContentHasChanged(object sender, FileSystemEventArgs e)
@@ -1709,9 +1699,9 @@ namespace Walkabout
             return total;
         }
 
-        #endregion
+#endregion
 
-        #region Caption
+#region Caption
 
         void UpdateCaption(string caption)
         {
@@ -1737,9 +1727,9 @@ namespace Walkabout
             }
         }
 
-        #endregion
+#endregion
 
-        #region Data
+#region Data
 
         private bool isLoading;
 
@@ -2405,9 +2395,9 @@ namespace Walkabout
             return 0;
         }
 
-        #endregion
+#endregion
 
-        #region TRACK CHANGES
+#region TRACK CHANGES
 
         private void OnChangedUI(object sender, ChangeEventArgs e)
         {
@@ -2469,9 +2459,9 @@ namespace Walkabout
             Save();
         }
 
-        #endregion
+#endregion
 
-        #region Balancing
+#region Balancing
 
         private void OnAccountsPanelBalanceAccount(object sender, ChangeEventArgs e)
         {
@@ -2530,9 +2520,9 @@ namespace Walkabout
                 TransactionView.OnEndReconcile(!balanced, hasStatement);
             }
         }
-        #endregion
+#endregion
 
-        #region MANAGE VIEW
+#region MANAGE VIEW
 
         private void OnBeforeViewStateChanged(object sender, EventArgs e)
         {
@@ -2692,9 +2682,9 @@ namespace Walkabout
             }
         }
 
-        #endregion
+#endregion
 
-        #region Manage Graph
+#region Manage Graph
 
         private bool inGraphMouseDown;
 
@@ -3094,9 +3084,9 @@ namespace Walkabout
             }
         }
 
-        #endregion
+#endregion
 
-        #region Manage Query
+#region Manage Query
 
 
         private void ShowQueryPanel()
@@ -3192,9 +3182,9 @@ namespace Walkabout
         }
 
 
-        #endregion
+#endregion
 
-        #region IServiceProvider Members
+#region IServiceProvider Members
 
 
         object IServiceProvider.GetService(Type service)
@@ -3278,9 +3268,9 @@ namespace Walkabout
             return null;
         }
 
-        #endregion
+#endregion
 
-        #region Edit Menu        
+#region Edit Menu        
 
         private void OnCommandCanUndo(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -3395,9 +3385,9 @@ namespace Walkabout
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Reports Menu        
+#region Reports Menu        
 
         void OnFlowDocumentViewClosed(object sender, EventArgs e)
         {
@@ -3516,9 +3506,9 @@ namespace Walkabout
             report.Generate(writer);
         }
 
-        #endregion
+#endregion
 
-        #region COMMANDS
+#region COMMANDS
 
         private void OnRemovedUnusedSecurities(object sender, RoutedEventArgs e)
         {
@@ -4195,9 +4185,9 @@ namespace Walkabout
         }
 
 
-        #endregion
+#endregion
 
-        #region ONLINE
+#region ONLINE
 
         void OnAccountsPanelShowTransfers(object sender, ChangeEventArgs e)
         {
@@ -4250,9 +4240,9 @@ namespace Walkabout
             od.ShowDialog();
         }
 
-        #endregion
+#endregion
 
-        #region IStatusService Members
+#region IStatusService Members
 
         public void ShowMessage(string text)
         {
@@ -4425,9 +4415,9 @@ namespace Walkabout
             this.CurrentView.FocusQuickFilter();
         }
 
-        #endregion
+#endregion
 
-        #region Window Events
+#region Window Events
 
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -4527,7 +4517,7 @@ namespace Walkabout
         }
 
 
-        #endregion
+#endregion
 
     }
 }

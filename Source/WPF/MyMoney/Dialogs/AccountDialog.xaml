@@ -144,9 +144,6 @@
                 <TextBlock Text="months" VerticalAlignment="Center" Margin="10,0,0,0"/>
             </StackPanel>
 
-            <TextBlock Text="Include in budget:" Grid.Column="0" Grid.Row="22" HorizontalAlignment="Right" />
-            <CheckBox x:Name="CheckBoxIncludeInBudget" Grid.Column="2" Grid.Row="22" IsChecked="{Binding Path=IsBudgeted, Mode=TwoWay}" TabIndex="14" />
-
             <TextBlock Text="Closed:" Grid.Column="0" Grid.Row="24" HorizontalAlignment="Right" />
             <CheckBox x:Name="CheckBoxClosed" Grid.Column="2" Grid.Row="24" IsChecked="{Binding Path=IsClosed, Mode=TwoWay}" TabIndex="15" />
 

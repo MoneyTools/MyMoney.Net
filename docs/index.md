@@ -27,7 +27,7 @@ Save a lot of typing using [Online Banking](Accounts/OnlineBanking.md) to downlo
 
 ![](Images/Home4.png)
 
-Secure storage of your data in a SQL Lite database.  See [Setup](Basics/Setup.md) for details.
+Secure storage of your data in a password protected SQL Lite database.  See [Setup](Basics/Setup.md) for details.
 
 ![](Images/Home5.png)
 
@@ -47,7 +47,8 @@ Bug free account reconciliation ([balancing](Accounts/BalancingAccounts.md)) pro
 
 ![](Images/Home9.png)
 
-[Attachments](Basics/Attachments.md) can be associated with each transaction which is handy for tracking additional information that doesn't fit in the memo field. You can also use this to store a scanned copy of your store receipts so you can find your receipts quickly and easily.
+[Attachments](Basics/Attachments.md) can be associated with each transaction which is handy for tracking additional information that doesn't fit in the memo field. You can also use this to store a scanned copy of your store receipts so you can find your receipts quickly and easily.  You can also attached bank statement .pdf files during account balancing so you can easily open the statement
+for a given reconciled transaction.
 
 ![](Images/Home10.png)
 

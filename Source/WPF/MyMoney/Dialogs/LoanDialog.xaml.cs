@@ -124,7 +124,6 @@ namespace Walkabout.Dialogs
             theAccount.Currency = editingAccount.Currency;
             theAccount.WebSite = editingAccount.WebSite;
             theAccount.IsClosed = editingAccount.IsClosed;
-            theAccount.IsBudgeted = editingAccount.IsBudgeted;
 
             this.DialogResult = true;
         }

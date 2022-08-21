@@ -107,9 +107,6 @@
                 <Button Grid.Column="1" Margin="8,0,0,0" Grid.ColumnSpan="2" Click="ButtonGoToWebSite">>></Button>
             </Grid>
 
-            <TextBlock Text="Include in budget:" Grid.Column="0" Grid.Row="16" HorizontalAlignment="Right" />
-            <CheckBox Grid.Column="2" Grid.Row="16" IsChecked="{Binding Path=IsBudgeted, Mode=TwoWay}"  />
-
             <TextBlock Text="Closed:" Grid.Column="0" Grid.Row="18" HorizontalAlignment="Right" />
             <CheckBox Grid.Column="2" Grid.Row="18" IsChecked="{Binding Path=IsClosed, Mode=TwoWay}"  />
         </Grid>

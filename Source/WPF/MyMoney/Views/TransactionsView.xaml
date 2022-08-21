@@ -20,7 +20,6 @@
 
             <MenuItem Name="menuItemToggleAccept" Header="Toggle _Accept" Command="views:TransactionsView.CommandAccept" InputGestureText="Ctrl-Space"/>
             <MenuItem Name="menuItemToggleVoid" Header="Toggle _Void" Command="views:TransactionsView.CommandVoid"/>
-            <MenuItem Name="menuItemBudget" Header="_Budgeted" Command="views:TransactionsView.CommandBudgeted" IsChecked="{Binding Path=SelectedTransaction.IsBudgeted}"/>
             <MenuItem Name="menuItemSplit" Header="_Splits..." Command="views:TransactionsView.CommandSplits"/>
             <MenuItem Name="menuItemRenamePayee" Header="_Rename Payee" Command="views:TransactionsView.CommandRenamePayee"/>
             <MenuItem Name="menuItemLookupPayee" Header="_Lookup Payee " Command="views:TransactionsView.CommandLookupPayee" InputGestureText="F3"/>
@@ -54,7 +53,6 @@
         <CommandBinding Command="views:TransactionsView.CommandCopySplits" Executed="OnCopySplits" CanExecute="CanCopySplits"/>
         <CommandBinding Command="views:TransactionsView.CommandPasteSplits" Executed="OnPasteSplits" CanExecute="CanPasteSplits"/>
         <CommandBinding Command="views:TransactionsView.CommandVoid" Executed="OnCommandVoid" CanExecute="CanExecute_Void" />
-        <CommandBinding Command="views:TransactionsView.CommandBudgeted" Executed="OnCommandBudgeted" CanExecute="CanExecute_Budgeted" />
         <CommandBinding Command="views:TransactionsView.CommandSplits" Executed="OnCommandSplits" CanExecute="CanExecute_Splits" />
         <CommandBinding Command="views:TransactionsView.CommandRenamePayee" Executed="OnCommandRenamePayee" CanExecute="CanExecute_RenamePayee"/>
         <CommandBinding Command="views:TransactionsView.CommandLookupPayee" Executed="OnCommandLookupPayee" CanExecute="CanExecute_LookupPayee"/>

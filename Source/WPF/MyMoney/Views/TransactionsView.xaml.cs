@@ -3786,7 +3786,6 @@ namespace Walkabout.Views
         public readonly static RoutedUICommand CommandPasteSplits = new RoutedUICommand("PasteSplits", "CommandPasteSplits", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandAccept = new RoutedUICommand("Accept", "CommandAccept", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandVoid = new RoutedUICommand("Void", "CommandVoid", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandBudgeted = new RoutedUICommand("Budgeted", "CommandBudgeted", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandSplits = new RoutedUICommand("Splits", "CommandSplits", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandRenamePayee = new RoutedUICommand("RenamePayee", "CommandRenamePayee", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandLookupPayee = new RoutedUICommand("LookupPayee", "CommandLookupPayee", typeof(TransactionsView));
@@ -3986,39 +3985,6 @@ namespace Walkabout.Views
         {
             Transaction t = this.SelectedTransaction;
             e.CanExecute = (t != null && Clipboard.ContainsText());
-        }
-
-        private void BudgetTransaction(Transaction t)
-
-        {
-            if (t != null)
-            {
-                try
-                {
-                    this.myMoney.BeginUpdate(this);
-                    t.SetBudgeted(!t.IsBudgeted, null);
-                }
-                catch (Exception ex)
-                {
-                    UiDispatcher.BeginInvoke(new Action(() =>
-                    {
-                        MessageBoxEx.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }));
-                }
-                finally
-                {
-                    this.myMoney.EndUpdate();
-                }
-            }
-        }
-
-        void OnCommandBudgeted(object sender, RoutedEventArgs e)
-        {
-            Transaction t = this.SelectedTransaction;
-            if (t != null && !t.IsReadOnly)
-            {
-                BudgetTransaction(t);
-            }
         }
 
         void OnCommandSplits(object sender, RoutedEventArgs e)
