@@ -149,10 +149,13 @@ namespace Walkabout.Reports
                     // liabilities are not included in the pie chart because that would be confusing.
                     balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, (a) => a.Type == AccountType.Credit);
                     WriteHeader(writer, "Liabilities");
-                    totalBalance += balance;
 
+                    Predicate<Account> creditAccountFilter = (a) => a.Type == AccountType.Credit;
+                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, creditAccountFilter);
+                    totalBalance += balance;
+                    var creditGroup = new AccountGroup() { Filter = creditAccountFilter, Date = this.reportDate, Title = "Credit Accounts" };
                     color = GetRandomColor();
-                    WriteRow(writer, color, "Credit", balance, null);
+                    WriteRow(writer, color, "Credit", balance, () => OnSelectCashGroup(creditGroup));
                     totalBalance += WriteLoanAccountRows(writer, data, color, true);
 
                     writer.StartFooterRow();

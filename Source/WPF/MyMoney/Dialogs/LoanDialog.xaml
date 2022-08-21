@@ -14,7 +14,14 @@
         WindowStartupLocation="CenterOwner" 
         WindowStyle="ToolWindow" 
         SizeToContent="WidthAndHeight">
-
+    <local:BaseDialog.Resources>
+        <Style x:Key="ComboBoxStretchStyle" TargetType="ComboBoxItem">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </local:BaseDialog.Resources>
     <StackPanel Margin="20,20,20,20">
         <Grid  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
