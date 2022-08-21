@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -88,20 +89,17 @@ namespace Walkabout.Views.Controls
             DateTime oldestUnreconciledDate = DateTime.MaxValue;
 
             HashSet<DateTime> previous = new HashSet<DateTime>();
-            foreach (Transaction t in this.myMoney.Transactions.GetAllTransactions())
+            foreach (Transaction t in this.myMoney.Transactions.GetTransactionsFrom(a))
             {
-                if (t.Account == a )
+                if (t.ReconciledDate.HasValue)
                 {
-                    if (t.ReconciledDate.HasValue)
+                    previous.Add(t.ReconciledDate.Value);
+                }
+                else
+                {
+                    if (t.Date < oldestUnreconciledDate)
                     {
-                        previous.Add(t.ReconciledDate.Value);
-                    }
-                    else
-                    {
-                        if (t.Date < oldestUnreconciledDate)
-                        {
-                            oldestUnreconciledDate = t.Date;
-                        }
+                        oldestUnreconciledDate = t.Date;
                     }
                 }
             }
@@ -135,12 +133,14 @@ namespace Walkabout.Views.Controls
             else
             {
                 string lastDate = estdate.ToShortDateString();
-                if (!previousReconciliations.Contains(lastDate))
+                if (previousReconciliations.Contains(lastDate))
                 {
-                    previousReconciliations.Add(lastDate);
+                    this.SelectedPreviousStatement = estdate;
                 }
-
-                this.SelectedPreviousStatement = estdate;
+                else
+                {
+                    Debug.WriteLine("Hmmm, there were no transactions with the Account.LastBalance date set as the ReconciledDate?");
+                }
             }
             this.ComboBoxPreviousReconcileDates.SelectedIndex = previousReconciliations.Count - 1;
             estdate = GetNextStatementDate(this.SelectedPreviousStatement);
