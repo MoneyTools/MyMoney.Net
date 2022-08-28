@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using Walkabout.Configuration;
+using Walkabout.Data;
 
 namespace Walkabout.Controls
 {
@@ -11,7 +12,8 @@ namespace Walkabout.Controls
     /// </summary>
     public partial class AppSettings : UserControl
     {
-        private readonly Settings settings;
+        private Settings settings;
+        private DatabaseSettings databaseSettings;
         private readonly IDictionary<string, string> themes = new SortedDictionary<string, string>() { 
             { "Light", "Light" },
             { "Dark", "Dark" }
@@ -40,7 +42,12 @@ namespace Walkabout.Controls
                 comboBoxTheme.Items.Add(theme);
             }
             comboBoxTheme.SelectedItem = settings.Theme;
+        }
 
+        internal void SetSite(IServiceProvider site)
+        {
+            this.settings = (Settings)site.GetService(typeof(Settings));
+            this.databaseSettings = (DatabaseSettings)site.GetService(typeof(DatabaseSettings));
         }
 
         public event EventHandler Closed;
@@ -51,9 +58,9 @@ namespace Walkabout.Controls
             {
                 if (b)
                 {
-                    this.checkBoxRentalSupport.IsChecked = settings.RentalManagement;
+                    this.checkBoxRentalSupport.IsChecked = this.databaseSettings.RentalManagement;
                     this.checkBoxPlaySounds.IsChecked = settings.PlaySounds;
-                    this.comboBoxFiscalYear.SelectedIndex = settings.FiscalYearStart;
+                    this.comboBoxFiscalYear.SelectedIndex = this.databaseSettings.FiscalYearStart;
 
                     foreach (string theme in comboBoxTheme.Items)
                     {
@@ -96,12 +103,12 @@ namespace Walkabout.Controls
 
         private void OnFiscalYearChanged(object sender, SelectionChangedEventArgs e)
         {
-            settings.FiscalYearStart = comboBoxFiscalYear.SelectedIndex;
+            this.databaseSettings.FiscalYearStart = comboBoxFiscalYear.SelectedIndex;
         }
 
         private void OnRentalSupportChanged(object sender, RoutedEventArgs e)
         {
-            settings.RentalManagement = this.checkBoxRentalSupport.IsChecked == true;
+            this.databaseSettings.RentalManagement = this.checkBoxRentalSupport.IsChecked == true;
         }
 
         private void OnPlaySoundsChanged(object sender, RoutedEventArgs e)

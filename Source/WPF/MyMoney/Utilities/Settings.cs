@@ -163,18 +163,27 @@ namespace Walkabout.Configuration
             }
         }
 
-        public int FiscalYearStart
+        internal int MigrateFiscalYearStart()
         {
-            get
+            object value = MigrateSetting("FiscalYearStart");
+            return value is int i ? i : 0;
+        }
+
+        internal bool MigrateRentalManagement()
+        {
+            object value = MigrateSetting("RentalManagement");
+            return value is bool i ? i : false;
+        }
+
+        private object MigrateSetting(string name)
+        {
+            if (map.ContainsKey(name))
             {
-                object value = map["FiscalYearStart"];
-                return value is int i ? i : 0;
+                object value = map[name];
+                map.Remove(name);
+                return value;
             }
-            set
-            {
-                map["FiscalYearStart"] = value;
-                OnPropertyChanged("FiscalYearStart");
-            }
+            return null;
         }
 
         public string Connection
@@ -285,19 +294,6 @@ namespace Walkabout.Configuration
             }
         }
 
-        public bool RentalManagement
-        {
-            get
-            {
-                object value = map["RentalManagement"];
-                return value is bool ? (bool)value : false;
-            }
-            set { 
-                map["RentalManagement"] = value;
-                OnPropertyChanged("RentalManagement");
-            }
-        }
-
         public List<StockServiceSettings> StockServiceSettings
         {
             get
@@ -380,8 +376,11 @@ namespace Walkabout.Configuration
                 return value is string ? (string)value : null;
             }
             set {
-                map["Theme"] = value;
-                OnPropertyChanged("Theme");
+                if (this.Theme != value)
+                {
+                    map["Theme"] = value;
+                    OnPropertyChanged("Theme");
+                }
             }
         }
 
@@ -460,11 +459,23 @@ namespace Walkabout.Configuration
             set {  map[key] = value;  }
         }
 
-        public void Read(string path)
+        public void Load(string path)
         {
             using (XmlTextReader r = new XmlTextReader(path))
             {
                 ReadXml(r);
+            }
+        }
+
+        public void Save()
+        {
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.Encoding = Encoding.UTF8;
+            using (XmlWriter w = XmlWriter.Create(this.ConfigFile, settings))
+            {
+                this.WriteXml(w);
+                w.Close();
             }
         }
 
@@ -931,6 +942,7 @@ namespace Walkabout.Configuration
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
             }
         }
+
     }
 
     public class GraphState : IXmlSerializable

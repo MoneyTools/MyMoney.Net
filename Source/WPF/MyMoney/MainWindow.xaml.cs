@@ -58,6 +58,10 @@ namespace Walkabout
         private UndoManager manager;
         private AttachmentManager attachmentManager;
         private StatementManager statementManager;
+        private bool canSave;
+        private IDatabase database;
+        private DatabaseSettings databaseSettings = new DatabaseSettings();
+
         internal MyMoney myMoney = new MyMoney();
         private ChangeTracker tracker;
 
@@ -135,6 +139,7 @@ namespace Walkabout
                 this.accountsControl.TabIndex = 1;
                 this.accountsControl.Name = "AccountsControl";
                 this.accountsControl.MyMoney = this.myMoney;
+                this.accountsControl.DatabaseSettings = this.databaseSettings;
                 this.accountsControl.SyncAccount += new EventHandler<ChangeEventArgs>(OnAccountsPanelSyncAccount);
                 this.accountsControl.BalanceAccount += new EventHandler<ChangeEventArgs>(OnAccountsPanelBalanceAccount);
                 this.accountsControl.ShowTransfers += new EventHandler<ChangeEventArgs>(OnAccountsPanelShowTransfers);
@@ -262,6 +267,18 @@ namespace Walkabout
 
         private void OnSettingsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            Settings settings = (Settings)sender;
+            switch (e.PropertyName)
+            {
+                case "Theme":
+                    OnThemeChanged(this.settings.Theme);
+                    break;
+            }
+        }
+
+        private void DatabaseSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            DatabaseSettings settings = (DatabaseSettings)sender;
             switch (e.PropertyName)
             {
                 case "RentalManagement":
@@ -271,15 +288,19 @@ namespace Walkabout
                 case "FiscalYearStart":
                     HistoryChart.FiscalYearStart = settings.FiscalYearStart;
                     break;
-                case "Theme":
-                    OnThemeChanged(this.settings.Theme);
-                    break;
             }
+
+            // save right away, but decoulpled from UI thread.
+            this.delayedActions.StartDelayedAction("SaveDatabaseSettings", () =>
+            {
+                settings.Save();
+            }, TimeSpan.FromSeconds(1));
         }
+
 
         private void UpdateRentalManagement()
         {
-            if (settings.RentalManagement)
+            if (this.databaseSettings.RentalManagement)
             {
                 //-----------------------------------------------------------------
                 // RENTAL CONTROL
@@ -1512,16 +1533,9 @@ namespace Walkabout
 
             s.GraphState = GetGraphState();
             ProcessHelper.CreateSettingsDirectory();
-            if (s.ConfigFile != null && s.Persist)
+            if (!string.IsNullOrEmpty(s.ConfigFile) && s.Persist)
             {
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.Encoding = Encoding.UTF8;
-                using (XmlWriter w = XmlWriter.Create(s.ConfigFile, settings))
-                {
-                    s.WriteXml(w);
-                    w.Close();
-                }
+                s.Save();
             }
         }
 
@@ -1833,9 +1847,6 @@ namespace Walkabout
             ShowMessage("Net worth: " + total.ToString("C"));
         }
 
-        private bool canSave = false;
-        private IDatabase database;
-
         private void LoadDatabase(string server, string databaseName, string userId, string password, string backupPath)
         {
             MyMoney newMoney = null;
@@ -1959,9 +1970,10 @@ namespace Walkabout
                     MenuFileAddUser.Visibility = database.SupportsUserLogin ? Visibility.Visible : Visibility.Collapsed;
                     CreateAttachmentDirectory();
                     CreateStatementsDirectory();
-                    this.DataContext = newMoney;
+                    this.DataContext = newMoney; // this sets this.myMoney.
                     canSave = true;
                     isLoading = false;
+                    UpdateDatabaseSettings(DatabaseSettings.LoadFrom(database));
                     string label = Path.GetFileName(database.DatabasePath);
                     var msg = "Loaded from " + label + " in " + (int)watch.Elapsed.TotalMilliseconds + " milliseconds";
                     if (string.IsNullOrEmpty(password))
@@ -1977,6 +1989,20 @@ namespace Walkabout
                     this.recentFilesMenu.AddRecentFile(database.DatabasePath);
                 }));
             }
+        }
+
+        private void UpdateDatabaseSettings(DatabaseSettings settings)
+        {
+            this.databaseSettings.PropertyChanged -= DatabaseSettings_PropertyChanged;
+            this.databaseSettings = settings;
+            this.accountsControl.DatabaseSettings = this.databaseSettings;
+            this.databaseSettings.PropertyChanged += DatabaseSettings_PropertyChanged;
+            if (this.databaseSettings.MigrateSettings(this.settings))
+            {
+                this.databaseSettings.Save();
+                this.settings.Save();
+            }
+            this.databaseSettings.RaiseAllEvents();
         }
 
         private void AnimateStatus(string start, string end)
@@ -2945,7 +2971,7 @@ namespace Walkabout
             {
                 return;
             }
-            HistoryChart.FiscalYearStart = settings.FiscalYearStart;
+            HistoryChart.FiscalYearStart = this.databaseSettings.FiscalYearStart;
 
             // pick a color based on selected category or payee.
             Category cat = this.TransactionView.ActiveCategory;
@@ -3196,6 +3222,10 @@ namespace Walkabout
             else if (service == typeof(Settings))
             {
                 return this.settings;
+            }
+            else if (service == typeof(DatabaseSettings))
+            {
+                return this.databaseSettings;
             }
             else if (service == typeof(AccountsControl))
             {
@@ -3460,7 +3490,7 @@ namespace Walkabout
             view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Tax Report");
-            TaxReport report = new TaxReport(view, this.myMoney, this.settings.FiscalYearStart);
+            TaxReport report = new TaxReport(view, this.myMoney, this.databaseSettings.FiscalYearStart);
             _ = view.Generate(report);
         }
 
@@ -3472,7 +3502,7 @@ namespace Walkabout
             view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "W2 Report");
-            W2Report report = new W2Report(view, this.myMoney, this, settings.FiscalYearStart);
+            W2Report report = new W2Report(view, this.myMoney, this, this.databaseSettings.FiscalYearStart);
             _ = view.Generate(report);
         }
 
@@ -3489,7 +3519,7 @@ namespace Walkabout
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportCashFlow");
             view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(OnFlowDocumentViewClosed);
-            CashFlowReport report = new CashFlowReport(view, this.myMoney, this, settings.FiscalYearStart);
+            CashFlowReport report = new CashFlowReport(view, this.myMoney, this, this.databaseSettings.FiscalYearStart);
             report.Regenerate();
         }
 
@@ -3993,6 +4023,7 @@ namespace Walkabout
                 this.AppSettingsPanel.Password = this.database.Password;
             }
 
+            this.AppSettingsPanel.SetSite(this);
             WpfHelper.Flyout(this.AppSettingsPanel);
         }
 

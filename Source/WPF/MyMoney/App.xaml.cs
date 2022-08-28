@@ -95,10 +95,7 @@ namespace Walkabout
 
                 if (File.Exists(s.ConfigFile) && !noSettings)
                 {
-                    using (XmlTextReader r = new XmlTextReader(s.ConfigFile))
-                    {
-                        s.ReadXml(r);
-                    }
+                    s.Load(s.ConfigFile);
                 }
 
             }

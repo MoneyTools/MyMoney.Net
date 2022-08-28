@@ -208,6 +208,7 @@
     <Compile Include="Controls\Resizer.cs" />
     <Compile Include="Controls\WpfConverters.cs" />
     <Compile Include="Database\AutoCategorization.cs" />
+    <Compile Include="Database\DatabaseSettings.cs" />
     <Compile Include="Dialogs\PickYearDialog.xaml.cs">
       <DependentUpon>PickYearDialog.xaml</DependentUpon>
     </Compile>

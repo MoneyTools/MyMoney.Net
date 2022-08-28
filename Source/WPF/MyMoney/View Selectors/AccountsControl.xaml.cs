@@ -67,6 +67,7 @@ namespace Walkabout.Views.Controls
 
         private ObservableCollection<AccountViewModel> items = new ObservableCollection<AccountViewModel>();
 
+        public DatabaseSettings DatabaseSettings { get; set; }
 
         public MyMoney MyMoney
         {
@@ -577,7 +578,7 @@ namespace Walkabout.Views.Controls
             if (filename.ToLowerInvariant().EndsWith(".txf"))
             {
                 TaxReportDialog options = new TaxReportDialog();
-                options.Month = Settings.TheSettings.FiscalYearStart;
+                options.Month = this.DatabaseSettings.FiscalYearStart;
                 options.Owner = App.Current.MainWindow;
                 if (options.ShowDialog() == true)
                 {
