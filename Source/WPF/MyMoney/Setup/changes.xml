@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <Change version="2.0.0.20" date="9/11/2022">
+    - Add escape key shortcut to close attachment dialog.
+  </Change>
   <Change version="2.0.0.19" date="8/27/2022">
     - Add a database settings xml file which now contains the FiscalYearStart and RentalManagement settings for each Money database you have (Issue #38).
   </Change>

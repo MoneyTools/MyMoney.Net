@@ -19,7 +19,7 @@ namespace Walkabout.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -403,7 +403,7 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The scanning device is busy..
+        ///   Looks up a localized string similar to The device is busy. Close any apps that are using this device or wait for it to finish and then try again..
         /// </summary>
         internal static string WIA_ERROR_BUSY {
             get {
@@ -412,7 +412,7 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The cover is open.
+        ///   Looks up a localized string similar to One or more of the device’s cover is open.
         /// </summary>
         internal static string WIA_ERROR_COVER_OPEN {
             get {
@@ -430,7 +430,7 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An unspecified error occurred during an attempted communication with the scanner..
+        ///   Looks up a localized string similar to Communication with the WIA device failed. Make sure that the device is powered on and connected to the PC. If the problem persists, disconnect and reconnect the device..
         /// </summary>
         internal static string WIA_ERROR_DEVICE_COMMUNICATION {
             get {
@@ -439,7 +439,7 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The scanner head is locked.
+        ///   Looks up a localized string similar to The device is locked. Close any apps that are using this device or wait for it to finish and then try again.
         /// </summary>
         internal static string WIA_ERROR_DEVICE_LOCKED {
             get {
@@ -502,11 +502,29 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The lamp is off.
+        ///   Looks up a localized string similar to The scanner&apos;s lamp is off.
         /// </summary>
         internal static string WIA_ERROR_LAMP_OFF {
             get {
                 return ResourceManager.GetString("WIA_ERROR_LAMP_OFF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A scan job was interrupted because an Imprinter/Endorser item reached the maximum valid value .
+        /// </summary>
+        internal static string WIA_ERROR_MAXIMUM_PRINTER_ENDORSER_COUNTER {
+            get {
+                return ResourceManager.GetString("WIA_ERROR_MAXIMUM_PRINTER_ENDORSER_COUNTER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A scan error occurred because of a multiple page feed condition.
+        /// </summary>
+        internal static string WIA_ERROR_MULTI_FEED {
+            get {
+                return ResourceManager.GetString("WIA_ERROR_MULTI_FEED", resourceCulture);
             }
         }
         

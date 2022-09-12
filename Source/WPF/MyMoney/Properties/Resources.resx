@@ -230,7 +230,7 @@
     <value>The scanning device is not online.</value>
   </data>
   <data name="WIA_ERROR_BUSY" xml:space="preserve">
-    <value>The scanning device is busy.</value>
+    <value>The device is busy. Close any apps that are using this device or wait for it to finish and then try again.</value>
   </data>
   <data name="WIA_ERROR_WARMING_UP" xml:space="preserve">
     <value>The scanner is warming up.</value>
@@ -242,7 +242,7 @@
     <value>The scanner device was deleted. It can no longer be accessed</value>
   </data>
   <data name="WIA_ERROR_DEVICE_COMMUNICATION" xml:space="preserve">
-    <value>An unspecified error occurred during an attempted communication with the scanner.</value>
+    <value>Communication with the WIA device failed. Make sure that the device is powered on and connected to the PC. If the problem persists, disconnect and reconnect the device.</value>
   </data>
   <data name="WIA_ERROR_INVALID_COMMAND" xml:space="preserve">
     <value>The device does not support this command</value>
@@ -251,7 +251,7 @@
     <value>There is an incorrect setting on the scanner.</value>
   </data>
   <data name="WIA_ERROR_DEVICE_LOCKED" xml:space="preserve">
-    <value>The scanner head is locked</value>
+    <value>The device is locked. Close any apps that are using this device or wait for it to finish and then try again</value>
   </data>
   <data name="WIA_ERROR_EXCEPTION_IN_DRIVER" xml:space="preserve">
     <value>The device driver threw an exception.</value>
@@ -260,16 +260,22 @@
     <value>The response from the driver is invalid.</value>
   </data>
   <data name="WIA_ERROR_COVER_OPEN" xml:space="preserve">
-    <value>The cover is open</value>
+    <value>One or more of the device’s cover is open</value>
   </data>
   <data name="WIA_ERROR_LAMP_OFF" xml:space="preserve">
-    <value>The lamp is off</value>
+    <value>The scanner's lamp is off</value>
   </data>
   <data name="WIA_ERROR_DESTINATION" xml:space="preserve">
     <value>Error in scanner destination.</value>
   </data>
   <data name="WIA_ERROR_NETWORK_RESERVATION_FAILED" xml:space="preserve">
     <value>Network reservation failed</value>
+  </data>
+  <data name="WIA_ERROR_MULTI_FEED" xml:space="preserve">
+    <value>A scan error occurred because of a multiple page feed condition</value>
+  </data>
+  <data name="WIA_ERROR_MAXIMUM_PRINTER_ENDORSER_COUNTER" xml:space="preserve">
+    <value>A scan job was interrupted because an Imprinter/Endorser item reached the maximum valid value </value>
   </data>
   <data name="XmlFileFilter" xml:space="preserve">
     <value>XML files (*.xml)|*.xml</value>

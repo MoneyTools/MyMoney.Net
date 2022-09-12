@@ -91,7 +91,7 @@ namespace Walkabout.Reports
             byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
             int selected = -1;
             int index = 0;
-            for (int i = firstYear; i <= lastYear; i++)
+            for (int i = lastYear; i >= firstYear; i--)
             {
                 if (this.fiscalYearStart > 0 && i == this.endDate.Year)
                 {

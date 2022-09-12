@@ -56,6 +56,15 @@ namespace Walkabout.Dialogs
             resizerBrush = (Brush)Resources["ResizerThumbBrush"];
         }
 
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                this.Close();
+            }
+            base.OnPreviewKeyDown(e);
+        }
+
         void CanvasGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Point pos = e.GetPosition(CanvasGrid);
@@ -280,7 +289,10 @@ namespace Walkabout.Dialogs
                     WiaErrorCode code = (WiaErrorCode)((hresult) & 0xffff);
                     var mgr = Walkabout.Properties.Resources.ResourceManager;
                     string msg = mgr.GetString(code.ToString());
-                    return msg;
+                    if (!string.IsNullOrEmpty(msg))
+                    {
+                        return msg;
+                    }
                 }
             }
             return "Unexpected error with scanner: " + ex.Message;
@@ -1291,7 +1303,9 @@ namespace Walkabout.Dialogs
         WIA_ERROR_COVER_OPEN,
         WIA_ERROR_LAMP_OFF,
         WIA_ERROR_DESTINATION,
-        WIA_ERROR_NETWORK_RESERVATION_FAILED
+        WIA_ERROR_NETWORK_RESERVATION_FAILED,
+        WIA_ERROR_MULTI_FEED,
+        WIA_ERROR_MAXIMUM_PRINTER_ENDORSER_COUNTER
     }
 }
 
