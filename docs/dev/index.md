@@ -30,7 +30,21 @@ tests running from a user model called `TestModel.dgml`.
 To run this test you need to first install the
 [DgmlTestMonitor 2022 plugin](https://marketplace.visualstudio.com/items?itemName=ChrisLovett.DgmlTestMonitor2022):
 
-
 ![](../Images/DgmlTestMonitorInstall.png)
 
 This installs a new tool window, you can open View/Other Windows/DGML Test Monitor. Here's a [demo video](https://youtu.be/h5cIDTlnN8I) showing the testing running.
+
+## Projects and Packages
+
+The overall project dependencies looks like this where the main app MyMoney depends on `ModernWPF`, `Newtonsoft` and `System.Data.SQLite`.  Everything else shown here is test related.
+
+![components](../Images/components.png)
+
+## PerformanceGraph
+
+The PerformanceGraph project provides a simple UI for visualizing the performance of the app while
+doing important operations like loading, switching views, and scrolling.  The PerformanceGraph
+can visualize measurements defined by the `MeasurementId` in the PerformanceGraphProvider.
+The following is an example of the events recorded during the load of a money database:
+
+![performance](../Images/performance.png)
