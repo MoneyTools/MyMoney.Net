@@ -209,8 +209,8 @@
     <Compile Include="Controls\WpfConverters.cs" />
     <Compile Include="Database\AutoCategorization.cs" />
     <Compile Include="Database\DatabaseSettings.cs" />
-    <Compile Include="Dialogs\PickYearDialog.xaml.cs">
-      <DependentUpon>PickYearDialog.xaml</DependentUpon>
+    <Compile Include="Dialogs\PickDateDialog.xaml.cs">
+      <DependentUpon>PickDateDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\RecategorizeDialog.xaml.cs">
       <DependentUpon>RecategorizeDialog.xaml</DependentUpon>
@@ -680,7 +680,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\PickYearDialog.xaml">
+    <Page Include="Dialogs\PickDateDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -57,34 +57,8 @@ namespace Walkabout.Reports
             FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
             writer.WriteHeading("Tax Report For ");
 
-            int firstYear = DateTime.Now.Year;
-            int lastYear = DateTime.Now.Year;
+            var (firstYear, lastYear) = this.money.Transactions.GetTaxYearRange(this.fiscalYearStart);
 
-            ICollection<Transaction> transactions = this.money.Transactions.GetAllTransactionsByDate();
-            Transaction first = transactions.FirstOrDefault();
-            if (first != null)
-            {
-                firstYear = first.Date.Year;
-            }
-            Transaction last = transactions.LastOrDefault();
-            if (last != null)
-            {
-                lastYear = last.Date.Year;
-                if (this.fiscalYearStart > 0 && last.Date.Month > this.fiscalYearStart + 1)
-                {
-                    lastYear++;
-                }
-                // don't show a report containing zero data.  Scroll back to the last year
-                // of data and show that.
-                if (this.fiscalYearStart > 0 && lastYear > this.endDate.Year)
-                {
-                    SetStartDate(lastYear);
-                }
-                else if (this.fiscalYearStart == 0 && this.startDate.Year > lastYear)
-                {
-                    SetStartDate(lastYear);
-                }
-            }
             Paragraph heading = fwriter.CurrentParagraph;
 
             ComboBox byYearCombo = new ComboBox();

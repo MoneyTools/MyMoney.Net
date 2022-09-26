@@ -209,13 +209,13 @@ namespace Walkabout.Reports
             FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
             writer.WriteHeading("Cash Flow Report ");
 
-            ICollection<Transaction> transactions = this.myMoney.Transactions.GetAllTransactionsByDate();
+            ICollection<Transaction> transactions = this.myMoney.Transactions.GetAllTransactionsByTaxDate();
 
             DateTime firstTransactionDate = DateTime.Now;
             Transaction first = transactions.FirstOrDefault();
             if (first != null)
             {
-                firstTransactionDate = first.Date;
+                firstTransactionDate = first.TaxDate;
             }
 
             columns = new List<string>();
@@ -461,7 +461,7 @@ namespace Walkabout.Reports
                     continue;
                 }
 
-                if (t.Date < startDate || t.Date >= endDate)
+                if (t.TaxDate < startDate || t.TaxDate >= endDate)
                 {
                     continue;
                 }

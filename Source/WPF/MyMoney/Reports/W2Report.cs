@@ -34,7 +34,7 @@ namespace Walkabout.Taxes
         {
             this.myMoney = money;
             this.fiscalYearStart = fiscalYearStart;
-            SetStartDate(DateTime.Now.Year);
+            SetStartDate(DateTime.Now);
             this.view = view;
             this.serviceProvider = sp;
             view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
@@ -47,18 +47,22 @@ namespace Walkabout.Taxes
         }
 
 
-        private void SetStartDate(int year)
+        private void SetStartDate(DateTime date)
         {
-            this.startDate = new DateTime(year, fiscalYearStart + 1, 1);
             if (fiscalYearStart > 0)
             {
-                // Note: "FY2020" means July 2019 to July 2020, in other words
-                // it is the end date that represents the year.
-                this.startDate = this.startDate.AddYears(-1);
+                if (date.Month >= fiscalYearStart + 1)
+                {
+                    startDate = new DateTime(date.Year, fiscalYearStart + 1, 1);
+                }
+                else
+                {
+                    startDate = new DateTime(date.Year  - 1, fiscalYearStart + 1, 1);
+                }
             }
-            if (this.startDate > DateTime.Today)
+            else 
             {
-                this.startDate = this.startDate.AddYears(-1);
+                this.startDate = new DateTime(date.Year, 1, 1);
             }
             this.endDate = this.startDate.AddYears(1);
         }
@@ -139,26 +143,15 @@ namespace Walkabout.Taxes
 
             ICollection<Transaction> transactions = this.myMoney.Transactions.GetAllTransactionsByDate();
 
-            int firstYear = DateTime.Now.Year;
-            int lastYear = DateTime.Now.Year;
+            var (firstYear, lastYear) = this.myMoney.Transactions.GetTaxYearRange(this.fiscalYearStart);
 
-            Transaction first = transactions.FirstOrDefault();
-            if (first != null)
-            {
-                firstYear = first.Date.Year;
-            }
-            Transaction last = transactions.LastOrDefault();
-            if (last != null)
-            {
-                lastYear = last.Date.Year;
-            }
             Paragraph heading = fwriter.CurrentParagraph;
 
             ComboBox byYearCombo = new ComboBox();
             byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
             int selected = -1;
             int index = 0;
-            for (int i = firstYear; i <= lastYear; i++)
+            for (int i = lastYear; i >= firstYear; i--)
             {
                 if (this.fiscalYearStart > 0 && i == this.endDate.Year)
                 {
@@ -242,20 +235,8 @@ namespace Walkabout.Taxes
                 {
                     continue;
                 }
-                bool include = t.Date >= this.startDate && t.Date < this.endDate;
-                var extra = myMoney.TransactionExtras.FindByTransaction(t.Id);
-                if (extra != null && extra.TaxYear != -1)
-                {
-                    var taxYearStartDate = new DateTime(extra.TaxYear, fiscalYearStart + 1, 1);
-                    if (fiscalYearStart > 0)
-                    {
-                        // Note: "FY2020" means July 2019 to July 2020, in other words
-                        // it is the end date that represents the year.
-                        taxYearStartDate = taxYearStartDate.AddYears(-1);
-                    }
-                    var taxYearEndDate = taxYearStartDate.AddYears(1);
-                    include = taxYearStartDate >= this.startDate && taxYearEndDate <= this.endDate;
-                }
+                var date = t.TaxDate;
+                bool include = date >= this.startDate && date < this.endDate;                
                 if (include)
                 {
                     found |= Summarize(byCategory, t);
@@ -371,7 +352,12 @@ namespace Walkabout.Taxes
             }
             if (int.TryParse(label, out int year))
             {
-                SetStartDate(year);
+                var start = new DateTime(year, this.fiscalYearStart + 1, 1);
+                if (this.fiscalYearStart > 0)
+                {
+                    start = start.AddYears(-1);
+                }
+                SetStartDate(start);
                 Regenerate();
             }
         }

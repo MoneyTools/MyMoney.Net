@@ -346,7 +346,7 @@ namespace Walkabout.Taxes
                     var rows = money.Transactions.GetTransactionsByCategory(c, null, (cat) => { return c == cat; });
                     foreach (Transaction t in rows)
                     {
-                        if (t.Date < startDate || t.Date >= endDate)
+                        if (t.TaxDate < startDate || t.TaxDate >= endDate)
                         {
                             continue;
                         }

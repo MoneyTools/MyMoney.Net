@@ -722,6 +722,7 @@ namespace Walkabout.Data
         internal void OnLoaded()
         {
             this.payeeAccountIndex.Reload();
+            this.Transactions.JoinExtras(this.TransactionExtras);
         }
 
         [DataMember]
@@ -4986,6 +4987,9 @@ namespace Walkabout.Data
             }
         }
 
+        // Update this if we add any more extra properties to this object.
+        public bool IsEmpty => this.taxDate == null;
+
         internal void PostDeserializeFixup(MyMoney myMoney)
         {
         }
@@ -5189,7 +5193,7 @@ namespace Walkabout.Data
             }
         }
 
-        private TransactionExtra[] ToArray()
+        internal TransactionExtra[] ToArray()
         {
             TransactionExtra[] a = null;
             lock (this.items)
@@ -8465,6 +8469,25 @@ namespace Walkabout.Data
     }
 
     //================================================================================
+    public class TransactionComparerByTaxDate : IComparer<Transaction>
+    {
+        public int Compare(Transaction x, Transaction y)
+        {
+            if (x == null)
+            {
+                return -1;
+            }
+            else if (y == null)
+            {
+                return 1;
+            }
+
+            return x.CompareByTaxDate(y);
+        }
+
+    }
+
+    //================================================================================
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Transactions : PersistentContainer, ICollection<Transaction>
     {
@@ -9014,6 +9037,19 @@ namespace Walkabout.Data
             return view;
         }
 
+        public ICollection<Transaction> GetAllTransactionsByTaxDate()
+        {
+            List<Transaction> view = new List<Transaction>();
+            foreach (Transaction t in transactions.Values)
+            {
+                if (t.IsDeleted)
+                    continue;
+                view.Add(t);
+            }
+            view.Sort(new TransactionComparerByTaxDate());
+            return view;
+        }
+
         public IList<Transaction> GetTransactionsFrom(Account a)
         {
             List<Transaction> view = new List<Transaction>();
@@ -9100,6 +9136,38 @@ namespace Walkabout.Data
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// Return the range of tax years that the transactions fall into.
+        /// </summary>
+        public Tuple<int, int> GetTaxYearRange(int fiscalYearStart)
+        {
+            int firstYear = DateTime.Now.Year;
+            int lastYear = firstYear;
+
+            ICollection<Transaction> transactions = this.GetAllTransactionsByTaxDate();
+            Transaction first = transactions.FirstOrDefault();
+            if (first != null)
+            {
+                var td = first.TaxDate;
+                firstYear = td.Year;
+                if (fiscalYearStart > 0 && td.Month >= fiscalYearStart + 1)
+                {
+                    firstYear++;
+                }
+            }
+            Transaction last = transactions.LastOrDefault();
+            if (last != null)
+            {
+                var td = last.TaxDate;
+                lastYear = td.Year;
+                if (fiscalYearStart > 0 && td.Month >= fiscalYearStart + 1)
+                {
+                    lastYear++;
+                }
+            }
+            return new Tuple<int, int>(firstYear, lastYear);
         }
 
 
@@ -9736,6 +9804,21 @@ namespace Walkabout.Data
                     {
                         t.Investment.OnInserted();
                     }
+                }
+            }
+        }
+
+        internal void JoinExtras(TransactionExtras transactionExtras)
+        {
+            foreach (var e in transactionExtras.ToArray())
+            {
+                if (this.transactions.TryGetValue(e.Transaction, out Transaction t))
+                {
+                    t.Extra = e;
+                }
+                else
+                {
+                    Debug.WriteLine("Dangling TransactionExtras " + e.Id.ToString());
                 }
             }
         }
@@ -11700,9 +11783,9 @@ namespace Walkabout.Data
                 Category c = this.account.GetFundCategory();
                 c.Balance -= this.amount;
             }
-            if (this.Parent is Transactions container && container.Parent is MyMoney m)
+            if (this.Extra != null && this.Extra.Parent is TransactionExtras container)
             {
-                m.TransactionExtras.OnRemoveTransaction(this);
+                container.OnRemoveTransaction(this);
             }
             base.OnDelete();
         }
@@ -11958,6 +12041,33 @@ namespace Walkabout.Data
             return rc;
         }
 
+        internal int CompareByTaxDate(Transaction compareTo)
+        {
+            if (this == compareTo)
+            {
+                return 0;
+            }
+
+            var rc = DateTime.Compare(this.TaxDate, compareTo.TaxDate);
+            if (rc == 0)
+            {
+                // sort deposits first, then withdrawals
+                if (compareTo.amount == this.amount)
+                {
+                    // if amounts are the same, then sort by transaction Id to
+                    // ensure a stable sort order.
+                    return (int)(this.Id - compareTo.Id);
+                }
+                else if (compareTo.amount > this.amount)
+                {
+                    return 1;
+                }
+                return -1;
+            }
+
+            return rc;
+        }
+
         // used in TransactionView.xaml as the SecondarySortOrder
         // so that deposits appear before payments when they occur on the same date.
         public decimal NegativeAmount
@@ -11978,6 +12088,14 @@ namespace Walkabout.Data
                 return this.MyMoney.Categories.SortedCategories;
             }
         }
+
+        [XmlIgnore]
+        [IgnoreDataMember]
+        public TransactionExtra Extra { get; internal set; }
+
+        [XmlIgnore]
+        [IgnoreDataMember]
+        public DateTime TaxDate => this.Extra != null && this.Extra.TaxDate.HasValue ? this.Extra.TaxDate.Value : this.Date;
 
         public void UpdateCategoriesView()
         {

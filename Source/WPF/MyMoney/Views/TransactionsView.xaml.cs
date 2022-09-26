@@ -4089,8 +4089,8 @@ namespace Walkabout.Views
                 var extra = this.myMoney.TransactionExtras.FindByTransaction(t.Id);
                 var dialog = new PickYearDialog();
                 dialog.Owner = Application.Current.MainWindow;
-                dialog.SetTitle("Select Tax Year");
-                dialog.SetPrompt("Set the tax year for which this transaction applies:");
+                dialog.SetTitle("Select Tax Date");
+                dialog.SetPrompt("Set the tax date for this transaction:");
                 if (extra != null && extra.TaxDate.HasValue)
                 {
                     dialog.SelectedDate = extra.TaxDate.Value;
@@ -4112,12 +4112,18 @@ namespace Walkabout.Views
                                 Transaction = t.Id
                             };
                             this.myMoney.TransactionExtras.AddExtra(extra);
+                            t.Extra = extra;
                         }
                         extra.TaxDate = date.Value;
                     }
                     else if (extra != null)
                     {
-                        this.myMoney.TransactionExtras.RemoveExtra(extra);
+                        extra.TaxDate = null;
+                        if (extra.IsEmpty)
+                        {
+                            this.myMoney.TransactionExtras.RemoveExtra(extra);
+                            t.Extra = null;
+                        }                        
                     }
                 }
             }

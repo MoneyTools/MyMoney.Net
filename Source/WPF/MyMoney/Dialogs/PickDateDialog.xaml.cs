@@ -26,20 +26,20 @@ namespace Walkabout.Dialogs
 
         void OnLoaded(object sender, RoutedEventArgs e)
         {
-            this.TaxDatePicker.Focus();
+            this.DatePicker.Focus();
         }
 
         public DateTime? SelectedDate
         {
             get
             {
-                return this.TaxDatePicker.SelectedDate;
+                return this.DatePicker.SelectedDate;
             }
             set
             {
                 if (value.HasValue)
                 {
-                    this.TaxDatePicker.SelectedDate = value.Value;
+                    this.DatePicker.SelectedDate = value.Value;
                 }
             }
         }
@@ -59,7 +59,7 @@ namespace Walkabout.Dialogs
 
         private void OnRemove(object sender, RoutedEventArgs e)
         {
-            this.TaxDatePicker.SelectedDate = null;
+            this.DatePicker.SelectedDate = null;
         }
     }
 }
