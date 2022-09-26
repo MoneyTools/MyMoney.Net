@@ -24,7 +24,7 @@
             <MenuItem Name="menuItemRenamePayee" Header="_Rename Payee" Command="views:TransactionsView.CommandRenamePayee"/>
             <MenuItem Name="menuItemLookupPayee" Header="_Lookup Payee " Command="views:TransactionsView.CommandLookupPayee" InputGestureText="F3"/>
             <MenuItem Name="menuItemCategories" Header="Recategori_ze all..." Command="views:TransactionsView.CommandRecategorize"/>
-            <MenuItem Name="menuItemSetTaxYear" Header="Set _Tax Year..." Command="views:TransactionsView.CommandSetTaxYear"/>
+            <MenuItem Name="menuItemSetTaxYear" Header="Set _Tax Date..." Command="views:TransactionsView.CommandSetTaxDate"/>
 
             <Separator/>
             <MenuItem Name="menuItemDelete" Header="_Delete" Command="Delete"/>
@@ -57,7 +57,7 @@
         <CommandBinding Command="views:TransactionsView.CommandRenamePayee" Executed="OnCommandRenamePayee" CanExecute="CanExecute_RenamePayee"/>
         <CommandBinding Command="views:TransactionsView.CommandLookupPayee" Executed="OnCommandLookupPayee" CanExecute="CanExecute_LookupPayee"/>
         <CommandBinding Command="views:TransactionsView.CommandRecategorize" Executed="OnRecategorizeAll" CanExecute="CanExecute_Recategorize" />
-        <CommandBinding Command="views:TransactionsView.CommandSetTaxYear" Executed="OnSetTaxYear" CanExecute="CanExecute_SetTaxYear" />
+        <CommandBinding Command="views:TransactionsView.CommandSetTaxDate" Executed="OnSetTaxDate" CanExecute="CanExecute_SetTaxDate" />
 
         <CommandBinding Command="views:TransactionsView.CommandGotoRelatedTransaction" Executed="OnCommandGotoRelatedTransaction"  CanExecute="CanExecute_GotoRelatedTransaction"/>
         <CommandBinding Command="views:TransactionsView.CommandGotoStatement" Executed="OnCommandGotoStatement" CanExecute="CanExecute_GotoStatement" />

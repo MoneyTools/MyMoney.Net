@@ -11,18 +11,6 @@ namespace Walkabout.Dialogs
         public PickYearDialog()
         {
             InitializeComponent();
-
-            int now = DateTime.Now.Year;
-
-            for(int year = now - 10; year < now + 1; year++)
-            {
-                this.YearCombo.Items.Add(year);
-                if (year == now)
-                {
-                    this.YearCombo.SelectedItem = year;
-                }
-            }
-
             this.Loaded += new RoutedEventHandler(OnLoaded);
         }
 
@@ -38,42 +26,21 @@ namespace Walkabout.Dialogs
 
         void OnLoaded(object sender, RoutedEventArgs e)
         {
-            this.YearCombo.Focus();
+            this.TaxDatePicker.Focus();
         }
 
-        public int SelectedYear
+        public DateTime? SelectedDate
         {
             get
             {
-                if (YearCombo.SelectedItem is int year)
-                {
-                    return year;
-                }
-                return -1;
+                return this.TaxDatePicker.SelectedDate;
             }
             set
             {
-                if (!YearCombo.Items.Contains(value))
+                if (value.HasValue)
                 {
-                    if (value < (int)this.YearCombo.Items[0])
-                    {
-                        // prepend more values!
-                        for (int year = (int)this.YearCombo.Items[0] - 1; year > value - 5; year--)
-                        {
-                            this.YearCombo.Items.Insert(0, year);
-                        }
-                    }
-                    else
-                    {
-                        // append more values!
-                        for(int year = (int)this.YearCombo.Items[this.YearCombo.Items.Count - 1]; year <= value + 1; year++)
-                        {
-                            this.YearCombo.Items.Add(year);
-                        }
-                    }
-                    
+                    this.TaxDatePicker.SelectedDate = value.Value;
                 }
-                YearCombo.SelectedItem = value;
             }
         }
 
@@ -88,6 +55,11 @@ namespace Walkabout.Dialogs
         {
             this.DialogResult = false;
             this.Close();
+        }
+
+        private void OnRemove(object sender, RoutedEventArgs e)
+        {
+            this.TaxDatePicker.SelectedDate = null;
         }
     }
 }

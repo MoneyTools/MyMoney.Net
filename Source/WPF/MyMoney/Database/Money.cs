@@ -4924,6 +4924,7 @@ namespace Walkabout.Data
         int id = -1;
         long transaction = -1;
         int taxYear = -1;
+        DateTime? taxDate;
 
         public TransactionExtra()
         { // for serialization only
@@ -4966,6 +4967,21 @@ namespace Walkabout.Data
                 {
                     this.taxYear = value;
                     OnChanged("TaxYear");
+                }
+            }
+        }
+
+        [DataMember]
+        [ColumnMapping(ColumnName = "TaxDate", AllowNulls = true)]
+        public DateTime? TaxDate
+        {
+            get { return this.taxDate; }
+            set
+            {
+                if (!this.taxDate.HasValue || this.taxDate.Value != value)
+                {
+                    this.taxDate = value;
+                    OnChanged("TaxDate");
                 }
             }
         }
@@ -5181,6 +5197,43 @@ namespace Walkabout.Data
                 a = this.items.Values.ToArray();
             }
             return a;
+        }
+
+        internal void MigrateTaxYears(MyMoney parent, int fiscalYearStart)
+        {
+            List<TransactionExtra> dangling = new List<TransactionExtra>();
+            foreach (var id in byTransactionId.Keys)
+            {
+                var e = byTransactionId[id];
+                Transaction t = parent.Transactions.FindTransactionById(id);
+                if (t != null)
+                {
+                    if (e.TaxYear != -1 && !e.TaxDate.HasValue)
+                    {
+                        // time to migrate it to a full date.
+                        var d = new DateTime(e.TaxYear, fiscalYearStart + 1, 1);                       
+                        e.TaxDate = d;
+                    }
+                } 
+                else
+                {
+                    // dangling extra!
+                    dangling.Add(e);
+                }
+            }
+
+            foreach (var toRemove in dangling)
+            {
+                this.RemoveExtra(toRemove);
+            }
+        }
+
+        internal void OnRemoveTransaction(Transaction transaction)
+        {
+            if (byTransactionId.TryGetValue(transaction.Id, out TransactionExtra e))
+            {
+                this.RemoveExtra(e);
+            }
         }
 
         #endregion
@@ -11645,6 +11698,10 @@ namespace Walkabout.Data
             {
                 Category c = this.account.GetFundCategory();
                 c.Balance -= this.amount;
+            }
+            if (this.Parent is Transactions container && container.Parent is MyMoney m)
+            {
+                m.TransactionExtras.OnRemoveTransaction(this);
             }
             base.OnDelete();
         }

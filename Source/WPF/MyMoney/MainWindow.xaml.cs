@@ -751,6 +751,8 @@ namespace Walkabout
                 myMoney.CheckSecurities();
 
                 myMoney.CheckCategoryFunds();
+
+                myMoney.TransactionExtras.MigrateTaxYears(myMoney, this.databaseSettings.FiscalYearStart);
             }
             finally
             {

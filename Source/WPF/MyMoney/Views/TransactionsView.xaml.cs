@@ -3790,7 +3790,7 @@ namespace Walkabout.Views
         public readonly static RoutedUICommand CommandRenamePayee = new RoutedUICommand("RenamePayee", "CommandRenamePayee", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandLookupPayee = new RoutedUICommand("LookupPayee", "CommandLookupPayee", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandRecategorize = new RoutedUICommand("Recategorize", "CommandRecategorize", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandSetTaxYear = new RoutedUICommand("SetTaxYear", "CommandSetTaxYear", typeof(TransactionsView));
+        public readonly static RoutedUICommand CommandSetTaxDate = new RoutedUICommand("SetTaxDate", "CommandSetTaxDate", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandGotoRelatedTransaction = new RoutedUICommand("GotoRelatedTransaction", "CommandGotoRelatedTransaction", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandGotoStatement = new RoutedUICommand("GotoStatement", "CommandGotoStatement", typeof(TransactionsView));
         public readonly static RoutedUICommand CommandViewTransactionsByAccount = new RoutedUICommand("ViewTransactionsByAccount", "CommandViewTransactionsByAccount", typeof(TransactionsView));
@@ -3877,7 +3877,7 @@ namespace Walkabout.Views
             e.Handled = true;
         }
 
-        private void CanExecute_SetTaxYear(object sender, CanExecuteRoutedEventArgs e)
+        private void CanExecute_SetTaxDate(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = HasNonReadonlySelectedTransaction;
             e.Handled = true;
@@ -4080,7 +4080,7 @@ namespace Walkabout.Views
             }
         }
 
-        private void OnSetTaxYear(object sender, ExecutedRoutedEventArgs e)
+        private void OnSetTaxDate(object sender, ExecutedRoutedEventArgs e)
         {
             this.TheActiveGrid.CommitEdit();
             Transaction t = this.SelectedTransaction;
@@ -4091,19 +4091,19 @@ namespace Walkabout.Views
                 dialog.Owner = Application.Current.MainWindow;
                 dialog.SetTitle("Select Tax Year");
                 dialog.SetPrompt("Set the tax year for which this transaction applies:");
-                if (extra != null && extra.TaxYear != -1)
+                if (extra != null && extra.TaxDate.HasValue)
                 {
-                    dialog.SelectedYear = extra.TaxYear;
+                    dialog.SelectedDate = extra.TaxDate.Value;
                 }
                 else
                 {
-                    dialog.SelectedYear = t.Date.Year;
+                    dialog.SelectedDate = t.Date;
                 }
 
-                if (dialog.ShowDialog() == true && dialog.SelectedYear != -1)
+                if (dialog.ShowDialog() == true)
                 {
-                    int year = dialog.SelectedYear;
-                    if (year != t.Date.Year)
+                    var date = dialog.SelectedDate;
+                    if (date.HasValue && date != t.Date)
                     {
                         if (extra == null)
                         {
@@ -4113,7 +4113,7 @@ namespace Walkabout.Views
                             };
                             this.myMoney.TransactionExtras.AddExtra(extra);
                         }
-                        extra.TaxYear = year;
+                        extra.TaxDate = date.Value;
                     }
                     else if (extra != null)
                     {

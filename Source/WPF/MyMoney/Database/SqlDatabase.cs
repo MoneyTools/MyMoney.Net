@@ -1329,7 +1329,7 @@ namespace Walkabout.Data
 
         private void ReadTransactionExtras(TransactionExtras extras, MyMoney money)
         {
-            IDataReader reader = ExecuteReader("SELECT [Id],[Transaction],[TaxYear] FROM TransactionExtras");
+            IDataReader reader = ExecuteReader("SELECT [Id],[Transaction],[TaxYear],[TaxDate] FROM TransactionExtras");
             extras.BeginUpdate(false);
             while (reader.Read())
             {
@@ -1340,6 +1340,14 @@ namespace Walkabout.Data
                 a.Transaction = transaction;
                 int taxYear = reader.GetInt32(2);
                 a.TaxYear = taxYear;
+                if (!reader.IsDBNull(3))
+                {
+                    DateTime taxDate = reader.GetDateTime(3);
+                    if (taxDate.Year > 1)
+                    {
+                        a.TaxDate = taxDate;
+                    }
+                }
                 a.OnUpdated();
             }
             extras.EndUpdate();
@@ -1512,15 +1520,34 @@ namespace Walkabout.Data
                     sb.Append("UPDATE TransactionExtras SET ");
                     sb.Append(String.Format("[Transaction]={0}", e.Transaction));
                     sb.Append(String.Format(",[TaxYear]={0}", e.TaxYear));
+                    if (e.TaxDate.HasValue)
+                    {
+                        sb.Append(String.Format(",[TaxDate]={0}", DBDateTime(e.TaxDate.Value)));
+                    } 
+                    else
+                    {
+                        sb.Append(",[TaxDate]=NULL");
+                    }
                     sb.AppendLine(String.Format(" WHERE Id={0};", e.Id));
                 }
                 else if (e.IsInserted)
                 {
                     sb.AppendLine("-- inserting transaction extra: " + e.Transaction);
-                    sb.Append("INSERT INTO TransactionExtras ([Id], [Transaction], [TaxYear]) VALUES (");
+                    if (e.TaxDate.HasValue)
+                    {
+                        sb.Append("INSERT INTO TransactionExtras ([Id], [Transaction], [TaxYear], [TaxDate]) VALUES (");
+                    }
+                    else
+                    {
+                        sb.Append("INSERT INTO TransactionExtras ([Id], [Transaction], [TaxYear]) VALUES (");
+                    }
                     sb.Append(String.Format("{0}", e.Id));
                     sb.Append(String.Format(",{0}", e.Transaction));
                     sb.Append(String.Format(",{0}", e.TaxYear));
+                    if (e.TaxDate.HasValue)
+                    {
+                        sb.Append(String.Format(",{0}", DBDateTime(e.TaxDate.Value)));
+                    }
                     sb.AppendLine(");");
                 }
                 else if (e.IsDeleted)
