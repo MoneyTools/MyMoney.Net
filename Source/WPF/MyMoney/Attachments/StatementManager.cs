@@ -489,14 +489,15 @@ namespace Walkabout.Attachments
             {
                 if (File.Exists(indexFile))
                 {
+                    StatementIndex index = null;
                     var s = new XmlSerializer(typeof(StatementIndex));
                     using (var fs = new FileStream(indexFile, FileMode.Open, FileAccess.Read, FileShare.None))
                     {
-                        StatementIndex index = (StatementIndex)s.Deserialize(fs);
-                        index.FileName = indexFile;
-                        statements[name] = index;
-                        CheckFileHashes(index);
+                        index = (StatementIndex)s.Deserialize(fs);
                     }
+                    index.FileName = indexFile;
+                    statements[name] = index;
+                    CheckFileHashes(index);
                 }
             } 
             catch (Exception ex)
