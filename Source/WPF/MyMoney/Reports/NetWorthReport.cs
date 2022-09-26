@@ -108,13 +108,40 @@ namespace Walkabout.Reports
                     totalBalance += balance;
 
                     // Investment Cash
-                    Predicate<Account> investmentAccountFilter = (a) => { return IsInvestmentAccount(a); };
+                    Predicate<Account> investmentAccountFilter = (a) => { return IsInvestmentAccount(a) && !a.IsTaxDeferred && !a.IsTaxFree; };
                     balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, investmentAccountFilter);
-                    var investmentCashGroup = new AccountGroup { Filter = investmentAccountFilter, Date = this.reportDate, Title = "Investment Account" };
-                    color = GetRandomColor();
-                    data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color, UserData = investmentCashGroup });
-                    WriteRow(writer, color, "Investment Cash", balance, () => OnSelectCashGroup(investmentCashGroup));
-                    totalBalance += balance;
+                    if (balance != 0)
+                    {
+                        var investmentCashGroup = new AccountGroup { Filter = investmentAccountFilter, Date = this.reportDate, Title = "Investment Account" };
+                        color = GetRandomColor();
+                        data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color, UserData = investmentCashGroup });
+                        WriteRow(writer, color, "Investment Cash", balance, () => OnSelectCashGroup(investmentCashGroup));
+                        totalBalance += balance;
+                    }
+
+                    // Tax-Deferred Cash
+                    Predicate<Account> taxDeferredAccountFilter = (a) => { return IsInvestmentAccount(a) && a.IsTaxDeferred; };
+                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, taxDeferredAccountFilter);
+                    if (balance != 0)
+                    {
+                        var taxDeferredCashGroup = new AccountGroup { Filter = taxDeferredAccountFilter, Date = this.reportDate, Title = "Tax-Deferred Account" };
+                        color = GetRandomColor();
+                        data.Add(new ChartDataValue() { Label = "Tax-Deferred Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color, UserData = taxDeferredCashGroup });
+                        WriteRow(writer, color, "Tax-Deferred Cash", balance, () => OnSelectCashGroup(taxDeferredCashGroup));
+                        totalBalance += balance;
+                    }
+
+                    // Tax-Free Cash
+                    Predicate<Account> taxFreeAccountFilter = (a) => { return IsInvestmentAccount(a) && a.IsTaxFree; };
+                    balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, taxFreeAccountFilter);
+                    if (balance != 0)
+                    {
+                        var taxFreeCashGroup = new AccountGroup { Filter = taxFreeAccountFilter, Date = this.reportDate, Title = "Tax-Free Account" };
+                        color = GetRandomColor();
+                        data.Add(new ChartDataValue() { Label = "Tax-Free Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color, UserData = taxFreeCashGroup });
+                        WriteRow(writer, color, "Tax-Free Cash", balance, () => OnSelectCashGroup(taxFreeCashGroup));
+                        totalBalance += balance;
+                    }
 
                     bool hasNoneTypeTaxDeferred = false;
                     Tuple<decimal, bool> r = null;

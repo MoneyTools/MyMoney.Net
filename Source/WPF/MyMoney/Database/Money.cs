@@ -5230,7 +5230,8 @@ namespace Walkabout.Data
 
         internal void OnRemoveTransaction(Transaction transaction)
         {
-            if (byTransactionId.TryGetValue(transaction.Id, out TransactionExtra e))
+            var e = FindByTransaction(transaction.Id);
+            if (e != null)
             {
                 this.RemoveExtra(e);
             }
