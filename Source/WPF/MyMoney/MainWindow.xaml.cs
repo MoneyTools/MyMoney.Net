@@ -4360,17 +4360,6 @@ namespace Walkabout
             changeList = new ChangeListRequest(this.settings);
             changeList.Completed += new EventHandler<SetupRequestEventArgs>(OnChangeListRequestCompleted);
             changeList.BeginGetChangeList(DownloadSite);
-
-            // and see if we just installed a new version.
-            string exe = ProcessHelper.MainExecutable;
-            DateTime lastWrite = File.GetLastWriteTime(exe);
-            if (lastWrite > settings.LastExeTimestamp)
-            {
-                string previous = settings.ExeVersion;
-                settings.ExeVersion = NativeMethods.GetFileVersion(exe);
-                settings.LastExeTimestamp = lastWrite;
-                ShowChangeInfo(previous, null, false);
-            }
         }
 
         private void OnChangeListRequestCompleted(object sender, SetupRequestEventArgs e)
@@ -4380,6 +4369,20 @@ namespace Walkabout
             {
                 ButtonShowUpdateInfoCaption.Text = "View Updates";
                 ButtonShowUpdateInfo.Visibility = System.Windows.Visibility.Visible;
+            }
+            if (changes != null) {
+                Task.Run(() => SaveCachedChangeList(changes));
+            }
+
+            // and see if we just installed a new version.
+            string exe = ProcessHelper.MainExecutable;
+            DateTime lastWrite = File.GetLastWriteTime(exe);
+            if (lastWrite > settings.LastExeTimestamp)
+            {
+                string previous = settings.ExeVersion;
+                settings.ExeVersion = NativeMethods.GetFileVersion(exe);
+                settings.LastExeTimestamp = lastWrite;
+                ShowChangeInfo(previous, changes, false);
             }
         }
 
@@ -4393,7 +4396,7 @@ namespace Walkabout
         {
             if (changeList == null)
             {
-                changeList = GetBuiltInList();
+                changeList = GetCachedChangeList();
             }
             if (changeList != null)
             {
@@ -4420,14 +4423,32 @@ namespace Walkabout
             Close();
         }
 
-        private XDocument GetBuiltInList()
+        private string ChangeListCachePath
+        {
+            get { return Path.Combine(System.IO.Path.GetTempPath(), "MyMoney", "changes.xml"); }
+        }
+
+        private void SaveCachedChangeList(XDocument doc)
+        {
+            var fileName = ChangeListCachePath;
+            var dir = Path.GetDirectoryName(fileName);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            doc.Save(fileName);
+        }
+
+        private XDocument GetCachedChangeList()
         {
             try
             {
-                // get the built in changelist.
-                string filename = new Uri(new Uri(ProcessHelper.MainExecutable), "Setup/changes.xml").LocalPath;
-                XDocument doc = XDocument.Load(filename);
-                return doc;
+                var fileName = ChangeListCachePath;
+                if (File.Exists(fileName))
+                {
+                    XDocument doc = XDocument.Load(fileName);
+                    return doc;
+                }
             }
             catch
             {
