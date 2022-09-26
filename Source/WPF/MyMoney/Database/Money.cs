@@ -1949,12 +1949,18 @@ namespace Walkabout.Data
                     {
                         throw new Exception("Do not use this method for Loan accounts");
                     }
-                    decimal balance = a.OpeningBalance;
+                    decimal balance = 0;
+                    bool first = true;
                     foreach (Transaction t in this.Transactions.GetTransactionsFrom(a))
                     {
                         if (t.Date > date)
                         {
                             break;
+                        }
+                        if (first)
+                        {
+                            balance = a.OpeningBalance;
+                            first = false;
                         }
                         if (!t.IsDeleted && t.Status != TransactionStatus.Void)
                         {
