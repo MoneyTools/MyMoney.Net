@@ -597,6 +597,9 @@ namespace Walkabout.Data
 
                 foreach (Investment i in list)
                 {
+                    // Now we need to apply any splits that are now valid as of  i.Date so we have the currect number of shares
+                    // computed for any future transactions.  Question is, if someone buys the stock on the very same day that it
+                    // was split, do they get the split or not?  This assumes not.
                     ApplySplits(s, splits, i.Date);
 
                     var holdings = GetHolding(i.Transaction.Account);
@@ -656,7 +659,7 @@ namespace Walkabout.Data
                     }
                 }
 
-                ApplySplits(s, splits, DateTime.Now);
+                ApplySplits(s, splits, this.toDate);
 
             }
 
