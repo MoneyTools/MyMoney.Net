@@ -34,7 +34,6 @@ namespace Walkabout.Taxes
         {
             this.myMoney = money;
             this.fiscalYearStart = fiscalYearStart;
-            SetStartDate(DateTime.Now);
             this.view = view;
             this.serviceProvider = sp;
             view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
@@ -144,6 +143,11 @@ namespace Walkabout.Taxes
             ICollection<Transaction> transactions = this.myMoney.Transactions.GetAllTransactionsByDate();
 
             var (firstYear, lastYear) = this.myMoney.Transactions.GetTaxYearRange(this.fiscalYearStart);
+
+            if (this.startDate == DateTime.MinValue)
+            {
+                this.SetStartDate(new DateTime(lastYear, 1, 1));
+            }
 
             Paragraph heading = fwriter.CurrentParagraph;
 

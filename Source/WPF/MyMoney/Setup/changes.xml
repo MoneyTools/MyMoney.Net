@@ -1,7 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <Change version="2.0.0.20" date="9/11/2022">
+  <Change version="2.0.0.20" date="9/25/2022">
     - Add escape key shortcut to close attachment dialog.
+    - Change "Set Tax Year" to "Set Tax Date".
+    - Fix start balance reporting, bug #68
+    - Fix stock split handling in historical net worth, bug #67    
+    - Fix cash flow report to use transaction TaxDate.
+    - Fix statement index file access bug, #70
   </Change>
   <Change version="2.0.0.19" date="8/27/2022">
     - Add a database settings xml file which now contains the FiscalYearStart and RentalManagement settings for each Money database you have (Issue #38).
