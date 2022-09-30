@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.1.0" date="9/29/2022">
+    - Fix #72  Rename account with linked statement for multiple accounts
+    - Show negative values in pie chart hover tooltips and legend labels.
+  </change>
   <change version="2.0.0.20" date="9/25/2022">
     - Add escape key shortcut to close attachment dialog.
     - Change "Set Tax Year" to "Set Tax Date".
