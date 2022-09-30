@@ -19,6 +19,7 @@ namespace Walkabout.Attachments
         private Dictionary<Account, string> nameMap;
         private string statementsDir;
         private bool started;
+        private bool loading;
         private bool loaded;
         // account name to index.
         private ConcurrentDictionary<string, StatementIndex> statements = new ConcurrentDictionary<string, StatementIndex>();
@@ -26,6 +27,11 @@ namespace Walkabout.Attachments
         public StatementManager(MyMoney myMoney)
         {
             this.myMoney = myMoney;
+            this.UpdateNameMap();
+        }
+
+        void UpdateNameMap()
+        { 
             // save the original account names, in case the account is renamed.
             this.nameMap = new Dictionary<Account, string>();
             foreach (var item in myMoney.Accounts.GetAccounts())
@@ -300,6 +306,36 @@ namespace Walkabout.Attachments
             return false;
         }
 
+        private void UpdateBundledPointers(string oldName, string newName)
+        {
+            string root = StatementsDirectory;
+            if (string.IsNullOrEmpty(root)) return;
+
+            foreach (var index in statements.Values)
+            {
+                var changed = false;
+                foreach (var item in index.Items)
+                {
+                    var fullPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename));
+                    var parentDir = Path.GetDirectoryName(fullPath);
+                    var dirName = Path.GetFileName(parentDir);
+                    if (dirName == oldName)
+                    {
+                        // oh then we need to redirect this link to the newName.
+                        var fileName = Path.GetFileName(item.Filename);
+                        var newPath = Path.Combine(Path.GetDirectoryName(parentDir), newName, fileName);
+                        var relative = FileHelpers.GetRelativePath(newPath, index.FileName);
+                        item.Filename = relative;
+                        changed = true;
+                    }
+                }
+                if (changed)
+                {
+                    SaveIndex(index);
+                }
+            }
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "AttachmentDirectory")]
         private string GetUniqueStatementName(string path, string fileName)
         {
@@ -374,32 +410,27 @@ namespace Walkabout.Attachments
 
         void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
-            while (args != null)
-            {
-                if (args.Item is Account a)
-                {
-                    if (args.ChangeType == ChangeType.Inserted)
-                    {
-                        actions.StartDelayedAction("LoadAccount" + a.Name, () => LoadIndexFile(a), TimeSpan.FromMilliseconds(100));
-                    }
-                    else if (args.ChangeType == ChangeType.Changed && args.Name == "Name")
-                    {
-                        OnAccountRenamed(a);
-                    }
-                }
-                args = args.Next;
-            }
+            HandleChanges(args);
         }
 
         void OnAccountsChanged(object sender, ChangeEventArgs args)
         {
+            HandleChanges(args);
+        }
+
+        void HandleChanges(ChangeEventArgs args)
+        { 
             while (args != null)
             {
                 if (args.Item is Account a)
                 {
                     if (args.ChangeType == ChangeType.Inserted)
                     {
-                        actions.StartDelayedAction("LoadAccount" + a.Name, () => LoadIndexFile(a), TimeSpan.FromMilliseconds(100));
+                        actions.StartDelayedAction("LoadAccount" + a.Name, () =>
+                        {
+                            UpdateNameMap();
+                            LoadIndexFile(a);
+                        }, TimeSpan.FromMilliseconds(100));
                     }
                     else if (args.ChangeType == ChangeType.Changed && args.Name == "Name")
                     {
@@ -416,18 +447,22 @@ namespace Walkabout.Attachments
             {
                 if (oldName != a.Name)
                 {
+                    this.OnRenameAccountFolder(a, oldName);
+                    this.nameMap[a] = a.Name;
                     if (this.statements.TryGetValue(oldName, out StatementIndex value))
                     {
                         this.statements[a.Name] = value;
+                        value.FileName = Path.Combine(this.StatementsDirectory, a.Name, "index.xml");
                         this.statements.TryRemove(oldName, out StatementIndex removed);
                     }
-                    this.OnRenameAccount(a, oldName);
-                    this.nameMap[a] = a.Name;
+                    // Now fix referential integrity for any bundled statements that were
+                    // pointing to this folder.
+                    this.UpdateBundledPointers(oldName, a.Name);
                 }
             }
         }
 
-        public void OnRenameAccount(Account a, string oldName)
+        public void OnRenameAccountFolder(Account a, string oldName)
         {
             string path = this.StatementsDirectory;
             if (Directory.Exists(path) && !string.IsNullOrEmpty(a.Name) && !string.IsNullOrEmpty(oldName))
@@ -533,10 +568,12 @@ namespace Walkabout.Attachments
         // synchronous loading of the entire index.
         public void Load()
         {
+            this.loading = true;
             foreach(var a in myMoney.Accounts.GetAccounts())
             {
                 LoadIndexFile(a);
             }
+            this.loading = false;
             this.loaded = true;
         }
 
