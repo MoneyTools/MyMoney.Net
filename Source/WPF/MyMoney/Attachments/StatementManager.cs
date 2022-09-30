@@ -429,7 +429,7 @@ namespace Walkabout.Attachments
                         actions.StartDelayedAction("LoadAccount" + a.Name, () =>
                         {
                             UpdateNameMap();
-                            LoadIndexFile(a);
+                            LoadIndexFile(a.Name);
                         }, TimeSpan.FromMilliseconds(100));
                     }
                     else if (args.ChangeType == ChangeType.Changed && args.Name == "Name")
@@ -448,12 +448,13 @@ namespace Walkabout.Attachments
                 if (oldName != a.Name)
                 {
                     this.OnRenameAccountFolder(a, oldName);
+                    var index = GetOrLoadIndexFile(oldName);
                     this.nameMap[a] = a.Name;
-                    if (this.statements.TryGetValue(oldName, out StatementIndex value))
+                    if (index != null)
                     {
-                        this.statements[a.Name] = value;
-                        value.FileName = Path.Combine(this.StatementsDirectory, a.Name, "index.xml");
-                        this.statements.TryRemove(oldName, out StatementIndex removed);
+                        this.statements[a.Name] = index;
+                        index.FileName = Path.Combine(this.StatementsDirectory, a.Name, "index.xml");
+                        this.statements.TryRemove(oldName, out StatementIndex _);
                     }
                     // Now fix referential integrity for any bundled statements that were
                     // pointing to this folder.
@@ -508,16 +509,15 @@ namespace Walkabout.Attachments
             }
         }
 
-        private void LoadIndexFile(Account a)
+        private StatementIndex LoadIndexFile(string name)
         {
-            string name = a.Name;
             string path = this.StatementsDirectory;
             if (string.IsNullOrEmpty(path))
             {
                 // we have no database loaded!
-                return;
+                return null;
             }
-            string dir = Path.Combine(path, NativeMethods.GetValidFileName(a.Name));
+            string dir = Path.Combine(path, NativeMethods.GetValidFileName(name));
             string indexFile = Path.Combine(dir, "index.xml");
 
             try
@@ -533,6 +533,7 @@ namespace Walkabout.Attachments
                     index.FileName = indexFile;
                     statements[name] = index;
                     CheckFileHashes(index);
+                    return index;
                 }
             } 
             catch (Exception ex)
@@ -541,6 +542,7 @@ namespace Walkabout.Attachments
                 Debug.WriteLine(String.Format("Failed to load statement index '{0}'", indexFile));
                 Debug.WriteLine(ex.ToString());
             }
+            return null;
         }
 
         internal void ImportStatements(Account a, StatementManager importStatements)
@@ -571,10 +573,24 @@ namespace Walkabout.Attachments
             this.loading = true;
             foreach(var a in myMoney.Accounts.GetAccounts())
             {
-                LoadIndexFile(a);
+                LoadIndexFile(a.Name);
             }
             this.loading = false;
             this.loaded = true;
+        }
+
+        private StatementIndex GetOrLoadIndexFile(string accountName)
+        {
+            if (this.statements.TryGetValue(accountName, out StatementIndex statementIndex))
+            {
+                return statementIndex;
+            }
+            if (this.loading)
+            {
+                // this.statements may be incomplete and we can't wait, we need it now!
+                return LoadIndexFile(accountName);
+            }
+            return null;
         }
 
         static string Sha256Hash(string fileName)
