@@ -158,14 +158,14 @@ namespace Walkabout.Charts
                     // must be Investments.
                     break;
                 }
-                decimal amount = Math.Abs(t.Amount);
+                decimal amount = t.Amount;
                 bool isExpenses = t.Amount < 0;
 
                 if (t.IsSplit)
                 {
                     foreach (Split s in t.Splits.GetSplits())
                     {
-                        decimal subtotal = Math.Abs(s.Amount);
+                        decimal subtotal = s.Amount;
                         if (s.Transfer != null)
                         {
                             willTally = WillTally(t, t.amount < 0 ? transferredOut : transferredIn, amount, isExpenses);
@@ -214,7 +214,7 @@ namespace Walkabout.Charts
                 return;
             }
 
-            TotalAmount.Text = string.Format("{0:C2}", Math.Abs(ComputeNetAmount()));
+            TotalAmount.Text = string.Format("{0:C2}", ComputeNetAmount());
             decimal total = 0;
 
             if (transactions != null)
@@ -227,7 +227,7 @@ namespace Walkabout.Charts
                         // must be Investments.
                         break;
                     }
-                    decimal amount = Math.Abs(t.Amount);
+                    decimal amount = t.Amount;
                     bool isExpenses = t.Amount < 0;
                     bool tallied = false;
 
@@ -235,7 +235,7 @@ namespace Walkabout.Charts
                     {
                         foreach (Split s in t.Splits.GetSplits())
                         {
-                            decimal subtotal = Math.Abs(s.Amount);
+                            decimal subtotal = s.Amount;
                             if (s.Transfer != null)
                             {
                                 tallied = Tally(t, t.amount < 0 ? transferredOut : transferredIn, amount, isExpenses);
@@ -287,7 +287,7 @@ namespace Walkabout.Charts
                     series.Values.Add(new ChartDataValue() { Label = item.Name, Value = item.Total, Color = item.Color, UserData = item });
                 }
 
-                TotalAmount.Text = string.Format("{0:C2}", Math.Abs(NetAmount));
+                TotalAmount.Text = string.Format("{0:C2}", NetAmount);
                 PieChart.Series = series;
                 Legend.DataSeries = series;
             }
@@ -307,7 +307,7 @@ namespace Walkabout.Charts
 
             PieChart.Update();
             NetAmount = (decimal)total;
-            TotalAmount.Text = string.Format("{0:C2}", Math.Abs(NetAmount));
+            TotalAmount.Text = string.Format("{0:C2}", NetAmount);
         }
 
 

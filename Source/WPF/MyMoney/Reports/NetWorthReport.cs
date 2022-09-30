@@ -103,7 +103,7 @@ namespace Walkabout.Reports
 
                     // Non-investment Cash
                     var color = GetRandomColor();
-                    data.Add(new ChartDataValue() { Label = "Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color, UserData = cashGroup });
+                    data.Add(new ChartDataValue() { Label = "Cash", Value = (double)balance.RoundToNearestCent(), Color = color, UserData = cashGroup });
                     WriteRow(writer, color, "Cash", balance, () => OnSelectCashGroup(cashGroup));
                     totalBalance += balance;
 
@@ -114,7 +114,7 @@ namespace Walkabout.Reports
                     {
                         var investmentCashGroup = new AccountGroup { Filter = investmentAccountFilter, Date = this.reportDate, Title = "Investment Account" };
                         color = GetRandomColor();
-                        data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color, UserData = investmentCashGroup });
+                        data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance.RoundToNearestCent(), Color = color, UserData = investmentCashGroup });
                         WriteRow(writer, color, "Investment Cash", balance, () => OnSelectCashGroup(investmentCashGroup));
                         totalBalance += balance;
                     }
@@ -126,7 +126,7 @@ namespace Walkabout.Reports
                     {
                         var taxDeferredCashGroup = new AccountGroup { Filter = taxDeferredAccountFilter, Date = this.reportDate, Title = "Tax-Deferred Account" };
                         color = GetRandomColor();
-                        data.Add(new ChartDataValue() { Label = "Tax-Deferred Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color, UserData = taxDeferredCashGroup });
+                        data.Add(new ChartDataValue() { Label = "Tax-Deferred Cash", Value = (double)balance.RoundToNearestCent(), Color = color, UserData = taxDeferredCashGroup });
                         WriteRow(writer, color, "Tax-Deferred Cash", balance, () => OnSelectCashGroup(taxDeferredCashGroup));
                         totalBalance += balance;
                     }
@@ -138,7 +138,7 @@ namespace Walkabout.Reports
                     {
                         var taxFreeCashGroup = new AccountGroup { Filter = taxFreeAccountFilter, Date = this.reportDate, Title = "Tax-Free Account" };
                         color = GetRandomColor();
-                        data.Add(new ChartDataValue() { Label = "Tax-Free Cash", Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color, UserData = taxFreeCashGroup });
+                        data.Add(new ChartDataValue() { Label = "Tax-Free Cash", Value = (double)balance.RoundToNearestCent(), Color = color, UserData = taxFreeCashGroup });
                         WriteRow(writer, color, "Tax-Free Cash", balance, () => OnSelectCashGroup(taxFreeCashGroup));
                         totalBalance += balance;
                     }
@@ -247,7 +247,7 @@ namespace Walkabout.Reports
                     if (balance != 0)
                     {
                         var color = GetRandomColor();
-                        data.Add(new ChartDataValue() { Label = a.Name, Value = (double)Math.Abs(balance).RoundToNearestCent(), Color = color });
+                        data.Add(new ChartDataValue() { Label = a.Name, Value = (double)balance.RoundToNearestCent(), Color = color });
                         WriteRow(writer, color, a.Name, balance, null);
                         totalBalance += balance;
                     }

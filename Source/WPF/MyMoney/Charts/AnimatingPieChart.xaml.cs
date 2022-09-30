@@ -13,7 +13,9 @@ using Walkabout.Utilities;
 namespace LovettSoftware.Charts
 {
     /// <summary>
-    /// Interaction logic for AnimatingPieChart.xaml
+    /// Presents a pie chart view of the ChartDataSeries where any negative
+    /// values are turned into positive values for the purposes of space allocation,
+    /// but the true negative value is shown in the Hover tooltips.
     /// </summary>
     public partial class AnimatingPieChart : UserControl
     {
@@ -149,7 +151,7 @@ namespace LovettSoftware.Charts
             double m = Math.Min(w, h);
             double c = Math.Floor(m / 2);
 
-            double total = (from d in this.Series.Values where !d.Hidden select d.Value).Sum();
+            double total = (from d in this.Series.Values where !d.Hidden select Math.Abs(d.Value)).Sum();
             Point center = new Point(c + (w - m) / 2, c + (h - m) / 2);
 
             switch (this.HorizontalContentAlignment)
@@ -202,16 +204,18 @@ namespace LovettSoftware.Charts
                     slice.Visibility = Visibility.Visible;
                 }
 
+                var value = Math.Abs(item.Value); // can't show negatives, but we will in the hover tooltip!
+
                 slice.Data = item;
                 slice.Color = item.Color.Value;
                 double start = total == 0 ? 0 : (sum * 360) / total;
-                double end = total == 0 ? 360 : ((sum + item.Value) * 360) / total;
+                double end = total == 0 ? 360 : ((sum + value) * 360) / total;
                 if (end == 360)
                 {
                     end = 359.99;
                 }
                 AnimateSlice(sb, slice, oldStart, start, oldEnd, end, item.Color.Value);
-                sum += item.Value;
+                sum += value;
                 i++;
             }
 

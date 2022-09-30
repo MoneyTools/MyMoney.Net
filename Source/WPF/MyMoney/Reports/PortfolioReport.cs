@@ -613,7 +613,7 @@ namespace Walkabout.Reports
                         var color = GetRandomColor();
                         data.Add(new ChartDataValue()
                         {
-                            Value = (double)Math.Abs(balance).RoundToNearestCent(),
+                            Value = (double)balance.RoundToNearestCent(),
                             Label = caption,
                             Color = color,
                             UserData = account
@@ -698,7 +698,7 @@ namespace Walkabout.Reports
                     
                     data.Add(new ChartDataValue()
                     {
-                        Value = (double)Math.Abs(marketValue).RoundToNearestCent(),
+                        Value = (double)marketValue.RoundToNearestCent(),
                         Label = caption,
                         Color = color,
                         UserData = securityGroup
@@ -722,7 +722,7 @@ namespace Walkabout.Reports
                 var color = GetRandomColor();
                 data.Add(new ChartDataValue()
                 {
-                    Value = (double)Math.Abs(cashBalance).RoundToNearestCent(),
+                    Value = (double)cashBalance.RoundToNearestCent(),
                     Label = "Cash",
                     Color = color
                 });
