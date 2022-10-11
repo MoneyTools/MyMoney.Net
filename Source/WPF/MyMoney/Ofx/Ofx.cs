@@ -348,7 +348,7 @@ namespace Walkabout.Ofx
             settings.ProhibitDtd = false;
 #pragma warning restore 618
             settings.ValidationType = ValidationType.None;
-            using (XmlReader reader = XmlReader.Create(fs, settings))
+            using (XmlReader reader = new StringTrimmingXmlReader(XmlReader.Create(fs, settings)))
             {
                 return XDocument.Load(reader);
             }
@@ -1107,7 +1107,6 @@ NEWFILEUID:{1}
             {
                 // try a different version of OFX
                 string version = "" + this.onlineAccount.OfxVersion;
-                version = version.Trim();
                 this.onlineAccount.OfxVersion = version.StartsWith("2") ? "1" : "2";
                 result = SendOfxRequest(doc, "NONE", fileuid);
             }
@@ -1330,7 +1329,7 @@ NEWFILEUID:{1}
             {
                 OFX ofx;
                 XmlSerializer s = new XmlSerializer(typeof(OFX));
-                using (XmlReader r = XmlReader.Create(new StringReader(doc.ToString())))
+                using (XmlReader r = new StringTrimmingXmlReader(XmlReader.Create(new StringReader(doc.ToString()))))
                 {
                     ofx = (OFX)s.Deserialize(r);
                 }
@@ -1384,7 +1383,7 @@ NEWFILEUID:{1}
             {
                 Debug.WriteLine(e.Message);
                 // try a different version of OFX
-                string version = oa.OfxVersion.Trim();
+                string version = oa.OfxVersion;
                 oa.OfxVersion = version.StartsWith("2") ? "1" : "2";
                 try
                 {
@@ -3347,7 +3346,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     {
                         if (!string.IsNullOrEmpty(localId))
                         {
-                            var trimmedLocalId = localId.Replace(" ", "").Trim();
+                            var trimmedLocalId = localId.Replace(" ", "");
                             if (trimmedLocalId.Length == downloadedId.Length)
                             {
                                 var localTail = trimmedLocalId.Substring(exs.Length);
@@ -3433,13 +3432,13 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     string reason = null;
                     if (severity != null)
                     {
-                        reason = severity.Value.Trim();
+                        reason = severity.Value?.Trim();
                     }
                     XElement message = statusElement.Element("MESSAGE");
                     if (message != null)
                     {
                         if (reason != null) reason += ", ";
-                        reason += message.Value.Trim();
+                        reason += message.Value?.Trim();
                     }
                     return msg + reason;
                 }
@@ -3735,7 +3734,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         {
                             continue;
                         }
-                        switch (id.ToUpperInvariant().Trim())
+                        switch (id.ToUpperInvariant())
                         {
                             case "MFA101": // Datetime, formatted YYYYMMDDHHMMSS
                                 answers.Add(new MfaChallengeAnswer() { Id = id, Answer = DateTime.Now.ToString("yyyyMMddhhmmss") });
@@ -3782,6 +3781,105 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         }
 
 
+    }
+
+    class StringTrimmingXmlReader : XmlReader
+    {
+        XmlReader inner;
+        public StringTrimmingXmlReader(XmlReader inner)
+        {
+            this.inner = inner;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            this.inner.Dispose();
+            base.Dispose(disposing);
+        }
+
+        public override XmlNodeType NodeType => this.inner.NodeType;
+
+        public override string LocalName => this.inner.LocalName;
+
+        public override string NamespaceURI => this.inner.NamespaceURI;
+
+        public override string Prefix => this.inner.Prefix;
+
+        public override string Value => this.inner.Value?.Trim();
+
+        public override int Depth => this.inner.Depth;
+
+        public override string BaseURI => this.inner.BaseURI;
+
+        public override bool IsEmptyElement => this.inner.IsEmptyElement;
+
+        public override int AttributeCount => this.inner.AttributeCount;
+
+        public override bool EOF => this.inner.EOF;
+
+        public override ReadState ReadState => this.inner.ReadState;
+
+        public override XmlNameTable NameTable => this.inner.NameTable;
+
+        public override string GetAttribute(string name)
+        {
+            return this.inner.GetAttribute(name);
+        }
+
+        public override string GetAttribute(string name, string namespaceURI)
+        {
+            return this.inner.GetAttribute(name, namespaceURI);
+        }
+
+        public override string GetAttribute(int i)
+        {
+            return this.inner.GetAttribute(i);
+        }
+
+        public override string LookupNamespace(string prefix)
+        {
+            return this.inner.LookupNamespace(prefix);
+        }
+
+        public override bool MoveToAttribute(string name)
+        {
+            return this.inner.MoveToAttribute(name);
+        }
+
+        public override bool MoveToAttribute(string name, string ns)
+        {
+            return this.inner.MoveToAttribute(name, ns);
+        }
+
+        public override bool MoveToElement()
+        {
+            return this.inner.MoveToElement();
+        }
+
+        public override bool MoveToFirstAttribute()
+        {
+            return this.inner.MoveToFirstAttribute();
+        }
+
+        public override bool MoveToNextAttribute()
+        {
+            return this.inner.MoveToNextAttribute();
+        }
+
+        public override bool Read()
+        {
+            return this.inner.Read();
+        }
+
+        public override bool ReadAttributeValue()
+        {
+            return this.inner.ReadAttributeValue();
+        }
+
+        public override void ResolveEntity()
+        {
+            this.inner.ResolveEntity();
+        }
     }
 
 }

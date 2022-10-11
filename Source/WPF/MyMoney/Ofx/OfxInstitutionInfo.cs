@@ -464,28 +464,31 @@
             string fname = OfxProviderList;
 
             List<OfxInstitutionInfo> list = new List<OfxInstitutionInfo>();
-            XDocument doc = null;
 
-            if (File.Exists(fname))
-            {
-                try
-                {
-                    doc = XDocument.Load(fname);
-                    list = LoadProviderList(doc);
-                }
-                catch
-                {
-                    // rats, got corrupted, so start over.
-                }
-            }
-
-            // Now merge any updates from the built in starter list.
+            // This is the default master list (and can have updated values that ship with new versions of the app!)
             using (Stream s = typeof(OfxRequest).Assembly.GetManifestResourceStream("Walkabout.Ofx.OfxProviderList.xml"))
             {
                 if (s != null)
                 {
                     XDocument builtIndoc = XDocument.Load(s);
                     MergeProviderList(list, builtIndoc);
+                }
+            }
+
+
+            if (File.Exists(fname))
+            {
+                try
+                {
+                    var cached = XDocument.Load(fname);
+                    if (cached != null)
+                    {
+                        MergeProviderList(list, cached);
+                    }
+                }
+                catch
+                {
+                    // rats, got corrupted, so start over.
                 }
             }
 

@@ -865,10 +865,10 @@ namespace Walkabout.Dialogs
 
             if (oe != null)
             {
-                code = ex.Message;
+                code = oe.Code;
                 if (string.IsNullOrEmpty(code))
                 {
-                    code = oe.Code;
+                    code = "Error";
                 }
 
                 if (oe.Response != null)
@@ -1101,6 +1101,10 @@ namespace Walkabout.Dialogs
                 if (ofx.SignOnMessageResponse != null && ofx.SignOnMessageResponse.SignOnResponse != null && ofx.SignOnMessageResponse.SignOnResponse.FinancialInstitution != null)
                 {
                     org = ofx.SignOnMessageResponse.SignOnResponse.FinancialInstitution.Organization;
+                    if (string.IsNullOrEmpty(org))
+                    {
+                        org = this.editing.Institution;
+                    }
                 }
                 var sor = sup.AccountInfoSet;
                 if (sor != null)
@@ -1553,7 +1557,7 @@ namespace Walkabout.Dialogs
                             string prefix = "If you are not sure you have a userid and password for online banking then please ";
                             if (signup.OtherEnrollInfo != null && !string.IsNullOrWhiteSpace(signup.OtherEnrollInfo.Message))
                             {
-                                string enrollInstructions = signup.OtherEnrollInfo.Message.Trim();
+                                string enrollInstructions = signup.OtherEnrollInfo.Message;
                                 instructions.Inlines.Add(new Run(prefix + "read the following instructions.  " + enrollInstructions + "  "));
                             }
                             else if (signup.WebEnrollInfo != null && !string.IsNullOrWhiteSpace(signup.WebEnrollInfo.Url) && signup.WebEnrollInfo.Url != "N")

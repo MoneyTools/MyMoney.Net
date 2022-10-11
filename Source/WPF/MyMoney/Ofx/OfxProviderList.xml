@@ -936,10 +936,9 @@
     <Name>Citi Cards</Name>
     <Org>Citigroup</Org>
     <Fid>24909</Fid>
-    <ProviderURL>https://secureofx2.bankhost.com/citi/cgi-forte/ofx_rt?servicename=ofx_rt&amp;pagename=ofx</ProviderURL>
-    <MoneyDanceId>md:1069</MoneyDanceId>
+    <ProviderURL>https://mobilesoa.citi.com/CitiOFXInterface</ProviderURL>
     <AppId>QWIN</AppId>
-    <AppVer>1900</AppVer>
+    <AppVer>2500</AppVer>
     <LastConnection>10/27/2012</LastConnection>
   </institution>
   <institution>

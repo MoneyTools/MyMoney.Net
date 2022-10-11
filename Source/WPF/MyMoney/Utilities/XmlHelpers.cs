@@ -123,7 +123,7 @@ namespace Walkabout.Utilities
             {
                 return string.Empty;
             }
-            return s.Trim().Replace("\r\n", " ").Replace('\r', ' ').Replace('\n', ' ');
+            return s.Replace("\r\n", " ").Replace('\r', ' ').Replace('\n', ' ').Trim();
         }
 
         public static int GetElementValueAsInt(this XElement e, int defaultValue = 0)
