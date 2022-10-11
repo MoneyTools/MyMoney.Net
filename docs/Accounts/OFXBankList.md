@@ -1,8 +1,12 @@
-OFX Bank List
+# OFX Bank List
 
-**We have the OFX URL for the following 338 banks and we can get a valid OFX profile response from them, so theoretically with the right online user id and password you should be able to connect to these banks and download your statements automatically after you follow the** [Online Banking](OnlineBanking.md)**instructions.**
+You can also sometimes find updated OFX connection information here:
+[https://wiki.gnucash.org/wiki/OFX_Direct_Connect_Bank_Setting](https://wiki.gnucash.org/wiki/OFX_Direct_Connect_Bank_Setting)
+
+We have the OFX URL for the following 338 banks and we can get a valid OFX profile response from them, so theoretically with the right online user id and password you should be able to connect to these banks and download your statements automatically after you follow the [Online Banking](OnlineBanking.md) instructions.
 
 If your bank is not listed here, you may be able to get it from [http://www.ofxhome.com/](http://www.ofxhome.com/).   Please also check the [Known OFX Issues](KnownOFXIssues.md)**.**
+
 
     1st Advantage FCU
     1st Source Bank
