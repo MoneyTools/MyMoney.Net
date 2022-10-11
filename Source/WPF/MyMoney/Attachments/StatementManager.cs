@@ -493,13 +493,17 @@ namespace Walkabout.Attachments
             var dir = Path.GetDirectoryName(index.FileName);
             foreach(var item in index.Items)
             {
-                if (string.IsNullOrEmpty(item.Hash) && !string.IsNullOrEmpty(item.Filename))
+                if (!string.IsNullOrEmpty(item.Filename))
                 {
                     var statementFile = Path.Combine(dir, item.Filename);
-                    if (File.Exists(statementFile))
-                    {
-                        item.Hash = Sha256Hash(statementFile);
-                        updated = true;
+                    if (File.Exists(statementFile)) {
+                        if (string.IsNullOrEmpty(item.Hash) || !item.FileModified.HasValue || 
+                            item.FileModified.Value < File.GetLastWriteTime(statementFile))
+                        {
+                            item.Hash = Sha256Hash(statementFile);
+                            item.FileModified = File.GetLastWriteTime(statementFile);
+                            updated = true;
+                        }
                     }
                 }
             }
@@ -626,5 +630,7 @@ namespace Walkabout.Attachments
         public string Filename { get; set; }
         public decimal StatementBalance { get; set; }
         public string Hash { get; set; }
+
+        public DateTime? FileModified { get; set; }
     }
 }
