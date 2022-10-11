@@ -521,7 +521,13 @@ namespace Walkabout.Attachments
                 // we have no database loaded!
                 return null;
             }
-            string dir = Path.Combine(path, NativeMethods.GetValidFileName(name));
+            var fname = NativeMethods.GetValidFileName(name);
+            if (string.IsNullOrEmpty(fname))
+            {
+                Debug.WriteLine(String.Format("Failed to compute a valid file name for account '{0}'", name));
+                return null;
+            }
+            string dir = Path.Combine(path, fname);
             string indexFile = Path.Combine(dir, "index.xml");
 
             try
@@ -577,7 +583,10 @@ namespace Walkabout.Attachments
             this.loading = true;
             foreach(var a in myMoney.Accounts.GetAccounts())
             {
-                LoadIndexFile(a.Name);
+                if (!string.IsNullOrEmpty(a.Name))
+                {
+                    LoadIndexFile(a.Name);
+                }
             }
             this.loading = false;
             this.loaded = true;
