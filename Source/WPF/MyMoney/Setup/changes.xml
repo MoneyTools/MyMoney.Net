@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.1.1" date="10/10/2022">
+    - Fix #74: detect and fix stale file hash values in statement indexes.
+    - Fixes to OFX processing so that Costco Citibank VISA cards now work.
+  </change>
   <change version="2.0.1.0" date="9/29/2022">
     - Fix #72  Rename account with linked statement for multiple accounts
     - Show negative values in pie chart hover tooltips and legend labels.
