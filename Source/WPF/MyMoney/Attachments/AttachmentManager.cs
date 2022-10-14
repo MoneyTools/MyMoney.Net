@@ -595,10 +595,6 @@ namespace Walkabout.Attachments
                     this.money.BeginUpdate(this);
                     foreach (Transaction t in this.money.Transactions.GetTransactionsFrom(a))
                     {
-                        if (!threadRunning)
-                        {
-                            return;
-                        }
                         if (t.HasAttachment && !set.Contains(t))
                         {
                             t.HasAttachment = false;
@@ -630,7 +626,7 @@ namespace Walkabout.Attachments
                 string accountDir = System.IO.Path.Combine(path, NativeMethods.GetValidFileName(t.Account.Name));
                 if (System.IO.Directory.Exists(accountDir))
                 {
-                    var files = Directory.GetFiles(accountDir, t.Id + "*.*");
+                    var files = Directory.GetFiles(accountDir, t.Id + ".*.*");
                     if (files.Length > 0)
                     {
                         hasAttachments = true;
@@ -653,7 +649,7 @@ namespace Walkabout.Attachments
                 string accountDirectory = Path.Combine(path, NativeMethods.GetValidFileName(t.Account.Name));
                 if (Directory.Exists(accountDirectory))
                 {
-                    files.AddRange(Directory.GetFiles(accountDirectory, t.Id + "*.*"));                    
+                    files.AddRange(Directory.GetFiles(accountDirectory, t.Id + ".*.*"));                    
                 }
             }
             return files;
