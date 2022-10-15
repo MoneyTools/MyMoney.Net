@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.0.1.2" date="10/14/2022">
+    - Fix #77: UI update bug, some icons disappear after showing Changes page.
+    - Fix #76: Fix attachment icon UI bug, where it should show attachments in the wrong transactions.
+  </change>
   <change version="2.0.1.1" date="10/10/2022">
     - Fix #74: detect and fix stale file hash values in statement indexes.
     - Fixes to OFX processing so that Costco Citibank VISA cards now work.
