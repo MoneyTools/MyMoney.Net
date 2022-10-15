@@ -5440,8 +5440,31 @@ namespace Walkabout.Views
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
             this.Unloaded += (s, e) =>
             {
-                this.ClearContext();
+                OnUnloaded();
             };
+            this.Loaded += (s, e) =>
+            {
+                OnLoaded();
+            };
+        }
+
+        void OnUnloaded()
+        {
+            // stop listening
+            if (this.context != null)
+            {
+                this.context.PropertyChanged -= OnPropertyChanged;
+            }
+        }
+
+        void OnLoaded()
+        {
+            // start listening
+            if (this.context != null)
+            {
+                this.context.PropertyChanged += OnPropertyChanged;
+                UpdateUI();
+            }
         }
 
         Transaction context;
@@ -5490,7 +5513,12 @@ namespace Walkabout.Views
             if (t != this.context)
             {
                 SetContext(t);
+                UpdateUI();
             }
+        }
+
+        void UpdateUI() 
+        { 
             UpdateBackground();
             UpdateForeground();
             UpdateFontWeight();
@@ -5735,8 +5763,31 @@ namespace Walkabout.Views
             this.DataContextChanged += OnDataContextChanged;
             this.Unloaded += (s, e) =>
             {
-                SetContext(null);
+                OnUnloaded();
             };
+            this.Loaded += (s, e) =>
+            {
+                OnLoaded();
+            };
+        }
+
+        void OnUnloaded()
+        {
+            // stop listening
+            if (this.context != null)
+            {
+                this.context.PropertyChanged -= OnContextPropertyChanged;
+            }
+        }
+
+        void OnLoaded()
+        {
+            // start listening
+            if (this.context != null)
+            {
+                this.context.PropertyChanged += OnContextPropertyChanged;
+                UpdateIcon();
+            }
         }
 
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -5745,7 +5796,6 @@ namespace Walkabout.Views
             {
                 // WPF is recycling this object for a different row!
                 SetContext(e.NewValue as Transaction);
-                UpdateIcon();
             }
         }
 
@@ -6820,8 +6870,31 @@ namespace Walkabout.Views
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
             this.Unloaded += (s, e) =>
             {
-                ClearContext();
+                OnUnloaded();
             };
+            this.Loaded += (s, e) =>
+            {
+                OnLoaded();
+            };
+        }
+
+        void OnUnloaded()
+        {
+            // stop listening
+            if (this.context != null)
+            {
+                this.context.PropertyChanged -= OnPropertyChanged;
+            }
+        }
+
+        void OnLoaded()
+        {
+            // start listening
+            if (this.context != null)
+            {
+                this.context.PropertyChanged += OnPropertyChanged;
+                UpdateLabel();
+            }
         }
 
         public string FieldName => this.fieldName;
@@ -6840,10 +6913,6 @@ namespace Walkabout.Views
             if (t != this.context)
             {
                 SetContext(t);
-            }
-            if (t == null)
-            {
-                UpdateLabel();
             }
         }
 
@@ -6866,12 +6935,12 @@ namespace Walkabout.Views
             if (this.context != null)
             {
                 this.context.PropertyChanged += OnPropertyChanged;
-                UpdateLabel();
             }
             else
             {
                 this.Text = string.Empty;
             }
+            UpdateLabel();
         }
 
         private void UpdateLabel()
@@ -6988,8 +7057,31 @@ namespace Walkabout.Views
             this.button.Background = Brushes.Transparent;
             this.Unloaded += (s, e) =>
             {
-                ClearContext();
+                OnUnloaded();
             };
+            this.Loaded += (s, e) =>
+            {
+                OnLoaded();
+            };
+        }
+
+        void OnUnloaded()
+        {
+            // stop listening
+            if (this.context != null)
+            {
+                this.context.PropertyChanged -= OnPropertyChanged;
+            }
+        }
+
+        void OnLoaded()
+        {
+            // start listening
+            if (this.context != null)
+            {
+                this.context.PropertyChanged += OnPropertyChanged;
+                UpdateLabel();
+            }
         }
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
@@ -7223,8 +7315,32 @@ namespace Walkabout.Views
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
             this.Unloaded += (s, e) =>
             {
-                this.ClearContext();
+                OnUnloaded();
             };
+            this.Loaded += (s, e) =>
+            {
+                OnLoaded();
+            };
+        }
+
+        void OnUnloaded()
+        {
+            // stop listening
+            if (this.context != null)
+            {
+                this.context.PropertyChanged -= OnPropertyChanged;
+            }
+        }
+
+        void OnLoaded()
+        {
+            // start listening
+            if (this.context != null)
+            {
+                this.context.PropertyChanged += OnPropertyChanged;
+                UpdateButton();
+                UpdateLabel();
+            }
         }
 
         // whether to show TextBox or TextLabel.
