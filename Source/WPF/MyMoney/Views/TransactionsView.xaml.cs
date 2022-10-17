@@ -5539,15 +5539,6 @@ namespace Walkabout.Views
             base.OnMouseLeave(e);
         }
 
-        void ClearContext()
-        {
-            if (this.context != null)
-            {
-                this.context.PropertyChanged -= OnPropertyChanged;
-            }
-            this.context = null;
-        }
-
         void SetContext(Transaction transaction)
         {
             if (this.context != null)
@@ -6916,15 +6907,6 @@ namespace Walkabout.Views
             }
         }
 
-        void ClearContext()
-        {
-            if (this.context != null)
-            {
-                this.context.PropertyChanged -= OnPropertyChanged;
-            }
-            this.context = null;
-        }
-
         void SetContext(Transaction transaction)
         {
             if (this.context != null)
@@ -6936,11 +6918,15 @@ namespace Walkabout.Views
             {
                 this.context.PropertyChanged += OnPropertyChanged;
             }
-            else
-            {
-                this.Text = string.Empty;
-            }
             UpdateLabel();
+        }
+
+        private void SetText(string text)
+        {
+            if (text != this.Text)
+            {
+                this.Text = text;
+            }
         }
 
         private void UpdateLabel()
@@ -6957,11 +6943,11 @@ namespace Walkabout.Views
                 {
                     value = string.Empty;
                 }
-                this.Text = value;
+                this.SetText(value);
             }
-            else
+            else if (!string.IsNullOrEmpty(this.Text))
             {
-                this.Text = string.Empty;
+                SetText(string.Empty);
             }
         }
 
@@ -7112,15 +7098,6 @@ namespace Walkabout.Views
             }
 
             UpdateLabel();
-        }
-
-        void ClearContext()
-        {
-            if (this.context != null)
-            {
-                this.context.PropertyChanged -= OnPropertyChanged;
-            }
-            this.context = null;
         }
 
         void SetContext(Transaction transaction)
@@ -7430,15 +7407,6 @@ namespace Walkabout.Views
                 // recycling of last row.
                 UpdateLabel();
             }
-        }
-
-        void ClearContext()
-        {
-            if (this.context != null)
-            {
-                this.context.PropertyChanged -= OnPropertyChanged;
-            }
-            this.context = null;
         }
 
         void SetContext(Transaction transaction)

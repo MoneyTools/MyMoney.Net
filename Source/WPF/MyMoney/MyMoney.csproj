@@ -203,6 +203,7 @@
     <Compile Include="Controls\OutputPane.xaml.cs">
       <DependentUpon>OutputPane.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SingleLineTextBlock.cs" />
     <Compile Include="Controls\TabCloseBox.xaml.cs">
       <DependentUpon>TabCloseBox.xaml</DependentUpon>
     </Compile>
