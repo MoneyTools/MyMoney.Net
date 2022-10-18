@@ -2390,14 +2390,9 @@ namespace Walkabout
 
         private int ImportXml(string file)
         {
-            int total = 0;
-
-            Account acct = null;
-
-            int count;
-            Importer importer = new Importer(myMoney);
-            acct = importer.Import(file, out count);
-            total += count;
+            var importer = new XmlImporter(myMoney);
+            int total = importer.Import(file);
+            Account acct = importer.LastAccount;
 
             var view = SetCurrentView<TransactionsView>();
             if (view.CheckTransfers() && acct != null)

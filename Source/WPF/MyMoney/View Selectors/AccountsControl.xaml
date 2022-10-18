@@ -73,6 +73,7 @@
         <CommandBinding  Command="local:AccountsControl.CommandViewTransfers" Executed="OnViewTransfers" CanExecute="CanViewTransfers"/>
         <CommandBinding  Command="local:AccountsControl.CommandExportAccount" Executed="OnExportAccount" CanExecute="CanExportAccount"/>
         <CommandBinding  Command="local:AccountsControl.CommandExportList" Executed="OnExportAccountList" />
+        <CommandBinding  Command="local:AccountsControl.CommandImportCsv" Executed="OnImportAccountCsv" />
         <CommandBinding  Command="local:AccountsControl.CommandToggleClosedAccounts" Executed="OnToggleShowClosedAccounts" CanExecute="CanToggleShowClosedAccounts"/>
     </UserControl.CommandBindings>
 

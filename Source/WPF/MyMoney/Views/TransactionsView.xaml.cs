@@ -2739,7 +2739,7 @@ namespace Walkabout.Views
 
                     Transaction selected = this.SelectedTransaction;
                     StringReader sr = new StringReader(xml);
-                    Importer importer = new Importer(myMoney);
+                    XmlImporter importer = new XmlImporter(myMoney);
                     using (XmlReader r = XmlReader.Create(sr))
                     {
                         Transaction first = null;

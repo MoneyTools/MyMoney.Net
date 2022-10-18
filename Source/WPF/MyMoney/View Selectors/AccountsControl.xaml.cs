@@ -38,6 +38,7 @@ namespace Walkabout.Views.Controls
         public static RoutedUICommand CommandViewTransfers;
         public static RoutedUICommand CommandExportAccount;
         public static RoutedUICommand CommandExportList;
+        public static RoutedUICommand CommandImportCsv;
         public static RoutedUICommand CommandToggleClosedAccounts;
 
         static AccountsControl()
@@ -52,6 +53,7 @@ namespace Walkabout.Views.Controls
             CommandViewTransfers = new RoutedUICommand("ViewTransfers", "ViewTransfers", typeof(AccountsControl));
             CommandExportAccount = new RoutedUICommand("ExportAccount", "ExportAccount", typeof(AccountsControl));
             CommandExportList = new RoutedUICommand("ExportList", "ExportList", typeof(AccountsControl));
+            CommandImportCsv = new RoutedUICommand("ImportCsv", "ImportCsv", typeof(AccountsControl));
             CommandToggleClosedAccounts = new RoutedUICommand("ToggleClosedAccounts", "ToggleClosedAccounts", typeof(AccountsControl));
         }
 
@@ -210,9 +212,9 @@ namespace Walkabout.Views.Controls
             if (data.GetDataPresent(typeof(string)))
             {
                 string xml = (string)data.GetData(typeof(string));
-                Importer importer = new Importer(this.myMoney);
-                Account a = importer.ImportAccount(xml);
-                if (a == null)
+                XmlImporter importer = new XmlImporter(this.myMoney);
+                importer.ImportAccount(xml);
+                if (importer.LastAccount == null)
                 {
                     MessageBoxEx.Show("Clipboard doesn't seem to contain valid account information", "Paste Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -851,6 +853,36 @@ namespace Walkabout.Views.Controls
         }
         #endregion
 
+        private void OnImportAccountCsv(object sender, ExecutedRoutedEventArgs e)
+        {
+            Account a = this.SelectedAccount;
+            if (a != null)
+            {
+                OpenFileDialog fd = new OpenFileDialog();
+                fd.Title = "Import .csv file";
+                fd.Filter = "*.csv (csv files)";
+                fd.CheckFileExists = true;
+                fd.RestoreDirectory = true;
+                if (fd.ShowDialog() == true)
+                {
+                    var file = fd.FileName;
+
+                }
+            }
+        }
+
+        private void ImportCsv(Account account, string fileName)
+        {
+            try
+            {
+                CsvImporter importer = new CsvImporter(this.myMoney, account);
+                importer.Import(fileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxEx.Show(ex.Message, "Import Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
     }
 
     public class AccountViewModel : INotifyPropertyChanged

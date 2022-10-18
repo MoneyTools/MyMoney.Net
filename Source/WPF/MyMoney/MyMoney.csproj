@@ -223,6 +223,7 @@
     <Compile Include="Dialogs\StockQuoteServiceDialog.xaml.cs">
       <DependentUpon>StockQuoteServiceDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\CsvImporter.cs" />
     <Compile Include="Reports\UnacceptedReport.cs" />
     <Compile Include="StockQuotes\AlphaVantage.cs" />
     <Compile Include="StockQuotes\IEXCloud.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="Utilities\RecentFilesMenu.cs" />
     <Compile Include="Utilities\UsHolidays.cs" />
     <Compile Include="Utilities\WpfAnnotations.cs" />
+    <Compile Include="Utilities\XmlImporter.cs" />
     <Compile Include="Views\ChangeTracker.cs" />
     <Compile Include="Database\CostBasis.cs" />
     <Compile Include="Database\SqliteDatabase.cs" />
