@@ -2810,6 +2810,18 @@ namespace Walkabout.Views
             }
             UpdateUX();
             ShowBalance();
+            RemoveInvisibleContent(TheGrid_BankTransactionDetails);
+            RemoveInvisibleContent(TheGrid_TransactionFromDetails);
+            RemoveInvisibleContent(TheGrid_InvestmentActivity);
+            RemoveInvisibleContent(TheGrid_BySecurity);
+        }
+
+        private void RemoveInvisibleContent(MoneyDataGrid grid)
+        {
+            if (grid.Visibility != Visibility.Visible)
+            {
+                grid.SetItemsSource(null);
+            }
         }
 
         private void SetActiveAccount(Account a, Category c, Payee p, Security s, RentBuilding r)
@@ -5462,6 +5474,7 @@ namespace Walkabout.Views
             // start listening
             if (this.context != null)
             {
+                this.context.PropertyChanged -= OnPropertyChanged;
                 this.context.PropertyChanged += OnPropertyChanged;
                 UpdateUI();
             }
@@ -5548,6 +5561,7 @@ namespace Walkabout.Views
             this.context = transaction;
             if (this.context != null)
             {
+                this.context.PropertyChanged -= OnPropertyChanged;
                 this.context.PropertyChanged += OnPropertyChanged;
             }
         }
@@ -5776,6 +5790,7 @@ namespace Walkabout.Views
             // start listening
             if (this.context != null)
             {
+                this.context.PropertyChanged -= OnContextPropertyChanged;
                 this.context.PropertyChanged += OnContextPropertyChanged;
                 UpdateIcon();
             }
@@ -6842,7 +6857,7 @@ namespace Walkabout.Views
     {
         Transaction context;
         string fieldName;
-        Binding binding;
+        bool hasBinding;
         Func<Transaction, string> getter;
 
         public TransactionTextField(string name, Func<Transaction, string> getter, Binding binding, object dataItem)
@@ -6850,9 +6865,9 @@ namespace Walkabout.Views
             this.getter = getter;
             this.Margin = new Thickness(2, 1, 3, 0);
             this.fieldName = name;
-            this.binding = binding;
             if (binding != null)
             {
+                this.hasBinding = true;
                 // inherit the binding from the editor control so we display the same uncomitted value.
                 this.SetBinding(TextBlock.TextProperty, binding);
             }
@@ -6883,6 +6898,7 @@ namespace Walkabout.Views
             // start listening
             if (this.context != null)
             {
+                this.context.PropertyChanged -= OnPropertyChanged;
                 this.context.PropertyChanged += OnPropertyChanged;
                 UpdateLabel();
             }
@@ -6916,6 +6932,7 @@ namespace Walkabout.Views
             this.context = transaction;
             if (this.context != null)
             {
+                this.context.PropertyChanged -= OnPropertyChanged;
                 this.context.PropertyChanged += OnPropertyChanged;
             }
             UpdateLabel();
@@ -6931,7 +6948,7 @@ namespace Walkabout.Views
 
         private void UpdateLabel()
         {
-            if (this.binding != null)
+            if (this.hasBinding)
             {
                 // already taken care of.
                 return;
@@ -7065,6 +7082,7 @@ namespace Walkabout.Views
             // start listening
             if (this.context != null)
             {
+                this.context.PropertyChanged -= OnPropertyChanged;
                 this.context.PropertyChanged += OnPropertyChanged;
                 UpdateLabel();
             }
@@ -7109,6 +7127,7 @@ namespace Walkabout.Views
             this.context = transaction;
             if (this.context != null)
             {
+                this.context.PropertyChanged -= OnPropertyChanged;
                 this.context.PropertyChanged += OnPropertyChanged;
             }
         }
@@ -7314,6 +7333,7 @@ namespace Walkabout.Views
             // start listening
             if (this.context != null)
             {
+                this.context.PropertyChanged -= OnPropertyChanged;
                 this.context.PropertyChanged += OnPropertyChanged;
                 UpdateButton();
                 UpdateLabel();
@@ -7418,6 +7438,7 @@ namespace Walkabout.Views
             this.context = transaction;
             if (this.context != null)
             {
+                this.context.PropertyChanged -= OnPropertyChanged;
                 this.context.PropertyChanged += OnPropertyChanged;
                 FinishConstruction();
             }

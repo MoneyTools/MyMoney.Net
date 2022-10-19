@@ -23,16 +23,16 @@ namespace Walkabout.Utilities
     /// }
     /// </summary>
     /// <typeparam name="T">The type of EventHandlerArgs</typeparam>
-    public class EventHandlerCollection<T> where T : EventArgs
+    public class EventHandlerCollection<T, Q> where T : Delegate where Q : EventArgs
     {
-        List<EventHandler<T>> list = new List<EventHandler<T>>();
+        List<T> list = new List<T>();
 
-        public void AddHandler(EventHandler<T> h)
+        public void AddHandler(T h)
         {
             list.Add(h);
         }
 
-        public void RemoveHandler(EventHandler<T> h)
+        public void RemoveHandler(T h)
         {
             list.Remove(h);
         }
@@ -46,7 +46,7 @@ namespace Walkabout.Utilities
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        public void RaiseEvent(object sender, T args)
+        public void RaiseEvent(object sender, Q args)
         {
             object[] array = new object[] { sender, args };
             foreach (Delegate d in this.list)
@@ -79,4 +79,8 @@ namespace Walkabout.Utilities
         }
     }
 
+    public class EventHandlerCollection<Q> : EventHandlerCollection<EventHandler<Q>, Q> 
+        where Q : EventArgs
+    {
+    }
 }

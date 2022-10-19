@@ -357,19 +357,42 @@ namespace Walkabout.Data
     public class PersistentObject : INotifyPropertyChanged
     {
         EventHandlerCollection<ChangeEventArgs> handlers;
+        EventHandlerCollection<PropertyChangedEventHandler, PropertyChangedEventArgs> propertyChangeHandlers;
 
         [XmlIgnore]
         public bool BatchMode;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add
+            {
+                if (propertyChangeHandlers == null)
+                {
+                    propertyChangeHandlers = new EventHandlerCollection<PropertyChangedEventHandler, PropertyChangedEventArgs>();
+                }
+                propertyChangeHandlers.AddHandler(value);
+                if (propertyChangeHandlers.ListenerCount > 500)
+                {
+                    Debug.WriteLine(String.Format("PropertyChanged handler leak detected on {0}", this.GetType().Name));
+                }
+            }
+            remove
+            {
+                if (propertyChangeHandlers != null)
+                {
+                    propertyChangeHandlers.RemoveHandler(value);
+                }
+            }
+        }
+
 
         public void RaisePropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
-            if (handler != null)
+            if (this.propertyChangeHandlers != null && this.propertyChangeHandlers.HasListeners)
             {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+                this.propertyChangeHandlers.RaiseEvent(this, new PropertyChangedEventArgs(propertyName));
+            }            
         }
 
         public int ChangeListenerCount => (handlers == null) ? 0 : handlers.ListenerCount;
@@ -382,7 +405,11 @@ namespace Walkabout.Data
                 {
                     handlers = new EventHandlerCollection<ChangeEventArgs>();
                 }
-                handlers.AddHandler(value);
+                handlers.AddHandler(value); 
+                if (handlers.ListenerCount > 500)
+                {
+                    Debug.WriteLine(String.Format("Changed handler leak detected on {0}", this.GetType().Name));
+                }
             }
             remove
             {
