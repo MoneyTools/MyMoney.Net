@@ -23,7 +23,7 @@ Trans. Date,Post Date,Description,Amount,Category
 When you select this file a dialog will appear where you can specify how to map the columns
 found in this file with the fields of the Money Transactions as follows:
 
-![CsvImportMap](../images/CsvImportMap.png)
+![CsvImportMap](../Images/CsvImportMap.png)
 
 This map will be saved in the same folder as your Money database under a new folder named `CsvMaps`
 so you will not have to keep re-entering this mapping information (unless the columns are changed by your bank).
