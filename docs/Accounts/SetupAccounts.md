@@ -1,14 +1,14 @@
 # Creating Accounts
 
-There are two ways to setup accounts.  You can do it manually using the following context menu item available in the accounts panel:
+There are two ways to setup accounts.  You can add accounts manually using the following context menu item available in the accounts panel:
 
 ![](../Images/Setup%20Accounts.png)
 
-Or you can download your accounts using the [Online Banking](OnlineBanking.md) features.
+Once an account exists you can import data using the
+[File/Import](../Basics/Importing.md) menu or using the
+[Import Csv...](../Accounts/CsvImport.md) menu available here.
 
-If you are importing data from QFX files then the QFX file contains the account names, and import will automatically create the accounts for you.  **So QFX format is preferred over QIF.**   Some banks also provide OFX file download, which is just as good as QFX.  If you have to import QIF files then you will need to create the accounts first.
-
-Either way, the New Account dialog contains the following information.  You can also get back to this dialog by right clicking on the account and selecting **Properties** :
+The New Account dialog contains the following information.  You can also get back to this dialog by right clicking on the account and selecting **Properties** :
 
 ![](../Images/Setup%20Accounts1.png)
 

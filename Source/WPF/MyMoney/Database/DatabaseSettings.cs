@@ -48,6 +48,8 @@ namespace Walkabout.Data
             return result;
         }
 
+        public string SettingsFileName => fileName;
+
         public void Save()
         {
             if (!string.IsNullOrEmpty(fileName))

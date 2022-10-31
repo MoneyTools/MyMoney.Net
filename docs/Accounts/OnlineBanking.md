@@ -38,11 +38,11 @@ If you enter the right authentication information then you should see your onlin
 
 ![](../Images/Online%20Banking5.png)
 
-![](../Images/Online%20Banking6.png)
-The blue question mark means the account numbers didn't match any of your existing accounts.  Click this question mark button to add this account to your list of accounts. 
+![](../Images/Online%20Banking6.png) ![](../Images/Online%20Banking7.png)
 
+The blue question mark means the account numbers didn't match any of your existing accounts.
+Click this question mark button to add this account to your list of accounts. 
 If the account was found in your local database you will see a green check mark instead:
-![](../Images/Online%20Banking7.png)
 
 If you were expecting a green check mark, but instead see a blue question mark for a given account, then it means your account numbers don't match what was downloaded from your bank. You can go back to your Account Properties to fix your account number, then try again.  Sometimes a financial institution might add or remove a dash in the account number.   See [Setup Accounts](SetupAccounts.md)
 

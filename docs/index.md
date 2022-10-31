@@ -23,7 +23,7 @@ Supports [Banking](Accounts/BankAccounts.md), [Credit Card](Accounts/CreditCardA
 
 ![](Images/Home3.png)
 
-Save a lot of typing using [Online Banking](Accounts/OnlineBanking.md) to download statements from your bank, using OFX over [secure](Accounts/OnlineSecurity.md) HTTPS. No middle man storage of your account information, MyMoney talks directory from your PC to your bank, which is just as secure as if you logged onto your Bank website and downloaded transactions yourself. For banks that don't support OFX, you can download Money or Quicken QFX files and import them.
+Save a lot of typing using [Online Banking](Accounts/OnlineBanking.md) to download statements from your bank, using OFX over [secure](Accounts/OnlineSecurity.md) HTTPS. No middle man storage of your account information, MyMoney talks directory from your PC to your bank, which is just as secure as if you logged onto your Bank website and downloaded transactions yourself. For banks that don't support OFX, you can download Money or Quicken QFX files and import them. Also supports [CSV importing](Accounts/CsvImport.md).
 
 ![](Images/Home4.png)
 

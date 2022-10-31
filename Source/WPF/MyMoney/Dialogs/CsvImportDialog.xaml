@@ -1,0 +1,81 @@
+﻿<d:BaseDialog x:Class="Walkabout.Dialogs.CsvImportDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="clr-namespace:Walkabout.Dialogs"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:Walkabout.Controls"
+        mc:Ignorable="d"
+        Title="CSV Import Field Map" Height="450" Width="400">
+  <Window.Resources>
+
+    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource DefaultButtonStyle}">
+      <Setter Property="MinWidth" Value="70" />
+      <Setter Property="MinHeight" Value="30" />
+    </Style>
+    <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
+      <Setter Property="IsEditable" Value="True"/>
+      <Setter Property="StaysOpenOnEdit" Value="True"/>
+      <Setter Property="Padding" Value="2,0"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
+      <Style.Triggers>
+        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+          <Setter Property="IsDropDownOpen" Value="true" />
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+    <Style x:Key="AlternationItemStyle" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MoneyDefaultListViewItem}">
+      <Setter Property="Background" 
+                            Value="{Binding RelativeSource={RelativeSource Self},
+                                            Path=(ItemsControl.AlternationIndex), 
+                                            Converter={StaticResource GridBackgroundAlternationConverter}}"/>
+    </Style>
+  </Window.Resources>
+  <DockPanel Margin="20">
+    <ListView x:Name="FieldListView" DockPanel.Dock="Top" ItemContainerStyle="{StaticResource AlternationItemStyle}"
+              BorderThickness="1" BorderBrush="{DynamicResource GridLineBrush}"
+              Background="Transparent" AlternationCount="2">
+      <ListView.Resources>
+      </ListView.Resources>
+      <ListView.View>
+        <GridView>
+          <GridViewColumn Width="Auto" Header="Header">
+            <GridViewColumn.CellTemplate>
+              <DataTemplate>
+                <Border MinHeight="30">
+                  <TextBlock Text="{Binding Header}"
+                            MinWidth="120"  VerticalAlignment="Center"
+                            Foreground="{DynamicResource ListItemForegroundBrush}"/>
+                </Border>
+              </DataTemplate>
+            </GridViewColumn.CellTemplate>
+          </GridViewColumn>
+          <GridViewColumn Width="Auto" Header="Field">
+            <GridViewColumn.CellTemplate>
+              <DataTemplate>
+                <controls:FilteringComboBox Style="{StaticResource GridComboStyle}" MinWidth="120"
+                                SelectedItem="{Binding Field, Mode=TwoWay}"
+                                Foreground="{DynamicResource ListItemForegroundBrush}"
+                                ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type d:CsvImportDialog}}, Path=TransactionFields}"
+                                FilterChanged="ComboBox_FilterChanged"
+                                >
+                  <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                  </ComboBox.ItemsPanel>
+                </controls:FilteringComboBox >
+              </DataTemplate>
+            </GridViewColumn.CellTemplate>
+          </GridViewColumn>
+        </GridView>
+      </ListView.View>
+    </ListView>
+    <!-- OK or Cancel -->
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Margin="10,0,10,10">
+      <Button Name="okButton" IsDefault="True" Margin="0,0,10,0" Click="OnOk">OK</Button>
+      <Button Name="cancelButton" IsCancel="True" Click="OnCancel">Cancel</Button>
+    </StackPanel>
+  </DockPanel>
+
+</d:BaseDialog>

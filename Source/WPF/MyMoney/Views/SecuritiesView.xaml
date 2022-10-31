@@ -264,16 +264,11 @@
                     u:WpfAnnotations.CodeRef="StockSplitMiniView">
 
                 <Border.Resources>
-                    <AlternationConverter x:Key="BackgroundConverter">
-                        <SolidColorBrush Color="{DynamicResource GridNormalBackgroundColor}"/>
-                        <SolidColorBrush Color="{DynamicResource GridAlternateBackgroundColor}"/>
-                    </AlternationConverter>
-
                     <Style x:Key="StockSplitAlternationItemStyle" TargetType="{x:Type ListViewItem}">
                         <Setter Property="Background" 
                             Value="{Binding RelativeSource={RelativeSource Self},
                                             Path=(ItemsControl.AlternationIndex), 
-                                            Converter={StaticResource BackgroundConverter}}"/>
+                                            Converter={StaticResource GridBackgroundAlternationConverter}}"/>
                     </Style>
                     
                 </Border.Resources>

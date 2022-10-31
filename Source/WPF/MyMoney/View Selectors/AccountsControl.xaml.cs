@@ -16,6 +16,10 @@ using Walkabout.Commands;
 using Walkabout.Configuration;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Security.Principal;
+using System.Xml.Linq;
+using System.Windows.Forms.VisualStyles;
+using System.Windows.Media.Animation;
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 #endif
@@ -57,7 +61,7 @@ namespace Walkabout.Views.Controls
             CommandToggleClosedAccounts = new RoutedUICommand("ToggleClosedAccounts", "ToggleClosedAccounts", typeof(AccountsControl));
         }
 
-        #endregion 
+        #endregion
 
         #region PROPERTIES
 
@@ -120,7 +124,8 @@ namespace Walkabout.Views.Controls
         public Account SelectedAccount
         {
             get { return (this.listBox1.SelectedItem is AccountItemViewModel m) ? m.Account : null; }
-            set {
+            set
+            {
                 var item = (from i in this.items where i is AccountItemViewModel m && m.Account == value select i).FirstOrDefault();
                 if (item != null)
                 {
@@ -153,7 +158,7 @@ namespace Walkabout.Views.Controls
         public event EventHandler<ChangeEventArgs> SyncAccount;
         public event EventHandler<ChangeEventArgs> ShowTransfers;
         #endregion
-        
+
         #region IClipboardClient SUPPORT
         public bool CanCut
         {
@@ -237,7 +242,7 @@ namespace Walkabout.Views.Controls
 
         public AccountsControl()
         {
-            
+
 #if PerformanceBlocks
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AccountsControlInitialize))
             {
@@ -251,7 +256,8 @@ namespace Walkabout.Views.Controls
                 foreach (object o in AccountsControlContextMenu.Items)
                 {
                     MenuItem m = o as MenuItem;
-                    if (m != null) {
+                    if (m != null)
+                    {
                         m.CommandTarget = this;
                     }
                 }
@@ -260,7 +266,7 @@ namespace Walkabout.Views.Controls
                 UpdateContextMenuView();
 #if PerformanceBlocks
             }
-#endif  
+#endif
         }
 
         void listBox1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -357,7 +363,7 @@ namespace Walkabout.Views.Controls
             if (myMoney != null)
             {
                 //---------------------------------------------------------
-                // First make a copy of the collection in order to 
+                // First make a copy of the collection in order to
                 // help LINQ do it's magic over the collection
                 List<Account> inputList = new List<Account>(myMoney.Accounts.GetAccounts(!this.displayClosedAccounts));
 
@@ -480,8 +486,8 @@ namespace Walkabout.Views.Controls
             RaiseSelectionEvent(selected as AccountViewModel, false);
         }
 
-        void RaiseSelectionEvent(AccountViewModel selected, bool force) 
-        { 
+        void RaiseSelectionEvent(AccountViewModel selected, bool force)
+        {
             AccountSectionHeader ash = selected as AccountSectionHeader;
 
             if (ash != null)
@@ -511,8 +517,8 @@ namespace Walkabout.Views.Controls
             {
                 return null;
             }
-            
-            // figure out which account to select next.            
+
+            // figure out which account to select next.
             AccountViewModel prev = null;
             AccountViewModel next = null;
             bool found = false;
@@ -601,12 +607,12 @@ namespace Walkabout.Views.Controls
             else
             {
                 Exporters e = new Exporters();
-                List<object> data =new List<object>();
-                foreach (object row in this.MyMoney.Transactions.GetTransactionsFrom(a)) 
+                List<object> data = new List<object>();
+                foreach (object row in this.MyMoney.Transactions.GetTransactionsFrom(a))
                 {
                     data.Add(row);
                 }
-                e.Export(filename, data);                
+                e.Export(filename, data);
             }
         }
 
@@ -860,13 +866,13 @@ namespace Walkabout.Views.Controls
             {
                 OpenFileDialog fd = new OpenFileDialog();
                 fd.Title = "Import .csv file";
-                fd.Filter = "*.csv (csv files)";
+                fd.Filter = "*.csv (csv files)|*.csv";
                 fd.CheckFileExists = true;
                 fd.RestoreDirectory = true;
                 if (fd.ShowDialog() == true)
                 {
                     var file = fd.FileName;
-
+                    ImportCsv(a, file);
                 }
             }
         }
@@ -875,13 +881,37 @@ namespace Walkabout.Views.Controls
         {
             try
             {
-                CsvImporter importer = new CsvImporter(this.myMoney, account);
+                // load existing csv map if we have one.
+                var map = LoadMap(account);
+                var ti = new CsvTransactionImporter(this.myMoney, account, map);
+                CsvImporter importer = new CsvImporter(this.myMoney, ti);
                 importer.Import(fileName);
+                ti.Commit();
+                map.Save();
+                this.myMoney.Rebalance(account);
+            }
+            catch (UserCanceledException)
+            {
             }
             catch (Exception ex)
             {
                 MessageBoxEx.Show(ex.Message, "Import Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
+        }
+
+        private CsvMap LoadMap(Account a)
+        {
+            if (this.DatabaseSettings != null)
+            {
+                var dir = Path.Combine(Path.GetDirectoryName(this.DatabaseSettings.SettingsFileName), "CsvMaps");
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                var filename = Path.Combine(dir, a.Id + ".xml");
+                return CsvMap.Load(filename);
+            }
+            return new CsvMap();
         }
     }
 
@@ -946,7 +976,7 @@ namespace Walkabout.Views.Controls
             return base.GetHashCode();
         }
 
-        protected override void OnSelectedChanged() 
+        protected override void OnSelectedChanged()
         {
             OnPropertyChanged("NameForeground");
             OnPropertyChanged("BalanceForeground");
@@ -955,7 +985,8 @@ namespace Walkabout.Views.Controls
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             OnPropertyChanged(e.PropertyName);
-            switch (e.PropertyName) {
+            switch (e.PropertyName)
+            {
                 case "Unaccepted":
                     OnPropertyChanged("NameForeground");
                     OnPropertyChanged("FontWeight");
@@ -1162,9 +1193,11 @@ namespace Walkabout.Views.Controls
             return base.GetHashCode();
         }
 
-        public decimal BalanceInNormalizedCurrencyValue {
+        public decimal BalanceInNormalizedCurrencyValue
+        {
             get => balanceNormalized;
-            set {
+            set
+            {
                 if (balanceNormalized != value)
                 {
                     balanceNormalized = value;
@@ -1221,5 +1254,5 @@ namespace Walkabout.Views.Controls
             this.BalanceInNormalizedCurrencyValue = balance;
         }
     }
-    
+
 }

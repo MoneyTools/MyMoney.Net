@@ -211,6 +211,9 @@
     <Compile Include="Controls\WpfConverters.cs" />
     <Compile Include="Database\AutoCategorization.cs" />
     <Compile Include="Database\DatabaseSettings.cs" />
+    <Compile Include="Dialogs\CsvImportDialog.xaml.cs">
+      <DependentUpon>CsvImportDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\PickDateDialog.xaml.cs">
       <DependentUpon>PickDateDialog.xaml</DependentUpon>
     </Compile>
@@ -683,6 +686,10 @@
     <Page Include="Controls\TabCloseBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\CsvImportDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\PickDateDialog.xaml">
       <Generator>MSBuild:Compile</Generator>

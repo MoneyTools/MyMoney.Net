@@ -1468,7 +1468,7 @@ namespace Walkabout
         {
             if (!File.Exists(settings.ConfigFile) || noSettings)
             {
-                Rect bounds = System.Windows.SystemParameters.WorkArea;
+                Rect bounds = SystemParameters.WorkArea;
                 if (bounds.Width != 0 && bounds.Height != 0)
                 {
                     this.Top = bounds.Top;
@@ -3651,6 +3651,7 @@ namespace Walkabout
                 {
                     List<string> ofxFiles = new List<string>();
                     List<string> qifFiles = new List<string>();
+                    List<string> csvFiles = new List<string>();
                     List<string> moneyFiles = new List<string>();
 
                     foreach (string file in openFileDialog1.FileNames)
@@ -3672,21 +3673,8 @@ namespace Walkabout
                                     totalTransactions += ImportXml(file);
                                     break;
                                 case ".csv":
-                                    {
-                                        Account acct = AccountHelper.PickAccount(myMoney, null, "Please select Account to import the CSV transactions to.");
-                                        if (acct!=null)
-                                        {
-                                            totalTransactions += CsvStore.ImportCsv(myMoney, acct, file);
-
-                                            myMoney.Rebalance(acct);
-
-                                            var view = SetCurrentView<TransactionsView>();
-                                            if (view.CheckTransfers() && acct != null)
-                                            {
-                                                view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
-                                            }
-                                        }
-                                    }
+                                    csvFiles.Add(file);
+                                    
                                     break;
                                 case ".db":
                                 case ".mmdb":
@@ -3714,6 +3702,13 @@ namespace Walkabout
                         {
                             totalTransactions += ImportMoneyFile(moneyFiles.ToArray());
                         }
+                        if (csvFiles.Count > 0)
+                        {
+                            foreach (var name in csvFiles)
+                            {
+                                totalTransactions += ImportCsv(name);
+                            }
+                        }
 
                         count++;
                     }
@@ -3732,6 +3727,58 @@ namespace Walkabout
                     ShowProgress(0, len, -1, null);
                 }
             }
+        }
+
+        private int ImportCsv(string fileName)
+        {
+            int count = 0;
+            try
+            {
+                {
+                    Account acct = AccountHelper.PickAccount(myMoney, null, "Please select Account to import the CSV transactions to.");
+                    if (acct != null)
+                    {
+                        // load existing csv map if we have one.
+                        var map = LoadMap(acct);
+                        var ti = new CsvTransactionImporter(this.myMoney, acct, map);
+                        CsvImporter importer = new CsvImporter(this.myMoney, ti);
+                        count = importer.Import(fileName);
+                        ti.Commit();
+                        map.Save();
+
+                        myMoney.Rebalance(acct);
+
+                        var view = SetCurrentView<TransactionsView>();
+                        if (view.CheckTransfers() && acct != null)
+                        {
+                            view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
+                        }
+                    }
+                }
+            }
+            catch (UserCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBoxEx.Show(ex.Message, "Import Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+            return count;
+        }
+
+        private CsvMap LoadMap(Account a)
+        {
+            if (this.databaseSettings != null)
+            {
+                var dir = Path.Combine(Path.GetDirectoryName(this.databaseSettings.SettingsFileName), "CsvMaps");
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                var filename = Path.Combine(dir, a.Id + ".xml");
+                return CsvMap.Load(filename);
+            }
+            return new CsvMap();
         }
 
         private void OnCommandCanOpenContainingFolder(object sender, CanExecuteRoutedEventArgs e)

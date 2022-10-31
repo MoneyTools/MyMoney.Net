@@ -2,6 +2,7 @@
 <changes>
   <change version="2.0.1.3" date="10/18/2022">
     - Add Import .csv to accounts so you can import Discover card .csv files.
+    - See https://clovett.github.io/MyMoney.Net/Accounts/CsvImport/
   </change>
   <change version="2.0.1.2" date="10/14/2022">
     - Fix #77: UI update bug, some icons disappear after showing Changes page.

@@ -2503,6 +2503,11 @@ namespace Walkabout.Data
                 }
                 else if (t.IsInserted)
                 {
+                    if (t.Id == -1)
+                    {
+                        Debug.WriteLine("Ignoring bad transaction with id=-1");
+                        continue;
+                    }
                     sb.AppendLine("-- inserting Transaction : " + t.Number);
                     sb.Append("INSERT INTO Transactions ([Id],[Number],[Account],[Date],[Amount],[Status],[Memo],[Payee],[Category],[Transfer],[TransferSplit],[FITID],[SalesTax],[Flags],[ReconciledDate],[BudgetBalanceDate],[MergeDate],[OriginalPayee]) VALUES (");
                     sb.Append(String.Format("{0}", t.Id.ToString()));

@@ -9,79 +9,79 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <UserControl.Resources>
+  <UserControl.Resources>
 
-        <DataTemplate DataType="{x:Type local:AccountSectionHeader}">
-            <Border BorderThickness="0 0 0 1" BorderBrush="{DynamicResource SectionHeaderBorder}" Margin="0 10 0 0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+    <DataTemplate DataType="{x:Type local:AccountSectionHeader}">
+      <Border BorderThickness="0 0 0 1" BorderBrush="{DynamicResource SectionHeaderBorder}" Margin="0 10 0 0">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Text="{Binding Title}"
+          <TextBlock Grid.Column="0" Text="{Binding Title}"
                                 FontSize="20"/>
 
-                    <TextBlock Grid.Column="1" Text="{Binding BalanceInNormalizedCurrencyValue, StringFormat={}{0:C}}"  
+          <TextBlock Grid.Column="1" Text="{Binding BalanceInNormalizedCurrencyValue, StringFormat={}{0:C}}"  
 							       HorizontalAlignment="Right" 
                                    Foreground="{Binding BalanceForeground}"
                                    />
-                </Grid>
-            </Border>
-        </DataTemplate>
+        </Grid>
+      </Border>
+    </DataTemplate>
 
-        <DataTemplate DataType="{x:Type local:AccountViewModel}">
-            <Grid Name="ItemInTheList">
-                <Grid.ToolTip>
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Text="{Binding TooltipRow1}"/>
-                        <TextBlock Text="{Binding TooltipRow2}"/>
-                        <TextBlock Text="{Binding TooltipRow3}"/>
-                    </StackPanel>
-                </Grid.ToolTip>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+    <DataTemplate DataType="{x:Type local:AccountViewModel}">
+      <Grid Name="ItemInTheList">
+        <Grid.ToolTip>
+          <StackPanel Orientation="Vertical">
+            <TextBlock Text="{Binding TooltipRow1}"/>
+            <TextBlock Text="{Binding TooltipRow2}"/>
+            <TextBlock Text="{Binding TooltipRow3}"/>
+          </StackPanel>
+        </Grid.ToolTip>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
 
-                <Image Source="{Binding Path=WarningIcon}"
+        <Image Source="{Binding Path=WarningIcon}"
                        Width="16" Height="16"
                        Visibility="{Binding Path=WarningIconVisibility}"
                        Margin="0,0,5,0" 
                        ToolTip="{Binding Path=WarningIconTooltip}"/>
 
-                <TextBlock x:Name="AccountName" Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True" Grid.Column="1" 
+        <TextBlock x:Name="AccountName" Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True" Grid.Column="1" 
                            Foreground="{Binding NameForeground}"
                            FontWeight="{Binding FontWeight}"/>
 
-                <TextBlock  x:Name="AccountBalance"  Text="{Binding Balance, StringFormat={}{0:C}}"  Grid.Column="2" 
+        <TextBlock  x:Name="AccountBalance"  Text="{Binding Balance, StringFormat={}{0:C}}"  Grid.Column="2" 
                            HorizontalAlignment="Right"
                            Foreground="{Binding BalanceForeground}"/>
-            </Grid>
-        </DataTemplate>
-    </UserControl.Resources>
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
 
-    <UserControl.CommandBindings>
-        <CommandBinding  Command="local:AccountsControl.CommandFileImport" Executed="OnAccountDetails" CanExecute="CanShowAccountDetails"/>
-        <CommandBinding  Command="local:AccountsControl.CommandSynchronize" Executed="OnSynchronizeAccount" CanExecute="CanSynchronizeAccount"/>
-        <CommandBinding  Command="local:AccountsControl.CommandBalance" Executed="OnBalanceAccount" CanExecute="CanBalanceAccount"/>
-        <CommandBinding  Command="local:AccountsControl.CommandNewAccount" Executed="OnAddNewAccount" CanExecute="CanAddNewAccount"/>
-        <CommandBinding  Command="local:AccountsControl.CommandDownloadAccounts" Executed="OnDownloadAccounts" CanExecute="CanDownloadAccounts"/>
-        <CommandBinding  Command="local:AccountsControl.CommandAddNewLoanAccount" Executed="OnAddNewLoanAccount" CanExecute="CanAddNewLoanAccount"/>
-        <CommandBinding  Command="local:AccountsControl.CommandDeleteAccount" Executed="OnDeleteAccount" CanExecute="CanDeleteAccount"/>
-        <CommandBinding  Command="local:AccountsControl.CommandViewTransfers" Executed="OnViewTransfers" CanExecute="CanViewTransfers"/>
-        <CommandBinding  Command="local:AccountsControl.CommandExportAccount" Executed="OnExportAccount" CanExecute="CanExportAccount"/>
-        <CommandBinding  Command="local:AccountsControl.CommandExportList" Executed="OnExportAccountList" />
-        <CommandBinding  Command="local:AccountsControl.CommandImportCsv" Executed="OnImportAccountCsv" />
-        <CommandBinding  Command="local:AccountsControl.CommandToggleClosedAccounts" Executed="OnToggleShowClosedAccounts" CanExecute="CanToggleShowClosedAccounts"/>
-    </UserControl.CommandBindings>
+  <UserControl.CommandBindings>
+    <CommandBinding  Command="local:AccountsControl.CommandFileImport" Executed="OnAccountDetails" CanExecute="CanShowAccountDetails"/>
+    <CommandBinding  Command="local:AccountsControl.CommandSynchronize" Executed="OnSynchronizeAccount" CanExecute="CanSynchronizeAccount"/>
+    <CommandBinding  Command="local:AccountsControl.CommandBalance" Executed="OnBalanceAccount" CanExecute="CanBalanceAccount"/>
+    <CommandBinding  Command="local:AccountsControl.CommandNewAccount" Executed="OnAddNewAccount" CanExecute="CanAddNewAccount"/>
+    <CommandBinding  Command="local:AccountsControl.CommandDownloadAccounts" Executed="OnDownloadAccounts" CanExecute="CanDownloadAccounts"/>
+    <CommandBinding  Command="local:AccountsControl.CommandAddNewLoanAccount" Executed="OnAddNewLoanAccount" CanExecute="CanAddNewLoanAccount"/>
+    <CommandBinding  Command="local:AccountsControl.CommandDeleteAccount" Executed="OnDeleteAccount" CanExecute="CanDeleteAccount"/>
+    <CommandBinding  Command="local:AccountsControl.CommandViewTransfers" Executed="OnViewTransfers" CanExecute="CanViewTransfers"/>
+    <CommandBinding  Command="local:AccountsControl.CommandExportAccount" Executed="OnExportAccount" CanExecute="CanExportAccount"/>
+    <CommandBinding  Command="local:AccountsControl.CommandExportList" Executed="OnExportAccountList" />
+    <CommandBinding  Command="local:AccountsControl.CommandImportCsv" Executed="OnImportAccountCsv" />
+    <CommandBinding  Command="local:AccountsControl.CommandToggleClosedAccounts" Executed="OnToggleShowClosedAccounts" CanExecute="CanToggleShowClosedAccounts"/>
+  </UserControl.CommandBindings>
 
-    <UserControl.InputBindings>
-        <KeyBinding Command="local:AccountsControl.CommandBalance" Key="B" Modifiers="Ctrl"/>
-    </UserControl.InputBindings>
+  <UserControl.InputBindings>
+    <KeyBinding Command="local:AccountsControl.CommandBalance" Key="B" Modifiers="Ctrl"/>
+  </UserControl.InputBindings>
 
-    <ListBox Name="listBox1" 
+  <ListBox Name="listBox1" 
              HorizontalAlignment="Stretch" 
              HorizontalContentAlignment="Stretch"
              Grid.IsSharedSizeScope="True"
@@ -90,34 +90,35 @@
              UseLayoutRounding="True"
              BorderThickness="0"
              >
-        <ListBox.ItemContainerStyle>
-            <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
-                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                <Setter Property="Padding" Value="10,5"/>
-                <Setter Property="AutomationProperties.AutomationId" Value="{Binding Name}">
-                </Setter>
-            </Style>
-        </ListBox.ItemContainerStyle>
+    <ListBox.ItemContainerStyle>
+      <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="AutomationProperties.AutomationId" Value="{Binding Name}">
+        </Setter>
+      </Style>
+    </ListBox.ItemContainerStyle>
 
-        <ListBox.ContextMenu>
-            <ContextMenu Name="AccountsControlContextMenu">
-                <MenuItem AutomationProperties.AutomationId="Properties" Header="_Properties..." Command="local:AccountsControl.CommandFileImport"  />
-                <MenuItem AutomationProperties.AutomationId="SynchronizeAccount" Name="MenuSync" Header="_Synchronize Account" Command="local:AccountsControl.CommandSynchronize" />
-                <MenuItem AutomationProperties.AutomationId="BalanceAccount" Header="_Balance account" Command="local:AccountsControl.CommandBalance" InputGestureText="Ctrl+B"/>
-                <Separator />
-                <MenuItem AutomationProperties.AutomationId="NewAccount" Header="_New Account..." Command="local:AccountsControl.CommandNewAccount" />
-                <MenuItem AutomationProperties.AutomationId="DownloadAccounts" Header="_Download Accounts..." Command="local:AccountsControl.CommandDownloadAccounts" />
-                <MenuItem AutomationProperties.AutomationId="NewLoan" Header="New _Loan..." Command="local:AccountsControl.CommandAddNewLoanAccount" />
-                <MenuItem AutomationProperties.AutomationId="DeleteAccount" Header="Delete _Account" Command="local:AccountsControl.CommandDeleteAccount" />
-                <Separator />
-                <MenuItem AutomationProperties.AutomationId="ViewTransfersToThisAccount" Header="View _Transfers To This Account" Command="local:AccountsControl.CommandViewTransfers" />
-                <MenuItem AutomationProperties.AutomationId="Export" Header="E_xport Account..." Command="local:AccountsControl.CommandExportAccount"/>
-                <MenuItem AutomationProperties.AutomationId="Export" Header="E_xport List..." Command="local:AccountsControl.CommandExportList"/>
-                <Separator />
-                <MenuItem AutomationProperties.AutomationId="DisplayClosedAccounts" Name="MenuDisplayClosedAccounts" Header="Display _Closed Accounts" Command="local:AccountsControl.CommandToggleClosedAccounts"/>
-            </ContextMenu>
-        </ListBox.ContextMenu>
+    <ListBox.ContextMenu>
+      <ContextMenu Name="AccountsControlContextMenu">
+        <MenuItem AutomationProperties.AutomationId="Properties" Header="_Properties..." Command="local:AccountsControl.CommandFileImport"  />
+        <MenuItem AutomationProperties.AutomationId="SynchronizeAccount" Name="MenuSync" Header="_Synchronize Account" Command="local:AccountsControl.CommandSynchronize" />
+        <MenuItem AutomationProperties.AutomationId="BalanceAccount" Header="_Balance account" Command="local:AccountsControl.CommandBalance" InputGestureText="Ctrl+B"/>
+        <Separator />
+        <MenuItem AutomationProperties.AutomationId="NewAccount" Header="_New Account..." Command="local:AccountsControl.CommandNewAccount" />
+        <MenuItem AutomationProperties.AutomationId="DownloadAccounts" Header="_Download Accounts..." Command="local:AccountsControl.CommandDownloadAccounts" />
+        <MenuItem AutomationProperties.AutomationId="NewLoan" Header="New _Loan..." Command="local:AccountsControl.CommandAddNewLoanAccount" />
+        <MenuItem AutomationProperties.AutomationId="DeleteAccount" Header="Delete _Account" Command="local:AccountsControl.CommandDeleteAccount" />
+        <Separator />
+        <MenuItem AutomationProperties.AutomationId="ViewTransfersToThisAccount" Header="View _Transfers To This Account" Command="local:AccountsControl.CommandViewTransfers" />
+        <MenuItem AutomationProperties.AutomationId="Export" Header="E_xport Account..." Command="local:AccountsControl.CommandExportAccount"/>
+        <MenuItem AutomationProperties.AutomationId="Export" Header="Ex_port List..." Command="local:AccountsControl.CommandExportList"/>
+        <MenuItem AutomationProperties.AutomationId="ImportCsv" Header="_Import Csv..." Command="local:AccountsControl.CommandImportCsv"/>
+        <Separator />
+        <MenuItem AutomationProperties.AutomationId="DisplayClosedAccounts" Name="MenuDisplayClosedAccounts" Header="Display _Closed Accounts" Command="local:AccountsControl.CommandToggleClosedAccounts"/>
+      </ContextMenu>
+    </ListBox.ContextMenu>
 
-    </ListBox>
+  </ListBox>
 </UserControl>
