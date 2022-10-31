@@ -4230,6 +4230,10 @@ namespace Walkabout.Views
                     }
                 }
             }
+            else
+            {
+                AttempToMatchAndConvertPossibleTransfer(t);
+            }
         }
 
         private void GotoTransaction(Transaction t)
@@ -4239,6 +4243,113 @@ namespace Walkabout.Views
             // RestorePreviouslySavedSelection.
             IViewNavigator n = (IViewNavigator)this.site.GetService(typeof(IViewNavigator));
             n.NavigateToTransaction(t);
+        }
+
+        private void AttempToMatchAndConvertPossibleTransfer(Transaction t)
+        {
+            List<QueryRow> queryRows = new List<QueryRow>();
+
+            //
+            // We are searching for the oposit transaction
+            //
+
+            {
+                // Date Conditon +- 3 days
+                // Set the acceptable Date range to consider the other transaction a possible match
+
+                var dateMin = t.Date.AddDays(-3);
+                var dateMax = t.Date.AddDays(3);
+
+                queryRows.Add(new QueryRow(Conjunction.And, Field.Date, Operation.GreaterThanEquals, dateMin.ToString()));
+                queryRows.Add(new QueryRow(Conjunction.And, Field.Date, Operation.LessThanEquals, dateMax.ToString()));
+            }
+
+            {
+                // If this was a payment we are looking for a deposit
+                // if this was a deposit we are looking for a payment
+
+                Field DepositOrPayment = t.amount > 0 ? Field.Payment : Field.Deposit;
+                queryRows.Add(new QueryRow(Conjunction.And, DepositOrPayment, Operation.Equals, Math.Abs(t.amount).ToString()));
+            }
+
+            // Execute the search, this a blocking call
+            IList<Transaction> list = myMoney.Transactions.ExecuteQuery(queryRows.ToArray());
+
+            switch (list.Count)
+            {
+                // Best case scenario we found only one match, offer to the user to convert this to a transfer 
+                case 1:
+                    {
+                        var found = list[0];
+                        String message = "Account:  " + found.AccountName + '\n';
+                        message += "Date:  " + found.Date + '\n';
+                        message += "Amount:  " + found.amount + '\n';
+                        message += "Category:  " + found.CategoryFullName + '\n';
+                        message += "Memo:  " + found.Memo + '\n';
+                        message += "\nMerge into a transfer transaction?";
+
+                        if (MessageBoxEx.Show(message,"Found a Match",MessageBoxButton.YesNo,MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        {
+                            if (t.amount > 0)
+                            {
+                                // Money was transfered from the external account to this account
+                                TransformTwoTrasactionIntoTransfer(found, t);
+                            }
+                            else
+                            {
+                                // Money was transfered from to external account
+                                TransformTwoTrasactionIntoTransfer(t, found);
+                            }
+                        }
+                        break;
+                    }
+
+
+                // There no Match, let the user know
+                case 0:
+                    {
+                        MessageBoxEx.Show("No matching transanction in any other accounts", "Transaction matching", MessageBoxButton.OK, MessageBoxImage.Information);
+                        break;
+                    }
+
+                // two or more matching transactions were found, let the user know
+                default:
+                    {
+                        String foundThese = "";
+                        foreach (var found in list)
+                        {
+                            foundThese += found.AccountName + ' ' + found.Date + ' ' + found.amount;
+                        }
+
+                        MessageBoxEx.Show(foundThese, "Found " + list.Count + " Match", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    break;
+            }
+        }
+
+        void TransformTwoTrasactionIntoTransfer(Transaction transferFrom, Transaction transferTo)
+        {
+            // keep the payees to store them in the transfer memo fields
+            // Its use a clue of the two original disconnected transactions
+            var newMemoForBothSide = transferFrom.PayeeName + ">" + transferTo.PayeeName;
+            
+            // From
+            {
+                transferFrom.Transfer = new Transfer(0, transferFrom, transferTo);
+                transferFrom.Memo = newMemoForBothSide;
+            }
+
+            // To
+            {
+                transferTo.Transfer = new Transfer(0, transferTo, transferFrom);
+                transferTo.Memo = newMemoForBothSide;
+            }
+
+            transferFrom.OnChanged("PayeeOrTransferCaption");
+            transferFrom.OnChanged("Memo");
+
+            transferTo.OnChanged("PayeeOrTransferCaption");
+            transferTo.OnChanged("Memo");
         }
 
         void OnCommandViewTransactionsByAccount(object sender, RoutedEventArgs e)
