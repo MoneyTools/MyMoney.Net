@@ -294,6 +294,20 @@ namespace Walkabout.Configuration
             }
         }
 
+        public int TransferSearchDays
+        {
+            get
+            {
+                object value = map["TransferSearchDays"];
+                return value is int ? (int)value : 5;
+            }
+            set
+            {
+                map["TransferSearchDays"] = value;
+                OnPropertyChanged("TransferSearchDays");
+            }
+        }
+
         public List<StockServiceSettings> StockServiceSettings
         {
             get

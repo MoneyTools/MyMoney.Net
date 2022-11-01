@@ -169,6 +169,7 @@ namespace Walkabout.Migrate
                 return;
             }
             CsvImportDialog cd = new CsvImportDialog(fields);
+            cd.Owner = System.Windows.Application.Current.MainWindow;
             cd.SetHeaders(headers);
             if (cd.ShowDialog() == true)
             {

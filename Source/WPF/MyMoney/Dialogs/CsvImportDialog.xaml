@@ -25,10 +25,9 @@
       </Style.Triggers>
     </Style>
     <Style x:Key="AlternationItemStyle" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MoneyDefaultListViewItem}">
-      <Setter Property="Background" 
-                            Value="{Binding RelativeSource={RelativeSource Self},
-                                            Path=(ItemsControl.AlternationIndex), 
-                                            Converter={StaticResource GridBackgroundAlternationConverter}}"/>
+      <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self},
+              Path=(ItemsControl.AlternationIndex), 
+              Converter={StaticResource GridBackgroundAlternationConverter}}"/>
     </Style>
   </Window.Resources>
   <DockPanel Margin="20">

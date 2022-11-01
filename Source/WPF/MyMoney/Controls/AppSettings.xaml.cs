@@ -42,6 +42,8 @@ namespace Walkabout.Controls
                 comboBoxTheme.Items.Add(theme);
             }
             comboBoxTheme.SelectedItem = settings.Theme;
+
+            textBoxTransferSearchDays.Text = settings.TransferSearchDays.ToString();
         }
 
         internal void SetSite(IServiceProvider site)
@@ -125,6 +127,14 @@ namespace Walkabout.Controls
                 {
                     settings.Theme = theme;
                 }
+            }
+        }
+
+        private void OnTransferDaysChanged(object sender, RoutedEventArgs e)
+        {
+            if (int.TryParse(textBoxTransferSearchDays.Text, out int x) && x > 0) 
+            {
+                settings.TransferSearchDays = x;
             }
         }
     }

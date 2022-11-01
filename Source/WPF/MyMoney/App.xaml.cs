@@ -112,6 +112,7 @@ namespace Walkabout
         {
             s.Theme = "Light"; // Default to this theme on the first ever run
             s.PlaySounds = true; // default true.
+            s.TransferSearchDays = 5;
         }
 
         /// <summary>

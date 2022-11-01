@@ -4247,83 +4247,98 @@ namespace Walkabout.Views
 
         private void AttempToMatchAndConvertPossibleTransfer(Transaction t)
         {
-            List<QueryRow> queryRows = new List<QueryRow>();
-
             //
-            // We are searching for the oposit transaction
+            // We are searching for the potential transfer transaction in another account.
             //
-
+            Settings settings = (Settings)this.site.GetService(typeof(Settings));
+            int days = settings.TransferSearchDays; // starting point, but can grow from there (hence the loop).
+            while (true)
             {
-                // Date Conditon +- 3 days
+                List<QueryRow> queryRows = new List<QueryRow>();
+             
                 // Set the acceptable Date range to consider the other transaction a possible match
-
-                var dateMin = t.Date.AddDays(-3);
-                var dateMax = t.Date.AddDays(3);
+                var dateMin = t.Date.AddDays(-days);
+                var dateMax = t.Date.AddDays(days);
 
                 queryRows.Add(new QueryRow(Conjunction.And, Field.Date, Operation.GreaterThanEquals, dateMin.ToString()));
                 queryRows.Add(new QueryRow(Conjunction.And, Field.Date, Operation.LessThanEquals, dateMax.ToString()));
-            }
-
-            {
+                
                 // If this was a payment we are looking for a deposit
                 // if this was a deposit we are looking for a payment
 
                 Field DepositOrPayment = t.amount > 0 ? Field.Payment : Field.Deposit;
                 queryRows.Add(new QueryRow(Conjunction.And, DepositOrPayment, Operation.Equals, Math.Abs(t.amount).ToString()));
-            }
+               
+                // Execute the search, this a blocking call
+                IList<Transaction> list = myMoney.Transactions.ExecuteQuery(queryRows.ToArray());
+                IList<Transaction> free = new List<Transaction>(from u in list where u.Transfer == null select u);
+                if (free.Count > 0)
+                {
+                    // only look at transactions that don't already have a Transfer.
+                    list = free; 
+                }
 
-            // Execute the search, this a blocking call
-            IList<Transaction> list = myMoney.Transactions.ExecuteQuery(queryRows.ToArray());
-
-            switch (list.Count)
-            {
-                // Best case scenario we found only one match, offer to the user to convert this to a transfer 
-                case 1:
-                    {
-                        var found = list[0];
-                        String message = "Account:  " + found.AccountName + '\n';
-                        message += "Date:  " + found.Date + '\n';
-                        message += "Amount:  " + found.amount + '\n';
-                        message += "Category:  " + found.CategoryFullName + '\n';
-                        message += "Memo:  " + found.Memo + '\n';
-                        message += "\nMerge into a transfer transaction?";
-
-                        if (MessageBoxEx.Show(message,"Found a Match",MessageBoxButton.YesNo,MessageBoxImage.Question) == MessageBoxResult.Yes)
+                switch (list.Count)
+                {
+                    // Best case scenario we found only one match, offer to the user to convert this to a transfer 
+                    case 1:
                         {
-                            if (t.amount > 0)
+                            var found = list[0];
+                            if (found.Transfer != null)
                             {
-                                // Money was transfered from the external account to this account
-                                TransformTwoTrasactionIntoTransfer(found, t);
+                                MessageBoxEx.Show("The matching transfer is already a linked Transfer, please check if you have a duplicate on this side that needs to be merged.",
+                                    "Transfer exists already", MessageBoxButton.OK, MessageBoxImage.Information);
+                                return;
                             }
-                            else
+                            String message = "Account:  " + found.AccountName + '\n';
+                            message += "Date:  " + found.Date + '\n';
+                            message += "Amount:  " + found.amount + '\n';
+                            message += "Category:  " + found.CategoryFullName + '\n';
+                            message += "Memo:  " + found.Memo + '\n';
+                            message += "\nMerge into a transfer transaction?";
+
+                            if (MessageBoxEx.Show(message, "Found a matching transfer", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                             {
-                                // Money was transfered from to external account
-                                TransformTwoTrasactionIntoTransfer(t, found);
+                                if (t.amount > 0)
+                                {
+                                    // Money was transfered from the external account to this account
+                                    TransformTwoTrasactionIntoTransfer(found, t);
+                                }
+                                else
+                                {
+                                    // Money was transfered from to external account
+                                    TransformTwoTrasactionIntoTransfer(t, found);
+                                }
                             }
-                        }
-                        break;
-                    }
-
-
-                // There no Match, let the user know
-                case 0:
-                    {
-                        MessageBoxEx.Show("No matching transanction in any other accounts", "Transaction matching", MessageBoxButton.OK, MessageBoxImage.Information);
-                        break;
-                    }
-
-                // two or more matching transactions were found, let the user know
-                default:
-                    {
-                        String foundThese = "";
-                        foreach (var found in list)
-                        {
-                            foundThese += found.AccountName + ' ' + found.Date + ' ' + found.amount;
+                            return;
                         }
 
-                        MessageBoxEx.Show(foundThese, "Found " + list.Count + " Match", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-                    break;
+                    // There no Match, let the user know
+                    case 0:
+                        {
+                            days *= 2;
+                            var rc = MessageBoxEx.Show($"No matching transaction found, would you like to try a wider search with ± {days} days?", 
+                                "Transfer Search Failed", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                            if (rc == MessageBoxResult.No)
+                            {
+                                return;
+                            }
+                            break;
+                        }
+
+                    // two or more matching transactions were found, let the user know
+                    default:
+                        {
+                            String foundThese = "";
+                            foreach (var found in list)
+                            {
+                                foundThese += found.AccountName + ' ' + found.Date + ' ' + found.amount;
+                            }
+
+                            MessageBoxEx.Show(foundThese, "Found " + list.Count + " matching transfers", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+                }
             }
         }
 
@@ -4336,13 +4351,19 @@ namespace Walkabout.Views
             // From
             {
                 transferFrom.Transfer = new Transfer(0, transferFrom, transferTo);
-                transferFrom.Memo = newMemoForBothSide;
+                if (string.IsNullOrEmpty(transferFrom.Memo))
+                {
+                    transferFrom.Memo = newMemoForBothSide;
+                }
             }
 
             // To
             {
                 transferTo.Transfer = new Transfer(0, transferTo, transferFrom);
-                transferTo.Memo = newMemoForBothSide;
+                if (string.IsNullOrEmpty(transferTo.Memo))
+                {
+                    transferTo.Memo = newMemoForBothSide;
+                }
             }
 
             transferFrom.OnChanged("PayeeOrTransferCaption");
