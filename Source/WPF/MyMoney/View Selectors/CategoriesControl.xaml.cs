@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -865,14 +866,23 @@ namespace Walkabout.Views.Controls
 
         private void MoveCategory(Category categorySource, Category categoryTarget)
         {
-            if (categorySource == null || categoryTarget == null)
+            if (categorySource == null)
             {
                 return;
             }
+            string newName = null;
+            if (categoryTarget == null)
+            {
+                // then user is promoting it to top level.
+                newName = string.Join(":", categorySource.GetFullName().Split(':').Skip(1));
+            }
+            else
+            {            
+                // Move into
+                newName = Category.Combine(categoryTarget.Name, categorySource.Label);
+            }
 
-            // Move
-            string newName = Category.Combine(categoryTarget.Name, categorySource.Label);
-            if (newName == categorySource.GetFullName())
+            if (string.IsNullOrEmpty(newName) || newName == categorySource.GetFullName())
             {
                 return; // no op!
             }
@@ -886,7 +896,7 @@ namespace Walkabout.Views.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxEx.Show("Please send this string to JP or Chris\n" + ex.ToString(), "Internal error merging categories", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxEx.Show("Please post this string in a new Github issue\n" + ex.ToString(), "Internal error merging categories", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

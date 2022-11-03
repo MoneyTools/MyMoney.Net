@@ -6777,6 +6777,10 @@ namespace Walkabout.Data
                 this.categoryIndex[name] = result;
                 this.FireChangeEvent(this, result, null, ChangeType.Inserted);
             }
+            else if (result.IsDeleted)
+            {
+                result.Undelete();
+            }
             return result;
         }
 
