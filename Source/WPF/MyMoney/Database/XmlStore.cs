@@ -132,7 +132,7 @@ namespace Walkabout.Data
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
-            DataContractSerializer serializer = new DataContractSerializer(typeof(MyMoney));
+            DataContractSerializer serializer = new DataContractSerializer(typeof(MyMoney), MyMoney.GetKnownTypes());
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Encoding = Encoding.UTF8;
             settings.Indent = true;

@@ -692,6 +692,25 @@ namespace Walkabout.Data
         private TransactionExtras extras;
         internal PayeeIndex payeeAccountIndex;
 
+        internal static Type[] GetKnownTypes()
+        {
+            return new Type[]
+            {
+                typeof(Account),
+                typeof(Payee),
+                typeof(Transaction),
+                typeof(Currency),
+                typeof(Category),
+                typeof(Transaction),
+                typeof(Security),
+                typeof(RentBuilding),
+                typeof(Payee),
+                typeof(Split),
+                typeof(StockSplit),
+                typeof(TransactionExtra)
+            };
+        }
+
         public MyMoney()
         {
             Accounts = new Accounts(this);
