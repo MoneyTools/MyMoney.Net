@@ -31,7 +31,7 @@
     <Utf8Output>true</Utf8Output>
     <ExpressionBlendVersion>4.0.20901.0</ExpressionBlendVersion>
     <NuGetPackageImportStamp></NuGetPackageImportStamp>
-    <PublishUrl>d:\git\clovett\MyMoney.Net\Source\WPF\publish\</PublishUrl>
+    <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
