@@ -33,6 +33,8 @@ namespace Walkabout.Dialogs
         private string storage;
         private Brush resizerBrush;
         const double ResizerThumbSize = 12;
+        private Transaction transaction;
+        private DelayedActions actions = new DelayedActions();
 
         public readonly static RoutedUICommand CommandRotateRight = new RoutedUICommand("Rotate Right", "CommandRotateRight", typeof(MainWindow));
         public readonly static RoutedUICommand CommandRotateLeft = new RoutedUICommand("Rotate Left", "CommandRotateLeft", typeof(MainWindow));
@@ -95,7 +97,13 @@ namespace Walkabout.Dialogs
 
         public bool IsClosed { get { return closed; } }
 
-        public Transaction Transaction { get; set; }
+        public Transaction Transaction { 
+            get => transaction;
+            set {
+                transaction = value;
+                actions.StartDelayedAction("Sync", LoadAttachments, TimeSpan.FromMilliseconds(30));
+            } 
+        }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -110,6 +118,11 @@ namespace Walkabout.Dialogs
                 selected = null;
                 RemoveResizer();
                 Canvas.Children.Clear();
+
+                if (this.Transaction == null)
+                {
+                    return;
+                }
 
                 foreach (string filePath in Manager.GetAttachments(this.Transaction))
                 {
@@ -184,7 +197,7 @@ namespace Walkabout.Dialogs
             set
             {
                 storage = value;
-                LoadAttachments();
+                actions.StartDelayedAction("Sync", LoadAttachments, TimeSpan.FromMilliseconds(30));
             }
         }
 
@@ -387,6 +400,7 @@ namespace Walkabout.Dialogs
         {
             base.OnClosing(e);
 
+            actions.CancelAll();
             if (dirty)
             {
                 Save(this, null);
@@ -608,53 +622,61 @@ namespace Walkabout.Dialogs
             e.CanExecute = dirty && this.ItemCount > 0;
         }
 
-        private static AttachmentDialog scanner = null;
+        private static AttachmentDialog dialog = null;
 
         private static void OnAppClosed(object sender, EventArgs e)
         {
-            if (scanner != null)
+            if (dialog != null)
             {
-                scanner.Close();
+                dialog.Close();
             }
         }
 
         private static void OnAppWindowStateChanged(object sender, EventArgs e)
         {
-            if (scanner != null)
+            if (dialog != null)
             {
                 if (App.Current.MainWindow.WindowState == WindowState.Minimized)
                 {
-                    scanner.WindowState = WindowState.Minimized;
+                    dialog.WindowState = WindowState.Minimized;
                 }
-                else if (scanner.WindowState == WindowState.Minimized)
+                else if (dialog.WindowState == WindowState.Minimized)
                 {
-                    scanner.WindowState = WindowState.Normal;
-                    scanner.Activate();
+                    dialog.WindowState = WindowState.Normal;
+                    dialog.Activate();
                 }
+            }
+        }
+
+        public static void OnSelectionChanged(Transaction t)
+        {
+            if (dialog != null)
+            {
+                dialog.Transaction = t;
             }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2234:PassSystemUriObjectsInsteadOfStrings")]
         public static void ScanAttachments(Transaction t, AttachmentManager attachmentManager, Settings settings)
         {
-            if (scanner == null)
+            if (dialog == null)
             {
-                scanner = new AttachmentDialog();
-                scanner.Settings = settings;
-                scanner.Directory = settings.AttachmentDirectory;
+                dialog = new AttachmentDialog();
+                dialog.Settings = settings;
+                dialog.Directory = settings.AttachmentDirectory;
 
-                scanner.Closing += new System.ComponentModel.CancelEventHandler((s, args) =>
+                dialog.Closing += new System.ComponentModel.CancelEventHandler((s, args) =>
                 {
-                    if (scanner.WindowState != WindowState.Minimized)
+                    if (dialog.WindowState != WindowState.Minimized)
                     {
-                        settings.AttachmentDialogSize = new Size(scanner.Width, scanner.Height);
+                        settings.AttachmentDialogSize = new Size(dialog.Width, dialog.Height);
                     }
                     if (App.Current != null && App.Current.MainWindow != null)
                     {
                         App.Current.MainWindow.Closed -= new EventHandler(OnAppClosed);
                     }
                     App.Current.MainWindow.Activate();
-                    AttachmentDialog.scanner = null;                    
+                    AttachmentDialog.dialog = null;                    
                 });
                 App.Current.MainWindow.Closed -= new EventHandler(OnAppClosed);
                 App.Current.MainWindow.Closed += new EventHandler(OnAppClosed);
@@ -676,25 +698,22 @@ namespace Walkabout.Dialogs
             Size size = settings.AttachmentDialogSize;
             if (size.Width > 100 && size.Height > 100)
             {
-                scanner.Width = size.Width;
-                scanner.Height = size.Height;
+                dialog.Width = size.Width;
+                dialog.Height = size.Height;
             }
 
-            scanner.Initialize(attachmentManager, t, path);
-            scanner.Owner = App.Current.MainWindow;
-            scanner.ShowInTaskbar = false;
-            scanner.Show();
-            scanner.Activate();
+            dialog.Initialize(attachmentManager, t, path);
+            dialog.Owner = App.Current.MainWindow;
+            dialog.ShowInTaskbar = false;
+            dialog.Show();
+            dialog.Activate();
         }
 
         private void Initialize(AttachmentManager attachmentManager, Data.Transaction t, string path)
         {
             this.Manager = attachmentManager;
-            if (this.Transaction != t || this.Directory != path)
-            {
-                this.Transaction = t;
-                this.Directory = path;
-            }
+            this.Transaction = t;
+            this.Directory = path;
         }
 
         private void RotateRight(object sender, ExecutedRoutedEventArgs e)

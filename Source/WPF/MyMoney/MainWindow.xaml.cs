@@ -293,7 +293,14 @@ namespace Walkabout
             // save right away, but decoulpled from UI thread.
             this.delayedActions.StartDelayedAction("SaveDatabaseSettings", () =>
             {
-                settings.Save();
+                try
+                {
+                    this.databaseSettings.Save();
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxEx.Show("Error saving updated database settings: " + ex.Message, "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }, TimeSpan.FromSeconds(1));
         }
 
@@ -1537,7 +1544,14 @@ namespace Walkabout
             ProcessHelper.CreateSettingsDirectory();
             if (!string.IsNullOrEmpty(s.ConfigFile) && s.Persist)
             {
-                s.Save();
+                try
+                {
+                    s.Save();
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxEx.Show("Error saving updated settings: " + ex.Message, "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -2001,8 +2015,15 @@ namespace Walkabout
             this.databaseSettings.PropertyChanged += DatabaseSettings_PropertyChanged;
             if (this.databaseSettings.MigrateSettings(this.settings))
             {
-                this.databaseSettings.Save();
-                this.settings.Save();
+                try
+                {
+                    this.databaseSettings.Save();
+                    this.settings.Save();
+                } 
+                catch (Exception ex)
+                {
+                    MessageBoxEx.Show("Error saving updated settings: " + ex.Message, "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             this.databaseSettings.RaiseAllEvents();
         }

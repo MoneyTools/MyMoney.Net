@@ -3646,6 +3646,7 @@ namespace Walkabout.Views
                         }
                     }
                     selectedSplit = null;
+                    AttachmentDialog.OnSelectionChanged((Transaction)selected);
                 }
                 else if (selected is Split)
                 {

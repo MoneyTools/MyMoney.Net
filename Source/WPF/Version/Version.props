@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ApplicationRevision>5</ApplicationRevision>
-    <ApplicationVersion>2.0.1.5</ApplicationVersion>
+    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationVersion>2.0.1.6</ApplicationVersion>
   </PropertyGroup>
 </Project>
