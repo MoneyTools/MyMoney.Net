@@ -439,7 +439,6 @@ namespace Walkabout.Reports
             }
 
             writer.EndExpandableRowGroup();
-
         }
 
         private List<string> FormatValues(IEnumerable<decimal> values)
@@ -560,22 +559,19 @@ namespace Walkabout.Reports
             {
                 writer.StartCell();
 
-                if (cell.Value != 0)
+                if (cell.Data?.Count > 0)
                 {                
                     writer.WriteNumber(cell.Value.ToString("N0"));
 
-                    if (cell.Data.Count > 0)
-                    {
-                        FlowDocumentReportWriter fw = (FlowDocumentReportWriter)writer;
-                        Paragraph p = fw.CurrentParagraph;
-                        p.Tag = cell;
-                        p.PreviewMouseLeftButtonDown -= OnReportCellMouseDown;
-                        p.PreviewMouseLeftButtonDown += OnReportCellMouseDown;
-                        p.Cursor = Cursors.Arrow;
-                        //p.TextDecorations.Add(TextDecorations.Underline);
-                        //p.Foreground = Brushes.DarkSlateBlue;
-                        p.SetResourceReference(Paragraph.ForegroundProperty, "HyperlinkForeground");
-                    }
+                    FlowDocumentReportWriter fw = (FlowDocumentReportWriter)writer;
+                    Paragraph p = fw.CurrentParagraph;
+                    p.Tag = cell;
+                    p.PreviewMouseLeftButtonDown -= OnReportCellMouseDown;
+                    p.PreviewMouseLeftButtonDown += OnReportCellMouseDown;
+                    p.Cursor = Cursors.Arrow;
+                    //p.TextDecorations.Add(TextDecorations.Underline);
+                    //p.Foreground = Brushes.DarkSlateBlue;
+                    p.SetResourceReference(Paragraph.ForegroundProperty, "HyperlinkForeground");
                 }
 
                 writer.EndCell();
