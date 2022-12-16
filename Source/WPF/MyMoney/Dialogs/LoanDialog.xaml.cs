@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Windows;
 using Walkabout.Controls;
 using Walkabout.Data;
+using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs
@@ -14,7 +15,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class LoanDialog : BaseDialog
     {
-       
+
         public MyMoney Money { get; set; }
 
         Account editingAccount = new Account();
@@ -26,7 +27,7 @@ namespace Walkabout.Dialogs
                 return editingAccount;
             }
         }
-        
+
         Account theAccount = new Account();
         List<OnlineAccount> newOnlineAccounts = new List<OnlineAccount>();
         ObservableCollection<object> onlineAccounts = new ObservableCollection<object>();
@@ -70,6 +71,10 @@ namespace Walkabout.Dialogs
                     InsertAccount(oa);
                 }
             }
+
+            List<string> currencies = new List<string>(Enum.GetNames(typeof(RestfulWebServices.CurrencyCode)));
+            currencies.Sort();
+            ComboBoxCurrency.ItemsSource = currencies;
         }
 
 
@@ -79,7 +84,7 @@ namespace Walkabout.Dialogs
             combo.Items.Filter = new Predicate<object>((o) => { return ((Category)o).GetFullName().IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0; });
         }
 
-   
+
         // Insert account in sorted order.
         void InsertAccount(OnlineAccount oa)
         {
@@ -178,11 +183,5 @@ namespace Walkabout.Dialogs
             this.DialogResult = false;
             this.Close();
         }
-
-
-      
-
-
-
     }
 }
