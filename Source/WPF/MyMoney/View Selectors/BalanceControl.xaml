@@ -66,8 +66,8 @@ For example, you can use this to swap out a reconciled transaction for another o
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Button x:Name="PreviousBalanceHelp" Click="PreviousBalanceHelp_Click">
-                                    <Image Source="/MyMoney;component/Icons/Help.png" />
+                                <Button x:Name="PreviousBalanceHelp" Click="PreviousBalanceHelp_Click" Background="Transparent">
+                                    <Label>ℹ️</Label>
                                 </Button>
                                 <TextBox x:Name="TextBlockPreviousBalance" Text="24.96" Style="{StaticResource ReadOnlyTextBox}"  Grid.Column="1"  
                        ToolTip="The current reconciled balance of your account should match the beginning balance on your statement.
@@ -155,8 +155,8 @@ reconciliation dropdown above."/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="CurrentBalanceHelp" Click="CurrentBalanceHelp_Click">
-                                <Image Source="/MyMoney;component/Icons/Help.png" />
+                            <Button x:Name="CurrentBalanceHelp" Click="CurrentBalanceHelp_Click" Background="Transparent">
+                                <Label>ℹ️</Label>
                             </Button>
                             <TextBox x:Name="TextBlockCurrentBalance" Text="24.96" Style="{StaticResource ReadOnlyTextBox}"  Grid.Column="1"
                            ToolTip="When the current balance matches the statement balance above you can click the 'Done' button"/>
@@ -170,8 +170,8 @@ reconciliation dropdown above."/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="CurrentDeltaHelp" Click="CurrentDeltaHelp_Click">
-                                <Image Source="/MyMoney;component/Icons/Help.png" />
+                            <Button x:Name="CurrentDeltaHelp" Click="CurrentDeltaHelp_Click" Background="Transparent">
+                                <Label>ℹ️</Label>
                             </Button>
                             <TextBox x:Name="TextBlockCurrentDelta" Text="1.99" Style="{StaticResource ReadOnlyTextBox}"  Grid.Column="1"
                            ToolTip="The current difference between your reported balance and the current balance on record.
@@ -203,32 +203,18 @@ For example, you can use this to swap out a reconciled transaction for another o
                     <Button.Template>
                         <ControlTemplate>
                             <Grid Height="80" Width="80" >
-                                <Rectangle StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Stroke="#F0565656" StrokeThickness="10" StrokeMiterLimit="10" StrokeLineJoin="Miter" Fill="#FFBABABA" Grid.ColumnSpan="2">
-                                    <Rectangle.Effect>
-                                        <DropShadowEffect/>
-                                    </Rectangle.Effect>
-                                </Rectangle>
-                                <Path Data="M132.76504,184.31341 C149.02845,213.3649 148.49972,224.50005 187.49979,261.50005 198.49981,249.50012 264.49987,65.49896 267.49995,73.499369 273.82965,90.379028 279.73021,134.49962 303.5,134.49962 276.50001,155.49973 225.74392,255.96528 188.0772,314.6321 165.50004,277.50007 144.7655,278.31394 117.76539,256.31391 126.53438,253.77058 127.32629,224.3786 132.76504,184.31341 z" 
-			            Margin="20,0,0,20"
-			            StrokeStartLineCap="Flat" 
-			            Stretch="Fill" 
-			            StrokeEndLineCap="Flat" StrokeThickness="6" StrokeMiterLimit="10" StrokeLineJoin="Miter" UseLayoutRounding="False" Grid.ColumnSpan="2">
+                                <Path Data="M 263,99 263,115 87,115 87,340 311,340 311,221 327,221 327,355 73,355 73,99 Z M 186,323 105,238 143,195 186,240,351,68 391,112 Z" 
+			                         Stretch="Fill" Grid.ColumnSpan="2"
+                                      Fill="Green">
                                     <Path.Effect>
-                                        <DropShadowEffect Opacity="0.455" BlurRadius="7" ShadowDepth="19"/>
+                                        <DropShadowEffect Opacity="0.4" BlurRadius="8" ShadowDepth="2"/>
                                     </Path.Effect>
-                                    <Path.Fill>
-                                        <LinearGradientBrush EndPoint="0.901,0.791" StartPoint="0.038,0.372">
-                                            <GradientStop Color="#FF4E7A12" Offset="0.306"/>
-                                            <GradientStop Color="#FF8BC042" Offset="0.788"/>
-                                            <GradientStop Color="#FFAEE465" Offset="0.578"/>
-                                        </LinearGradientBrush>
-                                    </Path.Fill>
                                 </Path>
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
             </Grid>
-           </StackPanel>
+        </StackPanel>
     </ScrollViewer>
 </UserControl>

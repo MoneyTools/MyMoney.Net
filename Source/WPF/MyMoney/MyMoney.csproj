@@ -566,7 +566,6 @@
     <EmbeddedResource Include="Database\SampleData.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Resource Include="Icons\Help.png" />
     <Resource Include="Icons\Error.png" />
     <EmbeddedResource Include="Charts\Icons\grab.cur" />
     <EmbeddedResource Include="Charts\Icons\grabbing.cur" />
