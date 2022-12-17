@@ -5,216 +5,223 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:Walkabout.Controls"
              xmlns:local="clr-namespace:Walkabout.Views.Controls"  
+             xmlns:clr="clr-namespace:System;assembly=mscorlib"
              Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
              xmlns:help="clr-namespace:Walkabout.Help"
              help:HelpService.HelpKeyword="Balancing Accounts"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="350">
 
-    <UserControl.Resources>
+  <UserControl.Resources>
 
-        <Style x:Key="NumericTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
-            <Setter Property="c:CalculatorPopup.CalculatorEnabled" Value="True" />
-            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
-            <Setter Property="Padding" Value="5,2"/>
-        </Style>
+    <Style x:Key="NumericTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
+      <Setter Property="c:CalculatorPopup.CalculatorEnabled" Value="True" />
+      <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
+      <Setter Property="Padding" Value="5,2"/>
+    </Style>
 
-        <Style x:Key="Rows" TargetType="Border">
-            <Setter Property="MinWidth" Value="200"/>
-            <Setter Property="Margin" Value="5,2,5,2"/>
-            <Setter Property="Padding" Value="5,5,5,5"/>
-            <Setter Property="CornerRadius" Value="3"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-        </Style>
+    <Style x:Key="Rows" TargetType="Border">
+      <Setter Property="MinWidth" Value="200"/>
+      <Setter Property="Margin" Value="5,2,5,2"/>
+      <Setter Property="Padding" Value="5,5,5,5"/>
+      <Setter Property="CornerRadius" Value="3"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+    </Style>
 
-        <Style x:Key="ReadOnlyTextBox" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
-            <Setter Property="TextAlignment" Value="Right"/>
-            <Setter Property="IsReadOnly" Value="True"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Margin" Value="0,0,0,0"/>
-            <Setter Property="Padding" Value="2,5"/>
-        </Style>
+    <Style x:Key="ReadOnlyTextBox" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
+      <Setter Property="TextAlignment" Value="Right"/>
+      <Setter Property="IsReadOnly" Value="True"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Margin" Value="0,0,0,0"/>
+      <Setter Property="Padding" Value="2,5"/>
+    </Style>
 
-        <Style x:Key="ValueAreaBorder" TargetType="Border">
-            <Setter Property="Margin" Value="10,2,20,2"/>
-        </Style>
+    <Style x:Key="ValueAreaBorder" TargetType="Border">
+      <Setter Property="Margin" Value="10,2,20,2"/>
+    </Style>
 
-    </UserControl.Resources>
+  </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel >
-            <Border Style="{StaticResource Rows}" Margin="0" BorderThickness="0">
-                <TextBox Style="{StaticResource ReadOnlyTextBox}" Text="name (number) what happens when this gets long" x:Name="AccountInfo" 
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel >
+      <Border Style="{StaticResource Rows}" Margin="0" BorderThickness="0">
+        <TextBox Style="{StaticResource ReadOnlyTextBox}" Text="name (number) what happens when this gets long" x:Name="AccountInfo" 
                      FontWeight="Bold"  TextAlignment="Left" />
-            </Border>
+      </Border>
 
-            <Border Style="{StaticResource Rows}" >
+      <Border Style="{StaticResource Rows}" >
 
-                <StackPanel>
-                    <TextBlock Text="Previous reconcilation:"  />
+        <StackPanel>
+          <TextBlock Text="Previous reconcilation:"  />
 
-                    <Border Style="{StaticResource ValueAreaBorder}">
-                        <StackPanel>
-                            <ComboBox x:Name="ComboBoxPreviousReconcileDates" Text="3/4/2010" HorizontalAlignment="Stretch"
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <StackPanel>
+              <ComboBox x:Name="ComboBoxPreviousReconcileDates" Text="3/4/2010" HorizontalAlignment="Stretch"
                                   ToolTip="You can select previous statement dates to see which transactions where reconciled in those statements.
 This is handy if you need to go back and fix any mistakes in prior reconciliations.
 For example, you can use this to swap out a reconciled transaction for another of the same amount since you cannot delete reconciled transactions."/>
-                            <Grid  Margin="0,3,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Button x:Name="PreviousBalanceHelp" Click="PreviousBalanceHelp_Click" Background="Transparent">
-                                    <Label>ℹ️</Label>
-                                </Button>
-                                <TextBox x:Name="TextBlockPreviousBalance" Text="24.96" Style="{StaticResource ReadOnlyTextBox}"  Grid.Column="1"  
-                       ToolTip="The current reconciled balance of your account should match the beginning balance on your statement.
+              <Grid  Margin="0,3,0,0">
+                <Grid.Resources>
+                  <clr:String x:Key="PreviousBalanceTooltip">The current reconciled balance of your account should match the beginning balance on your statement.
 If it doesn't then you may need to rebalance previous months to correct the problem, or for now you can just edit this
 field and fix the previous statements later.  You can browse previous statements by selecting a date from the previous
-reconciliation dropdown above."/>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
+reconciliation dropdown above.</clr:String>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="PreviousBalanceHelp" Click="PreviousBalanceHelp_Click" Style="{DynamicResource InformationButtonStyle}"
+                        ToolTip="{StaticResource PreviousBalanceTooltip}"></Button>
+                <TextBox x:Name="TextBlockPreviousBalance" Text="24.96" Style="{StaticResource ReadOnlyTextBox}"  Grid.Column="1"  
+                       ToolTip="{StaticResource PreviousBalanceTooltip}"/>
+              </Grid>
+            </StackPanel>
+          </Border>
 
-                </StackPanel>
-            </Border>
+        </StackPanel>
+      </Border>
 
-            <Border Style="{StaticResource Rows}" >
+      <Border Style="{StaticResource Rows}" >
 
-                <StackPanel>
+        <StackPanel>
 
-                    <TextBlock Text="New statement:"  />
+          <TextBlock Text="New statement:"  />
 
-                    <Border Style="{StaticResource ValueAreaBorder}">
-                        <StackPanel>
-                            <c:MoneyDatePicker x:Name="StatementDatePicker"  BorderThickness="1" HorizontalContentAlignment="Right" 
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <StackPanel>
+              <c:MoneyDatePicker x:Name="StatementDatePicker"  BorderThickness="1" HorizontalContentAlignment="Right" 
                                            Style="{DynamicResource DefaultDatePickerStyle}" HorizontalAlignment="Stretch"
                                     ToolTip="Enter the correct statement date and it will use that date to estimate your statement balance."  />
 
-                            <Grid Margin="0,3,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+              <Grid Margin="0,3,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                                <Button x:Name="ValueSign" Visibility="Collapsed" Grid.Column="0" Click="OnBalanceValueSign_Clicked">
-                                    <Image Source="/MyMoney;component/Dialogs/Icons/Warning.png" />
-                                </Button>
+                <Button x:Name="ValueSign" Visibility="Collapsed" Grid.Column="0" Click="OnBalanceValueSign_Clicked">
+                  <Image Source="/MyMoney;component/Dialogs/Icons/Warning.png" />
+                </Button>
 
-                                <TextBox x:Name="TextBoxStatementBalance" Grid.Column="1" Text="24.96"  HorizontalContentAlignment="Right" 
+                <TextBox x:Name="TextBoxStatementBalance" Grid.Column="1" Text="24.96"  HorizontalContentAlignment="Right" 
                                        TextChanged="TextBoxStatementBalance_TextChanged"
                                        KeyDown="TextBoxStatementBalance_KeyDown"
                                        Style="{StaticResource NumericTextBoxStyle}"  GotFocus="OnTextBoxGotFocus"
                                        PreviewMouseLeftButtonDown="OnTextBoxPreviewLeftMouseButtonDown"
                                        ToolTip="Enter the correct statement balance in case the calculated estimate was not correct."  />
-                            </Grid>
+              </Grid>
 
-                        </StackPanel>
+            </StackPanel>
 
-                    </Border>
+          </Border>
 
-                    <TextBlock Text="Statement file:"  />
+          <TextBlock Text="Statement file:"  />
 
-                    <Border Style="{StaticResource ValueAreaBorder}">
-                        <StackPanel>
-                            <Grid Margin="0,3,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox x:Name="StatementFileName" GotFocus="OnTextBoxGotFocus"
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <StackPanel>
+              <Grid Margin="0,3,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="StatementFileName" GotFocus="OnTextBoxGotFocus"
                                         ToolTip="Enter a path to the statement you want to save with this account so you can find it later using 'Goto Statement' from any of the balanced transactions." />
-                                <Button Grid.Column="1" x:Name="BrowseStatementButton" Click="OnBrowseStatement">...</Button>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Border>
+                <Button Grid.Column="1" x:Name="BrowseStatementButton" Click="OnBrowseStatement">...</Button>
+              </Grid>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+      </Border>
 
-            <Border Style="{StaticResource Rows}" >
-                <StackPanel>
-                    <TextBlock Text="Interest earned:" />
-                    <Border Style="{StaticResource ValueAreaBorder}">
-                        <TextBox x:Name="TextBoxInterestEarned" Text="1.96" HorizontalContentAlignment="Right"
+      <Border Style="{StaticResource Rows}" >
+        <StackPanel>
+          <TextBlock Text="Interest earned:" />
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <TextBox x:Name="TextBoxInterestEarned" Text="1.96" HorizontalContentAlignment="Right"
                              GotFocus="OnTextBoxGotFocus"
                        Style="{StaticResource NumericTextBoxStyle}"  
                          ToolTip="Enter the interest earned this month and press 'TAB' to add the matching interest transaction"  />
-                    </Border>
-                </StackPanel>
-            </Border>
+          </Border>
+        </StackPanel>
+      </Border>
 
-            <Border Style="{StaticResource Rows}"  >
+      <Border Style="{StaticResource Rows}"  >
 
-                <StackPanel>
-                    <TextBlock Text="Your current balance:"   />
-                    <Border Style="{StaticResource ValueAreaBorder}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Button x:Name="CurrentBalanceHelp" Click="CurrentBalanceHelp_Click" Background="Transparent">
-                                <Label>ℹ️</Label>
-                            </Button>
-                            <TextBox x:Name="TextBlockCurrentBalance" Text="24.96" Style="{StaticResource ReadOnlyTextBox}"  Grid.Column="1"
-                           ToolTip="When the current balance matches the statement balance above you can click the 'Done' button"/>
-                        </Grid>
-                    </Border>
+        <StackPanel>
+          <TextBlock Text="Your current balance:"   />
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <Grid>
+              <Grid.Resources>
+                <clr:String x:Key="CurrentBalanceTooltip">When the current balance matches the statement balance above you can click the 'Done' button.</clr:String>
+              </Grid.Resources>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+              <Button x:Name="CurrentBalanceHelp" Click="CurrentBalanceHelp_Click"  Style="{DynamicResource InformationButtonStyle}"
+                      ToolTip="{StaticResource CurrentBalanceTooltip}"></Button>
+              <TextBox x:Name="TextBlockCurrentBalance" Text="24.96" Style="{StaticResource ReadOnlyTextBox}"  Grid.Column="1"
+                           ToolTip="{StaticResource CurrentBalanceTooltip}"/>
+            </Grid>
+          </Border>
 
-                    <TextBlock Text="Off by:"   />
-                    <Border Style="{StaticResource ValueAreaBorder}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Button x:Name="CurrentDeltaHelp" Click="CurrentDeltaHelp_Click" Background="Transparent">
-                                <Label>ℹ️</Label>
-                            </Button>
-                            <TextBox x:Name="TextBlockCurrentDelta" Text="1.99" Style="{StaticResource ReadOnlyTextBox}"  Grid.Column="1"
-                           ToolTip="The current difference between your reported balance and the current balance on record.
-When this reaches zero you are done balancing this account and you can click the 'Done' button"/>
-                        </Grid>
-                    </Border>
+          <TextBlock Text="Off by:"   />
+          <Border Style="{StaticResource ValueAreaBorder}">
+            <Grid>
+              <Grid.Resources>
+                <clr:String x:Key="CurrentDeltaTooltip">The current difference between your reported balance and the current balance on record.
+When this reaches zero you are done balancing this account and you can click the 'Done' button.</clr:String>
+              </Grid.Resources>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+              <Button x:Name="CurrentDeltaHelp" Click="CurrentDeltaHelp_Click"  Style="{DynamicResource InformationButtonStyle}"
+                      ToolTip="{StaticResource CurrentDeltaTooltip}"></Button>
+              <TextBox x:Name="TextBlockCurrentDelta" Text="1.99" Style="{StaticResource ReadOnlyTextBox}"  Grid.Column="1"
+                           ToolTip="{StaticResource CurrentDeltaTooltip}"/>
+            </Grid>
+          </Border>
 
-                </StackPanel>
-            </Border>
+        </StackPanel>
+      </Border>
 
-            <StackPanel  HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,10,0,0">
-                <Button x:Name="Done" MinWidth="70" Margin="3" Click="Done_Click"
+      <StackPanel  HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,10,0,0">
+        <Button x:Name="Done" MinWidth="70" Margin="3" Click="Done_Click"
                     ToolTip="Click done when you have finished balancing your account. 
 This button will be enabled when the current balance matches the statement balance">Done</Button>
-                <Button x:Name="Cancel" MinWidth="70" Margin="3" Click="Cancel_Click">Cancel</Button>
-            </StackPanel>
+        <Button x:Name="Cancel" MinWidth="70" Margin="3" Click="Cancel_Click">Cancel</Button>
+      </StackPanel>
 
-            <Grid Margin="10" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBox x:Name="TextBlockMessage" Style="{StaticResource ReadOnlyTextBox}" Text="You can select previous statement dates to see which transactions where reconciled in those statements.
+      <Grid Margin="10" >
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="TextBlockMessage" Style="{StaticResource ReadOnlyTextBox}" Text="You can select previous statement dates to see which transactions where reconciled in those statements.
 This is handy if you need to go back and fix any mistakes in prior reconciliations.
 For example, you can use this to swap out a reconciled transaction for another of the same amount since you cannot delete reconciled transactions." AcceptsReturn="False" TextWrapping="Wrap" TextAlignment="Left" Grid.Column="1"/>
 
-                <!-- Big checkbox -->
-                <Button x:Name="CongratsButton" Click="Done_Click" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="0" BorderThickness="0" Margin="0,0,10,0">
-                    <Button.Template>
-                        <ControlTemplate>
-                            <Grid Height="80" Width="80" >
-                                <Path Data="M 263,99 263,115 87,115 87,340 311,340 311,221 327,221 327,355 73,355 73,99 Z M 186,323 105,238 143,195 186,240,351,68 391,112 Z" 
+        <!-- Big checkbox -->
+        <Button x:Name="CongratsButton" Click="Done_Click" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="0" BorderThickness="0" Margin="0,0,10,0">
+          <Button.Template>
+            <ControlTemplate>
+              <Grid Height="80" Width="80" >
+                <Path Data="M 263,99 263,115 87,115 87,340 311,340 311,221 327,221 327,355 73,355 73,99 Z M 186,323 105,238 143,195 186,240,351,68 391,112 Z" 
 			                         Stretch="Fill" Grid.ColumnSpan="2"
                                       Fill="Green">
-                                    <Path.Effect>
-                                        <DropShadowEffect Opacity="0.4" BlurRadius="8" ShadowDepth="2"/>
-                                    </Path.Effect>
-                                </Path>
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </Grid>
-        </StackPanel>
-    </ScrollViewer>
+                  <Path.Effect>
+                    <DropShadowEffect Opacity="0.4" BlurRadius="8" ShadowDepth="2"/>
+                  </Path.Effect>
+                </Path>
+              </Grid>
+            </ControlTemplate>
+          </Button.Template>
+        </Button>
+      </Grid>
+    </StackPanel>
+  </ScrollViewer>
 </UserControl>
