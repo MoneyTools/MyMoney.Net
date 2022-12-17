@@ -101,7 +101,7 @@
                 </Grid.ColumnDefinitions>
             </Grid>
             <TextBlock Text="Currency:" Grid.Column="0" Grid.Row="12" HorizontalAlignment="Right" />
-            <TextBox Grid.Column="2" Grid.Row="12"   Text="{Binding Path=Currency, Mode=TwoWay}" Height="22" />
+            <ComboBox x:Name="ComboBoxCurrency"  Grid.Column="2" Grid.Row="12"  Text="{Binding Path=Currency, Mode=TwoWay}"/>
 
             <TextBlock Text="Web Site:" Grid.Column="0" Grid.Row="14" HorizontalAlignment="Right" />
 
