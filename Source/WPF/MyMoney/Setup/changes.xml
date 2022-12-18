@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="2.0.1.7" date="11/13/2022">
+  <change version="2.0.1.8" date="11/13/2022">
     - Thanks to JP for improving some icon styles on the Balance Control.
     - Fix to improve transaction view performance after editing just the Category (previously it was triggering a rebalance and sometimes even a date change which triggers a complete refresh).
   </change>
