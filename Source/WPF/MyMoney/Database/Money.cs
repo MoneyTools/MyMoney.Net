@@ -10142,7 +10142,7 @@ namespace Walkabout.Data
             get { return date; }
             set
             {
-                if (this.date != value)
+                if (this.date.Date != value.Date)
                 {
                     date = value;
                     if (Transfer != null)

@@ -3,20 +3,26 @@ setlocal ENABLEDELAYEDEXPANSION
 cd %~dp0
 SET ROOT=%~dp0
 set WINGET_SRC=D:\git\clovett\winget-pkgs
+set PATH=%PATH%;%ROOT%\tools;%LOCALAPPDATA%\Microsoft\WindowsApps\
 for /f "usebackq" %%i in (`xsl -e -s Version\version.xsl Version\version.props`) do (
     set VERSION=%%i
 )
+
+call SetupWinget
+if '!WINGETVERSION!' == '' goto :eof
+if '!WINGETCREATEVERSION!' == '' goto :eof
 
 echo ### Publishing version %VERSION%...
 set WINGET=1
 set GITRELEASE=1
 set UPLOAD=1
 set ClickOnceBits=MyMoney\publish
-
+set DOBUILD=1
 :parse
 if "%1"=="/nowinget" set WINGET=0
 if "%1"=="/norelease" set GITRELEASE=0
 if "%1"=="/noupload" set UPLOAD=0
+if "%1"=="/nobuild" set DOBUILD=0
 if "%1"=="" goto :done
 shift
 goto :parse
@@ -24,6 +30,10 @@ goto :parse
 :done
 
 if "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%" == "" goto :nokey
+
+if "%DevEnvDir%"=="" goto :novsdev
+
+if "%DOBUILD%"=="0" goto :dorelease
 
 if EXIST %ClickOnceBits% rd /s /q %ClickOnceBits%
 msbuild /target:publish MyMoney.sln /p:Configuration=Release "/p:Platform=Any CPU" /p:PublishDir=publish
@@ -33,6 +43,7 @@ if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
 msbuild /target:publish MyMoneyPackage.sln /p:Configuration=Release "/p:Platform=Any CPU"
 if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :noappx
 
+:dorelease
 if "%GITRELEASE%" == "0" goto :upload
 echo Creating new tag for version %VERSION%
 git tag %VERSION%
@@ -55,6 +66,7 @@ echo ============ Done publishing ClickOnce installer ==============
 if "%WINGET%"=="0" goto :skipwinget
 if not exist %WINGET_SRC% goto :nowinget
 
+:syncwinget
 echo Syncing winget master branch
 pushd %WINGET_SRC%\manifests\l\LovettSoftware\MyMoney\Net
 git checkout master
@@ -107,6 +119,10 @@ goto :eof
 
 :nokey
 echo Please set your LOVETTSOFTWARE_STORAGE_CONNECTION_STRING
+exit /b 1
+
+:novsdev
+echo Please run this from a VS 2022 developer command prompt
 exit /b 1
 
 :nowinget
