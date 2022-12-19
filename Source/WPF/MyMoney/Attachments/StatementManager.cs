@@ -31,7 +31,7 @@ namespace Walkabout.Attachments
         }
 
         void UpdateNameMap()
-        { 
+        {
             // save the original account names, in case the account is renamed.
             this.nameMap = new Dictionary<Account, string>();
             foreach (var item in myMoney.Accounts.GetAccounts())
@@ -295,10 +295,13 @@ namespace Walkabout.Attachments
                 {
                     foreach (var item in index.Items)
                     {
-                        var fullPath = Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename);
-                        if (FileHelpers.FilesIdentical(fullPath, fileName))
+                        if (!string.IsNullOrEmpty(item.Filename))
                         {
-                            return true;
+                            var fullPath = Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename);
+                            if (FileHelpers.FilesIdentical(fullPath, fileName))
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -419,7 +422,7 @@ namespace Walkabout.Attachments
         }
 
         void HandleChanges(ChangeEventArgs args)
-        { 
+        {
             while (args != null)
             {
                 if (args.Item is Account a)
@@ -480,7 +483,7 @@ namespace Walkabout.Attachments
         }
         private void LoadIndex()
         {
-            Task.Run(this.Load);            
+            Task.Run(this.Load);
         }
 
         void CheckFileHashes(StatementIndex index)
@@ -497,7 +500,7 @@ namespace Walkabout.Attachments
                 {
                     var statementFile = Path.Combine(dir, item.Filename);
                     if (File.Exists(statementFile)) {
-                        if (string.IsNullOrEmpty(item.Hash) || !item.FileModified.HasValue || 
+                        if (string.IsNullOrEmpty(item.Hash) || !item.FileModified.HasValue ||
                             item.FileModified.Value < File.GetLastWriteTime(statementFile))
                         {
                             item.Hash = Sha256Hash(statementFile);
@@ -545,7 +548,7 @@ namespace Walkabout.Attachments
                     CheckFileHashes(index);
                     return index;
                 }
-            } 
+            }
             catch (Exception ex)
             {
                 // TODO: fix corrupt files?

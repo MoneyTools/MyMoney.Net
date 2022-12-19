@@ -249,9 +249,21 @@ namespace Walkabout.Views.Controls
 
             // in case we are re-editing a previously reconciled statement.
             this.statement = this.statements.GetStatement(this.account, statementDate);
-            var stmt = this.statements.GetStatementFullPath(this.account, statementDate);
-            this.StatementFileName.Text = stmt;
 
+            if (this.statementFileDate.HasValue)
+            {
+                var sfd = this.statementFileDate.Value;
+                if (sfd.Year != statementDate.Year || sfd.Month != statementDate.Month)
+                {
+                    // then the statement file is not valid.
+                    this.statementFileDate = null;
+                }
+            }
+            if (!this.statementFileDate.HasValue)
+            {
+                var stmt = this.statements.GetStatementFullPath(this.account, statementDate);
+                this.StatementFileName.Text = stmt;
+            }
             decimal savedBalance = this.statements.GetStatementBalance(this.account, statementDate);
             if (savedBalance != 0)
             {
@@ -629,7 +641,7 @@ namespace Walkabout.Views.Controls
                     DateTime date = DateTime.Parse(item);
 
                     this.SelectedPreviousStatement = date.AddMonths(-1);
-
+                    this.statementFileDate = null;
                     //
                     // Setting the StatementDate will fire the event to all listeners
                     //
@@ -697,6 +709,13 @@ namespace Walkabout.Views.Controls
             {
                 StatementFileName.Text = od.FileName;
             }
+        }
+
+        DateTime? statementFileDate;
+
+        private void OnStatementFileLostFocus(object sender, RoutedEventArgs e)
+        {
+            statementFileDate = this.StatementDate;
         }
     }
 

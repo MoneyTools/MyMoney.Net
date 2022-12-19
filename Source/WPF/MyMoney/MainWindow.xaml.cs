@@ -2443,9 +2443,46 @@ namespace Walkabout
 
 #region TRACK CHANGES
 
-        private void OnChangedUI(object sender, ChangeEventArgs e)
+        private void OnChangedUI(object sender, ChangeEventArgs args)
         {
-            SetChartsDirty();
+            bool chartsDirty = false;
+            for (ChangeEventArgs e = args; e != null; e = e.Next)
+            {
+                if (e.Item is Transaction)
+                {
+                    if ((e.ChangeType != ChangeType.None && e.ChangeType != ChangeType.Changed) ||
+                        (e.Name != "Status" && e.Name != "StatusString" && e.Name != "IsReconciling" && e.Name != "ReconciledDate" &&
+                         e.Name != "Flags" && e.Name != "Unaccepted")) // technically going to Void and back could require chart update, but unaccepted or not makes no difference.
+                    {
+                        chartsDirty = true;
+                    }
+                }
+                else if (e.Item is Payee)
+                {
+                    if ((e.ChangeType != ChangeType.None && e.ChangeType != ChangeType.Changed) ||
+                        (e.Name != "UnacceptedTransactions" && e.Name != "Flags"))
+                    {
+                        chartsDirty = true;
+                    }
+                }
+                else if (e.Item is Account)
+                {
+                    if ((e.ChangeType != ChangeType.None && e.ChangeType != ChangeType.Changed) ||
+                        (e.Name != "Unaccepted"))
+                    {
+                        chartsDirty = true;
+                    }
+                }
+                else
+                {
+                    // might need to update payee & category charts
+                    chartsDirty = true;
+                }
+            }
+            if (chartsDirty)
+            {
+                SetChartsDirty();
+            }
         }
 
         void OnDirtyChanged(object sender, EventArgs e)

@@ -281,6 +281,20 @@ namespace Walkabout.Configuration
             }
         }
 
+        public bool AcceptReconciled
+        {
+            get
+            {
+                object value = map["AcceptReconciled"];
+                return value is bool ? (bool)value : false;
+            }
+            set
+            {
+                map["AcceptReconciled"] = value;
+                OnPropertyChanged("AcceptReconciled");
+            }
+        }
+
         public bool PlaySounds
         {
             get

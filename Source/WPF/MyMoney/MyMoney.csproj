@@ -483,11 +483,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities\PerfTimer.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Ofx\SgmlParser.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -587,11 +582,6 @@
     <None Include="Controls\Calculator\states.dgml" />
     <None Include="Ofx\OFX 2.1.1.pdf" />
     <None Include="Ofx\ofx16.pdf" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />

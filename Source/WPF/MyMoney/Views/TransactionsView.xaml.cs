@@ -32,6 +32,7 @@ using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
 using System.Windows.Media.Animation;
 using ModernWpf.Controls;
+using Walkabout.Properties;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -775,13 +776,6 @@ namespace Walkabout.Views
                                     t.Parent.BeginUpdate(true);
                                     try
                                     {
-                                        // ACCEPTED
-                                        if (t.Category != null || t.Transfer != null)
-                                        {
-                                            // Set to ACCEPTED state only if there's Category and it's not a Transfer
-                                            t.Unaccepted = false;
-                                        }
-
                                         // RECONCILED
                                         ReconcileThisTransaction(t);
                                     }
@@ -1636,8 +1630,8 @@ namespace Walkabout.Views
 
                             if (dt.Year == statementDate.Year && dt.Month == statementDate.Month)
                             {
-                                // dt.Day == statementDate.Day
                                 t.IsReconciling = true;
+                                t.ReconciledDate = statementDate; // in case user changed the statement date half way through reconciling!
                                 reconcilingTransactions[t] = t.Status;
                             }
                         }
@@ -3648,12 +3642,15 @@ namespace Walkabout.Views
                     selectedSplit = (Split)selected;
                 }
 
-                if (lazyShowConnector == null)
+                if (lazyShowConnector == null && !this.IsReconciling)
                 {
                     lazyShowConnector = new DispatcherTimer(TimeSpan.FromMilliseconds(50), DispatcherPriority.Normal, ShowPotentialDuplicates, this.Dispatcher);
                 }
-                lazyShowConnector.Stop();
-                lazyShowConnector.Start();
+                if (lazyShowConnector != null)
+                {
+                    lazyShowConnector.Stop();
+                    lazyShowConnector.Start();
+                }
             }
             else if (e.RemovedItems.Count > 0)
             {
@@ -3673,6 +3670,11 @@ namespace Walkabout.Views
             }
         }
 
+        Settings GetSettings()
+        {
+            return (Settings)this.site.GetService(typeof(Settings));
+        }
+
         DispatcherTimer lazyShowConnector;
 
         private void ShowPotentialDuplicates(object sender, EventArgs e)
@@ -3686,7 +3688,7 @@ namespace Walkabout.Views
                 DataGridRow row = TheActiveGrid.GetRowFromItem(t);
                 if (row != null)
                 {
-                    Settings settings = (Settings)this.site.GetService(typeof(Settings));
+                    Settings settings = GetSettings();
                     TimeSpan range = settings.DuplicateRange;
                     TransactionCollection tc = this.TheActiveGrid.ItemsSource as TransactionCollection;
                     Transaction u = Transactions.FindPotentialDuplicate(t, tc, range);
@@ -4246,7 +4248,7 @@ namespace Walkabout.Views
             //
             // We are searching for the potential transfer transaction in another account.
             //
-            Settings settings = (Settings)this.site.GetService(typeof(Settings));
+            Settings settings = GetSettings();
             int days = settings.TransferSearchDays; // starting point, but can grow from there (hence the loop).
             while (true)
             {
@@ -4631,6 +4633,14 @@ namespace Walkabout.Views
                 t.IsReconciling = true;
                 t.ReconciledDate = this.StatmentReconcileDateEnd;
             }
+            if (t.Unaccepted)
+            {
+                Settings settings = GetSettings();
+                if (settings.AcceptReconciled)
+                {
+                    t.Unaccepted = false;
+                }
+            }
         }
 
         #endregion
@@ -4997,7 +5007,7 @@ namespace Walkabout.Views
             if (t != null)
             {
                 AttachmentManager rm = (AttachmentManager)this.site.GetService(typeof(AttachmentManager));
-                AttachmentDialog.ScanAttachments(t, rm, (Settings)this.site.GetService(typeof(Settings)));
+                AttachmentDialog.ScanAttachments(t, rm, GetSettings());
             }
         }
 

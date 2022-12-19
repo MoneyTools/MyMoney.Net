@@ -554,7 +554,7 @@ namespace Walkabout.Attachments
 
         private void FindAttachments(string path, Account a)
         {
-            if (a.IsCategoryFund)
+            if (a.IsCategoryFund || string.IsNullOrEmpty(a.Name))
             {
                 return;
             }

@@ -31,6 +31,7 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
@@ -64,6 +65,8 @@
       <CheckBox Grid.Row="5" Grid.ColumnSpan="3" x:Name="checkBoxRentalSupport" Checked="OnRentalSupportChanged" Unchecked="OnRentalSupportChanged">Rental management</CheckBox>
 
       <CheckBox Grid.Row="6" Grid.ColumnSpan="3" x:Name="checkBoxPlaySounds"  Checked="OnPlaySoundsChanged" Unchecked="OnPlaySoundsChanged">Play sounds</CheckBox>
+
+      <CheckBox Grid.Row="7" Grid.ColumnSpan="3" x:Name="checkBoxAcceptReconciled"  Checked="OnAcceptReconciledChanged" Unchecked="OnAcceptReconciledChanged">Accept reconciled transactions</CheckBox>
 
     </Grid>
   </Border>

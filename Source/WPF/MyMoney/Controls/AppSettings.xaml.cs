@@ -62,6 +62,7 @@ namespace Walkabout.Controls
                 {
                     this.checkBoxRentalSupport.IsChecked = this.databaseSettings.RentalManagement;
                     this.checkBoxPlaySounds.IsChecked = settings.PlaySounds;
+                    this.checkBoxAcceptReconciled.IsChecked = settings.AcceptReconciled;
                     this.comboBoxFiscalYear.SelectedIndex = this.databaseSettings.FiscalYearStart;
 
                     foreach (string theme in comboBoxTheme.Items)
@@ -136,6 +137,11 @@ namespace Walkabout.Controls
             {
                 settings.TransferSearchDays = x;
             }
+        }
+
+        private void OnAcceptReconciledChanged(object sender, RoutedEventArgs e)
+        {
+            settings.AcceptReconciled = this.checkBoxAcceptReconciled.IsChecked == true;
         }
     }
 }

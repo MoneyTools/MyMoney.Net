@@ -127,7 +127,7 @@ reconciliation dropdown above.</clr:String>
                   <ColumnDefinition Width="*"/>
                   <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="StatementFileName" GotFocus="OnTextBoxGotFocus"
+                <TextBox x:Name="StatementFileName" GotFocus="OnTextBoxGotFocus" LostFocus="OnStatementFileLostFocus"
                                         ToolTip="Enter a path to the statement you want to save with this account so you can find it later using 'Goto Statement' from any of the balanced transactions." />
                 <Button Grid.Column="1" x:Name="BrowseStatementButton" Click="OnBrowseStatement">...</Button>
               </Grid>
