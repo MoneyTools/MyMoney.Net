@@ -383,7 +383,7 @@ namespace Walkabout.Migrate
                                                 t.Amount = -t.Amount;
                                                 break;
                                         }
-                                        if (t.Payee == null && t.Investment.Security != null && 
+                                        if (t.Payee == null && t.Investment.Security != null &&
                                             !string.IsNullOrEmpty(t.Investment.Security.Name))
                                         {
                                             t.Payee = myMoney.Payees.FindPayee(t.Investment.Security.Name, true);
@@ -401,7 +401,7 @@ namespace Walkabout.Migrate
                                         }
                                     }
                                     if (!merged)
-                                    {                                        
+                                    {
                                         transactionsAdded++;
                                         myMoney.Transactions.AddTransaction(t);
                                     }

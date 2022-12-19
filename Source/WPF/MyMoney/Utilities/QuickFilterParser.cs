@@ -133,7 +133,7 @@ namespace Walkabout.Utilities
                         });
                         break;
                     case QuickFilterToken.Not: // reduce
-                        stack.Push(new FilterNot<T>(){});
+                        stack.Push(new FilterNot<T>() { });
                         break;
                     case QuickFilterToken.LeftParen: // shift
                         stack.Push(new FilterParens<T>());

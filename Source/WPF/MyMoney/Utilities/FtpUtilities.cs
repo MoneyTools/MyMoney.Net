@@ -25,7 +25,7 @@ namespace Walkabout.Utilities
 
             foreach (string dir in Directory.GetDirectories(source))
             {
-                string name = Path.GetFileName(dir); 
+                string name = Path.GetFileName(dir);
                 if (!subdirs.Contains(name, StringComparer.OrdinalIgnoreCase))
                 {
                     CreateTargetDirectory(target + '/' + name, user, password);
@@ -156,7 +156,7 @@ namespace Walkabout.Utilities
         {
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(targetFile);
             request.Credentials = new NetworkCredential(user, password);
-            request.Method = WebRequestMethods.Ftp.DeleteFile;           
+            request.Method = WebRequestMethods.Ftp.DeleteFile;
             using (var response = (FtpWebResponse)request.GetResponse())
             {
                 // "250 DELE command successful.\r\n"
@@ -233,7 +233,7 @@ namespace Walkabout.Utilities
         /// <param name="password">The FTP password</param>
         /// <returns>The number of files that failed to upload</returns>
         public static void MirrorDirectory(string source, string target, string user, string password)
-        {          
+        {
             List<string> files = new List<string>();
             List<string> subdirs = new List<string>();
             ListDirectory(target, user, password, files, subdirs);

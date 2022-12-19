@@ -126,7 +126,7 @@ namespace Walkabout.Reports
         private void WriteHeaderRow(IReportWriter writer, String col1, String col2, String col3)
         {
             writer.StartHeaderRow();
-            writer.StartCell(1,2);
+            writer.StartCell(1, 2);
             writer.WriteParagraph(col1);
             writer.EndCell();
             writer.StartCell();
@@ -147,7 +147,7 @@ namespace Walkabout.Reports
             try
             {
                 InternalGenerate(writer);
-            } 
+            }
             finally
             {
                 generating = false;
@@ -156,7 +156,7 @@ namespace Walkabout.Reports
         }
 
         private void InternalGenerate(IReportWriter writer)
-        { 
+        {
             flowwriter = writer as FlowDocumentReportWriter;
 
             calc = new CostBasisCalculator(this.myMoney, this.reportDate);
@@ -264,12 +264,12 @@ namespace Walkabout.Reports
                 else
                 {
                     WriteSummary(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a); }), true, false);
-                    WriteSummary(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a);  }), true, false);
+                    WriteSummary(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a); }), true, false);
                     WriteSummary(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && IsInvestmentAccount(a); }), true, false);
                 }
             }
             else
-            {                
+            {
                 WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == account; }), false, true);
             }
 
@@ -282,7 +282,7 @@ namespace Walkabout.Reports
             chart.Width = 400;
             chart.Height = 300;
             chart.BorderThickness = new Thickness(0);
-            chart.Padding = new Thickness(20,0,100,0);
+            chart.Padding = new Thickness(20, 0, 100, 0);
             chart.VerticalAlignment = VerticalAlignment.Top;
             chart.HorizontalContentAlignment = HorizontalAlignment.Left;
             chart.Series = series;
@@ -336,7 +336,7 @@ namespace Walkabout.Reports
 
         private void Picker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!generating) 
+            if (!generating)
             {
                 DatePicker picker = (DatePicker)sender;
                 if (picker.SelectedDate.HasValue)
@@ -482,7 +482,7 @@ namespace Walkabout.Reports
                 // for tax reporting we need to report the real GainLoss, but if CostBasis is zero then it doesn't make sense to report something
                 // as a gain or loss, it will be accounted for under MarketValue, but it will be misleading as a "Gain".  So we tweak the value here.
                 marketValue = i.FuturesFactor * i.UnitsRemaining * price;
-                gainLoss = (i.CostBasisPerUnit == 0) ? 0 : marketValue - i.TotalCostBasis;                
+                gainLoss = (i.CostBasisPerUnit == 0) ? 0 : marketValue - i.TotalCostBasis;
                 WriteRow(writer, false, false, FontWeights.Normal, i.DatePurchased, i.Security.Name, i.Security.Name,
                     i.UnitsRemaining, price, marketValue, i.CostBasisPerUnit, i.TotalCostBasis, gainLoss);
             }
@@ -695,7 +695,7 @@ namespace Walkabout.Reports
                     {
                         caption = prefix + Security.GetSecurityTypeCaption(st);
                     }
-                    
+
                     data.Add(new ChartDataValue()
                     {
                         Value = (double)marketValue.RoundToNearestCent(),
@@ -854,9 +854,9 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.EndRow();
-         
+
         }
-        
+
         private static void WriteHeader(IReportWriter writer, string caption)
         {
             writer.StartHeaderRow();

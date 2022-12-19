@@ -159,7 +159,7 @@ namespace Walkabout.Views
                         s.IsExpanded = (SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible) ? true : false;
                     }
                 }
-                    
+
 
                 lastSelectedItem = selected;
                 OnSelectionChanged(selected as Security);
@@ -278,7 +278,7 @@ namespace Walkabout.Views
 
             foreach (Security s in this.money.Securities.AllSecurities)
             {
-                if (!s.IsDeleted && s != edited && !string.IsNullOrEmpty(s.Symbol)  &&
+                if (!s.IsDeleted && s != edited && !string.IsNullOrEmpty(s.Symbol) &&
                     string.Compare(s.Symbol, newSymbol, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     throw new Exception("Symbol '" + newSymbol + "' is already being used elsewhere");
@@ -299,7 +299,7 @@ namespace Walkabout.Views
             SecuritiesView tv = (SecuritiesView)d;
             tv.OnViewAllSplitsChanged();
         }
-        
+
         void OnViewAllSplitsChanged()
         {
             OnBeforeViewStateChanged();
@@ -428,9 +428,9 @@ namespace Walkabout.Views
 
         public ListCollectionView AllSymbols
         {
-            get 
-            { 
-                return new ListCollectionView(((List<string>)this.money.Securities.AllSymbols).ToArray()); 
+            get
+            {
+                return new ListCollectionView(((List<string>)this.money.Securities.AllSymbols).ToArray());
             }
         }
 
@@ -527,7 +527,7 @@ namespace Walkabout.Views
 
         public ViewState ViewState
         {
-            get 
+            get
             {
                 Security s = this.SelectedSecurity;
                 string name = s == null ? string.Empty : s.Name;
@@ -673,8 +673,8 @@ namespace Walkabout.Views
                 splitVisibleRowId = -1;
             }
         }
-        #endregion 
-    
+        #endregion
+
         #region SEARCH & FILTERING
 
         public void FocusQuickFilter()
@@ -728,7 +728,7 @@ namespace Walkabout.Views
         {
             ViewAllSplits = false;
         }
-        
+
     }
 
     public class SecuritiesViewState : ViewState

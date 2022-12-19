@@ -14,10 +14,11 @@ namespace Walkabout.Data
 
         public string TableName { get; set; }
 
-        public Type ObjectType 
+        public Type ObjectType
         {
             get { return objectType; }
-            set {
+            set
+            {
                 objectType = value;
                 columns = MappingEngine.GetColumnsFromObject(objectType);
             }
@@ -40,7 +41,7 @@ namespace Walkabout.Data
         {
             foreach (ColumnMapping c in columns)
             {
-                if (c.ColumnName == name) 
+                if (c.ColumnName == name)
                     return c;
             }
             return null;
@@ -50,7 +51,7 @@ namespace Walkabout.Data
         {
             foreach (ColumnMapping c in columns)
             {
-                if (!string.IsNullOrEmpty(c.OldColumnName ) && c.OldColumnName == name)
+                if (!string.IsNullOrEmpty(c.OldColumnName) && c.OldColumnName == name)
                     return c;
             }
             return null;
@@ -87,7 +88,7 @@ namespace Walkabout.Data
         public void GetPartialSqlDefinition(StringBuilder sb)
         {
             sb.Append(string.Format("  [{0}] ", this.ColumnName));
-                    
+
             Type st = this.SqlType;
             if (st != null)
             {
@@ -120,7 +121,7 @@ namespace Walkabout.Data
                     sb.Append("decimal");
                     if (this.Precision > 0)
                     {
-                        sb.Append(string.Format("({0},{1})", Math.Min(this.Precision, SqlDecimal.MaxPrecision),  Math.Min(this.Scale, SqlDecimal.MaxScale)));
+                        sb.Append(string.Format("({0},{1})", Math.Min(this.Precision, SqlDecimal.MaxPrecision), Math.Min(this.Scale, SqlDecimal.MaxScale)));
                     }
                 }
                 else if (st == typeof(SqlDateTime))
@@ -276,7 +277,7 @@ namespace Walkabout.Data
             }
         }
 
-        
+
 
     }
 

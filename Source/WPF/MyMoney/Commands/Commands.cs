@@ -116,7 +116,7 @@ namespace Walkabout.Commands
             CommandStockQuoteServiceOptions = new RoutedUICommand("StockQuoteServiceOptions", "StockQuoteServiceOptions", typeof(AppCommands));
 
             // HELP
-            CommandHelpAbout= new RoutedUICommand("HelpAbout", "About", typeof(AppCommands));
+            CommandHelpAbout = new RoutedUICommand("HelpAbout", "About", typeof(AppCommands));
             CommandViewHelp = new RoutedUICommand("ViewHelp", "View Help", typeof(AppCommands));
             CommandAddSampleData = new RoutedUICommand("AddSampleData", "Add Sample Data", typeof(AppCommands));
             CommandTroubleshootCheckTransfer = new RoutedUICommand("TroubleshootCheckTransfer", "Check Transfer", typeof(AppCommands));
@@ -133,7 +133,7 @@ namespace Walkabout.Commands
             CommandAddSeries = new RoutedUICommand("Add series", "CommandAddSeries", typeof(AppCommands));
             CommandRemoveSeries = new RoutedUICommand("Remove series", "CommandRemoveSeries", typeof(AppCommands));
             CommandShowBudget = new RoutedUICommand("Show budget", "CommandShowBudget", typeof(AppCommands));
-            CommandExportData = new RoutedUICommand("Export...", "CommandExportData", typeof(AppCommands));            
+            CommandExportData = new RoutedUICommand("Export...", "CommandExportData", typeof(AppCommands));
         }
     }
 }

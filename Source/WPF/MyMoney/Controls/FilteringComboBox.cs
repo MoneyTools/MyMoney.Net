@@ -29,7 +29,7 @@ namespace Walkabout.Controls
         }
 
         public override void OnApplyTemplate()
-        {            
+        {
             base.OnApplyTemplate();
             TextBox edit = this.Template.FindName("PART_EditableTextBox", this) as TextBox;
             if (edit != null)
@@ -57,8 +57,9 @@ namespace Walkabout.Controls
             }
         }
 
-        public string Filter { 
-            get; set; 
+        public string Filter
+        {
+            get; set;
         }
 
         void SetFilter(string text)
@@ -97,7 +98,7 @@ namespace Walkabout.Controls
         public event RoutedEventHandler TextChanged;
 
 
-     
+
         private static void OnTextChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             ComboBox2 combo = sender as ComboBox2;

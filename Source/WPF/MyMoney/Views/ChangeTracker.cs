@@ -123,7 +123,7 @@ namespace Walkabout.Views
         void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
             while (args != null)
-            {                
+            {
                 object item = args.Item;
                 if (item != null)
                 {
@@ -150,7 +150,7 @@ namespace Walkabout.Views
         public Grid GetSummary()
         {
             Grid summary = new Grid();
-            
+
             summary.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
             summary.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
             summary.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
@@ -175,7 +175,7 @@ namespace Walkabout.Views
                 Type owner = list.owner;
 
                 summary.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-                    
+
                 AddColumn(summary, owner.Name, 0, row);
                 AddLink(summary, list.inserted, 1, row);
                 AddLink(summary, list.deleted, 2, row);
@@ -189,7 +189,7 @@ namespace Walkabout.Views
         private TextBlock AddColumn(Grid grid, string text, int column, int row)
         {
             TextBlock block = new TextBlock();
-            block.Margin = new Thickness(4,2,4,2);
+            block.Margin = new Thickness(4, 2, 4, 2);
             block.Text = text;
             Grid.SetColumn(block, column);
             Grid.SetRow(block, row);
@@ -219,11 +219,11 @@ namespace Walkabout.Views
                         NavigateTo(list);
                     });
                 }
-                else 
+                else
                 {
                     List<string> tooltip = new List<string>();
 
-                    foreach (object i in list) 
+                    foreach (object i in list)
                     {
                         if (i is Security)
                         {
@@ -287,7 +287,8 @@ namespace Walkabout.Views
 
         private void NavigateTo(HashSet<object> list)
         {
-            if (list.Count == 0) {
+            if (list.Count == 0)
+            {
                 return;
             }
             object first = list.FirstOrDefault();
@@ -459,10 +460,11 @@ namespace Walkabout.Views
         /// </summary>
         public IEnumerable<Category> ChangedCategories
         {
-            get {
+            get
+            {
                 ChangeList list = null;
                 changes.TryGetValue(typeof(Category), out list);
-                return GetChanged<Category>(list); 
+                return GetChanged<Category>(list);
             }
         }
 

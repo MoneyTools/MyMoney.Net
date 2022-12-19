@@ -163,7 +163,8 @@ namespace Walkabout.Charts
                 if (hls.Luminance < 0.5)
                 {
                     ui.button.Foreground = Brushes.White;
-                } else
+                }
+                else
                 {
                     ui.button.Foreground = Brushes.Black;
                 }

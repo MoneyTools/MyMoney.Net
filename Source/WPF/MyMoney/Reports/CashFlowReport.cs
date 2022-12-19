@@ -113,7 +113,7 @@ namespace Walkabout.Reports
                 this.startDate = new DateTime(DateTime.Now.Year, this.fiscalYearStart + 1, 1);
                 if (this.startDate > DateTime.Today)
                 {
-                    this.startDate = this.startDate.AddYears(-1); 
+                    this.startDate = this.startDate.AddYears(-1);
                 }
             }
 
@@ -184,7 +184,7 @@ namespace Walkabout.Reports
 
         private bool IsUnknown(Category c)
         {
-            return (c == null || c.Type == CategoryType.None || c.Name == "Unknown") && 
+            return (c == null || c.Type == CategoryType.None || c.Name == "Unknown") &&
                 (c.ParentCategory == null || IsUnknown(c.ParentCategory));
         }
 
@@ -203,7 +203,7 @@ namespace Walkabout.Reports
         }
 
         public override Task Generate(IReportWriter writer)
-        {            
+        {
             byCategory = new Dictionary<Category, CashFlowColumns>();
 
             FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
@@ -221,7 +221,7 @@ namespace Walkabout.Reports
             columns = new List<string>();
 
             DateTime start = this.startDate;
-            while(start < this.endDate)
+            while (start < this.endDate)
             {
                 DateTime end = (byYear) ? start.AddYears(1) : start.AddMonths(1);
                 string columnName = start.ToString("MM/yyyy");
@@ -299,7 +299,7 @@ namespace Walkabout.Reports
             WriteRow(writer, true, true, "", this.columns.ToArray());
 
             CashFlowColumns columnTotals = new CashFlowColumns();
-            
+
             GenerateGroup(writer, byCategory, columnTotals, "Income", (c) => { return IsIncome(c); });
 
             GenerateGroup(writer, byCategory, columnTotals, "Expenses", (c) => { return IsExpense(c); });
@@ -377,7 +377,7 @@ namespace Walkabout.Reports
             Button button = CreateReportButton("Icons/Excel.png", "Export", "Export .csv spreadsheet file format");
 
             button.HorizontalAlignment = HorizontalAlignment.Left;
-            button.Margin = new Thickness(10,0,10,0);
+            button.Margin = new Thickness(10, 0, 10, 0);
             button.Click += new RoutedEventHandler((s, args) =>
             {
                 ExportReportAsCsv();
@@ -414,7 +414,7 @@ namespace Walkabout.Reports
                         decimal amount = cc.GetValue(columnName);
                         columnTotals.AddValue(columnName, null, amount);
                         groupTotals.AddValue(columnName, null, amount);
-                    }                    
+                    }
                 }
             }
 
@@ -469,7 +469,7 @@ namespace Walkabout.Reports
                 {
                     foreach (Split s in t.Splits)
                     {
-                        if (s.Transfer == null) 
+                        if (s.Transfer == null)
                         {
                             if (s.Category != null)
                             {
@@ -560,7 +560,7 @@ namespace Walkabout.Reports
                 writer.StartCell();
 
                 if (cell.Data?.Count > 0)
-                {                
+                {
                     writer.WriteNumber(cell.Value.ToString("N0"));
 
                     FlowDocumentReportWriter fw = (FlowDocumentReportWriter)writer;
@@ -582,7 +582,7 @@ namespace Walkabout.Reports
 
         CashFlowCell mouseDownCell;
         Point downPos;
-        
+
         private void OnReportCellMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Paragraph p = (Paragraph)sender;
@@ -595,7 +595,7 @@ namespace Walkabout.Reports
         {
             using (StreamWriter writer = new StreamWriter(filename, false, Encoding.UTF8))
             {
-                GenerateCsvGroup(writer, byCategory, "Income", (c) => { return IsIncome(c); }, (v) => { return v;  });
+                GenerateCsvGroup(writer, byCategory, "Income", (c) => { return IsIncome(c); }, (v) => { return v; });
 
                 GenerateCsvGroup(writer, byCategory, "Expenses", (c) => { return IsExpense(c); }, (v) => { return -v; });
 
@@ -604,7 +604,7 @@ namespace Walkabout.Reports
             }
         }
 
-        private void GenerateCsvGroup(StreamWriter writer, Dictionary<Category, CashFlowColumns> byCategory, string groupTitle, Func<Category, bool> inGroup, Func<decimal,decimal> scaleFunc)
+        private void GenerateCsvGroup(StreamWriter writer, Dictionary<Category, CashFlowColumns> byCategory, string groupTitle, Func<Category, bool> inGroup, Func<decimal, decimal> scaleFunc)
         {
             writer.Write(groupTitle);
             foreach (string columnName in this.columns)

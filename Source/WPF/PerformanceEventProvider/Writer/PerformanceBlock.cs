@@ -39,7 +39,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider
             Size = size;
         }
 
-        public static EventDescriptor BeginEvent 
+        public static EventDescriptor BeginEvent
         {
             get { return new EventDescriptor(1, 0, 0, 2, 0, 0, 0); }
         }
@@ -55,9 +55,9 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider
     {
         //int id, byte version, byte channel, byte level, byte opcode, int task, long keywords
         private static EventDescriptor beginEvent = new EventDescriptor(1, 0, 0, 2, 0, 0, 0);
-        private static EventDescriptor  endEvent  = new EventDescriptor(2, 0, 0, 2, 0, 0, 0);
-        private static EventDescriptor  stepEvent = new EventDescriptor(3, 0, 0, 2, 0, 0, 0);
-        private static EventDescriptor  markEvent = new EventDescriptor(4, 0, 0, 2, 0, 0, 0);
+        private static EventDescriptor endEvent = new EventDescriptor(2, 0, 0, 2, 0, 0, 0);
+        private static EventDescriptor stepEvent = new EventDescriptor(3, 0, 0, 2, 0, 0, 0);
+        private static EventDescriptor markEvent = new EventDescriptor(4, 0, 0, 2, 0, 0, 0);
 
         //private static string performanceBlockProviderName = "Microsoft.VisualStudio.PerformanceBlock.4.0.0.0";
 

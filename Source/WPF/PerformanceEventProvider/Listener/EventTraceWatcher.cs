@@ -136,7 +136,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
         }
 
         public long SessionHandle { get { return sessionHandle; } }
-        
+
         const uint RealTime = 0x00000100;
         const uint EventRecord = 0x10000000;
         const uint PrivateLoggerMode = 0x00000800;
@@ -145,7 +145,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         public void OpenTraceLog(string logFileName)
         {
-            stopProcessing = false; 
+            stopProcessing = false;
             logFile = new EventTraceLogfile();
             logFile.BufferCallback = TraceEventBufferCallback;
             logFile.EventRecordCallback = EventRecordCallback;
@@ -165,7 +165,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
             processEventsDelegate = new System.Action(ProcessTraceInBackground);
             asyncResult = processEventsDelegate.BeginInvoke(null, this);
-        }        
+        }
 
         private void EventRecordCallback([In] ref EventRecord eventRecord)
         {
@@ -184,7 +184,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             {
                 return;
             }
-                
+
             stopProcessing = false;
             StartSession();
 
@@ -277,8 +277,8 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             }
 
             // Send exception to subscribers.
-            if (asyncException != null )
-            {                
+            if (asyncException != null)
+            {
                 // todo...
             }
         }
@@ -490,7 +490,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
                     args.ParseUserData(args.EventId, reader);
                 }
             }
-           
+
             // Dispose the event information because it doesn't live in the cache
             if (shouldDispose)
             {
@@ -542,7 +542,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             string path = Path.Combine(Path.GetTempPath(), embeddedResourceName);
             ExportResource(embeddedResourceName, path);
             LoadManifest(new Uri(path));
-            File.Delete(path);            
+            File.Delete(path);
         }
 
         public void LoadManifest(Uri uri)
@@ -552,7 +552,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             string wevtutil = Path.Combine(system, "wevtutil.exe");
             StringBuilder sb = new StringBuilder();
             RunProcess(wevtutil, string.Format("um \"{0}\"", path), sb); // in case it has changed.
-            RunProcess(wevtutil, string.Format("im \"{0}\"", path), sb);  
+            RunProcess(wevtutil, string.Format("im \"{0}\"", path), sb);
         }
 
         private static void RunProcess(string exe, string args, StringBuilder output)

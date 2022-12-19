@@ -38,7 +38,7 @@ namespace Walkabout.Utilities
 
             for (int n = initialValue.Length; this.startPos < n && this.startPos < finalValue.Length; this.startPos++)
             {
-                if(initialValue[this.startPos] != finalValue[this.startPos])
+                if (initialValue[this.startPos] != finalValue[this.startPos])
                 {
                     break;
                 }

@@ -27,7 +27,7 @@ namespace Walkabout.Attachments
         private MyMoney myMoney;
         private AttachmentWatcher watcher;
         private Dictionary<Account, string> nameMap;
-        
+
         public AttachmentManager(MyMoney myMoney)
         {
             this.myMoney = myMoney;
@@ -106,7 +106,7 @@ namespace Walkabout.Attachments
 
             if (split.Transfer != null)
             {
-                if (transfer == null )
+                if (transfer == null)
                 {
                     // transfer is being deleted, try and consolidate attachments on this side.
                     MoveAttachments(split.Transfer.Transaction, split.Transaction);
@@ -278,7 +278,7 @@ namespace Walkabout.Attachments
         }
 
         public void MoveAttachments(Transaction fromTransaction, Transaction toTransaction)
-        {            
+        {
             foreach (string fileName in GetAttachments(fromTransaction))
             {
                 toTransaction.HasAttachment = true;
@@ -310,7 +310,7 @@ namespace Walkabout.Attachments
                 TempFilesManager.DeleteFile(fileName);
             }
             t.HasAttachment = false;
-        }        
+        }
 
         public List<string> GetAttachments(Transaction t)
         {
@@ -319,9 +319,9 @@ namespace Walkabout.Attachments
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "AttachmentDirectory")]
         public string GetUniqueFileName(Transaction t, string extension)
-        {            
-            string path = this.AttachmentDirectory;   
-            if (string.IsNullOrEmpty(path)) 
+        {
+            string path = this.AttachmentDirectory;
+            if (string.IsNullOrEmpty(path))
             {
                 throw new InvalidOperationException("The field 'AttachmentDirectory' is not initialized");
             }
@@ -411,7 +411,7 @@ namespace Walkabout.Attachments
         }
     }
 
-    class AttachmentWatcher 
+    class AttachmentWatcher
     {
         private ConcurrentQueue<Account> accountQueue;
         private ConcurrentQueue<Transaction> transactionQueue;
@@ -425,7 +425,7 @@ namespace Walkabout.Attachments
         {
             this.accountQueue = new ConcurrentQueue<Account>();
             this.transactionQueue = new ConcurrentQueue<Transaction>();
-            this.money = money;  
+            this.money = money;
         }
 
         internal void Stop()
@@ -489,7 +489,7 @@ namespace Walkabout.Attachments
         {
             // set of transactions that have attachments.
             Thread.Sleep(1000); // give app time to startup...
-            
+
 #if PerformanceBlocks
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.Model, MeasurementId.ScanAttachments))
             {
@@ -497,7 +497,7 @@ namespace Walkabout.Attachments
                 try
                 {
                     string path = this.AttachmentDirectory;
-                    
+
                     if (!string.IsNullOrEmpty(path) && Directory.Exists(path) && this.money != null)
                     {
                         // process pending account checks
@@ -541,7 +541,7 @@ namespace Walkabout.Attachments
             this.money.BeginUpdate(this);
             try
             {
-                foreach(var pair in toUpdate)
+                foreach (var pair in toUpdate)
                 {
                     pair.Item1.HasAttachment = pair.Item2;
                 }
@@ -649,7 +649,7 @@ namespace Walkabout.Attachments
                 string accountDirectory = Path.Combine(path, NativeMethods.GetValidFileName(t.Account.Name));
                 if (Directory.Exists(accountDirectory))
                 {
-                    files.AddRange(Directory.GetFiles(accountDirectory, t.Id + ".*.*"));                    
+                    files.AddRange(Directory.GetFiles(accountDirectory, t.Id + ".*.*"));
                 }
             }
             return files;

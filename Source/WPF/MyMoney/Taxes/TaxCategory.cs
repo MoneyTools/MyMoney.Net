@@ -92,7 +92,7 @@ namespace Walkabout.Taxes
             List<string> tokens = GetTokens(line);
             if (tokens.Count != 8)
             {
-                return null;            
+                return null;
             }
             return new TaxCategory()
             {
@@ -115,7 +115,7 @@ namespace Walkabout.Taxes
         }
 
         internal static List<string> GetTokens(string line)
-        {        
+        {
             List<string> tokens = new List<string>();
             string token;
 
@@ -240,7 +240,7 @@ namespace Walkabout.Taxes
             if (forms == null)
             {
                 forms = new Dictionary<string, TaxForm>();
-                byRef = new Dictionary<int, TaxCategory>(); 
+                byRef = new Dictionary<int, TaxCategory>();
 
                 TaxForm form = null;
                 bool started = false;
@@ -268,8 +268,8 @@ namespace Walkabout.Taxes
                             {
                                 if (c.Level == 0)
                                 {
-                                    form = new TaxForm() 
-                                    { 
+                                    form = new TaxForm()
+                                    {
                                         Name = c.Name,
                                         Categories = new List<TaxCategory>()
                                     };

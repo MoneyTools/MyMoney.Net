@@ -110,7 +110,7 @@ namespace Walkabout.Dialogs
             this.categories = money.Categories;
 
             taxCategories.Insert(0, new TaxCategory()); // empty item allows user to clear the tax category.
-            ListCollectionView view = new ListCollectionView(taxCategories);            
+            ListCollectionView view = new ListCollectionView(taxCategories);
             this.comboTaxCategory.ItemsSource = view;
 
             RefreshCategories();
@@ -168,7 +168,8 @@ namespace Walkabout.Dialogs
         private void ComboBoxForTaxCategory_FilterChanged(object sender, RoutedEventArgs e)
         {
             FilteringComboBox combo = sender as FilteringComboBox;
-            combo.Items.Filter = new Predicate<object>((o) => {
+            combo.Items.Filter = new Predicate<object>((o) =>
+            {
                 TaxCategory tc = (TaxCategory)o;
                 return (tc.FormName != null && tc.FormName.IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0) ||
                     (tc.Name != null && tc.Name.IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0);
@@ -212,7 +213,7 @@ namespace Walkabout.Dialogs
 
         ColorPickerPanel ColorPicker
         {
-            get 
+            get
             {
                 var flyout = this.ColorDropDown.Flyout; // for some reason the Flyout class with the Content property is not public!
                 var pi = flyout.GetType().GetProperty("Content", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
@@ -359,7 +360,7 @@ namespace Walkabout.Dialogs
         }
 
         private void comboBoxType_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {            
+        {
         }
 
         private void comboBoxCategory_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -68,7 +68,7 @@ namespace Walkabout.StockQuotes
 
         public DownloadLog DownloadLog
         {
-            get => _downloadLog; 
+            get => _downloadLog;
         }
 
         public List<StockServiceSettings> Settings
@@ -140,19 +140,19 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        Tuple<int,int> GetProgress()
+        Tuple<int, int> GetProgress()
         {
             int max = 0;
             int value = 0;
             bool complete = true;
-            foreach(var service in _services)
+            foreach (var service in _services)
             {
                 int m = service.DownloadsCompleted + service.PendingCount;
-                int v = service.DownloadsCompleted;   
+                int v = service.DownloadsCompleted;
                 if (v < m) { complete = false; }
                 max += m;
                 value += v;
-                
+
             }
             if (complete)
             {
@@ -302,7 +302,7 @@ namespace Walkabout.StockQuotes
                     }
                 }
             }
-            
+
             if (!foundService)
             {
                 AddError(Walkabout.Properties.Resources.ConfigureStockQuoteService);
@@ -708,14 +708,14 @@ namespace Walkabout.StockQuotes
             var changed = false;
             var changedHistory = false;
             if (_downloaded.TryGetValue(symbol, out info))
-            { 
+            {
                 // read from disk on background thread so we don't block the UI thread loading
                 // all these stock quote histories.
                 await Task.Run(() =>
                 {
                     try
                     {
-                        history = StockQuoteHistory.Load(this._logFolder, symbol);                        
+                        history = StockQuoteHistory.Load(this._logFolder, symbol);
                         if (history.RemoveDuplicates())
                         {
                             changedHistory = true;
@@ -740,7 +740,7 @@ namespace Walkabout.StockQuotes
                 {
                     database[symbol] = history;
                 }
-                
+
                 if (_downloadedQuotes.TryGetValue(info.Symbol, out StockQuote quote))
                 {
                     if (history.AddQuote(quote))
@@ -784,7 +784,8 @@ namespace Walkabout.StockQuotes
             if (info == null)
             {
                 info = new DownloadInfo() { Downloaded = DateTime.Today, Symbol = history.Symbol };
-                lock (this.Downloaded) {
+                lock (this.Downloaded)
+                {
                     this.Downloaded.Add(info);
                 }
 
@@ -1003,7 +1004,8 @@ namespace Walkabout.StockQuotes
             }
             _downloadingHistory = false;
 
-            while (_downloadingHistory && _downloadBatch.Count > 0) {
+            while (_downloadingHistory && _downloadBatch.Count > 0)
+            {
                 Thread.Sleep(1000); // wait for download to finish.
             }
             _downloadingHistory = false;

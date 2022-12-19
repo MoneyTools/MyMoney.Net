@@ -21,7 +21,7 @@ namespace Walkabout.Controls
     // Summary:
     //     Provides data for the System.Windows.Controls.DataGrid.BeginningEdit event.
     public class DataGridCustomEditEventArgs : EventArgs
-    {        
+    {
         public bool Handled { get; set; }
         public DataGridColumn Column { get; internal set; }
         public DataGridRow Row { get; internal set; }
@@ -123,7 +123,7 @@ namespace Walkabout.Controls
             // No idea why DataGrid doesn't do this for us, but this method ensures the 
             // selected row stays in view when you sort.
             AsyncScrollSelectedRowIntoView();
-        }        
+        }
 
         public override void OnApplyTemplate()
         {
@@ -136,7 +136,7 @@ namespace Walkabout.Controls
                 viewer.ScrollChanged -= OnScrollChanged;
                 viewer.ScrollChanged += OnScrollChanged;
             }
-            
+
             OnContentMarginChanged();
 
             // Behavior change on windows 8, we have to do this after the template is loaded.
@@ -277,7 +277,7 @@ namespace Walkabout.Controls
                 }
             }
         }
-        
+
 
 #if PerformanceBlocks
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
@@ -474,7 +474,7 @@ namespace Walkabout.Controls
                         // Add additional sort descriptions, so long as they are not redundant.
                         foreach (string secondary in SecondarySortOrder.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
                         {
-                            if (!sort.Contains(secondary)) 
+                            if (!sort.Contains(secondary))
                             {
                                 sort.Add(secondary);
                                 dataView.SortDescriptions.Add(new SortDescription(secondary, direction));
@@ -511,7 +511,7 @@ namespace Walkabout.Controls
             finally
             {
                 sorting = false;
-            }            
+            }
         }
 
         /// <summary>
@@ -566,7 +566,7 @@ namespace Walkabout.Controls
         {
             base.OnCurrentCellChanged(e);
 
-            if (this.CurrentCell != null && this.CurrentCell.Column != null && this.CurrentCell.Column.Header != null) 
+            if (this.CurrentCell != null && this.CurrentCell.Column != null && this.CurrentCell.Column.Header != null)
             {
                 previousCurrentCell = this.CurrentCell.Column;
             }
@@ -876,7 +876,7 @@ namespace Walkabout.Controls
         {
             FrameworkElement contentPresenter = column.GetCellContent(row.DataContext);
             if (row.IsEditing)
-            {                
+            {
                 List<Control> editors = new List<Control>();
                 WpfHelper.FindEditableControls(contentPresenter, editors);
                 if (editors.Count > columnEditorIndex)
@@ -1060,7 +1060,7 @@ namespace Walkabout.Controls
             return this.scrollViewer;
         }
 
-        public Tuple<int,int> GetVisibleRows()
+        public Tuple<int, int> GetVisibleRows()
         {
             ScrollViewer sv = GetScrollViewer();
             if (sv != null)

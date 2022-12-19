@@ -68,7 +68,7 @@ namespace Walkabout.Views
         }
 
         private async Task InternalGenerate(IReport report)
-        { 
+        {
             this.report = report;
             this.Viewer.Document.Blocks.Clear();
             this.writer = null;
@@ -155,8 +155,8 @@ namespace Walkabout.Views
         public ViewState ViewState
         {
             get { return new ReportViewState(this.report); }
-            set 
-            { 
+            set
+            {
                 if (value is ReportViewState r)
                 {
                     _ = this.Generate(r.report);
@@ -175,7 +175,7 @@ namespace Walkabout.Views
         public string QuickFilter
         {
             get { return quickFilter; }
-            set 
+            set
             {
                 FlowDocumentScrollViewer viewer = this.Viewer;
                 FlowDocument doc = viewer.Document;
@@ -193,7 +193,7 @@ namespace Walkabout.Views
                 {
                     viewer.Selection.Select(textRange.Start, textRange.End);
                     Paragraph p = textRange.Start.Paragraph;
-                    if (p != null) 
+                    if (p != null)
                     {
                         p.BringIntoView();
                         viewer.Focus();
@@ -218,14 +218,14 @@ namespace Walkabout.Views
         }
 
         public bool IsQueryPanelDisplayed { get; set; }
-        #endregion 
-    
+        #endregion
+
         #region Clipboard
         internal void Copy()
         {
             FlowDocumentScrollViewer viewer = this.Viewer;
             TextSelection selection = viewer.Selection;
-            if (!selection.IsEmpty) 
+            if (!selection.IsEmpty)
             {
                 DataObject data = new DataObject();
                 data.SetText(selection.Text);

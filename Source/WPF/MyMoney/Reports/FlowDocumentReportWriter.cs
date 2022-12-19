@@ -38,8 +38,8 @@ namespace Walkabout.Reports
             this.doc = document;
             this.doc.Blocks.Clear();
 
-            this.section = new Section();   
-            doc.Blocks.Add(section); 
+            this.section = new Section();
+            doc.Blocks.Add(section);
         }
 
         public FlowDocument Document { get { return doc; } }
@@ -55,7 +55,7 @@ namespace Walkabout.Reports
             EndCell();
 
             this.section = new Section();
-            doc.Blocks.Add(section); 
+            doc.Blocks.Add(section);
             WriteParagraph(title);
             current.paragraph.Style = doc.Resources["ReportHeadingStyle"] as Style;
         }
@@ -169,11 +169,11 @@ namespace Walkabout.Reports
             else
             {
                 section.Blocks.Add(current.paragraph);
-            }            
+            }
         }
 
         public void StartTable()
-        {            
+        {
             Table table = new Table();
             if (current.table != null)
             {
@@ -195,7 +195,7 @@ namespace Walkabout.Reports
                 // root level
                 this.section = new Section();
                 this.section.Blocks.Add(table);
-                doc.Blocks.Add(section); 
+                doc.Blocks.Add(section);
             }
 
             current.table = table;
@@ -230,7 +230,8 @@ namespace Walkabout.Reports
             {
                 double w = 1;
                 double.TryParse(width.TrimEnd('*'), out w);
-                if (w < 1) {
+                if (w < 1)
+                {
                     w = 1;
                 }
                 tableWidth += 100; // give this column a minimum size at least
@@ -249,8 +250,8 @@ namespace Walkabout.Reports
                     throw new ArgumentException("width should be 'auto', '*', or a valid number", "width");
                 }
             }
-            var ext =  new ColumnWidthExtensions() { MinWidth = minWidth, MaxWidth = maxWidth };
-            current.table.Columns.Add(new TableColumn() { Width = gridLength, Tag = ext } );
+            var ext = new ColumnWidthExtensions() { MinWidth = minWidth, MaxWidth = maxWidth };
+            current.table.Columns.Add(new TableColumn() { Width = gridLength, Tag = ext });
         }
 
         public void EndColumnDefinitions()
@@ -335,7 +336,7 @@ namespace Walkabout.Reports
         }
 
         public bool CanExpandCollapse { get { return this.expandableRowGroups.Count > 0; } }
-        
+
         public void ExpandAll()
         {
             foreach (ToggleButton button in this.expandableRowGroups)
@@ -358,7 +359,7 @@ namespace Walkabout.Reports
             {
                 StartTable();
             }
-            if (current.group == null) 
+            if (current.group == null)
             {
                 current.group = new TableRowGroup();
                 current.table.RowGroups.Add(current.group);
@@ -378,7 +379,7 @@ namespace Walkabout.Reports
                         EndCell();
                     }
                 }
-                else 
+                else
                 {
                     // no expander on these guys.
                     groupedRows.Add(current.row);
@@ -514,7 +515,7 @@ namespace Walkabout.Reports
                 }
                 j++;
             }
-            
+
         }
 
     }

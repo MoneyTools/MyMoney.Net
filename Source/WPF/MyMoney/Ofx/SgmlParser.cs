@@ -421,7 +421,7 @@ namespace Walkabout.Sgml
         static int[] CtrlMap = new int[] {
             // This is the windows-1252 mapping of the code points 0x80 through 0x9f.
             8364, 129, 8218, 402, 8222, 8230, 8224, 8225, 710, 8240, 352, 8249, 338, 141,
-            381, 143, 144, 8216, 8217, 8220, 8221, 8226, 8211, 8212, 732, 8482, 353, 8250, 
+            381, 143, 144, 8216, 8217, 8220, 8221, 8226, 8211, 8212, 732, 8482, 353, 8250,
             339, 157, 382, 376
         };
 
@@ -736,7 +736,7 @@ namespace Walkabout.Sgml
                 if (obj is String)
                 {
                     string s = (string)obj;
-                    if (s == name || (dtd.IgnoreCase && string.Compare(s, name, StringComparison.OrdinalIgnoreCase) == 0)) 
+                    if (s == name || (dtd.IgnoreCase && string.Compare(s, name, StringComparison.OrdinalIgnoreCase) == 0))
                         return true;
                 }
             }

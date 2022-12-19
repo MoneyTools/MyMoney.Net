@@ -20,7 +20,8 @@ namespace Walkabout.Controls
         public event EventHandler Resized;
         public event EventHandler Resizing;
 
-        public Rect Bounds { 
+        public Rect Bounds
+        {
             get { return bounds; }
             set { bounds = value; InvalidateVisual(); }
         }
@@ -82,7 +83,7 @@ namespace Walkabout.Controls
 
         private void SizeToBounds()
         {
-            Canvas.SetLeft(this, limit.Left );
+            Canvas.SetLeft(this, limit.Left);
             Canvas.SetTop(this, limit.Top);
             Size size = limit.Size;
             this.Width = size.Width;
@@ -128,7 +129,7 @@ namespace Walkabout.Controls
             Rect resizerBounds = bounds;
             resizerBounds.Offset(-limit.Left, -limit.Top);
 
-            CombinedGeometry mask = new CombinedGeometry(GeometryCombineMode.Exclude, new RectangleGeometry(imageBounds), new RectangleGeometry(resizerBounds));            
+            CombinedGeometry mask = new CombinedGeometry(GeometryCombineMode.Exclude, new RectangleGeometry(imageBounds), new RectangleGeometry(resizerBounds));
             drawingContext.DrawGeometry(SmokyGlassBrush, null, mask);
 
             Pen pen = new Pen(borderBrush, 1);
@@ -141,7 +142,7 @@ namespace Walkabout.Controls
 
             Rect box = resizerBounds;
             drawingContext.DrawRectangle(null, pen, box);
-            
+
             drawingContext.DrawRectangle(thumbBrush, null, TopLeftThumb);
             drawingContext.DrawRectangle(thumbBrush, null, TopMiddleThumb);
             drawingContext.DrawRectangle(thumbBrush, null, TopRightThumb);
@@ -212,7 +213,7 @@ namespace Walkabout.Controls
             }
 
             initialBounds = bounds;
-            
+
             e.Handled = true;
             mouseDownPosition = pos;
             System.Windows.Input.Mouse.Capture(this);
@@ -248,7 +249,7 @@ namespace Walkabout.Controls
 
         protected override void OnLostMouseCapture(System.Windows.Input.MouseEventArgs e)
         {
-            base.OnLostMouseCapture(e); 
+            base.OnLostMouseCapture(e);
             dragging = Corner.None;
             if (IsEnabled && Resized != null)
             {
@@ -371,7 +372,8 @@ namespace Walkabout.Controls
 
         public Rect TopLeftThumb
         {
-            get { 
+            get
+            {
                 Rect result = new Rect(bounds.Left - thumbSize, bounds.Top - thumbSize, thumbSize, thumbSize);
                 result.Offset(-limit.Left, -limit.Top);
                 return result;

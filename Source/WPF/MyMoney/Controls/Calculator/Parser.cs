@@ -120,7 +120,7 @@ namespace Walkabout.Controls
                                     goto default;
                                 }
                                 break;
-                            case Token.EOF: 
+                            case Token.EOF:
                                 ReduceBinaryOperator(Token.EOF); // reduce binary operator based on precedence.  
                                 if (openParens > 0)
                                 {
@@ -170,7 +170,7 @@ namespace Walkabout.Controls
                         }
                         break;
                 }
-            } 
+            }
             throw new Exception("Internal error, EOF should have returned from state 1 or thrown unexpected token errors in all other states");
         }
 
@@ -425,5 +425,5 @@ namespace Walkabout.Controls
         }
 
     }
-        
+
 }

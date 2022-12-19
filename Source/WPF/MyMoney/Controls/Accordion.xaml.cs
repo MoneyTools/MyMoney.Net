@@ -167,7 +167,7 @@ namespace Walkabout.Controls
             // Now set the content of the expander
             //
             expanderToAdd.Content = content as UIElement;
-            
+
             expanderToAdd.Expanded += new RoutedEventHandler(OnExpanderExpanded);
             expanderToAdd.Collapsed += new RoutedEventHandler(OnExpanderCollapsed);
             expanderToAdd.SizeChanged += new SizeChangedEventHandler(OnExpanderToAdd_SizeChanged);

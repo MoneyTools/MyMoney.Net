@@ -187,7 +187,7 @@ namespace Walkabout.Data
     {
         public DateTime Date { get; set; }
         public Security Security { get; set; }
-        public SecurityType Type { get ;set; }
+        public SecurityType Type { get; set; }
         public IList<SecurityPurchase> Purchases { get; set; }
         public TaxStatus TaxStatus { get; set; }
         public Predicate<Account> Filter { get; internal set; }
@@ -349,7 +349,7 @@ namespace Walkabout.Data
         public IEnumerable<SecurityPurchase> GetHoldings()
         {
             List<SecurityPurchase> result = new List<SecurityPurchase>();
-            foreach (SecurityFifoQueue queue in queues.Values) 
+            foreach (SecurityFifoQueue queue in queues.Values)
             {
                 foreach (SecurityPurchase p in queue.GetHoldings())
                 {
@@ -368,7 +368,7 @@ namespace Walkabout.Data
             List<SecurityPurchase> result = new List<SecurityPurchase>();
             SecurityFifoQueue queue = null;
             if (queues.TryGetValue(security, out queue))
-            {                
+            {
                 foreach (SecurityPurchase p in queue.GetHoldings())
                 {
                     result.Add(p);
@@ -436,11 +436,11 @@ namespace Walkabout.Data
             }
             return new SecuritySale[0];
         }
-    
+
         internal IEnumerable<SecuritySale> GetPendingSales()
         {
             List<SecuritySale> result = new List<SecuritySale>();
-            foreach (var queue in this.queues.Values) 
+            foreach (var queue in this.queues.Values)
             {
                 foreach (SecuritySale sale in queue.GetPendingSales())
                 {
@@ -535,7 +535,7 @@ namespace Walkabout.Data
                         {
                             group = new SecurityGroup() { Date = this.toDate, Security = sp.Security, Type = type, Purchases = new List<SecurityPurchase>() };
                             result[type] = group;
-                        } 
+                        }
                         else if (group.Security != sp.Security)
                         {
                             group.Security = null; // is a multisecurity group.
@@ -590,7 +590,8 @@ namespace Walkabout.Data
                 List<Investment> list = pair.Value;
 
                 List<StockSplit> splits = new List<StockSplit>(this.myMoney.StockSplits.GetStockSplitsForSecurity(s));
-                splits.Sort(new Comparison<StockSplit>((a,b) => {
+                splits.Sort(new Comparison<StockSplit>((a, b) =>
+                {
                     return DateTime.Compare(a.Date, b.Date); // ascending
                 }));
 
@@ -619,7 +620,7 @@ namespace Walkabout.Data
                     else if ((i.Type == InvestmentType.Remove || i.Type == InvestmentType.Sell) && i.Units > 0)
                     {
                         if (i.Transaction.Transfer == null)
-                        {                            
+                        {
                             foreach (SecuritySale sale in holdings.Sell(i.Security, i.Date, i.Units, i.OriginalCostBasis))
                             {
                                 sales.Add(sale);
@@ -655,7 +656,7 @@ namespace Walkabout.Data
                                     }
                                 }
                             }
-                        } 
+                        }
                     }
                 }
 
@@ -713,7 +714,7 @@ namespace Walkabout.Data
                         {
                             purchase.UnitsRemaining = Math.Round(purchase.UnitsRemaining * adjustment, 5);
                         }
-                    }                   
+                    }
                 }
             }
         }

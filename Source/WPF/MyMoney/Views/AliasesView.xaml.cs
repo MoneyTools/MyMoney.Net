@@ -43,7 +43,7 @@ namespace Walkabout.Views
             delayedActions.StartDelayedAction("FindConflicts", FindConflicts, TimeSpan.FromMilliseconds(30));
         }
 
-        void FindConflicts() 
+        void FindConflicts()
         {
             if (rowEdit != null)
             {
@@ -68,7 +68,7 @@ namespace Walkabout.Views
                 {
                     // catch up now that we need to be visible.
                     ShowAliases();
-                }               
+                }
             }
         }
 
@@ -150,7 +150,7 @@ namespace Walkabout.Views
             MyMoney money;
 
             public AliasCollection(MyMoney money, string filter)
-                :base(money.Aliases.GetAliases(true), filter)
+                : base(money.Aliases.GetAliases(true), filter)
             {
                 this.money = money;
             }
@@ -248,7 +248,7 @@ namespace Walkabout.Views
                 delayedActions.StartDelayedAction("RefreshList", RefreshList, TimeSpan.FromMilliseconds(50));
             }
         }
-        
+
         void RefreshList()
         {
             if (payeesDirty)

@@ -121,7 +121,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                         if (e.Timestamp > end)
                         {
                             end = e.Timestamp;
-                        }                        
+                        }
                         data.Add(new BeginEndEvent() { Begin = s, End = e });
                     }
                 }
@@ -147,7 +147,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             else
             {
                 if (data == null || data.Count == 0) return new Size(0, 0);
-                
+
                 double ticksPerLabel = (zoom * frequency);
                 double scale = pixelsPerLabel / ticksPerLabel;
 
@@ -206,7 +206,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         }
 
         List<Color> colors = new List<Color>(new Color[] {
-            Colors.Green, 
+            Colors.Green,
             Colors.Blue,
             Colors.Red,
             Colors.Navy,
@@ -254,7 +254,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         protected override void OnRender(DrawingContext drawingContext)
         {
             drawingContext.DrawRectangle(Brushes.White, null, new Rect(new Point(0, 0), this.RenderSize));
-            
+
             gesture.HidePopup();
             if (data == null || data.Count == 0) return;
 

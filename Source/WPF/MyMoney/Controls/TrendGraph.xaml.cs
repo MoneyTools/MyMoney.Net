@@ -189,7 +189,8 @@ namespace Walkabout.Views.Controls
 
         public object SelectedItem
         {
-            get {
+            get
+            {
                 ChartDataValue v = this.Chart.Selected;
                 return v != null ? v.UserData : null;
             }
@@ -321,11 +322,11 @@ namespace Walkabout.Views.Controls
         IGraphGenerator generator;
         List<TrendValue> data = null;
         ChartData chartData;
-        
+
         public void GenerateGraph()
         {
             chartData = new ChartData();
-            
+
             TimeSpan span = (end - start);
             int days = span.Days;
 
@@ -401,7 +402,7 @@ namespace Walkabout.Views.Controls
                     return Color.FromRgb((byte)rand.Next(0, 255), (byte)rand.Next(0, 255), (byte)rand.Next(0, 255));
             }
         }
-    
+
         uint ToUint(string s)
         {
             uint v = 0;
@@ -432,7 +433,7 @@ namespace Walkabout.Views.Controls
                 cat.Name = start.ToShortDateString();
             }
 
-            TrendGraphSeries s = new TrendGraphSeries(cat.Name);            
+            TrendGraphSeries s = new TrendGraphSeries(cat.Name);
             chartData.AddSeries(s);
 
             s.Flipped = generator.IsFlipped;
@@ -463,18 +464,18 @@ namespace Walkabout.Views.Controls
                     }
                     last = v.Date;
                 }
-                lastv = v;            
+                lastv = v;
             }
 
             // Put the last item on the graph
             AddDatum(lastv, last, end.AddDays(1), timeData);
-            
+
             //s.Accumulate = false;
             //s.Color = color;
             s.Category = cat;
             s.Start = start;
             s.End = end;
-            
+
             return s;
         }
 
@@ -515,7 +516,7 @@ namespace Walkabout.Views.Controls
                 this.start = this.end;
                 this.end = Step(this.start, this.range, 1, 1);
             }
-            this.showAll = false; 
+            this.showAll = false;
             Pin();
             GenerateGraph();
         }

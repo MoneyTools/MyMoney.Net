@@ -79,7 +79,7 @@ namespace Walkabout.Utilities
         }
     }
 
-    public class EventHandlerCollection<Q> : EventHandlerCollection<EventHandler<Q>, Q> 
+    public class EventHandlerCollection<Q> : EventHandlerCollection<EventHandler<Q>, Q>
         where Q : EventArgs
     {
     }

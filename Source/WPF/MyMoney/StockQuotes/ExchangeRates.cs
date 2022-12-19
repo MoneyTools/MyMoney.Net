@@ -92,14 +92,14 @@ namespace Walkabout.StockQuotes
                 decimal d = GetExchangeRate(code, CurrencyCode.USD);
                 if (d != 0)
                 {
-                    Walkabout.Data.Currency found = myMoney.Currencies.FindCurrency(code.ToString());                   
+                    Walkabout.Data.Currency found = myMoney.Currencies.FindCurrency(code.ToString());
                     if (found == null)
                     {
                         found = new Data.Currency();
                         found.Symbol = code.ToString();
                         myMoney.Currencies.AddCurrency(found);
                     }
-                    
+
                     found.Ratio = d;
                 }
             }

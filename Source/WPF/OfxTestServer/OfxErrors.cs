@@ -55,7 +55,7 @@ namespace OfxTestServer
         ModelAlreadyCanceled = 10509, //  The server has already canceled the specified recurring model.
         InvalidPayeeID = 10510, //  The specified payee ID does not exist or no longer exists.
         InvalidPayeeCity = 10511, //  The specified city is incorrect or unknown.
-        InvalidPayeeState = 10512 , //  The specified state is incorrect or unknown.
+        InvalidPayeeState = 10512, //  The specified state is incorrect or unknown.
         InvalidPayeePostalCode = 10513, //  The specified postal code is incorrect or unknown.
         TransactionAlreadyProcessed = 10514, //  Transaction has already been sent or date due is past
         PayeeNotModifiableByClient = 10515, //  The server does not allow clients to change payee information.

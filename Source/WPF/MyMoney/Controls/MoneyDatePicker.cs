@@ -102,7 +102,7 @@ namespace Walkabout.Controls
                 {
                     month = 12;
                 }
-                
+
                 // reset for new month
                 maxDayOfMonth = DateTime.DaysInMonth(dt.Year, month);
 
@@ -174,7 +174,7 @@ namespace Walkabout.Controls
         }
 
         private void OnTextBoxKeyDown(object sender, KeyEventArgs e)
-        {            
+        {
             if (e.Key == Key.Enter)
             {
                 // The DatePicker set this as handled, which breaks the DataGrid commit model.

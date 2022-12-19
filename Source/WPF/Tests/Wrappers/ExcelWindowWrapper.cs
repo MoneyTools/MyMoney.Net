@@ -10,7 +10,7 @@ using System.IO;
 namespace Walkabout.Tests.Wrappers
 {
     class ExcelWindowWrapper : DialogWrapper
-    {        
+    {
         private ExcelWindowWrapper(AutomationElement e) : base(e)
         {
         }

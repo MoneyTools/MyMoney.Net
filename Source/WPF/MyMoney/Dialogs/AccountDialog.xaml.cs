@@ -70,7 +70,8 @@ namespace Walkabout.Dialogs
                 comboBoxAccountAliases.SelectedIndex = 0;
             }
 
-            foreach (var field in typeof(TaxStatus).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)) {
+            foreach (var field in typeof(TaxStatus).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))
+            {
                 var value = (TaxStatus)field.GetValue(null);
                 ComboBoxTaxStatus.Items.Add(value);
             }
@@ -152,7 +153,7 @@ namespace Walkabout.Dialogs
                 return;
             }
 
-            Currency c = this.money.Currencies.FindCurrency(current);            
+            Currency c = this.money.Currencies.FindCurrency(current);
             if (c != null && c.Symbol != "USD" && c.Ratio != 0)
             {
                 TextRate.Text = string.Format("$US {0:N2}", c.Ratio);
@@ -231,7 +232,7 @@ namespace Walkabout.Dialogs
             return null;
         }
 
-      
+
 
 
 
@@ -310,7 +311,7 @@ namespace Walkabout.Dialogs
                 }
                 else if (string.IsNullOrEmpty(name))
                 {
-                    this.editingAccount.OnlineAccount = null; 
+                    this.editingAccount.OnlineAccount = null;
                 }
                 else
                 {
@@ -346,9 +347,9 @@ namespace Walkabout.Dialogs
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
                         HandleOk(retries - 1);
-                    }), System.Windows.Threading.DispatcherPriority.Background);                   
+                    }), System.Windows.Threading.DispatcherPriority.Background);
                 }
-                return;                 
+                return;
             }
             if (theAccount == null)
             {
@@ -478,7 +479,7 @@ namespace Walkabout.Dialogs
                     {
                         a = new AccountAlias() { AliasType = AliasType.None, Pattern = text, AccountId = theAccount.AccountId };
                         money.AccountAliases.AddAlias(a);
-                        comboBoxAccountAliases.Items.Add(a);                        
+                        comboBoxAccountAliases.Items.Add(a);
                     }
                     else if (a.AccountId != theAccount.AccountId)
                     {

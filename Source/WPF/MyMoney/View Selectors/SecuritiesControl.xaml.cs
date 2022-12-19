@@ -19,8 +19,8 @@ namespace Walkabout.Views.Controls
     {
         #region COMMANDS
         public readonly static RoutedUICommand CommandDeletePayee = new RoutedUICommand("Delete", "CommandDeletePayee", typeof(SecuritiesControl));
-        
-        #endregion 
+
+        #endregion
 
         #region PROPERTIES
 
@@ -83,7 +83,7 @@ namespace Walkabout.Views.Controls
                 this.MouseUp += new MouseButtonEventHandler(OnMouseUp);
                 this.listbox1.SelectionChanged += new SelectionChangedEventHandler(OnSelectionChanged);
                 this.dragDropSupport = new DragAndDrop(listbox1, this.dragDropformatNameForSecurity, OnDragSource, OnDropTarget, OnDropSourceOnTarget, false);
-                this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnIsVisibleChanged); 
+                this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnIsVisibleChanged);
                 this.Unloaded += (s, e) =>
                 {
                     this.dragDropSupport.Disconnect();

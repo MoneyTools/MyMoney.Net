@@ -87,7 +87,7 @@ namespace Walkabout.Dialogs
 
         private void OnPropertyChanged(string name)
         {
-            if (PropertyChanged != null) 
+            if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
             }
@@ -138,7 +138,7 @@ namespace Walkabout.Dialogs
             foreach (OnlineAccount other in money.OnlineAccounts.GetOnlineAccounts())
             {
                 string v = other.OfxVersion;
-                InsertVersion(other.OfxVersion);                
+                InsertVersion(other.OfxVersion);
             }
 
             OfxVersions.ItemsSource = versions;
@@ -286,10 +286,11 @@ namespace Walkabout.Dialogs
                     OfxInstitutionInfo p = FindProvider(other.Name);
                     if (p == null)
                     {
-                        p = new OfxInstitutionInfo() { 
+                        p = new OfxInstitutionInfo()
+                        {
                             Name = other.Name,
                             BankId = other.BankId,
-                            BrokerId = other.BrokerId,                            
+                            BrokerId = other.BrokerId,
                             Fid = other.FID,
                             OfxVersion = other.OfxVersion,
                             Org = other.Institution,
@@ -355,7 +356,7 @@ namespace Walkabout.Dialogs
         }
 
         private void ComboBoxName_KeyUp(object sender, KeyEventArgs e)
-        {            
+        {
             if (editor == null)
             {
                 editor = this.ComboBoxName.Template.FindName("PART_EditableTextBox", this.ComboBoxName) as TextBox;
@@ -371,7 +372,7 @@ namespace Walkabout.Dialogs
         void OnProcessQueue(object sender, EventArgs e)
         {
             OfxInstitutionInfo info = null;
-            
+
             // drain the queue and only fetch the most recent request.
             while (true)
             {
@@ -408,7 +409,7 @@ namespace Walkabout.Dialogs
                 {
                     Enqueue(selected);
                 }
-                UpdateInstitutionInfo(selected);                
+                UpdateInstitutionInfo(selected);
             }
             Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -496,7 +497,7 @@ namespace Walkabout.Dialogs
                         }
                         else
                         {
-                            view.Filter = new Predicate<object>((item) => 
+                            view.Filter = new Predicate<object>((item) =>
                             {
                                 OfxInstitutionInfo p = (OfxInstitutionInfo)item;
                                 return p.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
@@ -535,7 +536,7 @@ namespace Walkabout.Dialogs
             {
                 UiDispatcher.BeginInvoke(new Action(() =>
                 {
-                    UpdateInstitutionInfo(ps);                    
+                    UpdateInstitutionInfo(ps);
                 }));
             }
 
@@ -576,7 +577,7 @@ namespace Walkabout.Dialogs
                 editing.FID = ps.Fid;
                 editing.Institution = ps.Org;
                 editing.Name = ps.Name;
-                
+
                 OnlineAccount oa = ps.OnlineAccount;
                 if (oa != null)
                 {
@@ -727,14 +728,15 @@ namespace Walkabout.Dialogs
         {
             var id = new object();
             this.pendingSignon = id;
-                  
+
             try
             {
                 var info = OfxRequest.GetSignonInfo(this.money, this.editing);
 
                 if (info.AuthTokenRequired.ConvertYesNoToBoolean() && string.IsNullOrEmpty(this.editing.AuthToken))
                 {
-                    bool result = (bool)Dispatcher.Invoke(new Func<bool>(() => {
+                    bool result = (bool)Dispatcher.Invoke(new Func<bool>(() =>
+                    {
                         return PromptForAuthToken(info, OfxErrorCode.AUTHTOKENRequired);
                     }));
 
@@ -743,8 +745,8 @@ namespace Walkabout.Dialogs
                         // user cancelled.
                         return;
                     }
-                }                
-                
+                }
+
                 if (info.MFAChallengeRequired.ConvertYesNoToBoolean())
                 {
                     challenge = new OfxMfaChallengeRequest(this.editing, this.money);
@@ -761,12 +763,13 @@ namespace Walkabout.Dialogs
                 if (this.pendingSignon == id)
                 {
                     this.pendingSignon = null;
-                       Dispatcher.Invoke(new Action(() =>
-                    {
-                        HandleSignOnErrors(ex, new Action(() => {
-                            Task.Run(StartSignup);
-                        }));
-                    }));
+                    Dispatcher.Invoke(new Action(() =>
+                 {
+                     HandleSignOnErrors(ex, new Action(() =>
+                     {
+                         Task.Run(StartSignup);
+                     }));
+                 }));
                 }
             }
             catch (Exception ex)
@@ -791,7 +794,7 @@ namespace Walkabout.Dialogs
                 // back to background thread.
                 Task.Run(Signup);
             }
-         
+
         }
 
         private bool PromptForAuthToken(OfxSignOnInfo info, OfxErrorCode code)
@@ -804,7 +807,7 @@ namespace Walkabout.Dialogs
 
             if (dialog.ShowDialog() == true)
             {
-                this.editing.AuthToken = dialog.AuthorizationToken;                
+                this.editing.AuthToken = dialog.AuthorizationToken;
                 return true;
             }
             else
@@ -818,7 +821,7 @@ namespace Walkabout.Dialogs
 
         private void Signup()
         {
-            OfxRequest req = new OfxRequest( this.editing, this.money, AccountHelper.PickAccount);
+            OfxRequest req = new OfxRequest(this.editing, this.money, AccountHelper.PickAccount);
             this.signupRequest = req;
             string logpath;
             OFX ofx = req.Signup(this.editing, out logpath);
@@ -836,7 +839,7 @@ namespace Walkabout.Dialogs
 
         OfxErrorCode GetSignOnCode(OFX ofx)
         {
-            if (ofx != null) 
+            if (ofx != null)
             {
                 var signOnResponseMsg = ofx.SignOnMessageResponse;
                 if (signOnResponseMsg != null)
@@ -852,7 +855,7 @@ namespace Walkabout.Dialogs
                     }
                 }
             }
-            return OfxErrorCode.None; 
+            return OfxErrorCode.None;
         }
 
         private void HandleUnexpectedError(Exception ex)
@@ -875,11 +878,11 @@ namespace Walkabout.Dialogs
                 {
                     msg = oe.Response;
                 }
-                
-                if (oe.HelpLink != null) 
+
+                if (oe.HelpLink != null)
                 {
                     errorLink = InternetExplorer.GetOpenFileHyperlink("XML Log File", oe.HelpLink);
-                }                    
+                }
             }
             if (msg.Contains("<HTML>"))
             {
@@ -922,7 +925,7 @@ namespace Walkabout.Dialogs
                     challenge = new OfxMfaChallengeRequest(this.editing, this.money);
                     challenge.UserData = continuation;
                     challenge.Completed += OnChallengeCompleted;
-                    challenge.BeginMFAChallenge();                    
+                    challenge.BeginMFAChallenge();
                     return;
                 }
                 else if (code == OfxErrorCode.MustChangeUSERPASS)
@@ -1021,7 +1024,7 @@ namespace Walkabout.Dialogs
             var info = OfxRequest.GetSignonInfo(this.money, this.editing);
 
             ChangePasswordDialog dialog = new ChangePasswordDialog(info, this.editing, this.money);
-            dialog.Owner = this;            
+            dialog.Owner = this;
 
             if (dialog.ShowDialog() == true)
             {
@@ -1043,7 +1046,7 @@ namespace Walkabout.Dialogs
 
         private void ShowError(string code, string message, Hyperlink link = null)
         {
-            AccountListPanel.Visibility = Visibility.Visible;            
+            AccountListPanel.Visibility = Visibility.Visible;
             SignupResultPrompt.Text = code;
             SignupResultPrompt.Foreground = Brushes.Red;
             OnlineResultList.Visibility = System.Windows.Visibility.Collapsed;
@@ -1166,7 +1169,7 @@ namespace Walkabout.Dialogs
             GridView view = (GridView)OnlineResultList.View;
             foreach (GridViewColumn c in view.Columns)
             {
-                c.Width = 0;              
+                c.Width = 0;
             }
 
             OnlineResultList.InvalidateMeasure();
@@ -1229,7 +1232,7 @@ namespace Walkabout.Dialogs
                     id = from.AccountId;
                 }
             }
-            else if (ar.InvAccountInfo != null )
+            else if (ar.InvAccountInfo != null)
             {
                 type = AccountType.Brokerage;
                 var from = ar.InvAccountInfo.InvAccountFrom;
@@ -1257,7 +1260,7 @@ namespace Walkabout.Dialogs
             {
                 if (a.AccountId == id || a.OfxAccountId == id)
                 {
-                    if (a.OnlineAccount != null )
+                    if (a.OnlineAccount != null)
                     {
                         if (a.OnlineAccount.Name != this.editing.Name)
                         {
@@ -1290,7 +1293,7 @@ namespace Walkabout.Dialogs
                 found = new Account();
                 found.Name = ar.Description;
                 found.AccountId = id;
-                found.Type = type;                
+                found.Type = type;
                 found.WebSite = this.account != null ? this.account.WebSite : null;
                 if (string.IsNullOrEmpty(found.WebSite) && this.profile != null)
                 {
@@ -1312,7 +1315,7 @@ namespace Walkabout.Dialogs
 
         private void OnIconButtonClick(object sender, RoutedEventArgs args)
         {
-            FrameworkElement e = (FrameworkElement)sender;            
+            FrameworkElement e = (FrameworkElement)sender;
             AccountListItem item = e.DataContext as AccountListItem;
             if (item != null)
             {
@@ -1339,7 +1342,8 @@ namespace Walkabout.Dialogs
                         item.IsNew = false;
                         item.IsDisconnected = false;
                         e.ToolTip = "Click here to undo the last account add operation";
-                    } else
+                    }
+                    else
                     {
                         // user cancelled
                     }
@@ -1350,7 +1354,7 @@ namespace Walkabout.Dialogs
                     item.UserAdded = false;
                     item.IsNew = true;
                     item.IsDisconnected = true;
-                    e.ToolTip = GetResolveButtonCaption(); 
+                    e.ToolTip = GetResolveButtonCaption();
                 }
                 else if (item.IsDisconnected)
                 {
@@ -1394,13 +1398,13 @@ namespace Walkabout.Dialogs
             {
                 // copy the name back from combo box in case the user has edited it.
                 editing.Name = ComboBoxName.Text;
-                
+
                 if (string.IsNullOrWhiteSpace(editing.OfxVersion))
                 {
                     editing.OfxVersion = "1.0";
                 }
 
-                AccountListPanel.Visibility = Visibility.Collapsed;                
+                AccountListPanel.Visibility = Visibility.Collapsed;
                 SignupResultPrompt.Text = "Connecting to your financial institution...";
                 SignupResultPrompt.SetValue(TextBlock.ForegroundProperty, DependencyProperty.UnsetValue);
                 OnlineResultList.Visibility = System.Windows.Visibility.Collapsed;
@@ -1410,14 +1414,14 @@ namespace Walkabout.Dialogs
                 HideRightHandPanels();
 
                 Task.Run(StartVerify);
-            }  
+            }
         }
 
         /// <summary>
         /// Background thread to connect to bank and verify OFX support
         /// </summary>
         void StartVerify()
-        {            
+        {
             if (this.pendingVerify != null)
             {
                 // hmmm, what does this mean?
@@ -1425,7 +1429,7 @@ namespace Walkabout.Dialogs
             }
             string fetchingName = this.editing.Name;
 
-            OfxRequest req = new OfxRequest( this.editing, this.money, AccountHelper.PickAccount);
+            OfxRequest req = new OfxRequest(this.editing, this.money, AccountHelper.PickAccount);
             this.pendingVerify = req;
 
             string cachePath;
@@ -1487,7 +1491,7 @@ namespace Walkabout.Dialogs
         }
 
         private void OnHtmlResponse(string html)
-        {            
+        {
             ShowHtmlError("Connect Error", html);
         }
 
@@ -1512,19 +1516,19 @@ namespace Walkabout.Dialogs
                     Paragraph p = new Paragraph();
                     prompt.Add(p);
 
-                    p.Inlines.Add( new Run("We received the following information from " + this.editing.Name + ". "));
-                    p.Inlines.Add( new Run("Please check this is who you think it is then enter your login information below:"));
+                    p.Inlines.Add(new Run("We received the following information from " + this.editing.Name + ". "));
+                    p.Inlines.Add(new Run("Please check this is who you think it is then enter your login information below:"));
 
                     p = GetAddressParagraph(response);
                     p.FontWeight = FontWeights.Bold;
 
-                    Table t = new Table();                    
+                    Table t = new Table();
                     t.Margin = new Thickness(20, 0, 0, 0);
                     t.Columns.Add(new TableColumn() { Width = GridLength.Auto });
                     t.Columns.Add(new TableColumn() { Width = GridLength.Auto });
                     var rg = new TableRowGroup();
                     t.RowGroups.Add(rg);
-                    TableRow row = new TableRow();                    
+                    TableRow row = new TableRow();
                     rg.Rows.Add(row);
                     TableCell address = new TableCell(p);
                     row.Cells.Add(address);
@@ -1533,7 +1537,7 @@ namespace Walkabout.Dialogs
 
                     string logo = this.editing.LogoUrl;
                     if (!string.IsNullOrEmpty(logo))
-                    {                    
+                    {
                         Image img = new Image();
                         img.Margin = new Thickness(5);
                         img.Height = 80;
@@ -1629,7 +1633,7 @@ namespace Walkabout.Dialogs
             if (!string.IsNullOrEmpty(error))
             {
                 error = "Did not get the expected response from your financial instutition.  " + error;
-                
+
                 OnGotProfile(error);
 
                 error += "\n\nIf you are need help please email the following file to chris@lovettsoftware.com: ";
@@ -1687,7 +1691,7 @@ namespace Walkabout.Dialogs
         private static Paragraph GetAddressParagraph(ProfileResponse response)
         {
             var p = new Paragraph();
-                    
+
             p.Inlines.Add(new Run(response.FinancialInstitutionName));
             p.Inlines.Add(new LineBreak());
 
@@ -1734,7 +1738,7 @@ namespace Walkabout.Dialogs
         private void SignOn()
         {
             if (this.editing != null)
-            {                
+            {
                 AccountListPanel.Visibility = Visibility.Visible;
                 SignupResultPrompt.Text = "Signing on to online banking server...";
                 SignupResultPrompt.SetValue(TextBlock.ForegroundProperty, DependencyProperty.UnsetValue);

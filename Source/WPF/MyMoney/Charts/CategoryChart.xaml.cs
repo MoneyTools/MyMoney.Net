@@ -116,10 +116,10 @@ namespace Walkabout.Charts
         // the type of category this chart instance is summarizing.
         public CategoryType CategoryType { get; set; }
 
-        public Category CategoryFilter 
-        { 
+        public Category CategoryFilter
+        {
             get { return this.filter; }
-            set { this.filter = value; }        
+            set { this.filter = value; }
         }
 
         public IList<Transaction> Transactions
@@ -334,7 +334,7 @@ namespace Walkabout.Charts
                         return false;
                     }
                     break;
-                case CategoryType.Expense: 
+                case CategoryType.Expense:
                     if (c.Type != Data.CategoryType.Expense)
                     {
                         return false;
@@ -361,7 +361,7 @@ namespace Walkabout.Charts
                     return false;
                 }
             }
-            
+
             return true;
         }
 
@@ -388,7 +388,7 @@ namespace Walkabout.Charts
                         return false;
                     }
                     break;
-                case CategoryType.Expense: 
+                case CategoryType.Expense:
                     if (c.Type != Data.CategoryType.Expense)
                     {
                         return false;
@@ -415,7 +415,7 @@ namespace Walkabout.Charts
                     return false;
                 }
             }
-            
+
             CategoryData cd;
             if (!map.TryGetValue(c, out cd))
             {

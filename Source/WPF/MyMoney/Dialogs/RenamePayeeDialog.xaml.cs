@@ -80,7 +80,7 @@ namespace Walkabout.Dialogs
 
         public bool Alias
         {
-            get { return this.checkBoxAuto.IsChecked==true; }
+            get { return this.checkBoxAuto.IsChecked == true; }
             set { this.checkBoxAuto.IsChecked = value; }
         }
 
@@ -158,8 +158,8 @@ namespace Walkabout.Dialogs
             CheckState();
         }
 
-        void CheckState() 
-        { 
+        void CheckState()
+        {
             EnableButtons();
             if (!string.IsNullOrWhiteSpace(this.textBox1.Text))
             {
@@ -265,7 +265,7 @@ namespace Walkabout.Dialogs
                 }
 
                 // Now see if we have any matches
-                IEnumerable<PersistentObject> result = this.money.FindAliasMatches(a, transactions);                
+                IEnumerable<PersistentObject> result = this.money.FindAliasMatches(a, transactions);
                 if (!result.Any())
                 {
                     if (MessageBoxResult.Cancel == MessageBoxEx.Show("No matching transactions found (that don't already have the target Payee), do you want to save it anyway?", "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning))
@@ -291,7 +291,8 @@ namespace Walkabout.Dialogs
                     {
                         List<string> sorted = new List<string>(conflicts);
                         bool truncated = false;
-                        if (sorted.Count > 10) {
+                        if (sorted.Count > 10)
+                        {
                             sorted.RemoveRange(10, sorted.Count - 10);
                             truncated = true;
                         }
@@ -302,12 +303,12 @@ namespace Walkabout.Dialogs
                         }
 
                         if (MessageBoxResult.Cancel == MessageBoxEx.Show("There are subsumed Aliases that map to " + conflicts.Count + " different Payees: [" +
-                            string.Join(", ", sorted) + "].  Are you sure you want to continue with this rename?", 
+                            string.Join(", ", sorted) + "].  Are you sure you want to continue with this rename?",
                             "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning))
                         {
                             this.textBox1.Focus();
                             this.textBox1.SelectAll();
-                            cancelled = true;                                
+                            cancelled = true;
                         }
                     }
 
@@ -338,7 +339,7 @@ namespace Walkabout.Dialogs
                 this.DialogResult = true;
                 this.Close();
             }
-             
+
         }
 
         void OnPayees_Changed(object sender, ChangeEventArgs args)
@@ -359,7 +360,7 @@ namespace Walkabout.Dialogs
         private void CamelCaseButton_Click(object sender, RoutedEventArgs e)
         {
             string text = this.textBox1.Text;
-            this.comboBox1.Text = text.CamelCase();            
+            this.comboBox1.Text = text.CamelCase();
         }
     }
 }

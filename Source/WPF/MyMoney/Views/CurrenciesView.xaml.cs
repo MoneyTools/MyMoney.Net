@@ -243,8 +243,8 @@ namespace Walkabout.Views
                 }
                 else
                 {
-                    return filterToken.MatchSubstring(item.Name) || 
-                        filterToken.MatchSubstring(item.Symbol) || 
+                    return filterToken.MatchSubstring(item.Name) ||
+                        filterToken.MatchSubstring(item.Symbol) ||
                         filterToken.MatchDecimal(item.Ratio) ||
                         filterToken.MatchDecimal(item.LastRatio);
                 }

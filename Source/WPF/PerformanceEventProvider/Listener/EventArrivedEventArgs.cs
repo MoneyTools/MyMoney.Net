@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 {
-    public class EventArrivedEventArgs : EventArgs 
+    public class EventArrivedEventArgs : EventArgs
     {
         internal EventArrivedEventArgs()
         {
@@ -18,13 +18,13 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal EventArrivedEventArgs(Exception exception)
-            : this(Guid.Empty, 0, string.Empty, new PropertyBag()) 
+            : this(Guid.Empty, 0, string.Empty, new PropertyBag())
         {
             this.EventException = exception;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal EventArrivedEventArgs(Guid providerId, uint id, string eventName, PropertyBag properties) 
+        internal EventArrivedEventArgs(Guid providerId, uint id, string eventName, PropertyBag properties)
         {
             this.EventName = eventName;
             this.EventId = id;

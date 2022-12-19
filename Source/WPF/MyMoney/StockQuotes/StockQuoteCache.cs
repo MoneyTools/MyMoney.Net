@@ -98,7 +98,7 @@ namespace Walkabout.StockQuotes
 
             decimal price = 0;
             if (quoteIndex.TryGetValue(s, out StockQuoteIndex index))
-            { 
+            {
                 var quote = index.GetQuote(date);
                 if (quote != null)
                 {
@@ -176,7 +176,7 @@ namespace Walkabout.StockQuotes
         internal class StockQuoteIndex
         {
             Dictionary<DateTime, StockQuote> index = new Dictionary<DateTime, StockQuote>();
-            
+
             public StockQuoteIndex(StockQuoteHistory history)
             {
                 if (history != null)

@@ -93,10 +93,10 @@ namespace Walkabout.Utilities
                 {
                     var item = pair.Value.Values[i];
                     var data = pair.Value.Data[i];
-                    
+
                     // negate the score, so that SortedSet puts the smallest values
                     // (cloest distance) on the top of the list.
-                    decimal score = -Math.Abs(item - value);                        
+                    decimal score = -Math.Abs(item - value);
                     if (!byCategory.TryGetValue(label, out SortedSet<DataScore<T>> s))
                     {
                         byCategory[label] = s = new SortedSet<DataScore<T>>();
@@ -108,14 +108,14 @@ namespace Walkabout.Utilities
             SortedSet<DataScore<T>> combined = new SortedSet<DataScore<T>>();
             foreach (var item in byCategory)
             {
-                foreach(var pick in (from i in item.Value.Take(k) select i))
+                foreach (var pick in (from i in item.Value.Take(k) select i))
                 {
                     combined.Add(pick);
                 }
             }
 
             // now from the combined set take the best 'k' values.
-            return from i in combined.Take(k) select new Tuple<object,T>(i.Data, i.Label);
+            return from i in combined.Take(k) select new Tuple<object, T>(i.Data, i.Label);
         }
 
     }

@@ -88,7 +88,7 @@ namespace Walkabout.Taxes
         /// Calculate the CapitalGains 
         /// </summary>
         private void CalculateCapitalGains(bool ignoreTaxDeferred)
-        {           
+        {
             foreach (SecuritySale sale in this.GetSales())
             {
                 if (ignoreTaxDeferred && sale.Account.IsTaxDeferred)

@@ -13,7 +13,7 @@ namespace Walkabout.Tests.Wrappers
         public TreeViewWrapper(AutomationElement e)
         {
             element = e.FindFirstWithRetries(TreeScope.Subtree, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Tree));
-            if (element == null) 
+            if (element == null)
             {
                 throw new Exception("No tree control found in this scope");
             }
@@ -48,7 +48,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                AutomationElementCollection result = element.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TreeItem));                 
+                AutomationElementCollection result = element.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TreeItem));
                 List<AutomationElement> list = new List<AutomationElement>();
                 if (result != null)
                 {

@@ -53,7 +53,7 @@ namespace Walkabout.Utilities
             this.calledBackForValidatingSource = validateDragSource;
             this.calledBackForValidatingTarget = validDropTarget;
             this.calledBackFinalDropOperation = finalDragDropOperation;
-            
+
             //-----------------------------------------------------------------
             // Drag Drop gesture hooks applied to the users supplied Framework Control
             this.mainControl.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(OnPreviewMouseLeftButtonDown);
@@ -210,7 +210,7 @@ namespace Walkabout.Utilities
 
                 // Initialize the drag & drop operation
                 DataObject dragData = new DataObject(formatName, objectBeenDragged.DataSource);
-                DragDrop.DoDragDrop(this.mainControl, dragData, DragDropEffects.Move | DragDropEffects.Copy);                
+                DragDrop.DoDragDrop(this.mainControl, dragData, DragDropEffects.Move | DragDropEffects.Copy);
             }
             catch (Exception ex)
             {
@@ -323,7 +323,7 @@ namespace Walkabout.Utilities
                             this.adornerLayer.Add(lastAdornerUsed);
                         }
                     }
-                } 
+                }
                 else
                 {
                     DragDropRemoveAnyAdorner();
@@ -376,10 +376,10 @@ namespace Walkabout.Utilities
             dragdropWindow = new Window();
             object style = this.mainControl.TryFindResource("DragDropWindowStyle");
             dragdropWindow.Style = (Style)style;
-            
+
 
             dragdropWindow.SourceInitialized += new EventHandler(
-                delegate(object sender, EventArgs args)
+                delegate (object sender, EventArgs args)
                 {
                     PresentationSource windowSource = PresentationSource.FromVisual(this.dragdropWindow);
                     IntPtr handle = ((System.Windows.Interop.HwndSource)windowSource).Handle;
@@ -433,8 +433,8 @@ namespace Walkabout.Utilities
             if (this.dragdropWindow != null)
             {
                 Point pos = NativeMethods.GetMousePosition();
-                this.dragdropWindow.Left = pos.X+10; 
-                this.dragdropWindow.Top = pos.Y+10;
+                this.dragdropWindow.Left = pos.X + 10;
+                this.dragdropWindow.Top = pos.Y + 10;
             }
         }
 
@@ -453,7 +453,7 @@ namespace Walkabout.Utilities
 
         #endregion
     }
-    
+
     public delegate DragDropSource OnIsDragSourceValid(object source);
     public delegate DragDropTarget OnIsValidDropTarget(object source, object target, DragDropEffects dropEfffect);
     public delegate void OnApplyDragDrop(object source, object target, DragDropEffects dropEfffect);

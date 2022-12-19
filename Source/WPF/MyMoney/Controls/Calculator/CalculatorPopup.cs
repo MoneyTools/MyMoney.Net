@@ -21,7 +21,7 @@ namespace Walkabout.Controls
 
         public CalculatorPopup()
         {
-            this.Child = calculator = new CalculatorControl();            
+            this.Child = calculator = new CalculatorControl();
         }
 
         static CalculatorPopup sharedPopup;
@@ -70,7 +70,7 @@ namespace Walkabout.Controls
             }
         }
 
-        void OnKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e) 
+        void OnKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
         {
             if (e.OldFocus == attached)
             {

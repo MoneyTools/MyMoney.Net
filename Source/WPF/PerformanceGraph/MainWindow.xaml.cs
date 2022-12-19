@@ -341,7 +341,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             ulong count = 0;
             foreach (PerformanceEventArrivedEventArgs e in Chart.Data)
             {
-                if (e.EventId == PerformanceData.EndEvent) 
+                if (e.EventId == PerformanceData.EndEvent)
                 {
                     sum += e.Ticks;
                     count++;
@@ -393,21 +393,21 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
                 // Start listening 
                 watcher.Enabled = true;
-                data.PerformanceFrequency = performanceFrequency = watcher.PerformanceFrequency;                
+                data.PerformanceFrequency = performanceFrequency = watcher.PerformanceFrequency;
                 if (WpfEvents.IsChecked)
                 {
                     wpfWatcher.Enabled = true;
                 }
                 measurementWatcher.Enabled = true;
-            } 
-            catch (Win32Exception we) 
-            {               
+            }
+            catch (Win32Exception we)
+            {
                 if (we.NativeErrorCode == 5)
                 {
                     // Access denied
                     bool isAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
                     System.Windows.MessageBox.Show("This app must be able to elevate to administrator permission, please make sure 'performancegraph.exe.manifest' has been deployed correctly",
-                            "Permissions Error", MessageBoxButton.OK, MessageBoxImage.Error);                    
+                            "Permissions Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
@@ -423,7 +423,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             Guid providerId = typeof(PerformanceBlock).GUID;
             watcher = new PerformanceEventTraceWatcher(session);
 
-            watcher.EventArrived += delegate(object sender, EventArrivedEventArgs e)
+            watcher.EventArrived += delegate (object sender, EventArrivedEventArgs e)
             {
                 if (e.EventException != null)
                 {
@@ -447,7 +447,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
             wpfWatcher = new WpfEventTraceWatcher(session);
 
-            wpfWatcher.EventArrived += delegate(object sender, EventArrivedEventArgs e)
+            wpfWatcher.EventArrived += delegate (object sender, EventArrivedEventArgs e)
             {
                 if (e.EventException != null)
                 {
@@ -473,7 +473,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                             Timestamp = we.Timestamp,
                             Category = CategoryId.View,
                             Component = ComponentId.WPF,
-                            MeasurementName = wev.Task                            
+                            MeasurementName = wev.Task
                         });
                         count++;
                         changed = true;
@@ -483,7 +483,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
             measurementWatcher = new MeasurementBlockEventTraceWatcher(session);
 
-            measurementWatcher.EventArrived += delegate(object sender, EventArrivedEventArgs e)
+            measurementWatcher.EventArrived += delegate (object sender, EventArrivedEventArgs e)
             {
                 if (e.EventException != null)
                 {
@@ -579,7 +579,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 wpfWatcher.Enabled = item.IsChecked;
             }
         }
-        
+
 
         private void OnFileSave(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {

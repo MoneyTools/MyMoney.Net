@@ -19,7 +19,7 @@ namespace Walkabout.Dialogs
         private void EnableButtons()
         {
             decimal pay;
-            double inflation;            
+            double inflation;
             if (ButtonOk != null)
             {
                 Message.Text = "";
@@ -34,7 +34,7 @@ namespace Walkabout.Dialogs
                     }
                 }
 
-                ButtonOk.IsEnabled = templateExists && (!string.IsNullOrEmpty(Employer) && decimal.TryParse(TextBoxPaycheck.Text, out pay) && 
+                ButtonOk.IsEnabled = templateExists && (!string.IsNullOrEmpty(Employer) && decimal.TryParse(TextBoxPaycheck.Text, out pay) &&
                     double.TryParse(TextBoxInflation.Text.Replace("%", string.Empty), out inflation));
             }
         }
@@ -46,7 +46,8 @@ namespace Walkabout.Dialogs
 
         public decimal PayCheck
         {
-            get {
+            get
+            {
                 decimal pay = 0;
                 decimal.TryParse(TextBoxPaycheck.Text, out pay);
                 return pay;
@@ -94,7 +95,7 @@ namespace Walkabout.Dialogs
             EnableButtons();
         }
 
-        public string SampleData 
+        public string SampleData
         {
             get { return TextBoxTemplate.Text; }
             set { TextBoxTemplate.Text = value; }

@@ -271,11 +271,11 @@ namespace Walkabout.Utilities
         /// </summary>
         public static void AddStyles(this Style thisStyle, Style style)
         {
-            foreach (SetterBase newSetter in style.Setters) 
+            foreach (SetterBase newSetter in style.Setters)
             {
-                thisStyle.Setters.Add(newSetter); 
+                thisStyle.Setters.Add(newSetter);
             }
-            foreach (TriggerBase newTrigger in style.Triggers) 
+            foreach (TriggerBase newTrigger in style.Triggers)
             {
                 thisStyle.Triggers.Add(newTrigger);
             }

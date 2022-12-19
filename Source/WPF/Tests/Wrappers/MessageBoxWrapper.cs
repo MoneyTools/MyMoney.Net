@@ -9,7 +9,7 @@ using System.Threading;
 namespace Walkabout.Tests.Wrappers
 {
     public class MessageBoxWrapper : DialogWrapper
-    {        
+    {
         internal MessageBoxWrapper(AutomationElement e) : base(e)
         {
         }

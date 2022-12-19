@@ -52,7 +52,7 @@ namespace Walkabout.Dialogs
                 throw new Exception("Please ensure the AttachmentDirectory property is set to existing location");
             }
             Directory = path;
-            
+
             CanvasGrid.PreviewMouseDown += new MouseButtonEventHandler(CanvasGrid_MouseDown);
 
             resizerBrush = (Brush)Resources["ResizerThumbBrush"];
@@ -97,12 +97,14 @@ namespace Walkabout.Dialogs
 
         public bool IsClosed { get { return closed; } }
 
-        public Transaction Transaction { 
+        public Transaction Transaction
+        {
             get => transaction;
-            set {
+            set
+            {
                 transaction = value;
                 actions.StartDelayedAction("Sync", LoadAttachments, TimeSpan.FromMilliseconds(30));
-            } 
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -140,7 +142,7 @@ namespace Walkabout.Dialogs
                         {
                             // load an xamlpackage document.
                             AddItem(new AttachmentDialogDocumentItem(filePath));
-                        }                        
+                        }
                     }
                     catch
                     {
@@ -214,7 +216,7 @@ namespace Walkabout.Dialogs
                     try
                     {
                         device = globalDialog.ShowSelectDevice(DeviceType: WIA.WiaDeviceType.ScannerDeviceType, AlwaysSelectDevice: true);
-                    } 
+                    }
                     catch (Exception ex)
                     {
                         Debug.WriteLine(ex.Message);
@@ -351,7 +353,7 @@ namespace Walkabout.Dialogs
         /// </summary>
         private void AddResizer(AttachmentDialogItem item, Rect cropBounds)
         {
-            if (resizer == null )
+            if (resizer == null)
             {
                 resizer = new Resizer();
                 resizer.BorderBrush = resizer.ThumbBrush = this.resizerBrush;
@@ -370,7 +372,7 @@ namespace Walkabout.Dialogs
             {
                 resizer.LimitBounds = GetScaledBounds(item.ResizeLimit);
                 resizer.Bounds = GetScaledBounds(resizerBounds);
-                resizer.InvalidateArrange();                
+                resizer.InvalidateArrange();
             }
         }
 
@@ -393,7 +395,7 @@ namespace Walkabout.Dialogs
             {
                 this.Adorners.Children.Remove(resizer);
                 resizer = null;
-            } 
+            }
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -475,17 +477,17 @@ namespace Walkabout.Dialogs
 
                         AttachmentDialogImageItem img = item as AttachmentDialogImageItem;
                         if (img != null)
-                        {                            
+                        {
                             if (item == selected && resizer != null)
                             {
                                 // crop it.
                                 Rect bounds = GetUnscaledBounds(resizer.Bounds);
                                 img.Resize(bounds);
-                            }                           
+                            }
                         }
 
                         // in case an item was deleted in the middle, we need to re-index the items.
-                        item.Save(fileName); 
+                        item.Save(fileName);
                         item.FileName = fileName;
                         index++;
                     }
@@ -676,14 +678,14 @@ namespace Walkabout.Dialogs
                         App.Current.MainWindow.Closed -= new EventHandler(OnAppClosed);
                     }
                     App.Current.MainWindow.Activate();
-                    AttachmentDialog.dialog = null;                    
+                    AttachmentDialog.dialog = null;
                 });
                 App.Current.MainWindow.Closed -= new EventHandler(OnAppClosed);
                 App.Current.MainWindow.Closed += new EventHandler(OnAppClosed);
                 App.Current.MainWindow.StateChanged -= new EventHandler(OnAppWindowStateChanged);
                 App.Current.MainWindow.StateChanged += new EventHandler(OnAppWindowStateChanged);
             }
-            
+
             string path = settings.AttachmentDirectory;
             if (string.IsNullOrEmpty(path))
             {
@@ -754,7 +756,7 @@ namespace Walkabout.Dialogs
             FrameworkElement visual = this.selected.CloneContent();
             visual.Margin = new Thickness(PrintMargin);
             visual.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-            visual.Arrange(new Rect(0, 0, w + (2*PrintMargin), h+(2*PrintMargin)));
+            visual.Arrange(new Rect(0, 0, w + (2 * PrintMargin), h + (2 * PrintMargin)));
 
             PrintDialog pd = new PrintDialog();
             // pd.Owner = this; // bugbug, print dialog is missing this?
@@ -789,7 +791,7 @@ namespace Walkabout.Dialogs
     ///  This class wraps an item in the attachment dialog and keeps track of it's file name
     ///  and file type.
     /// </summary>
-    abstract class AttachmentDialogItem : FrameworkElement    
+    abstract class AttachmentDialogItem : FrameworkElement
     {
         /// <summary>
         /// The content being rendered in this item.
@@ -881,7 +883,7 @@ namespace Walkabout.Dialogs
             }
 
             this.image = new Image();
-            this.image.Source = frame;            
+            this.image.Source = frame;
             this.AddVisualChild(image);
         }
 
@@ -971,7 +973,7 @@ namespace Walkabout.Dialogs
             };
         }
 
-        public override string FileExtension 
+        public override string FileExtension
         {
             get { return ".jpg"; }
         }
@@ -983,18 +985,19 @@ namespace Walkabout.Dialogs
 
         protected override Visual GetVisualChild(int index)
         {
-            if (index == 0) {
- 	           return image; 
+            if (index == 0)
+            {
+                return image;
             }
             return null;
         }
 
         protected override int VisualChildrenCount
         {
-	        get 
-	        { 
-		         return 1;
-	        }
+            get
+            {
+                return 1;
+            }
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -1016,7 +1019,7 @@ namespace Walkabout.Dialogs
 
         public override void Resize(Rect bounds)
         {
-            BitmapSource bitmap = (BitmapSource)this.Bitmap;            
+            BitmapSource bitmap = (BitmapSource)this.Bitmap;
 
             double dpiX = bitmap.DpiX / 96;
             double dpiY = bitmap.DpiY / 96;
@@ -1116,7 +1119,7 @@ namespace Walkabout.Dialogs
             richText = new RichTextBox();
             richText.MinWidth = 600;
 
-            using (MemoryStream ms = new MemoryStream()) 
+            using (MemoryStream ms = new MemoryStream())
             {
                 string dataFormat = null;
                 string text = null;

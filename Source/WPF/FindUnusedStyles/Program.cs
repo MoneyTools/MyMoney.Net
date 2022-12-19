@@ -20,13 +20,13 @@ namespace FindUnusedStyles
             Console.WriteLine("Loads all .xaml files and reports any x:Key names that are unreferenced.");
             Console.WriteLine("Optional resource dictionaries can be imported via --import arguments.");
         }
-        
+
         [STAThread]
         static int Main(string[] args)
         {
             List<string> imports = new List<string>();
             string dir = null;
-            for(int i = 0; i < args.Length; i++)
+            for (int i = 0; i < args.Length; i++)
             {
                 var arg = args[i];
                 if (arg == "--import" && i + 1 < args.Length)
@@ -105,7 +105,7 @@ namespace FindUnusedStyles
 
             // Load global resource dictionaries first.
             foreach (var xaml in files)
-            {             
+            {
                 var doc = LoadXaml(xaml);
                 if (doc != null)
                 {
@@ -149,12 +149,12 @@ namespace FindUnusedStyles
 
         private void FindXamlFiles(string dir, List<string> files)
         {
-            foreach(var file in Directory.GetFiles(dir, "*.xaml"))
+            foreach (var file in Directory.GetFiles(dir, "*.xaml"))
             {
                 files.Add(file);
             }
 
-            foreach(var child in Directory.GetDirectories(dir))
+            foreach (var child in Directory.GetDirectories(dir))
             {
                 FindXamlFiles(child, files);
             }
@@ -167,8 +167,8 @@ namespace FindUnusedStyles
         {
             try
             {
-                return XDocument.Load(xaml);                                 
-            } 
+                return XDocument.Load(xaml);
+            }
             catch (Exception ex)
             {
                 WriteError("Error loading {0}: {1}", xaml, ex.Message);
@@ -206,7 +206,7 @@ namespace FindUnusedStyles
             }
             return XName.Get(name);
         }
-        
+
         private XName ParseTargetType(string value, NamespaceScope scope)
         {
             if (value.StartsWith("{"))
@@ -351,7 +351,7 @@ namespace FindUnusedStyles
                 {
                     // If this control template is inside a <Style> then it is not an independently
                     // addressable resource. 
-                } 
+                }
                 else
                 {
                     styles.AddStyle(filePath, key, targetType, root);
@@ -426,7 +426,8 @@ namespace FindUnusedStyles
             }
         }
 
-        private string StripClrPrefix(string s) { 
+        private string StripClrPrefix(string s)
+        {
             if (s.StartsWith(ClrNamespacePrefix))
             {
                 return s.Substring(ClrNamespacePrefix.Length);
@@ -534,7 +535,7 @@ namespace FindUnusedStyles
             // Now we have the "usage" of styles, either something in a UserControl, or a ControlTemplate in a ResourceDictionary.
             foreach (var e in root.Elements())
             {
-                WalkResources(fileName, e, local, styles);                
+                WalkResources(fileName, e, local, styles);
             }
 
             if (localStyles != null)
@@ -623,7 +624,8 @@ namespace FindUnusedStyles
 
         XName QualifyPath(string value, NamespaceScope scope)
         {
-            if (value.StartsWith("(")){
+            if (value.StartsWith("("))
+            {
                 value = value.Trim('(', ')').Trim();
             }
             var pos = value.LastIndexOf('.');
@@ -643,7 +645,7 @@ namespace FindUnusedStyles
             BindingInfo bindingInfo = new BindingInfo();
             value = value.Trim(BindingChars).Trim();
             var parts = value.Split(',');
-            foreach(var part in parts)
+            foreach (var part in parts)
             {
                 string trimmed = part.Trim();
                 if (trimmed.StartsWith("Binding"))
@@ -761,7 +763,8 @@ namespace FindUnusedStyles
                     }
                 }
             }
-            else if (value.StartsWith('{')) {
+            else if (value.StartsWith('{'))
+            {
                 reference = ParseResourceReference(value, local);
             }
             if (reference != null)
@@ -845,7 +848,8 @@ namespace FindUnusedStyles
 
             public string FindPrefix(string prefix)
             {
-                if (this.Namespaces.ContainsKey(prefix)) {
+                if (this.Namespaces.ContainsKey(prefix))
+                {
                     return this.Namespaces[prefix];
                 }
                 else if (this.Parent != null)
@@ -1146,7 +1150,7 @@ namespace FindUnusedStyles
                 foreach (var targetType in targetTypes.Keys)
                 {
                     var map = targetTypes[targetType];
-                    foreach(var key in map.Keys)
+                    foreach (var key in map.Keys)
                     {
                         var si = map[key];
                         if (si.RefCount == 0 && si.FileName != null && !WhiteListResource(si.FileName))
@@ -1154,7 +1158,9 @@ namespace FindUnusedStyles
                             if (si.Key == emptyName && WhiteListType(si.TargetType))
                             {
                                 // skip it.
-                            } else { 
+                            }
+                            else
+                            {
                                 Program.WriteWarning("Unreferenced style {0} for target type {1} from {2}", si.Key.ToString(), si.TargetType.ToString(), si.FileName);
                             }
                         }

@@ -34,7 +34,7 @@ namespace Walkabout.Utilities
                 double diff = mean - v;
                 totalSquares += diff * diff;
             }
-            if (count == 0) 
+            if (count == 0)
             {
                 return 0;
             }

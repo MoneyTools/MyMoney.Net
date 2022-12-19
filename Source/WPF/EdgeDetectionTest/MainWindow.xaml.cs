@@ -119,7 +119,7 @@ namespace EdgeDetectionTest
                 ContentGrid.RenderTransform = new ScaleTransform(minScale, minScale);
             }
         }
-        
+
 
         private void ShowImage(ImageSource src, string title)
         {

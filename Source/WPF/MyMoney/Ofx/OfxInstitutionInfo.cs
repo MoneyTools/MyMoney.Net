@@ -593,7 +593,7 @@
                 return fname;
             }
         }
-        
+
         public static void SaveList(List<OfxInstitutionInfo> list)
         {
             string fname = OfxProviderList;

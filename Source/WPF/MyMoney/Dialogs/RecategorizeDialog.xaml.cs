@@ -19,7 +19,7 @@ namespace Walkabout.Dialogs
             InitializeComponent();
             this.myMoney = money;
 
-            var source = new ListCollectionView(((List<Category>)myMoney.Categories.SortedCategories).ToArray()); 
+            var source = new ListCollectionView(((List<Category>)myMoney.Categories.SortedCategories).ToArray());
             ComboToCategory.ItemsSource = source;
         }
 
@@ -35,7 +35,7 @@ namespace Walkabout.Dialogs
             }
             base.OnPreviewKeyDown(e);
         }
-        
+
         public Category FromCategory
         {
             get { return from; }

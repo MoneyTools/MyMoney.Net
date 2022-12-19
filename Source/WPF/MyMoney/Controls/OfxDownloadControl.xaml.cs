@@ -232,7 +232,7 @@ h2 { font-size: 12pt; }";
                 string message = ofxData.Message;
 
                 Exception error = ofxData.Error;
-                if (error != null)                
+                if (error != null)
                 {
                     HtmlResponseException htmlError = error as HtmlResponseException;
                     if (htmlError != null)

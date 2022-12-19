@@ -33,12 +33,12 @@ namespace Walkabout.Dialogs
 
         public bool EnableCategoriesSelection
         {
-            get 
+            get
             {
                 return CategoriesPicker.Visibility == System.Windows.Visibility.Visible;
             }
 
-            set 
+            set
             {
                 if (value == true)
                 {
@@ -97,9 +97,11 @@ namespace Walkabout.Dialogs
 
         bool showInterval;
 
-        public bool ShowInterval { 
+        public bool ShowInterval
+        {
             get => this.showInterval;
-            set {
+            set
+            {
                 if (!value)
                 {
                     intervalPrompt.Visibility = Visibility.Collapsed;
@@ -120,7 +122,7 @@ namespace Walkabout.Dialogs
             this.Close();
         }
 
-      
+
     }
 
     class CheckItem

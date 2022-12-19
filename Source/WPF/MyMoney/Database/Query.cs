@@ -94,8 +94,9 @@ namespace Walkabout.Data
         public Field Field
         {
             get { return this.field; }
-            set 
-            {   this.field = value;
+            set
+            {
+                this.field = value;
                 RaisePropertyChanged("Field");
             }
         }
@@ -103,7 +104,7 @@ namespace Walkabout.Data
         public Operation Operation
         {
             get { return this.op; }
-            set 
+            set
             {
                 this.op = value;
                 Init();
@@ -188,8 +189,8 @@ namespace Walkabout.Data
         public string Value
         {
             get { return this.value; }
-            set 
-            { 
+            set
+            {
                 this.value = value;
                 Init();
                 RaisePropertyChanged("Value");
@@ -199,8 +200,8 @@ namespace Walkabout.Data
         public Conjunction Conjunction
         {
             get { return this.con; }
-            set 
-            { 
+            set
+            {
                 this.con = value;
                 RaisePropertyChanged("Conjunction");
             }

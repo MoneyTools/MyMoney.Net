@@ -33,9 +33,9 @@ namespace Walkabout.Tests.Wrappers
                     return tab;
                 }
                 Thread.Sleep(1000);
-            } 
-            
-            throw new Exception("Tab named '" + id + "' not found");   
+            }
+
+            throw new Exception("Tab named '" + id + "' not found");
         }
 
         public TrendChartWrapper SelectTrends()

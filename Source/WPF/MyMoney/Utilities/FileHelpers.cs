@@ -27,7 +27,7 @@ namespace Walkabout.Utilities
                 return fileName;
             }
             int i = 0;
-            
+
             // find common paths
             for (i = 0; i < p1.Length && i < p2.Length; i++)
             {
@@ -57,7 +57,7 @@ namespace Walkabout.Utilities
                 sb.Append("..");
             }
 
-            for (; j < p1.Length; j ++)
+            for (; j < p1.Length; j++)
             {
                 if (sb.Length > 0)
                 {

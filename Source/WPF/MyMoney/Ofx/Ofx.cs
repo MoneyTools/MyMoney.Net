@@ -314,7 +314,7 @@ namespace Walkabout.Ofx
                             }
                             ofx.ProcessResponse(doc, se);
                             se.Success = true;
-                        }                            
+                        }
                         catch (OperationCanceledException ce)
                         {
                             // import cancelled by user.
@@ -327,7 +327,7 @@ namespace Walkabout.Ofx
                             se.Message = "Error loading file";
                         }
                         se.IsDownloading = false;
-                    }                    
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -374,7 +374,7 @@ namespace Walkabout.Ofx
             }
 
             // send empty start event
-            this.UpdateStatusOnUIThread( 0, list.Count, 0, downloadEventArgs);
+            this.UpdateStatusOnUIThread(0, list.Count, 0, downloadEventArgs);
 
             // start one thread for each online account to download so we can do them all at once,
             // this doesn't need Parallel.foreach because we don't need any throttling because we
@@ -616,7 +616,7 @@ namespace Walkabout.Ofx
             {
                 signonrequest.Add(new XElement("CLIENTUID", this.onlineAccount.ClientUid));
             }
-            
+
             if (!string.IsNullOrEmpty(onlineAccount.UserCred1))
             {
                 signonrequest.Add(new XElement("USERCRED1", this.onlineAccount.UserCred1));
@@ -1521,7 +1521,7 @@ NEWFILEUID:{1}
         public void Sync(IList accounts, OfxDownloadData results, Dispatcher dispatcher)
         {
             if (accounts.Count == 0) return;
-            
+
             XDocument doc = GetSignonRequest(true);
 
             // batch up accounts by type
@@ -1566,7 +1566,7 @@ NEWFILEUID:{1}
             Guid guid = Guid.NewGuid();
             string fileuid = guid.ToString();
             doc = SendOfxRequest(doc, this.account.SyncGuid.IsNull ? null : this.account.SyncGuid.ToString(), fileuid);
-       
+
             SaveLog(doc, GetLogfileName(this.onlineAccount) + "RS.xml");
 
             dispatcher.BeginInvoke(new Action(() =>
@@ -1736,7 +1736,7 @@ NEWFILEUID:{1}
                                 {
                                     usascii = true;
                                 }
-                                else 
+                                else
                                 {
                                     try
                                     {
@@ -1749,7 +1749,7 @@ NEWFILEUID:{1}
                                 }
                                 break;
                             case "CHARSET":
-                                if (usascii) 
+                                if (usascii)
                                 {
                                     if (string.Compare("NONE", value, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
@@ -1854,7 +1854,7 @@ NEWFILEUID:{1}
             {
                 throw new Exception(string.Format("The response from your bank does not appear to contain the expected 'OFX' namespace"));
             }
-            
+
             XElement e = doc.SelectExpectedElement("OFX/SIGNONMSGSRSV1/SONRS/STATUS/CODE");
 
             int statusCode = e.GetElementValueAsInt();
@@ -2037,7 +2037,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
                     if (a.Type != AccountType.Cash && a.Type != AccountType.Checking && a.Type != AccountType.Savings && a.Type != AccountType.MoneyMarket && a.Type != AccountType.CreditLine)
                     {
-                        throw new OfxException(string.Format(Properties.Resources.AccountTypeMismatch, a.Name, "'Cash', 'Checking' or 'Savings' or 'MoneyMarket'"));                        
+                        throw new OfxException(string.Format(Properties.Resources.AccountTypeMismatch, a.Name, "'Cash', 'Checking' or 'Savings' or 'MoneyMarket'"));
                     }
                 }
 
@@ -2098,7 +2098,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     // and we find the account using the account id in the statement.
 
                     if (a.Type != AccountType.Brokerage &&
-                        a.Type != AccountType.Retirement && 
+                        a.Type != AccountType.Retirement &&
                         a.Type != AccountType.Checking &&
                         a.Type != AccountType.Savings)
                     {
@@ -2130,7 +2130,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 {
                     continue;
                 }
-                
+
                 // save this for processing below, after all "CheckAccountId" calls have been made.
                 // This gives the user the opportunity to cancel the import if one account doesn't match.
                 pending.Add(new Tuple<Account, XElement>(a, srs));
@@ -2142,7 +2142,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 Account a = pair.Item1;
                 ProcessInvestmentPositions(srs.SelectElement("INVPOSLIST"));
                 ProcessInvestmentTransactionList(a, srs.SelectElement("INVTRANLIST"), results);
-                
+
                 // todo: compare this info with our local account info...
                 /*
                 <INVBAL>
@@ -2151,7 +2151,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                   <SHORTBALANCE>0</SHORTBALANCE>
                 </INVBAL>
                  */
-                
+
                 myMoney.Rebalance(a);
             }
 
@@ -3122,7 +3122,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     {
                         payee = e.Value.GetNormalizedValue();
                     }
-                    
+
 
                     string memo = null;
                     if ((e = sr.Element("MEMO")) != null)
@@ -3342,7 +3342,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
                 foreach (Account acct in this.myMoney.Accounts.GetAccounts())
                 {
-                    foreach (string localId in new string[] {  acct.AccountId, acct.OfxAccountId })
+                    foreach (string localId in new string[] { acct.AccountId, acct.OfxAccountId })
                     {
                         if (!string.IsNullOrEmpty(localId))
                         {

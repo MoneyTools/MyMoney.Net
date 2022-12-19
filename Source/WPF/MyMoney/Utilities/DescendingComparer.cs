@@ -9,6 +9,6 @@ namespace Walkabout.Utilities
         {
             return y.CompareTo(x);
         }
-    } 
+    }
 
 }

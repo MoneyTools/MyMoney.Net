@@ -14,7 +14,7 @@ namespace Walkabout.Controls
     {
         private Settings settings;
         private DatabaseSettings databaseSettings;
-        private readonly IDictionary<string, string> themes = new SortedDictionary<string, string>() { 
+        private readonly IDictionary<string, string> themes = new SortedDictionary<string, string>() {
             { "Light", "Light" },
             { "Dark", "Dark" }
         };
@@ -30,7 +30,7 @@ namespace Walkabout.Controls
             this.IsVisibleChanged += OnIsVisibleChanged;
 
             int year = DateTime.Now.Year;
-            for(int i = 0; i < 12; i++)
+            for (int i = 0; i < 12; i++)
             {
                 var month = new DateTime(year, i + 1, 1);
                 var label = month.ToString("MMMM");
@@ -90,7 +90,7 @@ namespace Walkabout.Controls
             get { return this.editPasswordBox.Password; }
             set { this.editPasswordBox.Password = value; }
         }
-            
+
         private void OnCloseClicked(object sender, RoutedEventArgs e)
         {
             this.Visibility = Visibility.Collapsed;
@@ -133,7 +133,7 @@ namespace Walkabout.Controls
 
         private void OnTransferDaysChanged(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(textBoxTransferSearchDays.Text, out int x) && x > 0) 
+            if (int.TryParse(textBoxTransferSearchDays.Text, out int x) && x > 0)
             {
                 settings.TransferSearchDays = x;
             }

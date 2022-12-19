@@ -43,7 +43,8 @@ namespace Walkabout.Attachments
         public string StatementsDirectory
         {
             get => statementsDir;
-            set {
+            set
+            {
                 if (statementsDir != value)
                 {
                     statementsDir = value;
@@ -365,7 +366,8 @@ namespace Walkabout.Attachments
         private void SaveIndex(StatementIndex index)
         {
             // sort the items by date.
-            index.Items.Sort((a, b) => {
+            index.Items.Sort((a, b) =>
+            {
                 return a.Date.CompareTo(b.Date);
             });
             var s = new XmlSerializer(typeof(StatementIndex));
@@ -494,12 +496,13 @@ namespace Walkabout.Attachments
             }
             bool updated = false;
             var dir = Path.GetDirectoryName(index.FileName);
-            foreach(var item in index.Items)
+            foreach (var item in index.Items)
             {
                 if (!string.IsNullOrEmpty(item.Filename))
                 {
                     var statementFile = Path.Combine(dir, item.Filename);
-                    if (File.Exists(statementFile)) {
+                    if (File.Exists(statementFile))
+                    {
                         if (string.IsNullOrEmpty(item.Hash) || !item.FileModified.HasValue ||
                             item.FileModified.Value < File.GetLastWriteTime(statementFile))
                         {
@@ -584,7 +587,7 @@ namespace Walkabout.Attachments
         public void Load()
         {
             this.loading = true;
-            foreach(var a in myMoney.Accounts.GetAccounts())
+            foreach (var a in myMoney.Accounts.GetAccounts())
             {
                 if (!string.IsNullOrEmpty(a.Name))
                 {

@@ -63,8 +63,8 @@ namespace Walkabout.Utilities
             Instance.Add(file);
         }
 
-        private void Add(string file) 
-        { 
+        private void Add(string file)
+        {
             lock (files)
             {
                 files.Add(file);
@@ -103,7 +103,7 @@ namespace Walkabout.Utilities
         }
 
         public void DeleteAll()
-        { 
+        {
             foreach (string file in this.files.ToArray())
             {
                 lock (this.files)
@@ -135,8 +135,8 @@ namespace Walkabout.Utilities
             doc.Save(TempFileList);
         }
 
-        private void LoadTempFileList() 
-        { 
+        private void LoadTempFileList()
+        {
             string fname = TempFileList;
             if (File.Exists(fname))
             {

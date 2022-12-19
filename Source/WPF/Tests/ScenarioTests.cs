@@ -76,10 +76,10 @@ namespace Walkabout.Tests
                 // seed = 313591431;  // Another variation of the above, sometimes even CancelEdit throws!
                 random = new Random(seed);
                 TestContext.WriteLine("Model Seed = " + seed);
-                
+
                 model = new DgmlTestModel(this, new TestLog(TestContext), random, vsDgmlMonitorTimeout);
 
-                string fileName = FindTestModel("TestModel.dgml");                
+                string fileName = FindTestModel("TestModel.dgml");
                 model.Load(fileName);
                 Thread.Sleep(2000); // let graph load.
                 int delay = 0; // 1000 is handy for debugging.
@@ -438,7 +438,7 @@ namespace Walkabout.Tests
                 try
                 {
                     money = Load();
-                } 
+                }
                 catch (Exception e)
                 {
                     // could be that the test process is still writing!
@@ -750,7 +750,7 @@ namespace Walkabout.Tests
 
         void OpenAttachmentDialog()
         {
-            AssertSelectedTransaction();            
+            AssertSelectedTransaction();
             attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
         }
 
@@ -1388,7 +1388,7 @@ to make sure attachments work.");
             if (this.transactions != null && this.quickFilter == null)
             {
                 this.quickFilter = this.window.Element.FindQuickFilter();
-                Assert.IsNotNull(this.quickFilter, "Cannot find quick filter control");                
+                Assert.IsNotNull(this.quickFilter, "Cannot find quick filter control");
             }
             if (!string.IsNullOrEmpty(this.quickFilter.GetFilter()))
             {

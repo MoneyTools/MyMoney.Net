@@ -75,7 +75,7 @@ namespace Walkabout.Tests
             data.Points.Add(new TestPoint() { X = 12.5, Y = 7.7 });
             data.Payees.Add(new Payee() { Id = 1, Name = "Costco" });
             data.Accounts.Add(new Account() { Id = 1, Name = "BECU" });
-            data.Accounts.Add(new Account() { Id = 2, Name = "Discover", WebSite="http://www.discover.com" });
+            data.Accounts.Add(new Account() { Id = 2, Name = "Discover", WebSite = "http://www.discover.com" });
 
             DataContractSerializer s = new DataContractSerializer(typeof(TestData));
 
@@ -115,7 +115,7 @@ namespace Walkabout.Tests
                 {
                     s.ReadObject(dr);
                     log2 = dr.Log;
-                } 
+                }
 
                 // Theoretically if this passes then the subsequent tests below must pass because if this log is
                 // identical then there is absolutely nothing different the BinaryXmlReader could do to
@@ -161,8 +161,8 @@ namespace Walkabout.Tests
                 if (string.Compare(x, y, StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     throw new Exception("Output is different at line " + i + "\n" +
-                        a + "\n" + 
-                        "==================================================================" + "\n" + 
+                        a + "\n" +
+                        "==================================================================" + "\n" +
                         b);
                 }
             }
@@ -170,7 +170,7 @@ namespace Walkabout.Tests
             {
                 throw new Exception("Output is different size " + lines.Length + " != " + lines2.Length + "\n" +
                     a + "\n" +
-                    "==================================================================" + "\n" + 
+                    "==================================================================" + "\n" +
                     b);
             }
         }
@@ -203,14 +203,14 @@ namespace Walkabout.Tests
     [DataContract(Namespace = "http://test")]
     public class TestData
     {
-        public TestData() 
+        public TestData()
         {
             Points = new List<TestPoint>();
             Aliases = new Aliases();
             Payees = new Payees();
             Accounts = new Accounts();
         }
-        
+
         [DataMember]
         public List<TestPoint> Points;
 
@@ -226,12 +226,14 @@ namespace Walkabout.Tests
         public void AssertSame(TestData data)
         {
             DataTests.CompareLists(this.Points, data.Points, new Comparison<TestPoint>((x, y) => { x.AssertSame(y); return 0; }));
-            DataTests.CompareLists(this.Aliases, data.Aliases, new Comparison<Alias>((x, y) => {
+            DataTests.CompareLists(this.Aliases, data.Aliases, new Comparison<Alias>((x, y) =>
+            {
                 Assert.IsTrue(x.AliasType == y.AliasType && x.Pattern == y.Pattern && x.Payee.Name == y.Payee.Name,
                     "Aliases don't match");
                 return 0;
             }));
-            DataTests.CompareLists(this.Payees, data.Payees, new Comparison<Payee>((x, y) => {
+            DataTests.CompareLists(this.Payees, data.Payees, new Comparison<Payee>((x, y) =>
+            {
                 Assert.IsTrue(x.Name == y.Name, "Payees don't match");
                 return 0;
             }));
@@ -284,9 +286,10 @@ namespace Walkabout.Tests
 
         public override int AttributeCount
         {
-            get {
+            get
+            {
                 WriteLine("AttributeCount=" + this.wrapped.AttributeCount);
-                return this.wrapped.AttributeCount; 
+                return this.wrapped.AttributeCount;
             }
         }
 
@@ -294,7 +297,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("BaseURI=" + this.wrapped.BaseURI); 
+                WriteLine("BaseURI=" + this.wrapped.BaseURI);
                 return this.wrapped.BaseURI;
             }
         }
@@ -307,16 +310,18 @@ namespace Walkabout.Tests
 
         public override int Depth
         {
-            get {
+            get
+            {
                 WriteLine("Depth=" + this.wrapped.Depth);
-                return this.wrapped.Depth; 
+                return this.wrapped.Depth;
             }
         }
 
         public override bool EOF
         {
-            get {
-                WriteLine("EOF=" + this.wrapped.EOF); 
+            get
+            {
+                WriteLine("EOF=" + this.wrapped.EOF);
                 return this.wrapped.EOF;
             }
         }
@@ -412,7 +417,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("NamespaceURI=" + wrapped.NamespaceURI); 
+                WriteLine("NamespaceURI=" + wrapped.NamespaceURI);
                 return wrapped.NamespaceURI;
             }
         }
@@ -421,7 +426,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("NodeType=" + wrapped.NodeType); 
+                WriteLine("NodeType=" + wrapped.NodeType);
                 return wrapped.NodeType;
             }
         }
@@ -430,7 +435,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("Prefix=" + wrapped.Prefix); 
+                WriteLine("Prefix=" + wrapped.Prefix);
                 return wrapped.Prefix;
             }
         }
@@ -438,14 +443,14 @@ namespace Walkabout.Tests
         public override bool Read()
         {
             var result = this.wrapped.Read();
-            WriteLine("Read()=" + result); 
+            WriteLine("Read()=" + result);
             return result;
         }
 
         public override bool ReadAttributeValue()
         {
             var result = this.wrapped.ReadAttributeValue();
-            WriteLine("ReadAttributeValue()=" + result); 
+            WriteLine("ReadAttributeValue()=" + result);
             return result;
         }
 
@@ -453,7 +458,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("ReadState=" + wrapped.ReadState); 
+                WriteLine("ReadState=" + wrapped.ReadState);
                 return wrapped.ReadState;
             }
         }
@@ -467,7 +472,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("Value=" + wrapped.Value); 
+                WriteLine("Value=" + wrapped.Value);
                 return wrapped.Value;
             }
         }

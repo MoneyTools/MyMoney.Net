@@ -919,7 +919,7 @@ namespace Walkabout.Data
         static string DBString(string s)
         {
             if (s == null) return null;
-            return s.Replace("'", "''").Replace("\r","\\r").Replace("\n", "\\n");
+            return s.Replace("'", "''").Replace("\r", "\\r").Replace("\n", "\\n");
         }
 
         static string TwoDigit(int i)
@@ -1523,7 +1523,7 @@ namespace Walkabout.Data
                     if (e.TaxDate.HasValue)
                     {
                         sb.Append(String.Format(",[TaxDate]={0}", DBDateTime(e.TaxDate.Value)));
-                    } 
+                    }
                     else
                     {
                         sb.Append(",[TaxDate]=NULL");

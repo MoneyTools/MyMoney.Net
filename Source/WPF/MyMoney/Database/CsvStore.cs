@@ -135,7 +135,7 @@ namespace Walkabout.Data
             if (t.InvestmentType != InvestmentType.None)
                 tradeType = t.InvestmentType.ToString();
 
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\"", 
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\"",
                 t.Date.ToShortDateString(), t.PayeeName, category,
                 tradeType, t.InvestmentSecuritySymbol, t.InvestmentUnits, t.InvestmentUnitPrice, t.Amount.ToString("C2"));
         }

@@ -46,7 +46,7 @@ namespace Walkabout.Interfaces.Views
         Payee ActivePayee { get; }
         RentBuilding ActiveRental { get; }
     }
-    
+
 
     /// <summary>
     /// Interface abstraction for decoupling the views from the main controlling windows

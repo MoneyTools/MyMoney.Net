@@ -175,7 +175,7 @@ namespace LovettSoftware.Charts
                 {
                     var first = s[0].Values;
                     int cols = first.Count;
-                    foreach(var series in s)
+                    foreach (var series in s)
                     {
                         var seriesDefaultColor = GetRandomColor();
                         if (series.Values.Count != cols)
@@ -598,7 +598,7 @@ namespace LovettSoftware.Charts
                     {
                         continue;
                     }
-                    double s = (dataValue.Value * w / range); 
+                    double s = (dataValue.Value * w / range);
                     Color color = dataValue.Color.Value;
 
                     ColumnInfo info = this.bars[col + (index * columns)];

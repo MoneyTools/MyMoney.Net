@@ -360,7 +360,7 @@ namespace Walkabout.Migrate
         public List<string> GetFields()
         {
             var result = new List<String>();
-            for(int i = 0; i < _fieldCount; i++)
+            for (int i = 0; i < _fieldCount; i++)
             {
                 result.Add(_fields[i].ToString());
             }
@@ -390,7 +390,7 @@ namespace Walkabout.Migrate
                     while (!done && pos < len)
                     {
                         while (pos < len && c != ch)
-                        { 
+                        {
                             // scan literal.
                             sb.Append(c);
                             c = line[pos++];
@@ -440,7 +440,7 @@ namespace Walkabout.Migrate
                     }
                 }
                 if (ch == _fieldDelimiter)
-                {                    
+                {
                     ch = line[pos++];
                 }
             }

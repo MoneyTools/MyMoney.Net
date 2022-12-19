@@ -46,7 +46,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         }
 
         private void LazyCleanup(long latest)
-        {             
+        {
             uint now = (uint)Environment.TickCount;
             if (now > lastCheck + 1000 && data.Count > PurgeThreshold)
             {
@@ -79,7 +79,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         public IEnumerable<string> Measurements { get { return measurements; } }
         public IEnumerable<string> Categoryies { get { return categoryNames; } }
 
- 
+
         public List<PerformanceEventArrivedEventArgs> GetMatchingEvents(string component, string category, string measurement)
         {
             List<PerformanceEventArrivedEventArgs> result = new List<PerformanceEventArrivedEventArgs>();
@@ -153,8 +153,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                         w.WriteAttributeString("Timestamp", (e.Timestamp - start).ToString());
                         w.WriteEndElement();
                     }
-                } 
-                
+                }
+
                 w.WriteEndElement();
             }
         }

@@ -7,7 +7,8 @@ using System.Windows.Media;
 
 namespace Walkabout.Utilities
 {
-    internal class AppTheme {
+    internal class AppTheme
+    {
         private string _name;
         private ResourceDictionary _theme;
         public event EventHandler<string> ThemeChanged;
@@ -31,7 +32,7 @@ namespace Walkabout.Utilities
         public void SetTheme(string name)
         {
             if (name != null)
-            {                
+            {
                 Uri themeUri = new Uri(name, UriKind.Relative);
                 try
                 {
@@ -61,7 +62,7 @@ namespace Walkabout.Utilities
 
         private void UpdateDynamicBrushes()
         {
-            foreach(var pair in this.dynamicBrushes)
+            foreach (var pair in this.dynamicBrushes)
             {
                 var name = pair.Key;
                 var brush = pair.Value;

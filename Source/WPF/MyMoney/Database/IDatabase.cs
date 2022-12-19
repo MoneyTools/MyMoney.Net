@@ -11,7 +11,7 @@ namespace Walkabout.Data
         string Server { get; }
         string DatabasePath { get; }
         string UserId { get; }
-        string Password { get; set;  }
+        string Password { get; set; }
         string BackupPath { get; }
         bool SupportsUserLogin { get; }
 

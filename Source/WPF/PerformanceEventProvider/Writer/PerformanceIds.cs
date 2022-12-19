@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider
     {
         None = 0,
 
-        WPF = 1,        
+        WPF = 1,
 
         Money = 2
     }
@@ -18,11 +18,11 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider
     public enum CategoryId
     {
         None = 0,
-        
+
         Model = 200,
 
         View = 300,
-        
+
         Controller = 400,
     }
 

@@ -13,7 +13,7 @@ namespace Walkabout.Tests.Wrappers
 
         public ListViewWrapper(AutomationElement e)
         {
-            this.element = e.FindFirstWithRetries(TreeScope.Subtree, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.List));            
+            this.element = e.FindFirstWithRetries(TreeScope.Subtree, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.List));
             if (element == null)
             {
                 throw new Exception("No list control found in this scope after 5 retries");
@@ -67,7 +67,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                AutomationElementCollection result = element.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem));                 
+                AutomationElementCollection result = element.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem));
                 List<AutomationElement> list = new List<AutomationElement>();
                 if (result != null)
                 {

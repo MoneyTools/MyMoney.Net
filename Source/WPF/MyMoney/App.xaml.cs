@@ -22,7 +22,7 @@ namespace Walkabout
 
     public partial class App : Application
     {
-        
+
         void MyApplicationStartup(object sender, StartupEventArgs e)
         {
             Settings settings = null;
@@ -181,7 +181,7 @@ namespace Walkabout
         {
             string[] args = Environment.GetCommandLineArgs();
 
-            for(int i = 1; i < args.Length; i++)
+            for (int i = 1; i < args.Length; i++)
             {
                 string importFile = args[i];
                 if (ProcessHelper.IsFileQIF(importFile) || ProcessHelper.IsFileOFX(importFile))
@@ -215,7 +215,7 @@ namespace Walkabout
         }
 
 
-      
+
 
 
 

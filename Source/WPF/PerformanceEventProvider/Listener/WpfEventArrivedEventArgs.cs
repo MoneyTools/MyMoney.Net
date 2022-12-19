@@ -19,7 +19,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
         MIL_PRESENTATION_VSYNC_UNSUPPORTED,
         MIL_PRESENTATION_DWM,
         MIL_PRESENTATION_FORCE_DWORD = unchecked((int)0xffffffff)
-    }; 
+    };
 
     public class WpfEventArrivedEventArgs : EventArrivedEventArgs
     {

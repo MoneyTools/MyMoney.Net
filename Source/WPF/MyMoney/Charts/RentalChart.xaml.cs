@@ -43,7 +43,7 @@ namespace Walkabout.Charts
 
                 Grid.SetColumn(rentalChartColumn, columnIndex);
                 MaingGrid.Children.Add(rentalChartColumn);
-                columnIndex+=2;
+                columnIndex += 2;
             }
 
             UpdateChartLayout();
@@ -81,7 +81,7 @@ namespace Walkabout.Charts
         private void MaingGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             whatExpenseIsAtTheBottom--;
-            if (whatExpenseIsAtTheBottom <0)
+            if (whatExpenseIsAtTheBottom < 0)
             {
                 whatExpenseIsAtTheBottom = 4;
             }
@@ -89,7 +89,7 @@ namespace Walkabout.Charts
         }
     }
 
-   
+
 
 
 }

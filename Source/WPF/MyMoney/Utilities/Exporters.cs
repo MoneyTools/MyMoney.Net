@@ -26,7 +26,7 @@ namespace Walkabout.Migrate
                 filter += "|" + Properties.Resources.XmlFileFilter;
             }
             sd.Filter = filter;
-            
+
             if (sd.ShowDialog(App.Current.MainWindow) == true)
             {
                 Export(sd.FileName, data);
@@ -132,11 +132,11 @@ namespace Walkabout.Migrate
                 Investment i = row as Investment;
                 Split s = row as Split;
                 if (t != null)
-                {                    
+                {
                     TransactionSerializer.WriteObject(writer, t);
                     i = t.Investment;
                 }
-                
+
                 if (i != null)
                 {
                     InvestmentSerializer.WriteObject(writer, i);
@@ -198,9 +198,9 @@ namespace Walkabout.Migrate
                     else if (containsInvestmentInfo)
                     {
                         CsvStore.WriteInvestmentTransaction(writer, t);
-                    } 
-                    else 
-                    { 
+                    }
+                    else
+                    {
                         CsvStore.WriteTransaction(writer, t);
                     }
                 }
@@ -248,7 +248,7 @@ namespace Walkabout.Migrate
         /// <param name="myMoney">The money data to analyze</param>
         /// <param name="fileName">The file name for the DGML graph output</param>
         public void ExportDgmlAccountMap(MyMoney myMoney, string fileName)
-        {            
+        {
             SimpleGraph sg = new SimpleGraph();
 
             foreach (Transaction t in myMoney.Transactions)

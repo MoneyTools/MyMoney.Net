@@ -109,12 +109,12 @@ namespace Walkabout.Dialogs
                 {
                     a = newAccountDialog.TheAccount;
                     money.Accounts.Add(a);
-                }                
+                }
             }
             else if (frm.Cancel)
             {
                 return null;
-            } 
+            }
             else if (a != null && accountTemplate != null)
             {
                 if (a.AccountId != accountTemplate.AccountId)

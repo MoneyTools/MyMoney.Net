@@ -13,7 +13,7 @@ namespace Walkabout.Help
         static List<WeakReference> dependencyObjects = new List<WeakReference>();
 
         internal static void Initialize()
-        {            
+        {
         }
 
         public static void OpenHelpPage(string name)
@@ -27,7 +27,7 @@ namespace Walkabout.Help
         }
 
         public static void SetHelpKeyword(DependencyObject obj, string value)
-        {            
+        {
             obj.SetValue(HelpKeywordProperty, value);
         }
 
@@ -46,7 +46,7 @@ namespace Walkabout.Help
             lock (dependencyObjects)
             {
                 List<WeakReference> dead = new List<WeakReference>();
-                foreach (WeakReference w in dependencyObjects) 
+                foreach (WeakReference w in dependencyObjects)
                 {
                     if (w.IsAlive)
                     {
@@ -80,7 +80,7 @@ namespace Walkabout.Help
 
                 // remember that we are listening to this object so we don't add another event handler
                 // every time the help keyword changes.
-                var r = new WeakReference(listener);                
+                var r = new WeakReference(listener);
                 dependencyObjects.Add(r);
             }
         }
@@ -88,7 +88,7 @@ namespace Walkabout.Help
         /// <summary>
         /// This class listens to the F1 help key in a way that does not keep the target object alive.
         /// </summary>
-        class HelpKeyEventRouter 
+        class HelpKeyEventRouter
         {
             public HelpKeyEventRouter(DependencyObject listener)
             {

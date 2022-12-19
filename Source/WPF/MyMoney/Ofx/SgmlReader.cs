@@ -159,7 +159,7 @@ namespace Walkabout.Sgml
             ParseNamespacePrefix(name);
 
         }
-        public Attribute AddAttribute(string name, string value, char quotechar , bool ignoreCase)
+        public Attribute AddAttribute(string name, string value, char quotechar, bool ignoreCase)
         {
             if (_attcount == _attsize)
             {
@@ -651,7 +651,7 @@ namespace Walkabout.Sgml
                 {
                     result = _a.NamespaceURI;
                 }
-                else 
+                else
                 {
                     result = _node.NamespaceURI;
                 }
@@ -921,7 +921,8 @@ namespace Walkabout.Sgml
 
         bool IsTextOnly
         {
-            get {
+            get
+            {
                 if (_node != null)
                 {
                     ElementDecl e = _node.DtdType;
@@ -1017,7 +1018,7 @@ namespace Walkabout.Sgml
                         break;
                     case State.AutoCloseTextOnly:
                         Pop(); // remove start tag.
-                         _state = State.Markup;
+                        _state = State.Markup;
                         foundnode = ParseTag(_partial);
                         break;
                     case State.AutoClose:
@@ -1213,7 +1214,8 @@ namespace Walkabout.Sgml
                 if (a.NamespaceURI == Attribute.XmlnsUri)
                 {
                     string prefix = a.LocalName;
-                    if (prefix == "xmlns") {
+                    if (prefix == "xmlns")
+                    {
                         prefix = "";
                     }
                     _mgr.AddNamespace(prefix, a.Value);

@@ -66,7 +66,7 @@ namespace Walkabout.Charts
             if (name == "Transfer")
             {
                 return Colors.Transparent;
-            } 
+            }
             else if (IsSpecialCategory(name))
             {
                 // Special cases were we want these in Black
@@ -87,7 +87,7 @@ namespace Walkabout.Charts
                 {
                     this.color = GetColorFromCategoryName(name);
                 }
-                return color?? Colors.Transparent;
+                return color ?? Colors.Transparent;
             }
             set
             {

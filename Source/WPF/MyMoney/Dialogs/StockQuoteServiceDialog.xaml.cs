@@ -24,7 +24,7 @@ namespace Walkabout.Dialogs
 
         public StockQuoteManager StockQuoteManager
         {
-            get { return _stockQuotes;  }
+            get { return _stockQuotes; }
             set
             {
                 _stockQuotes = value;

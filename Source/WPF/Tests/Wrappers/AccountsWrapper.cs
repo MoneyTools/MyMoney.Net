@@ -111,12 +111,12 @@ namespace Walkabout.Tests.Wrappers
             {
                 return false;
             }
-            
+
         }
 
         internal void SelectAccount(int index)
-        {            
-            Select(index);            
+        {
+            Select(index);
         }
     }
 }

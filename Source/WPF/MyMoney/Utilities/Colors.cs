@@ -18,7 +18,7 @@ namespace Walkabout.Utilities
         public static Color GenerateNamedColor(string name)
         {
             lock (cachedColors)
-            {                
+            {
                 Color color;
                 if (!cachedColors.TryGetValue(name, out color))
                 {
@@ -130,7 +130,7 @@ namespace Walkabout.Utilities
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if ( value is string )
+            if (value is string)
             {
                 return GetOrCreateBrushFromCategory((string)value);
             }

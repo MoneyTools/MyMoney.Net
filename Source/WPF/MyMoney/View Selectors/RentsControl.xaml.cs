@@ -149,7 +149,7 @@ namespace Walkabout.Views.Controls
             ReloadTreeView(true);
         }
 
-        private void ReloadTreeView(bool forRebuild=false)
+        private void ReloadTreeView(bool forRebuild = false)
         {
             if (this.treeView1.ItemsSource == null || forRebuild)
             {

@@ -18,7 +18,8 @@ namespace OfxTestServer
             }
         }
 
-        public MFAChallenge(string id, string label, string answer) {
+        public MFAChallenge(string id, string label, string answer)
+        {
             _mfaPhraseId = id;
             _mfaPhraseLabel = label;
             _mfaPhraseAnswer = answer;

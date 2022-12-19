@@ -151,7 +151,9 @@ namespace Walkabout.Views.Controls
                     {
                         System.Diagnostics.Debug.WriteLine("Why is BeginEdit failing?");
                     }
-                } catch {
+                }
+                catch
+                {
 
                 }
             }
@@ -164,7 +166,7 @@ namespace Walkabout.Views.Controls
                 Delete();
                 e.Handled = true;
             }
-        } 
+        }
         #endregion
 
         #region Public methods
@@ -224,7 +226,7 @@ namespace Walkabout.Views.Controls
             if (!(row["Conjunction"] is DBNull))
                 q.Conjunction = (Conjunction)row["Conjunction"];
             return q;
-        } 
+        }
         #endregion
 
         #region Serialize
@@ -363,7 +365,8 @@ namespace Walkabout.Views.Controls
         private void ComboBoxForConjunction_FilterChanged(object sender, RoutedEventArgs e)
         {
             FilteringComboBox combo = sender as FilteringComboBox;
-            combo.Items.Filter = new Predicate<object>((o) => {
+            combo.Items.Filter = new Predicate<object>((o) =>
+            {
                 return ((Conjunction)o).ToString().IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0;
             });
         }
@@ -371,7 +374,8 @@ namespace Walkabout.Views.Controls
         private void ComboBoxForField_FilterChanged(object sender, RoutedEventArgs e)
         {
             FilteringComboBox combo = sender as FilteringComboBox;
-            combo.Items.Filter = new Predicate<object>((o) => {
+            combo.Items.Filter = new Predicate<object>((o) =>
+            {
                 return ((Field)o).ToString().IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0;
             });
         }
@@ -379,7 +383,8 @@ namespace Walkabout.Views.Controls
         private void ComboBoxForOperation_FilterChanged(object sender, RoutedEventArgs e)
         {
             FilteringComboBox combo = sender as FilteringComboBox;
-            combo.Items.Filter = new Predicate<object>((o) => {
+            combo.Items.Filter = new Predicate<object>((o) =>
+            {
                 return ((string)o).IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0;
             });
         }

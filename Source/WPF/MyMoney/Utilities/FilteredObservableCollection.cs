@@ -13,7 +13,7 @@ namespace Walkabout.Utilities
     /// above example.
     /// </summary>
     /// <typeparam name="T">The items in the collection</typeparam>
-    public abstract class FilteredObservableCollection<T> : ObservableCollection<T> 
+    public abstract class FilteredObservableCollection<T> : ObservableCollection<T>
     {
         string filter;
         IEnumerable<T> original;

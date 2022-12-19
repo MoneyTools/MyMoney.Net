@@ -62,7 +62,7 @@ namespace Walkabout.Utilities
                 {
                     return; // ignore deleted files.
                 }
-                this.recentFiles.Add(fileName);                
+                this.recentFiles.Add(fileName);
                 if (this.recentFiles.Count > maxRecentFiles)
                 {
                     this.recentFiles.RemoveAt(0);
@@ -84,7 +84,7 @@ namespace Walkabout.Utilities
         {
             // Synchronize menu items.
             this.parent.Items.Clear();
-            
+
             // Add most recent files first.
             for (int i = this.recentFiles.Count - 1, j = 0; i >= 0; i--, j++)
             {

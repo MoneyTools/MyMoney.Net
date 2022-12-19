@@ -51,7 +51,7 @@ namespace Walkabout.Utilities
 
             if (To != null)
             {
-                foreach (Point pt in To) 
+                foreach (Point pt in To)
                     ptsTo.Add(pt);
             }
             else if (By != null)

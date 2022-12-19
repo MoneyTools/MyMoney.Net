@@ -54,7 +54,7 @@ namespace Walkabout.Dialogs
                 if (int.TryParse(YearText.Text, out result) && result < 100)
                 {
                     result += 2000;
-                }                
+                }
                 return result;
             }
             set

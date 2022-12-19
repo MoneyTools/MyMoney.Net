@@ -273,12 +273,14 @@ namespace OfxTestServer
             foreach (var e in root.Elements())
             {
                 string name = e.Name.LocalName;
-                if (name == "PROFMSGSRQV1") {
+                if (name == "PROFMSGSRQV1")
+                {
                     challenge = false;
                 }
             }
 
-            foreach (var e in root.Elements()) {
+            foreach (var e in root.Elements())
+            {
                 ProcessElement(e, challenge, result);
             }
             return result;
@@ -330,24 +332,30 @@ namespace OfxTestServer
             string message = string.Empty;
             string severity = "INFO";
 
-            if (sonrq == null) {
+            if (sonrq == null)
+            {
                 throw new Exception("Missing SONRQ");
             }
 
-            if (challenge) {
+            if (challenge)
+            {
 
                 string userId = GetElementValue(sonrq, "USERID");
                 string pswd = GetElementValue(sonrq, "USERPASS");
 
-                if (_userName != userId) {
+                if (_userName != userId)
+                {
                     message = "Invalid user id";
                     code = 15500;
-                } else if (_password != pswd) {
+                }
+                else if (_password != pswd)
+                {
                     message = "Invalid password";
                     code = (int)OfxErrors.SignonInvalid;
                 }
 
-                if (code == 0 && !String.IsNullOrEmpty(_userCred1Label)) {
+                if (code == 0 && !String.IsNullOrEmpty(_userCred1Label))
+                {
                     string cred1 = GetElementValue(sonrq, "USERCRED1");
                     if (_userCred1 != cred1)
                     {
@@ -356,7 +364,8 @@ namespace OfxTestServer
                     }
                 }
 
-                if (code == 0 && !String.IsNullOrEmpty(_userCred2Label)) {
+                if (code == 0 && !String.IsNullOrEmpty(_userCred2Label))
+                {
 
                     string cred2 = GetElementValue(sonrq, "USERCRED2");
                     if (_userCred2 != cred2)
@@ -374,7 +383,8 @@ namespace OfxTestServer
 
             XElement pinchrs = null;
 
-            if (code == 0 && _changePassword) {
+            if (code == 0 && _changePassword)
+            {
 
                 // PINCHTRNRQ
                 XElement pinchrq = e.Element("PINCHTRNRQ");
@@ -394,19 +404,23 @@ namespace OfxTestServer
             XElement accesskey = null;
             bool hasAccessKey = false;
 
-            if (code == 0 && _accessKey != null) {
+            if (code == 0 && _accessKey != null)
+            {
                 string value = GetElementValue(sonrq, "ACCESSKEY");
-                if (_accessKey == value) {
+                if (_accessKey == value)
+                {
                     hasAccessKey = true;
                 }
             }
 
 
-            if (challenge && code == 0) {
+            if (challenge && code == 0)
+            {
 
                 XElement challengeTran = e.Element("MFACHALLENGETRNRQ");
 
-                if (challengeTran != null) {
+                if (challengeTran != null)
+                {
 
                     // we are now expecting next request from user to contain the MFA challenge answers.
                     _mfaPendingResponse = true;
@@ -440,7 +454,8 @@ namespace OfxTestServer
                     return;
                 }
 
-                if (_mfaPendingResponse) {
+                if (_mfaPendingResponse)
+                {
                     _mfaPendingResponse = false;
                     if (!VerifyMFAAnswers(sonrq))
                     {
@@ -452,13 +467,16 @@ namespace OfxTestServer
                         _accessKey = Guid.NewGuid().ToString();
                         accesskey = new XElement("ACCESSKEY", _accessKey);
                     }
-                } else if (code == 0 && _mfaChallenges.Count > 0) {
+                }
+                else if (code == 0 && _mfaChallenges.Count > 0)
+                {
                     // Initiate MFA Challenge
                     code = 3000;
                 }
             }
 
-            if (code == 0 && !String.IsNullOrEmpty(_authTokenLabel) && !hasAccessKey) {
+            if (code == 0 && !String.IsNullOrEmpty(_authTokenLabel) && !hasAccessKey)
+            {
 
                 string token = GetElementValue(sonrq, "AUTHTOKEN");
                 if (token == null)
@@ -494,9 +512,12 @@ namespace OfxTestServer
             );
 
 
-            if (pinchrs != null) {
+            if (pinchrs != null)
+            {
                 response.Add(pinchrs);
-            } else if (accesskey != null) {
+            }
+            else if (accesskey != null)
+            {
                 response.Element("SONRS").Add(accesskey);
             }
 
@@ -512,8 +533,10 @@ namespace OfxTestServer
                 string id = challengeResponse.Element("MFAPRHASEID").Value;
                 string answer = challengeResponse.Element("MFAPHRASEA").Value;
 
-                foreach (var item in _mfaChallenges) {
-                    if (item.PhraseId == id && item.PhraseAnswer == answer) {
+                foreach (var item in _mfaChallenges)
+                {
+                    if (item.PhraseId == id && item.PhraseAnswer == answer)
+                    {
                         notVerified.Remove(item);
                     }
                 }
@@ -549,11 +572,13 @@ namespace OfxTestServer
         {
             XElement wrapper = new XElement("MFACHALLENGERS");
 
-            foreach (var item in _mfaChallenges) {
+            foreach (var item in _mfaChallenges)
+            {
 
                 XElement x = new XElement("MFACHALLENGE", new XElement("MFAPHRASEID", item.PhraseId));
 
-                if (!String.IsNullOrWhiteSpace(item.PhraseLabel)) {
+                if (!String.IsNullOrWhiteSpace(item.PhraseLabel))
+                {
                     x.Add(new XElement("MFAPHRASELABEL", item.PhraseLabel));
                 }
 
@@ -712,7 +737,8 @@ namespace OfxTestServer
         {
             var r = new XElement("BANKMSGSRSV1");
 
-            foreach (var statementRequest in e.Elements("STMTTRNRQ")) {
+            foreach (var statementRequest in e.Elements("STMTTRNRQ"))
+            {
                 ProcessBankStatementRequest(statementRequest, r);
             }
             result.Root.Add(r);
@@ -788,7 +814,8 @@ namespace OfxTestServer
                            )
                        )
                    );
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 stmt = new XElement("STMTTRNRS",
                         new XElement("TRNUID", GetTransactionId(e)),
@@ -810,29 +837,40 @@ namespace OfxTestServer
             var message = "";
 
             var req = e.Element("PINCHRQ");
-            if (req != null) {
+            if (req != null)
+            {
                 var ue = req.Element("USERID");
-                if (ue != null) {
+                if (ue != null)
+                {
                     user = ue.Value;
-                    if (user != _userName) {
+                    if (user != _userName)
+                    {
                         message = "User id unknown";
                     }
-                } else {
+                }
+                else
+                {
                     message = "Missing USERID";
                 }
 
                 var newpass = req.Element("NEWUSERPASS");
-                if (newpass != null) {
+                if (newpass != null)
+                {
                     Password = newpass.Value;
                     ChangePassword = false;
-                } else {
+                }
+                else
+                {
                     message = "Cannot have empty password";
                 }
-            } else {
+            }
+            else
+            {
                 message = "Missing PINCHRQ";
             }
 
-            if (!string.IsNullOrEmpty(message)) {
+            if (!string.IsNullOrEmpty(message))
+            {
                 severity = "ERROR";
                 code = (int)OfxErrors.CouldNotChangeUSERPASS;
             }
@@ -860,7 +898,8 @@ namespace OfxTestServer
             var rand = new Random(Environment.TickCount);
             var result = new List<XElement>();
 
-            for (int index = 0; index < 10; index++) {
+            for (int index = 0; index < 10; index++)
+            {
 
                 var payee = GetRandomPayee(rand);
                 var range = payee.Max - payee.Min;
@@ -869,7 +908,8 @@ namespace OfxTestServer
                 amount = Math.Round(amount, 2);
 
                 var type = "DEBIT";
-                if (amount > 0) {
+                if (amount > 0)
+                {
                     type = "CREDIT";
                 }
 
@@ -910,7 +950,8 @@ namespace OfxTestServer
         private string GetElementValue(XElement e, string name)
         {
             XElement child = e.Element(name);
-            if (child == null) {
+            if (child == null)
+            {
                 return null;
             }
             return child.Value;

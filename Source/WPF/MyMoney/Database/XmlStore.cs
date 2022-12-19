@@ -285,7 +285,7 @@ namespace Walkabout.Data
     }
 
     #region BinaryXmlReader/Writer
-    
+
     // These are currently not in use, but may come in handy in the future.
 
     // Tokens used by BinaryXmlReader and BinaryXmlWriter

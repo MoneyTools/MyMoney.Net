@@ -24,7 +24,7 @@ namespace Walkabout.Utilities
             var assignment = Expression.Assign(context, valueArgument);
 
             // Create a lambda expression.
-            Expression<Action<S, T>> le = Expression.Lambda<Action<S,T>>(assignment, contextArgument, valueArgument);
+            Expression<Action<S, T>> le = Expression.Lambda<Action<S, T>>(assignment, contextArgument, valueArgument);
 
             // Compile the lambda expression.
             return le.Compile();

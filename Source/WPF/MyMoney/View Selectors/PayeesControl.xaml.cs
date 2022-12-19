@@ -161,7 +161,7 @@ namespace Walkabout.Views.Controls
             if (listBoxItemControl != null)
             {
                 Payee payee = listBoxItemControl.Content as Payee;
-                if ( payee != null )
+                if (payee != null)
                 {
                     returnSource = new DragDropSource();
                     returnSource.DataSource = payee;
@@ -229,7 +229,7 @@ namespace Walkabout.Views.Controls
         private void GetAllPayees(string filter)
         {
             List<Payee> list;
-            
+
             if (string.IsNullOrWhiteSpace(filter))
             {
                 list = myMoney.Payees.GetPayeesAsList();
@@ -385,5 +385,5 @@ namespace Walkabout.Views.Controls
 
     }
 
-   
+
 }

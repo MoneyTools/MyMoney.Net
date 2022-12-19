@@ -10,7 +10,7 @@ namespace Walkabout.Utilities
         static Dispatcher dispatcher;
         static int uiThreadId;
 
-        public static Dispatcher CurrentDispatcher 
+        public static Dispatcher CurrentDispatcher
         {
             get
             {
@@ -37,7 +37,7 @@ namespace Walkabout.Utilities
                 // For example, if this is a background thread with a lock() on a money data object
                 // (like account.rebalance does) then UI thread might be blocked on trying to get
                 // that lock and this dispatcher invoke would therefore create a deadlock.
-                return dispatcher.BeginInvoke(d, args);                        
+                return dispatcher.BeginInvoke(d, args);
             }
             else
             {

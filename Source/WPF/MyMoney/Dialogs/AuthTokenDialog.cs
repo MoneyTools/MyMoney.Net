@@ -14,7 +14,7 @@ namespace Walkabout.Dialogs
             this.PasswordPrompt = null;
 
             this.Title = "Authentication Token Required";
-            
+
             string label = info.AuthTokenLabel;
 
             if (string.IsNullOrEmpty(info.AuthTokenLabel))
@@ -32,7 +32,7 @@ namespace Walkabout.Dialogs
 
             if (code == OfxErrorCode.AUTHTOKENInvalid)
             {
-                this.ShowError("Your authentication token is invalid");                
+                this.ShowError("Your authentication token is invalid");
             }
 
             Paragraph p = new Paragraph();

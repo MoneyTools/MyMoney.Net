@@ -21,7 +21,7 @@ namespace Walkabout.Data
         EventHandlerCollection<SqlQueryResultArgs> handlers;
 
         internal AsyncSqlQuery()
-        {            
+        {
         }
 
         public event EventHandler<SqlQueryResultArgs> Completed

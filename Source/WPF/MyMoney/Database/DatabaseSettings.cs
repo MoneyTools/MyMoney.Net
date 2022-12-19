@@ -41,7 +41,7 @@ namespace Walkabout.Data
                 using (var r = XmlReader.Create(settingsPath))
                 {
                     var s = new XmlSerializer(typeof(DatabaseSettings));
-                    result =(DatabaseSettings)s.Deserialize(r);
+                    result = (DatabaseSettings)s.Deserialize(r);
                 }
             }
             result.fileName = settingsPath;
@@ -84,7 +84,7 @@ namespace Walkabout.Data
 
         public bool RentalManagement
         {
-            get => this.rentalManagement.HasValue ? rentalManagement.Value :false;
+            get => this.rentalManagement.HasValue ? rentalManagement.Value : false;
             set
             {
                 if (this.rentalManagement != value)

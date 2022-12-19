@@ -84,7 +84,7 @@ namespace Walkabout.Setup
                 string version = (string)(first?.Attribute("version"));
                 Version latest = Version.Parse(version);
                 Version current = Version.Parse(currentVersion);
-                
+
                 OnCompleted(changelist, current < latest);
             }
             catch

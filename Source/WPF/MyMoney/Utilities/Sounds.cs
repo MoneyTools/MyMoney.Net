@@ -19,7 +19,7 @@ namespace Walkabout.Utilities
                 const int SND_FILENAME = 0x20000;
                 const int SND_ASYNC = 0x1;
 
-                string path = Path.Combine(Path.Combine(Path.GetTempPath(), "MyMoney"), name);                
+                string path = Path.Combine(Path.Combine(Path.GetTempPath(), "MyMoney"), name);
                 if (!File.Exists(path))
                 {
                     // extract the resource

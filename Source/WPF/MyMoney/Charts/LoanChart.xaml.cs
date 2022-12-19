@@ -86,7 +86,7 @@ namespace Walkabout.Charts
                 var data = new ChartData();
                 data.AddSeries(interestSeries);
                 data.AddSeries(principalSeries);
-                Chart.Data = data;                
+                Chart.Data = data;
 
                 this.TextBoxPrincipal.Text = string.Format("{0:C}", Math.Abs(totalPrincipal));
                 this.TextBoxInterest.Text = string.Format("{0:C}", Math.Abs(totalInterest));

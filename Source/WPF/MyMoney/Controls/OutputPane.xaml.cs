@@ -43,7 +43,7 @@ namespace Walkabout.Controls
             OutputTextView.Document.Blocks.Add(p);
         }
 
-        public void AppendText(string text) 
+        public void AppendText(string text)
         {
             if (OutputTextView.Document.Blocks.Count == 0)
             {

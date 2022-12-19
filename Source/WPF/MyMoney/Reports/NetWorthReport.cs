@@ -40,7 +40,7 @@ namespace Walkabout.Reports
             this.cache = cache;
             this.reportDate = DateTime.Now;
             minRandColor = 20;
-            maxRandColor = (""+AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128: (byte)200;
+            maxRandColor = ("" + AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128 : (byte)200;
         }
 
         public override async Task Generate(IReportWriter writer)
@@ -275,7 +275,7 @@ namespace Walkabout.Reports
                             totalBalance += balance;
                         }
                     }
-                }                
+                }
             }
             return totalBalance;
         }
@@ -377,15 +377,15 @@ namespace Walkabout.Reports
 
             if (byType.Count > 0)
             {
-                foreach (SecurityType st in new SecurityType[] { 
+                foreach (SecurityType st in new SecurityType[] {
                     SecurityType.Bond,
-                    SecurityType.MutualFund, 
-                    SecurityType.Equity, 
-                    SecurityType.MoneyMarket, 
-                    SecurityType.ETF, 
-                    SecurityType.Reit, 
+                    SecurityType.MutualFund,
+                    SecurityType.Equity,
+                    SecurityType.MoneyMarket,
+                    SecurityType.ETF,
+                    SecurityType.Reit,
                     SecurityType.Futures,
-                    SecurityType.Private, 
+                    SecurityType.Private,
                     SecurityType.None })
                 {
                     decimal sb = 0;
@@ -469,8 +469,8 @@ namespace Walkabout.Reports
 
         private Color GetRandomColor()
         {
-            return Color.FromRgb((byte)rand.Next(minRandColor, maxRandColor), 
-                (byte)rand.Next(minRandColor, maxRandColor), 
+            return Color.FromRgb((byte)rand.Next(minRandColor, maxRandColor),
+                (byte)rand.Next(minRandColor, maxRandColor),
                 (byte)rand.Next(minRandColor, maxRandColor));
         }
 

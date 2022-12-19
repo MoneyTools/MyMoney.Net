@@ -25,7 +25,7 @@ namespace Walkabout.Views
         {
         }
 
-        public RentInputControl(RentalBuildingSingleYear month) 
+        public RentInputControl(RentalBuildingSingleYear month)
         {
             InitializeComponent();
 
@@ -44,7 +44,7 @@ namespace Walkabout.Views
         }
 
 
-        DispatcherTimer dispatcherTimer = null; 
+        DispatcherTimer dispatcherTimer = null;
 
         private void TheDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
@@ -75,7 +75,7 @@ namespace Walkabout.Views
             finally
             {
             }
-            
+
         }
 
 
@@ -133,7 +133,7 @@ namespace Walkabout.Views
             set { this.TheDataGrid.SelectedItem = value; }
         }
 
-    
+
         public ViewState ViewState
         {
             get
@@ -143,7 +143,7 @@ namespace Walkabout.Views
             }
             set
             {
-                 // todo
+                // todo
             }
         }
 

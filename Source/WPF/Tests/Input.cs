@@ -6,7 +6,7 @@ namespace Walkabout.Tests.Interop
     using System.Security.Permissions;
     using System.ComponentModel;
     using System.Runtime.InteropServices;
-    
+
     using System;
 
     /// <summary>
@@ -14,29 +14,30 @@ namespace Walkabout.Tests.Interop
     /// or whether buttons were pressed or released.
     /// </summary>
     [Flags]
-    public enum SendMouseInputFlags {
+    public enum SendMouseInputFlags
+    {
         /// <summary>Specifies that the pointer moved.</summary>
-        Move       = 0x0001,
+        Move = 0x0001,
         /// <summary>Specifies that the left button was pressed.</summary>
-        LeftDown   = 0x0002,
+        LeftDown = 0x0002,
         /// <summary>Specifies that the left button was released.</summary>
-        LeftUp     = 0x0004,
+        LeftUp = 0x0004,
         /// <summary>Specifies that the right button was pressed.</summary>
-        RightDown  = 0x0008,
+        RightDown = 0x0008,
         /// <summary>Specifies that the right button was released.</summary>
-        RightUp    = 0x0010,
+        RightUp = 0x0010,
         /// <summary>Specifies that the middle button was pressed.</summary>
         MiddleDown = 0x0020,
         /// <summary>Specifies that the middle button was released.</summary>
-        MiddleUp   = 0x0040,
+        MiddleUp = 0x0040,
         /// <summary>Specifies that the x button was pressed.</summary>
-        XDown      = 0x0080,
+        XDown = 0x0080,
         /// <summary>Specifies that the x button was released. </summary>
-        XUp        = 0x0100,
+        XUp = 0x0100,
         /// <summary>Specifies that the wheel was moved</summary>
-        Wheel      = 0x0800,
+        Wheel = 0x0800,
         /// <summary>Specifies that x, y are absolute, not relative</summary>
-        Absolute   = 0x8000,
+        Absolute = 0x8000,
     };
 
 
@@ -56,14 +57,16 @@ namespace Walkabout.Tests.Interop
     /// <summary>
     /// Provides methods for sending mouse and keyboard input
     /// </summary>
-    public static class Input {
+    public static class Input
+    {
         /// <summary>The first X mouse button</summary>
         public const int XButton1 = 0x01;
 
         /// <summary>The second X mouse button</summary>
         public const int XButton2 = 0x02;
 
-        public static void SendMouseInput(int x, int y, int data, SendMouseInputFlags flags) {
+        public static void SendMouseInput(int x, int y, int data, SendMouseInputFlags flags)
+        {
             SendMouseInput((double)x, (double)y, data, flags);
         }
 
@@ -96,9 +99,10 @@ namespace Walkabout.Tests.Interop
 
         public static void SendMouseInput(double x, double y, int data, SendMouseInputFlags flags, int mouseData)
         {
-            int intflags = (int) flags;
+            int intflags = (int)flags;
 
-            if((intflags & (int)SendMouseInputFlags.Absolute) != 0) {
+            if ((intflags & (int)SendMouseInputFlags.Absolute) != 0)
+            {
                 int vscreenWidth = Win32.GetSystemMetrics(Win32.SM_CXVIRTUALSCREEN);
                 int vscreenHeight = Win32.GetSystemMetrics(Win32.SM_CYVIRTUALSCREEN);
                 int vscreenLeft = Win32.GetSystemMetrics(Win32.SM_XVIRTUALSCREEN);
@@ -132,7 +136,7 @@ namespace Walkabout.Tests.Interop
 
             Win32.INPUT mi = new Win32.INPUT();
             mi.type = Win32.INPUT_MOUSE;
-            mi.union.mouseInput.dx = (int) x;
+            mi.union.mouseInput.dx = (int)x;
             mi.union.mouseInput.dy = (int)y;
             mi.union.mouseInput.mouseData = data;
             mi.union.mouseInput.dwFlags = intflags;
@@ -140,7 +144,8 @@ namespace Walkabout.Tests.Interop
             mi.union.mouseInput.dwExtraInfo = new IntPtr(0);
             mi.union.mouseInput.mouseData = mouseData;
 
-            if(Win32.SendInput(1, ref mi, Marshal.SizeOf(mi)) == 0) {
+            if (Win32.SendInput(1, ref mi, Marshal.SizeOf(mi)) == 0)
+            {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
         }
@@ -171,7 +176,7 @@ namespace Walkabout.Tests.Interop
             {
                 mouseData = -120;
             }
-            
+
             Input.SendMouseInput(pt.X, pt.Y, 0, SendMouseInputFlags.Wheel | SendMouseInputFlags.Absolute, mouseData);
 
             Input.SendKeyboardInput(key, false);
@@ -230,8 +235,8 @@ namespace Walkabout.Tests.Interop
             }
         }
 
-        
-        
+
+
         /// <summary>
         /// Taps the specified keyboard key
         /// </summary>
@@ -243,7 +248,7 @@ namespace Walkabout.Tests.Interop
         }
 
 
-         /// <summary>
+        /// <summary>
         /// Taps the specified keyboard key
         /// </summary>
         /// <param name="key">key to tap</param>
@@ -260,28 +265,33 @@ namespace Walkabout.Tests.Interop
         /// </summary>
         /// <param name="key">indicates the key pressed or released. Can be one of the constants defined in the Key enum</param>
         /// <param name="press">true to inject a key press, false to inject a key release</param>
-        public static void SendKeyboardInput(Key key, bool press) {
+        public static void SendKeyboardInput(Key key, bool press)
+        {
             Win32.INPUT ki = new Win32.INPUT();
             ki.type = Win32.INPUT_KEYBOARD;
-            ki.union.keyboardInput.wVk = (short) KeyInterop.VirtualKeyFromKey(key);
-            ki.union.keyboardInput.wScan = (short) Win32.MapVirtualKey(ki.union.keyboardInput.wVk, 0);
-            
+            ki.union.keyboardInput.wVk = (short)KeyInterop.VirtualKeyFromKey(key);
+            ki.union.keyboardInput.wScan = (short)Win32.MapVirtualKey(ki.union.keyboardInput.wVk, 0);
+
             int dwFlags = 0;
-            if(ki.union.keyboardInput.wScan > 0) {
+            if (ki.union.keyboardInput.wScan > 0)
+            {
                 dwFlags |= Win32.KEYEVENTF_SCANCODE;
             }
-            if(false == press) {
+            if (false == press)
+            {
                 dwFlags |= Win32.KEYEVENTF_KEYUP;
             }
-            
+
             ki.union.keyboardInput.dwFlags = dwFlags;
-            if(IsExtendedKey(key)) {
+            if (IsExtendedKey(key))
+            {
                 ki.union.keyboardInput.dwFlags |= Win32.KEYEVENTF_EXTENDEDKEY;
             }
 
             ki.union.keyboardInput.time = Environment.TickCount & Int32.MaxValue;
             ki.union.keyboardInput.dwExtraInfo = new IntPtr(0);
-            if(0 == Win32.SendInput(1, ref ki, Marshal.SizeOf(ki))) {
+            if (0 == Win32.SendInput(1, ref ki, Marshal.SizeOf(ki)))
+            {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
         }
@@ -291,7 +301,8 @@ namespace Walkabout.Tests.Interop
         /// </summary>
         /// <param name="key">indicates the key to be pressed or released. Can be any unicode character</param>
         /// <param name="press">true to inject a key press, false to inject a key release</param>
-        public static void SendUnicodeKeyboardInput(char key, bool press) {
+        public static void SendUnicodeKeyboardInput(char key, bool press)
+        {
             Win32.INPUT ki = new Win32.INPUT();
 
             ki.type = Win32.INPUT_KEYBOARD;
@@ -300,7 +311,8 @@ namespace Walkabout.Tests.Interop
             ki.union.keyboardInput.dwFlags = Win32.KEYEVENTF_UNICODE | (press ? 0 : Win32.KEYEVENTF_KEYUP);
             ki.union.keyboardInput.time = Environment.TickCount & Int32.MaxValue;
             ki.union.keyboardInput.dwExtraInfo = new IntPtr(0);
-            if (0 == Win32.SendInput(1, ref ki, Marshal.SizeOf(ki))) {
+            if (0 == Win32.SendInput(1, ref ki, Marshal.SizeOf(ki)))
+            {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
         }
@@ -313,7 +325,8 @@ namespace Walkabout.Tests.Interop
         /// loss of the input data.
         /// </summary>
         /// <param name="data">The unicode string to be sent</param>
-        public static void SendUnicodeString(string data) {
+        public static void SendUnicodeString(string data)
+        {
             InternalSendUnicodeString(data, 50);
         }
 
@@ -323,11 +336,13 @@ namespace Walkabout.Tests.Interop
         /// </summary>
         /// <param name="data">The unicode string to be sent</param>
         /// <param name="sleepLength">How long, in milliseconds, to sleep between each character</param>
-        public static void SendUnicodeString(string data, int sleepLength) {
-            if(sleepLength < 0) {
+        public static void SendUnicodeString(string data, int sleepLength)
+        {
+            if (sleepLength < 0)
+            {
                 throw new ArgumentOutOfRangeException("sleepLength");
             }
-            
+
             InternalSendUnicodeString(data, sleepLength);
         }
 
@@ -336,11 +351,13 @@ namespace Walkabout.Tests.Interop
         /// </summary>
         /// <param name="key">The Key to check</param>
         /// <returns>true if the specified key is currently down (being pressed), false if it is up</returns>
-        public static bool GetAsyncKeyState(Key key) {
+        public static bool GetAsyncKeyState(Key key)
+        {
             int vKey = KeyInterop.VirtualKeyFromKey(key);
             int resp = Win32.GetAsyncKeyState(vKey);
 
-            if(resp == 0) {
+            if (resp == 0)
+            {
                 throw new InvalidOperationException("GetAsyncKeyStateFailed");
             }
 
@@ -358,7 +375,7 @@ namespace Walkabout.Tests.Interop
             System.Threading.Thread.Sleep(200);
 
             Input.SlideTo(p2);
-            Input.SendMouseInput(p2.X, p2.Y, 0, SendMouseInputFlags.LeftUp | SendMouseInputFlags.Absolute);            
+            Input.SendMouseInput(p2.X, p2.Y, 0, SendMouseInputFlags.LeftUp | SendMouseInputFlags.Absolute);
         }
 
         /// <summary>
@@ -394,8 +411,10 @@ namespace Walkabout.Tests.Interop
         /// This API does not work inside the secure execution environment.
         /// <exception cref="System.Security.Permissions.SecurityPermission"/>
         /// </outside_see>
-        public static void MoveTo(AutomationElement el) {
-            if (el == null) {
+        public static void MoveTo(AutomationElement el)
+        {
+            if (el == null)
+            {
                 throw new ArgumentNullException("el");
             }
             MoveTo(GetClickablePoint(el));
@@ -408,7 +427,8 @@ namespace Walkabout.Tests.Interop
         /// <exception cref="NoClickablePointException">If there is not clickable point for the element</exception>
         public static void SlideTo(AutomationElement el)
         {
-            if (el == null) {
+            if (el == null)
+            {
                 throw new ArgumentNullException("el");
             }
             SlideTo(GetClickablePoint(el));
@@ -424,7 +444,8 @@ namespace Walkabout.Tests.Interop
         /// This API does not work inside the secure execution environment.
         /// <exception cref="System.Security.Permissions.SecurityPermission"/>
         /// </outside_see>
-        public static void MoveTo(Point pt) {
+        public static void MoveTo(Point pt)
+        {
             Input.SendMouseInput(pt.X, pt.Y, 0, SendMouseInputFlags.Move | SendMouseInputFlags.Absolute);
         }
 
@@ -495,8 +516,10 @@ namespace Walkabout.Tests.Interop
         /// This API does not work inside the secure execution environment.
         /// <exception cref="System.Security.Permissions.SecurityPermission"/>
         /// </outside_see>
-        public static void MoveToAndClick(AutomationElement el) {
-            if (el == null) {
+        public static void MoveToAndClick(AutomationElement el)
+        {
+            if (el == null)
+            {
                 throw new ArgumentNullException("el");
             }
             MoveToAndLeftClick(GetClickablePoint(el));
@@ -530,17 +553,20 @@ namespace Walkabout.Tests.Interop
         /// This API does not work inside the secure execution environment.
         /// <exception cref="System.Security.Permissions.SecurityPermission"/>
         /// </outside_see>
-        public static void MoveToAndLeftClick(Point pt) {
+        public static void MoveToAndLeftClick(Point pt)
+        {
             MoveTo(pt);
 
             // send SendMouseInput works in term of the phisical mouse buttons, therefore we need
             // to check to see if the mouse buttons are swapped because this method need to use the primary
             // mouse button.
-            if (0 == Win32.GetSystemMetrics(Win32.SM_SWAPBUTTON)) {
+            if (0 == Win32.GetSystemMetrics(Win32.SM_SWAPBUTTON))
+            {
                 // the mouse buttons are not swaped the primary is the left
                 LeftClick(pt);
             }
-            else {
+            else
+            {
                 // the mouse buttons are swaped so click the right button which as actually the primary
                 RightClick(pt);
             }
@@ -576,8 +602,9 @@ namespace Walkabout.Tests.Interop
             Input.SendMouseInput(pt.X, pt.Y, 0, SendMouseInputFlags.LeftUp | SendMouseInputFlags.Absolute);
         }
 
-       
-        internal static Point GetClickablePoint(AutomationElement el) {
+
+        internal static Point GetClickablePoint(AutomationElement el)
+        {
             int retries = 10;
             while (retries-- > 0)
             {
@@ -685,7 +712,8 @@ namespace Walkabout.Tests.Interop
         // SendKeyboardInput does.
         // Note that this method is public, but this class is private, so
         // this is not externally visible.
-        internal static void SendKeyboardInputVK(byte vk, bool press) {
+        internal static void SendKeyboardInputVK(byte vk, bool press)
+        {
             Win32.INPUT ki = new Win32.INPUT();
             ki.type = Win32.INPUT_KEYBOARD;
             ki.union.keyboardInput.wVk = vk;
@@ -693,7 +721,8 @@ namespace Walkabout.Tests.Interop
             ki.union.keyboardInput.dwFlags = press ? 0 : Win32.KEYEVENTF_KEYUP;
             ki.union.keyboardInput.time = 0;
             ki.union.keyboardInput.dwExtraInfo = new IntPtr(0);
-            if(0 == Win32.SendInput(1, ref ki, Marshal.SizeOf(ki))) {
+            if (0 == Win32.SendInput(1, ref ki, Marshal.SizeOf(ki)))
+            {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
         }
@@ -736,10 +765,12 @@ namespace Walkabout.Tests.Interop
         // with user defined timing
         // <param name="data">The unicode string to be sent</param>
         // <param name="sleepLength">How long, in milliseconds, to sleep between each character</param>
-        private static void InternalSendUnicodeString(string data, int sleepLength) {
+        private static void InternalSendUnicodeString(string data, int sleepLength)
+        {
             char[] chardata = data.ToCharArray();
 
-            foreach (char c in chardata) {
+            foreach (char c in chardata)
+            {
                 SendUnicodeKeyboardInput(c, true);
                 System.Threading.Thread.Sleep(sleepLength);
                 SendUnicodeKeyboardInput(c, false);

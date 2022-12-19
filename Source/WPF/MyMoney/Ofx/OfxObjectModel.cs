@@ -138,7 +138,7 @@ namespace Walkabout.Ofx
     }
 
     public class MfaChallengeTransaction : TransactionWrapper
-    {        
+    {
         [XmlArrayItem("MFACHALLENGE")]
         [XmlArray("MFACHALLENGERS")]
         public List<MfaChallenge> Challenges { get; set; }
@@ -617,7 +617,7 @@ namespace Walkabout.Ofx
         /// </summary>
         [XmlElement("EMAIL")]
         public string Email { get; set; }
-        
+
         /// <summary>
         /// Intuit extension
         /// </summary>
@@ -626,7 +626,7 @@ namespace Walkabout.Ofx
 
     }
 
-    
+
     //<INTU.BROKERID>
     //  dstsystems.com<ADDR1>816 Broadway</ADDR1><CITY>Kansas City</CITY><STATE>MO</STATE><POSTALCODE>64105</POSTALCODE><COUNTRY>USA</COUNTRY>
     //</INTU.BROKERID>
@@ -669,7 +669,7 @@ namespace Walkabout.Ofx
 
         [XmlElement("DTACCTUP")]
         public string AccountUpdateDate { get; set; }
-        
+
         [XmlElement("USERKEY")]
         public string UserKey { get; set; }
 

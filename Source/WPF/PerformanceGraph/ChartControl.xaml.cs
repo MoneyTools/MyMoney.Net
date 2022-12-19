@@ -42,7 +42,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             hover.Hover += new MouseEventHandler(OnHover);
             this.Background = Brushes.White;
         }
-        
+
         public Legend Legend { get; set; }
 
         public bool RemoveSpikes { get; set; }
@@ -64,11 +64,11 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
         }
 
-        double zoom = 1; 
+        double zoom = 1;
         public double Zoom
         {
             get { return zoom; }
-            set { zoom = value; zoomToFit = false;  InvalidateMeasure(); }
+            set { zoom = value; zoomToFit = false; InvalidateMeasure(); }
         }
 
         bool zoomToFit = true;
@@ -96,7 +96,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
             set
             {
-                SetLineData(value);                
+                SetLineData(value);
             }
         }
 
@@ -145,7 +145,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             base.MeasureOverride(constraint);
             if (zoomToFit)
             {
-                return new Size(0,0);
+                return new Size(0, 0);
             }
             else
             {
@@ -407,7 +407,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 bounds = geometry.Bounds;
                 UpdateLabels();
                 InvalidateArrange();
-            } 
+            }
         }
 
         static Point CursorHotSpot = new Point(-26, 0);
@@ -473,7 +473,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                     if (grid != null)
                     {
                         Popup popup = hover.CreatePopup(grid);
-                        popup.Opened += (sender2, args) => {
+                        popup.Opened += (sender2, args) =>
+                        {
                             try
                             {
                                 Point p = scaled[closest];

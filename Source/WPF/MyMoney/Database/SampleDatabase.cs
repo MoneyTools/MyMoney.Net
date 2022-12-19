@@ -167,7 +167,8 @@ namespace Walkabout.Assitance
                     foreach (var split in sec.Splits)
                     {
                         var exists = money.StockSplits.FindStockSplitByDate(stock, split.Date);
-                        if (exists == null) {
+                        if (exists == null)
+                        {
                             StockSplit stockSplit = money.StockSplits.NewStockSplit();
                             stockSplit.Security = stock;
                             stockSplit.Date = split.Date;
@@ -230,7 +231,8 @@ namespace Walkabout.Assitance
 
             public void AddUnits(Account a, string symbol, decimal units)
             {
-                if (!owned.TryGetValue(a, out Dictionary<string, decimal> map)) {
+                if (!owned.TryGetValue(a, out Dictionary<string, decimal> map))
+                {
                     map = new Dictionary<string, decimal>();
                     owned[a] = map;
                 }
@@ -239,9 +241,11 @@ namespace Walkabout.Assitance
                 map[symbol] = tally + units;
             }
 
-            public decimal GetUnits(Account a, string symbol) {
+            public decimal GetUnits(Account a, string symbol)
+            {
                 decimal result = 0;
-                if (owned.TryGetValue(a, out Dictionary<string, decimal> map)) {
+                if (owned.TryGetValue(a, out Dictionary<string, decimal> map))
+                {
                     map.TryGetValue(symbol, out result);
                 }
                 return result;
@@ -292,7 +296,8 @@ namespace Walkabout.Assitance
             {
                 cash.TryGetValue(year, out decimal balance);
                 balance -= removed;
-                if (balance < 100) {
+                if (balance < 100)
+                {
                     continue; // not enough.
                 }
                 decimal startBalance = balance;

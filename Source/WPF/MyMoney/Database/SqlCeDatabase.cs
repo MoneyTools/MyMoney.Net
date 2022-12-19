@@ -226,9 +226,9 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
 
     public class SqlCeDatabase : SqlServerDatabase
     {
-        public SqlCeDatabase() 
+        public SqlCeDatabase()
         {
-            
+
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
             {
                 using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Microsoft SQL Server Compact Edition"))
                 {
-                    Version supported = new Version(4,0,0); // minimum supported version.
+                    Version supported = new Version(4, 0, 0); // minimum supported version.
                     if (key != null)
                     {
                         foreach (string versionName in key.GetSubKeyNames())
@@ -288,10 +288,10 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
             //    {
             //        cstr += ";User Id=" + userId;
             //    }
-                if (!string.IsNullOrEmpty(this.Password))
-                {
-                    builder.Password = this.Password;                    
-                }
+            if (!string.IsNullOrEmpty(this.Password))
+            {
+                builder.Password = this.Password;
+            }
             //    cstr += ";Workstation Id=" + Environment.MachineName;
             //}
 
@@ -315,7 +315,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
                 {
                     en.CreateDatabase();
                 }
-            }   
+            }
         }
 
         public override void Delete()
@@ -443,7 +443,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
                     result = command.ExecuteScalar();
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new Exception("Error executing SQL \"" + cmd + "\"\n" + ex.Message);
             }

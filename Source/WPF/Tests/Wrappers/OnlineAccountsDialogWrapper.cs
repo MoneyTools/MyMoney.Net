@@ -35,7 +35,7 @@ namespace Walkabout.Tests.Wrappers
         public string Name
         {
             get { return window.GetComboBoxText("ComboBoxName"); }
-            set { window.SetComboBoxText("ComboBoxName", value);  }
+            set { window.SetComboBoxText("ComboBoxName", value); }
         }
 
         public string Institution
@@ -103,8 +103,9 @@ namespace Walkabout.Tests.Wrappers
             window.ClickButton("ButtonVerify");
 
             AutomationElement pswd = window.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "PasswordDialog"), 10, 500);
-            
-            if (pswd != null) {
+
+            if (pswd != null)
+            {
                 return new PasswordDialogWrapper(pswd);
             }
 
@@ -205,14 +206,14 @@ namespace Walkabout.Tests.Wrappers
 
     }
 
-    public class OnlineAccountItem 
+    public class OnlineAccountItem
     {
         AutomationElement item;
         AutomationElement id;
         AutomationElement name;
         AutomationElement iconButton;
 
-        public OnlineAccountItem(AutomationElement item) 
+        public OnlineAccountItem(AutomationElement item)
         {
             this.item = item;
             int i = 0;
@@ -245,7 +246,7 @@ namespace Walkabout.Tests.Wrappers
                 {
                     return id.Current.Name;
                 }
-                return null;                
+                return null;
             }
         }
 
@@ -276,7 +277,7 @@ namespace Walkabout.Tests.Wrappers
                 InvokePattern invoke = (InvokePattern)iconButton.GetCurrentPattern(InvokePattern.Pattern);
                 invoke.Invoke();
                 return;
-            }                
+            }
             throw new Exception("AddAccount Button not found");
         }
     }

@@ -42,7 +42,7 @@ namespace Walkabout.Dialogs
             TextBlockIntroMessage.Width = Math.Max(0, e.NewSize.Width - 20);
         }
 
-        
+
 
         public void AddUserDefinedField(string id, string label)
         {
@@ -111,10 +111,11 @@ namespace Walkabout.Dialogs
 
         void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Dispatcher.BeginInvoke(new Action(() => {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
 
                 UpdateButtonState();
-   
+
                 foreach (UIElement child in EntryPanel.Children)
                 {
                     TextBox box = child as TextBox;
@@ -133,7 +134,7 @@ namespace Walkabout.Dialogs
                             break;
                         }
                     }
-                }    
+                }
             }));
         }
 

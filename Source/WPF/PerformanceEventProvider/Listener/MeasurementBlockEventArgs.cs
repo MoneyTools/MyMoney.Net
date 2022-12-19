@@ -30,10 +30,10 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
         public uint Component { get; set; }
         public string Category { get; set; }
         public Guid CorrelationId { get; set; }
-        public uint SequenceNumber{ get; set; }
+        public uint SequenceNumber { get; set; }
         public Guid ParentCorrelationId { get; set; }
         public uint ParentSequenceNumber { get; set; }
-        public uint NestingLevel{ get; set; }
+        public uint NestingLevel { get; set; }
         public ulong Size { get; set; }
         public ulong Ticks { get; set; }
         public ulong CpuTicks { get; set; }

@@ -56,17 +56,17 @@ namespace Walkabout.Controls
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
-            
+
             Size s = sizeInfo.NewSize;
             Rect inner = new Rect(0, 0, s.Width, s.Height);
             double radius = s.Width - this.BorderThickness.Left;
             double sinX = radius / Math.Sqrt(2);
             double margin = (int)(s.Width - sinX);
-            
+
             inner.Inflate(-margin, -margin);
-            
+
             Path p = (Path)Template.FindName("CrossShape", this);
-            p.Data = new PathGeometry(new PathFigure[] 
+            p.Data = new PathGeometry(new PathFigure[]
             {
                 new PathFigure(new Point(inner.Left, inner.Top),
                     new PathSegment[] {

@@ -80,7 +80,7 @@ namespace Walkabout.Setup
             return false;
         }
 
-        public override Task Generate(IReportWriter writer) 
+        public override Task Generate(IReportWriter writer)
         {
             if (doc == null) return Task.CompletedTask;
 
@@ -88,7 +88,7 @@ namespace Walkabout.Setup
 
             bool found = false;
             bool first = true;
-           
+
             foreach (XElement change in doc.Root.Elements("change"))
             {
                 string version = (string)change.Attribute("version");
@@ -98,7 +98,7 @@ namespace Walkabout.Setup
                 }
 
                 bool match = IsSameOrOlder(previousVersion, version);
-                
+
                 if (!found && match)
                 {
                     writer.WriteHeading("The following changes were already installed");
@@ -114,15 +114,15 @@ namespace Walkabout.Setup
                 string date = (string)change.Attribute("date");
 
                 writer.WriteSubHeading(version + "    " + date);
-                
+
                 foreach (string line in change.Value.Split('\r', '\n'))
                 {
                     string trimmed = line.Trim();
-                    if (!string.IsNullOrEmpty(trimmed)) 
+                    if (!string.IsNullOrEmpty(trimmed))
                     {
                         string brush = found ? "ListItemForegroundBrush" : "ListItemSelectedForegroundBrush";
                         FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
-                        Paragraph p = fwriter.WriteParagraph(trimmed, FontStyles.Normal, FontWeights.Normal, 
+                        Paragraph p = fwriter.WriteParagraph(trimmed, FontStyles.Normal, FontWeights.Normal,
                             AppTheme.Instance.GetThemedBrush(brush), null);
                         p.TextIndent = 20;
                         p.Margin = new Thickness(0);

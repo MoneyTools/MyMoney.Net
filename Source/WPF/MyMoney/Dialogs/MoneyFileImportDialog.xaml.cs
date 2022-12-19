@@ -31,7 +31,7 @@ namespace Walkabout.Dialogs
         Dispatcher dispatcher;
 
         public MoneyFileImportDialog()
-        {            
+        {
             InitializeComponent();
             loadingStatusPrompt = Status.Text;
             list = (ObservableCollection<AccountImportState>)AccountList.ItemsSource;
@@ -78,7 +78,8 @@ namespace Walkabout.Dialogs
             this.myStatements = myStatements;
             cancelSource = new CancellationTokenSource();
             var token = cancelSource.Token;
-            Task.Factory.StartNew(() => {
+            Task.Factory.StartNew(() =>
+            {
                 busy = true;
                 foreach (string file in fileNames)
                 {
@@ -206,14 +207,15 @@ namespace Walkabout.Dialogs
             StringBuilder sb = new StringBuilder();
 
             List<Transaction> newTransactions = new List<Transaction>();
-            for (int i = 0, n = transactions.Count; i< n; i++)
+            for (int i = 0, n = transactions.Count; i < n; i++)
             {
                 double percent = ((double)i * 100.0) / (double)n;
                 a.PercentComplete = (int)percent;
                 Transaction t = transactions[i];
                 Transaction u = this.myMoney.Transactions.FindTransactionById(t.Id);
-                
-                try {
+
+                try
+                {
                     if (u == null)
                     {
                         newTransactions.Add(t);
@@ -225,7 +227,7 @@ namespace Walkabout.Dialogs
                         // make the amounts the same
                         u.Amount = t.Amount;
                         List<string> attachments = newAttachments.GetAttachments(t);
-                        this.myAttachments.ImportAttachments(t, attachments);                   
+                        this.myAttachments.ImportAttachments(t, attachments);
                     }
                 }
                 catch (Exception ex)
@@ -298,7 +300,7 @@ namespace Walkabout.Dialogs
 
         public void ShowProgress(string message, int min, int max, int value)
         {
-            
+
         }
         #endregion
 
@@ -319,7 +321,7 @@ namespace Walkabout.Dialogs
     {
         public DemoList()
         {
-            this.Add(new AccountImportState() { Name = "Apple", Done= true, Status="Updated 5 rows" });
+            this.Add(new AccountImportState() { Name = "Apple", Done = true, Status = "Updated 5 rows" });
             this.Add(new AccountImportState() { Name = "Banana", Done = true, Status = "Updated 2 rows" });
             this.Add(new AccountImportState() { Name = "Orange", Loading = true, PercentComplete = 20, Status = "Updated 1 rows" });
             this.Add(new AccountImportState() { Name = "Pear" });

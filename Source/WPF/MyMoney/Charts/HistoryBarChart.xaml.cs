@@ -48,7 +48,7 @@ namespace Walkabout.Charts
     }
 
     public class HistoryChartColumn
-    { 
+    {
         public IEnumerable<HistoryDataValue> Values { get; set; }
         public HistoryRange Range { get; internal set; }
         public Brush Brush { get; set; }
@@ -114,7 +114,7 @@ namespace Walkabout.Charts
         }
 
         void DelayedUpdate()
-        { 
+        {
             delayedActions.StartDelayedAction("update", UpdateChart, TimeSpan.FromMilliseconds(1));
         }
 
@@ -132,7 +132,7 @@ namespace Walkabout.Charts
         }
 
         public int FiscalYearStart
-        { 
+        {
             get => fiscalYearStart;
             set
             {
@@ -208,7 +208,7 @@ namespace Walkabout.Charts
                 }
 
                 HistoryRange range = this.Selection.Range;
-                
+
                 Brush brush = this.Selection.Brush;
                 if (brush == null)
                 {
@@ -233,7 +233,7 @@ namespace Walkabout.Charts
                     startDate = this.selection.EndDate.AddDays(-maxColumns);
                     endDate = startDate.AddDays(1);
                 }
-                else 
+                else
                 {
                     maxColumns = 24;
                     DateTime yearStart = new DateTime(this.selection.EndDate.Year, this.fiscalYearStart + 1, 1);
@@ -315,7 +315,7 @@ namespace Walkabout.Charts
                 {
                     c = sc.Color;
                 }
-                
+
                 if (c == Colors.Transparent || c == Colors.White)
                 {
                     // not defined on the category, so use gray.
@@ -323,9 +323,9 @@ namespace Walkabout.Charts
                 }
 
                 // Send data to the animating bar chart.
-                var data = new ChartData(); 
+                var data = new ChartData();
                 var series = new ChartDataSeries() { Name = "History" };
-                foreach(var column in this.collection)
+                foreach (var column in this.collection)
                 {
                     series.Values.Add(new ChartDataValue() { Label = column.Label.ToString(), Value = (double)column.Amount, UserData = column, Color = c });
                 }

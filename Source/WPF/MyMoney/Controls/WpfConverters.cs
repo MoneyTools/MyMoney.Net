@@ -70,7 +70,7 @@ namespace Walkabout.WpfConverters
                     }
                 }
             }
-            return DependencyProperty.UnsetValue; 
+            return DependencyProperty.UnsetValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -98,22 +98,22 @@ namespace Walkabout.WpfConverters
     public class DeletedAliasToolTipConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (value is bool b && b == true)
         {
-            return "This alias has been subsumed by another and will be deleted when you save your changes";
+            if (value is bool b && b == true)
+            {
+                return "This alias has been subsumed by another and will be deleted when you save your changes";
+            }
+
+            return DependencyProperty.UnsetValue;
         }
 
-        return DependencyProperty.UnsetValue;
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        return value;
-    }
-}
-
-public class StrikeThroughConverter : IValueConverter
+    public class StrikeThroughConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -231,8 +231,8 @@ public class StrikeThroughConverter : IValueConverter
 
 
         static Brush lineColorBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x44, 0x7F, 0xFF)); // Light semi-transparent blue
-        static CornerRadius shapeAdd = new CornerRadius(0,5,5,0);
-        static CornerRadius shapeSubtract = new CornerRadius(5,0,0,5);
+        static CornerRadius shapeAdd = new CornerRadius(0, 5, 5, 0);
+        static CornerRadius shapeSubtract = new CornerRadius(5, 0, 0, 5);
         static CornerRadius shapeStart = new CornerRadius(5);
         static CornerRadius shapeStop = new CornerRadius(5);
 
@@ -302,14 +302,14 @@ public class StrikeThroughConverter : IValueConverter
                 Grid.SetColumn(spot, columnIndex);
                 g.Children.Add(spot);
 
-                
+
                 Label label = new Label();
                 label.FontSize = 11;
                 label.FontWeight = FontWeights.UltraBold;
                 label.Height = 16;
                 label.Width = 16;
                 spot.Child = label;
-               
+
                 switch (trackStyle)
                 {
                     case TrackStyle.Buy:
@@ -320,12 +320,12 @@ public class StrikeThroughConverter : IValueConverter
                         spot.VerticalAlignment = VerticalAlignment.Top;
 
                         label.Content = "+";
-                        label.Margin = new Thickness(0,-5,0,0);
+                        label.Margin = new Thickness(0, -5, 0, 0);
                         label.HorizontalContentAlignment = spot.HorizontalAlignment;
                         label.VerticalContentAlignment = spot.VerticalAlignment;
                         label.HorizontalAlignment = spot.HorizontalAlignment;
                         label.VerticalAlignment = spot.VerticalAlignment;
-                        
+
                         break;
 
                     case TrackStyle.Add:
@@ -436,13 +436,13 @@ public class StrikeThroughConverter : IValueConverter
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            
+
             if (value is string)
             {
                 string stringVal = value as string;
 
                 decimal d = 0;
-                if (!string.IsNullOrWhiteSpace(stringVal) && 
+                if (!string.IsNullOrWhiteSpace(stringVal) &&
                     false == Decimal.TryParse(stringVal, NumberStyles.Currency, CultureInfo.CurrentCulture, out d))
                 {
                     d = System.Convert.ToDecimal(stringVal, CultureInfo.GetCultureInfo("en-US"));

@@ -18,7 +18,7 @@ namespace Walkabout.Controls
         void PasswordControl_Loaded(object sender, RoutedEventArgs e)
         {
             PasswordField.Name = this.Name;
-            this.Name += "Control"; 
+            this.Name += "Control";
         }
 
         public event RoutedEventHandler PasswordChanged;
@@ -53,7 +53,7 @@ namespace Walkabout.Controls
         }
 
         public void SelectAll()
-        {            
+        {
             PasswordField.SelectAll();
             PasswordField.Focus();
         }

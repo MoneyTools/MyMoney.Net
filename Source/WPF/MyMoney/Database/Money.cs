@@ -392,7 +392,7 @@ namespace Walkabout.Data
             if (this.propertyChangeHandlers != null && this.propertyChangeHandlers.HasListeners)
             {
                 this.propertyChangeHandlers.RaiseEvent(this, new PropertyChangedEventArgs(propertyName));
-            }            
+            }
         }
 
         public int ChangeListenerCount => (handlers == null) ? 0 : handlers.ListenerCount;
@@ -405,7 +405,7 @@ namespace Walkabout.Data
                 {
                     handlers = new EventHandlerCollection<ChangeEventArgs>();
                 }
-                handlers.AddHandler(value); 
+                handlers.AddHandler(value);
                 if (handlers.ListenerCount > 500)
                 {
                     Debug.WriteLine(String.Format("Changed handler leak detected on {0}", this.GetType().Name));
@@ -1986,7 +1986,7 @@ namespace Walkabout.Data
         /// <param name="filter">The account filter predicate to decide which accounts to include.</param>
         /// <returns>Cash balance</returns>
         public decimal GetCashBalanceNormalized(DateTime date, Predicate<Account> filter)
-        {            
+        {
             decimal cash = 0;
             foreach (Account a in this.Accounts.GetAccounts(false))
             {
@@ -5261,10 +5261,10 @@ namespace Walkabout.Data
                     if (e.TaxYear != -1 && !e.TaxDate.HasValue)
                     {
                         // time to migrate it to a full date.
-                        var d = new DateTime(e.TaxYear, fiscalYearStart + 1, 1);                       
+                        var d = new DateTime(e.TaxYear, fiscalYearStart + 1, 1);
                         e.TaxDate = d;
                     }
-                } 
+                }
                 else
                 {
                     // dangling extra!
@@ -8360,7 +8360,7 @@ namespace Walkabout.Data
             if (n == null && m != null) return -1;
             if (n != null && m == null) return 1;
             if (n == null && m == null) return 0;
-            
+
             var rc = n.CompareTo(m);
             if (rc != 0)
             {

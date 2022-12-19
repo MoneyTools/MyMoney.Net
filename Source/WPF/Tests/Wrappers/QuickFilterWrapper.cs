@@ -24,7 +24,7 @@ namespace Walkabout.Tests.Wrappers
 
         public void SetFilter(string filter)
         {
-            var box = e.SetTextBox("InputFilterText", filter);            
+            var box = e.SetTextBox("InputFilterText", filter);
             Win32.SetFocus(Win32.HWND.Cast(new IntPtr(box.Current.NativeWindowHandle)));
             Input.TapKey(System.Windows.Input.Key.Enter);
         }

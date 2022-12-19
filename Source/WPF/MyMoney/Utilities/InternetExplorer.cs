@@ -17,7 +17,7 @@ namespace Walkabout.Utilities
         {
             Uri baseUri = new Uri(ProcessHelper.StartupPath);
             Uri resolved = new Uri(baseUri, url);
-            
+
             // todo: support showing embedded pack:// resources in a popup page (could be useful for help content).
             int rc = NativeMethods.ShellExecute(owner, "open", resolved.AbsoluteUri, null, ProcessHelper.StartupPath, NativeMethods.SW_SHOWNORMAL);
         }
@@ -85,7 +85,7 @@ namespace Walkabout.Utilities
 
         public static Hyperlink GetOpenFileHyperlink(string label, string path)
         {
-            Uri uri = new Uri(path, UriKind.RelativeOrAbsolute);            
+            Uri uri = new Uri(path, UriKind.RelativeOrAbsolute);
 
             Hyperlink link = new Hyperlink(new Run(label))
             {
@@ -117,5 +117,5 @@ namespace Walkabout.Utilities
 
 
 
-  
+
 }

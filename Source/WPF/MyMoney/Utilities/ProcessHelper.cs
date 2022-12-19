@@ -95,7 +95,7 @@ namespace Walkabout.Utilities
                 {
                     byte[] buffer = new byte[64000];
                     int len = 0;
-                    while ((len = s.Read(buffer, 0, buffer.Length)) > 0) 
+                    while ((len = s.Read(buffer, 0, buffer.Length)) > 0)
                     {
                         fs.Write(buffer, 0, len);
                     }

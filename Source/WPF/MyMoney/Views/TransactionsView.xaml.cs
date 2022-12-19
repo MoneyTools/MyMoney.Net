@@ -1781,7 +1781,7 @@ namespace Walkabout.Views
                     this.InvestmentAccountTabs.SelectedIndex == this.selectedTab)
                 {
                     // already viewing this account.
-                    return; 
+                    return;
                 }
 
 #if PerformanceBlocks
@@ -3203,7 +3203,7 @@ namespace Walkabout.Views
                         {
                             // ok, this might be the GetStock auto-update, see if there is anything to copy to 
                             // uncommitted payee.
-                            if (!string.IsNullOrEmpty(s.Name) && 
+                            if (!string.IsNullOrEmpty(s.Name) &&
                                 this.SelectedTransaction != null && this.SelectedTransaction.Investment != null &&
                                 this.SelectedTransaction.Investment.Security == s)
                             {
@@ -3237,7 +3237,7 @@ namespace Walkabout.Views
                                     {
                                         // then this account is gone, so we need to clear the display.
                                         this.TheActiveGrid.ClearItemsSource();
-                                    } 
+                                    }
                                     else if (args.ChangeType == ChangeType.Changed)
                                     {
                                         if (args.Name != "Unaccepted" && args.Name != "LastBalance")
@@ -4133,7 +4133,7 @@ namespace Walkabout.Views
                         {
                             this.myMoney.TransactionExtras.RemoveExtra(extra);
                             t.Extra = null;
-                        }                        
+                        }
                     }
                 }
             }
@@ -4253,27 +4253,27 @@ namespace Walkabout.Views
             while (true)
             {
                 List<QueryRow> queryRows = new List<QueryRow>();
-             
+
                 // Set the acceptable Date range to consider the other transaction a possible match
                 var dateMin = t.Date.AddDays(-days);
                 var dateMax = t.Date.AddDays(days);
 
                 queryRows.Add(new QueryRow(Conjunction.And, Field.Date, Operation.GreaterThanEquals, dateMin.ToString()));
                 queryRows.Add(new QueryRow(Conjunction.And, Field.Date, Operation.LessThanEquals, dateMax.ToString()));
-                
+
                 // If this was a payment we are looking for a deposit
                 // if this was a deposit we are looking for a payment
 
                 Field DepositOrPayment = t.amount > 0 ? Field.Payment : Field.Deposit;
                 queryRows.Add(new QueryRow(Conjunction.And, DepositOrPayment, Operation.Equals, Math.Abs(t.amount).ToString()));
-               
+
                 // Execute the search, this a blocking call
                 IList<Transaction> list = myMoney.Transactions.ExecuteQuery(queryRows.ToArray());
                 IList<Transaction> free = new List<Transaction>(from u in list where u.Transfer == null select u);
                 if (free.Count > 0)
                 {
                     // only look at transactions that don't already have a Transfer.
-                    list = free; 
+                    list = free;
                 }
 
                 switch (list.Count)
@@ -4315,7 +4315,7 @@ namespace Walkabout.Views
                     case 0:
                         {
                             days *= 2;
-                            var rc = MessageBoxEx.Show($"No matching transaction found, would you like to try a wider search with ± {days} days?", 
+                            var rc = MessageBoxEx.Show($"No matching transaction found, would you like to try a wider search with ± {days} days?",
                                 "Transfer Search Failed", MessageBoxButton.YesNo, MessageBoxImage.Question);
                             if (rc == MessageBoxResult.No)
                             {
@@ -4345,7 +4345,7 @@ namespace Walkabout.Views
             // keep the payees to store them in the transfer memo fields
             // Its use a clue of the two original disconnected transactions
             var newMemoForBothSide = transferFrom.PayeeName + ">" + transferTo.PayeeName;
-            
+
             // From
             {
                 transferFrom.Transfer = new Transfer(0, transferFrom, transferTo);
@@ -5668,8 +5668,8 @@ namespace Walkabout.Views
             }
         }
 
-        void UpdateUI() 
-        { 
+        void UpdateUI()
+        {
             UpdateBackground();
             UpdateForeground();
             UpdateFontWeight();
@@ -5985,7 +5985,8 @@ namespace Walkabout.Views
         }
     }
 
-    internal static class SymbolIconHackery {
+    internal static class SymbolIconHackery
+    {
         internal static Action<SymbolIcon, double> setter;
 
         internal static void SetFontSize(SymbolIcon icon, double fontSize)
@@ -6404,7 +6405,7 @@ namespace Walkabout.Views
         {
             Brush stroke = (Brush)FindResource("TransactionConnectorBrush");
             Brush foreground = (Brush)FindResource("TransactionConnectorForegroundBrush");
-            Brush background = (Brush)FindResource("TransactionConnectorButtonBackground"); 
+            Brush background = (Brush)FindResource("TransactionConnectorButtonBackground");
             Brush pressed = (Brush)FindResource("TransactionConnectorButtonPressedBackground");
             Brush mouseOver = (Brush)FindResource("TransactionConnectorButtonMouseOverBackground");
 
@@ -6560,7 +6561,7 @@ namespace Walkabout.Views
             this.grid.UnloadingRow += OnRowLoadUnload;
             // we also have to watch scrolling in case the anchor moves too far offscreen
             // such that it becomes invalid...
-            grid.ScrollChanged += OnGridScrollChanged;            
+            grid.ScrollChanged += OnGridScrollChanged;
         }
 
         void OnRowLoadUnload(object sender, DataGridRowEventArgs e)
@@ -6592,7 +6593,7 @@ namespace Walkabout.Views
             int j = tc.IndexOf(this.targetTransaction);
 
             var visibleRows = this.grid.GetVisibleRows();
-            if ((i < visibleRows.Item1 && j < visibleRows.Item1 ) ||
+            if ((i < visibleRows.Item1 && j < visibleRows.Item1) ||
                 (i > visibleRows.Item2 && j > visibleRows.Item2))
             {
                 // then the merged range is entirely out of view.
@@ -6901,7 +6902,7 @@ namespace Walkabout.Views
             }
 
             Func<Transaction, string> f = null;
-            switch(this.SortMemberPath)
+            switch (this.SortMemberPath)
             {
                 case "SalesTax":
                     f = (t) => GetStringValue(t.SalesTax);
@@ -7140,7 +7141,7 @@ namespace Walkabout.Views
                 BorderThickness = new Thickness(0),
                 Margin = new Thickness(0, -2, 0, 0),
                 Name = "EditorForDate"
-            };            
+            };
             picker.SetBinding(MoneyDatePicker.SelectedDateProperty, new Binding("Date"));
             return picker;
         }

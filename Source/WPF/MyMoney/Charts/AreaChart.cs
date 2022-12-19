@@ -76,7 +76,7 @@ namespace LovettSoftware.Charts
             get { return data; }
             set
             {
-                data = value; 
+                data = value;
                 Relayout();
             }
         }
@@ -118,7 +118,7 @@ namespace LovettSoftware.Charts
             if (graphWidth > 0 && height > 0)
             {
                 double scaleX = controlSize.Width / graphWidth;
-                double scaleY = -(controlSize.Height*.9) / height;
+                double scaleY = -(controlSize.Height * .9) / height;
                 transform.Children.Add(scale = new ScaleTransform(scaleX, scaleY));
                 double minScale = graphMin * scaleY;
                 transform.Children.Add(new TranslateTransform(0, controlSize.Height - minScale));
@@ -136,8 +136,9 @@ namespace LovettSoftware.Charts
         {
             if (data != null && data.Series.Count > 0 && scale != null && scale.ScaleX > 0)
             {
-                if (selectedSeries == null) {
-                    selectedSeries = data.Series[data.Series.Count-1];
+                if (selectedSeries == null)
+                {
+                    selectedSeries = data.Series[data.Series.Count - 1];
                 }
 
                 Point legendPos = this.TransformToDescendant(legend).Transform(pos);
@@ -231,7 +232,7 @@ namespace LovettSoftware.Charts
                     tooltip.Visibility = System.Windows.Visibility.Hidden;
                     pointer.Visibility = System.Windows.Visibility.Hidden;
                 }
-                
+
             }
             else
             {
@@ -271,7 +272,7 @@ namespace LovettSoftware.Charts
             UpdatePointer(pos);
             base.OnMouseMove(e);
         }
-        
+
         void ShowAreaGraph()
         {
             graphMin = 0;
@@ -375,13 +376,13 @@ namespace LovettSoftware.Charts
             legendEntry.PreviewMouseDown += OnSelectLegendEntry;
             legendEntry.IsHitTestVisible = true;
             legendEntry.MouseEnter += OnLegendEntryMouseEnter;
-            legendEntry.MouseLeave += OnLegendEntryMouseLeave; 
+            legendEntry.MouseLeave += OnLegendEntryMouseLeave;
             legend.Children.Add(legendEntry);
 
             s.UserData = shape;
-            
+
             Rectangle swatch = new Rectangle();
-            swatch.Margin = new Thickness(4,1,2,1);
+            swatch.Margin = new Thickness(4, 1, 2, 1);
             swatch.Width = 12;
             swatch.Height = 12;
             swatch.Stroke = shape.Stroke;
@@ -580,7 +581,7 @@ namespace LovettSoftware.Charts
             if (colors == null)
             {
                 colors = new List<Color>();
-                foreach (Color preference in new Color[] { 
+                foreach (Color preference in new Color[] {
                                                 Colors.SkyBlue,
                                                 Colors.Pink,
                                                 Colors.LightSalmon,

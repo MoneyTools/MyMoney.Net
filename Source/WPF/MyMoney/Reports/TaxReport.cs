@@ -577,7 +577,7 @@ namespace Walkabout.Reports
             if (this.fiscalYearStart > 0)
             {
                 fd.FileName = "TaxFY" + this.startDate.Year;
-            } 
+            }
             else
             {
                 fd.FileName = "Tax" + this.startDate.Year;

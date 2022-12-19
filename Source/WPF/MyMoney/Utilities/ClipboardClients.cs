@@ -96,7 +96,8 @@ namespace Walkabout.Utilities
             if (text != null)
             {
                 text.Copy();
-            } else
+            }
+            else
             {
                 Clipboard.SetText(this.box.Text);
             }

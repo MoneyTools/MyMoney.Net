@@ -38,7 +38,7 @@ namespace Walkabout.Views.Controls
         {
             InitializeComponent();
 
-            this.TextBoxStatementBalance.LostFocus += new RoutedEventHandler(this.StatementBalance_LostFocus);                        
+            this.TextBoxStatementBalance.LostFocus += new RoutedEventHandler(this.StatementBalance_LostFocus);
         }
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
@@ -69,7 +69,7 @@ namespace Walkabout.Views.Controls
             if (d != null && WpfHelper.FindAncestor<BalanceControl>(d) != null)
             {
                 // Search up the visual hierarchy for a tooltip.
-                object tooltip = WpfHelper.FindInheritedProperty <BalanceControl>(d, FrameworkElement.ToolTipProperty);
+                object tooltip = WpfHelper.FindInheritedProperty<BalanceControl>(d, FrameworkElement.ToolTipProperty);
                 if (tooltip != null)
                 {
                     text = tooltip.ToString();
@@ -77,7 +77,7 @@ namespace Walkabout.Views.Controls
             }
             TextBlockMessage.Text = text;
         }
-        
+
 
         public void Reconcile(MyMoney money, Account a, StatementManager statementManager)
         {
@@ -110,7 +110,7 @@ namespace Walkabout.Views.Controls
                 // In order to include the oldest un-reconciled transaction we need to start at least 1 day before the
                 // oldest un-reconciled date.
                 oldestUnreconciledDate = oldestUnreconciledDate.AddDays(-1);
-                previous.Add(oldestUnreconciledDate); 
+                previous.Add(oldestUnreconciledDate);
             }
 
             foreach (var stmt in statementManager.GetStatements(a))
@@ -146,7 +146,7 @@ namespace Walkabout.Views.Controls
             estdate = GetNextStatementDate(this.SelectedPreviousStatement);
             this.ComboBoxPreviousReconcileDates.SelectionChanged -= new SelectionChangedEventHandler(ComboBoxPreviousReconcileDates_SelectionChanged);
             this.ComboBoxPreviousReconcileDates.SelectionChanged += new SelectionChangedEventHandler(ComboBoxPreviousReconcileDates_SelectionChanged);
-            
+
             this.StatementDate = estdate;
 
             this.myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(Transactions_Changed);
@@ -544,7 +544,7 @@ namespace Walkabout.Views.Controls
                         hasStatement = this.statements.AddStatement(this.account, this.StatementDate, fileName, this.YourNewBalance, true);
                     }
                 }
-            } 
+            }
             catch (Exception ex)
             {
                 MessageBoxEx.Show(ex.Message, "Error with Statement file", MessageBoxButton.OK, MessageBoxImage.Error);

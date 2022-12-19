@@ -9,12 +9,13 @@ using System.Threading;
 namespace Walkabout.Tests.Wrappers
 {
     public class SaveAsDialogWrapper : DialogWrapper
-    {        
+    {
         internal SaveAsDialogWrapper(AutomationElement e) : base(e)
         {
         }
 
-        public void SetFileName(string value) {
+        public void SetFileName(string value)
+        {
             this.Element.SetTextBox("1001", value);
             this.WaitForInputIdle(100);
         }
@@ -27,7 +28,7 @@ namespace Walkabout.Tests.Wrappers
                 if (!this.window.Current.IsOffscreen)
                 {
                     this.WaitForInputIdle(100);
-                    for (int retries = 5; retries > 0 && 
+                    for (int retries = 5; retries > 0 &&
                         !this.window.Current.IsOffscreen; retries--)
                     {
                         if (this.IsBlocked)
@@ -46,7 +47,7 @@ namespace Walkabout.Tests.Wrappers
                         this.WaitForInputIdle(100);
                     }
                 }
-            } 
+            }
             catch (System.Windows.Automation.ElementNotAvailableException)
             {
                 // window is gone then.

@@ -38,11 +38,13 @@ namespace Walkabout.Configuration
 
         public Point WindowLocation
         {
-            get {
+            get
+            {
                 object value = map["WindowLocation"];
                 return value is Point ? (Point)value : new Point(0, 0);
             }
-            set { 
+            set
+            {
                 map["WindowLocation"] = value;
                 OnPropertyChanged("WindowLocation");
             }
@@ -55,7 +57,8 @@ namespace Walkabout.Configuration
                 object value = map["WindowSize"];
                 return value is Size ? (Size)value : new Size(0, 0);
             }
-            set { 
+            set
+            {
                 map["WindowSize"] = value;
                 OnPropertyChanged("WindowSize");
             }
@@ -75,7 +78,8 @@ namespace Walkabout.Configuration
                 value = map["AttachmentDialogSize"];
                 return value is Size ? (Size)value : new Size(0, 0);
             }
-            set { 
+            set
+            {
                 map["AttachmentDialogSize"] = value;
                 OnPropertyChanged("AttachmentDialogSize");
             }
@@ -88,8 +92,8 @@ namespace Walkabout.Configuration
                 object value = map["AttachmentDirectory"];
                 return value is string ? (string)value : null;
             }
-            set 
-            { 
+            set
+            {
                 map["AttachmentDirectory"] = value;
                 OnPropertyChanged("AttachmentDirectory");
             }
@@ -114,9 +118,10 @@ namespace Walkabout.Configuration
             get
             {
                 object value = map["RecentFiles"];
-                return value is string[] ? (string[])value : null;
+                return value is string[]? (string[])value : null;
             }
-            set { 
+            set
+            {
                 map["RecentFiles"] = value;
                 OnPropertyChanged("RecentFiles");
             }
@@ -129,7 +134,8 @@ namespace Walkabout.Configuration
                 object value = map["ToolBoxWidth"];
                 return value is int ? (int)value : 0;
             }
-            set { 
+            set
+            {
                 map["ToolBoxWidth"] = value;
                 OnPropertyChanged("ToolBoxWidth");
             }
@@ -142,7 +148,8 @@ namespace Walkabout.Configuration
                 object value = map["GraphHeight"];
                 return value is int ? (int)value : 0;
             }
-            set { 
+            set
+            {
                 map["GraphHeight"] = value;
                 OnPropertyChanged("GraphHeight");
             }
@@ -158,7 +165,8 @@ namespace Walkabout.Configuration
                 object value = map["Database"];
                 return value is string ? (string)value : null;
             }
-            set { 
+            set
+            {
                 map["Database"] = value;
             }
         }
@@ -188,8 +196,8 @@ namespace Walkabout.Configuration
 
         public string Connection
         {
-            set 
-            { 
+            set
+            {
                 // Migrate old setting to new separate fields.
                 ParseConnectionString(value);
             }
@@ -205,7 +213,7 @@ namespace Walkabout.Configuration
             foreach (string s in parts)
             {
                 int i = s.IndexOf('=');
-                if (i > 0) 
+                if (i > 0)
                 {
                     string name = s.Substring(0, i).Trim();
                     string value = s.Substring(i + 1);
@@ -237,8 +245,9 @@ namespace Walkabout.Configuration
                 object value = map["Server"];
                 return value is string ? (string)value : null;
             }
-            set { 
-                map["Server"] = value; 
+            set
+            {
+                map["Server"] = value;
             }
         }
 
@@ -249,7 +258,8 @@ namespace Walkabout.Configuration
                 object value = map["BackupPath"];
                 return value is string ? (string)value : null;
             }
-            set { 
+            set
+            {
                 map["BackupPath"] = value;
                 OnPropertyChanged("BackupPath");
             }
@@ -262,7 +272,8 @@ namespace Walkabout.Configuration
                 object value = map["UserId"];
                 return value is string ? (string)value : null;
             }
-            set { 
+            set
+            {
                 map["UserId"] = value;
                 OnPropertyChanged("UserId");
             }
@@ -275,7 +286,8 @@ namespace Walkabout.Configuration
                 object value = map["DisplayClosedAccounts"];
                 return value is bool ? (bool)value : false;
             }
-            set { 
+            set
+            {
                 map["DisplayClosedAccounts"] = value;
                 OnPropertyChanged("DisplayClosedAccounts");
             }
@@ -302,7 +314,8 @@ namespace Walkabout.Configuration
                 object value = map["PlaySounds"];
                 return value is bool ? (bool)value : false;
             }
-            set { 
+            set
+            {
                 map["PlaySounds"] = value;
                 OnPropertyChanged("PlaySounds");
             }
@@ -341,14 +354,15 @@ namespace Walkabout.Configuration
             get
             {
                 object value = map["Query"];
-                return value is QueryRow[] ? (QueryRow[])value : null;
+                return value is QueryRow[]? (QueryRow[])value : null;
             }
-            set { 
+            set
+            {
                 map["Query"] = value;
                 OnPropertyChanged("Query");
             }
         }
-        
+
         public GraphState GraphState
         {
             get
@@ -356,7 +370,8 @@ namespace Walkabout.Configuration
                 object value = map["GraphState"];
                 return value is GraphState ? (GraphState)value : null;
             }
-            set { 
+            set
+            {
                 map["GraphState"] = value;
                 OnPropertyChanged("GraphState");
             }
@@ -371,7 +386,7 @@ namespace Walkabout.Configuration
             }
             set { map["StartDate"] = value; }
         }
-        
+
         public DateTime EndDate
         {
             get
@@ -381,7 +396,7 @@ namespace Walkabout.Configuration
             }
             set { map["EndDate"] = value; }
         }
-        
+
         public DateTime LastStockRequest
         {
             get
@@ -389,13 +404,14 @@ namespace Walkabout.Configuration
                 object value = map["LastStockRequest"];
                 return value is DateTime ? (DateTime)value : DateTime.MinValue;
             }
-            set { 
+            set
+            {
                 map["LastStockRequest"] = value;
                 OnPropertyChanged("LastStockRequest");
             }
         }
 
-        
+
         public string Theme
         {
             get
@@ -403,7 +419,8 @@ namespace Walkabout.Configuration
                 object value = map["Theme"];
                 return value is string ? (string)value : null;
             }
-            set {
+            set
+            {
                 if (this.Theme != value)
                 {
                     map["Theme"] = value;
@@ -421,7 +438,7 @@ namespace Walkabout.Configuration
             }
             set
             {
-                map["ExeVersion"] = value; 
+                map["ExeVersion"] = value;
             }
         }
 
@@ -448,12 +465,13 @@ namespace Walkabout.Configuration
                 object value = map["DuplicateRange"];
                 return value is TimeSpan ? (TimeSpan)value : TimeSpan.FromDays(60);
             }
-            set { 
+            set
+            {
                 map["DuplicateRange"] = value;
                 OnPropertyChanged("DuplicateRange");
             }
         }
-        
+
         #endregion
 
         public Settings(bool save)
@@ -483,8 +501,8 @@ namespace Walkabout.Configuration
 
         public object this[string key]
         {
-            get {  return map[key];  }
-            set {  map[key] = value;  }
+            get { return map[key]; }
+            set { map[key] = value; }
         }
 
         public void Load(string path)
@@ -755,8 +773,8 @@ namespace Walkabout.Configuration
                         s.WriteXml(w);
                         w.WriteEndElement();
                     }
-                } 
-                else 
+                }
+                else
                 {
                     w.WriteElementString(key, value.ToString());
                 }
@@ -845,7 +863,7 @@ namespace Walkabout.Configuration
                     {
                         string temp = r.ReadString();
                         double w = 0;
-                        if (double.TryParse(temp, out w)) 
+                        if (double.TryParse(temp, out w))
                         {
                             s.Width = (int)w;
                         }
@@ -1168,9 +1186,9 @@ namespace Walkabout.Configuration
         }
 
 
-       
+
 
     }
 
-  
+
 }

@@ -816,7 +816,7 @@ namespace Walkabout.Views.Controls
             visual.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             visual.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             var label = new TextBlock() { Text = c.Name, Margin = new Thickness(5), FontSize = this.FontSize, FontFamily = this.FontFamily };
-            var swatch = new Border() { Margin=new Thickness(5), Width = 8, Height = 8, Background = new SolidColorBrush() { Color = ColorAndBrushGenerator.GenerateNamedColor(c.InheritedColor) } };
+            var swatch = new Border() { Margin = new Thickness(5), Width = 8, Height = 8, Background = new SolidColorBrush() { Color = ColorAndBrushGenerator.GenerateNamedColor(c.InheritedColor) } };
             visual.Children.Add(label);
             visual.Children.Add(swatch);
             Grid.SetColumn(swatch, 1);
@@ -830,7 +830,8 @@ namespace Walkabout.Views.Controls
                 // turn off drag when in editing mode
 
             }
-            else {
+            else
+            {
                 TreeViewItem treeViewItem = WpfHelper.FindAncestor<TreeViewItem>((DependencyObject)target);
                 if (treeViewItem != null)
                 {
@@ -877,7 +878,7 @@ namespace Walkabout.Views.Controls
                 newName = string.Join(":", categorySource.GetFullName().Split(':').Skip(1));
             }
             else
-            {            
+            {
                 // Move into
                 newName = Category.Combine(categoryTarget.Name, categorySource.Label);
             }

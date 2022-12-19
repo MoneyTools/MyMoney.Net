@@ -189,7 +189,7 @@ namespace Walkabout.StockQuotes
             return new List<StockQuote>(result.Values);
         }
 
-        public bool AddQuote(StockQuote quote, bool replace=true)
+        public bool AddQuote(StockQuote quote, bool replace = true)
         {
             if (History == null)
             {
@@ -202,7 +202,7 @@ namespace Walkabout.StockQuotes
                 quote.Name = null;
             }
             int len = History.Count;
-            for(int i = 0; i < len; i++)
+            for (int i = 0; i < len; i++)
             {
                 var h = History[i];
                 if (h.Date == quote.Date)
@@ -268,7 +268,7 @@ namespace Walkabout.StockQuotes
                 this.AddQuote(item);
             }
             // promote any stock quote names to the root (to save space)
-            foreach(var item in this.History)
+            foreach (var item in this.History)
             {
                 if (!string.IsNullOrEmpty(item.Name))
                 {

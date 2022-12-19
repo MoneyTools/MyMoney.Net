@@ -378,7 +378,7 @@ namespace Walkabout.Data
         }
 
         internal bool RemoveLoan(LoanPayment x, bool forceRemoveAfterSave = false)
-        { 
+        {
             lock (collection)
             {
                 if (x.IsInserted || forceRemoveAfterSave)

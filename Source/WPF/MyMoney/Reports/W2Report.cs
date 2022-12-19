@@ -56,10 +56,10 @@ namespace Walkabout.Taxes
                 }
                 else
                 {
-                    startDate = new DateTime(date.Year  - 1, fiscalYearStart + 1, 1);
+                    startDate = new DateTime(date.Year - 1, fiscalYearStart + 1, 1);
                 }
             }
-            else 
+            else
             {
                 this.startDate = new DateTime(date.Year, 1, 1);
             }
@@ -240,7 +240,7 @@ namespace Walkabout.Taxes
                     continue;
                 }
                 var date = t.TaxDate;
-                bool include = date >= this.startDate && date < this.endDate;                
+                bool include = date >= this.startDate && date < this.endDate;
                 if (include)
                 {
                     found |= Summarize(byCategory, t);

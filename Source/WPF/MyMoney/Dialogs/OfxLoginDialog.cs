@@ -15,7 +15,7 @@ namespace Walkabout.Dialogs
         public OfxLoginDialog(OfxSignOnInfo info, OnlineAccount account, List<Block> prompt, OfxErrorCode code, string error)
         {
             this.account = account;
- 
+
             this.UserNamePrompt = "User Name";
             this.UserName = this.account.UserId;
 
@@ -56,7 +56,7 @@ namespace Walkabout.Dialogs
             prompt.Add(trust);
             trust.Inlines.Add(new Run("These credentials will be sent securely using HTTPS to the OFX server at "));
             trust.Inlines.Add(new Run(url.Host) { FontWeight = FontWeights.Bold });
-            trust.Inlines.Add(new Run(".  Click cancel if you are not sure that this is the right address."));            
+            trust.Inlines.Add(new Run(".  Click cancel if you are not sure that this is the right address."));
 
             foreach (Block b in prompt)
             {
@@ -74,7 +74,7 @@ namespace Walkabout.Dialogs
                 this.SetUserDefinedField("UserCred2", this.account.UserCred2);
             }
 
-            this.OkClicked += new EventHandler<OkEventArgs>((s,e) =>             
+            this.OkClicked += new EventHandler<OkEventArgs>((s, e) =>
             {
                 this.account.UserId = this.UserName;
                 this.account.Password = this.PasswordConfirmation;

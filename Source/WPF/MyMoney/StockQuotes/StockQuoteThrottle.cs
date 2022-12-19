@@ -142,7 +142,7 @@ namespace Walkabout.StockQuotes
                 }
             }
             return new StockQuoteThrottle() { FileName = filename };
-        }        
+        }
     }
 
 }

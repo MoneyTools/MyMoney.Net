@@ -106,7 +106,7 @@ namespace LovettSoftware.Charts
             {
                 ResetVisuals();
             }
-            else 
+            else
             {
                 foreach (var dv in this.Series.Values)
                 {
@@ -232,21 +232,23 @@ namespace LovettSoftware.Charts
         {
             var duration1 = new Duration(TimeSpan.FromMilliseconds(AnimationGrowthMilliseconds));
 
-            var animation1 = new DoubleAnimation() { 
-                From = a1, 
-                To = a2, 
-                Duration = duration1, 
-                EasingFunction = new ExponentialEase() { Exponent = 0.6, EasingMode = EasingMode.EaseIn } 
+            var animation1 = new DoubleAnimation()
+            {
+                From = a1,
+                To = a2,
+                Duration = duration1,
+                EasingFunction = new ExponentialEase() { Exponent = 0.6, EasingMode = EasingMode.EaseIn }
             };
             sb.Children.Add(animation1);
             Storyboard.SetTarget(animation1, slice);
             Storyboard.SetTargetProperty(animation1, new PropertyPath(PieSlice.StartAngleProperty)); // start of the slice
 
-            var animation2 = new DoubleAnimation() { 
-                From = a3, 
-                To = a4, 
+            var animation2 = new DoubleAnimation()
+            {
+                From = a3,
+                To = a4,
                 Duration = duration1,
-                EasingFunction = new ExponentialEase() { Exponent = 0.6, EasingMode = EasingMode.EaseIn } 
+                EasingFunction = new ExponentialEase() { Exponent = 0.6, EasingMode = EasingMode.EaseIn }
             };
             sb.Children.Add(animation2);
             Storyboard.SetTarget(animation2, slice);
@@ -413,7 +415,7 @@ namespace LovettSoftware.Charts
             LineSegment line1;
             LineSegment line2;
             ArcSegment arc;
-            
+
 
             public PieSlice(Canvas owner, Color color, Point center, Size size)
             {
@@ -509,7 +511,7 @@ namespace LovettSoftware.Charts
             }
 
             public static readonly DependencyProperty CenterProperty =
-                DependencyProperty.Register("Center", typeof(Point), typeof(PieSlice), new PropertyMetadata(new Point(0,0), new PropertyChangedCallback(OnPropertyChanged)));
+                DependencyProperty.Register("Center", typeof(Point), typeof(PieSlice), new PropertyMetadata(new Point(0, 0), new PropertyChangedCallback(OnPropertyChanged)));
 
             public Size Size
             {
@@ -518,7 +520,7 @@ namespace LovettSoftware.Charts
             }
 
             public static readonly DependencyProperty SizeProperty =
-                DependencyProperty.Register("Size", typeof(Size), typeof(PieSlice), new PropertyMetadata(new Size(0,0), new PropertyChangedCallback(OnPropertyChanged)));
+                DependencyProperty.Register("Size", typeof(Size), typeof(PieSlice), new PropertyMetadata(new Size(0, 0), new PropertyChangedCallback(OnPropertyChanged)));
 
 
         }

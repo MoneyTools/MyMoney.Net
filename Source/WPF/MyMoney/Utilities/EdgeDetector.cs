@@ -6,14 +6,14 @@ using System.Windows.Media.Imaging;
 
 namespace Walkabout.Utilities
 {
-    public class EdgeDetectedEventArgs : EventArgs 
+    public class EdgeDetectedEventArgs : EventArgs
     {
         public EdgeDetectedEventArgs(List<Point> edge)
         {
             Edge = edge;
         }
 
-        public List<Point> Edge{ get; set; }
+        public List<Point> Edge { get; set; }
     }
 
     /// <summary>
@@ -56,11 +56,11 @@ namespace Walkabout.Utilities
         private int[,] edgeMap;
         private int[,] visitedMap;
 
-        public CannyEdgeDetector(BitmapSource input, 
-            float Th = DefaultMaxHysteresisThresh, 
+        public CannyEdgeDetector(BitmapSource input,
+            float Th = DefaultMaxHysteresisThresh,
             float Tl = DefaultMinHysteresisThresh,
             int minEdgeLength = DefaultMinimumEdgeLength,
-            int GaussianMaskSize = DefaultMaskSize, 
+            int GaussianMaskSize = DefaultMaskSize,
             float SigmaforGaussianKernel = DefaultSigma
             )
         {
@@ -209,7 +209,7 @@ namespace Walkabout.Utilities
 
             // bottom margin.
             allBlack = allWhite = true;
-            for (int y = height-1; y >= 0; y--)
+            for (int y = height - 1; y >= 0; y--)
             {
                 for (int x = 0; x < width; x++)
                 {
@@ -225,7 +225,7 @@ namespace Walkabout.Utilities
                 }
                 if (!allWhite && !allBlack)
                 {
-                    if (y < height-1)
+                    if (y < height - 1)
                     {
                         margin.Bottom = y - 1; // inset a bit further to avoid fuzzy outlines.
                     }
@@ -265,7 +265,7 @@ namespace Walkabout.Utilities
 
             // Right margin:
             allBlack = allWhite = true;
-            for (int x = width-1; x >= 0; x--)
+            for (int x = width - 1; x >= 0; x--)
             {
                 for (int y = 0; y < height; y++)
                 {
@@ -648,7 +648,7 @@ namespace Walkabout.Utilities
             return result;
         }
 
-        enum Direction 
+        enum Direction
         {
             None,
             TopLeft, TopCenter, TopRight,
@@ -725,7 +725,7 @@ namespace Walkabout.Utilities
         }
 
         public event EventHandler<EdgeDetectedEventArgs> EdgeDetected;
-        
+
 
         private int TraverseEdges(int x, int y)
         {
@@ -753,10 +753,10 @@ namespace Walkabout.Utilities
                     {
                         if (i != x || j != y)
                         {
-                            if (edgePoints[i,j] != 0 && visitedMap[i,j] == 0)
+                            if (edgePoints[i, j] != 0 && visitedMap[i, j] == 0)
                             {
-                                IntPoint next = new IntPoint(i,j);
-                                visitedMap[i,j] = 1;
+                                IntPoint next = new IntPoint(i, j);
+                                visitedMap[i, j] = 1;
                                 stack.Push(next);
                                 path.Add(next);
                                 length++;
@@ -765,11 +765,11 @@ namespace Walkabout.Utilities
                     }
                 }
             }
-                       
-            if (path.Count > minEdgeLength) 
+
+            if (path.Count > minEdgeLength)
             {
                 List<Point> points = new List<Point>();
-                foreach (IntPoint pt in path) 
+                foreach (IntPoint pt in path)
                 {
                     edgeMap[pt.X, pt.Y] = 1;
                     if (EdgeDetected != null)

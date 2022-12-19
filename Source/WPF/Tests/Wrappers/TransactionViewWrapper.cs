@@ -655,8 +655,8 @@ namespace Walkabout.Tests.Wrappers
                     return payee.Substring(i + 1).Trim();
                 }
             }
-            
-            throw new Exception("Expecting a Transfer transaction");            
+
+            throw new Exception("Expecting a Transfer transaction");
         }
 
         internal void Focus()
@@ -701,7 +701,7 @@ namespace Walkabout.Tests.Wrappers
 
 
         public AutomationElement GetCell(AutomationElement dataItem)
-        {            
+        {
             ScrollItemPattern scroll = (ScrollItemPattern)dataItem.GetCurrentPattern(ScrollItemPattern.Pattern);
             scroll.ScrollIntoView();
 
@@ -745,7 +745,7 @@ namespace Walkabout.Tests.Wrappers
                 }
 
                 AutomationElement found = null;
-                int i = 0; 
+                int i = 0;
                 foreach (AutomationElement child in cell.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.IsEnabledProperty, true)))
                 {
                     found = child;
@@ -779,7 +779,7 @@ namespace Walkabout.Tests.Wrappers
                         Thread.Sleep(500);
                     }
                 }
-                    
+
                 if (editor == null)
                 {
                     throw new Exception("Editor not found in compound cell at index " + Index);
@@ -787,7 +787,7 @@ namespace Walkabout.Tests.Wrappers
 
                 return editor;
             }
-            
+
         }
 
         protected virtual AutomationElement GetEditor(AutomationElement cell)

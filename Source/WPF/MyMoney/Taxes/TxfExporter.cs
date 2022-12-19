@@ -32,7 +32,7 @@ namespace Walkabout.Migrate
                 }
 
                 CapitalGainsTaxCalculator calculator = new CapitalGainsTaxCalculator(this.money, endDate, consolidateOnDateSold, true);
-                ExportCapitalGains(calculator, null, startDate, endDate, sw);                
+                ExportCapitalGains(calculator, null, startDate, endDate, sw);
             }
         }
 
@@ -166,7 +166,7 @@ namespace Walkabout.Migrate
                     }
                 }
             }
-            
+
             foreach (var data in calculator.LongTerm)
             {
                 if (data.DateSold >= startDate && data.DateSold < endDate)
@@ -177,7 +177,7 @@ namespace Walkabout.Migrate
                         WriteRecordFormat4(writer, data, refnum);
                     }
                 }
-            } 
+            }
 
         }
 
@@ -196,7 +196,9 @@ namespace Walkabout.Migrate
             else if (data.DateAcquired == null)
             {
                 writer.WriteLine("DVARIOUS");
-            } else {
+            }
+            else
+            {
                 writer.WriteLine("D" + data.DateAcquired.Value.ToShortDateString());
             }
             writer.WriteLine("D" + data.DateSold.ToShortDateString());

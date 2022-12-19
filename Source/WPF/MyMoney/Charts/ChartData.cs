@@ -49,16 +49,16 @@ namespace Walkabout.Charts
                 using (StreamWriter writer = new StreamWriter(name))
                 {
                     writer.Write("Label");
-                    foreach(var series in this.Series)
+                    foreach (var series in this.Series)
                     {
                         writer.Write(", {0}", series.Name);
                     }
                     writer.WriteLine();
 
                     int columns = this.Series[0].Values.Count;
-                    for(int i = 0; i < columns; i++)
+                    for (int i = 0; i < columns; i++)
                     {
-                        for(int j = 0, n = this.Series.Count; j < n; j++)
+                        for (int j = 0, n = this.Series.Count; j < n; j++)
                         {
                             var s = this.Series[j];
                             var item = s.Values[i];

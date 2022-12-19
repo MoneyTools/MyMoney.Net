@@ -54,7 +54,7 @@ namespace Walkabout.Controls
 
         void AnimateClick(Button b)
         {
-            b.Background = (Brush)Resources["SimulateDownBrush"];           
+            b.Background = (Brush)Resources["SimulateDownBrush"];
             BooleanAnimationUsingKeyFrames a = new BooleanAnimationUsingKeyFrames();
             a.Duration = TimeSpan.FromSeconds(0.1);
             a.KeyFrames.Add(new DiscreteBooleanKeyFrame(true, KeyTime.FromPercent(0)));
@@ -302,7 +302,7 @@ namespace Walkabout.Controls
                     break;
                 case Key.Enter:
                     break;
-            } 
+            }
             base.OnKeyDown(e);
         }
 

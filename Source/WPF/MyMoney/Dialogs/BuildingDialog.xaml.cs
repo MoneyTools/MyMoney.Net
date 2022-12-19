@@ -50,7 +50,7 @@ namespace Walkabout.Dialogs
                 if (categories == null)
                 {
                     categories = new List<Category>();
-                    Category na = new Category() { Name = "--N/A--" , Id=-1};
+                    Category na = new Category() { Name = "--N/A--", Id = -1 };
                     categories.Add(na);
 
                     foreach (Category c in this.money.Categories.SortedCategories)

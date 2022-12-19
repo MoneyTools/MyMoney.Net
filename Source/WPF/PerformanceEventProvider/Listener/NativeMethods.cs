@@ -62,7 +62,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    internal struct WNODE_HEADER 
+    internal struct WNODE_HEADER
     {
         internal uint BufferSize;
         internal uint ProviderId;
@@ -269,7 +269,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
         internal ushort CountPropertyIndex;
         [FieldOffset(18)]
         internal ushort LengthPropertyIndex;
-        [FieldOffset(20)]        
+        [FieldOffset(20)]
         private uint Reserved;
     }
 

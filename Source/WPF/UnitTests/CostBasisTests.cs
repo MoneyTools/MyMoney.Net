@@ -101,7 +101,7 @@ namespace Walkabout.Tests
             List<SecuritySale> sales = new List<SecuritySale>(calc.GetSales());
             Assert.AreEqual<int>(3, sales.Count);
 
-            SecuritySale s1 = sales[0]; 
+            SecuritySale s1 = sales[0];
             SecuritySale s2 = sales[1];
             SecuritySale s3 = sales[2];
 
@@ -114,11 +114,11 @@ namespace Walkabout.Tests
             // from the Ameritrade account as a result of the "Transfer" that happened above.
             Assert.AreEqual<decimal>(Math.Round(1M / 2M, 5), Math.Round(s2.CostBasisPerUnit, 5)); // $1 after 2:1 split
             Assert.AreEqual(a2, s2.Account); // Fidelity
-            Assert.AreEqual<decimal>(Math.Round(20M, 5), Math.Round(s2.UnitsSold, 5)); 
-            
+            Assert.AreEqual<decimal>(Math.Round(20M, 5), Math.Round(s2.UnitsSold, 5));
+
             Assert.AreEqual<decimal>(2, s3.CostBasisPerUnit); // $2, no splits
             Assert.AreEqual(a2, s2.Account); // Fidelity
-            Assert.AreEqual<decimal>(Math.Round(10M, 5), Math.Round(s3.UnitsSold, 5)); 
+            Assert.AreEqual<decimal>(Math.Round(10M, 5), Math.Round(s3.UnitsSold, 5));
 
 
 

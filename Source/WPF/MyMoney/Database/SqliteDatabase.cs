@@ -13,7 +13,7 @@ namespace Walkabout.Data
 {
     public class SqliteDatabase : SqlServerDatabase
     {
-        public SqliteDatabase() 
+        public SqliteDatabase()
         {
         }
 
@@ -40,7 +40,7 @@ namespace Walkabout.Data
         protected override string GetConnectionString(bool includeDatabase)
         {
             SQLiteConnectionStringBuilder builder = new SQLiteConnectionStringBuilder();
-            builder.DataSource = this.DatabasePath;            
+            builder.DataSource = this.DatabasePath;
             if (!string.IsNullOrEmpty(this.Password))
             {
                 builder.Password = this.Password;
@@ -69,7 +69,7 @@ namespace Walkabout.Data
             if (!File.Exists(this.DatabasePath))
             {
                 LazyCreateTables();
-            }   
+            }
         }
 
         public override void Delete()
@@ -257,7 +257,7 @@ namespace Walkabout.Data
                     id = line.Substring(i, n - i);
                     i = n;
                 }
-                else 
+                else
                 {
                     int j = line.IndexOfAny(new char[] { ' ', '\t', '\r', '\n' }, i);
                     if (j < 0)
@@ -274,7 +274,7 @@ namespace Walkabout.Data
                 }
 
                 id = id.Trim();
-                if (state == 0) 
+                if (state == 0)
                 {
                     result.ColumnName = id;
                     state++;
@@ -307,7 +307,7 @@ namespace Walkabout.Data
         {
             // split nvarchar(20) into [nvarchar][20].
             // split decimal(8,12) into [decimal[9][12]
-            string[] parts = type.Split('(',',',')');
+            string[] parts = type.Split('(', ',', ')');
             Type columnType = null;
             bool hasLength = false;
             bool hasPrecision = false;
@@ -319,51 +319,51 @@ namespace Walkabout.Data
                     columnType = typeof(SqlInt32);
                     break;
                 case "char":
-                    columnType =  typeof(SqlAscii);
+                    columnType = typeof(SqlAscii);
                     hasLength = true;
                     break;
                 case "nchar":
                 case "nvarchar":
-                    columnType =  typeof(SqlChars);
+                    columnType = typeof(SqlChars);
                     hasLength = true;
                     break;
                 case "money":
-                    columnType =  typeof(SqlMoney);
+                    columnType = typeof(SqlMoney);
                     hasPrecision = true;
                     break;
                 case "datetime":
-                    columnType =  typeof(SqlDateTime);
+                    columnType = typeof(SqlDateTime);
                     break;
                 case "uniqueidentifier":
-                    columnType =  typeof(SqlGuid);
+                    columnType = typeof(SqlGuid);
                     break;
                 case "decimal":
-                    columnType =  typeof(SqlDecimal);
+                    columnType = typeof(SqlDecimal);
                     hasPrecision = true;
                     break;
                 case "bigint":
-                    columnType =  typeof(SqlInt64);
+                    columnType = typeof(SqlInt64);
                     break;
                 case "smallint":
-                    columnType =  typeof(SqlInt16);
+                    columnType = typeof(SqlInt16);
                     break;
                 case "tinyint":
-                    columnType =  typeof(SqlByte);
+                    columnType = typeof(SqlByte);
                     break;
                 case "float":
-                    columnType =  typeof(SqlSingle);
+                    columnType = typeof(SqlSingle);
                     break;
                 case "real":
-                    columnType =  typeof(SqlDouble);
+                    columnType = typeof(SqlDouble);
                     break;
                 case "bit":
-                    columnType =  typeof(SqlBoolean);
+                    columnType = typeof(SqlBoolean);
                     break;
                 default:
                     throw new NotImplementedException(string.Format("SQL type '{0}' is not supported by the mapping engine", parts[0]));
             }
             result.SqlType = columnType;
-            
+
             if (hasLength)
             {
                 if (parts.Length > 1)
@@ -395,7 +395,7 @@ namespace Walkabout.Data
                 }
             }
 
-            
+
         }
 
         public override object ExecuteScalar(string cmd)
@@ -484,7 +484,7 @@ namespace Walkabout.Data
         {
             Debug.Assert(this.DbFlavor == DbFlavor.Sqlite);
 
-            this.AppendLog(cmd); 
+            this.AppendLog(cmd);
 
             try
             {
@@ -512,7 +512,7 @@ namespace Walkabout.Data
 
 
         public override void CreateOrUpdateTable(TableMapping mapping)
-        {            
+        {
             if (!this.TableExists(mapping.TableName))
             {
                 // this is the easy case, we need to create the table
@@ -699,7 +699,7 @@ namespace Walkabout.Data
                                 sb.Length = 0;
                             }
                         }
-                        
+
                         if (renames.Count > 0)
                         {
                             // create the new column that was added.

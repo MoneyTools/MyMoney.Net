@@ -86,7 +86,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             }
             else if (opcode.EndsWith("Stop"))
             {
-                evt.StopId = id; 
+                evt.StopId = id;
                 events[id] = evt;
             }
             return evt;

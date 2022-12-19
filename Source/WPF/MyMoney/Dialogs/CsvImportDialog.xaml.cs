@@ -32,8 +32,9 @@ namespace Walkabout.Dialogs
 
         public string[] TransactionFields
         {
-            get { 
-                return fields; 
+            get
+            {
+                return fields;
             }
         }
 
@@ -75,7 +76,7 @@ namespace Walkabout.Dialogs
 
             if (count < this.fields.Length)
             {
-                var rc = MessageBox.Show("You have not mapped all the fields, are you sure you want to continue?", "Confirm Incomplete Mapping", 
+                var rc = MessageBox.Show("You have not mapped all the fields, are you sure you want to continue?", "Confirm Incomplete Mapping",
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (rc == MessageBoxResult.No)
                 {
@@ -88,7 +89,8 @@ namespace Walkabout.Dialogs
         private void ComboBox_FilterChanged(object sender, RoutedEventArgs e)
         {
             FilteringComboBox combo = sender as FilteringComboBox;
-            combo.Items.Filter = new Predicate<object>((o) => {
+            combo.Items.Filter = new Predicate<object>((o) =>
+            {
                 return o.ToString().IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0;
             });
         }

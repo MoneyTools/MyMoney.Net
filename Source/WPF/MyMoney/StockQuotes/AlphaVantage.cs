@@ -128,7 +128,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        public bool IsSuspended {  get { return _suspended; } }
+        public bool IsSuspended { get { return _suspended; } }
 
         public void BeginFetchQuote(string symbol)
         {
@@ -169,7 +169,7 @@ namespace Walkabout.StockQuotes
         private void DownloadQuotes()
         {
             try
-            {                
+            {
                 while (!_cancelled)
                 {
                     int remaining = 0;
@@ -317,7 +317,7 @@ namespace Walkabout.StockQuotes
 
                             if (message.Contains("Please visit https://www.alphavantage.co/premium/"))
                             {
-                                lock(_retry)
+                                lock (_retry)
                                 {
                                     _retry.Add(symbol);
                                 }
@@ -341,7 +341,7 @@ namespace Walkabout.StockQuotes
             else
             {
                 OnComplete(false, "AlphaVantage download cancelled");
-            }   
+            }
             _downloadThread = null;
             _current = null;
         }

@@ -34,7 +34,7 @@ namespace Walkabout.Tests.Wrappers
                 Thread.Sleep(1000);
             }
 
-            throw new Exception("MainWindow not found for process " + processId);            
+            throw new Exception("MainWindow not found for process " + processId);
         }
 
         /// <summary>
@@ -70,11 +70,11 @@ namespace Walkabout.Tests.Wrappers
             {
                 return window.Current.Name;
             }
-        }        
+        }
 
         internal ContextMenu MainMenu
         {
-            get 
+            get
             {
                 AutomationElement mainMenu = window.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "MainMenu"));
                 if (mainMenu == null)
@@ -125,7 +125,8 @@ namespace Walkabout.Tests.Wrappers
             return securities;
         }
 
-        public bool IsAccountSelected {
+        public bool IsAccountSelected
+        {
             get
             {
                 if (accounts != null) return accounts.IsAccountSelected;
@@ -260,7 +261,7 @@ namespace Walkabout.Tests.Wrappers
                 }
                 else
                 {
-                    Debug.WriteLine("### Close button named 'CloseReport' not found");                
+                    Debug.WriteLine("### Close button named 'CloseReport' not found");
                 }
                 reportOpen = false;
             }

@@ -10,10 +10,10 @@ using System.IO;
 namespace Walkabout.Tests.Wrappers
 {
     class CreateDatabaseDialogWrapper
-    {        
+    {
         AutomationElement window;
 
-        private CreateDatabaseDialogWrapper(AutomationElement e) 
+        private CreateDatabaseDialogWrapper(AutomationElement e)
         {
             window = e;
         }
@@ -40,11 +40,11 @@ namespace Walkabout.Tests.Wrappers
         }
 
         internal void CreateSqliteDatabase(string databasePath)
-        {            
+        {
             SetTextBox("TextBoxSqliteDatabaseFile", databasePath);
             ClickButton("ButtonCreate");
         }
-        
+
 
         private void ClickOkIfExists()
         {
@@ -102,7 +102,7 @@ namespace Walkabout.Tests.Wrappers
             if (tab == null)
             {
                 throw new Exception("Tab '" + name + "' not found");
-            } 
+            }
             SelectionItemPattern selectionItem = (SelectionItemPattern)tab.GetCurrentPattern(SelectionItemPattern.Pattern);
             selectionItem.Select();
         }
@@ -113,7 +113,7 @@ namespace Walkabout.Tests.Wrappers
             if (box == null)
             {
                 throw new Exception("Control '" + name + "' not found");
-            } 
+            }
             return box.Current.IsEnabled;
         }
 
@@ -123,7 +123,7 @@ namespace Walkabout.Tests.Wrappers
             if (box == null)
             {
                 throw new Exception("TextBox '" + name + "' not found");
-            } 
+            }
             try
             {
                 ValuePattern value = (ValuePattern)box.GetCurrentPattern(ValuePattern.Pattern);

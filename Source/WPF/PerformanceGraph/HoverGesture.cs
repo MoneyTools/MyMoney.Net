@@ -85,7 +85,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         }
 
         public Popup CreatePopup(FrameworkElement content)
-        {            
+        {
             Border border;
             if (popup == null)
             {

@@ -78,7 +78,7 @@ namespace Walkabout.Controls
         }
 
         private static object OnCoerceColorValue(DependencyObject d, object baseValue)
-        {             
+        {
             Color baseColor = (Color)baseValue;
             return baseValue;
         }

@@ -37,15 +37,15 @@ namespace Walkabout.Utilities
 
         void MessageBoxEx_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if ( e.Key == Key.C ||  e.Key == Key.Insert) 
+            if (e.Key == Key.C || e.Key == Key.Insert)
             {
-                if ( Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl) )
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
                     string content = string.Format("[{0}]{1}{2}", this.Title, Environment.NewLine, this.Message);
                     System.Windows.Clipboard.SetDataObject(content, true);
                 }
             }
-            else if (e.Key == Key.Escape) 
+            else if (e.Key == Key.Escape)
             {
                 this.Result = MessageBoxResult.Cancel;
                 this.Close();
@@ -96,7 +96,7 @@ namespace Walkabout.Utilities
             if (Message.Contains("http://schemas.microsoft.com/winfx/2006/xaml/presentation"))
             {
                 FlowDocument doc = (FlowDocument)XamlReader.Parse(@"<FlowDocument xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" + Message + "</FlowDocument>");
-                foreach (Block block in doc.Blocks.ToArray()) 
+                foreach (Block block in doc.Blocks.ToArray())
                 {
                     Paragraph p = block as Paragraph;
                     if (p != null)
@@ -123,7 +123,7 @@ namespace Walkabout.Utilities
         void OnRequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
             if (e.Uri != null)
-            {                
+            {
                 InternetExplorer.OpenUrl(IntPtr.Zero, e.Uri);
             }
         }
