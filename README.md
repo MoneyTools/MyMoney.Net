@@ -7,7 +7,7 @@ proprietary format, it is yours to do with as you like.
 ## Install
 
 Once you have [.NET 4.8 installed](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) you can simply click the [ClickOnce
-Installer](https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/publish.htm) to install the app. 
+Installer](https://moneytools.github.io/MyMoney.Net/#Basics/install) to install the app. 
 You can also install using the new `winget install MyMoney.Net` for Windows 10 or 11.
 You can also download and install the latest release from [github releases](https://github.com/clovett/MyMoney.Net/releases/).
 
