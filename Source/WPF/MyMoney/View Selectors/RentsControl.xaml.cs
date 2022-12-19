@@ -138,7 +138,7 @@ namespace Walkabout.Views.Controls
                 {
                     this.MyMoney.Buildings.Add(rb);
 
-                    ReloadTreeView();
+                    ReloadTreeView(true);
                 }
             }
         }
@@ -146,12 +146,15 @@ namespace Walkabout.Views.Controls
 
         private void OnMenuRefresh_Click(object sender, RoutedEventArgs e)
         {
-            ReloadTreeView();
+            ReloadTreeView(true);
         }
 
-        private void ReloadTreeView()
+        private void ReloadTreeView(bool forRebuild=false)
         {
-            this.treeView1.ItemsSource = myMoney.Buildings.GetList();
+            if (this.treeView1.ItemsSource == null || forRebuild)
+            {
+                this.treeView1.ItemsSource = myMoney.Buildings.GetList();
+            }
             this.treeView1.Items.Refresh();
         }
 
