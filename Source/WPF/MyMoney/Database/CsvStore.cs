@@ -22,7 +22,7 @@ namespace Walkabout.Data
 
         public virtual string Server { get; set; }
 
-        public virtual string DatabasePath { get { return fileName; } }
+        public virtual string DatabasePath { get { return this.fileName; } }
 
         public virtual string ConnectionString { get { return null; } }
 
@@ -52,7 +52,7 @@ namespace Walkabout.Data
         }
         public virtual void Delete()
         {
-            if (Exists)
+            if (this.Exists)
             {
                 File.Delete(this.fileName);
             }
@@ -83,9 +83,9 @@ namespace Walkabout.Data
                 writer = new StreamWriter(this.fileName);
                 WriteTransactionHeader(writer);
 
-                if (rows != null)
+                if (this.rows != null)
                 {
-                    foreach (Transaction t in rows)
+                    foreach (Transaction t in this.rows)
                     {
                         if (t != null)
                         {

@@ -50,50 +50,50 @@ namespace Walkabout.Utilities
 
         private Filter<T> Reduce(QuickFilterToken token)
         {
-            while (stack.Count > 0)
+            while (this.stack.Count > 0)
             {
-                Filter<T> top = stack.Pop();
+                Filter<T> top = this.stack.Pop();
 
-                if (stack.Count == 0)
+                if (this.stack.Count == 0)
                 {
                     return top;
                 }
 
-                Filter<T> op = stack.Peek();
+                Filter<T> op = this.stack.Peek();
                 if (token > op.Precidence)
                 {
                     return top;
                 }
 
-                op = stack.Pop();
+                op = this.stack.Pop();
 
                 // now combine "top" and "op"
                 if (op is FilterKeyword<T>)
                 {
                     FilterKeyword<T> keyword = (FilterKeyword<T>)op;
-                    op = Combine(keyword, top);
+                    op = this.Combine(keyword, top);
                 }
                 else if (op is FilterAnd<T>)
                 {
                     FilterAnd<T> and = (FilterAnd<T>)op;
-                    and.Right = Combine(and.Right, top);
+                    and.Right = this.Combine(and.Right, top);
                 }
                 else if (op is FilterOr<T>)
                 {
                     FilterOr<T> or = (FilterOr<T>)op;
-                    or.Right = Combine(or.Right, top);
+                    or.Right = this.Combine(or.Right, top);
                 }
                 else if (op is FilterNot<T>)
                 {
                     FilterNot<T> not = (FilterNot<T>)op;
-                    not.Right = Combine(not.Right, top);
+                    not.Right = this.Combine(not.Right, top);
                 }
                 else if (op is FilterParens<T>)
                 {
                     FilterParens<T> parens = (FilterParens<T>)op;
-                    parens.Expression = Combine(parens.Expression, top);
+                    parens.Expression = this.Combine(parens.Expression, top);
                 }
-                stack.Push(op);
+                this.stack.Push(op);
             }
             return null;
         }
@@ -111,51 +111,51 @@ namespace Walkabout.Utilities
                 return null;
             }
 
-            foreach (Tuple<QuickFilterToken, string> token in GetFilterTokens(quickFilter))
+            foreach (Tuple<QuickFilterToken, string> token in this.GetFilterTokens(quickFilter))
             {
                 string literal = token.Item2;
 
                 switch (token.Item1)
                 {
                     case QuickFilterToken.Literal: // shift                        
-                        stack.Push(new FilterKeyword<T>(new FilterLiteral(literal)));
+                        this.stack.Push(new FilterKeyword<T>(new FilterLiteral(literal)));
                         break;
                     case QuickFilterToken.And: // reduce
-                        stack.Push(new FilterAnd<T>()
+                        this.stack.Push(new FilterAnd<T>()
                         {
-                            Left = Reduce(QuickFilterToken.And)
+                            Left = this.Reduce(QuickFilterToken.And)
                         });
                         break;
                     case QuickFilterToken.Or: // reduce
-                        stack.Push(new FilterOr<T>()
+                        this.stack.Push(new FilterOr<T>()
                         {
-                            Left = Reduce(QuickFilterToken.Or)
+                            Left = this.Reduce(QuickFilterToken.Or)
                         });
                         break;
                     case QuickFilterToken.Not: // reduce
-                        stack.Push(new FilterNot<T>() { });
+                        this.stack.Push(new FilterNot<T>() { });
                         break;
                     case QuickFilterToken.LeftParen: // shift
-                        stack.Push(new FilterParens<T>());
+                        this.stack.Push(new FilterParens<T>());
                         break;
                     case QuickFilterToken.RightParen: // reduce
-                        Filter<T> op = Reduce(QuickFilterToken.RightParen);
+                        Filter<T> op = this.Reduce(QuickFilterToken.RightParen);
                         FilterParens<T> parens = op as FilterParens<T>;
                         if (parens != null)
                         {
                             // eliminate parens
-                            stack.Push(parens.Expression);
+                            this.stack.Push(parens.Expression);
                         }
                         else
                         {
                             // missing open parens, now what?
-                            stack.Push(op);
+                            this.stack.Push(op);
                         }
                         break;
                 }
             }
 
-            return Reduce(QuickFilterToken.None);
+            return this.Reduce(QuickFilterToken.None);
         }
 
         /// <summary>
@@ -292,7 +292,7 @@ namespace Walkabout.Utilities
         public virtual string ToXml()
         {
             SimpleGraph g = new SimpleGraph();
-            WriteTo(g);
+            this.WriteTo(g);
             return g.ToXml("").OuterXml;
         }
 
@@ -312,14 +312,14 @@ namespace Walkabout.Utilities
 
         public override bool IsMatch(FilteredObservableCollection<T> collection, T item)
         {
-            return collection.IsMatch(item, Keyword);
+            return collection.IsMatch(item, this.Keyword);
         }
 
         public override SimpleGraphNode WriteTo(SimpleGraph g)
         {
-            if (Keyword != null)
+            if (this.Keyword != null)
             {
-                return g.AddOrGetNode(Keyword.Literal);
+                return g.AddOrGetNode(this.Keyword.Literal);
             }
             return null;
         }
@@ -338,29 +338,29 @@ namespace Walkabout.Utilities
 
         public override bool IsMatch(FilteredObservableCollection<T> collection, T item)
         {
-            if (Left == null && Right != null)
+            if (this.Left == null && this.Right != null)
             {
-                return Right.IsMatch(collection, item);
+                return this.Right.IsMatch(collection, item);
             }
-            if (Right == null && Left != null)
+            if (this.Right == null && this.Left != null)
             {
-                return Left.IsMatch(collection, item);
+                return this.Left.IsMatch(collection, item);
             }
-            return Left.IsMatch(collection, item) && Right.IsMatch(collection, item);
+            return this.Left.IsMatch(collection, item) && this.Right.IsMatch(collection, item);
         }
 
         public override SimpleGraphNode WriteTo(SimpleGraph g)
         {
             var node = g.AddOrGetNode(Guid.NewGuid().ToString());
             node.Label = "And";
-            if (Left != null)
+            if (this.Left != null)
             {
-                var child = Left.WriteTo(g);
+                var child = this.Left.WriteTo(g);
                 g.GetOrAddLink(node.Id, child.Id);
             }
-            if (Right != null)
+            if (this.Right != null)
             {
-                var child = Right.WriteTo(g);
+                var child = this.Right.WriteTo(g);
                 g.GetOrAddLink(node.Id, child.Id);
             }
             return node;
@@ -380,29 +380,29 @@ namespace Walkabout.Utilities
 
         public override bool IsMatch(FilteredObservableCollection<T> collection, T item)
         {
-            if (Left == null && Right != null)
+            if (this.Left == null && this.Right != null)
             {
-                return Right.IsMatch(collection, item);
+                return this.Right.IsMatch(collection, item);
             }
-            if (Right == null && Left != null)
+            if (this.Right == null && this.Left != null)
             {
-                return Left.IsMatch(collection, item);
+                return this.Left.IsMatch(collection, item);
             }
-            return Left.IsMatch(collection, item) || Right.IsMatch(collection, item);
+            return this.Left.IsMatch(collection, item) || this.Right.IsMatch(collection, item);
         }
 
         public override SimpleGraphNode WriteTo(SimpleGraph g)
         {
             var node = g.AddOrGetNode(Guid.NewGuid().ToString());
             node.Label = "Or";
-            if (Left != null)
+            if (this.Left != null)
             {
-                var child = Left.WriteTo(g);
+                var child = this.Left.WriteTo(g);
                 g.GetOrAddLink(node.Id, child.Id);
             }
-            if (Right != null)
+            if (this.Right != null)
             {
-                var child = Right.WriteTo(g);
+                var child = this.Right.WriteTo(g);
                 g.GetOrAddLink(node.Id, child.Id);
             }
             return node;
@@ -421,9 +421,9 @@ namespace Walkabout.Utilities
 
         public override bool IsMatch(FilteredObservableCollection<T> collection, T item)
         {
-            if (Right != null)
+            if (this.Right != null)
             {
-                return !Right.IsMatch(collection, item);
+                return !this.Right.IsMatch(collection, item);
             }
             return false;
         }
@@ -432,9 +432,9 @@ namespace Walkabout.Utilities
         {
             var node = g.AddOrGetNode(Guid.NewGuid().ToString());
             node.Label = "Not";
-            if (Right != null)
+            if (this.Right != null)
             {
-                var child = Right.WriteTo(g);
+                var child = this.Right.WriteTo(g);
                 g.GetOrAddLink(node.Id, child.Id);
             }
             return node;
@@ -453,18 +453,18 @@ namespace Walkabout.Utilities
 
         public override bool IsMatch(FilteredObservableCollection<T> collection, T item)
         {
-            if (Expression == null)
+            if (this.Expression == null)
             {
                 return false;
             }
-            return Expression.IsMatch(collection, item);
+            return this.Expression.IsMatch(collection, item);
         }
 
         public override SimpleGraphNode WriteTo(SimpleGraph g)
         {
-            if (Expression != null)
+            if (this.Expression != null)
             {
-                return Expression.WriteTo(g);
+                return this.Expression.WriteTo(g);
             }
             return null;
         }
@@ -484,58 +484,58 @@ namespace Walkabout.Utilities
 
         public FilterLiteral(string keyword)
         {
-            _keyword = keyword;
+            this._keyword = keyword;
         }
 
-        public string Literal { get { return _keyword; } }
+        public string Literal { get { return this._keyword; } }
 
         public bool MatchDecimal(decimal other)
         {
-            return InternalMatchDecimal(other) || InternalMatchDecimal(-other);
+            return this.InternalMatchDecimal(other) || this.InternalMatchDecimal(-other);
         }
 
         private bool InternalMatchDecimal(decimal other)
         {
-            if (notDecimal)
+            if (this.notDecimal)
             {
                 return false;
             }
-            if (_decimal == null)
+            if (this._decimal == null)
             {
                 decimal d = 0;
-                if (!decimal.TryParse(_keyword, out d))
+                if (!decimal.TryParse(this._keyword, out d))
                 {
-                    notDecimal = true;
+                    this.notDecimal = true;
                     return false;
                 }
-                _decimal = d;
+                this._decimal = d;
             }
-            return other == _decimal.Value;
+            return other == this._decimal.Value;
         }
 
         internal bool MatchSubstring(string s)
         {
-            bool rc = s != null && s.IndexOf(_keyword, StringComparison.OrdinalIgnoreCase) >= 0;
+            bool rc = s != null && s.IndexOf(this._keyword, StringComparison.OrdinalIgnoreCase) >= 0;
             return rc;
         }
 
         internal bool MatchDate(DateTime dateTime)
         {
-            if (notDate)
+            if (this.notDate)
             {
-                return MatchSubstring(dateTime.ToShortDateString());
+                return this.MatchSubstring(dateTime.ToShortDateString());
             }
-            if (_date == null)
+            if (this._date == null)
             {
                 DateTime d = DateTime.MinValue;
-                if (!DateTime.TryParse(_keyword, CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.NoCurrentDateDefault, out d))
+                if (!DateTime.TryParse(this._keyword, CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.NoCurrentDateDefault, out d))
                 {
-                    notDate = true;
+                    this.notDate = true;
                     return false;
                 }
-                _date = d;
+                this._date = d;
             }
-            return _date.Value == dateTime;
+            return this._date.Value == dateTime;
 
         }
     }

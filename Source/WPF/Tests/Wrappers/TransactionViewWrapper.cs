@@ -135,7 +135,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return IsBankAccount || IsInvestmentAccount;
+                return this.IsBankAccount || this.IsInvestmentAccount;
             }
         }
 
@@ -143,7 +143,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                string name = control.Current.AutomationId;
+                string name = this.control.Current.AutomationId;
                 return name == "TheGrid_BankTransactionDetails";
             }
         }
@@ -152,7 +152,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                string name = control.Current.AutomationId;
+                string name = this.control.Current.AutomationId;
                 return name == "TheGrid_InvestmentActivity";
             }
         }
@@ -161,7 +161,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                foreach (AutomationElement e in control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
+                foreach (AutomationElement e in this.control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
                 {
                     if (e.Current.Name == "Walkabout.Data.Transaction")
                     {
@@ -176,14 +176,14 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return GetItems().Count;
+                return this.GetItems().Count;
             }
         }
 
         public List<TransactionViewItem> GetItems()
         {
             List<TransactionViewItem> list = new List<TransactionViewItem>();
-            foreach (AutomationElement e in control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
+            foreach (AutomationElement e in this.control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
             {
                 if (e.Current.Name == "Walkabout.Data.Transaction")
                 {
@@ -195,7 +195,7 @@ namespace Walkabout.Tests.Wrappers
 
         public TransactionViewItem Select(int index)
         {
-            List<TransactionViewItem> list = GetItems();
+            List<TransactionViewItem> list = this.GetItems();
             if (index >= list.Count)
             {
                 throw new ArgumentOutOfRangeException("Index " + index + " is out of range, list only has " + list.Count + " items");
@@ -210,7 +210,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return Selection != null;
+                return this.Selection != null;
             }
         }
 
@@ -218,7 +218,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                SelectionPattern selection = (SelectionPattern)control.GetCurrentPattern(SelectionPattern.Pattern);
+                SelectionPattern selection = (SelectionPattern)this.control.GetCurrentPattern(SelectionPattern.Pattern);
                 AutomationElement[] selected = selection.Current.GetSelection();
                 return (selected == null || selected.Length == 0) ? null : new TransactionViewItem(this, selected[0]);
             }
@@ -226,13 +226,13 @@ namespace Walkabout.Tests.Wrappers
 
         internal void Delete(int index)
         {
-            TransactionViewItem item = Select(index);
+            TransactionViewItem item = this.Select(index);
             item.Delete();
         }
 
         internal TransactionViewColumn GetColumn(string name)
         {
-            return Columns.GetColumn(name);
+            return this.Columns.GetColumn(name);
         }
 
         internal TransactionViewColumns Columns
@@ -251,10 +251,10 @@ namespace Walkabout.Tests.Wrappers
 
         internal TransactionViewItem AddNew()
         {
-            ScrollToEnd();
+            this.ScrollToEnd();
             Thread.Sleep(100);
 
-            AutomationElement placeholder = TreeWalker.RawViewWalker.GetLastChild(control);
+            AutomationElement placeholder = TreeWalker.RawViewWalker.GetLastChild(this.control);
             if (placeholder.Current.Name != "{NewItemPlaceholder}")
             {
                 throw new Exception("Expecting {NewItemPlaceholder} at the bottom of the DataGrid");
@@ -279,7 +279,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void ScrollVertical(double verticalPercent)
         {
-            ScrollPattern sp = (ScrollPattern)control.GetCurrentPattern(ScrollPattern.Pattern);
+            ScrollPattern sp = (ScrollPattern)this.control.GetCurrentPattern(ScrollPattern.Pattern);
             if (sp.Current.VerticallyScrollable && sp.Current.VerticalScrollPercent != verticalPercent)
             {
                 sp.SetScrollPercent(System.Windows.Automation.ScrollPattern.NoScroll, verticalPercent);
@@ -288,7 +288,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void SortBy(TransactionViewColumn column)
         {
-            AutomationElement header = control.FindFirstWithRetries(TreeScope.Descendants, new AndCondition(
+            AutomationElement header = this.control.FindFirstWithRetries(TreeScope.Descendants, new AndCondition(
                 new PropertyCondition(AutomationElement.ClassNameProperty, "DataGridColumnHeader"),
                 new PropertyCondition(AutomationElement.NameProperty, column.Header)));
             if (header != null)
@@ -304,7 +304,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void ScrollToEnd()
         {
-            ScrollVertical(100);
+            this.ScrollVertical(100);
         }
 
         internal void CommitEdit()
@@ -322,7 +322,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void NavigateTransfer()
         {
-            var selection = Selection;
+            var selection = this.Selection;
 
             string tofrom;
             string sourceAccount = selection.ParseTransferPayee(out tofrom);
@@ -353,7 +353,7 @@ namespace Walkabout.Tests.Wrappers
                 for (int retries = 5; retries > 0; retries--)
                 {
                     // update the new "transactions" grid in place.
-                    this.control = window.FindTransactionGrid().control;
+                    this.control = this.window.FindTransactionGrid().control;
 
                     // now verify we got a new selection
                     var target = this.Selection;
@@ -391,7 +391,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void Export(string name)
         {
-            this.control = window.FindTransactionGrid().control;
+            this.control = this.window.FindTransactionGrid().control;
             this.control.SetFocus();
             ContextMenu menu = new ContextMenu(this.control, true);
             menu.InvokeMenuItem("menuItemExport");
@@ -409,26 +409,26 @@ namespace Walkabout.Tests.Wrappers
             this.item = item;
         }
 
-        public AutomationElement Element { get { return item; } }
+        public AutomationElement Element { get { return this.item; } }
 
         public void Select()
         {
-            SelectionItemPattern select = (SelectionItemPattern)item.GetCurrentPattern(SelectionItemPattern.Pattern);
+            SelectionItemPattern select = (SelectionItemPattern)this.item.GetCurrentPattern(SelectionItemPattern.Pattern);
             select.Select();
-            ScrollIntoView();
+            this.ScrollIntoView();
         }
 
         public void ScrollIntoView()
         {
-            ScrollItemPattern scroll = (ScrollItemPattern)item.GetCurrentPattern(ScrollItemPattern.Pattern);
+            ScrollItemPattern scroll = (ScrollItemPattern)this.item.GetCurrentPattern(ScrollItemPattern.Pattern);
             scroll.ScrollIntoView();
         }
 
         public void Delete()
         {
-            Select();
+            this.Select();
 
-            AutomationElement cell = item.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, "DataGridCell"));
+            AutomationElement cell = this.item.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, "DataGridCell"));
             if (cell == null)
             {
                 throw new Exception("DataGridCell not found");
@@ -442,20 +442,20 @@ namespace Walkabout.Tests.Wrappers
 
         internal AttachmentDialogWrapper ClickAttachmentsButton()
         {
-            ScrollIntoView();
+            this.ScrollIntoView();
 
             // AutomationId:	"CommandScanAttachment"
             try
             {
-                TransactionViewColumn col = view.GetColumn("Attachment");
-                col.Invoke(item);
+                TransactionViewColumn col = this.view.GetColumn("Attachment");
+                col.Invoke(this.item);
             }
             catch (Exception ex)
             {
                 throw new Exception("Cannot find the Attachment column: " + ex.Message);
             }
 
-            AutomationElement dialog = view.Window.Element.FindChildWindow("Attachments", 5);
+            AutomationElement dialog = this.view.Window.Element.FindChildWindow("Attachments", 5);
             if (dialog == null)
             {
                 throw new Exception("Cannot find the AttachmentDialog");
@@ -465,93 +465,93 @@ namespace Walkabout.Tests.Wrappers
 
         internal string GetCheckNumber()
         {
-            TransactionViewColumn col = view.GetColumn("Number");
-            return col.GetValue(item);
+            TransactionViewColumn col = this.view.GetColumn("Number");
+            return col.GetValue(this.item);
         }
         internal void SetCheckNumber(string num)
         {
-            TransactionViewColumn col = view.GetColumn("Number");
-            col.SetValue(item, num);
+            TransactionViewColumn col = this.view.GetColumn("Number");
+            col.SetValue(this.item, num);
         }
 
         internal string GetDate()
         {
-            TransactionViewColumn col = view.GetColumn("Date");
-            return col.GetValue(item);
+            TransactionViewColumn col = this.view.GetColumn("Date");
+            return col.GetValue(this.item);
         }
         internal void SetDate(string dateTime)
         {
-            TransactionViewColumn col = view.GetColumn("Date");
-            col.SetValue(item, dateTime);
+            TransactionViewColumn col = this.view.GetColumn("Date");
+            col.SetValue(this.item, dateTime);
         }
 
         internal string GetPayee()
         {
-            TransactionViewColumn col = view.GetColumn("Payee");
-            return col.GetValue(item);
+            TransactionViewColumn col = this.view.GetColumn("Payee");
+            return col.GetValue(this.item);
         }
         internal void SetPayee(string payee)
         {
-            TransactionViewColumn col = view.GetColumn("Payee");
-            col.SetValue(item, payee);
+            TransactionViewColumn col = this.view.GetColumn("Payee");
+            col.SetValue(this.item, payee);
         }
 
         internal string GetCategory()
         {
-            TransactionViewColumn col = view.GetColumn("Category");
-            return col.GetValue(item);
+            TransactionViewColumn col = this.view.GetColumn("Category");
+            return col.GetValue(this.item);
         }
         internal void SetCategory(string category)
         {
-            TransactionViewColumn col = view.GetColumn("Category");
-            col.SetValue(item, category);
+            TransactionViewColumn col = this.view.GetColumn("Category");
+            col.SetValue(this.item, category);
         }
         internal string GetMemo()
         {
-            TransactionViewColumn col = view.GetColumn("Memo");
-            return col.GetValue(item);
+            TransactionViewColumn col = this.view.GetColumn("Memo");
+            return col.GetValue(this.item);
         }
         internal void SetMemo(string memo)
         {
-            TransactionViewColumn col = view.GetColumn("Memo");
-            col.SetValue(item, memo);
+            TransactionViewColumn col = this.view.GetColumn("Memo");
+            col.SetValue(this.item, memo);
         }
         internal decimal GetSalesTax()
         {
-            return GetDecimalColumn("SalesTax");
+            return this.GetDecimalColumn("SalesTax");
         }
 
         private decimal GetDecimalColumn(string name)
         {
-            TransactionViewColumn col = view.GetColumn(name);
-            string s = col.GetValue(item);
+            TransactionViewColumn col = this.view.GetColumn(name);
+            string s = col.GetValue(this.item);
             decimal d;
             decimal.TryParse(s, out d);
             return d;
         }
         internal void SetSalesTax(decimal tax)
         {
-            TransactionViewColumn col = view.GetColumn("SalesTax");
-            col.SetValue(item, tax == 0 ? "" : tax.ToString());
+            TransactionViewColumn col = this.view.GetColumn("SalesTax");
+            col.SetValue(this.item, tax == 0 ? "" : tax.ToString());
         }
         internal decimal GetPayment()
         {
-            return GetDecimalColumn("Payment");
+            return this.GetDecimalColumn("Payment");
         }
         internal decimal GetDeposit()
         {
-            return GetDecimalColumn("Deposit");
+            return this.GetDecimalColumn("Deposit");
         }
         internal decimal GetAmount()
         {
             int sign = 1;
-            TransactionViewColumn col = view.GetColumn("Deposit");
-            string s = col.GetValue(item);
+            TransactionViewColumn col = this.view.GetColumn("Deposit");
+            string s = col.GetValue(this.item);
             if (string.IsNullOrEmpty(s))
             {
                 sign = -1;
-                col = view.GetColumn("Payment");
-                s = col.GetValue(item);
+                col = this.view.GetColumn("Payment");
+                s = col.GetValue(this.item);
             }
             decimal p = 0;
             decimal.TryParse(s, out p);
@@ -561,59 +561,59 @@ namespace Walkabout.Tests.Wrappers
         {
             if (amount < 0)
             {
-                TransactionViewColumn col = view.GetColumn("Payment");
+                TransactionViewColumn col = this.view.GetColumn("Payment");
                 amount *= -1;
-                col.SetValue(item, amount == 0 ? "" : amount.ToString());
+                col.SetValue(this.item, amount == 0 ? "" : amount.ToString());
             }
             else
             {
-                TransactionViewColumn col = view.GetColumn("Deposit");
-                col.SetValue(item, amount == 0 ? "" : amount.ToString());
+                TransactionViewColumn col = this.view.GetColumn("Deposit");
+                col.SetValue(this.item, amount == 0 ? "" : amount.ToString());
             }
         }
 
         // investment transactions
         internal string GetActivity()
         {
-            TransactionViewColumn col = view.GetColumn("Activity");
-            return col.GetValue(item);
+            TransactionViewColumn col = this.view.GetColumn("Activity");
+            return col.GetValue(this.item);
         }
 
         internal void SetActivity(string activity)
         {
-            TransactionViewColumn col = view.GetColumn("Activity");
-            col.SetValue(item, activity);
+            TransactionViewColumn col = this.view.GetColumn("Activity");
+            col.SetValue(this.item, activity);
         }
 
         internal string GetSecurity()
         {
-            TransactionViewColumn col = view.GetColumn("Security");
-            return col.GetValue(item);
+            TransactionViewColumn col = this.view.GetColumn("Security");
+            return col.GetValue(this.item);
         }
         internal void SetSecurity(string security)
         {
-            TransactionViewColumn col = view.GetColumn("Security");
-            col.SetValue(item, security);
+            TransactionViewColumn col = this.view.GetColumn("Security");
+            col.SetValue(this.item, security);
         }
 
         internal decimal GetUnits()
         {
-            return GetDecimalColumn("Units");
+            return this.GetDecimalColumn("Units");
         }
         internal void SetUnits(decimal units)
         {
-            TransactionViewColumn col = view.GetColumn("Units");
-            col.SetValue(item, units == 0 ? "" : units.ToString());
+            TransactionViewColumn col = this.view.GetColumn("Units");
+            col.SetValue(this.item, units == 0 ? "" : units.ToString());
         }
 
         internal decimal GetUnitPrice()
         {
-            return GetDecimalColumn("UnitPrice");
+            return this.GetDecimalColumn("UnitPrice");
         }
         internal void SetUnitPrice(decimal price)
         {
-            TransactionViewColumn col = view.GetColumn("UnitPrice");
-            col.SetValue(item, price == 0 ? "" : price.ToString());
+            TransactionViewColumn col = this.view.GetColumn("UnitPrice");
+            col.SetValue(this.item, price == 0 ? "" : price.ToString());
         }
 
         // todo: toggle status button
@@ -625,7 +625,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 try
                 {
-                    string payee = GetPayee();
+                    string payee = this.GetPayee();
                     return payee.StartsWith("Transfer");
                 }
                 catch
@@ -643,7 +643,7 @@ namespace Walkabout.Tests.Wrappers
         /// <returns>The account that we are transfering to or from</returns>
         public string ParseTransferPayee(out string tofrom)
         {
-            string payee = GetPayee();
+            string payee = this.GetPayee();
 
             if (payee.StartsWith("Transfer"))
             {
@@ -661,7 +661,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void Focus()
         {
-            TransactionViewColumn col = view.GetColumn("Payee");
+            TransactionViewColumn col = this.view.GetColumn("Payee");
             col.Focus(this.item);
         }
     }
@@ -687,17 +687,17 @@ namespace Walkabout.Tests.Wrappers
 
         public int Index
         {
-            get { return index; }
-            set { index = value; }
+            get { return this.index; }
+            set { this.index = value; }
         }
 
         public CompoundTransactionViewColumn Parent { get; set; }
 
-        public string Header { get { return header; } }
+        public string Header { get { return this.header; } }
 
-        public string Name { get { return name; } }
+        public string Name { get { return this.name; } }
 
-        public string DataType { get { return datatype; } }
+        public string DataType { get { return this.datatype; } }
 
 
         public AutomationElement GetCell(AutomationElement dataItem)
@@ -726,7 +726,7 @@ namespace Walkabout.Tests.Wrappers
 
             if (cell == null)
             {
-                throw new Exception("Expecting a DataGridCell to appear at index " + index + " in the DataItem" + Name + ". We found " + i + " DataGridCells.");
+                throw new Exception("Expecting a DataGridCell to appear at index " + index + " in the DataItem" + this.Name + ". We found " + i + " DataGridCells.");
             }
 
             return cell;
@@ -734,7 +734,7 @@ namespace Walkabout.Tests.Wrappers
 
         private AutomationElement GetCellContent(AutomationElement dataItem, bool forEditing)
         {
-            AutomationElement cell = GetCell(dataItem);
+            AutomationElement cell = this.GetCell(dataItem);
 
             string name = cell.Current.ClassName;
             if (!forEditing)
@@ -773,7 +773,7 @@ namespace Walkabout.Tests.Wrappers
                     Thread.Sleep(50); // let editing mode kick in.
 
                     // Now find the editable control within cell 
-                    editor = GetEditor(cell);
+                    editor = this.GetEditor(cell);
                     if (editor == null)
                     {
                         Thread.Sleep(500);
@@ -782,7 +782,7 @@ namespace Walkabout.Tests.Wrappers
 
                 if (editor == null)
                 {
-                    throw new Exception("Editor not found in compound cell at index " + Index);
+                    throw new Exception("Editor not found in compound cell at index " + this.Index);
                 }
 
                 return editor;
@@ -835,7 +835,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 try
                 {
-                    switch (DataType)
+                    switch (this.DataType)
                     {
                         case "Button":
                         case "Custom":
@@ -843,9 +843,9 @@ namespace Walkabout.Tests.Wrappers
                         case "TextBox":
                         case "DatePicker":
                         case "ComboBox":
-                            return GetCellValue(GetCellContent(dataItem, false));
+                            return this.GetCellValue(this.GetCellContent(dataItem, false));
                         default:
-                            throw new Exception("Unrecognized datatype: " + DataType);
+                            throw new Exception("Unrecognized datatype: " + this.DataType);
                     }
                 }
                 catch
@@ -861,19 +861,19 @@ namespace Walkabout.Tests.Wrappers
 
         public void SetValue(AutomationElement dataItem, string value)
         {
-            switch (DataType)
+            switch (this.DataType)
             {
                 case "Button":
                 case "TextBlock":
                 case "Custom":
-                    throw new Exception("Cannot set the value of a " + DataType + " column");
+                    throw new Exception("Cannot set the value of a " + this.DataType + " column");
                 case "DatePicker":
                 case "ComboBox":
                 case "TextBox":
-                    SetCellValue(GetCellContent(dataItem, true), value);
+                    this.SetCellValue(this.GetCellContent(dataItem, true), value);
                     break;
                 default:
-                    throw new Exception("Unrecognized datatype: " + DataType);
+                    throw new Exception("Unrecognized datatype: " + this.DataType);
             }
         }
 
@@ -918,7 +918,7 @@ namespace Walkabout.Tests.Wrappers
                 return vp.Current.Value;
             }
 
-            throw new Exception("DataCell for column " + name + " at index " + index + " does not have a ValuePatten");
+            throw new Exception("DataCell for column " + name + " at index " + this.index + " does not have a ValuePatten");
         }
 
         public void SetCellValue(AutomationElement cell, string value)
@@ -930,14 +930,14 @@ namespace Walkabout.Tests.Wrappers
                 vp.SetValue(value);
                 return;
             }
-            throw new Exception("DataCell for column " + name + " at index " + index + " does not have a ValuePatten");
+            throw new Exception("DataCell for column " + this.name + " at index " + this.index + " does not have a ValuePatten");
         }
 
         public void Invoke(AutomationElement dataItem)
         {
-            if (DataType == "Button")
+            if (this.DataType == "Button")
             {
-                AutomationElement cell = GetCellContent(dataItem, true);
+                AutomationElement cell = this.GetCellContent(dataItem, true);
 
                 object obj;
                 if (cell.TryGetCurrentPattern(InvokePattern.Pattern, out obj))
@@ -947,7 +947,7 @@ namespace Walkabout.Tests.Wrappers
                     return;
                 }
 
-                throw new Exception("DataGridCell " + Name + " does not contain an InvokePattern");
+                throw new Exception("DataGridCell " + this.Name + " does not contain an InvokePattern");
             }
             else
             {
@@ -957,7 +957,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void Focus(AutomationElement dataItem)
         {
-            AutomationElement cell = GetCell(dataItem);
+            AutomationElement cell = this.GetCell(dataItem);
             string name = cell.Current.Name;
             string className = cell.Current.ClassName;
             cell.SetFocus();
@@ -976,7 +976,7 @@ namespace Walkabout.Tests.Wrappers
                 int i = 0;
                 foreach (TransactionViewColumn tc in cols)
                 {
-                    columns.Add(tc);
+                    this.columns.Add(tc);
                     tc.Parent = this;
                     tc.Index = i++;
                 }
@@ -985,7 +985,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal TransactionViewColumn GetColumn(string name)
         {
-            foreach (TransactionViewColumn tc in columns)
+            foreach (TransactionViewColumn tc in this.columns)
             {
                 if (tc.Name == name)
                 {
@@ -1006,24 +1006,24 @@ namespace Walkabout.Tests.Wrappers
             int i = 0;
             foreach (TransactionViewColumn tc in cols)
             {
-                columns.Add(tc);
+                this.columns.Add(tc);
                 tc.Index = i++;
             }
         }
 
         public void AddColumn(string header, string name, string datatype)
         {
-            columns.Add(new TransactionViewColumn(header, name, datatype));
+            this.columns.Add(new TransactionViewColumn(header, name, datatype));
         }
 
         public int Count
         {
-            get { return columns.Count; }
+            get { return this.columns.Count; }
         }
 
         public TransactionViewColumn GetColumn(string name)
         {
-            foreach (TransactionViewColumn tc in columns)
+            foreach (TransactionViewColumn tc in this.columns)
             {
                 CompoundTransactionViewColumn cc = tc as CompoundTransactionViewColumn;
                 if (cc != null)
@@ -1045,11 +1045,11 @@ namespace Walkabout.Tests.Wrappers
 
         internal TransactionViewColumn GetColumn(int index)
         {
-            if (index < 0 || index >= columns.Count)
+            if (index < 0 || index >= this.columns.Count)
             {
                 throw new ArgumentOutOfRangeException("index");
             }
-            return columns[index];
+            return this.columns[index];
         }
 
     }

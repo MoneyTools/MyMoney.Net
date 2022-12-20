@@ -39,66 +39,66 @@ namespace Walkabout.Reports
             this.doc.Blocks.Clear();
 
             this.section = new Section();
-            doc.Blocks.Add(section);
+            this.doc.Blocks.Add(this.section);
         }
 
-        public FlowDocument Document { get { return doc; } }
+        public FlowDocument Document { get { return this.doc; } }
 
-        public TableRow CurrentRow { get { return current.row; } }
+        public TableRow CurrentRow { get { return this.current.row; } }
 
-        public Paragraph CurrentParagraph { get { return current.paragraph; } }
+        public Paragraph CurrentParagraph { get { return this.current.paragraph; } }
 
         public void WriteHeading(string title)
         {
-            EndTable();
-            EndRow();
-            EndCell();
+            this.EndTable();
+            this.EndRow();
+            this.EndCell();
 
             this.section = new Section();
-            doc.Blocks.Add(section);
-            WriteParagraph(title);
-            current.paragraph.Style = doc.Resources["ReportHeadingStyle"] as Style;
+            this.doc.Blocks.Add(this.section);
+            this.WriteParagraph(title);
+            this.current.paragraph.Style = this.doc.Resources["ReportHeadingStyle"] as Style;
         }
 
         public void WriteSubHeading(string subHeading)
         {
-            EndTable();
-            EndRow();
-            EndCell();
+            this.EndTable();
+            this.EndRow();
+            this.EndCell();
 
             this.section = new Section();
-            doc.Blocks.Add(section);
-            WriteParagraph(subHeading);
-            current.paragraph.Style = doc.Resources["ReportSubHeadingStyle"] as Style;
+            this.doc.Blocks.Add(this.section);
+            this.WriteParagraph(subHeading);
+            this.current.paragraph.Style = this.doc.Resources["ReportSubHeadingStyle"] as Style;
         }
 
         public void WriteElement(UIElement e)
         {
-            current.paragraph = new Paragraph();
-            current.paragraph.Inlines.Add(new InlineUIContainer(e));
-            if (current.cell != null)
+            this.current.paragraph = new Paragraph();
+            this.current.paragraph.Inlines.Add(new InlineUIContainer(e));
+            if (this.current.cell != null)
             {
-                current.cell.Blocks.Add(current.paragraph);
+                this.current.cell.Blocks.Add(this.current.paragraph);
             }
             else
             {
-                section.Blocks.Add(current.paragraph);
+                this.section.Blocks.Add(this.current.paragraph);
             }
         }
 
         public void WriteParagraph(string text)
         {
-            WriteParagraph(text, FontStyles.Normal, FontWeights.Normal, null);
+            this.WriteParagraph(text, FontStyles.Normal, FontWeights.Normal, null);
         }
 
         public void WriteParagraph(string text, FontStyle style, FontWeight weight, Brush foreground)
         {
-            WriteParagraph(text, style, weight, foreground, null);
+            this.WriteParagraph(text, style, weight, foreground, null);
         }
 
         public Paragraph WriteParagraph(string text, FontStyle style, FontWeight weight, Brush foreground, double? fontSize)
         {
-            current.paragraph = new Paragraph();
+            this.current.paragraph = new Paragraph();
             Run run = new Run();
             run.Text = text;
             if (style != FontStyles.Normal)
@@ -117,21 +117,21 @@ namespace Walkabout.Reports
             {
                 run.Foreground = foreground;
             }
-            current.paragraph.Inlines.Add(run);
-            if (current.cell != null)
+            this.current.paragraph.Inlines.Add(run);
+            if (this.current.cell != null)
             {
-                current.cell.Blocks.Add(current.paragraph);
+                this.current.cell.Blocks.Add(this.current.paragraph);
             }
             else
             {
-                section.Blocks.Add(current.paragraph);
+                this.section.Blocks.Add(this.current.paragraph);
             }
-            return current.paragraph;
+            return this.current.paragraph;
         }
 
         public void WriteHyperlink(string text, FontStyle style, FontWeight weight, MouseButtonEventHandler clickHandler)
         {
-            Paragraph p = WriteParagraph(text, style, weight, AppTheme.Instance.GetThemedBrush("HyperlinkForeground"), null);
+            Paragraph p = this.WriteParagraph(text, style, weight, AppTheme.Instance.GetThemedBrush("HyperlinkForeground"), null);
             p.Tag = text;
             p.PreviewMouseLeftButtonDown += clickHandler;
             p.Cursor = Cursors.Arrow;
@@ -140,12 +140,12 @@ namespace Walkabout.Reports
 
         public void WriteNumber(string number)
         {
-            WriteNumber(number, FontStyles.Normal, FontWeights.Normal, null);
+            this.WriteNumber(number, FontStyles.Normal, FontWeights.Normal, null);
         }
 
         public void WriteNumber(string number, FontStyle style, FontWeight weight, Brush foreground)
         {
-            current.paragraph = new Paragraph();
+            this.current.paragraph = new Paragraph();
             Run run = new Run();
             run.Text = number;
             if (style != FontStyles.Normal)
@@ -160,55 +160,55 @@ namespace Walkabout.Reports
             {
                 run.Foreground = foreground;
             }
-            current.paragraph.Inlines.Add(run);
-            current.paragraph.Style = doc.Resources["NumericStyle"] as Style;
-            if (current.cell != null)
+            this.current.paragraph.Inlines.Add(run);
+            this.current.paragraph.Style = this.doc.Resources["NumericStyle"] as Style;
+            if (this.current.cell != null)
             {
-                current.cell.Blocks.Add(current.paragraph);
+                this.current.cell.Blocks.Add(this.current.paragraph);
             }
             else
             {
-                section.Blocks.Add(current.paragraph);
+                this.section.Blocks.Add(this.current.paragraph);
             }
         }
 
         public void StartTable()
         {
             Table table = new Table();
-            if (current.table != null)
+            if (this.current.table != null)
             {
                 // nested table
-                if (current.row == null)
+                if (this.current.row == null)
                 {
-                    StartRow();
+                    this.StartRow();
                 }
-                if (current.cell == null)
+                if (this.current.cell == null)
                 {
-                    StartCell();
+                    this.StartCell();
                 }
-                current.cell.Blocks.Add(table);
-                nested.Push(current);
-                current = new NestedTableState();
+                this.current.cell.Blocks.Add(table);
+                this.nested.Push(this.current);
+                this.current = new NestedTableState();
             }
             else
             {
                 // root level
                 this.section = new Section();
                 this.section.Blocks.Add(table);
-                doc.Blocks.Add(section);
+                this.doc.Blocks.Add(this.section);
             }
 
-            current.table = table;
+            this.current.table = table;
         }
 
         double maxWidth;
         double tableWidth;
 
-        public double MaxWidth { get { return maxWidth; } }
+        public double MaxWidth { get { return this.maxWidth; } }
 
         public void StartColumnDefinitions()
         {
-            tableWidth = 0;
+            this.tableWidth = 0;
         }
 
         class ColumnWidthExtensions
@@ -223,7 +223,7 @@ namespace Walkabout.Reports
             width = width.Trim();
             if (string.Compare(width, "auto", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                tableWidth += 100; // give this column a minimum size at least
+                this.tableWidth += 100; // give this column a minimum size at least
                 gridLength = new GridLength(0, GridUnitType.Auto);
             }
             else if (width.EndsWith("*"))
@@ -234,7 +234,7 @@ namespace Walkabout.Reports
                 {
                     w = 1;
                 }
-                tableWidth += 100; // give this column a minimum size at least
+                this.tableWidth += 100; // give this column a minimum size at least
                 gridLength = new GridLength(w, GridUnitType.Star);
             }
             else
@@ -242,7 +242,7 @@ namespace Walkabout.Reports
                 double w;
                 if (double.TryParse(width, out w))
                 {
-                    tableWidth += w;
+                    this.tableWidth += w;
                     gridLength = new GridLength(w);
                 }
                 else
@@ -251,32 +251,32 @@ namespace Walkabout.Reports
                 }
             }
             var ext = new ColumnWidthExtensions() { MinWidth = minWidth, MaxWidth = maxWidth };
-            current.table.Columns.Add(new TableColumn() { Width = gridLength, Tag = ext });
+            this.current.table.Columns.Add(new TableColumn() { Width = gridLength, Tag = ext });
         }
 
         public void EndColumnDefinitions()
         {
-            maxWidth = Math.Max(maxWidth, tableWidth);
+            this.maxWidth = Math.Max(this.maxWidth, this.tableWidth);
 
             // The layout gets really slow and messy if you squeeze tables smaller than these column definitions, 
             // so we set the MinPageWidth to this value to stop that from happening, and the FlowDocumentScrollVIewer
             // will display a horizontal scrollbar instead.
-            if (maxWidth > 0)
+            if (this.maxWidth > 0)
             {
-                this.doc.MinPageWidth = maxWidth + 100;
+                this.doc.MinPageWidth = this.maxWidth + 100;
             }
         }
 
         public void StartHeaderRow()
         {
-            StartRow();
-            current.row.Style = doc.Resources["RowHeaderStyle"] as Style;
+            this.StartRow();
+            this.current.row.Style = this.doc.Resources["RowHeaderStyle"] as Style;
         }
 
         public void StartFooterRow()
         {
-            StartRow();
-            current.row.Style = doc.Resources["RowFooterStyle"] as Style;
+            this.StartRow();
+            this.current.row.Style = this.doc.Resources["RowFooterStyle"] as Style;
         }
 
         ToggleButton expander; // current one
@@ -286,22 +286,22 @@ namespace Walkabout.Reports
         // expand/collapse all rows inside this group.
         public void StartExpandableRowGroup()
         {
-            expander = new ToggleButton();
-            expander.Cursor = System.Windows.Input.Cursors.Arrow;
-            expander.SetResourceReference(FrameworkElement.StyleProperty, "NuclearTreeViewItemToggleButton");
-            expandableRowGroups.Add(expander);
-            groupedRows = new List<TableRow>();
-            firstExpandableRow = true; // add this toggle button to the first cell of the next row.
+            this.expander = new ToggleButton();
+            this.expander.Cursor = System.Windows.Input.Cursors.Arrow;
+            this.expander.SetResourceReference(FrameworkElement.StyleProperty, "NuclearTreeViewItemToggleButton");
+            this.expandableRowGroups.Add(this.expander);
+            this.groupedRows = new List<TableRow>();
+            this.firstExpandableRow = true; // add this toggle button to the first cell of the next row.
         }
 
         public void EndExpandableRowGroup()
         {
-            expander.Tag = groupedRows;
-            expander.Checked += OnExpanderChecked;
-            expander.Unchecked += OnExpanderUnchecked;
-            OnExpanderUnchecked(expander, null); // start out collapsed.
-            groupedRows = null;
-            firstExpandableRow = false;
+            this.expander.Tag = this.groupedRows;
+            this.expander.Checked += this.OnExpanderChecked;
+            this.expander.Unchecked += this.OnExpanderUnchecked;
+            this.OnExpanderUnchecked(this.expander, null); // start out collapsed.
+            this.groupedRows = null;
+            this.firstExpandableRow = false;
         }
 
         void OnExpanderUnchecked(object sender, RoutedEventArgs e)
@@ -355,37 +355,37 @@ namespace Walkabout.Reports
 
         public void StartRow()
         {
-            if (current.table == null)
+            if (this.current.table == null)
             {
-                StartTable();
+                this.StartTable();
             }
-            if (current.group == null)
+            if (this.current.group == null)
             {
-                current.group = new TableRowGroup();
-                current.table.RowGroups.Add(current.group);
+                this.current.group = new TableRowGroup();
+                this.current.table.RowGroups.Add(this.current.group);
             }
-            current.row = new TableRow();
-            current.group.Rows.Add(current.row);
+            this.current.row = new TableRow();
+            this.current.group.Rows.Add(this.current.row);
 
-            if (groupedRows != null)
+            if (this.groupedRows != null)
             {
-                if (firstExpandableRow)
+                if (this.firstExpandableRow)
                 {
-                    firstExpandableRow = false;
-                    if (expander != null)
+                    this.firstExpandableRow = false;
+                    if (this.expander != null)
                     {
-                        StartCell();
-                        WriteElement(expander);
-                        EndCell();
+                        this.StartCell();
+                        this.WriteElement(this.expander);
+                        this.EndCell();
                     }
                 }
                 else
                 {
                     // no expander on these guys.
-                    groupedRows.Add(current.row);
+                    this.groupedRows.Add(this.current.row);
 
-                    StartCell();
-                    EndCell();
+                    this.StartCell();
+                    this.EndCell();
                 }
             }
 
@@ -394,56 +394,56 @@ namespace Walkabout.Reports
 
         public void StartCell()
         {
-            StartCell(1, 1);
+            this.StartCell(1, 1);
 
         }
 
         public void StartCell(int rowSpan, int colSpan)
         {
-            if (current.row == null) StartRow();
-            current.cell = new TableCell();
+            if (this.current.row == null) this.StartRow();
+            this.current.cell = new TableCell();
             if (rowSpan != 1)
             {
-                current.cell.RowSpan = rowSpan;
+                this.current.cell.RowSpan = rowSpan;
             }
             if (colSpan != 1)
             {
-                current.cell.ColumnSpan = colSpan;
+                this.current.cell.ColumnSpan = colSpan;
             }
-            current.row.Cells.Add(current.cell);
+            this.current.row.Cells.Add(this.current.cell);
 
 
         }
 
         public void EndCell()
         {
-            current.cell = null;
+            this.current.cell = null;
         }
 
         public void EndRow()
         {
-            current.cell = null;
-            current.row = null;
+            this.current.cell = null;
+            this.current.row = null;
         }
 
         public void EndTable()
         {
-            if (current.table != null)
+            if (this.current.table != null)
             {
-                FixAutoColumns(current.table);
+                this.FixAutoColumns(this.current.table);
             }
-            current.table = null;
-            current.group = null;
-            current.row = null;
-            current.cell = null;
+            this.current.table = null;
+            this.current.group = null;
+            this.current.row = null;
+            this.current.cell = null;
 
-            if (nested.Count == 0)
+            if (this.nested.Count == 0)
             {
-                current = new NestedTableState();
+                this.current = new NestedTableState();
             }
             else
             {
-                current = nested.Pop();
+                this.current = this.nested.Pop();
             }
         }
 
@@ -453,7 +453,7 @@ namespace Walkabout.Reports
             // This code fixes that.
             Brush brush = Brushes.Black;
 
-            List<TableColumn> columns = new List<TableColumn>(current.table.Columns);
+            List<TableColumn> columns = new List<TableColumn>(this.current.table.Columns);
             if (columns.Count == 0)
             {
                 return;
@@ -464,7 +464,7 @@ namespace Walkabout.Reports
                 maxWidths.Add(0);
             }
 
-            foreach (var group in current.table.RowGroups)
+            foreach (var group in this.current.table.RowGroups)
             {
                 foreach (var row in group.Rows)
                 {
@@ -504,7 +504,7 @@ namespace Walkabout.Reports
 
             // fixup 'auto' columns so they have the right width
             int j = 0;
-            foreach (var col in current.table.Columns)
+            foreach (var col in this.current.table.Columns)
             {
                 ColumnWidthExtensions ext = col.Tag as ColumnWidthExtensions;
                 if (col.Width.IsAuto && ext != null && ext.MinWidth > 0)

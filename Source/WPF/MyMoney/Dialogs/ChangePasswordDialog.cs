@@ -34,8 +34,8 @@ namespace Walkabout.Dialogs
             Paragraph p = new Paragraph();
             intro.Document.Blocks.Add(p);
 
-            this.AddUserDefinedField(newPasswordFieldId, "New Password");
-            this.AddUserDefinedField(confirmPasswordFieldId, "Confirm New Password");
+            this.AddUserDefinedField(this.newPasswordFieldId, "New Password");
+            this.AddUserDefinedField(this.confirmPasswordFieldId, "Confirm New Password");
 
             p.Inlines.Add(new Run(account.Name + " is requesting that you enter a new password."));
 
@@ -63,19 +63,19 @@ namespace Walkabout.Dialogs
                 }
 
                 // capture value so thread can use it.
-                newPassword = this.NewPassword;
+                this.newPassword = this.NewPassword;
 
                 account.UserId = this.UserName;
                 account.Password = this.PasswordConfirmation;
 
-                Task.Run(ChangePassword);
+                Task.Run(this.ChangePassword);
                 e.Error = "Sending new password information to " + account.Name + ".\nPlease do NOT close this dialog until we get a response.";
                 e.Cancel = true;
 
                 // stop user from hitting OK again and stop user from trying to cancel, 
                 // cancel is problematic because we won't know if the server
                 // received the password change or not!
-                DisableButtons();
+                this.DisableButtons();
             });
 
         }
@@ -83,7 +83,7 @@ namespace Walkabout.Dialogs
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            cancelled = true;
+            this.cancelled = true;
         }
 
         string newPassword; // so thread can access it.
@@ -96,13 +96,13 @@ namespace Walkabout.Dialogs
             OfxRequest req = new OfxRequest(this.account, this.money, null);
             try
             {
-                req.ChangePassword(this.account, newPassword, out logFile);
+                req.ChangePassword(this.account, this.newPassword, out this.logFile);
             }
             catch (Exception e)
             {
-                Error = e;
+                this.Error = e;
             }
-            if (cancelled)
+            if (this.cancelled)
             {
                 return;
             }
@@ -113,8 +113,8 @@ namespace Walkabout.Dialogs
                 {
                     // The error might be about the new password being invalid for some reason, so show
                     // the message and let user try again.
-                    ShowError(this.Error.Message);
-                    EnableButtons();
+                    this.ShowError(this.Error.Message);
+                    this.EnableButtons();
                 }
                 else
                 {
@@ -138,13 +138,13 @@ namespace Walkabout.Dialogs
         {
             get
             {
-                return this.GetUserDefinedField(newPasswordFieldId);
+                return this.GetUserDefinedField(this.newPasswordFieldId);
             }
         }
 
         /// <summary>
         /// Get the OFX error log.
         /// </summary>
-        public string OfxLogFile { get { return logFile; } }
+        public string OfxLogFile { get { return this.logFile; } }
     }
 }

@@ -51,7 +51,7 @@ namespace Walkabout.Utilities
             }
             catch (Exception)
             {
-                Add(fileToDelete);
+                this.Add(fileToDelete);
             }
         }
 
@@ -65,12 +65,12 @@ namespace Walkabout.Utilities
 
         private void Add(string file)
         {
-            lock (files)
+            lock (this.files)
             {
-                files.Add(file);
+                this.files.Add(file);
             }
 
-            actions.StartDelayedAction("Cleanup", DeleteAll, TimeSpan.FromSeconds(30));
+            this.actions.StartDelayedAction("Cleanup", this.DeleteAll, TimeSpan.FromSeconds(30));
         }
 
         public static bool HasTempFiles

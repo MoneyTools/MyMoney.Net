@@ -15,10 +15,10 @@ namespace Walkabout.Dialogs
 
         public AddLoginDialog()
         {
-            InitializeComponent();
-            UserNameBox.GotFocus += new RoutedEventHandler(OnTextBoxGotFocus);
-            PasswordBox.GotFocus += new RoutedEventHandler(OnPasswordBoxGotFocus);
-            ConfirmPasswordBox.GotFocus += new RoutedEventHandler(OnPasswordBoxGotFocus);
+            this.InitializeComponent();
+            this.UserNameBox.GotFocus += new RoutedEventHandler(this.OnTextBoxGotFocus);
+            this.PasswordBox.GotFocus += new RoutedEventHandler(this.OnPasswordBoxGotFocus);
+            this.ConfirmPasswordBox.GotFocus += new RoutedEventHandler(this.OnPasswordBoxGotFocus);
         }
 
         void OnTextBoxGotFocus(object sender, RoutedEventArgs e)
@@ -51,11 +51,11 @@ namespace Walkabout.Dialogs
 
         private void buttonOk_Click(object sender, RoutedEventArgs e)
         {
-            string user = ValidateInput(this.UserNameBox, "user name");
+            string user = this.ValidateInput(this.UserNameBox, "user name");
             if (user == null) return;
-            string pswd = ValidateInput(this.PasswordBox, "password");
+            string pswd = this.ValidateInput(this.PasswordBox, "password");
             if (pswd == null) return;
-            string confirmed = ValidateInput(this.ConfirmPasswordBox, "password");
+            string confirmed = this.ValidateInput(this.ConfirmPasswordBox, "password");
             if (confirmed == null) return;
             if (pswd != confirmed)
             {

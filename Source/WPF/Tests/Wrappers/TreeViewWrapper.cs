@@ -12,8 +12,8 @@ namespace Walkabout.Tests.Wrappers
 
         public TreeViewWrapper(AutomationElement e)
         {
-            element = e.FindFirstWithRetries(TreeScope.Subtree, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Tree));
-            if (element == null)
+            this.element = e.FindFirstWithRetries(TreeScope.Subtree, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Tree));
+            if (this.element == null)
             {
                 throw new Exception("No tree control found in this scope");
             }
@@ -23,7 +23,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return Items.Count;
+                return this.Items.Count;
             }
         }
 
@@ -33,7 +33,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 try
                 {
-                    SelectionPattern selection = (SelectionPattern)element.GetCurrentPattern(SelectionPattern.Pattern);
+                    SelectionPattern selection = (SelectionPattern)this.element.GetCurrentPattern(SelectionPattern.Pattern);
                     AutomationElement[] selected = selection.Current.GetSelection();
                     return (selected == null) ? new AutomationElement[0] : selected;
                 }
@@ -48,7 +48,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                AutomationElementCollection result = element.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TreeItem));
+                AutomationElementCollection result = this.element.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TreeItem));
                 List<AutomationElement> list = new List<AutomationElement>();
                 if (result != null)
                 {
@@ -63,8 +63,8 @@ namespace Walkabout.Tests.Wrappers
 
         public void Select(int i)
         {
-            AutomationElement element = Items[i];
-            Select(element);
+            AutomationElement element = this.Items[i];
+            this.Select(element);
         }
 
         public void Select(AutomationElement element)

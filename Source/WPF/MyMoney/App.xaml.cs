@@ -56,7 +56,7 @@ namespace Walkabout
 
                     // Let the currently running application handle the IMPORT file
                     // we can close this instance 
-                    Shutdown();
+                    this.Shutdown();
                     return;
                 }
 

@@ -19,15 +19,15 @@ namespace Walkabout.Dialogs
         public FreeStyleQueryDialog(MyMoney m, IDatabase database)
         {
             this.database = database;
-            InitializeComponent();
+            this.InitializeComponent();
             this.Owner = Application.Current.MainWindow;
-            myMoney = m;
+            this.myMoney = m;
         }
 
         public string Query
         {
-            get { return textBoxQuery.Text; }
-            set { textBoxQuery.Text = value; }
+            get { return this.textBoxQuery.Text; }
+            set { this.textBoxQuery.Text = value; }
         }
 
 
@@ -42,7 +42,7 @@ namespace Walkabout.Dialogs
             try
             {
                 this.dataSet = this.database.QueryDataSet(query);
-                if (dataSet != null)
+                if (this.dataSet != null)
                 {
 
                     this.dataGrid1.ItemsSource = this.dataSet.Tables["Results"].DefaultView;

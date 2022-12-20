@@ -26,10 +26,10 @@ namespace Walkabout.Tests.Wrappers
         {
             for (int retries = 5; retries > 0; retries--)
             {
-                AutomationElement tab = charts.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, id));
+                AutomationElement tab = this.charts.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, id));
                 if (tab != null)
                 {
-                    SelectTab(tab);
+                    this.SelectTab(tab);
                     return tab;
                 }
                 Thread.Sleep(1000);
@@ -40,37 +40,37 @@ namespace Walkabout.Tests.Wrappers
 
         public TrendChartWrapper SelectTrends()
         {
-            AutomationElement tab = FindAndSelectTab("TabTrends");
+            AutomationElement tab = this.FindAndSelectTab("TabTrends");
             return new TrendChartWrapper(tab);
         }
 
         public HistoryChartWrapper SelectHistory()
         {
-            AutomationElement tab = FindAndSelectTab("TabHistory");
+            AutomationElement tab = this.FindAndSelectTab("TabHistory");
             return new HistoryChartWrapper(tab);
         }
 
         public IncomeChartWrapper SelectIncomes()
         {
-            AutomationElement tab = FindAndSelectTab("TabIncomes");
+            AutomationElement tab = this.FindAndSelectTab("TabIncomes");
             return new IncomeChartWrapper(tab);
         }
 
         public ExpensesChartWrapper SelectExpenses()
         {
-            AutomationElement tab = FindAndSelectTab("TabExpenses");
+            AutomationElement tab = this.FindAndSelectTab("TabExpenses");
             return new ExpensesChartWrapper(tab);
         }
 
         public StockChartWrapper SelectStock()
         {
-            AutomationElement tab = FindAndSelectTab("TabStock");
+            AutomationElement tab = this.FindAndSelectTab("TabStock");
             return new StockChartWrapper(tab);
         }
 
         public DownloadDetailsWrapper SelectDownload()
         {
-            AutomationElement tab = FindAndSelectTab("TabDownload");
+            AutomationElement tab = this.FindAndSelectTab("TabDownload");
             return new DownloadDetailsWrapper(tab);
         }
     }

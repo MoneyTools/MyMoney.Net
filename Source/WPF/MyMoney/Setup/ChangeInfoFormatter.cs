@@ -67,29 +67,29 @@ namespace Walkabout.Setup
 
         public bool HasLatestVersion()
         {
-            if (doc == null) return true;
-            foreach (XElement change in doc.Root.Elements("change"))
+            if (this.doc == null) return true;
+            foreach (XElement change in this.doc.Root.Elements("change"))
             {
                 string version = (string)change.Attribute("version");
-                if (version == previousVersion)
+                if (version == this.previousVersion)
                 {
                     return true;
                 }
-                return IsSameOrOlder(previousVersion, version);
+                return this.IsSameOrOlder(this.previousVersion, version);
             }
             return false;
         }
 
         public override Task Generate(IReportWriter writer)
         {
-            if (doc == null) return Task.CompletedTask;
+            if (this.doc == null) return Task.CompletedTask;
 
-            var document = view.DocumentViewer.Document;
+            var document = this.view.DocumentViewer.Document;
 
             bool found = false;
             bool first = true;
 
-            foreach (XElement change in doc.Root.Elements("change"))
+            foreach (XElement change in this.doc.Root.Elements("change"))
             {
                 string version = (string)change.Attribute("version");
                 if (string.IsNullOrEmpty(version))
@@ -97,7 +97,7 @@ namespace Walkabout.Setup
                     continue;
                 }
 
-                bool match = IsSameOrOlder(previousVersion, version);
+                bool match = this.IsSameOrOlder(this.previousVersion, version);
 
                 if (!found && match)
                 {
@@ -131,9 +131,9 @@ namespace Walkabout.Setup
                 }
             }
 
-            if (installButton && !HasLatestVersion())
+            if (this.installButton && !this.HasLatestVersion())
             {
-                document.Blocks.InsertAfter(document.Blocks.FirstBlock, new BlockUIContainer(CreateInstallButton()));
+                document.Blocks.InsertAfter(document.Blocks.FirstBlock, new BlockUIContainer(this.CreateInstallButton()));
             }
             return Task.CompletedTask;
         }
@@ -165,13 +165,13 @@ namespace Walkabout.Setup
             });
 
             button.Content = panel;
-            button.Click += new RoutedEventHandler(OnInstallLatest);
+            button.Click += new RoutedEventHandler(this.OnInstallLatest);
             return button;
         }
 
         void OnInstallLatest(object sender, RoutedEventArgs e)
         {
-            OnInstallButtonClick();
+            this.OnInstallButtonClick();
         }
 
     }

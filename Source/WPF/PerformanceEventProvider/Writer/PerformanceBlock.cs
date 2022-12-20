@@ -31,12 +31,12 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider
             MeasurementId measurementId,
             ulong size)
         {
-            EventProvider = eventProvider;
-            EventDescriptor = eventDescriptor;
-            ComponentId = componentId;
-            CategoryId = categoryId;
-            MeasurementId = measurementId;
-            Size = size;
+            this.EventProvider = eventProvider;
+            this.EventDescriptor = eventDescriptor;
+            this.ComponentId = componentId;
+            this.CategoryId = categoryId;
+            this.MeasurementId = measurementId;
+            this.Size = size;
         }
 
         public static EventDescriptor BeginEvent
@@ -72,7 +72,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider
 
         internal PerformanceBlock(ComponentId component, CategoryId category, MeasurementId measurementId, ulong size)
         {
-            Start(component, category, measurementId, size);
+            this.Start(component, category, measurementId, size);
         }
 
         private void Start(ComponentId component, CategoryId category, MeasurementId measurementId, ulong size)
@@ -122,7 +122,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider
         /// </summary>
         public void Step(int steps)
         {
-            etwProvider.WriteEvent(ref stepEvent, (uint)component, (uint)category, (uint)measurementId, (ulong)0, (ulong)steps, (double)0);
+            etwProvider.WriteEvent(ref stepEvent, (uint)this.component, (uint)this.category, (uint)this.measurementId, (ulong)0, (ulong)steps, (double)0);
         }
 
         public void Dispose()
@@ -130,11 +130,11 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider
             if (!memReportingSwitch.TraceInfo)  // the default
             {
                 this.timer.Stop();
-                etwProvider.WriteEvent(ref endEvent, (uint)component, (uint)category, (uint)measurementId, (ulong)this.timer.ElapsedTicks, (ulong)0, (double)0);
+                etwProvider.WriteEvent(ref endEvent, (uint)this.component, (uint)this.category, (uint)this.measurementId, (ulong)this.timer.ElapsedTicks, (ulong)0, (double)0);
             }
             else
             {
-                EventInfo eventInfo = new EventInfo(etwProvider, endEvent, component, category, measurementId, 0);
+                EventInfo eventInfo = new EventInfo(etwProvider, endEvent, this.component, this.category, this.measurementId, 0);
                 Trace.WriteLine(eventInfo);
             }
             System.Threading.Interlocked.CompareExchange<PerformanceBlock>(ref cache, null, this);

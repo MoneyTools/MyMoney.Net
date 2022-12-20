@@ -24,7 +24,7 @@ namespace Walkabout.Dialogs
         {
             get
             {
-                return editingAccount;
+                return this.editingAccount;
             }
         }
 
@@ -34,14 +34,14 @@ namespace Walkabout.Dialogs
 
         public Account TheAccount
         {
-            get { return theAccount; }
+            get { return this.theAccount; }
             set
             {
-                theAccount = value;
+                this.theAccount = value;
                 if (value != null)
                 {
-                    editingAccount = value.ShallowCopy();
-                    this.DataContext = EditingAccount;
+                    this.editingAccount = value.ShallowCopy();
+                    this.DataContext = this.EditingAccount;
                 }
             }
         }
@@ -52,15 +52,15 @@ namespace Walkabout.Dialogs
         {
             this.Money = money;
 
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.Owner = Application.Current.MainWindow;
             this.TheAccount = a;
 
 
-            onlineAccounts.Add(string.Empty); // so you can clear it out.
+            this.onlineAccounts.Add(string.Empty); // so you can clear it out.
 
-            foreach (OnlineAccount oa in Money.OnlineAccounts.Items)
+            foreach (OnlineAccount oa in this.Money.OnlineAccounts.Items)
             {
                 if (string.IsNullOrEmpty(oa.Name))
                 {
@@ -68,13 +68,13 @@ namespace Walkabout.Dialogs
                 }
                 else
                 {
-                    InsertAccount(oa);
+                    this.InsertAccount(oa);
                 }
             }
 
             List<string> currencies = new List<string>(Enum.GetNames(typeof(RestfulWebServices.CurrencyCode)));
             currencies.Sort();
-            ComboBoxCurrency.ItemsSource = currencies;
+            this.ComboBoxCurrency.ItemsSource = currencies;
         }
 
 
@@ -88,23 +88,23 @@ namespace Walkabout.Dialogs
         // Insert account in sorted order.
         void InsertAccount(OnlineAccount oa)
         {
-            for (int i = 0, n = onlineAccounts.Count; i < n; i++)
+            for (int i = 0, n = this.onlineAccounts.Count; i < n; i++)
             {
-                OnlineAccount other = onlineAccounts[i] as OnlineAccount;
+                OnlineAccount other = this.onlineAccounts[i] as OnlineAccount;
                 if (other != null && string.Compare(other.Name, oa.Name, StringComparison.OrdinalIgnoreCase) > 0)
                 {
-                    onlineAccounts.Insert(i, oa);
+                    this.onlineAccounts.Insert(i, oa);
                     return;
                 }
             }
-            onlineAccounts.Add(oa);
+            this.onlineAccounts.Add(oa);
         }
 
         OnlineAccount GetMatchingOnlineAccount(string name)
         {
-            foreach (OnlineAccount oa in Money.OnlineAccounts.Items)
+            foreach (OnlineAccount oa in this.Money.OnlineAccounts.Items)
             {
-                if (editingAccount.OnlineAccount.Name == oa.Name)
+                if (this.editingAccount.OnlineAccount.Name == oa.Name)
                 {
                     return oa;
                 }
@@ -114,21 +114,21 @@ namespace Walkabout.Dialogs
 
         private void ButtonOk(object sender, RoutedEventArgs e)
         {
-            theAccount.Name = editingAccount.Name;
-            theAccount.AccountId = editingAccount.AccountId;
-            theAccount.Description = editingAccount.Description;
-            theAccount.Type = AccountType.Loan;
-            theAccount.CategoryForPrincipal = editingAccount.CategoryForPrincipal;
-            theAccount.CategoryForInterest = editingAccount.CategoryForInterest;
+            this.theAccount.Name = this.editingAccount.Name;
+            this.theAccount.AccountId = this.editingAccount.AccountId;
+            this.theAccount.Description = this.editingAccount.Description;
+            this.theAccount.Type = AccountType.Loan;
+            this.theAccount.CategoryForPrincipal = this.editingAccount.CategoryForPrincipal;
+            this.theAccount.CategoryForInterest = this.editingAccount.CategoryForInterest;
 
-            theAccount.OpeningBalance = editingAccount.OpeningBalance;
-            if (editingAccount.OnlineAccount != null)
+            this.theAccount.OpeningBalance = this.editingAccount.OpeningBalance;
+            if (this.editingAccount.OnlineAccount != null)
             {
-                theAccount.OnlineAccount = GetMatchingOnlineAccount(editingAccount.OnlineAccount.Name);
+                this.theAccount.OnlineAccount = this.GetMatchingOnlineAccount(this.editingAccount.OnlineAccount.Name);
             }
-            theAccount.Currency = editingAccount.Currency;
-            theAccount.WebSite = editingAccount.WebSite;
-            theAccount.IsClosed = editingAccount.IsClosed;
+            this.theAccount.Currency = this.editingAccount.Currency;
+            this.theAccount.WebSite = this.editingAccount.WebSite;
+            this.theAccount.IsClosed = this.editingAccount.IsClosed;
 
             this.DialogResult = true;
         }
@@ -136,7 +136,7 @@ namespace Walkabout.Dialogs
         private void ButtonGoToWebSite(object sender, RoutedEventArgs e)
         {
 
-            string url = editingAccount.WebSite.ToLower();
+            string url = this.editingAccount.WebSite.ToLower();
             if (string.IsNullOrWhiteSpace(url))
             {
                 MessageBoxEx.Show("You must supply the web site address");
@@ -165,7 +165,7 @@ namespace Walkabout.Dialogs
             }
             else
             {
-                MessageBoxEx.Show(string.Format("Invalid web site:{0}\"{1}\"", Environment.NewLine, editingAccount.WebSite));
+                MessageBoxEx.Show(string.Format("Invalid web site:{0}\"{1}\"", Environment.NewLine, this.editingAccount.WebSite));
             }
         }
 
@@ -177,7 +177,7 @@ namespace Walkabout.Dialogs
             {
                 if (oa != null)
                 {
-                    Money.OnlineAccounts.RemoveOnlineAccount(oa);
+                    this.Money.OnlineAccounts.RemoveOnlineAccount(oa);
                 }
             }
             this.DialogResult = false;

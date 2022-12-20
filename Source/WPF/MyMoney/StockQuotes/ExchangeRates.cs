@@ -21,28 +21,28 @@ namespace Walkabout.StockQuotes
 
         public void Dispose()
         {
-            stop = true;
-            lock (queue)
+            this.stop = true;
+            lock (this.queue)
             {
-                queue.Clear();
+                this.queue.Clear();
             }
         }
 
         public MyMoney MyMoney
         {
-            get { return myMoney; }
-            set { myMoney = value; }
+            get { return this.myMoney; }
+            set { this.myMoney = value; }
         }
 
         internal void UpdateRates()
         {
-            if (myMoney != null)
+            if (this.myMoney != null)
             {
-                foreach (var c in myMoney.Currencies.GetCurrencies())
+                foreach (var c in this.myMoney.Currencies.GetCurrencies())
                 {
                     if (!string.IsNullOrEmpty(c.Symbol))
                     {
-                        Enqueue(c.Symbol);
+                        this.Enqueue(c.Symbol);
                     }
                 }
             }
@@ -57,31 +57,31 @@ namespace Walkabout.StockQuotes
                 return;
             }
 
-            lock (queue)
+            lock (this.queue)
             {
-                queue.Add(code);
+                this.queue.Add(code);
             }
 
-            if (quotesThread == null)
+            if (this.quotesThread == null)
             {
-                quotesThread = new Thread(new ThreadStart(GetRates));
-                quotesThread.Start();
+                this.quotesThread = new Thread(new ThreadStart(this.GetRates));
+                this.quotesThread.Start();
             }
 
         }
 
         void GetRates()
         {
-            while (!stop)
+            while (!this.stop)
             {
                 CurrencyCode code;
 
-                lock (queue)
+                lock (this.queue)
                 {
-                    if (queue.Count > 0)
+                    if (this.queue.Count > 0)
                     {
-                        code = queue[0];
-                        queue.RemoveAt(0);
+                        code = this.queue[0];
+                        this.queue.RemoveAt(0);
                     }
                     else
                     {
@@ -89,21 +89,21 @@ namespace Walkabout.StockQuotes
                     }
                 }
 
-                decimal d = GetExchangeRate(code, CurrencyCode.USD);
+                decimal d = this.GetExchangeRate(code, CurrencyCode.USD);
                 if (d != 0)
                 {
-                    Walkabout.Data.Currency found = myMoney.Currencies.FindCurrency(code.ToString());
+                    Walkabout.Data.Currency found = this.myMoney.Currencies.FindCurrency(code.ToString());
                     if (found == null)
                     {
                         found = new Data.Currency();
                         found.Symbol = code.ToString();
-                        myMoney.Currencies.AddCurrency(found);
+                        this.myMoney.Currencies.AddCurrency(found);
                     }
 
                     found.Ratio = d;
                 }
             }
-            quotesThread = null;
+            this.quotesThread = null;
         }
 
         decimal GetExchangeRate(CurrencyCode fromCurrency, CurrencyCode toCurrency)

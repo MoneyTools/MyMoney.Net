@@ -61,8 +61,8 @@ namespace Walkabout.Utilities
 
         public string TargetName
         {
-            get { return targetName; }
-            set { targetName = value; }
+            get { return this.targetName; }
+            set { this.targetName = value; }
         }
 
         public CredentialType CredentialType
@@ -104,7 +104,7 @@ namespace Walkabout.Utilities
 
         public DateTime LastWriteTime
         {
-            get { return lastWriteTime; }
+            get { return this.lastWriteTime; }
             set { this.lastWriteTime = value; }
         }
 
@@ -122,22 +122,22 @@ namespace Walkabout.Utilities
 
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
         }
 
         protected virtual void Dispose(bool disposing)
         {
             GC.SuppressFinalize(this);
-            password = null;
-            TargetName = null;
-            UserName = null;
-            TargetAlias = null;
-            Description = null;
+            this.password = null;
+            this.TargetName = null;
+            this.UserName = null;
+            this.TargetAlias = null;
+            this.Description = null;
         }
 
         ~Credential()
         {
-            Dispose(false);
+            this.Dispose(false);
         }
 
         private const int ERROR_NO_SUCH_LOGON_SESSION = 1312;
@@ -166,7 +166,7 @@ namespace Walkabout.Utilities
 
         internal void Save()
         {
-            LastWriteTime = DateTime.Now;
+            this.LastWriteTime = DateTime.Now;
 
             CREDENTIAL data = new CREDENTIAL();
             data.CredentialBlobSize = (uint)this.password.Length * sizeof(char); // in bytes
@@ -272,10 +272,10 @@ namespace Walkabout.Utilities
             CREDENTIAL data = new CREDENTIAL();
             Marshal.PtrToStructure(block, data);
 
-            this.targetName = GetNativeString(data.TargetName);
-            this.userName = GetNativeString(data.UserName);
-            this.targetAlias = GetNativeString(data.TargetAlias);
-            this.description = GetNativeString(data.Comment);
+            this.targetName = this.GetNativeString(data.TargetName);
+            this.userName = this.GetNativeString(data.UserName);
+            this.targetAlias = this.GetNativeString(data.TargetAlias);
+            this.description = this.GetNativeString(data.Comment);
             this.persist = (CredentialPersistence)data.Persist;
             this.lastWriteTime = DateTime.FromFileTime(data.LastWritten);
             if (data.CredentialBlobSize > 0)

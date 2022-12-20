@@ -39,29 +39,29 @@ namespace Walkabout.Views
         {
             get
             {
-                return accountSelected;
+                return this.accountSelected;
             }
             set
             {
                 if (value != null)
                 {
-                    FireBeforeViewStateChanged();
+                    this.FireBeforeViewStateChanged();
 
-                    accountSelected = value;
-                    loanAccount = this.Money.GetOrCreateLoanAccount(this.accountSelected);
-                    loanAccount.Rebalance();
-                    var dataProvider = (CollectionViewSource)FindResource("ByYear");
-                    dataProvider.Source = loanAccount.Payments;
+                    this.accountSelected = value;
+                    this.loanAccount = this.Money.GetOrCreateLoanAccount(this.accountSelected);
+                    this.loanAccount.Rebalance();
+                    var dataProvider = (CollectionViewSource)this.FindResource("ByYear");
+                    dataProvider.Source = this.loanAccount.Payments;
 
-                    FireAfterViewStateChanged();
+                    this.FireAfterViewStateChanged();
                 }
             }
         }
 
         public ObservableCollection<LoanPaymentAggregation> LoanPayments
         {
-            get { return loanAccount.Payments; }
-            set { loanAccount.Payments = value; }
+            get { return this.loanAccount.Payments; }
+            set { this.loanAccount.Payments = value; }
         }
 
 
@@ -72,7 +72,7 @@ namespace Walkabout.Views
 
         public LoansView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         #region IView
@@ -108,8 +108,8 @@ namespace Walkabout.Views
 
         public IServiceProvider ServiceProvider
         {
-            get { return sp; }
-            set { sp = value; }
+            get { return this.sp; }
+            set { this.sp = value; }
         }
 
 
@@ -118,14 +118,14 @@ namespace Walkabout.Views
         {
             get
             {
-                if (status == null)
+                if (this.status == null)
                 {
-                    if (ServiceProvider != null)
+                    if (this.ServiceProvider != null)
                     {
-                        status = (IStatusService)ServiceProvider.GetService(typeof(IStatusService));
+                        this.status = (IStatusService)this.ServiceProvider.GetService(typeof(IStatusService));
                     }
                 }
-                return status;
+                return this.status;
             }
         }
 
@@ -139,7 +139,7 @@ namespace Walkabout.Views
             get
             {
 
-                return "Loan -" + (AccountSelected == null ? "no account" : AccountSelected.Name);
+                return "Loan -" + (this.AccountSelected == null ? "no account" : this.AccountSelected.Name);
             }
         }
 
@@ -170,9 +170,9 @@ namespace Walkabout.Views
                 ViewStateForLoan vs = value as ViewStateForLoan;
                 if (vs != null)
                 {
-                    viewStateLock++;
-                    AccountSelected = this.Money.Accounts.FindAccountAt(vs.LoanAccountId);
-                    viewStateLock--;
+                    this.viewStateLock++;
+                    this.AccountSelected = this.Money.Accounts.FindAccountAt(vs.LoanAccountId);
+                    this.viewStateLock--;
                 }
             }
         }
@@ -181,9 +181,9 @@ namespace Walkabout.Views
         int viewStateLock;
         void FireBeforeViewStateChanged()
         {
-            if (viewStateLock == 0 && this.BeforeViewStateChanged != null)
+            if (this.viewStateLock == 0 && BeforeViewStateChanged != null)
             {
-                this.BeforeViewStateChanged(this, new EventArgs());
+                BeforeViewStateChanged(this, new EventArgs());
             }
 
         }
@@ -191,17 +191,17 @@ namespace Walkabout.Views
 
         void FireAfterViewStateChanged()
         {
-            if (this.AfterViewStateChanged != null)
+            if (AfterViewStateChanged != null)
             {
-                this.AfterViewStateChanged(this, new AfterViewStateChangedEventArgs(0));
+                AfterViewStateChanged(this, new AfterViewStateChangedEventArgs(0));
             }
-            ServiceStatus.ShowMessage(CreateStatusText());
+            this.ServiceStatus.ShowMessage(this.CreateStatusText());
         }
 
 
         string CreateStatusText()
         {
-            return LoanPayments.Count.ToString() + " Payments";
+            return this.LoanPayments.Count.ToString() + " Payments";
         }
 
 
@@ -232,7 +232,7 @@ namespace Walkabout.Views
 
         private void TheDataGrid_InitializingNewItem(object sender, InitializingNewItemEventArgs e)
         {
-            LoanPaymentAggregation current = TheDataGrid.SelectedItem as LoanPaymentAggregation;
+            LoanPaymentAggregation current = this.TheDataGrid.SelectedItem as LoanPaymentAggregation;
             LoanPaymentAggregation lvp = e.NewItem as LoanPaymentAggregation;
 
             // Add new manual entry
@@ -273,8 +273,8 @@ namespace Walkabout.Views
         {
             if (e.EditAction == DataGridEditAction.Commit)
             {
-                currentEditRow = e.Row.Item as LoanPaymentAggregation;
-                if (currentEditRow != null)
+                this.currentEditRow = e.Row.Item as LoanPaymentAggregation;
+                if (this.currentEditRow != null)
                 {
                     //
                     // Cache the value of the 4 possible field being edited
@@ -283,13 +283,13 @@ namespace Walkabout.Views
                     // that the user just edited
                     // so to work around this we cache the last value, send our self and event and we compare the before and after value
                     //
-                    this.editingPrincipalBefore = currentEditRow.Principal;
-                    this.editingInterestBefore = currentEditRow.Interest;
-                    this.editingPercentageBefore = currentEditRow.Percentage;
+                    this.editingPrincipalBefore = this.currentEditRow.Principal;
+                    this.editingInterestBefore = this.currentEditRow.Interest;
+                    this.editingPercentageBefore = this.currentEditRow.Percentage;
 
                     // Note: this must be DispatcherPriority.Background otherwise Updated value are happens too soon and
                     // doesn't see the new value!
-                    this.Dispatcher.BeginInvoke(new Action(Rebalance), DispatcherPriority.ApplicationIdle);
+                    this.Dispatcher.BeginInvoke(new Action(this.Rebalance), DispatcherPriority.ApplicationIdle);
                 }
             }
         }
@@ -353,7 +353,7 @@ namespace Walkabout.Views
         {
             if (Key.Delete == e.Key)
             {
-                if (CurrentSelectedItem != null && CurrentSelectedItem.IsReadOnly == true)
+                if (this.CurrentSelectedItem != null && this.CurrentSelectedItem.IsReadOnly == true)
                 {
                     // not allowed to delete these ReadOnly entries
                     e.Handled = true;
@@ -365,7 +365,7 @@ namespace Walkabout.Views
         {
             if (e.Command == DataGrid.DeleteCommand)
             {
-                if (CurrentSelectedItem != null && CurrentSelectedItem.IsReadOnly)
+                if (this.CurrentSelectedItem != null && this.CurrentSelectedItem.IsReadOnly)
                 {
                     // Cancel delete operation
                     e.Handled = true;
@@ -374,7 +374,7 @@ namespace Walkabout.Views
                 {
                     if (MessageBoxEx.Show("Are you sure you want to delete?", "Please confirm.", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
-                        this.Money.LoanPayments.Remove(CurrentSelectedItem.LoanPayementManualEntry);
+                        this.Money.LoanPayments.Remove(this.CurrentSelectedItem.LoanPayementManualEntry);
                     }
                     else
                     {
@@ -398,10 +398,10 @@ namespace Walkabout.Views
 
             if (l != null && l.Transaction != null)
             {
-                if (ServiceProvider != null)
+                if (this.ServiceProvider != null)
                 {
                     // Get the main service
-                    IViewNavigator view = ServiceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
+                    IViewNavigator view = this.ServiceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
                     if (view != null)
                     {
                         // Request to change the current view
@@ -415,7 +415,7 @@ namespace Walkabout.Views
         {
             Exporters exporter = new Exporters();
             exporter.SupportXml = false;
-            exporter.ExportPrompt(LoanPayments.ToArray());
+            exporter.ExportPrompt(this.LoanPayments.ToArray());
         }
 
     }

@@ -36,11 +36,11 @@ namespace Walkabout.Taxes
             this.fiscalYearStart = fiscalYearStart;
             this.view = view;
             this.serviceProvider = sp;
-            view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
-            view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+            view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
+            view.PreviewMouseLeftButtonUp += this.OnPreviewMouseLeftButtonUp;
             view.Unloaded += (s, e) =>
             {
-                view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
+                view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
             };
             this.taxCategories = new TaxCategoryCollection();
         }
@@ -48,15 +48,15 @@ namespace Walkabout.Taxes
 
         private void SetStartDate(DateTime date)
         {
-            if (fiscalYearStart > 0)
+            if (this.fiscalYearStart > 0)
             {
-                if (date.Month >= fiscalYearStart + 1)
+                if (date.Month >= this.fiscalYearStart + 1)
                 {
-                    startDate = new DateTime(date.Year, fiscalYearStart + 1, 1);
+                    this.startDate = new DateTime(date.Year, this.fiscalYearStart + 1, 1);
                 }
                 else
                 {
-                    startDate = new DateTime(date.Year - 1, fiscalYearStart + 1, 1);
+                    this.startDate = new DateTime(date.Year - 1, this.fiscalYearStart + 1, 1);
                 }
             }
             else
@@ -68,14 +68,14 @@ namespace Walkabout.Taxes
 
         private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Point pos = e.GetPosition(view);
+            Point pos = e.GetPosition(this.view);
 
-            if (Math.Abs(downPos.X - pos.X) < 5 && Math.Abs(downPos.Y - pos.Y) < 5)
+            if (Math.Abs(this.downPos.X - pos.X) < 5 && Math.Abs(this.downPos.Y - pos.Y) < 5)
             {
                 // navigate to show the cell.Data rows.
-                IViewNavigator nav = serviceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
+                IViewNavigator nav = this.serviceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
                 List<Transaction> transactions = null;
-                if (selectedCategory != null && transactionsByCategory.TryGetValue(selectedCategory, out transactions))
+                if (this.selectedCategory != null && this.transactionsByCategory.TryGetValue(this.selectedCategory, out transactions))
                 {
                     nav.ViewTransactions(transactions);
                 }
@@ -84,7 +84,7 @@ namespace Walkabout.Taxes
 
         public void Regenerate()
         {
-            _ = view.Generate(this);
+            _ = this.view.Generate(this);
         }
 
         private bool Summarize(Dictionary<Category, decimal> byCategory, Transaction t)
@@ -101,7 +101,7 @@ namespace Walkabout.Taxes
                         found = true;
                         total += s.Amount;
                         byCategory[c] = total;
-                        GroupTransactions(t, c);
+                        this.GroupTransactions(t, c);
                     }
                 }
             }
@@ -113,7 +113,7 @@ namespace Walkabout.Taxes
                 {
                     total += t.Amount;
                     byCategory[c] = total;
-                    GroupTransactions(t, c);
+                    this.GroupTransactions(t, c);
                     found = true;
                 }
             }
@@ -123,10 +123,10 @@ namespace Walkabout.Taxes
         private void GroupTransactions(Transaction t, Category c)
         {
             List<Transaction> transactions;
-            if (!transactionsByCategory.TryGetValue(c, out transactions))
+            if (!this.transactionsByCategory.TryGetValue(c, out transactions))
             {
                 transactions = new List<Transaction>();
-                transactionsByCategory[c] = transactions;
+                this.transactionsByCategory[c] = transactions;
             }
             if (!transactions.Contains(t))
             {
@@ -180,15 +180,15 @@ namespace Walkabout.Taxes
             {
                 byYearCombo.SelectedIndex = selected;
             }
-            byYearCombo.SelectionChanged += OnYearChanged;
+            byYearCombo.SelectionChanged += this.OnYearChanged;
             byYearCombo.Margin = new Thickness(10, 0, 0, 0);
 
             heading.Inlines.Add(new InlineUIContainer(byYearCombo));
 
             bool empty = true;
-            foreach (TaxForm form in taxCategories.GetForms())
+            foreach (TaxForm form in this.taxCategories.GetForms())
             {
-                if (GenerateForm(form, writer, transactions))
+                if (this.GenerateForm(form, writer, transactions))
                 {
                     empty = false;
                 }
@@ -243,7 +243,7 @@ namespace Walkabout.Taxes
                 bool include = date >= this.startDate && date < this.endDate;
                 if (include)
                 {
-                    found |= Summarize(byCategory, t);
+                    found |= this.Summarize(byCategory, t);
                 }
             }
 
@@ -299,7 +299,7 @@ namespace Walkabout.Taxes
                                     writer.EndCell();
                                     writer.StartCell();
                                     writer.WriteNumber(v.ToString("N0"));
-                                    AddHyperlink(c, writer);
+                                    this.AddHyperlink(c, writer);
                                     writer.EndCell();
                                     writer.EndRow();
                                 }
@@ -323,7 +323,7 @@ namespace Walkabout.Taxes
                             writer.EndCell();
                             writer.StartCell();
                             writer.WriteNumber(v.ToString("N0"));
-                            AddHyperlink(c, writer);
+                            this.AddHyperlink(c, writer);
                             writer.EndCell();
                             writer.EndRow();
                         }
@@ -341,7 +341,7 @@ namespace Walkabout.Taxes
             FlowDocumentReportWriter fw = (FlowDocumentReportWriter)writer;
             Paragraph p = fw.CurrentParagraph;
             p.Tag = c;
-            p.PreviewMouseLeftButtonDown += OnReportCellMouseDown;
+            p.PreviewMouseLeftButtonDown += this.OnReportCellMouseDown;
             p.Cursor = Cursors.Arrow;
             p.SetResourceReference(Paragraph.ForegroundProperty, "HyperlinkForeground");
         }
@@ -361,8 +361,8 @@ namespace Walkabout.Taxes
                 {
                     start = start.AddYears(-1);
                 }
-                SetStartDate(start);
-                Regenerate();
+                this.SetStartDate(start);
+                this.Regenerate();
             }
         }
 
@@ -374,8 +374,8 @@ namespace Walkabout.Taxes
         private void OnReportCellMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Paragraph p = (Paragraph)sender;
-            selectedCategory = p.Tag as Category;
-            downPos = e.GetPosition(this.view);
+            this.selectedCategory = p.Tag as Category;
+            this.downPos = e.GetPosition(this.view);
         }
 
 

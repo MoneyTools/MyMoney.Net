@@ -42,7 +42,7 @@ namespace Walkabout.Tests.Wrappers
         /// </summary>
         internal void New()
         {
-            ContextMenu subMenu = MainMenu.OpenSubMenu("MenuFile");
+            ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuFile");
             subMenu.InvokeMenuItem("MenuFileNew");
 
             Thread.Sleep(300);
@@ -68,7 +68,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return window.Current.Name;
+                return this.window.Current.Name;
             }
         }
 
@@ -76,7 +76,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                AutomationElement mainMenu = window.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "MainMenu"));
+                AutomationElement mainMenu = this.window.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "MainMenu"));
                 if (mainMenu == null)
                 {
                     throw new Exception("MainMenu not found");
@@ -87,49 +87,49 @@ namespace Walkabout.Tests.Wrappers
 
         internal AccountsWrapper ViewAccounts()
         {
-            accounts = new AccountsWrapper(Element.Expand("AccountsSelector"));
-            categories = null;
-            payees = null;
-            securities = null;
-            WaitForInputIdle(500);
-            return accounts;
+            this.accounts = new AccountsWrapper(this.Element.Expand("AccountsSelector"));
+            this.categories = null;
+            this.payees = null;
+            this.securities = null;
+            this.WaitForInputIdle(500);
+            return this.accounts;
         }
 
         internal CategoriesWrapper ViewCategories()
         {
-            categories = new CategoriesWrapper(Element.Expand("CategoriesSelector"));
+            this.categories = new CategoriesWrapper(this.Element.Expand("CategoriesSelector"));
             //accounts = null;
-            payees = null;
-            securities = null;
-            WaitForInputIdle(500);
-            return categories;
+            this.payees = null;
+            this.securities = null;
+            this.WaitForInputIdle(500);
+            return this.categories;
         }
 
         internal PayeesWrapper ViewPayees()
         {
-            payees = new PayeesWrapper(Element.Expand("PayeesSelector"));
+            this.payees = new PayeesWrapper(this.Element.Expand("PayeesSelector"));
             //accounts = null;
-            categories = null;
-            securities = null;
-            WaitForInputIdle(500);
-            return payees;
+            this.categories = null;
+            this.securities = null;
+            this.WaitForInputIdle(500);
+            return this.payees;
         }
 
         internal SecuritiesWrapper ViewSecurities()
         {
-            securities = new SecuritiesWrapper(Element.Expand("SecuritiesSelector"));
+            this.securities = new SecuritiesWrapper(this.Element.Expand("SecuritiesSelector"));
             //accounts = null;
-            categories = null;
-            payees = null;
-            WaitForInputIdle(500);
-            return securities;
+            this.categories = null;
+            this.payees = null;
+            this.WaitForInputIdle(500);
+            return this.securities;
         }
 
         public bool IsAccountSelected
         {
             get
             {
-                if (accounts != null) return accounts.IsAccountSelected;
+                if (this.accounts != null) return this.accounts.IsAccountSelected;
                 return false;
             }
         }
@@ -138,7 +138,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                if (categories != null) return categories.IsCategorySelected;
+                if (this.categories != null) return this.categories.IsCategorySelected;
                 return false;
             }
         }
@@ -147,7 +147,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                if (categories != null) return categories.HasCategories;
+                if (this.categories != null) return this.categories.HasCategories;
                 return false;
             }
         }
@@ -156,7 +156,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                if (payees != null) return payees.IsPayeeSelected;
+                if (this.payees != null) return this.payees.IsPayeeSelected;
                 return false;
             }
         }
@@ -165,7 +165,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                if (securities != null) return securities.IsSecuritySelected;
+                if (this.securities != null) return this.securities.IsSecuritySelected;
                 return false;
             }
         }
@@ -190,7 +190,7 @@ namespace Walkabout.Tests.Wrappers
 
         public TransactionViewWrapper FindTransactionGrid()
         {
-            CloseReport();
+            this.CloseReport();
 
             AutomationElement e = FindTransactionGrid(this.window);
             if (e == null)
@@ -203,15 +203,15 @@ namespace Walkabout.Tests.Wrappers
 
         internal void Save()
         {
-            ContextMenu menu = MainMenu.OpenSubMenu("MenuFile");
+            ContextMenu menu = this.MainMenu.OpenSubMenu("MenuFile");
             menu.InvokeMenuItem("MenuFileSave");
             Thread.Sleep(1000);
-            WaitForInputIdle(1000);
+            this.WaitForInputIdle(1000);
         }
 
         internal OnlineAccountsDialogWrapper DownloadAccounts()
         {
-            ContextMenu menu = MainMenu.OpenSubMenu("MenuOnline");
+            ContextMenu menu = this.MainMenu.OpenSubMenu("MenuOnline");
             menu.InvokeMenuItem("MenuOnlineDownloadAccounts");
 
             AutomationElement window = this.Element.FindChildWindow("Online Account", 5);
@@ -221,13 +221,13 @@ namespace Walkabout.Tests.Wrappers
 
         internal void Synchronize()
         {
-            Element.ClickButton("ButtonSynchronize");
+            this.Element.ClickButton("ButtonSynchronize");
         }
 
         internal ChartsAreaWrapper GetChartsArea()
         {
             // 
-            AutomationElement charts = window.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "TabForGraphs"));
+            AutomationElement charts = this.window.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "TabForGraphs"));
             if (charts == null)
             {
                 throw new Exception("Tab named 'TabForGraphs' not found");
@@ -239,21 +239,21 @@ namespace Walkabout.Tests.Wrappers
 
         public void ResetReport()
         {
-            if (reportOpen)
+            if (this.reportOpen)
             {
-                AutomationElement closeButton = window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "CloseReport"));
+                AutomationElement closeButton = this.window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "CloseReport"));
                 if (closeButton == null || closeButton.Current.IsOffscreen)
                 {
-                    reportOpen = false;
+                    this.reportOpen = false;
                 }
             }
         }
 
         public void CloseReport()
         {
-            if (reportOpen)
+            if (this.reportOpen)
             {
-                AutomationElement closeButton = window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "CloseReport"));
+                AutomationElement closeButton = this.window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "CloseReport"));
                 if (closeButton != null)
                 {
                     InvokePattern invoke = (InvokePattern)closeButton.GetCurrentPattern(InvokePattern.Pattern);
@@ -263,37 +263,37 @@ namespace Walkabout.Tests.Wrappers
                 {
                     Debug.WriteLine("### Close button named 'CloseReport' not found");
                 }
-                reportOpen = false;
+                this.reportOpen = false;
             }
         }
 
         public AutomationElement NetWorthReport()
         {
-            ContextMenu subMenu = MainMenu.OpenSubMenu("MenuViewReports");
+            ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuViewReports");
             subMenu.InvokeMenuItem("MenuReportsNetWorth");
-            reportOpen = true;
-            return FindReport("ReportNetworth");
+            this.reportOpen = true;
+            return this.FindReport("ReportNetworth");
         }
 
         public AutomationElement TaxReport()
         {
-            ContextMenu subMenu = MainMenu.OpenSubMenu("MenuViewReports");
+            ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuViewReports");
             subMenu.InvokeMenuItem("MenuReportsTaxReport");
-            reportOpen = true;
-            return FindReport("ReportTaxes");
+            this.reportOpen = true;
+            return this.FindReport("ReportTaxes");
         }
 
         public AutomationElement PortfolioReport()
         {
-            ContextMenu subMenu = MainMenu.OpenSubMenu("MenuViewReports");
+            ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuViewReports");
             subMenu.InvokeMenuItem("MenuReportsInvestment");
-            reportOpen = true;
-            return FindReport("ReportPortfolio");
+            this.reportOpen = true;
+            return this.FindReport("ReportPortfolio");
         }
 
         public AutomationElement FindReport(string name)
         {
-            AutomationElement report = window.FindFirstWithRetries(TreeScope.Children,
+            AutomationElement report = this.window.FindFirstWithRetries(TreeScope.Children,
                 new PropertyCondition(AutomationElement.AutomationIdProperty, name));
             if (report == null)
             {

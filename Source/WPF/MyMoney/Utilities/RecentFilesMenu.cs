@@ -28,25 +28,25 @@ namespace Walkabout.Utilities
 
         public string[] ToArray()
         {
-            return recentFiles.ToArray();
+            return this.recentFiles.ToArray();
         }
 
         public void Clear()
         {
-            recentFiles.Clear();
+            this.recentFiles.Clear();
         }
 
         public void SetFiles(string[] files)
         {
-            Clear();
+            this.Clear();
             if (files != null)
             {
                 foreach (string fileName in files)
                 {
-                    AddRecentFileName(fileName);
+                    this.AddRecentFileName(fileName);
                 }
             }
-            SyncRecentFilesMenu();
+            this.SyncRecentFilesMenu();
         }
 
         void AddRecentFileName(string fileName)
@@ -76,8 +76,8 @@ namespace Walkabout.Utilities
 
         public void AddRecentFile(string fileName)
         {
-            AddRecentFileName(fileName);
-            SyncRecentFilesMenu();
+            this.AddRecentFileName(fileName);
+            this.SyncRecentFilesMenu();
         }
 
         void SyncRecentFilesMenu()
@@ -90,7 +90,7 @@ namespace Walkabout.Utilities
             {
                 string filename = this.recentFiles[i];
                 MenuItem item = new MenuItem();
-                item.Click += OnMenuItemClick;
+                item.Click += this.OnMenuItemClick;
                 this.parent.Items.Add(item);
                 item.Header = string.Format("_{0} {1}", j + 1, filename);
                 item.Tag = filename;
@@ -99,10 +99,10 @@ namespace Walkabout.Utilities
 
         private void OnMenuItemClick(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (this.RecentFileSelected != null)
+            if (RecentFileSelected != null)
             {
                 MenuItem item = (MenuItem)sender;
-                this.RecentFileSelected(sender, new RecentFileEventArgs((string)item.Tag));
+                RecentFileSelected(sender, new RecentFileEventArgs((string)item.Tag));
             }
         }
 

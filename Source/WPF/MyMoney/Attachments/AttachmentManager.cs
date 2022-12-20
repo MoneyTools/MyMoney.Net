@@ -60,11 +60,11 @@ namespace Walkabout.Attachments
         {
             if (this.myMoney != null)
             {
-                myMoney.Accounts.Changed -= new EventHandler<ChangeEventArgs>(OnAccountsChanged);
-                myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(OnTransactionsChanged);
-                myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
-                myMoney.BeforeTransferChanged -= new EventHandler<TransferChangedEventArgs>(OnBeforeTransferChanged);
-                myMoney.BeforeSplitTransferChanged -= new EventHandler<SplitTransferChangedEventArgs>(OnBeforeSplitTransferChanged);
+                this.myMoney.Accounts.Changed -= new EventHandler<ChangeEventArgs>(this.OnAccountsChanged);
+                this.myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(this.OnTransactionsChanged);
+                this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
+                this.myMoney.BeforeTransferChanged -= new EventHandler<TransferChangedEventArgs>(this.OnBeforeTransferChanged);
+                this.myMoney.BeforeSplitTransferChanged -= new EventHandler<SplitTransferChangedEventArgs>(this.OnBeforeSplitTransferChanged);
             }
             this.watcher.Stop();
         }
@@ -72,15 +72,15 @@ namespace Walkabout.Attachments
         public void Start()
         {
             this.Stop();
-            if (myMoney != null)
+            if (this.myMoney != null)
             {
                 // listen to transaction changed events so that we can cleanup attachments when transactions
                 // are deleted.
-                myMoney.Accounts.Changed += new EventHandler<ChangeEventArgs>(OnAccountsChanged);
-                myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(OnTransactionsChanged);
-                myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
-                myMoney.BeforeTransferChanged += new EventHandler<TransferChangedEventArgs>(OnBeforeTransferChanged);
-                myMoney.BeforeSplitTransferChanged += new EventHandler<SplitTransferChangedEventArgs>(OnBeforeSplitTransferChanged);
+                this.myMoney.Accounts.Changed += new EventHandler<ChangeEventArgs>(this.OnAccountsChanged);
+                this.myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(this.OnTransactionsChanged);
+                this.myMoney.Changed += new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
+                this.myMoney.BeforeTransferChanged += new EventHandler<TransferChangedEventArgs>(this.OnBeforeTransferChanged);
+                this.myMoney.BeforeSplitTransferChanged += new EventHandler<SplitTransferChangedEventArgs>(this.OnBeforeSplitTransferChanged);
                 this.watcher.ScanAllAccounts();
             }
         }
@@ -109,12 +109,12 @@ namespace Walkabout.Attachments
                 if (transfer == null)
                 {
                     // transfer is being deleted, try and consolidate attachments on this side.
-                    MoveAttachments(split.Transfer.Transaction, split.Transaction);
+                    this.MoveAttachments(split.Transfer.Transaction, split.Transaction);
                 }
                 else
                 {
                     // transfer is being moved. So move attachments with it.
-                    MoveAttachments(split.Transfer.Transaction, transfer.Transaction);
+                    this.MoveAttachments(split.Transfer.Transaction, transfer.Transaction);
                 }
             }
         }
@@ -128,12 +128,12 @@ namespace Walkabout.Attachments
                 if (tran == null)
                 {
                     // transfer is being deleted, try and consolidate attachments on this side.
-                    MoveAttachments(t.Transfer.Transaction, t);
+                    this.MoveAttachments(t.Transfer.Transaction, t);
                 }
                 else
                 {
                     // transfer is being moved. So move attachments with it.
-                    MoveAttachments(t.Transfer.Transaction, tran.Transaction);
+                    this.MoveAttachments(t.Transfer.Transaction, tran.Transaction);
                 }
             }
         }
@@ -148,13 +148,13 @@ namespace Walkabout.Attachments
                     {
                         // transaction is being deleted, so delete attachments with it.
                         // todo: would be nice to warn the user they are losing them...
-                        DeleteAttachments(t);
+                        this.DeleteAttachments(t);
                     }
                     else if (args.ChangeType == ChangeType.Inserted)
                     {
-                        if (watcher != null)
+                        if (this.watcher != null)
                         {
-                            watcher.QueueTransaction(t);
+                            this.watcher.QueueTransaction(t);
                         }
                     }
                 }
@@ -162,21 +162,21 @@ namespace Walkabout.Attachments
                 {
                     if (args.ChangeType == ChangeType.Inserted)
                     {
-                        if (watcher != null)
+                        if (this.watcher != null)
                         {
-                            watcher.QueueAccount(a);
+                            this.watcher.QueueAccount(a);
                         }
                     }
                     else if (args.ChangeType == ChangeType.Changed && args.Name == "Name")
                     {
-                        OnAccountRenamed(a);
+                        this.OnAccountRenamed(a);
                     }
                 }
                 args = args.Next;
             }
-            if (watcher != null)
+            if (this.watcher != null)
             {
-                watcher.StartQueued();
+                this.watcher.StartQueued();
             }
         }
 
@@ -191,11 +191,11 @@ namespace Walkabout.Attachments
                     {
                         // transaction is being deleted, so delete attachments with it.
                         // todo: would be nice to warn the user they are losing them...
-                        DeleteAttachments(t);
+                        this.DeleteAttachments(t);
                     }
                     else if (args.ChangeType == ChangeType.Inserted)
                     {
-                        watcher.QueueTransaction(t);
+                        this.watcher.QueueTransaction(t);
                     }
                 }
                 args = args.Next;
@@ -211,11 +211,11 @@ namespace Walkabout.Attachments
                 {
                     if (args.ChangeType == ChangeType.Inserted)
                     {
-                        watcher.QueueAccount(a);
+                        this.watcher.QueueAccount(a);
                     }
                     else if (args.ChangeType == ChangeType.Changed && args.Name == "Name")
                     {
-                        OnAccountRenamed(a);
+                        this.OnAccountRenamed(a);
                     }
                 }
                 args = args.Next;
@@ -248,7 +248,7 @@ namespace Walkabout.Attachments
             List<HashedFile> existing = new List<HashedFile>();
             if (t.HasAttachment)
             {
-                foreach (string file in GetAttachments(t))
+                foreach (string file in this.GetAttachments(t))
                 {
                     existing.Add(new HashedFile(file));
                 }
@@ -270,7 +270,7 @@ namespace Walkabout.Attachments
                 }
                 if (!found)
                 {
-                    string newFileName = GetUniqueFileName(t, Path.GetExtension(fileName));
+                    string newFileName = this.GetUniqueFileName(t, Path.GetExtension(fileName));
                     File.Copy(fileName, newFileName);
                 }
             }
@@ -279,10 +279,10 @@ namespace Walkabout.Attachments
 
         public void MoveAttachments(Transaction fromTransaction, Transaction toTransaction)
         {
-            foreach (string fileName in GetAttachments(fromTransaction))
+            foreach (string fileName in this.GetAttachments(fromTransaction))
             {
                 toTransaction.HasAttachment = true;
-                string newFileName = GetUniqueFileName(toTransaction, Path.GetExtension(fileName));
+                string newFileName = this.GetUniqueFileName(toTransaction, Path.GetExtension(fileName));
                 try
                 {
                     File.Move(fileName, newFileName);
@@ -305,7 +305,7 @@ namespace Walkabout.Attachments
             {
                 return;
             }
-            foreach (string fileName in GetAttachments(t))
+            foreach (string fileName in this.GetAttachments(t))
             {
                 TempFilesManager.DeleteFile(fileName);
             }
@@ -314,7 +314,7 @@ namespace Walkabout.Attachments
 
         public List<string> GetAttachments(Transaction t)
         {
-            return watcher.GetAttachments(this.AttachmentDirectory, t);
+            return this.watcher.GetAttachments(this.AttachmentDirectory, t);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "AttachmentDirectory")]
@@ -351,7 +351,7 @@ namespace Walkabout.Attachments
 
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -359,7 +359,7 @@ namespace Walkabout.Attachments
         {
             if (disposing)
             {
-                Stop();
+                this.Stop();
             }
         }
 
@@ -430,53 +430,53 @@ namespace Walkabout.Attachments
 
         internal void Stop()
         {
-            if (threadRunning)
+            if (this.threadRunning)
             {
-                threadRunning = false;
-                threadStopEvent.WaitOne(5000);
+                this.threadRunning = false;
+                this.threadStopEvent.WaitOne(5000);
             }
         }
 
         internal void QueueTransaction(Transaction t)
         {
-            if (t != null && !transactionQueue.Contains(t))
+            if (t != null && !this.transactionQueue.Contains(t))
             {
-                transactionQueue.Enqueue(t);
+                this.transactionQueue.Enqueue(t);
             }
         }
 
         internal void QueueAccount(Account a)
         {
-            if (a != null && !accountQueue.Contains(a))
+            if (a != null && !this.accountQueue.Contains(a))
             {
-                accountQueue.Enqueue(a);
+                this.accountQueue.Enqueue(a);
             }
         }
 
         public void ScanAllAccounts()
         {
-            foreach (Account a in money.Accounts)
+            foreach (Account a in this.money.Accounts)
             {
-                QueueAccount(a);
+                this.QueueAccount(a);
             }
-            StartQueued();
+            this.StartQueued();
         }
 
         public void StartQueued()
         {
-            if (accountQueue.Count > 0 || transactionQueue.Count > 0)
+            if (this.accountQueue.Count > 0 || this.transactionQueue.Count > 0)
             {
-                StartThread();
+                this.StartThread();
             }
         }
 
         void StartThread()
         {
-            if (!threadRunning)
+            if (!this.threadRunning)
             {
-                threadRunning = true;
-                threadStopEvent.Reset();
-                Task.Run(ScanDirectory);
+                this.threadRunning = true;
+                this.threadStopEvent.Reset();
+                Task.Run(this.ScanDirectory);
             }
         }
 
@@ -502,17 +502,17 @@ namespace Walkabout.Attachments
                     {
                         // process pending account checks
                         Account a;
-                        while (accountQueue.TryDequeue(out a) && threadRunning)
+                        while (this.accountQueue.TryDequeue(out a) && this.threadRunning)
                         {
-                            FindAttachments(path, a);
+                            this.FindAttachments(path, a);
                         }
 
                         // process pending individual transaction checks.
                         List<Tuple<Transaction, bool>> toUpdate = new List<Tuple<Transaction, bool>>();
                         Transaction t;
-                        while (transactionQueue.TryDequeue(out t) && threadRunning)
+                        while (this.transactionQueue.TryDequeue(out t) && this.threadRunning)
                         {
-                            bool yes = HasAttachments(path, t);
+                            bool yes = this.HasAttachments(path, t);
                             if (t.HasAttachment != yes)
                             {
                                 toUpdate.Add(new Tuple<Transaction, bool>(t, yes));
@@ -522,7 +522,7 @@ namespace Walkabout.Attachments
                         // Updating Money transactions has to happen on the UI thread.
                         UiDispatcher.BeginInvoke(new Action(() =>
                         {
-                            BatchUpdate(toUpdate);
+                            this.BatchUpdate(toUpdate);
                         }));
                     }
                 }
@@ -532,8 +532,8 @@ namespace Walkabout.Attachments
 #if PerformanceBlocks
             }
 #endif
-            threadRunning = false;
-            threadStopEvent.Set();
+            this.threadRunning = false;
+            this.threadStopEvent.Set();
         }
 
         private void BatchUpdate(List<Tuple<Transaction, bool>> toUpdate)
@@ -565,7 +565,7 @@ namespace Walkabout.Attachments
             {
                 foreach (string fileName in Directory.GetFiles(accountDirectory, "*.*"))
                 {
-                    if (!threadRunning)
+                    if (!this.threadRunning)
                     {
                         return;
                     }

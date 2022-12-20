@@ -18,7 +18,7 @@ namespace Walkabout.Utilities
         {
             get
             {
-                return pos > 0;
+                return this.pos > 0;
             }
         }
 
@@ -26,7 +26,7 @@ namespace Walkabout.Utilities
         {
             get
             {
-                return pos + 1 < stack.Count;
+                return this.pos + 1 < this.stack.Count;
             }
         }
 
@@ -34,9 +34,9 @@ namespace Walkabout.Utilities
         {
             get
             {
-                if (pos >= 0 && pos < stack.Count)
+                if (this.pos >= 0 && this.pos < this.stack.Count)
                 {
-                    return (Command)stack[pos];
+                    return (Command)this.stack[this.pos];
                 }
                 return null;
             }
@@ -44,9 +44,9 @@ namespace Walkabout.Utilities
 
         public Command Undo()
         {
-            if (pos > 0)
+            if (this.pos > 0)
             {
-                pos--;
+                this.pos--;
                 return this.Current;
             }
             return null;
@@ -54,9 +54,9 @@ namespace Walkabout.Utilities
 
         public Command Redo()
         {
-            if (pos + 1 < stack.Count)
+            if (this.pos + 1 < this.stack.Count)
             {
-                pos++;
+                this.pos++;
                 Command cmd = this.Current;
                 if (cmd != null)
                 {
@@ -71,29 +71,29 @@ namespace Walkabout.Utilities
         {
             cmd.Done();
 
-            if (pos < stack.Count)
+            if (this.pos < this.stack.Count)
             {
-                stack.RemoveRange(pos, stack.Count - pos);
+                this.stack.RemoveRange(this.pos, this.stack.Count - this.pos);
             }
-            stack.Add(cmd);
-            if (stack.Count > this.max)
+            this.stack.Add(cmd);
+            if (this.stack.Count > this.max)
             {
-                stack.RemoveAt(0); // bye bye old guy
+                this.stack.RemoveAt(0); // bye bye old guy
             }
             else
             {
-                pos++;
+                this.pos++;
             }
         }
 
         // Remove top most command (but don't call Undo on it)
         public Command Pop()
         {
-            if (pos == stack.Count && stack.Count > 0)
+            if (this.pos == this.stack.Count && this.stack.Count > 0)
             {
-                pos--;
+                this.pos--;
                 Command cmd = this.Current;
-                stack.RemoveAt(pos);
+                this.stack.RemoveAt(this.pos);
                 return cmd;
             }
             return null;

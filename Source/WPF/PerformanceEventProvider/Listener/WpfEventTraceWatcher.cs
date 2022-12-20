@@ -29,7 +29,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             Uri wpfman = new Uri(uri, @"wpf\wpf-etw.man");
             if (File.Exists(wpfman.LocalPath))
             {
-                LoadManifest(wpfman);
+                this.LoadManifest(wpfman);
                 FindEvents(wpfman.LocalPath);
             }
         }

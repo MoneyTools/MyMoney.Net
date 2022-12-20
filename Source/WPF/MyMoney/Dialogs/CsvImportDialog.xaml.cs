@@ -20,25 +20,25 @@ namespace Walkabout.Dialogs
 
         public CsvImportDialog(string[] expectedColumns)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.fields = expectedColumns;
         }
 
         internal void SetHeaders(IEnumerable<string> headers)
         {
-            map = new List<CsvFieldMap>(from h in headers select new CsvFieldMap() { Header = h });
-            FieldListView.ItemsSource = map;
+            this.map = new List<CsvFieldMap>(from h in headers select new CsvFieldMap() { Header = h });
+            this.FieldListView.ItemsSource = this.map;
         }
 
         public string[] TransactionFields
         {
             get
             {
-                return fields;
+                return this.fields;
             }
         }
 
-        public List<CsvFieldMap> Mapping => map;
+        public List<CsvFieldMap> Mapping => this.map;
 
         private void OnCancel(object sender, RoutedEventArgs e)
         {
@@ -47,7 +47,7 @@ namespace Walkabout.Dialogs
 
         private void OnOk(object sender, RoutedEventArgs e)
         {
-            if (!Validate())
+            if (!this.Validate())
             {
                 return;
             }
@@ -60,7 +60,7 @@ namespace Walkabout.Dialogs
             // check all fields are mapped.
             int count = 0;
             HashSet<string> unique = new HashSet<string>();
-            foreach (var f in map)
+            foreach (var f in this.map)
             {
                 if (!string.IsNullOrEmpty(f.Field))
                 {

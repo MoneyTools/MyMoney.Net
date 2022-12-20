@@ -17,9 +17,9 @@ namespace Walkabout.Dialogs
 
         public SelectAccountDialog()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            ButtonOk.IsEnabled = false;
+            this.ButtonOk.IsEnabled = false;
         }
 
         private void ButtonOk_Click(object sender, RoutedEventArgs e)
@@ -47,7 +47,7 @@ namespace Walkabout.Dialogs
 
         public void SetUnknownAccountPrompt(string text)
         {
-            TextBlockPrompt.Text = text;
+            this.TextBlockPrompt.Text = text;
         }
 
         public void SetAccounts(IList<Account> list)
@@ -74,7 +74,7 @@ namespace Walkabout.Dialogs
 
         private void ListBoxAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ButtonOk.IsEnabled = true;
+            this.ButtonOk.IsEnabled = true;
         }
 
 

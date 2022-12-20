@@ -73,46 +73,46 @@ namespace Walkabout.Ofx
 
         public Account Account { get { return this.account; } }
 
-        public bool IsError { get { return this.isError; } set { this.isError = value; OnPropertyChanged("IsError"); } }
+        public bool IsError { get { return this.isError; } set { this.isError = value; this.OnPropertyChanged("IsError"); } }
 
-        public bool IsDownloading { get { return this.isDownloading; } set { this.isDownloading = value; OnPropertyChanged("IsDownloading"); } }
+        public bool IsDownloading { get { return this.isDownloading; } set { this.isDownloading = value; this.OnPropertyChanged("IsDownloading"); } }
 
-        public bool Success { get { return this.success; } set { this.success = value; OnPropertyChanged("Success"); } }
+        public bool Success { get { return this.success; } set { this.success = value; this.OnPropertyChanged("Success"); } }
 
-        public OfxErrorCode OfxError { get { return this.ofxError; } set { this.ofxError = value; OnPropertyChanged("OfxError"); } }
+        public OfxErrorCode OfxError { get { return this.ofxError; } set { this.ofxError = value; this.OnPropertyChanged("OfxError"); } }
 
         public string Message
         {
             get { return (this.Caption == this.message) ? "" : this.message; }
-            set { this.message = value; OnPropertyChanged("Message"); }
+            set { this.message = value; this.OnPropertyChanged("Message"); }
         }
 
-        public Exception Error { get { return this.error; } set { this.error = value; OnPropertyChanged("Error"); } }
+        public Exception Error { get { return this.error; } set { this.error = value; this.OnPropertyChanged("Error"); } }
 
         public Visibility ErrorVisibility { get { return this.error == null ? Visibility.Hidden : Visibility.Visible; } }
 
-        public string LinkCaption { get { return linkCaption; } set { linkCaption = value; OnPropertyChanged("LinkCaption"); } }
+        public string LinkCaption { get { return this.linkCaption; } set { this.linkCaption = value; this.OnPropertyChanged("LinkCaption"); } }
 
         public string Caption
         {
             get
             {
                 string name = null;
-                if (Account != null)
+                if (this.Account != null)
                 {
-                    name = Account.Name;
+                    name = this.Account.Name;
                 }
-                else if (OnlineAccount != null)
+                else if (this.OnlineAccount != null)
                 {
-                    name = OnlineAccount.Name;
+                    name = this.OnlineAccount.Name;
                 }
-                else if (!string.IsNullOrEmpty(fileName))
+                else if (!string.IsNullOrEmpty(this.fileName))
                 {
                     name = this.fileName;
                 }
                 if (name == null)
                 {
-                    name = message;
+                    name = this.message;
                 }
                 return name;
             }
@@ -129,7 +129,7 @@ namespace Walkabout.Ofx
                 e.Error = new OfxException(error);
             }
             e.isError = true;
-            children.Add(e);
+            this.children.Add(e);
             return e;
         }
 
@@ -138,14 +138,14 @@ namespace Walkabout.Ofx
             OfxDownloadData e = new OfxDownloadData(oa, account, "Error");
             e.Error = error;
             e.isError = true;
-            children.Add(e);
+            this.children.Add(e);
             return e;
         }
 
         public OfxDownloadData AddMessage(OnlineAccount oa, Account account, string msg)
         {
             OfxDownloadData e = new OfxDownloadData(oa, account, msg);
-            children.Add(e);
+            this.children.Add(e);
             return e;
         }
 
@@ -182,7 +182,7 @@ namespace Walkabout.Ofx
         {
             OfxDownloadData entry = new OfxDownloadData(online, account, message);
             entry.IsError = true;
-            list.Add(entry);
+            this.list.Add(entry);
             return entry;
         }
 
@@ -190,14 +190,14 @@ namespace Walkabout.Ofx
         {
             OfxDownloadData entry = new OfxDownloadData(online, fileName, message);
             entry.IsError = true;
-            list.Add(entry);
+            this.list.Add(entry);
             return entry;
         }
 
         public OfxDownloadData AddEntry(OnlineAccount online, Account account, string caption)
         {
             OfxDownloadData entry = new OfxDownloadData(online, account, caption);
-            list.Add(entry);
+            this.list.Add(entry);
             return entry;
         }
     }
@@ -231,21 +231,21 @@ namespace Walkabout.Ofx
         {
             if (this.files != null)
             {
-                Task.Run(LoadImports);
+                Task.Run(this.LoadImports);
             }
             else
             {
-                Synchronize();
+                this.Synchronize();
             }
         }
 
         internal void Stop()
         {
             List<OfxRequest> snapshot = null;
-            lock (pending)
+            lock (this.pending)
             {
                 // need to snapshot to avoid collection changed exceptions
-                snapshot = new List<OfxRequest>(pending);
+                snapshot = new List<OfxRequest>(this.pending);
             }
 
             foreach (var request in snapshot)
@@ -258,11 +258,11 @@ namespace Walkabout.Ofx
 
         void UpdateStatusOnUIThread(int min, int max, int value, OfxDownloadEventArgs e)
         {
-            delayedActions.StartDelayedAction("UpdateStatus", () =>
+            this.delayedActions.StartDelayedAction("UpdateStatus", () =>
             {
-                if (this.Status != null)
+                if (Status != null)
                 {
-                    this.Status(min, max, value, e);
+                    Status(min, max, value, e);
                 }
             }, TimeSpan.FromMilliseconds(10));
         }
@@ -367,14 +367,14 @@ namespace Walkabout.Ofx
             for (i = 0; i < count; i++)
             {
                 OnlineAccount oa = this.list[i] as OnlineAccount;
-                OfxDownloadData f = downloadEventArgs.AddEntry(oa, null, null);
+                OfxDownloadData f = this.downloadEventArgs.AddEntry(oa, null, null);
                 f.Index = i;
                 f.IsDownloading = true;
-                work.Enqueue(f);
+                this.work.Enqueue(f);
             }
 
             // send empty start event
-            this.UpdateStatusOnUIThread(0, list.Count, 0, downloadEventArgs);
+            this.UpdateStatusOnUIThread(0, this.list.Count, 0, this.downloadEventArgs);
 
             // start one thread for each online account to download so we can do them all at once,
             // this doesn't need Parallel.foreach because we don't need any throttling because we
@@ -382,7 +382,7 @@ namespace Walkabout.Ofx
             // is spent waiting on the server.
             for (i = 0; i < count; i++)
             {
-                Task.Run(SyncAccount);
+                Task.Run(this.SyncAccount);
             }
         }
 
@@ -393,7 +393,7 @@ namespace Walkabout.Ofx
             Thread.CurrentThread.Name = "Synchronize";
 
             OfxDownloadData f = null;
-            if (!work.TryDequeue(out f))
+            if (!this.work.TryDequeue(out f))
             {
                 return;
             }
@@ -410,9 +410,9 @@ namespace Walkabout.Ofx
 
                 request = new OfxRequest(oa, this.myMoney, this.resolverWhenMissingAccountId);
 
-                lock (pending)
+                lock (this.pending)
                 {
-                    pending.Add(request);
+                    this.pending.Add(request);
                 }
 
                 ArrayList accounts = new ArrayList();
@@ -431,7 +431,7 @@ namespace Walkabout.Ofx
                 }
                 else
                 {
-                    request.Sync(accounts, f, dispatcher);
+                    request.Sync(accounts, f, this.dispatcher);
                     f.Success = true;
                 }
             }
@@ -445,18 +445,18 @@ namespace Walkabout.Ofx
 
                 if (request != null)
                 {
-                    lock (pending)
+                    lock (this.pending)
                     {
-                        pending.Remove(request);
+                        this.pending.Remove(request);
                     }
                 }
             }
 
             bool last = false;
-            lock (work)
+            lock (this.work)
             {
                 this.completed++;
-                if (completed == count)
+                if (this.completed == count)
                 {
                     last = true;
                 }
@@ -601,7 +601,7 @@ namespace Walkabout.Ofx
                                 ));
             }
 
-            if (!string.IsNullOrEmpty(onlineAccount.SessionCookie))
+            if (!string.IsNullOrEmpty(this.onlineAccount.SessionCookie))
             {
                 signonrequest.Add(new XElement("SESSCOOKIE", this.onlineAccount.SessionCookie));
             }
@@ -612,24 +612,24 @@ namespace Walkabout.Ofx
                 signonrequest.Add(new XElement("APPVER", this.onlineAccount.AppVersion));
             }
 
-            if (!string.IsNullOrEmpty(onlineAccount.ClientUid))
+            if (!string.IsNullOrEmpty(this.onlineAccount.ClientUid))
             {
                 signonrequest.Add(new XElement("CLIENTUID", this.onlineAccount.ClientUid));
             }
 
-            if (!string.IsNullOrEmpty(onlineAccount.UserCred1))
+            if (!string.IsNullOrEmpty(this.onlineAccount.UserCred1))
             {
                 signonrequest.Add(new XElement("USERCRED1", this.onlineAccount.UserCred1));
             }
 
-            if (!string.IsNullOrEmpty(onlineAccount.UserCred2))
+            if (!string.IsNullOrEmpty(this.onlineAccount.UserCred2))
             {
                 signonrequest.Add(new XElement("USERCRED2", this.onlineAccount.UserCred2));
             }
 
-            if (onlineAccount.MfaChallengeAnswers != null)
+            if (this.onlineAccount.MfaChallengeAnswers != null)
             {
-                foreach (MfaChallengeAnswer answer in onlineAccount.MfaChallengeAnswers)
+                foreach (MfaChallengeAnswer answer in this.onlineAccount.MfaChallengeAnswers)
                 {
                     signonrequest.Add(new XElement("MFACHALLENGEANSWER",
                         new XElement("MFAPRHASEID", answer.Id),
@@ -637,13 +637,13 @@ namespace Walkabout.Ofx
                 }
 
                 // only use these answers once.
-                onlineAccount.MfaChallengeAnswers = null;
+                this.onlineAccount.MfaChallengeAnswers = null;
             }
-            else if (!string.IsNullOrEmpty(onlineAccount.AccessKey))
+            else if (!string.IsNullOrEmpty(this.onlineAccount.AccessKey))
             {
                 signonrequest.Add(new XElement("ACCESSKEY", this.onlineAccount.AccessKey));
             }
-            else if (!string.IsNullOrEmpty(onlineAccount.AuthToken))
+            else if (!string.IsNullOrEmpty(this.onlineAccount.AuthToken))
             {
                 signonrequest.Add(new XElement("AUTHTOKEN", this.onlineAccount.AuthToken));
             }
@@ -664,7 +664,7 @@ namespace Walkabout.Ofx
 
         XDocument GetSignupRequest()
         {
-            XDocument doc = GetSignonRequest(true);
+            XDocument doc = this.GetSignonRequest(true);
 
             XElement e = new XElement("SIGNUPMSGSRQV1",
                 new XElement("ACCTINFOTRNRQ",
@@ -690,8 +690,8 @@ namespace Walkabout.Ofx
             foreach (Account a in accounts)
             {
                 string truid = Guid.NewGuid().ToString();
-                truidMap[truid] = a;
-                DateTime dt = GetStatementRequestRange(a);
+                this.truidMap[truid] = a;
+                DateTime dt = this.GetStatementRequestRange(a);
 
                 XElement from = new XElement("BANKACCTFROM",
                             new XElement("BANKID", this.onlineAccount.BankId));
@@ -731,8 +731,8 @@ namespace Walkabout.Ofx
             foreach (Account a in accounts)
             {
                 string truid = Guid.NewGuid().ToString();
-                truidMap[truid] = a;
-                DateTime dt = GetStatementRequestRange(a);
+                this.truidMap[truid] = a;
+                DateTime dt = this.GetStatementRequestRange(a);
 
                 XElement csr = new XElement("CCSTMTTRNRQ",
                     new XElement("TRNUID", truid),
@@ -786,8 +786,8 @@ namespace Walkabout.Ofx
             foreach (Account a in accounts)
             {
                 string truid = Guid.NewGuid().ToString();
-                truidMap[truid] = a;
-                DateTime dt = GetStatementRequestRange(a);
+                this.truidMap[truid] = a;
+                DateTime dt = this.GetStatementRequestRange(a);
 
                 XElement sr = new XElement("INVSTMTTRNRQ",
                     new XElement("TRNUID", truid),
@@ -848,7 +848,7 @@ namespace Walkabout.Ofx
             {
                 using (StringWriter sw = new StringWriter())
                 {
-                    WriteOfxVersion1Format(sw, doc.Root);
+                    this.WriteOfxVersion1Format(sw, doc.Root);
                     body = sw.ToString();
                 }
             }
@@ -936,7 +936,7 @@ NEWFILEUID:{1}
                 writer.WriteLine();
                 foreach (XElement child in e.Elements())
                 {
-                    WriteOfxVersion1Format(writer, child);
+                    this.WriteOfxVersion1Format(writer, child);
                 }
                 writer.WriteLine("</" + e.Name.LocalName + ">");
             }
@@ -950,9 +950,9 @@ NEWFILEUID:{1}
 
         public void Cancel()
         {
-            if (pending != null)
+            if (this.pending != null)
             {
-                pending.Abort();
+                this.pending.Abort();
             }
         }
 
@@ -971,7 +971,7 @@ NEWFILEUID:{1}
         XDocument SendOfxRequest(XDocument doc, string oldFileUid, string newFileUid)
         {
             Encoding encoding = null;
-            string msg = FormatRequest(doc, oldFileUid, newFileUid, out encoding);
+            string msg = this.FormatRequest(doc, oldFileUid, newFileUid, out encoding);
 
             string url = this.onlineAccount.Ofx;
             if (!url.StartsWith("https://") && !url.StartsWith("http://"))
@@ -982,30 +982,30 @@ NEWFILEUID:{1}
             //SecurityProtocolType.Tls
 
             Uri uri = new Uri(url);
-            pending = (HttpWebRequest)WebRequest.Create(uri);
+            this.pending = (HttpWebRequest)WebRequest.Create(uri);
 
-            ServicePointManager.ServerCertificateValidationCallback -= new RemoteCertificateValidationCallback(AllwaysGoodCertificate);
-            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(AllwaysGoodCertificate);
+            ServicePointManager.ServerCertificateValidationCallback -= new RemoteCertificateValidationCallback(this.AllwaysGoodCertificate);
+            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(this.AllwaysGoodCertificate);
 
-            pending.Method = "POST";
-            pending.ContentType = "application/x-ofx";
-            pending.Accept = "application/x-ofx";
-            pending.Expect = string.Empty;
-            pending.ServicePoint.Expect100Continue = false;
-            pending.AllowAutoRedirect = true;
-            pending.UserAgent = GetUserAgent(this.onlineAccount);
+            this.pending.Method = "POST";
+            this.pending.ContentType = "application/x-ofx";
+            this.pending.Accept = "application/x-ofx";
+            this.pending.Expect = string.Empty;
+            this.pending.ServicePoint.Expect100Continue = false;
+            this.pending.AllowAutoRedirect = true;
+            this.pending.UserAgent = GetUserAgent(this.onlineAccount);
 
             // Discover doesn't like these headers
             if (this.onlineAccount.FID == "7101")
             {
-                pending.UserAgent = null;
-                pending.Accept = null;
-                pending.KeepAlive = false;
+                this.pending.UserAgent = null;
+                this.pending.Accept = null;
+                this.pending.KeepAlive = false;
             }
 
             byte[] data = encoding.GetBytes(msg);
-            pending.ContentLength = data.Length;
-            Stream stm = pending.GetRequestStream();
+            this.pending.ContentLength = data.Length;
+            Stream stm = this.pending.GetRequestStream();
             stm.Write(data, 0, data.Length);
             stm.Close();
 
@@ -1013,14 +1013,14 @@ NEWFILEUID:{1}
             HttpWebResponse resp = null;
             try
             {
-                resp = (HttpWebResponse)pending.GetResponse();
+                resp = (HttpWebResponse)this.pending.GetResponse();
                 if (resp.StatusCode != HttpStatusCode.OK)
                 {
                     string error = resp.StatusDescription;
                     string headers = GetHttpHeaders(resp);
                     throw new OfxException(resp.StatusDescription, resp.StatusCode.ToString(), GetResponseBody(resp), headers);
                 }
-                return ParseOfxResponse(resp.GetResponseStream(), true);
+                return this.ParseOfxResponse(resp.GetResponseStream(), true);
             }
             catch (WebException e)
             {
@@ -1035,7 +1035,7 @@ NEWFILEUID:{1}
             finally
             {
                 if (resp != null) resp.Close();
-                pending = null;
+                this.pending = null;
             }
         }
 
@@ -1097,7 +1097,7 @@ NEWFILEUID:{1}
             // try both version 1 and 2 just in case the online account information we have is wrong.
             try
             {
-                result = SendOfxRequest(doc, "NONE", fileuid);
+                result = this.SendOfxRequest(doc, "NONE", fileuid);
             }
             catch (HtmlResponseException)
             {
@@ -1108,7 +1108,7 @@ NEWFILEUID:{1}
                 // try a different version of OFX
                 string version = "" + this.onlineAccount.OfxVersion;
                 this.onlineAccount.OfxVersion = version.StartsWith("2") ? "1" : "2";
-                result = SendOfxRequest(doc, "NONE", fileuid);
+                result = this.SendOfxRequest(doc, "NONE", fileuid);
             }
 
             return result;
@@ -1142,7 +1142,7 @@ NEWFILEUID:{1}
             this.onlineAccount = oa;
 
             DateTime lastGetProfileDate = new DateTime(1970, 1, 1);
-            string cache = Path.Combine(OfxLogPath, GetLogfileName(this.onlineAccount) + "PROF_RS.xml");
+            string cache = Path.Combine(OfxLogPath, this.GetLogfileName(this.onlineAccount) + "PROF_RS.xml");
             if (File.Exists(cache))
             {
                 lastGetProfileDate = File.GetLastWriteTime(cache);
@@ -1153,16 +1153,16 @@ NEWFILEUID:{1}
             this.onlineAccount.ClientUid = null;
 
             XDocument doc = this.GetProfileRequest(lastGetProfileDate);
-            SaveLog(doc, GetLogfileName(this.onlineAccount) + "PROF_RQ.xml");
+            SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "PROF_RQ.xml");
 
             OFX ofx = null;
             try
             {
-                doc = SendOfxRequest(doc);
+                doc = this.SendOfxRequest(doc);
                 // deserialize response into our OfxProfile structure.
                 ofx = DeserializeOfxResponse(doc);
 
-                CheckSignOnStatusError(ofx);
+                this.CheckSignOnStatusError(ofx);
             }
             catch (Exception ex)
             {
@@ -1254,16 +1254,16 @@ NEWFILEUID:{1}
 
             XDocument doc = this.GetPinChangeRequest(newPassword);
 
-            SaveLog(doc, Path.Combine(OfxLogPath, GetLogfileName(this.onlineAccount) + "_PINCHRQ.xml"));
+            SaveLog(doc, Path.Combine(OfxLogPath, this.GetLogfileName(this.onlineAccount) + "_PINCHRQ.xml"));
 
-            doc = SendOfxRequest(doc);
+            doc = this.SendOfxRequest(doc);
 
-            outputLogFile = SaveLog(doc, GetLogfileName(this.onlineAccount) + "_PINCHRS.xml");
+            outputLogFile = SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "_PINCHRS.xml");
 
             // deserialize response into our OfxProfile structure.
             OFX ofx = OFX.Deserialize(doc);
 
-            CheckSignOnStatusError(ofx);
+            this.CheckSignOnStatusError(ofx);
 
             var somr = ofx.SignOnMessageResponse;
             if (somr != null)
@@ -1308,7 +1308,7 @@ NEWFILEUID:{1}
 
         private XDocument GetPinChangeRequest(string newPassword)
         {
-            XDocument doc = GetSignonRequest(false);
+            XDocument doc = this.GetSignonRequest(false);
 
             XElement msgSet = doc.Root.Element("SIGNONMSGSRQV1");
 
@@ -1343,7 +1343,7 @@ NEWFILEUID:{1}
 
         private XDocument GetProfileRequest(DateTime lastProfileRequest)
         {
-            XDocument doc = GetSignonRequest(false);
+            XDocument doc = this.GetSignonRequest(false);
 
             XElement profreq = new XElement("PROFMSGSRQV1",
                     new XElement("PROFTRNRQ",
@@ -1364,7 +1364,7 @@ NEWFILEUID:{1}
             Exception e = null;
             try
             {
-                result = InternalSignup(oa, out rslog);
+                result = this.InternalSignup(oa, out rslog);
             }
             catch (OfxException oe)
             {
@@ -1387,7 +1387,7 @@ NEWFILEUID:{1}
                 oa.OfxVersion = version.StartsWith("2") ? "1" : "2";
                 try
                 {
-                    result = InternalSignup(oa, out rslog);
+                    result = this.InternalSignup(oa, out rslog);
                 }
                 catch (Exception)
                 {
@@ -1431,16 +1431,16 @@ NEWFILEUID:{1}
             this.onlineAccount = oa;
 
             XDocument doc = this.GetSignupRequest();
-            SaveLog(doc, GetLogfileName(this.onlineAccount) + "SIGNUP_RQ.xml");
+            SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "SIGNUP_RQ.xml");
 
             string fileuid = Guid.NewGuid().ToString();
-            doc = SendOfxRequest(doc, "NONE", fileuid);
+            doc = this.SendOfxRequest(doc, "NONE", fileuid);
 
-            rslog = SaveLog(doc, GetLogfileName(this.onlineAccount) + "SIGNUP_RS.xml");
+            rslog = SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "SIGNUP_RS.xml");
 
             OFX ofx = DeserializeOfxResponse(doc);
 
-            OfxException e = GetSignOnStatusError(ofx);
+            OfxException e = this.GetSignOnStatusError(ofx);
 
             var status = ofx?.SignUpMessageResponse?.AccountInfoSet?.OfxStatus;
             if (status != null && status.Code != 0)
@@ -1477,18 +1477,18 @@ NEWFILEUID:{1}
                 if (sor != null)
                 {
                     // store the session cookie for next request.
-                    onlineAccount.SessionCookie = sor.SessionCookie;
+                    this.onlineAccount.SessionCookie = sor.SessionCookie;
 
                     // store any AccessKey that is returned.
                     if (!string.IsNullOrEmpty(sor.AccessKey))
                     {
-                        onlineAccount.AccessKey = sor.AccessKey;
+                        this.onlineAccount.AccessKey = sor.AccessKey;
                     }
 
                     // store any UserKey that is returned.
                     if (!string.IsNullOrEmpty(sor.UserKey))
                     {
-                        onlineAccount.UserKey = sor.UserKey;
+                        this.onlineAccount.UserKey = sor.UserKey;
                     }
 
                     var status = sor.OfxStatus;
@@ -1511,7 +1511,7 @@ NEWFILEUID:{1}
 
         internal void CheckSignOnStatusError(OFX ofx)
         {
-            var e = GetSignOnStatusError(ofx);
+            var e = this.GetSignOnStatusError(ofx);
             if (e != null)
             {
                 throw e;
@@ -1522,7 +1522,7 @@ NEWFILEUID:{1}
         {
             if (accounts.Count == 0) return;
 
-            XDocument doc = GetSignonRequest(true);
+            XDocument doc = this.GetSignonRequest(true);
 
             // batch up accounts by type
             Dictionary<OfxRequestType, List<Account>> sorted = new Dictionary<OfxRequestType, List<Account>>();
@@ -1548,26 +1548,26 @@ NEWFILEUID:{1}
                 switch (rt)
                 {
                     case OfxRequestType.BankRequest:
-                        e = GetBankRequest(list);
+                        e = this.GetBankRequest(list);
                         break;
                     case OfxRequestType.CreditRequest:
-                        e = GetCreditRequest(list);
+                        e = this.GetCreditRequest(list);
                         break;
                     case OfxRequestType.InvestmentRequest:
-                        e = GetInvestmentRequest(list);
+                        e = this.GetInvestmentRequest(list);
                         break;
                 }
 
                 doc.Root.Add(e);
             }
 
-            SaveLog(doc, GetLogfileName(this.onlineAccount) + "RQ.xml");
+            SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "RQ.xml");
 
             Guid guid = Guid.NewGuid();
             string fileuid = guid.ToString();
-            doc = SendOfxRequest(doc, this.account.SyncGuid.IsNull ? null : this.account.SyncGuid.ToString(), fileuid);
+            doc = this.SendOfxRequest(doc, this.account.SyncGuid.IsNull ? null : this.account.SyncGuid.ToString(), fileuid);
 
-            SaveLog(doc, GetLogfileName(this.onlineAccount) + "RS.xml");
+            SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "RS.xml");
 
             dispatcher.BeginInvoke(new Action(() =>
             {
@@ -1900,7 +1900,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             }
 
             //Load SECLISTMSGSRSV1, if any.
-            this.securityInfo = ReadSecurityInfo(doc);
+            this.securityInfo = this.ReadSecurityInfo(doc);
 
             foreach (XElement child in doc.Root.Elements())
             {
@@ -1936,13 +1936,13 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         switch (child.Name.LocalName)
                         {
                             case "CREDITCARDMSGSRSV1":
-                                ProcessCreditCardResponse(child, results);
+                                this.ProcessCreditCardResponse(child, results);
                                 break;
                             case "BANKMSGSRSV1":
-                                ProcessBankResponse(child, results);
+                                this.ProcessBankResponse(child, results);
                                 break;
                             case "INVSTMTMSGSRSV1":
-                                ProcessInvestmentResponse(child, results);
+                                this.ProcessInvestmentResponse(child, results);
                                 break;
 
                         }
@@ -1981,14 +1981,14 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 string status = ProcessStatementStatus(tr, a);
                 if (!string.IsNullOrEmpty(status))
                 {
-                    results.AddError(onlineAccount, a, status);
+                    results.AddError(this.onlineAccount, a, status);
                     continue; // skip this statement and move on to the next one.
                 }
 
                 XElement srs = tr.SelectExpectedElement("CCSTMTRS");
                 if (srs == null)
                 {
-                    results.AddError(onlineAccount, a, "Expected CCSTMTRS element is missing");
+                    results.AddError(this.onlineAccount, a, "Expected CCSTMTRS element is missing");
                     continue; // skip this statement and move on to the next one.
                 }
 
@@ -1998,7 +1998,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 }
 
                 XElement ccard = srs.SelectExpectedElement("CCACCTFROM");
-                if (!CheckAccountId(ref a, AccountType.Credit, ccard, results))
+                if (!this.CheckAccountId(ref a, AccountType.Credit, ccard, results))
                 {
                     continue;
                 }
@@ -2011,7 +2011,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
             foreach (var pair in pending)
             {
-                ProcessStatement(results, pair.Item1, pair.Item2);
+                this.ProcessStatement(results, pair.Item1, pair.Item2);
             }
         }
 
@@ -2045,14 +2045,14 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 string status = ProcessStatementStatus(tr, a);
                 if (!string.IsNullOrEmpty(status))
                 {
-                    results.AddError(onlineAccount, a, status);
+                    results.AddError(this.onlineAccount, a, status);
                     continue; // skip this statement and move on to the next one.
                 }
 
                 XElement srs = tr.SelectExpectedElement("STMTRS");
                 if (srs == null)
                 {
-                    results.AddError(onlineAccount, a, "Expected STMTRS element is missing");
+                    results.AddError(this.onlineAccount, a, "Expected STMTRS element is missing");
                     continue; // skip this statement and move on to the next one.
                 }
 
@@ -2062,7 +2062,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 }
 
                 XElement bank = srs.SelectExpectedElement("BANKACCTFROM");
-                if (!CheckAccountId(ref a, AccountType.Checking, bank, results))
+                if (!this.CheckAccountId(ref a, AccountType.Checking, bank, results))
                 {
                     continue;
                 }
@@ -2074,7 +2074,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
             foreach (var pair in pending)
             {
-                ProcessStatement(results, pair.Item1, pair.Item2);
+                this.ProcessStatement(results, pair.Item1, pair.Item2);
             }
         }
 
@@ -2109,14 +2109,14 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 string status = ProcessStatementStatus(tr, a);
                 if (!string.IsNullOrEmpty(status))
                 {
-                    results.AddError(onlineAccount, a, status);
+                    results.AddError(this.onlineAccount, a, status);
                     continue; // skip this statement and move on to the next one.
                 }
 
                 XElement srs = tr.SelectExpectedElement("INVSTMTRS");
                 if (srs == null)
                 {
-                    results.AddError(onlineAccount, a, "Expected INVSTMTRS element is missing");
+                    results.AddError(this.onlineAccount, a, "Expected INVSTMTRS element is missing");
                     continue; // skip this statement and move on to the next one.
                 }
 
@@ -2126,7 +2126,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 }
 
                 XElement from = srs.SelectExpectedElement("INVACCTFROM");
-                if (!CheckAccountId(ref a, AccountType.Brokerage, from, results))
+                if (!this.CheckAccountId(ref a, AccountType.Brokerage, from, results))
                 {
                     continue;
                 }
@@ -2140,8 +2140,8 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             {
                 XElement srs = pair.Item2;
                 Account a = pair.Item1;
-                ProcessInvestmentPositions(srs.SelectElement("INVPOSLIST"));
-                ProcessInvestmentTransactionList(a, srs.SelectElement("INVTRANLIST"), results);
+                this.ProcessInvestmentPositions(srs.SelectElement("INVPOSLIST"));
+                this.ProcessInvestmentTransactionList(a, srs.SelectElement("INVTRANLIST"), results);
 
                 // todo: compare this info with our local account info...
                 /*
@@ -2152,7 +2152,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 </INVBAL>
                  */
 
-                myMoney.Rebalance(a);
+                this.myMoney.Rebalance(a);
             }
 
         }
@@ -2210,7 +2210,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 XElement invPos = e.Element("INVPOS");
                 if (invPos != null)
                 {
-                    Security s = ProcessSecId(invPos.Element("SECID"));
+                    Security s = this.ProcessSecId(invPos.Element("SECID"));
                     decimal price = invPos.SelectElementValueAsDecimal("UNITPRICE");
                     if (price != 0)
                     {
@@ -2245,28 +2245,28 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     case "BUYMF":
                     case "BUYOTHER":
                     case "BUYSTOCK":
-                        t = ProcessInvestmentBuy(a, e);
+                        t = this.ProcessInvestmentBuy(a, e);
                         break;
                     case "CLOSUREOPT": // ignored
                         break;
                     case "INCOME":
                     case "INVEXPENSE":
                     case "RETOFCAP":
-                        t = ProcessIncomeExpense(a, e);
+                        t = this.ProcessIncomeExpense(a, e);
                         break;
                     case "INVBANKTRAN":
-                        t = ProcessInvestmentBankTransaction(a, e);
+                        t = this.ProcessInvestmentBankTransaction(a, e);
                         break;
                     case "JRNLFUND": // ignored
                         break;
                     case "JRNLSEC": // ignored: should this be a transfer?
                         break;
                     case "MARGININTEREST":
-                        t = ProcessMarginInterest(a, e);
+                        t = this.ProcessMarginInterest(a, e);
                         break;
                     case "REINVEST":
                         // REINVEST is a single transaction that contains both income and an investment transaction                        
-                        t = ProcessInvestmentBuy(a, e);
+                        t = this.ProcessInvestmentBuy(a, e);
 
                         // create another transaction as a cash deposit to cover this this amount.
                         if (t != null)
@@ -2280,7 +2280,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                             q.Unaccepted = true;
                             q.Date = t.Date;
                             q.Amount = Math.Abs(t.Amount); // deposit.              
-                            q.Category = GetIncomeCategory(e);
+                            q.Category = this.GetIncomeCategory(e);
                             if (q.Category == this.myMoney.Categories.InvestmentDividends)
                             {
                                 q.Investment.Type = InvestmentType.Dividend;
@@ -2293,13 +2293,13 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     case "SELLOPT":
                     case "SELLOTHER":
                     case "SELLSTOCK":
-                        t = ProcessInvestmentSell(a, e);
+                        t = this.ProcessInvestmentSell(a, e);
                         break;
                     case "SPLIT": // record a stock split
                         // todo:
                         break;
                     case "TRANSFER":
-                        t = ProcessInvestmentTransfer(a, e);
+                        t = this.ProcessInvestmentTransfer(a, e);
                         break;
                 }
 
@@ -2352,7 +2352,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     }
                 }
 
-                Transaction u = myMoney.Transactions.Merge(this.myMoney.Aliases, t, newTransactions);
+                Transaction u = this.myMoney.Transactions.Merge(this.myMoney.Aliases, t, newTransactions);
                 if (u != null)
                 {
                     t = u;
@@ -2460,14 +2460,14 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 return null;
             }
 
-            Transaction t = ProcessInvestmentTransaction(a, invBuy);
+            Transaction t = this.ProcessInvestmentTransaction(a, invBuy);
 
             // force the amount to be negative!
             t.Amount = -Math.Abs(t.Amount);
 
             t.Investment = t.GetOrCreateInvestment();
 
-            Security s = ProcessSecId(invBuy.Element("SECID"));
+            Security s = this.ProcessSecId(invBuy.Element("SECID"));
             if (s != null)
             {
                 t.Investment.Security = s;
@@ -2558,10 +2558,10 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             XElement invSell = sell.Element("INVSELL");
             if (invSell == null) return null;
 
-            Transaction t = ProcessInvestmentTransaction(a, invSell);
+            Transaction t = this.ProcessInvestmentTransaction(a, invSell);
 
             t.Investment = t.GetOrCreateInvestment();
-            Security s = ProcessSecId(invSell.Element("SECID"));
+            Security s = this.ProcessSecId(invSell.Element("SECID"));
             if (s != null)
             {
                 t.Investment.Security = s;
@@ -2618,11 +2618,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         Transaction ProcessInvestmentTransfer(Account a, XElement transfer)
         {
-            Transaction t = ProcessInvestmentTransaction(a, transfer);
+            Transaction t = this.ProcessInvestmentTransaction(a, transfer);
             t.Investment = t.GetOrCreateInvestment();
 
 
-            Security s = ProcessSecId(transfer.Element("SECID"));
+            Security s = this.ProcessSecId(transfer.Element("SECID"));
             if (s != null)
             {
                 t.Investment.Security = s;
@@ -2721,9 +2721,9 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             */
             if (income == null) return null;
 
-            Transaction t = ProcessInvestmentTransaction(a, income);
+            Transaction t = this.ProcessInvestmentTransaction(a, income);
 
-            Security s = ProcessSecId(income.Element("SECID"));
+            Security s = this.ProcessSecId(income.Element("SECID"));
             if (s != null)
             {
                 t.Investment = t.GetOrCreateInvestment();
@@ -2734,11 +2734,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 if (income.Name.LocalName != "INCOME")
                 {
                     // INVEXPENSE or RETOFCAP
-                    t.Category = myMoney.Categories.InvestmentMiscellaneous;
+                    t.Category = this.myMoney.Categories.InvestmentMiscellaneous;
                 }
                 else
                 {
-                    t.Category = GetIncomeCategory(income);
+                    t.Category = this.GetIncomeCategory(income);
 
                     if (t.Category == this.myMoney.Categories.InvestmentDividends)
                     {
@@ -2759,19 +2759,19 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             switch (type)
             {
                 default:
-                    cat = myMoney.Categories.InvestmentInterest;
+                    cat = this.myMoney.Categories.InvestmentInterest;
                     break;
                 case "CGLONG":
-                    cat = myMoney.Categories.InvestmentLongTermCapitalGainsDistribution;
+                    cat = this.myMoney.Categories.InvestmentLongTermCapitalGainsDistribution;
                     break;
                 case "CGSHORT":
-                    cat = myMoney.Categories.InvestmentShortTermCapitalGainsDistribution;
+                    cat = this.myMoney.Categories.InvestmentShortTermCapitalGainsDistribution;
                     break;
                 case "DIV":
-                    cat = myMoney.Categories.InvestmentDividends;
+                    cat = this.myMoney.Categories.InvestmentDividends;
                     break;
                 case "MISC":
-                    cat = myMoney.Categories.InvestmentMiscellaneous;
+                    cat = this.myMoney.Categories.InvestmentMiscellaneous;
                     break;
             }
             return cat;
@@ -2854,8 +2854,8 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         Transaction ProcessMarginInterest(Account a, XElement e)
         {
             if (e == null) return null;
-            Transaction t = ProcessInvestmentTransaction(a, e);
-            t.Category = myMoney.Categories.InvestmentInterest;
+            Transaction t = this.ProcessInvestmentTransaction(a, e);
+            t.Category = this.myMoney.Categories.InvestmentInterest;
             return t;
         }
 
@@ -2909,7 +2909,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
             public override int GetHashCode()
             {
-                return UniqueId.GetHashCode();
+                return this.UniqueId.GetHashCode();
             }
             public override bool Equals(object obj)
             {
@@ -3201,7 +3201,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     t.FITID = fitid;
                     t.Unaccepted = true;
 
-                    Transaction u = myMoney.Transactions.Merge(this.myMoney.Aliases, t, newTransactions);
+                    Transaction u = this.myMoney.Transactions.Merge(this.myMoney.Aliases, t, newTransactions);
                     if (u != null)
                     {
                         t = u;
@@ -3222,7 +3222,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     items.Added.Add(t);
                 }
 
-                myMoney.Rebalance(a);
+                this.myMoney.Rebalance(a);
                 items.Success = true;
             }
             finally
@@ -3240,7 +3240,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
             if (a != null && accountid != a.OfxAccountId)
             {
-                results.AddError(onlineAccount, temp, "Bank account ID's do not match.");
+                results.AddError(this.onlineAccount, temp, "Bank account ID's do not match.");
                 return false;
             }
 
@@ -3248,18 +3248,18 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             {
                 if (accountid == string.Empty)
                 {
-                    results.AddError(onlineAccount, temp, "ACCID should not be empty.");
+                    results.AddError(this.onlineAccount, temp, "ACCID should not be empty.");
                     return false;
                 }
 
-                a = FindAccountByOfxId(accountid);
+                a = this.FindAccountByOfxId(accountid);
                 if (a != null)
                 {
                     this.account = a;
                     this.onlineAccount = a.OnlineAccount;
                     if (this.onlineAccount != null)
                     {
-                        from.Document.Save(Path.Combine(OfxLogPath, GetLogfileName(this.onlineAccount) + "RS.xml"));
+                        from.Document.Save(Path.Combine(OfxLogPath, this.GetLogfileName(this.onlineAccount) + "RS.xml"));
                     }
                 }
                 else
@@ -3270,7 +3270,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         // and the caller did not supply a "resolver" callback
                         return false;
                     }
-                    else if (skippedAccounts.Contains(accountid))
+                    else if (this.skippedAccounts.Contains(accountid))
                     {
                         // user has already told us they want to skip this account.
                         return false;
@@ -3285,7 +3285,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         UiDispatcher.Invoke(new Action(() =>
                         {
                             string prompt = string.Format("We found a reference to an unknown account number '{0}'. Please select the account that you want to use or click the Add New Account button at the bottom of this window:", accountid);
-                            Account picked = callerPickAccount(this.myMoney, temp, prompt);
+                            Account picked = this.callerPickAccount(this.myMoney, temp, prompt);
                             if (picked == null)
                             {
                                 // cancelled
@@ -3296,15 +3296,15 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
                         if (cancelled)
                         {
-                            skippedAccounts.Add(accountid);
-                            results.AddError(onlineAccount, temp, "Import cancelled.");
+                            this.skippedAccounts.Add(accountid);
+                            results.AddError(this.onlineAccount, temp, "Import cancelled.");
                             return false;
                         }
                         a = temp;
                         if (a == null)
                         {
-                            skippedAccounts.Add(accountid);
-                            results.AddError(onlineAccount, temp, "Account skipped.");
+                            this.skippedAccounts.Add(accountid);
+                            results.AddError(this.onlineAccount, temp, "Account skipped.");
                             return false;
                         }
                     }
@@ -3378,11 +3378,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             {
                 foreach (Account acct in this.myMoney.Accounts.GetAccounts())
                 {
-                    if (AccoundIdMatches(accountId, acct.AccountId))
+                    if (this.AccoundIdMatches(accountId, acct.AccountId))
                     {
                         return acct;
                     }
-                    if (AccoundIdMatches(accountId, acct.OfxAccountId))
+                    if (this.AccoundIdMatches(accountId, acct.OfxAccountId))
                     {
                         return acct;
                     }
@@ -3400,7 +3400,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     }
                 }
 
-                return AccountIdFuzzyMatch(accountId);
+                return this.AccountIdFuzzyMatch(accountId);
             }
             return null;
         }
@@ -3566,8 +3566,8 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         public OFX Root { get; set; }
         public Account Account
         {
-            get { return account; }
-            set { account = value; }
+            get { return this.account; }
+            set { this.account = value; }
         }
 
     }
@@ -3619,7 +3619,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         /// </summary>
         public void BeginMFAChallenge()
         {
-            Task.Run(BackgroundThread);
+            Task.Run(this.BackgroundThread);
         }
 
 
@@ -3627,15 +3627,15 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         {
             try
             {
-                OFX ofx = RequestChallenge();
+                OFX ofx = this.RequestChallenge();
                 UiDispatcher.Invoke(new Action(() =>
                 {
-                    HandleChallenge(ofx);
+                    this.HandleChallenge(ofx);
                 }));
             }
             catch (Exception ex)
             {
-                OnError(ex);
+                this.OnError(ex);
             }
         }
 
@@ -3653,8 +3653,8 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         private void OnError(Exception ex)
         {
-            Error = ex;
-            OnCompleted();
+            this.Error = ex;
+            this.OnCompleted();
         }
 
         private OFX RequestChallenge()
@@ -3666,7 +3666,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
             doc = req.SendOfxRequest(doc);
 
-            challengeLog = OfxRequest.SaveLog(doc, OfxRequest.GetLogfileName(this.money, this.onlineAccount) + "_MFAChallenge_RS.xml");
+            this.challengeLog = OfxRequest.SaveLog(doc, OfxRequest.GetLogfileName(this.money, this.onlineAccount) + "_MFAChallenge_RS.xml");
 
             // deserialize response into our OfxProfile structure.
 
@@ -3715,7 +3715,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         private void HandleChallenge(OFX ofx)
         {
-            List<MfaChallengeAnswer> answers = BuiltInAnswers = new List<MfaChallengeAnswer>();
+            List<MfaChallengeAnswer> answers = this.BuiltInAnswers = new List<MfaChallengeAnswer>();
 
             SignOnResponseMessageSet response = ofx.SignOnMessageResponse;
             if (response != null)
@@ -3747,7 +3747,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                                 answers.Add(new MfaChallengeAnswer() { Id = id, Answer = address.ToString() });
                                 break;
                             case "MFA104": // MAC Address                                                                
-                                answers.Add(new MfaChallengeAnswer() { Id = id, Answer = GetMacAddress() });
+                                answers.Add(new MfaChallengeAnswer() { Id = id, Answer = this.GetMacAddress() });
                                 break;
                             case "MFA105": // Operating System version
                                 answers.Add(new MfaChallengeAnswer() { Id = id, Answer = Environment.OSVersion.ToString() });
@@ -3767,13 +3767,13 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     if (userChallenges.Count > 0)
                     {
                         this.UserChallenges = userChallenges;
-                        OnCompleted();
+                        this.OnCompleted();
                         return;
                     }
                 }
             }
 
-            OnError(new OfxException("Server returned unexpected response from MFA Challenge Request")
+            this.OnError(new OfxException("Server returned unexpected response from MFA Challenge Request")
             {
                 Root = ofx,
                 HelpLink = challengeLog

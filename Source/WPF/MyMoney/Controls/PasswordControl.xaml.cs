@@ -11,13 +11,13 @@ namespace Walkabout.Controls
     {
         public PasswordControl()
         {
-            InitializeComponent();
-            this.Loaded += PasswordControl_Loaded;
+            this.InitializeComponent();
+            Loaded += this.PasswordControl_Loaded;
         }
 
         void PasswordControl_Loaded(object sender, RoutedEventArgs e)
         {
-            PasswordField.Name = this.Name;
+            this.PasswordField.Name = this.Name;
             this.Name += "Control";
         }
 
@@ -25,8 +25,8 @@ namespace Walkabout.Controls
 
         public string Password
         {
-            get { return PasswordField.Password; }
-            set { PasswordField.Password = value; }
+            get { return this.PasswordField.Password; }
+            set { this.PasswordField.Password = value; }
         }
 
         private void OnPasswordChanged(object sender, RoutedEventArgs e)
@@ -39,23 +39,23 @@ namespace Walkabout.Controls
 
         private void OnEyeButtonDown(object sender, MouseButtonEventArgs e)
         {
-            PasswordTextBox.Text = PasswordField.Password;
-            PasswordTextBox.Visibility = System.Windows.Visibility.Visible;
-            PasswordField.Visibility = System.Windows.Visibility.Collapsed;
+            this.PasswordTextBox.Text = this.PasswordField.Password;
+            this.PasswordTextBox.Visibility = System.Windows.Visibility.Visible;
+            this.PasswordField.Visibility = System.Windows.Visibility.Collapsed;
             e.Handled = true;
         }
 
         private void OnEyeButtonUp(object sender, MouseButtonEventArgs e)
         {
-            PasswordTextBox.Visibility = System.Windows.Visibility.Collapsed;
-            PasswordField.Visibility = System.Windows.Visibility.Visible;
+            this.PasswordTextBox.Visibility = System.Windows.Visibility.Collapsed;
+            this.PasswordField.Visibility = System.Windows.Visibility.Visible;
             e.Handled = true;
         }
 
         public void SelectAll()
         {
-            PasswordField.SelectAll();
-            PasswordField.Focus();
+            this.PasswordField.SelectAll();
+            this.PasswordField.Focus();
         }
     }
 }

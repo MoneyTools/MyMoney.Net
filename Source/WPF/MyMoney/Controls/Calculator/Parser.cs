@@ -50,31 +50,31 @@ namespace Walkabout.Controls
         /// <param name="expression"></param>
         public double Parse(string expression)
         {
-            foreach (Token token in Tokenize(expression))
+            foreach (Token token in this.Tokenize(expression))
             {
-                switch (state)
+                switch (this.state)
                 {
                     case 0:
                         switch (token)
                         {
                             case Token.Number:
-                                Shift(new Operation() { Token = Token.Number, Number = this.number });
-                                state = 1;
+                                this.Shift(new Operation() { Token = Token.Number, Number = number });
+                                this.state = 1;
                                 break;
                             case Token.Plus:
-                                Shift(new Operation() { Token = Token.UnaryPlus });
-                                state = 2;
+                                this.Shift(new Operation() { Token = Token.UnaryPlus });
+                                this.state = 2;
                                 break;
                             case Token.Minus:
-                                Shift(new Operation() { Token = Token.UnaryMinus });
-                                state = 2;
+                                this.Shift(new Operation() { Token = Token.UnaryMinus });
+                                this.state = 2;
                                 break;
                             case Token.LeftParen:
-                                Shift(new Operation() { Token = Token.LeftParen });
-                                openParens++;
+                                this.Shift(new Operation() { Token = Token.LeftParen });
+                                this.openParens++;
                                 break;
                             case Token.Dollar:
-                                state = 3;
+                                this.state = 3;
                                 break;
                             default:
                                 UnexpectedToken(token, Token.Number, Token.Plus, Token.Minus, Token.LeftParen);
@@ -85,35 +85,35 @@ namespace Walkabout.Controls
                         switch (token)
                         {
                             case Token.Plus:
-                                ReduceBinaryOperator(Token.Plus); // reduce binary operator based on precedence.
-                                Shift(new Operation() { Token = Token.Plus });
-                                state = 0;
+                                this.ReduceBinaryOperator(Token.Plus); // reduce binary operator based on precedence.
+                                this.Shift(new Operation() { Token = Token.Plus });
+                                this.state = 0;
                                 break;
                             case Token.Minus:
-                                ReduceBinaryOperator(Token.Minus); // reduce binary operator based on precedence.
-                                Shift(new Operation() { Token = Token.Minus });
-                                state = 0;
+                                this.ReduceBinaryOperator(Token.Minus); // reduce binary operator based on precedence.
+                                this.Shift(new Operation() { Token = Token.Minus });
+                                this.state = 0;
                                 break;
                             case Token.Multiply:
-                                ReduceBinaryOperator(Token.Multiply); // reduce binary operator based on precedence.
-                                Shift(new Operation() { Token = Token.Multiply });
-                                state = 0;
+                                this.ReduceBinaryOperator(Token.Multiply); // reduce binary operator based on precedence.
+                                this.Shift(new Operation() { Token = Token.Multiply });
+                                this.state = 0;
                                 break;
                             case Token.Divide:
-                                ReduceBinaryOperator(Token.Divide); // reduce binary operator based on precedence.
-                                Shift(new Operation() { Token = Token.Divide });
-                                state = 0;
+                                this.ReduceBinaryOperator(Token.Divide); // reduce binary operator based on precedence.
+                                this.Shift(new Operation() { Token = Token.Divide });
+                                this.state = 0;
                                 break;
                             case Token.Percent:
-                                ReducePercent();
-                                state = 1;
+                                this.ReducePercent();
+                                this.state = 1;
                                 break;
                             case Token.RightParen:
-                                if (openParens > 0)
+                                if (this.openParens > 0)
                                 {
-                                    CloseParens();
-                                    state = 1;
-                                    openParens--;
+                                    this.CloseParens();
+                                    this.state = 1;
+                                    this.openParens--;
                                 }
                                 else
                                 {
@@ -121,16 +121,16 @@ namespace Walkabout.Controls
                                 }
                                 break;
                             case Token.EOF:
-                                ReduceBinaryOperator(Token.EOF); // reduce binary operator based on precedence.  
-                                if (openParens > 0)
+                                this.ReduceBinaryOperator(Token.EOF); // reduce binary operator based on precedence.  
+                                if (this.openParens > 0)
                                 {
                                     throw new Exception("Expecting close parentheses')'");
                                 }
-                                if (stack.Count > 1 || stack[0].Token != Token.Number)
+                                if (this.stack.Count > 1 || this.stack[0].Token != Token.Number)
                                 {
                                     throw new Exception("Internal error, expecting stack to contain one number");
                                 }
-                                return stack[0].Number;
+                                return this.stack[0].Number;
                             default:
                                 UnexpectedToken(token, Token.Plus, Token.Minus, Token.Multiply, Token.Divide, Token.Percent, Token.RightParen);
                                 break;
@@ -140,16 +140,16 @@ namespace Walkabout.Controls
                         switch (token)
                         {
                             case Token.Number:
-                                Shift(new Operation() { Token = Token.Number, Number = this.number });
-                                ReduceUnaryOperator();
-                                state = 1;
+                                this.Shift(new Operation() { Token = Token.Number, Number = number });
+                                this.ReduceUnaryOperator();
+                                this.state = 1;
                                 break;
                             case Token.LeftParen:
-                                Shift(new Operation() { Token = Token.LeftParen, Number = this.number });
-                                state = 0;
+                                this.Shift(new Operation() { Token = Token.LeftParen, Number = number });
+                                this.state = 0;
                                 break;
                             case Token.Dollar:
-                                state = 3;
+                                this.state = 3;
                                 break;
                             default:
                                 UnexpectedToken(token, Token.Number, Token.LeftParen);
@@ -160,9 +160,9 @@ namespace Walkabout.Controls
                         switch (token)
                         {
                             case Token.Number:
-                                Shift(new Operation() { Token = Token.Number, Number = this.number });
-                                ReduceUnaryOperator();
-                                state = 1;
+                                this.Shift(new Operation() { Token = Token.Number, Number = number });
+                                this.ReduceUnaryOperator();
+                                this.state = 1;
                                 break;
                             default:
                                 UnexpectedToken(token, Token.Number);
@@ -223,47 +223,47 @@ namespace Walkabout.Controls
 
         void Shift(Operation op)
         {
-            stack.Add(op);
+            this.stack.Add(op);
         }
 
         Operation Pop()
         {
             Operation op = new Operation();
-            if (stack.Count > 0)
+            if (this.stack.Count > 0)
             {
-                int i = stack.Count - 1;
-                op = stack[i];
-                stack.RemoveAt(i);
+                int i = this.stack.Count - 1;
+                op = this.stack[i];
+                this.stack.RemoveAt(i);
             }
             return op;
         }
 
         void ReduceUnaryOperator()
         {
-            Operation number = Pop();
-            Operation op = Pop();
+            Operation number = this.Pop();
+            Operation op = this.Pop();
             if (op.Token == Token.UnaryMinus)
             {
                 number.Number = -number.Number;
             }
-            Shift(number);
+            this.Shift(number);
         }
 
         void ReduceBinaryOperator(Token token)
         {
-            int len = stack.Count;
+            int len = this.stack.Count;
             while (len >= 3)
             {
-                Operation right = stack[len - 1];
-                Operation op = stack[len - 2];
-                Operation left = stack[len - 3];
+                Operation right = this.stack[len - 1];
+                Operation op = this.stack[len - 2];
+                Operation left = this.stack[len - 3];
                 if (left.Token == Token.Number && Precidence(token) <= Precidence(op.Token))
                 {
-                    Pop();
-                    Pop();
-                    Pop();
-                    Shift(ComputeBinaryOperation(left, op, right));
-                    len = stack.Count;
+                    this.Pop();
+                    this.Pop();
+                    this.Pop();
+                    this.Shift(ComputeBinaryOperation(left, op, right));
+                    len = this.stack.Count;
                 }
                 else
                 {
@@ -317,22 +317,22 @@ namespace Walkabout.Controls
 
         void CloseParens()
         {
-            Operation right = Pop();
-            Operation op = Pop();
+            Operation right = this.Pop();
+            Operation op = this.Pop();
             while (op.Token != Token.LeftParen)
             {
-                Operation left = Pop();
+                Operation left = this.Pop();
                 right = ComputeBinaryOperation(left, op, right);
-                op = Pop();
+                op = this.Pop();
             }
-            Shift(right);
+            this.Shift(right);
         }
 
         void ReducePercent()
         {
-            Operation number = Pop();
+            Operation number = this.Pop();
             number.Number /= 100;
-            Shift(number);
+            this.Shift(number);
         }
 
         public double Number { get { return this.number; } }
@@ -374,7 +374,7 @@ namespace Walkabout.Controls
                         default:
                             if (Char.IsDigit(c) || c == '.')
                             {
-                                number = 0;
+                                this.number = 0;
                                 double decimalFactor = 0;
 
                                 while (Char.IsDigit(c) || c == '.' || c == ',')
@@ -396,12 +396,12 @@ namespace Walkabout.Controls
                                         int v = Convert.ToInt16(c) - Convert.ToInt16('0');
                                         if (decimalFactor > 0)
                                         {
-                                            number = number + (v / decimalFactor);
+                                            this.number = this.number + (v / decimalFactor);
                                             decimalFactor *= 10;
                                         }
                                         else
                                         {
-                                            number = (number * 10) + v;
+                                            this.number = (this.number * 10) + v;
                                         }
                                     }
                                     i++;

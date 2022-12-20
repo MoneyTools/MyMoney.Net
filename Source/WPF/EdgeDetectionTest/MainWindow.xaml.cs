@@ -29,38 +29,38 @@ namespace EdgeDetectionTest
 
         public MainWindow()
         {
-            InitializeComponent();
-            dispatcher = this.Dispatcher;
-            HideButton.Content = "Hide";
+            this.InitializeComponent();
+            this.dispatcher = this.Dispatcher;
+            this.HideButton.Content = "Hide";
         }
 
         public MainWindow(ImageSource src)
             : this()
         {
-            ImageContent.Source = src;
+            this.ImageContent.Source = src;
         }
 
         private void OnDetect(object sender, RoutedEventArgs e)
         {
-            DebugView.Children.Clear();
-            BitmapSource src = ImageContent.Source as BitmapSource;
+            this.DebugView.Children.Clear();
+            BitmapSource src = this.ImageContent.Source as BitmapSource;
             if (src != null)
             {
-                float min = float.Parse(Min.Text);
-                float max = float.Parse(Max.Text);
-                int minEdgeLength = int.Parse(EdgeLength.Text);
+                float min = float.Parse(this.Min.Text);
+                float max = float.Parse(this.Max.Text);
+                int minEdgeLength = int.Parse(this.EdgeLength.Text);
 
-                DetectButton.IsEnabled = false;
+                this.DetectButton.IsEnabled = false;
                 CannyEdgeDetector canny = new CannyEdgeDetector(src, max, min, minEdgeLength);
-                canny.EdgeDetected += OnEdgeDetected;
+                canny.EdgeDetected += this.OnEdgeDetected;
 
                 Task.Run(new Action(() =>
                 {
                     canny.DetectEdges();
-                    canny.EdgeDetected -= OnEdgeDetected;
-                    Dispatcher.BeginInvoke(new Action(() =>
+                    canny.EdgeDetected -= this.OnEdgeDetected;
+                    this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        DetectButton.IsEnabled = true;
+                        this.DetectButton.IsEnabled = true;
                     }));
                 }));
 
@@ -76,7 +76,7 @@ namespace EdgeDetectionTest
 
         void OnEdgeDetected(object sender, EdgeDetectedEventArgs e)
         {
-            dispatcher.BeginInvoke(new Action(() =>
+            this.dispatcher.BeginInvoke(new Action(() =>
             {
                 for (int i = 0, n = e.Edge.Count; i < n; i++)
                 {
@@ -89,7 +89,7 @@ namespace EdgeDetectionTest
                     Canvas.SetLeft(dot, p.X);
                     Canvas.SetTop(dot, p.Y);
 
-                    DebugView.Children.Add(dot);
+                    this.DebugView.Children.Add(dot);
                 }
 
 
@@ -102,21 +102,21 @@ namespace EdgeDetectionTest
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
-            ScaleImage();
+            this.ScaleImage();
         }
 
         private void ScaleImage()
         {
-            BitmapSource bitmap = ImageContent.Source as BitmapSource;
+            BitmapSource bitmap = this.ImageContent.Source as BitmapSource;
             if (bitmap != null)
             {
                 double w = bitmap.PixelWidth;
                 double h = bitmap.PixelHeight;
 
-                double xScale = Scroller.ActualWidth / w;
-                double yScale = Scroller.ActualHeight / h;
+                double xScale = this.Scroller.ActualWidth / w;
+                double yScale = this.Scroller.ActualHeight / h;
                 double minScale = Math.Min(xScale, yScale);
-                ContentGrid.RenderTransform = new ScaleTransform(minScale, minScale);
+                this.ContentGrid.RenderTransform = new ScaleTransform(minScale, minScale);
             }
         }
 
@@ -130,22 +130,22 @@ namespace EdgeDetectionTest
 
         private void OnPaste(object sender, ExecutedRoutedEventArgs e)
         {
-            DebugView.Children.Clear();
+            this.DebugView.Children.Clear();
             if (Clipboard.ContainsImage())
             {
-                ImageContent.Source = Clipboard.GetImage();
-                ScaleImage();
+                this.ImageContent.Source = Clipboard.GetImage();
+                this.ScaleImage();
             }
         }
 
         private void OnOpen(object sender, RoutedEventArgs e)
         {
-            DebugView.Children.Clear();
+            this.DebugView.Children.Clear();
             OpenFileDialog od = new OpenFileDialog();
             if (od.ShowDialog() == true)
             {
-                ImageContent.Source = LoadImage(od.FileName);
-                ScaleImage();
+                this.ImageContent.Source = LoadImage(od.FileName);
+                this.ScaleImage();
             }
         }
 
@@ -171,24 +171,24 @@ namespace EdgeDetectionTest
 
         private void OnCopy(object sender, ExecutedRoutedEventArgs e)
         {
-            if (ImageContent.Source is BitmapSource)
+            if (this.ImageContent.Source is BitmapSource)
             {
-                Clipboard.SetImage((BitmapSource)ImageContent.Source);
+                Clipboard.SetImage((BitmapSource)this.ImageContent.Source);
             }
         }
 
         private void OnToggleVisibility(object sender, RoutedEventArgs e)
         {
 
-            if (HideButton.Content.ToString() == "Hide")
+            if (this.HideButton.Content.ToString() == "Hide")
             {
-                HideButton.Content = "Show";
-                ImageContent.Visibility = System.Windows.Visibility.Hidden;
+                this.HideButton.Content = "Show";
+                this.ImageContent.Visibility = System.Windows.Visibility.Hidden;
             }
             else
             {
-                HideButton.Content = "Hide";
-                ImageContent.Visibility = System.Windows.Visibility.Visible;
+                this.HideButton.Content = "Hide";
+                this.ImageContent.Visibility = System.Windows.Visibility.Visible;
             }
         }
     }

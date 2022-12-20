@@ -24,18 +24,18 @@ namespace Walkabout.Views
 
         public ChangeTracker(MyMoney money, IViewNavigator navigator)
         {
-            myMoney = money;
-            myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+            this.myMoney = money;
+            this.myMoney.Changed += new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
             this.navigator = navigator;
-            Clear();
+            this.Clear();
         }
 
         public void Dispose()
         {
-            if (myMoney != null)
+            if (this.myMoney != null)
             {
-                myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
-                myMoney = null;
+                this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
+                this.myMoney = null;
             }
         }
 
@@ -43,13 +43,13 @@ namespace Walkabout.Views
 
         public bool IsDirty
         {
-            get { return isDirty; }
+            get { return this.isDirty; }
             set
             {
-                if (isDirty != value)
+                if (this.isDirty != value)
                 {
-                    isDirty = value;
-                    OnDirtyChanged();
+                    this.isDirty = value;
+                    this.OnDirtyChanged();
                 }
             }
         }
@@ -71,7 +71,7 @@ namespace Walkabout.Views
 
             public ChangeList(Type t)
             {
-                owner = t;
+                this.owner = t;
             }
 
             public void Add(ChangeEventArgs args)
@@ -83,19 +83,19 @@ namespace Walkabout.Views
                     case ChangeType.TransientChanged:
                         break;
                     case ChangeType.Changed:
-                        if (!inserted.Contains(item) && !deleted.Contains(item))
+                        if (!this.inserted.Contains(item) && !this.deleted.Contains(item))
                         {
-                            changed.Add(item);
+                            this.changed.Add(item);
                         }
                         break;
                     case ChangeType.Inserted:
-                        deleted.Remove(item);
-                        changed.Remove(item);
-                        inserted.Add(item);
+                        this.deleted.Remove(item);
+                        this.changed.Remove(item);
+                        this.inserted.Add(item);
                         break;
                     case ChangeType.Deleted:
-                        inserted.Remove(item);
-                        deleted.Add(item);
+                        this.inserted.Remove(item);
+                        this.deleted.Add(item);
                         break;
                 }
             }
@@ -103,8 +103,8 @@ namespace Walkabout.Views
 
         public void Clear()
         {
-            changes = new Dictionary<Type, ChangeList>();
-            IsDirty = false;
+            this.changes = new Dictionary<Type, ChangeList>();
+            this.IsDirty = false;
         }
 
         public int ChangeCount
@@ -112,7 +112,7 @@ namespace Walkabout.Views
             get
             {
                 int total = 0;
-                foreach (ChangeList list in changes.Values)
+                foreach (ChangeList list in this.changes.Values)
                 {
                     total += list.changed.Count + list.deleted.Count + list.inserted.Count;
                 }
@@ -131,19 +131,19 @@ namespace Walkabout.Views
                     if (t != typeof(MyMoney))
                     {
                         ChangeList list;
-                        if (!changes.TryGetValue(t, out list))
+                        if (!this.changes.TryGetValue(t, out list))
                         {
                             list = new ChangeList(t);
-                            changes[t] = list;
+                            this.changes[t] = list;
                         }
                         list.Add(args);
                     }
                 }
                 args = args.Next;
             }
-            if (changes.Count > 0)
+            if (this.changes.Count > 0)
             {
-                IsDirty = true;
+                this.IsDirty = true;
             }
         }
 
@@ -158,28 +158,28 @@ namespace Walkabout.Views
 
             summary.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
 
-            if (changes.Count == 0)
+            if (this.changes.Count == 0)
             {
-                AddColumn(summary, "No changes pending", 0, 0).FontStyle = FontStyles.Italic;
+                this.AddColumn(summary, "No changes pending", 0, 0).FontStyle = FontStyles.Italic;
                 return summary;
             }
 
-            AddColumn(summary, "Inserted", 1, 0).FontStyle = FontStyles.Italic;
-            AddColumn(summary, "Deleted", 2, 0).FontStyle = FontStyles.Italic;
-            AddColumn(summary, "Changed", 3, 0).FontStyle = FontStyles.Italic;
+            this.AddColumn(summary, "Inserted", 1, 0).FontStyle = FontStyles.Italic;
+            this.AddColumn(summary, "Deleted", 2, 0).FontStyle = FontStyles.Italic;
+            this.AddColumn(summary, "Changed", 3, 0).FontStyle = FontStyles.Italic;
 
             int row = 1;
 
-            foreach (ChangeList list in from list in changes.Values orderby list.owner.Name select list)
+            foreach (ChangeList list in from list in this.changes.Values orderby list.owner.Name select list)
             {
                 Type owner = list.owner;
 
                 summary.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
 
-                AddColumn(summary, owner.Name, 0, row);
-                AddLink(summary, list.inserted, 1, row);
-                AddLink(summary, list.deleted, 2, row);
-                AddLink(summary, list.changed, 3, row);
+                this.AddColumn(summary, owner.Name, 0, row);
+                this.AddLink(summary, list.inserted, 1, row);
+                this.AddLink(summary, list.deleted, 2, row);
+                this.AddLink(summary, list.changed, 3, row);
                 row++;
             }
 
@@ -199,7 +199,7 @@ namespace Walkabout.Views
 
         private TextBlock AddLink(Grid grid, HashSet<object> list, int column, int row)
         {
-            TextBlock block = AddColumn(grid, list.Count.ToString(), column, row);
+            TextBlock block = this.AddColumn(grid, list.Count.ToString(), column, row);
             if (list.Count > 0)
             {
                 if (list.FirstOrDefault() is Transaction)
@@ -216,7 +216,7 @@ namespace Walkabout.Views
                     });
                     block.MouseDown += new System.Windows.Input.MouseButtonEventHandler((s, e) =>
                     {
-                        NavigateTo(list);
+                        this.NavigateTo(list);
                     });
                 }
                 else
@@ -227,23 +227,23 @@ namespace Walkabout.Views
                     {
                         if (i is Security)
                         {
-                            AppendNonEmptyLine(tooltip, ((Security)i).Name);
+                            this.AppendNonEmptyLine(tooltip, ((Security)i).Name);
                         }
                         else if (i is Account)
                         {
-                            AppendNonEmptyLine(tooltip, ((Account)i).Name);
+                            this.AppendNonEmptyLine(tooltip, ((Account)i).Name);
                         }
                         else if (i is Payee)
                         {
-                            AppendNonEmptyLine(tooltip, ((Payee)i).Name);
+                            this.AppendNonEmptyLine(tooltip, ((Payee)i).Name);
                         }
                         else if (i is Category)
                         {
-                            AppendNonEmptyLine(tooltip, ((Category)i).Name);
+                            this.AppendNonEmptyLine(tooltip, ((Category)i).Name);
                         }
                         else if (i is Alias)
                         {
-                            AppendNonEmptyLine(tooltip, ((Alias)i).Pattern);
+                            this.AppendNonEmptyLine(tooltip, ((Alias)i).Pattern);
                         }
                         else if (i is Investment)
                         {
@@ -251,11 +251,11 @@ namespace Walkabout.Views
                         }
                         else if (i is RentBuilding)
                         {
-                            AppendNonEmptyLine(tooltip, ((RentBuilding)i).Name);
+                            this.AppendNonEmptyLine(tooltip, ((RentBuilding)i).Name);
                         }
                         else if (i is RentUnit)
                         {
-                            AppendNonEmptyLine(tooltip, ((RentUnit)i).Name);
+                            this.AppendNonEmptyLine(tooltip, ((RentUnit)i).Name);
                         }
                         else if (i is LoanPayment)
                         {
@@ -294,7 +294,7 @@ namespace Walkabout.Views
             object first = list.FirstOrDefault();
             if (first is Transaction)
             {
-                navigator.ViewTransactions(list.Cast<Transaction>());
+                this.navigator.ViewTransactions(list.Cast<Transaction>());
             }
         }
 
@@ -306,7 +306,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Account), out list);
+                this.changes.TryGetValue(typeof(Account), out list);
                 return GetChanged<Account>(list);
             }
         }
@@ -319,7 +319,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Account), out list);
+                this.changes.TryGetValue(typeof(Account), out list);
                 return GetDeleted<Account>(list);
             }
         }
@@ -332,7 +332,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Account), out list);
+                this.changes.TryGetValue(typeof(Account), out list);
                 return GetInserted<Account>(list);
             }
         }
@@ -345,7 +345,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Transaction), out list);
+                this.changes.TryGetValue(typeof(Transaction), out list);
                 return GetChanged<Transaction>(list);
             }
         }
@@ -358,7 +358,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Transaction), out list);
+                this.changes.TryGetValue(typeof(Transaction), out list);
                 return GetDeleted<Transaction>(list);
             }
         }
@@ -371,7 +371,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Transaction), out list);
+                this.changes.TryGetValue(typeof(Transaction), out list);
                 return GetInserted<Transaction>(list);
             }
         }
@@ -384,7 +384,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Split), out list);
+                this.changes.TryGetValue(typeof(Split), out list);
                 return GetChanged<Split>(list);
             }
         }
@@ -397,7 +397,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Split), out list);
+                this.changes.TryGetValue(typeof(Split), out list);
                 return GetDeleted<Split>(list);
             }
         }
@@ -410,7 +410,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Split), out list);
+                this.changes.TryGetValue(typeof(Split), out list);
                 return GetInserted<Split>(list);
             }
         }
@@ -423,7 +423,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Payee), out list);
+                this.changes.TryGetValue(typeof(Payee), out list);
                 return GetChanged<Payee>(list);
             }
         }
@@ -436,7 +436,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Payee), out list);
+                this.changes.TryGetValue(typeof(Payee), out list);
                 return GetDeleted<Payee>(list);
             }
         }
@@ -449,7 +449,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Payee), out list);
+                this.changes.TryGetValue(typeof(Payee), out list);
                 return GetInserted<Payee>(list);
             }
         }
@@ -463,7 +463,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Category), out list);
+                this.changes.TryGetValue(typeof(Category), out list);
                 return GetChanged<Category>(list);
             }
         }
@@ -476,7 +476,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Category), out list);
+                this.changes.TryGetValue(typeof(Category), out list);
                 return GetDeleted<Category>(list);
             }
         }
@@ -489,7 +489,7 @@ namespace Walkabout.Views
             get
             {
                 ChangeList list = null;
-                changes.TryGetValue(typeof(Category), out list);
+                this.changes.TryGetValue(typeof(Category), out list);
                 return GetInserted<Category>(list);
             }
         }

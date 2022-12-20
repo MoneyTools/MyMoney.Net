@@ -48,43 +48,43 @@ namespace Walkabout.StockQuotes
             this.provider = provider;
             this.myMoney = (MyMoney)provider.GetService(typeof(MyMoney));
             this.status = (IStatusService)provider.GetService(typeof(IStatusService));
-            this.myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+            this.myMoney.Changed += new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
 
             // assume we have fetched all securities.
             // call UpdateQuotes to refetch them all again, otherwise this
             // class will track changes and automatically fetch any new securities that it finds.
-            foreach (Security s in myMoney.Securities.AllSecurities)
+            foreach (Security s in this.myMoney.Securities.AllSecurities)
             {
                 if (!string.IsNullOrEmpty(s.Symbol))
                 {
-                    lock (fetched)
+                    lock (this.fetched)
                     {
-                        fetched.Add(s.Symbol);
+                        this.fetched.Add(s.Symbol);
                     }
                 }
             }
-            _downloadLog = DownloadLog.Load(logPath);
+            this._downloadLog = DownloadLog.Load(logPath);
         }
 
         public DownloadLog DownloadLog
         {
-            get => _downloadLog;
+            get => this._downloadLog;
         }
 
         public List<StockServiceSettings> Settings
         {
             get
             {
-                return _settings;
+                return this._settings;
             }
             set
             {
-                StopThread();
-                ResetServices();
-                _settings = value;
+                this.StopThread();
+                this.ResetServices();
+                this._settings = value;
                 if (!string.IsNullOrEmpty(this.LogPath))
                 {
-                    UpdateServices();
+                    this.UpdateServices();
                 }
 
             }
@@ -94,11 +94,11 @@ namespace Walkabout.StockQuotes
         {
             foreach (var item in this._services)
             {
-                item.DownloadError -= OnServiceDownloadError;
-                item.QuoteAvailable -= OnServiceQuoteAvailable;
-                item.Complete -= OnServiceQuotesComplete;
-                item.Suspended -= OnServiceSuspended;
-                item.SymbolNotFound -= OnSymbolNotFound;
+                item.DownloadError -= this.OnServiceDownloadError;
+                item.QuoteAvailable -= this.OnServiceQuoteAvailable;
+                item.Complete -= this.OnServiceQuotesComplete;
+                item.Suspended -= this.OnServiceSuspended;
+                item.SymbolNotFound -= this.OnSymbolNotFound;
                 item.Cancel();
             }
         }
@@ -107,7 +107,7 @@ namespace Walkabout.StockQuotes
         {
             this._services = new List<IStockQuoteService>();
 
-            foreach (var item in _settings)
+            foreach (var item in this._settings)
             {
                 IStockQuoteService service = null;
                 if (AlphaVantage.IsMySettings(item))
@@ -121,11 +121,11 @@ namespace Walkabout.StockQuotes
 
                 if (service != null)
                 {
-                    service.DownloadError += OnServiceDownloadError;
-                    service.QuoteAvailable += OnServiceQuoteAvailable;
-                    service.Complete += OnServiceQuotesComplete;
-                    service.Suspended += OnServiceSuspended;
-                    service.SymbolNotFound += OnSymbolNotFound;
+                    service.DownloadError += this.OnServiceDownloadError;
+                    service.QuoteAvailable += this.OnServiceQuoteAvailable;
+                    service.Complete += this.OnServiceQuotesComplete;
+                    service.Suspended += this.OnServiceSuspended;
+                    service.SymbolNotFound += this.OnSymbolNotFound;
                     this._services.Add(service);
                 }
             }
@@ -134,9 +134,9 @@ namespace Walkabout.StockQuotes
         private void OnSymbolNotFound(object sender, string symbol)
         {
             // todo: what kind of cleanup should we do with symbols that are no longer trading?
-            lock (_unknown)
+            lock (this._unknown)
             {
-                _unknown.Add(symbol);
+                this._unknown.Add(symbol);
             }
         }
 
@@ -145,7 +145,7 @@ namespace Walkabout.StockQuotes
             int max = 0;
             int value = 0;
             bool complete = true;
-            foreach (var service in _services)
+            foreach (var service in this._services)
             {
                 int m = service.DownloadsCompleted + service.PendingCount;
                 int v = service.DownloadsCompleted;
@@ -164,15 +164,15 @@ namespace Walkabout.StockQuotes
 
         private void OnServiceSuspended(object sender, bool suspended)
         {
-            OnServiceQuotesComplete(sender, new DownloadCompleteEventArgs() { Complete = false });
-            Tuple<int, int> progress = GetProgress();
+            this.OnServiceQuotesComplete(sender, new DownloadCompleteEventArgs() { Complete = false });
+            Tuple<int, int> progress = this.GetProgress();
             if (suspended)
             {
-                status.ShowProgress("Zzzz!", 0, progress.Item1, progress.Item2);
+                this.status.ShowProgress("Zzzz!", 0, progress.Item1, progress.Item2);
             }
             else
             {
-                status.ShowProgress("", 0, progress.Item1, progress.Item2);
+                this.status.ShowProgress("", 0, progress.Item1, progress.Item2);
             }
         }
 
@@ -186,7 +186,7 @@ namespace Walkabout.StockQuotes
 
         void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
-            if (processingResults)
+            if (this.processingResults)
             {
                 // we are updating the security, so avoid infinite update loop here
                 return;
@@ -205,20 +205,20 @@ namespace Walkabout.StockQuotes
                         {
                             case ChangeType.Changed:
                             case ChangeType.Inserted:
-                                lock (fetched)
+                                lock (this.fetched)
                                 {
-                                    if (!fetched.Contains(symbol))
+                                    if (!this.fetched.Contains(symbol))
                                     {
                                         newSecurities.Add(s);
                                     }
                                 }
                                 break;
                             case ChangeType.Deleted:
-                                lock (fetched)
+                                lock (this.fetched)
                                 {
-                                    if (fetched.Contains(symbol))
+                                    if (this.fetched.Contains(symbol))
                                     {
-                                        fetched.Remove(symbol);
+                                        this.fetched.Remove(symbol);
                                         newSecurities.Remove(s);
                                     }
                                 }
@@ -231,38 +231,38 @@ namespace Walkabout.StockQuotes
 
             if (newSecurities.Count > 0)
             {
-                BeginGetQuotes(newSecurities);
+                this.BeginGetQuotes(newSecurities);
             }
         }
 
         public void UpdateQuotes()
         {
             // start with owned securities first
-            HashSet<Security> combined = new HashSet<Security>(myMoney.GetOwnedSecurities());
+            HashSet<Security> combined = new HashSet<Security>(this.myMoney.GetOwnedSecurities());
             // then complete the picture with everything else that is referenced by a Transaction in an open account
-            foreach (Security s in myMoney.GetUsedSecurities((a) => !a.IsClosed))
+            foreach (Security s in this.myMoney.GetUsedSecurities((a) => !a.IsClosed))
             {
                 combined.Add(s);
             }
             // then complete the picture with everything else that is referenced by a Transaction in a closed account
-            foreach (Security s in myMoney.GetUsedSecurities((a) => a.IsClosed))
+            foreach (Security s in this.myMoney.GetUsedSecurities((a) => a.IsClosed))
             {
                 combined.Add(s);
             }
-            BeginGetQuotes(combined);
+            this.BeginGetQuotes(combined);
         }
 
         void BeginGetQuotes(HashSet<Security> toFetch)
         {
-            _firstError = true;
-            if (_services.Count == 0 || toFetch.Count == 0)
+            this._firstError = true;
+            if (this._services.Count == 0 || toFetch.Count == 0)
             {
                 return;
             }
 
             UiDispatcher.BeginInvoke(new Action(() =>
             {
-                OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
+                OutputPane output = (OutputPane)this.provider.GetService(typeof(OutputPane));
                 output.Clear();
                 output.AppendHeading(Walkabout.Properties.Resources.StockQuoteCaption);
             }));
@@ -278,15 +278,15 @@ namespace Walkabout.StockQuotes
             }
 
             bool foundService = false;
-            IStockQuoteService service = GetHistoryService();
-            HistoryDownloader downloader = GetDownloader(service);
+            IStockQuoteService service = this.GetHistoryService();
+            HistoryDownloader downloader = this.GetDownloader(service);
             if (service != null)
             {
                 downloader.BeginFetchHistory(batch);
                 foundService = true;
             }
 
-            service = GetQuoteService();
+            service = this.GetQuoteService();
             if (service != null)
             {
                 foundService = true;
@@ -305,15 +305,15 @@ namespace Walkabout.StockQuotes
 
             if (!foundService)
             {
-                AddError(Walkabout.Properties.Resources.ConfigureStockQuoteService);
-                UiDispatcher.BeginInvoke(new Action(UpdateUI));
+                this.AddError(Walkabout.Properties.Resources.ConfigureStockQuoteService);
+                UiDispatcher.BeginInvoke(new Action(this.UpdateUI));
             }
         }
 
         private IStockQuoteService GetQuoteService()
         {
             IStockQuoteService result = null;
-            foreach (var service in _services)
+            foreach (var service in this._services)
             {
                 if (service.IsEnabled)
                 {
@@ -332,7 +332,7 @@ namespace Walkabout.StockQuotes
 
         private IStockQuoteService GetHistoryService()
         {
-            foreach (var service in _services)
+            foreach (var service in this._services)
             {
                 if (service.SupportsHistory && service.IsEnabled)
                 {
@@ -344,13 +344,13 @@ namespace Walkabout.StockQuotes
 
         private HistoryDownloader GetDownloader(IStockQuoteService service)
         {
-            if (_downloader == null)
+            if (this._downloader == null)
             {
-                _downloader = new HistoryDownloader(service, this._downloadLog);
-                _downloader.Error += OnDownloadError;
-                _downloader.HistoryAvailable += OnHistoryAvailable;
+                this._downloader = new HistoryDownloader(service, this._downloadLog);
+                this._downloader.Error += this.OnDownloadError;
+                this._downloader.HistoryAvailable += this.OnHistoryAvailable;
             }
-            return _downloader;
+            return this._downloader;
         }
 
         public event EventHandler<StockQuoteHistory> HistoryAvailable;
@@ -365,22 +365,22 @@ namespace Walkabout.StockQuotes
 
         private void OnDownloadError(object sender, string error)
         {
-            AddError(error);
+            this.AddError(error);
         }
 
         private void OnServiceQuoteAvailable(object sender, StockQuote e)
         {
-            Tuple<int, int> progress = GetProgress();
-            status.ShowProgress(e.Name, 0, progress.Item1, progress.Item2);
+            Tuple<int, int> progress = this.GetProgress();
+            this.status.ShowProgress(e.Name, 0, progress.Item1, progress.Item2);
 
-            lock (fetched)
+            lock (this.fetched)
             {
-                fetched.Add(e.Symbol);
+                this.fetched.Add(e.Symbol);
             }
             this._downloadLog.OnQuoteAvailable(e);
-            lock (_batch)
+            lock (this._batch)
             {
-                _batch.Add(e);
+                this._batch.Add(e);
             }
         }
 
@@ -388,51 +388,51 @@ namespace Walkabout.StockQuotes
         {
             if (!string.IsNullOrEmpty(args.Message))
             {
-                AddError(args.Message);
+                this.AddError(args.Message);
             }
             if (args.Complete)
             {
-                Tuple<int, int> progress = GetProgress();
-                status.ShowProgress("", 0, progress.Item1, progress.Item2);
+                Tuple<int, int> progress = this.GetProgress();
+                this.status.ShowProgress("", 0, progress.Item1, progress.Item2);
 
-                if (!disposed)
+                if (!this.disposed)
                 {
-                    OnDownloadComplete();
+                    this.OnDownloadComplete();
                 }
             }
 
-            UiDispatcher.BeginInvoke(new Action(UpdateUI));
+            UiDispatcher.BeginInvoke(new Action(this.UpdateUI));
         }
 
         private void UpdateUI()
         {
             // must run on the UI thread because some Money changed event handlers change dependency properties and that requires UI thread.
-            lock (_unknown)
+            lock (this._unknown)
             {
-                if (_unknown.Count > 0)
+                if (this._unknown.Count > 0)
                 {
-                    AddError(Walkabout.Properties.Resources.FoundUnknownStockQuotes);
+                    this.AddError(Walkabout.Properties.Resources.FoundUnknownStockQuotes);
                 }
-                _unknown.Clear();
+                this._unknown.Clear();
             }
 
             List<StockQuote> results = null;
-            lock (_batch)
+            lock (this._batch)
             {
-                results = _batch;
-                _batch = new List<StockQuote>();
+                results = this._batch;
+                this._batch = new List<StockQuote>();
             }
-            ProcessResults(results);
+            this.ProcessResults(results);
 
-            if (hasError && !disposed)
+            if (this.hasError && !this.disposed)
             {
-                ShowErrors(null);
+                this.ShowErrors(null);
             }
         }
 
         private void OnServiceDownloadError(object sender, string e)
         {
-            AddError(e);
+            this.AddError(e);
         }
 
         EventHandlerCollection<EventArgs> handlers;
@@ -441,45 +441,45 @@ namespace Walkabout.StockQuotes
         {
             add
             {
-                if (handlers == null)
+                if (this.handlers == null)
                 {
-                    handlers = new EventHandlerCollection<EventArgs>();
+                    this.handlers = new EventHandlerCollection<EventArgs>();
                 }
-                handlers.AddHandler(value);
+                this.handlers.AddHandler(value);
             }
             remove
             {
-                if (handlers != null)
+                if (this.handlers != null)
                 {
-                    handlers.RemoveHandler(value);
+                    this.handlers.RemoveHandler(value);
                 }
             }
         }
 
         void OnDownloadComplete()
         {
-            if (handlers != null && handlers.HasListeners)
+            if (this.handlers != null && this.handlers.HasListeners)
             {
-                handlers.RaiseEvent(this, EventArgs.Empty);
+                this.handlers.RaiseEvent(this, EventArgs.Empty);
             }
         }
 
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            disposed = true;
+            this.disposed = true;
             if (disposing)
             {
-                StopThread();
-                ResetServices();
+                this.StopThread();
+                this.ResetServices();
                 if (this.myMoney != null)
                 {
-                    this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                    this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
                 }
             }
         }
@@ -488,7 +488,7 @@ namespace Walkabout.StockQuotes
         {
             get
             {
-                return (from s in _services where s.PendingCount > 0 select s).Any();
+                return (from s in this._services where s.PendingCount > 0 select s).Any();
             }
         }
 
@@ -513,17 +513,17 @@ namespace Walkabout.StockQuotes
 
         void StopThread()
         {
-            foreach (var item in _services)
+            foreach (var item in this._services)
             {
                 item.Cancel();
             }
-            if (_downloader != null)
+            if (this._downloader != null)
             {
-                _downloader.Cancel();
+                this._downloader.Cancel();
             }
-            if (status != null)
+            if (this.status != null)
             {
-                status.ShowProgress(string.Empty, 0, 0, 0);
+                this.status.ShowProgress(string.Empty, 0, 0, 0);
             }
         }
 
@@ -533,7 +533,7 @@ namespace Walkabout.StockQuotes
         {
             try
             {
-                processingResults = true;  // lock out Enqueue.
+                this.processingResults = true;  // lock out Enqueue.
 
                 // Now batch update the securities instead of dribbling them in one by one.
                 this.myMoney.Securities.BeginUpdate(true);
@@ -541,7 +541,7 @@ namespace Walkabout.StockQuotes
                 {
                     foreach (StockQuote quote in results)
                     {
-                        ProcessResult(quote);
+                        this.ProcessResult(quote);
                     }
                 }
                 finally
@@ -556,13 +556,13 @@ namespace Walkabout.StockQuotes
             }
             finally
             {
-                processingResults = false;
+                this.processingResults = false;
             }
         }
 
         private void ShowErrors(string path)
         {
-            var errorMessages = errorLog.ToString();
+            var errorMessages = this.errorLog.ToString();
             if (string.IsNullOrEmpty(errorMessages))
             {
                 return;
@@ -574,19 +574,19 @@ namespace Walkabout.StockQuotes
                 p.Inlines.Add("See ");
                 var link = new Hyperlink() { NavigateUri = new Uri("file://" + path) };
                 link.Cursor = Cursors.Arrow;
-                link.PreviewMouseLeftButtonDown += OnShowLogFile;
+                link.PreviewMouseLeftButtonDown += this.OnShowLogFile;
                 link.Inlines.Add("Log File");
                 p.Inlines.Add(link);
                 p.Inlines.Add(" for details");
             }
-            OutputPane output = (OutputPane)provider.GetService(typeof(OutputPane));
+            OutputPane output = (OutputPane)this.provider.GetService(typeof(OutputPane));
             output.AppendParagraph(p);
-            if (_firstError)
+            if (this._firstError)
             {
-                _firstError = false;
+                this._firstError = false;
                 output.Show();
             }
-            errorLog = new StringBuilder();
+            this.errorLog = new StringBuilder();
         }
 
 
@@ -602,8 +602,8 @@ namespace Walkabout.StockQuotes
         {
             if (!string.IsNullOrWhiteSpace(msg))
             {
-                hasError = true;
-                errorLog.AppendLine(msg);
+                this.hasError = true;
+                this.errorLog.AppendLine(msg);
             }
         }
 
@@ -636,20 +636,20 @@ namespace Walkabout.StockQuotes
 
         internal void BeginDownloadHistory(string symbol)
         {
-            _firstError = true;
-            var service = GetHistoryService();
+            this._firstError = true;
+            var service = this.GetHistoryService();
             if (service != null)
             {
-                GetDownloader(service).BeginFetchHistory(new List<string>(new string[] { symbol }));
+                this.GetDownloader(service).BeginFetchHistory(new List<string>(new string[] { symbol }));
             }
         }
 
         internal async Task<StockQuoteHistory> GetCachedHistory(string symbol)
         {
-            var service = GetHistoryService();
+            var service = this.GetHistoryService();
             if (service != null)
             {
-                return await GetDownloader(service).GetCachedHistory(symbol);
+                return await this.GetDownloader(service).GetCachedHistory(symbol);
             }
             return null;
         }
@@ -675,13 +675,13 @@ namespace Walkabout.StockQuotes
         string _logFolder;
         ConcurrentDictionary<string, StockQuote> _downloadedQuotes = new ConcurrentDictionary<string, StockQuote>();
 
-        public DownloadLog() { Downloaded = new List<DownloadInfo>(); }
+        public DownloadLog() { this.Downloaded = new List<DownloadInfo>(); }
 
         public List<DownloadInfo> Downloaded { get; set; }
 
         public DownloadInfo GetInfo(string symbol)
         {
-            if (_downloaded.TryGetValue(symbol, out DownloadInfo info))
+            if (this._downloaded.TryGetValue(symbol, out DownloadInfo info))
             {
                 return info;
             }
@@ -692,13 +692,13 @@ namespace Walkabout.StockQuotes
         {
             // record downloaded quotes so they can be merged with quote histories.
             StockQuote existing = null;
-            _downloadedQuotes.TryGetValue(quote.Symbol, out existing);
-            return _downloadedQuotes.TryUpdate(quote.Symbol, quote, existing);
+            this._downloadedQuotes.TryGetValue(quote.Symbol, out existing);
+            return this._downloadedQuotes.TryUpdate(quote.Symbol, quote, existing);
         }
 
         public async Task<StockQuoteHistory> GetHistory(string symbol)
         {
-            if (database.TryGetValue(symbol, out StockQuoteHistory result))
+            if (this.database.TryGetValue(symbol, out StockQuoteHistory result))
             {
                 return result;
             }
@@ -707,7 +707,7 @@ namespace Walkabout.StockQuotes
             DownloadInfo info;
             var changed = false;
             var changedHistory = false;
-            if (_downloaded.TryGetValue(symbol, out info))
+            if (this._downloaded.TryGetValue(symbol, out info))
             {
                 // read from disk on background thread so we don't block the UI thread loading
                 // all these stock quote histories.
@@ -738,10 +738,10 @@ namespace Walkabout.StockQuotes
                 }
                 else
                 {
-                    database[symbol] = history;
+                    this.database[symbol] = history;
                 }
 
-                if (_downloadedQuotes.TryGetValue(info.Symbol, out StockQuote quote))
+                if (this._downloadedQuotes.TryGetValue(info.Symbol, out StockQuote quote))
                 {
                     if (history.AddQuote(quote))
                     {
@@ -751,36 +751,36 @@ namespace Walkabout.StockQuotes
             }
             if (changed)
             {
-                DelayedSave();
+                this.DelayedSave();
             }
             if (changedHistory)
             {
-                DelayedSaveHistory(history);
+                this.DelayedSaveHistory(history);
             }
             return history;
         }
 
         private void DelayedSave()
         {
-            if (!string.IsNullOrEmpty(_logFolder))
+            if (!string.IsNullOrEmpty(this._logFolder))
             {
-                delayedActions.StartDelayedAction("save", new Action(() => { Save(_logFolder); }), TimeSpan.FromSeconds(1));
+                this.delayedActions.StartDelayedAction("save", new Action(() => { this.Save(this._logFolder); }), TimeSpan.FromSeconds(1));
             }
         }
 
         private void DelayedSaveHistory(StockQuoteHistory history)
         {
-            if (!string.IsNullOrEmpty(_logFolder))
+            if (!string.IsNullOrEmpty(this._logFolder))
             {
                 var key = "Save_" + history.Symbol;
-                delayedActions.StartDelayedAction(key, new Action(() => { history.Save(_logFolder); }), TimeSpan.FromSeconds(0.5));
+                this.delayedActions.StartDelayedAction(key, new Action(() => { history.Save(this._logFolder); }), TimeSpan.FromSeconds(0.5));
             }
         }
 
         public void AddHistory(StockQuoteHistory history)
         {
             this.database[history.Symbol] = history;
-            DownloadInfo info = GetInfo(history.Symbol);
+            DownloadInfo info = this.GetInfo(history.Symbol);
             if (info == null)
             {
                 info = new DownloadInfo() { Downloaded = DateTime.Today, Symbol = history.Symbol };
@@ -795,7 +795,7 @@ namespace Walkabout.StockQuotes
             {
                 info.Downloaded = DateTime.Today;
             }
-            DelayedSave();
+            this.DelayedSave();
         }
 
         public static DownloadLog Load(string logFolder)
@@ -872,8 +872,8 @@ namespace Walkabout.StockQuotes
 
         public HistoryDownloader(IStockQuoteService service, DownloadLog log)
         {
-            _service = service;
-            _downloadLog = log;
+            this._service = service;
+            this._downloadLog = log;
         }
 
         public event EventHandler<string> Error;
@@ -882,7 +882,7 @@ namespace Walkabout.StockQuotes
 
         void OnHistoryAvailable(StockQuoteHistory history)
         {
-            _downloadLog.AddHistory(history);
+            this._downloadLog.AddHistory(history);
 
             if (HistoryAvailable != null)
             {
@@ -895,20 +895,20 @@ namespace Walkabout.StockQuotes
         {
             string singleton = null;
             bool busy = false;
-            lock (_downloadSync)
+            lock (this._downloadSync)
             {
-                busy = _downloadingHistory;
+                busy = this._downloadingHistory;
                 if (busy)
                 {
                     if (batch.Count == 1)
                     {
                         // then we need this individual stock ASAP
                         var item = batch[0];
-                        if (_downloadBatch.Contains(item))
+                        if (this._downloadBatch.Contains(item))
                         {
-                            _downloadBatch.Remove(item);
+                            this._downloadBatch.Remove(item);
                         }
-                        _downloadBatch.Insert(0, item);
+                        this._downloadBatch.Insert(0, item);
                         singleton = item;
                     }
                     else
@@ -916,9 +916,9 @@ namespace Walkabout.StockQuotes
                         // then merge the new batch with existing batch that we are downloading.
                         foreach (var item in batch)
                         {
-                            if (!_downloadBatch.Contains(item))
+                            if (!this._downloadBatch.Contains(item))
                             {
-                                _downloadBatch.Add(item);
+                                this._downloadBatch.Add(item);
                             }
                         }
                     }
@@ -926,7 +926,7 @@ namespace Walkabout.StockQuotes
                 else
                 {
                     // starting a new download batch.
-                    _downloadBatch = new List<string>(batch);
+                    this._downloadBatch = new List<string>(batch);
                 }
             }
             if (busy)
@@ -939,25 +939,25 @@ namespace Walkabout.StockQuotes
                     if (history != null && history.History != null && history.History.Count != 0)
                     {
                         // unblock the UI thread with the cached history for now.
-                        OnHistoryAvailable(history);
+                        this.OnHistoryAvailable(history);
                     }
                 }
                 // only allow one thread do all the downloading.
                 return;
             }
 
-            tokenSource = new CancellationTokenSource();
-            _downloadingHistory = true;
+            this.tokenSource = new CancellationTokenSource();
+            this._downloadingHistory = true;
 
-            while (_downloadingHistory)
+            while (this._downloadingHistory)
             {
                 string symbol = null;
-                lock (_downloadSync)
+                lock (this._downloadSync)
                 {
-                    if (_downloadBatch != null && _downloadBatch.Count > 0)
+                    if (this._downloadBatch != null && this._downloadBatch.Count > 0)
                     {
-                        symbol = _downloadBatch.First();
-                        _downloadBatch.Remove(symbol);
+                        symbol = this._downloadBatch.First();
+                        this._downloadBatch.Remove(symbol);
                     }
                 }
                 if (symbol == null)
@@ -986,30 +986,30 @@ namespace Walkabout.StockQuotes
                         {
                             try
                             {
-                                await _service.UpdateHistory(history);
+                                await this._service.UpdateHistory(history);
                             }
                             catch (Exception ex)
                             {
-                                OnError("Download history error: " + ex.Message);
+                                this.OnError("Download history error: " + ex.Message);
                             }
                         }
                         if (history != null && history.History != null && history.History.Count != 0)
                         {
-                            OnHistoryAvailable(history);
+                            this.OnHistoryAvailable(history);
                         }
 #if PerformanceBlocks
                     }
 #endif
                 }
             }
-            _downloadingHistory = false;
+            this._downloadingHistory = false;
 
-            while (_downloadingHistory && _downloadBatch.Count > 0)
+            while (this._downloadingHistory && this._downloadBatch.Count > 0)
             {
                 Thread.Sleep(1000); // wait for download to finish.
             }
-            _downloadingHistory = false;
-            OnError("Download history complete");
+            this._downloadingHistory = false;
+            this.OnError("Download history complete");
         }
 
         void OnError(string message)
@@ -1022,10 +1022,10 @@ namespace Walkabout.StockQuotes
 
         internal void Cancel()
         {
-            _downloadingHistory = false;
-            if (tokenSource != null)
+            this._downloadingHistory = false;
+            if (this.tokenSource != null)
             {
-                tokenSource.Cancel();
+                this.tokenSource.Cancel();
             }
         }
 

@@ -14,19 +14,19 @@ namespace OfxTestServer
 
         public MainWindow()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var url = "http://localhost:3000/ofx/test/";
             int delay = 1000;
-            server = new OfxServer();
-            server.UserName = "test";
-            server.Password = "1234";
-            Dispatcher.BeginInvoke(new Action<TextBox>(OnFocusTextBox), UserName);
-            this.DataContext = server;
-            MFAChallengeGrid.ItemsSource = server.MFAChallenges;
+            this.server = new OfxServer();
+            this.server.UserName = "test";
+            this.server.Password = "1234";
+            this.Dispatcher.BeginInvoke(new Action<TextBox>(this.OnFocusTextBox), this.UserName);
+            this.DataContext = this.server;
+            this.MFAChallengeGrid.ItemsSource = this.server.MFAChallenges;
             var app = Application.Current as App;
             string[] args = app.CommandLineArgs;
 
@@ -44,12 +44,12 @@ namespace OfxTestServer
                     }
                 }
             }
-            server.Start(url, delay);
+            this.server.Start(url, delay);
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            server.Terminate();
+            this.server.Terminate();
             base.OnClosing(e);
         }
 
@@ -57,7 +57,7 @@ namespace OfxTestServer
         {
             if (sender is TextBox box)
             {
-                OnFocusTextBox(box);
+                this.OnFocusTextBox(box);
             }
         }
 
@@ -69,45 +69,45 @@ namespace OfxTestServer
 
         private void OnShowAdditionalCredentials(object sender, RoutedEventArgs e)
         {
-            AdditionalCredentials.Visibility = Visibility.Visible;
+            this.AdditionalCredentials.Visibility = Visibility.Visible;
         }
 
         private void OnHideAdditionalCredentials(object sender, RoutedEventArgs e)
         {
-            AdditionalCredentials.Visibility = Visibility.Collapsed;
+            this.AdditionalCredentials.Visibility = Visibility.Collapsed;
         }
 
         private void OnShowAuthTokenQuestions(object sender, RoutedEventArgs e)
         {
-            AuthTokenQuestions.Visibility = Visibility.Visible;
+            this.AuthTokenQuestions.Visibility = Visibility.Visible;
         }
 
         private void OnHideAuthTokenQuestions(object sender, RoutedEventArgs e)
         {
-            AuthTokenQuestions.Visibility = Visibility.Collapsed;
+            this.AuthTokenQuestions.Visibility = Visibility.Collapsed;
         }
 
         private void OnShowMFAChallengeQuestions(object sender, RoutedEventArgs e)
         {
-            server.AddStandardChallenges();
-            MFAChallengeQuestions.Visibility = Visibility.Visible;
+            this.server.AddStandardChallenges();
+            this.MFAChallengeQuestions.Visibility = Visibility.Visible;
         }
 
         private void OnHideMFAChallengeQuestions(object sender, RoutedEventArgs e)
         {
-            server.RemoveChallenges();
-            MFAChallengeQuestions.Visibility = Visibility.Collapsed;
+            this.server.RemoveChallenges();
+            this.MFAChallengeQuestions.Visibility = Visibility.Collapsed;
         }
 
         private void OnShowChangePasswordQuestions(object sender, RoutedEventArgs e)
         {
-            NewPasswordQuestions.Visibility = Visibility.Visible;
-            server.ChangePassword = true;
+            this.NewPasswordQuestions.Visibility = Visibility.Visible;
+            this.server.ChangePassword = true;
         }
 
         private void OnHideChangePasswordQuestions(object sender, RoutedEventArgs e)
         {
-            NewPasswordQuestions.Visibility = Visibility.Collapsed;
+            this.NewPasswordQuestions.Visibility = Visibility.Collapsed;
         }
     }
 }

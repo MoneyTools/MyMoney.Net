@@ -22,7 +22,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return window.Current.Name;
+                return this.window.Current.Name;
             }
         }
 
@@ -44,76 +44,76 @@ namespace Walkabout.Tests.Wrappers
 
         public string UserName
         {
-            get { return window.GetTextBox("UserName"); }
-            set { window.SetTextBox("UserName", value); }
+            get { return this.window.GetTextBox("UserName"); }
+            set { this.window.SetTextBox("UserName", value); }
         }
 
         public string Password
         {
-            get { return window.GetTextBox("Password"); }
-            set { window.SetTextBox("Password", value); }
+            get { return this.window.GetTextBox("Password"); }
+            set { this.window.SetTextBox("Password", value); }
         }
 
         public bool UseAdditionalCredentials
         {
-            get { return window.GetRadioButton("UseAdditionalCredentials"); }
-            set { window.SetRadioButton("UseAdditionalCredentials", value); }
+            get { return this.window.GetRadioButton("UseAdditionalCredentials"); }
+            set { this.window.SetRadioButton("UseAdditionalCredentials", value); }
         }
 
         public bool AuthTokenRequired
         {
-            get { return window.GetRadioButton("AuthTokenRequired"); }
-            set { window.SetRadioButton("AuthTokenRequired", value); }
+            get { return this.window.GetRadioButton("AuthTokenRequired"); }
+            set { this.window.SetRadioButton("AuthTokenRequired", value); }
         }
 
         public bool MFAChallengeRequired
         {
-            get { return window.GetRadioButton("MFAChallengeRequired"); }
-            set { window.SetRadioButton("MFAChallengeRequired", value); }
+            get { return this.window.GetRadioButton("MFAChallengeRequired"); }
+            set { this.window.SetRadioButton("MFAChallengeRequired", value); }
         }
 
         public bool ChangePasswordRequired
         {
-            get { return window.GetRadioButton("ChangePasswordRequired"); }
-            set { window.SetRadioButton("ChangePasswordRequired", value); }
+            get { return this.window.GetRadioButton("ChangePasswordRequired"); }
+            set { this.window.SetRadioButton("ChangePasswordRequired", value); }
         }
 
 
         public string UserCred1Label
         {
-            get { return window.GetTextBox("UserCred1Label"); }
-            set { window.SetTextBox("UserCred1Label", value); }
+            get { return this.window.GetTextBox("UserCred1Label"); }
+            set { this.window.SetTextBox("UserCred1Label", value); }
         }
 
         public string UserCred1
         {
-            get { return window.GetTextBox("UserCred1"); }
-            set { window.SetTextBox("UserCred1", value); }
+            get { return this.window.GetTextBox("UserCred1"); }
+            set { this.window.SetTextBox("UserCred1", value); }
         }
 
         public string UserCred2Label
         {
-            get { return window.GetTextBox("UserCred2Label"); }
-            set { window.SetTextBox("UserCred2Label", value); }
+            get { return this.window.GetTextBox("UserCred2Label"); }
+            set { this.window.SetTextBox("UserCred2Label", value); }
         }
 
         public string UserCred2
         {
-            get { return window.GetTextBox("UserCred2"); }
-            set { window.SetTextBox("UserCred2", value); }
+            get { return this.window.GetTextBox("UserCred2"); }
+            set { this.window.SetTextBox("UserCred2", value); }
         }
 
 
         public string AuthTokenLabel
         {
-            get { return window.GetTextBox("AuthTokenLabel"); }
-            set { window.SetTextBox("AuthTokenLabel", value); }
+            get { return this.window.GetTextBox("AuthTokenLabel"); }
+            set { this.window.SetTextBox("AuthTokenLabel", value); }
         }
 
         public string AuthToken
         {
-            get { return window.GetTextBox("AuthToken"); }
-            set { window.SetTextBox("AuthToken", value); }
+            get { return this.window.GetTextBox("AuthToken"); }
+            set { this.window.SetTextBox("AuthToken", value); }
         }
     }
 }

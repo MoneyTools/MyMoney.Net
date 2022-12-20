@@ -32,18 +32,18 @@ namespace Walkabout.Charts
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.CategoryChartInitialize))
             {
 #endif
-                InitializeComponent();
-                IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnIsVisibleChanged);
+                this.InitializeComponent();
+                IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
 
-                unassigned = new Category() { Name = "Unknown", Type = Data.CategoryType.None };
-                transferredIn = new Category() { Name = "Transferred In", Type = Data.CategoryType.Transfer };
-                transferredOut = new Category() { Name = "Transferred Out", Type = Data.CategoryType.Transfer };
+                this.unassigned = new Category() { Name = "Unknown", Type = Data.CategoryType.None };
+                this.transferredIn = new Category() { Name = "Transferred In", Type = Data.CategoryType.Transfer };
+                this.transferredOut = new Category() { Name = "Transferred Out", Type = Data.CategoryType.Transfer };
 
-                this.PieChart.PieSliceClicked += OnPieSliceClicked;
-                this.PieChart.PieSliceHover += OnPieSliceHovered;
-                this.PieChart.ToolTipGenerator = OnGenerateTip;
+                this.PieChart.PieSliceClicked += this.OnPieSliceClicked;
+                this.PieChart.PieSliceHover += this.OnPieSliceHovered;
+                this.PieChart.ToolTipGenerator = this.OnGenerateTip;
 
-                this.Legend.Toggled += OnLegendToggled;
+                this.Legend.Toggled += this.OnLegendToggled;
 #if PerformanceBlocks
             }
 #endif
@@ -52,7 +52,7 @@ namespace Walkabout.Charts
         private void OnLegendToggled(object sender, ChartDataValue e)
         {
             // filtering out a category.
-            FilterChartData();
+            this.FilterChartData();
         }
 
         private UIElement OnGenerateTip(ChartDataValue value)
@@ -67,26 +67,26 @@ namespace Walkabout.Charts
         {
             if ((bool)e.NewValue)
             {
-                if (dataDirty)
+                if (this.dataDirty)
                 {
-                    UpdateChart();
+                    this.UpdateChart();
                 }
                 else
                 {
-                    ShowChart();
+                    this.ShowChart();
                 }
             }
         }
 
         public CategoryData Selection
         {
-            get { return selection; }
+            get { return this.selection; }
             set
             {
-                if (selection != value)
+                if (this.selection != value)
                 {
-                    selection = value;
-                    OnSelectionChanged();
+                    this.selection = value;
+                    this.OnSelectionChanged();
                 }
             }
         }
@@ -109,7 +109,7 @@ namespace Walkabout.Charts
         {
             if (e.UserData is CategoryData data)
             {
-                Selection = data;
+                this.Selection = data;
             }
         }
 
@@ -125,14 +125,14 @@ namespace Walkabout.Charts
         public IList<Transaction> Transactions
         {
             get { return this.transactions; }
-            set { this.transactions = value; UpdateChart(); }
+            set { this.transactions = value; this.UpdateChart(); }
         }
 
         public Category Unknown { get; set; }
 
         private bool MatchesFilter(Category c)
         {
-            return this.filter == null || this.filter.Contains(c) || (this.filter == Unknown && c == null);
+            return this.filter == null || this.filter.Contains(c) || (this.filter == this.Unknown && c == null);
         }
 
         public decimal NetAmount { get; private set; }
@@ -145,12 +145,12 @@ namespace Walkabout.Charts
 
             bool willTally = false;
 
-            if (transactions == null)
+            if (this.transactions == null)
             {
                 return 0;
             }
 
-            foreach (object row in transactions)
+            foreach (object row in this.transactions)
             {
                 Transaction t = row as Transaction;
                 if (t == null)
@@ -168,26 +168,26 @@ namespace Walkabout.Charts
                         decimal subtotal = s.Amount;
                         if (s.Transfer != null)
                         {
-                            willTally = WillTally(t, t.amount < 0 ? transferredOut : transferredIn, amount, isExpenses);
+                            willTally = this.WillTally(t, t.amount < 0 ? this.transferredOut : this.transferredIn, amount, isExpenses);
                         }
-                        else if (MatchesFilter(s.Category))
+                        else if (this.MatchesFilter(s.Category))
                         {
-                            willTally = WillTally(t, s.Category, subtotal, isExpenses);
+                            willTally = this.WillTally(t, s.Category, subtotal, isExpenses);
                         }
                         amount -= subtotal;
                     }
                     if (amount != 0)
                     {
-                        willTally = WillTally(t, unassigned, amount, isExpenses);
+                        willTally = this.WillTally(t, this.unassigned, amount, isExpenses);
                     }
                 }
                 else if (t.Transfer != null)
                 {
-                    willTally = WillTally(t, t.amount < 0 ? transferredOut : transferredIn, amount, isExpenses);
+                    willTally = this.WillTally(t, t.amount < 0 ? this.transferredOut : this.transferredIn, amount, isExpenses);
                 }
-                else if (MatchesFilter(t.Category))
+                else if (this.MatchesFilter(t.Category))
                 {
-                    willTally = WillTally(t, t.Category, amount, isExpenses);
+                    willTally = this.WillTally(t, t.Category, amount, isExpenses);
                 }
 
                 if (willTally)
@@ -196,7 +196,7 @@ namespace Walkabout.Charts
                 }
             }
 
-            NetAmount = total;
+            this.NetAmount = total;
 
             return total;
         }
@@ -209,17 +209,17 @@ namespace Walkabout.Charts
 
             if (!this.IsVisible)
             {
-                dataDirty = true;
+                this.dataDirty = true;
 
                 return;
             }
 
-            TotalAmount.Text = string.Format("{0:C2}", ComputeNetAmount());
+            this.TotalAmount.Text = string.Format("{0:C2}", this.ComputeNetAmount());
             decimal total = 0;
 
-            if (transactions != null)
+            if (this.transactions != null)
             {
-                foreach (object row in transactions)
+                foreach (object row in this.transactions)
                 {
                     Transaction t = row as Transaction;
                     if (t == null)
@@ -238,26 +238,26 @@ namespace Walkabout.Charts
                             decimal subtotal = s.Amount;
                             if (s.Transfer != null)
                             {
-                                tallied = Tally(t, t.amount < 0 ? transferredOut : transferredIn, amount, isExpenses);
+                                tallied = this.Tally(t, t.amount < 0 ? this.transferredOut : this.transferredIn, amount, isExpenses);
                             }
-                            else if (MatchesFilter(s.Category))
+                            else if (this.MatchesFilter(s.Category))
                             {
-                                tallied = Tally(t, s.Category, subtotal, isExpenses);
+                                tallied = this.Tally(t, s.Category, subtotal, isExpenses);
                             }
                             amount -= subtotal;
                         }
                         if (amount != 0)
                         {
-                            tallied = Tally(t, unassigned, amount, isExpenses);
+                            tallied = this.Tally(t, this.unassigned, amount, isExpenses);
                         }
                     }
                     else if (t.Transfer != null)
                     {
-                        tallied = Tally(t, t.amount < 0 ? transferredOut : transferredIn, amount, isExpenses);
+                        tallied = this.Tally(t, t.amount < 0 ? this.transferredOut : this.transferredIn, amount, isExpenses);
                     }
-                    else if (MatchesFilter(t.Category))
+                    else if (this.MatchesFilter(t.Category))
                     {
-                        tallied = Tally(t, t.Category, amount, isExpenses);
+                        tallied = this.Tally(t, t.Category, amount, isExpenses);
                     }
                     if (tallied)
                     {
@@ -265,37 +265,37 @@ namespace Walkabout.Charts
                     }
                 }
 
-                chartDirty = true;
+                this.chartDirty = true;
             }
 
-            dataDirty = false;
+            this.dataDirty = false;
 
-            ShowChart();
+            this.ShowChart();
         }
 
         private void ShowChart()
         {
             // Now update the observable collection.
-            if (this.IsVisible && chartDirty)
+            if (this.IsVisible && this.chartDirty)
             {
-                chartDirty = false;
+                this.chartDirty = false;
 
-                ChartDataSeries series = new ChartDataSeries() { Name = CategoryType.ToString() };
+                ChartDataSeries series = new ChartDataSeries() { Name = this.CategoryType.ToString() };
 
-                foreach (CategoryData item in from c in map.Values orderby c.Total descending select c)
+                foreach (CategoryData item in from c in this.map.Values orderby c.Total descending select c)
                 {
                     series.Values.Add(new ChartDataValue() { Label = item.Name, Value = item.Total, Color = item.Color, UserData = item });
                 }
 
-                TotalAmount.Text = string.Format("{0:C2}", NetAmount);
-                PieChart.Series = series;
-                Legend.DataSeries = series;
+                this.TotalAmount.Text = string.Format("{0:C2}", this.NetAmount);
+                this.PieChart.Series = series;
+                this.Legend.DataSeries = series;
             }
         }
 
         private void FilterChartData()
         {
-            var data = PieChart.Series;
+            var data = this.PieChart.Series;
             double total = 0;
             foreach (var dv in data.Values)
             {
@@ -305,9 +305,9 @@ namespace Walkabout.Charts
                 }
             }
 
-            PieChart.Update();
-            NetAmount = (decimal)total;
-            TotalAmount.Text = string.Format("{0:C2}", NetAmount);
+            this.PieChart.Update();
+            this.NetAmount = (decimal)total;
+            this.TotalAmount.Text = string.Format("{0:C2}", this.NetAmount);
         }
 
 
@@ -317,7 +317,7 @@ namespace Walkabout.Charts
 
             if (c == null)
             {
-                c = unassigned;
+                c = this.unassigned;
             }
 
             switch (this.CategoryType)
@@ -345,13 +345,13 @@ namespace Walkabout.Charts
                     return false;
             }
 
-            if (filter == null)
+            if (this.filter == null)
             {
                 c = c.Root;
             }
             else
             {
-                while (c != null && c != filter && c.ParentCategory != filter)
+                while (c != null && c != this.filter && c.ParentCategory != this.filter)
                 {
                     // then we are looking at a "grand child category", so need to roll this up to the child category 
                     c = c.ParentCategory;
@@ -371,7 +371,7 @@ namespace Walkabout.Charts
 
             if (c == null)
             {
-                c = unassigned;
+                c = this.unassigned;
             }
 
             switch (this.CategoryType)
@@ -399,13 +399,13 @@ namespace Walkabout.Charts
                     return false;
             }
 
-            if (filter == null)
+            if (this.filter == null)
             {
                 c = c.Root;
             }
             else
             {
-                while (c != null && c != filter && c.ParentCategory != filter)
+                while (c != null && c != this.filter && c.ParentCategory != this.filter)
                 {
                     // then we are looking at a "grand child category", so need to roll this up to the child category 
                     c = c.ParentCategory;
@@ -417,9 +417,9 @@ namespace Walkabout.Charts
             }
 
             CategoryData cd;
-            if (!map.TryGetValue(c, out cd))
+            if (!this.map.TryGetValue(c, out cd))
             {
-                map[c] = cd = new CategoryData(c);
+                this.map[c] = cd = new CategoryData(c);
 
                 if (string.IsNullOrWhiteSpace(c.InheritedColor))
                 {
@@ -435,10 +435,10 @@ namespace Walkabout.Charts
 
         private void OnExport(object sender, RoutedEventArgs e)
         {
-            if (PieChart.Series != null && PieChart.Series.Values.Count > 0)
+            if (this.PieChart.Series != null && this.PieChart.Series.Values.Count > 0)
             {
                 ChartData data = new ChartData();
-                data.AddSeries(new ChartDataSeries() { Values = PieChart.Series.Values, Name = "Categories" });
+                data.AddSeries(new ChartDataSeries() { Values = this.PieChart.Series.Values, Name = "Categories" });
                 data.Export();
             }
         }

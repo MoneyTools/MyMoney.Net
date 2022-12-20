@@ -22,13 +22,13 @@ namespace Microsoft.VisualStudio.PerformanceGraph
     {
         public Legend()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public void AddItem(Color color, string name)
         {
-            int row = LegendGrid.RowDefinitions.Count;
-            LegendGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+            int row = this.LegendGrid.RowDefinitions.Count;
+            this.LegendGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
 
             Rectangle r = new Rectangle();
             r.Margin = new Thickness(1);
@@ -38,7 +38,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             Grid.SetColumn(r, 0);
             Grid.SetRow(r, row);
 
-            LegendGrid.Children.Add(r);
+            this.LegendGrid.Children.Add(r);
 
             TextBlock block = new TextBlock() { Text = name };
             block.VerticalAlignment = System.Windows.VerticalAlignment.Center;
@@ -46,13 +46,13 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             Grid.SetColumn(block, 1);
             Grid.SetRow(block, row);
 
-            LegendGrid.Children.Add(block);
+            this.LegendGrid.Children.Add(block);
         }
 
         public void Clear()
         {
-            LegendGrid.Children.Clear();
-            LegendGrid.RowDefinitions.Clear();
+            this.LegendGrid.Children.Clear();
+            this.LegendGrid.RowDefinitions.Clear();
         }
 
         private void OnCloseBoxClick(object sender, RoutedEventArgs e)

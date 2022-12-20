@@ -11,7 +11,7 @@ namespace Walkabout.Utilities
 
         public override object GetCurrentValue(object defaultOriginValue, object defaultDestinationValue, AnimationClock animationClock)
         {
-            return GetCurrentValueCore((PointCollection)defaultOriginValue, (PointCollection)defaultDestinationValue, animationClock);
+            return this.GetCurrentValueCore((PointCollection)defaultOriginValue, (PointCollection)defaultDestinationValue, animationClock);
         }
 
         protected abstract PointCollection GetCurrentValueCore(
@@ -29,8 +29,8 @@ namespace Walkabout.Utilities
 
         public PointCollection From
         {
-            get { return (PointCollection)GetValue(FromProperty); }
-            set { SetValue(FromProperty, value); }
+            get { return (PointCollection)this.GetValue(FromProperty); }
+            set { this.SetValue(FromProperty, value); }
         }
 
         public static readonly DependencyProperty FromProperty =
@@ -44,32 +44,32 @@ namespace Walkabout.Utilities
         private void OnPointsChanged()
         {
             // Set ptsFrom from From 
-            PointCollection ptsFrom = From ?? new PointCollection();
+            PointCollection ptsFrom = this.From ?? new PointCollection();
 
             // Set ptsTo from To, By, or a default value.
-            ptsTo.Clear();
+            this.ptsTo.Clear();
 
-            if (To != null)
+            if (this.To != null)
             {
-                foreach (Point pt in To)
-                    ptsTo.Add(pt);
+                foreach (Point pt in this.To)
+                    this.ptsTo.Add(pt);
             }
-            else if (By != null)
+            else if (this.By != null)
             {
-                var count = Math.Min(ptsFrom.Count, By.Count);
-                for (int i = 0; i < By.Count; i++)
+                var count = Math.Min(ptsFrom.Count, this.By.Count);
+                for (int i = 0; i < this.By.Count; i++)
                 {
                     double fromX = (i < ptsFrom.Count) ? ptsFrom[i].X : 0;
                     double fromY = (i < ptsFrom.Count) ? ptsFrom[i].Y : 0;
-                    ptsTo.Add(new Point(fromX + By[i].X, fromY + By[i].Y));
+                    this.ptsTo.Add(new Point(fromX + this.By[i].X, fromY + this.By[i].Y));
                 }
             }
         }
 
         public PointCollection To
         {
-            get { return (PointCollection)GetValue(ToProperty); }
-            set { SetValue(ToProperty, value); }
+            get { return (PointCollection)this.GetValue(ToProperty); }
+            set { this.SetValue(ToProperty, value); }
         }
 
         public static readonly DependencyProperty ToProperty =
@@ -82,8 +82,8 @@ namespace Walkabout.Utilities
 
         public PointCollection By
         {
-            get { return (PointCollection)GetValue(ByProperty); }
-            set { SetValue(ByProperty, value); }
+            get { return (PointCollection)this.GetValue(ByProperty); }
+            set { this.SetValue(ByProperty, value); }
         }
 
         public static readonly DependencyProperty ByProperty =
@@ -96,12 +96,12 @@ namespace Walkabout.Utilities
 
         public bool IsAdditive
         {
-            get { return (bool)GetValue(IsAdditiveProperty); }
+            get { return (bool)this.GetValue(IsAdditiveProperty); }
         }
 
         public bool IsCumulative
         {
-            get { return (bool)GetValue(IsCumulativeProperty); }
+            get { return (bool)this.GetValue(IsCumulativeProperty); }
         }
 
         PointCollection ptsDst1 = new PointCollection();
@@ -122,33 +122,33 @@ namespace Walkabout.Utilities
             int count;
 
             // Set ptsFrom from From or defaultOriginValue
-            PointCollection ptsFrom = From ?? defaultOriginValue;
+            PointCollection ptsFrom = this.From ?? defaultOriginValue;
 
-            if (To == null && By == null)
+            if (this.To == null && this.By == null)
             {
-                ptsTo.Clear();
-                foreach (Point pt in defaultDestinationValue) ptsTo.Add(pt);
+                this.ptsTo.Clear();
+                foreach (Point pt in defaultDestinationValue) this.ptsTo.Add(pt);
             }
 
             // Choose which destination collection to use
-            PointCollection ptsDst = flip ? ptsDst1 : ptsDst2;
-            flip = !flip;
+            PointCollection ptsDst = this.flip ? this.ptsDst1 : this.ptsDst2;
+            this.flip = !this.flip;
             ptsDst.Clear();
 
             // Interpolate the points, but in a left to right sweeping motion
             // where column growth happens in 1/10th of the allocated duration (0.1 on our 0-1 clock scale).
-            double end = (double)ptsTo.Count;
+            double end = (double)this.ptsTo.Count;
 
-            for (int i = 0; i < ptsTo.Count; i++)
+            for (int i = 0; i < this.ptsTo.Count; i++)
             {
                 double fromX = (i < ptsFrom.Count) ? ptsFrom[i].X : 0;
                 double fromY = (i < ptsFrom.Count) ? ptsFrom[i].Y : 0;
-                ptsDst.Add(new Point((1 - progress) * fromX + progress * ptsTo[i].X,
-                                     (1 - progress) * fromY + progress * ptsTo[i].Y));
+                ptsDst.Add(new Point((1 - progress) * fromX + progress * this.ptsTo[i].X,
+                                     (1 - progress) * fromY + progress * this.ptsTo[i].Y));
             }
 
             // If IsAdditive, add the base values to ptsDst
-            if (IsAdditive && From != null && (To != null || By != null))
+            if (this.IsAdditive && this.From != null && (this.To != null || this.By != null))
             {
                 count = Math.Min(ptsDst.Count, defaultOriginValue.Count);
 
@@ -162,15 +162,15 @@ namespace Walkabout.Utilities
             }
 
             // Take account of IsCumulative
-            if (IsCumulative && animationClock.CurrentIteration != null)
+            if (this.IsCumulative && animationClock.CurrentIteration != null)
             {
                 int iter = animationClock.CurrentIteration.Value;
 
                 for (int i = 0; i < ptsDst.Count; i++)
                 {
                     Point pt = ptsDst[i];
-                    pt.X += (iter - 1) * (ptsTo[i].X - ptsFrom[i].X);
-                    pt.Y += (iter - 1) * (ptsTo[i].Y - ptsFrom[i].Y);
+                    pt.X += (iter - 1) * (this.ptsTo[i].X - ptsFrom[i].X);
+                    pt.Y += (iter - 1) * (this.ptsTo[i].Y - ptsFrom[i].Y);
                     ptsDst[i] = pt;
                 }
             }

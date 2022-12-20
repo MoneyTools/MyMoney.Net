@@ -48,14 +48,14 @@ namespace Walkabout.Data
             return result;
         }
 
-        public string SettingsFileName => fileName;
+        public string SettingsFileName => this.fileName;
 
         public void Save()
         {
-            if (!string.IsNullOrEmpty(fileName))
+            if (!string.IsNullOrEmpty(this.fileName))
             {
                 var writerSettings = new XmlWriterSettings() { Indent = true };
-                using (var r = XmlWriter.Create(fileName, writerSettings))
+                using (var r = XmlWriter.Create(this.fileName, writerSettings))
                 {
                     var s = new XmlSerializer(typeof(DatabaseSettings));
                     s.Serialize(r, this);
@@ -65,8 +65,8 @@ namespace Walkabout.Data
 
         public void RaiseAllEvents()
         {
-            OnPropertyChanged(nameof(FiscalYearStart));
-            OnPropertyChanged(nameof(RentalManagement));
+            this.OnPropertyChanged(nameof(this.FiscalYearStart));
+            this.OnPropertyChanged(nameof(this.RentalManagement));
         }
 
         public int FiscalYearStart
@@ -77,20 +77,20 @@ namespace Walkabout.Data
                 if (this.fiscalYearStart != value)
                 {
                     this.fiscalYearStart = value;
-                    OnPropertyChanged(nameof(FiscalYearStart));
+                    this.OnPropertyChanged(nameof(this.FiscalYearStart));
                 }
             }
         }
 
         public bool RentalManagement
         {
-            get => this.rentalManagement.HasValue ? rentalManagement.Value : false;
+            get => this.rentalManagement.HasValue ? this.rentalManagement.Value : false;
             set
             {
                 if (this.rentalManagement != value)
                 {
                     this.rentalManagement = value;
-                    OnPropertyChanged(nameof(RentalManagement));
+                    this.OnPropertyChanged(nameof(this.RentalManagement));
                 }
             }
         }

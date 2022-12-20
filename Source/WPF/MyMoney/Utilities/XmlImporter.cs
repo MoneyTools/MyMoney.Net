@@ -20,14 +20,14 @@ namespace Walkabout.Migrate
         {
         }
 
-        public Account LastAccount => last;
+        public Account LastAccount => this.last;
 
         public override int Import(string file)
         {
             string ext = Path.GetExtension(file).ToLowerInvariant();
             if (ext == ".xml")
             {
-                return ImportXml(file);
+                return this.ImportXml(file);
             }
             else
             {
@@ -45,7 +45,7 @@ namespace Walkabout.Migrate
             int c = 0;
             using (XmlReader reader = XmlReader.Create(file))
             {
-                foreach (object o in ImportObjects(reader, null, null))
+                foreach (object o in this.ImportObjects(reader, null, null))
                 {
                     Account a = o as Account;
                     if (a != null)
@@ -77,7 +77,7 @@ namespace Walkabout.Migrate
         public IEnumerable<object> ImportObjects(XmlReader reader, Account selected, Transaction selectedTransaction)
         {
             List<object> result = new List<object>();
-            Money.BeginUpdate(this);
+            this.Money.BeginUpdate(this);
             try
             {
                 reader.MoveToElement();
@@ -89,7 +89,7 @@ namespace Walkabout.Migrate
                         {
                             case "Account":
                                 Account a = (Account)AccountSerializer.ReadObject(reader, false);
-                                a = MergeAccount(a);
+                                a = this.MergeAccount(a);
                                 result.Add(a);
                                 break;
                             case "Transaction":
@@ -98,9 +98,9 @@ namespace Walkabout.Migrate
                                 if (ta == null)
                                 {
                                     // this code path is used when importing entire account from a file.
-                                    ta = Money.Accounts.FindAccount(t.AccountName);
+                                    ta = this.Money.Accounts.FindAccount(t.AccountName);
                                 }
-                                AddTransaction(ta, t);
+                                this.AddTransaction(ta, t);
                                 result.Add(t);
                                 break;
                             case "Split":
@@ -118,7 +118,7 @@ namespace Walkabout.Migrate
                                 if (i.SecurityName != null)
                                 {
                                     result.Add(i);
-                                    AddInvestment(selected, i);
+                                    this.AddInvestment(selected, i);
                                 }
                                 break;
                             default:
@@ -134,7 +134,7 @@ namespace Walkabout.Migrate
             }
             finally
             {
-                Money.EndUpdate();
+                this.Money.EndUpdate();
             }
             return result;
         }
@@ -149,7 +149,7 @@ namespace Walkabout.Migrate
                     using (XmlReader reader = XmlReader.Create(sr))
                     {
                         Account a = (Account)accountSerializer.ReadObject(reader, false);
-                        MergeAccount(a);
+                        this.MergeAccount(a);
                         return a;
                     }
                 }
@@ -162,12 +162,12 @@ namespace Walkabout.Migrate
 
         private Account MergeAccount(Account a)
         {
-            Account found = Money.Accounts.FindAccount(a.Name);
+            Account found = this.Money.Accounts.FindAccount(a.Name);
             if (found == null)
             {
-                a.PostDeserializeFixup(Money);
+                a.PostDeserializeFixup(this.Money);
                 a.Id = -1;
-                Money.Accounts.AddAccount(a);
+                this.Money.Accounts.AddAccount(a);
                 found = a;
             }
             return found;
@@ -181,7 +181,7 @@ namespace Walkabout.Migrate
                 throw new Exception("Cannot add transactions before we find account information in the imported xml file");
             }
 
-            t.PostDeserializeFixup(Money, Money.Transactions, a, true);
+            t.PostDeserializeFixup(this.Money, this.Money.Transactions, a, true);
 
             if (t.Unaccepted)
             {
@@ -197,9 +197,9 @@ namespace Walkabout.Migrate
             long originalId = t.Id;
             t.Id = -1;
             t.Account = a;
-            Money.Transactions.Add(t);
+            this.Money.Transactions.Add(t);
 
-            remappedIds[originalId] = t.Id;
+            this.remappedIds[originalId] = t.Id;
 
         }
 
@@ -211,15 +211,15 @@ namespace Walkabout.Migrate
             }
 
             long id;
-            if (!remappedIds.TryGetValue(i.Id, out id))
+            if (!this.remappedIds.TryGetValue(i.Id, out id))
             {
                 throw new Exception("Cannot find original transaction mentioned by this investment");
             }
 
             string name = i.SecurityName;
-            i.Security = Money.Securities.FindSecurity(name, true);
+            i.Security = this.Money.Securities.FindSecurity(name, true);
 
-            Transaction u = Money.Transactions.FindTransactionById(id);
+            Transaction u = this.Money.Transactions.FindTransactionById(id);
             if (u != null)
             {
                 Investment j = u.GetOrCreateInvestment();

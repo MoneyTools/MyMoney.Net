@@ -37,7 +37,7 @@ namespace Walkabout.Data
         /// <summary>
         /// The total remaining cost basis based on the number of units remaning.
         /// </summary>
-        public decimal TotalCostBasis { get { return CostBasisPerUnit * UnitsRemaining; } }
+        public decimal TotalCostBasis { get { return this.CostBasisPerUnit * this.UnitsRemaining; } }
 
         /// <summary>
         /// Get market value of remaining units.
@@ -46,7 +46,7 @@ namespace Walkabout.Data
         {
             get
             {
-                return this.FuturesFactor * UnitsRemaining * Security.Price;
+                return this.FuturesFactor * this.UnitsRemaining * this.Security.Price;
             }
         }
         public decimal FuturesFactor
@@ -55,7 +55,7 @@ namespace Walkabout.Data
             {
                 decimal factor = 1;
                 // futures prices are always listed by the instance.  But wen you buy 1 contract, you always get 100 futures in that contract
-                if (Security.SecurityType == SecurityType.Futures)
+                if (this.Security.SecurityType == SecurityType.Futures)
                 {
                     factor = 100;
                 }
@@ -84,10 +84,10 @@ namespace Walkabout.Data
             return new SecuritySale()
             {
                 DateSold = date,
-                Security = this.Security,
-                CostBasisPerUnit = this.CostBasisPerUnit,
+                Security = Security,
+                CostBasisPerUnit = CostBasisPerUnit,
                 UnitsSold = canSell,
-                DateAcquired = this.DatePurchased,
+                DateAcquired = DatePurchased,
                 SalePricePerUnit = unitSalePrice
             };
         }
@@ -142,17 +142,17 @@ namespace Walkabout.Data
         /// <summary>
         /// The total remaining cost basis based on the number of units remaining.
         /// </summary>
-        public decimal TotalCostBasis { get { return CostBasisPerUnit * UnitsSold; } }
+        public decimal TotalCostBasis { get { return this.CostBasisPerUnit * this.UnitsSold; } }
 
         /// <summary>
         /// The total funds received from the transaction
         /// </summary>
-        public decimal SaleProceeds { get { return SalePricePerUnit * UnitsSold; } }
+        public decimal SaleProceeds { get { return this.SalePricePerUnit * this.UnitsSold; } }
 
         /// <summary>
         /// The total difference between the Proceeds and the TotalCostBasis
         /// </summary>
-        public decimal TotalGain { get { return SaleProceeds - TotalCostBasis; } }
+        public decimal TotalGain { get { return this.SaleProceeds - this.TotalCostBasis; } }
 
         /// <summary>
         /// For a roll-up report where individual SecuritySale is too much detail we
@@ -228,24 +228,24 @@ namespace Walkabout.Data
         {
             SecurityPurchase sp = new SecurityPurchase()
             {
-                Security = this.Security,
+                Security = Security,
                 DatePurchased = datePurchased,
                 CostBasisPerUnit = costBasis / units,
                 UnitsRemaining = units
             };
 
             // insert the purchase in date order
-            for (int i = 0, n = list.Count; i < n; i++)
+            for (int i = 0, n = this.list.Count; i < n; i++)
             {
-                SecurityPurchase e = list[i];
+                SecurityPurchase e = this.list[i];
                 if (e.DatePurchased > datePurchased)
                 {
-                    list.Insert(i, sp);
+                    this.list.Insert(i, sp);
                     return;
                 }
             }
 
-            list.Add(sp);
+            this.list.Add(sp);
         }
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace Walkabout.Data
         {
             decimal salePricePerUnit = amount / units;
             List<SecuritySale> result = new List<SecuritySale>();
-            foreach (var purchase in list)
+            foreach (var purchase in this.list)
             {
                 SecuritySale sale = purchase.Sell(dateSold, units, salePricePerUnit);
                 if (sale != null)
@@ -282,10 +282,10 @@ namespace Walkabout.Data
             if (Math.Floor(units) > 0)
             {
                 // Generate an error item so we can report this problem later.
-                pending.Add(new SecuritySale()
+                this.pending.Add(new SecuritySale()
                 {
-                    Security = this.Security,
-                    Account = this.Account,
+                    Security = Security,
+                    Account = Account,
                     DateSold = dateSold,
                     UnitsSold = units,
                     SalePricePerUnit = salePricePerUnit
@@ -296,7 +296,7 @@ namespace Walkabout.Data
 
         internal IEnumerable<SecuritySale> GetPendingSales()
         {
-            return pending;
+            return this.pending;
         }
 
         internal IEnumerable<SecuritySale> ProcessPendingSales()
@@ -308,7 +308,7 @@ namespace Walkabout.Data
             foreach (SecuritySale s in copy)
             {
                 // this will put any remainder back in the pending list if it still can't be covered.
-                foreach (SecuritySale real in Sell(s.DateSold, s.UnitsSold, s.UnitsSold * s.SalePricePerUnit))
+                foreach (SecuritySale real in this.Sell(s.DateSold, s.UnitsSold, s.UnitsSold * s.SalePricePerUnit))
                 {
                     result.Add(real);
                 }
@@ -319,7 +319,7 @@ namespace Walkabout.Data
         internal IEnumerable<SecurityPurchase> GetHoldings()
         {
             List<SecurityPurchase> result = new List<SecurityPurchase>();
-            foreach (SecurityPurchase sp in list)
+            foreach (SecurityPurchase sp in this.list)
             {
                 if (sp.UnitsRemaining > 0)
                 {
@@ -349,7 +349,7 @@ namespace Walkabout.Data
         public IEnumerable<SecurityPurchase> GetHoldings()
         {
             List<SecurityPurchase> result = new List<SecurityPurchase>();
-            foreach (SecurityFifoQueue queue in queues.Values)
+            foreach (SecurityFifoQueue queue in this.queues.Values)
             {
                 foreach (SecurityPurchase p in queue.GetHoldings())
                 {
@@ -367,7 +367,7 @@ namespace Walkabout.Data
         {
             List<SecurityPurchase> result = new List<SecurityPurchase>();
             SecurityFifoQueue queue = null;
-            if (queues.TryGetValue(security, out queue))
+            if (this.queues.TryGetValue(security, out queue))
             {
                 foreach (SecurityPurchase p in queue.GetHoldings())
                 {
@@ -387,14 +387,14 @@ namespace Walkabout.Data
         public void Buy(Security s, DateTime datePurchased, decimal units, decimal costBasis)
         {
             SecurityFifoQueue queue;
-            if (!queues.TryGetValue(s, out queue))
+            if (!this.queues.TryGetValue(s, out queue))
             {
                 queue = new SecurityFifoQueue()
                 {
                     Security = s,
-                    Account = this.Account
+                    Account = Account
                 };
-                queues[s] = queue;
+                this.queues[s] = queue;
             }
 
             queue.Buy(datePurchased, units, costBasis);
@@ -413,14 +413,14 @@ namespace Walkabout.Data
         public IEnumerable<SecuritySale> Sell(Security s, DateTime dateSold, decimal units, decimal amount)
         {
             SecurityFifoQueue queue;
-            if (!queues.TryGetValue(s, out queue))
+            if (!this.queues.TryGetValue(s, out queue))
             {
                 queue = new SecurityFifoQueue()
                 {
                     Security = s,
-                    Account = this.Account
+                    Account = Account
                 };
-                queues[s] = queue;
+                this.queues[s] = queue;
             }
 
             return queue.Sell(dateSold, units, amount);
@@ -430,7 +430,7 @@ namespace Walkabout.Data
         internal IEnumerable<SecuritySale> ProcessPendingSales(Security s)
         {
             SecurityFifoQueue queue;
-            if (queues.TryGetValue(s, out queue))
+            if (this.queues.TryGetValue(s, out queue))
             {
                 return queue.ProcessPendingSales();
             }
@@ -454,7 +454,7 @@ namespace Walkabout.Data
         {
             List<SecuritySale> result = new List<SecuritySale>();
             SecurityFifoQueue queue;
-            if (queues.TryGetValue(s, out queue))
+            if (this.queues.TryGetValue(s, out queue))
             {
                 foreach (SecuritySale sale in queue.GetPendingSales())
                 {
@@ -490,12 +490,12 @@ namespace Walkabout.Data
         {
             this.myMoney = money;
             this.toDate = toDate;
-            Calculate();
+            this.Calculate();
         }
 
         public IEnumerable<SecuritySale> GetSales()
         {
-            return sales;
+            return this.sales;
         }
 
         /// <summary>
@@ -506,10 +506,10 @@ namespace Walkabout.Data
         public AccountHoldings GetHolding(Account a)
         {
             AccountHoldings holdings = null;
-            if (!byAccount.TryGetValue(a, out holdings))
+            if (!this.byAccount.TryGetValue(a, out holdings))
             {
                 holdings = new AccountHoldings() { Account = a };
-                byAccount[a] = holdings;
+                this.byAccount[a] = holdings;
             }
             return holdings;
         }
@@ -523,7 +523,7 @@ namespace Walkabout.Data
         {
             Dictionary<SecurityType, SecurityGroup> result = new Dictionary<SecurityType, SecurityGroup>();
 
-            foreach (var accountHolding in byAccount.Values)
+            foreach (var accountHolding in this.byAccount.Values)
             {
                 if (filter == null || filter(accountHolding.Account))
                 {
@@ -533,7 +533,7 @@ namespace Walkabout.Data
                         SecurityGroup group = null;
                         if (!result.TryGetValue(type, out group))
                         {
-                            group = new SecurityGroup() { Date = this.toDate, Security = sp.Security, Type = type, Purchases = new List<SecurityPurchase>() };
+                            group = new SecurityGroup() { Date = toDate, Security = sp.Security, Type = type, Purchases = new List<SecurityPurchase>() };
                             result[type] = group;
                         }
                         else if (group.Security != sp.Security)
@@ -564,7 +564,7 @@ namespace Walkabout.Data
                 SecurityGroup group = null;
                 if (!holdingsBySecurity.TryGetValue(s, out group))
                 {
-                    group = new SecurityGroup() { Date = this.toDate, Security = s, Type = s.SecurityType, Purchases = new List<SecurityPurchase>() };
+                    group = new SecurityGroup() { Date = toDate, Security = s, Type = s.SecurityType, Purchases = new List<SecurityPurchase>() };
                     holdingsBySecurity[s] = group;
                 }
                 group.Purchases.Add(sp);
@@ -578,9 +578,9 @@ namespace Walkabout.Data
         /// </summary>
         private void Calculate()
         {
-            IDictionary<Security, List<Investment>> map = myMoney.GetTransactionsGroupedBySecurity(null, toDate);
+            IDictionary<Security, List<Investment>> map = this.myMoney.GetTransactionsGroupedBySecurity(null, this.toDate);
 
-            byAccount = new Dictionary<Account, AccountHoldings>();
+            this.byAccount = new Dictionary<Account, AccountHoldings>();
 
             // Now build the AccountHoldings  for all non-transfer add/buy transactions.
             // Don't handle transfers yet - for that we need to be able to compute the cost basis.
@@ -601,9 +601,9 @@ namespace Walkabout.Data
                     // Now we need to apply any splits that are now valid as of  i.Date so we have the currect number of shares
                     // computed for any future transactions.  Question is, if someone buys the stock on the very same day that it
                     // was split, do they get the split or not?  This assumes not.
-                    ApplySplits(s, splits, i.Date);
+                    this.ApplySplits(s, splits, i.Date);
 
-                    var holdings = GetHolding(i.Transaction.Account);
+                    var holdings = this.GetHolding(i.Transaction.Account);
 
                     if (i.Type == InvestmentType.Add || i.Type == InvestmentType.Buy)
                     {
@@ -613,7 +613,7 @@ namespace Walkabout.Data
                             holdings.Buy(s, i.Date, i.Units, i.OriginalCostBasis);
                             foreach (SecuritySale pending in holdings.ProcessPendingSales(s))
                             {
-                                sales.Add(pending);
+                                this.sales.Add(pending);
                             }
                         }
                     }
@@ -623,7 +623,7 @@ namespace Walkabout.Data
                         {
                             foreach (SecuritySale sale in holdings.Sell(i.Security, i.Date, i.Units, i.OriginalCostBasis))
                             {
-                                sales.Add(sale);
+                                this.sales.Add(sale);
                             }
                         }
                         else
@@ -640,14 +640,14 @@ namespace Walkabout.Data
 
                                 foreach (SecuritySale sale in holdings.Sell(i.Security, i.Date, i.Units, 0))
                                 {
-                                    var targetHoldings = GetHolding(add.Transaction.Account);
+                                    var targetHoldings = this.GetHolding(add.Transaction.Account);
                                     if (sale.DateAcquired.HasValue)
                                     {
                                         // now transfer the cost basis over to the target account.
                                         targetHoldings.Buy(s, sale.DateAcquired.Value, sale.UnitsSold, sale.CostBasisPerUnit * sale.UnitsSold);
                                         foreach (SecuritySale pending in targetHoldings.ProcessPendingSales(s))
                                         {
-                                            sales.Add(pending);
+                                            this.sales.Add(pending);
                                         }
                                     }
                                     else
@@ -660,7 +660,7 @@ namespace Walkabout.Data
                     }
                 }
 
-                ApplySplits(s, splits, this.toDate);
+                this.ApplySplits(s, splits, this.toDate);
 
             }
 
@@ -671,7 +671,7 @@ namespace Walkabout.Data
             StockSplit next = splits.FirstOrDefault();
             while (next != null && next.Date.Date < dateTime.Date)
             {
-                ApplySplit(s, next);
+                this.ApplySplit(s, next);
                 splits.Remove(next);
                 next = splits.FirstOrDefault();
             }
@@ -722,7 +722,7 @@ namespace Walkabout.Data
         public IEnumerable<SecuritySale> GetPendingSales(Predicate<Account> forAccounts)
         {
             List<SecuritySale> result = new List<SecuritySale>();
-            foreach (var pair in byAccount)
+            foreach (var pair in this.byAccount)
             {
                 Account a = pair.Key;
                 if (forAccounts(a))

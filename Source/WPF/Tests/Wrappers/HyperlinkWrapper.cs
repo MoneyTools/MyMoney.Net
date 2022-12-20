@@ -17,7 +17,7 @@ namespace Walkabout.Tests.Wrappers
 
         public void Invoke()
         {
-            InvokePattern invoke = (InvokePattern)e.GetCurrentPattern(InvokePattern.Pattern);
+            InvokePattern invoke = (InvokePattern)this.e.GetCurrentPattern(InvokePattern.Pattern);
             invoke.Invoke();
         }
 

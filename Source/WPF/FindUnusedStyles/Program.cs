@@ -71,7 +71,7 @@ namespace FindUnusedStyles
                 {
                     if (!t.IsGenericType)
                     {
-                        cache[t.Name] = t;
+                        this.cache[t.Name] = t;
                     }
                 }
             }
@@ -79,41 +79,41 @@ namespace FindUnusedStyles
 
         private void Process(List<string> imports, string dir)
         {
-            CacheWpfTypes();
+            this.CacheWpfTypes();
             emptyName = XName.Get("_empty_");
 
-            Styles global = new Styles(cache);
+            Styles global = new Styles(this.cache);
 
             foreach (var import in imports)
             {
                 List<string> importFiles = new List<string>();
-                FindXamlFiles(import, importFiles);
+                this.FindXamlFiles(import, importFiles);
                 foreach (var path in importFiles)
                 {
-                    var doc = LoadXaml(path);
+                    var doc = this.LoadXaml(path);
                     if (doc != null)
                     {
-                        FindStyles(null, doc.Root, null, global);
+                        this.FindStyles(null, doc.Root, null, global);
                     }
                 }
             }
 
             List<string> files = new List<string>();
-            FindXamlFiles(dir, files);
+            this.FindXamlFiles(dir, files);
 
             List<XDocument> documents = new List<XDocument>();
 
             // Load global resource dictionaries first.
             foreach (var xaml in files)
             {
-                var doc = LoadXaml(xaml);
+                var doc = this.LoadXaml(xaml);
                 if (doc != null)
                 {
                     Console.WriteLine("{0}: {1}", doc.Root.Name.LocalName, xaml);
                     if (doc.Root.Name.LocalName == "ResourceDictionary")
                     {
-                        FindStyles(xaml, doc.Root, null, global);
-                        CheckStyleReferences(xaml, doc.Root, null, global);
+                        this.FindStyles(xaml, doc.Root, null, global);
+                        this.CheckStyleReferences(xaml, doc.Root, null, global);
                     }
                     else
                     {
@@ -131,7 +131,7 @@ namespace FindUnusedStyles
                     var a = doc.Root.Attribute(XName.Get("Class", "http://schemas.microsoft.com/winfx/2006/xaml"));
                     var location = doc.Annotation<string>();
                     Styles local = new Styles(location, global);
-                    WalkResources(location, doc.Root, null, local);
+                    this.WalkResources(location, doc.Root, null, local);
                     local.ReportUnreferenced();
                 }
             }
@@ -141,7 +141,7 @@ namespace FindUnusedStyles
             Console.WriteLine();
             Console.WriteLine("SystemControl resource references");
             Console.WriteLine("=================================");
-            foreach (var item in sysControlReferences.Keys)
+            foreach (var item in this.sysControlReferences.Keys)
             {
                 Console.WriteLine(item);
             }
@@ -156,7 +156,7 @@ namespace FindUnusedStyles
 
             foreach (var child in Directory.GetDirectories(dir))
             {
-                FindXamlFiles(child, files);
+                this.FindXamlFiles(child, files);
             }
         }
 
@@ -216,8 +216,8 @@ namespace FindUnusedStyles
                 var parts = value.Split(WhitespaceChars, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length == 2)
                 {
-                    var name = QualifyName(parts[0], scope);
-                    var type = QualifyName(parts[1], scope);
+                    var name = this.QualifyName(parts[0], scope);
+                    var type = this.QualifyName(parts[1], scope);
                     if (name == XamlTypeName || name == XamlStaticName)
                     {
                         return type;
@@ -227,11 +227,11 @@ namespace FindUnusedStyles
                         Program.WriteError("Unexpected target type: {0}", value);
                     }
                 }
-                return QualifyName(parts[0], scope);
+                return this.QualifyName(parts[0], scope);
             }
             else
             {
-                return QualifyName(value, scope);
+                return this.QualifyName(value, scope);
             }
         }
 
@@ -326,17 +326,17 @@ namespace FindUnusedStyles
             XName targetType = null;
             XName key = null;
 
-            AddNamespaces(root, local);
+            this.AddNamespaces(root, local);
 
             foreach (var a in root.Attributes())
             {
                 if (a.Name.LocalName == "TargetType")
                 {
-                    targetType = ParseTargetType(a.Value, local);
+                    targetType = this.ParseTargetType(a.Value, local);
                 }
                 else if (a.Name.LocalName == "Key" && a.Name.Namespace == XamlNsUri)
                 {
-                    key = ParseTargetType(a.Value, local);
+                    key = this.ParseTargetType(a.Value, local);
                 }
                 else if (a.Name.LocalName == "DataType")
                 {
@@ -347,7 +347,7 @@ namespace FindUnusedStyles
             if (key != null || targetType != null)
             {
                 if (root.Name.LocalName == "ControlTemplate" && targetType != null && key == null
-                    && HasParent(root, "Style"))
+                    && this.HasParent(root, "Style"))
                 {
                     // If this control template is inside a <Style> then it is not an independently
                     // addressable resource. 
@@ -365,7 +365,7 @@ namespace FindUnusedStyles
                 // are not global, we will create localstyles for this one later.
                 if (!e.Name.LocalName.EndsWith(".Resources"))
                 {
-                    FindStyles(filePath, e, local, styles);
+                    this.FindStyles(filePath, e, local, styles);
                 }
             }
         }
@@ -377,17 +377,17 @@ namespace FindUnusedStyles
             XName targetType = null;
             XName key = null;
 
-            AddNamespaces(root, local);
+            this.AddNamespaces(root, local);
 
             foreach (var a in root.Attributes())
             {
                 if (a.Name.LocalName == "TargetType")
                 {
-                    targetType = ParseTargetType(a.Value, local);
+                    targetType = this.ParseTargetType(a.Value, local);
                 }
                 else if (a.Name.LocalName == "Key" && a.Name.Namespace == XamlNsUri)
                 {
-                    key = ParseTargetType(a.Value, local);
+                    key = this.ParseTargetType(a.Value, local);
                 }
                 else if (a.Name.LocalName == "DataType")
                 {
@@ -395,7 +395,7 @@ namespace FindUnusedStyles
                 }
                 else if (a.Name.LocalName != "xmlns" && a.Name.Namespace != XmlNsUri)
                 {
-                    CheckReferences(GetTargetTypeName(root, a), a.Value, local, styles);
+                    this.CheckReferences(this.GetTargetTypeName(root, a), a.Value, local, styles);
                 }
             }
             Styles localStyles = null;
@@ -410,14 +410,14 @@ namespace FindUnusedStyles
                         localStyles = new Styles(filePath + "+" + e.Name, styles);
                         styles = localStyles;
                     }
-                    FindStyles(filePath, e, local, localStyles);
+                    this.FindStyles(filePath, e, local, localStyles);
                 }
             }
 
             // Check for any nested styles first.
             foreach (var e in root.Elements())
             {
-                CheckStyleReferences(filePath, e, local, styles);
+                this.CheckStyleReferences(filePath, e, local, styles);
             }
 
             if (localStyles != null)
@@ -442,11 +442,11 @@ namespace FindUnusedStyles
             {
                 if (a.Name.LocalName == "xmlns")
                 {
-                    scope.AddPrefix("", StripClrPrefix(a.Value));
+                    scope.AddPrefix("", this.StripClrPrefix(a.Value));
                 }
                 else if (a.Name.Namespace == XmlNsUri)
                 {
-                    scope.AddPrefix(a.Name.LocalName, StripClrPrefix(a.Value));
+                    scope.AddPrefix(a.Name.LocalName, this.StripClrPrefix(a.Value));
                 }
             }
         }
@@ -454,7 +454,7 @@ namespace FindUnusedStyles
         private void WalkResources(string fileName, XElement root, NamespaceScope scope, Styles styles)
         {
             var local = new NamespaceScope(scope);
-            AddNamespaces(root, local);
+            this.AddNamespaces(root, local);
 
             string codeRef = null;
             foreach (var a in root.Attributes())
@@ -477,7 +477,7 @@ namespace FindUnusedStyles
                 }
                 else if (a.Name.LocalName != "xmlns" && a.Name.Namespace != XmlNsUri)
                 {
-                    CheckReferences(GetTargetTypeName(root, a), a.Value, local, styles);
+                    this.CheckReferences(this.GetTargetTypeName(root, a), a.Value, local, styles);
                 }
             }
 
@@ -493,7 +493,7 @@ namespace FindUnusedStyles
                         localStyles = new Styles(fileName + "+" + e.Name, styles);
                         styles = localStyles;
                     }
-                    FindStyles(fileName, e, local, localStyles);
+                    this.FindStyles(fileName, e, local, localStyles);
                 }
             }
 
@@ -506,7 +506,7 @@ namespace FindUnusedStyles
                     {
                         continue;
                     }
-                    XName reference = QualifyName(part.Trim(), local);
+                    XName reference = this.QualifyName(part.Trim(), local);
                     var style = styles.FindStyle(null, reference);
                     if (style == null)
                     {
@@ -530,12 +530,12 @@ namespace FindUnusedStyles
             }
 
             // record possible reference to a TargetType of the matching element name.
-            styles.FindStyle(GetTargetTypeName(root, null), Program.emptyName);
+            styles.FindStyle(this.GetTargetTypeName(root, null), Program.emptyName);
 
             // Now we have the "usage" of styles, either something in a UserControl, or a ControlTemplate in a ResourceDictionary.
             foreach (var e in root.Elements())
             {
-                WalkResources(fileName, e, local, styles);
+                this.WalkResources(fileName, e, local, styles);
             }
 
             if (localStyles != null)
@@ -562,7 +562,7 @@ namespace FindUnusedStyles
         {
             value = value.Trim(BindingChars).Trim();
             string[] parts = value.Split(WhitespaceChars, StringSplitOptions.RemoveEmptyEntries);
-            var name = QualifyName(parts[0], scope);
+            var name = this.QualifyName(parts[0], scope);
             if (name == "DynamicResource" || name == "{http://schemas.modernwpf.com/2019}DynamicColor" ||
                 name == "StaticResource" || name == XamlStaticName)
             {
@@ -574,7 +574,7 @@ namespace FindUnusedStyles
                 else
                 {
                     var resourceName = value.Substring(i).Trim();
-                    return ParseTargetType(resourceName, scope);
+                    return this.ParseTargetType(resourceName, scope);
                 }
             }
             else if (name == "Binding" || name == "TemplateBinding")
@@ -637,7 +637,7 @@ namespace FindUnusedStyles
             {
                 return null;
             }
-            return QualifyName(value, scope);
+            return this.QualifyName(value, scope);
         }
 
         BindingInfo ParseBinding(string value, NamespaceScope scope)
@@ -666,7 +666,7 @@ namespace FindUnusedStyles
                 if (nameValue.Length == 1)
                 {
                     // {Binding IsClosed,
-                    bindingInfo.Path = QualifyPath(nameValue[0], scope);
+                    bindingInfo.Path = this.QualifyPath(nameValue[0], scope);
                 }
                 else
                 {
@@ -675,13 +675,13 @@ namespace FindUnusedStyles
                         case "Path":
                             if (nameValue.Length > 1)
                             {
-                                bindingInfo.Path = QualifyPath(nameValue[1].Trim(), scope);
+                                bindingInfo.Path = this.QualifyPath(nameValue[1].Trim(), scope);
                             }
                             break;
                         case "Converter":
                             if (nameValue.Length > 1)
                             {
-                                bindingInfo.Converter = ParseResourceReference(nameValue[1].Trim(), scope);
+                                bindingInfo.Converter = this.ParseResourceReference(nameValue[1].Trim(), scope);
                             }
                             break;
                         case "ConverterParameter":
@@ -751,13 +751,13 @@ namespace FindUnusedStyles
             XName reference = null;
             if (value.StartsWith("{Binding") || value.StartsWith("{TemplateBinding"))
             {
-                var binding = ParseBinding(value, local);
+                var binding = this.ParseBinding(value, local);
                 reference = binding.Converter;
                 if (binding.Source != null)
                 {
-                    var sourceRef = ParseResourceReference(binding.Source, local);
+                    var sourceRef = this.ParseResourceReference(binding.Source, local);
                     var style = localStyles.FindStyle(element, sourceRef);
-                    if (style == null && !Whitelisted(sourceRef))
+                    if (style == null && !this.Whitelisted(sourceRef))
                     {
                         Program.WriteError("Resource {0} not found", sourceRef.ToString());
                     }
@@ -765,12 +765,12 @@ namespace FindUnusedStyles
             }
             else if (value.StartsWith('{'))
             {
-                reference = ParseResourceReference(value, local);
+                reference = this.ParseResourceReference(value, local);
             }
             if (reference != null)
             {
                 var style = localStyles.FindStyle(element, reference);
-                if (style == null && !Whitelisted(reference))
+                if (style == null && !this.Whitelisted(reference))
                 {
                     Program.WriteError("Resource {0} not found", reference.ToString());
                 }
@@ -843,7 +843,7 @@ namespace FindUnusedStyles
 
             public void AddPrefix(string prefix, string uri)
             {
-                Namespaces[prefix] = uri;
+                this.Namespaces[prefix] = uri;
             }
 
             public string FindPrefix(string prefix)
@@ -896,10 +896,10 @@ namespace FindUnusedStyles
                 if (targetType != null)
                 {
                     // key is scoped to this type.
-                    if (!targetTypes.TryGetValue(targetType, out Dictionary<XName, StyleInfo> d))
+                    if (!this.targetTypes.TryGetValue(targetType, out Dictionary<XName, StyleInfo> d))
                     {
                         d = new Dictionary<XName, StyleInfo>();
-                        targetTypes[targetType] = d;
+                        this.targetTypes[targetType] = d;
                     }
                     s = d;
                 }
@@ -933,7 +933,7 @@ namespace FindUnusedStyles
 
             private IEnumerable<XName> GetWpfChildTypes(XName typeName)
             {
-                var type = GetWpfType(typeName.LocalName);
+                var type = this.GetWpfType(typeName.LocalName);
                 if (type != null)
                 {
                     switch (type.Name)
@@ -986,7 +986,7 @@ namespace FindUnusedStyles
 
             private Type GetWpfType(string typeName)
             {
-                if (cache.TryGetValue(typeName, out var type))
+                if (this.cache.TryGetValue(typeName, out var type))
                 {
                     return type;
                 }
@@ -1021,7 +1021,7 @@ namespace FindUnusedStyles
             private XElement LookupTargetType(XName name, XName key)
             {
                 // key is scoped to this type.
-                if (targetTypes.TryGetValue(name, out Dictionary<XName, StyleInfo> d))
+                if (this.targetTypes.TryGetValue(name, out Dictionary<XName, StyleInfo> d))
                 {
                     if (d.ContainsKey(key))
                     {
@@ -1030,7 +1030,7 @@ namespace FindUnusedStyles
                         return si.Element;
                     }
                 }
-                else if (targetTypes.TryGetValue(name, out Dictionary<XName, StyleInfo> d2))
+                else if (this.targetTypes.TryGetValue(name, out Dictionary<XName, StyleInfo> d2))
                 {
                     if (d2.ContainsKey(key))
                     {
@@ -1046,7 +1046,7 @@ namespace FindUnusedStyles
             {
                 XName name = type.Name;
                 // key is scoped to this type.
-                XElement result = LookupTargetType(name, key);
+                XElement result = this.LookupTargetType(name, key);
                 if (result != null)
                 {
                     return result;
@@ -1055,7 +1055,7 @@ namespace FindUnusedStyles
                 {
                     // key is scoped to this type.
                     name = XName.Get(type.Name, type.Namespace);
-                    result = LookupTargetType(name, key);
+                    result = this.LookupTargetType(name, key);
                     if (result != null)
                     {
                         return result;
@@ -1066,7 +1066,7 @@ namespace FindUnusedStyles
                 // check base types!
                 if (type.BaseType != null)
                 {
-                    result = FindTargetType(type.BaseType, key);
+                    result = this.FindTargetType(type.BaseType, key);
                 }
                 return result;
             }
@@ -1074,7 +1074,7 @@ namespace FindUnusedStyles
             private XElement FindTargetType(XName typeName, XName key)
             {
                 // key is scoped to this type.
-                if (targetTypes.TryGetValue(typeName, out Dictionary<XName, StyleInfo> d))
+                if (this.targetTypes.TryGetValue(typeName, out Dictionary<XName, StyleInfo> d))
                 {
                     if (d.ContainsKey(key))
                     {
@@ -1083,7 +1083,7 @@ namespace FindUnusedStyles
                         return si.Element;
                     }
                 }
-                else if (targetTypes.TryGetValue(typeName.LocalName, out Dictionary<XName, StyleInfo> d2))
+                else if (this.targetTypes.TryGetValue(typeName.LocalName, out Dictionary<XName, StyleInfo> d2))
                 {
                     if (d2.ContainsKey(key))
                     {
@@ -1094,10 +1094,10 @@ namespace FindUnusedStyles
                 }
 
                 // check base types!
-                Type t = GetWpfType(typeName.LocalName);
+                Type t = this.GetWpfType(typeName.LocalName);
                 if (t != null)
                 {
-                    return FindTargetType(t, key);
+                    return this.FindTargetType(t, key);
                 }
                 return null;
             }
@@ -1112,12 +1112,12 @@ namespace FindUnusedStyles
                         // then this type reference might imply some child type references,
                         // for example a <DataGrid> implies we will be using styles defined
                         // for <DataGridRow>, <DataGridCell>, etc.
-                        foreach (XName childType in GetWpfChildTypes(typename))
+                        foreach (XName childType in this.GetWpfChildTypes(typename))
                         {
-                            FindStyle(childType, Program.emptyName);
+                            this.FindStyle(childType, Program.emptyName);
                         }
                     }
-                    XElement e = FindTargetType(typename, key);
+                    XElement e = this.FindTargetType(typename, key);
                     if (e != null)
                     {
                         return e;
@@ -1129,33 +1129,33 @@ namespace FindUnusedStyles
                     si.RefCount++;
                     return si.Element;
                 }
-                if (Parent != null)
+                if (this.Parent != null)
                 {
-                    return Parent.FindStyle(typename, key);
+                    return this.Parent.FindStyle(typename, key);
                 }
                 return null;
             }
 
             internal void ReportUnreferenced()
             {
-                foreach (var key in keys.Keys)
+                foreach (var key in this.keys.Keys)
                 {
-                    var si = keys[key];
-                    if (si.RefCount == 0 && si.FileName != null && !WhiteListResource(si.FileName))
+                    var si = this.keys[key];
+                    if (si.RefCount == 0 && si.FileName != null && !this.WhiteListResource(si.FileName))
                     {
                         Program.WriteWarning("Unreferenced style {0} from {1}", si.Key.ToString(), si.FileName);
                     }
                 }
 
-                foreach (var targetType in targetTypes.Keys)
+                foreach (var targetType in this.targetTypes.Keys)
                 {
-                    var map = targetTypes[targetType];
+                    var map = this.targetTypes[targetType];
                     foreach (var key in map.Keys)
                     {
                         var si = map[key];
-                        if (si.RefCount == 0 && si.FileName != null && !WhiteListResource(si.FileName))
+                        if (si.RefCount == 0 && si.FileName != null && !this.WhiteListResource(si.FileName))
                         {
-                            if (si.Key == emptyName && WhiteListType(si.TargetType))
+                            if (si.Key == emptyName && this.WhiteListType(si.TargetType))
                             {
                                 // skip it.
                             }
@@ -1191,17 +1191,17 @@ namespace FindUnusedStyles
 
             internal XName FindTargetType(XName key)
             {
-                foreach (var targetType in targetTypes.Keys)
+                foreach (var targetType in this.targetTypes.Keys)
                 {
-                    var map = targetTypes[targetType];
+                    var map = this.targetTypes[targetType];
                     if (map.ContainsKey(key))
                     {
                         return targetType;
                     }
                 }
-                if (Parent != null)
+                if (this.Parent != null)
                 {
-                    return Parent.FindTargetType(key);
+                    return this.Parent.FindTargetType(key);
                 }
                 return null;
             }

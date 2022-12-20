@@ -13,7 +13,7 @@ namespace Walkabout.Dialogs
     {
         public MfaChallengeDialog()
         {
-            PasswordPrompt = null; // remove default field.
+            this.PasswordPrompt = null; // remove default field.
             this.Title = "Multi-Factor Authentication";
 
             // add instructions 
@@ -32,7 +32,7 @@ namespace Walkabout.Dialogs
         {
             foreach (MfaChallenge c in challenges)
             {
-                this.AddUserDefinedField(c.PhraseId, GetPhrasePrompt(c));
+                this.AddUserDefinedField(c.PhraseId, this.GetPhrasePrompt(c));
             }
         }
 
@@ -49,11 +49,11 @@ namespace Walkabout.Dialogs
 
         private XDocument GetPhraseTable()
         {
-            if (phraseTable == null)
+            if (this.phraseTable == null)
             {
-                phraseTable = ProcessHelper.GetEmbeddedResourceAsXml("Walkabout.Ofx.MfaPhrases.xml");
+                this.phraseTable = ProcessHelper.GetEmbeddedResourceAsXml("Walkabout.Ofx.MfaPhrases.xml");
             }
-            return phraseTable;
+            return this.phraseTable;
         }
 
         private string GetPhrasePrompt(MfaChallenge c)
@@ -65,7 +65,7 @@ namespace Walkabout.Dialogs
             }
 
             // label-less phrase, hopefully we have the id right here.
-            XDocument table = GetPhraseTable();
+            XDocument table = this.GetPhraseTable();
             foreach (XElement row in table.Root.Elements())
             {
                 if ((string)row.Attribute("Id") == c.PhraseId)

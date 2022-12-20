@@ -144,12 +144,12 @@ namespace Walkabout.Tests.Interop
             override public bool Equals(object oCompare)
             {
                 HWND temp = Cast((HWND)oCompare);
-                return _value == temp._value;
+                return this._value == temp._value;
             }
 
             public override int GetHashCode()
             {
-                return (int)_value;
+                return (int)this._value;
             }
         }
 

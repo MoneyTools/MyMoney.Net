@@ -16,62 +16,62 @@ namespace Walkabout.Tests.Wrappers
 
         public void ClickScan()
         {
-            window.ClickButton("ScanButton");
+            this.window.ClickButton("ScanButton");
         }
 
         public void ClickZoomIn()
         {
-            window.ClickButton("ZoomInButton");
+            this.window.ClickButton("ZoomInButton");
         }
 
         public void ClickZoomOut()
         {
-            window.ClickButton("ZoomOutButton");
+            this.window.ClickButton("ZoomOutButton");
         }
 
         public void ClickSave()
         {
-            window.ClickButton("SaveButton");
+            this.window.ClickButton("SaveButton");
         }
 
         public void ClickRotateLeft()
         {
-            window.ClickButton("RotateLeftButton");
+            this.window.ClickButton("RotateLeftButton");
         }
 
         public void ClickRotateRight()
         {
-            window.ClickButton("RotateRightButton");
+            this.window.ClickButton("RotateRightButton");
         }
 
         public void ClickCropImage()
         {
-            window.ClickButton("CropImageButton");
+            this.window.ClickButton("CropImageButton");
         }
 
         public void ClickCut()
         {
-            window.ClickButton("CutButton");
+            this.window.ClickButton("CutButton");
         }
 
         public void ClickCopy()
         {
-            window.ClickButton("CopyButton");
+            this.window.ClickButton("CopyButton");
         }
 
         public void ClickPaste()
         {
-            window.ClickButton("PasteButton");
+            this.window.ClickButton("PasteButton");
         }
 
         public void ClickDelete()
         {
-            window.ClickButton("DeleteButton");
+            this.window.ClickButton("DeleteButton");
         }
 
         public void ClickPrint()
         {
-            window.ClickButton("PrintButton");
+            this.window.ClickButton("PrintButton");
         }
 
         public AutomationElement ScrollViewer

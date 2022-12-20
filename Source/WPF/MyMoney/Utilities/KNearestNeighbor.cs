@@ -17,7 +17,7 @@ namespace Walkabout.Utilities
 
             public Feature(U c)
             {
-                label = c;
+                this.label = c;
             }
         }
 
@@ -33,15 +33,15 @@ namespace Walkabout.Utilities
         public void Add(object data, T label, decimal value)
         {
             Feature<T> feature = null;
-            if (!features.TryGetValue(label, out feature))
+            if (!this.features.TryGetValue(label, out feature))
             {
                 feature = new Feature<T>(label);
-                features[label] = feature;
+                this.features[label] = feature;
             }
 
             feature.Values.Add(value);
             feature.Data.Add(data);
-            total++;
+            this.total++;
         }
 
         public int Count
@@ -64,11 +64,11 @@ namespace Walkabout.Utilities
 
             public int CompareTo(DataScore<T> other)
             {
-                if (Score > other.Score)
+                if (this.Score > other.Score)
                 {
                     return -1;
                 }
-                else if (Score < other.Score)
+                else if (this.Score < other.Score)
                 {
                     return 1;
                 }
@@ -77,7 +77,7 @@ namespace Walkabout.Utilities
 
             public override string ToString()
             {
-                return Label.ToString() + ": " + Score;
+                return this.Label.ToString() + ": " + this.Score;
             }
         }
 
@@ -86,7 +86,7 @@ namespace Walkabout.Utilities
             // Compute the "score" which is distance of each transaction from our given 'value'
             // grouped by category.
             Dictionary<T, SortedSet<DataScore<T>>> byCategory = new Dictionary<T, SortedSet<DataScore<T>>>();
-            foreach (var pair in features)
+            foreach (var pair in this.features)
             {
                 T label = pair.Key;
                 for (int i = 0, n = pair.Value.Values.Count; i < n; i++)

@@ -24,16 +24,16 @@ namespace Walkabout.Data
         public void EncryptFile(string inputFile, string passPhrase, string fileName)
         {
             // Convert our plaintext into a byte array.
-            byte[] initVectorBytes = Encoding.ASCII.GetBytes(initVector);
+            byte[] initVectorBytes = Encoding.ASCII.GetBytes(this.initVector);
 
-            var password = GetPasswordHelper(passPhrase);
+            var password = this.GetPasswordHelper(passPhrase);
 
             // Create uninitialized Rijndael encryption object.
             RijndaelManaged symmetricKey = new RijndaelManaged();
 
             // Use the password to generate pseudo-random bytes for the encryption
             // key. Specify the size of the key in bytes (instead of bits).
-            byte[] keyBytes = password.GetBytes(keySize / 8);
+            byte[] keyBytes = password.GetBytes(this.keySize / 8);
 
 
             // It is reasonable to set encryption mode to Cipher Block Chaining
@@ -74,13 +74,13 @@ namespace Walkabout.Data
         public void DecryptFile(string inputFile, string passPhrase, string fileName)
         {
             // Convert our plaintext into a byte array.
-            byte[] initVectorBytes = Encoding.ASCII.GetBytes(initVector);
+            byte[] initVectorBytes = Encoding.ASCII.GetBytes(this.initVector);
 
-            var password = GetPasswordHelper(passPhrase);
+            var password = this.GetPasswordHelper(passPhrase);
 
             // Use the password to generate pseudo-random bytes for the encryption
             // key. Specify the size of the key in bytes (instead of bits).
-            byte[] keyBytes = password.GetBytes(keySize / 8);
+            byte[] keyBytes = password.GetBytes(this.keySize / 8);
 
             // Create uninitialized Rijndael encryption object.
             RijndaelManaged symmetricKey = new RijndaelManaged();
@@ -128,7 +128,7 @@ namespace Walkabout.Data
             // Let us assume that strings only contain ASCII codes.
             // If strings include Unicode characters, use Unicode, UTF7, or UTF8 
             // encoding.
-            byte[] saltValueBytes = Encoding.ASCII.GetBytes(saltValue);
+            byte[] saltValueBytes = Encoding.ASCII.GetBytes(this.saltValue);
 
             // First, we must create a password, from which the key will be derived.
             // This password will be generated from the specified passphrase and 
@@ -137,8 +137,8 @@ namespace Walkabout.Data
             PasswordDeriveBytes password = new PasswordDeriveBytes(
                                                             passPhrase,
                                                             saltValueBytes,
-                                                            hashAlgorithm,
-                                                            passwordIterations);
+                                                            this.hashAlgorithm,
+                                                            this.passwordIterations);
             return password;
         }
 

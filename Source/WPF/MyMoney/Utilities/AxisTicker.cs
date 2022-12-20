@@ -16,15 +16,15 @@ namespace Walkabout.Utilities
         {
             this.minPoint = min;
             this.maxPoint = max;
-            Calculate();
+            this.Calculate();
         }
 
         private void Calculate()
         {
-            this.range = GetNiceNum(maxPoint - minPoint, false);
-            this.tickSpacing = GetNiceNum(range / (maxTicks - 1), true);
-            this.niceMin = Math.Floor(minPoint / tickSpacing) * tickSpacing;
-            this.niceMax = Math.Ceiling(maxPoint / tickSpacing) * tickSpacing;
+            this.range = this.GetNiceNum(this.maxPoint - this.minPoint, false);
+            this.tickSpacing = this.GetNiceNum(this.range / (this.maxTicks - 1), true);
+            this.niceMin = Math.Floor(this.minPoint / this.tickSpacing) * this.tickSpacing;
+            this.niceMax = Math.Ceiling(this.maxPoint / this.tickSpacing) * this.tickSpacing;
         }
 
         private double GetNiceNum(double range, bool round)
@@ -66,28 +66,28 @@ namespace Walkabout.Utilities
         {
             this.minPoint = minPoint;
             this.maxPoint = maxPoint;
-            Calculate();
+            this.Calculate();
         }
 
         public void SetMaxTicks(double maxTicks)
         {
             this.maxTicks = maxTicks;
-            Calculate();
+            this.Calculate();
         }
 
         public double GetTickSpacing()
         {
-            return tickSpacing;
+            return this.tickSpacing;
         }
 
         public double GetNiceMin()
         {
-            return niceMin;
+            return this.niceMin;
         }
 
         public double GetNiceMax()
         {
-            return niceMax;
+            return this.niceMax;
         }
     }
 }

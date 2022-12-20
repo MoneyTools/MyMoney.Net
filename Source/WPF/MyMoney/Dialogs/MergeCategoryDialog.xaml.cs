@@ -17,35 +17,35 @@ namespace Walkabout.Dialogs
 
         public MergeCategoryDialog()
         {
-            InitializeComponent();
-            ButtonOK.IsEnabled = false;
-            _statusFormat = Status.Text;
+            this.InitializeComponent();
+            this.ButtonOK.IsEnabled = false;
+            this._statusFormat = this.Status.Text;
         }
 
         public Category SourceCategory
         {
-            get => _source;
+            get => this._source;
             set
             {
-                _source = value;
+                this._source = value;
                 if (value != null)
                 {
-                    Status.Text = string.Format(_statusFormat, value.GetFullName());
+                    this.Status.Text = string.Format(this._statusFormat, value.GetFullName());
                 }
             }
         }
 
         public MyMoney Money
         {
-            get => _money;
+            get => this._money;
             set
             {
-                _money = value;
-                Categories.ItemsSource = _money.Categories.SortedCategories;
+                this._money = value;
+                this.Categories.ItemsSource = this._money.Categories.SortedCategories;
             }
         }
 
-        public Category SelectedCategory => Categories.SelectedItem as Category;
+        public Category SelectedCategory => this.Categories.SelectedItem as Category;
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {
@@ -61,7 +61,7 @@ namespace Walkabout.Dialogs
 
         private void OnCategorySelected(object sender, SelectionChangedEventArgs e)
         {
-            ButtonOK.IsEnabled = Categories.SelectedItem != null;
+            this.ButtonOK.IsEnabled = this.Categories.SelectedItem != null;
         }
 
         private void ComboBoxForCategory_FilterChanged(object sender, RoutedEventArgs e)

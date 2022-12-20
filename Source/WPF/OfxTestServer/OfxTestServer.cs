@@ -38,99 +38,99 @@ namespace OfxTestServer
 
         public OfxServer()
         {
-            AddSamplePayees();
-            _dispatcher = Application.Current.Dispatcher;
+            this.AddSamplePayees();
+            this._dispatcher = Application.Current.Dispatcher;
         }
 
-        public ObservableCollection<MFAChallenge> MFAChallenges { get => _mfaChallenges; }
+        public ObservableCollection<MFAChallenge> MFAChallenges { get => this._mfaChallenges; }
 
         public bool ChangePassword
         {
-            get => _changePassword;
+            get => this._changePassword;
             set
             {
-                if (_changePassword != value)
+                if (this._changePassword != value)
                 {
-                    _changePassword = value;
-                    OnPropertyChanged("ChangePassword");
+                    this._changePassword = value;
+                    this.OnPropertyChanged("ChangePassword");
                 }
             }
         }
 
         public string UserName
         {
-            get => _userName;
+            get => this._userName;
             set
             {
-                if (_userName != value)
+                if (this._userName != value)
                 {
-                    _userName = value;
-                    OnPropertyChanged("UserName");
+                    this._userName = value;
+                    this.OnPropertyChanged("UserName");
                 }
             }
         }
 
         public string Password
         {
-            get => _password;
+            get => this._password;
             set
             {
-                if (_password != value)
+                if (this._password != value)
                 {
-                    _password = value;
-                    OnPropertyChanged("Password");
+                    this._password = value;
+                    this.OnPropertyChanged("Password");
                 }
             }
         }
 
         public string UserCred1Label
         {
-            get => _userCred1Label;
+            get => this._userCred1Label;
             set
             {
-                if (_userCred1Label != value)
+                if (this._userCred1Label != value)
                 {
-                    _userCred1Label = value;
-                    OnPropertyChanged("UserCred1Label");
+                    this._userCred1Label = value;
+                    this.OnPropertyChanged("UserCred1Label");
                 }
             }
         }
 
         public string UserCred1
         {
-            get => _userCred1;
+            get => this._userCred1;
             set
             {
-                if (_userCred1 != value)
+                if (this._userCred1 != value)
                 {
-                    _userCred1 = value;
-                    OnPropertyChanged("UserCred1");
+                    this._userCred1 = value;
+                    this.OnPropertyChanged("UserCred1");
                 }
             }
         }
 
         public string UserCred2Label
         {
-            get => _userCred2Label;
+            get => this._userCred2Label;
             set
             {
-                if (_userCred2Label != value)
+                if (this._userCred2Label != value)
                 {
-                    _userCred2Label = value;
-                    OnPropertyChanged("UserCred2Label");
+                    this._userCred2Label = value;
+                    this.OnPropertyChanged("UserCred2Label");
                 }
             }
         }
 
         public string UserCred2
         {
-            get => _userCred2;
+            get => this._userCred2;
             set
             {
-                if (_userCred2 != value)
+                if (this._userCred2 != value)
                 {
-                    _userCred2 = value;
-                    OnPropertyChanged("UserCred2");
+                    this._userCred2 = value;
+                    this.OnPropertyChanged("UserCred2");
                 }
             }
         }
@@ -138,27 +138,27 @@ namespace OfxTestServer
 
         public string AuthTokenLabel
         {
-            get => _authTokenLabel;
+            get => this._authTokenLabel;
             set
             {
-                if (_authTokenLabel != value)
+                if (this._authTokenLabel != value)
                 {
-                    _authTokenLabel = value;
-                    OnPropertyChanged("AuthTokenLabel");
+                    this._authTokenLabel = value;
+                    this.OnPropertyChanged("AuthTokenLabel");
                 }
             }
         }
 
         public string AuthToken
         {
-            get => _authToken;
+            get => this._authToken;
             set
             {
-                if (_authToken != value)
+                if (this._authToken != value)
                 {
-                    _authToken = value;
-                    _accessKey = null;
-                    OnPropertyChanged("AuthToken");
+                    this._authToken = value;
+                    this._accessKey = null;
+                    this.OnPropertyChanged("AuthToken");
                 }
             }
         }
@@ -167,36 +167,36 @@ namespace OfxTestServer
 
         internal void AddStandardChallenges()
         {
-            if (_mfaChallenges.Count == 0)
+            if (this._mfaChallenges.Count == 0)
             {
-                _mfaChallenges.Add(new MFAChallenge("MFA13", "Please enter the last four digits of your social security number", "1234"));
-                _mfaChallenges.Add(new MFAChallenge("MFA107", null, "QWIN 1700")); // Built in question for "App id"
-                _mfaChallenges.Add(new MFAChallenge("123", "With which branch is your account associated?", "Newcastle"));
-                _mfaChallenges.Add(new MFAChallenge("MFA16", null, "HigginBothum")); // Built in label for "Mother’s maiden name"
+                this._mfaChallenges.Add(new MFAChallenge("MFA13", "Please enter the last four digits of your social security number", "1234"));
+                this._mfaChallenges.Add(new MFAChallenge("MFA107", null, "QWIN 1700")); // Built in question for "App id"
+                this._mfaChallenges.Add(new MFAChallenge("123", "With which branch is your account associated?", "Newcastle"));
+                this._mfaChallenges.Add(new MFAChallenge("MFA16", null, "HigginBothum")); // Built in label for "Mother’s maiden name"
             }
         }
 
         internal void RemoveChallenges()
         {
-            _mfaChallenges.Clear();
+            this._mfaChallenges.Clear();
         }
 
         internal void Start(string prefix, int delayInMilliseconds)
         {
-            _delay = delayInMilliseconds;
-            _prefix = prefix;
-            Task.Run(RunServer);
+            this._delay = delayInMilliseconds;
+            this._prefix = prefix;
+            Task.Run(this.RunServer);
         }
 
         internal void Terminate()
         {
-            _terminated = true;
-            using (_http)
+            this._terminated = true;
+            using (this._http)
             {
-                if (_http != null)
+                if (this._http != null)
                 {
-                    _http.Stop();
-                    _http = null;
+                    this._http.Stop();
+                    this._http = null;
                 }
             }
         }
@@ -204,16 +204,16 @@ namespace OfxTestServer
         //========================================================================================
         private void RunServer()
         {
-            _http = new HttpListener();
-            _http.Prefixes.Add(_prefix);
-            _http.Start();
+            this._http = new HttpListener();
+            this._http.Prefixes.Add(this._prefix);
+            this._http.Start();
 
             try
             {
-                while (!_terminated)
+                while (!this._terminated)
                 {
                     // Note: The GetContext method blocks while waiting for a request. 
-                    HttpListenerContext context = _http.GetContext();
+                    HttpListenerContext context = this._http.GetContext();
                     HttpListenerRequest request = context.Request;
                     HttpListenerResponse response = context.Response;
 
@@ -226,9 +226,9 @@ namespace OfxTestServer
                         }
 
 
-                        Thread.Sleep(_delay);  // slow it down to make it more realistic otherwise it is too fast to see...
+                        Thread.Sleep(this._delay);  // slow it down to make it more realistic otherwise it is too fast to see...
 
-                        XDocument output = ProcessRequest(input);
+                        XDocument output = this.ProcessRequest(input);
 
                         using (Stream s = response.OutputStream)
                         {
@@ -281,7 +281,7 @@ namespace OfxTestServer
 
             foreach (var e in root.Elements())
             {
-                ProcessElement(e, challenge, result);
+                this.ProcessElement(e, challenge, result);
             }
             return result;
         }
@@ -291,19 +291,19 @@ namespace OfxTestServer
             switch (e.Name.LocalName)
             {
                 case "SIGNONMSGSRQV1":
-                    ProcessSignonRequest(e, challenge, result);
+                    this.ProcessSignonRequest(e, challenge, result);
                     break;
 
                 case "SIGNUPMSGSRQV1":
-                    ProcessSignupRequest(e, result);
+                    this.ProcessSignupRequest(e, result);
                     break;
 
                 case "PROFMSGSRQV1":
-                    ProcessProfileRequest(e, result);
+                    this.ProcessProfileRequest(e, result);
                     break;
 
                 case "BANKMSGSRQV1":
-                    ProcessBankRequest(e, result);
+                    this.ProcessBankRequest(e, result);
                     break;
             }
         }
@@ -340,42 +340,42 @@ namespace OfxTestServer
             if (challenge)
             {
 
-                string userId = GetElementValue(sonrq, "USERID");
-                string pswd = GetElementValue(sonrq, "USERPASS");
+                string userId = this.GetElementValue(sonrq, "USERID");
+                string pswd = this.GetElementValue(sonrq, "USERPASS");
 
-                if (_userName != userId)
+                if (this._userName != userId)
                 {
                     message = "Invalid user id";
                     code = 15500;
                 }
-                else if (_password != pswd)
+                else if (this._password != pswd)
                 {
                     message = "Invalid password";
                     code = (int)OfxErrors.SignonInvalid;
                 }
 
-                if (code == 0 && !String.IsNullOrEmpty(_userCred1Label))
+                if (code == 0 && !String.IsNullOrEmpty(this._userCred1Label))
                 {
-                    string cred1 = GetElementValue(sonrq, "USERCRED1");
-                    if (_userCred1 != cred1)
+                    string cred1 = this.GetElementValue(sonrq, "USERCRED1");
+                    if (this._userCred1 != cred1)
                     {
                         message = "Invalid USERCRED1";
                         code = (int)OfxErrors.SignonInvalid;
                     }
                 }
 
-                if (code == 0 && !String.IsNullOrEmpty(_userCred2Label))
+                if (code == 0 && !String.IsNullOrEmpty(this._userCred2Label))
                 {
 
-                    string cred2 = GetElementValue(sonrq, "USERCRED2");
-                    if (_userCred2 != cred2)
+                    string cred2 = this.GetElementValue(sonrq, "USERCRED2");
+                    if (this._userCred2 != cred2)
                     {
                         message = "Invalid USERCRED2";
                         code = (int)OfxErrors.SignonInvalid;
                     }
                 }
 
-                if (_mfaChallenges.Count == 0)
+                if (this._mfaChallenges.Count == 0)
                 {
                     challenge = false;
                 }
@@ -383,7 +383,7 @@ namespace OfxTestServer
 
             XElement pinchrs = null;
 
-            if (code == 0 && _changePassword)
+            if (code == 0 && this._changePassword)
             {
 
                 // PINCHTRNRQ
@@ -391,7 +391,7 @@ namespace OfxTestServer
 
                 if (pinchrq != null)
                 {
-                    pinchrs = ProcessChangePassword(pinchrq);
+                    pinchrs = this.ProcessChangePassword(pinchrq);
                     challenge = false;
                 }
                 else
@@ -404,10 +404,10 @@ namespace OfxTestServer
             XElement accesskey = null;
             bool hasAccessKey = false;
 
-            if (code == 0 && _accessKey != null)
+            if (code == 0 && this._accessKey != null)
             {
-                string value = GetElementValue(sonrq, "ACCESSKEY");
-                if (_accessKey == value)
+                string value = this.GetElementValue(sonrq, "ACCESSKEY");
+                if (this._accessKey == value)
                 {
                     hasAccessKey = true;
                 }
@@ -423,7 +423,7 @@ namespace OfxTestServer
                 {
 
                     // we are now expecting next request from user to contain the MFA challenge answers.
-                    _mfaPendingResponse = true;
+                    this._mfaPendingResponse = true;
 
                     response = new XElement("SIGNONMSGSRSV1",
                                    new XElement("SONRS",
@@ -431,7 +431,7 @@ namespace OfxTestServer
                                            new XElement("CODE", 0),
                                            new XElement("SEVERITY", "INFO")
                                        ),
-                                       new XElement("DTSERVER", GetIsoDateTime(DateTime.Now)),
+                                       new XElement("DTSERVER", this.GetIsoDateTime(DateTime.Now)),
                                        new XElement("LANGUAGE", "ENG"),
                                        new XElement("FI",
                                             new XElement("ORG", "bankofhope"),
@@ -446,7 +446,7 @@ namespace OfxTestServer
                                             new XElement("SEVERITY", "INFO"),
                                             new XElement("MESSAGE", "SUCCESS")
                                         ),
-                                        GetMFAChallenges()
+                                        this.GetMFAChallenges()
                                     )
                                 );
 
@@ -454,45 +454,45 @@ namespace OfxTestServer
                     return;
                 }
 
-                if (_mfaPendingResponse)
+                if (this._mfaPendingResponse)
                 {
-                    _mfaPendingResponse = false;
-                    if (!VerifyMFAAnswers(sonrq))
+                    this._mfaPendingResponse = false;
+                    if (!this.VerifyMFAAnswers(sonrq))
                     {
                         accesskey = null;
                         code = 3001;
                     }
                     else
                     {
-                        _accessKey = Guid.NewGuid().ToString();
-                        accesskey = new XElement("ACCESSKEY", _accessKey);
+                        this._accessKey = Guid.NewGuid().ToString();
+                        accesskey = new XElement("ACCESSKEY", this._accessKey);
                     }
                 }
-                else if (code == 0 && _mfaChallenges.Count > 0)
+                else if (code == 0 && this._mfaChallenges.Count > 0)
                 {
                     // Initiate MFA Challenge
                     code = 3000;
                 }
             }
 
-            if (code == 0 && !String.IsNullOrEmpty(_authTokenLabel) && !hasAccessKey)
+            if (code == 0 && !String.IsNullOrEmpty(this._authTokenLabel) && !hasAccessKey)
             {
 
-                string token = GetElementValue(sonrq, "AUTHTOKEN");
+                string token = this.GetElementValue(sonrq, "AUTHTOKEN");
                 if (token == null)
                 {
                     message = "AUTHTOKEN Required";
                     code = (int)OfxErrors.AUTHTOKENRequired;
                 }
-                else if (_authToken != token)
+                else if (this._authToken != token)
                 {
                     message = "Invalid AUTHTOKEN";
                     code = (int)OfxErrors.AUTHTOKENInvalid;
                 }
                 else
                 {
-                    _accessKey = Guid.NewGuid().ToString();
-                    accesskey = new XElement("ACCESSKEY", _accessKey);
+                    this._accessKey = Guid.NewGuid().ToString();
+                    accesskey = new XElement("ACCESSKEY", this._accessKey);
                 }
             }
             response = new XElement("SIGNONMSGSRSV1",
@@ -502,7 +502,7 @@ namespace OfxTestServer
                        new XElement("SEVERITY", severity),
                        new XElement("MESSAGE", message)
                    ),
-                   new XElement("DTSERVER", GetIsoDateTime(DateTime.Now)),
+                   new XElement("DTSERVER", this.GetIsoDateTime(DateTime.Now)),
                    new XElement("LANGUAGE", "ENG"),
                    new XElement("FI",
                         new XElement("ORG", "bankofhope"),
@@ -526,14 +526,14 @@ namespace OfxTestServer
 
         private bool VerifyMFAAnswers(XElement sonrq)
         {
-            var notVerified = new HashSet<MFAChallenge>(_mfaChallenges);
+            var notVerified = new HashSet<MFAChallenge>(this._mfaChallenges);
 
             foreach (var challengeResponse in sonrq.Elements("MFACHALLENGEANSWER"))
             {
                 string id = challengeResponse.Element("MFAPRHASEID").Value;
                 string answer = challengeResponse.Element("MFAPHRASEA").Value;
 
-                foreach (var item in _mfaChallenges)
+                foreach (var item in this._mfaChallenges)
                 {
                     if (item.PhraseId == id && item.PhraseAnswer == answer)
                     {
@@ -572,7 +572,7 @@ namespace OfxTestServer
         {
             XElement wrapper = new XElement("MFACHALLENGERS");
 
-            foreach (var item in _mfaChallenges)
+            foreach (var item in this._mfaChallenges)
             {
 
                 XElement x = new XElement("MFACHALLENGE", new XElement("MFAPHRASEID", item.PhraseId));
@@ -592,14 +592,14 @@ namespace OfxTestServer
         {
             XElement r = new XElement("SIGNUPMSGSRSV1",
                             new XElement("ACCTINFOTRNRS",
-                                new XElement("TRNUID", GetTransactionId(e)),
+                                new XElement("TRNUID", this.GetTransactionId(e)),
                                 new XElement("STATUS",
                                     new XElement("CODE", "0"),
                                     new XElement("SEVERITY", "INFO")
                                 ),
                                 new XElement("CLTCOOKIE", "1"),
                                 new XElement("ACCTINFORS",
-                                    new XElement("DTACCTUP", GetIsoDateTime(DateTime.Now)),
+                                    new XElement("DTACCTUP", this.GetIsoDateTime(DateTime.Now)),
                                     new XElement("ACCTINFO",
                                         new XElement("DESC", "Checking"),
                                         new XElement("BANKACCTINFO",
@@ -624,7 +624,7 @@ namespace OfxTestServer
         {
             return new XElement("MSGSETCORE",
                         new XElement("VER", 1),
-                        new XElement("URL", _prefix),
+                        new XElement("URL", this._prefix),
                         new XElement("OFXSEC", "NONE"),
                         new XElement("TRANSPSEC", "Y"),
                         new XElement("SIGNONREALM", "DefaultRealm"),
@@ -649,7 +649,7 @@ namespace OfxTestServer
         {
             var r = new XElement("PROFMSGSRSV1",
                         new XElement("PROFTRNRS",
-                            new XElement("TRNUID", GetTransactionId(e)),
+                            new XElement("TRNUID", this.GetTransactionId(e)),
                             new XElement("STATUS",
                                 new XElement("CODE", 0),
                                 new XElement("SEVERITY", "INFO")
@@ -657,10 +657,10 @@ namespace OfxTestServer
                             new XElement("PROFRS",
                                 new XElement("MSGSETLIST",
                                     new XElement("SIGNONMSGSET",
-                                        new XElement("SIGNONMSGSETV1", GetMsgSetCore())
+                                        new XElement("SIGNONMSGSETV1", this.GetMsgSetCore())
                                     ),
                                     new XElement("SIGNUPMSGSET",
-                                        new XElement("SIGNUPMSGSETV1", GetMsgSetCore(),
+                                        new XElement("SIGNUPMSGSETV1", this.GetMsgSetCore(),
                                             new XElement("WEBENROLL",
                                                 new XElement("URL", "http://localhost")
                                             ),
@@ -670,7 +670,7 @@ namespace OfxTestServer
                                         )
                                     ),
                                     new XElement("BANKMSGSET",
-                                        new XElement("BANKMSGSETV1", GetMsgSetCore(),
+                                        new XElement("BANKMSGSETV1", this.GetMsgSetCore(),
                                             new XElement("CLOSINGAVAIL", "N"),
                                             new XElement("XFERPROF",
                                                 new XElement("PROCENDTM", "235959[0:GMT]"),
@@ -689,10 +689,10 @@ namespace OfxTestServer
                                         )
                                     ),
                                     new XElement("PROFMSGSET",
-                                        new XElement("PROFMSGSETV1", GetMsgSetCore())
+                                        new XElement("PROFMSGSETV1", this.GetMsgSetCore())
                                     )
                                 ),
-                                new XElement("SIGNONINFOLIST", GetSignOnInfo()),
+                                new XElement("SIGNONINFOLIST", this.GetSignOnInfo()),
                                 new XElement("DTPROFUP", "20111031070000.000[0:GMT]"),
                                 new XElement("FINAME", "Last Chance Bank of Hope"),
                                 new XElement("ADDR1", "123 Walkabout Drive"),
@@ -722,8 +722,8 @@ namespace OfxTestServer
                          new XElement("SPACES", "N"),
                          new XElement("PINCH", "Y"),
                          new XElement("CHGPINFIRST", "N"),
-                         new XElement("USERCRED1LABEL", _userCred1Label),
-                         new XElement("USERCRED2LABEL", _userCred2Label),
+                         new XElement("USERCRED1LABEL", this._userCred1Label),
+                         new XElement("USERCRED2LABEL", this._userCred2Label),
                          new XElement("CLIENTUIDREQ", "Y"),
                          new XElement("AUTHTOKENFIRST", "N"),
                          new XElement("AUTHTOKENLABEL", "Authentication Token"),
@@ -739,7 +739,7 @@ namespace OfxTestServer
 
             foreach (var statementRequest in e.Elements("STMTTRNRQ"))
             {
-                ProcessBankStatementRequest(statementRequest, r);
+                this.ProcessBankStatementRequest(statementRequest, r);
             }
             result.Root.Add(r);
         }
@@ -783,14 +783,14 @@ namespace OfxTestServer
          */
         private void ProcessBankStatementRequest(XElement e, XElement result)
         {
-            var acct = GetBankAccountFrom(e);
+            var acct = this.GetBankAccountFrom(e);
             var endDate = DateTime.Now;
             var startDate = endDate.AddMonths(-1);
             XElement stmt = null;
             try
             {
                 stmt = new XElement("STMTTRNRS",
-                       new XElement("TRNUID", GetTransactionId(e)),
+                       new XElement("TRNUID", this.GetTransactionId(e)),
                        new XElement("STATUS",
                            new XElement("CODE", "0"),
                            new XElement("SEVERITY", "INFO")
@@ -800,17 +800,17 @@ namespace OfxTestServer
                            new XElement("CURDEF", "USD"),
                            acct,
                            new XElement("BANKTRANLIST",
-                               new XElement("DTSTART", GetIsoDateTime(startDate)),
-                               new XElement("DTEND", GetIsoDateTime(endDate)),
-                               GetRandomTransactions(startDate, endDate)
+                               new XElement("DTSTART", this.GetIsoDateTime(startDate)),
+                               new XElement("DTEND", this.GetIsoDateTime(endDate)),
+                               this.GetRandomTransactions(startDate, endDate)
                            ),
                            new XElement("LEDGERBAL",
                                new XElement("BALAMT", "8722.69"),
-                               new XElement("DTASOF", GetIsoDateTime(DateTime.Now))
+                               new XElement("DTASOF", this.GetIsoDateTime(DateTime.Now))
                            ),
                            new XElement("AVAILBAL",
                                new XElement("BALAMT", "8717.69"),
-                               new XElement("DTASOF", GetIsoDateTime(DateTime.Now))
+                               new XElement("DTASOF", this.GetIsoDateTime(DateTime.Now))
                            )
                        )
                    );
@@ -818,7 +818,7 @@ namespace OfxTestServer
             catch (Exception ex)
             {
                 stmt = new XElement("STMTTRNRS",
-                        new XElement("TRNUID", GetTransactionId(e)),
+                        new XElement("TRNUID", this.GetTransactionId(e)),
                         new XElement("STATUS",
                             new XElement("CODE", "2000"),
                             new XElement("SEVERITY", "ERROR"),
@@ -843,7 +843,7 @@ namespace OfxTestServer
                 if (ue != null)
                 {
                     user = ue.Value;
-                    if (user != _userName)
+                    if (user != this._userName)
                     {
                         message = "User id unknown";
                     }
@@ -856,8 +856,8 @@ namespace OfxTestServer
                 var newpass = req.Element("NEWUSERPASS");
                 if (newpass != null)
                 {
-                    Password = newpass.Value;
-                    ChangePassword = false;
+                    this.Password = newpass.Value;
+                    this.ChangePassword = false;
                 }
                 else
                 {
@@ -876,7 +876,7 @@ namespace OfxTestServer
             }
 
             XElement r = new XElement("PINCHTRNRS",
-                                new XElement("TRNUID", GetTransactionId(e)),
+                                new XElement("TRNUID", this.GetTransactionId(e)),
                                 new XElement("STATUS",
                                     new XElement("CODE", code),
                                     new XElement("SEVERITY", severity),
@@ -884,7 +884,7 @@ namespace OfxTestServer
                                 ),
                                 new XElement("PINCHRS",
                                     new XElement("USERID", user),
-                                    new XElement("DTCHANGED", GetIsoDateTime(DateTime.Now))
+                                    new XElement("DTCHANGED", this.GetIsoDateTime(DateTime.Now))
                                 )
                             );
 
@@ -901,7 +901,7 @@ namespace OfxTestServer
             for (int index = 0; index < 10; index++)
             {
 
-                var payee = GetRandomPayee(rand);
+                var payee = this.GetRandomPayee(rand);
                 var range = payee.Max - payee.Min;
                 var amount = rand.NextDouble() * range;
                 amount = amount + payee.Min;
@@ -915,7 +915,7 @@ namespace OfxTestServer
 
                 var e = new XElement("STMTTRN",
                             new XElement("TRNTYPE", type),
-                            new XElement("DTPOSTED", GetIsoDateTime(startDate)),
+                            new XElement("DTPOSTED", this.GetIsoDateTime(startDate)),
                             new XElement("TRNAMT", amount),
                             new XElement("FITID", index),
                             new XElement("NAME", payee.Name)
@@ -931,14 +931,14 @@ namespace OfxTestServer
 
         private SamplePayee GetRandomPayee(Random rand)
         {
-            var index = rand.Next(0, _payees.Count);
-            return _payees[index];
+            var index = rand.Next(0, this._payees.Count);
+            return this._payees[index];
         }
 
         private object GetIsoDateTime(DateTime dt)
         {
             var gmt = dt.ToUniversalTime();
-            var isodate = GetIsoDate(gmt) + gmt.Hour.ToString("D2") + gmt.Minute.ToString("D2") + gmt.Second.ToString("D2");
+            var isodate = this.GetIsoDate(gmt) + gmt.Hour.ToString("D2") + gmt.Minute.ToString("D2") + gmt.Second.ToString("D2");
             return isodate;
         }
 
@@ -959,129 +959,129 @@ namespace OfxTestServer
 
         private void AddSamplePayees()
         {
-            _payees = new List<SamplePayee>();
-            _payees.Add(new SamplePayee("Sprint PCS", -275, -27));
-            _payees.Add(new SamplePayee("Costco Gas", -76, -12));
-            _payees.Add(new SamplePayee("Garlic Jims Famous Gourmet Pizza", -56, -11));
-            _payees.Add(new SamplePayee("Veterinary Hostpital", -222, -11));
-            _payees.Add(new SamplePayee("Safeway", -199, 50));
-            _payees.Add(new SamplePayee("World Market", -100, -9));
-            _payees.Add(new SamplePayee("AAA", -242, -3));
-            _payees.Add(new SamplePayee("Radio Shack", -199, 54));
-            _payees.Add(new SamplePayee("Costco", -4621, 870));
-            _payees.Add(new SamplePayee("Rite Aid", -50, -3));
-            _payees.Add(new SamplePayee("Starbucks", -108, -1));
-            _payees.Add(new SamplePayee("GTC Telecom", -98, -2));
-            _payees.Add(new SamplePayee("ARCO", -73, -3));
-            _payees.Add(new SamplePayee("Home Depot", -912, 224));
-            _payees.Add(new SamplePayee("McLendon Hardware", -202, 25));
-            _payees.Add(new SamplePayee("World Vision", -147, -5));
-            _payees.Add(new SamplePayee("State Farm Insurance", -3100, 1191));
-            _payees.Add(new SamplePayee("Bank of America", -2063, -2063));
-            _payees.Add(new SamplePayee("Comcast", -74, -49));
-            _payees.Add(new SamplePayee("Puget Sound Energy", -428, 50));
-            _payees.Add(new SamplePayee("Albertsons", -62, -1));
-            _payees.Add(new SamplePayee("Top Foods", -203, 0));
-            _payees.Add(new SamplePayee("Target", -218, 76));
-            _payees.Add(new SamplePayee("Ruby's Diner", -99, -3));
-            _payees.Add(new SamplePayee("DeYoung's Farm & Garden", -181, 84));
-            _payees.Add(new SamplePayee("Water District", -510, -42));
-            _payees.Add(new SamplePayee("Whole Foods", -167, -9));
-            _payees.Add(new SamplePayee("Applebee's", -123, -14));
-            _payees.Add(new SamplePayee("PCC", -119, -3));
-            _payees.Add(new SamplePayee("Dairy Queen", -20, -1));
-            _payees.Add(new SamplePayee("In Harmony", -438, -9));
-            _payees.Add(new SamplePayee("Jerusalem Post", -49, -3));
-            _payees.Add(new SamplePayee("Volvo Dealer", -2000, -23));
-            _payees.Add(new SamplePayee("Big Foot Bagels", -30, -5));
-            _payees.Add(new SamplePayee("Amazon.com", -293, 71));
-            _payees.Add(new SamplePayee("REI", -855, 290));
-            _payees.Add(new SamplePayee("PetSmart", -144, 10));
-            _payees.Add(new SamplePayee("Jamba Juice", -39, -4));
-            _payees.Add(new SamplePayee("Waste Management", -150, -92));
-            _payees.Add(new SamplePayee("Fred Meyer", -121, 42));
-            _payees.Add(new SamplePayee("Molbaks Inc.", -146, -7));
-            _payees.Add(new SamplePayee("Walmart", -183, 41));
-            _payees.Add(new SamplePayee("Verizon", -83, -33));
-            _payees.Add(new SamplePayee("Barnes & Noble", -113, -2));
-            _payees.Add(new SamplePayee("McDonalds", -57, -1));
-            _payees.Add(new SamplePayee("Quizno's", -51, 0));
-            _payees.Add(new SamplePayee("Pony Mailbox", -78, -4));
-            _payees.Add(new SamplePayee("Blockbuster Video", -115, 36));
-            _payees.Add(new SamplePayee("Office Max", -128, -2));
-            _payees.Add(new SamplePayee("Teddy's Bigger Burgers", -48, -4));
-            _payees.Add(new SamplePayee("Pallino Pastaria", -57, -15));
-            _payees.Add(new SamplePayee("Famous Footwear", -322, 142));
-            _payees.Add(new SamplePayee("Department of Licensing", -61, -20));
-            _payees.Add(new SamplePayee("Play It Again Sports", -76, 81));
-            _payees.Add(new SamplePayee("NewEgg.com", -1745, 161));
-            _payees.Add(new SamplePayee("Marriot Atlanta m:Store", -19, -3));
-            _payees.Add(new SamplePayee("Marta Atlanta", -18, -4));
-            _payees.Add(new SamplePayee("Applebees", -73, -15));
-            _payees.Add(new SamplePayee("Seattle Times", -98, -27));
-            _payees.Add(new SamplePayee("Foot Zone", -255, 109));
-            _payees.Add(new SamplePayee("Staples", -161, 326));
-            _payees.Add(new SamplePayee("The Whole Pet Shop", -78, -8));
-            _payees.Add(new SamplePayee("Chinese Restaurant", -99, -46));
-            _payees.Add(new SamplePayee("Animal Healing Center", -328, 140));
-            _payees.Add(new SamplePayee("Travelsmith Catalogue", -419, 190));
-            _payees.Add(new SamplePayee("Baskin Robbins", -48, -5));
-            _payees.Add(new SamplePayee("Subway", -46, -5));
-            _payees.Add(new SamplePayee("The Lego Store", -405, -13));
-            _payees.Add(new SamplePayee("Red Robin", -85, -10));
-            _payees.Add(new SamplePayee("Dentist", -200, -12));
-            _payees.Add(new SamplePayee("Black Angus", -227, -28));
-            _payees.Add(new SamplePayee("Lands End", -437, 218));
-            _payees.Add(new SamplePayee("Gymnastics", -533, -30));
-            _payees.Add(new SamplePayee("KFC", -45, -5));
-            _payees.Add(new SamplePayee("Fry's Electronics", -4025, 163));
-            _payees.Add(new SamplePayee("Milk Delivery", -57, -8));
-            _payees.Add(new SamplePayee("Soccer West", -140, -13));
-            _payees.Add(new SamplePayee("Borders Books", -114, 15));
-            _payees.Add(new SamplePayee("Stevens Pass Ski Resort", -289, -18));
-            _payees.Add(new SamplePayee("Ben Franklin", -165, -5));
-            _payees.Add(new SamplePayee("Audible Books", -41, 68));
-            _payees.Add(new SamplePayee("Great Harvest Bakery", -29, 0));
-            _payees.Add(new SamplePayee("Osh Kosh B'gosh", -212, -17));
-            _payees.Add(new SamplePayee("QFC", -36, -1));
-            _payees.Add(new SamplePayee("Trader Joe's", -93, 0));
-            _payees.Add(new SamplePayee("Round Table Pizza", -84, -11));
-            _payees.Add(new SamplePayee("Southwest Airlines", -394, 243));
-            _payees.Add(new SamplePayee("Consumer Reports", -26, 24));
-            _payees.Add(new SamplePayee("Cost Plus World Market", -162, -1));
-            _payees.Add(new SamplePayee("IKEA", -585, 79));
-            _payees.Add(new SamplePayee("Lego Shop At Home", -391, -3));
-            _payees.Add(new SamplePayee("Pacific Science Center", -131, -10));
-            _payees.Add(new SamplePayee("Countrywide", -2063, -2063));
-            _payees.Add(new SamplePayee("Alaska Airlines", -299, -5));
-            _payees.Add(new SamplePayee("Chinese Restaurant", -129, -25));
-            _payees.Add(new SamplePayee("Stevens Pass Cascadian", -27, -4));
-            _payees.Add(new SamplePayee("Toys R Us", -97, 4));
-            _payees.Add(new SamplePayee("Linens N Things", -457, -5));
-            _payees.Add(new SamplePayee("Ski Rentals", -609, 32));
-            _payees.Add(new SamplePayee("Tapatio Mexican Grill", -83, -7));
-            _payees.Add(new SamplePayee("Sir Plus", -110, -3));
-            _payees.Add(new SamplePayee("Bartell Drugs", -76, -1));
-            _payees.Add(new SamplePayee("Stevens Pass", -540, 34));
-            _payees.Add(new SamplePayee("SeaTac Airport", -8, 0));
-            _payees.Add(new SamplePayee("Lego Store", -199, -10));
-            _payees.Add(new SamplePayee("Intuit", -76, 76));
-            _payees.Add(new SamplePayee("Loews", -49, -10));
-            _payees.Add(new SamplePayee("Residential House Cleaning", -135, -125));
-            _payees.Add(new SamplePayee("Tina Eddy", -50, -25));
-            _payees.Add(new SamplePayee("A Canine Experience", -755, -25));
-            _payees.Add(new SamplePayee("Veterinary Hospital", -563, -21));
-            _payees.Add(new SamplePayee("Denny's", -20, -1));
-            _payees.Add(new SamplePayee("Museum Of Flight", -48, -3));
-            _payees.Add(new SamplePayee("USPS", -36, -1));
-            _payees.Add(new SamplePayee("Legoland", -290, -3));
-            _payees.Add(new SamplePayee("Sears", -1810, 63));
-            _payees.Add(new SamplePayee("Hobby Town USA", -80, -5));
+            this._payees = new List<SamplePayee>();
+            this._payees.Add(new SamplePayee("Sprint PCS", -275, -27));
+            this._payees.Add(new SamplePayee("Costco Gas", -76, -12));
+            this._payees.Add(new SamplePayee("Garlic Jims Famous Gourmet Pizza", -56, -11));
+            this._payees.Add(new SamplePayee("Veterinary Hostpital", -222, -11));
+            this._payees.Add(new SamplePayee("Safeway", -199, 50));
+            this._payees.Add(new SamplePayee("World Market", -100, -9));
+            this._payees.Add(new SamplePayee("AAA", -242, -3));
+            this._payees.Add(new SamplePayee("Radio Shack", -199, 54));
+            this._payees.Add(new SamplePayee("Costco", -4621, 870));
+            this._payees.Add(new SamplePayee("Rite Aid", -50, -3));
+            this._payees.Add(new SamplePayee("Starbucks", -108, -1));
+            this._payees.Add(new SamplePayee("GTC Telecom", -98, -2));
+            this._payees.Add(new SamplePayee("ARCO", -73, -3));
+            this._payees.Add(new SamplePayee("Home Depot", -912, 224));
+            this._payees.Add(new SamplePayee("McLendon Hardware", -202, 25));
+            this._payees.Add(new SamplePayee("World Vision", -147, -5));
+            this._payees.Add(new SamplePayee("State Farm Insurance", -3100, 1191));
+            this._payees.Add(new SamplePayee("Bank of America", -2063, -2063));
+            this._payees.Add(new SamplePayee("Comcast", -74, -49));
+            this._payees.Add(new SamplePayee("Puget Sound Energy", -428, 50));
+            this._payees.Add(new SamplePayee("Albertsons", -62, -1));
+            this._payees.Add(new SamplePayee("Top Foods", -203, 0));
+            this._payees.Add(new SamplePayee("Target", -218, 76));
+            this._payees.Add(new SamplePayee("Ruby's Diner", -99, -3));
+            this._payees.Add(new SamplePayee("DeYoung's Farm & Garden", -181, 84));
+            this._payees.Add(new SamplePayee("Water District", -510, -42));
+            this._payees.Add(new SamplePayee("Whole Foods", -167, -9));
+            this._payees.Add(new SamplePayee("Applebee's", -123, -14));
+            this._payees.Add(new SamplePayee("PCC", -119, -3));
+            this._payees.Add(new SamplePayee("Dairy Queen", -20, -1));
+            this._payees.Add(new SamplePayee("In Harmony", -438, -9));
+            this._payees.Add(new SamplePayee("Jerusalem Post", -49, -3));
+            this._payees.Add(new SamplePayee("Volvo Dealer", -2000, -23));
+            this._payees.Add(new SamplePayee("Big Foot Bagels", -30, -5));
+            this._payees.Add(new SamplePayee("Amazon.com", -293, 71));
+            this._payees.Add(new SamplePayee("REI", -855, 290));
+            this._payees.Add(new SamplePayee("PetSmart", -144, 10));
+            this._payees.Add(new SamplePayee("Jamba Juice", -39, -4));
+            this._payees.Add(new SamplePayee("Waste Management", -150, -92));
+            this._payees.Add(new SamplePayee("Fred Meyer", -121, 42));
+            this._payees.Add(new SamplePayee("Molbaks Inc.", -146, -7));
+            this._payees.Add(new SamplePayee("Walmart", -183, 41));
+            this._payees.Add(new SamplePayee("Verizon", -83, -33));
+            this._payees.Add(new SamplePayee("Barnes & Noble", -113, -2));
+            this._payees.Add(new SamplePayee("McDonalds", -57, -1));
+            this._payees.Add(new SamplePayee("Quizno's", -51, 0));
+            this._payees.Add(new SamplePayee("Pony Mailbox", -78, -4));
+            this._payees.Add(new SamplePayee("Blockbuster Video", -115, 36));
+            this._payees.Add(new SamplePayee("Office Max", -128, -2));
+            this._payees.Add(new SamplePayee("Teddy's Bigger Burgers", -48, -4));
+            this._payees.Add(new SamplePayee("Pallino Pastaria", -57, -15));
+            this._payees.Add(new SamplePayee("Famous Footwear", -322, 142));
+            this._payees.Add(new SamplePayee("Department of Licensing", -61, -20));
+            this._payees.Add(new SamplePayee("Play It Again Sports", -76, 81));
+            this._payees.Add(new SamplePayee("NewEgg.com", -1745, 161));
+            this._payees.Add(new SamplePayee("Marriot Atlanta m:Store", -19, -3));
+            this._payees.Add(new SamplePayee("Marta Atlanta", -18, -4));
+            this._payees.Add(new SamplePayee("Applebees", -73, -15));
+            this._payees.Add(new SamplePayee("Seattle Times", -98, -27));
+            this._payees.Add(new SamplePayee("Foot Zone", -255, 109));
+            this._payees.Add(new SamplePayee("Staples", -161, 326));
+            this._payees.Add(new SamplePayee("The Whole Pet Shop", -78, -8));
+            this._payees.Add(new SamplePayee("Chinese Restaurant", -99, -46));
+            this._payees.Add(new SamplePayee("Animal Healing Center", -328, 140));
+            this._payees.Add(new SamplePayee("Travelsmith Catalogue", -419, 190));
+            this._payees.Add(new SamplePayee("Baskin Robbins", -48, -5));
+            this._payees.Add(new SamplePayee("Subway", -46, -5));
+            this._payees.Add(new SamplePayee("The Lego Store", -405, -13));
+            this._payees.Add(new SamplePayee("Red Robin", -85, -10));
+            this._payees.Add(new SamplePayee("Dentist", -200, -12));
+            this._payees.Add(new SamplePayee("Black Angus", -227, -28));
+            this._payees.Add(new SamplePayee("Lands End", -437, 218));
+            this._payees.Add(new SamplePayee("Gymnastics", -533, -30));
+            this._payees.Add(new SamplePayee("KFC", -45, -5));
+            this._payees.Add(new SamplePayee("Fry's Electronics", -4025, 163));
+            this._payees.Add(new SamplePayee("Milk Delivery", -57, -8));
+            this._payees.Add(new SamplePayee("Soccer West", -140, -13));
+            this._payees.Add(new SamplePayee("Borders Books", -114, 15));
+            this._payees.Add(new SamplePayee("Stevens Pass Ski Resort", -289, -18));
+            this._payees.Add(new SamplePayee("Ben Franklin", -165, -5));
+            this._payees.Add(new SamplePayee("Audible Books", -41, 68));
+            this._payees.Add(new SamplePayee("Great Harvest Bakery", -29, 0));
+            this._payees.Add(new SamplePayee("Osh Kosh B'gosh", -212, -17));
+            this._payees.Add(new SamplePayee("QFC", -36, -1));
+            this._payees.Add(new SamplePayee("Trader Joe's", -93, 0));
+            this._payees.Add(new SamplePayee("Round Table Pizza", -84, -11));
+            this._payees.Add(new SamplePayee("Southwest Airlines", -394, 243));
+            this._payees.Add(new SamplePayee("Consumer Reports", -26, 24));
+            this._payees.Add(new SamplePayee("Cost Plus World Market", -162, -1));
+            this._payees.Add(new SamplePayee("IKEA", -585, 79));
+            this._payees.Add(new SamplePayee("Lego Shop At Home", -391, -3));
+            this._payees.Add(new SamplePayee("Pacific Science Center", -131, -10));
+            this._payees.Add(new SamplePayee("Countrywide", -2063, -2063));
+            this._payees.Add(new SamplePayee("Alaska Airlines", -299, -5));
+            this._payees.Add(new SamplePayee("Chinese Restaurant", -129, -25));
+            this._payees.Add(new SamplePayee("Stevens Pass Cascadian", -27, -4));
+            this._payees.Add(new SamplePayee("Toys R Us", -97, 4));
+            this._payees.Add(new SamplePayee("Linens N Things", -457, -5));
+            this._payees.Add(new SamplePayee("Ski Rentals", -609, 32));
+            this._payees.Add(new SamplePayee("Tapatio Mexican Grill", -83, -7));
+            this._payees.Add(new SamplePayee("Sir Plus", -110, -3));
+            this._payees.Add(new SamplePayee("Bartell Drugs", -76, -1));
+            this._payees.Add(new SamplePayee("Stevens Pass", -540, 34));
+            this._payees.Add(new SamplePayee("SeaTac Airport", -8, 0));
+            this._payees.Add(new SamplePayee("Lego Store", -199, -10));
+            this._payees.Add(new SamplePayee("Intuit", -76, 76));
+            this._payees.Add(new SamplePayee("Loews", -49, -10));
+            this._payees.Add(new SamplePayee("Residential House Cleaning", -135, -125));
+            this._payees.Add(new SamplePayee("Tina Eddy", -50, -25));
+            this._payees.Add(new SamplePayee("A Canine Experience", -755, -25));
+            this._payees.Add(new SamplePayee("Veterinary Hospital", -563, -21));
+            this._payees.Add(new SamplePayee("Denny's", -20, -1));
+            this._payees.Add(new SamplePayee("Museum Of Flight", -48, -3));
+            this._payees.Add(new SamplePayee("USPS", -36, -1));
+            this._payees.Add(new SamplePayee("Legoland", -290, -3));
+            this._payees.Add(new SamplePayee("Sears", -1810, 63));
+            this._payees.Add(new SamplePayee("Hobby Town USA", -80, -5));
         }
 
         private void OnPropertyChanged(string name)
         {
-            _dispatcher.BeginInvoke(new Action<string>(RaisePropertyChanged), name);
+            this._dispatcher.BeginInvoke(new Action<string>(this.RaisePropertyChanged), name);
         }
 
         private void RaisePropertyChanged(string name)

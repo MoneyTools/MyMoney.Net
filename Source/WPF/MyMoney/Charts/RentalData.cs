@@ -15,10 +15,10 @@
         {
             get
             {
-                return ExpenseTaxes + ExpenseRepair + ExpenseMaintenance + ExpenseManagement + ExpenseInterest;
+                return this.ExpenseTaxes + this.ExpenseRepair + this.ExpenseMaintenance + this.ExpenseManagement + this.ExpenseInterest;
             }
         }
-        public double Profit { get { return Income - Expense; } }
+        public double Profit { get { return this.Income - this.Expense; } }
 
         public RentalData()
         {

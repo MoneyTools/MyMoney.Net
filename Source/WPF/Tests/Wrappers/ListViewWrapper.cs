@@ -14,19 +14,19 @@ namespace Walkabout.Tests.Wrappers
         public ListViewWrapper(AutomationElement e)
         {
             this.element = e.FindFirstWithRetries(TreeScope.Subtree, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.List));
-            if (element == null)
+            if (this.element == null)
             {
                 throw new Exception("No list control found in this scope after 5 retries");
             }
         }
 
-        public AutomationElement Element { get { return element; } }
+        public AutomationElement Element { get { return this.element; } }
 
         public int Count
         {
             get
             {
-                return Items.Count;
+                return this.Items.Count;
             }
         }
 
@@ -57,7 +57,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                SelectionPattern selection = (SelectionPattern)element.GetCurrentPattern(SelectionPattern.Pattern);
+                SelectionPattern selection = (SelectionPattern)this.element.GetCurrentPattern(SelectionPattern.Pattern);
                 AutomationElement[] selected = selection.Current.GetSelection();
                 return (selected == null) ? new AutomationElement[0] : selected;
             }
@@ -67,7 +67,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                AutomationElementCollection result = element.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem));
+                AutomationElementCollection result = this.element.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ListItem));
                 List<AutomationElement> list = new List<AutomationElement>();
                 if (result != null)
                 {

@@ -13,14 +13,14 @@ namespace Walkabout.Utilities
         public AdornerDropTarget(FrameworkElement adornedElement)
             : base(adornedElement)
         {
-            IsHitTestVisible = false;
+            this.IsHitTestVisible = false;
 
-            brush = adornedElement.FindResource("DragDropFeedbackBrush") as Brush;
-            if (brush == null)
+            this.brush = adornedElement.FindResource("DragDropFeedbackBrush") as Brush;
+            if (this.brush == null)
             {
-                brush = Brushes.Orange;
+                this.brush = Brushes.Orange;
             }
-            pen = new Pen(brush, 1.5);
+            this.pen = new Pen(this.brush, 1.5);
         }
 
         // A common way to implement an adorner's rendering behavior is to override the OnRender
@@ -28,7 +28,7 @@ namespace Walkabout.Utilities
         protected override void OnRender(DrawingContext drawingContext)
         {
             Rect adornedElementRect = new Rect(this.AdornedElement.DesiredSize);
-            drawingContext.DrawRectangle(null, pen, adornedElementRect);
+            drawingContext.DrawRectangle(null, this.pen, adornedElementRect);
         }
     }
 

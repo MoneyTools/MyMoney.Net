@@ -30,17 +30,17 @@ namespace Walkabout.Data
 
         public void CreateDatabase()
         {
-            create(engine);
+            this.create(this.engine);
         }
 
         public void Dispose()
         {
-            dispose(engine);
+            this.dispose(this.engine);
         }
 
         public void Upgrade()
         {
-            upgrade(engine);
+            this.upgrade(this.engine);
         }
     }
 
@@ -307,7 +307,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
 
         public override void Create()
         {
-            string connectionString = GetConnectionString(true);
+            string connectionString = this.GetConnectionString(true);
 
             if (!File.Exists(this.DatabasePath))
             {
@@ -320,7 +320,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
 
         public override void Delete()
         {
-            Disconnect();
+            this.Disconnect();
             if (File.Exists(this.DatabasePath))
             {
                 File.Delete(this.DatabasePath);
@@ -363,7 +363,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
             {
                 try
                 {
-                    Connect();
+                    this.Connect();
                     return false;
                 }
                 catch (Exception e)
@@ -375,7 +375,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
 
         public override void Upgrade()
         {
-            string constr = GetConnectionString(true);
+            string constr = this.GetConnectionString(true);
             using (SqlCeEngine en = SqlCeFactory.CreateSqlCeEngine(constr))
             {
                 en.Upgrade();
@@ -395,7 +395,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
                         a 64 bit version of windows, otherwise <Bold>SSCERuntime_x86-ENU.exe</Bold>).  Then after it is installed restart the Money application.</Paragraph>");
                 }
 
-                string constr = GetConnectionString(true);
+                string constr = this.GetConnectionString(true);
                 this.sqlCEConnection = SqlCeFactory.CreateSqlCeConnection(constr);
                 this.sqlCEConnection.Open();
 
@@ -437,7 +437,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
             object result = null;
             try
             {
-                Connect();
+                this.Connect();
                 using (DbCommand command = SqlCeFactory.CreateSqlCeCommand(cmd, this.sqlCEConnection))
                 {
                     result = command.ExecuteScalar();
@@ -461,7 +461,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
 
             try
             {
-                Connect();
+                this.Connect();
 
                 DataSet dataSet = new DataSet();
 
@@ -491,7 +491,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
             this.AppendLog(cmd);
             try
             {
-                Connect();
+                this.Connect();
                 using (DbCommand command = SqlCeFactory.CreateSqlCeCommand(cmd, this.sqlCEConnection))
                 {
                     command.ExecuteNonQuery();
@@ -511,7 +511,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
 
             try
             {
-                Connect();
+                this.Connect();
                 using (DbCommand command = SqlCeFactory.CreateSqlCeCommand(cmd, this.sqlCEConnection))
                 {
                     return command.ExecuteReader();

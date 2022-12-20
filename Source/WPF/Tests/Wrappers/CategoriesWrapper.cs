@@ -18,7 +18,7 @@ namespace Walkabout.Tests.Wrappers
             get
             {
                 List<AutomationElement> list = new List<AutomationElement>();
-                foreach (AutomationElement e in CategoryGroups)
+                foreach (AutomationElement e in this.CategoryGroups)
                 {
                     AutomationElementCollection result = e.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TreeItem));
                     foreach (AutomationElement c in result)
@@ -34,7 +34,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                foreach (AutomationElement e in Selection)
+                foreach (AutomationElement e in this.Selection)
                 {
                     return true;
                 }
@@ -55,7 +55,7 @@ namespace Walkabout.Tests.Wrappers
             get
             {
                 List<AutomationElement> list = new List<AutomationElement>();
-                foreach (AutomationElement e in CategoryGroups)
+                foreach (AutomationElement e in this.CategoryGroups)
                 {
                     AutomationElementCollection result = e.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TreeItem));
                     foreach (AutomationElement c in result)

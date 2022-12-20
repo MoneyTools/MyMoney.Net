@@ -26,7 +26,7 @@ namespace Walkabout.StockQuotes
         {
             this.myMoney = money;
             this.log = log;
-            this.myMoney.Securities.Changed += Securities_Changed;
+            this.myMoney.Securities.Changed += this.Securities_Changed;
         }
 
         private void Securities_Changed(object sender, ChangeEventArgs e)
@@ -35,17 +35,17 @@ namespace Walkabout.StockQuotes
             {
                 if (e.Item is Security s)
                 {
-                    if (lockCount > 0)
+                    if (this.lockCount > 0)
                     {
-                        if (changed == null)
+                        if (this.changed == null)
                         {
-                            changed = new HashSet<Security>();
+                            this.changed = new HashSet<Security>();
                         }
-                        changed.Add(s);
+                        this.changed.Add(s);
                     }
                     else
                     {
-                        OnSecurityChanged(s);
+                        this.OnSecurityChanged(s);
                     }
                 }
                 e = e.Next;
@@ -54,35 +54,35 @@ namespace Walkabout.StockQuotes
 
         private void OnSecurityChanged(Security s)
         {
-            if (quoteIndex.ContainsKey(s))
+            if (this.quoteIndex.ContainsKey(s))
             {
-                quoteIndex.Remove(s);
+                this.quoteIndex.Remove(s);
             }
-            if (transactionsBySecurity != null && transactionsBySecurity.ContainsKey(s))
+            if (this.transactionsBySecurity != null && this.transactionsBySecurity.ContainsKey(s))
             {
-                transactionsBySecurity.Remove(s);
+                this.transactionsBySecurity.Remove(s);
             }
         }
 
         public IDisposable BeginLock()
         {
-            lockCount++;
+            this.lockCount++;
             return new UpdateLock(this);
         }
 
         private void ReleaseLock()
         {
-            lockCount--;
-            if (lockCount <= 0)
+            this.lockCount--;
+            if (this.lockCount <= 0)
             {
-                lockCount = 0;
-                var snapshot = changed;
-                changed = null;
+                this.lockCount = 0;
+                var snapshot = this.changed;
+                this.changed = null;
                 if (snapshot != null)
                 {
                     foreach (var s in snapshot)
                     {
-                        OnSecurityChanged(s);
+                        this.OnSecurityChanged(s);
                     }
                 }
             }
@@ -97,7 +97,7 @@ namespace Walkabout.StockQuotes
             }
 
             decimal price = 0;
-            if (quoteIndex.TryGetValue(s, out StockQuoteIndex index))
+            if (this.quoteIndex.TryGetValue(s, out StockQuoteIndex index))
             {
                 var quote = index.GetQuote(date);
                 if (quote != null)
@@ -108,7 +108,7 @@ namespace Walkabout.StockQuotes
             else
             {
                 // create an empty index that we can update below.
-                quoteIndex[s] = index = new StockQuoteIndex(null);
+                this.quoteIndex[s] = index = new StockQuoteIndex(null);
             }
 
             // hmmm, then we have to search our own transactions for a recorded UnitPrice.
@@ -119,7 +119,7 @@ namespace Walkabout.StockQuotes
                     this.transactionsBySecurity = this.myMoney.GetTransactionsGroupedBySecurity((a) => true, date.AddDays(1));
                 }
 
-                if (transactionsBySecurity.TryGetValue(s, out List<Investment> trades) && trades != null)
+                if (this.transactionsBySecurity.TryGetValue(s, out List<Investment> trades) && trades != null)
                 {
                     price = 0;
                     foreach (var t in trades)
@@ -145,7 +145,7 @@ namespace Walkabout.StockQuotes
 
         internal async Task LoadHistory(Security s)
         {
-            if (s != null && !quoteIndex.TryGetValue(s, out StockQuoteIndex index))
+            if (s != null && !this.quoteIndex.TryGetValue(s, out StockQuoteIndex index))
             {
                 StockQuoteHistory history = null;
                 if (!string.IsNullOrEmpty(s.Symbol))
@@ -154,7 +154,7 @@ namespace Walkabout.StockQuotes
                     history = await this.log.GetHistory(s.Symbol);
                 }
                 index = new StockQuoteIndex(history);
-                quoteIndex[s] = index;
+                this.quoteIndex[s] = index;
             }
         }
 
@@ -165,12 +165,12 @@ namespace Walkabout.StockQuotes
         /// </summary>
         internal void SetQuote(DateTime date, Security security, decimal price)
         {
-            if (!quoteIndex.TryGetValue(security, out StockQuoteIndex index))
+            if (!this.quoteIndex.TryGetValue(security, out StockQuoteIndex index))
             {
                 // create an empty index that we can update below.
-                quoteIndex[security] = new StockQuoteIndex(null);
+                this.quoteIndex[security] = new StockQuoteIndex(null);
             }
-            quoteIndex[security].SetQuote(date, price);
+            this.quoteIndex[security].SetQuote(date, price);
         }
 
         internal class StockQuoteIndex
@@ -183,23 +183,23 @@ namespace Walkabout.StockQuotes
                 {
                     foreach (var quote in history.GetSorted())
                     {
-                        index[quote.Date] = quote;
+                        this.index[quote.Date] = quote;
                     }
                 }
             }
 
             public void SetQuote(DateTime date, decimal price)
             {
-                index[date] = new StockQuote() { Close = price, Date = date };
+                this.index[date] = new StockQuote() { Close = price, Date = date };
             }
 
             public StockQuote GetQuote(DateTime date)
             {
-                if (index.Count != 0)
+                if (this.index.Count != 0)
                 {
                     for (int i = 7; i > 0; i--)
                     {
-                        if (index.TryGetValue(date, out StockQuote value))
+                        if (this.index.TryGetValue(date, out StockQuote value))
                         {
                             return value;
                         }

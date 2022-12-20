@@ -35,12 +35,12 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
 
         internal TraceEventInfoWrapper(EventRecord eventRecord)
         {
-            Initialize(eventRecord);
+            this.Initialize(eventRecord);
         }
 
         ~TraceEventInfoWrapper()
         {
-            ReleaseMemory();
+            this.ReleaseMemory();
         }
 
         internal string EventName
@@ -51,7 +51,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
 
         public void Dispose()
         {
-            ReleaseMemory();
+            this.ReleaseMemory();
             GC.SuppressFinalize(this);
         }
 
@@ -64,19 +64,19 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
             {
                 int offset = 0;
 
-                for (int i = 0; i < traceEventInfo.TopLevelPropertyCount; i++)
+                for (int i = 0; i < this.traceEventInfo.TopLevelPropertyCount; i++)
                 {
-                    EventPropertyInfo info = eventPropertyInfoArray[i];
+                    EventPropertyInfo info = this.eventPropertyInfoArray[i];
 
                     // Read the current property name
-                    string propertyName = Marshal.PtrToStringUni(new IntPtr(address.ToInt64() + info.NameOffset));
+                    string propertyName = Marshal.PtrToStringUni(new IntPtr(this.address.ToInt64() + info.NameOffset));
 
                     object value;
                     string mapName;
                     int length;
                     IntPtr dataPtr = new IntPtr(eventRecord.UserData.ToInt64() + offset);
 
-                    value = ReadPropertyValue(info, dataPtr, out mapName, out length);
+                    value = this.ReadPropertyValue(info, dataPtr, out mapName, out length);
 
                     // If we have a map name, return both map name and map value as a pair.
                     if (!string.IsNullOrEmpty(mapName))
@@ -137,14 +137,14 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
             // Get the event information (schema)
             this.address = Marshal.AllocHGlobal(size);
             this.traceEventInfo = new TraceEventInfo();
-            error = NativeMethods.TdhGetEventInformation(ref eventRecord, 0, IntPtr.Zero, address, ref size);
+            error = NativeMethods.TdhGetEventInformation(ref eventRecord, 0, IntPtr.Zero, this.address, ref size);
             if (error != 0)
             {
                 throw new System.ComponentModel.Win32Exception(error);
             }
 
             // Marshal the first part of the trace event information.
-            Marshal.PtrToStructure(this.address, traceEventInfo);
+            Marshal.PtrToStructure(this.address, this.traceEventInfo);
 
             // Marshal the second part of the trace event information, the array of property info.
             int actualSize = Marshal.SizeOf(this.traceEventInfo);
@@ -154,7 +154,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
                 int itemsLeft = (size - actualSize) / structSize;
 
                 this.eventPropertyInfoArray = new EventPropertyInfo[itemsLeft];
-                long baseAddress = address.ToInt64() + actualSize;
+                long baseAddress = this.address.ToInt64() + actualSize;
                 for (int i = 0; i < itemsLeft; i++)
                 {
                     IntPtr structPtr = new IntPtr(baseAddress + (i * structSize));
@@ -165,9 +165,9 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
             }
 
             // Get the opcode name
-            if (traceEventInfo.OpcodeNameOffset > 0)
+            if (this.traceEventInfo.OpcodeNameOffset > 0)
             {
-                this.EventName = Marshal.PtrToStringUni(new IntPtr(address.ToInt64() + traceEventInfo.OpcodeNameOffset));
+                this.EventName = Marshal.PtrToStringUni(new IntPtr(this.address.ToInt64() + this.traceEventInfo.OpcodeNameOffset));
             }
         }
 

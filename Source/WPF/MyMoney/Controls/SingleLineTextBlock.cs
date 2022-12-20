@@ -51,8 +51,8 @@ namespace Walkabout.Controls
 
         public TextAlignment TextAlignment
         {
-            get { return (TextAlignment)GetValue(TextAlignmentProperty); }
-            set { SetValue(TextAlignmentProperty, value); }
+            get { return (TextAlignment)this.GetValue(TextAlignmentProperty); }
+            set { this.SetValue(TextAlignmentProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for TextAlignment.  This enables animation, styling, binding, etc...
@@ -70,13 +70,13 @@ namespace Walkabout.Controls
             {
                 this._properties.TextAlignment = this.TextAlignment;
             }
-            InvalidateVisual();
+            this.InvalidateVisual();
         }
 
         public string Text
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get { return (string)this.GetValue(TextProperty); }
+            set { this.SetValue(TextProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Text.  This enables animation, styling, binding, etc...
@@ -91,29 +91,29 @@ namespace Walkabout.Controls
         void OnTextChanged()
         {
             this.text = this.Text;
-            _formatted = null;
-            InvalidateMeasure();
-            InvalidateArrange();
+            this._formatted = null;
+            this.InvalidateMeasure();
+            this.InvalidateArrange();
         }
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
-            InvalidateAll();
+            this.InvalidateAll();
             base.OnVisualParentChanged(oldParent);
         }
 
         void InvalidateAll()
         {
-            _properties = null;
-            _formatted = null;
-            InvalidateMeasure();
-            InvalidateArrange();
-            InvalidateVisual();
+            this._properties = null;
+            this._formatted = null;
+            this.InvalidateMeasure();
+            this.InvalidateArrange();
+            this.InvalidateVisual();
         }
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            var ft = GetFormattedText();
+            var ft = this.GetFormattedText();
             if (ft != null)
             {
                 switch (this._properties.TextAlignment)
@@ -143,8 +143,8 @@ namespace Walkabout.Controls
 
         protected override Size MeasureOverride(Size constraint)
         {
-            CheckProperties();
-            var ft = GetFormattedText();
+            this.CheckProperties();
+            var ft = this.GetFormattedText();
             if (ft != null)
             {
                 return new Size(ft.Width, ft.Height);
@@ -154,7 +154,7 @@ namespace Walkabout.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            InvalidateVisual();
+            this.InvalidateVisual();
             return finalSize;
         }
 
@@ -169,7 +169,7 @@ namespace Walkabout.Controls
                     this._properties.FontStretch != this.FontStretch)
                 {
                     this._properties = null;
-                    InvalidateArrange();
+                    this.InvalidateArrange();
                 }
                 else if (this._properties.FlowDirection != this.FlowDirection ||
                     this._properties.ForegroundBrush != this.Foreground ||
@@ -178,7 +178,7 @@ namespace Walkabout.Controls
                     this._properties.VerticalAlignment != this.VerticalAlignment)
                 {
                     this._properties = null;
-                    InvalidateVisual();
+                    this.InvalidateVisual();
                 }
             }
         }
@@ -192,16 +192,16 @@ namespace Walkabout.Controls
                     this._properties = new TextProperties()
                     {
                         CultureInfo = CultureInfo.CurrentCulture,
-                        FontFamily = this.FontFamily,
-                        FontSize = this.FontSize,
-                        FontStyle = this.FontStyle,
-                        FontWeight = this.FontWeight,
-                        FontStretch = this.FontStretch,
-                        ForegroundBrush = this.Foreground,
+                        FontFamily = FontFamily,
+                        FontSize = FontSize,
+                        FontStyle = FontStyle,
+                        FontWeight = FontWeight,
+                        FontStretch = FontStretch,
+                        ForegroundBrush = Foreground,
                         PixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip,
-                        FlowDirection = this.FlowDirection,
-                        TextAlignment = this.TextAlignment,
-                        VerticalAlignment = this.VerticalAlignment
+                        FlowDirection = FlowDirection,
+                        TextAlignment = TextAlignment,
+                        VerticalAlignment = VerticalAlignment
                     };
                     this._properties.Typeface = new Typeface(this._properties.FontFamily, this._properties.FontStyle, this._properties.FontWeight, this._properties.FontStretch);
                     this._formatted = null;

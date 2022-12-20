@@ -16,41 +16,41 @@ namespace Walkabout.Dialogs
 
         public RecategorizeDialog(MyMoney money)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.myMoney = money;
 
-            var source = new ListCollectionView(((List<Category>)myMoney.Categories.SortedCategories).ToArray());
-            ComboToCategory.ItemsSource = source;
+            var source = new ListCollectionView(((List<Category>)this.myMoney.Categories.SortedCategories).ToArray());
+            this.ComboToCategory.ItemsSource = source;
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                Commit();
+                this.Commit();
             }
             else if (e.Key == Key.Escape)
             {
-                Cancel();
+                this.Cancel();
             }
             base.OnPreviewKeyDown(e);
         }
 
         public Category FromCategory
         {
-            get { return from; }
-            set { from = value; ComboFromCategory.Text = value?.GetFullName(); }
+            get { return this.from; }
+            set { this.from = value; this.ComboFromCategory.Text = value?.GetFullName(); }
         }
 
         public Category ToCategory
         {
-            get { return ComboToCategory.SelectedItem as Category; }
-            set { ComboToCategory.SelectedItem = value; }
+            get { return this.ComboToCategory.SelectedItem as Category; }
+            set { this.ComboToCategory.SelectedItem = value; }
         }
 
         private void buttonOk_Click(object sender, RoutedEventArgs e)
         {
-            Commit();
+            this.Commit();
         }
 
         private void Commit()
@@ -61,7 +61,7 @@ namespace Walkabout.Dialogs
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            Cancel();
+            this.Cancel();
         }
 
         private void Cancel()

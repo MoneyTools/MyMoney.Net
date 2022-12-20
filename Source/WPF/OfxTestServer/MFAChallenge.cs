@@ -20,46 +20,46 @@ namespace OfxTestServer
 
         public MFAChallenge(string id, string label, string answer)
         {
-            _mfaPhraseId = id;
-            _mfaPhraseLabel = label;
-            _mfaPhraseAnswer = answer;
+            this._mfaPhraseId = id;
+            this._mfaPhraseLabel = label;
+            this._mfaPhraseAnswer = answer;
         }
 
         public string PhraseId
         {
-            get => _mfaPhraseId;
+            get => this._mfaPhraseId;
             set
             {
-                if (value != _mfaPhraseId)
+                if (value != this._mfaPhraseId)
                 {
-                    _mfaPhraseId = value;
-                    OnPropertyChanged("PhraseId");
+                    this._mfaPhraseId = value;
+                    this.OnPropertyChanged("PhraseId");
                 }
             }
         }
 
         public string PhraseLabel
         {
-            get => _mfaPhraseLabel;
+            get => this._mfaPhraseLabel;
             set
             {
-                if (value != _mfaPhraseLabel)
+                if (value != this._mfaPhraseLabel)
                 {
-                    _mfaPhraseLabel = value;
-                    OnPropertyChanged("PhraseLabel");
+                    this._mfaPhraseLabel = value;
+                    this.OnPropertyChanged("PhraseLabel");
                 }
             }
         }
 
         public string PhraseAnswer
         {
-            get => _mfaPhraseAnswer;
+            get => this._mfaPhraseAnswer;
             set
             {
-                if (value != _mfaPhraseAnswer)
+                if (value != this._mfaPhraseAnswer)
                 {
-                    _mfaPhraseAnswer = value;
-                    OnPropertyChanged("PhraseAnswer");
+                    this._mfaPhraseAnswer = value;
+                    this.OnPropertyChanged("PhraseAnswer");
                 }
             }
         }

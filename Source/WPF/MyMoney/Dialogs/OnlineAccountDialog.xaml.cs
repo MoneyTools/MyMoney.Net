@@ -28,46 +28,46 @@ namespace Walkabout.Dialogs
 
         public string AccountId
         {
-            get { return accountId; }
-            set { accountId = value; OnPropertyChanged("AccountId"); }
+            get { return this.accountId; }
+            set { this.accountId = value; this.OnPropertyChanged("AccountId"); }
         }
         string name;
 
         public string Name
         {
-            get { return name; }
-            set { name = value; OnPropertyChanged("Name"); }
+            get { return this.name; }
+            set { this.name = value; this.OnPropertyChanged("Name"); }
         }
         bool isNew;
 
         public bool IsNew
         {
-            get { return isNew; }
-            set { isNew = value; OnPropertyChanged("IsNew"); }
+            get { return this.isNew; }
+            set { this.isNew = value; this.OnPropertyChanged("IsNew"); }
         }
 
         bool userAdded;
 
         public bool UserAdded
         {
-            get { return userAdded; }
-            set { userAdded = value; OnPropertyChanged("UserAdded"); }
+            get { return this.userAdded; }
+            set { this.userAdded = value; this.OnPropertyChanged("UserAdded"); }
         }
 
         bool isDisconnected;
 
         public bool IsDisconnected
         {
-            get { return isDisconnected; }
-            set { isDisconnected = value; OnPropertyChanged("IsDisconnected"); }
+            get { return this.isDisconnected; }
+            set { this.isDisconnected = value; this.OnPropertyChanged("IsDisconnected"); }
         }
 
         bool warning;
 
         public bool HasWarning
         {
-            get { return warning; }
-            set { warning = value; OnPropertyChanged("HasWarning"); }
+            get { return this.warning; }
+            set { this.warning = value; this.OnPropertyChanged("HasWarning"); }
         }
 
 
@@ -75,8 +75,8 @@ namespace Walkabout.Dialogs
 
         public string ToolTipMessage
         {
-            get { return tooltip; }
-            set { tooltip = value; OnPropertyChanged("WarningMessage"); }
+            get { return this.tooltip; }
+            set { this.tooltip = value; this.OnPropertyChanged("WarningMessage"); }
         }
 
         public AccountType CorrectType { get; set; }
@@ -119,53 +119,53 @@ namespace Walkabout.Dialogs
             this.debugging = System.Diagnostics.Debugger.IsAttached;
             this.money = money;
             this.account = account;
-            InitializeComponent();
+            this.InitializeComponent();
 
             OnlineAccount oa = this.account.OnlineAccount;
             if (oa != null)
             {
-                editing = oa.ShallowCopy();
-                editing.Id = 0;
+                this.editing = oa.ShallowCopy();
+                this.editing.Id = 0;
             }
 
             // Hide any fields that don't apply to this account type.
-            ShowHideFieldsForAccountType(account.Type);
+            this.ShowHideFieldsForAccountType(account.Type);
 
             // add versions we support explicitly.
-            versions.Add("1.0");
-            versions.Add("2.0");
+            this.versions.Add("1.0");
+            this.versions.Add("2.0");
 
             foreach (OnlineAccount other in money.OnlineAccounts.GetOnlineAccounts())
             {
                 string v = other.OfxVersion;
-                InsertVersion(other.OfxVersion);
+                this.InsertVersion(other.OfxVersion);
             }
 
-            OfxVersions.ItemsSource = versions;
+            this.OfxVersions.ItemsSource = this.versions;
 
-            this.DataContext = editing;
+            this.DataContext = this.editing;
 
-            ComboBoxName.SelectionChanged += new SelectionChangedEventHandler(OnComboBoxNameSelectionChanged);
+            this.ComboBoxName.SelectionChanged += new SelectionChangedEventHandler(this.OnComboBoxNameSelectionChanged);
 
-            Progress.Visibility = Visibility.Collapsed;
-            AccountListPanel.Visibility = Visibility.Collapsed;
+            this.Progress.Visibility = Visibility.Collapsed;
+            this.AccountListPanel.Visibility = Visibility.Collapsed;
 
-            ButtonVerify.IsEnabled = false;
+            this.ButtonVerify.IsEnabled = false;
 
-            successPrompt = SignupResultPrompt.Text;
+            this.successPrompt = this.SignupResultPrompt.Text;
 
-            this.Loaded += new RoutedEventHandler(OnLoaded);
+            Loaded += new RoutedEventHandler(this.OnLoaded);
         }
 
         void OnLoaded(object sender, RoutedEventArgs e)
         {
-            GetBankListProgress.Visibility = System.Windows.Visibility.Visible;
-            ComboBoxName.Visibility = System.Windows.Visibility.Collapsed;
-            Task.Run(GetBankList);
+            this.GetBankListProgress.Visibility = System.Windows.Visibility.Visible;
+            this.ComboBoxName.Visibility = System.Windows.Visibility.Collapsed;
+            Task.Run(this.GetBankList);
 
-            Dispatcher.BeginInvoke(new Action(() =>
+            this.Dispatcher.BeginInvoke(new Action(() =>
             {
-                OfxVersions.SelectedItem = versions[versions.Count - 1];
+                this.OfxVersions.SelectedItem = this.versions[this.versions.Count - 1];
             }));
         }
 
@@ -176,10 +176,10 @@ namespace Walkabout.Dialogs
         {
             this.pendingVerify = null;
             this.pendingSignon = null;
-            if (queueProcessor != null)
+            if (this.queueProcessor != null)
             {
-                queueProcessor.Stop();
-                queueProcessor = null;
+                this.queueProcessor.Stop();
+                this.queueProcessor = null;
             }
             base.OnClosed(e);
         }
@@ -192,20 +192,20 @@ namespace Walkabout.Dialogs
                 case AccountType.Checking:
                 case AccountType.MoneyMarket:
                 case AccountType.CreditLine:
-                    TextBoxBrokerId.Visibility = BrokerIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
-                    TextBoxBranchId.Visibility = BranchIdPrompt.Visibility = System.Windows.Visibility.Visible;
-                    TextBoxBankId.Visibility = BankIdPrompt.Visibility = System.Windows.Visibility.Visible;
+                    this.TextBoxBrokerId.Visibility = this.BrokerIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TextBoxBranchId.Visibility = this.BranchIdPrompt.Visibility = System.Windows.Visibility.Visible;
+                    this.TextBoxBankId.Visibility = this.BankIdPrompt.Visibility = System.Windows.Visibility.Visible;
                     break;
                 case AccountType.Credit:
-                    TextBoxBrokerId.Visibility = BrokerIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
-                    TextBoxBranchId.Visibility = BranchIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
-                    TextBoxBankId.Visibility = BankIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TextBoxBrokerId.Visibility = this.BrokerIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TextBoxBranchId.Visibility = this.BranchIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TextBoxBankId.Visibility = this.BankIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
                     break;
                 case AccountType.Brokerage:
                 case AccountType.Retirement:
-                    TextBoxBrokerId.Visibility = BrokerIdPrompt.Visibility = System.Windows.Visibility.Visible;
-                    TextBoxBranchId.Visibility = BranchIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
-                    TextBoxBankId.Visibility = BankIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TextBoxBrokerId.Visibility = this.BrokerIdPrompt.Visibility = System.Windows.Visibility.Visible;
+                    this.TextBoxBranchId.Visibility = this.BranchIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TextBoxBankId.Visibility = this.BankIdPrompt.Visibility = System.Windows.Visibility.Collapsed;
                     break;
             }
         }
@@ -220,21 +220,21 @@ namespace Walkabout.Dialogs
             double x = 0;
             if (!string.IsNullOrEmpty(version) && double.TryParse(version, out x))
             {
-                for (int i = 0, n = versions.Count; i < n; i++)
+                for (int i = 0, n = this.versions.Count; i < n; i++)
                 {
-                    double y = double.Parse(versions[i]);
+                    double y = double.Parse(this.versions[i]);
                     if (y == x)
                     {
                         return i;
                     }
                     if (y > x)
                     {
-                        versions.Insert(i, version);
+                        this.versions.Insert(i, version);
                         return i;
                     }
                 }
-                versions.Add(version);
-                return versions.Count - 1;
+                this.versions.Add(version);
+                return this.versions.Count - 1;
             }
 
             // invalid
@@ -244,9 +244,9 @@ namespace Walkabout.Dialogs
 
         OfxInstitutionInfo FindProvider(string name)
         {
-            if (providers != null)
+            if (this.providers != null)
             {
-                foreach (OfxInstitutionInfo p in providers)
+                foreach (OfxInstitutionInfo p in this.providers)
                 {
                     if (string.Compare(p.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
                     {
@@ -262,28 +262,28 @@ namespace Walkabout.Dialogs
         void GetBankList()
         {
             // show the cached list first.
-            providers = OfxInstitutionInfo.GetCachedBankList();
-            ShowBankList();
+            this.providers = OfxInstitutionInfo.GetCachedBankList();
+            this.ShowBankList();
 
-            providers = OfxInstitutionInfo.GetRemoteBankList();
-            ShowBankList();
+            this.providers = OfxInstitutionInfo.GetRemoteBankList();
+            this.ShowBankList();
         }
 
         void ShowBankList()
         {
             UiDispatcher.BeginInvoke(new Action(() =>
             {
-                updating = true;
+                this.updating = true;
 
                 OfxInstitutionInfo selection = null;
 
-                GetBankListProgress.Visibility = System.Windows.Visibility.Collapsed;
-                ComboBoxName.Visibility = System.Windows.Visibility.Visible;
+                this.GetBankListProgress.Visibility = System.Windows.Visibility.Collapsed;
+                this.ComboBoxName.Visibility = System.Windows.Visibility.Visible;
 
                 // add known onlineaccount providers.
-                foreach (OnlineAccount other in money.OnlineAccounts.GetOnlineAccounts())
+                foreach (OnlineAccount other in this.money.OnlineAccounts.GetOnlineAccounts())
                 {
-                    OfxInstitutionInfo p = FindProvider(other.Name);
+                    OfxInstitutionInfo p = this.FindProvider(other.Name);
                     if (p == null)
                     {
                         p = new OfxInstitutionInfo()
@@ -299,31 +299,31 @@ namespace Walkabout.Dialogs
                             AppId = other.AppId,
                             AppVer = other.AppVersion
                         };
-                        providers.Add(p);
+                        this.providers.Add(p);
                     }
                     p.Existing = true;
                     p.OnlineAccount = other;
                 }
 
-                string saved = ComboBoxName.Text;
+                string saved = this.ComboBoxName.Text;
                 if (string.IsNullOrEmpty(saved))
                 {
-                    saved = editing.Name;
+                    saved = this.editing.Name;
                 }
 
-                foreach (var provider in providers)
+                foreach (var provider in this.providers)
                 {
-                    if (editing != null && provider.Name == saved)
+                    if (this.editing != null && provider.Name == saved)
                     {
                         selection = provider;
                     }
                 }
 
-                providers.Sort(new Comparison<OfxInstitutionInfo>((a, b) => { return string.Compare(a.Name, b.Name); }));
+                this.providers.Sort(new Comparison<OfxInstitutionInfo>((a, b) => { return string.Compare(a.Name, b.Name); }));
 
-                this.view = new ListCollectionView(providers);
+                this.view = new ListCollectionView(this.providers);
 
-                if (!debugging)
+                if (!this.debugging)
                 {
                     // don't show error items
                     this.view.Filter = new Predicate<object>((item) =>
@@ -333,38 +333,38 @@ namespace Walkabout.Dialogs
                     });
                 }
 
-                ComboBoxName.ItemsSource = view;
+                this.ComboBoxName.ItemsSource = this.view;
 
                 if (selection == null)
                 {
-                    ComboBoxName.Text = saved;
+                    this.ComboBoxName.Text = saved;
                 }
                 else
                 {
-                    ComboBoxName.SelectedItem = selection;
-                    ComboBoxName.Text = saved;
+                    this.ComboBoxName.SelectedItem = selection;
+                    this.ComboBoxName.Text = saved;
                 }
 
-                ComboBoxName.Focus();
-                updating = false;
+                this.ComboBoxName.Focus();
+                this.updating = false;
 
                 // now we have the bank list we can update the info
-                Enqueue((OfxInstitutionInfo)ComboBoxName.SelectedItem);
+                this.Enqueue((OfxInstitutionInfo)this.ComboBoxName.SelectedItem);
 
-                UpdateButtonState();
+                this.UpdateButtonState();
             }));
         }
 
         private void ComboBoxName_KeyUp(object sender, KeyEventArgs e)
         {
-            if (editor == null)
+            if (this.editor == null)
             {
-                editor = this.ComboBoxName.Template.FindName("PART_EditableTextBox", this.ComboBoxName) as TextBox;
-                if (editor != null)
+                this.editor = this.ComboBoxName.Template.FindName("PART_EditableTextBox", this.ComboBoxName) as TextBox;
+                if (this.editor != null)
                 {
-                    editor.TextChanged -= new TextChangedEventHandler(OnComboBoxNameChanged);
-                    editor.TextChanged += new TextChangedEventHandler(OnComboBoxNameChanged);
-                    OnComboBoxNameChanged();
+                    this.editor.TextChanged -= new TextChangedEventHandler(this.OnComboBoxNameChanged);
+                    this.editor.TextChanged += new TextChangedEventHandler(this.OnComboBoxNameChanged);
+                    this.OnComboBoxNameChanged();
                 }
             }
         }
@@ -377,7 +377,7 @@ namespace Walkabout.Dialogs
             while (true)
             {
                 OfxInstitutionInfo next = null;
-                if (fetchQueue.TryDequeue(out next))
+                if (this.fetchQueue.TryDequeue(out next))
                 {
                     info = next;
                 }
@@ -389,31 +389,31 @@ namespace Walkabout.Dialogs
 
             if (info == null)
             {
-                queueProcessor.Stop();
-                queueProcessor = null;
+                this.queueProcessor.Stop();
+                this.queueProcessor = null;
                 return;
             }
 
-            Task.Run(() => GetUpdatedBankInfo(info));
+            Task.Run(() => this.GetUpdatedBankInfo(info));
         }
 
         ConcurrentQueue<OfxInstitutionInfo> fetchQueue = new ConcurrentQueue<OfxInstitutionInfo>();
 
         void OnComboBoxNameSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!updating)
+            if (!this.updating)
             {
-                HideRightHandPanels();
-                selected = (OfxInstitutionInfo)ComboBoxName.SelectedItem;
-                if (selected != null)
+                this.HideRightHandPanels();
+                this.selected = (OfxInstitutionInfo)this.ComboBoxName.SelectedItem;
+                if (this.selected != null)
                 {
-                    Enqueue(selected);
+                    this.Enqueue(this.selected);
                 }
-                UpdateInstitutionInfo(selected);
+                this.UpdateInstitutionInfo(this.selected);
             }
-            Dispatcher.BeginInvoke(new Action(() =>
+            this.Dispatcher.BeginInvoke(new Action(() =>
             {
-                UpdateButtonState();
+                this.UpdateButtonState();
             }));
         }
 
@@ -421,56 +421,56 @@ namespace Walkabout.Dialogs
         {
             if (info != null)
             {
-                fetchQueue.Enqueue(selected);
+                this.fetchQueue.Enqueue(this.selected);
 
-                if (queueProcessor == null)
+                if (this.queueProcessor == null)
                 {
-                    queueProcessor = new DispatcherTimer(TimeSpan.FromMilliseconds(50), DispatcherPriority.Normal, new EventHandler(OnProcessQueue), this.Dispatcher);
+                    this.queueProcessor = new DispatcherTimer(TimeSpan.FromMilliseconds(50), DispatcherPriority.Normal, new EventHandler(this.OnProcessQueue), this.Dispatcher);
                 }
             }
         }
 
         void OnComboBoxNameChanged(object sender, TextChangedEventArgs e)
         {
-            if (!updating)
+            if (!this.updating)
             {
-                OnComboBoxNameChanged();
+                this.OnComboBoxNameChanged();
             }
-            UpdateButtonState();
+            this.UpdateButtonState();
         }
 
         string filter;
 
         void OnComboBoxNameChanged()
         {
-            OfxInstitutionInfo ps = FindProvider(ComboBoxName.Text);
+            OfxInstitutionInfo ps = this.FindProvider(this.ComboBoxName.Text);
             // check for null here allows the user to rename this institution.
             if (ps != null)
             {
-                UpdateInstitutionInfo(ps);
+                this.UpdateInstitutionInfo(ps);
             }
-            if (view == null || editor == null)
+            if (this.view == null || this.editor == null)
             {
                 return;
             }
 
-            Dispatcher.BeginInvoke(new Action(() =>
+            this.Dispatcher.BeginInvoke(new Action(() =>
             {
                 // Update the filter on the combo so it shows only those banks matching what the user typed in so far.
-                filter = editor.Text;
-                if (string.IsNullOrEmpty(filter))
+                this.filter = this.editor.Text;
+                if (string.IsNullOrEmpty(this.filter))
                 {
-                    view.Filter = null;
+                    this.view.Filter = null;
                 }
-                else if (editor.SelectionLength < filter.Length)
+                else if (this.editor.SelectionLength < this.filter.Length)
                 {
-                    if (editor.SelectionStart >= 0)
+                    if (this.editor.SelectionStart >= 0)
                     {
-                        filter = filter.Substring(0, editor.SelectionStart);
+                        this.filter = this.filter.Substring(0, this.editor.SelectionStart);
                     }
-                    if (string.IsNullOrEmpty(filter))
+                    if (string.IsNullOrEmpty(this.filter))
                     {
-                        if (!debugging)
+                        if (!this.debugging)
                         {
                             // don't show error items
                             this.view.Filter = new Predicate<object>((item) =>
@@ -481,26 +481,26 @@ namespace Walkabout.Dialogs
                         }
                         else
                         {
-                            view.Filter = null;
+                            this.view.Filter = null;
                         }
                     }
                     else
                     {
-                        if (!debugging)
+                        if (!this.debugging)
                         {
                             // don't show error items
                             this.view.Filter = new Predicate<object>((item) =>
                             {
                                 OfxInstitutionInfo p = (OfxInstitutionInfo)item;
-                                return !p.HasError && p.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
+                                return !p.HasError && p.Name.IndexOf(this.filter, StringComparison.OrdinalIgnoreCase) >= 0;
                             });
                         }
                         else
                         {
-                            view.Filter = new Predicate<object>((item) =>
+                            this.view.Filter = new Predicate<object>((item) =>
                             {
                                 OfxInstitutionInfo p = (OfxInstitutionInfo)item;
-                                return p.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
+                                return p.Name.IndexOf(this.filter, StringComparison.OrdinalIgnoreCase) >= 0;
                             });
                         }
                     }
@@ -510,15 +510,15 @@ namespace Walkabout.Dialogs
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            UpdateButtonState();
+            this.UpdateButtonState();
         }
 
         private void UpdateButtonState()
         {
-            ButtonVerify.IsEnabled = !string.IsNullOrWhiteSpace(ComboBoxName.Text) &&
-                    !string.IsNullOrWhiteSpace(TextBoxInstitution.Text) &&
-                    !string.IsNullOrWhiteSpace(TextBoxFid.Text) &&
-                    !string.IsNullOrWhiteSpace(TextBoxOfxAddress.Text);
+            this.ButtonVerify.IsEnabled = !string.IsNullOrWhiteSpace(this.ComboBoxName.Text) &&
+                    !string.IsNullOrWhiteSpace(this.TextBoxInstitution.Text) &&
+                    !string.IsNullOrWhiteSpace(this.TextBoxFid.Text) &&
+                    !string.IsNullOrWhiteSpace(this.TextBoxOfxAddress.Text);
         }
 
 
@@ -536,7 +536,7 @@ namespace Walkabout.Dialogs
             {
                 UiDispatcher.BeginInvoke(new Action(() =>
                 {
-                    UpdateInstitutionInfo(ps);
+                    this.UpdateInstitutionInfo(ps);
                 }));
             }
 
@@ -552,14 +552,14 @@ namespace Walkabout.Dialogs
                 //editing.Institution = null;
                 //editing.LogoUrl = null;
                 //editing.BankId = null;
-                editing.UserId = null;
-                editing.Password = null;
+                this.editing.UserId = null;
+                this.editing.Password = null;
                 //editing.Ofx = null;
-                editing.AccessKey = null;
-                editing.AuthToken = null;
-                editing.UserCred1 = null;
-                editing.UserCred2 = null;
-                editing.UserKey = null;
+                this.editing.AccessKey = null;
+                this.editing.AuthToken = null;
+                this.editing.UserCred1 = null;
+                this.editing.UserCred2 = null;
+                this.editing.UserKey = null;
             }
             else
             {
@@ -569,32 +569,32 @@ namespace Walkabout.Dialogs
                 {
                     version = "1.0";
                 }
-                editing.OfxVersion = version;
-                OfxVersions.SelectedIndex = InsertVersion(version);
-                editing.Ofx = ps.ProviderURL;
-                editing.LogoUrl = string.IsNullOrEmpty(ps.SmallLogoURL) ? null : ps.SmallLogoURL;
-                account.WebSite = ps.Website;
-                editing.FID = ps.Fid;
-                editing.Institution = ps.Org;
-                editing.Name = ps.Name;
+                this.editing.OfxVersion = version;
+                this.OfxVersions.SelectedIndex = this.InsertVersion(version);
+                this.editing.Ofx = ps.ProviderURL;
+                this.editing.LogoUrl = string.IsNullOrEmpty(ps.SmallLogoURL) ? null : ps.SmallLogoURL;
+                this.account.WebSite = ps.Website;
+                this.editing.FID = ps.Fid;
+                this.editing.Institution = ps.Org;
+                this.editing.Name = ps.Name;
 
                 OnlineAccount oa = ps.OnlineAccount;
                 if (oa != null)
                 {
                     // this is an existing online account, so copy the additional properties from there.
-                    editing.BankId = oa.BankId;
-                    editing.UserId = oa.UserId;
-                    editing.Password = oa.Password;
-                    editing.UserCred1 = oa.UserCred1;
-                    editing.UserCred2 = oa.UserCred2;
+                    this.editing.BankId = oa.BankId;
+                    this.editing.UserId = oa.UserId;
+                    this.editing.Password = oa.Password;
+                    this.editing.UserCred1 = oa.UserCred1;
+                    this.editing.UserCred2 = oa.UserCred2;
                 }
                 else
                 {
-                    editing.AccessKey = null;
-                    editing.AuthToken = null;
-                    editing.UserCred1 = null;
-                    editing.UserCred2 = null;
-                    editing.UserKey = null;
+                    this.editing.AccessKey = null;
+                    this.editing.AuthToken = null;
+                    this.editing.UserCred1 = null;
+                    this.editing.UserCred2 = null;
+                    this.editing.UserKey = null;
                 }
             }
         }
@@ -607,21 +607,21 @@ namespace Walkabout.Dialogs
         private void OnButtonOk(object sender, RoutedEventArgs e)
         {
             // create the online account
-            var oa = account.OnlineAccount;
+            var oa = this.account.OnlineAccount;
             if (oa == null)
             {
                 if (this.selected == null)
                 {
                     // then the name entered by user didn't exist in the list of providers, so use the text box value
-                    editing.Name = ComboBoxName.Text;
+                    this.editing.Name = this.ComboBoxName.Text;
                 }
-                oa = this.money.OnlineAccounts.FindOnlineAccount(editing.Name);
+                oa = this.money.OnlineAccounts.FindOnlineAccount(this.editing.Name);
                 if (oa == null)
                 {
-                    oa = editing;
-                    this.money.OnlineAccounts.AddOnlineAccount(editing);
+                    oa = this.editing;
+                    this.money.OnlineAccounts.AddOnlineAccount(this.editing);
                 }
-                account.OnlineAccount = oa;
+                this.account.OnlineAccount = oa;
             }
 
             if (oa.IsDeleted)
@@ -631,26 +631,26 @@ namespace Walkabout.Dialogs
             }
 
             // make sure we get edited values (don't use databinding here because we want to ensure Cancel leaves everything in clean state)
-            if (oa != editing)
+            if (oa != this.editing)
             {
-                oa.Name = editing.Name;
-                oa.Institution = editing.Institution;
-                oa.FID = editing.FID;
-                oa.BankId = editing.BankId;
-                oa.BranchId = editing.BranchId;
-                oa.BrokerId = editing.BrokerId;
-                oa.Ofx = editing.Ofx;
-                oa.OfxVersion = editing.OfxVersion;
-                oa.AppId = editing.AppId;
-                oa.AppVersion = editing.AppVersion;
-                oa.UserId = editing.UserId;
-                oa.LogoUrl = editing.LogoUrl;
-                oa.Password = editing.Password;
-                oa.UserCred1 = editing.UserCred1;
-                oa.UserCred2 = editing.UserCred2;
-                oa.ClientUid = editing.ClientUid;
-                oa.AuthToken = editing.AuthToken;
-                oa.AccessKey = editing.AccessKey;
+                oa.Name = this.editing.Name;
+                oa.Institution = this.editing.Institution;
+                oa.FID = this.editing.FID;
+                oa.BankId = this.editing.BankId;
+                oa.BranchId = this.editing.BranchId;
+                oa.BrokerId = this.editing.BrokerId;
+                oa.Ofx = this.editing.Ofx;
+                oa.OfxVersion = this.editing.OfxVersion;
+                oa.AppId = this.editing.AppId;
+                oa.AppVersion = this.editing.AppVersion;
+                oa.UserId = this.editing.UserId;
+                oa.LogoUrl = this.editing.LogoUrl;
+                oa.Password = this.editing.Password;
+                oa.UserCred1 = this.editing.UserCred1;
+                oa.UserCred2 = this.editing.UserCred2;
+                oa.ClientUid = this.editing.ClientUid;
+                oa.AuthToken = this.editing.AuthToken;
+                oa.AccessKey = this.editing.AccessKey;
             }
 
             // go through all accounts and add the ones the user wants added.
@@ -660,7 +660,7 @@ namespace Walkabout.Dialogs
                 {
                     if (item.UserAdded)
                     {
-                        OnAddAccount(item);
+                        this.OnAddAccount(item);
                     }
                     else if (item.IsDisconnected)
                     {
@@ -679,29 +679,29 @@ namespace Walkabout.Dialogs
             }
 
             OfxInstitutionInfo provider = this.selected;
-            if (provider != null && providers != null)
+            if (provider != null && this.providers != null)
             {
-                if (!string.IsNullOrEmpty(editing.Name))
+                if (!string.IsNullOrEmpty(this.editing.Name))
                 {
-                    provider.Name = editing.Name;
+                    provider.Name = this.editing.Name;
                 }
-                if (!string.IsNullOrEmpty(editing.FID))
+                if (!string.IsNullOrEmpty(this.editing.FID))
                 {
-                    provider.Fid = editing.FID;
+                    provider.Fid = this.editing.FID;
                 }
-                if (!string.IsNullOrEmpty(editing.Institution))
+                if (!string.IsNullOrEmpty(this.editing.Institution))
                 {
-                    provider.Org = editing.Institution;
+                    provider.Org = this.editing.Institution;
                 }
-                if (!string.IsNullOrEmpty(editing.BrokerId))
+                if (!string.IsNullOrEmpty(this.editing.BrokerId))
                 {
-                    provider.BrokerId = editing.BrokerId;
+                    provider.BrokerId = this.editing.BrokerId;
                 }
-                if (!string.IsNullOrEmpty(editing.OfxVersion))
+                if (!string.IsNullOrEmpty(this.editing.OfxVersion))
                 {
-                    provider.OfxVersion = editing.OfxVersion;
+                    provider.OfxVersion = this.editing.OfxVersion;
                 }
-                OfxInstitutionInfo.SaveList(providers);
+                OfxInstitutionInfo.SaveList(this.providers);
             }
 
             this.DialogResult = true;
@@ -735,9 +735,9 @@ namespace Walkabout.Dialogs
 
                 if (info.AuthTokenRequired.ConvertYesNoToBoolean() && string.IsNullOrEmpty(this.editing.AuthToken))
                 {
-                    bool result = (bool)Dispatcher.Invoke(new Func<bool>(() =>
+                    bool result = (bool)this.Dispatcher.Invoke(new Func<bool>(() =>
                     {
-                        return PromptForAuthToken(info, OfxErrorCode.AUTHTOKENRequired);
+                        return this.PromptForAuthToken(info, OfxErrorCode.AUTHTOKENRequired);
                     }));
 
                     if (!result)
@@ -749,13 +749,13 @@ namespace Walkabout.Dialogs
 
                 if (info.MFAChallengeRequired.ConvertYesNoToBoolean())
                 {
-                    challenge = new OfxMfaChallengeRequest(this.editing, this.money);
-                    challenge.Completed += OnMfaChallengeCompleted;
-                    challenge.BeginMFAChallenge();
+                    this.challenge = new OfxMfaChallengeRequest(this.editing, this.money);
+                    this.challenge.Completed += this.OnMfaChallengeCompleted;
+                    this.challenge.BeginMFAChallenge();
                 }
                 else
                 {
-                    Signup();
+                    this.Signup();
                 }
             }
             catch (OfxException ex)
@@ -763,11 +763,11 @@ namespace Walkabout.Dialogs
                 if (this.pendingSignon == id)
                 {
                     this.pendingSignon = null;
-                    Dispatcher.Invoke(new Action(() =>
+                    this.Dispatcher.Invoke(new Action(() =>
                  {
-                     HandleSignOnErrors(ex, new Action(() =>
+                     this.HandleSignOnErrors(ex, new Action(() =>
                      {
-                         Task.Run(StartSignup);
+                         Task.Run(this.StartSignup);
                      }));
                  }));
                 }
@@ -777,9 +777,9 @@ namespace Walkabout.Dialogs
                 if (this.pendingSignon == id)
                 {
                     this.pendingSignon = null;
-                    Dispatcher.Invoke(new Action(() =>
+                    this.Dispatcher.Invoke(new Action(() =>
                     {
-                        ShowError(ex.GetType().Name, ex.Message);
+                        this.ShowError(ex.GetType().Name, ex.Message);
                     }));
                 }
             }
@@ -787,12 +787,12 @@ namespace Walkabout.Dialogs
 
         void OnMfaChallengeCompleted(object sender, EventArgs e)
         {
-            OnChallengeCompleted(sender, e);
+            this.OnChallengeCompleted(sender, e);
 
             if (this.editing.MfaChallengeAnswers != null)
             {
                 // back to background thread.
-                Task.Run(Signup);
+                Task.Run(this.Signup);
             }
 
         }
@@ -812,7 +812,7 @@ namespace Walkabout.Dialogs
             }
             else
             {
-                ShowError("Cancelled", "User cancelled");
+                this.ShowError("Cancelled", "User cancelled");
                 return false;
             }
         }
@@ -830,9 +830,9 @@ namespace Walkabout.Dialogs
                 this.signupRequest = null;
                 UiDispatcher.BeginInvoke(new Action(() =>
                 {
-                    Progress.Visibility = Visibility.Collapsed;
-                    ShowResult(ofx);
-                    OfxVersions.SelectedIndex = InsertVersion(this.editing.OfxVersion); // in case it was changed by the "Signup" method.
+                    this.Progress.Visibility = Visibility.Collapsed;
+                    this.ShowResult(ofx);
+                    this.OfxVersions.SelectedIndex = this.InsertVersion(this.editing.OfxVersion); // in case it was changed by the "Signup" method.
                 }));
             }
         }
@@ -886,11 +886,11 @@ namespace Walkabout.Dialogs
             }
             if (msg.Contains("<HTML>"))
             {
-                ShowHtmlError(code, msg);
+                this.ShowHtmlError(code, msg);
             }
             else
             {
-                ShowError(code, msg, errorLink);
+                this.ShowError(code, msg, errorLink);
             }
         }
 
@@ -899,20 +899,20 @@ namespace Walkabout.Dialogs
             OFX ofx = ex.Root;
             if (ofx != null)
             {
-                OfxErrorCode code = GetSignOnCode(ex.Root);
+                OfxErrorCode code = this.GetSignOnCode(ex.Root);
                 if ((code == OfxErrorCode.AUTHTOKENRequired && string.IsNullOrWhiteSpace(this.editing.AuthToken)) || code == OfxErrorCode.AUTHTOKENInvalid)
                 {
                     var info = OfxRequest.GetSignonInfo(this.money, this.editing);
                     if (info != null)
                     {
-                        if (!PromptForAuthToken(info, code))
+                        if (!this.PromptForAuthToken(info, code))
                         {
                             // user cancelled.
                             return;
                         }
                         else
                         {
-                            Dispatcher.BeginInvoke(continuation);
+                            this.Dispatcher.BeginInvoke(continuation);
                             return;
                         }
                     }
@@ -920,34 +920,34 @@ namespace Walkabout.Dialogs
                 else if (code == OfxErrorCode.MFAChallengeAuthenticationRequired)
                 {
                     // Begin the MFA Challenge Authentication process...
-                    ShowError("Requesting More Information", "Server is requesting Multi-Factor Authentication...");
+                    this.ShowError("Requesting More Information", "Server is requesting Multi-Factor Authentication...");
 
-                    challenge = new OfxMfaChallengeRequest(this.editing, this.money);
-                    challenge.UserData = continuation;
-                    challenge.Completed += OnChallengeCompleted;
-                    challenge.BeginMFAChallenge();
+                    this.challenge = new OfxMfaChallengeRequest(this.editing, this.money);
+                    this.challenge.UserData = continuation;
+                    this.challenge.Completed += this.OnChallengeCompleted;
+                    this.challenge.BeginMFAChallenge();
                     return;
                 }
                 else if (code == OfxErrorCode.MustChangeUSERPASS)
                 {
-                    PromptForNewPassword(continuation);
+                    this.PromptForNewPassword(continuation);
                     return;
                 }
                 else if (code == OfxErrorCode.SignonInvalid)
                 {
-                    PromptForPassword(OfxRequest.GetSignonInfo(this.money, this.editing), null, code, ex.Message, continuation);
+                    this.PromptForPassword(OfxRequest.GetSignonInfo(this.money, this.editing), null, code, ex.Message, continuation);
                     return;
                 }
             }
 
-            HandleUnexpectedError(ex);
+            this.HandleUnexpectedError(ex);
         }
 
         void PromptForPassword(OfxSignOnInfo info, List<Block> prompt, OfxErrorCode code, string errorMessage, Action continuation)
         {
             if (info != null && info.AuthTokenRequired.ConvertYesNoToBoolean() && string.IsNullOrEmpty(this.editing.AuthToken))
             {
-                if (!PromptForAuthToken(info, code))
+                if (!this.PromptForAuthToken(info, code))
                 {
                     // user cancelled.
                     return;
@@ -965,7 +965,7 @@ namespace Walkabout.Dialogs
             }
             else
             {
-                ShowError("Cancelled", "User cancelled");
+                this.ShowError("Cancelled", "User cancelled");
             }
         }
 
@@ -982,7 +982,7 @@ namespace Walkabout.Dialogs
 
             if (req.Error != null)
             {
-                HandleUnexpectedError(req.Error);
+                this.HandleUnexpectedError(req.Error);
                 return;
             }
             else if (req.UserChallenges.Count > 0)
@@ -1003,7 +1003,7 @@ namespace Walkabout.Dialogs
                 else
                 {
                     // user cancelled.
-                    ShowError("Error", "User cancelled");
+                    this.ShowError("Error", "User cancelled");
                     return;
                 }
             }
@@ -1031,27 +1031,27 @@ namespace Walkabout.Dialogs
                 Exception ex = dialog.Error;
                 if (ex != null)
                 {
-                    HandleUnexpectedError(ex);
+                    this.HandleUnexpectedError(ex);
                 }
                 else
                 {
-                    Dispatcher.BeginInvoke(continuation);
+                    this.Dispatcher.BeginInvoke(continuation);
                 }
             }
             else
             {
-                ShowError("Cancelled", "User cancelled");
+                this.ShowError("Cancelled", "User cancelled");
             }
         }
 
         private void ShowError(string code, string message, Hyperlink link = null)
         {
-            AccountListPanel.Visibility = Visibility.Visible;
-            SignupResultPrompt.Text = code;
-            SignupResultPrompt.Foreground = Brushes.Red;
-            OnlineResultList.Visibility = System.Windows.Visibility.Collapsed;
+            this.AccountListPanel.Visibility = Visibility.Visible;
+            this.SignupResultPrompt.Text = code;
+            this.SignupResultPrompt.Foreground = Brushes.Red;
+            this.OnlineResultList.Visibility = System.Windows.Visibility.Collapsed;
 
-            ErrorMessage.Document.Blocks.Clear();
+            this.ErrorMessage.Document.Blocks.Clear();
 
             Paragraph p = new Paragraph();
             p.Inlines.Add(new Run(message));
@@ -1059,41 +1059,41 @@ namespace Walkabout.Dialogs
             {
                 p.Inlines.Add(link);
             }
-            ErrorMessage.Document.Blocks.Add(p);
+            this.ErrorMessage.Document.Blocks.Add(p);
 
-            ErrorScroller.Visibility = System.Windows.Visibility.Visible;
-            ErrorHtml.Visibility = System.Windows.Visibility.Collapsed;
-            ErrorMessage.Visibility = System.Windows.Visibility.Visible;
-            Progress.Visibility = Visibility.Collapsed;
+            this.ErrorScroller.Visibility = System.Windows.Visibility.Visible;
+            this.ErrorHtml.Visibility = System.Windows.Visibility.Collapsed;
+            this.ErrorMessage.Visibility = System.Windows.Visibility.Visible;
+            this.Progress.Visibility = Visibility.Collapsed;
         }
 
         private void ShowHtmlError(string code, string message)
         {
-            AccountListPanel.Visibility = Visibility.Visible;
-            SignupResultPrompt.Text = code;
-            SignupResultPrompt.Foreground = Brushes.Red;
-            OnlineResultList.Visibility = System.Windows.Visibility.Collapsed;
+            this.AccountListPanel.Visibility = Visibility.Visible;
+            this.SignupResultPrompt.Text = code;
+            this.SignupResultPrompt.Foreground = Brushes.Red;
+            this.OnlineResultList.Visibility = System.Windows.Visibility.Collapsed;
 
-            ErrorHtml.NavigateToString(message);
+            this.ErrorHtml.NavigateToString(message);
 
-            ErrorScroller.Visibility = System.Windows.Visibility.Visible;
-            ErrorHtml.Visibility = System.Windows.Visibility.Visible;
-            ErrorMessage.Visibility = System.Windows.Visibility.Collapsed;
-            Progress.Visibility = Visibility.Collapsed;
+            this.ErrorScroller.Visibility = System.Windows.Visibility.Visible;
+            this.ErrorHtml.Visibility = System.Windows.Visibility.Visible;
+            this.ErrorMessage.Visibility = System.Windows.Visibility.Collapsed;
+            this.Progress.Visibility = Visibility.Collapsed;
         }
 
         private void HideRightHandPanels()
         {
-            ErrorMessage.Visibility = Visibility.Collapsed;
-            AccountListPanel.Visibility = Visibility.Collapsed;
+            this.ErrorMessage.Visibility = Visibility.Collapsed;
+            this.AccountListPanel.Visibility = Visibility.Collapsed;
         }
 
         private void ShowResult(OFX ofx)
         {
-            HideRightHandPanels();
-            AccountListPanel.Visibility = Visibility.Visible;
-            SignupResultPrompt.SetValue(TextBlock.ForegroundProperty, DependencyProperty.UnsetValue);
-            SignupResultPrompt.Text = successPrompt;
+            this.HideRightHandPanels();
+            this.AccountListPanel.Visibility = Visibility.Visible;
+            this.SignupResultPrompt.SetValue(TextBlock.ForegroundProperty, DependencyProperty.UnsetValue);
+            this.SignupResultPrompt.Text = this.successPrompt;
             this.found = new List<AccountListItem>();
 
             var sup = ofx.SignUpMessageResponse;
@@ -1117,7 +1117,7 @@ namespace Walkabout.Dialogs
                     {
                         foreach (var acct in list)
                         {
-                            AccountListItem f = FindMatchingOnlineAccount(acct);
+                            AccountListItem f = this.FindMatchingOnlineAccount(acct);
                             if (f != null)
                             {
                                 if (string.IsNullOrWhiteSpace(f.Name))
@@ -1129,35 +1129,35 @@ namespace Walkabout.Dialogs
                                     }
                                     index++;
                                 }
-                                found.Add(f);
+                                this.found.Add(f);
                             }
                         }
                     }
                 }
             }
-            OnlineResultList.ItemsSource = this.found;
-            OnlineResultList.Visibility = System.Windows.Visibility.Visible;
-            ErrorScroller.Visibility = System.Windows.Visibility.Collapsed;
+            this.OnlineResultList.ItemsSource = this.found;
+            this.OnlineResultList.Visibility = System.Windows.Visibility.Visible;
+            this.ErrorScroller.Visibility = System.Windows.Visibility.Collapsed;
 
-            ResizeListColumns();
+            this.ResizeListColumns();
         }
 
         Typeface typeface;
 
         private double MeasureListString(string s)
         {
-            double fontSize = (double)OnlineResultList.GetValue(ListView.FontSizeProperty);
+            double fontSize = (double)this.OnlineResultList.GetValue(ListView.FontSizeProperty);
 
-            if (typeface == null)
+            if (this.typeface == null)
             {
-                typeface = new Typeface((FontFamily)OnlineResultList.GetValue(ListView.FontFamilyProperty),
-                    (FontStyle)OnlineResultList.GetValue(ListView.FontStyleProperty),
-                    (FontWeight)OnlineResultList.GetValue(ListView.FontWeightProperty),
-                    (FontStretch)OnlineResultList.GetValue(ListView.FontStretchProperty));
+                this.typeface = new Typeface((FontFamily)this.OnlineResultList.GetValue(ListView.FontFamilyProperty),
+                    (FontStyle)this.OnlineResultList.GetValue(ListView.FontStyleProperty),
+                    (FontWeight)this.OnlineResultList.GetValue(ListView.FontWeightProperty),
+                    (FontStretch)this.OnlineResultList.GetValue(ListView.FontStretchProperty));
             }
             var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             FormattedText ft = new FormattedText(s, System.Globalization.CultureInfo.CurrentCulture, System.Windows.FlowDirection.LeftToRight,
-                typeface, fontSize, Brushes.Black, pixelsPerDip);
+                this.typeface, fontSize, Brushes.Black, pixelsPerDip);
             return ft.Width;
         }
 
@@ -1166,24 +1166,24 @@ namespace Walkabout.Dialogs
         /// </summary>
         private void ResizeListColumns()
         {
-            GridView view = (GridView)OnlineResultList.View;
+            GridView view = (GridView)this.OnlineResultList.View;
             foreach (GridViewColumn c in view.Columns)
             {
                 c.Width = 0;
             }
 
-            OnlineResultList.InvalidateMeasure();
-            OnlineResultList.InvalidateArrange();
-            OnlineResultList.UpdateLayout();
+            this.OnlineResultList.InvalidateMeasure();
+            this.OnlineResultList.InvalidateArrange();
+            this.OnlineResultList.UpdateLayout();
 
             foreach (GridViewColumn c in view.Columns)
             {
                 c.Width = double.NaN;
             }
 
-            OnlineResultList.InvalidateMeasure();
-            OnlineResultList.InvalidateArrange();
-            OnlineResultList.UpdateLayout();
+            this.OnlineResultList.InvalidateMeasure();
+            this.OnlineResultList.InvalidateArrange();
+            this.OnlineResultList.UpdateLayout();
 
 
         }
@@ -1287,7 +1287,7 @@ namespace Walkabout.Dialogs
             if (found == null)
             {
                 isNew = true;
-                tooltip = GetResolveButtonCaption();
+                tooltip = this.GetResolveButtonCaption();
                 // create place holder for new account, this will be turned into a real account when
                 // user clicks the "add" button.
                 found = new Account();
@@ -1297,7 +1297,7 @@ namespace Walkabout.Dialogs
                 found.WebSite = this.account != null ? this.account.WebSite : null;
                 if (string.IsNullOrEmpty(found.WebSite) && this.profile != null)
                 {
-                    found.WebSite = profile.CompanyUrl;
+                    found.WebSite = this.profile.CompanyUrl;
                 }
             }
             return new AccountListItem()
@@ -1323,7 +1323,7 @@ namespace Walkabout.Dialogs
                 {
                     Account a = item.Account;
                     if (MessageBoxResult.Yes == MessageBoxEx.Show(string.Format("Online account '{0}' says account {1} is of type '{2}' account, but you have it as '{3}', do you want to fix your local account type?",
-                        editing.Name, a.Name, item.CorrectType, a.Type.ToString()), "Account Type Mismatch", MessageBoxButton.YesNo, MessageBoxImage.Question))
+                        this.editing.Name, a.Name, item.CorrectType, a.Type.ToString()), "Account Type Mismatch", MessageBoxButton.YesNo, MessageBoxImage.Question))
                     {
                         a.Type = item.CorrectType;
                         item.HasWarning = false;
@@ -1354,7 +1354,7 @@ namespace Walkabout.Dialogs
                     item.UserAdded = false;
                     item.IsNew = true;
                     item.IsDisconnected = true;
-                    e.ToolTip = GetResolveButtonCaption();
+                    e.ToolTip = this.GetResolveButtonCaption();
                 }
                 else if (item.IsDisconnected)
                 {
@@ -1379,13 +1379,13 @@ namespace Walkabout.Dialogs
                 if (this.selected == null)
                 {
                     // then the name entered by user didn't exist in the list of providers, so use the text box value
-                    editing.Name = ComboBoxName.Text;
+                    this.editing.Name = this.ComboBoxName.Text;
                 }
-                OnlineAccount oa = this.money.OnlineAccounts.FindOnlineAccount(editing.Name);
+                OnlineAccount oa = this.money.OnlineAccounts.FindOnlineAccount(this.editing.Name);
                 if (oa == null)
                 {
-                    oa = editing;
-                    this.money.OnlineAccounts.AddOnlineAccount(editing);
+                    oa = this.editing;
+                    this.money.OnlineAccounts.AddOnlineAccount(this.editing);
                 }
                 a.OnlineAccount = oa;
             }
@@ -1397,23 +1397,23 @@ namespace Walkabout.Dialogs
             if (this.editing != null)
             {
                 // copy the name back from combo box in case the user has edited it.
-                editing.Name = ComboBoxName.Text;
+                this.editing.Name = this.ComboBoxName.Text;
 
-                if (string.IsNullOrWhiteSpace(editing.OfxVersion))
+                if (string.IsNullOrWhiteSpace(this.editing.OfxVersion))
                 {
-                    editing.OfxVersion = "1.0";
+                    this.editing.OfxVersion = "1.0";
                 }
 
-                AccountListPanel.Visibility = Visibility.Collapsed;
-                SignupResultPrompt.Text = "Connecting to your financial institution...";
-                SignupResultPrompt.SetValue(TextBlock.ForegroundProperty, DependencyProperty.UnsetValue);
-                OnlineResultList.Visibility = System.Windows.Visibility.Collapsed;
-                ErrorMessage.Document.Blocks.Clear();
-                Progress.Visibility = Visibility.Visible;
-                Progress.IsIndeterminate = true;
-                HideRightHandPanels();
+                this.AccountListPanel.Visibility = Visibility.Collapsed;
+                this.SignupResultPrompt.Text = "Connecting to your financial institution...";
+                this.SignupResultPrompt.SetValue(TextBlock.ForegroundProperty, DependencyProperty.UnsetValue);
+                this.OnlineResultList.Visibility = System.Windows.Visibility.Collapsed;
+                this.ErrorMessage.Document.Blocks.Clear();
+                this.Progress.Visibility = Visibility.Visible;
+                this.Progress.IsIndeterminate = true;
+                this.HideRightHandPanels();
 
-                Task.Run(StartVerify);
+                Task.Run(this.StartVerify);
             }
         }
 
@@ -1444,9 +1444,9 @@ namespace Walkabout.Dialogs
                     if (this.pendingVerify == req && fetchingName == this.editing.Name)
                     {
                         this.pendingVerify = null;
-                        Progress.Visibility = Visibility.Collapsed;
-                        HandleProfileResponse(profile, cachePath);
-                        OfxVersions.SelectedIndex = InsertVersion(this.editing.OfxVersion); // in case it was changed by the "GetProfile" method.
+                        this.Progress.Visibility = Visibility.Collapsed;
+                        this.HandleProfileResponse(profile, cachePath);
+                        this.OfxVersions.SelectedIndex = this.InsertVersion(this.editing.OfxVersion); // in case it was changed by the "GetProfile" method.
                     }
                 }));
             }
@@ -1455,12 +1455,12 @@ namespace Walkabout.Dialogs
                 if (this.pendingVerify == req)
                 {
                     this.pendingVerify = null;
-                    Dispatcher.Invoke(new Action(() =>
+                    this.Dispatcher.Invoke(new Action(() =>
                     {
-                        OnGotProfile(ex.Message);
-                        HandleSignOnErrors(ex, new Action(() =>
+                        this.OnGotProfile(ex.Message);
+                        this.HandleSignOnErrors(ex, new Action(() =>
                         {
-                            Task.Run(StartVerify);
+                            Task.Run(this.StartVerify);
                         }));
                     }));
                 }
@@ -1470,9 +1470,9 @@ namespace Walkabout.Dialogs
                 if (this.pendingVerify == req)
                 {
                     this.pendingVerify = null;
-                    Dispatcher.Invoke(new Action(() =>
+                    this.Dispatcher.Invoke(new Action(() =>
                     {
-                        OnHtmlResponse(he.Html);
+                        this.OnHtmlResponse(he.Html);
                     }));
                 }
             }
@@ -1481,10 +1481,10 @@ namespace Walkabout.Dialogs
                 if (this.pendingVerify == req)
                 {
                     this.pendingVerify = null;
-                    Dispatcher.Invoke(new Action(() =>
+                    this.Dispatcher.Invoke(new Action(() =>
                     {
-                        OnGotProfile(ex.Message);
-                        ShowError(ex.GetType().Name, ex.Message);
+                        this.OnGotProfile(ex.Message);
+                        this.ShowError(ex.GetType().Name, ex.Message);
                     }));
                 }
             }
@@ -1492,7 +1492,7 @@ namespace Walkabout.Dialogs
 
         private void OnHtmlResponse(string html)
         {
-            ShowHtmlError("Connect Error", html);
+            this.ShowHtmlError("Connect Error", html);
         }
 
         private void HandleProfileResponse(ProfileResponseMessageSet profile, string cachePath)
@@ -1634,25 +1634,25 @@ namespace Walkabout.Dialogs
             {
                 error = "Did not get the expected response from your financial instutition.  " + error;
 
-                OnGotProfile(error);
+                this.OnGotProfile(error);
 
                 error += "\n\nIf you are need help please email the following file to chris@lovettsoftware.com: ";
 
-                ShowError("Connect Error", error, InternetExplorer.GetOpenFileHyperlink("Unexpected XML Response", cachePath));
+                this.ShowError("Connect Error", error, InternetExplorer.GetOpenFileHyperlink("Unexpected XML Response", cachePath));
             }
             else
             {
-                OnGotProfile(null);
+                this.OnGotProfile(null);
 
-                PromptForPassword(info, prompt, statusCode, error, new Action(() =>
+                this.PromptForPassword(info, prompt, statusCode, error, new Action(() =>
                 {
                     if (retryProfile)
                     {
-                        Task.Run(StartVerify);
+                        Task.Run(this.StartVerify);
                     }
                     else
                     {
-                        SignOn();
+                        this.SignOn();
                     }
                 }));
             }
@@ -1667,24 +1667,24 @@ namespace Walkabout.Dialogs
             {
                 // add new entry, the end-user just found a bank that works!
                 institution = new OfxInstitutionInfo();
-                providers.Add(institution);
+                this.providers.Add(institution);
             }
 
-            if (institution != null && providers.Contains(institution))
+            if (institution != null && this.providers.Contains(institution))
             {
                 // Save any user edited fields back to the selected OfxInstututionInfo.
-                institution.OfxVersion = editing.OfxVersion;
-                institution.ProviderURL = editing.Ofx;
-                institution.Fid = editing.FID;
-                institution.Org = editing.Institution;
-                institution.Name = editing.Name;
+                institution.OfxVersion = this.editing.OfxVersion;
+                institution.ProviderURL = this.editing.Ofx;
+                institution.Fid = this.editing.FID;
+                institution.Org = this.editing.Institution;
+                institution.Name = this.editing.Name;
 
                 institution.LastError = error;
                 if (error == null)
                 {
                     institution.LastConnection = DateTime.Now;
                 }
-                OfxInstitutionInfo.SaveList(providers);
+                OfxInstitutionInfo.SaveList(this.providers);
             }
         }
 
@@ -1739,16 +1739,16 @@ namespace Walkabout.Dialogs
         {
             if (this.editing != null)
             {
-                AccountListPanel.Visibility = Visibility.Visible;
-                SignupResultPrompt.Text = "Signing on to online banking server...";
-                SignupResultPrompt.SetValue(TextBlock.ForegroundProperty, DependencyProperty.UnsetValue);
-                OnlineResultList.Visibility = System.Windows.Visibility.Collapsed;
-                ErrorMessage.Document.Blocks.Clear();
-                Progress.Visibility = Visibility.Visible;
-                Progress.IsIndeterminate = true;
-                HideRightHandPanels();
+                this.AccountListPanel.Visibility = Visibility.Visible;
+                this.SignupResultPrompt.Text = "Signing on to online banking server...";
+                this.SignupResultPrompt.SetValue(TextBlock.ForegroundProperty, DependencyProperty.UnsetValue);
+                this.OnlineResultList.Visibility = System.Windows.Visibility.Collapsed;
+                this.ErrorMessage.Document.Blocks.Clear();
+                this.Progress.Visibility = Visibility.Visible;
+                this.Progress.IsIndeterminate = true;
+                this.HideRightHandPanels();
 
-                Task.Run(StartSignup);
+                Task.Run(this.StartSignup);
             }
         }
 

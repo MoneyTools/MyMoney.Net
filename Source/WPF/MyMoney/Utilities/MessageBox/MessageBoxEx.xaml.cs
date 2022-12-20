@@ -27,12 +27,12 @@ namespace Walkabout.Utilities
 
         public MessageBoxEx()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             if (Application.Current != null && Application.Current.MainWindow != null && Application.Current.MainWindow.IsVisible)
             {
                 this.Owner = Application.Current.MainWindow;
             }
-            this.PreviewKeyDown += new KeyEventHandler(MessageBoxEx_PreviewKeyDown);
+            PreviewKeyDown += new KeyEventHandler(this.MessageBoxEx_PreviewKeyDown);
         }
 
         void MessageBoxEx_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -54,21 +54,21 @@ namespace Walkabout.Utilities
 
         public void DisplayWindow()
         {
-            SetButtonVisibility(this.Buttons);
+            this.SetButtonVisibility(this.Buttons);
 
-            if (MessageImageSource == MessageBoxImage.None && this.Buttons == MessageBoxButton.YesNo || this.Buttons == MessageBoxButton.YesNoCancel)
+            if (this.MessageImageSource == MessageBoxImage.None && this.Buttons == MessageBoxButton.YesNo || this.Buttons == MessageBoxButton.YesNoCancel)
             {
                 // if no Image is supplied but yet this looks like a question then lets use a Question image
-                MessageImageSource = MessageBoxImage.Question;
+                this.MessageImageSource = MessageBoxImage.Question;
             }
 
-            SetImageStyle();
+            this.SetImageStyle();
 
-            CreateMessage();
+            this.CreateMessage();
 
-            if (string.IsNullOrWhiteSpace(Details) == false)
+            if (string.IsNullOrWhiteSpace(this.Details) == false)
             {
-                ShowDetails.Visibility = Visibility.Visible;
+                this.ShowDetails.Visibility = Visibility.Visible;
             }
 
             this.DataContext = this;
@@ -93,9 +93,9 @@ namespace Walkabout.Utilities
 
         private void CreateMessage()
         {
-            if (Message.Contains("http://schemas.microsoft.com/winfx/2006/xaml/presentation"))
+            if (this.Message.Contains("http://schemas.microsoft.com/winfx/2006/xaml/presentation"))
             {
-                FlowDocument doc = (FlowDocument)XamlReader.Parse(@"<FlowDocument xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" + Message + "</FlowDocument>");
+                FlowDocument doc = (FlowDocument)XamlReader.Parse(@"<FlowDocument xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" + this.Message + "</FlowDocument>");
                 foreach (Block block in doc.Blocks.ToArray())
                 {
                     Paragraph p = block as Paragraph;
@@ -106,17 +106,17 @@ namespace Walkabout.Utilities
                             Hyperlink hyper = i as Hyperlink;
                             if (hyper != null)
                             {
-                                hyper.RequestNavigate += new System.Windows.Navigation.RequestNavigateEventHandler(OnRequestNavigate);
+                                hyper.RequestNavigate += new System.Windows.Navigation.RequestNavigateEventHandler(this.OnRequestNavigate);
                             }
                         }
                     }
                     doc.Blocks.Remove(block);
-                    FlowDocument.Blocks.Add(block);
+                    this.FlowDocument.Blocks.Add(block);
                 }
             }
             else
             {
-                FlowDocument.Blocks.Add(new Paragraph(new Run(Message)));
+                this.FlowDocument.Blocks.Add(new Paragraph(new Run(this.Message)));
             }
         }
 
@@ -135,28 +135,28 @@ namespace Walkabout.Utilities
             byte alpha = 0x80;
             if (this.MessageImageSource == MessageBoxImage.Exclamation) // same value as as MessageBoxImage.Warning
             {
-                ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Yellow.R, Colors.Yellow.G, Colors.Yellow.B));
-                TextContent.Text = "!";
+                this.ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Yellow.R, Colors.Yellow.G, Colors.Yellow.B));
+                this.TextContent.Text = "!";
             }
             else if (this.MessageImageSource == MessageBoxImage.Question)
             {
-                ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Orange.R, Colors.Orange.G, Colors.Orange.B));
-                TextContent.Text = "?";
+                this.ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Orange.R, Colors.Orange.G, Colors.Orange.B));
+                this.TextContent.Text = "?";
             }
             else if (this.MessageImageSource == MessageBoxImage.Asterisk) // same value as MessageBoxImage.Information
             {
-                ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Green.R, Colors.Green.G, Colors.Green.B));
-                TextContent.Text = "*";
+                this.ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Green.R, Colors.Green.G, Colors.Green.B));
+                this.TextContent.Text = "*";
             }
             else if (this.MessageImageSource == MessageBoxImage.Error) // Sane value as MessageBoxImage.Hand & MessageBoxImage.Stop
             {
-                ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Red.R, Colors.Red.G, Colors.Red.B));
-                TextContent.Text = "*";
+                this.ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Red.R, Colors.Red.G, Colors.Red.B));
+                this.TextContent.Text = "*";
             }
             else
             {
-                ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Blue.R, Colors.Blue.G, Colors.Blue.B));
-                TextContent.Text = "i";
+                this.ImageHolder.Background = new SolidColorBrush(Color.FromArgb(alpha, Colors.Blue.R, Colors.Blue.G, Colors.Blue.B));
+                this.TextContent.Text = "i";
             }
 
         }
@@ -165,7 +165,7 @@ namespace Walkabout.Utilities
 
         public void DragWindow(object sender, MouseButtonEventArgs args)
         {
-            DragMove();
+            this.DragMove();
         }
 
         public static MessageBoxResult Show(string message, string title, string details, MessageBoxButton buttonOption, MessageBoxImage image)
@@ -270,34 +270,34 @@ namespace Walkabout.Utilities
             switch (buttonOption)
             {
                 case MessageBoxButton.YesNo:
-                    ButtonYes.Visibility = Visibility.Visible;
-                    ButtonNo.Visibility = Visibility.Visible;
-                    defaultButton = ButtonYes;
+                    this.ButtonYes.Visibility = Visibility.Visible;
+                    this.ButtonNo.Visibility = Visibility.Visible;
+                    defaultButton = this.ButtonYes;
                     break;
 
                 case MessageBoxButton.YesNoCancel:
-                    ButtonYes.Visibility = Visibility.Visible;
-                    ButtonNo.Visibility = Visibility.Visible;
-                    defaultButton = ButtonYes;
+                    this.ButtonYes.Visibility = Visibility.Visible;
+                    this.ButtonNo.Visibility = Visibility.Visible;
+                    defaultButton = this.ButtonYes;
                     break;
 
                 case MessageBoxButton.OKCancel:
-                    ButtonOK.Visibility = Visibility.Visible;
-                    ButtonCancel.Visibility = Visibility.Visible;
-                    defaultButton = ButtonOK;
+                    this.ButtonOK.Visibility = Visibility.Visible;
+                    this.ButtonCancel.Visibility = Visibility.Visible;
+                    defaultButton = this.ButtonOK;
                     break;
 
                 case MessageBoxButton.OK:
                 default:
-                    ButtonOK.Visibility = Visibility.Visible;
-                    defaultButton = ButtonOK;
+                    this.ButtonOK.Visibility = Visibility.Visible;
+                    defaultButton = this.ButtonOK;
                     break;
             }
 
             if (defaultButton != null)
             {
-                ButtonYes.IsDefault = true;
-                ButtonYes.Background = AppTheme.Instance.GetThemedBrush("ListItemSelectedBackgroundBrush");
+                this.ButtonYes.IsDefault = true;
+                this.ButtonYes.Background = AppTheme.Instance.GetThemedBrush("ListItemSelectedBackgroundBrush");
             }
         }
 

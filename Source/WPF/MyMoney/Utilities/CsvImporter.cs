@@ -79,7 +79,7 @@ namespace Walkabout.Migrate
         public void Commit()
         {
             // ok, we haved typed data, no exceptions, so merge with the account.
-            if (typedData.Count == 0)
+            if (this.typedData.Count == 0)
             {
                 return;
             }
@@ -112,7 +112,7 @@ namespace Walkabout.Migrate
                     }
                 }
 
-                foreach (var bag in typedData)
+                foreach (var bag in this.typedData)
                 {
                     Transaction found = null;
                     if (indexed.TryGetValue(bag.Date, out object o))
@@ -163,12 +163,12 @@ namespace Walkabout.Migrate
 
         public override void WriteHeaders(IEnumerable<string> headers)
         {
-            if (HeadersMatch(headers))
+            if (this.HeadersMatch(headers))
             {
                 // we're good!
                 return;
             }
-            CsvImportDialog cd = new CsvImportDialog(fields);
+            CsvImportDialog cd = new CsvImportDialog(this.fields);
             cd.Owner = System.Windows.Application.Current.MainWindow;
             cd.SetHeaders(headers);
             if (cd.ShowDialog() == true)
@@ -205,22 +205,22 @@ namespace Walkabout.Migrate
 
         public override void WriteRow(IEnumerable<string> values)
         {
-            if (map == null) return;
+            if (this.map == null) return;
             int col = 0;
             TBag t = new TBag();
             foreach (var s in values)
             {
-                if (col < map.Fields.Count)
+                if (col < this.map.Fields.Count)
                 {
-                    var fm = map.Fields[col];
+                    var fm = this.map.Fields[col];
                     if (!string.IsNullOrEmpty(fm.Field))
                     {
-                        MapField(t, fm.Field, s);
+                        this.MapField(t, fm.Field, s);
                     }
                 }
                 col++;
             }
-            typedData.Add(t);
+            this.typedData.Add(t);
         }
 
         private void MapField(TBag t, string fieldName, string value)
@@ -255,7 +255,7 @@ namespace Walkabout.Migrate
                 case "Amount":
                     if (decimal.TryParse(value, out decimal amount))
                     {
-                        if (account.Type == AccountType.Credit)
+                        if (this.account.Type == AccountType.Credit)
                         {
                             // credit cards show payments as positive numbers (yeah positive for them!)
                             amount = -amount;
@@ -301,14 +301,14 @@ namespace Walkabout.Migrate
 
         public CsvImporter(MyMoney money, CsvFieldWriter writer) : base(money)
         {
-            _writer = writer;
+            this._writer = writer;
         }
 
         public override int Import(string file)
         {
             using (var reader = new StreamReader(file))
             {
-                return ImportStream(reader);
+                return this.ImportStream(reader);
             }
         }
 
@@ -322,19 +322,19 @@ namespace Walkabout.Migrate
                 {
                     break;
                 }
-                if (ReadRecord(line))
+                if (this.ReadRecord(line))
                 {
-                    if (_fieldCount > 0)
+                    if (this._fieldCount > 0)
                     {
-                        var values = (from f in _fields select f.ToString());
+                        var values = (from f in this._fields select f.ToString());
                         if (rows == 0)
                         {
                             // first row might be row headers e.g. "Trans. Date,Post Date,Description,Amount,Category"
-                            _writer.WriteHeaders(values);
+                            this._writer.WriteHeaders(values);
                         }
                         else
                         {
-                            _writer.WriteRow(values);
+                            this._writer.WriteRow(values);
                         }
                     }
                     rows++;
@@ -345,14 +345,14 @@ namespace Walkabout.Migrate
 
         StringBuilder AddField()
         {
-            if (_fieldCount == _fields.Count)
+            if (this._fieldCount == this._fields.Count)
             {
                 var builder = new StringBuilder();
-                _fields.Add(builder);
-                _fieldCount++;
+                this._fields.Add(builder);
+                this._fieldCount++;
                 return builder;
             }
-            var sb = _fields[_fieldCount++];
+            var sb = this._fields[this._fieldCount++];
             sb.Length = 0;
             return sb;
         }
@@ -360,16 +360,16 @@ namespace Walkabout.Migrate
         public List<string> GetFields()
         {
             var result = new List<String>();
-            for (int i = 0; i < _fieldCount; i++)
+            for (int i = 0; i < this._fieldCount; i++)
             {
-                result.Add(_fields[i].ToString());
+                result.Add(this._fields[i].ToString());
             }
             return result;
         }
 
         public bool ReadRecord(string line)
         {
-            _fieldCount = 0;
+            this._fieldCount = 0;
             // read a record.
             int pos = 0;
             int len = line.Length;
@@ -381,10 +381,10 @@ namespace Walkabout.Migrate
 
             while (pos < len)
             {
-                StringBuilder sb = AddField();
+                StringBuilder sb = this.AddField();
                 if (ch == '\'' || ch == '"')
                 {
-                    _quoteChar = ch;
+                    this._quoteChar = ch;
                     var c = line[pos++];
                     bool done = false;
                     while (!done && pos < len)
@@ -428,18 +428,18 @@ namespace Walkabout.Migrate
                 else
                 {
                     // scan number, date, time, float, etc.
-                    while (pos < len && ch != _fieldDelimiter)
+                    while (pos < len && ch != this._fieldDelimiter)
                     {
                         sb.Append(ch);
                         ch = line[pos++]; // peek next char
                     }
-                    if (ch != _fieldDelimiter)
+                    if (ch != this._fieldDelimiter)
                     {
                         sb.Append(ch);
                         ch = '\0';
                     }
                 }
-                if (ch == _fieldDelimiter)
+                if (ch == this._fieldDelimiter)
                 {
                     ch = line[pos++];
                 }

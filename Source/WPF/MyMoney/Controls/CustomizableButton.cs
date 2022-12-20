@@ -12,8 +12,8 @@ namespace Walkabout.Controls
 
         public CornerRadius CornerRadius
         {
-            get { return (CornerRadius)GetValue(CornerRadiusProperty); }
-            set { SetValue(CornerRadiusProperty, value); }
+            get { return (CornerRadius)this.GetValue(CornerRadiusProperty); }
+            set { this.SetValue(CornerRadiusProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for CornerRadius.  This enables animation, styling, binding, etc...
@@ -22,8 +22,8 @@ namespace Walkabout.Controls
 
         public Brush MouseOverBackground
         {
-            get { return (Brush)GetValue(MouseOverBackgroundProperty); }
-            set { SetValue(MouseOverBackgroundProperty, value); }
+            get { return (Brush)this.GetValue(MouseOverBackgroundProperty); }
+            set { this.SetValue(MouseOverBackgroundProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for MouseOverBackground.  This enables animation, styling, binding, etc...
@@ -33,8 +33,8 @@ namespace Walkabout.Controls
 
         public Brush MouseOverForeground
         {
-            get { return (Brush)GetValue(MouseOverForegroundProperty); }
-            set { SetValue(MouseOverForegroundProperty, value); }
+            get { return (Brush)this.GetValue(MouseOverForegroundProperty); }
+            set { this.SetValue(MouseOverForegroundProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for MouseOverForeground.  This enables animation, styling, binding, etc...
@@ -44,8 +44,8 @@ namespace Walkabout.Controls
 
         public Brush MouseOverBorder
         {
-            get { return (Brush)GetValue(MouseOverBorderProperty); }
-            set { SetValue(MouseOverBorderProperty, value); }
+            get { return (Brush)this.GetValue(MouseOverBorderProperty); }
+            set { this.SetValue(MouseOverBorderProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for MouseOverBorder.  This enables animation, styling, binding, etc...
@@ -56,8 +56,8 @@ namespace Walkabout.Controls
 
         public Brush MousePressedBackground
         {
-            get { return (Brush)GetValue(MousePressedBackgroundProperty); }
-            set { SetValue(MousePressedBackgroundProperty, value); }
+            get { return (Brush)this.GetValue(MousePressedBackgroundProperty); }
+            set { this.SetValue(MousePressedBackgroundProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for MousePressedBackground.  This enables animation, styling, binding, etc...
@@ -67,8 +67,8 @@ namespace Walkabout.Controls
 
         public Brush MousePressedBorder
         {
-            get { return (Brush)GetValue(MousePressedBorderProperty); }
-            set { SetValue(MousePressedBorderProperty, value); }
+            get { return (Brush)this.GetValue(MousePressedBorderProperty); }
+            set { this.SetValue(MousePressedBorderProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for MousePressedBorder.  This enables animation, styling, binding, etc...
@@ -78,8 +78,8 @@ namespace Walkabout.Controls
 
         public Brush MousePressedForeground
         {
-            get { return (Brush)GetValue(MousePressedForegroundProperty); }
-            set { SetValue(MousePressedForegroundProperty, value); }
+            get { return (Brush)this.GetValue(MousePressedForegroundProperty); }
+            set { this.SetValue(MousePressedForegroundProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for MousePressedForeground.  This enables animation, styling, binding, etc...

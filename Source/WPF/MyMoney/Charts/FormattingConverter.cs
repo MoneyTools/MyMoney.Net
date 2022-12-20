@@ -20,12 +20,12 @@ namespace Walkabout.Charts
             if (value is decimal)
             {
                 decimal v = (decimal)value;
-                return v.ToString("C", nfi);
+                return v.ToString("C", this.nfi);
             }
             else if (value is double)
             {
                 double v = (double)value;
-                return v.ToString("C", nfi);
+                return v.ToString("C", this.nfi);
             }
             else
             {

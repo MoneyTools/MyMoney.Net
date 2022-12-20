@@ -17,9 +17,9 @@ namespace Walkabout.Views.Controls
 
         public RentsControl()
         {
-            InitializeComponent();
-            this.MouseUp += new MouseButtonEventHandler(OnMouseUp);
-            this.treeView1.SelectedItemChanged += new RoutedPropertyChangedEventHandler<object>(OnTreeView_SelectedItemChanged);
+            this.InitializeComponent();
+            MouseUp += new MouseButtonEventHandler(this.OnMouseUp);
+            this.treeView1.SelectedItemChanged += new RoutedPropertyChangedEventHandler<object>(this.OnTreeView_SelectedItemChanged);
         }
 
         #endregion
@@ -30,7 +30,7 @@ namespace Walkabout.Views.Controls
 
         public MyMoney MyMoney
         {
-            get { return myMoney; }
+            get { return this.myMoney; }
             set
             {
                 if (this.myMoney != value)
@@ -38,7 +38,7 @@ namespace Walkabout.Views.Controls
                     // First stop monitoring changes on the existing Money type
                     if (this.myMoney != null)
                     {
-                        myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(OnBalanceChanged);
+                        this.myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(this.OnBalanceChanged);
                     }
 
                     this.myMoney = value;
@@ -49,10 +49,10 @@ namespace Walkabout.Views.Controls
                     }
                     else
                     {
-                        this.myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(OnBalanceChanged);
+                        this.myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(this.OnBalanceChanged);
 
                         // Fire initial change to display the Buildings in they new Money db
-                        OnBalanceChanged(value.Buildings, new ChangeEventArgs(value.Buildings, null, ChangeType.Reloaded));
+                        this.OnBalanceChanged(value.Buildings, new ChangeEventArgs(value.Buildings, null, ChangeType.Reloaded));
                     }
                 }
             }
@@ -67,7 +67,7 @@ namespace Walkabout.Views.Controls
 
         void OnBalanceChanged(object sender, ChangeEventArgs args)
         {
-            ReloadTreeView();
+            this.ReloadTreeView();
         }
 
 
@@ -78,7 +78,7 @@ namespace Walkabout.Views.Controls
             get { return this.treeView1.SelectedItem; }
             set
             {
-                selection = value;
+                this.selection = value;
                 //   this.treeView1.SelectedItem = value; 
             }
         }
@@ -108,18 +108,18 @@ namespace Walkabout.Views.Controls
         {
             if (e.XButton1 == MouseButtonState.Pressed)
             {
-                if (this.MouseButtonBackwardChanged != null)
+                if (MouseButtonBackwardChanged != null)
                 {
-                    this.MouseButtonBackwardChanged(this, new EventArgs());
+                    MouseButtonBackwardChanged(this, new EventArgs());
                 }
             }
 
             if (e.XButton2 == MouseButtonState.Pressed)
             {
 
-                if (this.MouseButtonForwardChanged != null)
+                if (MouseButtonForwardChanged != null)
                 {
-                    this.MouseButtonForwardChanged(this, new EventArgs());
+                    MouseButtonForwardChanged(this, new EventArgs());
                 }
             }
         }
@@ -134,11 +134,11 @@ namespace Walkabout.Views.Controls
 
             if (rb != null)
             {
-                if (EditProperties(rb) == true)
+                if (this.EditProperties(rb) == true)
                 {
                     this.MyMoney.Buildings.Add(rb);
 
-                    ReloadTreeView(true);
+                    this.ReloadTreeView(true);
                 }
             }
         }
@@ -146,14 +146,14 @@ namespace Walkabout.Views.Controls
 
         private void OnMenuRefresh_Click(object sender, RoutedEventArgs e)
         {
-            ReloadTreeView(true);
+            this.ReloadTreeView(true);
         }
 
         private void ReloadTreeView(bool forRebuild = false)
         {
             if (this.treeView1.ItemsSource == null || forRebuild)
             {
-                this.treeView1.ItemsSource = myMoney.Buildings.GetList();
+                this.treeView1.ItemsSource = this.myMoney.Buildings.GetList();
             }
             this.treeView1.Items.Refresh();
         }
@@ -165,13 +165,13 @@ namespace Walkabout.Views.Controls
 
             if (x != null)
             {
-                EditProperties(x);
+                this.EditProperties(x);
             }
         }
 
         bool EditProperties(RentBuilding a)
         {
-            Walkabout.Dialogs.BuildingDialog dialog = new Dialogs.BuildingDialog(myMoney);
+            Walkabout.Dialogs.BuildingDialog dialog = new Dialogs.BuildingDialog(this.myMoney);
             dialog.TheBuilding = a;
             dialog.Owner = Application.Current.MainWindow;
             if (dialog.ShowDialog() == true)
@@ -205,7 +205,7 @@ namespace Walkabout.Views.Controls
 
                     if (MessageBoxEx.Show("Delete " + toDelete.Name, "Rental", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
-                        myMoney.Buildings.RemoveBuilding(toDelete);
+                        this.myMoney.Buildings.RemoveBuilding(toDelete);
                     }
                 }
 

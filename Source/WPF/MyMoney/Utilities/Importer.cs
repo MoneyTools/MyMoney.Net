@@ -34,7 +34,7 @@ namespace Walkabout.Migrate
         /// <returns></returns>
         public Transfer FindMatchingTransfer(Transaction t, Account from)
         {
-            foreach (Transaction u in Money.Transactions)
+            foreach (Transaction u in this.Money.Transactions)
             {
                 if (u.IsDeleted)
                     continue;
@@ -42,7 +42,7 @@ namespace Walkabout.Migrate
                 {
                     if (u.IsSplit)
                     {
-                        Transfer stran = FindSplitTransfer(u.Splits, t, from);
+                        Transfer stran = this.FindSplitTransfer(u.Splits, t, from);
                         if (stran != null)
                         {
                             return stran;
@@ -114,7 +114,7 @@ namespace Walkabout.Migrate
         public Transfer FindMatchingSplitTransfer(Split s, Account to)
         {
             Transaction t = s.Transaction;
-            foreach (Transaction u in Money.Transactions)
+            foreach (Transaction u in this.Money.Transactions)
             {
                 if (u.IsDeleted)
                     continue;

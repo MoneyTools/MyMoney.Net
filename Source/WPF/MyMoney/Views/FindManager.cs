@@ -54,7 +54,7 @@ namespace Walkabout.Views
         {
             get
             {
-                return currentPosition;
+                return this.currentPosition;
             }
             set
             {
@@ -62,13 +62,13 @@ namespace Walkabout.Views
                 {
                     throw new ArgumentNullException("value");
                 }
-                if (value.CompareTo(inputDocument.ContentStart) < 0 ||
-                    value.CompareTo(inputDocument.ContentEnd) > 0)
+                if (value.CompareTo(this.inputDocument.ContentStart) < 0 ||
+                    value.CompareTo(this.inputDocument.ContentEnd) > 0)
                 {
                     throw new ArgumentOutOfRangeException("value");
                 }
 
-                currentPosition = value;
+                this.currentPosition = value;
             }
         }
 
@@ -83,7 +83,7 @@ namespace Walkabout.Views
         /// </remarks>
         public TextRange FindNext(String input, FindOptions findOptions = FindOptions.None)
         {
-            TextRange textRange = GetTextRangeFromPosition(ref currentPosition, input, findOptions);
+            TextRange textRange = this.GetTextRangeFromPosition(ref this.currentPosition, input, findOptions);
             return textRange;
         }
 
@@ -110,7 +110,7 @@ namespace Walkabout.Views
 
             while (position != null)
             {
-                if (position.CompareTo(inputDocument.ContentEnd) == 0)
+                if (position.CompareTo(this.inputDocument.ContentEnd) == 0)
                 {
                     break;
                 }
@@ -130,7 +130,7 @@ namespace Walkabout.Views
 
                         if (matchWholeWord)
                         {
-                            if (IsWholeWord(textRange)) // Test if the "textRange" represents a word.
+                            if (this.IsWholeWord(textRange)) // Test if the "textRange" represents a word.
                             {
                                 // If a WholeWord match is found, directly terminate the loop.
                                 position = position.GetPositionAtOffset(input.Length);
@@ -140,7 +140,7 @@ namespace Walkabout.Views
                             {
                                 // If a WholeWord match is not found, go to next recursion to find it.
                                 position = position.GetPositionAtOffset(input.Length);
-                                return GetTextRangeFromPosition(ref position, input, findOptions);
+                                return this.GetTextRangeFromPosition(ref position, input, findOptions);
                             }
                         }
                         else
@@ -191,23 +191,23 @@ namespace Walkabout.Views
         {
             Char[] chars = new Char[1];
 
-            if (textRange.Start.CompareTo(inputDocument.ContentStart) == 0 || textRange.Start.IsAtLineStartPosition)
+            if (textRange.Start.CompareTo(this.inputDocument.ContentStart) == 0 || textRange.Start.IsAtLineStartPosition)
             {
                 textRange.End.GetTextInRun(LogicalDirection.Forward, chars, 0, 1);
-                return !IsWordChar(chars[0]);
+                return !this.IsWordChar(chars[0]);
             }
-            else if (textRange.End.CompareTo(inputDocument.ContentEnd) == 0)
+            else if (textRange.End.CompareTo(this.inputDocument.ContentEnd) == 0)
             {
                 textRange.Start.GetTextInRun(LogicalDirection.Backward, chars, 0, 1);
-                return !IsWordChar(chars[0]);
+                return !this.IsWordChar(chars[0]);
             }
             else
             {
                 textRange.End.GetTextInRun(LogicalDirection.Forward, chars, 0, 1);
-                if (!IsWordChar(chars[0]))
+                if (!this.IsWordChar(chars[0]))
                 {
                     textRange.Start.GetTextInRun(LogicalDirection.Backward, chars, 0, 1);
-                    return !IsWordChar(chars[0]);
+                    return !this.IsWordChar(chars[0]);
                 }
             }
 

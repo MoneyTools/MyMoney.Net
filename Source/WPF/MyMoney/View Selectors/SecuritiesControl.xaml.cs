@@ -28,23 +28,23 @@ namespace Walkabout.Views.Controls
 
         public MyMoney MyMoney
         {
-            get { return myMoney; }
+            get { return this.myMoney; }
             set
             {
                 if (this.myMoney != null)
                 {
-                    myMoney.Securities.Changed -= new EventHandler<ChangeEventArgs>(OnSecuritiesChanged);
-                    myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(OnBalanceChanged);
-                    myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(OnTransactionsChanged);
+                    this.myMoney.Securities.Changed -= new EventHandler<ChangeEventArgs>(this.OnSecuritiesChanged);
+                    this.myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(this.OnBalanceChanged);
+                    this.myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(this.OnTransactionsChanged);
                 }
-                myMoney = value;
+                this.myMoney = value;
                 if (value != null)
                 {
-                    myMoney.Securities.Changed += new EventHandler<ChangeEventArgs>(OnSecuritiesChanged);
-                    myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(OnBalanceChanged);
-                    myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(OnTransactionsChanged);
+                    this.myMoney.Securities.Changed += new EventHandler<ChangeEventArgs>(this.OnSecuritiesChanged);
+                    this.myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(this.OnBalanceChanged);
+                    this.myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(this.OnTransactionsChanged);
 
-                    OnSecuritiesChanged(this, new ChangeEventArgs(myMoney.Securities, null, ChangeType.Reloaded));
+                    this.OnSecuritiesChanged(this, new ChangeEventArgs(this.myMoney.Securities, null, ChangeType.Reloaded));
                 }
             }
         }
@@ -61,9 +61,9 @@ namespace Walkabout.Views.Controls
             get { return this.listbox1.SelectedItem as Security; }
             set
             {
-                selection = value;
+                this.selection = value;
                 this.listbox1.SelectedItem = value;
-                listbox1.ScrollIntoView(value);
+                this.listbox1.ScrollIntoView(value);
             }
         }
 
@@ -79,12 +79,12 @@ namespace Walkabout.Views.Controls
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.SecuritiesControlInitialize))
             {
 #endif
-                InitializeComponent();
-                this.MouseUp += new MouseButtonEventHandler(OnMouseUp);
-                this.listbox1.SelectionChanged += new SelectionChangedEventHandler(OnSelectionChanged);
-                this.dragDropSupport = new DragAndDrop(listbox1, this.dragDropformatNameForSecurity, OnDragSource, OnDropTarget, OnDropSourceOnTarget, false);
-                this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnIsVisibleChanged);
-                this.Unloaded += (s, e) =>
+                this.InitializeComponent();
+                MouseUp += new MouseButtonEventHandler(this.OnMouseUp);
+                this.listbox1.SelectionChanged += new SelectionChangedEventHandler(this.OnSelectionChanged);
+                this.dragDropSupport = new DragAndDrop(this.listbox1, this.dragDropformatNameForSecurity, this.OnDragSource, this.OnDropTarget, this.OnDropSourceOnTarget, false);
+                IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
+                Unloaded += (s, e) =>
                 {
                     this.dragDropSupport.Disconnect();
                     this.MyMoney = null;
@@ -96,16 +96,16 @@ namespace Walkabout.Views.Controls
 
         void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (!loaded)
+            if (!this.loaded)
             {
-                GetAllSecurities(lastActiveFilter);
+                this.GetAllSecurities(this.lastActiveFilter);
             }
         }
 
         public void Filter(string filterText)
         {
-            lastActiveFilter = filterText;
-            GetAllSecurities(filterText);
+            this.lastActiveFilter = filterText;
+            this.GetAllSecurities(filterText);
         }
 
         void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -113,9 +113,9 @@ namespace Walkabout.Views.Controls
             if (e.AddedItems.Count > 0)
             {
                 Security x = e.AddedItems[0] as Security;
-                if (x != selection)
+                if (x != this.selection)
                 {
-                    selection = x;
+                    this.selection = x;
                     if (SelectionChanged != null)
                     {
                         SelectionChanged(this, EventArgs.Empty);
@@ -134,17 +134,17 @@ namespace Walkabout.Views.Controls
         {
             if (e.XButton1 == MouseButtonState.Pressed)
             {
-                if (this.MouseButtonBackwardChanged != null)
+                if (MouseButtonBackwardChanged != null)
                 {
-                    this.MouseButtonBackwardChanged(this, new EventArgs());
+                    MouseButtonBackwardChanged(this, new EventArgs());
                 }
             }
 
             if (e.XButton2 == MouseButtonState.Pressed)
             {
-                if (this.MouseButtonForwardChanged != null)
+                if (MouseButtonForwardChanged != null)
                 {
-                    this.MouseButtonForwardChanged(this, new EventArgs());
+                    MouseButtonForwardChanged(this, new EventArgs());
                 }
             }
         }
@@ -166,7 +166,7 @@ namespace Walkabout.Views.Controls
                 {
                     returnSource = new DragDropSource();
                     returnSource.DataSource = x;
-                    returnSource.VisualForDraginSource = CreateDragVisual(x);
+                    returnSource.VisualForDraginSource = this.CreateDragVisual(x);
                 }
             }
 
@@ -178,7 +178,7 @@ namespace Walkabout.Views.Controls
             Border visual = new Border();
             visual.SetResourceReference(Window.BackgroundProperty, "SystemControlHighlightAccent3RevealBackgroundBrush");
             visual.SetResourceReference(Window.ForegroundProperty, "SystemControlPageTextBaseHighBrush");
-            var label = new TextBlock() { Text = s.Name, Margin = new Thickness(5), FontSize = this.FontSize, FontFamily = this.FontFamily };
+            var label = new TextBlock() { Text = s.Name, Margin = new Thickness(5), FontSize = FontSize, FontFamily = FontFamily };
             visual.Child = label;
             return visual;
         }
@@ -207,7 +207,7 @@ namespace Walkabout.Views.Controls
         /// <param name="target">Security that was dropped on</param>
         private void OnDropSourceOnTarget(object source, object target, DragDropEffects dropEffect)
         {
-            Rename(source as Security, target as Security);
+            this.Rename(source as Security, target as Security);
         }
 
         #endregion
@@ -216,7 +216,7 @@ namespace Walkabout.Views.Controls
         {
             if (this.IsVisible)
             {
-                GetAllSecurities(this.lastActiveFilter);
+                this.GetAllSecurities(this.lastActiveFilter);
             }
         }
 
@@ -224,14 +224,14 @@ namespace Walkabout.Views.Controls
         {
             if (this.IsVisible)
             {
-                GetAllSecurities(this.lastActiveFilter);
+                this.GetAllSecurities(this.lastActiveFilter);
             }
         }
 
 
         private void GetAllSecurities()
         {
-            GetAllSecurities(this.lastActiveFilter);
+            this.GetAllSecurities(this.lastActiveFilter);
         }
 
         private void GetAllSecurities(string filter)
@@ -240,14 +240,14 @@ namespace Walkabout.Views.Controls
 
             if (string.IsNullOrWhiteSpace(filter))
             {
-                list = myMoney.Securities.GetSecuritiesAsList();
+                list = this.myMoney.Securities.GetSecuritiesAsList();
             }
             else
             {
-                list = myMoney.Securities.GetSecuritiesAsList(filter);
+                list = this.myMoney.Securities.GetSecuritiesAsList(filter);
             }
             list.Sort(Security.Compare);
-            loaded = list.Count > 0;
+            this.loaded = list.Count > 0;
             this.listbox1.ItemsSource = list;
         }
 
@@ -259,7 +259,7 @@ namespace Walkabout.Views.Controls
         private void OnMenuItem_Rename(object sender, RoutedEventArgs e)
         {
             Security x = this.listbox1.SelectedItem as Security;
-            Rename(x);
+            this.Rename(x);
         }
 
         private void OnCanDeleteCommand(object sender, CanExecuteRoutedEventArgs e)
@@ -270,12 +270,12 @@ namespace Walkabout.Views.Controls
         private void OnExecuteDelete(object sender, ExecutedRoutedEventArgs e)
         {
             Security x = this.Selected;
-            DeleteSecurity(x);
+            this.DeleteSecurity(x);
         }
 
         Security Rename(Security p)
         {
-            return Rename(p, p);
+            return this.Rename(p, p);
         }
 
         Security Rename(Security fromSecurity, Security renameToThisSecurity)
@@ -301,8 +301,8 @@ namespace Walkabout.Views.Controls
 
         public bool DeleteSecurity(Security x)
         {
-            Securities collection = myMoney.Securities;
-            IList<Transaction> trans = myMoney.Transactions.GetTransactionsBySecurity(x, null);
+            Securities collection = this.myMoney.Securities;
+            IList<Transaction> trans = this.myMoney.Transactions.GetTransactionsBySecurity(x, null);
             if (trans.Count == 0)
             {
                 collection.RemoveSecurity(x);
@@ -340,7 +340,7 @@ namespace Walkabout.Views.Controls
         public void Cut()
         {
             Security s = this.Selected;
-            if (s != null && DeleteSecurity(this.Selected))
+            if (s != null && this.DeleteSecurity(this.Selected))
             {
                 string xml = s.Serialize();
                 Clipboard.SetDataObject(xml, true);
@@ -367,7 +367,7 @@ namespace Walkabout.Views.Controls
             Security s = this.Selected;
             if (s != null)
             {
-                DeleteSecurity(this.Selected);
+                this.DeleteSecurity(this.Selected);
             }
         }
 

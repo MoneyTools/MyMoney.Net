@@ -8,8 +8,8 @@ namespace Walkabout.Ofx
 
         public string Html
         {
-            get { return html; }
-            set { html = value; }
+            get { return this.html; }
+            set { this.html = value; }
         }
 
         public HtmlResponseException(string msg, string html) : base(msg)

@@ -29,17 +29,17 @@ namespace Walkabout.Utilities
 
         public void AddHandler(T h)
         {
-            list.Add(h);
+            this.list.Add(h);
         }
 
         public void RemoveHandler(T h)
         {
-            list.Remove(h);
+            this.list.Remove(h);
         }
 
-        public bool HasListeners => list.Count > 0;
+        public bool HasListeners => this.list.Count > 0;
 
-        public int ListenerCount => list.Count;
+        public int ListenerCount => this.list.Count;
 
         /// <summary>
         /// The owner of the event uses this method to raise the event to the registered event handlers.        
@@ -59,7 +59,7 @@ namespace Walkabout.Utilities
                     }
                     else
                     {
-                        Invoke(d, array);
+                        this.Invoke(d, array);
                     }
                 }
                 catch (System.Reflection.TargetInvocationException e)

@@ -94,7 +94,7 @@ namespace Walkabout.Assitance
             foreach (SampleAccount sa in data.Accounts)
             {
                 // Create all the accounts.
-                Accounts accounts = money.Accounts;
+                Accounts accounts = this.money.Accounts;
                 Account a = accounts.FindAccount(sa.Name);
                 if (a == null)
                 {
@@ -157,19 +157,19 @@ namespace Walkabout.Assitance
                 }
             }
 
-            money.BeginUpdate(this);
+            this.money.BeginUpdate(this);
             // create the securities and stock splits
             foreach (var sec in data.Securities)
             {
-                Security stock = money.Securities.FindSecurity(sec.Name, true);
+                Security stock = this.money.Securities.FindSecurity(sec.Name, true);
                 if (sec.Splits != null)
                 {
                     foreach (var split in sec.Splits)
                     {
-                        var exists = money.StockSplits.FindStockSplitByDate(stock, split.Date);
+                        var exists = this.money.StockSplits.FindStockSplitByDate(stock, split.Date);
                         if (exists == null)
                         {
-                            StockSplit stockSplit = money.StockSplits.NewStockSplit();
+                            StockSplit stockSplit = this.money.StockSplits.NewStockSplit();
                             stockSplit.Security = stock;
                             stockSplit.Date = split.Date;
                             stockSplit.Numerator = split.Numerator;
@@ -178,25 +178,25 @@ namespace Walkabout.Assitance
                     }
                 }
             }
-            money.EndUpdate();
+            this.money.EndUpdate();
 
-            CreateRandomTransactions(list, inflation);
+            this.CreateRandomTransactions(list, inflation);
 
-            AddPaychecks(options.Employer, options.PayCheck, inflation);
+            this.AddPaychecks(options.Employer, options.PayCheck, inflation);
 
             // now with any spare cash we can buy stocks.
-            CreateInvestmentSamples(data, brokerageAccounts);
+            this.CreateInvestmentSamples(data, brokerageAccounts);
 
             // only have to do this because we hid all update events earlier by doing BeginUpdate/EndUpdate on money object.
             // trigger payee update 
-            money.Payees.BeginUpdate(false);
-            money.Payees.EndUpdate();
+            this.money.Payees.BeginUpdate(false);
+            this.money.Payees.EndUpdate();
 
             // trigger category update
-            money.Categories.BeginUpdate(false);
-            money.Categories.EndUpdate();
+            this.money.Categories.BeginUpdate(false);
+            this.money.Categories.EndUpdate();
 
-            money.OnLoaded();
+            this.money.OnLoaded();
         }
 
         private decimal GetStockMoney(decimal balance)
@@ -221,7 +221,7 @@ namespace Walkabout.Assitance
                     }
                 }
             }
-            return rand.Next(100);
+            return this.rand.Next(100);
         }
 
         class Ownership
@@ -231,10 +231,10 @@ namespace Walkabout.Assitance
 
             public void AddUnits(Account a, string symbol, decimal units)
             {
-                if (!owned.TryGetValue(a, out Dictionary<string, decimal> map))
+                if (!this.owned.TryGetValue(a, out Dictionary<string, decimal> map))
                 {
                     map = new Dictionary<string, decimal>();
-                    owned[a] = map;
+                    this.owned[a] = map;
                 }
                 decimal tally = 0;
                 map.TryGetValue(symbol, out tally);
@@ -244,7 +244,7 @@ namespace Walkabout.Assitance
             public decimal GetUnits(Account a, string symbol)
             {
                 decimal result = 0;
-                if (owned.TryGetValue(a, out Dictionary<string, decimal> map))
+                if (this.owned.TryGetValue(a, out Dictionary<string, decimal> map))
                 {
                     map.TryGetValue(symbol, out result);
                 }
@@ -260,9 +260,9 @@ namespace Walkabout.Assitance
             }
 
             // now balance the accounts.
-            foreach (Account a in money.Accounts.GetAccounts())
+            foreach (Account a in this.money.Accounts.GetAccounts())
             {
-                money.Rebalance(a);
+                this.money.Rebalance(a);
             }
 
             // first figure out how much we can spend each year.
@@ -273,17 +273,17 @@ namespace Walkabout.Assitance
             Ownership ownership = new Ownership();
             decimal removed = 0;
 
-            foreach (var t in money.Transactions.GetTransactionsFrom(this.checking))
+            foreach (var t in this.money.Transactions.GetTransactionsFrom(this.checking))
             {
                 if (t.Date > end)
                 {
-                    cash[year] = GetStockMoney(t.Balance);
+                    cash[year] = this.GetStockMoney(t.Balance);
                     end = end.AddYears(1);
                     year++;
                 }
             }
 
-            money.BeginUpdate(this);
+            this.money.BeginUpdate(this);
 
             Dictionary<Account, decimal> cashBalance = new Dictionary<Account, decimal>();
             foreach (var a in brokerageAccounts)
@@ -291,7 +291,7 @@ namespace Walkabout.Assitance
                 cashBalance[a] = 0;
             }
 
-            Transactions transactions = money.Transactions;
+            Transactions transactions = this.money.Transactions;
             for (year = DateTime.Now.Year - 10; year <= DateTime.Now.Year; year++)
             {
                 cash.TryGetValue(year, out decimal balance);
@@ -302,22 +302,22 @@ namespace Walkabout.Assitance
                 }
                 decimal startBalance = balance;
 
-                int numberOfTransactionForThatYear = rand.Next(5, 100); // up to 100 transactions max per year.
+                int numberOfTransactionForThatYear = this.rand.Next(5, 100); // up to 100 transactions max per year.
 
                 // keep track of how much we own so we never go negative.
-                IList<int> selectedDays = GetRandomDaysInTheYearForTransactions(numberOfTransactionForThatYear);
+                IList<int> selectedDays = this.GetRandomDaysInTheYearForTransactions(numberOfTransactionForThatYear);
 
                 foreach (var day in selectedDays)
                 {
                     // select random security.
-                    SampleSecurity ss = data.Securities[rand.Next(0, data.Securities.Count)];
+                    SampleSecurity ss = data.Securities[this.rand.Next(0, data.Securities.Count)];
                     // Get or Create the security
-                    Security stock = money.Securities.FindSecurity(ss.Name, true);
+                    Security stock = this.money.Securities.FindSecurity(ss.Name, true);
                     stock.SecurityType = ss.SecurityType;
                     stock.Symbol = ss.Symbol;
 
                     // select a random brokerage.
-                    Account a = brokerageAccounts[rand.Next(brokerageAccounts.Count)];
+                    Account a = brokerageAccounts[this.rand.Next(brokerageAccounts.Count)];
 
                     var canSpend = balance + cashBalance[a];
                     if (canSpend < 100)
@@ -329,15 +329,15 @@ namespace Walkabout.Assitance
                     var date = new DateTime(year, 1, 1).AddDays(day);
 
                     // How many unit bought or sold
-                    var quote = GetClosingPrice(ss.Symbol, date);
+                    var quote = this.GetClosingPrice(ss.Symbol, date);
 
                     Transaction t = null;
                     decimal owned = ownership.GetUnits(a, ss.Symbol);
-                    if (owned > 4 && rand.Next(3) == 1)
+                    if (owned > 4 && this.rand.Next(3) == 1)
                     {
                         // make this a sell transaction.
                         // Create a new Transaction
-                        t = money.Transactions.NewTransaction(a);
+                        t = this.money.Transactions.NewTransaction(a);
                         t.Date = date;
                         //-----------------------------------------------------
                         // Create the matching Investment transaction
@@ -348,10 +348,10 @@ namespace Walkabout.Assitance
                         i.Price = quote;
                         i.Type = InvestmentType.Sell;
                         // Create the a SELL transaction
-                        i.Units = rand.Next(1, (int)(owned / 2));
+                        i.Units = this.rand.Next(1, (int)(owned / 2));
                         ownership.AddUnits(a, ss.Symbol, -i.Units);
                         // Calculate the Payment or Deposit amount
-                        t.Amount = RoundCents(i.Units * i.UnitPrice);
+                        t.Amount = this.RoundCents(i.Units * i.UnitPrice);
                     }
                     else
                     {
@@ -359,7 +359,7 @@ namespace Walkabout.Assitance
                         if (max > 0)
                         {
                             // Create a new Transaction
-                            t = money.Transactions.NewTransaction(a);
+                            t = this.money.Transactions.NewTransaction(a);
                             t.Date = date;
 
                             //-----------------------------------------------------
@@ -370,21 +370,21 @@ namespace Walkabout.Assitance
                             i.UnitPrice = quote;
                             i.Price = quote;
                             i.Type = InvestmentType.Buy;
-                            i.Units = rand.Next(1, max);
+                            i.Units = this.rand.Next(1, max);
                             ownership.AddUnits(a, ss.Symbol, i.Units);
                             // Calculate the Payment or Deposit amount
-                            t.Amount = RoundCents(i.Units * i.UnitPrice * -1);
+                            t.Amount = this.RoundCents(i.Units * i.UnitPrice * -1);
                         }
                     }
 
                     if (t != null)
                     {
-                        t.Payee = money.Payees.FindPayee(ss.Name, true);
-                        t.Category = money.Categories.InvestmentStocks;
+                        t.Payee = this.money.Payees.FindPayee(ss.Name, true);
+                        t.Category = this.money.Categories.InvestmentStocks;
                         balance += t.Amount;
                         cashBalance[a] += t.Amount;
                         // Finally add the new transaction
-                        money.Transactions.AddTransaction(t);
+                        this.money.Transactions.AddTransaction(t);
                     }
                 }
 
@@ -394,22 +394,22 @@ namespace Walkabout.Assitance
                     if (amount < 0)
                     {
                         // then we need to transfer money to cover the cost of the stock purchases.
-                        Transaction payment = transactions.NewTransaction(checking);
+                        Transaction payment = transactions.NewTransaction(this.checking);
                         payment.Date = new DateTime(year, 1, 1);
-                        payment.Amount = RoundCents(amount);
+                        payment.Amount = this.RoundCents(amount);
                         transactions.AddTransaction(payment);
-                        money.Transfer(payment, acct);
+                        this.money.Transfer(payment, acct);
                         removed += -amount;
                         cashBalance[acct] += -amount;
                     }
                 }
             }
-            money.EndUpdate();
+            this.money.EndUpdate();
 
             // now balance the accounts again!
-            foreach (Account a in money.Accounts.GetAccounts())
+            foreach (Account a in this.money.Accounts.GetAccounts())
             {
-                money.Rebalance(a);
+                this.money.Rebalance(a);
             }
         }
 
@@ -430,7 +430,7 @@ namespace Walkabout.Assitance
 
             for (int populateCount = 0; populateCount < count; populateCount++)
             {
-                int takeThisDay = rand.Next(allDaysInYear.Count - 1);
+                int takeThisDay = this.rand.Next(allDaysInYear.Count - 1);
 
                 int dayofTheYear = allDaysInYear[takeThisDay];
                 selectedDays.Add(dayofTheYear, dayofTheYear);
@@ -441,24 +441,24 @@ namespace Walkabout.Assitance
 
         private void AddPaychecks(string employer, decimal paycheck, double inflation)
         {
-            Debug.Assert(checking != null); // the .xml file must have a checking account.
+            Debug.Assert(this.checking != null); // the .xml file must have a checking account.
             DateTime today = DateTime.Today;
             DateTime first = today.AddYears(-Years);
             double biMonthlyInfation = (inflation / 24);
 
             DateTime date = new DateTime(first.Year, 1, 1);
-            money.BeginUpdate(this);
-            Payee payee = money.Payees.FindPayee(employer, true);
-            Category category = money.Categories.GetOrCreateCategory("Wages & Salary:Gross Pay", CategoryType.Income);
+            this.money.BeginUpdate(this);
+            Payee payee = this.money.Payees.FindPayee(employer, true);
+            Category category = this.money.Categories.GetOrCreateCategory("Wages & Salary:Gross Pay", CategoryType.Income);
             category.Type = CategoryType.Income;
-            Transactions transactions = money.Transactions;
+            Transactions transactions = this.money.Transactions;
             for (int paydays = Years * 12 * 2; paydays > 0; paydays--)
             {
                 Transaction t = transactions.NewTransaction(this.checking);
                 t.Payee = payee;
                 t.Category = category;
                 t.Date = date;
-                t.Amount = RoundCents(paycheck);
+                t.Amount = this.RoundCents(paycheck);
                 transactions.AddTransaction(t);
 
                 // make it a bi-monthly paycheck
@@ -473,7 +473,7 @@ namespace Walkabout.Assitance
                 }
                 paycheck += (paycheck * (decimal)biMonthlyInfation) / 100M;
             }
-            money.EndUpdate();
+            this.money.EndUpdate();
         }
 
         private void CreateRandomTransactions(List<SampleTransaction> list, double inflation)
@@ -487,11 +487,11 @@ namespace Walkabout.Assitance
             int totalDays = (int)span.TotalDays;
             double monthlyInflation = (inflation / 12);
 
-            money.BeginUpdate(this);
-            Transactions transactions = money.Transactions;
-            Accounts accounts = money.Accounts;
-            Payees payees = money.Payees;
-            Categories categories = money.Categories;
+            this.money.BeginUpdate(this);
+            Transactions transactions = this.money.Transactions;
+            Accounts accounts = this.money.Accounts;
+            Payees payees = this.money.Payees;
+            Categories categories = this.money.Categories;
             int nextCheck = 2800;
 
             while (list.Count > 0)
@@ -504,7 +504,7 @@ namespace Walkabout.Assitance
                 Account a = accounts.FindAccount(sa.Name);
                 Payee p = payees.FindPayee(st.Payee.Name, true);
                 SampleCategory sc = st.Category;
-                Category c = money.Categories.GetOrCreateCategory(sc.Name, sc.Type);
+                Category c = this.money.Categories.GetOrCreateCategory(sc.Name, sc.Type);
                 if (c.Type == CategoryType.None)
                 {
                     c.Type = sc.Type;
@@ -531,13 +531,13 @@ namespace Walkabout.Assitance
                 }
 
                 // add inflation
-                amount = Inflate(amount, (int)(daysFromStart / 30), (decimal)monthlyInflation);
+                amount = this.Inflate(amount, (int)(daysFromStart / 30), (decimal)monthlyInflation);
 
                 Transaction t = transactions.NewTransaction(a);
                 t.Payee = p;
                 t.Category = c;
                 t.Date = date;
-                t.Amount = RoundCents(amount);
+                t.Amount = this.RoundCents(amount);
                 if (st.Payee.Type == PaymentType.Check)
                 {
                     t.Number = nextCheck.ToString();
@@ -557,7 +557,7 @@ namespace Walkabout.Assitance
                         // here we know transactions are sorted by date.
                         DateTime endOfMonth = start.AddMonths(1);
                         decimal balance = 0;
-                        foreach (var t in money.Transactions.GetTransactionsFrom(acct))
+                        foreach (var t in this.money.Transactions.GetTransactionsFrom(acct))
                         {
                             balance += t.Amount;
                             if (t.Date >= endOfMonth)
@@ -566,9 +566,9 @@ namespace Walkabout.Assitance
                                 {
                                     Transaction payment = transactions.NewTransaction(checking);
                                     payment.Date = endOfMonth;
-                                    payment.Amount = RoundCents(balance);
+                                    payment.Amount = this.RoundCents(balance);
                                     transactions.AddTransaction(payment);
-                                    money.Transfer(payment, acct);
+                                    this.money.Transfer(payment, acct);
                                     balance = 0;
                                     endOfMonth = endOfMonth.AddMonths(1);
                                 }
@@ -578,7 +578,7 @@ namespace Walkabout.Assitance
                 }
             }
 
-            money.EndUpdate();
+            this.money.EndUpdate();
         }
 
         private decimal Inflate(decimal amount, int months, decimal monthlyInflation)
@@ -596,7 +596,7 @@ namespace Walkabout.Assitance
             List<SampleAccount> accounts = data.Accounts = new List<SampleAccount>();
             Dictionary<Account, SampleAccount> accountMap = new Dictionary<Account, SampleAccount>();
 
-            foreach (Account a in money.Accounts.GetAccounts())
+            foreach (Account a in this.money.Accounts.GetAccounts())
             {
                 if (!a.IsClosed)
                 {
@@ -609,7 +609,7 @@ namespace Walkabout.Assitance
             List<SamplePayee> payees = data.Payees = new List<SamplePayee>();
             Dictionary<Payee, SamplePayee> payeeMap = new Dictionary<Payee, SamplePayee>();
 
-            foreach (Transaction t in money.Transactions.GetAllTransactions())
+            foreach (Transaction t in this.money.Transactions.GetAllTransactions())
             {
                 SampleAccount sa;
                 if (!accountMap.TryGetValue(t.Account, out sa) || t.Account.Type == AccountType.Brokerage || t.Payee == null || t.IsSplit || t.Category == null || t.Transfer != null)
@@ -719,7 +719,7 @@ namespace Walkabout.Assitance
         public int GetTotalFrequency()
         {
             int total = 0;
-            foreach (SamplePayee sp in Payees)
+            foreach (SamplePayee sp in this.Payees)
             {
                 int pf = 0;
                 foreach (SampleCategory sc in sp.Categories)

@@ -82,17 +82,17 @@ namespace Walkabout.Utilities
             this.box = b;
         }
 
-        public bool CanCut => box.IsEditable;
+        public bool CanCut => this.box.IsEditable;
 
         public bool CanCopy => true;
 
-        public bool CanPaste => box.IsEditable;
+        public bool CanPaste => this.box.IsEditable;
 
-        public bool CanDelete => box.IsEditable;
+        public bool CanDelete => this.box.IsEditable;
 
         public void Copy()
         {
-            var text = GetTextBox();
+            var text = this.GetTextBox();
             if (text != null)
             {
                 text.Copy();
@@ -110,12 +110,12 @@ namespace Walkabout.Utilities
 
         public void Cut()
         {
-            GetTextBox()?.Cut();
+            this.GetTextBox()?.Cut();
         }
 
         public void Delete()
         {
-            var text = GetTextBox();
+            var text = this.GetTextBox();
             if (text != null)
             {
                 text.SelectedText = string.Empty;
@@ -124,7 +124,7 @@ namespace Walkabout.Utilities
 
         public void Paste()
         {
-            GetTextBox()?.Paste();
+            this.GetTextBox()?.Paste();
         }
     }
 

@@ -27,8 +27,8 @@ namespace Walkabout.Views
             this.account = account;
             this.category = category;
             this.viewName = viewName;
-            nfi.NumberDecimalDigits = 2;
-            nfi.CurrencyNegativePattern = 0;
+            this.nfi.NumberDecimalDigits = 2;
+            this.nfi.CurrencyNegativePattern = 0;
         }
 
         public bool IsFlipped
@@ -46,11 +46,11 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphGenerate))
             {
 #endif
-                if (data != null)
+                if (this.data != null)
                 {
                     decimal balance = this.account != null ? this.account.OpeningBalance : 0;
 
-                    foreach (object row in data)
+                    foreach (object row in this.data)
                     {
                         Transaction t = row as Transaction;
                         if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
@@ -200,8 +200,8 @@ namespace Walkabout.Views
                             // Stock splits are in a "pending" list and when the Date rolls by it can trigger a specific
                             // stock split.  When that happens all the remaining units and cost bases in the AccountHoldings
                             // are adjusted accordingly.
-                            ApplyPendingSplits(date, holdings);
-                            decimal marketValue = ComputeMarketValue(date, holdings);
+                            this.ApplyPendingSplits(date, holdings);
+                            decimal marketValue = this.ComputeMarketValue(date, holdings);
                             this.graph.Add(new TrendValue() { Date = date, UserData = t, Value = marketValue + cashBalance });
                             date = date.AddDays(1);
                         }
@@ -233,7 +233,7 @@ namespace Walkabout.Views
                                             // In case we don't have any online stock quote histories this at least
                                             // tells our StockQuotesByDate what the unit price was on the date of this
                                             // transaction.
-                                            RecordPrice(i.Date, s, i.UnitPrice);
+                                            this.RecordPrice(i.Date, s, i.UnitPrice);
                                         }
                                         holdings.Buy(i.Security, i.Date, i.Units, i.OriginalCostBasis);
                                         foreach (var sale in holdings.ProcessPendingSales(i.Security))
@@ -248,7 +248,7 @@ namespace Walkabout.Views
                                     {
                                         if (i.UnitPrice != 0)
                                         {
-                                            RecordPrice(i.Date, s, i.UnitPrice);
+                                            this.RecordPrice(i.Date, s, i.UnitPrice);
                                         }
                                         if (i.Transaction.Transfer == null)
                                         {
@@ -349,7 +349,7 @@ namespace Walkabout.Views
                 StockSplit next = splits.FirstOrDefault();
                 while (next != null && next.Date.Date < dateTime)
                 {
-                    ApplySplit(next, holding);
+                    this.ApplySplit(next, holding);
                     splits.Remove(next);
                     next = splits.FirstOrDefault();
                     if (next == null)
@@ -415,8 +415,8 @@ namespace Walkabout.Views
         {
             this.history = history;
             this.security = security;
-            nfi.NumberDecimalDigits = 2;
-            nfi.CurrencyNegativePattern = 0;
+            this.nfi.NumberDecimalDigits = 2;
+            this.nfi.CurrencyNegativePattern = 0;
         }
 
         public bool IsFlipped { get { return false; } }
@@ -427,10 +427,10 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphGenerate))
             {
 #endif
-                string symbol = history.Symbol;
-                foreach (var item in history.History)
+                string symbol = this.history.Symbol;
+                foreach (var item in this.history.History)
                 {
-                    decimal adjustedClose = ApplySplits(item.Close, item.Date);
+                    decimal adjustedClose = this.ApplySplits(item.Close, item.Date);
 
                     yield return new TrendValue()
                     {

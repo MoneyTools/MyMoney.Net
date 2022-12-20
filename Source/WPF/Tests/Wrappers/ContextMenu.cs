@@ -21,7 +21,7 @@ namespace Walkabout.Tests.Wrappers
         public ContextMenu(AutomationElement control, bool isPopupMenu)
         {
             this.isPopupMenu = isPopupMenu;
-            root = MainWindowWrapper.FindMainWindow(control.Current.ProcessId);
+            this.root = MainWindowWrapper.FindMainWindow(control.Current.ProcessId);
             this.control = control;
         }
 
@@ -31,16 +31,16 @@ namespace Walkabout.Tests.Wrappers
         /// <param name="e">Automation element to right-click</param>
         public AutomationElement Open(bool throwIfNotOpened)
         {
-            if (!isPopupMenu)
+            if (!this.isPopupMenu)
             {
                 return null;
             }
-            isOpened = false;
+            this.isOpened = false;
             AutomationElement openMenu = null;
 
             // see if this is a SubMenuItem already
             object pattern;
-            if (control.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out pattern))
+            if (this.control.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out pattern))
             {
                 ExpandCollapsePattern expandCollapse = (ExpandCollapsePattern)pattern;
                 expandCollapse.Expand();
@@ -48,10 +48,10 @@ namespace Walkabout.Tests.Wrappers
 
                 for (int retries = 5; retries > 0; retries--)
                 {
-                    AutomationElement firstChild = control.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.MenuItem));
+                    AutomationElement firstChild = this.control.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.MenuItem));
                     if (firstChild != null)
                     {
-                        openMenu = control;
+                        openMenu = this.control;
                     }
                     else
                     {
@@ -64,17 +64,17 @@ namespace Walkabout.Tests.Wrappers
             {
                 for (int outerRetries = 5; outerRetries > 0; outerRetries--)
                 {
-                    if (control == null)
+                    if (this.control == null)
                     {
                         // use the context menu key
                         Input.TapKey(Key.Apps);
                     }
                     else
                     {
-                        Rect bounds = (Rect)control.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
+                        Rect bounds = (Rect)this.control.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
                         Point clickLocation = new Point(bounds.X + (bounds.Width / 2), bounds.Y + (bounds.Height / 2));
 
-                        if (control.Current.ControlType == ControlType.Menu)
+                        if (this.control.Current.ControlType == ControlType.Menu)
                         {
                             Input.MoveToAndLeftClick(clickLocation);
                         }
@@ -84,13 +84,13 @@ namespace Walkabout.Tests.Wrappers
                         }
                     }
 
-                    if (!isPopupMenu)
+                    if (!this.isPopupMenu)
                     {
-                        openMenu = root.Element.FindChildMenuPopup(5);
+                        openMenu = this.root.Element.FindChildMenuPopup(5);
                     }
                     else
                     {
-                        openMenu = root.Element.FindChildContextMenu(5);
+                        openMenu = this.root.Element.FindChildContextMenu(5);
                     }
 
                 }
@@ -111,34 +111,34 @@ namespace Walkabout.Tests.Wrappers
         public void InvokeMenuItem(string menuItemId)
         {
             AutomationElement subMenu = null;
-            if (!isPopupMenu)
+            if (!this.isPopupMenu)
             {
-                subMenu = control;
+                subMenu = this.control;
             }
-            else if (!isOpened)
+            else if (!this.isOpened)
             {
-                subMenu = Open(true);
+                subMenu = this.Open(true);
             }
 
-            AutomationElement menuItem = FindSubMenuItem(subMenu, menuItemId);
-            InvokeMenuItem(menuItem);
-            isOpened = false;
+            AutomationElement menuItem = this.FindSubMenuItem(subMenu, menuItemId);
+            this.InvokeMenuItem(menuItem);
+            this.isOpened = false;
         }
 
         public ContextMenu OpenSubMenu(string menuItemId)
         {
             AutomationElement subMenu = null;
-            if (!isPopupMenu)
+            if (!this.isPopupMenu)
             {
-                subMenu = control;
+                subMenu = this.control;
             }
-            else if (!isOpened)
+            else if (!this.isOpened)
             {
-                subMenu = Open(true);
+                subMenu = this.Open(true);
             }
 
-            AutomationElement subMenuItem = FindSubMenuItem(subMenu, menuItemId);
-            return ExpandSubMenuItem(subMenuItem);
+            AutomationElement subMenuItem = this.FindSubMenuItem(subMenu, menuItemId);
+            return this.ExpandSubMenuItem(subMenuItem);
         }
 
         private AutomationElement FindSubMenuItem(AutomationElement contextMenuItem, string menuItemId)

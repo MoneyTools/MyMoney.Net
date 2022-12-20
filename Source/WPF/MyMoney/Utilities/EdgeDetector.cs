@@ -10,7 +10,7 @@ namespace Walkabout.Utilities
     {
         public EdgeDetectedEventArgs(List<Point> edge)
         {
-            Edge = edge;
+            this.Edge = edge;
         }
 
         public List<Point> Edge { get; set; }
@@ -65,40 +65,40 @@ namespace Walkabout.Utilities
             )
         {
             // Gaussian and Canny Parameters
-            maxHysteresisThresh = Th;
-            minHysteresisThresh = Tl;
+            this.maxHysteresisThresh = Th;
+            this.minHysteresisThresh = Tl;
             this.minEdgeLength = minEdgeLength;
-            kernelSize = GaussianMaskSize;
-            sigma = SigmaforGaussianKernel;
+            this.kernelSize = GaussianMaskSize;
+            this.sigma = SigmaforGaussianKernel;
 
-            bitmap = input;
-            width = bitmap.PixelWidth;
-            height = bitmap.PixelHeight;
+            this.bitmap = input;
+            this.width = this.bitmap.PixelWidth;
+            this.height = this.bitmap.PixelHeight;
 
-            ReadImage();
+            this.ReadImage();
 
-            margin = GetImageMargin(this.greyImage);
+            this.margin = this.GetImageMargin(this.greyImage);
         }
 
         public Rect EdgeBounds
         {
-            get { return edgeBounds; }
+            get { return this.edgeBounds; }
         }
 
         public BitmapSource ToImage<T>(T[,] image)
         {
             var format = System.Windows.Media.PixelFormats.Pbgra32;
             int bitsPerPixel = format.BitsPerPixel;
-            int stride = (width * bitsPerPixel + 7) / 8;
+            int stride = (this.width * bitsPerPixel + 7) / 8;
             int bytesPerPixel = format.BitsPerPixel / 8;
 
             // 4 bytes per pixel.
-            byte[] pixels = new byte[stride * height];
+            byte[] pixels = new byte[stride * this.height];
             int i = 0;
 
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < this.height; y++)
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < this.width; x++)
                 {
                     // write the logic implementation here
                     object t = image[x, y];
@@ -124,10 +124,10 @@ namespace Walkabout.Utilities
                 }//end for j
 
                 // account for any padding at the end of the stride so we're ready for new row...
-                i += (stride - (width * 4));
+                i += (stride - (this.width * 4));
             }//end for i
 
-            return BitmapSource.Create(width, height, 96, 96, System.Windows.Media.PixelFormats.Pbgra32, null, pixels, stride);
+            return BitmapSource.Create(this.width, this.height, 96, 96, System.Windows.Media.PixelFormats.Pbgra32, null, pixels, stride);
         }      // Display Grey Image
 
 
@@ -138,21 +138,21 @@ namespace Walkabout.Utilities
         /// </summary>
         private void ReadImage()
         {
-            greyImage = new int[width, height];  //[Row,Column]
+            this.greyImage = new int[this.width, this.height];  //[Row,Column]
 
-            int bitsPerPixel = bitmap.Format.BitsPerPixel;
-            int stride = (bitmap.PixelWidth * bitsPerPixel + 7) / 8;
-            int bytesPerPixel = bitmap.Format.BitsPerPixel / 8;
+            int bitsPerPixel = this.bitmap.Format.BitsPerPixel;
+            int stride = (this.bitmap.PixelWidth * bitsPerPixel + 7) / 8;
+            int bytesPerPixel = this.bitmap.Format.BitsPerPixel / 8;
             if (bytesPerPixel != 4 && bytesPerPixel != 3)
             {
                 throw new Exception("This algorithm requires 3 or 4 bytes per pixel");
             }
-            int rowSize = bytesPerPixel * width;
+            int rowSize = bytesPerPixel * this.width;
             byte[] pixels = new byte[rowSize];
 
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < this.height; y++)
             {
-                bitmap.CopyPixels(new Int32Rect(0, y, width, 1), pixels, stride, 0);
+                this.bitmap.CopyPixels(new Int32Rect(0, y, this.width, 1), pixels, stride, 0);
 
                 for (int x = 0; x < rowSize; x += bytesPerPixel)
                 {
@@ -168,7 +168,7 @@ namespace Walkabout.Utilities
                     {
                         sum = (255 * 3);
                     }
-                    greyImage[x / bytesPerPixel, y] = (int)(sum / 3.0);
+                    this.greyImage[x / bytesPerPixel, y] = (int)(sum / 3.0);
                 }
             }
 
@@ -183,9 +183,9 @@ namespace Walkabout.Utilities
             bool allWhite = true;
             bool allBlack = true;
 
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < this.height; y++)
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < this.width; x++)
                 {
                     int v = image[x, y];
                     if (v > BlackThreshold)
@@ -209,9 +209,9 @@ namespace Walkabout.Utilities
 
             // bottom margin.
             allBlack = allWhite = true;
-            for (int y = height - 1; y >= 0; y--)
+            for (int y = this.height - 1; y >= 0; y--)
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < this.width; x++)
                 {
                     int v = image[x, y];
                     if (v > BlackThreshold)
@@ -225,13 +225,13 @@ namespace Walkabout.Utilities
                 }
                 if (!allWhite && !allBlack)
                 {
-                    if (y < height - 1)
+                    if (y < this.height - 1)
                     {
                         margin.Bottom = y - 1; // inset a bit further to avoid fuzzy outlines.
                     }
                     else
                     {
-                        margin.Bottom = height;
+                        margin.Bottom = this.height;
                     }
                     break;
                 }
@@ -239,9 +239,9 @@ namespace Walkabout.Utilities
 
             // Left margin:
             allBlack = allWhite = true;
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < this.width; x++)
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < this.height; y++)
                 {
                     int v = image[x, y];
                     if (v > BlackThreshold)
@@ -265,9 +265,9 @@ namespace Walkabout.Utilities
 
             // Right margin:
             allBlack = allWhite = true;
-            for (int x = width - 1; x >= 0; x--)
+            for (int x = this.width - 1; x >= 0; x--)
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < this.height; y++)
                 {
                     int v = image[x, y];
                     if (v > BlackThreshold)
@@ -281,13 +281,13 @@ namespace Walkabout.Utilities
                 }
                 if (!allWhite && !allBlack)
                 {
-                    if (x < width - 1)
+                    if (x < this.width - 1)
                     {
                         margin.Right = x - 1;
                     }
                     else
                     {
-                        margin.Right = width;
+                        margin.Right = this.width;
                     }
                     break;
                 }
@@ -306,7 +306,7 @@ namespace Walkabout.Utilities
             int SizeofKernel = N;
 
             float[,] Kernel = new float[N, N];
-            gaussianKernel = new int[N, N];
+            this.gaussianKernel = new int[N, N];
             float[,] OP = new float[N, N];
             float D1, D2;
 
@@ -344,8 +344,8 @@ namespace Walkabout.Utilities
                     for (j = -halfKernel; j < kernelMax; j++)
                     {
                         Kernel[halfKernel + i, halfKernel + j] = (float)Math.Round(Kernel[halfKernel + i, halfKernel + j] * mult, 0);
-                        gaussianKernel[halfKernel + i, halfKernel + j] = (int)Kernel[halfKernel + i, halfKernel + j];
-                        sum = sum + gaussianKernel[halfKernel + i, halfKernel + j];
+                        this.gaussianKernel[halfKernel + i, halfKernel + j] = (int)Kernel[halfKernel + i, halfKernel + j];
+                        sum = sum + this.gaussianKernel[halfKernel + i, halfKernel + j];
                     }
 
                 }
@@ -359,8 +359,8 @@ namespace Walkabout.Utilities
                     for (j = -halfKernel; j < kernelMax; j++)
                     {
                         Kernel[halfKernel + i, halfKernel + j] = (float)Math.Round(Kernel[halfKernel + i, halfKernel + j], 0);
-                        gaussianKernel[halfKernel + i, halfKernel + j] = (int)Kernel[halfKernel + i, halfKernel + j];
-                        sum = sum + gaussianKernel[halfKernel + i, halfKernel + j];
+                        this.gaussianKernel[halfKernel + i, halfKernel + j] = (int)Kernel[halfKernel + i, halfKernel + j];
+                        sum = sum + this.gaussianKernel[halfKernel + i, halfKernel + j];
                     }
 
                 }
@@ -374,35 +374,35 @@ namespace Walkabout.Utilities
 
         private int[,] GaussianFilter(int[,] data)
         {
-            GenerateGaussianKernel(kernelSize, sigma, out kernelWeight);
+            this.GenerateGaussianKernel(this.kernelSize, this.sigma, out this.kernelWeight);
 
-            int[,] output = new int[width, height];
+            int[,] output = new int[this.width, this.height];
             int i, j, k, l;
-            int limit = kernelSize / 2;
+            int limit = this.kernelSize / 2;
             int limitUpper = limit;
-            if (limitUpper * 2 < kernelSize)
+            if (limitUpper * 2 < this.kernelSize)
             {
                 limitUpper++;
             }
 
             float sum = 0;
 
-            int maxX = (int)margin.Right - limit;
-            int maxY = (int)margin.Bottom - limit;
+            int maxX = (int)this.margin.Right - limit;
+            int maxY = (int)this.margin.Bottom - limit;
 
-            for (i = (int)margin.Left + limit; i < maxX; i++)
+            for (i = (int)this.margin.Left + limit; i < maxX; i++)
             {
-                for (j = (int)margin.Top + limit; j < maxY; j++)
+                for (j = (int)this.margin.Top + limit; j < maxY; j++)
                 {
                     sum = 0;
                     for (k = -limit; k < limitUpper; k++)
                     {
                         for (l = -limit; l < limitUpper; l++)
                         {
-                            sum = sum + ((float)data[i + k, j + l] * gaussianKernel[limit + k, limit + l]);
+                            sum = sum + ((float)data[i + k, j + l] * this.gaussianKernel[limit + k, limit + l]);
                         }
                     }
-                    output[i, j] = (int)(Math.Round(sum / (float)kernelWeight));
+                    output[i, j] = (int)(Math.Round(sum / (float)this.kernelWeight));
                 }
 
             }
@@ -417,7 +417,7 @@ namespace Walkabout.Utilities
                          {1,0,-1},
                          {1,0,-1}};
 
-            derivativeX = Differentiate(filteredImage, Dx);
+            this.derivativeX = this.Differentiate(this.filteredImage, Dx);
         }
 
         private void DifferentiateY()
@@ -427,7 +427,7 @@ namespace Walkabout.Utilities
                          {0,0,0},
                          {-1,-1,-1}};
 
-            derivativeY = Differentiate(filteredImage, Dy);
+            this.derivativeY = this.Differentiate(this.filteredImage, Dy);
         }
 
         private float[,] Differentiate(int[,] data, int[,] filter)
@@ -435,7 +435,7 @@ namespace Walkabout.Utilities
             int filterWidth = filter.GetLength(0);
             int filterHeight = filter.GetLength(1);
             float sum = 0;
-            float[,] output = new float[width, height];
+            float[,] output = new float[this.width, this.height];
 
             int halfFilterWidth = filterWidth / 2;
             int halfFilterX = halfFilterWidth;
@@ -453,11 +453,11 @@ namespace Walkabout.Utilities
             // the gaussian filter creates a blank margin around the edge.
             // We don't want to mistakenly think those are edges, so we do not include
             // that margin in the differential.
-            int startX = (int)margin.Left + Math.Max(kernelSize / 2 + 1, halfFilterWidth);
-            int startY = (int)margin.Top + Math.Max(kernelSize / 2 + 1, halfFilterHeight);
+            int startX = (int)this.margin.Left + Math.Max(this.kernelSize / 2 + 1, halfFilterWidth);
+            int startY = (int)this.margin.Top + Math.Max(this.kernelSize / 2 + 1, halfFilterHeight);
 
-            int maxX = (int)margin.Right - startX;
-            int maxY = (int)margin.Bottom - startY;
+            int maxX = (int)this.margin.Right - startX;
+            int maxY = (int)this.margin.Bottom - startY;
 
             for (int i = startX; i < maxX; i++)
             {
@@ -480,15 +480,15 @@ namespace Walkabout.Utilities
 
         private float[,] EdgeGradient(float[,] derivativeX, float[,] derivativeY)
         {
-            var gradient = new float[width, height];
+            var gradient = new float[this.width, this.height];
 
             //Compute the gradient magnitude based on derivatives in x and y:
-            int maxX = (int)margin.Right;
-            int maxY = (int)margin.Bottom;
+            int maxX = (int)this.margin.Right;
+            int maxY = (int)this.margin.Bottom;
 
-            for (int i = (int)margin.Left; i < maxX; i++)
+            for (int i = (int)this.margin.Left; i < maxX; i++)
             {
-                for (int j = (int)margin.Top; j < maxY; j++)
+                for (int j = (int)this.margin.Top; j < maxY; j++)
                 {
                     float dx = derivativeX[i, j];
                     float dy = derivativeY[i, j];
@@ -503,47 +503,47 @@ namespace Walkabout.Utilities
         public void DetectEdges()
         {
             //Gaussian Filter Input Image to remove noise.
-            filteredImage = GaussianFilter(greyImage);
+            this.filteredImage = this.GaussianFilter(this.greyImage);
 
             // the X and Y differentiation can be done in parallel since they don't depend on each other.
             var jobs = new List<Action>();
-            jobs.Add(DifferentiateX);
-            jobs.Add(DifferentiateY);
+            jobs.Add(this.DifferentiateX);
+            jobs.Add(this.DifferentiateY);
 
             System.Threading.Tasks.Parallel.ForEach<Action>(jobs, new Action<Action>((job) =>
             {
                 job();
             }));
 
-            gradient = EdgeGradient(derivativeX, derivativeY);
+            this.gradient = this.EdgeGradient(this.derivativeX, this.derivativeY);
 
             // Perform Non maximum suppression
-            nonMax = NonMaximumSuppression(gradient);
+            this.nonMax = this.NonMaximumSuppression(this.gradient);
 
             // reclaim the memory...
-            derivativeX = null;
-            derivativeY = null;
-            gradient = null;
+            this.derivativeX = null;
+            this.derivativeY = null;
+            this.gradient = null;
 
             // Now do hysteresis thresholding
-            edgeMap = HysterisisThresholding(nonMax);
+            this.edgeMap = this.HysterisisThresholding(this.nonMax);
 
-            nonMax = null;
-            visitedMap = null;
-            edgePoints = null;
+            this.nonMax = null;
+            this.visitedMap = null;
+            this.edgePoints = null;
 
-            Scale(edgeMap, 255);
+            this.Scale(this.edgeMap, 255);
 
-            Thickness final = GetImageMargin(edgeMap);
+            Thickness final = this.GetImageMargin(this.edgeMap);
 
-            edgeBounds = new Rect(final.Left, final.Top, final.Right - final.Left, final.Bottom - final.Top);
+            this.edgeBounds = new Rect(final.Left, final.Top, final.Right - final.Left, final.Bottom - final.Top);
         }
 
         private void Scale(int[,] data, int scale)
         {
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < this.width; i++)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < this.height; j++)
                 {
                     data[i, j] = data[i, j] * scale;
                 }
@@ -558,11 +558,11 @@ namespace Walkabout.Utilities
 
         private float[,] NonMaximumSuppression(float[,] gradient)
         {
-            nonMax = Copy(gradient);
+            this.nonMax = this.Copy(gradient);
 
-            int limit = kernelSize / 2;
-            int limitX = width - limit;
-            int limitY = height - limit;
+            int limit = this.kernelSize / 2;
+            int limitX = this.width - limit;
+            int limitY = this.height - limit;
 
             int i, j;
 
@@ -572,7 +572,7 @@ namespace Walkabout.Utilities
                 {
                     float tangent;
 
-                    float dx = derivativeX[i, j];
+                    float dx = this.derivativeX[i, j];
 
                     if (dx == 0)
                     {
@@ -580,7 +580,7 @@ namespace Walkabout.Utilities
                     }
                     else
                     {
-                        float dy = derivativeY[i, j];
+                        float dy = this.derivativeY[i, j];
                         tangent = (float)Math.Atan(dy / dx);
                     }
 
@@ -592,7 +592,7 @@ namespace Walkabout.Utilities
                     {
                         if ((g < gradient[i, j + 1]) || (g < gradient[i, j - 1]))
                         {
-                            nonMax[i, j] = 0;
+                            this.nonMax[i, j] = 0;
                         }
                     }
 
@@ -603,7 +603,7 @@ namespace Walkabout.Utilities
                     {
                         if ((g < gradient[i + 1, j]) || (g < gradient[i - 1, j]))
                         {
-                            nonMax[i, j] = 0;
+                            this.nonMax[i, j] = 0;
                         }
                     }
 
@@ -613,7 +613,7 @@ namespace Walkabout.Utilities
                     {
                         if ((g < gradient[i + 1, j - 1]) || (g < gradient[i - 1, j + 1]))
                         {
-                            nonMax[i, j] = 0;
+                            this.nonMax[i, j] = 0;
                         }
                     }
 
@@ -623,13 +623,13 @@ namespace Walkabout.Utilities
                     {
                         if ((g < gradient[i + 1, j + 1]) || (g < gradient[i - 1, j - 1]))
                         {
-                            nonMax[i, j] = 0;
+                            this.nonMax[i, j] = 0;
                         }
                     }
 
                 }
             }
-            return nonMax;
+            return this.nonMax;
         }
 
         private float[,] Copy(float[,] data)
@@ -663,50 +663,50 @@ namespace Walkabout.Utilities
 
             public IntPoint(int x, int y)
             {
-                X = x;
-                Y = y;
+                this.X = x;
+                this.Y = y;
             }
         }
 
 
         private int[,] HysterisisThresholding(float[,] nonMax)
         {
-            int limit = kernelSize / 2;
-            int limitX = width - limit;
-            int limitY = height - limit;
+            int limit = this.kernelSize / 2;
+            int limitX = this.width - limit;
+            int limitY = this.height - limit;
 
             //PostHysteresis = NonMax;   
-            postHysteresis = new int[width, height];
+            this.postHysteresis = new int[this.width, this.height];
 
             for (int r = limit; r < limitX; r++)
             {
                 for (int c = limit; c < limitY; c++)
                 {
-                    postHysteresis[r, c] = (int)nonMax[r, c];
+                    this.postHysteresis[r, c] = (int)nonMax[r, c];
                 }
             }
 
-            edgePoints = new int[width, height];
+            this.edgePoints = new int[this.width, this.height];
 
             for (int r = limit; r < limitX; r++)
             {
                 for (int c = limit; c < limitY; c++)
                 {
-                    int ph = postHysteresis[r, c];
-                    if (ph >= maxHysteresisThresh)
+                    int ph = this.postHysteresis[r, c];
+                    if (ph >= this.maxHysteresisThresh)
                     {
-                        edgePoints[r, c] = 1;
+                        this.edgePoints[r, c] = 1;
                     }
-                    if ((ph < maxHysteresisThresh) && (ph >= minHysteresisThresh))
+                    if ((ph < this.maxHysteresisThresh) && (ph >= this.minHysteresisThresh))
                     {
-                        edgePoints[r, c] = 2;
+                        this.edgePoints[r, c] = 2;
                     }
                 }
             }
 
-            edgeMap = new int[width, height];
+            this.edgeMap = new int[this.width, this.height];
 
-            visitedMap = new int[width, height];
+            this.visitedMap = new int[this.width, this.height];
 
             int maxLength = 0;
 
@@ -714,14 +714,14 @@ namespace Walkabout.Utilities
             {
                 for (int j = limit; j < limitY; j++)
                 {
-                    if (edgePoints[i, j] == 1 && visitedMap[i, j] == 0)
+                    if (this.edgePoints[i, j] == 1 && this.visitedMap[i, j] == 0)
                     {
-                        maxLength = Math.Max(maxLength, TraverseEdges(i, j));
+                        maxLength = Math.Max(maxLength, this.TraverseEdges(i, j));
                     }
                 }
             }
 
-            return edgeMap;
+            return this.edgeMap;
         }
 
         public event EventHandler<EdgeDetectedEventArgs> EdgeDetected;
@@ -739,7 +739,7 @@ namespace Walkabout.Utilities
             List<IntPoint> path = new List<IntPoint>();
             Stack<IntPoint> stack = new Stack<IntPoint>();
             stack.Push(new IntPoint(x, y));
-            visitedMap[x, y] = 1;
+            this.visitedMap[x, y] = 1;
 
             while (stack.Count > 0)
             {
@@ -753,10 +753,10 @@ namespace Walkabout.Utilities
                     {
                         if (i != x || j != y)
                         {
-                            if (edgePoints[i, j] != 0 && visitedMap[i, j] == 0)
+                            if (this.edgePoints[i, j] != 0 && this.visitedMap[i, j] == 0)
                             {
                                 IntPoint next = new IntPoint(i, j);
-                                visitedMap[i, j] = 1;
+                                this.visitedMap[i, j] = 1;
                                 stack.Push(next);
                                 path.Add(next);
                                 length++;
@@ -766,12 +766,12 @@ namespace Walkabout.Utilities
                 }
             }
 
-            if (path.Count > minEdgeLength)
+            if (path.Count > this.minEdgeLength)
             {
                 List<Point> points = new List<Point>();
                 foreach (IntPoint pt in path)
                 {
-                    edgeMap[pt.X, pt.Y] = 1;
+                    this.edgeMap[pt.X, pt.Y] = 1;
                     if (EdgeDetected != null)
                     {
                         points.Add(new Point(pt.X, pt.Y));

@@ -14,8 +14,8 @@ namespace Walkabout.Controls
     {
         public ProgressDots()
         {
-            InitializeComponent();
-            this.SizeChanged += OnRenderSizeChanged;
+            this.InitializeComponent();
+            SizeChanged += this.OnRenderSizeChanged;
         }
 
         private void OnRenderSizeChanged(object sender, SizeChangedEventArgs sizeInfo)
@@ -29,7 +29,7 @@ namespace Walkabout.Controls
             int index = 1;
 
             // {Binding DotBrush} is not working for some unknown reason.
-            foreach (UIElement child in IndeterminateRoot.Children)
+            foreach (UIElement child in this.IndeterminateRoot.Children)
             {
                 if (child is Ellipse)
                 {
@@ -39,11 +39,11 @@ namespace Walkabout.Controls
                     string name = string.Format("RTT{0}", index++);
                     tt.SetValue(NameProperty, name);
                     e.RenderTransform = tt;
-                    if (IndeterminateRoot.FindName(name) != null)
+                    if (this.IndeterminateRoot.FindName(name) != null)
                     {
-                        IndeterminateRoot.UnregisterName(name);
+                        this.IndeterminateRoot.UnregisterName(name);
                     }
-                    IndeterminateRoot.RegisterName(name, tt);
+                    this.IndeterminateRoot.RegisterName(name, tt);
                 }
             }
 
@@ -78,15 +78,15 @@ namespace Walkabout.Controls
 
                 start += TimeSpan.FromSeconds(0.2);
             }
-            IndeterminateRoot.BeginStoryboard(storyboard);
+            this.IndeterminateRoot.BeginStoryboard(storyboard);
         }
 
 
 
         public Brush DotBrush
         {
-            get { return (Brush)GetValue(DotBrushProperty); }
-            set { SetValue(DotBrushProperty, value); }
+            get { return (Brush)this.GetValue(DotBrushProperty); }
+            set { this.SetValue(DotBrushProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for DotBrush.  This enables animation, styling, binding, etc...

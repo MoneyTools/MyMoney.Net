@@ -56,12 +56,12 @@ namespace Walkabout.Views.Controls
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.CategoriesControlInitialize))
             {
 #endif
-                InitializeComponent();
+                this.InitializeComponent();
 
-                this.treeView.SelectedItemChanged += new RoutedPropertyChangedEventHandler<object>(OnSelectedItemChanged);
-                this.treeView.Loaded += new RoutedEventHandler(OnTreeViewLoaded);
+                this.treeView.SelectedItemChanged += new RoutedPropertyChangedEventHandler<object>(this.OnSelectedItemChanged);
+                this.treeView.Loaded += new RoutedEventHandler(this.OnTreeViewLoaded);
 
-                this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnIsVisibleChanged);
+                IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
 
                 this.dragDropSupport = new DragAndDrop(
                     this.treeView,
@@ -72,7 +72,7 @@ namespace Walkabout.Views.Controls
                     true
                     );
 
-                this.Unloaded += (s, e) =>
+                Unloaded += (s, e) =>
                 {
                     this.dragDropSupport.Disconnect();
                     this.MyMoney = null;
@@ -96,13 +96,13 @@ namespace Walkabout.Views.Controls
             {
                 if (this.money != null)
                 {
-                    this.money.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                    this.money.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
                 }
                 this.money = value;
                 if (value != null)
                 {
-                    this.money.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
-                    OnMoneyChanged(this, new ChangeEventArgs(this.money.Categories, null, ChangeType.Reloaded));
+                    this.money.Changed += new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
+                    this.OnMoneyChanged(this, new ChangeEventArgs(this.money.Categories, null, ChangeType.Reloaded));
                 }
             }
         }
@@ -111,7 +111,7 @@ namespace Walkabout.Views.Controls
         {
             get
             {
-                Category c = treeView.SelectedItem as Category;
+                Category c = this.treeView.SelectedItem as Category;
                 if (c != null)
                 {
                     return c;
@@ -123,9 +123,9 @@ namespace Walkabout.Views.Controls
                 if (value != null && value != this.Selected)
                 {
                     List<object> path = new List<object>();
-                    if (FindTreeItemByCategory(this.treeView.Items, value, path))
+                    if (this.FindTreeItemByCategory(this.treeView.Items, value, path))
                     {
-                        SelectedAndExpandPath(treeView, path);
+                        this.SelectedAndExpandPath(this.treeView, path);
                     }
                 }
             }
@@ -135,7 +135,7 @@ namespace Walkabout.Views.Controls
         {
             get
             {
-                CategoryGroup g = treeView.SelectedItem as CategoryGroup;
+                CategoryGroup g = this.treeView.SelectedItem as CategoryGroup;
                 if (g != null)
                 {
                     return g;
@@ -156,8 +156,8 @@ namespace Walkabout.Views.Controls
 
         void UpdateRoots()
         {
-            if (insideUpdateRoots) return;
-            insideUpdateRoots = true;
+            if (this.insideUpdateRoots) return;
+            this.insideUpdateRoots = true;
 
             try
             {
@@ -166,14 +166,14 @@ namespace Walkabout.Views.Controls
 
                 List<Category> roots;
 
-                if (string.IsNullOrWhiteSpace(filterCategory))
+                if (string.IsNullOrWhiteSpace(this.filterCategory))
                 {
                     // No filter return the top root items as is
                     roots = this.money.Categories.GetRootCategories();
                 }
                 else
                 {
-                    roots = GetDeepFilteredRootCategories();
+                    roots = this.GetDeepFilteredRootCategories();
                 }
 
                 //--------------------------------------------------------------
@@ -213,8 +213,8 @@ namespace Walkabout.Views.Controls
                     groups.Add(g);
                 }
 
-                total = new CategoryBalance() { Name = "Total", Balance = balance };
-                groups.Add(total);
+                this.total = new CategoryBalance() { Name = "Total", Balance = balance };
+                groups.Add(this.total);
 
                 if (!hasRoots)
                 {
@@ -239,14 +239,14 @@ namespace Walkabout.Views.Controls
                         }
                         else
                         {
-                            SyncCollections(a.Subcategories, b.Subcategories);
+                            this.SyncCollections(a.Subcategories, b.Subcategories);
                         }
                     }
                 }
             }
             finally
             {
-                insideUpdateRoots = false;
+                this.insideUpdateRoots = false;
             }
         }
 
@@ -265,7 +265,7 @@ namespace Walkabout.Views.Controls
                 }
                 else
                 {
-                    AddRootIfOneOrMoreChildMatchFilder(c, c, newFilteredList);
+                    this.AddRootIfOneOrMoreChildMatchFilder(c, c, newFilteredList);
                 }
             }
             return newFilteredList;
@@ -286,7 +286,7 @@ namespace Walkabout.Views.Controls
                     }
                     else
                     {
-                        if (AddRootIfOneOrMoreChildMatchFilder(rootCategory, c, newFilteredList) == true)
+                        if (this.AddRootIfOneOrMoreChildMatchFilder(rootCategory, c, newFilteredList) == true)
                         {
                             return true;
                         }
@@ -363,14 +363,14 @@ namespace Walkabout.Views.Controls
 
         void OnTreeViewLoaded(object sender, RoutedEventArgs e)
         {
-            ExpandGroups();
+            this.ExpandGroups();
         }
 
         void ExpandGroups()
         {
             foreach (CategoryGroup g in this.treeView.Items)
             {
-                ExpandThisItem(this.treeView, g);
+                this.ExpandThisItem(this.treeView, g);
             }
         }
 
@@ -394,19 +394,19 @@ namespace Walkabout.Views.Controls
                     if (path.Count == 1)
                     {
                         // We found the item we were looking for, we can stop here
-                        SelectThisItem(parent, top);
+                        this.SelectThisItem(parent, top);
                         return true;
                     }
                     else
                     {
                         path.RemoveAt(0);
-                        ExpandThisItem(parent, childItem);
+                        this.ExpandThisItem(parent, childItem);
 
                         ItemsControl childControl = parent.ItemContainerGenerator.ContainerFromItem(childItem) as ItemsControl;
                         if (childControl != null)
                         {
                             // recurs the remainder of the path.
-                            if (SelectedAndExpandPath(childControl, path))
+                            if (this.SelectedAndExpandPath(childControl, path))
                             {
                                 return true;
                             }
@@ -416,7 +416,7 @@ namespace Walkabout.Views.Controls
                             // Could not build the child tree control containers that's not expected
                         }
                         // We could not find the child item, so at least select the currently matching item
-                        SelectThisItem(parent, childItem);
+                        this.SelectThisItem(parent, childItem);
                         return false;
                     }
 
@@ -468,7 +468,7 @@ namespace Walkabout.Views.Controls
                 if (g != null)
                 {
                     path.Add(g);
-                    if (FindTreeItemByCategory(g.Subcategories, value, path))
+                    if (this.FindTreeItemByCategory(g.Subcategories, value, path))
                     {
                         return true;
                     }
@@ -485,7 +485,7 @@ namespace Walkabout.Views.Controls
 
                     if (c.Subcategories != null && c.Subcategories.Count > 0)
                     {
-                        if (FindTreeItemByCategory(c.Subcategories, value, path))
+                        if (this.FindTreeItemByCategory(c.Subcategories, value, path))
                         {
                             return true;
                         }
@@ -510,7 +510,7 @@ namespace Walkabout.Views.Controls
 
                     if (itv.Subcategories != null && itv.Subcategories.Count > 0)
                     {
-                        if (FindTreeItemByCategory(itv.Subcategories, value, path))
+                        if (this.FindTreeItemByCategory(itv.Subcategories, value, path))
                         {
                             return true;
                         }
@@ -528,8 +528,8 @@ namespace Walkabout.Views.Controls
         /// <param name="filterText"></param>
         public void Filter(string filterText)
         {
-            filterCategory = StringHelpers.SafeLower(filterText);
-            UpdateRoots();
+            this.filterCategory = StringHelpers.SafeLower(filterText);
+            this.UpdateRoots();
         }
         #endregion
 
@@ -594,11 +594,11 @@ namespace Walkabout.Views.Controls
             }
             if (updateRoots)
             {
-                Dispatcher.BeginInvoke(new Action(() => { UpdateRoots(); }));
+                this.Dispatcher.BeginInvoke(new Action(() => { this.UpdateRoots(); }));
             }
             if (updateBalance)
             {
-                Dispatcher.BeginInvoke(new Action(() => { UpdateBalance(); }));
+                this.Dispatcher.BeginInvoke(new Action(() => { this.UpdateBalance(); }));
             }
         }
 
@@ -615,13 +615,13 @@ namespace Walkabout.Views.Controls
         {
             if (this.treeView.ItemsSource == null)
             {
-                UpdateRoots();
+                this.UpdateRoots();
             }
         }
 
         private void treeView_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            HitTestResult result = VisualTreeHelper.HitTest(treeView, e.GetPosition(treeView));
+            HitTestResult result = VisualTreeHelper.HitTest(this.treeView, e.GetPosition(this.treeView));
             FrameworkElement hit = result.VisualHit as FrameworkElement;
             if (hit != null)
             {
@@ -690,7 +690,7 @@ namespace Walkabout.Views.Controls
                 IList<Transaction> data = this.MyMoney.Transactions.GetTransactionsByCategory(c, null);
                 if (data.Count > 0)
                 {
-                    var dialog = new MergeCategoryDialog() { Money = this.MyMoney, SourceCategory = c };
+                    var dialog = new MergeCategoryDialog() { Money = MyMoney, SourceCategory = c };
                     dialog.FontSize = this.FontSize;
                     dialog.Owner = App.Current.MainWindow;
                     dialog.Title = "Delete Category";
@@ -700,7 +700,7 @@ namespace Walkabout.Views.Controls
                         return;
                     }
 
-                    Merge(c, dialog.SelectedCategory);
+                    this.Merge(c, dialog.SelectedCategory);
                 }
                 else
                 {
@@ -715,7 +715,7 @@ namespace Walkabout.Views.Controls
 
         private void menuItemRename_Click(object sender, System.EventArgs e)
         {
-            SetCurrentItemInEditMode();
+            this.SetCurrentItemInEditMode();
         }
 
         void ExpandAll(ItemsControl items, bool expand)
@@ -728,7 +728,7 @@ namespace Walkabout.Views.Controls
 
                 if (childControl != null)
                 {
-                    ExpandAll(childControl, expand);
+                    this.ExpandAll(childControl, expand);
                 }
 
             }
@@ -765,12 +765,12 @@ namespace Walkabout.Views.Controls
 
         private void ReverseTransfer(Transaction t)
         {
-            MyMoney.BeginUpdate(this);
+            this.MyMoney.BeginUpdate(this);
             decimal amount = -t.Amount;
             t.IsBudgeted = false;
             t.Transfer.Transaction.IsBudgeted = false;
             this.MyMoney.RemoveTransaction(t);
-            MyMoney.EndUpdate();
+            this.MyMoney.EndUpdate();
         }
 
         Account GetCategoryFund(Category c)
@@ -793,7 +793,7 @@ namespace Walkabout.Views.Controls
 
         Walkabout.Utilities.DragDropSource OnDragDropObjectSource(object source)
         {
-            if (IsEditing)
+            if (this.IsEditing)
             {
                 // turn off drag when in editing mode
             }
@@ -802,7 +802,7 @@ namespace Walkabout.Views.Controls
                 return new DragDropSource()
                 {
                     DataSource = c,
-                    VisualForDraginSource = CreateDragVisual(c)
+                    VisualForDraginSource = this.CreateDragVisual(c)
                 };
             }
             return null;
@@ -815,7 +815,7 @@ namespace Walkabout.Views.Controls
             visual.SetResourceReference(Window.ForegroundProperty, "SystemControlPageTextBaseHighBrush");
             visual.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             visual.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
-            var label = new TextBlock() { Text = c.Name, Margin = new Thickness(5), FontSize = this.FontSize, FontFamily = this.FontFamily };
+            var label = new TextBlock() { Text = c.Name, Margin = new Thickness(5), FontSize = FontSize, FontFamily = FontFamily };
             var swatch = new Border() { Margin = new Thickness(5), Width = 8, Height = 8, Background = new SolidColorBrush() { Color = ColorAndBrushGenerator.GenerateNamedColor(c.InheritedColor) } };
             visual.Children.Add(label);
             visual.Children.Add(swatch);
@@ -825,7 +825,7 @@ namespace Walkabout.Views.Controls
 
         DragDropTarget OnDragDropObjectTarget(object source, object target, DragDropEffects dropEfffect)
         {
-            if (IsEditing)
+            if (this.IsEditing)
             {
                 // turn off drag when in editing mode
 
@@ -853,11 +853,11 @@ namespace Walkabout.Views.Controls
             {
                 if (dropEffect == DragDropEffects.Move)
                 {
-                    MoveCategory(source as Category, target as Category);
+                    this.MoveCategory(source as Category, target as Category);
                 }
                 else
                 {
-                    Merge(source as Category, target as Category);
+                    this.Merge(source as Category, target as Category);
                 }
             }
             catch (Exception)
@@ -891,7 +891,7 @@ namespace Walkabout.Views.Controls
             try
             {
                 // Create new category under target and move all transactions to that
-                categoryTarget = MyMoney.Categories.GetOrCreateCategory(newName, categorySource.Type);
+                categoryTarget = this.MyMoney.Categories.GetOrCreateCategory(newName, categorySource.Type);
 
                 this.Merge(categorySource, categoryTarget);
             }
@@ -903,7 +903,7 @@ namespace Walkabout.Views.Controls
 
         void Merge(Category source, Category target)
         {
-            var sourceTransactions = MyMoney.Transactions.GetTransactionsByCategory(source, null);
+            var sourceTransactions = this.MyMoney.Transactions.GetTransactionsByCategory(source, null);
             foreach (Transaction t in sourceTransactions)
             {
                 t.ReCategorize(source, target);
@@ -912,7 +912,7 @@ namespace Walkabout.Views.Controls
             // source category should now be unused.
             source.OnDelete();
 
-            treeView.Items.Refresh();
+            this.treeView.Items.Refresh();
 
             // Change the selection to the drop target, since the source target is about to be deleted
             this.Dispatcher.BeginInvoke(new Action(() =>
@@ -933,22 +933,22 @@ namespace Walkabout.Views.Controls
 
         public bool IsEditing
         {
-            get { return editorForRenaming != null; }
+            get { return this.editorForRenaming != null; }
         }
 
         protected override void OnPreviewLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
         {
-            if (e.OldFocus == editorForRenaming)
+            if (e.OldFocus == this.editorForRenaming)
             {
                 // The Rename Edit box has lost the focus, preserve the edited changes
-                OnRenameNode_CommitAndStopEditing();
+                this.OnRenameNode_CommitAndStopEditing();
             }
             base.OnPreviewLostKeyboardFocus(e);
         }
 
         private void OnExecutedRename(object sender, ExecutedRoutedEventArgs e)
         {
-            SetCurrentItemInEditMode();
+            this.SetCurrentItemInEditMode();
         }
 
         private void IsCategorySelected(object sender, CanExecuteRoutedEventArgs e)
@@ -958,7 +958,7 @@ namespace Walkabout.Views.Controls
 
         void OnRenameNode_StopEditing()
         {
-            editorForRenaming = null;
+            this.editorForRenaming = null;
             if (this.categoryBeingRenamed != null)
             {
                 this.categoryBeingRenamed.IsEditing = false;
@@ -967,13 +967,13 @@ namespace Walkabout.Views.Controls
 
         void OnRenameNode_CommitAndStopEditing()
         {
-            if (editorForRenaming != null)
+            if (this.editorForRenaming != null)
             {
-                string renameTo = editorForRenaming.Text.Trim();
+                string renameTo = this.editorForRenaming.Text.Trim();
 
                 Category categoryToRename = this.categoryBeingRenamed;
 
-                OnRenameNode_StopEditing();
+                this.OnRenameNode_StopEditing();
 
                 if (string.Compare(renameTo, categoryToRename.Label, true) == 0)
                 {
@@ -1024,11 +1024,11 @@ namespace Walkabout.Views.Controls
         {
             if (e.Key == Key.Enter)
             {
-                OnRenameNode_CommitAndStopEditing();
+                this.OnRenameNode_CommitAndStopEditing();
             }
             else if (e.Key == Key.Escape)
             {
-                OnRenameNode_StopEditing();
+                this.OnRenameNode_StopEditing();
             }
         }
 
@@ -1038,7 +1038,7 @@ namespace Walkabout.Views.Controls
 
         private void OnShowProperties(object sender, ExecutedRoutedEventArgs e)
         {
-            ShowDetails();
+            this.ShowDetails();
         }
 
         private void OnAddCategory(object sender, ExecutedRoutedEventArgs e)
@@ -1063,7 +1063,7 @@ namespace Walkabout.Views.Controls
                 return;
             }
 
-            treeView.Items.Refresh();
+            this.treeView.Items.Refresh();
 
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -1080,29 +1080,29 @@ namespace Walkabout.Views.Controls
             Category c = this.Selected;
             if (c != null)
             {
-                var d = new MergeCategoryDialog() { Money = this.money, SourceCategory = c };
+                var d = new MergeCategoryDialog() { Money = money, SourceCategory = c };
                 d.Owner = App.Current.MainWindow;
                 d.FontSize = this.FontSize;
                 if (d.ShowDialog() == true && d.SelectedCategory != null)
                 {
-                    Merge(c, d.SelectedCategory);
+                    this.Merge(c, d.SelectedCategory);
                 }
             }
         }
 
         private void OnDeleteCategory(object sender, ExecutedRoutedEventArgs e)
         {
-            Delete();
+            this.Delete();
         }
 
         private void OnExpandAll(object sender, ExecutedRoutedEventArgs e)
         {
-            this.ExpandAll(treeView, true);
+            this.ExpandAll(this.treeView, true);
         }
 
         private void OnCollapseAll(object sender, ExecutedRoutedEventArgs e)
         {
-            this.ExpandAll(treeView, false);
+            this.ExpandAll(this.treeView, false);
         }
 
         #endregion
@@ -1114,8 +1114,8 @@ namespace Walkabout.Views.Controls
     {
         public string Name
         {
-            get { return (string)GetValue(NameProperty); }
-            set { SetValue(NameProperty, value); }
+            get { return (string)this.GetValue(NameProperty); }
+            set { this.SetValue(NameProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Name.  This enables animation, styling, binding, etc...
@@ -1132,8 +1132,8 @@ namespace Walkabout.Views.Controls
     {
         public decimal Balance
         {
-            get { return (decimal)GetValue(BalanceProperty); }
-            set { SetValue(BalanceProperty, value); }
+            get { return (decimal)this.GetValue(BalanceProperty); }
+            set { this.SetValue(BalanceProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Balance.  This enables animation, styling, binding, etc...
@@ -1144,7 +1144,7 @@ namespace Walkabout.Views.Controls
         {
             get
             {
-                return Subcategories;
+                return this.Subcategories;
             }
         }
     }

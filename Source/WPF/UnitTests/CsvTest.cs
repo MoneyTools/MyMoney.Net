@@ -33,35 +33,35 @@ namespace UnitTests
             {
             }
 
-            public int FieldCount => headers.Length;
+            public int FieldCount => this.headers.Length;
 
             public string GetCsv()
             {
-                return string.Join(",", headers) + Environment.NewLine +
-                    string.Join(",", row1) + Environment.NewLine +
-                    string.Join(",", row2) + Environment.NewLine;
+                return string.Join(",", this.headers) + Environment.NewLine +
+                    string.Join(",", this.row1) + Environment.NewLine +
+                    string.Join(",", this.row2) + Environment.NewLine;
             }
 
             public override void WriteHeaders(IEnumerable<string> headers)
             {
-                AssertEqual(this.headers, headers);
+                this.AssertEqual(this.headers, headers);
             }
 
             public override void WriteRow(IEnumerable<string> values)
             {
-                if (row == 0)
+                if (this.row == 0)
                 {
-                    AssertEqual(row1, values);
+                    this.AssertEqual(this.row1, values);
                 }
-                else if (row == 1)
+                else if (this.row == 1)
                 {
-                    AssertEqual(row2, values);
+                    this.AssertEqual(this.row2, values);
                 }
                 else
                 {
                     Assert.Fail("Too many rows returned");
                 }
-                row++;
+                this.row++;
             }
 
             private void AssertEqual(string[] expected, IEnumerable<string> actual)
@@ -71,7 +71,7 @@ namespace UnitTests
                 int i = 0;
                 foreach (var v in actual)
                 {
-                    var q = CsvQuote(v);
+                    var q = this.CsvQuote(v);
                     var s = expected[i++];
                     if (s != v && s.Trim('"') == v)
                     {

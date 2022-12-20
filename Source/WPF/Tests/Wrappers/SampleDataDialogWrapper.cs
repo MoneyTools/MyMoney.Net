@@ -16,27 +16,27 @@ namespace Walkabout.Tests.Wrappers
 
         public void ClickOk()
         {
-            window.ClickButton("ButtonOk");
+            this.window.ClickButton("ButtonOk");
         }
 
         public void ClickCancel()
         {
-            window.ClickButton("ButtonCancel");
+            this.window.ClickButton("ButtonCancel");
         }
 
         public void SetEmployer(string name)
         {
-            window.SetTextBox("TextBoxEmployer", name);
+            this.window.SetTextBox("TextBoxEmployer", name);
         }
 
         public void SetPaycheck(string name)
         {
-            window.SetTextBox("TextBoxPaycheck", name);
+            this.window.SetTextBox("TextBoxPaycheck", name);
         }
 
         public void SetInflation(string name)
         {
-            window.SetTextBox("TextBoxInflation", name);
+            this.window.SetTextBox("TextBoxInflation", name);
         }
     }
 }

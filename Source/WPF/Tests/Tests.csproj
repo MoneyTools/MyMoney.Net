@@ -166,6 +166,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
     <None Include="TestModel.dgml">
       <SubType>Designer</SubType>
     </None>

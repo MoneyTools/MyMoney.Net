@@ -24,7 +24,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             this.NestingLevel = reader.ReadUInt32();
             this.ParentCorrelationId = new Guid(reader.ReadBytes(16));
             this.ParentSequenceNumber = reader.ReadUInt32();
-            this.Category = ReadLittleEndianString(reader);
+            this.Category = this.ReadLittleEndianString(reader);
         }
 
         public uint Component { get; set; }

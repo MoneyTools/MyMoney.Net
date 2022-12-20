@@ -14,8 +14,8 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             : base(typeof(MeasurementBlockEventTraceWatcher).GUID, session)
         {
             string path = Path.Combine(Path.GetTempPath(), "Microsoft.VisualStudio.Diagnostics.Measurement.Native.dll");
-            ExportResource("Microsoft.VisualStudio.Diagnostics.PerformanceProvider.MeasurementBlockManifest.xml", path);
-            LoadManifest("Microsoft.VisualStudio.Diagnostics.PerformanceProvider.MeasurementBlockManifest.xml");
+            this.ExportResource("Microsoft.VisualStudio.Diagnostics.PerformanceProvider.MeasurementBlockManifest.xml", path);
+            this.LoadManifest("Microsoft.VisualStudio.Diagnostics.PerformanceProvider.MeasurementBlockManifest.xml");
         }
 
         protected override EventArrivedEventArgs CreateEventArgs()

@@ -24,9 +24,9 @@ namespace Walkabout.Utilities
                 if (date.Year != this.year)
                 {
                     this.year = date.Year;
-                    holidays = GetHolidays(this.year);
+                    this.holidays = GetHolidays(this.year);
                 }
-                if (holidays.Contains(date))
+                if (this.holidays.Contains(date))
                 {
                     date = date.AddDays(-1); // skip holidays
                     moved = true;

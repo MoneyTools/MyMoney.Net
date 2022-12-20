@@ -60,10 +60,10 @@ namespace LovettSoftware.Charts
 #endif
                 base.OnInitialized(e);
 
-                nfi = new NumberFormatInfo();
-                nfi.CurrencyDecimalDigits = 0;
-                nfi.CurrencySymbol = string.Empty;
-                nfi.CurrencyNegativePattern = 0;
+                this.nfi = new NumberFormatInfo();
+                this.nfi.CurrencyDecimalDigits = 0;
+                this.nfi.CurrencySymbol = string.Empty;
+                this.nfi.CurrencyNegativePattern = 0;
                 this.Background = Brushes.Transparent; // so mouseclicks work.
 
 #if PerformanceBlocks
@@ -73,35 +73,35 @@ namespace LovettSoftware.Charts
 
         public ChartData Data
         {
-            get { return data; }
+            get { return this.data; }
             set
             {
-                data = value;
-                Relayout();
+                this.data = value;
+                this.Relayout();
             }
         }
 
 
         void Relayout()
         {
-            HidePointer();
+            this.HidePointer();
             this.Children.Clear();
             this.ColumnDefinitions.Clear();
             this.RowDefinitions.Clear();
-            if (data != null)
+            if (this.data != null)
             {
-                ShowAreaGraph();
-                TransformGraph();
+                this.ShowAreaGraph();
+                this.TransformGraph();
             }
-            InvalidateArrange();
+            this.InvalidateArrange();
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
 
-            controlSize = sizeInfo.NewSize;
-            TransformGraph();
+            this.controlSize = sizeInfo.NewSize;
+            this.TransformGraph();
         }
 
         protected override Size MeasureOverride(Size constraint)
@@ -112,40 +112,40 @@ namespace LovettSoftware.Charts
 
         void TransformGraph()
         {
-            transform = new TransformGroup();
-            double height = graphMax - graphMin;
+            this.transform = new TransformGroup();
+            double height = this.graphMax - this.graphMin;
 
-            if (graphWidth > 0 && height > 0)
+            if (this.graphWidth > 0 && height > 0)
             {
-                double scaleX = controlSize.Width / graphWidth;
-                double scaleY = -(controlSize.Height * .9) / height;
-                transform.Children.Add(scale = new ScaleTransform(scaleX, scaleY));
-                double minScale = graphMin * scaleY;
-                transform.Children.Add(new TranslateTransform(0, controlSize.Height - minScale));
+                double scaleX = this.controlSize.Width / this.graphWidth;
+                double scaleY = -(this.controlSize.Height * .9) / height;
+                this.transform.Children.Add(this.scale = new ScaleTransform(scaleX, scaleY));
+                double minScale = this.graphMin * scaleY;
+                this.transform.Children.Add(new TranslateTransform(0, this.controlSize.Height - minScale));
 
-                foreach (Geometry g in geometries)
+                foreach (Geometry g in this.geometries)
                 {
-                    g.Transform = transform;
+                    g.Transform = this.transform;
                 }
             }
         }
 
-        public ChartDataSeries SelectedSeries { get { return selectedSeries; } set { selectedSeries = value; OnSelectedSeriesChanged(); } }
+        public ChartDataSeries SelectedSeries { get { return this.selectedSeries; } set { this.selectedSeries = value; this.OnSelectedSeriesChanged(); } }
 
         void UpdatePointer(Point pos)
         {
-            if (data != null && data.Series.Count > 0 && scale != null && scale.ScaleX > 0)
+            if (this.data != null && this.data.Series.Count > 0 && this.scale != null && this.scale.ScaleX > 0)
             {
-                if (selectedSeries == null)
+                if (this.selectedSeries == null)
                 {
-                    selectedSeries = data.Series[data.Series.Count - 1];
+                    this.selectedSeries = this.data.Series[this.data.Series.Count - 1];
                 }
 
-                Point legendPos = this.TransformToDescendant(legend).Transform(pos);
-                Rect legendArea = new Rect(0, 0, legend.ActualWidth, legend.ActualHeight);
+                Point legendPos = this.TransformToDescendant(this.legend).Transform(pos);
+                Rect legendArea = new Rect(0, 0, this.legend.ActualWidth, this.legend.ActualHeight);
                 bool insideLegend = (legendArea.Contains(legendPos));
 
-                if (pointer == null)
+                if (this.pointer == null)
                 {
                     PathGeometry diamond = new PathGeometry();
                     PathFigure figure = new PathFigure();
@@ -157,33 +157,33 @@ namespace LovettSoftware.Charts
                     figure.Segments.Add(new LineSegment(new Point(0, 5), true));
                     figure.Segments.Add(new LineSegment(new Point(-5, 0), true));
 
-                    pointer = new Path()
+                    this.pointer = new Path()
                     {
                         Data = diamond,
                         Fill = Brushes.Red
                     };
-                    this.Children.Add(pointer);
+                    this.Children.Add(this.pointer);
                 }
-                if (tooltip == null)
+                if (this.tooltip == null)
                 {
-                    tooltip = new Border();
-                    tooltip.Padding = new Thickness(2);
-                    tooltip.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-                    tooltip.VerticalAlignment = System.Windows.VerticalAlignment.Top;
-                    tooltip.BorderBrush = AppTheme.Instance.GetThemedBrush("SystemControlForegroundBaseHighBrush");
-                    tooltip.BorderThickness = new Thickness(1);
-                    tooltip.Background = AppTheme.Instance.GetThemedBrush("SystemControlBackgroundBaseLowBrush");
-                    this.Children.Add(tooltip);
+                    this.tooltip = new Border();
+                    this.tooltip.Padding = new Thickness(2);
+                    this.tooltip.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+                    this.tooltip.VerticalAlignment = System.Windows.VerticalAlignment.Top;
+                    this.tooltip.BorderBrush = AppTheme.Instance.GetThemedBrush("SystemControlForegroundBaseHighBrush");
+                    this.tooltip.BorderThickness = new Thickness(1);
+                    this.tooltip.Background = AppTheme.Instance.GetThemedBrush("SystemControlBackgroundBaseLowBrush");
+                    this.Children.Add(this.tooltip);
                 }
 
-                ChartDataSeries series = selectedSeries;
+                ChartDataSeries series = this.selectedSeries;
                 var values = series.Values;
 
-                int i = (int)(pos.X / scale.ScaleX);
+                int i = (int)(pos.X / this.scale.ScaleX);
                 if (i >= 0 && i < values.Count)
                 {
                     ChartDataValue v = values[i];
-                    Selected = v;
+                    this.Selected = v;
 
                     UIElement content = null;
                     if (this.ToolTipGenerator != null)
@@ -197,40 +197,40 @@ namespace LovettSoftware.Charts
                         label.Text = v.Label;
                         content = label;
                     }
-                    tooltip.Child = content;
+                    this.tooltip.Child = content;
 
                     if (insideLegend)
                     {
-                        tooltip.Visibility = System.Windows.Visibility.Hidden;
+                        this.tooltip.Visibility = System.Windows.Visibility.Hidden;
                     }
                     else
                     {
-                        tooltip.UpdateLayout();
+                        this.tooltip.UpdateLayout();
 
                         double tipPositionX = pos.X;
-                        if (tipPositionX + tooltip.ActualWidth > this.ActualWidth)
+                        if (tipPositionX + this.tooltip.ActualWidth > this.ActualWidth)
                         {
-                            tipPositionX = this.ActualWidth - tooltip.ActualWidth;
+                            tipPositionX = this.ActualWidth - this.tooltip.ActualWidth;
                         }
-                        double tipPositionY = pos.Y - tooltip.ActualHeight - 4;
+                        double tipPositionY = pos.Y - this.tooltip.ActualHeight - 4;
                         if (tipPositionY < 0)
                         {
                             tipPositionY = 0;
                         }
-                        tooltip.Margin = new Thickness(tipPositionX, tipPositionY, 0, 0);
-                        tooltip.Visibility = System.Windows.Visibility.Visible;
+                        this.tooltip.Margin = new Thickness(tipPositionX, tipPositionY, 0, 0);
+                        this.tooltip.Visibility = System.Windows.Visibility.Visible;
                     }
 
                     double value = v.Value;
                     if (series.Flipped) value = -value;
-                    Point pointerPosition = transform.Transform(new Point(i, value));
-                    pointer.RenderTransform = new TranslateTransform(pointerPosition.X, pointerPosition.Y);
-                    pointer.Visibility = System.Windows.Visibility.Visible;
+                    Point pointerPosition = this.transform.Transform(new Point(i, value));
+                    this.pointer.RenderTransform = new TranslateTransform(pointerPosition.X, pointerPosition.Y);
+                    this.pointer.Visibility = System.Windows.Visibility.Visible;
                 }
                 else
                 {
-                    tooltip.Visibility = System.Windows.Visibility.Hidden;
-                    pointer.Visibility = System.Windows.Visibility.Hidden;
+                    this.tooltip.Visibility = System.Windows.Visibility.Hidden;
+                    this.pointer.Visibility = System.Windows.Visibility.Hidden;
                 }
 
             }
@@ -247,50 +247,50 @@ namespace LovettSoftware.Charts
 
         void HidePointer()
         {
-            Selected = null;
-            if (pointer != null)
+            this.Selected = null;
+            if (this.pointer != null)
             {
-                this.Children.Remove(pointer);
-                pointer = null;
+                this.Children.Remove(this.pointer);
+                this.pointer = null;
             }
-            if (tooltip != null)
+            if (this.tooltip != null)
             {
-                this.Children.Remove(tooltip);
-                tooltip = null;
+                this.Children.Remove(this.tooltip);
+                this.tooltip = null;
             }
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
-            HidePointer();
+            this.HidePointer();
             base.OnMouseLeave(e);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
             Point pos = e.GetPosition(this);
-            UpdatePointer(pos);
+            this.UpdatePointer(pos);
             base.OnMouseMove(e);
         }
 
         void ShowAreaGraph()
         {
-            graphMin = 0;
-            graphMax = 0;
-            graphWidth = 0;
-            geometries.Clear();
+            this.graphMin = 0;
+            this.graphMax = 0;
+            this.graphWidth = 0;
+            this.geometries.Clear();
             this.Children.Clear();
 
-            legend = new StackPanel();
-            legend.Orientation = Orientation.Vertical;
-            legend.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
-            legend.VerticalAlignment = System.Windows.VerticalAlignment.Top;
-            legend.Margin = new Thickness(4);
+            this.legend = new StackPanel();
+            this.legend.Orientation = Orientation.Vertical;
+            this.legend.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
+            this.legend.VerticalAlignment = System.Windows.VerticalAlignment.Top;
+            this.legend.Margin = new Thickness(4);
 
-            PopulateTheChart(legend);
+            this.PopulateTheChart(this.legend);
 
-            LineGeometry line = new LineGeometry(new Point(0, 0), new Point(graphWidth, 0));
-            geometries.Add(line);
+            LineGeometry line = new LineGeometry(new Point(0, 0), new Point(this.graphWidth, 0));
+            this.geometries.Add(line);
 
             Path lineShape = new Path();
             lineShape.Data = line;
@@ -299,14 +299,14 @@ namespace LovettSoftware.Charts
             this.Children.Add(lineShape);
 
             // legend on top
-            this.Children.Add(legend);
+            this.Children.Add(this.legend);
         }
 
         void PopulateTheChart(StackPanel legend)
         {
-            selectedSeries = null;
+            this.selectedSeries = null;
 
-            foreach (ChartDataSeries s in data.Series)
+            foreach (ChartDataSeries s in this.data.Series)
             {
                 if (s.Values.Count > 0)
                 {
@@ -326,8 +326,8 @@ namespace LovettSoftware.Charts
                         min = -temp;
                         flip = true;
                     }
-                    graphMin = Math.Min(graphMin, min);
-                    graphMax = Math.Max(graphMax, max);
+                    this.graphMin = Math.Min(this.graphMin, min);
+                    this.graphMax = Math.Max(this.graphMax, max);
 
                     figure.StartPoint = new Point(0, 0);
 
@@ -347,7 +347,7 @@ namespace LovettSoftware.Charts
 
                     Path shape = new Path();
                     shape.Data = path;
-                    geometries.Add(path);
+                    this.geometries.Add(path);
 
                     Color c = (Color)s.Category.WpfColor;
 
@@ -359,9 +359,9 @@ namespace LovettSoftware.Charts
                     shape.StrokeThickness = 1;
                     this.Children.Add(shape);
 
-                    graphWidth = Math.Max(graphWidth, x);
+                    this.graphWidth = Math.Max(this.graphWidth, x);
 
-                    AddLengenEntry(legend, s, shape);
+                    this.AddLengenEntry(legend, s, shape);
                 }
             }
         }
@@ -373,10 +373,10 @@ namespace LovettSoftware.Charts
             legendEntry.Orientation = Orientation.Horizontal;
             legendEntry.Background = Brushes.Transparent;
             legendEntry.Tag = s;
-            legendEntry.PreviewMouseDown += OnSelectLegendEntry;
+            legendEntry.PreviewMouseDown += this.OnSelectLegendEntry;
             legendEntry.IsHitTestVisible = true;
-            legendEntry.MouseEnter += OnLegendEntryMouseEnter;
-            legendEntry.MouseLeave += OnLegendEntryMouseLeave;
+            legendEntry.MouseEnter += this.OnLegendEntryMouseEnter;
+            legendEntry.MouseLeave += this.OnLegendEntryMouseLeave;
             legend.Children.Add(legendEntry);
 
             s.UserData = shape;
@@ -425,7 +425,7 @@ namespace LovettSoftware.Charts
             DoubleAnimation fadeOut = new DoubleAnimation() { To = 0.0, Duration = new Duration(TimeSpan.FromMilliseconds(200)) };
             Storyboard sb = new Storyboard();
             sb.Children.Add(fadeOut);
-            sb.Completed += OnFadeCompleted;
+            sb.Completed += this.OnFadeCompleted;
             Storyboard.SetTarget(fadeOut, shape);
             Storyboard.SetTargetProperty(fadeOut, new PropertyPath("Opacity"));
             sb.Begin();
@@ -464,7 +464,7 @@ namespace LovettSoftware.Charts
                 var min = (from i in s.Values select i.Value).Min();
                 var max = (from i in s.Values select i.Value).Min();
                 var range = max - min;
-                ChartColumn col = new ChartColumn(cv, nfi, c1, colWidth - 1, availableHeight, range);
+                ChartColumn col = new ChartColumn(cv, this.nfi, c1, colWidth - 1, availableHeight, range);
                 Grid.SetColumn(col, index++);
                 Grid.SetRow(col, 1);
                 col.VerticalAlignment = VerticalAlignment.Bottom;
@@ -494,20 +494,20 @@ namespace LovettSoftware.Charts
             }
             this.range = range;
 
-            vtext = new TextBlock();
+            this.vtext = new TextBlock();
 
             Binding binding = new Binding();
             binding.Source = this;
             binding.Path = new PropertyPath("ColumnValue");
             binding.Converter = new NumberConverter(nfi);
 
-            vtext.SetBinding(TextBlock.TextProperty, binding);
-            vtext.HorizontalAlignment = HorizontalAlignment.Center;
+            this.vtext.SetBinding(TextBlock.TextProperty, binding);
+            this.vtext.HorizontalAlignment = HorizontalAlignment.Center;
 
-            r = new Rectangle();
-            r.Width = colWidth;
-            r.Height = 0;
-            r.RadiusX = r.RadiusY = 2;
+            this.r = new Rectangle();
+            this.r.Width = colWidth;
+            this.r.Height = 0;
+            this.r.RadiusX = this.r.RadiusY = 2;
 
             HlsColor hls = new HlsColor(c1);
             hls.Lighten(.3f);
@@ -516,16 +516,16 @@ namespace LovettSoftware.Charts
             hls.Darken(.3f);
             Color stroke = hls.Color;
 
-            r.Stroke = new SolidColorBrush(stroke);
-            r.StrokeThickness = 1;
-            r.Fill = new LinearGradientBrush(c1, c2, new Point(0, 0), new Point(0, 1));
+            this.r.Stroke = new SolidColorBrush(stroke);
+            this.r.StrokeThickness = 1;
+            this.r.Fill = new LinearGradientBrush(c1, c2, new Point(0, 0), new Point(0, 1));
 
             TextBlock label = new TextBlock();
             label.Text = cv.Label;
             label.HorizontalAlignment = HorizontalAlignment.Center;
 
-            this.Children.Add(vtext);
-            this.Children.Add(r);
+            this.Children.Add(this.vtext);
+            this.Children.Add(this.r);
             this.Children.Add(label);
 
             this.value = cv;
@@ -552,7 +552,7 @@ namespace LovettSoftware.Charts
             {
                 this.currentValue = value;
                 double height = (Math.Abs(value) * this.availableHeight) / this.range;
-                r.Height = height;
+                this.r.Height = height;
             }
         }
 
@@ -560,7 +560,7 @@ namespace LovettSoftware.Charts
         {
             if (e.Property == ColumnValueProperty)
             {
-                ColumnValue = (double)e.NewValue;
+                this.ColumnValue = (double)e.NewValue;
             }
             else
             {

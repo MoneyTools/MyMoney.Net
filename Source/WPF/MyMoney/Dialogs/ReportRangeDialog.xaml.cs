@@ -27,26 +27,26 @@ namespace Walkabout.Dialogs
 
         public ReportInterval Interval
         {
-            get { return (ReportInterval)comboBoxInterval.SelectedItem; }
-            set { comboBoxInterval.SelectedItem = value; }
+            get { return (ReportInterval)this.comboBoxInterval.SelectedItem; }
+            set { this.comboBoxInterval.SelectedItem = value; }
         }
 
         public bool EnableCategoriesSelection
         {
             get
             {
-                return CategoriesPicker.Visibility == System.Windows.Visibility.Visible;
+                return this.CategoriesPicker.Visibility == System.Windows.Visibility.Visible;
             }
 
             set
             {
                 if (value == true)
                 {
-                    CategoriesPicker.Visibility = System.Windows.Visibility.Visible;
+                    this.CategoriesPicker.Visibility = System.Windows.Visibility.Visible;
                 }
                 else
                 {
-                    CategoriesPicker.Visibility = System.Windows.Visibility.Collapsed;
+                    this.CategoriesPicker.Visibility = System.Windows.Visibility.Collapsed;
                 }
             }
         }
@@ -83,16 +83,16 @@ namespace Walkabout.Dialogs
         /// </summary>
         public ReportRangeDialog()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.Owner = Application.Current.MainWindow;
 
-            comboBoxInterval.Visibility = Visibility.Visible;
-            comboBoxInterval.Items.Add(ReportInterval.Days);
-            comboBoxInterval.Items.Add(ReportInterval.Months);
-            comboBoxInterval.Items.Add(ReportInterval.Years);
-            comboBoxInterval.SelectedIndex = 2;
+            this.comboBoxInterval.Visibility = Visibility.Visible;
+            this.comboBoxInterval.Items.Add(ReportInterval.Days);
+            this.comboBoxInterval.Items.Add(ReportInterval.Months);
+            this.comboBoxInterval.Items.Add(ReportInterval.Years);
+            this.comboBoxInterval.SelectedIndex = 2;
 
-            okButton.Click += new RoutedEventHandler(OnOkButton_Click);
+            this.okButton.Click += new RoutedEventHandler(this.OnOkButton_Click);
         }
 
         bool showInterval;
@@ -104,12 +104,12 @@ namespace Walkabout.Dialogs
             {
                 if (!value)
                 {
-                    intervalPrompt.Visibility = Visibility.Collapsed;
-                    comboBoxInterval.Visibility = Visibility.Collapsed;
+                    this.intervalPrompt.Visibility = Visibility.Collapsed;
+                    this.comboBoxInterval.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    intervalPrompt.Visibility = Visibility.Visible;
+                    this.intervalPrompt.Visibility = Visibility.Visible;
                 }
                 this.showInterval = value;
             }

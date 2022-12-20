@@ -27,7 +27,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        public string GetTheme() { return _name; }
+        public string GetTheme() { return this._name; }
 
         public void SetTheme(string name)
         {
@@ -38,16 +38,16 @@ namespace Walkabout.Utilities
                 {
                     ResourceDictionary theme = (ResourceDictionary)Application.LoadComponent(themeUri);
                     Application.Current.Resources.MergedDictionaries.Add(theme);
-                    if (_theme != null)
+                    if (this._theme != null)
                     {
                         // Note: must remove the old theme AFTER adding the new one because some update
                         // events trigger when removing this theme and we don't want that code to hit
                         // brush not found exceptions.
-                        Application.Current.Resources.MergedDictionaries.Remove(_theme);
+                        Application.Current.Resources.MergedDictionaries.Remove(this._theme);
                     }
-                    _theme = theme;
-                    _name = name;
-                    UpdateDynamicBrushes();
+                    this._theme = theme;
+                    this._name = name;
+                    this.UpdateDynamicBrushes();
                     if (ThemeChanged != null)
                     {
                         ThemeChanged(null, name);

@@ -22,47 +22,47 @@ namespace Walkabout.Controls
 
         public Rect Bounds
         {
-            get { return bounds; }
-            set { bounds = value; InvalidateVisual(); }
+            get { return this.bounds; }
+            set { this.bounds = value; this.InvalidateVisual(); }
         }
 
         public Rect LimitBounds
         {
-            get { return limit; }
+            get { return this.limit; }
             set
             {
-                limit = value;
-                PinToLimits();
-                SizeToBounds();
-                InvalidateVisual();
+                this.limit = value;
+                this.PinToLimits();
+                this.SizeToBounds();
+                this.InvalidateVisual();
             }
         }
 
         private void PinToLimits()
         {
-            double left = bounds.Left;
-            double top = bounds.Top;
-            double right = bounds.Right;
-            double bottom = bounds.Bottom;
+            double left = this.bounds.Left;
+            double top = this.bounds.Top;
+            double right = this.bounds.Right;
+            double bottom = this.bounds.Bottom;
             bool changed = false;
-            if (left < limit.Left)
+            if (left < this.limit.Left)
             {
-                left = limit.Left;
+                left = this.limit.Left;
                 changed = true;
             }
-            if (top < limit.Top)
+            if (top < this.limit.Top)
             {
-                top = limit.Top;
+                top = this.limit.Top;
                 changed = true;
             }
-            if (right > limit.Right)
+            if (right > this.limit.Right)
             {
-                right = limit.Right;
+                right = this.limit.Right;
                 changed = true;
             }
-            if (bottom > limit.Bottom)
+            if (bottom > this.limit.Bottom)
             {
-                bottom = limit.Bottom;
+                bottom = this.limit.Bottom;
                 changed = true;
             }
             if (changed)
@@ -77,41 +77,41 @@ namespace Walkabout.Controls
                 {
                     h = 0;
                 }
-                Bounds = new Rect(left, top, w, h);
+                this.Bounds = new Rect(left, top, w, h);
             }
         }
 
         private void SizeToBounds()
         {
-            Canvas.SetLeft(this, limit.Left);
-            Canvas.SetTop(this, limit.Top);
-            Size size = limit.Size;
+            Canvas.SetLeft(this, this.limit.Left);
+            Canvas.SetTop(this, this.limit.Top);
+            Size size = this.limit.Size;
             this.Width = size.Width;
             this.Height = size.Height;
-            InvalidateVisual();
+            this.InvalidateVisual();
         }
 
 
         public double ThumbSize
         {
-            get { return thumbSize; }
-            set { thumbSize = value; }
+            get { return this.thumbSize; }
+            set { this.thumbSize = value; }
         }
 
         Brush thumbBrush = Brushes.Navy;
 
         public Brush ThumbBrush
         {
-            get { return thumbBrush; }
-            set { thumbBrush = value; }
+            get { return this.thumbBrush; }
+            set { this.thumbBrush = value; }
         }
 
         Brush borderBrush = Brushes.Navy;
 
         public Brush BorderBrush
         {
-            get { return borderBrush; }
-            set { borderBrush = value; }
+            get { return this.borderBrush; }
+            set { this.borderBrush = value; }
         }
 
         static Brush SmokyGlassBrush = new SolidColorBrush(Color.FromArgb(0xA0, 0xe0, 0xe0, 0xff));
@@ -124,35 +124,35 @@ namespace Walkabout.Controls
         {
             base.OnRender(drawingContext);
 
-            Rect imageBounds = limit;
-            imageBounds.Offset(-limit.Left, -limit.Top);
-            Rect resizerBounds = bounds;
-            resizerBounds.Offset(-limit.Left, -limit.Top);
+            Rect imageBounds = this.limit;
+            imageBounds.Offset(-this.limit.Left, -this.limit.Top);
+            Rect resizerBounds = this.bounds;
+            resizerBounds.Offset(-this.limit.Left, -this.limit.Top);
 
             CombinedGeometry mask = new CombinedGeometry(GeometryCombineMode.Exclude, new RectangleGeometry(imageBounds), new RectangleGeometry(resizerBounds));
             drawingContext.DrawGeometry(SmokyGlassBrush, null, mask);
 
-            Pen pen = new Pen(borderBrush, 1);
-            pen.DashStyle = new DashStyle(dashes, offset);
-            offset++;
-            if (offset == 6)
+            Pen pen = new Pen(this.borderBrush, 1);
+            pen.DashStyle = new DashStyle(this.dashes, this.offset);
+            this.offset++;
+            if (this.offset == 6)
             {
-                offset = 0;
+                this.offset = 0;
             }
 
             Rect box = resizerBounds;
             drawingContext.DrawRectangle(null, pen, box);
 
-            drawingContext.DrawRectangle(thumbBrush, null, TopLeftThumb);
-            drawingContext.DrawRectangle(thumbBrush, null, TopMiddleThumb);
-            drawingContext.DrawRectangle(thumbBrush, null, TopRightThumb);
+            drawingContext.DrawRectangle(this.thumbBrush, null, this.TopLeftThumb);
+            drawingContext.DrawRectangle(this.thumbBrush, null, this.TopMiddleThumb);
+            drawingContext.DrawRectangle(this.thumbBrush, null, this.TopRightThumb);
 
-            drawingContext.DrawRectangle(thumbBrush, null, MiddleLeftThumb);
-            drawingContext.DrawRectangle(thumbBrush, null, MiddleRightThumb);
+            drawingContext.DrawRectangle(this.thumbBrush, null, this.MiddleLeftThumb);
+            drawingContext.DrawRectangle(this.thumbBrush, null, this.MiddleRightThumb);
 
-            drawingContext.DrawRectangle(thumbBrush, null, BottomLeftThumb);
-            drawingContext.DrawRectangle(thumbBrush, null, BottomMiddleThumb);
-            drawingContext.DrawRectangle(thumbBrush, null, BottomRightThumb);
+            drawingContext.DrawRectangle(this.thumbBrush, null, this.BottomLeftThumb);
+            drawingContext.DrawRectangle(this.thumbBrush, null, this.BottomMiddleThumb);
+            drawingContext.DrawRectangle(this.thumbBrush, null, this.BottomRightThumb);
 
         }
 
@@ -165,93 +165,93 @@ namespace Walkabout.Controls
         {
             base.OnPreviewMouseLeftButtonDown(e);
 
-            if (!IsEnabled)
+            if (!this.IsEnabled)
             {
                 // resizing is not enabled.
-                dragging = Corner.None;
+                this.dragging = Corner.None;
                 return;
             }
 
-            Cursor = System.Windows.Input.Cursors.Arrow;
+            this.Cursor = System.Windows.Input.Cursors.Arrow;
 
             Point pos = e.GetPosition(this);
-            if (TopLeftThumb.Contains(pos))
+            if (this.TopLeftThumb.Contains(pos))
             {
-                dragging = Corner.TopLeft;
+                this.dragging = Corner.TopLeft;
             }
-            else if (TopMiddleThumb.Contains(pos))
+            else if (this.TopMiddleThumb.Contains(pos))
             {
-                dragging = Corner.TopMiddle;
+                this.dragging = Corner.TopMiddle;
             }
-            else if (TopRightThumb.Contains(pos))
+            else if (this.TopRightThumb.Contains(pos))
             {
-                dragging = Corner.TopRight;
+                this.dragging = Corner.TopRight;
             }
-            else if (MiddleLeftThumb.Contains(pos))
+            else if (this.MiddleLeftThumb.Contains(pos))
             {
-                dragging = Corner.MiddleLeft;
+                this.dragging = Corner.MiddleLeft;
             }
-            else if (MiddleRightThumb.Contains(pos))
+            else if (this.MiddleRightThumb.Contains(pos))
             {
-                dragging = Corner.MiddleRight;
+                this.dragging = Corner.MiddleRight;
             }
-            else if (BottomLeftThumb.Contains(pos))
+            else if (this.BottomLeftThumb.Contains(pos))
             {
-                dragging = Corner.BottomLeft;
+                this.dragging = Corner.BottomLeft;
             }
-            else if (BottomMiddleThumb.Contains(pos))
+            else if (this.BottomMiddleThumb.Contains(pos))
             {
-                dragging = Corner.BottomMiddle;
+                this.dragging = Corner.BottomMiddle;
             }
-            else if (BottomRightThumb.Contains(pos))
+            else if (this.BottomRightThumb.Contains(pos))
             {
-                dragging = Corner.BottomRight;
+                this.dragging = Corner.BottomRight;
             }
             else
             {
-                dragging = Corner.Middle;
+                this.dragging = Corner.Middle;
             }
 
-            initialBounds = bounds;
+            this.initialBounds = this.bounds;
 
             e.Handled = true;
-            mouseDownPosition = pos;
+            this.mouseDownPosition = pos;
             System.Windows.Input.Mouse.Capture(this);
 
-            if (timer == null)
+            if (this.timer == null)
             {
-                timer = new DispatcherTimer(TimeSpan.FromMilliseconds(30), DispatcherPriority.Normal, OnTimerTick, this.Dispatcher);
-                timer.Start();
+                this.timer = new DispatcherTimer(TimeSpan.FromMilliseconds(30), DispatcherPriority.Normal, this.OnTimerTick, this.Dispatcher);
+                this.timer.Start();
             }
         }
 
         private void OnTimerTick(object sender, EventArgs e)
         {
-            InvalidateVisual(); // draw marching ants.
+            this.InvalidateVisual(); // draw marching ants.
         }
 
         protected override void OnPreviewMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e)
         {
             base.OnPreviewMouseLeftButtonUp(e);
 
-            if (IsEnabled)
+            if (this.IsEnabled)
             {
                 System.Windows.Input.Mouse.Capture(null);
-                dragging = Corner.None;
+                this.dragging = Corner.None;
             }
-            if (timer != null)
+            if (this.timer != null)
             {
-                timer.Stop();
-                timer.Tick -= OnTimerTick;
-                timer = null;
+                this.timer.Stop();
+                this.timer.Tick -= this.OnTimerTick;
+                this.timer = null;
             }
         }
 
         protected override void OnLostMouseCapture(System.Windows.Input.MouseEventArgs e)
         {
             base.OnLostMouseCapture(e);
-            dragging = Corner.None;
-            if (IsEnabled && Resized != null)
+            this.dragging = Corner.None;
+            if (this.IsEnabled && Resized != null)
             {
                 Resized(this, EventArgs.Empty);
             }
@@ -261,7 +261,7 @@ namespace Walkabout.Controls
         {
             base.OnPreviewMouseMove(e);
 
-            if (!IsEnabled)
+            if (!this.IsEnabled)
             {
                 return;
             }
@@ -269,21 +269,21 @@ namespace Walkabout.Controls
             Rect newBounds = this.initialBounds;
 
             Point pos = e.GetPosition(this);
-            double dx = pos.X - mouseDownPosition.X;
-            double dy = pos.Y - mouseDownPosition.Y;
+            double dx = pos.X - this.mouseDownPosition.X;
+            double dy = pos.Y - this.mouseDownPosition.Y;
 
-            if (dragging == Corner.Middle)
+            if (this.dragging == Corner.Middle)
             {
                 newBounds.X += dx;
                 newBounds.Y += dy;
                 this.bounds = newBounds;
-                PinToLimits();
-                InvalidateVisual();
+                this.PinToLimits();
+                this.InvalidateVisual();
             }
-            else if (dragging != Corner.None)
+            else if (this.dragging != Corner.None)
             {
                 // actually move the shape!
-                switch (dragging)
+                switch (this.dragging)
                 {
                     case Corner.TopLeft:
                         newBounds.X += dx;
@@ -322,8 +322,8 @@ namespace Walkabout.Controls
                 }
 
                 this.bounds = newBounds;
-                PinToLimits();
-                InvalidateVisual();
+                this.PinToLimits();
+                this.InvalidateVisual();
                 if (Resizing != null)
                 {
                     Resizing(this, EventArgs.Empty);
@@ -331,41 +331,41 @@ namespace Walkabout.Controls
             }
             else
             {
-                if (TopLeftThumb.Contains(pos))
+                if (this.TopLeftThumb.Contains(pos))
                 {
-                    Cursor = System.Windows.Input.Cursors.SizeNWSE;
+                    this.Cursor = System.Windows.Input.Cursors.SizeNWSE;
                 }
-                else if (TopMiddleThumb.Contains(pos))
+                else if (this.TopMiddleThumb.Contains(pos))
                 {
-                    Cursor = System.Windows.Input.Cursors.SizeNS;
+                    this.Cursor = System.Windows.Input.Cursors.SizeNS;
                 }
-                else if (TopRightThumb.Contains(pos))
+                else if (this.TopRightThumb.Contains(pos))
                 {
-                    Cursor = System.Windows.Input.Cursors.SizeNESW;
+                    this.Cursor = System.Windows.Input.Cursors.SizeNESW;
                 }
-                else if (MiddleLeftThumb.Contains(pos))
+                else if (this.MiddleLeftThumb.Contains(pos))
                 {
-                    Cursor = System.Windows.Input.Cursors.SizeWE;
+                    this.Cursor = System.Windows.Input.Cursors.SizeWE;
                 }
-                else if (MiddleRightThumb.Contains(pos))
+                else if (this.MiddleRightThumb.Contains(pos))
                 {
-                    Cursor = System.Windows.Input.Cursors.SizeWE;
+                    this.Cursor = System.Windows.Input.Cursors.SizeWE;
                 }
-                else if (BottomLeftThumb.Contains(pos))
+                else if (this.BottomLeftThumb.Contains(pos))
                 {
-                    Cursor = System.Windows.Input.Cursors.SizeNESW;
+                    this.Cursor = System.Windows.Input.Cursors.SizeNESW;
                 }
-                else if (BottomMiddleThumb.Contains(pos))
+                else if (this.BottomMiddleThumb.Contains(pos))
                 {
-                    Cursor = System.Windows.Input.Cursors.SizeNS;
+                    this.Cursor = System.Windows.Input.Cursors.SizeNS;
                 }
-                else if (BottomRightThumb.Contains(pos))
+                else if (this.BottomRightThumb.Contains(pos))
                 {
-                    Cursor = System.Windows.Input.Cursors.SizeNWSE;
+                    this.Cursor = System.Windows.Input.Cursors.SizeNWSE;
                 }
                 else
                 {
-                    Cursor = System.Windows.Input.Cursors.Arrow;
+                    this.Cursor = System.Windows.Input.Cursors.Arrow;
                 }
             }
         }
@@ -374,8 +374,8 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(bounds.Left - thumbSize, bounds.Top - thumbSize, thumbSize, thumbSize);
-                result.Offset(-limit.Left, -limit.Top);
+                Rect result = new Rect(this.bounds.Left - this.thumbSize, this.bounds.Top - this.thumbSize, this.thumbSize, this.thumbSize);
+                result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }
         }
@@ -384,8 +384,8 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(bounds.Left + bounds.Width / 2 - thumbSize / 2, bounds.Top - thumbSize, thumbSize, thumbSize);
-                result.Offset(-limit.Left, -limit.Top);
+                Rect result = new Rect(this.bounds.Left + this.bounds.Width / 2 - this.thumbSize / 2, this.bounds.Top - this.thumbSize, this.thumbSize, this.thumbSize);
+                result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }
         }
@@ -393,8 +393,8 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(bounds.Right, bounds.Top - thumbSize, thumbSize, thumbSize);
-                result.Offset(-limit.Left, -limit.Top);
+                Rect result = new Rect(this.bounds.Right, this.bounds.Top - this.thumbSize, this.thumbSize, this.thumbSize);
+                result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }
         }
@@ -402,8 +402,8 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(bounds.Left - thumbSize, bounds.Top + bounds.Height / 2 - thumbSize / 2, thumbSize, thumbSize);
-                result.Offset(-limit.Left, -limit.Top);
+                Rect result = new Rect(this.bounds.Left - this.thumbSize, this.bounds.Top + this.bounds.Height / 2 - this.thumbSize / 2, this.thumbSize, this.thumbSize);
+                result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }
         }
@@ -412,8 +412,8 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(bounds.Right, bounds.Top + bounds.Height / 2 - thumbSize / 2, thumbSize, thumbSize);
-                result.Offset(-limit.Left, -limit.Top);
+                Rect result = new Rect(this.bounds.Right, this.bounds.Top + this.bounds.Height / 2 - this.thumbSize / 2, this.thumbSize, this.thumbSize);
+                result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }
         }
@@ -422,8 +422,8 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(bounds.Left - thumbSize, bounds.Bottom, thumbSize, thumbSize);
-                result.Offset(-limit.Left, -limit.Top);
+                Rect result = new Rect(this.bounds.Left - this.thumbSize, this.bounds.Bottom, this.thumbSize, this.thumbSize);
+                result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }
         }
@@ -432,8 +432,8 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(bounds.Left + bounds.Width / 2 - thumbSize / 2, bounds.Bottom, thumbSize, thumbSize);
-                result.Offset(-limit.Left, -limit.Top);
+                Rect result = new Rect(this.bounds.Left + this.bounds.Width / 2 - this.thumbSize / 2, this.bounds.Bottom, this.thumbSize, this.thumbSize);
+                result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }
         }
@@ -442,8 +442,8 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(bounds.Right, bounds.Bottom, thumbSize, thumbSize);
-                result.Offset(-limit.Left, -limit.Top);
+                Rect result = new Rect(this.bounds.Right, this.bounds.Bottom, this.thumbSize, this.thumbSize);
+                result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }
         }

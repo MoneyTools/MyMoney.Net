@@ -43,7 +43,7 @@ namespace Walkabout.Database
 
         public object GetData(string format, bool autoConvert)
         {
-            return GetData(format);
+            return this.GetData(format);
         }
 
         public bool GetDataPresent(Type format)
@@ -61,7 +61,7 @@ namespace Walkabout.Database
 
         public bool GetDataPresent(string format, bool autoConvert)
         {
-            return GetDataPresent(format);
+            return this.GetDataPresent(format);
         }
 
         public string[] GetFormats()
@@ -75,7 +75,7 @@ namespace Walkabout.Database
 
         public string[] GetFormats(bool autoConvert)
         {
-            return GetFormats();
+            return this.GetFormats();
         }
 
         public void SetData(object data)

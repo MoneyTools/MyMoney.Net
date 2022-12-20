@@ -28,11 +28,11 @@ namespace Walkabout.Dialogs
 
         public CreateDatabaseDialog()
         {
-            InitializeComponent();
-            EnableControls();
-            this.TextBoxSqliteDatabaseFile.Text = System.IO.Path.Combine(DefaultPath, Environment.UserName + Walkabout.Data.SqliteDatabase.OfficialSqliteFileExtension);
+            this.InitializeComponent();
+            this.EnableControls();
+            this.TextBoxSqliteDatabaseFile.Text = System.IO.Path.Combine(this.DefaultPath, Environment.UserName + Walkabout.Data.SqliteDatabase.OfficialSqliteFileExtension);
 
-            HideBackupPrompt();
+            this.HideBackupPrompt();
 
         }
 
@@ -42,22 +42,22 @@ namespace Walkabout.Dialogs
             set
             {
                 this.mode = value;
-                switch (mode)
+                switch (this.mode)
                 {
                     case ConnectMode.Create:
                         this.Title = "Create Database";
                         this.ButtonCreate.Content = "_Create";
-                        HideBackupPrompt();
+                        this.HideBackupPrompt();
                         break;
                     case ConnectMode.Connect:
                         this.Title = "Connect Database";
                         this.ButtonCreate.Content = "_Connect";
-                        HideBackupPrompt();
+                        this.HideBackupPrompt();
                         break;
                     case ConnectMode.Restore:
                         this.Title = "Restore Database";
                         this.ButtonCreate.Content = "_Restore";
-                        ShowBackupPrompt();
+                        this.ShowBackupPrompt();
                         break;
                 }
             }
@@ -65,16 +65,16 @@ namespace Walkabout.Dialogs
 
         private void ShowBackupPrompt()
         {
-            TextBlockSqliteBackupPrompt.Visibility = Visibility.Visible;
-            TextBoxSqliteBackup.Visibility = Visibility.Visible;
-            ButtonSqliteBrowseBackup.Visibility = Visibility.Visible;
+            this.TextBlockSqliteBackupPrompt.Visibility = Visibility.Visible;
+            this.TextBoxSqliteBackup.Visibility = Visibility.Visible;
+            this.ButtonSqliteBrowseBackup.Visibility = Visibility.Visible;
         }
 
         private void HideBackupPrompt()
         {
-            TextBlockSqliteBackupPrompt.Visibility = Visibility.Collapsed;
-            TextBoxSqliteBackup.Visibility = Visibility.Collapsed;
-            ButtonSqliteBrowseBackup.Visibility = Visibility.Collapsed;
+            this.TextBlockSqliteBackupPrompt.Visibility = Visibility.Collapsed;
+            this.TextBoxSqliteBackup.Visibility = Visibility.Collapsed;
+            this.ButtonSqliteBrowseBackup.Visibility = Visibility.Collapsed;
         }
 
         public string Database
@@ -82,7 +82,7 @@ namespace Walkabout.Dialogs
             get
             {
                 string fileName = null;
-                fileName = TextBoxSqliteDatabaseFile.Text;
+                fileName = this.TextBoxSqliteDatabaseFile.Text;
                 fileName = fileName.Trim('"', '\''); // Remove any surrounding double quotes or single quotes
                 return fileName;
 
@@ -93,22 +93,22 @@ namespace Walkabout.Dialogs
         {
             get
             {
-                return TextBoxSqlitePassword.Password;
+                return this.TextBoxSqlitePassword.Password;
             }
         }
 
         private void ButtonCreate_Click(object sender, RoutedEventArgs e)
         {
-            CreateOrConnect(Mode);
+            this.CreateOrConnect(this.Mode);
         }
 
 
         private void ButtonOpen_Click(object sender, RoutedEventArgs e)
         {
-            CreateOrConnect(ConnectMode.Connect);
+            this.CreateOrConnect(ConnectMode.Connect);
             if (this.DialogResult == true)
             {
-                Mode = ConnectMode.Connect;
+                this.Mode = ConnectMode.Connect;
             }
         }
 
@@ -139,7 +139,7 @@ namespace Walkabout.Dialogs
                 switch (mode)
                 {
                     case ConnectMode.Create:
-                        if (!CheckPathExists())
+                        if (!this.CheckPathExists())
                         {
                             return;
                         }
@@ -153,8 +153,8 @@ namespace Walkabout.Dialogs
                         }
                         var sql = new SqliteDatabase()
                         {
-                            DatabasePath = this.Database,
-                            Password = this.Password
+                            DatabasePath = Database,
+                            Password = Password
                         };
                         sql.Create();
                         result = true;
@@ -196,12 +196,12 @@ namespace Walkabout.Dialogs
         {
             if (show)
             {
-                ButtonOpen.Visibility = Visibility.Visible;
-                ButtonOpen.BeginAnimation(Button.OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500))));
+                this.ButtonOpen.Visibility = Visibility.Visible;
+                this.ButtonOpen.BeginAnimation(Button.OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500))));
             }
             else
             {
-                ButtonOpen.Visibility = Visibility.Hidden;
+                this.ButtonOpen.Visibility = Visibility.Hidden;
             }
         }
 
@@ -216,13 +216,13 @@ namespace Walkabout.Dialogs
             {
                 okEnabled = true;
             }
-            if (Mode == ConnectMode.Restore && !File.Exists(TextBoxSqliteBackup.Text))
+            if (this.Mode == ConnectMode.Restore && !File.Exists(this.TextBoxSqliteBackup.Text))
             {
                 okEnabled = false;
             }
-            if (Mode == ConnectMode.Create)
+            if (this.Mode == ConnectMode.Create)
             {
-                ShowConnectButton(File.Exists(TextBoxSqliteDatabaseFile.Text));
+                this.ShowConnectButton(File.Exists(this.TextBoxSqliteDatabaseFile.Text));
             }
             this.ButtonCreate.IsEnabled = okEnabled;
         }
@@ -252,7 +252,7 @@ namespace Walkabout.Dialogs
 
         private void TextBoxSqliteBackup_TextChanged(object sender, TextChangedEventArgs e)
         {
-            EnableControls();
+            this.EnableControls();
         }
 
         private OpenFileDialog InitializeOpenFileDialog(string title, string filter)
@@ -276,41 +276,41 @@ namespace Walkabout.Dialogs
         {
             get
             {
-                return TextBoxSqliteBackup.Text;
+                return this.TextBoxSqliteBackup.Text;
             }
             set
             {
-                TextBoxSqliteBackup.Text = value;
+                this.TextBoxSqliteBackup.Text = value;
             }
         }
 
         private void ButtonSqliteBrowseBackup_Click(object sender, RoutedEventArgs e)
         {
             // Restore SQL CE database from a backup.
-            OpenFileDialog fd = InitializeOpenFileDialog("Restore Database", Properties.Resources.MoneySQLLiteFileFilter);
-            if (!string.IsNullOrEmpty(BackupPath))
+            OpenFileDialog fd = this.InitializeOpenFileDialog("Restore Database", Properties.Resources.MoneySQLLiteFileFilter);
+            if (!string.IsNullOrEmpty(this.BackupPath))
             {
-                fd.InitialDirectory = System.IO.Path.GetDirectoryName(BackupPath);
+                fd.InitialDirectory = System.IO.Path.GetDirectoryName(this.BackupPath);
             }
             if (fd.ShowDialog(this) != true)
             {
                 return;
             }
-            if (VerifyFileName(fd.FileName))
+            if (this.VerifyFileName(fd.FileName))
             {
-                BackupPath = fd.FileName;
+                this.BackupPath = fd.FileName;
             }
         }
 
         private void ButtonSqliteBrowse_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog fdlg = InitializeOpenFileDialog("MyMoney SQL Lite *.mmdb file",
+            OpenFileDialog fdlg = this.InitializeOpenFileDialog("MyMoney SQL Lite *.mmdb file",
                 StringHelpers.CreateFileFilter(Properties.Resources.MoneySQLLiteFileFilter, Properties.Resources.AllFileFilter));
             fdlg.FilterIndex = 1;
             if (fdlg.ShowDialog(this) == true)
             {
                 string path = fdlg.FileName;
-                if (VerifyFileName(path))
+                if (this.VerifyFileName(path))
                 {
                     this.TextBoxSqliteDatabaseFile.Text = fdlg.FileName;
                 }
@@ -319,11 +319,11 @@ namespace Walkabout.Dialogs
 
         private void TextBoxSqliteDatabaseFile_TextChanged(object sender, TextChangedEventArgs e)
         {
-            EnableControls();
+            this.EnableControls();
 
             try
             {
-                TextBoxSqlitePassword.Password = "" + DatabaseSecurity.LoadDatabasePassword(TextBoxSqliteDatabaseFile.Text);
+                this.TextBoxSqlitePassword.Password = "" + DatabaseSecurity.LoadDatabasePassword(this.TextBoxSqliteDatabaseFile.Text);
             }
             catch { }
         }

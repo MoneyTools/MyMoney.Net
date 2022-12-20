@@ -34,56 +34,56 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         public void Add(PerformanceEventArrivedEventArgs e)
         {
-            lock (data)
+            lock (this.data)
             {
                 this.data.Add(e);
 
-                componentNames.Add(e.ComponentName);
-                categoryNames.Add(e.CategoryName);
-                measurements.Add(e.MeasurementName);
-                LazyCleanup(e.Timestamp);
+                this.componentNames.Add(e.ComponentName);
+                this.categoryNames.Add(e.CategoryName);
+                this.measurements.Add(e.MeasurementName);
+                this.LazyCleanup(e.Timestamp);
             }
         }
 
         private void LazyCleanup(long latest)
         {
             uint now = (uint)Environment.TickCount;
-            if (now > lastCheck + 1000 && data.Count > PurgeThreshold)
+            if (now > this.lastCheck + 1000 && this.data.Count > this.PurgeThreshold)
             {
-                double seconds = (double)latest / (double)PerformanceFrequency;
-                double deleteDate = seconds - HistoryLength.TotalSeconds;
-                for (int i = 0; i < data.Count; i++)
+                double seconds = (double)latest / (double)this.PerformanceFrequency;
+                double deleteDate = seconds - this.HistoryLength.TotalSeconds;
+                for (int i = 0; i < this.data.Count; i++)
                 {
-                    PerformanceEventArrivedEventArgs args = data[i];
-                    seconds = (double)args.Timestamp / (double)PerformanceFrequency;
+                    PerformanceEventArrivedEventArgs args = this.data[i];
+                    seconds = (double)args.Timestamp / (double)this.PerformanceFrequency;
                     if (seconds > deleteDate)
                     {
                         if (i > 0)
                         {
-                            data.RemoveRange(0, i);
+                            this.data.RemoveRange(0, i);
                         }
                         break;
                     }
                 }
 
-                lastCheck = now;
+                this.lastCheck = now;
             }
         }
 
         public void Clear()
         {
-            data = new List<PerformanceEventArrivedEventArgs>();
+            this.data = new List<PerformanceEventArrivedEventArgs>();
         }
 
-        public IEnumerable<string> Components { get { return componentNames; } }
-        public IEnumerable<string> Measurements { get { return measurements; } }
-        public IEnumerable<string> Categoryies { get { return categoryNames; } }
+        public IEnumerable<string> Components { get { return this.componentNames; } }
+        public IEnumerable<string> Measurements { get { return this.measurements; } }
+        public IEnumerable<string> Categoryies { get { return this.categoryNames; } }
 
 
         public List<PerformanceEventArrivedEventArgs> GetMatchingEvents(string component, string category, string measurement)
         {
             List<PerformanceEventArrivedEventArgs> result = new List<PerformanceEventArrivedEventArgs>();
-            lock (data)
+            lock (this.data)
             {
                 if (this.data.Count > 0)
                 {
@@ -135,7 +135,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                     else if (e.EventId == EndEvent)
                     {
                         w.WriteStartElement("Event");
-                        WriteEventCategory(w, e);
+                        this.WriteEventCategory(w, e);
                         w.WriteAttributeString("Timestamp", (e.Timestamp - start).ToString())
                             ;
                         PerformanceEventArrivedEventArgs begin = null;
@@ -149,7 +149,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                     else
                     {
                         w.WriteStartElement("Event");
-                        WriteEventCategory(w, e);
+                        this.WriteEventCategory(w, e);
                         w.WriteAttributeString("Timestamp", (e.Timestamp - start).ToString());
                         w.WriteEndElement();
                     }
@@ -179,9 +179,9 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             this.Category = data.CategoryName;
             this.Measurement = data.MeasurementName;
 
-            if (this.Component == null && !string.IsNullOrEmpty(Category))
+            if (this.Component == null && !string.IsNullOrEmpty(this.Category))
             {
-                string[] parts = Category.Split('.');
+                string[] parts = this.Category.Split('.');
                 if (parts.Length == 2)
                 {
                     this.Component = parts[0];
@@ -193,24 +193,24 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         public override int GetHashCode()
         {
             int result = 0;
-            if (Component != null)
+            if (this.Component != null)
             {
-                result += Component.GetHashCode();
+                result += this.Component.GetHashCode();
             }
-            if (Category != null)
+            if (this.Category != null)
             {
-                result = result * 100 + Category.GetHashCode();
+                result = result * 100 + this.Category.GetHashCode();
             }
-            if (Measurement != null)
+            if (this.Measurement != null)
             {
-                result = result * 10 + Measurement.GetHashCode();
+                result = result * 10 + this.Measurement.GetHashCode();
             }
             return result;
         }
 
         public override bool Equals(object obj)
         {
-            return Equals((PerformanceEventArrivedEventArgsKey)obj);
+            return this.Equals((PerformanceEventArrivedEventArgsKey)obj);
         }
 
         public bool Equals(PerformanceEventArrivedEventArgsKey other)
@@ -222,15 +222,15 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         {
             get
             {
-                if (string.IsNullOrEmpty(Measurement))
+                if (string.IsNullOrEmpty(this.Measurement))
                 {
-                    if (string.IsNullOrEmpty(Category))
+                    if (string.IsNullOrEmpty(this.Category))
                     {
-                        return Component;
+                        return this.Component;
                     }
-                    return Category;
+                    return this.Category;
                 }
-                return Measurement;
+                return this.Measurement;
             }
         }
     }

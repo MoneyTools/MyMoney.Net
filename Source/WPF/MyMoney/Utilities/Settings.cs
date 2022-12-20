@@ -40,13 +40,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["WindowLocation"];
+                object value = this.map["WindowLocation"];
                 return value is Point ? (Point)value : new Point(0, 0);
             }
             set
             {
-                map["WindowLocation"] = value;
-                OnPropertyChanged("WindowLocation");
+                this.map["WindowLocation"] = value;
+                this.OnPropertyChanged("WindowLocation");
             }
         }
 
@@ -54,13 +54,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["WindowSize"];
+                object value = this.map["WindowSize"];
                 return value is Size ? (Size)value : new Size(0, 0);
             }
             set
             {
-                map["WindowSize"] = value;
-                OnPropertyChanged("WindowSize");
+                this.map["WindowSize"] = value;
+                this.OnPropertyChanged("WindowSize");
             }
         }
 
@@ -68,20 +68,20 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["ReceiptDialogSize"];
+                object value = this.map["ReceiptDialogSize"];
                 if (value != null)
                 {
                     // convert to new name
-                    map["AttachmentDialogSize"] = value;
-                    map.Remove("ReceiptDialogSize");
+                    this.map["AttachmentDialogSize"] = value;
+                    this.map.Remove("ReceiptDialogSize");
                 }
-                value = map["AttachmentDialogSize"];
+                value = this.map["AttachmentDialogSize"];
                 return value is Size ? (Size)value : new Size(0, 0);
             }
             set
             {
-                map["AttachmentDialogSize"] = value;
-                OnPropertyChanged("AttachmentDialogSize");
+                this.map["AttachmentDialogSize"] = value;
+                this.OnPropertyChanged("AttachmentDialogSize");
             }
         }
 
@@ -89,13 +89,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["AttachmentDirectory"];
+                object value = this.map["AttachmentDirectory"];
                 return value is string ? (string)value : null;
             }
             set
             {
-                map["AttachmentDirectory"] = value;
-                OnPropertyChanged("AttachmentDirectory");
+                this.map["AttachmentDirectory"] = value;
+                this.OnPropertyChanged("AttachmentDirectory");
             }
         }
 
@@ -103,13 +103,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["StatementsDirectory"];
+                object value = this.map["StatementsDirectory"];
                 return value is string ? (string)value : null;
             }
             set
             {
-                map["StatementsDirectory"] = value;
-                OnPropertyChanged("StatementsDirectory");
+                this.map["StatementsDirectory"] = value;
+                this.OnPropertyChanged("StatementsDirectory");
             }
         }
 
@@ -117,13 +117,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["RecentFiles"];
+                object value = this.map["RecentFiles"];
                 return value is string[]? (string[])value : null;
             }
             set
             {
-                map["RecentFiles"] = value;
-                OnPropertyChanged("RecentFiles");
+                this.map["RecentFiles"] = value;
+                this.OnPropertyChanged("RecentFiles");
             }
         }
 
@@ -131,13 +131,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["ToolBoxWidth"];
+                object value = this.map["ToolBoxWidth"];
                 return value is int ? (int)value : 0;
             }
             set
             {
-                map["ToolBoxWidth"] = value;
-                OnPropertyChanged("ToolBoxWidth");
+                this.map["ToolBoxWidth"] = value;
+                this.OnPropertyChanged("ToolBoxWidth");
             }
         }
 
@@ -145,13 +145,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["GraphHeight"];
+                object value = this.map["GraphHeight"];
                 return value is int ? (int)value : 0;
             }
             set
             {
-                map["GraphHeight"] = value;
-                OnPropertyChanged("GraphHeight");
+                this.map["GraphHeight"] = value;
+                this.OnPropertyChanged("GraphHeight");
             }
         }
 
@@ -162,33 +162,33 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["Database"];
+                object value = this.map["Database"];
                 return value is string ? (string)value : null;
             }
             set
             {
-                map["Database"] = value;
+                this.map["Database"] = value;
             }
         }
 
         internal int MigrateFiscalYearStart()
         {
-            object value = MigrateSetting("FiscalYearStart");
+            object value = this.MigrateSetting("FiscalYearStart");
             return value is int i ? i : 0;
         }
 
         internal bool MigrateRentalManagement()
         {
-            object value = MigrateSetting("RentalManagement");
+            object value = this.MigrateSetting("RentalManagement");
             return value is bool i ? i : false;
         }
 
         private object MigrateSetting(string name)
         {
-            if (map.ContainsKey(name))
+            if (this.map.ContainsKey(name))
             {
-                object value = map[name];
-                map.Remove(name);
+                object value = this.map[name];
+                this.map.Remove(name);
                 return value;
             }
             return null;
@@ -199,7 +199,7 @@ namespace Walkabout.Configuration
             set
             {
                 // Migrate old setting to new separate fields.
-                ParseConnectionString(value);
+                this.ParseConnectionString(value);
             }
         }
 
@@ -219,16 +219,16 @@ namespace Walkabout.Configuration
                     string value = s.Substring(i + 1);
                     if (string.Compare(name, "Data Source", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        Server = value;
+                        this.Server = value;
                     }
                     else if (string.Compare(name, "Initial Catalog", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        Database = value;
+                        this.Database = value;
                     }
                     else if (string.Compare(name, "DataSource", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         // CE doesn't have separate Server string, the DataSource is the path to the database.
-                        Database = value;
+                        this.Database = value;
                     }
                     else if (string.Compare(name, "User Id", StringComparison.OrdinalIgnoreCase) == 0)
                     {
@@ -242,12 +242,12 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["Server"];
+                object value = this.map["Server"];
                 return value is string ? (string)value : null;
             }
             set
             {
-                map["Server"] = value;
+                this.map["Server"] = value;
             }
         }
 
@@ -255,13 +255,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["BackupPath"];
+                object value = this.map["BackupPath"];
                 return value is string ? (string)value : null;
             }
             set
             {
-                map["BackupPath"] = value;
-                OnPropertyChanged("BackupPath");
+                this.map["BackupPath"] = value;
+                this.OnPropertyChanged("BackupPath");
             }
         }
 
@@ -269,13 +269,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["UserId"];
+                object value = this.map["UserId"];
                 return value is string ? (string)value : null;
             }
             set
             {
-                map["UserId"] = value;
-                OnPropertyChanged("UserId");
+                this.map["UserId"] = value;
+                this.OnPropertyChanged("UserId");
             }
         }
 
@@ -283,13 +283,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["DisplayClosedAccounts"];
+                object value = this.map["DisplayClosedAccounts"];
                 return value is bool ? (bool)value : false;
             }
             set
             {
-                map["DisplayClosedAccounts"] = value;
-                OnPropertyChanged("DisplayClosedAccounts");
+                this.map["DisplayClosedAccounts"] = value;
+                this.OnPropertyChanged("DisplayClosedAccounts");
             }
         }
 
@@ -297,13 +297,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["AcceptReconciled"];
+                object value = this.map["AcceptReconciled"];
                 return value is bool ? (bool)value : false;
             }
             set
             {
-                map["AcceptReconciled"] = value;
-                OnPropertyChanged("AcceptReconciled");
+                this.map["AcceptReconciled"] = value;
+                this.OnPropertyChanged("AcceptReconciled");
             }
         }
 
@@ -311,13 +311,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["PlaySounds"];
+                object value = this.map["PlaySounds"];
                 return value is bool ? (bool)value : false;
             }
             set
             {
-                map["PlaySounds"] = value;
-                OnPropertyChanged("PlaySounds");
+                this.map["PlaySounds"] = value;
+                this.OnPropertyChanged("PlaySounds");
             }
         }
 
@@ -325,13 +325,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["TransferSearchDays"];
+                object value = this.map["TransferSearchDays"];
                 return value is int ? (int)value : 5;
             }
             set
             {
-                map["TransferSearchDays"] = value;
-                OnPropertyChanged("TransferSearchDays");
+                this.map["TransferSearchDays"] = value;
+                this.OnPropertyChanged("TransferSearchDays");
             }
         }
 
@@ -339,13 +339,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["StockServiceSettings"];
+                object value = this.map["StockServiceSettings"];
                 return value is List<StockServiceSettings> ? (List<StockServiceSettings>)value : null;
             }
             set
             {
-                map["StockServiceSettings"] = value;
-                OnPropertyChanged("StockServiceSettings");
+                this.map["StockServiceSettings"] = value;
+                this.OnPropertyChanged("StockServiceSettings");
             }
         }
 
@@ -353,13 +353,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["Query"];
+                object value = this.map["Query"];
                 return value is QueryRow[]? (QueryRow[])value : null;
             }
             set
             {
-                map["Query"] = value;
-                OnPropertyChanged("Query");
+                this.map["Query"] = value;
+                this.OnPropertyChanged("Query");
             }
         }
 
@@ -367,13 +367,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["GraphState"];
+                object value = this.map["GraphState"];
                 return value is GraphState ? (GraphState)value : null;
             }
             set
             {
-                map["GraphState"] = value;
-                OnPropertyChanged("GraphState");
+                this.map["GraphState"] = value;
+                this.OnPropertyChanged("GraphState");
             }
         }
 
@@ -381,33 +381,33 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["StartDate"];
+                object value = this.map["StartDate"];
                 return value is DateTime ? (DateTime)value : DateTime.MinValue;
             }
-            set { map["StartDate"] = value; }
+            set { this.map["StartDate"] = value; }
         }
 
         public DateTime EndDate
         {
             get
             {
-                object value = map["EndDate"];
+                object value = this.map["EndDate"];
                 return value is DateTime ? (DateTime)value : DateTime.MinValue;
             }
-            set { map["EndDate"] = value; }
+            set { this.map["EndDate"] = value; }
         }
 
         public DateTime LastStockRequest
         {
             get
             {
-                object value = map["LastStockRequest"];
+                object value = this.map["LastStockRequest"];
                 return value is DateTime ? (DateTime)value : DateTime.MinValue;
             }
             set
             {
-                map["LastStockRequest"] = value;
-                OnPropertyChanged("LastStockRequest");
+                this.map["LastStockRequest"] = value;
+                this.OnPropertyChanged("LastStockRequest");
             }
         }
 
@@ -416,15 +416,15 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["Theme"];
+                object value = this.map["Theme"];
                 return value is string ? (string)value : null;
             }
             set
             {
                 if (this.Theme != value)
                 {
-                    map["Theme"] = value;
-                    OnPropertyChanged("Theme");
+                    this.map["Theme"] = value;
+                    this.OnPropertyChanged("Theme");
                 }
             }
         }
@@ -433,12 +433,12 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["ExeVersion"];
+                object value = this.map["ExeVersion"];
                 return value is string ? (string)value : null;
             }
             set
             {
-                map["ExeVersion"] = value;
+                this.map["ExeVersion"] = value;
             }
         }
 
@@ -446,12 +446,12 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["LastExeTimestamp"];
+                object value = this.map["LastExeTimestamp"];
                 return value is DateTime ? (DateTime)value : DateTime.MinValue;
             }
             set
             {
-                map["LastExeTimestamp"] = value;
+                this.map["LastExeTimestamp"] = value;
             }
         }
 
@@ -462,13 +462,13 @@ namespace Walkabout.Configuration
         {
             get
             {
-                object value = map["DuplicateRange"];
+                object value = this.map["DuplicateRange"];
                 return value is TimeSpan ? (TimeSpan)value : TimeSpan.FromDays(60);
             }
             set
             {
-                map["DuplicateRange"] = value;
-                OnPropertyChanged("DuplicateRange");
+                this.map["DuplicateRange"] = value;
+                this.OnPropertyChanged("DuplicateRange");
             }
         }
 
@@ -476,8 +476,8 @@ namespace Walkabout.Configuration
 
         public Settings(bool save)
         {
-            StartDate = DateTime.Now;
-            EndDate = DateTime.Now;
+            this.StartDate = DateTime.Now;
+            this.EndDate = DateTime.Now;
             this.persist = save;
         }
 
@@ -486,8 +486,8 @@ namespace Walkabout.Configuration
 
         public string ConfigFile
         {
-            get { return _fileName; }
-            set { _fileName = value; }
+            get { return this._fileName; }
+            set { this._fileName = value; }
         }
 
         XmlDocument doc = new XmlDocument();
@@ -501,15 +501,15 @@ namespace Walkabout.Configuration
 
         public object this[string key]
         {
-            get { return map[key]; }
-            set { map[key] = value; }
+            get { return this.map[key]; }
+            set { this.map[key] = value; }
         }
 
         public void Load(string path)
         {
             using (XmlTextReader r = new XmlTextReader(path))
             {
-                ReadXml(r);
+                this.ReadXml(r);
             }
         }
 
@@ -532,7 +532,7 @@ namespace Walkabout.Configuration
             using (XmlTextWriter w = new XmlTextWriter(path, Encoding.UTF8))
             {
                 w.Formatting = Formatting.Indented;
-                WriteXml(w);
+                this.WriteXml(w);
             }
         }
 
@@ -581,7 +581,7 @@ namespace Walkabout.Configuration
                         }
                         else if (t == typeof(XmlElement))
                         {
-                            pi.SetValue(this, (XmlElement)doc.ReadNode(r), null);
+                            pi.SetValue(this, (XmlElement)this.doc.ReadNode(r), null);
                         }
                         else if (t == typeof(GraphState))
                         {
@@ -621,7 +621,7 @@ namespace Walkabout.Configuration
                     else if (r.Name == "ViewState")
                     {
                         // backwards compat for old TransactionViewState slot.
-                        this.SetViewStateNode(typeof(TransactionsView), (XmlElement)doc.ReadNode(r));
+                        this.SetViewStateNode(typeof(TransactionsView), (XmlElement)this.doc.ReadNode(r));
                     }
                     else if (r.Name == "Password")
                     {
@@ -636,12 +636,12 @@ namespace Walkabout.Configuration
                             if (t != null && typeof(IView).IsAssignableFrom(t))
                             {
                                 // special case...we don't know how to deserialize these so we leave it for later.
-                                this.SetViewStateNode(t, (XmlElement)doc.ReadNode(r));
+                                this.SetViewStateNode(t, (XmlElement)this.doc.ReadNode(r));
                             }
                         }
                         else
                         {
-                            map[r.Name] = r.ReadString();
+                            this.map[r.Name] = r.ReadString();
                         }
                     }
                 }
@@ -686,11 +686,11 @@ namespace Walkabout.Configuration
         {
             w.WriteStartDocument();
             w.WriteStartElement("Settings");
-            ArrayList keys = new ArrayList(map.Keys);
+            ArrayList keys = new ArrayList(this.map.Keys);
             keys.Sort();
             foreach (string key in keys)
             {
-                object value = map[key];
+                object value = this.map[key];
                 if (value == null) continue;
 
                 PropertyInfo pi = this.GetType().GetProperty(key);
@@ -960,25 +960,25 @@ namespace Walkabout.Configuration
         internal ViewState GetViewState(Type viewType)
         {
             ViewState state = null;
-            viewStates.TryGetValue(viewType, out state);
+            this.viewStates.TryGetValue(viewType, out state);
             return state;
         }
 
         internal XmlElement GetViewStateNode(Type viewType)
         {
             XmlElement stateNode = null;
-            viewStateNodes.TryGetValue(viewType, out stateNode);
+            this.viewStateNodes.TryGetValue(viewType, out stateNode);
             return stateNode;
         }
 
         internal void SetViewState(Type viewType, ViewState newState)
         {
-            viewStates[viewType] = newState;
+            this.viewStates[viewType] = newState;
         }
 
         private void SetViewStateNode(Type viewType, XmlElement xmlElement)
         {
-            viewStateNodes[viewType] = xmlElement;
+            this.viewStateNodes[viewType] = xmlElement;
         }
 
         private void OnPropertyChanged(string name)
@@ -1010,15 +1010,15 @@ namespace Walkabout.Configuration
 
         public void WriteXml(XmlWriter w)
         {
-            w.WriteElementString("Range", Range.ToString());
-            w.WriteElementString("Years", Years.ToString());
-            w.WriteElementString("Start", Start.ToShortDateString());
-            w.WriteElementString("End", End.ToShortDateString());
-            w.WriteElementString("YearToDate", YearToDate.ToString());
-            w.WriteElementString("ShowAll", ShowAll.ToString());
-            w.WriteElementString("Series", Series.ToString());
-            w.WriteElementString("ShowBalance", ShowBalance.ToString());
-            w.WriteElementString("ShowBudget", ShowBudget.ToString());
+            w.WriteElementString("Range", this.Range.ToString());
+            w.WriteElementString("Years", this.Years.ToString());
+            w.WriteElementString("Start", this.Start.ToShortDateString());
+            w.WriteElementString("End", this.End.ToShortDateString());
+            w.WriteElementString("YearToDate", this.YearToDate.ToString());
+            w.WriteElementString("ShowAll", this.ShowAll.ToString());
+            w.WriteElementString("Series", this.Series.ToString());
+            w.WriteElementString("ShowBalance", this.ShowBalance.ToString());
+            w.WriteElementString("ShowBudget", this.ShowBudget.ToString());
         }
 
         public void ReadXml(XmlReader r)

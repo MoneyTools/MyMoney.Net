@@ -19,14 +19,14 @@ namespace Walkabout.Data
         [DataMember]
         public LoanPayments LoanPayments
         {
-            get { return loanPayments; }
-            set { loanPayments = value; loanPayments.Parent = this; }
+            get { return this.loanPayments; }
+            set { this.loanPayments = value; this.loanPayments.Parent = this; }
         }
 
         public Loan GetOrCreateLoanAccount(Account a)
         {
             // This will have the side effect of updating the Account.Balance to the latest value
-            Loan loan = (from l in loans where l.Account == a select l).FirstOrDefault();
+            Loan loan = (from l in this.loans where l.Account == a select l).FirstOrDefault();
             if (loan == null)
             {
                 a.BatchMode = true;
@@ -35,7 +35,7 @@ namespace Walkabout.Data
                 // alone seems wrong since what if you have multiple loans using the same categories?
                 loan = new Loan(this, a);
                 a.BatchMode = false;
-                loans.Add(loan);
+                this.loans.Add(loan);
             }
             return loan;
         }
@@ -58,13 +58,13 @@ namespace Walkabout.Data
         public Loan(MyMoney money, Account a)
         {
             this.Account = a; // the loan account
-            this.Payments = GetLoanPaymentsAggregation(money);
+            this.Payments = this.GetLoanPaymentsAggregation(money);
             var first = this.Payments.FirstOrDefault();
             if (first != null && first.Principal > 0)
             {
-                IsLiability = true;
+                this.IsLiability = true;
             }
-            Rebalance();
+            this.Rebalance();
         }
 
         /// <summary>
@@ -335,9 +335,9 @@ namespace Walkabout.Data
         {
             if (this.collection.Count != 0)
             {
-                nextItemToAdd = 0;
+                this.nextItemToAdd = 0;
 
-                lock (collection)
+                lock (this.collection)
                 {
                     this.collection.Clear();
                 }
@@ -374,12 +374,12 @@ namespace Walkabout.Data
         // todo: there should be no references left at this point...
         public bool Remove(LoanPayment x)
         {
-            return RemoveLoan(x);
+            return this.RemoveLoan(x);
         }
 
         internal bool RemoveLoan(LoanPayment x, bool forceRemoveAfterSave = false)
         {
-            lock (collection)
+            lock (this.collection)
             {
                 if (x.IsInserted || forceRemoveAfterSave)
                 {
@@ -397,9 +397,9 @@ namespace Walkabout.Data
         public List<LoanPayment> GetList()
         {
             List<LoanPayment> list = new List<LoanPayment>();
-            lock (collection)
+            lock (this.collection)
             {
-                foreach (LoanPayment x in collection.Values)
+                foreach (LoanPayment x in this.collection.Values)
                 {
                     if (!x.IsDeleted)
                     {
@@ -414,12 +414,12 @@ namespace Walkabout.Data
 
         public void Add(LoanPayment item)
         {
-            AddLoan(item);
+            this.AddLoan(item);
         }
 
         public bool Contains(LoanPayment item)
         {
-            return collection.Contains(item.Id);
+            return this.collection.Contains(item.Id);
         }
 
         public void CopyTo(LoanPayment[] array, int arrayIndex)
@@ -429,12 +429,12 @@ namespace Walkabout.Data
 
         public override void Add(object child)
         {
-            Add((LoanPayment)child);
+            this.Add((LoanPayment)child);
         }
 
         public override void RemoveChild(PersistentObject pe, bool forceRemoveAfterSave = false)
         {
-            RemoveLoan((LoanPayment)pe, forceRemoveAfterSave);
+            this.RemoveLoan((LoanPayment)pe, forceRemoveAfterSave);
         }
 
         public bool IsReadOnly
@@ -452,7 +452,7 @@ namespace Walkabout.Data
 
         protected override IEnumerator<PersistentObject> InternalGetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
         #endregion
     }
@@ -472,7 +472,7 @@ namespace Walkabout.Data
 
         public decimal Payment
         {
-            get { return Principal + Interest; }
+            get { return this.Principal + this.Interest; }
         }
 
         public LoanPayment()
@@ -495,7 +495,7 @@ namespace Walkabout.Data
                 if (this.id != value)
                 {
                     this.id = value;
-                    OnChanged("Id");
+                    this.OnChanged("Id");
                 }
             }
         }
@@ -510,7 +510,7 @@ namespace Walkabout.Data
                 if (this.accountId != value)
                 {
                     this.accountId = value;
-                    OnChanged("AccountId");
+                    this.OnChanged("AccountId");
                 }
             }
         }
@@ -525,7 +525,7 @@ namespace Walkabout.Data
                 if (this.date != value)
                 {
                     this.date = value;
-                    OnChanged("Date");
+                    this.OnChanged("Date");
                 }
             }
         }
@@ -540,7 +540,7 @@ namespace Walkabout.Data
                 if (this.principal != value)
                 {
                     this.principal = value;
-                    OnChanged("Principal");
+                    this.OnChanged("Principal");
                 }
             }
         }
@@ -555,7 +555,7 @@ namespace Walkabout.Data
                 if (this.interest != value)
                 {
                     this.interest = value;
-                    OnChanged("Interest");
+                    this.OnChanged("Interest");
                 }
             }
         }
@@ -566,7 +566,7 @@ namespace Walkabout.Data
         public string Memo
         {
             get { return this.memo; }
-            set { if (this.memo != value) { this.memo = Truncate(value, 255); OnChanged("Memo"); } }
+            set { if (this.memo != value) { this.memo = Truncate(value, 255); this.OnChanged("Memo"); } }
         }
 
         #endregion
@@ -600,16 +600,16 @@ namespace Walkabout.Data
         Account accountId;
         public Account Account
         {
-            get { return accountId; }
+            get { return this.accountId; }
             set
             {
-                accountId = value;
-                if (LoanPayementManualEntry != null)
+                this.accountId = value;
+                if (this.LoanPayementManualEntry != null)
                 {
-                    LoanPayementManualEntry.AccountId = value.Id;
+                    this.LoanPayementManualEntry.AccountId = value.Id;
                 }
 
-                NotifyPropertyChanged("AccountId");
+                this.NotifyPropertyChanged("AccountId");
             }
         }
 
@@ -624,26 +624,26 @@ namespace Walkabout.Data
         DateTime date;
         public DateTime Date
         {
-            get { return date; }
+            get { return this.date; }
             set
             {
-                date = value;
-                if (LoanPayementManualEntry != null)
+                this.date = value;
+                if (this.LoanPayementManualEntry != null)
                 {
-                    LoanPayementManualEntry.Date = value;
+                    this.LoanPayementManualEntry.Date = value;
                 }
-                NotifyPropertyChanged("Date");
+                this.NotifyPropertyChanged("Date");
             }
         }
 
         public int Year
         {
-            get { return date.Year; }
+            get { return this.date.Year; }
         }
 
         public string YearMonth
         {
-            get { return string.Format("{0}/{1}", date.Year, date.Month); }
+            get { return string.Format("{0}/{1}", this.date.Year, this.date.Month); }
         }
 
 
@@ -653,22 +653,22 @@ namespace Walkabout.Data
         decimal principal;
         public decimal Principal
         {
-            get { return principal; }
+            get { return this.principal; }
             set
             {
-                if (principal != value)
+                if (this.principal != value)
                 {
-                    principal = Math.Round(value, 2, MidpointRounding.AwayFromZero);
-                    if (LoanPayementManualEntry != null)
+                    this.principal = Math.Round(value, 2, MidpointRounding.AwayFromZero);
+                    if (this.LoanPayementManualEntry != null)
                     {
-                        LoanPayementManualEntry.Principal = principal;
+                        this.LoanPayementManualEntry.Principal = this.principal;
                     }
-                    if (SplitForPrincipal != null)
+                    if (this.SplitForPrincipal != null)
                     {
-                        SplitForPrincipal.Amount = principal;
+                        this.SplitForPrincipal.Amount = this.principal;
                     }
 
-                    NotifyPropertyChanged("Principal");
+                    this.NotifyPropertyChanged("Principal");
                 }
             }
         }
@@ -676,22 +676,22 @@ namespace Walkabout.Data
         decimal interest;
         public decimal Interest
         {
-            get { return interest; }
+            get { return this.interest; }
             set
             {
-                if (interest != value)
+                if (this.interest != value)
                 {
-                    interest = Math.Round(value, 2, MidpointRounding.AwayFromZero);
-                    if (LoanPayementManualEntry != null)
+                    this.interest = Math.Round(value, 2, MidpointRounding.AwayFromZero);
+                    if (this.LoanPayementManualEntry != null)
                     {
-                        LoanPayementManualEntry.Interest = interest;
+                        this.LoanPayementManualEntry.Interest = this.interest;
                     }
-                    if (SplitForInterest != null)
+                    if (this.SplitForInterest != null)
                     {
-                        SplitForInterest.Amount = interest;
+                        this.SplitForInterest.Amount = this.interest;
                     }
 
-                    NotifyPropertyChanged("Interest");
+                    this.NotifyPropertyChanged("Interest");
                 }
             }
         }
@@ -705,13 +705,13 @@ namespace Walkabout.Data
         {
             get
             {
-                return payment;
+                return this.payment;
             }
             set
             {
-                payment = Math.Round(value, 2, MidpointRounding.AwayFromZero);
+                this.payment = Math.Round(value, 2, MidpointRounding.AwayFromZero);
 
-                NotifyPropertyChanged("Payment");
+                this.NotifyPropertyChanged("Payment");
             }
 
         }
@@ -719,13 +719,13 @@ namespace Walkabout.Data
         decimal percentage;
         public decimal Percentage
         {
-            get { return percentage; }
+            get { return this.percentage; }
             set
             {
-                if (percentage != value)
+                if (this.percentage != value)
                 {
-                    percentage = Math.Round(value, 4, MidpointRounding.AwayFromZero);
-                    NotifyPropertyChanged("Percentage");
+                    this.percentage = Math.Round(value, 4, MidpointRounding.AwayFromZero);
+                    this.NotifyPropertyChanged("Percentage");
                 }
             }
         }
@@ -735,18 +735,18 @@ namespace Walkabout.Data
             get
             {
                 // Only allow editing of Payment field if this was a Manual Entry
-                return LoanPayementManualEntry == null;
+                return this.LoanPayementManualEntry == null;
             }
         }
 
         decimal balance;
         public decimal Balance
         {
-            get { return balance; }
+            get { return this.balance; }
             set
             {
-                balance = Math.Round(value, 2, MidpointRounding.AwayFromZero);
-                NotifyPropertyChanged("Balance");
+                this.balance = Math.Round(value, 2, MidpointRounding.AwayFromZero);
+                this.NotifyPropertyChanged("Balance");
             }
         }
 
@@ -757,12 +757,12 @@ namespace Walkabout.Data
         {
             get
             {
-                if (Transaction == null)
+                if (this.Transaction == null)
                 {
                     return this.LoanPayementManualEntry.Memo;
                 }
 
-                return Account.Name + ">" + Transaction.CategoryFullName;
+                return this.Account.Name + ">" + this.Transaction.CategoryFullName;
             }
 
             set
@@ -770,7 +770,7 @@ namespace Walkabout.Data
                 if (this.LoanPayementManualEntry != null)
                 {
                     this.LoanPayementManualEntry.Memo = value;
-                    NotifyPropertyChanged("Source");
+                    this.NotifyPropertyChanged("Source");
                 }
             }
         }

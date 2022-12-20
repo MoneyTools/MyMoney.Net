@@ -13,7 +13,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
         public PerformanceEventTraceWatcher(EventTraceSession session)
             : base(typeof(PerformanceBlock).GUID, session)
         {
-            LoadManifest("Microsoft.VisualStudio.Diagnostics.PerformanceProvider.PerformanceProviderManifest.xml");
+            this.LoadManifest("Microsoft.VisualStudio.Diagnostics.PerformanceProvider.PerformanceProviderManifest.xml");
         }
 
         protected override EventArrivedEventArgs CreateEventArgs()

@@ -44,7 +44,7 @@ namespace Walkabout.Taxes
         /// <summary>
         /// The tax form this category is associated with.
         /// </summary>
-        public string FormName { get { return (Form != null) ? Form.Name : ""; } }
+        public string FormName { get { return (this.Form != null) ? this.Form.Name : ""; } }
 
         /// <summary>
         /// The tax form this category is associated with.
@@ -210,7 +210,7 @@ namespace Walkabout.Taxes
 
         public TaxCategoryCollection()
         {
-            Load();
+            this.Load();
         }
 
         static Dictionary<string, TaxForm> forms = null;
@@ -297,7 +297,7 @@ namespace Walkabout.Taxes
             // now outside of this cache, we need to load the cached values into our collection.
             foreach (var tc in byRef.Values)
             {
-                Add(tc);
+                this.Add(tc);
             }
         }
 

@@ -19,23 +19,23 @@ namespace Walkabout.Charts
 
         public IList<ChartDataSeries> Series
         {
-            get { return allSeries; }
+            get { return this.allSeries; }
         }
 
         public ChartDataSeries AddSeries(ChartDataSeries s)
         {
-            return InsertSeries(allSeries.Count, s);
+            return this.InsertSeries(this.allSeries.Count, s);
         }
 
         public ChartDataSeries InsertSeries(int i, ChartDataSeries s)
         {
-            if (i >= allSeries.Count)
+            if (i >= this.allSeries.Count)
             {
-                allSeries.Add(s);
+                this.allSeries.Add(s);
             }
             else
             {
-                allSeries.Insert(i, s);
+                this.allSeries.Insert(i, s);
             }
             return s;
         }
@@ -85,13 +85,13 @@ namespace Walkabout.Charts
     {
         public ChartDataSeries()
         {
-            Values = new List<ChartDataValue>();
+            this.Values = new List<ChartDataValue>();
         }
 
         public ChartDataSeries(string name)
         {
             this.Name = name;
-            Values = new List<ChartDataValue>();
+            this.Values = new List<ChartDataValue>();
         }
 
         public string Name { get; set; }
@@ -173,12 +173,12 @@ namespace Walkabout.Charts
             this.color = color;
         }
 
-        public string Name { get { return name; } set { this.name = value; } }
+        public string Name { get { return this.name; } set { this.name = value; } }
 
-        public int Color { get { return color; } set { this.color = value; } }
+        public int Color { get { return this.color; } set { this.color = value; } }
 
 
-        public object WpfColor { get { return wpfcolor; } set { this.wpfcolor = value; } }
+        public object WpfColor { get { return this.wpfcolor; } set { this.wpfcolor = value; } }
     }
 
 }

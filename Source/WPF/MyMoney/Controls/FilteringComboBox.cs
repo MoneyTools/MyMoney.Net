@@ -16,16 +16,16 @@ namespace Walkabout.Controls
 
         protected override void OnItemsSourceChanged(System.Collections.IEnumerable oldValue, System.Collections.IEnumerable newValue)
         {
-            Filter = null;
-            Items.Filter = null;
+            this.Filter = null;
+            this.Items.Filter = null;
             this.view = newValue as ListCollectionView;
             base.OnItemsSourceChanged(oldValue, newValue);
         }
 
         public Predicate<object> FilterPredicate
         {
-            get { return view.Filter; }
-            set { view.Filter = value; }
+            get { return this.view.Filter; }
+            set { this.view.Filter = value; }
         }
 
         public override void OnApplyTemplate()
@@ -34,8 +34,8 @@ namespace Walkabout.Controls
             TextBox edit = this.Template.FindName("PART_EditableTextBox", this) as TextBox;
             if (edit != null)
             {
-                edit.KeyUp -= new System.Windows.Input.KeyEventHandler(OnEditKeyUp);
-                edit.KeyUp += new System.Windows.Input.KeyEventHandler(OnEditKeyUp);
+                edit.KeyUp -= new System.Windows.Input.KeyEventHandler(this.OnEditKeyUp);
+                edit.KeyUp += new System.Windows.Input.KeyEventHandler(this.OnEditKeyUp);
             }
         }
 
@@ -45,7 +45,7 @@ namespace Walkabout.Controls
             string filter = box.Text;
             if (string.IsNullOrEmpty(filter))
             {
-                Items.Filter = null;
+                this.Items.Filter = null;
             }
             else if (box.SelectionLength < filter.Length)
             {
@@ -53,7 +53,7 @@ namespace Walkabout.Controls
                 {
                     filter = filter.Substring(0, box.SelectionStart);
                 }
-                SetFilter(filter);
+                this.SetFilter(filter);
             }
         }
 
@@ -64,13 +64,13 @@ namespace Walkabout.Controls
 
         void SetFilter(string text)
         {
-            Filter = text;
+            this.Filter = text;
             var e = new RoutedEventArgs(FilterChangedEvent);
             if (FilterChanged != null)
             {
                 FilterChanged(this, e);
             }
-            RaiseEvent(e);
+            this.RaiseEvent(e);
         }
 
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
