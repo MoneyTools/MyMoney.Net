@@ -21,7 +21,7 @@ namespace Walkabout.Migrate
         {
             SaveFileDialog sd = new SaveFileDialog();
             string filter = Properties.Resources.CsvFileFilter;
-            if (SupportXml)
+            if (this.SupportXml)
             {
                 filter += "|" + Properties.Resources.XmlFileFilter;
             }
@@ -29,7 +29,7 @@ namespace Walkabout.Migrate
 
             if (sd.ShowDialog(App.Current.MainWindow) == true)
             {
-                Export(sd.FileName, data);
+                this.Export(sd.FileName, data);
             }
         }
 
@@ -45,7 +45,7 @@ namespace Walkabout.Migrate
                     using (XmlWriter writer = XmlWriter.Create(fileName))
                     {
                         writer.WriteStartElement("root");
-                        ExportToXml(writer, data);
+                        this.ExportToXml(writer, data);
                         writer.WriteEndElement();
                     }
                     InternetExplorer.EditTransform(IntPtr.Zero, fileName);
@@ -54,7 +54,7 @@ namespace Walkabout.Migrate
                 {
                     using (StreamWriter sw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8))
                     {
-                        ExportToCsv(sw, data);
+                        this.ExportToCsv(sw, data);
                     }
                     InternetExplorer.OpenUrl(IntPtr.Zero, fileName);
                 }
@@ -78,7 +78,7 @@ namespace Walkabout.Migrate
                 using (XmlWriter writer = XmlWriter.Create(sw, settings))
                 {
                     writer.WriteStartElement("root");
-                    ExportToXml(writer, data);
+                    this.ExportToXml(writer, data);
                     writer.WriteEndElement();
                 }
                 return sw.ToString();
@@ -108,18 +108,18 @@ namespace Walkabout.Migrate
                 }
                 if (t != null)
                 {
-                    ExportAccount(writer, t.Account);
+                    this.ExportAccount(writer, t.Account);
                     if (t.Transfer != null)
                     {
-                        ExportAccount(writer, t.Transfer.Transaction.Account);
+                        this.ExportAccount(writer, t.Transfer.Transaction.Account);
                     }
                 }
                 else if (s != null)
                 {
-                    ExportAccount(writer, s.Transaction.Account);
+                    this.ExportAccount(writer, s.Transaction.Account);
                     if (s.Transfer != null)
                     {
-                        ExportAccount(writer, s.Transfer.Transaction.Account);
+                        this.ExportAccount(writer, s.Transfer.Transaction.Account);
                     }
                 }
             }
@@ -158,7 +158,7 @@ namespace Walkabout.Migrate
             if (!this.accounts.Contains(account))
             {
                 AccountSerializer.WriteObject(writer, account);
-                accounts.Add(account);
+                this.accounts.Add(account);
             }
         }
 
@@ -291,7 +291,7 @@ namespace Walkabout.Migrate
                 }
             }
 
-            sg.Save(fileName, styleForGraph_Accounts);
+            sg.Save(fileName, this.styleForGraph_Accounts);
 
         }
 

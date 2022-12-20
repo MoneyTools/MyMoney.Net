@@ -21,7 +21,7 @@ namespace Walkabout.Controls
 
         public CalculatorPopup()
         {
-            this.Child = calculator = new CalculatorControl();
+            this.Child = this.calculator = new CalculatorControl();
         }
 
         static CalculatorPopup sharedPopup;
@@ -72,21 +72,21 @@ namespace Walkabout.Controls
 
         void OnKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
         {
-            if (e.OldFocus == attached)
+            if (e.OldFocus == this.attached)
             {
-                Attach(null);
+                this.Attach(null);
             }
             TextBox box = e.NewFocus as TextBox;
             if (box != null)
             {
                 if (GetCalculatorEnabled(box))
                 {
-                    attached = box;
-                    Attach(box);
+                    this.attached = box;
+                    this.Attach(box);
                 }
                 else
                 {
-                    Attach(null);
+                    this.Attach(null);
                 }
             }
         }
@@ -94,16 +94,16 @@ namespace Walkabout.Controls
         void Attach(TextBox box)
         {
             this.IsOpen = false;
-            if (attached != null)
+            if (this.attached != null)
             {
-                attached.PreviewKeyDown -= new KeyEventHandler(TextBoxPreviewKeyDown);
+                this.attached.PreviewKeyDown -= new KeyEventHandler(this.TextBoxPreviewKeyDown);
             }
-            attached = box;
-            calculator.Attach(box);
+            this.attached = box;
+            this.calculator.Attach(box);
             this.PlacementTarget = box;
             if (box != null)
             {
-                box.PreviewKeyDown += new KeyEventHandler(TextBoxPreviewKeyDown);
+                box.PreviewKeyDown += new KeyEventHandler(this.TextBoxPreviewKeyDown);
             }
         }
 
@@ -128,7 +128,7 @@ namespace Walkabout.Controls
                     }
                     break;
                 case Key.Enter:
-                    IsOpen = false;
+                    this.IsOpen = false;
                     break;
                 case Key.OemPlus:
                     this.IsOpen = true;

@@ -152,7 +152,7 @@ namespace Walkabout.StockQuotes
     /// </summary>
     public class StockQuoteHistory
     {
-        public StockQuoteHistory() { History = new List<StockQuote>(); }
+        public StockQuoteHistory() { this.History = new List<StockQuote>(); }
 
         public string Symbol { get; set; }
         public string Name { get; set; }
@@ -168,9 +168,9 @@ namespace Walkabout.StockQuotes
         {
             get
             {
-                if (History != null && History.Count > 0)
+                if (this.History != null && this.History.Count > 0)
                 {
-                    return History.Last().Downloaded;
+                    return this.History.Last().Downloaded;
                 }
                 return DateTime.MinValue;
             }
@@ -179,9 +179,9 @@ namespace Walkabout.StockQuotes
         public List<StockQuote> GetSorted()
         {
             var result = new SortedDictionary<DateTime, StockQuote>();
-            if (History != null)
+            if (this.History != null)
             {
-                foreach (var quote in History)
+                foreach (var quote in this.History)
                 {
                     result[quote.Date] = quote;
                 }
@@ -191,9 +191,9 @@ namespace Walkabout.StockQuotes
 
         public bool AddQuote(StockQuote quote, bool replace = true)
         {
-            if (History == null)
+            if (this.History == null)
             {
-                History = new List<StockQuote>();
+                this.History = new List<StockQuote>();
             }
             quote.Date = quote.Date.Date;
             if (!string.IsNullOrEmpty(quote.Name))
@@ -201,10 +201,10 @@ namespace Walkabout.StockQuotes
                 this.Name = quote.Name;
                 quote.Name = null;
             }
-            int len = History.Count;
+            int len = this.History.Count;
             for (int i = 0; i < len; i++)
             {
-                var h = History[i];
+                var h = this.History[i];
                 if (h.Date == quote.Date)
                 {
                     // already have this one
@@ -222,11 +222,11 @@ namespace Walkabout.StockQuotes
                 if (h.Date > quote.Date)
                 {
                     // keep it sorted by date
-                    History.Insert(i, quote);
+                    this.History.Insert(i, quote);
                     return true;
                 }
             }
-            History.Add(quote);
+            this.History.Add(quote);
             return true;
         }
 
@@ -376,65 +376,65 @@ namespace Walkabout.StockQuotes
 
         public string Name
         {
-            get { return _name; }
+            get { return this._name; }
             set
             {
-                if (_name != value)
+                if (this._name != value)
                 {
-                    _name = value;
-                    OnPropertyChanged("Name");
+                    this._name = value;
+                    this.OnPropertyChanged("Name");
                 }
             }
         }
 
         public string ApiKey
         {
-            get { return _apiKey; }
+            get { return this._apiKey; }
             set
             {
-                if (_apiKey != value)
+                if (this._apiKey != value)
                 {
-                    _apiKey = value;
-                    OnPropertyChanged("ApiKey");
+                    this._apiKey = value;
+                    this.OnPropertyChanged("ApiKey");
                 }
             }
         }
 
         public int ApiRequestsPerMinuteLimit
         {
-            get { return _requestsPerMinute; }
+            get { return this._requestsPerMinute; }
             set
             {
-                if (_requestsPerMinute != value)
+                if (this._requestsPerMinute != value)
                 {
-                    _requestsPerMinute = value;
-                    OnPropertyChanged("ApiRequestsPerMinuteLimit");
+                    this._requestsPerMinute = value;
+                    this.OnPropertyChanged("ApiRequestsPerMinuteLimit");
                 }
             }
         }
 
         public int ApiRequestsPerDayLimit
         {
-            get { return _requestsPerDay; }
+            get { return this._requestsPerDay; }
             set
             {
-                if (_requestsPerDay != value)
+                if (this._requestsPerDay != value)
                 {
-                    _requestsPerDay = value;
-                    OnPropertyChanged("ApiRequestsPerDayLimit");
+                    this._requestsPerDay = value;
+                    this.OnPropertyChanged("ApiRequestsPerDayLimit");
                 }
             }
         }
 
         public int ApiRequestsPerMonthLimit
         {
-            get { return _requestsPerMonth; }
+            get { return this._requestsPerMonth; }
             set
             {
-                if (_requestsPerMonth != value)
+                if (this._requestsPerMonth != value)
                 {
-                    _requestsPerMonth = value;
-                    OnPropertyChanged("ApiRequestsPerMonthLimit");
+                    this._requestsPerMonth = value;
+                    this.OnPropertyChanged("ApiRequestsPerMonthLimit");
                 }
             }
         }

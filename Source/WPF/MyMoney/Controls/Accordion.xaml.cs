@@ -28,7 +28,7 @@ namespace Walkabout.Controls
 
         public Accordion()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
 
@@ -50,10 +50,10 @@ namespace Walkabout.Controls
 
         public object Selected
         {
-            get { return currentlyExpandedExpander.Content; }
+            get { return this.currentlyExpandedExpander.Content; }
             set
             {
-                foreach (object item in MainGrid.Children)
+                foreach (object item in this.MainGrid.Children)
                 {
                     Expander asExpander = item as Expander;
                     if (asExpander != null)
@@ -71,22 +71,22 @@ namespace Walkabout.Controls
 
         public void Add(string header, string id, object content)
         {
-            Add(header, id, content, false);
+            this.Add(header, id, content, false);
         }
 
         Dictionary<string, Expander> tabs = new Dictionary<string, Expander>();
 
         public bool ContainsTab(string name)
         {
-            return tabs.ContainsKey(name);
+            return this.tabs.ContainsKey(name);
         }
 
         public void RemoveTab(string name)
         {
-            if (tabs.ContainsKey(name))
+            if (this.tabs.ContainsKey(name))
             {
-                Expander expander = tabs[name];
-                tabs.Remove(name);
+                Expander expander = this.tabs[name];
+                this.tabs.Remove(name);
                 this.MainGrid.Children.Remove(expander);
             }
         }
@@ -98,7 +98,7 @@ namespace Walkabout.Controls
             // The new accordion section is build using an Expander
             //
             Expander expanderToAdd = new Expander();
-            tabs[header] = expanderToAdd;
+            this.tabs[header] = expanderToAdd;
 
 
             expanderToAdd.Name = id;
@@ -129,7 +129,7 @@ namespace Walkabout.Controls
             if (searchBox)
             {
                 QuickFilterControl qf = new QuickFilterControl();
-                qf.FilterValueChanged += new QuickFilterControl.QuickFilterValueChanged(OnFilterValueChanged);
+                qf.FilterValueChanged += new QuickFilterControl.QuickFilterValueChanged(this.OnFilterValueChanged);
                 qf.Name = nameIdOfQuickFilter;
                 qf.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
                 qf.VerticalAlignment = System.Windows.VerticalAlignment.Center;
@@ -168,9 +168,9 @@ namespace Walkabout.Controls
             //
             expanderToAdd.Content = content as UIElement;
 
-            expanderToAdd.Expanded += new RoutedEventHandler(OnExpanderExpanded);
-            expanderToAdd.Collapsed += new RoutedEventHandler(OnExpanderCollapsed);
-            expanderToAdd.SizeChanged += new SizeChangedEventHandler(OnExpanderToAdd_SizeChanged);
+            expanderToAdd.Expanded += new RoutedEventHandler(this.OnExpanderExpanded);
+            expanderToAdd.Collapsed += new RoutedEventHandler(this.OnExpanderCollapsed);
+            expanderToAdd.SizeChanged += new SizeChangedEventHandler(this.OnExpanderToAdd_SizeChanged);
 
 
             //-----------------------------------------------------------------
@@ -248,23 +248,23 @@ namespace Walkabout.Controls
         /// <param name="e"></param>
         void OnExpanderExpanded(object sender, RoutedEventArgs e)
         {
-            if (currentlyExpandedExpander != null)
+            if (this.currentlyExpandedExpander != null)
             {
-                Expander expanderLoosing = currentlyExpandedExpander as Expander;
+                Expander expanderLoosing = this.currentlyExpandedExpander as Expander;
                 expanderLoosing.IsExpanded = false;
-                SetRowHeight(currentlyExpandedExpander, GridUnitType.Auto);
+                this.SetRowHeight(this.currentlyExpandedExpander, GridUnitType.Auto);
             }
 
-            currentlyExpandedExpander = sender as Expander;
+            this.currentlyExpandedExpander = sender as Expander;
 
-            SetRowHeight(sender, GridUnitType.Star);
+            this.SetRowHeight(sender, GridUnitType.Star);
 
             if (Expanded != null)
             {
-                Expanded.Invoke(currentlyExpandedExpander.Content, e);
+                Expanded.Invoke(this.currentlyExpandedExpander.Content, e);
             }
 
-            QuickFilterControl qf = WpfHelper.FindDescendantElement(currentlyExpandedExpander, nameIdOfQuickFilter) as QuickFilterControl;
+            QuickFilterControl qf = WpfHelper.FindDescendantElement(this.currentlyExpandedExpander, nameIdOfQuickFilter) as QuickFilterControl;
 
             if (qf != null)
             {
@@ -280,9 +280,9 @@ namespace Walkabout.Controls
         /// <param name="e"></param>
         void OnExpanderCollapsed(object sender, RoutedEventArgs e)
         {
-            if (currentlyExpandedExpander != null)
+            if (this.currentlyExpandedExpander != null)
             {
-                QuickFilterControl qf = WpfHelper.FindDescendantElement(currentlyExpandedExpander, nameIdOfQuickFilter) as QuickFilterControl;
+                QuickFilterControl qf = WpfHelper.FindDescendantElement(this.currentlyExpandedExpander, nameIdOfQuickFilter) as QuickFilterControl;
 
                 if (qf != null)
                 {
@@ -290,9 +290,9 @@ namespace Walkabout.Controls
                 }
             }
 
-            currentlyExpandedExpander = null;
+            this.currentlyExpandedExpander = null;
 
-            SetRowHeight(sender, GridUnitType.Auto);
+            this.SetRowHeight(sender, GridUnitType.Auto);
 
 
         }
@@ -301,7 +301,7 @@ namespace Walkabout.Controls
         {
             if (FilterUpdated != null)
             {
-                FilterUpdated.Invoke(currentlyExpandedExpander.Content, filter);
+                FilterUpdated.Invoke(this.currentlyExpandedExpander.Content, filter);
             }
 
         }
@@ -310,27 +310,27 @@ namespace Walkabout.Controls
             if (expander != null)
             {
                 int row = Grid.GetRow(expander as UIElement);
-                MainGrid.RowDefinitions[row].Height = new GridLength(100, gu);
+                this.MainGrid.RowDefinitions[row].Height = new GridLength(100, gu);
             }
         }
 
         void RemoveRow(object expanderToRemove)
         {
             int row = Grid.GetRow(expanderToRemove as UIElement);
-            MainGrid.RowDefinitions[row].Height = new GridLength(0);
+            this.MainGrid.RowDefinitions[row].Height = new GridLength(0);
         }
 
         public void Remove(object content)
         {
-            foreach (object item in MainGrid.Children)
+            foreach (object item in this.MainGrid.Children)
             {
                 Expander asExpander = item as Expander;
                 if (asExpander != null)
                 {
                     if (asExpander.Content == content)
                     {
-                        RemoveRow(asExpander);
-                        MainGrid.Children.Remove(asExpander);
+                        this.RemoveRow(asExpander);
+                        this.MainGrid.Children.Remove(asExpander);
                         return;
                     }
                 }

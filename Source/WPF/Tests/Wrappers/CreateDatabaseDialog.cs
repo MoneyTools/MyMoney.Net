@@ -15,7 +15,7 @@ namespace Walkabout.Tests.Wrappers
 
         private CreateDatabaseDialogWrapper(AutomationElement e)
         {
-            window = e;
+            this.window = e;
         }
 
         public static CreateDatabaseDialogWrapper FindCreateDatabaseDialogWindow(int processId, int retries, bool throwIfNotFound)
@@ -41,15 +41,15 @@ namespace Walkabout.Tests.Wrappers
 
         internal void CreateSqliteDatabase(string databasePath)
         {
-            SetTextBox("TextBoxSqliteDatabaseFile", databasePath);
-            ClickButton("ButtonCreate");
+            this.SetTextBox("TextBoxSqliteDatabaseFile", databasePath);
+            this.ClickButton("ButtonCreate");
         }
 
 
         private void ClickOkIfExists()
         {
             // if database exists, click "yes"...
-            MainWindowWrapper main = MainWindowWrapper.FindMainWindow(window.Current.ProcessId);
+            MainWindowWrapper main = MainWindowWrapper.FindMainWindow(this.window.Current.ProcessId);
             bool found = true;
             do
             {
@@ -73,21 +73,21 @@ namespace Walkabout.Tests.Wrappers
 
         internal void CreateXmlDatabase(string databasePath)
         {
-            SelectTab("UseXmlTab");
-            SetTextBox("TextBoxXmlFile", databasePath);
-            ClickButton("ButtonCreate");
+            this.SelectTab("UseXmlTab");
+            this.SetTextBox("TextBoxXmlFile", databasePath);
+            this.ClickButton("ButtonCreate");
         }
 
         internal void CreateBinaryXmlDatabase(string databasePath)
         {
-            SelectTab("UseBinaryXmlTab");
-            SetTextBox("TextBoxBinaryXmlFile", databasePath);
-            ClickButton("ButtonCreate");
+            this.SelectTab("UseBinaryXmlTab");
+            this.SetTextBox("TextBoxBinaryXmlFile", databasePath);
+            this.ClickButton("ButtonCreate");
         }
 
         private void ClickButton(string name)
         {
-            AutomationElement tab = window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, name));
+            AutomationElement tab = this.window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, name));
             if (tab == null)
             {
                 throw new Exception("Button '" + name + "' not found");
@@ -98,7 +98,7 @@ namespace Walkabout.Tests.Wrappers
 
         private void SelectTab(string name)
         {
-            AutomationElement tab = window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, name));
+            AutomationElement tab = this.window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, name));
             if (tab == null)
             {
                 throw new Exception("Tab '" + name + "' not found");
@@ -109,7 +109,7 @@ namespace Walkabout.Tests.Wrappers
 
         private bool IsControlEnabled(string name)
         {
-            AutomationElement box = window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, name));
+            AutomationElement box = this.window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, name));
             if (box == null)
             {
                 throw new Exception("Control '" + name + "' not found");
@@ -119,7 +119,7 @@ namespace Walkabout.Tests.Wrappers
 
         private void SetTextBox(string name, string databasePath)
         {
-            AutomationElement box = window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, name));
+            AutomationElement box = this.window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, name));
             if (box == null)
             {
                 throw new Exception("TextBox '" + name + "' not found");

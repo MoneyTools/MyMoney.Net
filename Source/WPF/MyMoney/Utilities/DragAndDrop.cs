@@ -56,13 +56,13 @@ namespace Walkabout.Utilities
 
             //-----------------------------------------------------------------
             // Drag Drop gesture hooks applied to the users supplied Framework Control
-            this.mainControl.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(OnPreviewMouseLeftButtonDown);
-            this.mainControl.PreviewMouseMove += new MouseEventHandler(OnPreviewMouseMove);
-            this.mainControl.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(OnPreviewMouseLeftButtonUp);
-            this.mainControl.PreviewDragEnter += new DragEventHandler(OnPreviewDragEnter);
+            this.mainControl.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(this.OnPreviewMouseLeftButtonDown);
+            this.mainControl.PreviewMouseMove += new MouseEventHandler(this.OnPreviewMouseMove);
+            this.mainControl.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(this.OnPreviewMouseLeftButtonUp);
+            this.mainControl.PreviewDragEnter += new DragEventHandler(this.OnPreviewDragEnter);
 
-            this.mainControl.Drop += new DragEventHandler(OnDrop);
-            this.mainControl.PreviewKeyDown += MainControl_PreviewKeyDown;
+            this.mainControl.Drop += new DragEventHandler(this.OnDrop);
+            this.mainControl.PreviewKeyDown += this.MainControl_PreviewKeyDown;
         }
 
         private void MainControl_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -89,17 +89,17 @@ namespace Walkabout.Utilities
         {
             this.isDragging = false;
             this.isMouseDown = false;
-            DestroyDragDropWindow();
+            this.DestroyDragDropWindow();
         }
 
         internal void Disconnect()
         {
-            this.mainControl.PreviewMouseLeftButtonDown -= new MouseButtonEventHandler(OnPreviewMouseLeftButtonDown);
-            this.mainControl.PreviewMouseMove -= new MouseEventHandler(OnPreviewMouseMove);
-            this.mainControl.PreviewMouseLeftButtonUp -= new MouseButtonEventHandler(OnPreviewMouseLeftButtonUp);
-            this.mainControl.PreviewDragEnter -= new DragEventHandler(OnPreviewDragEnter);
-            this.mainControl.Drop -= new DragEventHandler(OnDrop);
-            this.mainControl.PreviewKeyDown -= MainControl_PreviewKeyDown;
+            this.mainControl.PreviewMouseLeftButtonDown -= new MouseButtonEventHandler(this.OnPreviewMouseLeftButtonDown);
+            this.mainControl.PreviewMouseMove -= new MouseEventHandler(this.OnPreviewMouseMove);
+            this.mainControl.PreviewMouseLeftButtonUp -= new MouseButtonEventHandler(this.OnPreviewMouseLeftButtonUp);
+            this.mainControl.PreviewDragEnter -= new DragEventHandler(this.OnPreviewDragEnter);
+            this.mainControl.Drop -= new DragEventHandler(this.OnDrop);
+            this.mainControl.PreviewKeyDown -= this.MainControl_PreviewKeyDown;
         }
 
         void OnPreviewMouseMove(object sender, MouseEventArgs e)
@@ -118,10 +118,10 @@ namespace Walkabout.Utilities
                 if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
                 {
                     // Find out if we have a acceptable object instance behind for the UIElement being dragged
-                    DragDropSource validObjectToDrag = calledBackForValidatingSource(dragSourceStartedFrom);
+                    DragDropSource validObjectToDrag = this.calledBackForValidatingSource(this.dragSourceStartedFrom);
                     if (validObjectToDrag != null)
                     {
-                        StartDrag(e, validObjectToDrag);
+                        this.StartDrag(e, validObjectToDrag);
                     }
                 }
             }
@@ -129,7 +129,7 @@ namespace Walkabout.Utilities
 
         void OnPreviewDragEnter(object sender, DragEventArgs e)
         {
-            if (UpdateEffects(e) == true)
+            if (this.UpdateEffects(e) == true)
             {
                 e.Handled = true;
             }
@@ -137,9 +137,9 @@ namespace Walkabout.Utilities
 
         void OnDrop(object sender, DragEventArgs e)
         {
-            if (this.isDragging && e.Data.GetDataPresent(formatName))
+            if (this.isDragging && e.Data.GetDataPresent(this.formatName))
             {
-                object dragSource = e.Data.GetData(formatName);
+                object dragSource = e.Data.GetData(this.formatName);
                 if (dragSource != null)
                 {
                     DragDropTarget dropTarget = this.calledBackForValidatingTarget(dragSource, e.OriginalSource, e.Effects);
@@ -148,15 +148,15 @@ namespace Walkabout.Utilities
                         if (dragSource != dropTarget.DataSource)
                         {
                             e.Handled = true;
-                            UpdateEffects(e);
-                            DestroyDragDropWindow();
+                            this.UpdateEffects(e);
+                            this.DestroyDragDropWindow();
                             this.calledBackFinalDropOperation(dragSource, dropTarget.DataSource, e.Effects);
                         }
                     }
                 }
             }
 
-            DragDropRemoveAnyAdorner();
+            this.DragDropRemoveAnyAdorner();
         }
 
         /// <summary>
@@ -169,12 +169,12 @@ namespace Walkabout.Utilities
             if (this.isDragging)
             {
                 e.UseDefaultCursors = true;
-                UpdateWindowLocation();
+                this.UpdateWindowLocation();
                 if (e.Effects == DragDropEffects.None)
                 {
-                    DragDropRemoveAnyAdorner();
+                    this.DragDropRemoveAnyAdorner();
                 }
-                UpdateInstructions(e.Effects);
+                this.UpdateInstructions(e.Effects);
             }
         }
 
@@ -182,7 +182,7 @@ namespace Walkabout.Utilities
         {
             if (this.isDragging)
             {
-                UpdateWindowLocation();
+                this.UpdateWindowLocation();
             }
         }
 
@@ -190,14 +190,14 @@ namespace Walkabout.Utilities
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "e")]
         private void StartDrag(MouseEventArgs e, DragDropSource objectBeenDragged)
         {
-            DestroyDragDropWindow();
+            this.DestroyDragDropWindow();
 
             this.isDragging = true;
 
-            GiveFeedbackEventHandler feedbackHandler = new GiveFeedbackEventHandler(OnDragSourceGiveFeedback); ;
+            GiveFeedbackEventHandler feedbackHandler = new GiveFeedbackEventHandler(this.OnDragSourceGiveFeedback); ;
             this.mainControl.GiveFeedback += feedbackHandler;
 
-            QueryContinueDragEventHandler queryContinueHandler = new QueryContinueDragEventHandler(OnDragSourceQueryContinueDrag);
+            QueryContinueDragEventHandler queryContinueHandler = new QueryContinueDragEventHandler(this.OnDragSourceQueryContinueDrag);
             this.mainControl.QueryContinueDrag += queryContinueHandler;
 
 
@@ -205,11 +205,11 @@ namespace Walkabout.Utilities
             {
                 if (objectBeenDragged.VisualForDraginSource != null)
                 {
-                    CreateDragDropWindow(objectBeenDragged.VisualForDraginSource);
+                    this.CreateDragDropWindow(objectBeenDragged.VisualForDraginSource);
                 }
 
                 // Initialize the drag & drop operation
-                DataObject dragData = new DataObject(formatName, objectBeenDragged.DataSource);
+                DataObject dragData = new DataObject(this.formatName, objectBeenDragged.DataSource);
                 DragDrop.DoDragDrop(this.mainControl, dragData, DragDropEffects.Move | DragDropEffects.Copy);
             }
             catch (Exception ex)
@@ -220,8 +220,8 @@ namespace Walkabout.Utilities
             {
 
                 this.isDragging = false;
-                DestroyDragDropWindow();
-                DragDropRemoveAnyAdorner();
+                this.DestroyDragDropWindow();
+                this.DragDropRemoveAnyAdorner();
                 this.mainControl.GiveFeedback -= feedbackHandler;
                 this.mainControl.QueryContinueDrag -= queryContinueHandler;
             }
@@ -261,15 +261,15 @@ namespace Walkabout.Utilities
         {
             if (!this.isDragging)
             {
-                DragDropRemoveAnyAdorner();
+                this.DragDropRemoveAnyAdorner();
                 e.Effects = DragDropEffects.None;
                 return true;
             }
 
-            object dragSource = e.Data.GetData(formatName);
+            object dragSource = e.Data.GetData(this.formatName);
             if (dragSource == null)
             {
-                DragDropRemoveAnyAdorner();
+                this.DragDropRemoveAnyAdorner();
                 e.Effects = DragDropEffects.None;
                 return false;
             }
@@ -286,11 +286,11 @@ namespace Walkabout.Utilities
                     // The user is close to the bottom of the container (ListBox or TreeView)
                     if (pt.Y < dragScrollMarginFast)
                     {
-                        AttemptToScrollUp(4);
+                        this.AttemptToScrollUp(4);
                     }
                     else
                     {
-                        AttemptToScrollUp(1);
+                        this.AttemptToScrollUp(1);
                     }
                 }
                 else if (pt.Y > this.mainControl.ActualHeight - dragScrollMarginSpeedSlow)
@@ -298,11 +298,11 @@ namespace Walkabout.Utilities
                     // The user is close to the bottom of the container (ListBox or TreeView)
                     if (pt.Y > this.mainControl.ActualHeight - dragScrollMarginFast)
                     {
-                        AttemptToScrollDown(4);
+                        this.AttemptToScrollDown(4);
                     }
                     else
                     {
-                        AttemptToScrollDown(1);
+                        this.AttemptToScrollDown(1);
                     }
                 }
 
@@ -312,26 +312,26 @@ namespace Walkabout.Utilities
                 {
                     DragDropTarget possibleDropTarget = this.calledBackForValidatingTarget(dragSource, ctrl, e.Effects);
 
-                    if (possibleDropTarget != null && possibleDropTarget.DataSource != previousPossibleDropTarget)
+                    if (possibleDropTarget != null && possibleDropTarget.DataSource != this.previousPossibleDropTarget)
                     {
                         if (possibleDropTarget.DataSource != dragSource)
                         {
-                            DragDropRemoveAnyAdorner();
-                            previousPossibleDropTarget = possibleDropTarget.DataSource;
+                            this.DragDropRemoveAnyAdorner();
+                            this.previousPossibleDropTarget = possibleDropTarget.DataSource;
                             this.adornerLayer = AdornerLayer.GetAdornerLayer(possibleDropTarget.TargetElement);
-                            lastAdornerUsed = new AdornerDropTarget(possibleDropTarget.TargetElement);
-                            this.adornerLayer.Add(lastAdornerUsed);
+                            this.lastAdornerUsed = new AdornerDropTarget(possibleDropTarget.TargetElement);
+                            this.adornerLayer.Add(this.lastAdornerUsed);
                         }
                     }
                 }
                 else
                 {
-                    DragDropRemoveAnyAdorner();
+                    this.DragDropRemoveAnyAdorner();
                 }
             }
             else
             {
-                DragDropRemoveAnyAdorner();
+                this.DragDropRemoveAnyAdorner();
             }
 
             if (((e.AllowedEffects & DragDropEffects.Copy) == DragDropEffects.Copy) ||
@@ -346,9 +346,9 @@ namespace Walkabout.Utilities
                 {
                     e.Effects = DragDropEffects.Move;
                 }
-                if (e.Effects != currentEffect)
+                if (e.Effects != this.currentEffect)
                 {
-                    currentEffect = e.Effects;
+                    this.currentEffect = e.Effects;
                 }
             }
             else
@@ -363,7 +363,7 @@ namespace Walkabout.Utilities
         {
             if (this.adornerLayer != null)
             {
-                this.adornerLayer.Remove(lastAdornerUsed);
+                this.adornerLayer.Remove(this.lastAdornerUsed);
             }
         }
 
@@ -373,12 +373,12 @@ namespace Walkabout.Utilities
 
         public void CreateDragDropWindow(FrameworkElement dragVisual)
         {
-            dragdropWindow = new Window();
+            this.dragdropWindow = new Window();
             object style = this.mainControl.TryFindResource("DragDropWindowStyle");
-            dragdropWindow.Style = (Style)style;
+            this.dragdropWindow.Style = (Style)style;
 
 
-            dragdropWindow.SourceInitialized += new EventHandler(
+            this.dragdropWindow.SourceInitialized += new EventHandler(
                 delegate (object sender, EventArgs args)
                 {
                     PresentationSource windowSource = PresentationSource.FromVisual(this.dragdropWindow);
@@ -399,29 +399,29 @@ namespace Walkabout.Utilities
             visual.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             visual.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             this.instruction = new TextBlock() { Margin = new Thickness(5), FontSize = App.Current.MainWindow.FontSize, FontFamily = App.Current.MainWindow.FontFamily };
-            UpdateInstructions(DragDropEffects.Move);
+            this.UpdateInstructions(DragDropEffects.Move);
             visual.Children.Add(dragVisual);
-            visual.Children.Add(instruction);
-            Grid.SetRow(instruction, 1);
+            visual.Children.Add(this.instruction);
+            Grid.SetRow(this.instruction, 1);
 
             this.dragdropWindow.Content = visual;
             this.dragdropWindow.UpdateLayout();
 
             // Show the window at the current mouse position
-            UpdateWindowLocation();
+            this.UpdateWindowLocation();
             this.dragdropWindow.Show();
         }
 
         private void UpdateInstructions(DragDropEffects effects)
         {
-            if (instruction != null && this.mergePrompt)
+            if (this.instruction != null && this.mergePrompt)
             {
                 string label = ((effects & DragDropEffects.Copy) != 0) ? "Merge (-Ctrl to Move)" : "Move (+Ctrl to Merge)";
-                instruction.Text = label;
+                this.instruction.Text = label;
             }
             else
             {
-                instruction.Text = "Merge";
+                this.instruction.Text = "Merge";
             }
         }
 
@@ -444,7 +444,7 @@ namespace Walkabout.Utilities
         /// </summary>
         void DestroyDragDropWindow()
         {
-            if (dragdropWindow != null)
+            if (this.dragdropWindow != null)
             {
                 this.dragdropWindow.Close();
                 this.dragdropWindow = null;

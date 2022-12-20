@@ -24,101 +24,101 @@
     {
         public string Id
         {
-            get { return GetValue<string>("Id"); }
-            set { SetValue("Id", value); }
+            get { return this.GetValue<string>("Id"); }
+            set { this.SetValue("Id", value); }
         }
 
         public string Name
         {
-            get { return GetValue<string>("Name"); }
-            set { SetValue("Name", value); }
+            get { return this.GetValue<string>("Name"); }
+            set { this.SetValue("Name", value); }
 
         }
         public string OfxVersion
         {
-            get { return GetValue<string>("OfxVersion"); }
-            set { SetValue("OfxVersion", value); }
+            get { return this.GetValue<string>("OfxVersion"); }
+            set { this.SetValue("OfxVersion", value); }
         }
         public string Org
         {
-            get { return GetValue<string>("Org"); }
-            set { SetValue("Org", value); }
+            get { return this.GetValue<string>("Org"); }
+            set { this.SetValue("Org", value); }
         }
 
         public string Fid
         {
-            get { return GetValue<string>("Fid"); }
-            set { SetValue("Fid", value); }
+            get { return this.GetValue<string>("Fid"); }
+            set { this.SetValue("Fid", value); }
         }
         public string BankId
         {
-            get { return GetValue<string>("BankId"); }
-            set { SetValue("BankId", value); }
+            get { return this.GetValue<string>("BankId"); }
+            set { this.SetValue("BankId", value); }
         }
 
         public string BrokerId
         {
-            get { return GetValue<string>("BrokerId"); }
-            set { SetValue("BrokerId", value); }
+            get { return this.GetValue<string>("BrokerId"); }
+            set { this.SetValue("BrokerId", value); }
         }
         public string ProviderURL
         {
-            get { return GetValue<string>("ProviderURL"); }
-            set { SetValue("ProviderURL", value); }
+            get { return this.GetValue<string>("ProviderURL"); }
+            set { this.SetValue("ProviderURL", value); }
         }
         public string SmallLogoURL
         {
-            get { return GetValue<string>("SmallLogoURL"); }
-            set { SetValue("SmallLogoURL", value); }
+            get { return this.GetValue<string>("SmallLogoURL"); }
+            set { this.SetValue("SmallLogoURL", value); }
         }
         public string Website
         {
-            get { return GetValue<string>("Website"); }
-            set { SetValue("Website", value); }
+            get { return this.GetValue<string>("Website"); }
+            set { this.SetValue("Website", value); }
         }
         public string OfxHomeId
         {
-            get { return GetValue<string>("OfxHomeId"); }
-            set { SetValue("OfxHomeId", value); }
+            get { return this.GetValue<string>("OfxHomeId"); }
+            set { this.SetValue("OfxHomeId", value); }
         }
         public string MoneyDanceId
         {
-            get { return GetValue<string>("MoneyDanceId"); }
-            set { SetValue("MoneyDanceId", value); }
+            get { return this.GetValue<string>("MoneyDanceId"); }
+            set { this.SetValue("MoneyDanceId", value); }
         }
         public string AppId
         {
-            get { return GetValue<string>("AppId"); }
-            set { SetValue("AppId", value); }
+            get { return this.GetValue<string>("AppId"); }
+            set { this.SetValue("AppId", value); }
         }
         public string AppVer
         {
-            get { return GetValue<string>("AppVer"); }
-            set { SetValue("AppVer", value); }
+            get { return this.GetValue<string>("AppVer"); }
+            set { this.SetValue("AppVer", value); }
         }
         public string LastError
         {
-            get { return GetValue<string>("LastError"); }
-            set { SetValue("LastError", value); }
+            get { return this.GetValue<string>("LastError"); }
+            set { this.SetValue("LastError", value); }
         }
 
         public DateTime? LastConnection
         {
-            get { return GetValue<DateTime?>("LastConnection"); }
-            set { SetValue("LastConnection", value); }
+            get { return this.GetValue<DateTime?>("LastConnection"); }
+            set { this.SetValue("LastConnection", value); }
         }
 
         public bool Existing
         {
-            get { return GetValue<bool>("Existing"); }
-            set { SetValue("Existing", value); }
+            get { return this.GetValue<bool>("Existing"); }
+            set { this.SetValue("Existing", value); }
         }
 
         public bool HasError
         {
             get
             {
-                return !string.IsNullOrEmpty(LastError);
+                return !string.IsNullOrEmpty(this.LastError);
             }
         }
 
@@ -132,7 +132,7 @@
         private T GetValue<T>(string name)
         {
             ChangeTrackedField field = null;
-            fields.TryGetValue(name, out field);
+            this.fields.TryGetValue(name, out field);
             if (field == null || field.Value == null)
             {
                 return default(T);
@@ -142,17 +142,17 @@
 
         private void SetValue(string name, object value)
         {
-            SetValue(name, value, DateTime.Now);
+            this.SetValue(name, value, DateTime.Now);
         }
 
         private void SetValue(string name, object value, DateTime? changed)
         {
             ChangeTrackedField field = null;
-            fields.TryGetValue(name, out field);
+            this.fields.TryGetValue(name, out field);
             if (field == null)
             {
                 field = new ChangeTrackedField() { Name = name };
-                fields[name] = field;
+                this.fields[name] = field;
             }
             if (field.Value != value)
             {
@@ -234,8 +234,8 @@
             // the OfxHomeId field must already be set otherwise we wouldn't have been able
             // to get this update from OfxHome.com.
 
-            changed |= SetIfNewer("Name", GetElementString(ofxHomeInfo, "name"), lastvalidation);
-            changed |= SetIfNewer("Org", GetElementString(ofxHomeInfo, "org"), lastvalidation);
+            changed |= this.SetIfNewer("Name", GetElementString(ofxHomeInfo, "name"), lastvalidation);
+            changed |= this.SetIfNewer("Org", GetElementString(ofxHomeInfo, "org"), lastvalidation);
 
             if (string.IsNullOrEmpty(this.Org))
             {
@@ -265,7 +265,7 @@
         {
             bool setit = false;
             ChangeTrackedField field;
-            if (fields.TryGetValue(name, out field))
+            if (this.fields.TryGetValue(name, out field))
             {
                 // see if ofxhome is more recent
                 setit = (lastvalidation.HasValue && (!field.LastChange.HasValue || field.LastChange.Value < lastvalidation.Value));
@@ -276,7 +276,7 @@
             }
             if (setit)
             {
-                SetValue(name, value, lastvalidation);
+                this.SetValue(name, value, lastvalidation);
             }
             return setit;
         }
@@ -321,7 +321,7 @@
             {
                 bool setit = false;
                 ChangeTrackedField ourField;
-                if (fields.TryGetValue(field.Name, out ourField))
+                if (this.fields.TryGetValue(field.Name, out ourField))
                 {
                     if (ourField.Value != field.Value)
                     {
@@ -340,7 +340,7 @@
                 }
                 if (setit)
                 {
-                    SetValue(field.Name, field.Value, field.LastChange);
+                    this.SetValue(field.Name, field.Value, field.LastChange);
                     changed = true;
                 }
             }

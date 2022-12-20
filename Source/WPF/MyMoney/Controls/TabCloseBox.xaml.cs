@@ -9,7 +9,7 @@ namespace Walkabout.Controls
     {
         public TabCloseBox()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

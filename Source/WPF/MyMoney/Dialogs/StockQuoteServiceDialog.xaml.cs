@@ -19,30 +19,30 @@ namespace Walkabout.Dialogs
 
         public StockQuoteServiceDialog()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public StockQuoteManager StockQuoteManager
         {
-            get { return _stockQuotes; }
+            get { return this._stockQuotes; }
             set
             {
-                _stockQuotes = value;
-                UpdateDialog();
+                this._stockQuotes = value;
+                this.UpdateDialog();
             }
         }
 
         private void UpdateDialog()
         {
-            this.ComboServiceName.SelectionChanged -= ComboServiceName_SelectionChanged;
-            var list = _stockQuotes.GetDefaultSettingsList();
+            this.ComboServiceName.SelectionChanged -= this.ComboServiceName_SelectionChanged;
+            var list = this._stockQuotes.GetDefaultSettingsList();
             var current = new List<StockServiceSettings>();
             // find the settings that match the current list of stock quote services.
             for (int i = 0; i < list.Count(); i++)
             {
                 bool found = false;
                 var item = list[i];
-                foreach (var c in _stockQuotes.Settings)
+                foreach (var c in this._stockQuotes.Settings)
                 {
                     if (c.Name == item.Name || c.OldName == item.Name || c.Name == item.OldName)
                     {
@@ -64,35 +64,35 @@ namespace Walkabout.Dialogs
             }
             this._list = current;
             this.ComboServiceName.SelectedIndex = 0;
-            this.ComboServiceName.SelectionChanged += ComboServiceName_SelectionChanged;
+            this.ComboServiceName.SelectionChanged += this.ComboServiceName_SelectionChanged;
             this.DataContext = current[0];
         }
 
         public List<StockServiceSettings> Settings
         {
-            get { return _list; }
+            get { return this._list; }
         }
 
         private void ComboServiceName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int i = this.ComboServiceName.SelectedIndex;
-            this.DataContext = _list[i];
+            this.DataContext = this._list[i];
         }
 
         private void Apply()
         {
             int i = this.ComboServiceName.SelectedIndex;
-            _selection = _list[i];
+            this._selection = this._list[i];
         }
 
         public StockServiceSettings SelectedSettings
         {
-            get { return _selection; }
+            get { return this._selection; }
         }
 
         private void OnOk(object sender, RoutedEventArgs e)
         {
-            Apply();
+            this.Apply();
             this.DialogResult = true;
             this.Close();
         }

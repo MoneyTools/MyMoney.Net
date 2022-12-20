@@ -25,70 +25,70 @@ namespace Walkabout.Charts
 
         internal void SetExpensesDistribution(int whatExpenseIsAtTheBottom)
         {
-            if (MyRentalData != null)
+            if (this.MyRentalData != null)
             {
-                if (fields == null)
+                if (this.fields == null)
                 {
-                    fields = new List<object>();
-                    fieldLabels = new List<string>();
+                    this.fields = new List<object>();
+                    this.fieldLabels = new List<string>();
 
-                    fields.Add(MyRentalData.ExpenseTaxes);
-                    fieldLabels.Add("Tax");
+                    this.fields.Add(this.MyRentalData.ExpenseTaxes);
+                    this.fieldLabels.Add("Tax");
 
-                    fields.Add(MyRentalData.ExpenseRepair);
-                    fieldLabels.Add("Repair");
+                    this.fields.Add(this.MyRentalData.ExpenseRepair);
+                    this.fieldLabels.Add("Repair");
 
-                    fields.Add(MyRentalData.ExpenseMaintenance);
-                    fieldLabels.Add("Maintenance");
+                    this.fields.Add(this.MyRentalData.ExpenseMaintenance);
+                    this.fieldLabels.Add("Maintenance");
 
-                    fields.Add(MyRentalData.ExpenseManagement);
-                    fieldLabels.Add("Management");
+                    this.fields.Add(this.MyRentalData.ExpenseManagement);
+                    this.fieldLabels.Add("Management");
 
-                    fields.Add(MyRentalData.ExpenseInterest);
-                    fieldLabels.Add("Interest");
+                    this.fields.Add(this.MyRentalData.ExpenseInterest);
+                    this.fieldLabels.Add("Interest");
                 }
 
-                UpdateSubExpense(
+                this.UpdateSubExpense(
                     this.Row0,
                     this.Expense0,
-                    (double)fields[whatExpenseIsAtTheBottom],
-                    fieldLabels[whatExpenseIsAtTheBottom]
+                    (double)this.fields[whatExpenseIsAtTheBottom],
+                    this.fieldLabels[whatExpenseIsAtTheBottom]
                     );
 
                 whatExpenseIsAtTheBottom = Next(whatExpenseIsAtTheBottom);
 
-                UpdateSubExpense(
+                this.UpdateSubExpense(
                     this.Row1,
                     this.Expense1,
-                    (double)fields[whatExpenseIsAtTheBottom],
-                    fieldLabels[whatExpenseIsAtTheBottom]
+                    (double)this.fields[whatExpenseIsAtTheBottom],
+                    this.fieldLabels[whatExpenseIsAtTheBottom]
                     );
 
                 whatExpenseIsAtTheBottom = Next(whatExpenseIsAtTheBottom);
 
-                UpdateSubExpense(
+                this.UpdateSubExpense(
                     this.Row2,
                     this.Expense2,
-                    (double)fields[whatExpenseIsAtTheBottom],
-                    fieldLabels[whatExpenseIsAtTheBottom]
+                    (double)this.fields[whatExpenseIsAtTheBottom],
+                    this.fieldLabels[whatExpenseIsAtTheBottom]
                     );
 
                 whatExpenseIsAtTheBottom = Next(whatExpenseIsAtTheBottom);
 
-                UpdateSubExpense(
+                this.UpdateSubExpense(
                     this.Row3,
                     this.Expense3,
-                    (double)fields[whatExpenseIsAtTheBottom],
-                    fieldLabels[whatExpenseIsAtTheBottom]
+                    (double)this.fields[whatExpenseIsAtTheBottom],
+                    this.fieldLabels[whatExpenseIsAtTheBottom]
                     );
 
                 whatExpenseIsAtTheBottom = Next(whatExpenseIsAtTheBottom);
 
-                UpdateSubExpense(
+                this.UpdateSubExpense(
                     this.Row4,
                     this.Expense4,
-                    (double)fields[whatExpenseIsAtTheBottom],
-                    fieldLabels[whatExpenseIsAtTheBottom]
+                    (double)this.fields[whatExpenseIsAtTheBottom],
+                    this.fieldLabels[whatExpenseIsAtTheBottom]
                     );
             }
         }
@@ -111,9 +111,9 @@ namespace Walkabout.Charts
             )
         {
             double defaultHeight = 0;
-            if (MyRentalData.Expense != 0)
+            if (this.MyRentalData.Expense != 0)
             {
-                defaultHeight = expenseValue / MyRentalData.Expense * 100;
+                defaultHeight = expenseValue / this.MyRentalData.Expense * 100;
             }
             rd.Height = new System.Windows.GridLength(defaultHeight, System.Windows.GridUnitType.Star);
             b.DataContext = string.Format("{0}{1}{2:N}", label, System.Environment.NewLine, expenseValue);

@@ -32,15 +32,15 @@ namespace Walkabout.Taxes
         public CapitalGainsTaxCalculator(MyMoney money, DateTime toDate, bool consolidateOnDateSold, bool ignoreTaxDeferred)
             : base(money, toDate)
         {
-            CalculateCapitalGains(ignoreTaxDeferred);
-            Consolidate(consolidateOnDateSold);
+            this.CalculateCapitalGains(ignoreTaxDeferred);
+            this.Consolidate(consolidateOnDateSold);
         }
 
         private void Consolidate(bool consolidateOnDateSold)
         {
-            this.unknown = Consolidate(this.unknown, consolidateOnDateSold);
-            this.shortTerm = Consolidate(this.shortTerm, consolidateOnDateSold);
-            this.longTerm = Consolidate(this.longTerm, consolidateOnDateSold);
+            this.unknown = this.Consolidate(this.unknown, consolidateOnDateSold);
+            this.shortTerm = this.Consolidate(this.shortTerm, consolidateOnDateSold);
+            this.longTerm = this.Consolidate(this.longTerm, consolidateOnDateSold);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Walkabout.Taxes
                 }
                 if (sale.Error != null)
                 {
-                    unknown.Add(sale);
+                    this.unknown.Add(sale);
                 }
                 else
                 {
@@ -106,11 +106,11 @@ namespace Walkabout.Taxes
                     TimeSpan diff = sale.DateSold - sale.DateAcquired.Value;
                     if (diff.Days > 365)
                     {
-                        longTerm.Add(sale);
+                        this.longTerm.Add(sale);
                     }
                     else
                     {
-                        shortTerm.Add(sale);
+                        this.shortTerm.Add(sale);
                     }
                 }
             }

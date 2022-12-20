@@ -28,18 +28,18 @@ namespace Walkabout.Dialogs
 
         public PasswordWindow()
         {
-            InitializeComponent();
-            this.Loaded += new RoutedEventHandler(OnLoaded);
+            this.InitializeComponent();
+            Loaded += new RoutedEventHandler(this.OnLoaded);
 
-            UserNamePrompt = "";
-            PasswordPrompt = Properties.Resources.PasswordPrompt;
+            this.UserNamePrompt = "";
+            this.PasswordPrompt = Properties.Resources.PasswordPrompt;
 
-            this.SizeChanged += PasswordWindow_SizeChanged;
+            SizeChanged += this.PasswordWindow_SizeChanged;
         }
 
         void PasswordWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            TextBlockIntroMessage.Width = Math.Max(0, e.NewSize.Width - 20);
+            this.TextBlockIntroMessage.Width = Math.Max(0, e.NewSize.Width - 20);
         }
 
 
@@ -49,22 +49,22 @@ namespace Walkabout.Dialogs
             //<TextBlock x:Name="TextBlockUserNamePrompt" Text="User Name: " VerticalAlignment="Center" Margin="0,10,0,2"/>
             TextBlock block = new TextBlock() { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 10, 0, 2), TextWrapping = TextWrapping.Wrap };
             block.Text = label;
-            EntryPanel.Children.Add(block);
+            this.EntryPanel.Children.Add(block);
 
             // <TextBox x:Name="TextBoxUserName" TextChanged="OnUserNameChanged" />
             TextBox answerBox = new TextBox();
             answerBox.Name = "TextBox" + id;
-            answerBox.TextChanged += OnTextChanged;
-            answerBox.GotFocus += OnTextBoxGotFocus;
-            EntryPanel.Children.Add(answerBox);
+            answerBox.TextChanged += this.OnTextChanged;
+            answerBox.GotFocus += this.OnTextBoxGotFocus;
+            this.EntryPanel.Children.Add(answerBox);
 
-            userDefined[id] = answerBox;
+            this.userDefined[id] = answerBox;
         }
 
         public string GetUserDefinedField(string id)
         {
             TextBox box = null;
-            if (userDefined.TryGetValue(id, out box))
+            if (this.userDefined.TryGetValue(id, out box))
             {
                 return box.Text;
             }
@@ -74,7 +74,7 @@ namespace Walkabout.Dialogs
         public void SetUserDefinedField(string id, string value)
         {
             TextBox box = null;
-            if (userDefined.TryGetValue(id, out box))
+            if (this.userDefined.TryGetValue(id, out box))
             {
                 box.Text = value;
                 return;
@@ -84,26 +84,26 @@ namespace Walkabout.Dialogs
 
         public RichTextBox IntroMessagePrompt
         {
-            get { return TextBlockIntroMessage; }
+            get { return this.TextBlockIntroMessage; }
         }
 
         public string UserNamePrompt
         {
-            get { return TextBlockUserNamePrompt.Text; }
+            get { return this.TextBlockUserNamePrompt.Text; }
             set
             {
-                TextBlockUserNamePrompt.Text = value;
-                TextBlockUserNamePrompt.Visibility = TextBoxUserName.Visibility = (string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible);
+                this.TextBlockUserNamePrompt.Text = value;
+                this.TextBlockUserNamePrompt.Visibility = this.TextBoxUserName.Visibility = (string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible);
             }
         }
 
         public string PasswordPrompt
         {
-            get { return TextBlockPasswordPrompt.Text; }
+            get { return this.TextBlockPasswordPrompt.Text; }
             set
             {
-                TextBlockPasswordPrompt.Text = value;
-                TextBlockPasswordPrompt.Visibility = PasswordBox.Visibility = (string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible);
+                this.TextBlockPasswordPrompt.Text = value;
+                this.TextBlockPasswordPrompt.Visibility = this.PasswordBox.Visibility = (string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible);
             }
         }
 
@@ -111,12 +111,12 @@ namespace Walkabout.Dialogs
 
         void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Dispatcher.BeginInvoke(new Action(() =>
+            this.Dispatcher.BeginInvoke(new Action(() =>
             {
 
-                UpdateButtonState();
+                this.UpdateButtonState();
 
-                foreach (UIElement child in EntryPanel.Children)
+                foreach (UIElement child in this.EntryPanel.Children)
                 {
                     TextBox box = child as TextBox;
                     if (box != null && box.Visibility == System.Windows.Visibility.Visible)
@@ -140,47 +140,47 @@ namespace Walkabout.Dialogs
 
         public string UserName
         {
-            get { return TextBoxUserName.Text; }
-            set { TextBoxUserName.Text = value; }
+            get { return this.TextBoxUserName.Text; }
+            set { this.TextBoxUserName.Text = value; }
         }
 
         public string PasswordConfirmation
         {
-            get { return PasswordBox.Password; }
-            set { PasswordBox.Password = value; }
+            get { return this.PasswordBox.Password; }
+            set { this.PasswordBox.Password = value; }
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)
         {
-            Hide();
+            this.Hide();
         }
 
         public event EventHandler<OkEventArgs> OkClicked;
 
         public void PasswordFailure(string errorMessage)
         {
-            KeyImage.Visibility = System.Windows.Visibility.Hidden;
-            ShieldImage.Visibility = System.Windows.Visibility.Hidden;
-            BrokenImage.Visibility = System.Windows.Visibility.Visible;
+            this.KeyImage.Visibility = System.Windows.Visibility.Hidden;
+            this.ShieldImage.Visibility = System.Windows.Visibility.Hidden;
+            this.BrokenImage.Visibility = System.Windows.Visibility.Visible;
 
-            ShowError(errorMessage);
-            PasswordBox.SelectAll();
+            this.ShowError(errorMessage);
+            this.PasswordBox.SelectAll();
         }
 
         private void OnOk(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(RealPassword))
+            if (!string.IsNullOrEmpty(this.RealPassword))
             {
-                if (PasswordBox.Password != RealPassword)
+                if (this.PasswordBox.Password != this.RealPassword)
                 {
-                    PasswordFailure("Password is incorrect");
+                    this.PasswordFailure("Password is incorrect");
                     return;
                 }
             }
 
-            if (!Optional && PasswordBox.Visibility == System.Windows.Visibility.Visible && string.IsNullOrWhiteSpace(PasswordBox.Password))
+            if (!this.Optional && this.PasswordBox.Visibility == System.Windows.Visibility.Visible && string.IsNullOrWhiteSpace(this.PasswordBox.Password))
             {
-                PasswordFailure("Password cannot be empty");
+                this.PasswordFailure("Password cannot be empty");
                 return;
             }
 
@@ -190,7 +190,7 @@ namespace Walkabout.Dialogs
                 OkClicked(this, args);
                 if (!string.IsNullOrWhiteSpace(args.Error))
                 {
-                    ShowError(args.Error);
+                    this.ShowError(args.Error);
                 }
                 if (args.Cancel)
                 {
@@ -199,31 +199,31 @@ namespace Walkabout.Dialogs
             }
 
             this.DialogResult = true;
-            Hide();
+            this.Hide();
         }
 
         public void ShowError(string message)
         {
-            ErrorMessage.Text = message;
-            ErrorMessage.Visibility = System.Windows.Visibility.Visible;
+            this.ErrorMessage.Text = message;
+            this.ErrorMessage.Visibility = System.Windows.Visibility.Visible;
         }
 
         private void OnPasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(RealPassword) && PasswordBox.Password == RealPassword)
+            if (!string.IsNullOrEmpty(this.RealPassword) && this.PasswordBox.Password == this.RealPassword)
             {
-                KeyImage.Visibility = System.Windows.Visibility.Hidden;
-                ShieldImage.Visibility = System.Windows.Visibility.Visible;
-                BrokenImage.Visibility = System.Windows.Visibility.Hidden;
+                this.KeyImage.Visibility = System.Windows.Visibility.Hidden;
+                this.ShieldImage.Visibility = System.Windows.Visibility.Visible;
+                this.BrokenImage.Visibility = System.Windows.Visibility.Hidden;
             }
             else
             {
-                KeyImage.Visibility = System.Windows.Visibility.Visible;
-                ShieldImage.Visibility = System.Windows.Visibility.Hidden;
-                BrokenImage.Visibility = System.Windows.Visibility.Hidden;
+                this.KeyImage.Visibility = System.Windows.Visibility.Visible;
+                this.ShieldImage.Visibility = System.Windows.Visibility.Hidden;
+                this.BrokenImage.Visibility = System.Windows.Visibility.Hidden;
                 if (this.IsVisible)
                 {
-                    ErrorMessage.Visibility = System.Windows.Visibility.Hidden;
+                    this.ErrorMessage.Visibility = System.Windows.Visibility.Hidden;
                 }
             }
         }
@@ -232,10 +232,10 @@ namespace Walkabout.Dialogs
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            UpdateButtonState();
+            this.UpdateButtonState();
             if (this.IsVisible)
             {
-                ErrorMessage.Text = "";
+                this.ErrorMessage.Text = "";
             }
         }
 
@@ -243,7 +243,7 @@ namespace Walkabout.Dialogs
         {
             bool empty = false;
 
-            foreach (UIElement child in EntryPanel.Children)
+            foreach (UIElement child in this.EntryPanel.Children)
             {
                 TextBox box = child as TextBox;
                 if (box != null && box.Visibility == System.Windows.Visibility.Visible)
@@ -257,23 +257,23 @@ namespace Walkabout.Dialogs
                 }
             }
 
-            ButtonOk.IsEnabled = !empty && !buttonsDisabled;
+            this.ButtonOk.IsEnabled = !empty && !this.buttonsDisabled;
 
-            ButtonCancel.IsEnabled = !buttonsDisabled;
+            this.ButtonCancel.IsEnabled = !this.buttonsDisabled;
         }
 
         bool buttonsDisabled;
 
         public void DisableButtons()
         {
-            buttonsDisabled = true;
-            UpdateButtonState();
+            this.buttonsDisabled = true;
+            this.UpdateButtonState();
         }
 
         public void EnableButtons()
         {
-            buttonsDisabled = false;
-            UpdateButtonState();
+            this.buttonsDisabled = false;
+            this.UpdateButtonState();
         }
 
 

@@ -24,19 +24,19 @@ namespace Walkabout.Charts
 
         public ObservableCollection<LoanPaymentAggregation> LoanPayments
         {
-            get => payments;
+            get => this.payments;
             set
             {
-                payments = value;
-                UpdateChart();
+                this.payments = value;
+                this.UpdateChart();
             }
         }
 
         public LoanChart()
         {
-            InitializeComponent();
-            IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnIsVisibleChanged);
-            Chart.ToolTipGenerator = OnGenerateToolTip;
+            this.InitializeComponent();
+            IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
+            this.Chart.ToolTipGenerator = this.OnGenerateToolTip;
         }
 
         private UIElement OnGenerateToolTip(ChartDataValue value)
@@ -50,15 +50,15 @@ namespace Walkabout.Charts
 
         void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            UpdateChart();
+            this.UpdateChart();
         }
 
 
         public void UpdateChart()
         {
-            if (!this.IsVisible || LoanPayments == null)
+            if (!this.IsVisible || this.LoanPayments == null)
             {
-                Chart.Data = null;
+                this.Chart.Data = null;
                 return;
             }
 
@@ -67,7 +67,7 @@ namespace Walkabout.Charts
                 decimal totalPrincipal = 0;
                 decimal totalInterest = 0;
 
-                Dictionary<int, Payment> cumulatedPayementsPerYear = CumulatePayementsPerYear();
+                Dictionary<int, Payment> cumulatedPayementsPerYear = this.CumulatePayementsPerYear();
 
                 ChartDataSeries interestSeries = new ChartDataSeries() { Name = "Interest" };
                 ChartDataSeries principalSeries = new ChartDataSeries() { Name = "Principal" };
@@ -86,7 +86,7 @@ namespace Walkabout.Charts
                 var data = new ChartData();
                 data.AddSeries(interestSeries);
                 data.AddSeries(principalSeries);
-                Chart.Data = data;
+                this.Chart.Data = data;
 
                 this.TextBoxPrincipal.Text = string.Format("{0:C}", Math.Abs(totalPrincipal));
                 this.TextBoxInterest.Text = string.Format("{0:C}", Math.Abs(totalInterest));
@@ -116,7 +116,7 @@ namespace Walkabout.Charts
 
             bool discardFirstItem = true;
 
-            foreach (LoanPaymentAggregation payment in LoanPayments)
+            foreach (LoanPaymentAggregation payment in this.LoanPayments)
             {
                 if (discardFirstItem)
                 {

@@ -35,11 +35,11 @@ namespace Walkabout.Tests
         {
             get
             {
-                return testContextInstance;
+                return this.testContextInstance;
             }
             set
             {
-                testContextInstance = value;
+                this.testContextInstance = value;
             }
         }
 
@@ -205,10 +205,10 @@ namespace Walkabout.Tests
     {
         public TestData()
         {
-            Points = new List<TestPoint>();
-            Aliases = new Aliases();
-            Payees = new Payees();
-            Accounts = new Accounts();
+            this.Points = new List<TestPoint>();
+            this.Aliases = new Aliases();
+            this.Payees = new Payees();
+            this.Accounts = new Accounts();
         }
 
         [DataMember]
@@ -258,8 +258,8 @@ namespace Walkabout.Tests
 
         public void AssertSame(TestPoint data)
         {
-            Assert.AreEqual<double>(X, data.X, "TestPoint X is not the same, " + X + " != " + data.X);
-            Assert.AreEqual<double>(Y, data.Y, "TestPoint Y is not the same, " + Y + " != " + data.Y);
+            Assert.AreEqual<double>(this.X, data.X, "TestPoint X is not the same, " + this.X + " != " + data.X);
+            Assert.AreEqual<double>(this.Y, data.Y, "TestPoint Y is not the same, " + this.Y + " != " + data.Y);
         }
     }
 
@@ -275,20 +275,20 @@ namespace Walkabout.Tests
 
         public string Log
         {
-            get { return sw.ToString(); }
+            get { return this.sw.ToString(); }
         }
 
         private void WriteLine(string msg)
         {
-            sw.Write(new string(' ', wrapped.Depth * 2));
-            sw.WriteLine(msg);
+            this.sw.Write(new string(' ', this.wrapped.Depth * 2));
+            this.sw.WriteLine(msg);
         }
 
         public override int AttributeCount
         {
             get
             {
-                WriteLine("AttributeCount=" + this.wrapped.AttributeCount);
+                this.WriteLine("AttributeCount=" + this.wrapped.AttributeCount);
                 return this.wrapped.AttributeCount;
             }
         }
@@ -297,14 +297,14 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("BaseURI=" + this.wrapped.BaseURI);
+                this.WriteLine("BaseURI=" + this.wrapped.BaseURI);
                 return this.wrapped.BaseURI;
             }
         }
 
         public override void Close()
         {
-            WriteLine("Close()");
+            this.WriteLine("Close()");
             this.wrapped.Close();
         }
 
@@ -312,7 +312,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("Depth=" + this.wrapped.Depth);
+                this.WriteLine("Depth=" + this.wrapped.Depth);
                 return this.wrapped.Depth;
             }
         }
@@ -321,7 +321,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("EOF=" + this.wrapped.EOF);
+                this.WriteLine("EOF=" + this.wrapped.EOF);
                 return this.wrapped.EOF;
             }
         }
@@ -329,21 +329,21 @@ namespace Walkabout.Tests
         public override string GetAttribute(int i)
         {
             var result = this.wrapped.GetAttribute(i);
-            WriteLine("GetAttribute(" + i + ")=" + result);
+            this.WriteLine("GetAttribute(" + i + ")=" + result);
             return result;
         }
 
         public override string GetAttribute(string name, string namespaceURI)
         {
             var result = this.wrapped.GetAttribute(name, namespaceURI);
-            WriteLine("GetAttribute(" + name + ", " + namespaceURI + ")=" + result);
+            this.WriteLine("GetAttribute(" + name + ", " + namespaceURI + ")=" + result);
             return result;
         }
 
         public override string GetAttribute(string name)
         {
             var result = this.wrapped.GetAttribute(name);
-            WriteLine("GetAttribute(" + name + ")=" + result);
+            this.WriteLine("GetAttribute(" + name + ")=" + result);
             return result;
         }
 
@@ -352,7 +352,7 @@ namespace Walkabout.Tests
             get
             {
                 var result = this.wrapped.IsEmptyElement;
-                WriteLine("IsEmptyElement=" + result);
+                this.WriteLine("IsEmptyElement=" + result);
                 return result;
             }
         }
@@ -361,7 +361,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("LocalName=" + this.wrapped.LocalName);
+                this.WriteLine("LocalName=" + this.wrapped.LocalName);
                 return this.wrapped.LocalName;
             }
         }
@@ -369,56 +369,56 @@ namespace Walkabout.Tests
         public override string LookupNamespace(string prefix)
         {
             var result = this.wrapped.LookupNamespace(prefix);
-            WriteLine("LookupNamespace(" + prefix + ")=" + result);
+            this.WriteLine("LookupNamespace(" + prefix + ")=" + result);
             return result;
         }
 
         public override bool MoveToAttribute(string name, string ns)
         {
             var result = this.wrapped.MoveToAttribute(name, ns);
-            WriteLine("MoveToAttribute(" + name + ", " + ns + ")=" + result);
+            this.WriteLine("MoveToAttribute(" + name + ", " + ns + ")=" + result);
             return result;
         }
 
         public override bool MoveToAttribute(string name)
         {
             var result = this.wrapped.MoveToAttribute(name);
-            WriteLine("MoveToAttribute(" + name + ")=" + result);
+            this.WriteLine("MoveToAttribute(" + name + ")=" + result);
             return result;
         }
 
         public override bool MoveToElement()
         {
             var result = this.wrapped.MoveToElement();
-            WriteLine("MoveToElement()=" + result);
+            this.WriteLine("MoveToElement()=" + result);
             return result;
         }
 
         public override bool MoveToFirstAttribute()
         {
             var result = this.wrapped.MoveToFirstAttribute();
-            WriteLine("MoveToFirstAttribute()=" + result);
+            this.WriteLine("MoveToFirstAttribute()=" + result);
             return result;
         }
 
         public override bool MoveToNextAttribute()
         {
             var result = this.wrapped.MoveToNextAttribute();
-            WriteLine("MoveToNextAttribute()=" + result);
+            this.WriteLine("MoveToNextAttribute()=" + result);
             return result;
         }
 
         public override XmlNameTable NameTable
         {
-            get { return wrapped.NameTable; }
+            get { return this.wrapped.NameTable; }
         }
 
         public override string NamespaceURI
         {
             get
             {
-                WriteLine("NamespaceURI=" + wrapped.NamespaceURI);
-                return wrapped.NamespaceURI;
+                this.WriteLine("NamespaceURI=" + this.wrapped.NamespaceURI);
+                return this.wrapped.NamespaceURI;
             }
         }
 
@@ -426,8 +426,8 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("NodeType=" + wrapped.NodeType);
-                return wrapped.NodeType;
+                this.WriteLine("NodeType=" + this.wrapped.NodeType);
+                return this.wrapped.NodeType;
             }
         }
 
@@ -435,22 +435,22 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("Prefix=" + wrapped.Prefix);
-                return wrapped.Prefix;
+                this.WriteLine("Prefix=" + this.wrapped.Prefix);
+                return this.wrapped.Prefix;
             }
         }
 
         public override bool Read()
         {
             var result = this.wrapped.Read();
-            WriteLine("Read()=" + result);
+            this.WriteLine("Read()=" + result);
             return result;
         }
 
         public override bool ReadAttributeValue()
         {
             var result = this.wrapped.ReadAttributeValue();
-            WriteLine("ReadAttributeValue()=" + result);
+            this.WriteLine("ReadAttributeValue()=" + result);
             return result;
         }
 
@@ -458,8 +458,8 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("ReadState=" + wrapped.ReadState);
-                return wrapped.ReadState;
+                this.WriteLine("ReadState=" + this.wrapped.ReadState);
+                return this.wrapped.ReadState;
             }
         }
 
@@ -472,8 +472,8 @@ namespace Walkabout.Tests
         {
             get
             {
-                WriteLine("Value=" + wrapped.Value);
-                return wrapped.Value;
+                this.WriteLine("Value=" + this.wrapped.Value);
+                return this.wrapped.Value;
             }
         }
     }

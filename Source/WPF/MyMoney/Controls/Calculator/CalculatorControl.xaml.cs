@@ -19,19 +19,19 @@ namespace Walkabout.Controls
 
         public CalculatorControl()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public void Attach(TextBox box)
         {
-            if (text != null)
+            if (this.text != null)
             {
-                text.KeyDown -= new KeyEventHandler(OnTextKeyDown);
+                this.text.KeyDown -= new KeyEventHandler(this.OnTextKeyDown);
             }
-            text = box;
-            if (text != null)
+            this.text = box;
+            if (this.text != null)
             {
-                text.KeyDown += new KeyEventHandler(OnTextKeyDown);
+                this.text.KeyDown += new KeyEventHandler(this.OnTextKeyDown);
             }
         }
 
@@ -54,7 +54,7 @@ namespace Walkabout.Controls
 
         void AnimateClick(Button b)
         {
-            b.Background = (Brush)Resources["SimulateDownBrush"];
+            b.Background = (Brush)this.Resources["SimulateDownBrush"];
             BooleanAnimationUsingKeyFrames a = new BooleanAnimationUsingKeyFrames();
             a.Duration = TimeSpan.FromSeconds(0.1);
             a.KeyFrames.Add(new DiscreteBooleanKeyFrame(true, KeyTime.FromPercent(0)));
@@ -74,167 +74,167 @@ namespace Walkabout.Controls
                 if (!shift)
                 {
                     // this is '=' key
-                    AnimateClick(ButtonEquals);
-                    Calculate();
+                    this.AnimateClick(this.ButtonEquals);
+                    this.Calculate();
                     e.Handled = true;
                     return;
                 }
                 else
                 {
-                    AnimateClick(ButtonPlus);
+                    this.AnimateClick(this.ButtonPlus);
                 }
             }
 
             switch (e.Key)
             {
                 case Key.Enter:
-                    AnimateClick(ButtonEquals);
-                    Calculate();
+                    this.AnimateClick(this.ButtonEquals);
+                    this.Calculate();
                     break;
                 case Key.D0:
                 case Key.NumPad0:
                     if (!shift)
                     {
-                        AnimateClick(Button0);
+                        this.AnimateClick(this.Button0);
                     }
                     break;
                 case Key.D1:
                 case Key.NumPad1:
                     if (!shift)
                     {
-                        AnimateClick(Button1);
+                        this.AnimateClick(this.Button1);
                     }
                     break;
                 case Key.D2:
                 case Key.NumPad2:
                     if (!shift)
                     {
-                        AnimateClick(Button2);
+                        this.AnimateClick(this.Button2);
                     }
                     break;
                 case Key.D3:
                 case Key.NumPad3:
                     if (!shift)
                     {
-                        AnimateClick(Button3);
+                        this.AnimateClick(this.Button3);
                     }
                     break;
                 case Key.D4:
                 case Key.NumPad4:
                     if (!shift)
                     {
-                        AnimateClick(Button4);
+                        this.AnimateClick(this.Button4);
                     }
                     break;
                 case Key.D5:
                 case Key.NumPad5:
                     if (!shift)
                     {
-                        AnimateClick(Button5);
+                        this.AnimateClick(this.Button5);
                     }
                     else
                     {
-                        AnimateClick(ButtonPercent);
+                        this.AnimateClick(this.ButtonPercent);
                     }
                     break;
                 case Key.D6:
                 case Key.NumPad6:
                     if (!shift)
                     {
-                        AnimateClick(Button6);
+                        this.AnimateClick(this.Button6);
                     }
                     break;
                 case Key.D7:
                 case Key.NumPad7:
                     if (!shift)
                     {
-                        AnimateClick(Button7);
+                        this.AnimateClick(this.Button7);
                     }
                     break;
                 case Key.D8:
                 case Key.NumPad8:
                     if (!shift)
                     {
-                        AnimateClick(Button8);
+                        this.AnimateClick(this.Button8);
                     }
                     else
                     {
-                        AnimateClick(ButtonMultiply);
+                        this.AnimateClick(this.ButtonMultiply);
                     }
                     break;
                 case Key.D9:
                 case Key.NumPad9:
                     if (!shift)
                     {
-                        AnimateClick(Button9);
+                        this.AnimateClick(this.Button9);
                     }
                     break;
                 case Key.Divide:
-                    AnimateClick(ButtonDivide);
+                    this.AnimateClick(this.ButtonDivide);
                     break;
                 case Key.Multiply:
-                    AnimateClick(ButtonMultiply);
+                    this.AnimateClick(this.ButtonMultiply);
                     break;
                 case Key.Subtract:
-                    AnimateClick(ButtonMinus);
+                    this.AnimateClick(this.ButtonMinus);
                     break;
                 case Key.OemPeriod:
-                    AnimateClick(ButtonPeriod);
+                    this.AnimateClick(this.ButtonPeriod);
                     break;
             }
         }
 
         void UpdateValue(double v)
         {
-            text.Text = v.ToString("N2");
+            this.text.Text = v.ToString("N2");
         }
 
         private void OnClick(object sender, RoutedEventArgs e)
         {
-            if (text == null)
+            if (this.text == null)
             {
                 return;
             }
             Button b = (Button)sender;
             string key = (string)b.Tag;
-            int pos = text.SelectionStart;
+            int pos = this.text.SelectionStart;
             switch (key)
             {
                 case "C":
-                    text.Text = string.Empty;
+                    this.text.Text = string.Empty;
                     break;
                 case "SquareRoot":
-                    UpdateValue(Math.Sqrt(Calculate()));
-                    text.SelectionStart = text.Text.Length;
-                    text.SelectionLength = 0;
+                    this.UpdateValue(Math.Sqrt(this.Calculate()));
+                    this.text.SelectionStart = this.text.Text.Length;
+                    this.text.SelectionLength = 0;
                     break;
                 case "MC":
-                    memory = 0;
+                    this.memory = 0;
                     break;
                 case "MR":
-                    string ms = memory.ToString();
-                    text.Text = text.Text.Substring(0, pos) + ms + text.Text.Substring(pos + text.SelectionLength);
-                    text.SelectionStart = pos + ms.Length;
-                    text.SelectionLength = 0;
+                    string ms = this.memory.ToString();
+                    this.text.Text = this.text.Text.Substring(0, pos) + ms + this.text.Text.Substring(pos + this.text.SelectionLength);
+                    this.text.SelectionStart = pos + ms.Length;
+                    this.text.SelectionLength = 0;
                     break;
                 case "MS":
-                    memory = Calculate();
+                    this.memory = this.Calculate();
                     break;
                 case "M+":
-                    memory += Calculate();
+                    this.memory += this.Calculate();
                     break;
                 case "Sign":
-                    UpdateValue(-Calculate());
-                    text.SelectionStart = text.Text.Length;
-                    text.SelectionLength = 0;
+                    this.UpdateValue(-this.Calculate());
+                    this.text.SelectionStart = this.text.Text.Length;
+                    this.text.SelectionLength = 0;
                     break;
                 case "=":
-                    Calculate();
+                    this.Calculate();
                     break;
                 default:
-                    text.Text += key;
-                    text.SelectionStart = pos + 1;
-                    text.SelectionLength = 0;
+                    this.text.Text += key;
+                    this.text.SelectionStart = pos + 1;
+                    this.text.SelectionLength = 0;
                     break;
             }
         }
@@ -242,15 +242,15 @@ namespace Walkabout.Controls
         public double Calculate()
         {
             double result = 0;
-            string test = text.Text;
+            string test = this.text.Text;
             try
             {
                 if (!string.IsNullOrEmpty(test.Trim()))
                 {
                     Parser p = new Parser();
                     result = p.Parse(test);
-                    text.Text = result.ToString("N2");
-                    text.SelectionStart = text.Text.Length;
+                    this.text.Text = result.ToString("N2");
+                    this.text.SelectionStart = this.text.Text.Length;
                 }
             }
             catch (Exception ex)

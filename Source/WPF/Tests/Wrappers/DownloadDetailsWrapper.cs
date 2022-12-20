@@ -19,7 +19,7 @@ namespace Walkabout.Tests.Wrappers
 
         public List<DownloadedOnlineAccountWrapper> GetOnlineAccounts()
         {
-            AutomationElement tree = panel.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Tree));
+            AutomationElement tree = this.panel.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Tree));
             if (tree == null)
             {
                 throw new Exception("Tree not found");
@@ -34,7 +34,7 @@ namespace Walkabout.Tests.Wrappers
 
         public void Close()
         {
-            AutomationElement button = panel.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "ButtonCloseDownloads"));
+            AutomationElement button = this.panel.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "ButtonCloseDownloads"));
             if (button == null)
             {
                 throw new Exception("Cannot find ButtonCloseDownloads");
@@ -57,7 +57,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                AutomationElement link = treeitem.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Hyperlink));
+                AutomationElement link = this.treeitem.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Hyperlink));
                 if (link == null)
                 {
                     throw new Exception("HyperLink not found");
@@ -69,7 +69,7 @@ namespace Walkabout.Tests.Wrappers
         public List<DownloadedAccountWrapper> GetAccounts()
         {
             List<DownloadedAccountWrapper> result = new List<DownloadedAccountWrapper>();
-            foreach (AutomationElement e in treeitem.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TreeItem)))
+            foreach (AutomationElement e in this.treeitem.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TreeItem)))
             {
                 result.Add(new DownloadedAccountWrapper(e));
             }
@@ -90,7 +90,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                AutomationElement link = treeitem.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Hyperlink));
+                AutomationElement link = this.treeitem.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Hyperlink));
                 if (link == null)
                 {
                     throw new Exception("HyperLink not found");
@@ -101,7 +101,7 @@ namespace Walkabout.Tests.Wrappers
 
         public void Select()
         {
-            SelectionItemPattern sip = (SelectionItemPattern)treeitem.GetCurrentPattern(SelectionItemPattern.Pattern);
+            SelectionItemPattern sip = (SelectionItemPattern)this.treeitem.GetCurrentPattern(SelectionItemPattern.Pattern);
             sip.Select();
             return;
         }

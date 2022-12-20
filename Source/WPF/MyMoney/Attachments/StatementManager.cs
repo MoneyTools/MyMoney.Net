@@ -34,7 +34,7 @@ namespace Walkabout.Attachments
         {
             // save the original account names, in case the account is renamed.
             this.nameMap = new Dictionary<Account, string>();
-            foreach (var item in myMoney.Accounts.GetAccounts())
+            foreach (var item in this.myMoney.Accounts.GetAccounts())
             {
                 this.nameMap[item] = item.Name;
             }
@@ -42,17 +42,17 @@ namespace Walkabout.Attachments
 
         public string StatementsDirectory
         {
-            get => statementsDir;
+            get => this.statementsDir;
             set
             {
-                if (statementsDir != value)
+                if (this.statementsDir != value)
                 {
-                    statementsDir = value;
-                    if (started && myMoney != null)
+                    this.statementsDir = value;
+                    if (this.started && this.myMoney != null)
                     {
                         // start again at zero.
-                        loaded = false;
-                        actions.StartDelayedAction("ScanAccounts", () => LoadIndex(), TimeSpan.FromMilliseconds(10));
+                        this.loaded = false;
+                        this.actions.StartDelayedAction("ScanAccounts", () => this.LoadIndex(), TimeSpan.FromMilliseconds(10));
                     }
                 }
             }
@@ -63,7 +63,7 @@ namespace Walkabout.Attachments
         private StatementIndex GetOrCreateIndex(Account a)
         {
             string path = this.StatementsDirectory;
-            if (string.IsNullOrEmpty(StatementsDirectory))
+            if (string.IsNullOrEmpty(this.StatementsDirectory))
             {
                 // we have no database loaded!
                 return null;
@@ -94,16 +94,16 @@ namespace Walkabout.Attachments
 
         public StatementItem GetStatement(Account a, DateTime date)
         {
-            var statementIndex = GetOrCreateIndex(a);
+            var statementIndex = this.GetOrCreateIndex(a);
             if (statementIndex == null) return null;
             return statementIndex.Items.Where(s => s.Date == date).FirstOrDefault();
         }
 
         public decimal GetStatementBalance(Account a, DateTime date)
         {
-            var statementIndex = GetOrCreateIndex(a);
+            var statementIndex = this.GetOrCreateIndex(a);
             if (statementIndex == null) return 0;
-            var statement = GetStatement(a, date);
+            var statement = this.GetStatement(a, date);
             if (statement != null)
             {
                 return statement.StatementBalance;
@@ -113,9 +113,9 @@ namespace Walkabout.Attachments
 
         public string GetStatementFullPath(Account a, DateTime date)
         {
-            var statementIndex = GetOrCreateIndex(a);
+            var statementIndex = this.GetOrCreateIndex(a);
             if (statementIndex == null) return "";
-            var statement = GetStatement(a, date);
+            var statement = this.GetStatement(a, date);
             if (statement != null)
             {
                 if (!string.IsNullOrEmpty(statement.Filename))
@@ -129,7 +129,7 @@ namespace Walkabout.Attachments
 
         public bool UpdateStatement(Account a, StatementItem selected, DateTime date, string statementFile, decimal balance, bool flush = true)
         {
-            var statementIndex = GetOrCreateIndex(a);
+            var statementIndex = this.GetOrCreateIndex(a);
             if (statementIndex == null || !statementIndex.Items.Contains(selected))
             {
                 return false;
@@ -139,11 +139,11 @@ namespace Walkabout.Attachments
             selected.Date = date;
             selected.StatementBalance = balance;
             var statementDir = Path.GetDirectoryName(statementIndex.FileName);
-            ComputeHash(statementIndex, selected, statementFile);
+            this.ComputeHash(statementIndex, selected, statementFile);
 
             if (flush)
             {
-                SaveIndex(statementIndex);
+                this.SaveIndex(statementIndex);
             }
 
             return true;
@@ -155,7 +155,7 @@ namespace Walkabout.Attachments
             var fullPath = Path.Combine(statementDir, item.Filename);
             if (File.Exists(fullPath))
             {
-                if (IsBundledStatement(index, item))
+                if (this.IsBundledStatement(index, item))
                 {
                     // it is being used elsewhere!
                     item.Filename = "";
@@ -191,7 +191,7 @@ namespace Walkabout.Attachments
                     {
                         item.Hash = "";
                         // File is not already in our statementDir, so see if we can bundle it.
-                        var bundled = FindBundledStatement(statementFile);
+                        var bundled = this.FindBundledStatement(statementFile);
                         if (!string.IsNullOrEmpty(bundled))
                         {
                             // then the file is already referenced by another statement, perhaps in a different account,
@@ -202,7 +202,7 @@ namespace Walkabout.Attachments
                         {
                             // Make sure we have a unique name for it
                             // copy the file to our directory (if it's not already there).
-                            var newName = GetUniqueStatementName(statementDir, Path.GetFileName(statementFile));
+                            var newName = this.GetUniqueStatementName(statementDir, Path.GetFileName(statementFile));
                             File.Copy(statementFile, newName, true);
                             statementFile = newName;
                         }
@@ -212,7 +212,7 @@ namespace Walkabout.Attachments
                     if (!string.IsNullOrEmpty(item.Filename) && item.Filename != relative)
                     {
                         // then the statement is being renamed, which means we might need to cleanup the old one
-                        SafeDeleteFile(index, item);
+                        this.SafeDeleteFile(index, item);
                     }
 
                     item.Filename = relative;
@@ -228,11 +228,11 @@ namespace Walkabout.Attachments
 
         public bool AddStatement(Account a, DateTime date, string statementFile, decimal balance, bool flush = true)
         {
-            var statementIndex = GetOrCreateIndex(a);
+            var statementIndex = this.GetOrCreateIndex(a);
             if (statementIndex == null) return false;
             var statementDir = Path.GetDirectoryName(statementIndex.FileName);
 
-            var statement = GetStatement(a, date);
+            var statement = this.GetStatement(a, date);
             if (statement != null)
             {
                 throw new InvalidOperationException("Internal Error: should have called UpdateStatement");
@@ -249,11 +249,11 @@ namespace Walkabout.Attachments
                 statementIndex.Items.Add(statement);
             }
 
-            ComputeHash(statementIndex, statement, statementFile);
+            this.ComputeHash(statementIndex, statement, statementFile);
 
             if (flush)
             {
-                SaveIndex(statementIndex);
+                this.SaveIndex(statementIndex);
             }
 
             return statement != null;
@@ -268,7 +268,7 @@ namespace Walkabout.Attachments
                 // if that happens we don't want to store duplicate statements across
                 // all those accounts.  Instead we find the other index that already
                 // has the statement and we point to that file instead.
-                foreach (var index in statements.Values)
+                foreach (var index in this.statements.Values)
                 {
                     foreach (var item in index.Items)
                     {
@@ -290,7 +290,7 @@ namespace Walkabout.Attachments
         {
             string fileName = Path.Combine(Path.GetDirectoryName(parent.FileName), toFind.Filename);
             // Return true if a different Statement directory is referencing this statement file.
-            foreach (var index in statements.Values)
+            foreach (var index in this.statements.Values)
             {
                 if (index != parent)
                 {
@@ -312,10 +312,10 @@ namespace Walkabout.Attachments
 
         private void UpdateBundledPointers(string oldName, string newName)
         {
-            string root = StatementsDirectory;
+            string root = this.StatementsDirectory;
             if (string.IsNullOrEmpty(root)) return;
 
-            foreach (var index in statements.Values)
+            foreach (var index in this.statements.Values)
             {
                 var changed = false;
                 foreach (var item in index.Items)
@@ -335,7 +335,7 @@ namespace Walkabout.Attachments
                 }
                 if (changed)
                 {
-                    SaveIndex(index);
+                    this.SaveIndex(index);
                 }
             }
         }
@@ -389,38 +389,38 @@ namespace Walkabout.Attachments
 
         public void Stop()
         {
-            started = false;
-            actions.CancelAll();
+            this.started = false;
+            this.actions.CancelAll();
             if (this.myMoney != null)
             {
-                myMoney.Accounts.Changed -= new EventHandler<ChangeEventArgs>(OnAccountsChanged);
-                myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                this.myMoney.Accounts.Changed -= new EventHandler<ChangeEventArgs>(this.OnAccountsChanged);
+                this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
             }
         }
 
         public void Start()
         {
             this.Stop();
-            if (myMoney != null)
+            if (this.myMoney != null)
             {
                 // listen to transaction changed events so that we can cleanup attachments when transactions
                 // are deleted.
-                myMoney.Accounts.Changed += new EventHandler<ChangeEventArgs>(OnAccountsChanged);
-                myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
-                started = true;
-                loaded = false;
-                actions.StartDelayedAction("ScanAccounts", () => LoadIndex(), TimeSpan.FromMilliseconds(100));
+                this.myMoney.Accounts.Changed += new EventHandler<ChangeEventArgs>(this.OnAccountsChanged);
+                this.myMoney.Changed += new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
+                this.started = true;
+                this.loaded = false;
+                this.actions.StartDelayedAction("ScanAccounts", () => this.LoadIndex(), TimeSpan.FromMilliseconds(100));
             }
         }
 
         void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
-            HandleChanges(args);
+            this.HandleChanges(args);
         }
 
         void OnAccountsChanged(object sender, ChangeEventArgs args)
         {
-            HandleChanges(args);
+            this.HandleChanges(args);
         }
 
         void HandleChanges(ChangeEventArgs args)
@@ -431,15 +431,15 @@ namespace Walkabout.Attachments
                 {
                     if (args.ChangeType == ChangeType.Inserted)
                     {
-                        actions.StartDelayedAction("LoadAccount" + a.Name, () =>
+                        this.actions.StartDelayedAction("LoadAccount" + a.Name, () =>
                         {
-                            UpdateNameMap();
-                            LoadIndexFile(a.Name);
+                            this.UpdateNameMap();
+                            this.LoadIndexFile(a.Name);
                         }, TimeSpan.FromMilliseconds(100));
                     }
                     else if (args.ChangeType == ChangeType.Changed && args.Name == "Name")
                     {
-                        OnAccountRenamed(a);
+                        this.OnAccountRenamed(a);
                     }
                 }
                 args = args.Next;
@@ -453,7 +453,7 @@ namespace Walkabout.Attachments
                 if (oldName != a.Name)
                 {
                     this.OnRenameAccountFolder(a, oldName);
-                    var index = GetOrLoadIndexFile(oldName);
+                    var index = this.GetOrLoadIndexFile(oldName);
                     this.nameMap[a] = a.Name;
                     if (index != null)
                     {
@@ -515,7 +515,7 @@ namespace Walkabout.Attachments
             }
             if (updated)
             {
-                SaveIndex(index);
+                this.SaveIndex(index);
             }
         }
 
@@ -547,8 +547,8 @@ namespace Walkabout.Attachments
                         index = (StatementIndex)s.Deserialize(fs);
                     }
                     index.FileName = indexFile;
-                    statements[name] = index;
-                    CheckFileHashes(index);
+                    this.statements[name] = index;
+                    this.CheckFileHashes(index);
                     return index;
                 }
             }
@@ -577,7 +577,7 @@ namespace Walkabout.Attachments
                     // now update the xml file.
                     if (this.statements.TryGetValue(a.Name, out StatementIndex updated))
                     {
-                        SaveIndex(updated);
+                        this.SaveIndex(updated);
                     }
                 }
             }
@@ -587,11 +587,11 @@ namespace Walkabout.Attachments
         public void Load()
         {
             this.loading = true;
-            foreach (var a in myMoney.Accounts.GetAccounts())
+            foreach (var a in this.myMoney.Accounts.GetAccounts())
             {
                 if (!string.IsNullOrEmpty(a.Name))
                 {
-                    LoadIndexFile(a.Name);
+                    this.LoadIndexFile(a.Name);
                 }
             }
             this.loading = false;
@@ -607,7 +607,7 @@ namespace Walkabout.Attachments
             if (this.loading)
             {
                 // this.statements may be incomplete and we can't wait, we need it now!
-                return LoadIndexFile(accountName);
+                return this.LoadIndexFile(accountName);
             }
             return null;
         }
@@ -635,7 +635,7 @@ namespace Walkabout.Attachments
 
         public StatementIndex()
         {
-            Items = new List<StatementItem>();
+            this.Items = new List<StatementItem>();
         }
     }
 

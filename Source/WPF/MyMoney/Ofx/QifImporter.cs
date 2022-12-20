@@ -24,7 +24,7 @@ namespace Walkabout.Migrate
         {
             count = 0;
             string name = Path.GetFileNameWithoutExtension(filename);
-            Account a = Money.Accounts.FindAccount(name);
+            Account a = this.Money.Accounts.FindAccount(name);
             if (a == null)
             {
                 if (name != Path.GetFileNameWithoutExtension(SpecialImportFileName))
@@ -38,7 +38,7 @@ namespace Walkabout.Migrate
 
                     if (MessageBoxEx.Show(message, "New Account", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
-                        a = Money.Accounts.AddAccount(name);
+                        a = this.Money.Accounts.AddAccount(name);
                     }
                 }
 
@@ -69,7 +69,7 @@ namespace Walkabout.Migrate
                 }
             }
 
-            count = ImportQif(a, filename);
+            count = this.ImportQif(a, filename);
 
             return a;
         }
@@ -162,7 +162,7 @@ namespace Walkabout.Migrate
                         switch (ltype)
                         {
                             case 'A': // address
-                                t.Memo = AppendMemo(t.Memo, line);
+                                t.Memo = this.AppendMemo(t.Memo, line);
                                 break;
                             case '!': // comment, Type:?
                                 break;
@@ -197,7 +197,7 @@ namespace Walkabout.Migrate
                                 }
                                 break;
                             case 'M': // memo
-                                t.Memo = AppendMemo(t.Memo, line);
+                                t.Memo = this.AppendMemo(t.Memo, line);
                                 break;
                             case 'T': // amount
                             case 'U': // amount
@@ -290,7 +290,7 @@ namespace Walkabout.Migrate
                                     }
                                     else
                                     {
-                                        t.Transfer = FindMatchingTransfer(t, to);
+                                        t.Transfer = this.FindMatchingTransfer(t, to);
                                         if (t.Transfer != null)
                                         {
                                             Category c = t.Transfer.Transaction.Category;
@@ -362,7 +362,7 @@ namespace Walkabout.Migrate
                                 if (s.to != null)
                                 {
                                     // now we can find the matching transfer.
-                                    FindMatchingSplitTransfer(s, splitTo);
+                                    this.FindMatchingSplitTransfer(s, splitTo);
                                 }
                                 break;
                             case '^': // commit

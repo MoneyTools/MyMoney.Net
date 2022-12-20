@@ -17,7 +17,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return Count > 0;
+                return this.Count > 0;
             }
         }
 
@@ -25,7 +25,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                foreach (AutomationElement e in Selection)
+                foreach (AutomationElement e in this.Selection)
                 {
                     return true;
                 }

@@ -41,7 +41,7 @@ namespace Walkabout.Controls
                 TextBox tv = sender as TextBox;
                 if (tv != null)
                 {
-                    FiterEventTextChanged(tv.Text);
+                    this.FiterEventTextChanged(tv.Text);
                 }
             }
 
@@ -60,11 +60,11 @@ namespace Walkabout.Controls
             TextBox tb = sender as TextBox;
             if (tb != null && string.IsNullOrWhiteSpace(tb.Text) == false)
             {
-                ClearFilter.Visibility = System.Windows.Visibility.Visible;
+                this.ClearFilter.Visibility = System.Windows.Visibility.Visible;
             }
             else
             {
-                ClearFilter.Visibility = System.Windows.Visibility.Collapsed;
+                this.ClearFilter.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
 
@@ -73,13 +73,13 @@ namespace Walkabout.Controls
         {
             e.Handled = true;
             this.InputFilterText.Text = string.Empty;
-            FiterEventTextChanged(this.InputFilterText.Text);
+            this.FiterEventTextChanged(this.InputFilterText.Text);
         }
 
         internal void FocusTextBox()
         {
-            InputFilterText.Focus();
-            InputFilterText.SelectAll();
+            this.InputFilterText.Focus();
+            this.InputFilterText.SelectAll();
         }
     }
 

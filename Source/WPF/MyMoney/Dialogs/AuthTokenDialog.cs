@@ -22,7 +22,7 @@ namespace Walkabout.Dialogs
                 label = "Authentication token";
             }
 
-            this.AddUserDefinedField(customFieldId, info.AuthTokenLabel);
+            this.AddUserDefinedField(this.customFieldId, info.AuthTokenLabel);
 
             string url = info.AuthTokenInfoUrl;
 
@@ -60,7 +60,7 @@ namespace Walkabout.Dialogs
         {
             get
             {
-                return this.GetUserDefinedField(customFieldId);
+                return this.GetUserDefinedField(this.customFieldId);
             }
         }
     }

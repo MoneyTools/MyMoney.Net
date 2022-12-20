@@ -30,11 +30,11 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         public MainWindow()
         {
-            data.HistoryLength = TimeSpan.FromSeconds(60); // keep no more than 60 seconds history.
-            InitializeComponent();
-            Categories.SelectionChanged += new SelectionChangedEventHandler(OnSelectionChanged);
-            Components.SelectionChanged += new SelectionChangedEventHandler(OnSelectionChanged);
-            Measurements.SelectionChanged += new SelectionChangedEventHandler(OnSelectionChanged);
+            this.data.HistoryLength = TimeSpan.FromSeconds(60); // keep no more than 60 seconds history.
+            this.InitializeComponent();
+            this.Categories.SelectionChanged += new SelectionChangedEventHandler(this.OnSelectionChanged);
+            this.Components.SelectionChanged += new SelectionChangedEventHandler(this.OnSelectionChanged);
+            this.Measurements.SelectionChanged += new SelectionChangedEventHandler(this.OnSelectionChanged);
 
             bool isAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
             if (!isAdmin)
@@ -43,66 +43,66 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                     "Permissions Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            Chart.Legend = LegendControl;
-            Bars.Legend = LegendControl;
+            this.Chart.Legend = this.LegendControl;
+            this.Bars.Legend = this.LegendControl;
         }
 
         private void OnLineGraph(object sender, RoutedEventArgs e)
         {
-            BarGraphCheckBox.IsChecked = false;
-            Chart.Visibility = System.Windows.Visibility.Visible;
-            LegendControl.Visibility = System.Windows.Visibility.Collapsed;
-            Bars.Visibility = System.Windows.Visibility.Collapsed;
-            changed = true;
-            UpdateGraph();
+            this.BarGraphCheckBox.IsChecked = false;
+            this.Chart.Visibility = System.Windows.Visibility.Visible;
+            this.LegendControl.Visibility = System.Windows.Visibility.Collapsed;
+            this.Bars.Visibility = System.Windows.Visibility.Collapsed;
+            this.changed = true;
+            this.UpdateGraph();
         }
 
         private void OnBarGraph(object sender, RoutedEventArgs e)
         {
-            LineGraphCheckBox.IsChecked = false;
-            Bars.Visibility = System.Windows.Visibility.Visible;
-            LegendControl.Visibility = System.Windows.Visibility.Visible;
-            Chart.Visibility = System.Windows.Visibility.Collapsed;
-            changed = true;
-            UpdateGraph();
+            this.LineGraphCheckBox.IsChecked = false;
+            this.Bars.Visibility = System.Windows.Visibility.Visible;
+            this.LegendControl.Visibility = System.Windows.Visibility.Visible;
+            this.Chart.Visibility = System.Windows.Visibility.Collapsed;
+            this.changed = true;
+            this.UpdateGraph();
         }
 
         private void OnZoomIn(object sender, RoutedEventArgs e)
         {
-            if (Bars.Visibility == System.Windows.Visibility.Visible)
+            if (this.Bars.Visibility == System.Windows.Visibility.Visible)
             {
-                Bars.ZoomIn();
+                this.Bars.ZoomIn();
             }
             else
             {
-                Chart.Zoom *= 2;
+                this.Chart.Zoom *= 2;
             }
-            ZoomToFitButton.IsChecked = false;
+            this.ZoomToFitButton.IsChecked = false;
         }
 
         private void OnZoomOut(object sender, RoutedEventArgs e)
         {
-            if (Bars.Visibility == System.Windows.Visibility.Visible)
+            if (this.Bars.Visibility == System.Windows.Visibility.Visible)
             {
-                Bars.ZoomOut();
+                this.Bars.ZoomOut();
             }
             else
             {
-                Chart.Zoom *= 0.5;
+                this.Chart.Zoom *= 0.5;
             }
-            ZoomToFitButton.IsChecked = false;
+            this.ZoomToFitButton.IsChecked = false;
         }
 
         private void OnZoomToFit(object sender, RoutedEventArgs e)
         {
             CheckBox checkBox = (CheckBox)sender;
-            if (Bars.Visibility == System.Windows.Visibility.Visible)
+            if (this.Bars.Visibility == System.Windows.Visibility.Visible)
             {
-                Bars.ZoomToFit = checkBox.IsChecked == true;
+                this.Bars.ZoomToFit = checkBox.IsChecked == true;
             }
             else
             {
-                Chart.ZoomToFit = checkBox.IsChecked == true;
+                this.Chart.ZoomToFit = checkBox.IsChecked == true;
             }
         }
 
@@ -115,139 +115,139 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             CheckBox box = (CheckBox)sender;
             if (box.IsChecked == true)
             {
-                StartRecording();
+                this.StartRecording();
             }
             else
             {
-                OnStop(sender, e);
+                this.OnStop(sender, e);
             }
         }
 
         private void OnTick(object sender, EventArgs e)
         {
-            if (!paused)
+            if (!this.paused)
             {
-                UpdateGraph();
+                this.UpdateGraph();
             }
             else
             {
-                Events.Text = count.ToString("N0");
+                this.Events.Text = this.count.ToString("N0");
             }
         }
 
         private void OnStop(object sender, RoutedEventArgs e)
         {
-            Stop();
-            UpdateGraph();
+            this.Stop();
+            this.UpdateGraph();
         }
 
         private void Stop()
         {
-            RecordCheckBox.IsChecked = false;
+            this.RecordCheckBox.IsChecked = false;
 
-            if (watcher != null)
+            if (this.watcher != null)
             {
-                watcher.Enabled = false;
+                this.watcher.Enabled = false;
             }
 
-            using (watcher)
+            using (this.watcher)
             {
-                watcher = null;
+                this.watcher = null;
             }
-            if (wpfWatcher != null)
+            if (this.wpfWatcher != null)
             {
-                wpfWatcher.Enabled = false;
+                this.wpfWatcher.Enabled = false;
             }
-            using (wpfWatcher)
+            using (this.wpfWatcher)
             {
-                wpfWatcher = null;
+                this.wpfWatcher = null;
             }
-            if (measurementWatcher != null)
+            if (this.measurementWatcher != null)
             {
-                measurementWatcher = null;
+                this.measurementWatcher = null;
             }
-            using (measurementWatcher)
+            using (this.measurementWatcher)
             {
-                measurementWatcher = null;
+                this.measurementWatcher = null;
             }
-            if (timer != null)
+            if (this.timer != null)
             {
-                timer.Stop();
+                this.timer.Stop();
             }
-            timer = null;
-            recording = false;
+            this.timer = null;
+            this.recording = false;
         }
 
         bool paused;
         private void OnPause(object sender, RoutedEventArgs e)
         {
             CheckBox box = (CheckBox)sender;
-            paused = box.IsChecked == true;
-            UpdateGraph();
+            this.paused = box.IsChecked == true;
+            this.UpdateGraph();
         }
 
         private void OnClear(object sender, RoutedEventArgs e)
         {
-            Clear();
+            this.Clear();
         }
 
         private void OnTrend(object sender, RoutedEventArgs e)
         {
             CheckBox box = (CheckBox)sender;
-            Chart.ShowTrendLine = box.IsChecked == true;
+            this.Chart.ShowTrendLine = box.IsChecked == true;
         }
 
         bool removeSpikes;
         private void OnRemoveSpikes(object sender, RoutedEventArgs e)
         {
             CheckBox box = (CheckBox)sender;
-            removeSpikes = box.IsChecked == true;
-            changed = true;
-            UpdateGraph();
+            this.removeSpikes = box.IsChecked == true;
+            this.changed = true;
+            this.UpdateGraph();
         }
 
         private void Clear()
         {
-            count = 0;
-            changed = true;
-            data.Clear();
-            UpdateGraph();
+            this.count = 0;
+            this.changed = true;
+            this.data.Clear();
+            this.UpdateGraph();
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            changed = true;
+            this.changed = true;
 
             if (this.Components.SelectedItem is string)
             {
-                ComponentFilter = (string)this.Components.SelectedItem;
+                this.ComponentFilter = (string)this.Components.SelectedItem;
             }
             else
             {
-                ComponentFilter = null;
+                this.ComponentFilter = null;
             }
 
             if (this.Categories.SelectedItem is string)
             {
-                CategoryFilter = (string)this.Categories.SelectedItem;
+                this.CategoryFilter = (string)this.Categories.SelectedItem;
             }
             else
             {
-                CategoryFilter = null;
+                this.CategoryFilter = null;
             }
 
             if (this.Measurements.SelectedItem is string)
             {
-                MeasurementFilter = (string)this.Measurements.SelectedItem;
+                this.MeasurementFilter = (string)this.Measurements.SelectedItem;
             }
             else
             {
-                MeasurementFilter = null;
+                this.MeasurementFilter = null;
             }
 
-            if (!inUpdate)
+            if (!this.inUpdate)
             {
-                UpdateGraph();
+                this.UpdateGraph();
             }
         }
 
@@ -296,50 +296,50 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         private void UpdateGraph()
         {
-            inUpdate = true;
-            Events.Text = count.ToString("N0");
-            if (changed)
+            this.inUpdate = true;
+            this.Events.Text = this.count.ToString("N0");
+            if (this.changed)
             {
-                FillList<string>(this.Components, new List<string>(data.Components));
-                FillList<string>(this.Categories, new List<string>(data.Categoryies));
-                FillList<string>(this.Measurements, new List<string>(data.Measurements));
+                this.FillList(this.Components, new List<string>(this.data.Components));
+                this.FillList(this.Categories, new List<string>(this.data.Categoryies));
+                this.FillList(this.Measurements, new List<string>(this.data.Measurements));
 
                 bool zoomToFit = false;
-                if (LineGraphCheckBox.IsChecked == true)
+                if (this.LineGraphCheckBox.IsChecked == true)
                 {
-                    Chart.RemoveSpikes = removeSpikes;
-                    Chart.PerformanceFrequency = this.performanceFrequency;
-                    Chart.Data = data.GetMatchingEvents(ComponentFilter, CategoryFilter, MeasurementFilter);
-                    Chart.Units = data.Units;
-                    Bars.Data = null;
-                    zoomToFit = Chart.ZoomToFit;
-                    UpdateAverage();
+                    this.Chart.RemoveSpikes = this.removeSpikes;
+                    this.Chart.PerformanceFrequency = this.performanceFrequency;
+                    this.Chart.Data = this.data.GetMatchingEvents(this.ComponentFilter, this.CategoryFilter, this.MeasurementFilter);
+                    this.Chart.Units = this.data.Units;
+                    this.Bars.Data = null;
+                    zoomToFit = this.Chart.ZoomToFit;
+                    this.UpdateAverage();
                 }
                 else
                 {
-                    Bars.PerformanceFrequency = this.performanceFrequency;
-                    Bars.Data = data.GetMatchingEvents(ComponentFilter, CategoryFilter, MeasurementFilter);
-                    zoomToFit = Bars.ZoomToFit;
-                    Chart.Data = null;
+                    this.Bars.PerformanceFrequency = this.performanceFrequency;
+                    this.Bars.Data = this.data.GetMatchingEvents(this.ComponentFilter, this.CategoryFilter, this.MeasurementFilter);
+                    zoomToFit = this.Bars.ZoomToFit;
+                    this.Chart.Data = null;
                 }
-                UpdateLayout();
+                this.UpdateLayout();
                 if (!zoomToFit)
                 {
-                    double to = Scroller.ScrollableWidth;
-                    double from = Scroller.HorizontalOffset;
+                    double to = this.Scroller.ScrollableWidth;
+                    double from = this.Scroller.HorizontalOffset;
                     this.BeginAnimation(HorizontalScrollProperty, new DoubleAnimation(from, to, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.HoldEnd));
                 }
-                ZoomToFitButton.IsChecked = zoomToFit;
+                this.ZoomToFitButton.IsChecked = zoomToFit;
             }
-            changed = false;
-            inUpdate = false;
+            this.changed = false;
+            this.inUpdate = false;
         }
 
         private void UpdateAverage()
         {
             ulong sum = 0;
             ulong count = 0;
-            foreach (PerformanceEventArrivedEventArgs e in Chart.Data)
+            foreach (PerformanceEventArrivedEventArgs e in this.Chart.Data)
             {
                 if (e.EventId == PerformanceData.EndEvent)
                 {
@@ -351,15 +351,15 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             if (count > 0)
             {
                 double avg = (double)sum / (double)count;
-                avg /= Chart.UnitConversion;
-                AverageStatus.Text = "Average: " + avg.ToString("G2") + Chart.Units;
+                avg /= this.Chart.UnitConversion;
+                this.AverageStatus.Text = "Average: " + avg.ToString("G2") + this.Chart.Units;
             }
         }
 
         public double HorizontalScroll
         {
-            get { return (double)GetValue(HorizontalScrollProperty); }
-            set { SetValue(HorizontalScrollProperty, value); }
+            get { return (double)this.GetValue(HorizontalScrollProperty); }
+            set { this.SetValue(HorizontalScrollProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for HorizontalScroll.  This enables animation, styling, binding, etc...
@@ -383,22 +383,22 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         {
             try
             {
-                RecordCheckBox.IsChecked = true;
-                Clear();
-                recording = true;
-                if (watcher == null)
+                this.RecordCheckBox.IsChecked = true;
+                this.Clear();
+                this.recording = true;
+                if (this.watcher == null)
                 {
-                    CreateWatchers();
+                    this.CreateWatchers();
                 }
 
                 // Start listening 
-                watcher.Enabled = true;
-                data.PerformanceFrequency = performanceFrequency = watcher.PerformanceFrequency;
-                if (WpfEvents.IsChecked)
+                this.watcher.Enabled = true;
+                this.data.PerformanceFrequency = this.performanceFrequency = this.watcher.PerformanceFrequency;
+                if (this.WpfEvents.IsChecked)
                 {
-                    wpfWatcher.Enabled = true;
+                    this.wpfWatcher.Enabled = true;
                 }
-                measurementWatcher.Enabled = true;
+                this.measurementWatcher.Enabled = true;
             }
             catch (Win32Exception we)
             {
@@ -421,9 +421,9 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         private void CreateWatchers()
         {
             Guid providerId = typeof(PerformanceBlock).GUID;
-            watcher = new PerformanceEventTraceWatcher(session);
+            this.watcher = new PerformanceEventTraceWatcher(this.session);
 
-            watcher.EventArrived += delegate (object sender, EventArrivedEventArgs e)
+            this.watcher.EventArrived += delegate (object sender, EventArrivedEventArgs e)
             {
                 if (e.EventException != null)
                 {
@@ -432,22 +432,22 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                     return;
                 }
                 PerformanceEventArrivedEventArgs pe = e as PerformanceEventArrivedEventArgs;
-                if (recording && pe != null)
+                if (this.recording && pe != null)
                 {
-                    if (!filter || ((ComponentFilter == null || pe.ComponentName == ComponentFilter) &&
-                                    (CategoryFilter == null || pe.CategoryName == CategoryFilter) &&
-                                    (MeasurementFilter == null || pe.MeasurementName == MeasurementFilter)))
+                    if (!this.filter || ((this.ComponentFilter == null || pe.ComponentName == this.ComponentFilter) &&
+                                    (this.CategoryFilter == null || pe.CategoryName == this.CategoryFilter) &&
+                                    (this.MeasurementFilter == null || pe.MeasurementName == this.MeasurementFilter)))
                     {
-                        data.Add(pe);
-                        count++;
-                        changed = true;
+                        this.data.Add(pe);
+                        this.count++;
+                        this.changed = true;
                     }
                 }
             };
 
-            wpfWatcher = new WpfEventTraceWatcher(session);
+            this.wpfWatcher = new WpfEventTraceWatcher(this.session);
 
-            wpfWatcher.EventArrived += delegate (object sender, EventArrivedEventArgs e)
+            this.wpfWatcher.EventArrived += delegate (object sender, EventArrivedEventArgs e)
             {
                 if (e.EventException != null)
                 {
@@ -458,14 +458,14 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 WpfEventArrivedEventArgs we = e as WpfEventArrivedEventArgs;
 
                 // find the WPF render events
-                if (recording && we != null && we.Event != null)
+                if (this.recording && we != null && we.Event != null)
                 {
                     WpfEvent wev = we.Event;
-                    if (!filter || ((ComponentFilter == null || ComponentId.WPF.ToString() == ComponentFilter) &&
-                                    (CategoryFilter == null || CategoryId.View.ToString() == CategoryFilter) &&
-                                    (MeasurementFilter == null || wev.Task == MeasurementFilter)))
+                    if (!this.filter || ((this.ComponentFilter == null || ComponentId.WPF.ToString() == this.ComponentFilter) &&
+                                    (this.CategoryFilter == null || CategoryId.View.ToString() == this.CategoryFilter) &&
+                                    (this.MeasurementFilter == null || wev.Task == this.MeasurementFilter)))
                     {
-                        data.Add(new PerformanceEventArrivedEventArgs()
+                        this.data.Add(new PerformanceEventArrivedEventArgs()
                         {
                             EventId = we.EventId,
                             EventName = we.EventName,
@@ -475,15 +475,15 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                             Component = ComponentId.WPF,
                             MeasurementName = wev.Task
                         });
-                        count++;
-                        changed = true;
+                        this.count++;
+                        this.changed = true;
                     }
                 }
             };
 
-            measurementWatcher = new MeasurementBlockEventTraceWatcher(session);
+            this.measurementWatcher = new MeasurementBlockEventTraceWatcher(this.session);
 
-            measurementWatcher.EventArrived += delegate (object sender, EventArrivedEventArgs e)
+            this.measurementWatcher.EventArrived += delegate (object sender, EventArrivedEventArgs e)
             {
                 if (e.EventException != null)
                 {
@@ -493,9 +493,9 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 }
                 MeasurementBlockEventArgs me = e as MeasurementBlockEventArgs;
 
-                if (recording && me != null)
+                if (this.recording && me != null)
                 {
-                    if (!filter || (CategoryFilter == null || me.Category == CategoryFilter))
+                    if (!this.filter || (this.CategoryFilter == null || me.Category == this.CategoryFilter))
                     {
                         string cat = me.Category;
                         string comp = null;
@@ -506,7 +506,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                             cat = cat.Substring(i + 1).Trim();
                         }
 
-                        data.Add(new PerformanceEventArrivedEventArgs()
+                        this.data.Add(new PerformanceEventArrivedEventArgs()
                         {
                             EventId = me.EventId, // fortunately the event id's are the same.
                             EventName = me.EventName,
@@ -517,24 +517,24 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                             Size = me.Size,
                             Ticks = me.Ticks
                         });
-                        count++;
-                        changed = true;
+                        this.count++;
+                        this.changed = true;
                     }
                 }
             };
 
             // start timer so we can update graph when events arrive.
-            if (timer == null)
+            if (this.timer == null)
             {
-                timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background,
-                    new EventHandler(OnTick), this.Dispatcher);
-                timer.Start();
+                this.timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background,
+                    new EventHandler(this.OnTick), this.Dispatcher);
+                this.timer.Start();
             }
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            Stop();
+            this.Stop();
             base.OnClosed(e);
 
         }
@@ -542,7 +542,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         void OnFilterChanged(object sender, RoutedEventArgs e)
         {
             CheckBox cb = (CheckBox)sender;
-            filter = cb.IsChecked == true;
+            this.filter = cb.IsChecked == true;
         }
 
         private void OnFileOpen(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
@@ -552,21 +552,21 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             fd.CheckFileExists = true;
             if (fd.ShowDialog() == true)
             {
-                Stop();
-                PauseCheckBox.IsChecked = false;
-                paused = true;
-                recording = true;
+                this.Stop();
+                this.PauseCheckBox.IsChecked = false;
+                this.paused = true;
+                this.recording = true;
                 this.session = new EventTraceSession("Visual Studio Performance");
-                session.TraceComplete += new EventHandler(OnTraceComplete);
-                CreateWatchers();
-                session.OpenTraceLog(fd.FileName);
-                this.performanceFrequency = session.PerformanceFrequency;
+                this.session.TraceComplete += new EventHandler(this.OnTraceComplete);
+                this.CreateWatchers();
+                this.session.OpenTraceLog(fd.FileName);
+                this.performanceFrequency = this.session.PerformanceFrequency;
             }
         }
 
         void OnTraceComplete(object sender, EventArgs e)
         {
-            paused = false;
+            this.paused = false;
         }
 
         private void MenuAddWpf_Click(object sender, RoutedEventArgs e)
@@ -574,9 +574,9 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             MenuItem item = (MenuItem)sender;
             item.IsChecked = !item.IsChecked;
 
-            if (wpfWatcher != null)
+            if (this.wpfWatcher != null)
             {
-                wpfWatcher.Enabled = item.IsChecked;
+                this.wpfWatcher.Enabled = item.IsChecked;
             }
         }
 
@@ -587,8 +587,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             sd.Filter = "XML Files (*.xml)|*.xml";
             if (sd.ShowDialog() == true)
             {
-                var events = data.GetMatchingEvents(ComponentFilter, CategoryFilter, MeasurementFilter);
-                data.WriteXml(sd.FileName, events);
+                var events = this.data.GetMatchingEvents(this.ComponentFilter, this.CategoryFilter, this.MeasurementFilter);
+                this.data.WriteXml(sd.FileName, events);
             }
         }
 

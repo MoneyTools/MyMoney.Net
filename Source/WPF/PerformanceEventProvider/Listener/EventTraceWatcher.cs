@@ -72,7 +72,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
         {
             int status = 0;
 
-            string path = LogFilePath;
+            string path = this.LogFilePath;
 
             // Allocate memory for the session properties. The memory must
             // be large enough to include the log file name and session name,
@@ -109,17 +109,17 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
                 // Copy the data to the buffer
                 Marshal.StructureToPtr(pSessionProperties, this.traceProperties, false);
-                CopyString(path, new IntPtr((long)this.traceProperties + structSize));
-                CopyString(this.eventLogSessionName, new IntPtr((long)this.traceProperties + structSize + pathSize));
+                this.CopyString(path, new IntPtr((long)this.traceProperties + structSize));
+                this.CopyString(this.eventLogSessionName, new IntPtr((long)this.traceProperties + structSize + pathSize));
 
                 this.sessionHandle = 0;
                 // Create the trace session.
-                status = NativeMethods.StartTrace(out sessionHandle, this.eventLogSessionName, this.traceProperties);
+                status = NativeMethods.StartTrace(out this.sessionHandle, this.eventLogSessionName, this.traceProperties);
                 if (status == ERROR_ALREADY_EXISTS)
                 {
                     // close unclosed previous trace.
-                    StopTrace();
-                    status = NativeMethods.StartTrace(out sessionHandle, this.eventLogSessionName, this.traceProperties);
+                    this.StopTrace();
+                    status = NativeMethods.StartTrace(out this.sessionHandle, this.eventLogSessionName, this.traceProperties);
                 }
 
                 if (0 != status)
@@ -135,7 +135,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         }
 
-        public long SessionHandle { get { return sessionHandle; } }
+        public long SessionHandle { get { return this.sessionHandle; } }
 
         const uint RealTime = 0x00000100;
         const uint EventRecord = 0x10000000;
@@ -145,16 +145,16 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         public void OpenTraceLog(string logFileName)
         {
-            stopProcessing = false;
-            logFile = new EventTraceLogfile();
-            logFile.BufferCallback = TraceEventBufferCallback;
-            logFile.EventRecordCallback = EventRecordCallback;
-            logFile.ProcessTraceMode = EventRecord;
-            logFile.LogFileName = logFileName;
+            this.stopProcessing = false;
+            this.logFile = new EventTraceLogfile();
+            this.logFile.BufferCallback = this.TraceEventBufferCallback;
+            this.logFile.EventRecordCallback = this.EventRecordCallback;
+            this.logFile.ProcessTraceMode = EventRecord;
+            this.logFile.LogFileName = logFileName;
 
-            this.traceHandle = NativeMethods.OpenTrace(ref logFile);
+            this.traceHandle = NativeMethods.OpenTrace(ref this.logFile);
 
-            if (INVALID_HANDLE_VALUE == traceHandle)
+            if (INVALID_HANDLE_VALUE == this.traceHandle)
             {
                 int error = Marshal.GetLastWin32Error();
                 if (error != 0)
@@ -163,8 +163,8 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
                 }
             }
 
-            processEventsDelegate = new System.Action(ProcessTraceInBackground);
-            asyncResult = processEventsDelegate.BeginInvoke(null, this);
+            this.processEventsDelegate = new System.Action(this.ProcessTraceInBackground);
+            this.asyncResult = this.processEventsDelegate.BeginInvoke(null, this);
         }
 
         private void EventRecordCallback([In] ref EventRecord eventRecord)
@@ -179,21 +179,21 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         public void StartTracing()
         {
-            refCount++;
-            if (refCount > 1)
+            this.refCount++;
+            if (this.refCount > 1)
             {
                 return;
             }
 
-            stopProcessing = false;
-            StartSession();
+            this.stopProcessing = false;
+            this.StartSession();
 
-            logFile = new EventTraceLogfile();
-            logFile.LoggerName = this.eventLogSessionName;
-            logFile.EventRecordCallback = EventRecordCallback;
+            this.logFile = new EventTraceLogfile();
+            this.logFile.LoggerName = this.eventLogSessionName;
+            this.logFile.EventRecordCallback = this.EventRecordCallback;
 
-            logFile.ProcessTraceMode = EventRecord | RealTime;
-            this.traceHandle = NativeMethods.OpenTrace(ref logFile);
+            this.logFile.ProcessTraceMode = EventRecord | RealTime;
+            this.traceHandle = NativeMethods.OpenTrace(ref this.logFile);
 
             int error = Marshal.GetLastWin32Error();
             if (error != 0)
@@ -201,8 +201,8 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
                 throw new System.ComponentModel.Win32Exception(error);
             }
 
-            processEventsDelegate = new System.Action(ProcessTraceInBackground);
-            asyncResult = processEventsDelegate.BeginInvoke(null, this);
+            this.processEventsDelegate = new System.Action(this.ProcessTraceInBackground);
+            this.asyncResult = this.processEventsDelegate.BeginInvoke(null, this);
         }
 
         // Return how many ticks per second.
@@ -218,17 +218,17 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         public void StopTracing()
         {
-            refCount--;
-            if (refCount != 0)
+            this.refCount--;
+            if (this.refCount != 0)
             {
                 return;
             }
 
-            stopProcessing = true;
+            this.stopProcessing = true;
             NativeMethods.CloseTrace(this.traceHandle);
-            traceHandle = 0;
-            processEventsDelegate.EndInvoke(asyncResult);
-            StopTrace();
+            this.traceHandle = 0;
+            this.processEventsDelegate.EndInvoke(this.asyncResult);
+            this.StopTrace();
             Marshal.FreeCoTaskMem(this.traceProperties);
             this.traceProperties = IntPtr.Zero;
         }
@@ -252,7 +252,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
         [AllowReversePInvokeCalls]
         private bool TraceEventBufferCallback(IntPtr rawLogFile)
         {
-            return !stopProcessing;
+            return !this.stopProcessing;
         }
 
 
@@ -264,7 +264,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             {
                 ulong[] array = { this.traceHandle };
                 int error = NativeMethods.ProcessTrace(array, 1, IntPtr.Zero, IntPtr.Zero);
-                OnTraceComplete();
+                this.OnTraceComplete();
 
                 if (error != 0)
                 {
@@ -309,7 +309,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
         {
             this.providerId = providerId;
             this.session = session;
-            session.EventArrived += new EventHandler<EventRecordArgs>(InternalEventArrived);
+            session.EventArrived += new EventHandler<EventRecordArgs>(this.InternalEventArrived);
         }
 
         void InternalEventArrived(object sender, EventRecordArgs e)
@@ -333,54 +333,54 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         ~EventTraceWatcher()
         {
-            Cleanup();
+            this.Cleanup();
         }
 
         public bool Enabled
         {
             get
             {
-                return enabled;
+                return this.enabled;
             }
             set
             {
-                rwlock.EnterReadLock();
-                if (enabled == value)
+                this.rwlock.EnterReadLock();
+                if (this.enabled == value)
                 {
-                    rwlock.ExitReadLock();
+                    this.rwlock.ExitReadLock();
                     return;
                 }
-                rwlock.ExitReadLock();
+                this.rwlock.ExitReadLock();
 
-                rwlock.EnterWriteLock();
+                this.rwlock.EnterWriteLock();
                 try
                 {
                     if (value)
                     {
-                        StartTracing();
+                        this.StartTracing();
                     }
                     else
                     {
-                        StopTracing();
+                        this.StopTracing();
                     }
-                    enabled = value;
+                    this.enabled = value;
                 }
                 finally
                 {
-                    rwlock.ExitWriteLock();
+                    this.rwlock.ExitWriteLock();
                 }
             }
         }
 
         void StartTracing()
         {
-            session.StartTracing();
+            this.session.StartTracing();
 
             // Enable the providers that you want to log events to your session.
             const int EVENT_CONTROL_CODE_ENABLE_PROVIDER = 1;
             const short TRACE_LEVEL_INFORMATION = 4;
-            Guid id = providerId;
-            int status = NativeMethods.EnableTraceEx2(session.SessionHandle, ref id,
+            Guid id = this.providerId;
+            int status = NativeMethods.EnableTraceEx2(this.session.SessionHandle, ref id,
                 EVENT_CONTROL_CODE_ENABLE_PROVIDER,
                 TRACE_LEVEL_INFORMATION,
                 0,
@@ -398,24 +398,24 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
         {
             get
             {
-                return session != null ? session.PerformanceFrequency : 0;
+                return this.session != null ? this.session.PerformanceFrequency : 0;
             }
         }
 
         void StopTracing()
         {
-            session.StopTracing();
+            this.session.StopTracing();
         }
 
         private void Cleanup()
         {
             this.Enabled = false;
-            foreach (TraceEventInfoWrapper value in traceEventInfoCache.Values)
+            foreach (TraceEventInfoWrapper value in this.traceEventInfoCache.Values)
             {
                 value.Dispose();
             }
-            traceEventInfoCache = null;
-            rwlock.Dispose();
+            this.traceEventInfoCache = null;
+            this.rwlock.Dispose();
         }
 
         private static byte[] CreateComposedKey(Guid providerId, byte opcode)
@@ -438,7 +438,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         private EventArrivedEventArgs CreateEventArgsFromEventRecord(EventRecord eventRecord)
         {
-            if (traceEventInfoCache == null)
+            if (this.traceEventInfoCache == null)
             {
                 return null;
             }
@@ -449,13 +449,13 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             bool shouldDispose = false;
 
             // Find the event information (schema).
-            if (!traceEventInfoCache.TryGetValue(key, out traceEventInfo))
+            if (!this.traceEventInfoCache.TryGetValue(key, out traceEventInfo))
             {
                 traceEventInfo = new TraceEventInfoWrapper(eventRecord);
 
                 try
                 {
-                    traceEventInfoCache.Add(key, traceEventInfo);
+                    this.traceEventInfoCache.Add(key, traceEventInfo);
                 }
                 catch (ArgumentException)
                 {
@@ -467,7 +467,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             // Get the properties using the current event information (schema).
             PropertyBag properties = traceEventInfo.GetProperties(eventRecord);
 
-            EventArrivedEventArgs args = CreateEventArgs();
+            EventArrivedEventArgs args = this.CreateEventArgs();
             args.Timestamp = eventRecord.EventHeader.TimeStamp;
             args.ProviderId = providerId;
             args.EventId = eventRecord.EventHeader.EventDescriptor.Id;
@@ -502,20 +502,20 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         public void Dispose()
         {
-            Cleanup();
+            this.Cleanup();
             GC.SuppressFinalize(this);
         }
 
         private void EventRecordCallback([In] ref EventRecord eventRecord)
         {
-            if (providerId != eventRecord.EventHeader.ProviderId)
+            if (this.providerId != eventRecord.EventHeader.ProviderId)
             {
                 return;
             }
 
             if (EventArrived != null)
             {
-                EventArrivedEventArgs e = CreateEventArgsFromEventRecord(eventRecord);
+                EventArrivedEventArgs e = this.CreateEventArgsFromEventRecord(eventRecord);
                 EventArrived(this, e);
             }
         }
@@ -540,8 +540,8 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
         public void LoadManifest(string embeddedResourceName)
         {
             string path = Path.Combine(Path.GetTempPath(), embeddedResourceName);
-            ExportResource(embeddedResourceName, path);
-            LoadManifest(new Uri(path));
+            this.ExportResource(embeddedResourceName, path);
+            this.LoadManifest(new Uri(path));
             File.Delete(path);
         }
 

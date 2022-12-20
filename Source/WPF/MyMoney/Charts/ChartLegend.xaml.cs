@@ -28,21 +28,21 @@ namespace Walkabout.Charts
 
         public ChartLegend()
         {
-            InitializeComponent();
-            this.IsVisibleChanged += OnVisibleChanged;
+            this.InitializeComponent();
+            IsVisibleChanged += this.OnVisibleChanged;
         }
 
         public event EventHandler<ChartDataValue> Toggled;
 
         private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            OnDelayedUpdate();
+            this.OnDelayedUpdate();
         }
 
         public ChartDataSeries DataSeries
         {
-            get { return (ChartDataSeries)GetValue(DataSeriesProperty); }
-            set { SetValue(DataSeriesProperty, value); }
+            get { return (ChartDataSeries)this.GetValue(DataSeriesProperty); }
+            set { this.SetValue(DataSeriesProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for DataSeries.  This enables animation, styling, binding, etc...
@@ -56,7 +56,7 @@ namespace Walkabout.Charts
 
         private void OnDelayedUpdate()
         {
-            actions.StartDelayedAction("update", UpdateLegend, TimeSpan.FromMilliseconds(10));
+            this.actions.StartDelayedAction("update", this.UpdateLegend, TimeSpan.FromMilliseconds(10));
         }
 
         private void UpdateLegend()
@@ -72,56 +72,56 @@ namespace Walkabout.Charts
                 return;
             }
 
-            LegendGrid.Children.Clear();
+            this.LegendGrid.Children.Clear();
 
-            if (DataSeries == null || DataSeries.Values == null)
+            if (this.DataSeries == null || this.DataSeries.Values == null)
             {
                 return;
             }
 
-            if (swatchTemplate == null)
+            if (this.swatchTemplate == null)
             {
-                swatchTemplate = (ControlTemplate)FindResource("ChartLegendFilterControlTemplate");
-                if (swatchTemplate == null)
+                this.swatchTemplate = (ControlTemplate)this.FindResource("ChartLegendFilterControlTemplate");
+                if (this.swatchTemplate == null)
                 {
                     throw new Exception("Cannot find required resource ChartLegendFilterControlTemplate");
                 }
             }
 
             int index = 0;
-            var rows = DataSeries.Values.Count;
+            var rows = this.DataSeries.Values.Count;
             for (index = 0; index < rows; index++)
             {
-                var dv = DataSeries.Values[index];
-                AddRow(index, dv);
+                var dv = this.DataSeries.Values[index];
+                this.AddRow(index, dv);
             }
 
-            while (elements.Count > index)
+            while (this.elements.Count > index)
             {
-                RemoveRow(index);
+                this.RemoveRow(index);
             }
         }
 
         private void RemoveRow(int index)
         {
-            var ui = elements[index];
-            LegendGrid.RowDefinitions.RemoveAt(index);
+            var ui = this.elements[index];
+            this.LegendGrid.RowDefinitions.RemoveAt(index);
             if (ui.button != null)
             {
-                LegendGrid.Children.Remove(ui.button);
+                this.LegendGrid.Children.Remove(ui.button);
             }
-            LegendGrid.Children.Remove(ui.label);
-            LegendGrid.Children.Remove(ui.value);
-            elements.RemoveAt(index);
+            this.LegendGrid.Children.Remove(ui.label);
+            this.LegendGrid.Children.Remove(ui.value);
+            this.elements.RemoveAt(index);
         }
 
         private void AddRow(int index, ChartDataValue dv)
         {
             Row ui = null;
 
-            if (LegendGrid.RowDefinitions.Count <= index)
+            if (this.LegendGrid.RowDefinitions.Count <= index)
             {
-                LegendGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+                this.LegendGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
             }
 
             if (this.elements.Count > index)
@@ -136,7 +136,7 @@ namespace Walkabout.Charts
                 {
                     var c = dv.Color.Value;
                     ToggleButton colorSwatch = new ToggleButton();
-                    colorSwatch.Template = swatchTemplate;
+                    colorSwatch.Template = this.swatchTemplate;
                     colorSwatch.Margin = new Thickness(2);
                     colorSwatch.Width = 16;
                     colorSwatch.Height = 16;
@@ -172,32 +172,32 @@ namespace Walkabout.Charts
                 ui.button.DataContext = dv;
                 Grid.SetRow(ui.button, index);
                 Grid.SetColumn(ui.button, 0);
-                LegendGrid.Children.Add(ui.button);
-                ui.button.Checked -= OnColorSwatchToggled;
-                ui.button.Unchecked -= OnColorSwatchToggled;
+                this.LegendGrid.Children.Add(ui.button);
+                ui.button.Checked -= this.OnColorSwatchToggled;
+                ui.button.Unchecked -= this.OnColorSwatchToggled;
                 ui.button.IsChecked = dv.Hidden;
-                ui.button.Checked += OnColorSwatchToggled;
-                ui.button.Unchecked += OnColorSwatchToggled;
+                ui.button.Checked += this.OnColorSwatchToggled;
+                ui.button.Unchecked += this.OnColorSwatchToggled;
             }
 
             ui.label.Text = dv.Label;
             Grid.SetRow(ui.label, index);
             Grid.SetColumn(ui.label, 1);
-            LegendGrid.Children.Add(ui.label);
+            this.LegendGrid.Children.Add(ui.label);
 
             ui.value.Text = dv.Value.ToString("C0");
             Grid.SetRow(ui.value, index);
             Grid.SetColumn(ui.value, 2);
-            LegendGrid.Children.Add(ui.value);
+            this.LegendGrid.Children.Add(ui.value);
         }
 
         private void OnColorSwatchToggled(object sender, RoutedEventArgs e)
         {
-            if (this.Toggled != null && sender is ToggleButton button)
+            if (Toggled != null && sender is ToggleButton button)
             {
                 var dv = (ChartDataValue)button.DataContext;
                 dv.Hidden = button.IsChecked == true;
-                this.Toggled(this, dv);
+                Toggled(this, dv);
             }
         }
     }

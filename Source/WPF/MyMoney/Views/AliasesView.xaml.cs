@@ -23,14 +23,14 @@ namespace Walkabout.Views
 
         public AliasesView()
         {
-            InitializeComponent();
-            this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(AliasesView_IsVisibleChanged);
-            this.AliasDataGrid.RowEditEnding += AliasDataGrid_RowEditEnding;
-            this.Unloaded += (s, e) =>
+            this.InitializeComponent();
+            IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.AliasesView_IsVisibleChanged);
+            this.AliasDataGrid.RowEditEnding += this.AliasDataGrid_RowEditEnding;
+            Unloaded += (s, e) =>
             {
                 if (this.money != null)
                 {
-                    this.money.Changed += OnMoneyChanged;
+                    this.money.Changed += this.OnMoneyChanged;
                 }
             };
         }
@@ -39,18 +39,18 @@ namespace Walkabout.Views
         {
             // There seems to be a bug in WPF where this is called before the final editing cell is committed!
             // For example, I change Alias type to Regex, hit ENTER and this is called before Alias.Type is changed to Regex!
-            rowEdit = e.Row.DataContext as Alias;
-            delayedActions.StartDelayedAction("FindConflicts", FindConflicts, TimeSpan.FromMilliseconds(30));
+            this.rowEdit = e.Row.DataContext as Alias;
+            this.delayedActions.StartDelayedAction("FindConflicts", this.FindConflicts, TimeSpan.FromMilliseconds(30));
         }
 
         void FindConflicts()
         {
-            if (rowEdit != null)
+            if (this.rowEdit != null)
             {
-                IEnumerable<Alias> conflicts = this.money.FindSubsumedAliases(rowEdit);
+                IEnumerable<Alias> conflicts = this.money.FindSubsumedAliases(this.rowEdit);
                 foreach (Alias conflict in conflicts)
                 {
-                    if (conflict != rowEdit)
+                    if (conflict != this.rowEdit)
                     {
                         conflict.OnDelete();
                     }
@@ -62,12 +62,12 @@ namespace Walkabout.Views
         {
             if ((bool)e.NewValue)
             {
-                OnBeforeViewStateChanged();
-                OnAfterViewStateChanged();
-                if (dirty)
+                this.OnBeforeViewStateChanged();
+                this.OnAfterViewStateChanged();
+                if (this.dirty)
                 {
                     // catch up now that we need to be visible.
-                    ShowAliases();
+                    this.ShowAliases();
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace Walkabout.Views
         void ShowAliases()
         {
             this.AliasDataGrid.SetItemsSource(new AliasCollection(this.Money, this.quickFilter));
-            this.PayeeList = new ListCollectionView(GetPayeesList());
+            this.PayeeList = new ListCollectionView(this.GetPayeesList());
             this.dirty = false;
             this.payeesDirty = false;
         }
@@ -115,15 +115,15 @@ namespace Walkabout.Views
 
         public IList<AliasType> AliasTypes
         {
-            get { return aliasTypes; }
+            get { return this.aliasTypes; }
         }
 
 
 
         public ListCollectionView PayeeList
         {
-            get { return (ListCollectionView)GetValue(PayeeListProperty); }
-            set { SetValue(PayeeListProperty, value); }
+            get { return (ListCollectionView)this.GetValue(PayeeListProperty); }
+            set { this.SetValue(PayeeListProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for PayeeList.  This enables animation, styling, binding, etc...
@@ -134,7 +134,7 @@ namespace Walkabout.Views
         private List<Payee> GetPayeesList()
         {
             List<Payee> names = new List<Payee>();
-            foreach (Payee p in Money.Payees.GetPayees())
+            foreach (Payee p in this.Money.Payees.GetPayees())
             {
                 names.Add(p);
             }
@@ -174,7 +174,7 @@ namespace Walkabout.Views
 
                 if (alias.Id == -1)
                 {
-                    money.Aliases.AddAlias(alias);
+                    this.money.Aliases.AddAlias(alias);
                 }
             }
 
@@ -204,15 +204,15 @@ namespace Walkabout.Views
             {
                 if (this.money != null)
                 {
-                    this.money.Changed -= OnMoneyChanged;
+                    this.money.Changed -= this.OnMoneyChanged;
                 }
 
                 this.money = value;
 
                 if (this.money != null)
                 {
-                    this.money.Changed += OnMoneyChanged;
-                    ShowAliases();
+                    this.money.Changed += this.OnMoneyChanged;
+                    this.ShowAliases();
                 }
             }
         }
@@ -225,10 +225,10 @@ namespace Walkabout.Views
             {
                 if (e.Item is Payee)
                 {
-                    payeesDirty = true;
+                    this.payeesDirty = true;
                     break;
                 }
-                else if (e.Item is Alias && e.Item != rowEdit)
+                else if (e.Item is Alias && e.Item != this.rowEdit)
                 {
                     if (e.ChangeType == ChangeType.Inserted && view != null && view.Contains((Alias)e.Item))
                     {
@@ -236,42 +236,42 @@ namespace Walkabout.Views
                     }
                     else if (!this.AliasDataGrid.IsEditing)  // ignore changes if grid is being edited.
                     {
-                        dirty = true;
+                        this.dirty = true;
                         break;
                     }
                 }
                 e = e.Next;
             }
-            if (dirty || payeesDirty && this.IsVisible)
+            if (this.dirty || this.payeesDirty && this.IsVisible)
             {
                 // start delayed update
-                delayedActions.StartDelayedAction("RefreshList", RefreshList, TimeSpan.FromMilliseconds(50));
+                this.delayedActions.StartDelayedAction("RefreshList", this.RefreshList, TimeSpan.FromMilliseconds(50));
             }
         }
 
         void RefreshList()
         {
-            if (payeesDirty)
+            if (this.payeesDirty)
             {
-                this.PayeeList = new ListCollectionView(GetPayeesList());
-                payeesDirty = false;
+                this.PayeeList = new ListCollectionView(this.GetPayeesList());
+                this.payeesDirty = false;
             }
 
-            if (dirty && this.IsVisible)
+            if (this.dirty && this.IsVisible)
             {
                 if (this.AliasDataGrid.IsEditing)
                 {
                     this.AliasDataGrid.CommitEdit();
                 }
                 // show the new list
-                ShowAliases();
+                this.ShowAliases();
             }
         }
 
 
         public void ActivateView()
         {
-            Focus();
+            this.Focus();
             // re-wire events
             this.Money = this.money;
         }
@@ -300,8 +300,8 @@ namespace Walkabout.Views
 
         public IServiceProvider ServiceProvider
         {
-            get { return sp; }
-            set { sp = value; }
+            get { return this.sp; }
+            set { this.sp = value; }
         }
 
         public void Commit()
@@ -341,7 +341,7 @@ namespace Walkabout.Views
 
         public void FocusQuickFilter()
         {
-            QuickFilterUX.FocusTextBox();
+            this.QuickFilterUX.FocusTextBox();
         }
 
         string quickFilter;
@@ -354,7 +354,7 @@ namespace Walkabout.Views
                 if (this.quickFilter != value)
                 {
                     this.quickFilter = value;
-                    ShowAliases();
+                    this.ShowAliases();
                 }
             }
         }

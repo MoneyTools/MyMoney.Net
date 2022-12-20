@@ -29,15 +29,15 @@ namespace Walkabout.Dialogs
             {
                 if (this.money != null)
                 {
-                    this.money.Payees.Changed -= handler;
+                    this.money.Payees.Changed -= this.handler;
                 }
                 this.money = value;
                 if (this.money != null)
                 {
-                    this.money.Payees.Changed -= handler;
-                    this.money.Payees.Changed += handler;
+                    this.money.Payees.Changed -= this.handler;
+                    this.money.Payees.Changed += this.handler;
                 }
-                LoadPayees();
+                this.LoadPayees();
             }
         }
 
@@ -124,18 +124,18 @@ namespace Walkabout.Dialogs
         /// </summary>
         public RenamePayeeDialog()
         {
-            handler = new EventHandler<ChangeEventArgs>(OnPayees_Changed);
+            this.handler = new EventHandler<ChangeEventArgs>(this.OnPayees_Changed);
 
-            InitializeComponent();
+            this.InitializeComponent();
 
-            okButton.Click += new RoutedEventHandler(OnOkButton_Click);
+            this.okButton.Click += new RoutedEventHandler(this.OnOkButton_Click);
 
-            comboBox1.TextChanged += new RoutedEventHandler(OnComboBox1_TextChanged);
-            textBox1.TextChanged += OnPatternTextChanged;
-            checkBoxUseRegex.Checked += OnRegexChanged;
-            checkBoxUseRegex.Unchecked += OnRegexChanged;
-            checkBoxAuto.Checked += OnAutoChanged;
-            checkBoxAuto.Unchecked += OnAutoChanged;
+            this.comboBox1.TextChanged += new RoutedEventHandler(this.OnComboBox1_TextChanged);
+            this.textBox1.TextChanged += this.OnPatternTextChanged;
+            this.checkBoxUseRegex.Checked += this.OnRegexChanged;
+            this.checkBoxUseRegex.Unchecked += this.OnRegexChanged;
+            this.checkBoxAuto.Checked += this.OnAutoChanged;
+            this.checkBoxAuto.Unchecked += this.OnAutoChanged;
         }
 
         private void EnableButtons()
@@ -145,31 +145,31 @@ namespace Walkabout.Dialogs
 
         private void OnAutoChanged(object sender, RoutedEventArgs e)
         {
-            CheckState();
+            this.CheckState();
         }
 
         private void OnRegexChanged(object sender, RoutedEventArgs e)
         {
-            CheckState();
+            this.CheckState();
         }
 
         private void OnPatternTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            CheckState();
+            this.CheckState();
         }
 
         void CheckState()
         {
-            EnableButtons();
+            this.EnableButtons();
             if (!string.IsNullOrWhiteSpace(this.textBox1.Text))
             {
-                delayedActions.StartDelayedAction("CheckConflicts", CheckConflicts, TimeSpan.FromMilliseconds(50));
+                this.delayedActions.StartDelayedAction("CheckConflicts", this.CheckConflicts, TimeSpan.FromMilliseconds(50));
             }
         }
 
         void OnComboBox1_TextChanged(object sender, RoutedEventArgs e)
         {
-            EnableButtons();
+            this.EnableButtons();
         }
 
         private void CheckConflicts()
@@ -178,22 +178,22 @@ namespace Walkabout.Dialogs
             if (this.Alias)
             {
                 AliasType atype = this.checkBoxUseRegex.IsChecked == true ? AliasType.Regex : AliasType.None;
-                Alias a = new Alias() { Pattern = this.Pattern, AliasType = atype };
+                Alias a = new Alias() { Pattern = Pattern, AliasType = atype };
                 IEnumerable<Alias> conflicts = this.money.FindSubsumedAliases(a);
                 if (conflicts.Count() > 0)
                 {
                     foundConflicts = true;
-                    ClashPromp.Visibility = Visibility.Visible;
-                    ClashingAliases.ItemsSource = (from i in conflicts select i.Pattern).ToList();
-                    ClashingAliases.Visibility = Visibility.Visible;
+                    this.ClashPromp.Visibility = Visibility.Visible;
+                    this.ClashingAliases.ItemsSource = (from i in conflicts select i.Pattern).ToList();
+                    this.ClashingAliases.Visibility = Visibility.Visible;
                 }
             }
 
             if (!foundConflicts)
             {
-                ClashPromp.Visibility = Visibility.Collapsed;
-                ClashingAliases.ItemsSource = null;
-                ClashingAliases.Visibility = Visibility.Collapsed;
+                this.ClashPromp.Visibility = Visibility.Collapsed;
+                this.ClashingAliases.ItemsSource = null;
+                this.ClashingAliases.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -201,7 +201,7 @@ namespace Walkabout.Dialogs
         {
             if (this.money != null)
             {
-                this.money.Payees.Changed -= handler;
+                this.money.Payees.Changed -= this.handler;
                 this.money = null;
             }
 
@@ -254,10 +254,10 @@ namespace Walkabout.Dialogs
                 }
 
                 IEnumerable<Transaction> transactions = this.money.Transactions.GetAllTransactions();
-                if (ServiceProvider != null)
+                if (this.ServiceProvider != null)
                 {
                     // make sure we search visible transactions being edited as well.
-                    TransactionCollection viewModel = ServiceProvider.GetService(typeof(TransactionCollection)) as TransactionCollection;
+                    TransactionCollection viewModel = this.ServiceProvider.GetService(typeof(TransactionCollection)) as TransactionCollection;
                     if (viewModel != null)
                     {
                         transactions = transactions.Concat(viewModel);

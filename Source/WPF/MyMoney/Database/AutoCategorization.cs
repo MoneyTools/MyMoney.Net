@@ -56,9 +56,9 @@ namespace Walkabout.Data
             }
 
             // Tally of how close the current transaction is to the amounts for a given category or split.
-            singleNeighbors = new KNearestNeighbor<Category>();
-            splitNeighbors = new KNearestNeighbor<Category>();
-            splitCount = normalCount = 0;
+            this.singleNeighbors = new KNearestNeighbor<Category>();
+            this.splitNeighbors = new KNearestNeighbor<Category>();
+            this.splitCount = this.normalCount = 0;
 
             Transaction closestByDate = null;
             long ticks = 0;
@@ -84,7 +84,7 @@ namespace Walkabout.Data
                 }
                 else if (u.Amount != 0)
                 {
-                    AddPossibility(t, u, payeeOrTransferCaption);
+                    this.AddPossibility(t, u, payeeOrTransferCaption);
                 }
             }
 
@@ -94,13 +94,13 @@ namespace Walkabout.Data
             }
 
             IEnumerable<Tuple<object, Category>> result = null;
-            if (splitCount > normalCount)
+            if (this.splitCount > this.normalCount)
             {
-                result = splitNeighbors.GetNearestNeighbors(1, t.Amount);
+                result = this.splitNeighbors.GetNearestNeighbors(1, t.Amount);
             }
             else
             {
-                result = singleNeighbors.GetNearestNeighbors(1, t.Amount);
+                result = this.singleNeighbors.GetNearestNeighbors(1, t.Amount);
             }
 
             if (result != null && result.Any())
@@ -146,18 +146,18 @@ namespace Walkabout.Data
                     {
                         if (s.Payee == null && s.Category != null && s.Amount != 0)
                         {
-                            singleNeighbors.Add(s, s.Category, s.Amount);
+                            this.singleNeighbors.Add(s, s.Category, s.Amount);
                         }
                     }
-                    splitNeighbors.Add(u, u.Category, u.Amount);
-                    splitCount++;
+                    this.splitNeighbors.Add(u, u.Category, u.Amount);
+                    this.splitCount++;
                 }
                 else
                 {
-                    normalCount++;
+                    this.normalCount++;
                     // absolute value because for this purpose of categorization we don't care if it was 
                     // a purchase or refund on that category.
-                    singleNeighbors.Add(u, u.Category, u.Amount);
+                    this.singleNeighbors.Add(u, u.Category, u.Amount);
                 }
             }
         }

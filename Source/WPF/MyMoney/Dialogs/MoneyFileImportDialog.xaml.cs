@@ -32,12 +32,12 @@ namespace Walkabout.Dialogs
 
         public MoneyFileImportDialog()
         {
-            InitializeComponent();
-            loadingStatusPrompt = Status.Text;
-            list = (ObservableCollection<AccountImportState>)AccountList.ItemsSource;
-            list.Clear();
+            this.InitializeComponent();
+            this.loadingStatusPrompt = this.Status.Text;
+            this.list = (ObservableCollection<AccountImportState>)this.AccountList.ItemsSource;
+            this.list.Clear();
             this.dispatcher = this.Dispatcher;
-            this.Loaded += OnWindowLoaded;
+            Loaded += this.OnWindowLoaded;
         }
 
         private void OnWindowLoaded(object sender, RoutedEventArgs e)
@@ -45,8 +45,8 @@ namespace Walkabout.Dialogs
             Window owner = this.Owner;
             if (owner != null)
             {
-                owner.Closed -= OnOwnerClosed;
-                owner.Closed += OnOwnerClosed;
+                owner.Closed -= this.OnOwnerClosed;
+                owner.Closed += this.OnOwnerClosed;
             }
         }
 
@@ -59,14 +59,14 @@ namespace Walkabout.Dialogs
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (busy)
+            if (this.busy)
             {
                 if (MessageBoxEx.Show("Still importing, do you want to cancel?", "Cancel", MessageBoxButton.YesNo, MessageBoxImage.Hand) == MessageBoxResult.No)
                 {
                     e.Cancel = true;
                     return;
                 }
-                cancelSource.Cancel();
+                this.cancelSource.Cancel();
             }
             base.OnClosing(e);
         }
@@ -76,29 +76,29 @@ namespace Walkabout.Dialogs
             this.myMoney = myMoney;
             this.myAttachments = myAttachments;
             this.myStatements = myStatements;
-            cancelSource = new CancellationTokenSource();
-            var token = cancelSource.Token;
+            this.cancelSource = new CancellationTokenSource();
+            var token = this.cancelSource.Token;
             Task.Factory.StartNew(() =>
             {
-                busy = true;
+                this.busy = true;
                 foreach (string file in fileNames)
                 {
                     if (token.IsCancellationRequested)
                     {
                         break;
                     }
-                    if (!ProcessFile(file))
+                    if (!this.ProcessFile(file))
                     {
                         break;
                     }
                 }
-                busy = false;
+                this.busy = false;
             }, token);
         }
 
         private bool ProcessFile(string file)
         {
-            ShowStatus(string.Format(loadingStatusPrompt, file));
+            this.ShowStatus(string.Format(this.loadingStatusPrompt, file));
 
             try
             {
@@ -110,7 +110,7 @@ namespace Walkabout.Dialogs
                     string path = Path.GetFullPath(file);
                     bool cancelled = false;
 
-                    dispatcher.Invoke(new Action(() =>
+                    this.dispatcher.Invoke(new Action(() =>
                     {
                         PasswordWindow w = new PasswordWindow();
                         Paragraph p = (Paragraph)w.IntroMessagePrompt.Document.Blocks.FirstBlock;
@@ -124,7 +124,7 @@ namespace Walkabout.Dialogs
                         }
                         else
                         {
-                            ShowStatus("Import cancelled.");
+                            this.ShowStatus("Import cancelled.");
                             cancelled = true;
                         }
                     }));
@@ -146,7 +146,7 @@ namespace Walkabout.Dialogs
                         StatementManager importStatements = new StatementManager(newMoney);
                         importStatements.SetupStatementsDirectory(path);
                         importStatements.Load();
-                        ImportMoneyFile(newMoney, importAttachments, importStatements);
+                        this.ImportMoneyFile(newMoney, importAttachments, importStatements);
                     }
                     else
                     {
@@ -155,13 +155,13 @@ namespace Walkabout.Dialogs
                 }
                 else
                 {
-                    ShowStatus("Import only supports sqllite money files");
+                    this.ShowStatus("Import only supports sqllite money files");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                ShowStatus("Error: " + ex.Message);
+                this.ShowStatus("Error: " + ex.Message);
                 return false;
             }
             return true;
@@ -177,9 +177,9 @@ namespace Walkabout.Dialogs
                 {
                     if (!acct.IsClosed && !acct.IsCategoryFund)
                     {
-                        list.Add(new AccountImportState()
+                        this.list.Add(new AccountImportState()
                         {
-                            Dispatcher = this.dispatcher,
+                            Dispatcher = dispatcher,
                             Account = acct,
                             Name = acct.Name,
                         });
@@ -187,12 +187,12 @@ namespace Walkabout.Dialogs
                 }
             }));
 
-            foreach (AccountImportState a in list)
+            foreach (AccountImportState a in this.list)
             {
-                ImportAccount(newMoney, a, newAttachments, importStatements);
+                this.ImportAccount(newMoney, a, newAttachments, importStatements);
             }
 
-            ShowStatus("Done");
+            this.ShowStatus("Done");
         }
 
         private void ImportAccount(MyMoney newMoney, AccountImportState a, AttachmentManager newAttachments, StatementManager importStatements)
@@ -284,7 +284,7 @@ namespace Walkabout.Dialogs
         {
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
-                Status.Text = status;
+                this.Status.Text = status;
             }));
         }
 
@@ -309,9 +309,9 @@ namespace Walkabout.Dialogs
             if (e.AddedItems != null && e.AddedItems.Count > 0)
             {
                 AccountImportState item = (AccountImportState)e.AddedItems[0];
-                if (Navigator != null)
+                if (this.Navigator != null)
                 {
-                    Navigator.ViewTransactions(item.Changed);
+                    this.Navigator.ViewTransactions(item.Changed);
                 }
             }
         }
@@ -340,13 +340,13 @@ namespace Walkabout.Dialogs
 
         public string Name
         {
-            get { return name; }
+            get { return this.name; }
             set
             {
-                if (name != value)
+                if (this.name != value)
                 {
-                    name = value;
-                    OnPropertyChanged("Name");
+                    this.name = value;
+                    this.OnPropertyChanged("Name");
                 }
             }
         }
@@ -355,13 +355,13 @@ namespace Walkabout.Dialogs
 
         public string Status
         {
-            get { return status; }
+            get { return this.status; }
             set
             {
-                if (status != value)
+                if (this.status != value)
                 {
-                    status = value;
-                    OnPropertyChanged("Status");
+                    this.status = value;
+                    this.OnPropertyChanged("Status");
                 }
             }
         }
@@ -369,12 +369,12 @@ namespace Walkabout.Dialogs
 
         public int PercentComplete
         {
-            get { return percentComplete; }
+            get { return this.percentComplete; }
             set
             {
-                if (percentComplete != value)
+                if (this.percentComplete != value)
                 {
-                    percentComplete = value;
+                    this.percentComplete = value;
                     // let the timer do this so we don't flood the input queue.
                     //OnPropertyChanged("PercentComplete");
                 }
@@ -386,23 +386,23 @@ namespace Walkabout.Dialogs
 
         public bool Loading
         {
-            get { return loading; }
+            get { return this.loading; }
             set
             {
-                if (loading != value)
+                if (this.loading != value)
                 {
-                    loading = value;
-                    OnPropertyChanged("Loading");
+                    this.loading = value;
+                    this.OnPropertyChanged("Loading");
                 }
                 if (value)
                 {
-                    StartTimer();
+                    this.StartTimer();
                 }
                 else
                 {
-                    StopTimer();
+                    this.StopTimer();
                     // one more in case timer never ticked.
-                    ThrottledUpdate();
+                    this.ThrottledUpdate();
                 }
             }
         }
@@ -411,38 +411,38 @@ namespace Walkabout.Dialogs
 
         private void StopTimer()
         {
-            if (timer != null)
+            if (this.timer != null)
             {
-                timer.Stop();
-                timer.Tick -= OnTimerTick;
-                timer = null;
+                this.timer.Stop();
+                this.timer.Tick -= this.OnTimerTick;
+                this.timer = null;
             }
         }
 
         private void StartTimer()
         {
-            StopTimer();
-            if (Dispatcher != null)
+            this.StopTimer();
+            if (this.Dispatcher != null)
             {
-                timer = new DispatcherTimer(DispatcherPriority.Normal, Dispatcher);
-                timer.Tick += OnTimerTick;
-                timer.Interval = TimeSpan.FromMilliseconds(30);
-                timer.Start();
+                this.timer = new DispatcherTimer(DispatcherPriority.Normal, this.Dispatcher);
+                this.timer.Tick += this.OnTimerTick;
+                this.timer.Interval = TimeSpan.FromMilliseconds(30);
+                this.timer.Start();
             }
         }
 
         private void OnTimerTick(object sender, EventArgs e)
         {
-            ThrottledUpdate();
+            this.ThrottledUpdate();
         }
 
         void ThrottledUpdate()
         {
-            OnPropertyChanged("PercentComplete");
-            if (Modified != 0)
+            this.OnPropertyChanged("PercentComplete");
+            if (this.Modified != 0)
             {
-                Status = "Updated " + Modified + ((Modified == 1) ? " row" : " rows");
-                OnPropertyChanged("Status");
+                this.Status = "Updated " + this.Modified + ((this.Modified == 1) ? " row" : " rows");
+                this.OnPropertyChanged("Status");
             }
         }
 
@@ -450,13 +450,13 @@ namespace Walkabout.Dialogs
 
         public bool Done
         {
-            get { return done; }
+            get { return this.done; }
             set
             {
-                if (done != value)
+                if (this.done != value)
                 {
-                    done = value;
-                    OnPropertyChanged("Done");
+                    this.done = value;
+                    this.OnPropertyChanged("Done");
                 }
             }
         }
@@ -472,9 +472,9 @@ namespace Walkabout.Dialogs
         {
             if (PropertyChanged != null)
             {
-                if (Dispatcher != null)
+                if (this.Dispatcher != null)
                 {
-                    Dispatcher.Invoke(new Action(() =>
+                    this.Dispatcher.Invoke(new Action(() =>
                     {
                         PropertyChanged(this, new PropertyChangedEventArgs(name));
                     }));

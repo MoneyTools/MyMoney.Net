@@ -29,12 +29,12 @@ namespace Walkabout.Reports
         public void AddValue(string key, Transaction data, decimal amount)
         {
             CashFlowCell cell;
-            columns.TryGetValue(key, out cell);
+            this.columns.TryGetValue(key, out cell);
             if (cell == null)
             {
                 cell = new CashFlowCell();
                 cell.Data = new List<Transaction>();
-                columns[key] = cell;
+                this.columns[key] = cell;
             }
             cell.Value += amount;
             if (data != null)
@@ -46,7 +46,7 @@ namespace Walkabout.Reports
         public CashFlowCell GetCell(String key)
         {
             CashFlowCell cell = null;
-            if (!columns.TryGetValue(key, out cell))
+            if (!this.columns.TryGetValue(key, out cell))
             {
                 cell = new CashFlowCell();
             }
@@ -56,7 +56,7 @@ namespace Walkabout.Reports
         public decimal GetValue(String key)
         {
             CashFlowCell cell;
-            columns.TryGetValue(key, out cell);
+            this.columns.TryGetValue(key, out cell);
             if (cell != null)
             {
                 return cell.Value;
@@ -67,7 +67,7 @@ namespace Walkabout.Reports
         public List<Transaction> GetData(String key)
         {
             CashFlowCell cell;
-            columns.TryGetValue(key, out cell);
+            this.columns.TryGetValue(key, out cell);
             if (cell != null)
             {
                 return cell.Data;
@@ -85,7 +85,7 @@ namespace Walkabout.Reports
             return result;
         }
 
-        public int Count { get { return columns.Count; } }
+        public int Count { get { return this.columns.Count; } }
     }
 
     //=========================================================================================
@@ -121,23 +121,23 @@ namespace Walkabout.Reports
             this.startDate = this.startDate.AddYears(-4); // show 5 years by default.
             this.view = view;
             this.serviceProvider = sp;
-            view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
-            view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+            view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
+            view.PreviewMouseLeftButtonUp += this.OnPreviewMouseLeftButtonUp;
             view.Unloaded += (s, e) =>
             {
-                this.view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
+                this.view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
             };
         }
 
         private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Point pos = e.GetPosition(view);
+            Point pos = e.GetPosition(this.view);
 
-            if (mouseDownCell != null && Math.Abs(downPos.X - pos.X) < 5 && Math.Abs(downPos.Y - pos.Y) < 5)
+            if (this.mouseDownCell != null && Math.Abs(this.downPos.X - pos.X) < 5 && Math.Abs(this.downPos.Y - pos.Y) < 5)
             {
                 // navigate to show the cell.Data rows.
-                IViewNavigator nav = serviceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
-                nav.ViewTransactions(mouseDownCell.Data);
+                IViewNavigator nav = this.serviceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
+                nav.ViewTransactions(this.mouseDownCell.Data);
             }
         }
 
@@ -150,17 +150,17 @@ namespace Walkabout.Reports
             if (c.ParentCategory == null || (c.Type != CategoryType.None && c.Type != c.ParentCategory.Type))
             {
                 CashFlowColumns columns = null;
-                byCategory.TryGetValue(c, out columns);
+                this.byCategory.TryGetValue(c, out columns);
                 if (columns == null)
                 {
                     columns = new CashFlowColumns();
-                    byCategory[c] = columns;
+                    this.byCategory[c] = columns;
                 }
                 columns.AddValue(columnName, data, t.CurrencyNormalizedAmount(amount));
             }
             else
             {
-                TallyCategory(t, c.ParentCategory, data, columnName, amount);
+                this.TallyCategory(t, c.ParentCategory, data, columnName, amount);
             }
         }
 
@@ -168,7 +168,7 @@ namespace Walkabout.Reports
         {
             if (c.Type == CategoryType.None && c.ParentCategory != null)
             {
-                return IsExpense(c.ParentCategory);
+                return this.IsExpense(c.ParentCategory);
             }
             return (c.Type == CategoryType.Expense);
         }
@@ -177,7 +177,7 @@ namespace Walkabout.Reports
         {
             if (c.Type == CategoryType.None && c.ParentCategory != null)
             {
-                return IsIncome(c.ParentCategory);
+                return this.IsIncome(c.ParentCategory);
             }
             return (c.Type == CategoryType.Income || c.Type == CategoryType.Savings);
         }
@@ -185,26 +185,26 @@ namespace Walkabout.Reports
         private bool IsUnknown(Category c)
         {
             return (c == null || c.Type == CategoryType.None || c.Name == "Unknown") &&
-                (c.ParentCategory == null || IsUnknown(c.ParentCategory));
+                (c.ParentCategory == null || this.IsUnknown(c.ParentCategory));
         }
 
         private bool IsInvestment(Category c)
         {
             if (c.Type == CategoryType.None && c.ParentCategory != null)
             {
-                return IsInvestment(c.ParentCategory);
+                return this.IsInvestment(c.ParentCategory);
             }
             return (c.Type == CategoryType.Investments);
         }
 
         public void Regenerate()
         {
-            _ = view.Generate(this);
+            _ = this.view.Generate(this);
         }
 
         public override Task Generate(IReportWriter writer)
         {
-            byCategory = new Dictionary<Category, CashFlowColumns>();
+            this.byCategory = new Dictionary<Category, CashFlowColumns>();
 
             FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
             writer.WriteHeading("Cash Flow Report ");
@@ -218,32 +218,32 @@ namespace Walkabout.Reports
                 firstTransactionDate = first.TaxDate;
             }
 
-            columns = new List<string>();
+            this.columns = new List<string>();
 
             DateTime start = this.startDate;
             while (start < this.endDate)
             {
-                DateTime end = (byYear) ? start.AddYears(1) : start.AddMonths(1);
+                DateTime end = (this.byYear) ? start.AddYears(1) : start.AddMonths(1);
                 string columnName = start.ToString("MM/yyyy");
-                if (byYear)
+                if (this.byYear)
                 {
                     columnName = (this.fiscalYearStart == 0) ? start.Year.ToString() : "FY" + end.Year.ToString();
                 }
-                columns.Add(columnName);
-                GenerateColumn(writer, columnName, transactions, start, end);
+                this.columns.Add(columnName);
+                this.GenerateColumn(writer, columnName, transactions, start, end);
                 start = end;
             }
 
             Paragraph heading = fwriter.CurrentParagraph;
 
-            monthMap = new Dictionary<string, int>();
+            this.monthMap = new Dictionary<string, int>();
             heading.Inlines.Add(" - from ");
 
             var previousButton = new Button();
             previousButton.Content = "\uE100";
             previousButton.ToolTip = "Previous year";
             previousButton.FontFamily = new FontFamily("Segoe UI Symbol");
-            previousButton.Click += OnPreviousClick;
+            previousButton.Click += this.OnPreviousClick;
             previousButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
             heading.Inlines.Add(new InlineUIContainer(previousButton));
 
@@ -251,7 +251,7 @@ namespace Walkabout.Reports
             fromPicker.DisplayDateStart = firstTransactionDate;
             fromPicker.SelectedDate = this.startDate;
             fromPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            fromPicker.SelectedDateChanged += OnSelectedFromDateChanged;
+            fromPicker.SelectedDateChanged += this.OnSelectedFromDateChanged;
             heading.Inlines.Add(new InlineUIContainer(fromPicker));
 
             heading.Inlines.Add(" to ");
@@ -260,7 +260,7 @@ namespace Walkabout.Reports
             toPicker.DisplayDateStart = firstTransactionDate;
             toPicker.SelectedDate = this.endDate;
             toPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            toPicker.SelectedDateChanged += OnSelectedToDateChanged; ;
+            toPicker.SelectedDateChanged += this.OnSelectedToDateChanged; ;
             heading.Inlines.Add(new InlineUIContainer(toPicker));
 
             var nextButton = new Button();
@@ -268,7 +268,7 @@ namespace Walkabout.Reports
             nextButton.ToolTip = "Next year";
             nextButton.FontFamily = new FontFamily("Segoe UI Symbol");
             nextButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            nextButton.Click += OnNextClick;
+            nextButton.Click += this.OnNextClick;
             heading.Inlines.Add(new InlineUIContainer(nextButton));
 
 
@@ -276,12 +276,12 @@ namespace Walkabout.Reports
             byYearMonthCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
             byYearMonthCombo.Items.Add("by years");
             byYearMonthCombo.Items.Add("by month");
-            byYearMonthCombo.SelectedIndex = (byYear ? 0 : 1);
-            byYearMonthCombo.SelectionChanged += OnByYearMonthChanged;
+            byYearMonthCombo.SelectedIndex = (this.byYear ? 0 : 1);
+            byYearMonthCombo.SelectionChanged += this.OnByYearMonthChanged;
 
             heading.Inlines.Add(new InlineUIContainer(byYearMonthCombo));
 
-            heading.Inlines.Add(new InlineUIContainer(CreateExportReportButton()));
+            heading.Inlines.Add(new InlineUIContainer(this.CreateExportReportButton()));
 
             writer.StartTable();
             writer.StartColumnDefinitions();
@@ -289,7 +289,7 @@ namespace Walkabout.Reports
             writer.WriteColumnDefinition("20", 20, 20); // expander column            
             writer.WriteColumnDefinition("300", 300, 300);
 
-            for (int i = 0; i < columns.Count; i++)
+            for (int i = 0; i < this.columns.Count; i++)
             {
                 writer.WriteColumnDefinition("Auto", 100, double.MaxValue);
             }
@@ -300,19 +300,19 @@ namespace Walkabout.Reports
 
             CashFlowColumns columnTotals = new CashFlowColumns();
 
-            GenerateGroup(writer, byCategory, columnTotals, "Income", (c) => { return IsIncome(c); });
+            this.GenerateGroup(writer, this.byCategory, columnTotals, "Income", (c) => { return this.IsIncome(c); });
 
-            GenerateGroup(writer, byCategory, columnTotals, "Expenses", (c) => { return IsExpense(c); });
+            this.GenerateGroup(writer, this.byCategory, columnTotals, "Expenses", (c) => { return this.IsExpense(c); });
 
-            GenerateGroup(writer, byCategory, columnTotals, "Investments", (c) => { return IsInvestment(c); });
+            this.GenerateGroup(writer, this.byCategory, columnTotals, "Investments", (c) => { return this.IsInvestment(c); });
 
-            GenerateGroup(writer, byCategory, columnTotals, "Unknown", (c) => { return IsUnknown(c); });
+            this.GenerateGroup(writer, this.byCategory, columnTotals, "Unknown", (c) => { return this.IsUnknown(c); });
 
 
             List<decimal> totals = columnTotals.GetOrderedValues(this.columns);
             decimal balance = (from d in totals select d).Sum();
 
-            WriteRow(writer, true, true, "Total", FormatValues(totals).ToArray());
+            WriteRow(writer, true, true, "Total", this.FormatValues(totals).ToArray());
 
             writer.EndTable();
 
@@ -327,14 +327,14 @@ namespace Walkabout.Reports
         {
             this.startDate = this.startDate.AddYears(1);
             this.endDate = this.endDate.AddYears(1);
-            Regenerate();
+            this.Regenerate();
         }
 
         private void OnPreviousClick(object sender, RoutedEventArgs e)
         {
             this.startDate = this.startDate.AddYears(-1);
             this.endDate = this.endDate.AddYears(-1);
-            Regenerate();
+            this.Regenerate();
         }
 
 
@@ -343,7 +343,7 @@ namespace Walkabout.Reports
             if (sender is DatePicker picker && picker.SelectedDate.HasValue)
             {
                 this.startDate = picker.SelectedDate.Value;
-                Regenerate();
+                this.Regenerate();
             }
         }
 
@@ -352,7 +352,7 @@ namespace Walkabout.Reports
             if (sender is DatePicker picker && picker.SelectedDate.HasValue)
             {
                 this.endDate = picker.SelectedDate.Value;
-                Regenerate();
+                this.Regenerate();
             }
         }
 
@@ -362,25 +362,25 @@ namespace Walkabout.Reports
             string selected = (string)combo.SelectedItem;
             if (selected == "by years")
             {
-                byYear = true;
+                this.byYear = true;
             }
             else
             {
-                byYear = false;
+                this.byYear = false;
             }
 
-            Regenerate();
+            this.Regenerate();
         }
 
         private Button CreateExportReportButton()
         {
-            Button button = CreateReportButton("Icons/Excel.png", "Export", "Export .csv spreadsheet file format");
+            Button button = this.CreateReportButton("Icons/Excel.png", "Export", "Export .csv spreadsheet file format");
 
             button.HorizontalAlignment = HorizontalAlignment.Left;
             button.Margin = new Thickness(10, 0, 10, 0);
             button.Click += new RoutedEventHandler((s, args) =>
             {
-                ExportReportAsCsv();
+                this.ExportReportAsCsv();
             });
             return button;
         }
@@ -395,7 +395,7 @@ namespace Walkabout.Reports
             List<Category> rootCategories = new List<Category>(columns.Keys);
             rootCategories.Sort(new Comparison<Category>((a, b) =>
             {
-                return string.Compare(GetCategoryCaption(a), GetCategoryCaption(b));
+                return string.Compare(this.GetCategoryCaption(a), this.GetCategoryCaption(b));
             }));
 
             // start the group
@@ -418,7 +418,7 @@ namespace Walkabout.Reports
                 }
             }
 
-            WriteRow(writer, true, false, groupName, FormatValues(groupTotals.GetOrderedValues(this.columns)).ToArray());
+            WriteRow(writer, true, false, groupName, this.FormatValues(groupTotals.GetOrderedValues(this.columns)).ToArray());
 
             // now add the detail rows of the group
             foreach (Category c in rootCategories)
@@ -434,7 +434,7 @@ namespace Walkabout.Reports
                         cells.Add(cell);
                     }
 
-                    WriteRow(writer, false, false, GetCategoryCaption(c), cells);
+                    this.WriteRow(writer, false, false, this.GetCategoryCaption(c), cells);
                 }
             }
 
@@ -474,26 +474,26 @@ namespace Walkabout.Reports
                             if (s.Category != null)
                             {
                                 Category c = s.Category.Root;
-                                TallyCategory(t, c, new Transaction(t, s), columnName, s.Amount);
+                                this.TallyCategory(t, c, new Transaction(t, s), columnName, s.Amount);
                             }
                             else if (s.Category == null && s.Amount != 0)
                             {
-                                TallyCategory(t, this.myMoney.Categories.Unknown, new Transaction(t, s), columnName, s.Amount);
+                                this.TallyCategory(t, this.myMoney.Categories.Unknown, new Transaction(t, s), columnName, s.Amount);
                             }
                         }
                     }
                     if (t.Splits.Unassigned != 0)
                     {
-                        TallyCategory(t, this.myMoney.Categories.UnassignedSplit, t, columnName, t.Splits.Unassigned);
+                        this.TallyCategory(t, this.myMoney.Categories.UnassignedSplit, t, columnName, t.Splits.Unassigned);
                     }
                 }
                 else if (t.Category != null)
                 {
-                    TallyCategory(t, t.Category, t, columnName, t.AmountMinusTax);
+                    this.TallyCategory(t, t.Category, t, columnName, t.AmountMinusTax);
                 }
                 else if (t.Amount != 0)
                 {
-                    TallyCategory(t, this.myMoney.Categories.Unknown, t, columnName, t.AmountMinusTax);
+                    this.TallyCategory(t, this.myMoney.Categories.Unknown, t, columnName, t.AmountMinusTax);
                 }
             }
         }
@@ -566,8 +566,8 @@ namespace Walkabout.Reports
                     FlowDocumentReportWriter fw = (FlowDocumentReportWriter)writer;
                     Paragraph p = fw.CurrentParagraph;
                     p.Tag = cell;
-                    p.PreviewMouseLeftButtonDown -= OnReportCellMouseDown;
-                    p.PreviewMouseLeftButtonDown += OnReportCellMouseDown;
+                    p.PreviewMouseLeftButtonDown -= this.OnReportCellMouseDown;
+                    p.PreviewMouseLeftButtonDown += this.OnReportCellMouseDown;
                     p.Cursor = Cursors.Arrow;
                     //p.TextDecorations.Add(TextDecorations.Underline);
                     //p.Foreground = Brushes.DarkSlateBlue;
@@ -586,8 +586,8 @@ namespace Walkabout.Reports
         private void OnReportCellMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Paragraph p = (Paragraph)sender;
-            mouseDownCell = (CashFlowCell)p.Tag;
-            downPos = e.GetPosition(this.view);
+            this.mouseDownCell = (CashFlowCell)p.Tag;
+            this.downPos = e.GetPosition(this.view);
         }
 
 
@@ -595,11 +595,11 @@ namespace Walkabout.Reports
         {
             using (StreamWriter writer = new StreamWriter(filename, false, Encoding.UTF8))
             {
-                GenerateCsvGroup(writer, byCategory, "Income", (c) => { return IsIncome(c); }, (v) => { return v; });
+                this.GenerateCsvGroup(writer, this.byCategory, "Income", (c) => { return this.IsIncome(c); }, (v) => { return v; });
 
-                GenerateCsvGroup(writer, byCategory, "Expenses", (c) => { return IsExpense(c); }, (v) => { return -v; });
+                this.GenerateCsvGroup(writer, this.byCategory, "Expenses", (c) => { return this.IsExpense(c); }, (v) => { return -v; });
 
-                GenerateCsvGroup(writer, byCategory, "Investments", (c) => { return IsInvestment(c); }, (v) => { return v; });
+                this.GenerateCsvGroup(writer, this.byCategory, "Investments", (c) => { return this.IsInvestment(c); }, (v) => { return v; });
 
             }
         }
@@ -617,7 +617,7 @@ namespace Walkabout.Reports
             List<Category> rootCategories = new List<Category>(byCategory.Keys);
             rootCategories.Sort(new Comparison<Category>((a, b) =>
             {
-                return string.Compare(GetCategoryCaption(a), GetCategoryCaption(b));
+                return string.Compare(this.GetCategoryCaption(a), this.GetCategoryCaption(b));
             }));
 
             // now add the detail rows of the group
@@ -634,7 +634,7 @@ namespace Walkabout.Reports
                         cells.Add(cell);
                     }
 
-                    writer.Write(GetCategoryCaption(c));
+                    writer.Write(this.GetCategoryCaption(c));
 
                     foreach (CashFlowCell cell in cells)
                     {

@@ -27,81 +27,81 @@ namespace Walkabout.Dialogs
 
         public Account TheAccount
         {
-            get { return theAccount; }
+            get { return this.theAccount; }
             set
             {
-                theAccount = value;
+                this.theAccount = value;
                 if (value != null)
                 {
-                    editingAccount = value.ShallowCopy();
-                    this.DataContext = editingAccount;
-                    UpdateUI();
+                    this.editingAccount = value.ShallowCopy();
+                    this.DataContext = this.editingAccount;
+                    this.UpdateUI();
                 }
             }
         }
 
         public AccountDialog(MyMoney money, Account a, IServiceProvider sp)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.serviceProvider = sp;
 
-            onlineAccounts.Add(string.Empty); // so you can clear it out.
+            this.onlineAccounts.Add(string.Empty); // so you can clear it out.
             this.money = money;
             this.Owner = Application.Current.MainWindow;
             this.TheAccount = a;
-            onlineAccounts.Add(NewLabel); // so you can add new online accounts.
+            this.onlineAccounts.Add(NewLabel); // so you can add new online accounts.
 
             List<string> currencies = new List<string>(Enum.GetNames(typeof(RestfulWebServices.CurrencyCode)));
             currencies.Sort();
-            ComboBoxCurrency.ItemsSource = currencies;
+            this.ComboBoxCurrency.ItemsSource = currencies;
 
-            comboBoxOnlineAccount.ItemsSource = onlineAccounts;
+            this.comboBoxOnlineAccount.ItemsSource = this.onlineAccounts;
 
             foreach (var alias in money.AccountAliases)
             {
                 if (alias.AccountId == a.AccountId && !alias.IsDeleted)
                 {
-                    comboBoxAccountAliases.Items.Add(alias);
+                    this.comboBoxAccountAliases.Items.Add(alias);
                 }
             }
-            if (comboBoxAccountAliases.Items.Count > 0)
+            if (this.comboBoxAccountAliases.Items.Count > 0)
             {
-                comboBoxAccountAliases.SelectedIndex = 0;
+                this.comboBoxAccountAliases.SelectedIndex = 0;
             }
 
             foreach (var field in typeof(TaxStatus).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))
             {
                 var value = (TaxStatus)field.GetValue(null);
-                ComboBoxTaxStatus.Items.Add(value);
+                this.ComboBoxTaxStatus.Items.Add(value);
             }
 
-            UpdateUI();
+            this.UpdateUI();
 
-            money.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+            money.Changed += new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
 
-            this.Unloaded += (s, e) =>
+            Unloaded += (s, e) =>
             {
-                money.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                money.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
             };
 
 
-            CheckButtonStates();
+            this.CheckButtonStates();
 
             this.TextBoxName.Focus();
 
-            this.Closed += AccountDialog_Closed;
+            Closed += this.AccountDialog_Closed;
         }
 
         void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
-            OnOnlineAccountsChanged(sender, args);
-            OnCurrencyDataChanged(sender, args);
+            this.OnOnlineAccountsChanged(sender, args);
+            this.OnCurrencyDataChanged(sender, args);
         }
 
         void AccountDialog_Closed(object sender, EventArgs e)
         {
-            money.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+            this.money.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
         }
 
         void OnOnlineAccountsChanged(object sender, ChangeEventArgs args)
@@ -114,7 +114,7 @@ namespace Walkabout.Dialogs
                 {
                     if (args.ChangeType == ChangeType.Inserted)
                     {
-                        newOnlineAccounts.Add(args.Item as OnlineAccount);
+                        this.newOnlineAccounts.Add(args.Item as OnlineAccount);
                     }
                     changed = true;
                 }
@@ -122,7 +122,7 @@ namespace Walkabout.Dialogs
             }
             if (changed)
             {
-                UpdateOnlineAccounts();
+                this.UpdateOnlineAccounts();
             }
         }
 
@@ -139,15 +139,15 @@ namespace Walkabout.Dialogs
             }
             if (changed)
             {
-                UpdateRateText();
+                this.UpdateRateText();
             }
         }
 
         void UpdateRateText()
         {
-            TextRate.Text = "";
+            this.TextRate.Text = "";
 
-            string current = (string)ComboBoxCurrency.SelectedItem;
+            string current = (string)this.ComboBoxCurrency.SelectedItem;
             if (string.IsNullOrEmpty(current))
             {
                 return;
@@ -156,75 +156,75 @@ namespace Walkabout.Dialogs
             Currency c = this.money.Currencies.FindCurrency(current);
             if (c != null && c.Symbol != "USD" && c.Ratio != 0)
             {
-                TextRate.Text = string.Format("$US {0:N2}", c.Ratio);
+                this.TextRate.Text = string.Format("$US {0:N2}", c.Ratio);
             }
         }
 
         void UpdateUI()
         {
-            UpdateOnlineAccounts();
-            UpdateRateText();
+            this.UpdateOnlineAccounts();
+            this.UpdateRateText();
         }
 
         bool updating;
 
         void UpdateOnlineAccounts()
         {
-            updating = true;
+            this.updating = true;
 
             // Find any new accounts
-            foreach (OnlineAccount oa in money.OnlineAccounts.Items)
+            foreach (OnlineAccount oa in this.money.OnlineAccounts.Items)
             {
                 if (string.IsNullOrEmpty(oa.Name))
                 {
                     // cleanup - this should be in the database
                     oa.OnDelete();
                 }
-                else if (!onlineAccounts.Contains(oa))
+                else if (!this.onlineAccounts.Contains(oa))
                 {
-                    InsertAccount(oa);
+                    this.InsertAccount(oa);
                 }
             }
 
-            var existing = money.OnlineAccounts.GetOnlineAccounts();
+            var existing = this.money.OnlineAccounts.GetOnlineAccounts();
             // find any removed accounts;
-            foreach (object obj in new List<object>(onlineAccounts))
+            foreach (object obj in new List<object>(this.onlineAccounts))
             {
                 OnlineAccount oa = obj as OnlineAccount;
                 if (oa != null && !existing.Contains(oa))
                 {
-                    onlineAccounts.Remove(oa);
+                    this.onlineAccounts.Remove(oa);
                 }
             }
 
-            if (editingAccount.OnlineAccount != null)
+            if (this.editingAccount.OnlineAccount != null)
             {
-                this.comboBoxOnlineAccount.SelectedItem = editingAccount.OnlineAccount;
+                this.comboBoxOnlineAccount.SelectedItem = this.editingAccount.OnlineAccount;
             }
 
-            updating = false;
+            this.updating = false;
         }
 
         // Insert account in sorted order.
         void InsertAccount(OnlineAccount oa)
         {
-            for (int i = 0, n = onlineAccounts.Count; i < n; i++)
+            for (int i = 0, n = this.onlineAccounts.Count; i < n; i++)
             {
-                OnlineAccount other = onlineAccounts[i] as OnlineAccount;
+                OnlineAccount other = this.onlineAccounts[i] as OnlineAccount;
                 if (other != null && string.Compare(other.Name, oa.Name, StringComparison.OrdinalIgnoreCase) > 0)
                 {
-                    onlineAccounts.Insert(i, oa);
+                    this.onlineAccounts.Insert(i, oa);
                     return;
                 }
             }
-            onlineAccounts.Add(oa);
+            this.onlineAccounts.Add(oa);
         }
 
         OnlineAccount GetMatchingOnlineAccount(string name)
         {
-            foreach (OnlineAccount oa in money.OnlineAccounts.Items)
+            foreach (OnlineAccount oa in this.money.OnlineAccounts.Items)
             {
-                if (editingAccount.OnlineAccount.Name == oa.Name)
+                if (this.editingAccount.OnlineAccount.Name == oa.Name)
                 {
                     return oa;
                 }
@@ -244,13 +244,13 @@ namespace Walkabout.Dialogs
         private void OnButtonGoToWebSite(object sender, RoutedEventArgs e)
         {
 
-            if (string.IsNullOrWhiteSpace(editingAccount.WebSite))
+            if (string.IsNullOrWhiteSpace(this.editingAccount.WebSite))
             {
                 MessageBoxEx.Show("You must supply the web site address");
                 return;
             }
 
-            string url = editingAccount.WebSite.ToLower();
+            string url = this.editingAccount.WebSite.ToLower();
 
 
             if (!url.StartsWith("https://") && !url.StartsWith("http://"))
@@ -274,7 +274,7 @@ namespace Walkabout.Dialogs
             }
             else
             {
-                MessageBoxEx.Show(string.Format("Invalid web site:{0}\"{1}\"", Environment.NewLine, editingAccount.WebSite));
+                MessageBoxEx.Show(string.Format("Invalid web site:{0}\"{1}\"", Environment.NewLine, this.editingAccount.WebSite));
             }
         }
 
@@ -288,9 +288,9 @@ namespace Walkabout.Dialogs
                 // force update of this.editingAccount since the real account may have been modified
                 // by the OnlineAccountDialog
                 var temp = this.theAccount;
-                TheAccount = null;
-                TheAccount = temp;
-                UpdateUI();// make sure 'this.comboBoxOnlineAccount' has the new account
+                this.TheAccount = null;
+                this.TheAccount = temp;
+                this.UpdateUI();// make sure 'this.comboBoxOnlineAccount' has the new account
                 this.comboBoxOnlineAccount.SelectedItem = this.editingAccount.OnlineAccount;
             }
             else
@@ -302,12 +302,12 @@ namespace Walkabout.Dialogs
 
         private void OnComboBoxOnlineAccount_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!updating && comboBoxOnlineAccount.SelectedItem != null)
+            if (!this.updating && this.comboBoxOnlineAccount.SelectedItem != null)
             {
-                string name = comboBoxOnlineAccount.SelectedItem.ToString();
+                string name = this.comboBoxOnlineAccount.SelectedItem.ToString();
                 if (name == NewLabel)
                 {
-                    OnButtonOnlineAccountDetails_Click(sender, e);
+                    this.OnButtonOnlineAccountDetails_Click(sender, e);
                 }
                 else if (string.IsNullOrEmpty(name))
                 {
@@ -315,7 +315,7 @@ namespace Walkabout.Dialogs
                 }
                 else
                 {
-                    this.editingAccount.OnlineAccount = comboBoxOnlineAccount.SelectedItem as OnlineAccount;
+                    this.editingAccount.OnlineAccount = this.comboBoxOnlineAccount.SelectedItem as OnlineAccount;
                 }
             }
         }
@@ -330,13 +330,13 @@ namespace Walkabout.Dialogs
         {
             // take the focus off whatever field may have it which will force commit of edit and binding of the
             // new value back to editingAccount object
-            ButtonOk.Focus();
-            HandleOk(5);
+            this.ButtonOk.Focus();
+            this.HandleOk(5);
         }
 
         private void HandleOk(int retries)
         {
-            if (string.IsNullOrEmpty(editingAccount.Name))
+            if (string.IsNullOrEmpty(this.editingAccount.Name))
             {
                 // then the ok button should not have been enabled, or databinding has not caught up yet.
                 // This is unbelievable, but TwoWay databinding is also "asynchronous", so if you click OK fast
@@ -344,37 +344,37 @@ namespace Walkabout.Dialogs
                 // background priority dispatch invoke allows that binding to complete before closing the dialog.
                 if (retries > 0)
                 {
-                    Dispatcher.BeginInvoke(new Action(() =>
+                    this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        HandleOk(retries - 1);
+                        this.HandleOk(retries - 1);
                     }), System.Windows.Threading.DispatcherPriority.Background);
                 }
                 return;
             }
-            if (theAccount == null)
+            if (this.theAccount == null)
             {
-                theAccount = new Account();
+                this.theAccount = new Account();
             }
-            theAccount.Name = editingAccount.Name;
-            theAccount.AccountId = editingAccount.AccountId;
-            theAccount.OfxAccountId = editingAccount.OfxAccountId;
-            theAccount.Description = editingAccount.Description;
-            theAccount.Type = editingAccount.Type;
+            this.theAccount.Name = this.editingAccount.Name;
+            this.theAccount.AccountId = this.editingAccount.AccountId;
+            this.theAccount.OfxAccountId = this.editingAccount.OfxAccountId;
+            this.theAccount.Description = this.editingAccount.Description;
+            this.theAccount.Type = this.editingAccount.Type;
 
-            theAccount.OpeningBalance = editingAccount.OpeningBalance;
-            if (editingAccount.OnlineAccount != null)
+            this.theAccount.OpeningBalance = this.editingAccount.OpeningBalance;
+            if (this.editingAccount.OnlineAccount != null)
             {
-                theAccount.OnlineAccount = GetMatchingOnlineAccount(editingAccount.OnlineAccount.Name);
+                this.theAccount.OnlineAccount = this.GetMatchingOnlineAccount(this.editingAccount.OnlineAccount.Name);
             }
             else
             {
-                theAccount.OnlineAccount = null;
+                this.theAccount.OnlineAccount = null;
             }
-            theAccount.Currency = editingAccount.Currency;
-            theAccount.WebSite = editingAccount.WebSite;
-            theAccount.Flags = editingAccount.Flags;
-            theAccount.ReconcileWarning = editingAccount.ReconcileWarning;
-            theAccount.LastSync = editingAccount.LastSync;
+            this.theAccount.Currency = this.editingAccount.Currency;
+            this.theAccount.WebSite = this.editingAccount.WebSite;
+            this.theAccount.Flags = this.editingAccount.Flags;
+            this.theAccount.ReconcileWarning = this.editingAccount.ReconcileWarning;
+            this.theAccount.LastSync = this.editingAccount.LastSync;
 
             this.DialogResult = true;
         }
@@ -400,7 +400,7 @@ namespace Walkabout.Dialogs
             {
                 if (oa != null)
                 {
-                    money.OnlineAccounts.RemoveOnlineAccount(oa);
+                    this.money.OnlineAccounts.RemoveOnlineAccount(oa);
                 }
             }
             this.DialogResult = false;
@@ -411,31 +411,31 @@ namespace Walkabout.Dialogs
 
         private void OnNameChanged(object sender, TextChangedEventArgs e)
         {
-            CheckButtonStates();
+            this.CheckButtonStates();
 
-            if (TextBoxName.Text.IndexOfAny(InvalidNameChars) >= 0)
+            if (this.TextBoxName.Text.IndexOfAny(InvalidNameChars) >= 0)
             {
-                TextBoxName.Background = Brushes.Red;
-                TextBoxName.ToolTip = Walkabout.Properties.Resources.AccountNameValidChars;
-                ButtonOk.IsEnabled = false;
+                this.TextBoxName.Background = Brushes.Red;
+                this.TextBoxName.ToolTip = Walkabout.Properties.Resources.AccountNameValidChars;
+                this.ButtonOk.IsEnabled = false;
             }
             else
             {
-                TextBoxName.ClearValue(TextBox.BackgroundProperty);
-                TextBoxName.ToolTip = "";
+                this.TextBoxName.ClearValue(TextBox.BackgroundProperty);
+                this.TextBoxName.ToolTip = "";
             }
         }
 
         private void CheckButtonStates()
         {
-            ButtonOk.IsEnabled = !string.IsNullOrEmpty(TextBoxName.Text);
+            this.ButtonOk.IsEnabled = !string.IsNullOrEmpty(this.TextBoxName.Text);
         }
 
         private void OnCurrencyChanged(object sender, SelectionChangedEventArgs e)
         {
-            TextRate.Text = "";
+            this.TextRate.Text = "";
 
-            string currency = (string)ComboBoxCurrency.SelectedItem;
+            string currency = (string)this.ComboBoxCurrency.SelectedItem;
 
             if (currency == "USD")
             {
@@ -450,7 +450,7 @@ namespace Walkabout.Dialogs
                 rates.Enqueue(currency);
             }
 
-            UpdateRateText();
+            this.UpdateRateText();
         }
 
         private void OnAccountAliaseDeleted(object sender, RoutedEventArgs args)
@@ -460,7 +460,7 @@ namespace Walkabout.Dialogs
                 if (a.Parent is AccountAliases container)
                 {
                     container.RemoveAlias(a);
-                    comboBoxAccountAliases.Items.Remove(a);
+                    this.comboBoxAccountAliases.Items.Remove(a);
                 }
             }
         }
@@ -477,14 +477,14 @@ namespace Walkabout.Dialogs
                     var a = this.money.AccountAliases.FindAlias(text);
                     if (a == null)
                     {
-                        a = new AccountAlias() { AliasType = AliasType.None, Pattern = text, AccountId = theAccount.AccountId };
-                        money.AccountAliases.AddAlias(a);
-                        comboBoxAccountAliases.Items.Add(a);
+                        a = new AccountAlias() { AliasType = AliasType.None, Pattern = text, AccountId = this.theAccount.AccountId };
+                        this.money.AccountAliases.AddAlias(a);
+                        this.comboBoxAccountAliases.Items.Add(a);
                     }
-                    else if (a.AccountId != theAccount.AccountId)
+                    else if (a.AccountId != this.theAccount.AccountId)
                     {
                         // user is moving the alias?
-                        a.AccountId = theAccount.AccountId;
+                        a.AccountId = this.theAccount.AccountId;
                     }
                 }
             }

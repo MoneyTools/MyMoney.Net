@@ -101,7 +101,7 @@ namespace Walkabout
 #endif
                 UiDispatcher.CurrentDispatcher = this.Dispatcher;
                 this.settings = settings;
-                this.settings.PropertyChanged += OnSettingsChanged;
+                this.settings.PropertyChanged += this.OnSettingsChanged;
 
                 this.attachmentManager = new AttachmentManager(this.myMoney);
                 this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
@@ -118,19 +118,19 @@ namespace Walkabout
 
                 Walkabout.Utilities.UiDispatcher.CurrentDispatcher = this.Dispatcher;
                 this.mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-                OnThemeChanged(settings.Theme);
-                ParseCommandLine();
+                this.OnThemeChanged(settings.Theme);
+                this.ParseCommandLine();
 
                 this.navigator = new UndoManager(1000); // view state stack
                 this.manager = new UndoManager(1000);
 
 
                 System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
-                AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(OnUnhandledException);
-                App.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(OnDispatcherUnhandledException);
-                TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+                AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.OnUnhandledException);
+                App.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(this.OnDispatcherUnhandledException);
+                TaskScheduler.UnobservedTaskException += this.TaskScheduler_UnobservedTaskException;
 
-                InitializeComponent();
+                this.InitializeComponent();
 
                 //-----------------------------------------------------------------
                 // ACCOUNTS CONTROL
@@ -140,9 +140,9 @@ namespace Walkabout
                 this.accountsControl.Name = "AccountsControl";
                 this.accountsControl.MyMoney = this.myMoney;
                 this.accountsControl.DatabaseSettings = this.databaseSettings;
-                this.accountsControl.SyncAccount += new EventHandler<ChangeEventArgs>(OnAccountsPanelSyncAccount);
-                this.accountsControl.BalanceAccount += new EventHandler<ChangeEventArgs>(OnAccountsPanelBalanceAccount);
-                this.accountsControl.ShowTransfers += new EventHandler<ChangeEventArgs>(OnAccountsPanelShowTransfers);
+                this.accountsControl.SyncAccount += new EventHandler<ChangeEventArgs>(this.OnAccountsPanelSyncAccount);
+                this.accountsControl.BalanceAccount += new EventHandler<ChangeEventArgs>(this.OnAccountsPanelBalanceAccount);
+                this.accountsControl.ShowTransfers += new EventHandler<ChangeEventArgs>(this.OnAccountsPanelShowTransfers);
                 this.accountsControl.DisplayClosedAccounts = this.settings.DisplayClosedAccounts;
 
                 //-----------------------------------------------------------------
@@ -168,22 +168,22 @@ namespace Walkabout
                 this.securitiesControl.Name = "SecuritiesControl";
                 this.securitiesControl.MyMoney = this.myMoney;
 
-                UpdateRentalManagement();
+                this.UpdateRentalManagement();
 
                 //-----------------------------------------------------------------
                 // Set the default view to be the Transaction view
-                SetCurrentView<TransactionsView>();
+                this.SetCurrentView<TransactionsView>();
                 this.navigator.Pop();
 
                 //-----------------------------------------------------------------
                 // These events must be set after view.ServiceProvider is set
                 //
-                this.accountsControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Account);
-                this.categoriesControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Categories);
-                this.categoriesControl.GroupSelectionChanged += new EventHandler(OnSelectionChangeFor_CategoryGroup);
-                this.categoriesControl.SelectedTransactionChanged += new EventHandler(CategoriesControl_SelectedTransactionChanged);
-                this.payeesControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Payees);
-                this.securitiesControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Securities);
+                this.accountsControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Account);
+                this.categoriesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Categories);
+                this.categoriesControl.GroupSelectionChanged += new EventHandler(this.OnSelectionChangeFor_CategoryGroup);
+                this.categoriesControl.SelectedTransactionChanged += new EventHandler(this.CategoriesControl_SelectedTransactionChanged);
+                this.payeesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Payees);
+                this.securitiesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Securities);
 
                 this.exchangeRates = new ExchangeRates();
 
@@ -193,7 +193,7 @@ namespace Walkabout
                 FileSystemWatcher fsw = new FileSystemWatcher();
                 fsw.Path = ProcessHelper.ImportFileListFolder;
                 fsw.NotifyFilter = NotifyFilters.LastWrite;
-                fsw.Changed += new FileSystemEventHandler(OnImportFolderContentHasChanged);
+                fsw.Changed += new FileSystemEventHandler(this.OnImportFolderContentHasChanged);
                 fsw.EnableRaisingEvents = true;
 
                 //-----------------------------------------------------------------
@@ -204,18 +204,18 @@ namespace Walkabout
                 this.toolBox.Add("PAYEES", "PayeesSelector", this.payeesControl, true);
                 this.toolBox.Add("SECURITIES", "SecuritiesSelector", this.securitiesControl, true);
 
-                OnUpdateRentalTab();
+                this.OnUpdateRentalTab();
 
-                this.toolBox.Expanded += new RoutedEventHandler(OnToolBoxItemsExpanded);
-                this.toolBox.FilterUpdated += new Accordion.FilterEventHandler(OnToolBoxFilterUpdated);
+                this.toolBox.Expanded += new RoutedEventHandler(this.OnToolBoxItemsExpanded);
+                this.toolBox.FilterUpdated += new Accordion.FilterEventHandler(this.OnToolBoxFilterUpdated);
 
-                Keyboard.AddGotKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(OnKeyboardFocusChanged));
+                Keyboard.AddGotKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(this.OnKeyboardFocusChanged));
 
                 //---------------------------------------------------------------
                 // Setup the Graph area
                 //
-                PieChartExpenses.SelectionChanged += new EventHandler(PieChartSelectionChanged);
-                PieChartIncomes.SelectionChanged += new EventHandler(PieChartSelectionChanged);
+                this.PieChartExpenses.SelectionChanged += new EventHandler(this.PieChartSelectionChanged);
+                this.PieChartIncomes.SelectionChanged += new EventHandler(this.PieChartSelectionChanged);
 
                 //-----------------------------------------------------------------
                 // Setup the Loan area
@@ -223,42 +223,42 @@ namespace Walkabout
                 //this.LoanChart.MyMoney = this.myMoney;
 
                 // Setup the HistoryChart
-                HistoryChart.SelectionChanged += new EventHandler(HistoryChart_SelectionChanged);
+                this.HistoryChart.SelectionChanged += new EventHandler(this.HistoryChart_SelectionChanged);
 
                 //-----------------------------------------------------------------
                 // Transaction Graph
                 //
-                this.TransactionGraph.MouseDown += new MouseButtonEventHandler(OnGraphMouseDown);
+                this.TransactionGraph.MouseDown += new MouseButtonEventHandler(this.OnGraphMouseDown);
 
                 //-----------------------------------------------------------------
                 // Main context setup
                 //
                 this.DataContext = this.myMoney;
-                this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
+                DataContextChanged += new DependencyPropertyChangedEventHandler(this.OnDataContextChanged);
 
-                TransactionView.QuickFilterChanged += new EventHandler(TransactionView_QuickFilterChanged);
+                this.TransactionView.QuickFilterChanged += new EventHandler(this.TransactionView_QuickFilterChanged);
 
-                ButtonShowUpdateInfo.Visibility = System.Windows.Visibility.Collapsed;
+                this.ButtonShowUpdateInfo.Visibility = System.Windows.Visibility.Collapsed;
 
-                this.Loaded += new RoutedEventHandler(OnMainWindowLoaded);
+                Loaded += new RoutedEventHandler(this.OnMainWindowLoaded);
 
                 //----------------------------------------------------------------------
                 // Download tab
-                OfxDownloadControl.SelectionChanged += OfxDownloadControl_SelectionChanged;
-                TabDownload.Visibility = System.Windows.Visibility.Hidden;
+                this.OfxDownloadControl.SelectionChanged += this.OfxDownloadControl_SelectionChanged;
+                this.TabDownload.Visibility = System.Windows.Visibility.Hidden;
 
                 //----------------------------------------------------------------------
                 // Output Window
-                TabOutput.Visibility = System.Windows.Visibility.Collapsed;
-                AddHandler(OutputPane.ShowOutputEvent, new RoutedEventHandler(OnShowOutputWindow));
-                AddHandler(OutputPane.HideOutputEvent, new RoutedEventHandler(OnHideOutputWindow));
+                this.TabOutput.Visibility = System.Windows.Visibility.Collapsed;
+                this.AddHandler(OutputPane.ShowOutputEvent, new RoutedEventHandler(this.OnShowOutputWindow));
+                this.AddHandler(OutputPane.HideOutputEvent, new RoutedEventHandler(this.OnHideOutputWindow));
 
-                this.recentFilesMenu = new RecentFilesMenu(MenuRecentFiles);
+                this.recentFilesMenu = new RecentFilesMenu(this.MenuRecentFiles);
                 this.recentFilesMenu.SetFiles(settings.RecentFiles);
-                this.recentFilesMenu.RecentFileSelected += OnRecentFileSelected;
+                this.recentFilesMenu.RecentFileSelected += this.OnRecentFileSelected;
 
                 this.TransactionGraph.ServiceProvider = this;
-                this.AppSettingsPanel.Closed += OnAppSettingsPanelClosed;
+                this.AppSettingsPanel.Closed += this.OnAppSettingsPanelClosed;
 
 #if PerformanceBlocks
             }
@@ -271,7 +271,7 @@ namespace Walkabout
             switch (e.PropertyName)
             {
                 case "Theme":
-                    OnThemeChanged(this.settings.Theme);
+                    this.OnThemeChanged(this.settings.Theme);
                     break;
             }
         }
@@ -282,11 +282,11 @@ namespace Walkabout
             switch (e.PropertyName)
             {
                 case "RentalManagement":
-                    UpdateRentalManagement();
-                    OnUpdateRentalTab(); // in case tab needs to be added back.
+                    this.UpdateRentalManagement();
+                    this.OnUpdateRentalTab(); // in case tab needs to be added back.
                     break;
                 case "FiscalYearStart":
-                    HistoryChart.FiscalYearStart = settings.FiscalYearStart;
+                    this.HistoryChart.FiscalYearStart = settings.FiscalYearStart;
                     break;
             }
 
@@ -316,7 +316,7 @@ namespace Walkabout
                     this.rentsControl = new RentsControl();
                     this.rentsControl.TabIndex = 5;
                     this.rentsControl.Name = "RentsControl";
-                    this.rentsControl.SelectionChanged += new EventHandler(OnSelectionChangeFor_Rents);
+                    this.rentsControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Rents);
                 }
                 this.rentsControl.MyMoney = this.myMoney;
             }
@@ -352,53 +352,53 @@ namespace Walkabout
                 StockQuote quote = history.History[history.History.Count - 1];
                 if (quote.Date > s.PriceDate)
                 {
-                    myMoney.BeginUpdate(this);
+                    this.myMoney.BeginUpdate(this);
                     try
                     {
                         s.LastPrice = s.Price;
                         s.Price = quote.Close;
                         s.PriceDate = quote.Date;
-                        delayedActions.StartDelayedAction("updateBalance", UpdateBalance, TimeSpan.FromSeconds(1));
+                        this.delayedActions.StartDelayedAction("updateBalance", this.UpdateBalance, TimeSpan.FromSeconds(1));
                     }
                     finally
                     {
-                        myMoney.EndUpdate();
+                        this.myMoney.EndUpdate();
                     }
                 }
             }
-            if (TransactionView.ActiveSecurity != null && TransactionView.ActiveSecurity.Symbol == history.Symbol)
+            if (this.TransactionView.ActiveSecurity != null && this.TransactionView.ActiveSecurity.Symbol == history.Symbol)
             {
-                StockGraph.Generator = new SecurityGraphGenerator(history, TransactionView.ActiveSecurity);
+                this.StockGraph.Generator = new SecurityGraphGenerator(history, this.TransactionView.ActiveSecurity);
             }
         }
 
         private void UpdateBalance()
         {
-            myMoney.BeginUpdate(this);
+            this.myMoney.BeginUpdate(this);
             try
             {
-                CostBasisCalculator calculator = new CostBasisCalculator(myMoney, DateTime.Now);
-                foreach (Account a in myMoney.Accounts.GetAccounts())
+                CostBasisCalculator calculator = new CostBasisCalculator(this.myMoney, DateTime.Now);
+                foreach (Account a in this.myMoney.Accounts.GetAccounts())
                 {
                     if (a.Type != AccountType.Loan)
                     {
-                        myMoney.Rebalance(calculator, a);
+                        this.myMoney.Rebalance(calculator, a);
                     }
                 }
             }
             finally
             {
-                myMoney.EndUpdate();
+                this.myMoney.EndUpdate();
             }
         }
 
         private void OnRecentFileSelected(object sender, RecentFileEventArgs e)
         {
-            if (!SaveIfDirty())
+            if (!this.SaveIfDirty())
                 return;
 
             Settings.TheSettings.Database = e.FileName;
-            BeginLoadDatabase();
+            this.BeginLoadDatabase();
         }
 
         void OfxDownloadControl_SelectionChanged(object sender, OfxDocumentControlSelectionChangedEventArgs e)
@@ -413,30 +413,30 @@ namespace Walkabout
 
         void OnShowOutputWindow(object sender, RoutedEventArgs e)
         {
-            ShowOutputWindow();
+            this.ShowOutputWindow();
         }
 
         void ShowOutputWindow()
         {
-            TabOutput.Visibility = System.Windows.Visibility.Visible;
-            TabForGraphs.SelectedItem = TabOutput;
+            this.TabOutput.Visibility = System.Windows.Visibility.Visible;
+            this.TabForGraphs.SelectedItem = this.TabOutput;
         }
 
         void OnHideOutputWindow(object sender, RoutedEventArgs e)
         {
-            HideOutputWindow();
+            this.HideOutputWindow();
         }
 
         void HideOutputWindow()
         {
-            TabOutput.Visibility = System.Windows.Visibility.Collapsed;
-            TabForGraphs.SelectedItem = TabTrends;
+            this.TabOutput.Visibility = System.Windows.Visibility.Collapsed;
+            this.TabForGraphs.SelectedItem = this.TabTrends;
         }
 
         void ClearOutput()
         {
-            OutputView.Clear();
-            HideOutputWindow();
+            this.OutputView.Clear();
+            this.HideOutputWindow();
         }
 
         private void OnCloseOutputWindow(object sender, RoutedEventArgs e)
@@ -450,16 +450,16 @@ namespace Walkabout
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.Loaded))
             {
 #endif
-                if (!string.IsNullOrEmpty(newDatabaseName))
+                if (!string.IsNullOrEmpty(this.newDatabaseName))
                 {
                     // This only happens during testing when we launch the app with the "-nd" command line option.
-                    CreateNewDatabase(newDatabaseName);
+                    this.CreateNewDatabase(this.newDatabaseName);
                 }
-                else if (!emptyWindow)
+                else if (!this.emptyWindow)
                 {
                     // windows 11 has a weird behavior where main window does not appear before the 
                     // Open Database dialog unless we do this delay here.
-                    delayedActions.StartDelayedAction("loaddata", BeginLoadDatabase, TimeSpan.FromMilliseconds(1));
+                    this.delayedActions.StartDelayedAction("loaddata", this.BeginLoadDatabase, TimeSpan.FromMilliseconds(1));
                 }
 #if PerformanceBlocks
             }
@@ -468,7 +468,7 @@ namespace Walkabout
 
         void TransactionView_QuickFilterChanged(object sender, EventArgs e)
         {
-            SetChartsDirty();
+            this.SetChartsDirty();
         }
 
         void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -482,11 +482,11 @@ namespace Walkabout
                     msg = "The reason is:\n" + e.ExceptionObject.ToString();
                 }
 
-                SaveIfDirty("The program is terminating, do you want to save your changes?", msg);
+                this.SaveIfDirty("The program is terminating, do you want to save your changes?", msg);
             }
             else if (e.ExceptionObject != null)
             {
-                HandleUnhandledException(e.ExceptionObject);
+                this.HandleUnhandledException(e.ExceptionObject);
             }
         }
 
@@ -494,7 +494,7 @@ namespace Walkabout
         {
             if (e.Exception != null)
             {
-                HandleUnhandledException(e.Exception);
+                this.HandleUnhandledException(e.Exception);
             }
             e.SetObserved();
         }
@@ -504,23 +504,23 @@ namespace Walkabout
 
         void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            if (handlingException)
+            if (this.handlingException)
             {
                 e.Handled = false;
             }
             else
             {
-                handlingException = true;
+                this.handlingException = true;
                 UiDispatcher.Invoke(new Action(() =>
                 {
                     try
                     {
-                        e.Handled = HandleUnhandledException(e.Exception);
+                        e.Handled = this.HandleUnhandledException(e.Exception);
                     }
                     catch (Exception)
                     {
                     }
-                    handlingException = false;
+                    this.handlingException = false;
                 }));
             }
         }
@@ -550,7 +550,7 @@ namespace Walkabout
             {
                 // hmmm, if we can't show the dialog then perhaps this is some sort of stack overflow.
                 // save the details to a file, terminate the process and 
-                SaveCrashLog(message, details);
+                this.SaveCrashLog(message, details);
             }
             return false;
         }
@@ -585,30 +585,30 @@ namespace Walkabout
         {
             using (this.tracker)
             {
-                if (tracker != null)
+                if (this.tracker != null)
                 {
-                    tracker.DirtyChanged -= OnDirtyChanged;
+                    this.tracker.DirtyChanged -= this.OnDirtyChanged;
                 }
-                tracker = null;
+                this.tracker = null;
             }
             this.attachmentManager.Stop();
             this.statementManager.Stop();
             if (this.myMoney != null)
             {
-                this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnChangedUI);
+                this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(this.OnChangedUI);
             }
         }
 
         void StartTracking()
         {
-            tracker = new ChangeTracker(this.myMoney, this);
-            tracker.DirtyChanged += new EventHandler(OnDirtyChanged);
-            this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
+            this.tracker = new ChangeTracker(this.myMoney, this);
+            this.tracker.DirtyChanged += new EventHandler(this.OnDirtyChanged);
+            this.attachmentManager.AttachmentDirectory = this.settings.AttachmentDirectory;
             this.attachmentManager.Start();
-            this.statementManager.StatementsDirectory = settings.StatementsDirectory;
+            this.statementManager.StatementsDirectory = this.settings.StatementsDirectory;
             this.statementManager.Start();
-            this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnChangedUI);
-            this.myMoney.Changed += new EventHandler<ChangeEventArgs>(OnChangedUI);
+            this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(this.OnChangedUI);
+            this.myMoney.Changed += new EventHandler<ChangeEventArgs>(this.OnChangedUI);
         }
 
         void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -617,22 +617,22 @@ namespace Walkabout
             if (money != this.myMoney)
             {
                 this.myMoney = money;
-                StopTracking();
+                this.StopTracking();
 
                 if (this.quotes != null)
                 {
-                    CleanupStockQuoteManager();
+                    this.CleanupStockQuoteManager();
                 }
-                UpdateRentalManagement();
-                UpdateCaption(null);
+                this.UpdateRentalManagement();
+                this.UpdateCaption(null);
 
-                myMoney.BeginUpdate(this);
+                this.myMoney.BeginUpdate(this);
                 try
                 {
                     if (this.database != null)
                     {
                         string path = this.database.DatabasePath;
-                        SetupStockQuoteManager(money);
+                        this.SetupStockQuoteManager(money);
                         OfxRequest.OfxLogPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
                     }
 
@@ -643,23 +643,23 @@ namespace Walkabout
 
                     this.attachmentManager.Stop();
                     this.attachmentManager = new AttachmentManager(this.myMoney);
-                    this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
+                    this.attachmentManager.AttachmentDirectory = this.settings.AttachmentDirectory;
 
                     this.statementManager.Stop();
                     this.statementManager = new StatementManager(this.myMoney);
-                    this.statementManager.StatementsDirectory = settings.StatementsDirectory;
+                    this.statementManager.StatementsDirectory = this.settings.StatementsDirectory;
 
                 }
                 finally
                 {
-                    myMoney.EndUpdate();
+                    this.myMoney.EndUpdate();
                 }
 
                 this.Cursor = Cursors.Arrow;
 
-                SetCurrentView<TransactionsView>();
-                TransactionView.Money = myMoney;
-                IView view = (IView)TransactionView;
+                this.SetCurrentView<TransactionsView>();
+                this.TransactionView.Money = this.myMoney;
+                IView view = (IView)this.TransactionView;
 
                 // try again to restore the selected account/payee, whatever, since we now have loaded data to play with
                 ViewState state = this.settings.GetViewState(view.GetType());
@@ -668,28 +668,28 @@ namespace Walkabout
                     view.ViewState = state;
                 }
 
-                if (TransactionView.ActiveAccount != null)
+                if (this.TransactionView.ActiveAccount != null)
                 {
-                    this.accountsControl.SelectedAccount = TransactionView.ActiveAccount;
+                    this.accountsControl.SelectedAccount = this.TransactionView.ActiveAccount;
                 }
 
-                if (myMoney.Accounts.Count == 0)
+                if (this.myMoney.Accounts.Count == 0)
                 {
                     // make sure we clear out current view (this is necessary if you go from a loaded database
                     // to a new empty one with no accounts yet).
-                    ViewTransactions(new Transaction[0]);
+                    this.ViewTransactions(new Transaction[0]);
                 }
 
                 GraphState graphState = this.settings.GraphState;
                 if (graphState != null)
                 {
-                    SetGraphState(graphState);
+                    this.SetGraphState(graphState);
                 }
 
                 this.exchangeRates.MyMoney = money;
 
-                ClearOutput();
-                ClearOfxDownloads();
+                this.ClearOutput();
+                this.ClearOfxDownloads();
 
                 if (this.settings.LastStockRequest != DateTime.Today && this.quotes != null)
                 {
@@ -697,23 +697,23 @@ namespace Walkabout
                     this.exchangeRates.UpdateRates();
                 }
 
-                ShowNetWorth();
+                this.ShowNetWorth();
 
-                UpdateCategoryColors();
+                this.UpdateCategoryColors();
 
-                SetChartsDirty();
+                this.SetChartsDirty();
 
-                HideBalancePanel(false, false);
+                this.HideBalancePanel(false, false);
 
-                this.Dispatcher.BeginInvoke(new Action(AfterLoadChecks), DispatcherPriority.Background);
+                this.Dispatcher.BeginInvoke(new Action(this.AfterLoadChecks), DispatcherPriority.Background);
             }
         }
 
         private void SetupStockQuoteManager(MyMoney money)
         {
-            this.quotes = new StockQuoteManager((IServiceProvider)this, settings.StockServiceSettings, GetStockQuotePath());
-            this.quotes.DownloadComplete += new EventHandler<EventArgs>(OnStockDownloadComplete);
-            this.quotes.HistoryAvailable += OnStockQuoteHistoryAvailable;
+            this.quotes = new StockQuoteManager((IServiceProvider)this, this.settings.StockServiceSettings, this.GetStockQuotePath());
+            this.quotes.DownloadComplete += new EventHandler<EventArgs>(this.OnStockDownloadComplete);
+            this.quotes.HistoryAvailable += this.OnStockQuoteHistoryAvailable;
             this.cache = new StockQuoteCache(money, this.quotes.DownloadLog);
         }
 
@@ -725,57 +725,57 @@ namespace Walkabout
 
         private void ClearOfxDownloads()
         {
-            OfxDownloadControl.Cancel();
-            HideDownloadTab();
+            this.OfxDownloadControl.Cancel();
+            this.HideDownloadTab();
         }
 
         void AfterLoadChecks()
         {
-            myMoney.BeginUpdate(this);
+            this.myMoney.BeginUpdate(this);
             try
             {
                 // remove dangling transactions.
-                foreach (Transaction t in myMoney.Transactions)
+                foreach (Transaction t in this.myMoney.Transactions)
                 {
                     if (t.Account == null)
                     {
-                        myMoney.Transactions.Remove(t);
+                        this.myMoney.Transactions.Remove(t);
                     }
                 }
 
-                CostBasisCalculator calculator = new CostBasisCalculator(myMoney, DateTime.Now);
+                CostBasisCalculator calculator = new CostBasisCalculator(this.myMoney, DateTime.Now);
 
                 // This can be done on the background thread before we wire up 
                 // all the event handlers (for improved performance).
-                foreach (Account a in myMoney.Accounts.GetAccounts())
+                foreach (Account a in this.myMoney.Accounts.GetAccounts())
                 {
                     if (a.Type != AccountType.Loan)
                     {
-                        myMoney.Rebalance(calculator, a);
+                        this.myMoney.Rebalance(calculator, a);
                     }
                 }
 
-                myMoney.CheckSecurities();
+                this.myMoney.CheckSecurities();
 
-                myMoney.CheckCategoryFunds();
+                this.myMoney.CheckCategoryFunds();
 
-                myMoney.TransactionExtras.MigrateTaxYears(myMoney, this.databaseSettings.FiscalYearStart);
+                this.myMoney.TransactionExtras.MigrateTaxYears(this.myMoney, this.databaseSettings.FiscalYearStart);
             }
             finally
             {
-                myMoney.EndUpdate();
+                this.myMoney.EndUpdate();
             }
 
-            SetDirty(false);
+            this.SetDirty(false);
 
             // one last thing (this can take over the "current view" so it comes last).
-            TransactionView.CheckTransfers();
+            this.TransactionView.CheckTransfers();
 
-            CheckLastVersion();
+            this.CheckLastVersion();
 
-            StartTracking();
+            this.StartTracking();
 
-            CheckCrashLog();
+            this.CheckCrashLog();
         }
 
         void OnStockDownloadComplete(object sender, EventArgs e)
@@ -787,7 +787,7 @@ namespace Walkabout
         {
             bool isTransactionViewAlready = this.CurrentView is TransactionViewState;
             // This happens when there is an error budgeting a transaction, so we want to display the transaction so it can be fixed.
-            TransactionView.ViewTransactions(this.categoriesControl.SelectedTransactions);
+            this.TransactionView.ViewTransactions(this.categoriesControl.SelectedTransactions);
             if (!isTransactionViewAlready)
             {
                 this.navigator.Pop();
@@ -834,11 +834,11 @@ namespace Walkabout
                         case "?":
                         case "h":
                         case "help":
-                            ShowUsage();
+                            this.ShowUsage();
                             Application.Current.Shutdown();
                             break;
                         case "n":
-                            emptyWindow = true;
+                            this.emptyWindow = true;
                             break;
                         case "nd":
                             if (i + 1 < n)
@@ -847,7 +847,7 @@ namespace Walkabout
                             }
                             break;
                         case "nosettings":
-                            noSettings = true;
+                            this.noSettings = true;
                             break;
                     }
                 }
@@ -891,27 +891,27 @@ namespace Walkabout
         {
             if (sender is AccountsControl)
             {
-                OnSelectionChangeFor_Account(sender, e);
+                this.OnSelectionChangeFor_Account(sender, e);
             }
 
             if (sender is PayeesControl)
             {
-                OnSelectionChangeFor_Payees(sender, e);
+                this.OnSelectionChangeFor_Payees(sender, e);
             }
 
             if (sender is SecuritiesControl)
             {
-                OnSelectionChangeFor_Securities(sender, e);
+                this.OnSelectionChangeFor_Securities(sender, e);
             }
 
             if (sender is CategoriesControl)
             {
-                OnSelectionChangeFor_Categories(sender, e);
+                this.OnSelectionChangeFor_Categories(sender, e);
             }
 
             if (sender is RentsControl)
             {
-                OnSelectionChangeFor_Rents(sender, e);
+                this.OnSelectionChangeFor_Rents(sender, e);
             }
         }
 
@@ -923,10 +923,10 @@ namespace Walkabout
         {
 #if DEBUG
             var count = this.myMoney.TotalChangeListenerCount;
-            if (count != lastHandlerCount)
+            if (count != this.lastHandlerCount)
             {
-                Debug.WriteLine($"Number of listeners changed from {lastHandlerCount} to {count}");
-                lastHandlerCount = count;
+                Debug.WriteLine($"Number of listeners changed from {this.lastHandlerCount} to {count}");
+                this.lastHandlerCount = count;
             }
 #endif
 
@@ -940,26 +940,26 @@ namespace Walkabout
                 if (a.Type == AccountType.Loan)
                 {
                     this.SaveViewStateOfCurrentView();
-                    bool isLoanViewAlready = CurrentView is LoansView;
-                    LoansView view = SetCurrentView<LoansView>();
+                    bool isLoanViewAlready = this.CurrentView is LoansView;
+                    LoansView view = this.SetCurrentView<LoansView>();
                     view.AccountSelected = a;
                     if (!isLoanViewAlready)
                     {
                         this.navigator.Pop();
                     }
-                    TrackSelectionChanges();
+                    this.TrackSelectionChanges();
                 }
                 else
                 {
-                    bool isTransactionViewAlready = CurrentView is TransactionsView;
-                    TransactionsView view = SetCurrentView<TransactionsView>();
+                    bool isTransactionViewAlready = this.CurrentView is TransactionsView;
+                    TransactionsView view = this.SetCurrentView<TransactionsView>();
                     view.ViewTransactionsForSingleAccount(a, TransactionSelection.Current, 0);
 
                     if (!isTransactionViewAlready)
                     {
                         this.navigator.Pop();
                     }
-                    TrackSelectionChanges();
+                    this.TrackSelectionChanges();
                 }
 
                 return;
@@ -972,7 +972,7 @@ namespace Walkabout
             Category c = this.categoriesControl.Selected;
             if (c != null)
             {
-                ViewTransactionsByCategory(c);
+                this.ViewTransactionsByCategory(c);
             }
         }
 
@@ -981,31 +981,31 @@ namespace Walkabout
             CategoryGroup g = this.categoriesControl.SelectedGroup;
             if (g != null)
             {
-                ViewTransactionsByCategoryGroup(g);
+                this.ViewTransactionsByCategoryGroup(g);
             }
         }
 
         private void ViewTransactionsByCategory(Category c)
         {
-            bool isTransactionViewAlready = CurrentView is TransactionsView;
-            TransactionsView view = SetCurrentView<TransactionsView>();
+            bool isTransactionViewAlready = this.CurrentView is TransactionsView;
+            TransactionsView view = this.SetCurrentView<TransactionsView>();
             long selectedId = -1;
             view.ViewTransactionsForCategory(c, selectedId);
             if (!isTransactionViewAlready)
             {
                 this.navigator.Pop();
             }
-            TrackSelectionChanges();
+            this.TrackSelectionChanges();
         }
 
         private void ViewTransactionsByCategoryGroup(CategoryGroup g)
         {
-            bool isTransactionViewAlready = CurrentView is TransactionsView;
-            TransactionsView view = SetCurrentView<TransactionsView>();
+            bool isTransactionViewAlready = this.CurrentView is TransactionsView;
+            TransactionsView view = this.SetCurrentView<TransactionsView>();
             List<Transaction> total = new List<Data.Transaction>();
             foreach (Category c in g.Subcategories)
             {
-                IList<Transaction> transactions = myMoney.Transactions.GetTransactionsByCategory(c,
+                IList<Transaction> transactions = this.myMoney.Transactions.GetTransactionsByCategory(c,
                     new Predicate<Transaction>((t) => { return true; }));
                 total.AddRange(transactions);
             }
@@ -1016,7 +1016,7 @@ namespace Walkabout
             {
                 this.navigator.Pop();
             }
-            TrackSelectionChanges();
+            this.TrackSelectionChanges();
         }
 
 
@@ -1025,14 +1025,14 @@ namespace Walkabout
             Payee p = this.payeesControl.Selected;
             if (p != null)
             {
-                bool isTransactionViewAlready = CurrentView is TransactionsView;
-                TransactionsView view = SetCurrentView<TransactionsView>();
+                bool isTransactionViewAlready = this.CurrentView is TransactionsView;
+                TransactionsView view = this.SetCurrentView<TransactionsView>();
                 view.ViewTransactionsForPayee(this.payeesControl.Selected, view.SelectedRowId);
                 if (!isTransactionViewAlready)
                 {
                     this.navigator.Pop();
                 }
-                TrackSelectionChanges();
+                this.TrackSelectionChanges();
             }
         }
 
@@ -1041,7 +1041,7 @@ namespace Walkabout
             Security s = this.securitiesControl.Selected;
             if (s != null)
             {
-                ViewTransactionsBySecurity(s);
+                this.ViewTransactionsBySecurity(s);
             }
         }
 
@@ -1049,14 +1049,14 @@ namespace Walkabout
         {
             if (security != null)
             {
-                bool isTransactionViewAlready = CurrentView is TransactionsView;
-                TransactionsView view = SetCurrentView<TransactionsView>();
+                bool isTransactionViewAlready = this.CurrentView is TransactionsView;
+                TransactionsView view = this.SetCurrentView<TransactionsView>();
                 view.ViewTransactionsForSecurity(security, view.SelectedRowId);
                 if (!isTransactionViewAlready)
                 {
                     this.navigator.Pop();
                 }
-                TrackSelectionChanges();
+                this.TrackSelectionChanges();
             }
         }
 
@@ -1071,40 +1071,40 @@ namespace Walkabout
             if (currentlySelected is RentBuilding)
             {
                 this.SaveViewStateOfCurrentView();
-                RentSummaryView summary = SetCurrentView<RentSummaryView>();
+                RentSummaryView summary = this.SetCurrentView<RentSummaryView>();
                 summary.SetViewToRentBuilding(currentlySelected as RentBuilding);
             }
             else if (currentlySelected is RentalBuildingSingleYear)
             {
                 this.SaveViewStateOfCurrentView();
-                RentSummaryView summary = SetCurrentView<RentSummaryView>();
+                RentSummaryView summary = this.SetCurrentView<RentSummaryView>();
                 summary.SetViewToRentalBuildingSingleYear(currentlySelected as RentalBuildingSingleYear);
             }
             else if (currentlySelected is RentalBuildingSingleYearSingleDepartment)
             {
-                TransactionsView view = SetCurrentView<TransactionsView>();
+                TransactionsView view = this.SetCurrentView<TransactionsView>();
                 view.ViewTransactionRentalBuildingSingleYearDepartment(currentlySelected as RentalBuildingSingleYearSingleDepartment);
             }
 
-            SetChartsDirty();
+            this.SetChartsDirty();
 
-            TrackSelectionChanges();
+            this.TrackSelectionChanges();
         }
 
         private void SetChartsDirty()
         {
-            delayedActions.StartDelayedAction("updateCharts", TryUpdateCharts, TimeSpan.FromMilliseconds(10));
+            this.delayedActions.StartDelayedAction("updateCharts", this.TryUpdateCharts, TimeSpan.FromMilliseconds(10));
         }
 
         private void TryUpdateCharts()
         {
             if (!this.myMoney.IsUpdating)
             {
-                UpdateCharts();
+                this.UpdateCharts();
             }
             else
             {
-                SetChartsDirty();
+                this.SetChartsDirty();
             }
         }
 
@@ -1115,7 +1115,7 @@ namespace Walkabout
 
         public IView CurrentView
         {
-            get { return EditingZone.Content as IView; }
+            get { return this.EditingZone.Content as IView; }
             set { this.EditingZone.Content = value; }
         }
 
@@ -1141,8 +1141,8 @@ namespace Walkabout
                 {
 
                     iView.ServiceProvider = (IServiceProvider)this;
-                    iView.BeforeViewStateChanged += new EventHandler(OnBeforeViewStateChanged);
-                    iView.AfterViewStateChanged += new EventHandler<AfterViewStateChangedEventArgs>(OnAfterViewStateChanged);
+                    iView.BeforeViewStateChanged += new EventHandler(this.OnBeforeViewStateChanged);
+                    iView.AfterViewStateChanged += new EventHandler<AfterViewStateChangedEventArgs>(this.OnAfterViewStateChanged);
                     iView.Money = this.myMoney;
 
                     ViewState state = this.settings.GetViewState(typeof(T));
@@ -1161,7 +1161,7 @@ namespace Walkabout
                         }
                     }
                     // Cache the new singleton instance
-                    cacheViews.Add(typeof(T), iView);
+                    this.cacheViews.Add(typeof(T), iView);
                 }
                 else
                 {
@@ -1169,7 +1169,7 @@ namespace Walkabout
                 }
             }
 
-            IView o = cacheViews[typeof(T)];
+            IView o = this.cacheViews[typeof(T)];
 
             return (T)o;
         }
@@ -1183,10 +1183,10 @@ namespace Walkabout
         /// <returns></returns>
         private T SetCurrentView<T>() where T : IView
         {
-            IView newView = GetOrCreateView<T>();
-            CurrentView = newView;
-            CurrentView.ActivateView();
-            return (T)CurrentView;
+            IView newView = this.GetOrCreateView<T>();
+            this.CurrentView = newView;
+            this.CurrentView.ActivateView();
+            return (T)this.CurrentView;
         }
 
 
@@ -1197,16 +1197,16 @@ namespace Walkabout
         {
             get
             {
-                var result = GetOrCreateView<TransactionsView>();
-                result.ViewModelChanged -= OnTransactionViewModelChanged;
-                result.ViewModelChanged += OnTransactionViewModelChanged;
+                var result = this.GetOrCreateView<TransactionsView>();
+                result.ViewModelChanged -= this.OnTransactionViewModelChanged;
+                result.ViewModelChanged += this.OnTransactionViewModelChanged;
                 return result;
             }
         }
 
         private void OnTransactionViewModelChanged(object sender, EventArgs e)
         {
-            SetChartsDirty();
+            this.SetChartsDirty();
         }
 
         #endregion
@@ -1346,7 +1346,7 @@ namespace Walkabout
 
                 //Debug.WriteLine("****** Main window Back Navigator.Current is NULL");
 
-                SaveViewStateOfCurrentView();   // save current state so we can come back here if user press FORWARD button
+                this.SaveViewStateOfCurrentView();   // save current state so we can come back here if user press FORWARD button
                 this.navigator.Undo();          // undo the state we just pushed on the stack
             }
 
@@ -1371,7 +1371,7 @@ namespace Walkabout
 
         private void OnCommandBackExecute(object sender, ExecutedRoutedEventArgs e)
         {
-            Back();
+            this.Back();
         }
 
         private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -1382,7 +1382,7 @@ namespace Walkabout
 
         private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            Forward();
+            this.Forward();
         }
 
         #region IViewNavigation
@@ -1401,7 +1401,7 @@ namespace Walkabout
                         if (transactionView != null)
                         {
                             transactionView.ViewTransactionsForSingleAccount(transaction.Account, TransactionSelection.Specific, transaction.Id);
-                            SetCurrentView<TransactionsView>();
+                            this.SetCurrentView<TransactionsView>();
 
                         }
                     }));
@@ -1412,7 +1412,7 @@ namespace Walkabout
             UiDispatcher.BeginInvoke(
                 new Action(() =>
                 {
-                    TransactionsView view = SetCurrentView<TransactionsView>();
+                    TransactionsView view = this.SetCurrentView<TransactionsView>();
                     view.ViewTransactions(list);
 
                     // now we only want one view.
@@ -1424,10 +1424,10 @@ namespace Walkabout
 
         public void NavigateToSecurity(Security security)
         {
-            Dispatcher.BeginInvoke(
+            this.Dispatcher.BeginInvoke(
                 new Action(() =>
                 {
-                    SecuritiesView view = ViewSecurities();
+                    SecuritiesView view = this.ViewSecurities();
                     if (view != null)
                     {
                         view.GotoSecurity(security);
@@ -1445,9 +1445,9 @@ namespace Walkabout
         {
             base.OnInitialized(e);
 
-            LoadConfig();
+            this.LoadConfig();
 
-            this.TransactionView.QueryPanel.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnQueryPanelIsVisibleChanged);
+            this.TransactionView.QueryPanel.IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnQueryPanelIsVisibleChanged);
 
 
             TempFilesManager.Initialize();
@@ -1455,7 +1455,7 @@ namespace Walkabout
 
         }
 
-        public bool HasDatabase { get { return this.database != null || isLoading; } }
+        public bool HasDatabase { get { return this.database != null || this.isLoading; } }
 
         void OnThemeChanged(string themeToApply)
         {
@@ -1473,7 +1473,7 @@ namespace Walkabout
 
         void LoadConfig()
         {
-            if (!File.Exists(settings.ConfigFile) || noSettings)
+            if (!File.Exists(this.settings.ConfigFile) || this.noSettings)
             {
                 Rect bounds = SystemParameters.WorkArea;
                 if (bounds.Width != 0 && bounds.Height != 0)
@@ -1488,26 +1488,26 @@ namespace Walkabout
             }
             else
             {
-                if (settings.WindowSize.Width != 0 && settings.WindowSize.Height != 0)
+                if (this.settings.WindowSize.Width != 0 && this.settings.WindowSize.Height != 0)
                 {
-                    Point location = settings.WindowLocation;
+                    Point location = this.settings.WindowLocation;
                     this.Left = location.X;
                     this.Top = location.Y;
 
-                    this.Width = settings.WindowSize.Width;
-                    this.Height = settings.WindowSize.Height;
+                    this.Width = this.settings.WindowSize.Width;
+                    this.Height = this.settings.WindowSize.Height;
                 }
-                if (settings.ToolBoxWidth > 20)
+                if (this.settings.ToolBoxWidth > 20)
                 {
-                    toolBox.Width = settings.ToolBoxWidth;
-                    GridColumns.ColumnDefinitions[0].Width = new GridLength(settings.ToolBoxWidth);
+                    this.toolBox.Width = this.settings.ToolBoxWidth;
+                    this.GridColumns.ColumnDefinitions[0].Width = new GridLength(this.settings.ToolBoxWidth);
                 }
-                if (settings.GraphHeight > 20)
+                if (this.settings.GraphHeight > 20)
                 {
-                    TransactionGraph.Height = settings.GraphHeight;
+                    this.TransactionGraph.Height = this.settings.GraphHeight;
                 }
 
-                this.caption = settings.Database;
+                this.caption = this.settings.Database;
             }
         }
 
@@ -1540,7 +1540,7 @@ namespace Walkabout
                 s.SetViewState(view.GetType(), view.ViewState);
             }
 
-            s.GraphState = GetGraphState();
+            s.GraphState = this.GetGraphState();
             ProcessHelper.CreateSettingsDirectory();
             if (!string.IsNullOrEmpty(s.ConfigFile) && s.Persist)
             {
@@ -1570,7 +1570,7 @@ namespace Walkabout
 
         void SaveViewStateOfCurrentView()
         {
-            IView view = CurrentView;
+            IView view = this.CurrentView;
             if (view != null)
             {
                 var state = view.ViewState;
@@ -1604,14 +1604,14 @@ namespace Walkabout
 
             public override void Undo()
             {
-                window.CurrentView = view;
-                view.ViewState = state;
+                this.window.CurrentView = this.view;
+                this.view.ViewState = this.state;
             }
 
             public override void Redo()
             {
-                window.CurrentView = view;
-                view.ViewState = state;
+                this.window.CurrentView = this.view;
+                this.view.ViewState = this.state;
             }
         }
 
@@ -1623,7 +1623,7 @@ namespace Walkabout
         // the problem is file change events can generate many of these in a burst, so we need a timer to delay actual loading.
         private void OnImportFolderContentHasChanged(object sender, FileSystemEventArgs e)
         {
-            this.delayedActions.StartDelayedAction("ImportFiles", LoadImportFiles, TimeSpan.FromMilliseconds(250));
+            this.delayedActions.StartDelayedAction("ImportFiles", this.LoadImportFiles, TimeSpan.FromMilliseconds(250));
         }
 
         // Could be on a background thread.
@@ -1661,12 +1661,12 @@ namespace Walkabout
                     }
                     if (ofxFiles.Count > 0)
                     {
-                        delayedActions.StartDelayedAction("ImportOfx", () => { ImportOfx(ofxFiles.ToArray()); }, TimeSpan.FromMilliseconds(1));
+                        this.delayedActions.StartDelayedAction("ImportOfx", () => { this.ImportOfx(ofxFiles.ToArray()); }, TimeSpan.FromMilliseconds(1));
                     }
 
                     if (qifFiles.Count > 0)
                     {
-                        delayedActions.StartDelayedAction("ImportQif", () => { ImportQif(qifFiles.ToArray()); }, TimeSpan.FromMilliseconds(1));
+                        this.delayedActions.StartDelayedAction("ImportQif", () => { this.ImportQif(qifFiles.ToArray()); }, TimeSpan.FromMilliseconds(1));
                     }
                 }
             }
@@ -1686,7 +1686,7 @@ namespace Walkabout
             {
                 Account acct = null;
                 int len = files.Length;
-                ShowProgress(0, len, 0, null);
+                this.ShowProgress(0, len, 0, null);
                 for (int i = 0; i < len; i++)
                 {
                     string file = files[i];
@@ -1699,7 +1699,7 @@ namespace Walkabout
                         break;
                     }
                     acct = selected;
-                    ShowProgress(0, len, i, string.Format("Importing '{0}'", file));
+                    this.ShowProgress(0, len, i, string.Format("Importing '{0}'", file));
 
                     try
                     {
@@ -1714,9 +1714,9 @@ namespace Walkabout
                     }
                 }
 
-                ShowProgress(0, len, -1, string.Format("Loaded {0} transactions", total));
+                this.ShowProgress(0, len, -1, string.Format("Loaded {0} transactions", total));
 
-                var view = SetCurrentView<TransactionsView>();
+                var view = this.SetCurrentView<TransactionsView>();
                 if (view.CheckTransfers() && acct != null)
                 {
                     view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
@@ -1810,14 +1810,14 @@ namespace Walkabout
 
                     if (!string.IsNullOrEmpty(this.settings.Database))
                     {
-                        isLoading = true;
-                        Task.Run(() => LoadDatabase(password));
+                        this.isLoading = true;
+                        Task.Run(() => this.LoadDatabase(password));
                     }
                     else
                     {
                         this.NewDatabase();
-                        StartTracking();
-                        LoadImportFiles();
+                        this.StartTracking();
+                        this.LoadImportFiles();
                     }
                 }
                 catch (Exception e)
@@ -1844,13 +1844,13 @@ namespace Walkabout
             {
                 UiDispatcher.BeginInvoke(new System.Action(() => { this.Cursor = Cursors.Wait; }));
 
-                LoadDatabase(server, database, userid, password, backuppath);
+                this.LoadDatabase(server, database, userid, password, backuppath);
 
                 UiDispatcher.BeginInvoke(new System.Action(() => { this.Cursor = Cursors.Arrow; }));
 
             }
 
-            LoadImportFiles();
+            this.LoadImportFiles();
         }
 
         private void ShowNetWorth()
@@ -1860,7 +1860,7 @@ namespace Walkabout
             {
                 total += a.BalanceNormalized;
             }
-            ShowMessage("Net worth: " + total.ToString("C"));
+            this.ShowMessage("Net worth: " + total.ToString("C"));
         }
 
         private void LoadDatabase(string server, string databaseName, string userId, string password, string backupPath)
@@ -1983,23 +1983,23 @@ namespace Walkabout
                 UiDispatcher.BeginInvoke(new Action(() =>
                 {
                     this.database = database;
-                    MenuFileAddUser.Visibility = database.SupportsUserLogin ? Visibility.Visible : Visibility.Collapsed;
-                    CreateAttachmentDirectory();
-                    CreateStatementsDirectory();
+                    this.MenuFileAddUser.Visibility = database.SupportsUserLogin ? Visibility.Visible : Visibility.Collapsed;
+                    this.CreateAttachmentDirectory();
+                    this.CreateStatementsDirectory();
                     this.DataContext = newMoney; // this sets this.myMoney.
-                    canSave = true;
-                    isLoading = false;
-                    UpdateDatabaseSettings(DatabaseSettings.LoadFrom(database));
+                    this.canSave = true;
+                    this.isLoading = false;
+                    this.UpdateDatabaseSettings(DatabaseSettings.LoadFrom(database));
                     string label = Path.GetFileName(database.DatabasePath);
                     var msg = "Loaded from " + label + " in " + (int)watch.Elapsed.TotalMilliseconds + " milliseconds";
                     if (string.IsNullOrEmpty(password))
                     {
                         string end = msg + " (database has no password!!)";
-                        AnimateStatus(msg, end);
+                        this.AnimateStatus(msg, end);
                     }
                     else
                     {
-                        InternalShowMessage(msg);
+                        this.InternalShowMessage(msg);
                     }
 
                     this.recentFilesMenu.AddRecentFile(database.DatabasePath);
@@ -2009,10 +2009,10 @@ namespace Walkabout
 
         private void UpdateDatabaseSettings(DatabaseSettings settings)
         {
-            this.databaseSettings.PropertyChanged -= DatabaseSettings_PropertyChanged;
+            this.databaseSettings.PropertyChanged -= this.DatabaseSettings_PropertyChanged;
             this.databaseSettings = settings;
             this.accountsControl.DatabaseSettings = this.databaseSettings;
-            this.databaseSettings.PropertyChanged += DatabaseSettings_PropertyChanged;
+            this.databaseSettings.PropertyChanged += this.DatabaseSettings_PropertyChanged;
             if (this.databaseSettings.MigrateSettings(this.settings))
             {
                 try
@@ -2030,11 +2030,11 @@ namespace Walkabout
 
         private void AnimateStatus(string start, string end)
         {
-            if (animatedStatus == null)
+            if (this.animatedStatus == null)
             {
-                animatedStatus = new AnimatedMessage((string value) => { StatusMessage.Content = value; });
+                this.animatedStatus = new AnimatedMessage((string value) => { this.StatusMessage.Content = value; });
             }
-            animatedStatus.Start(start, end, TimeSpan.FromMilliseconds(50));
+            this.animatedStatus.Start(start, end, TimeSpan.FromMilliseconds(50));
         }
 
         public IDatabase Database
@@ -2058,32 +2058,32 @@ namespace Walkabout
 
         private void CreateAttachmentDirectory()
         {
-            if (database != null)
+            if (this.database != null)
             {
-                string path = database.DatabasePath;
-                settings.AttachmentDirectory = this.attachmentManager.SetupAttachmentDirectory(path);
+                string path = this.database.DatabasePath;
+                this.settings.AttachmentDirectory = this.attachmentManager.SetupAttachmentDirectory(path);
             }
         }
 
         private void CreateStatementsDirectory()
         {
-            if (database != null)
+            if (this.database != null)
             {
-                string path = database.DatabasePath;
-                settings.StatementsDirectory = this.statementManager.SetupStatementsDirectory(path);
+                string path = this.database.DatabasePath;
+                this.settings.StatementsDirectory = this.statementManager.SetupStatementsDirectory(path);
             }
         }
 
         private bool NewDatabase()
         {
-            if (!SaveIfDirty())
+            if (!this.SaveIfDirty())
                 return false;
 
             if (this.database == null ||
                 MessageBoxEx.Show("Are you sure you want to create a new money database?", "New Database",
                     MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK)
             {
-                CreateDatabaseDialog frm = InitializeCreateDatabaseDialog();
+                CreateDatabaseDialog frm = this.InitializeCreateDatabaseDialog();
                 frm.Owner = this;
                 frm.Mode = ConnectMode.Create;
                 if (frm.ShowDialog() == false)
@@ -2094,7 +2094,7 @@ namespace Walkabout
                 this.canSave = false;
                 try
                 {
-                    LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
+                    this.LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
                 }
                 catch (Exception ex)
                 {
@@ -2142,10 +2142,10 @@ namespace Walkabout
                     this.database.Create();
                 }
 
-                MyMoney newMoney = database.Load(this);
+                MyMoney newMoney = this.database.Load(this);
                 this.DataContext = newMoney;
-                canSave = true;
-                isLoading = false;
+                this.canSave = true;
+                this.isLoading = false;
             }
             catch (Exception ex)
             {
@@ -2155,12 +2155,12 @@ namespace Walkabout
 
         private void OpenDatabase()
         {
-            if (!SaveIfDirty())
+            if (!this.SaveIfDirty())
             {
                 return;
             }
 
-            CreateDatabaseDialog frm = InitializeCreateDatabaseDialog();
+            CreateDatabaseDialog frm = this.InitializeCreateDatabaseDialog();
             frm.Owner = this;
             frm.Mode = ConnectMode.Connect;
             if (frm.ShowDialog() == true)
@@ -2168,8 +2168,8 @@ namespace Walkabout
                 try
                 {
                     this.LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
-                    CreateAttachmentDirectory();
-                    CreateStatementsDirectory();
+                    this.CreateAttachmentDirectory();
+                    this.CreateStatementsDirectory();
                 }
                 catch (Exception ex)
                 {
@@ -2180,12 +2180,12 @@ namespace Walkabout
 
         internal bool SaveIfDirty()
         {
-            return SaveIfDirty("Do you want to save your changes?", null);
+            return this.SaveIfDirty("Do you want to save your changes?", null);
         }
 
         internal bool SaveIfDirty(string message, string details)
         {
-            if (dirty)
+            if (this.dirty)
             {
                 MessageBoxResult rc = MessageBoxEx.Show(message, "Save Changes", details, MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
@@ -2195,7 +2195,7 @@ namespace Walkabout
                 }
                 else if (rc == MessageBoxResult.Yes)
                 {
-                    if (!Save())
+                    if (!this.Save())
                     {
                         return false;
                     }
@@ -2210,7 +2210,7 @@ namespace Walkabout
 
         private bool Save()
         {
-            canSave = true;
+            this.canSave = true;
             try
             {
                 this.Cursor = Cursors.Wait;
@@ -2219,15 +2219,15 @@ namespace Walkabout
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
 
-                myMoney.Save(this.database);
+                this.myMoney.Save(this.database);
 
                 watch.Stop();
                 string label = Path.GetFileName(this.database.DatabasePath);
-                ShowMessage("Saved to " + label + " in " + (int)watch.Elapsed.TotalMilliseconds + " milliseconds");
+                this.ShowMessage("Saved to " + label + " in " + (int)watch.Elapsed.TotalMilliseconds + " milliseconds");
 
-                SetDirty(false);
+                this.SetDirty(false);
 
-                if (settings.PlaySounds)
+                if (this.settings.PlaySounds)
                 {
                     Sounds.PlaySound("Walkabout.Icons.Ding.wav");
                 }
@@ -2267,7 +2267,7 @@ namespace Walkabout
         private void SaveAsSqlCe(string filename)
         {
             string password = null;
-            if (!PromptForPassword(out password))
+            if (!this.PromptForPassword(out password))
             {
                 return;
             }
@@ -2277,7 +2277,7 @@ namespace Walkabout
                 DatabasePath = filename,
                 Password = password
             };
-            SaveNewDatabase(database, password);
+            this.SaveNewDatabase(database, password);
         }
 
         private void SaveNewDatabase(SqlServerDatabase database, string password)
@@ -2291,22 +2291,22 @@ namespace Walkabout
                 }
 
                 // force all the data to be written.
-                myMoney.MarkAllNew();
+                this.myMoney.MarkAllNew();
 
                 // ensure schema exists
                 database.LazyCreateTables();
 
                 // save the settings
                 DatabaseSecurity.SaveDatabasePassword(database.DatabasePath, password);
-                settings.BackupPath = null;
+                this.settings.BackupPath = null;
 
                 // switch over
                 this.database = database;
-                Save();
+                this.Save();
 
-                CreateAttachmentDirectory();
-                CreateStatementsDirectory();
-                SetDirty(false);
+                this.CreateAttachmentDirectory();
+                this.CreateStatementsDirectory();
+                this.SetDirty(false);
             }
             catch (Exception ex)
             {
@@ -2317,7 +2317,7 @@ namespace Walkabout
         private void SaveAsSqlite(string filename)
         {
             string password = null;
-            if (!PromptForPassword(out password))
+            if (!this.PromptForPassword(out password))
             {
                 return;
             }
@@ -2328,7 +2328,7 @@ namespace Walkabout
                 Password = password
             };
 
-            SaveNewDatabase(database, password);
+            this.SaveNewDatabase(database, password);
 
         }
 
@@ -2337,10 +2337,10 @@ namespace Walkabout
             try
             {
                 XmlStore xs = new XmlStore(filename, null);
-                settings.BackupPath = null;
+                this.settings.BackupPath = null;
 
                 this.database = xs;
-                Save();
+                this.Save();
             }
             catch (Exception ex)
             {
@@ -2351,7 +2351,7 @@ namespace Walkabout
         private void SaveAsBinaryXml(string filename)
         {
             string password = null;
-            if (!PromptForPassword(out password))
+            if (!this.PromptForPassword(out password))
             {
                 return;
             }
@@ -2360,11 +2360,11 @@ namespace Walkabout
             {
                 BinaryXmlStore xs = new BinaryXmlStore(filename, password);
                 DatabaseSecurity.SaveDatabasePassword(xs.DatabasePath, password);
-                settings.BackupPath = null;
+                this.settings.BackupPath = null;
 
                 this.database = xs;
 
-                Save();
+                this.Save();
             }
             catch (Exception ex)
             {
@@ -2374,15 +2374,15 @@ namespace Walkabout
 
         private void ExportCsv(string filename)
         {
-            CsvStore csv = new CsvStore(filename, TransactionView.Rows);
+            CsvStore csv = new CsvStore(filename, this.TransactionView.Rows);
             csv.Save(this.myMoney);
         }
 
 
         private TabItem ShowDownloadTab()
         {
-            TabControl tc = TabForGraphs;
-            TabItem item = TabDownload;
+            TabControl tc = this.TabForGraphs;
+            TabItem item = this.TabDownload;
             item.Visibility = System.Windows.Visibility.Visible;
             tc.SelectedItem = item;
             return item;
@@ -2390,20 +2390,20 @@ namespace Walkabout
 
         private void OnDownloadTabClose(object sender, RoutedEventArgs e)
         {
-            OfxDownloadControl dc = TabDownload.Content as OfxDownloadControl;
+            OfxDownloadControl dc = this.TabDownload.Content as OfxDownloadControl;
             dc.Cancel();
-            HideDownloadTab();
+            this.HideDownloadTab();
         }
 
         private void HideDownloadTab()
         {
-            TabDownload.Visibility = System.Windows.Visibility.Hidden;
-            TabForGraphs.SelectedItem = TabTrends;
+            this.TabDownload.Visibility = System.Windows.Visibility.Hidden;
+            this.TabForGraphs.SelectedItem = this.TabTrends;
         }
 
         private int ImportOfx(string[] files)
         {
-            TabItem item = ShowDownloadTab();
+            TabItem item = this.ShowDownloadTab();
             OfxDownloadControl dc = item.Content as OfxDownloadControl;
             dc.BeginImport(this.myMoney, files);
             return 0;
@@ -2411,11 +2411,11 @@ namespace Walkabout
 
         private int ImportXml(string file)
         {
-            var importer = new XmlImporter(myMoney);
+            var importer = new XmlImporter(this.myMoney);
             int total = importer.Import(file);
             Account acct = importer.LastAccount;
 
-            var view = SetCurrentView<TransactionsView>();
+            var view = this.SetCurrentView<TransactionsView>();
             if (view.CheckTransfers() && acct != null)
             {
                 view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
@@ -2481,20 +2481,20 @@ namespace Walkabout
             }
             if (chartsDirty)
             {
-                SetChartsDirty();
+                this.SetChartsDirty();
             }
         }
 
         void OnDirtyChanged(object sender, EventArgs e)
         {
-            if (isLoading) // ignore these.
+            if (this.isLoading) // ignore these.
                 return;
 
-            if (tracker.IsDirty)
+            if (this.tracker.IsDirty)
             {
                 UiDispatcher.BeginInvoke(new Action(() =>
                 {
-                    SetDirty(true);
+                    this.SetDirty(true);
                 }));
             }
         }
@@ -2503,15 +2503,15 @@ namespace Walkabout
 
         private void SetDirty(bool dirty)
         {
-            if (!dirty && tracker != null)
+            if (!dirty && this.tracker != null)
             {
-                tracker.Clear();
+                this.tracker.Clear();
             }
             this.dirty = dirty;
-            UpdateCaption(this.caption);
+            this.UpdateCaption(this.caption);
             if (dirty)
             {
-                SetChartsDirty();
+                this.SetChartsDirty();
             }
         }
 
@@ -2529,15 +2529,15 @@ namespace Walkabout
 
             System.Windows.Input.CommandManager.InvalidateRequerySuggested();
 
-            if (tracker != null)
+            if (this.tracker != null)
             {
-                this.pendingStack.Children.Add(tracker.GetSummary());
+                this.pendingStack.Children.Add(this.tracker.GetSummary());
             }
         }
 
         private void PendingChangeClicked(object sender, object args)
         {
-            Save();
+            this.Save();
         }
 
         #endregion
@@ -2552,21 +2552,21 @@ namespace Walkabout
 
         public void BalanceAccount(Account a)
         {
-            HideQueryPanel();
-            HideBalancePanel(false, false);
+            this.HideQueryPanel();
+            this.HideBalancePanel(false, false);
 
-            SetCurrentView<TransactionsView>();
-            TransactionView.OnStartReconcile(a);
+            this.SetCurrentView<TransactionsView>();
+            this.TransactionView.OnStartReconcile(a);
 
             this.balanceControl = new BalanceControl();
             this.balanceControl.Reconcile(this.myMoney, a, this.statementManager);
-            this.balanceControl.StatementDateChanged += new EventHandler(OnBalanceStatementDateChanged);
+            this.balanceControl.StatementDateChanged += new EventHandler(this.OnBalanceStatementDateChanged);
             this.toolBox.Add("BALANCE", "BalanceSelector", this.balanceControl);
             this.toolBox.Selected = this.balanceControl;
 
-            this.balanceControl.Balanced += new EventHandler<BalanceEventArgs>(OnButtonBalanceDone);
+            this.balanceControl.Balanced += new EventHandler<BalanceEventArgs>(this.OnButtonBalanceDone);
             this.balanceControl.Focus();
-            OnBalanceStatementDateChanged(this, EventArgs.Empty);
+            this.OnBalanceStatementDateChanged(this, EventArgs.Empty);
 
         }
 
@@ -2576,7 +2576,7 @@ namespace Walkabout
             // The user has changed some date in the Balance Control 
             // We will now update the transaction list view to reflect the new selected date range
             //
-            TransactionView.SetReconcileDateRange(
+            this.TransactionView.SetReconcileDateRange(
                 this.balanceControl.SelectedPreviousStatement,
                 this.balanceControl.StatementDate,
                 this.balanceControl.IsLatestStatement
@@ -2585,20 +2585,20 @@ namespace Walkabout
 
         private void OnButtonBalanceDone(object sender, BalanceEventArgs e)
         {
-            HideBalancePanel(e.Balanced, e.HasStatement);
+            this.HideBalancePanel(e.Balanced, e.HasStatement);
         }
 
         void HideBalancePanel(bool balanced, bool hasStatement)
         {
             if (this.balanceControl != null)
             {
-                this.balanceControl.Balanced -= new EventHandler<BalanceEventArgs>(OnButtonBalanceDone);
-                this.balanceControl.StatementDateChanged -= new EventHandler(OnBalanceStatementDateChanged);
+                this.balanceControl.Balanced -= new EventHandler<BalanceEventArgs>(this.OnButtonBalanceDone);
+                this.balanceControl.StatementDateChanged -= new EventHandler(this.OnBalanceStatementDateChanged);
                 this.toolBox.Remove(this.balanceControl);
                 this.balanceControl = null;
                 this.toolBox.Selected = this.accountsControl;
 
-                TransactionView.OnEndReconcile(!balanced, hasStatement);
+                this.TransactionView.OnEndReconcile(!balanced, hasStatement);
             }
         }
         #endregion
@@ -2614,22 +2614,22 @@ namespace Walkabout
 
         private void OnAfterViewStateChanged(object sender, AfterViewStateChangedEventArgs e)
         {
-            if (CurrentView == null)
+            if (this.CurrentView == null)
             {
                 return;
             }
 
-            viewStateChanging = e;
+            this.viewStateChanging = e;
 
-            ITransactionView view = CurrentView as ITransactionView;
+            ITransactionView view = this.CurrentView as ITransactionView;
             if (view != null)
             {
                 // Search back in this.navigator for previously saved view state information so we can jump back to the same row we were on before.
-                RestorePreviouslySavedSelection(view, e.SelectedRowId);
+                this.RestorePreviouslySavedSelection(view, e.SelectedRowId);
 
-                this.TransactionView.QuickFilterUX.FilterText = TransactionView.QuickFilter;
+                this.TransactionView.QuickFilterUX.FilterText = this.TransactionView.QuickFilter;
 
-                if (TransactionView.IsReconciling && this.balanceControl != null)
+                if (this.TransactionView.IsReconciling && this.balanceControl != null)
                 {
                     this.toolBox.Selected = this.balanceControl;
                 }
@@ -2645,28 +2645,28 @@ namespace Walkabout
                 }
                 else if (view.ActiveCategory != null)
                 {
-                    categoriesControl.Selected = view.ActiveCategory;
+                    this.categoriesControl.Selected = view.ActiveCategory;
                     this.toolBox.Selected = this.categoriesControl;
                 }
                 else if (view.ActiveRental != null)
                 {
                     if (this.rentsControl != null)
                     {
-                        rentsControl.Selected = view.ActiveRental;
+                        this.rentsControl.Selected = view.ActiveRental;
                         this.toolBox.Selected = this.rentsControl;
                     }
                 }
                 else if (view.ActiveSecurity != null)
                 {
-                    securitiesControl.Selected = view.ActiveSecurity;
+                    this.securitiesControl.Selected = view.ActiveSecurity;
                     this.toolBox.Selected = this.securitiesControl;
-                    StockGraph.Generator = null; // wait for stock history to load.
+                    this.StockGraph.Generator = null; // wait for stock history to load.
                 }
 
             }
             else
             {
-                LoansView otherPossibleView = CurrentView as LoansView;
+                LoansView otherPossibleView = this.CurrentView as LoansView;
                 if (otherPossibleView != null)
                 {
                     this.accountsControl.SelectedAccount = otherPossibleView.AccountSelected;
@@ -2674,13 +2674,13 @@ namespace Walkabout
                 }
             }
 
-            viewStateChanging = null;
-            SetChartsDirty();
+            this.viewStateChanging = null;
+            this.SetChartsDirty();
 
             //
             // All views must prepare a nice caption that we will show in the Main window title bar
             //
-            UpdateCaption(CurrentView.Caption);
+            this.UpdateCaption(this.CurrentView.Caption);
 
         }
 
@@ -2698,9 +2698,9 @@ namespace Walkabout
                         if (vs != null && vs.Account == ts.Account && vs.Category == ts.Category && vs.Payee == ts.Payee && vs.Rental == ts.Rental)
                         {
                             // If the view was already told to navigate to a specific transaction, then we need to honor that and not override it.
-                            if (TransactionView.SelectedRowId != selectedRowId)
+                            if (this.TransactionView.SelectedRowId != selectedRowId)
                             {
-                                TransactionView.SelectedRowId = ts.SelectedRow;
+                                this.TransactionView.SelectedRowId = ts.SelectedRow;
                             }
                             break;
                         }
@@ -2711,13 +2711,13 @@ namespace Walkabout
 
         public void ShowTransfers(Account a)
         {
-            SetCurrentView<TransactionsView>();
-            TransactionView.ViewTransfers(a);
+            this.SetCurrentView<TransactionsView>();
+            this.TransactionView.ViewTransfers(a);
         }
 
         private void TrackSelectionChanges()
         {
-            if (viewStateChanging != null && viewStateChanging.SelectedRowId != -1)
+            if (this.viewStateChanging != null && this.viewStateChanging.SelectedRowId != -1)
             {
                 // then we're navigating to a specific row, so don't restore previous row.
                 return;
@@ -2729,7 +2729,7 @@ namespace Walkabout
                 ViewCommand vs = this.navigator[i] as ViewCommand;
                 if (vs != null)
                 {
-                    if (vs.View == TransactionView)
+                    if (vs.View == this.TransactionView)
                     {
                         TransactionViewState state = vs.State as TransactionViewState;
                         if (state != null)
@@ -2773,7 +2773,7 @@ namespace Walkabout
         {
             try
             {
-                inGraphMouseDown = true;
+                this.inGraphMouseDown = true;
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
                     Transaction t = this.TransactionGraph.SelectedItem as Transaction;
@@ -2786,18 +2786,18 @@ namespace Walkabout
             }
             finally
             {
-                inGraphMouseDown = false;
+                this.inGraphMouseDown = false;
             }
         }
 
         private void HistoryChart_SelectionChanged(object sender, EventArgs e)
         {
-            HistoryChartColumn selection = HistoryChart.Selection;
+            HistoryChartColumn selection = this.HistoryChart.Selection;
             if (selection != null)
             {
                 List<Transaction> list = new List<Transaction>(from v in selection.Values select (Transaction)v.UserData);
                 this.TransactionView.QuickFilter = ""; // need to clear this as they might conflict.
-                var view = SetCurrentView<TransactionsView>();
+                var view = this.SetCurrentView<TransactionsView>();
                 if (this.TransactionView.ActiveCategory != null)
                 {
                     view.ViewTransactionsForCategory(this.TransactionView.ActiveCategory, list);
@@ -2841,112 +2841,112 @@ namespace Walkabout
 
                         Category filter = this.TransactionView.ActiveCategory;
 
-                        bool pieChartSelected = TabExpenses.IsSelected || TabIncomes.IsSelected;
+                        bool pieChartSelected = this.TabExpenses.IsSelected || this.TabIncomes.IsSelected;
 
                         if (this.TransactionView.ActiveCategory != null ||
                             this.TransactionView.ActivePayee != null)
                         {
-                            bool historyWasNotVisible = TabHistory.Visibility != System.Windows.Visibility.Visible;
-                            TabHistory.Visibility = System.Windows.Visibility.Visible;
-                            TabTrends.Visibility = System.Windows.Visibility.Visible;
+                            bool historyWasNotVisible = this.TabHistory.Visibility != System.Windows.Visibility.Visible;
+                            this.TabHistory.Visibility = System.Windows.Visibility.Visible;
+                            this.TabTrends.Visibility = System.Windows.Visibility.Visible;
 
-                            UpdateHistoryChart();
+                            this.UpdateHistoryChart();
 
-                            if ((historyWasNotVisible || TabLoan.IsSelected || TabRental.IsSelected) && !pieChartSelected)
+                            if ((historyWasNotVisible || this.TabLoan.IsSelected || this.TabRental.IsSelected) && !pieChartSelected)
                             {
-                                TabHistory.IsSelected = true;
+                                this.TabHistory.IsSelected = true;
                             }
                         }
                         else if (this.TransactionView.ActiveAccount != null)
                         {
-                            TabTrends.Visibility = System.Windows.Visibility.Visible;
-                            TabHistory.Visibility = System.Windows.Visibility.Collapsed;
-                            if (TabLoan.IsSelected || TabRental.IsSelected || TabHistory.IsSelected)
+                            this.TabTrends.Visibility = System.Windows.Visibility.Visible;
+                            this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
+                            if (this.TabLoan.IsSelected || this.TabRental.IsSelected || this.TabHistory.IsSelected)
                             {
-                                HistoryChart.Selection = null;
-                                TabTrends.IsSelected = true;
+                                this.HistoryChart.Selection = null;
+                                this.TabTrends.IsSelected = true;
                             }
                         }
 
-                        UpdateTransactionGraph(TransactionView.Rows, TransactionView.ActiveAccount, TransactionView.ActiveCategory);
+                        this.UpdateTransactionGraph(this.TransactionView.Rows, this.TransactionView.ActiveAccount, this.TransactionView.ActiveCategory);
 
                         // expense categories.
-                        TabExpenses.Visibility = System.Windows.Visibility.Visible;
-                        Category parent = GetParentCategory(filter);
-                        IList<Transaction> rows = TransactionView.Rows as IList<Transaction>;
+                        this.TabExpenses.Visibility = System.Windows.Visibility.Visible;
+                        Category parent = this.GetParentCategory(filter);
+                        IList<Transaction> rows = this.TransactionView.Rows as IList<Transaction>;
 
                         if (parent != filter)
                         {
-                            rows = myMoney.Transactions.GetTransactionsByCategory(parent, TransactionView.GetTransactionIncludePredicate());
+                            rows = this.myMoney.Transactions.GetTransactionsByCategory(parent, this.TransactionView.GetTransactionIncludePredicate());
                         }
                         if (parent == null)
                         {
                             // sometimes we have custom rows from a report, like cash flow report that is
                             // a categorized group, but we didn't get a "filter" for it, but we can find this out here
                             // so we get a nice pie chart breakdown of the reported rows.
-                            parent = FindCommonParent(rows);
+                            parent = this.FindCommonParent(rows);
                         }
 
-                        PieChartExpenses.CategoryFilter = parent;
-                        PieChartExpenses.Unknown = myMoney.Categories.Unknown;
-                        PieChartExpenses.Transactions = rows;
+                        this.PieChartExpenses.CategoryFilter = parent;
+                        this.PieChartExpenses.Unknown = this.myMoney.Categories.Unknown;
+                        this.PieChartExpenses.Transactions = rows;
 
                         // income categories
-                        TabIncomes.Visibility = System.Windows.Visibility.Visible;
+                        this.TabIncomes.Visibility = System.Windows.Visibility.Visible;
 
-                        PieChartIncomes.CategoryFilter = parent;
-                        PieChartIncomes.Unknown = myMoney.Categories.Unknown;
-                        PieChartIncomes.Transactions = rows;
+                        this.PieChartIncomes.CategoryFilter = parent;
+                        this.PieChartIncomes.Unknown = this.myMoney.Categories.Unknown;
+                        this.PieChartIncomes.Transactions = rows;
 
                         // view the stock history
-                        if (TransactionView.ActiveSecurity != null)
+                        if (this.TransactionView.ActiveSecurity != null)
                         {
-                            TabStock.Visibility = System.Windows.Visibility.Visible;
+                            this.TabStock.Visibility = System.Windows.Visibility.Visible;
                         }
                         else
                         {
-                            if (TabStock.IsSelected)
+                            if (this.TabStock.IsSelected)
                             {
-                                TabStock.IsSelected = false;
-                                TabTrends.IsSelected = true;
+                                this.TabStock.IsSelected = false;
+                                this.TabTrends.IsSelected = true;
                             }
-                            TabStock.Visibility = System.Windows.Visibility.Collapsed;
+                            this.TabStock.Visibility = System.Windows.Visibility.Collapsed;
                         }
 
                         // Hide these Tabs
-                        TabLoan.Visibility = System.Windows.Visibility.Collapsed;
-                        TabRental.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabLoan.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabRental.Visibility = System.Windows.Visibility.Collapsed;
 
                     }
-                    else if (CurrentView is LoansView)
+                    else if (this.CurrentView is LoansView)
                     {
-                        TabLoan.Visibility = System.Windows.Visibility.Visible;
-                        TabLoan.IsSelected = true;
+                        this.TabLoan.Visibility = System.Windows.Visibility.Visible;
+                        this.TabLoan.IsSelected = true;
 
                         // Hide these TABS
-                        TabTrends.Visibility = System.Windows.Visibility.Collapsed;
-                        TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
-                        TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
-                        TabStock.Visibility = System.Windows.Visibility.Collapsed;
-                        TabHistory.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabTrends.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabStock.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
 
-                        LoansView loandView = CurrentView as LoansView;
+                        LoansView loandView = this.CurrentView as LoansView;
                         this.LoanChart.LoanPayments = loandView.LoanPayments;
                     }
-                    else if (CurrentView is RentSummaryView)
+                    else if (this.CurrentView is RentSummaryView)
                     {
                         // Show these TABS
-                        TabRental.Visibility = System.Windows.Visibility.Visible;
-                        TabRental.IsSelected = true;
+                        this.TabRental.Visibility = System.Windows.Visibility.Visible;
+                        this.TabRental.IsSelected = true;
 
 
                         // Hide these TABS
-                        TabTrends.Visibility = System.Windows.Visibility.Collapsed;
-                        TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
-                        TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
-                        TabStock.Visibility = System.Windows.Visibility.Collapsed;
-                        TabLoan.Visibility = System.Windows.Visibility.Collapsed;
-                        TabHistory.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabTrends.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabStock.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabLoan.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
 
                         // Set the data for the graph
                         this.RentalChart.ProfitsAndLostEntries.Clear();
@@ -3026,7 +3026,7 @@ namespace Walkabout
             {
                 return;
             }
-            HistoryChart.FiscalYearStart = this.databaseSettings.FiscalYearStart;
+            this.HistoryChart.FiscalYearStart = this.databaseSettings.FiscalYearStart;
 
             // pick a color based on selected category or payee.
             Category cat = this.TransactionView.ActiveCategory;
@@ -3045,7 +3045,7 @@ namespace Walkabout
                 Color c = ColorAndBrushGenerator.GenerateNamedColor(payee.Name);
                 brush = new SolidColorBrush(c);
             }
-            HistoryChartColumn selection = HistoryChart.Selection;
+            HistoryChartColumn selection = this.HistoryChart.Selection;
             if (selection == null)
             {
                 selection = new Charts.HistoryChartColumn() { Range = HistoryRange.Year };
@@ -3099,7 +3099,7 @@ namespace Walkabout
 
             selection.Values = rows;
             selection.Brush = brush;
-            HistoryChart.Selection = selection;
+            this.HistoryChart.Selection = selection;
         }
 
         bool generatingTrendGraph;
@@ -3108,25 +3108,25 @@ namespace Walkabout
         {
             if (account != null && (account.Type == AccountType.Retirement || account.Type == AccountType.Brokerage))
             {
-                if (!generatingTrendGraph)
+                if (!this.generatingTrendGraph)
                 {
                     try
                     {
                         // only allow one at a time, since cancellation/restart is not efficient.
-                        generatingTrendGraph = true;
+                        this.generatingTrendGraph = true;
                         this.TransactionGraph.Generator = null;
                         var gen = new BrokerageAccountGraphGenerator(this.myMoney, this.cache, account);
                         var sp = (IServiceProvider)this;
                         // Prepare is slow, but it can be done entirely on a background thread.
                         await Task.Run(async () => await gen.Prepare((IStatusService)sp.GetService(typeof(IStatusService))));
-                        if (TransactionView.ActiveAccount == account)
+                        if (this.TransactionView.ActiveAccount == account)
                         {
                             this.TransactionGraph.Generator = gen;
                         }
                     }
                     finally
                     {
-                        generatingTrendGraph = false;
+                        this.generatingTrendGraph = false;
                     }
                 }
             }
@@ -3160,7 +3160,7 @@ namespace Walkabout
             CategoryData data = (CategoryData)chart.Selection;
             if (data != null)
             {
-                TransactionsView view = SetCurrentView<TransactionsView>();
+                TransactionsView view = this.SetCurrentView<TransactionsView>();
                 view.ViewTransactionsForCategory(data.Category, data.Transactions);
             }
         }
@@ -3172,28 +3172,28 @@ namespace Walkabout
 
         private void ShowQueryPanel()
         {
-            MenuQueryShowForm.IsChecked = true;
-            SetCurrentView<TransactionsView>();
+            this.MenuQueryShowForm.IsChecked = true;
+            this.SetCurrentView<TransactionsView>();
             this.CurrentView.IsQueryPanelDisplayed = true;
             this.TransactionView.QueryPanel.OnShow();
         }
 
         private void HideQueryPanel(bool force = false)
         {
-            if (force || MenuQueryShowForm.IsChecked)
+            if (force || this.MenuQueryShowForm.IsChecked)
             {
-                MenuQueryShowForm.IsChecked = false;
+                this.MenuQueryShowForm.IsChecked = false;
                 this.CurrentView.IsQueryPanelDisplayed = false;
 
                 // Come back to the View state that we had before entering Query View
-                Back();
-                Forward();
+                this.Back();
+                this.Forward();
             }
         }
 
         private void OnQueryPanelIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            MenuQueryShowForm.IsChecked = (bool)e.NewValue;
+            this.MenuQueryShowForm.IsChecked = (bool)e.NewValue;
         }
 
         private void OnCommandAdhocQuery(object sender, ExecutedRoutedEventArgs e)
@@ -3201,7 +3201,7 @@ namespace Walkabout
             SqlServerDatabase realDb = this.database as SqlServerDatabase;
             if (realDb != null)
             {
-                FreeStyleQueryDialog dialog = new FreeStyleQueryDialog(myMoney, realDb);
+                FreeStyleQueryDialog dialog = new FreeStyleQueryDialog(this.myMoney, realDb);
                 dialog.Show();
             }
         }
@@ -3209,15 +3209,15 @@ namespace Walkabout
 
         private void OnCommandShowQuery(object sender, ExecutedRoutedEventArgs e)
         {
-            MenuQueryShowForm.IsChecked = !MenuQueryShowForm.IsChecked;
-            if (MenuQueryShowForm.IsChecked)
+            this.MenuQueryShowForm.IsChecked = !this.MenuQueryShowForm.IsChecked;
+            if (this.MenuQueryShowForm.IsChecked)
             {
-                ShowQueryPanel();
+                this.ShowQueryPanel();
 
             }
             else
             {
-                HideQueryPanel(true);
+                this.HideQueryPanel(true);
             }
         }
 
@@ -3225,7 +3225,7 @@ namespace Walkabout
         {
             try
             {
-                ExecuteQuery();
+                this.ExecuteQuery();
             }
             catch (Exception ex)
             {
@@ -3238,8 +3238,8 @@ namespace Walkabout
             if (this.TransactionView.QueryPanel != null)
             {
                 this.settings.Query = this.TransactionView.QueryPanel.GetQuery();
-                bool isTransactionViewAlready = CurrentView is TransactionsView;
-                TransactionsView view = SetCurrentView<TransactionsView>();
+                bool isTransactionViewAlready = this.CurrentView is TransactionsView;
+                TransactionsView view = this.SetCurrentView<TransactionsView>();
                 view.ViewTransactionsForAdvancedQuery(this.settings.Query);
                 if (!isTransactionViewAlready)
                 {
@@ -3379,7 +3379,7 @@ namespace Walkabout
         }
         private void OnCommandCanCut(object sender, CanExecuteRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
+            IClipboardClient c = this.GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 e.CanExecute = c.CanCut;
@@ -3388,7 +3388,7 @@ namespace Walkabout
         }
         private void OnCommandCut(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
+            IClipboardClient c = this.GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 c.Cut();
@@ -3396,7 +3396,7 @@ namespace Walkabout
         }
         private void OnCommandCanCopy(object sender, CanExecuteRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
+            IClipboardClient c = this.GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 e.CanExecute = c.CanCopy;
@@ -3406,7 +3406,7 @@ namespace Walkabout
 
         private void OnCommandCopy(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
+            IClipboardClient c = this.GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 try
@@ -3422,7 +3422,7 @@ namespace Walkabout
         }
         private void OnCommandCanPaste(object sender, CanExecuteRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
+            IClipboardClient c = this.GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 e.CanExecute = c.CanPaste;
@@ -3431,7 +3431,7 @@ namespace Walkabout
         }
         private void OnCommandPaste(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
+            IClipboardClient c = this.GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 try
@@ -3447,7 +3447,7 @@ namespace Walkabout
         }
         private void OnCommandCanDelete(object sender, CanExecuteRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
+            IClipboardClient c = this.GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 e.CanExecute = c.CanDelete;
@@ -3456,7 +3456,7 @@ namespace Walkabout
         }
         private void OnCommandDelete(object sender, ExecutedRoutedEventArgs e)
         {
-            IClipboardClient c = GetClipboardClient(Keyboard.FocusedElement);
+            IClipboardClient c = this.GetClipboardClient(Keyboard.FocusedElement);
             if (c != null)
             {
                 try
@@ -3476,38 +3476,38 @@ namespace Walkabout
 
         void OnFlowDocumentViewClosed(object sender, EventArgs e)
         {
-            SetCurrentView<TransactionsView>();
+            this.SetCurrentView<TransactionsView>();
         }
 
         private void OnCommandNetWorth(object sender, ExecutedRoutedEventArgs e)
         {
             this.SaveViewStateOfCurrentView();
-            FlowDocumentView view = SetCurrentView<FlowDocumentView>();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportNetworth");
-            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(OnFlowDocumentViewClosed);
+            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
+            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Networth Report");
             NetWorthReport report = new NetWorthReport(view, this.myMoney, this.cache);
-            report.SecurityDrillDown += OnReportDrillDown;
-            report.CashBalanceDrillDown += OnReportCashDrillDown;
+            report.SecurityDrillDown += this.OnReportDrillDown;
+            report.CashBalanceDrillDown += this.OnReportCashDrillDown;
             _ = view.Generate(report);
         }
 
         private void OnCommandReportInvestment(object sender, ExecutedRoutedEventArgs e)
         {
-            ViewInvestmentPortfolio();
+            this.ViewInvestmentPortfolio();
         }
 
         private void ViewInvestmentPortfolio()
         {
             this.SaveViewStateOfCurrentView();
-            FlowDocumentView view = SetCurrentView<FlowDocumentView>();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
-            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(OnFlowDocumentViewClosed);
+            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
+            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio");
             PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now);
-            report.DrillDown += OnReportDrillDown;
+            report.DrillDown += this.OnReportDrillDown;
             _ = view.Generate(report);
         }
 
@@ -3515,10 +3515,10 @@ namespace Walkabout
         {
             // create new report just for this drill down in security group.
             this.SaveViewStateOfCurrentView();
-            FlowDocumentView view = SetCurrentView<FlowDocumentView>();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
-            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(OnFlowDocumentViewClosed);
+            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
+            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio - " + e.Type);
             PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
             _ = view.Generate(report);
@@ -3528,10 +3528,10 @@ namespace Walkabout
         {
             // create new report just for this drill down to show specific account cash-only balances.
             this.SaveViewStateOfCurrentView();
-            FlowDocumentView view = SetCurrentView<FlowDocumentView>();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
-            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(OnFlowDocumentViewClosed);
+            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
+            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, e.Title);
             PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
             _ = view.Generate(report);
@@ -3540,10 +3540,10 @@ namespace Walkabout
         private void OnTaxReport(object sender, ExecutedRoutedEventArgs e)
         {
             this.SaveViewStateOfCurrentView();
-            FlowDocumentView view = SetCurrentView<FlowDocumentView>();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportTaxes");
-            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(OnFlowDocumentViewClosed);
+            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
+            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Tax Report");
             TaxReport report = new TaxReport(view, this.myMoney, this.databaseSettings.FiscalYearStart);
             _ = view.Generate(report);
@@ -3552,10 +3552,10 @@ namespace Walkabout
         private void OnCommandW2Report(object sender, ExecutedRoutedEventArgs e)
         {
             this.SaveViewStateOfCurrentView();
-            FlowDocumentView view = SetCurrentView<FlowDocumentView>();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportW2");
-            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(OnFlowDocumentViewClosed);
+            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
+            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "W2 Report");
             W2Report report = new W2Report(view, this.myMoney, this, this.databaseSettings.FiscalYearStart);
             _ = view.Generate(report);
@@ -3570,10 +3570,10 @@ namespace Walkabout
         private void OnCommandReportCashFlow(object sender, ExecutedRoutedEventArgs e)
         {
             this.SaveViewStateOfCurrentView();
-            FlowDocumentView view = SetCurrentView<FlowDocumentView>();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportCashFlow");
-            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(OnFlowDocumentViewClosed);
+            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
+            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             CashFlowReport report = new CashFlowReport(view, this.myMoney, this, this.databaseSettings.FiscalYearStart);
             report.Regenerate();
         }
@@ -3581,10 +3581,10 @@ namespace Walkabout
         private void OnCommandReportUnaccepted(object sender, ExecutedRoutedEventArgs e)
         {
             this.SaveViewStateOfCurrentView();
-            FlowDocumentView view = SetCurrentView<FlowDocumentView>();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportUnaccepted");
-            view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(OnFlowDocumentViewClosed);
+            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
+            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             FlowDocumentReportWriter writer = new FlowDocumentReportWriter(view.DocumentViewer.Document, pixelsPerDip);
             UnacceptedReport report = new UnacceptedReport(this.myMoney);
@@ -3597,23 +3597,23 @@ namespace Walkabout
 
         private void OnRemovedUnusedSecurities(object sender, RoutedEventArgs e)
         {
-            myMoney.RemoveUnusedSecurities();
+            this.myMoney.RemoveUnusedSecurities();
         }
 
         private void OnCommandFileNew(object sender, ExecutedRoutedEventArgs e)
         {
-            NewDatabase();
+            this.NewDatabase();
         }
 
         private void OnCommandFileOpen(object sender, ExecutedRoutedEventArgs e)
         {
-            OpenDatabase();
+            this.OpenDatabase();
         }
 
         private void OnCommandFileSave(object sender, ExecutedRoutedEventArgs e)
         {
-            TransactionView.Commit();
-            Save();
+            this.TransactionView.Commit();
+            this.Save();
         }
 
         private void OnCommandCanSave(object sender, CanExecuteRoutedEventArgs e)
@@ -3624,7 +3624,7 @@ namespace Walkabout
 
         private void OnCommandFileSaveAs(object sender, ExecutedRoutedEventArgs e)
         {
-            TransactionView.Commit();
+            this.TransactionView.Commit();
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
             List<string> fileTypes = new List<string>();
@@ -3654,20 +3654,20 @@ namespace Walkabout
                 switch (ext.ToLowerInvariant())
                 {
                     case ".sdf":
-                        SaveAsSqlCe(fname);
+                        this.SaveAsSqlCe(fname);
                         break;
                     case ".db":
                     case ".mmdb":
-                        SaveAsSqlite(fname);
+                        this.SaveAsSqlite(fname);
                         break;
                     case ".xml":
-                        SaveAsXml(fname);
+                        this.SaveAsXml(fname);
                         break;
                     case ".bxml":
-                        SaveAsBinaryXml(fname);
+                        this.SaveAsBinaryXml(fname);
                         break;
                     case ".csv":
-                        ExportCsv(fname);
+                        this.ExportCsv(fname);
                         break;
                     default:
                         MessageBox.Show(string.Format("Don't know how to write file of type '{0}'", ext), "Save As Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -3699,7 +3699,7 @@ namespace Walkabout
             if (openFileDialog1.ShowDialog(this) == true)
             {
                 int len = openFileDialog1.FileNames.Length;
-                ShowProgress(0, len, 0, null);
+                this.ShowProgress(0, len, 0, null);
                 int count = 0;
                 int totalTransactions = 0;
 
@@ -3715,7 +3715,7 @@ namespace Walkabout
                     foreach (string file in openFileDialog1.FileNames)
                     {
                         string ext = System.IO.Path.GetExtension(file).ToLower();
-                        ShowProgress(0, len, count, string.Format("Importing '{0}'", file));
+                        this.ShowProgress(0, len, count, string.Format("Importing '{0}'", file));
                         try
                         {
                             switch (ext)
@@ -3728,7 +3728,7 @@ namespace Walkabout
                                     ofxFiles.Add(file);
                                     break;
                                 case ".xml":
-                                    totalTransactions += ImportXml(file);
+                                    totalTransactions += this.ImportXml(file);
                                     break;
                                 case ".csv":
                                     csvFiles.Add(file);
@@ -3750,21 +3750,21 @@ namespace Walkabout
 
                         if (qifFiles.Count > 0)
                         {
-                            totalTransactions += ImportQif(qifFiles.ToArray());
+                            totalTransactions += this.ImportQif(qifFiles.ToArray());
                         }
                         if (ofxFiles.Count > 0)
                         {
-                            totalTransactions += ImportOfx(ofxFiles.ToArray());
+                            totalTransactions += this.ImportOfx(ofxFiles.ToArray());
                         }
                         if (moneyFiles.Count > 0)
                         {
-                            totalTransactions += ImportMoneyFile(moneyFiles.ToArray());
+                            totalTransactions += this.ImportMoneyFile(moneyFiles.ToArray());
                         }
                         if (csvFiles.Count > 0)
                         {
                             foreach (var name in csvFiles)
                             {
-                                totalTransactions += ImportCsv(name);
+                                totalTransactions += this.ImportCsv(name);
                             }
                         }
 
@@ -3778,11 +3778,11 @@ namespace Walkabout
 
                 if (totalTransactions > 0)
                 {
-                    ShowProgress(0, len, -1, string.Format("Loaded {0} transactions", totalTransactions));
+                    this.ShowProgress(0, len, -1, string.Format("Loaded {0} transactions", totalTransactions));
                 }
                 else
                 {
-                    ShowProgress(0, len, -1, null);
+                    this.ShowProgress(0, len, -1, null);
                 }
             }
         }
@@ -3793,20 +3793,20 @@ namespace Walkabout
             try
             {
                 {
-                    Account acct = AccountHelper.PickAccount(myMoney, null, "Please select Account to import the CSV transactions to.");
+                    Account acct = AccountHelper.PickAccount(this.myMoney, null, "Please select Account to import the CSV transactions to.");
                     if (acct != null)
                     {
                         // load existing csv map if we have one.
-                        var map = LoadMap(acct);
+                        var map = this.LoadMap(acct);
                         var ti = new CsvTransactionImporter(this.myMoney, acct, map);
                         CsvImporter importer = new CsvImporter(this.myMoney, ti);
                         count = importer.Import(fileName);
                         ti.Commit();
                         map.Save();
 
-                        myMoney.Rebalance(acct);
+                        this.myMoney.Rebalance(acct);
 
-                        var view = SetCurrentView<TransactionsView>();
+                        var view = this.SetCurrentView<TransactionsView>();
                         if (view.CheckTransfers() && acct != null)
                         {
                             view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
@@ -3900,7 +3900,7 @@ namespace Walkabout
         {
             SaveFileDialog fd = new SaveFileDialog();
             fd.Title = "Backup Location";
-            string path = GetBackupPath();
+            string path = this.GetBackupPath();
 
             switch (this.database.DbFlavor)
             {
@@ -3938,7 +3938,7 @@ namespace Walkabout
                     this.Cursor = Cursors.Wait;
                     TempFilesManager.DeleteFile(fd.FileName); // don't let it accumulate.                    
                     this.database.Backup(fd.FileName);
-                    ShowMessage("Backed up to " + fd.FileName);
+                    this.ShowMessage("Backed up to " + fd.FileName);
                 }
                 catch (Exception ex)
                 {
@@ -3974,8 +3974,8 @@ namespace Walkabout
 
         private void OnCommandRestore(object sender, ExecutedRoutedEventArgs e)
         {
-            CreateDatabaseDialog frm = InitializeCreateDatabaseDialog();
-            frm.BackupPath = GetBackupPath();
+            CreateDatabaseDialog frm = this.InitializeCreateDatabaseDialog();
+            frm.BackupPath = this.GetBackupPath();
             frm.Mode = ConnectMode.Restore;
             frm.Owner = this;
             if (frm.ShowDialog() == true)
@@ -3995,8 +3995,8 @@ namespace Walkabout
                     SqliteDatabase.Restore(frm.BackupPath, frm.Database, frm.Password);
 
                     // Now load it into memory and make sure tables are up to date in case anything changed since the backup was created.
-                    LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
-                    CreateAttachmentDirectory();
+                    this.LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
+                    this.CreateAttachmentDirectory();
                 }
                 catch (Exception ex)
                 {
@@ -4013,12 +4013,12 @@ namespace Walkabout
         {
             if (this.dirty)
             {
-                int changes = tracker.ChangeCount;
+                int changes = this.tracker.ChangeCount;
                 if (MessageBoxEx.Show(string.Format("Are you sure you want to revert {0} changes", changes), "Revert Changes", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     this.DataContext = new MyMoney();
                     this.dirty = false;
-                    BeginLoadDatabase();
+                    this.BeginLoadDatabase();
                 }
             }
         }
@@ -4056,20 +4056,20 @@ namespace Walkabout
 
         private void OnCommandViewSecurities(object sender, ExecutedRoutedEventArgs e)
         {
-            ViewSecurities();
+            this.ViewSecurities();
         }
 
         private SecuritiesView ViewSecurities()
         {
             this.SaveViewStateOfCurrentView();
             bool initialized = this.cacheViews.ContainsKey(typeof(SecuritiesView));
-            SecuritiesView view = SetCurrentView<SecuritiesView>();
+            SecuritiesView view = this.SetCurrentView<SecuritiesView>();
             if (!initialized)
             {
-                view.SecurityNavigated -= OnSecurityNavigated;
-                view.SecuritySelected -= OnSecuritySelected;
-                view.SecurityNavigated += OnSecurityNavigated;
-                view.SecuritySelected += OnSecuritySelected;
+                view.SecurityNavigated -= this.OnSecurityNavigated;
+                view.SecuritySelected -= this.OnSecuritySelected;
+                view.SecurityNavigated += this.OnSecurityNavigated;
+                view.SecuritySelected += this.OnSecuritySelected;
             }
 
             return view;
@@ -4079,17 +4079,17 @@ namespace Walkabout
         {
             if (e.Security != null)
             {
-                TabTrends.Visibility = System.Windows.Visibility.Collapsed;
-                TabHistory.Visibility = System.Windows.Visibility.Collapsed;
-                TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
-                TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
-                TabStock.Visibility = System.Windows.Visibility.Visible;
-                TabStock.IsSelected = true;
+                this.TabTrends.Visibility = System.Windows.Visibility.Collapsed;
+                this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
+                this.TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
+                this.TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
+                this.TabStock.Visibility = System.Windows.Visibility.Visible;
+                this.TabStock.IsSelected = true;
 
                 var history = await this.quotes.GetCachedHistory(e.Security.Symbol);
                 if (history != null)
                 {
-                    StockGraph.Generator = new SecurityGraphGenerator(history, e.Security);
+                    this.StockGraph.Generator = new SecurityGraphGenerator(history, e.Security);
                 }
             }
         }
@@ -4097,7 +4097,7 @@ namespace Walkabout
         private void OnSecurityNavigated(object sender, SecuritySelectionEventArgs e)
         {
             bool isTransactionViewAlready = this.CurrentView is TransactionViewState;
-            TransactionsView view = SetCurrentView<TransactionsView>();
+            TransactionsView view = this.SetCurrentView<TransactionsView>();
             view.ViewTransactionsForSecurity(e.Security, view.SelectedRowId);
             if (!isTransactionViewAlready)
             {
@@ -4108,13 +4108,13 @@ namespace Walkabout
         private void OnCommandViewViewAliases(object sender, ExecutedRoutedEventArgs e)
         {
             this.SaveViewStateOfCurrentView();
-            SetCurrentView<AliasesView>();
+            this.SetCurrentView<AliasesView>();
         }
 
         private void OnCommandViewCurrencies(object sender, ExecutedRoutedEventArgs e)
         {
             this.SaveViewStateOfCurrentView();
-            SetCurrentView<CurrenciesView>();
+            this.SetCurrentView<CurrenciesView>();
         }
 
 
@@ -4144,7 +4144,7 @@ namespace Walkabout
         private void OnAppSettingsPanelClosed(object sender, EventArgs e)
         {
             var newPassword = this.AppSettingsPanel.Password;
-            if (database != null && database.Password != newPassword)
+            if (this.database != null && this.database.Password != newPassword)
             {
                 try
                 {
@@ -4152,7 +4152,7 @@ namespace Walkabout
                     {
                         this.database.Password = newPassword;
                     }
-                    DatabaseSecurity.SaveDatabasePassword(database.DatabasePath, database.Password);
+                    DatabaseSecurity.SaveDatabasePassword(this.database.DatabasePath, this.database.Password);
                 }
                 catch (Exception ex)
                 {
@@ -4163,7 +4163,7 @@ namespace Walkabout
 
         private void OnSynchronizeOnlineAccounts(object sender, ExecutedRoutedEventArgs e)
         {
-            TransactionView.Commit();
+            this.TransactionView.Commit();
             List<OnlineAccount> list = new List<OnlineAccount>();
             foreach (OnlineAccount oa in this.myMoney.OnlineAccounts.Items)
             {
@@ -4176,7 +4176,7 @@ namespace Walkabout
             }
             if (list.Count == 0)
             {
-                TabItem item = ShowDownloadTab();
+                TabItem item = this.ShowDownloadTab();
                 OfxDownloadControl dc = item.Content as OfxDownloadControl;
 
                 OfxDownloadData f = new OfxDownloadData(null, "Error", "");
@@ -4188,7 +4188,7 @@ namespace Walkabout
                 dc.OfxEventTree.ItemsSource = data;
                 return;
             }
-            DoSync(list);
+            this.DoSync(list);
         }
 
         private void CanSynchronizeOnlineAccounts(object sender, CanExecuteRoutedEventArgs e)
@@ -4215,7 +4215,7 @@ namespace Walkabout
         {
             if (this.database != null)
             {
-                FreeStyleQueryDialog dialog = new FreeStyleQueryDialog(myMoney, this.database);
+                FreeStyleQueryDialog dialog = new FreeStyleQueryDialog(this.myMoney, this.database);
                 dialog.Query = this.database.GetLog();
                 dialog.Show();
             }
@@ -4229,7 +4229,7 @@ namespace Walkabout
 
         private void OnCommandAddSampleData(object sender, ExecutedRoutedEventArgs e)
         {
-            if (myMoney.Transactions.Count > 0)
+            if (this.myMoney.Transactions.Count > 0)
             {
                 if (MessageBoxEx.Show("You already have some data, are you sure you want to add lots of additional sample data?", "Add Sample Data", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                 {
@@ -4237,21 +4237,21 @@ namespace Walkabout
                 }
             }
 
-            SampleDatabase sample = new SampleDatabase(this.myMoney, this.quotes, GetStockQuotePath());
+            SampleDatabase sample = new SampleDatabase(this.myMoney, this.quotes, this.GetStockQuotePath());
             sample.Create();
 
             this.toolBox.Selected = this.accountsControl;
             Account a = this.myMoney.Accounts.GetFirstAccount();
             this.accountsControl.OnAccountsChanged(this, new ChangeEventArgs(a, null, ChangeType.Inserted)); // trigger early rebind so we can select it
             this.accountsControl.SelectedAccount = a;
-            OnSelectionChangeFor_Account(this, EventArgs.Empty);
-            UpdateCharts();
+            this.OnSelectionChangeFor_Account(this, EventArgs.Empty);
+            this.UpdateCharts();
         }
 
         private void MenuExportSampleData_Click(object sender, RoutedEventArgs e)
         {
             string temp = Path.Combine(Path.GetTempPath(), "SampleData.xml");
-            SampleDatabase sample = new SampleDatabase(this.myMoney, this.quotes, GetStockQuotePath());
+            SampleDatabase sample = new SampleDatabase(this.myMoney, this.quotes, this.GetStockQuotePath());
             sample.Export(temp);
             InternetExplorer.OpenUrl(IntPtr.Zero, temp);
         }
@@ -4285,7 +4285,7 @@ namespace Walkabout
             {
                 MessageBoxEx.Show("Fixed " + list.Count + " transactions that still have splits", "Check Splits", MessageBoxButton.OK, MessageBoxImage.Error);
                 bool isTransactionViewAlready = this.CurrentView is TransactionViewState;
-                TransactionsView view = SetCurrentView<TransactionsView>();
+                TransactionsView view = this.SetCurrentView<TransactionsView>();
                 view.ViewTransactions(list);
                 if (!isTransactionViewAlready)
                 {
@@ -4341,25 +4341,25 @@ namespace Walkabout
             }
             List<OnlineAccount> accounts = new List<OnlineAccount>();
             accounts.Add(a.OnlineAccount);
-            DoSync(accounts);
+            this.DoSync(accounts);
         }
 
         bool isSynchronizing;
 
         void DoSync(List<OnlineAccount> accounts)
         {
-            isSynchronizing = true;
+            this.isSynchronizing = true;
             try
             {
                 this.accountsControl.MenuSync.IsEnabled = false;
 
-                TabItem item = ShowDownloadTab();
+                TabItem item = this.ShowDownloadTab();
                 OfxDownloadControl dc = item.Content as OfxDownloadControl;
                 dc.BeginDownload(this.myMoney, accounts);
             }
             finally
             {
-                isSynchronizing = false;
+                this.isSynchronizing = false;
             }
             this.accountsControl.MenuSync.IsEnabled = true;
         }
@@ -4383,34 +4383,34 @@ namespace Walkabout
             {
                 return;
             }
-            InternalShowMessage(text);
+            this.InternalShowMessage(text);
         }
 
         public void InternalShowMessage(string text)
         {
-            if (Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
             {
-                ShowMessageUIThread(text);
+                this.ShowMessageUIThread(text);
             }
             else
             {
                 UiDispatcher.BeginInvoke(new Action(() =>
                 {
-                    ShowMessageUIThread(text);
+                    this.ShowMessageUIThread(text);
                 }));
             }
         }
 
         private void ShowMessageUIThread(string text)
         {
-            StatusMessage.Content = text;
+            this.StatusMessage.Content = text;
         }
 
         public void ShowProgress(int min, int max, int value)
         {
             UiDispatcher.BeginInvoke(new Action(() =>
             {
-                ShowProgress(min, max, value, null);
+                this.ShowProgress(min, max, value, null);
             }));
         }
 
@@ -4418,7 +4418,7 @@ namespace Walkabout
         {
             UiDispatcher.BeginInvoke(new Action(() =>
             {
-                ShowProgress(min, max, value, message);
+                this.ShowProgress(min, max, value, message);
             }));
         }
 
@@ -4447,7 +4447,7 @@ namespace Walkabout
 
         public void ClearStatus()
         {
-            StatusMessage.Content = string.Empty;
+            this.StatusMessage.Content = string.Empty;
         }
 
         ChangeListRequest changeList;
@@ -4457,9 +4457,9 @@ namespace Walkabout
         /// </summary>
         private void CheckLastVersion()
         {
-            changeList = new ChangeListRequest(this.settings);
-            changeList.Completed += new EventHandler<SetupRequestEventArgs>(OnChangeListRequestCompleted);
-            changeList.BeginGetChangeList(DownloadSite);
+            this.changeList = new ChangeListRequest(this.settings);
+            this.changeList.Completed += new EventHandler<SetupRequestEventArgs>(this.OnChangeListRequestCompleted);
+            this.changeList.BeginGetChangeList(DownloadSite);
         }
 
         private void OnChangeListRequestCompleted(object sender, SetupRequestEventArgs e)
@@ -4467,61 +4467,61 @@ namespace Walkabout
             XDocument changes = e.Changes;
             if (changes != null && e.NewVersionAvailable)
             {
-                ButtonShowUpdateInfoCaption.Text = "View Updates";
-                ButtonShowUpdateInfo.Visibility = System.Windows.Visibility.Visible;
+                this.ButtonShowUpdateInfoCaption.Text = "View Updates";
+                this.ButtonShowUpdateInfo.Visibility = System.Windows.Visibility.Visible;
             }
             if (changes != null)
             {
-                Task.Run(() => SaveCachedChangeList(changes));
+                Task.Run(() => this.SaveCachedChangeList(changes));
             }
 
             // and see if we just installed a new version.
             string exe = ProcessHelper.MainExecutable;
             DateTime lastWrite = File.GetLastWriteTime(exe);
-            if (lastWrite > settings.LastExeTimestamp)
+            if (lastWrite > this.settings.LastExeTimestamp)
             {
-                string previous = settings.ExeVersion;
-                settings.ExeVersion = NativeMethods.GetFileVersion(exe);
-                settings.LastExeTimestamp = lastWrite;
-                ShowChangeInfo(previous, changes, false);
+                string previous = this.settings.ExeVersion;
+                this.settings.ExeVersion = NativeMethods.GetFileVersion(exe);
+                this.settings.LastExeTimestamp = lastWrite;
+                this.ShowChangeInfo(previous, changes, false);
             }
         }
 
         private void OnButtonShowUpdateInfoClick(object sender, RoutedEventArgs e)
         {
             // we found a new version online, so show the details about what's in it.
-            ShowChangeInfo(settings.ExeVersion, changeList.Changes, true);
+            this.ShowChangeInfo(this.settings.ExeVersion, this.changeList.Changes, true);
         }
 
         private void ShowChangeInfo(string previousVersion, XDocument changeList, bool installButton)
         {
             if (changeList == null)
             {
-                changeList = GetCachedChangeList();
+                changeList = this.GetCachedChangeList();
             }
             if (changeList != null)
             {
                 this.SaveViewStateOfCurrentView();
-                FlowDocumentView view = SetCurrentView<FlowDocumentView>();
+                FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
                 view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportUpdates");
-                view.Closed -= new EventHandler(OnFlowDocumentViewClosed);
-                view.Closed += new EventHandler(OnFlowDocumentViewClosed);
+                view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
+                view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
                 HelpService.SetHelpKeyword(view, "Updates");
                 ChangeInfoFormatter report = new ChangeInfoFormatter(view, installButton, previousVersion, changeList);
-                report.InstallButtonClick += OnInstallButtonClick;
+                report.InstallButtonClick += this.OnInstallButtonClick;
                 _ = view.Generate(report);
             }
         }
 
         void OnInstallButtonClick(object sender, EventArgs e)
         {
-            if (!SaveIfDirty("Save your changes before installing new version?", null))
+            if (!this.SaveIfDirty("Save your changes before installing new version?", null))
             {
                 return;
             }
 
             InternetExplorer.OpenUrl(IntPtr.Zero, new Uri(InstallUrl));
-            Close();
+            this.Close();
         }
 
         private string ChangeListCachePath
@@ -4531,7 +4531,7 @@ namespace Walkabout
 
         private void SaveCachedChangeList(XDocument doc)
         {
-            var fileName = ChangeListCachePath;
+            var fileName = this.ChangeListCachePath;
             var dir = Path.GetDirectoryName(fileName);
             if (!Directory.Exists(dir))
             {
@@ -4544,7 +4544,7 @@ namespace Walkabout
         {
             try
             {
-                var fileName = ChangeListCachePath;
+                var fileName = this.ChangeListCachePath;
                 if (File.Exists(fileName))
                 {
                     XDocument doc = XDocument.Load(fileName);
@@ -4561,7 +4561,7 @@ namespace Walkabout
 
         private void OnCommandViewChanges(object sender, ExecutedRoutedEventArgs e)
         {
-            ShowChangeInfo(settings.ExeVersion, null, false);
+            this.ShowChangeInfo(this.settings.ExeVersion, null, false);
         }
 
 
@@ -4577,7 +4577,7 @@ namespace Walkabout
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             // BUG BUG The user control is not getting resize automatically so we need to help it out
-            toolBox.Width = e.NewSize.Width;
+            this.toolBox.Width = e.NewSize.Width;
         }
 
 
@@ -4585,7 +4585,7 @@ namespace Walkabout
         {
             base.OnClosing(e);
 
-            if (!SaveIfDirty())
+            if (!this.SaveIfDirty())
             {
                 e.Cancel = true;
             }
@@ -4594,25 +4594,25 @@ namespace Walkabout
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            CleanupStockQuoteManager();
+            this.CleanupStockQuoteManager();
 
             if (this.exchangeRates != null)
             {
                 this.exchangeRates.Dispose();
             }
 
-            StopTracking();
+            this.StopTracking();
 
-            delayedActions.CancelAll();
+            this.delayedActions.CancelAll();
 
-            using (attachmentManager)
+            using (this.attachmentManager)
             {
             }
             try
             {
-                if (HasDatabase)
+                if (this.HasDatabase)
                 {
-                    SaveConfig();
+                    this.SaveConfig();
                 }
             }
             catch (Exception ex)
@@ -4629,8 +4629,8 @@ namespace Walkabout
             {
                 if (this.quotes != null)
                 {
-                    this.quotes.DownloadComplete -= new EventHandler<EventArgs>(OnStockDownloadComplete);
-                    this.quotes.HistoryAvailable -= OnStockQuoteHistoryAvailable;
+                    this.quotes.DownloadComplete -= new EventHandler<EventArgs>(this.OnStockDownloadComplete);
+                    this.quotes.HistoryAvailable -= this.OnStockQuoteHistoryAvailable;
                     this.quotes = null;
                 }
             }

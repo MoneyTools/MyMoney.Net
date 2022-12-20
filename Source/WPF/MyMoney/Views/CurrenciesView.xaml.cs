@@ -31,13 +31,13 @@ namespace Walkabout.Views
 
         public CurrenciesView()
         {
-            InitializeComponent();
-            SetupGrid(this.CurrenciesDataGrid);
-            this.Unloaded += (s, e) =>
+            this.InitializeComponent();
+            this.SetupGrid(this.CurrenciesDataGrid);
+            Unloaded += (s, e) =>
             {
                 if (this.money != null)
                 {
-                    this.money.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                    this.money.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
                 }
             };
         }
@@ -48,19 +48,19 @@ namespace Walkabout.Views
 
         void SetupGrid(DataGrid grid)
         {
-            grid.BeginningEdit += OnBeginEdit;
-            grid.RowEditEnding += OnDataGridCommit;
-            grid.PreviewKeyDown += new KeyEventHandler(OnDataGridPreviewKeyDown);
-            grid.SelectionChanged += new SelectionChangedEventHandler(OnGridSelectionChanged);
+            grid.BeginningEdit += this.OnBeginEdit;
+            grid.RowEditEnding += this.OnDataGridCommit;
+            grid.PreviewKeyDown += new KeyEventHandler(this.OnDataGridPreviewKeyDown);
+            grid.SelectionChanged += new SelectionChangedEventHandler(this.OnGridSelectionChanged);
         }
 
 
         void TearDownGrid(DataGrid grid)
         {
-            grid.BeginningEdit -= OnBeginEdit;
-            grid.RowEditEnding -= OnDataGridCommit;
-            grid.PreviewKeyDown -= new KeyEventHandler(OnDataGridPreviewKeyDown);
-            grid.SelectionChanged -= new SelectionChangedEventHandler(OnGridSelectionChanged);
+            grid.BeginningEdit -= this.OnBeginEdit;
+            grid.RowEditEnding -= this.OnDataGridCommit;
+            grid.PreviewKeyDown -= new KeyEventHandler(this.OnDataGridPreviewKeyDown);
+            grid.SelectionChanged -= new SelectionChangedEventHandler(this.OnGridSelectionChanged);
         }
 
         public Security SelectedSecurity
@@ -86,26 +86,26 @@ namespace Walkabout.Views
                     // We now need to decide if we went to hide the Detail view or leave it as is
 
 
-                    if (CurrenciesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible)
+                    if (this.CurrenciesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible)
                     {
                         // Do not change any thing keep the Detail view in Mini mode 
                     }
 
                     Security s = (Security)selected;
-                    s.IsExpanded = (CurrenciesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Collapsed) ? false : true;
+                    s.IsExpanded = (this.CurrenciesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Collapsed) ? false : true;
                 }
 
-                if (lastSelectedItem != null && lastSelectedItem != selected)
+                if (this.lastSelectedItem != null && this.lastSelectedItem != selected)
                 {
-                    Security s = lastSelectedItem as Security;
+                    Security s = this.lastSelectedItem as Security;
                     if (s != null)
                     {
-                        s.IsExpanded = (CurrenciesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible) ? true : false;
+                        s.IsExpanded = (this.CurrenciesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible) ? true : false;
                     }
                 }
 
 
-                lastSelectedItem = selected;
+                this.lastSelectedItem = selected;
 
             }
         }
@@ -159,7 +159,7 @@ namespace Walkabout.Views
 
         void OnBeginEdit(object sender, DataGridBeginningEditEventArgs e)
         {
-            IsEditing = true;
+            this.IsEditing = true;
         }
 
         void OnDataGridCommit(object sender, DataGridRowEditEndingEventArgs e)
@@ -187,7 +187,7 @@ namespace Walkabout.Views
             try
             {
                 // dumb thing doesn't let us update the list while sorting.
-                DataGridColumn sort = RemoveSort(this.CurrenciesDataGrid);
+                DataGridColumn sort = this.RemoveSort(this.CurrenciesDataGrid);
 
                 this.CurrenciesDataGrid.ItemsSource = new CurrencyCollection(this, this.Money, this.quickFilter);
                 if (sort != null)
@@ -256,7 +256,7 @@ namespace Walkabout.Views
 
                 if (currency.Id == -1)
                 {
-                    money.Currencies.AddCurrency(currency);
+                    this.money.Currencies.AddCurrency(currency);
                 }
             }
 
@@ -288,13 +288,13 @@ namespace Walkabout.Views
             {
                 if (this.money != null)
                 {
-                    this.money.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                    this.money.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
                 }
                 this.money = value;
                 if (this.money != null)
                 {
-                    this.money.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
-                    ShowCurrencies();
+                    this.money.Changed += new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
+                    this.ShowCurrencies();
                 }
             }
 
@@ -303,7 +303,7 @@ namespace Walkabout.Views
 
         public void ActivateView()
         {
-            Focus();
+            this.Focus();
             this.Money = this.money;
         }
 
@@ -331,8 +331,8 @@ namespace Walkabout.Views
 
         public IServiceProvider ServiceProvider
         {
-            get { return sp; }
-            set { sp = value; }
+            get { return this.sp; }
+            set { this.sp = value; }
         }
 
         public void Commit()
@@ -364,7 +364,7 @@ namespace Walkabout.Views
                 };
 
                 int column = 0;
-                foreach (DataGridColumn c in CurrenciesDataGrid.Columns)
+                foreach (DataGridColumn c in this.CurrenciesDataGrid.Columns)
                 {
                     if (c.SortDirection.HasValue)
                     {
@@ -389,13 +389,13 @@ namespace Walkabout.Views
                         Security s = this.money.Securities.FindSecurity(security, false);
                         if (s != null)
                         {
-                            CurrenciesDataGrid.SelectedItem = s;
-                            CurrenciesDataGrid.ScrollIntoView(s);
+                            this.CurrenciesDataGrid.SelectedItem = s;
+                            this.CurrenciesDataGrid.ScrollIntoView(s);
                         }
                     }
-                    if (svs.SortedColumn != -1 && svs.SortedColumn < CurrenciesDataGrid.Columns.Count && svs.SortDirection.HasValue)
+                    if (svs.SortedColumn != -1 && svs.SortedColumn < this.CurrenciesDataGrid.Columns.Count && svs.SortDirection.HasValue)
                     {
-                        DataGridColumn c = CurrenciesDataGrid.Columns[svs.SortedColumn];
+                        DataGridColumn c = this.CurrenciesDataGrid.Columns[svs.SortedColumn];
                         c.SortDirection = svs.SortDirection.Value;
                     }
                 }
@@ -418,7 +418,7 @@ namespace Walkabout.Views
                 if (this.quickFilter != value)
                 {
                     this.quickFilter = value;
-                    ShowCurrencies();
+                    this.ShowCurrencies();
                 }
             }
         }
@@ -478,17 +478,17 @@ namespace Walkabout.Views
         {
             if (writer != null)
             {
-                if (!string.IsNullOrEmpty(SelectedSecurity))
+                if (!string.IsNullOrEmpty(this.SelectedSecurity))
                 {
-                    writer.WriteElementString("SelectedSecurity", SelectedSecurity);
+                    writer.WriteElementString("SelectedSecurity", this.SelectedSecurity);
                 }
                 if (this.SortedColumn != -1)
                 {
-                    writer.WriteElementString("SortedColumn", SortedColumn.ToString());
+                    writer.WriteElementString("SortedColumn", this.SortedColumn.ToString());
                 }
                 if (this.SortDirection.HasValue)
                 {
-                    writer.WriteElementString("SortDirection", SortDirection.Value.ToString());
+                    writer.WriteElementString("SortDirection", this.SortDirection.Value.ToString());
                 }
             }
         }

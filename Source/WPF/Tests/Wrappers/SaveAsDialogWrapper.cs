@@ -22,7 +22,7 @@ namespace Walkabout.Tests.Wrappers
 
         public void ClickSave()
         {
-            window.ClickButton("1");
+            this.window.ClickButton("1");
             try
             {
                 if (!this.window.Current.IsOffscreen)
@@ -42,7 +42,7 @@ namespace Walkabout.Tests.Wrappers
                         else
                         {
                             // then folder moved, so we have to click save again!
-                            window.ClickButton("1");
+                            this.window.ClickButton("1");
                         }
                         this.WaitForInputIdle(100);
                     }
@@ -56,7 +56,7 @@ namespace Walkabout.Tests.Wrappers
 
         public void ClickCancel()
         {
-            window.ClickButton("2");
+            this.window.ClickButton("2");
         }
 
     }

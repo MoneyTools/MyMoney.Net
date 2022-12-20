@@ -16,17 +16,17 @@ namespace Walkabout.Tests.Wrappers
 
         public void ClickAddNewAccount()
         {
-            window.ClickButton("ButtonAdd");
+            this.window.ClickButton("ButtonAdd");
         }
 
         public void ClickOk()
         {
-            window.ClickButton("ButtonOk");
+            this.window.ClickButton("ButtonOk");
         }
 
         public void ClickCancel()
         {
-            window.ClickButton("ButtonCancel");
+            this.window.ClickButton("ButtonCancel");
         }
     }
 }

@@ -35,12 +35,12 @@ namespace Walkabout.Controls
 
         private void AutoCompleteDate()
         {
-            if (box == null)
+            if (this.box == null)
             {
                 return;
             }
 
-            string text = box.Text;
+            string text = this.box.Text;
             DateTime dt = DateTime.Now;
 
             // We don't use DateTime.TryParse because it will insert the current year
@@ -143,7 +143,7 @@ namespace Walkabout.Controls
                 string newText = dt.ToShortDateString();
                 if (text != newText)
                 {
-                    box.Text = newText;
+                    this.box.Text = newText;
                 }
             }
             catch
@@ -154,11 +154,11 @@ namespace Walkabout.Controls
 
         protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
         {
-            if (e.OldFocus == box)
+            if (e.OldFocus == this.box)
             {
                 // we got this before the DatePicker gets it, so now's the time to "auto-complete"
                 // any incomplete date with the date we want (looking backwards instead of forwards).
-                AutoCompleteDate();
+                this.AutoCompleteDate();
             }
             base.OnLostKeyboardFocus(e);
         }
@@ -168,8 +168,8 @@ namespace Walkabout.Controls
             base.OnApplyTemplate();
             if (this.Template != null)
             {
-                box = (TextBox)this.Template.FindName("PART_TextBox", this);
-                box.AddHandler(TextBox.KeyDownEvent, new KeyEventHandler(OnTextBoxKeyDown), true);
+                this.box = (TextBox)this.Template.FindName("PART_TextBox", this);
+                this.box.AddHandler(TextBox.KeyDownEvent, new KeyEventHandler(this.OnTextBoxKeyDown), true);
             }
         }
 

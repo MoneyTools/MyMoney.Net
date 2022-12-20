@@ -27,14 +27,14 @@ namespace Walkabout.Views.Controls
 
         public QueryViewControl()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            dataGrid1.ItemsSource = queryRows;
+            this.dataGrid1.ItemsSource = this.queryRows;
 
-            dataGrid1.CurrentCellChanged += new EventHandler<EventArgs>(OnDataGrid1_CurrentCellChanged);
-            dataGrid1.BeginningEdit += new EventHandler<DataGridBeginningEditEventArgs>(OnDataGrid_BeginningEdit);
-            dataGrid1.RowEditEnding += new EventHandler<DataGridRowEditEndingEventArgs>(OnDataGrid_RowEditEnding);
-            dataGrid1.CanUserAddRows = true;
+            this.dataGrid1.CurrentCellChanged += new EventHandler<EventArgs>(this.OnDataGrid1_CurrentCellChanged);
+            this.dataGrid1.BeginningEdit += new EventHandler<DataGridBeginningEditEventArgs>(this.OnDataGrid_BeginningEdit);
+            this.dataGrid1.RowEditEnding += new EventHandler<DataGridRowEditEndingEventArgs>(this.OnDataGrid_RowEditEnding);
+            this.dataGrid1.CanUserAddRows = true;
         }
 
         #region Properties
@@ -48,14 +48,14 @@ namespace Walkabout.Views.Controls
         {
             get
             {
-                if (listOfConjunctions == null)
+                if (this.listOfConjunctions == null)
                 {
-                    listOfConjunctions = new List<Conjunction>();
-                    listOfConjunctions.Add(Conjunction.None);
-                    listOfConjunctions.Add(Conjunction.And);
-                    listOfConjunctions.Add(Conjunction.Or);
+                    this.listOfConjunctions = new List<Conjunction>();
+                    this.listOfConjunctions.Add(Conjunction.None);
+                    this.listOfConjunctions.Add(Conjunction.And);
+                    this.listOfConjunctions.Add(Conjunction.Or);
                 }
-                return listOfConjunctions;
+                return this.listOfConjunctions;
             }
         }
 
@@ -64,24 +64,24 @@ namespace Walkabout.Views.Controls
         {
             get
             {
-                if (listOfFields == null)
+                if (this.listOfFields == null)
                 {
-                    listOfFields = new List<Field>();
-                    listOfFields.Add(Field.None);
-                    listOfFields.Add(Field.Accepted);
-                    listOfFields.Add(Field.Account);
-                    listOfFields.Add(Field.Budgeted);
-                    listOfFields.Add(Field.Category);
-                    listOfFields.Add(Field.Deposit);
-                    listOfFields.Add(Field.Date);
-                    listOfFields.Add(Field.Memo);
-                    listOfFields.Add(Field.Number);
-                    listOfFields.Add(Field.Payee);
-                    listOfFields.Add(Field.Payment);
-                    listOfFields.Add(Field.SalesTax);
-                    listOfFields.Add(Field.Status);
+                    this.listOfFields = new List<Field>();
+                    this.listOfFields.Add(Field.None);
+                    this.listOfFields.Add(Field.Accepted);
+                    this.listOfFields.Add(Field.Account);
+                    this.listOfFields.Add(Field.Budgeted);
+                    this.listOfFields.Add(Field.Category);
+                    this.listOfFields.Add(Field.Deposit);
+                    this.listOfFields.Add(Field.Date);
+                    this.listOfFields.Add(Field.Memo);
+                    this.listOfFields.Add(Field.Number);
+                    this.listOfFields.Add(Field.Payee);
+                    this.listOfFields.Add(Field.Payment);
+                    this.listOfFields.Add(Field.SalesTax);
+                    this.listOfFields.Add(Field.Status);
                 }
-                return listOfFields;
+                return this.listOfFields;
             }
         }
 
@@ -91,21 +91,21 @@ namespace Walkabout.Views.Controls
         {
             get
             {
-                if (listOfOperations == null)
+                if (this.listOfOperations == null)
                 {
-                    listOfOperations = new List<string>();
-                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.None));
-                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.Contains));
-                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.Equals));
-                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.GreaterThan));
-                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.GreaterThanEquals));
-                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.LessThan));
-                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.LessThanEquals));
-                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.NotContains));
-                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.NotEquals));
-                    listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.Regex));
+                    this.listOfOperations = new List<string>();
+                    this.listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.None));
+                    this.listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.Contains));
+                    this.listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.Equals));
+                    this.listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.GreaterThan));
+                    this.listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.GreaterThanEquals));
+                    this.listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.LessThan));
+                    this.listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.LessThanEquals));
+                    this.listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.NotContains));
+                    this.listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.NotEquals));
+                    this.listOfOperations.Add(QueryRow.GetOperationDisplayString(Operation.Regex));
                 }
-                return listOfOperations;
+                return this.listOfOperations;
             }
         }
 
@@ -119,14 +119,14 @@ namespace Walkabout.Views.Controls
 
         void OnDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
-            isEditing = true;
-            editingArgs = e;
+            this.isEditing = true;
+            this.editingArgs = e;
         }
 
         void OnDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-            isEditing = false;
-            editingArgs = null;
+            this.isEditing = false;
+            this.editingArgs = null;
         }
 
         void OnDataGrid1_CurrentCellChanged(object sender, EventArgs e)
@@ -163,7 +163,7 @@ namespace Walkabout.Views.Controls
         {
             if (e.Key == Key.Delete && !(e.OriginalSource is TextBox))
             {
-                Delete();
+                this.Delete();
                 e.Handled = true;
             }
         }
@@ -177,21 +177,21 @@ namespace Walkabout.Views.Controls
             {
                 foreach (QueryRow r in q)
                 {
-                    queryRows.Add(new QueryRow(r.Conjunction, r.Field, r.Operation, r.Value));
+                    this.queryRows.Add(new QueryRow(r.Conjunction, r.Field, r.Operation, r.Value));
                 }
             }
         }
 
         public void Clear()
         {
-            queryRows.Clear();
+            this.queryRows.Clear();
         }
 
         internal void OnShow()
         {
-            if (queryRows.Count == 0)
+            if (this.queryRows.Count == 0)
             {
-                queryRows.Add(new QueryRow());
+                this.queryRows.Add(new QueryRow());
             }
         }
 
@@ -202,7 +202,7 @@ namespace Walkabout.Views.Controls
                 try
                 {
 
-                    dataGrid1.CommitEdit(DataGridEditingUnit.Row, false);
+                    this.dataGrid1.CommitEdit(DataGridEditingUnit.Row, false);
                 }
                 catch
                 {
@@ -211,7 +211,7 @@ namespace Walkabout.Views.Controls
                     this.isEditing = false;
                 }
             }
-            List<QueryRow> complete = new List<QueryRow>(from q in queryRows where q.Operation != Operation.None && q.Operation != Operation.None select q);
+            List<QueryRow> complete = new List<QueryRow>(from q in this.queryRows where q.Operation != Operation.None && q.Operation != Operation.None select q);
             return complete.ToArray();
         }
 
@@ -274,10 +274,10 @@ namespace Walkabout.Views.Controls
         {
             ArrayList qrows = new ArrayList();
 
-            List<QueryRow> list = GetSelectedRows();
+            List<QueryRow> list = this.GetSelectedRows();
             foreach (QueryRow row in list)
             {
-                queryRows.Remove(row);
+                this.queryRows.Remove(row);
             }
             if (qrows.Count >= 0)
             {
@@ -294,10 +294,10 @@ namespace Walkabout.Views.Controls
         List<QueryRow> GetSelectedRows()
         {
             List<QueryRow> list = new List<QueryRow>();
-            for (int i = 0, n = queryRows.Count; i < n; i++)
+            for (int i = 0, n = this.queryRows.Count; i < n; i++)
             {
-                QueryRow qr = queryRows[i];
-                if (dataGrid1.SelectedItems.Contains(qr))
+                QueryRow qr = this.queryRows[i];
+                if (this.dataGrid1.SelectedItems.Contains(qr))
                 {
                     list.Add(qr);
                 }
@@ -307,7 +307,7 @@ namespace Walkabout.Views.Controls
 
         public void Copy()
         {
-            List<QueryRow> list = GetSelectedRows();
+            List<QueryRow> list = this.GetSelectedRows();
             if (list.Count > 0)
             {
                 string xml = Serialize(list.ToArray());
@@ -343,7 +343,7 @@ namespace Walkabout.Views.Controls
                 try
                 {
                     QueryRow[] rows = Settings.Deserialize(xml);
-                    AddQuery(rows);
+                    this.AddQuery(rows);
                 }
                 catch
                 {

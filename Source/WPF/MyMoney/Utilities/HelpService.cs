@@ -92,7 +92,7 @@ namespace Walkabout.Help
         {
             public HelpKeyEventRouter(DependencyObject listener)
             {
-                Keyboard.AddKeyDownHandler(listener, OnKeyDown);
+                Keyboard.AddKeyDownHandler(listener, this.OnKeyDown);
             }
 
             private void OnKeyDown(object sender, KeyEventArgs e)

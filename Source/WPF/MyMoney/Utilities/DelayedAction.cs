@@ -16,10 +16,10 @@ namespace Walkabout.Utilities
         public void StartDelayedAction(string name, Action action, TimeSpan delay)
         {
             DelayedAction da;
-            if (!pending.TryGetValue(name, out da))
+            if (!this.pending.TryGetValue(name, out da))
             {
                 da = new DelayedAction();
-                pending[name] = da;
+                this.pending[name] = da;
             }
             da.StartDelayTimer(action, delay);
         }
@@ -27,17 +27,17 @@ namespace Walkabout.Utilities
         public void CancelDelayedAction(string name)
         {
             DelayedAction action;
-            if (pending.TryGetValue(name, out action))
+            if (this.pending.TryGetValue(name, out action))
             {
                 action.StopDelayTimer();
-                pending.Remove(name);
+                this.pending.Remove(name);
             }
         }
 
         public void CancelAll()
         {
-            var snapshot = pending.ToArray();
-            pending.Clear();
+            var snapshot = this.pending.ToArray();
+            this.pending.Clear();
             foreach (var pair in snapshot)
             {
                 pair.Value.StopDelayTimer();
@@ -59,14 +59,14 @@ namespace Walkabout.Utilities
             /// <param name="delay">The timeout before calling the action</param>
             public void StartDelayTimer(Action action, TimeSpan delay)
             {
-                startTime = NativeMethods.TickCount;
+                this.startTime = NativeMethods.TickCount;
 
                 // stop any previous timer and start over.
-                StopDelayTimer();
+                this.StopDelayTimer();
 
                 this.delayedAction = action;
 
-                this.delayTimer = new System.Threading.Timer(OnDelayTimerTick, null, (int)delay.TotalMilliseconds, System.Threading.Timeout.Infinite);
+                this.delayTimer = new System.Threading.Timer(this.OnDelayTimerTick, null, (int)delay.TotalMilliseconds, System.Threading.Timeout.Infinite);
             }
 
             public void StopDelayTimer()
@@ -79,16 +79,16 @@ namespace Walkabout.Utilities
                     timer.Dispose();
                     timer = null;
                 }
-                delayedAction = null;
+                this.delayedAction = null;
             }
 
             private void OnDelayTimerTick(object state)
             {
                 uint endTime = NativeMethods.TickCount;
-                uint diff = startTime - endTime;
+                uint diff = this.startTime - endTime;
                 Action a = this.delayedAction;
 
-                StopDelayTimer();
+                this.StopDelayTimer();
 
                 if (a != null)
                 {

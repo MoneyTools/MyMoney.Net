@@ -80,14 +80,14 @@ namespace Walkabout.Data
             this.field = field;
             this.op = op;
             this.value = value;
-            Init();
+            this.Init();
         }
 
         private void Init()
         {
-            if (op == Data.Operation.Regex)
+            if (this.op == Data.Operation.Regex)
             {
-                regex = new Regex(this.value);
+                this.regex = new Regex(this.value);
             }
         }
 
@@ -97,7 +97,7 @@ namespace Walkabout.Data
             set
             {
                 this.field = value;
-                RaisePropertyChanged("Field");
+                this.RaisePropertyChanged("Field");
             }
         }
 
@@ -107,8 +107,8 @@ namespace Walkabout.Data
             set
             {
                 this.op = value;
-                Init();
-                RaisePropertyChanged("Operation");
+                this.Init();
+                this.RaisePropertyChanged("Operation");
             }
         }
 
@@ -192,8 +192,8 @@ namespace Walkabout.Data
             set
             {
                 this.value = value;
-                Init();
-                RaisePropertyChanged("Value");
+                this.Init();
+                this.RaisePropertyChanged("Value");
             }
         }
 
@@ -203,7 +203,7 @@ namespace Walkabout.Data
             set
             {
                 this.con = value;
-                RaisePropertyChanged("Conjunction");
+                this.RaisePropertyChanged("Conjunction");
             }
         }
 
@@ -245,7 +245,7 @@ namespace Walkabout.Data
             {
                 return q.Matches(this.value, this.op);
             }
-            return string.IsNullOrEmpty(value);
+            return string.IsNullOrEmpty(this.value);
         }
 
         public bool Matches(bool value)

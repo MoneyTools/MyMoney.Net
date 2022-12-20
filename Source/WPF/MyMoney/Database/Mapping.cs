@@ -16,11 +16,11 @@ namespace Walkabout.Data
 
         public Type ObjectType
         {
-            get { return objectType; }
+            get { return this.objectType; }
             set
             {
-                objectType = value;
-                columns = MappingEngine.GetColumnsFromObject(objectType);
+                this.objectType = value;
+                this.columns = MappingEngine.GetColumnsFromObject(this.objectType);
             }
         }
 
@@ -28,18 +28,18 @@ namespace Walkabout.Data
         {
             get
             {
-                if (columns == null)
+                if (this.columns == null)
                 {
-                    Debug.Assert(columns != null, "ObjectType should have been set by now");
+                    Debug.Assert(this.columns != null, "ObjectType should have been set by now");
                 }
-                return columns;
+                return this.columns;
             }
-            set { columns = value; }
+            set { this.columns = value; }
         }
 
         public ColumnMapping FindColumn(string name)
         {
-            foreach (ColumnMapping c in columns)
+            foreach (ColumnMapping c in this.columns)
             {
                 if (c.ColumnName == name)
                     return c;
@@ -49,7 +49,7 @@ namespace Walkabout.Data
 
         public ColumnMapping FindOldColumn(string name)
         {
-            foreach (ColumnMapping c in columns)
+            foreach (ColumnMapping c in this.columns)
             {
                 if (!string.IsNullOrEmpty(c.OldColumnName) && c.OldColumnName == name)
                     return c;
@@ -71,7 +71,7 @@ namespace Walkabout.Data
 
         public void GetSqlDefinition(StringBuilder sb)
         {
-            GetPartialSqlDefinition(sb);
+            this.GetPartialSqlDefinition(sb);
 
             if (this.IsPrimaryKey)
             {

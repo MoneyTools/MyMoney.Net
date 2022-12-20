@@ -26,11 +26,11 @@ namespace Walkabout.Data
         public virtual bool SupportsUserLogin => false;
         public virtual string Server { get; set; }
 
-        public virtual string DatabasePath { get { return filename; } }
+        public virtual string DatabasePath { get { return this.filename; } }
 
         public virtual string ConnectionString { get { return null; } }
 
-        public virtual string BackupPath { get { return backup; } set { backup = value; } }
+        public virtual string BackupPath { get { return this.backup; } set { this.backup = value; } }
 
         public virtual DbFlavor DbFlavor { get { return Data.DbFlavor.Xml; } }
 
@@ -38,8 +38,8 @@ namespace Walkabout.Data
 
         public virtual string Password
         {
-            get { return password; }
-            set { password = value; }
+            get { return this.password; }
+            set { this.password = value; }
         }
 
         public virtual bool Exists
@@ -66,7 +66,7 @@ namespace Walkabout.Data
 
         public virtual void Delete()
         {
-            if (Exists)
+            if (this.Exists)
             {
                 File.Delete(this.filename);
             }
@@ -89,7 +89,7 @@ namespace Walkabout.Data
             MyMoney money = null;
 
             DataContractSerializer serializer = new DataContractSerializer(typeof(MyMoney));
-            if (!File.Exists(filename))
+            if (!File.Exists(this.filename))
             {
                 money = new MyMoney();
             }
@@ -98,7 +98,7 @@ namespace Walkabout.Data
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
 
-                using (XmlReader r = XmlReader.Create(filename))
+                using (XmlReader r = XmlReader.Create(this.filename))
                 {
                     money = (MyMoney)serializer.ReadObject(r);
                 }
@@ -120,7 +120,7 @@ namespace Walkabout.Data
         public virtual DataSet QueryDataSet(string cmd)
         {
             DataSet result = new DataSet();
-            result.ReadXml(filename);
+            result.ReadXml(this.filename);
             return result;
         }
 
@@ -136,7 +136,7 @@ namespace Walkabout.Data
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Encoding = Encoding.UTF8;
             settings.Indent = true;
-            using (XmlWriter w = XmlWriter.Create(filename, settings))
+            using (XmlWriter w = XmlWriter.Create(this.filename, settings))
             {
                 serializer.WriteObject(w, money);
             }
@@ -170,7 +170,7 @@ namespace Walkabout.Data
 
         public virtual void Backup(string path)
         {
-            File.Copy(filename, path);
+            File.Copy(this.filename, path);
             this.backup = path;
         }
     }
@@ -196,7 +196,7 @@ namespace Walkabout.Data
             MyMoney money = null;
 
             DataContractSerializer serializer = new DataContractSerializer(typeof(MyMoney));
-            if (!File.Exists(filename))
+            if (!File.Exists(this.filename))
             {
                 money = new MyMoney();
             }
@@ -204,14 +204,14 @@ namespace Walkabout.Data
             {
                 string path = this.filename;
                 string tempPath = null;
-                bool encrypted = !string.IsNullOrWhiteSpace(Password);
+                bool encrypted = !string.IsNullOrWhiteSpace(this.Password);
 
                 if (encrypted)
                 {
                     // Decrypt the file.
                     Encryption e = new Encryption();
                     tempPath = Path.GetTempFileName();
-                    e.DecryptFile(this.filename, Password, tempPath);
+                    e.DecryptFile(this.filename, this.Password, tempPath);
                     path = tempPath;
                 }
 
@@ -248,7 +248,7 @@ namespace Walkabout.Data
             DataContractSerializer serializer = new DataContractSerializer(typeof(MyMoney));
 
             string path = this.filename;
-            bool encrypted = !string.IsNullOrWhiteSpace(Password);
+            bool encrypted = !string.IsNullOrWhiteSpace(this.Password);
 
             if (encrypted)
             {
@@ -275,7 +275,7 @@ namespace Walkabout.Data
             {
                 // now encrypt the file.
                 Encryption e = new Encryption();
-                e.EncryptFile(path, Password, this.filename);
+                e.EncryptFile(path, this.Password, this.filename);
                 File.Delete(path);
             }
 
@@ -355,28 +355,28 @@ namespace Walkabout.Data
         void PushNewNamespace(string prefix, string namespaceUri)
         {
             XmlNamespaceDefinition def;
-            if (namespacePos < namespaceStack.Count)
+            if (this.namespacePos < this.namespaceStack.Count)
             {
-                def = namespaceStack[namespacePos];
+                def = this.namespaceStack[this.namespacePos];
             }
             else
             {
                 def = new XmlNamespaceDefinition();
-                namespaceStack.Add(def);
+                this.namespaceStack.Add(def);
             }
             def.Prefix = prefix;
             def.NamespaceUri = namespaceUri;
-            namespacePos++;
+            this.namespacePos++;
         }
 
         void SetNamespaceDefined(string prefix, string nsuri)
         {
-            for (int i = 0; i < namespacePos; i++)
+            for (int i = 0; i < this.namespacePos; i++)
             {
-                XmlNamespaceDefinition def = namespaceStack[i];
+                XmlNamespaceDefinition def = this.namespaceStack[i];
                 if (def.Prefix == prefix && def.NamespaceUri == nsuri)
                 {
-                    namespaceStack.RemoveAt(i);
+                    this.namespaceStack.RemoveAt(i);
                     return;
                 }
             }
@@ -384,216 +384,216 @@ namespace Walkabout.Data
 
         void WriteAutoNamespaces()
         {
-            if (namespacePos > 0)
+            if (this.namespacePos > 0)
             {
                 // need to write out some extra namespace definitions
-                for (int i = 0; i < namespacePos; i++)
+                for (int i = 0; i < this.namespacePos; i++)
                 {
-                    XmlNamespaceDefinition d = namespaceStack[i];
+                    XmlNamespaceDefinition d = this.namespaceStack[i];
 
-                    writer.Write((short)XmlNodeTypeToken.StartAttribute);
+                    this.writer.Write((short)XmlNodeTypeToken.StartAttribute);
                     if (string.IsNullOrEmpty(d.Prefix))
                     {
-                        writer.Write(string.Empty);
-                        writer.Write("xmlns");
+                        this.writer.Write(string.Empty);
+                        this.writer.Write("xmlns");
                     }
                     else
                     {
-                        writer.Write("xmlns");
-                        writer.Write(d.Prefix);
+                        this.writer.Write("xmlns");
+                        this.writer.Write(d.Prefix);
                     }
-                    writer.Write("http://www.w3.org/2000/xmlns/");
+                    this.writer.Write("http://www.w3.org/2000/xmlns/");
 
-                    writer.Write((short)XmlNodeTypeToken.Text);
-                    writer.Write(d.NamespaceUri);
+                    this.writer.Write((short)XmlNodeTypeToken.Text);
+                    this.writer.Write(d.NamespaceUri);
 
-                    writer.Write((short)XmlNodeTypeToken.EndAttribute);
+                    this.writer.Write((short)XmlNodeTypeToken.EndAttribute);
 
-                    mgr.AddNamespace(d.Prefix ?? string.Empty, d.NamespaceUri);
+                    this.mgr.AddNamespace(d.Prefix ?? string.Empty, d.NamespaceUri);
                 }
-                namespacePos = 0;
+                this.namespacePos = 0;
             }
         }
         #endregion
 
         public BinaryXmlWriter(string filename)
         {
-            stream = new FileStream(filename, FileMode.OpenOrCreate | FileMode.Truncate, FileAccess.ReadWrite, FileShare.None);
-            writer = new BinaryWriter(stream, Encoding.UTF8);
-            nameTable = new NameTable();
-            mgr = new XmlNamespaceManager(nameTable);
+            this.stream = new FileStream(filename, FileMode.OpenOrCreate | FileMode.Truncate, FileAccess.ReadWrite, FileShare.None);
+            this.writer = new BinaryWriter(this.stream, Encoding.UTF8);
+            this.nameTable = new NameTable();
+            this.mgr = new XmlNamespaceManager(this.nameTable);
         }
 
         public BinaryXmlWriter(Stream stream)
         {
             this.stream = stream;
-            writer = new BinaryWriter(stream, Encoding.UTF8);
-            nameTable = new NameTable();
-            mgr = new XmlNamespaceManager(nameTable);
+            this.writer = new BinaryWriter(stream, Encoding.UTF8);
+            this.nameTable = new NameTable();
+            this.mgr = new XmlNamespaceManager(this.nameTable);
         }
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            writer.Dispose();
-            stream.Dispose();
+            this.writer.Dispose();
+            this.stream.Dispose();
         }
 
         public override void Close()
         {
-            writer.Close();
-            stream.Close();
-            state = WriteState.Closed;
+            this.writer.Close();
+            this.stream.Close();
+            this.state = WriteState.Closed;
         }
 
         public override void Flush()
         {
-            stream.Flush();
+            this.stream.Flush();
         }
 
         public override string LookupPrefix(string ns)
         {
-            string result = mgr.LookupPrefix(nameTable.Add(ns));
+            string result = this.mgr.LookupPrefix(this.nameTable.Add(ns));
             return result;
         }
 
         private void EndStartTag(bool isEmpty)
         {
-            if (state == System.Xml.WriteState.Element)
+            if (this.state == System.Xml.WriteState.Element)
             {
-                WriteAutoNamespaces();
-                state = System.Xml.WriteState.Content;
-                writer.Write(isEmpty ? (short)XmlNodeTypeToken.EmptyEndStartTag : (short)XmlNodeTypeToken.EndStartTag);
+                this.WriteAutoNamespaces();
+                this.state = System.Xml.WriteState.Content;
+                this.writer.Write(isEmpty ? (short)XmlNodeTypeToken.EmptyEndStartTag : (short)XmlNodeTypeToken.EndStartTag);
             }
         }
 
         public override void WriteBase64(byte[] buffer, int index, int count)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
             int outsize = ((count - index) * 4) / 3;
             char[] chars = new char[outsize + 4];
             Convert.ToBase64CharArray(buffer, index, count, chars, 0);
-            writer.Write((short)XmlNodeTypeToken.Base64);
-            writer.Write(count);
-            writer.Write(chars, 0, count);
+            this.writer.Write((short)XmlNodeTypeToken.Base64);
+            this.writer.Write(count);
+            this.writer.Write(chars, 0, count);
         }
 
         public override void WriteCData(string text)
         {
-            EndStartTag(false);
-            writer.Write((short)XmlNodeTypeToken.CDATA);
-            writer.Write(text);
+            this.EndStartTag(false);
+            this.writer.Write((short)XmlNodeTypeToken.CDATA);
+            this.writer.Write(text);
         }
 
         public override void WriteCharEntity(char ch)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.CharacterEntity);
-            writer.Write(ch);
+            this.writer.Write((short)XmlNodeTypeToken.CharacterEntity);
+            this.writer.Write(ch);
         }
 
         public override void WriteChars(char[] buffer, int index, int count)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.Chars);
-            writer.Write(count);
-            writer.Write(buffer, index, count);
+            this.writer.Write((short)XmlNodeTypeToken.Chars);
+            this.writer.Write(count);
+            this.writer.Write(buffer, index, count);
         }
 
         public override void WriteComment(string text)
         {
-            EndStartTag(false);
-            state = System.Xml.WriteState.Content;
-            writer.Write((short)XmlNodeTypeToken.Comment);
-            writer.Write(text);
+            this.EndStartTag(false);
+            this.state = System.Xml.WriteState.Content;
+            this.writer.Write((short)XmlNodeTypeToken.Comment);
+            this.writer.Write(text);
         }
 
         public override void WriteDocType(string name, string pubid, string sysid, string subset)
         {
-            state = System.Xml.WriteState.Prolog;
-            writer.Write((short)XmlNodeTypeToken.DocumentType);
-            writer.Write(name);
-            writer.Write(pubid);
-            writer.Write(sysid);
-            writer.Write(subset);
+            this.state = System.Xml.WriteState.Prolog;
+            this.writer.Write((short)XmlNodeTypeToken.DocumentType);
+            this.writer.Write(name);
+            this.writer.Write(pubid);
+            this.writer.Write(sysid);
+            this.writer.Write(subset);
         }
 
         public override void WriteEndAttribute()
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
                 throw new Exception("Cannot write EndAttribute since we are not in 'Attribute' state");
             }
-            writingNamespace = false;
-            state = System.Xml.WriteState.Element;
-            writer.Write((short)XmlNodeTypeToken.EndAttribute);
+            this.writingNamespace = false;
+            this.state = System.Xml.WriteState.Element;
+            this.writer.Write((short)XmlNodeTypeToken.EndAttribute);
         }
 
         public override void WriteEndDocument()
         {
-            EndStartTag(true);
-            writer.Write((short)XmlNodeTypeToken.EndDocument);
+            this.EndStartTag(true);
+            this.writer.Write((short)XmlNodeTypeToken.EndDocument);
         }
 
         public override void WriteEndElement()
         {
-            EndStartTag(true);
-            mgr.PopScope();
-            writer.Write((short)XmlNodeTypeToken.EndElement);
+            this.EndStartTag(true);
+            this.mgr.PopScope();
+            this.writer.Write((short)XmlNodeTypeToken.EndElement);
         }
 
         public override void WriteEntityRef(string name)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.EntityReference);
-            writer.Write(name);
+            this.writer.Write((short)XmlNodeTypeToken.EntityReference);
+            this.writer.Write(name);
         }
 
         public override void WriteFullEndElement()
         {
-            EndStartTag(false);
-            WriteEndElement();
+            this.EndStartTag(false);
+            this.WriteEndElement();
         }
 
         public override void WriteProcessingInstruction(string name, string text)
         {
-            EndStartTag(false);
-            writer.Write((short)XmlNodeTypeToken.ProcessingInstruction);
-            writer.Write(name);
-            writer.Write(text);
+            this.EndStartTag(false);
+            this.writer.Write((short)XmlNodeTypeToken.ProcessingInstruction);
+            this.writer.Write(name);
+            this.writer.Write(text);
         }
 
         public override void WriteRaw(string data)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.RawText);
-            writer.Write(data);
+            this.writer.Write((short)XmlNodeTypeToken.RawText);
+            this.writer.Write(data);
         }
 
         public override void WriteRaw(char[] buffer, int index, int count)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.RawChars);
-            writer.Write(count);
-            writer.Write(buffer, index, count);
+            this.writer.Write((short)XmlNodeTypeToken.RawChars);
+            this.writer.Write(count);
+            this.writer.Write(buffer, index, count);
         }
 
         bool writingNamespace;
@@ -601,162 +601,162 @@ namespace Walkabout.Data
 
         public override void WriteStartAttribute(string prefix, string localName, string ns)
         {
-            writingNamespace = false;
+            this.writingNamespace = false;
             if (prefix == "xmlns")
             {
-                writingNamespace = true;
-                this.prefix = nameTable.Add(localName);
+                this.writingNamespace = true;
+                this.prefix = this.nameTable.Add(localName);
             }
-            state = System.Xml.WriteState.Attribute;
+            this.state = System.Xml.WriteState.Attribute;
 
-            writer.Write((short)XmlNodeTypeToken.StartAttribute);
-            writer.Write(prefix ?? string.Empty);
-            writer.Write(localName ?? string.Empty);
-            writer.Write(ns ?? string.Empty);
+            this.writer.Write((short)XmlNodeTypeToken.StartAttribute);
+            this.writer.Write(prefix ?? string.Empty);
+            this.writer.Write(localName ?? string.Empty);
+            this.writer.Write(ns ?? string.Empty);
         }
 
         public override void WriteStartDocument(bool standalone)
         {
-            state = System.Xml.WriteState.Prolog;
-            writer.Write((short)XmlNodeTypeToken.Document);
+            this.state = System.Xml.WriteState.Prolog;
+            this.writer.Write((short)XmlNodeTypeToken.Document);
         }
 
         public override void WriteStartDocument()
         {
-            state = System.Xml.WriteState.Prolog;
-            writer.Write((short)XmlNodeTypeToken.Document);
+            this.state = System.Xml.WriteState.Prolog;
+            this.writer.Write((short)XmlNodeTypeToken.Document);
         }
 
         public override void WriteStartElement(string prefix, string localName, string ns)
         {
-            EndStartTag(false);
-            state = System.Xml.WriteState.Element;
-            writer.Write((short)XmlNodeTypeToken.Element);
-            mgr.PushScope();
+            this.EndStartTag(false);
+            this.state = System.Xml.WriteState.Element;
+            this.writer.Write((short)XmlNodeTypeToken.Element);
+            this.mgr.PushScope();
             if (!string.IsNullOrEmpty(ns) && prefix == null)
             {
-                prefix = LookupPrefix(ns);
+                prefix = this.LookupPrefix(ns);
                 if (prefix == null)
                 {
-                    PushNewNamespace(prefix, ns);
+                    this.PushNewNamespace(prefix, ns);
                 }
             }
-            writer.Write(prefix ?? string.Empty);
-            writer.Write(localName ?? string.Empty);
-            writer.Write(ns ?? string.Empty);
+            this.writer.Write(prefix ?? string.Empty);
+            this.writer.Write(localName ?? string.Empty);
+            this.writer.Write(ns ?? string.Empty);
         }
 
         public override WriteState WriteState
         {
-            get { return state; }
+            get { return this.state; }
         }
 
         public override void WriteString(string text)
         {
-            if (!string.IsNullOrWhiteSpace(text) || state == System.Xml.WriteState.Attribute)
+            if (!string.IsNullOrWhiteSpace(text) || this.state == System.Xml.WriteState.Attribute)
             {
-                if (writingNamespace)
+                if (this.writingNamespace)
                 {
-                    SetNamespaceDefined(prefix, text);
-                    mgr.AddNamespace(prefix, nameTable.Add(text));
+                    this.SetNamespaceDefined(this.prefix, text);
+                    this.mgr.AddNamespace(this.prefix, this.nameTable.Add(text));
                 }
-                if (state != System.Xml.WriteState.Attribute)
+                if (this.state != System.Xml.WriteState.Attribute)
                 {
-                    EndStartTag(false);
+                    this.EndStartTag(false);
                 }
-                writer.Write((short)XmlNodeTypeToken.Text);
-                writer.Write(text ?? string.Empty);
+                this.writer.Write((short)XmlNodeTypeToken.Text);
+                this.writer.Write(text ?? string.Empty);
             }
         }
 
         public override void WriteSurrogateCharEntity(char lowChar, char highChar)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.SurrogateCharEntity);
-            writer.Write(lowChar);
-            writer.Write(highChar);
+            this.writer.Write((short)XmlNodeTypeToken.SurrogateCharEntity);
+            this.writer.Write(lowChar);
+            this.writer.Write(highChar);
         }
 
         public override void WriteWhitespace(string ws)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.Whitespace);
-            writer.Write(ws ?? string.Empty);
+            this.writer.Write((short)XmlNodeTypeToken.Whitespace);
+            this.writer.Write(ws ?? string.Empty);
         }
 
         public override void WriteValue(bool value)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.Bool);
-            writer.Write(value);
+            this.writer.Write((short)XmlNodeTypeToken.Bool);
+            this.writer.Write(value);
         }
 
         public override void WriteValue(DateTime value)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.DateTime);
-            writer.Write(value.Ticks);
+            this.writer.Write((short)XmlNodeTypeToken.DateTime);
+            this.writer.Write(value.Ticks);
         }
 
         public override void WriteValue(decimal value)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.Decimal);
-            writer.Write(value);
+            this.writer.Write((short)XmlNodeTypeToken.Decimal);
+            this.writer.Write(value);
         }
 
         public override void WriteValue(double value)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.Double);
-            writer.Write(value);
+            this.writer.Write((short)XmlNodeTypeToken.Double);
+            this.writer.Write(value);
         }
         public override void WriteValue(float value)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.Float);
-            writer.Write(value);
+            this.writer.Write((short)XmlNodeTypeToken.Float);
+            this.writer.Write(value);
         }
 
         public override void WriteValue(int value)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.Int);
-            writer.Write(value);
+            this.writer.Write((short)XmlNodeTypeToken.Int);
+            this.writer.Write(value);
         }
 
         public override void WriteValue(long value)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            writer.Write((short)XmlNodeTypeToken.Long);
-            writer.Write(value);
+            this.writer.Write((short)XmlNodeTypeToken.Long);
+            this.writer.Write(value);
         }
 
         public override void WriteValue(object value)
@@ -766,14 +766,14 @@ namespace Walkabout.Data
 
         public override void WriteValue(string value)
         {
-            if (state != System.Xml.WriteState.Attribute)
+            if (this.state != System.Xml.WriteState.Attribute)
             {
-                EndStartTag(false);
+                this.EndStartTag(false);
             }
-            if (!string.IsNullOrWhiteSpace(value) || state == System.Xml.WriteState.Attribute)
+            if (!string.IsNullOrWhiteSpace(value) || this.state == System.Xml.WriteState.Attribute)
             {
-                writer.Write((short)XmlNodeTypeToken.Text);
-                writer.Write(value ?? string.Empty);
+                this.writer.Write((short)XmlNodeTypeToken.Text);
+                this.writer.Write(value ?? string.Empty);
             }
         }
     }
@@ -817,13 +817,13 @@ namespace Walkabout.Data
             // This stack operates as a high water mark kind of stack so we keep BinaryXmlAttributes allocated so we can reuse them efficiently.
             public BinaryXmlAttribute PushAttribute()
             {
-                if (this.AttributeCount < Attributes.Count)
+                if (this.AttributeCount < this.Attributes.Count)
                 {
-                    return Attributes[AttributeCount++];
+                    return this.Attributes[this.AttributeCount++];
                 }
                 BinaryXmlAttribute result = new BinaryXmlAttribute();
-                Attributes.Add(result);
-                AttributeCount++;
+                this.Attributes.Add(result);
+                this.AttributeCount++;
                 return result;
             }
         }
@@ -831,68 +831,68 @@ namespace Walkabout.Data
         public BinaryXmlReader(string filename)
         {
             this.baseUri = filename;
-            stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-            reader = new BinaryReader(stream, Encoding.UTF8);
-            mgr = new XmlNamespaceManager(nameTable);
+            this.stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+            this.reader = new BinaryReader(this.stream, Encoding.UTF8);
+            this.mgr = new XmlNamespaceManager(this.nameTable);
         }
 
         public BinaryXmlReader(Stream stream)
         {
             this.stream = stream;
-            reader = new BinaryReader(stream, Encoding.UTF8);
-            mgr = new XmlNamespaceManager(nameTable);
+            this.reader = new BinaryReader(stream, Encoding.UTF8);
+            this.mgr = new XmlNamespaceManager(this.nameTable);
         }
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            reader.Dispose();
-            stream.Dispose();
+            this.reader.Dispose();
+            this.stream.Dispose();
         }
 
         public override void Close()
         {
-            reader.Close();
-            stream.Close();
-            state = ReadState.Closed;
+            this.reader.Close();
+            this.stream.Close();
+            this.state = ReadState.Closed;
         }
 
         public override int Depth
         {
-            get { return elementDepth; }
+            get { return this.elementDepth; }
         }
 
         public override bool EOF
         {
-            get { return state == System.Xml.ReadState.EndOfFile; }
+            get { return this.state == System.Xml.ReadState.EndOfFile; }
         }
 
         public override int AttributeCount
         {
-            get { return currentElement != null ? currentElement.AttributeCount : 0; }
+            get { return this.currentElement != null ? this.currentElement.AttributeCount : 0; }
         }
 
         public override string BaseURI
         {
-            get { return baseUri; }
+            get { return this.baseUri; }
         }
 
         public override string GetAttribute(int i)
         {
-            if ((token == XmlNodeTypeToken.Element || this.currentAttribute != null) && i <= currentElement.AttributeCount)
+            if ((this.token == XmlNodeTypeToken.Element || this.currentAttribute != null) && i <= this.currentElement.AttributeCount)
             {
-                return currentElement.Attributes[i].Value.ToString();
+                return this.currentElement.Attributes[i].Value.ToString();
             }
             return null;
         }
 
         public override string GetAttribute(string name, string namespaceURI)
         {
-            if ((token == XmlNodeTypeToken.Element || this.currentAttribute != null) && currentElement.AttributeCount > 0)
+            if ((this.token == XmlNodeTypeToken.Element || this.currentAttribute != null) && this.currentElement.AttributeCount > 0)
             {
-                string tname = nameTable.Add(name);
-                string tnamespace = nameTable.Add(namespaceURI ?? string.Empty);
-                foreach (BinaryXmlAttribute a in currentElement.Attributes)
+                string tname = this.nameTable.Add(name);
+                string tnamespace = this.nameTable.Add(namespaceURI ?? string.Empty);
+                foreach (BinaryXmlAttribute a in this.currentElement.Attributes)
                 {
                     if ((object)a.Name == (object)tname && (object)a.Namespace == (object)tnamespace)
                     {
@@ -905,10 +905,10 @@ namespace Walkabout.Data
 
         public override string GetAttribute(string name)
         {
-            if ((token == XmlNodeTypeToken.Element || this.currentAttribute != null) && currentElement.AttributeCount > 0)
+            if ((this.token == XmlNodeTypeToken.Element || this.currentAttribute != null) && this.currentElement.AttributeCount > 0)
             {
-                string tname = nameTable.Add(name);
-                foreach (BinaryXmlAttribute a in currentElement.Attributes)
+                string tname = this.nameTable.Add(name);
+                foreach (BinaryXmlAttribute a in this.currentElement.Attributes)
                 {
                     if ((object)a.Name == (object)tname)
                     {
@@ -923,7 +923,7 @@ namespace Walkabout.Data
         {
             get
             {
-                return isElementEmpty;
+                return this.isElementEmpty;
             }
         }
 
@@ -931,7 +931,7 @@ namespace Walkabout.Data
         {
             get
             {
-                if (token == XmlNodeTypeToken.Attribute)
+                if (this.token == XmlNodeTypeToken.Attribute)
                 {
                     return this.currentAttribute.Name;
                 }
@@ -941,21 +941,21 @@ namespace Walkabout.Data
 
         public override string LookupNamespace(string prefix)
         {
-            return mgr.LookupNamespace(prefix);
+            return this.mgr.LookupNamespace(prefix);
         }
 
         public override bool MoveToAttribute(string name, string namespaceURI)
         {
-            if ((token == XmlNodeTypeToken.Element || this.currentAttribute != null) && this.currentElement.AttributeCount > 0)
+            if ((this.token == XmlNodeTypeToken.Element || this.currentAttribute != null) && this.currentElement.AttributeCount > 0)
             {
-                string tname = nameTable.Add(name);
-                string tnamespace = nameTable.Add(namespaceURI ?? string.Empty);
+                string tname = this.nameTable.Add(name);
+                string tnamespace = this.nameTable.Add(namespaceURI ?? string.Empty);
                 int i = 0;
-                foreach (BinaryXmlAttribute a in currentElement.Attributes)
+                foreach (BinaryXmlAttribute a in this.currentElement.Attributes)
                 {
                     if ((object)a.Name == (object)tname && (object)a.Namespace == (object)tnamespace)
                     {
-                        SetCurrentAttribute(i);
+                        this.SetCurrentAttribute(i);
                         return true;
                     }
                     i++;
@@ -966,31 +966,31 @@ namespace Walkabout.Data
 
         private string SetCurrentAttribute(int i)
         {
-            Debug.Assert(currentElement != null);
-            if (token == XmlNodeTypeToken.Element)
+            Debug.Assert(this.currentElement != null);
+            if (this.token == XmlNodeTypeToken.Element)
             {
-                elementDepth++;
+                this.elementDepth++;
             }
             this.attributePos = i;
             this.currentAttribute = this.currentElement.Attributes[i];
-            value = this.currentAttribute.Value;
-            token = XmlNodeTypeToken.Attribute;
-            nodeType = XmlNodeType.Attribute;
+            this.value = this.currentAttribute.Value;
+            this.token = XmlNodeTypeToken.Attribute;
+            this.nodeType = XmlNodeType.Attribute;
             return this.currentAttribute.Name;
         }
 
 
         public override bool MoveToAttribute(string name)
         {
-            if ((token == XmlNodeTypeToken.Element || this.currentAttribute != null) && this.currentElement.AttributeCount > 0)
+            if ((this.token == XmlNodeTypeToken.Element || this.currentAttribute != null) && this.currentElement.AttributeCount > 0)
             {
-                string tname = nameTable.Add(name);
+                string tname = this.nameTable.Add(name);
                 int i = 0;
                 foreach (BinaryXmlAttribute a in this.currentElement.Attributes)
                 {
                     if ((object)a.Name == (object)tname)
                     {
-                        SetCurrentAttribute(i);
+                        this.SetCurrentAttribute(i);
                         return true;
                     }
                     i++;
@@ -1001,20 +1001,20 @@ namespace Walkabout.Data
 
         public override bool MoveToElement()
         {
-            if (token == XmlNodeTypeToken.EndElement || state == ReadState.Initial || token == XmlNodeTypeToken.Element)
+            if (this.token == XmlNodeTypeToken.EndElement || this.state == ReadState.Initial || this.token == XmlNodeTypeToken.Element)
             {
                 return false;
             }
             if (this.currentAttribute != null)
             {
-                elementDepth--;
+                this.elementDepth--;
                 this.currentAttribute = null;
-                token = XmlNodeTypeToken.Element;
-                nodeType = XmlNodeType.Element;
+                this.token = XmlNodeTypeToken.Element;
+                this.nodeType = XmlNodeType.Element;
                 return true;
             }
 
-            while (Read())
+            while (this.Read())
             {
                 if (this.nodeType == XmlNodeType.Element)
                 {
@@ -1026,9 +1026,9 @@ namespace Walkabout.Data
 
         public override bool MoveToFirstAttribute()
         {
-            if ((token == XmlNodeTypeToken.Element || this.currentAttribute != null) && this.currentElement.AttributeCount > 0)
+            if ((this.token == XmlNodeTypeToken.Element || this.currentAttribute != null) && this.currentElement.AttributeCount > 0)
             {
-                SetCurrentAttribute(0);
+                this.SetCurrentAttribute(0);
                 return true;
             }
             return false;
@@ -1036,10 +1036,10 @@ namespace Walkabout.Data
 
         public override bool MoveToNextAttribute()
         {
-            if ((token == XmlNodeTypeToken.Element || this.currentAttribute != null) && this.attributePos + 1 < this.currentElement.AttributeCount)
+            if ((this.token == XmlNodeTypeToken.Element || this.currentAttribute != null) && this.attributePos + 1 < this.currentElement.AttributeCount)
             {
                 this.attributePos++;
-                SetCurrentAttribute(this.attributePos);
+                this.SetCurrentAttribute(this.attributePos);
                 return true;
             }
             return false;
@@ -1047,14 +1047,14 @@ namespace Walkabout.Data
 
         public override XmlNameTable NameTable
         {
-            get { return nameTable; }
+            get { return this.nameTable; }
         }
 
         public override string NamespaceURI
         {
             get
             {
-                if (token == XmlNodeTypeToken.Attribute)
+                if (this.token == XmlNodeTypeToken.Attribute)
                 {
                     return this.currentAttribute.Namespace;
                 }
@@ -1071,7 +1071,7 @@ namespace Walkabout.Data
         {
             get
             {
-                if (token == XmlNodeTypeToken.Attribute)
+                if (this.token == XmlNodeTypeToken.Attribute)
                 {
                     return this.currentAttribute.Prefix;
                 }
@@ -1081,137 +1081,137 @@ namespace Walkabout.Data
 
         public override bool Read()
         {
-            if (state == System.Xml.ReadState.EndOfFile || state == System.Xml.ReadState.Error || state == System.Xml.ReadState.Closed)
+            if (this.state == System.Xml.ReadState.EndOfFile || this.state == System.Xml.ReadState.Error || this.state == System.Xml.ReadState.Closed)
             {
                 return false;
             }
 
-            if (nodeType == XmlNodeType.Element || nodeType == XmlNodeType.Attribute)
+            if (this.nodeType == XmlNodeType.Element || this.nodeType == XmlNodeType.Attribute)
             {
-                elementDepth++;
+                this.elementDepth++;
             }
 
-            currentElement = null;
-            XmlNodeTypeToken previous = token;
+            this.currentElement = null;
+            XmlNodeTypeToken previous = this.token;
             try
             {
-                token = (XmlNodeTypeToken)reader.ReadInt16();
+                this.token = (XmlNodeTypeToken)this.reader.ReadInt16();
             }
             catch (EndOfStreamException)
             {
-                state = System.Xml.ReadState.EndOfFile;
-                token = XmlNodeTypeToken.EndDocument;
+                this.state = System.Xml.ReadState.EndOfFile;
+                this.token = XmlNodeTypeToken.EndDocument;
                 return false;
             }
 
-            if (isElementEmpty && token == XmlNodeTypeToken.EndElement)
+            if (this.isElementEmpty && this.token == XmlNodeTypeToken.EndElement)
             {
-                PopElement();
+                this.PopElement();
                 // have to swallow this end element.
-                token = (XmlNodeTypeToken)reader.ReadInt16();
+                this.token = (XmlNodeTypeToken)this.reader.ReadInt16();
             }
-            if (token == XmlNodeTypeToken.Document)
+            if (this.token == XmlNodeTypeToken.Document)
             {
-                token = (XmlNodeTypeToken)reader.ReadInt16();
+                this.token = (XmlNodeTypeToken)this.reader.ReadInt16();
             }
-            if (token == XmlNodeTypeToken.None || token == XmlNodeTypeToken.EndDocument)
+            if (this.token == XmlNodeTypeToken.None || this.token == XmlNodeTypeToken.EndDocument)
             {
-                nodeType = XmlNodeType.None;
-                state = System.Xml.ReadState.EndOfFile;
+                this.nodeType = XmlNodeType.None;
+                this.state = System.Xml.ReadState.EndOfFile;
                 return false;
             }
-            state = System.Xml.ReadState.Interactive;
-            switch (token)
+            this.state = System.Xml.ReadState.Interactive;
+            switch (this.token)
             {
                 case XmlNodeTypeToken.Element: // begining of start tag
-                    ReadElement();
+                    this.ReadElement();
                     break;
                 case XmlNodeTypeToken.Text:
-                    nodeType = XmlNodeType.Text;
-                    value = reader.ReadString();
+                    this.nodeType = XmlNodeType.Text;
+                    this.value = this.reader.ReadString();
                     break;
                 case XmlNodeTypeToken.CDATA:
-                    nodeType = XmlNodeType.CDATA;
-                    value = reader.ReadString();
+                    this.nodeType = XmlNodeType.CDATA;
+                    this.value = this.reader.ReadString();
                     break;
                 case XmlNodeTypeToken.ProcessingInstruction:
-                    nodeType = XmlNodeType.ProcessingInstruction;
-                    currentElement = leafNode;
-                    currentElement.Name = nameTable.Add(ReadString());
-                    value = reader.ReadString();
+                    this.nodeType = XmlNodeType.ProcessingInstruction;
+                    this.currentElement = this.leafNode;
+                    this.currentElement.Name = this.nameTable.Add(this.ReadString());
+                    this.value = this.reader.ReadString();
                     break;
                 case XmlNodeTypeToken.Comment:
-                    nodeType = XmlNodeType.Comment;
-                    currentElement = leafNode;
-                    currentElement.Name = nameTable.Add("#comment");
-                    value = reader.ReadString();
+                    this.nodeType = XmlNodeType.Comment;
+                    this.currentElement = this.leafNode;
+                    this.currentElement.Name = this.nameTable.Add("#comment");
+                    this.value = this.reader.ReadString();
                     break;
                 case XmlNodeTypeToken.DocumentType:
                     this.nodeType = XmlNodeType.DocumentType;
-                    currentElement = new BinaryXmlElement();
-                    currentElement.Name = nameTable.Add(reader.ReadString());
-                    BinaryXmlAttribute pubid = currentElement.PushAttribute();
+                    this.currentElement = new BinaryXmlElement();
+                    this.currentElement.Name = this.nameTable.Add(this.reader.ReadString());
+                    BinaryXmlAttribute pubid = this.currentElement.PushAttribute();
                     pubid.Name = "Public";
-                    pubid.Value = reader.ReadString();
-                    BinaryXmlAttribute sysid = currentElement.PushAttribute();
+                    pubid.Value = this.reader.ReadString();
+                    BinaryXmlAttribute sysid = this.currentElement.PushAttribute();
                     sysid.Name = "SystemLiteral";
-                    sysid.Value = reader.ReadString();
-                    BinaryXmlAttribute subset = currentElement.PushAttribute();
+                    sysid.Value = this.reader.ReadString();
+                    BinaryXmlAttribute subset = this.currentElement.PushAttribute();
                     subset.Name = "InternalSubset";
-                    subset.Value = reader.ReadString();
+                    subset.Value = this.reader.ReadString();
                     break;
                 case XmlNodeTypeToken.Whitespace:
                 case XmlNodeTypeToken.SignificantWhitespace:
-                    nodeType = (XmlNodeType)token;
-                    currentElement = leafNode;
-                    currentElement.Name = nameTable.Add("#whitespace");
-                    value = reader.ReadString();
+                    this.nodeType = (XmlNodeType)this.token;
+                    this.currentElement = this.leafNode;
+                    this.currentElement.Name = this.nameTable.Add("#whitespace");
+                    this.value = this.reader.ReadString();
                     break;
                 case XmlNodeTypeToken.EndElement:
-                    PopElement();
+                    this.PopElement();
                     break;
                 case XmlNodeTypeToken.Base64:
-                    SetTextNode(ReadBase64());
+                    this.SetTextNode(this.ReadBase64());
                     return true;
                 case XmlNodeTypeToken.RawText:
                 case XmlNodeTypeToken.RawChars:
                 case XmlNodeTypeToken.Chars:
-                    SetTextNode(ReadRaw());
+                    this.SetTextNode(this.ReadRaw());
                     break;
                 case XmlNodeTypeToken.Bool:
-                    SetTextNode(reader.ReadBoolean());
+                    this.SetTextNode(this.reader.ReadBoolean());
                     break;
                 case XmlNodeTypeToken.DateTime:
-                    SetTextNode(new DateTime(reader.ReadInt64()));
+                    this.SetTextNode(new DateTime(this.reader.ReadInt64()));
                     break;
                 case XmlNodeTypeToken.Decimal:
-                    SetTextNode(reader.ReadDecimal());
+                    this.SetTextNode(this.reader.ReadDecimal());
                     break;
                 case XmlNodeTypeToken.Double:
-                    SetTextNode(reader.ReadDouble());
+                    this.SetTextNode(this.reader.ReadDouble());
                     break;
                 case XmlNodeTypeToken.Float:
-                    SetTextNode(reader.ReadSingle());
+                    this.SetTextNode(this.reader.ReadSingle());
                     break;
                 case XmlNodeTypeToken.Int:
-                    SetTextNode(reader.ReadInt32());
+                    this.SetTextNode(this.reader.ReadInt32());
                     break;
                 case XmlNodeTypeToken.Long:
-                    SetTextNode(reader.ReadInt64());
+                    this.SetTextNode(this.reader.ReadInt64());
                     break;
                 default:
-                    state = System.Xml.ReadState.Error;
-                    throw new Exception(string.Format("Binary stream contains unpexpected token '{0}'", (int)token));
+                    this.state = System.Xml.ReadState.Error;
+                    throw new Exception(string.Format("Binary stream contains unpexpected token '{0}'", (int)this.token));
             }
             return true;
         }
 
         public override bool ReadAttributeValue()
         {
-            if (this.token == XmlNodeTypeToken.Attribute && currentAttribute != null)
+            if (this.token == XmlNodeTypeToken.Attribute && this.currentAttribute != null)
             {
-                this.value = currentAttribute.Value;
-                this.token = currentAttribute.Token;
+                this.value = this.currentAttribute.Value;
+                this.token = this.currentAttribute.Token;
                 return true;
             }
             return false;
@@ -1235,15 +1235,15 @@ namespace Walkabout.Data
                 {
                     return null;
                 }
-                if (value is DateTime)
+                if (this.value is DateTime)
                 {
-                    return XmlConvert.ToString((DateTime)value, "yyyy-MM-ddTHH:mm:ss");
+                    return XmlConvert.ToString((DateTime)this.value, "yyyy-MM-ddTHH:mm:ss");
                 }
-                else if (value is Boolean)
+                else if (this.value is Boolean)
                 {
-                    return XmlConvert.ToString((bool)value);
+                    return XmlConvert.ToString((bool)this.value);
                 }
-                return value.ToString();
+                return this.value.ToString();
             }
         }
 
@@ -1256,23 +1256,23 @@ namespace Walkabout.Data
 
         public override int ReadContentAsBase64(byte[] buffer, int index, int count)
         {
-            if (token == XmlNodeTypeToken.Attribute)
+            if (this.token == XmlNodeTypeToken.Attribute)
             {
-                ReadAttributeValue();
+                this.ReadAttributeValue();
             }
-            if (token == XmlNodeTypeToken.Base64 && (value is byte[]))
+            if (this.token == XmlNodeTypeToken.Base64 && (this.value is byte[]))
             {
-                byte[] data = (byte[])value;
-                int available = data.Length - bufferPos;
+                byte[] data = (byte[])this.value;
+                int available = data.Length - this.bufferPos;
                 int returned = Math.Min(available, count);
                 if (returned != 0)
                 {
-                    Array.Copy(data, bufferPos, buffer, index, returned);
-                    bufferPos += returned;
+                    Array.Copy(data, this.bufferPos, buffer, index, returned);
+                    this.bufferPos += returned;
                 }
-                if (currentAttribute == null)
+                if (this.currentAttribute == null)
                 {
-                    Read();
+                    this.Read();
                 }
                 return returned;
             }
@@ -1284,16 +1284,16 @@ namespace Walkabout.Data
 
         public override bool ReadContentAsBoolean()
         {
-            if (token == XmlNodeTypeToken.Attribute)
+            if (this.token == XmlNodeTypeToken.Attribute)
             {
-                ReadAttributeValue();
+                this.ReadAttributeValue();
             }
-            if (token == XmlNodeTypeToken.Bool)
+            if (this.token == XmlNodeTypeToken.Bool)
             {
-                var rc = (bool)value;
-                if (currentAttribute == null)
+                var rc = (bool)this.value;
+                if (this.currentAttribute == null)
                 {
-                    Read();
+                    this.Read();
                 }
                 return rc;
             }
@@ -1305,16 +1305,16 @@ namespace Walkabout.Data
 
         public override DateTime ReadContentAsDateTime()
         {
-            if (token == XmlNodeTypeToken.Attribute)
+            if (this.token == XmlNodeTypeToken.Attribute)
             {
-                ReadAttributeValue();
+                this.ReadAttributeValue();
             }
-            if (token == XmlNodeTypeToken.DateTime)
+            if (this.token == XmlNodeTypeToken.DateTime)
             {
-                var rc = (DateTime)value;
-                if (currentAttribute == null)
+                var rc = (DateTime)this.value;
+                if (this.currentAttribute == null)
                 {
-                    Read();
+                    this.Read();
                 }
                 return rc;
             }
@@ -1326,16 +1326,16 @@ namespace Walkabout.Data
 
         public override decimal ReadContentAsDecimal()
         {
-            if (token == XmlNodeTypeToken.Attribute)
+            if (this.token == XmlNodeTypeToken.Attribute)
             {
-                ReadAttributeValue();
+                this.ReadAttributeValue();
             }
-            if (token == XmlNodeTypeToken.Decimal)
+            if (this.token == XmlNodeTypeToken.Decimal)
             {
-                var rc = (decimal)value;
-                if (currentAttribute == null)
+                var rc = (decimal)this.value;
+                if (this.currentAttribute == null)
                 {
-                    Read();
+                    this.Read();
                 }
                 return rc;
             }
@@ -1347,16 +1347,16 @@ namespace Walkabout.Data
 
         public override double ReadContentAsDouble()
         {
-            if (token == XmlNodeTypeToken.Attribute)
+            if (this.token == XmlNodeTypeToken.Attribute)
             {
-                ReadAttributeValue();
+                this.ReadAttributeValue();
             }
-            if (token == XmlNodeTypeToken.Double)
+            if (this.token == XmlNodeTypeToken.Double)
             {
-                var rc = (double)value;
-                if (currentAttribute == null)
+                var rc = (double)this.value;
+                if (this.currentAttribute == null)
                 {
-                    Read();
+                    this.Read();
                 }
                 return rc;
             }
@@ -1368,16 +1368,16 @@ namespace Walkabout.Data
 
         public override float ReadContentAsFloat()
         {
-            if (token == XmlNodeTypeToken.Attribute)
+            if (this.token == XmlNodeTypeToken.Attribute)
             {
-                ReadAttributeValue();
+                this.ReadAttributeValue();
             }
-            if (token == XmlNodeTypeToken.Float)
+            if (this.token == XmlNodeTypeToken.Float)
             {
-                var rc = (float)value;
-                if (currentAttribute == null)
+                var rc = (float)this.value;
+                if (this.currentAttribute == null)
                 {
-                    Read();
+                    this.Read();
                 }
                 return rc;
             }
@@ -1389,16 +1389,16 @@ namespace Walkabout.Data
 
         public override int ReadContentAsInt()
         {
-            if (token == XmlNodeTypeToken.Attribute)
+            if (this.token == XmlNodeTypeToken.Attribute)
             {
-                ReadAttributeValue();
+                this.ReadAttributeValue();
             }
-            if (token == XmlNodeTypeToken.Int)
+            if (this.token == XmlNodeTypeToken.Int)
             {
-                var rc = (int)value;
-                if (currentAttribute == null)
+                var rc = (int)this.value;
+                if (this.currentAttribute == null)
                 {
-                    Read();
+                    this.Read();
                 }
                 return rc;
             }
@@ -1410,16 +1410,16 @@ namespace Walkabout.Data
 
         public override long ReadContentAsLong()
         {
-            if (token == XmlNodeTypeToken.Attribute)
+            if (this.token == XmlNodeTypeToken.Attribute)
             {
-                ReadAttributeValue();
+                this.ReadAttributeValue();
             }
-            if (token == XmlNodeTypeToken.Long)
+            if (this.token == XmlNodeTypeToken.Long)
             {
-                var rc = (long)value;
-                if (currentAttribute == null)
+                var rc = (long)this.value;
+                if (this.currentAttribute == null)
                 {
-                    Read();
+                    this.Read();
                 }
                 return rc;
             }
@@ -1436,16 +1436,16 @@ namespace Walkabout.Data
 
         public override string ReadContentAsString()
         {
-            if (token == XmlNodeTypeToken.Attribute)
+            if (this.token == XmlNodeTypeToken.Attribute)
             {
-                ReadAttributeValue();
+                this.ReadAttributeValue();
             }
-            if (token == XmlNodeTypeToken.Text)
+            if (this.token == XmlNodeTypeToken.Text)
             {
-                var rc = (string)value;
-                if (currentAttribute == null)
+                var rc = (string)this.value;
+                if (this.currentAttribute == null)
                 {
-                    Read();
+                    this.Read();
                 }
                 return rc;
             }
@@ -1458,9 +1458,9 @@ namespace Walkabout.Data
 
         public override void MoveToAttribute(int i)
         {
-            if (token == XmlNodeTypeToken.Element && i < this.currentElement.AttributeCount)
+            if (this.token == XmlNodeTypeToken.Element && i < this.currentElement.AttributeCount)
             {
-                SetCurrentAttribute(i);
+                this.SetCurrentAttribute(i);
             }
         }
 
@@ -1468,7 +1468,7 @@ namespace Walkabout.Data
         {
             get
             {
-                if (token == XmlNodeTypeToken.Attribute)
+                if (this.token == XmlNodeTypeToken.Attribute)
                 {
                     return !string.IsNullOrEmpty(this.currentAttribute.Prefix) ? this.currentAttribute.Prefix + ":" + this.currentAttribute.Name : this.currentAttribute.Name;
                 }
@@ -1488,105 +1488,105 @@ namespace Walkabout.Data
             }
             this.nodeType = XmlNodeType.EndElement;
             this.elementDepth--;
-            currentElement = (this.elementDepth >= 0) ? this.elementStack[this.elementDepth] : null;
-            value = null;
-            isElementEmpty = false;
+            this.currentElement = (this.elementDepth >= 0) ? this.elementStack[this.elementDepth] : null;
+            this.value = null;
+            this.isElementEmpty = false;
         }
 
         private void SetTextNode(object value)
         {
-            nodeType = XmlNodeType.Text;
-            currentElement = leafNode;
-            currentElement.Name = null;
+            this.nodeType = XmlNodeType.Text;
+            this.currentElement = this.leafNode;
+            this.currentElement.Name = null;
             this.value = value;
         }
 
         private void ReadElement()
         {
-            BinaryXmlElement e = PushElement();
+            BinaryXmlElement e = this.PushElement();
             this.nodeType = XmlNodeType.Element;
-            e.Prefix = nameTable.Add(reader.ReadString());
-            e.Name = nameTable.Add(reader.ReadString());
-            e.NamespaceUri = nameTable.Add(reader.ReadString());
-            ReadAttributes(e);
-            currentElement = e;
+            e.Prefix = this.nameTable.Add(this.reader.ReadString());
+            e.Name = this.nameTable.Add(this.reader.ReadString());
+            e.NamespaceUri = this.nameTable.Add(this.reader.ReadString());
+            this.ReadAttributes(e);
+            this.currentElement = e;
         }
 
         #region Attributes
 
         private void ReadAttributes(BinaryXmlElement e)
         {
-            value = null;
+            this.value = null;
             this.attributePos = -1;
             this.currentAttribute = null;
             e.AttributeCount = 0;
-            XmlNodeTypeToken next = (XmlNodeTypeToken)reader.ReadInt16();
+            XmlNodeTypeToken next = (XmlNodeTypeToken)this.reader.ReadInt16();
             while (next != XmlNodeTypeToken.EndStartTag && next != XmlNodeTypeToken.EmptyEndStartTag)
             {
                 Debug.Assert(next == XmlNodeTypeToken.StartAttribute);
                 BinaryXmlAttribute a = e.PushAttribute();
-                a.Prefix = nameTable.Add(reader.ReadString());
-                a.Name = nameTable.Add(reader.ReadString());
-                a.Namespace = nameTable.Add(reader.ReadString());
+                a.Prefix = this.nameTable.Add(this.reader.ReadString());
+                a.Name = this.nameTable.Add(this.reader.ReadString());
+                a.Namespace = this.nameTable.Add(this.reader.ReadString());
 
-                next = (XmlNodeTypeToken)reader.ReadInt16();
+                next = (XmlNodeTypeToken)this.reader.ReadInt16();
                 while (next != XmlNodeTypeToken.EndAttribute)
                 {
                     a.Token = next;
                     switch (next)
                     {
                         case XmlNodeTypeToken.Text:
-                            a.Value = reader.ReadString();
+                            a.Value = this.reader.ReadString();
                             break;
                         case XmlNodeTypeToken.Base64:
-                            a.Value = ReadBase64();
+                            a.Value = this.ReadBase64();
                             break;
                         case XmlNodeTypeToken.RawText:
-                            a.Value = ReadString();
+                            a.Value = this.ReadString();
                             break;
                         case XmlNodeTypeToken.RawChars:
                         case XmlNodeTypeToken.Chars:
-                            a.Value = ReadRaw();
+                            a.Value = this.ReadRaw();
                             break;
                         case XmlNodeTypeToken.Bool:
-                            a.Value = reader.ReadBoolean();
+                            a.Value = this.reader.ReadBoolean();
                             break;
                         case XmlNodeTypeToken.DateTime:
-                            a.Value = new DateTime(reader.ReadInt64());
+                            a.Value = new DateTime(this.reader.ReadInt64());
                             break;
                         case XmlNodeTypeToken.Decimal:
-                            a.Value = reader.ReadDecimal();
+                            a.Value = this.reader.ReadDecimal();
                             break;
                         case XmlNodeTypeToken.Double:
-                            a.Value = reader.ReadDouble();
+                            a.Value = this.reader.ReadDouble();
                             break;
                         case XmlNodeTypeToken.Float:
-                            a.Value = reader.ReadSingle();
+                            a.Value = this.reader.ReadSingle();
                             break;
                         case XmlNodeTypeToken.Int:
-                            a.Value = reader.ReadInt32();
+                            a.Value = this.reader.ReadInt32();
                             break;
                         case XmlNodeTypeToken.Long:
-                            a.Value = reader.ReadInt64();
+                            a.Value = this.reader.ReadInt64();
                             break;
                         default:
                             throw new Exception(string.Format("Unexpected token '{0}' reading attributes", (int)next));
                     }
 
-                    next = (XmlNodeTypeToken)reader.ReadInt16();
+                    next = (XmlNodeTypeToken)this.reader.ReadInt16();
                 }
                 if (a.Prefix == "xmlns")
                 {
                     a.Namespace = "http://www.w3.org/2000/xmlns/";
-                    mgr.AddNamespace(a.Name, (string)a.Value);
+                    this.mgr.AddNamespace(a.Name, (string)a.Value);
                 }
                 else if ((string.IsNullOrEmpty(a.Prefix) && a.Name == "xmlns"))
                 {
                     a.Namespace = "http://www.w3.org/2000/xmlns/";
-                    mgr.AddNamespace(string.Empty, (string)a.Value);
+                    this.mgr.AddNamespace(string.Empty, (string)a.Value);
                 }
 
-                next = (XmlNodeTypeToken)reader.ReadInt16();// consume EndAttribute
+                next = (XmlNodeTypeToken)this.reader.ReadInt16();// consume EndAttribute
             }
 
             this.isElementEmpty = (next == XmlNodeTypeToken.EmptyEndStartTag);
@@ -1594,28 +1594,28 @@ namespace Walkabout.Data
 
         private byte[] ReadBase64()
         {
-            bufferPos = 0;
-            int count = reader.ReadInt32();
-            char[] buffer = reader.ReadChars(count);
+            this.bufferPos = 0;
+            int count = this.reader.ReadInt32();
+            char[] buffer = this.reader.ReadChars(count);
             return Convert.FromBase64CharArray(buffer, 0, count);
         }
 
         private char[] ReadRaw()
         {
-            bufferPos = 0;
-            int count = reader.ReadInt32();
-            return reader.ReadChars(count);
+            this.bufferPos = 0;
+            int count = this.reader.ReadInt32();
+            return this.reader.ReadChars(count);
         }
 
         // This stack operates as a high water mark kind of stack so we keep BinaryXmlElements allocated so we can reuse them efficiently.
         private BinaryXmlElement PushElement()
         {
-            if (elementDepth < elementStack.Count)
+            if (this.elementDepth < this.elementStack.Count)
             {
-                return elementStack[elementDepth];
+                return this.elementStack[this.elementDepth];
             }
             BinaryXmlElement e = new BinaryXmlElement();
-            elementStack.Add(e);
+            this.elementStack.Add(e);
             return e;
         }
 

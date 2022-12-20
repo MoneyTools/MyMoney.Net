@@ -39,11 +39,11 @@ namespace Walkabout.Utilities
         {
             get
             {
-                return (EdgeBehavior)GetValue(EdgeBehaviorProperty);
+                return (EdgeBehavior)this.GetValue(EdgeBehaviorProperty);
             }
             set
             {
-                SetValue(EdgeBehaviorProperty, value);
+                this.SetValue(EdgeBehaviorProperty, value);
             }
         }
 
@@ -54,13 +54,13 @@ namespace Walkabout.Utilities
         {
             get
             {
-                return (double)GetValue(PowerProperty);
+                return (double)this.GetValue(PowerProperty);
             }
             set
             {
                 if (value > 0.0)
                 {
-                    SetValue(PowerProperty, value);
+                    this.SetValue(PowerProperty, value);
                 }
                 else
                 {
@@ -72,20 +72,20 @@ namespace Walkabout.Utilities
         protected override double GetCurrentValueCore(double defaultOriginValue, double defaultDestinationValue, AnimationClock clock)
         {
             double returnValue;
-            double start = (double)From;
-            double delta = (double)To - start;
+            double start = (double)this.From;
+            double delta = (double)this.To - start;
 
             switch (this.EdgeBehavior)
             {
                 case EdgeBehavior.EaseIn:
-                    returnValue = easeIn(clock.CurrentProgress.Value, start, delta, Power);
+                    returnValue = easeIn(clock.CurrentProgress.Value, start, delta, this.Power);
                     break;
                 case EdgeBehavior.EaseOut:
-                    returnValue = easeOut(clock.CurrentProgress.Value, start, delta, Power);
+                    returnValue = easeOut(clock.CurrentProgress.Value, start, delta, this.Power);
                     break;
                 case EdgeBehavior.EaseInOut:
                 default:
-                    returnValue = easeInOut(clock.CurrentProgress.Value, start, delta, Power);
+                    returnValue = easeInOut(clock.CurrentProgress.Value, start, delta, this.Power);
                     break;
             }
             return returnValue;

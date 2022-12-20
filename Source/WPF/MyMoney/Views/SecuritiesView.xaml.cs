@@ -27,8 +27,8 @@ namespace Walkabout.Views
 
         public SecuritiesView()
         {
-            InitializeComponent();
-            SetupGrid(this.SecuritiesDataGrid);
+            this.InitializeComponent();
+            this.SetupGrid(this.SecuritiesDataGrid);
         }
 
         public event EventHandler<SecuritySelectionEventArgs> SecurityNavigated;
@@ -53,20 +53,20 @@ namespace Walkabout.Views
 
         void SetupGrid(DataGrid grid)
         {
-            stockSplitGrid = grid;
-            grid.BeginningEdit += OnBeginEdit;
-            grid.RowEditEnding += OnDataGridCommit;
-            grid.CellEditEnding += OnDataGridCellEditEnding;
-            grid.PreviewKeyDown += new KeyEventHandler(OnDataGridPreviewKeyDown);
-            grid.SelectionChanged += new SelectionChangedEventHandler(OnGridSelectionChanged);
+            this.stockSplitGrid = grid;
+            grid.BeginningEdit += this.OnBeginEdit;
+            grid.RowEditEnding += this.OnDataGridCommit;
+            grid.CellEditEnding += this.OnDataGridCellEditEnding;
+            grid.PreviewKeyDown += new KeyEventHandler(this.OnDataGridPreviewKeyDown);
+            grid.SelectionChanged += new SelectionChangedEventHandler(this.OnGridSelectionChanged);
         }
 
         void TearDownGrid(DataGrid grid)
         {
-            grid.BeginningEdit -= OnBeginEdit;
-            grid.RowEditEnding -= OnDataGridCommit;
-            grid.PreviewKeyDown -= new KeyEventHandler(OnDataGridPreviewKeyDown);
-            grid.SelectionChanged -= new SelectionChangedEventHandler(OnGridSelectionChanged);
+            grid.BeginningEdit -= this.OnBeginEdit;
+            grid.RowEditEnding -= this.OnDataGridCommit;
+            grid.PreviewKeyDown -= new KeyEventHandler(this.OnDataGridPreviewKeyDown);
+            grid.SelectionChanged -= new SelectionChangedEventHandler(this.OnGridSelectionChanged);
         }
 
         public Security SelectedSecurity
@@ -128,13 +128,13 @@ namespace Walkabout.Views
                     // We now need to decide if we went to hide the Detail view or leave it as is
 
 
-                    if (SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible)
+                    if (this.SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible)
                     {
                         // Do not change any thing keep the Detail view in Mini mode 
                     }
-                    else if (splitVisibleRowId != this.SelectedRowId)
+                    else if (this.splitVisibleRowId != this.SelectedRowId)
                     {
-                        if (SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.VisibleWhenSelected)
+                        if (this.SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.VisibleWhenSelected)
                         {
                             // VisibleWhenSelected can only have been set by the user action of clicking on the "SPLIT" button
                             // Since we are now selecting an different Transaction we can hide the Detail view
@@ -143,32 +143,32 @@ namespace Walkabout.Views
                             // We need to refresh the items in order show the SPLIT button
                             // TheActiveGrid.Items.Refresh();
 
-                            RestoreSplitViewMode();
+                            this.RestoreSplitViewMode();
                         }
                     }
 
                     Security s = (Security)selected;
-                    s.IsExpanded = (SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Collapsed) ? false : true;
+                    s.IsExpanded = (this.SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Collapsed) ? false : true;
                 }
 
-                if (lastSelectedItem != null && lastSelectedItem != selected)
+                if (this.lastSelectedItem != null && this.lastSelectedItem != selected)
                 {
-                    Security s = lastSelectedItem as Security;
+                    Security s = this.lastSelectedItem as Security;
                     if (s != null)
                     {
-                        s.IsExpanded = (SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible) ? true : false;
+                        s.IsExpanded = (this.SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible) ? true : false;
                     }
                 }
 
 
-                lastSelectedItem = selected;
-                OnSelectionChanged(selected as Security);
+                this.lastSelectedItem = selected;
+                this.OnSelectionChanged(selected as Security);
             }
         }
 
         void OnSelectionChanged(Security security)
         {
-            OnSecuritySelected(security);
+            this.OnSecuritySelected(security);
         }
 
 
@@ -186,7 +186,7 @@ namespace Walkabout.Views
         {
             get
             {
-                DataGrid focus = FindDataGridContainingFocus();
+                DataGrid focus = this.FindDataGridContainingFocus();
                 if (focus != null && focus.Name == "TheGridForStockSplit")
                 {
                     return true;
@@ -199,7 +199,7 @@ namespace Walkabout.Views
         {
             MoneyDataGrid grid = (MoneyDataGrid)sender;
 
-            if (IsKeyboardFocusInsideSplitsDataGrid)
+            if (this.IsKeyboardFocusInsideSplitsDataGrid)
             {
                 return;
             }
@@ -211,11 +211,11 @@ namespace Walkabout.Views
                     {
                         if (e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift))
                         {
-                            e.Handled = SecuritiesDataGrid.MoveFocusToPreviousEditableField();
+                            e.Handled = this.SecuritiesDataGrid.MoveFocusToPreviousEditableField();
                         }
                         else
                         {
-                            e.Handled = SecuritiesDataGrid.MoveFocusToNextEditableField();
+                            e.Handled = this.SecuritiesDataGrid.MoveFocusToNextEditableField();
                         }
                     }
                     break;
@@ -238,7 +238,7 @@ namespace Walkabout.Views
 
         void OnBeginEdit(object sender, DataGridBeginningEditEventArgs e)
         {
-            IsEditing = true;
+            this.IsEditing = true;
         }
 
         void OnDataGridCommit(object sender, DataGridRowEditEndingEventArgs e)
@@ -255,7 +255,7 @@ namespace Walkabout.Views
                 TextBox box = e.EditingElement.FindFirstDescendantOfType<TextBox>();
                 try
                 {
-                    ValidateSymbol(s, box.Text);
+                    this.ValidateSymbol(s, box.Text);
                 }
                 catch (Exception ex)
                 {
@@ -290,8 +290,8 @@ namespace Walkabout.Views
 
         public bool ViewAllSplits
         {
-            get { return (bool)GetValue(ViewAllSplitsProperty); }
-            set { SetValue(ViewAllSplitsProperty, value); }
+            get { return (bool)this.GetValue(ViewAllSplitsProperty); }
+            set { this.SetValue(ViewAllSplitsProperty, value); }
         }
 
         static void OnViewAllSplitsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -302,30 +302,30 @@ namespace Walkabout.Views
 
         void OnViewAllSplitsChanged()
         {
-            OnBeforeViewStateChanged();
+            this.OnBeforeViewStateChanged();
 
             // Toggle the Detail Split View 
-            if (ViewAllSplits == true)
+            if (this.ViewAllSplits == true)
             {
-                SecuritiesDataGrid.RowDetailsTemplate = TryFindResource("StockSplitMiniView") as DataTemplate;
-                SecuritiesDataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Visible;
-                splitVisibleRowId = this.SelectedRowId;
+                this.SecuritiesDataGrid.RowDetailsTemplate = this.TryFindResource("StockSplitMiniView") as DataTemplate;
+                this.SecuritiesDataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Visible;
+                this.splitVisibleRowId = this.SelectedRowId;
             }
             else
             {
-                SecuritiesDataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Collapsed;
-                splitVisibleRowId = -1;
+                this.SecuritiesDataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Collapsed;
+                this.splitVisibleRowId = -1;
             }
 
-            ToggleShowSplits.IsChecked = ViewAllSplits;
+            this.ToggleShowSplits.IsChecked = this.ViewAllSplits;
         }
 
         public static readonly DependencyProperty ViewAllSecuritiesProperty = DependencyProperty.Register("ViewAllSecurities", typeof(bool), typeof(SecuritiesView), new FrameworkPropertyMetadata(true, new PropertyChangedCallback(OnViewAllSecuritiesChanged)));
 
         public bool ViewAllSecurities
         {
-            get { return (bool)GetValue(ViewAllSecuritiesProperty); }
-            set { SetValue(ViewAllSecuritiesProperty, value); }
+            get { return (bool)this.GetValue(ViewAllSecuritiesProperty); }
+            set { this.SetValue(ViewAllSecuritiesProperty, value); }
         }
 
         static void OnViewAllSecuritiesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -336,20 +336,20 @@ namespace Walkabout.Views
 
         void OnViewAllSecuritiesChanged()
         {
-            ToggleShowAllSecurities.IsChecked = !ViewAllSecurities;
-            ShowSecurities();
+            this.ToggleShowAllSecurities.IsChecked = !this.ViewAllSecurities;
+            this.ShowSecurities();
         }
 
         private void TheGridForStockSplit_Loaded(object sender, RoutedEventArgs e)
         {
             DataGrid grid = (DataGrid)sender;
-            SetupGrid(grid);
+            this.SetupGrid(grid);
         }
 
         private void TheGridForStockSplit_Unloaded(object sender, RoutedEventArgs e)
         {
             DataGrid grid = (DataGrid)sender;
-            TearDownGrid(grid);
+            this.TearDownGrid(grid);
         }
 
         public int SelectedRowId
@@ -373,10 +373,10 @@ namespace Walkabout.Views
                 }
                 if (!sc.Contains(security))
                 {
-                    if (!ViewAllSecurities)
+                    if (!this.ViewAllSecurities)
                     {
                         // add all securities so we have better chance of showing the security in question.
-                        ViewAllSecurities = true;
+                        this.ViewAllSecurities = true;
                     }
                 }
             }
@@ -390,7 +390,7 @@ namespace Walkabout.Views
             try
             {
                 // dumb thing doesn't let us update the list while sorting.
-                DataGridColumn sort = RemoveSort(this.SecuritiesDataGrid);
+                DataGridColumn sort = this.RemoveSort(this.SecuritiesDataGrid);
 
                 this.SecuritiesDataGrid.ItemsSource = new SecurityCollection(this, this.Money, this.quickFilter, this.ViewAllSecurities);
                 if (sort != null)
@@ -467,14 +467,14 @@ namespace Walkabout.Views
             set
             {
                 this.money = value;
-                ShowSecurities();
+                this.ShowSecurities();
             }
 
         }
 
         public void ActivateView()
         {
-            Focus();
+            this.Focus();
             this.Money = this.money;
         }
 
@@ -502,8 +502,8 @@ namespace Walkabout.Views
 
         public IServiceProvider ServiceProvider
         {
-            get { return sp; }
-            set { sp = value; }
+            get { return this.sp; }
+            set { this.sp = value; }
         }
 
         public void Commit()
@@ -534,12 +534,12 @@ namespace Walkabout.Views
                 SecuritiesViewState state = new SecuritiesViewState()
                 {
                     SelectedSecurity = name,
-                    ViewAllSplits = this.ViewAllSplits,
-                    ViewAllSecurities = this.ViewAllSecurities
+                    ViewAllSplits = ViewAllSplits,
+                    ViewAllSecurities = ViewAllSecurities
                 };
 
                 int column = 0;
-                foreach (DataGridColumn c in SecuritiesDataGrid.Columns)
+                foreach (DataGridColumn c in this.SecuritiesDataGrid.Columns)
                 {
                     if (c.SortDirection.HasValue)
                     {
@@ -566,13 +566,13 @@ namespace Walkabout.Views
                         Security s = this.money.Securities.FindSecurity(security, false);
                         if (s != null)
                         {
-                            SecuritiesDataGrid.SelectedItem = s;
-                            SecuritiesDataGrid.ScrollIntoView(s);
+                            this.SecuritiesDataGrid.SelectedItem = s;
+                            this.SecuritiesDataGrid.ScrollIntoView(s);
                         }
                     }
-                    if (svs.SortedColumn != -1 && svs.SortedColumn < SecuritiesDataGrid.Columns.Count && svs.SortDirection.HasValue)
+                    if (svs.SortedColumn != -1 && svs.SortedColumn < this.SecuritiesDataGrid.Columns.Count && svs.SortDirection.HasValue)
                     {
-                        DataGridColumn c = SecuritiesDataGrid.Columns[svs.SortedColumn];
+                        DataGridColumn c = this.SecuritiesDataGrid.Columns[svs.SortedColumn];
                         c.SortDirection = svs.SortDirection.Value;
                     }
                 }
@@ -607,7 +607,7 @@ namespace Walkabout.Views
             if (s != null)
             {
                 // navigate to transaction view showing all transactions involving the selected security
-                OnSecurityNavigated(s);
+                this.OnSecurityNavigated(s);
             }
         }
 
@@ -624,31 +624,31 @@ namespace Walkabout.Views
             if (s != null) id = s.Id;
 
             // Toggle the Detail Split View 
-            if (id == splitVisibleRowId && this.SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.VisibleWhenSelected)
+            if (id == this.splitVisibleRowId && this.SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.VisibleWhenSelected)
             {
 
                 // Done editing the split. must be executive after the any edit filed are committed
                 // so we run this on the ContextIdle
-                Dispatcher.BeginInvoke(new Action(() => RestoreSplitViewMode()), DispatcherPriority.ContextIdle);
+                this.Dispatcher.BeginInvoke(new Action(() => this.RestoreSplitViewMode()), DispatcherPriority.ContextIdle);
             }
             else
             {
                 // Show the Full Details Split inline DataGrid
                 this.SecuritiesDataGrid.RowDetailsTemplate = this.TryFindResource("StockSplitDetailView") as DataTemplate;
                 this.SecuritiesDataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.VisibleWhenSelected;
-                splitVisibleRowId = id;
+                this.splitVisibleRowId = id;
             }
         }
 
 
         private void RestoreSplitViewMode()
         {
-            if (splitVisibleRowId != -1)
+            if (this.splitVisibleRowId != -1)
             {
                 //
                 // Split view is changing and we have a chance to cleanup any empty split that the user may have left behind
                 //
-                Security securityLostSelection = this.Money.Securities.FindSecurityAt(splitVisibleRowId);
+                Security securityLostSelection = this.Money.Securities.FindSecurityAt(this.splitVisibleRowId);
 
                 if (securityLostSelection != null)
                 {
@@ -664,13 +664,13 @@ namespace Walkabout.Views
             {
                 this.SecuritiesDataGrid.RowDetailsTemplate = this.TryFindResource("StockSplitMiniView") as DataTemplate;
                 this.SecuritiesDataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Visible;
-                splitVisibleRowId = this.SelectedRowId;
+                this.splitVisibleRowId = this.SelectedRowId;
             }
             else
             {
                 this.SecuritiesDataGrid.RowDetailsTemplate = this.TryFindResource("StockSplitDetailView") as DataTemplate;
                 this.SecuritiesDataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Collapsed;
-                splitVisibleRowId = -1;
+                this.splitVisibleRowId = -1;
             }
         }
         #endregion
@@ -679,7 +679,7 @@ namespace Walkabout.Views
 
         public void FocusQuickFilter()
         {
-            QuickFilterUX.FocusTextBox();
+            this.QuickFilterUX.FocusTextBox();
         }
 
         private string quickFilter = string.Empty;
@@ -692,14 +692,14 @@ namespace Walkabout.Views
                 if (this.quickFilter != value)
                 {
                     this.quickFilter = value;
-                    Refresh();
+                    this.Refresh();
                 }
             }
         }
 
         void Refresh()
         {
-            ShowSecurities();
+            this.ShowSecurities();
         }
 
         private void OnQuickFilterValueChanged(object sender, string filter)
@@ -711,22 +711,22 @@ namespace Walkabout.Views
 
         private void OnShowAllSecurities_Checked(object sender, RoutedEventArgs e)
         {
-            ViewAllSecurities = false; // filter is in effect
+            this.ViewAllSecurities = false; // filter is in effect
         }
 
         private void OnShowAllSecurities_Unchecked(object sender, RoutedEventArgs e)
         {
-            ViewAllSecurities = true; // filter is not in effect
+            this.ViewAllSecurities = true; // filter is not in effect
         }
 
         private void OnToggleShowSplits_Checked(object sender, RoutedEventArgs e)
         {
-            ViewAllSplits = true;
+            this.ViewAllSplits = true;
         }
 
         private void OnToggleShowSplits_Unchecked(object sender, RoutedEventArgs e)
         {
-            ViewAllSplits = false;
+            this.ViewAllSplits = false;
         }
 
     }
@@ -738,15 +738,15 @@ namespace Walkabout.Views
         private bool viewAllSplits;
         public bool ViewAllSplits
         {
-            get { return viewAllSplits; }
-            set { viewAllSplits = value; }
+            get { return this.viewAllSplits; }
+            set { this.viewAllSplits = value; }
         }
 
         private bool viewAllSecurities = true; // default true
         public bool ViewAllSecurities
         {
-            get { return viewAllSecurities; }
-            set { viewAllSecurities = value; }
+            get { return this.viewAllSecurities; }
+            set { this.viewAllSecurities = value; }
         }
 
         int sort = -1;
@@ -801,17 +801,17 @@ namespace Walkabout.Views
             {
                 writer.WriteElementString("ViewAllSplits", this.ViewAllSplits.ToString());
                 writer.WriteElementString("ViewAllSecurities", this.ViewAllSecurities.ToString());
-                if (!string.IsNullOrEmpty(SelectedSecurity))
+                if (!string.IsNullOrEmpty(this.SelectedSecurity))
                 {
-                    writer.WriteElementString("SelectedSecurity", SelectedSecurity);
+                    writer.WriteElementString("SelectedSecurity", this.SelectedSecurity);
                 }
                 if (this.SortedColumn != -1)
                 {
-                    writer.WriteElementString("SortedColumn", SortedColumn.ToString());
+                    writer.WriteElementString("SortedColumn", this.SortedColumn.ToString());
                 }
                 if (this.SortDirection.HasValue)
                 {
-                    writer.WriteElementString("SortDirection", SortDirection.Value.ToString());
+                    writer.WriteElementString("SortDirection", this.SortDirection.Value.ToString());
                 }
             }
         }
@@ -859,7 +859,7 @@ namespace Walkabout.Views
 
             if (security.Id == -1)
             {
-                money.Securities.AddSecurity(security);
+                this.money.Securities.AddSecurity(security);
             }
         }
 
@@ -867,13 +867,13 @@ namespace Walkabout.Views
         {
             Security security = (Security)this[index];
 
-            foreach (Transaction t in money.Transactions)
+            foreach (Transaction t in this.money.Transactions)
             {
                 if (t.Investment != null && t.Investment.Security == security)
                 {
                     if (MessageBoxEx.Show("This security is being used, do you want to see which transactions are using it?", "Security in use", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
                     {
-                        view.OnSecurityNavigated(security);
+                        this.view.OnSecurityNavigated(security);
                     }
                     return;
                 }
@@ -893,7 +893,7 @@ namespace Walkabout.Views
         Security security;
         public SecuritySelectionEventArgs(Security s)
         {
-            security = s;
+            this.security = s;
         }
         public Security Security { get { return this.security; } }
     }

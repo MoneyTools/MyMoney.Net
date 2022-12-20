@@ -30,9 +30,9 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             this.Rate = reader.ReadDouble();
         }
 
-        public ComponentId Component { get { return component; } set { component = value; ComponentName = value.ToString(); } }
-        public CategoryId Category { get { return category; } set { category = value; CategoryName = value.ToString(); } }
-        public MeasurementId Measurement { get { return measurement; } set { measurement = value; MeasurementName = value.ToString(); } }
+        public ComponentId Component { get { return this.component; } set { this.component = value; this.ComponentName = value.ToString(); } }
+        public CategoryId Category { get { return this.category; } set { this.category = value; this.CategoryName = value.ToString(); } }
+        public MeasurementId Measurement { get { return this.measurement; } set { this.measurement = value; this.MeasurementName = value.ToString(); } }
         public ulong Size { get; set; }
         public ulong Ticks { get; set; }
         public double Rate { get; set; }

@@ -18,25 +18,25 @@ namespace Walkabout.Utilities
                 TValue result = default(TValue);
                 if (key != null)
                 {
-                    implementation.TryGetValue(key, out result);
+                    this.implementation.TryGetValue(key, out result);
                 }
                 return result;
             }
             set
             {
-                implementation[key] = value;
+                this.implementation[key] = value;
             }
         }
 
         internal bool Contains(TKey key)
         {
-            return implementation.ContainsKey(key);
+            return this.implementation.ContainsKey(key);
         }
 
         #region IDictionary<TKey, TValue>
         public void Add(TKey key, TValue value)
         {
-            implementation.Add(key, value);
+            this.implementation.Add(key, value);
         }
 
         public bool ContainsKey(TKey key)
@@ -45,12 +45,12 @@ namespace Walkabout.Utilities
             {
                 return false;
             }
-            return implementation.ContainsKey(key);
+            return this.implementation.ContainsKey(key);
         }
 
         public ICollection<TKey> Keys
         {
-            get { return implementation.Keys; }
+            get { return this.implementation.Keys; }
         }
 
         public bool Remove(TKey key)
@@ -59,42 +59,42 @@ namespace Walkabout.Utilities
             {
                 return false;
             }
-            return implementation.Remove(key);
+            return this.implementation.Remove(key);
         }
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            return implementation.TryGetValue(key, out value);
+            return this.implementation.TryGetValue(key, out value);
         }
 
         public ICollection<TValue> Values
         {
-            get { return implementation.Values; }
+            get { return this.implementation.Values; }
         }
 
         public void Add(KeyValuePair<TKey, TValue> item)
         {
-            ((IDictionary<TKey, TValue>)implementation).Add(item);
+            ((IDictionary<TKey, TValue>)this.implementation).Add(item);
         }
 
         public void Clear()
         {
-            implementation.Clear();
+            this.implementation.Clear();
         }
 
         public bool Contains(KeyValuePair<TKey, TValue> item)
         {
-            return ((IDictionary<TKey, TValue>)implementation).Contains(item);
+            return ((IDictionary<TKey, TValue>)this.implementation).Contains(item);
         }
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            ((IDictionary<TKey, TValue>)implementation).CopyTo(array, arrayIndex);
+            ((IDictionary<TKey, TValue>)this.implementation).CopyTo(array, arrayIndex);
         }
 
         public int Count
         {
-            get { return implementation.Count; }
+            get { return this.implementation.Count; }
         }
 
         public bool IsReadOnly
@@ -104,17 +104,17 @@ namespace Walkabout.Utilities
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
-            return ((IDictionary<TKey, TValue>)implementation).Remove(item);
+            return ((IDictionary<TKey, TValue>)this.implementation).Remove(item);
         }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            return implementation.GetEnumerator();
+            return this.implementation.GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return ((System.Collections.IEnumerable)implementation).GetEnumerator();
+            return ((System.Collections.IEnumerable)this.implementation).GetEnumerator();
         }
         #endregion
     }

@@ -50,11 +50,11 @@ namespace Walkabout.Data
 
         public override void OnPasswordChanged(string oldPassword, string newPassword)
         {
-            Connect();
+            this.Connect();
             this.sqliteConnection.ChangePassword(newPassword);
 
             // if ChangePassword succeeds the next operation needs a new connection with the new password.
-            Disconnect();
+            this.Disconnect();
         }
 
         public override string GetDatabaseFullPath()
@@ -64,17 +64,17 @@ namespace Walkabout.Data
 
         public override void Create()
         {
-            string connectionString = GetConnectionString(true);
+            string connectionString = this.GetConnectionString(true);
 
             if (!File.Exists(this.DatabasePath))
             {
-                LazyCreateTables();
+                this.LazyCreateTables();
             }
         }
 
         public override void Delete()
         {
-            Disconnect();
+            this.Disconnect();
             if (File.Exists(this.DatabasePath))
             {
                 File.Delete(this.DatabasePath);
@@ -130,7 +130,7 @@ namespace Walkabout.Data
         {
             if (this.sqliteConnection == null || this.sqliteConnection.State != ConnectionState.Open)
             {
-                string constr = GetConnectionString(true);
+                string constr = this.GetConnectionString(true);
                 this.sqliteConnection = new SQLiteConnection(constr);
                 this.sqliteConnection.Open();
             }
@@ -164,7 +164,7 @@ namespace Walkabout.Data
         public override bool TableExists(string name)
         {
             //object result = ExecuteScalar("select * from INFORMATION_SCHEMA.tables where table_name = '" + mapping.TableName + "'");
-            object result = ExecuteScalar("SELECT tbl_name FROM sqlite_master where tbl_name='" + name + "'");
+            object result = this.ExecuteScalar("SELECT tbl_name FROM sqlite_master where tbl_name='" + name + "'");
             return (result != null);
         }
 
@@ -176,7 +176,7 @@ namespace Walkabout.Data
         public override List<ColumnMapping> GetTableSchema(string tableName)
         {
             // get the CREATE TABLE statement, the second and subsequent lines are the column information.
-            string sql = ExecuteScalar("select sql from sqlite_master where tbl_name='" + tableName + "'").ToString();
+            string sql = this.ExecuteScalar("select sql from sqlite_master where tbl_name='" + tableName + "'").ToString();
 
             // replace comma column separator with newline.
             sql = sql.Replace(",", "\r\n");
@@ -203,7 +203,7 @@ namespace Walkabout.Data
                         }
 
 
-                        ColumnMapping c = ParseColumnSql(line.TrimEnd(new char[] { ' ', '\t', '\r', '\n', ',' }));
+                        ColumnMapping c = this.ParseColumnSql(line.TrimEnd(new char[] { ' ', '\t', '\r', '\n', ',' }));
                         if (c != null)
                         {
                             columns.Add(c);
@@ -282,7 +282,7 @@ namespace Walkabout.Data
                 else if (state == 1)
                 {
                     // ok, now we have a sql data type.
-                    ParseSqlType(id, result);
+                    this.ParseSqlType(id, result);
                     state++;
                 }
                 else
@@ -408,7 +408,7 @@ namespace Walkabout.Data
             object result = null;
             try
             {
-                Connect();
+                this.Connect();
 #if DEBUG_DATABASE
                 Debug.WriteLine(string.Format("ExecuteScalar {0}", cmd));
 #endif
@@ -435,7 +435,7 @@ namespace Walkabout.Data
 
             try
             {
-                Connect();
+                this.Connect();
 
                 DataSet dataSet = new DataSet();
 
@@ -465,7 +465,7 @@ namespace Walkabout.Data
             this.AppendLog(cmd);
             try
             {
-                Connect();
+                this.Connect();
 #if DEBUG_DATABASE
                 Debug.WriteLine(string.Format("ExecuteNonQuery {0}", cmd));
 #endif
@@ -488,7 +488,7 @@ namespace Walkabout.Data
 
             try
             {
-                Connect();
+                this.Connect();
 #if DEBUG_DATABASE
                 Debug.WriteLine(string.Format("ExecuteReader {0}", cmd));
 #endif
@@ -528,7 +528,7 @@ namespace Walkabout.Data
                 {
 
                     // the hard part, figure out if table needs to be altered...                
-                    TableMapping actual = LoadTableMetadata(mapping.TableName);
+                    TableMapping actual = this.LoadTableMetadata(mapping.TableName);
 
                     // Lastly see if any types or maxlengths need to be changed.
                     // Unfortunately SqlLite does not support ALTER a column!!

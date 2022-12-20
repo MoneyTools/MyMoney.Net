@@ -28,18 +28,18 @@ namespace Walkabout.Migrate
                 WriteHeader(sw);
                 if (!cpitalGainsOnly)
                 {
-                    ExportCategories(sw, startDate, endDate);
+                    this.ExportCategories(sw, startDate, endDate);
                 }
 
                 CapitalGainsTaxCalculator calculator = new CapitalGainsTaxCalculator(this.money, endDate, consolidateOnDateSold, true);
-                ExportCapitalGains(calculator, null, startDate, endDate, sw);
+                this.ExportCapitalGains(calculator, null, startDate, endDate, sw);
             }
         }
 
         private void ExportCategories(TextWriter writer, DateTime startDate, DateTime endDate)
         {
             TaxCategoryCollection taxCategories = new TaxCategoryCollection();
-            List<TaxCategory> list = taxCategories.GenerateGroups(money, startDate, endDate);
+            List<TaxCategory> list = taxCategories.GenerateGroups(this.money, startDate, endDate);
             if (list != null)
             {
                 foreach (TaxCategory tc in list)
@@ -138,7 +138,7 @@ namespace Walkabout.Migrate
         public void ExportCapitalGains(Account a, TextWriter writer, DateTime startDate, DateTime endDate, bool consolidateSecuritiesOnDateSold)
         {
             CapitalGainsTaxCalculator calculator = new CapitalGainsTaxCalculator(this.money, endDate, consolidateSecuritiesOnDateSold, true);
-            ExportCapitalGains(calculator, a, startDate, endDate, writer);
+            this.ExportCapitalGains(calculator, a, startDate, endDate, writer);
         }
 
         private void ExportCapitalGains(CapitalGainsTaxCalculator calculator, Account a, DateTime startDate, DateTime endDate, TextWriter writer)

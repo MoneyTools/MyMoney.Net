@@ -21,8 +21,8 @@ namespace Walkabout.StockQuotes
 
         public string FileName
         {
-            get { return _filename; }
-            set { _filename = value; }
+            get { return this._filename; }
+            set { this._filename = value; }
         }
 
         [XmlIgnore]
@@ -30,67 +30,67 @@ namespace Walkabout.StockQuotes
 
         public DateTime LastCall
         {
-            get { return _lastCall; }
-            set { _lastCall = value; }
+            get { return this._lastCall; }
+            set { this._lastCall = value; }
         }
 
         public int CallsThisMinute
         {
-            get { return _callsThisMinute; }
-            set { _callsThisMinute = value; }
+            get { return this._callsThisMinute; }
+            set { this._callsThisMinute = value; }
         }
 
         public int CallsToday
         {
-            get { return _callsToday; }
-            set { _callsToday = value; }
+            get { return this._callsToday; }
+            set { this._callsToday = value; }
         }
 
         public int CallsThisMonth
         {
-            get { return _callsThisMonth; }
-            set { _callsThisMonth = value; }
+            get { return this._callsThisMonth; }
+            set { this._callsThisMonth = value; }
         }
 
         private void CheckResetCounters()
         {
-            lock (_sync)
+            lock (this._sync)
             {
                 bool changed = false;
                 var now = DateTime.Now;
-                if (!(now.Year == _lastCall.Year && now.Month == _lastCall.Month))
+                if (!(now.Year == this._lastCall.Year && now.Month == this._lastCall.Month))
                 {
-                    _callsThisMonth = 0;
-                    _callsToday = 0;
-                    _callsThisMinute = 0;
+                    this._callsThisMonth = 0;
+                    this._callsToday = 0;
+                    this._callsThisMinute = 0;
                 }
-                else if (now.Date != _lastCall.Date)
+                else if (now.Date != this._lastCall.Date)
                 {
-                    _callsToday = 0;
-                    _callsThisMinute = 0;
+                    this._callsToday = 0;
+                    this._callsThisMinute = 0;
                 }
-                else if (now.Hour != _lastCall.Hour || now.Minute != _lastCall.Minute)
+                else if (now.Hour != this._lastCall.Hour || now.Minute != this._lastCall.Minute)
                 {
-                    _callsThisMinute = 0;
+                    this._callsThisMinute = 0;
                 }
                 if (changed)
                 {
-                    saveActions.StartDelayedAction("save", Save, TimeSpan.FromSeconds(1));
+                    this.saveActions.StartDelayedAction("save", this.Save, TimeSpan.FromSeconds(1));
                 }
             }
         }
 
         public void RecordCall()
         {
-            lock (_sync)
+            lock (this._sync)
             {
-                CheckResetCounters();
-                _callsThisMonth++;
-                _callsToday++;
-                _callsThisMinute++;
-                _lastCall = DateTime.Now;
+                this.CheckResetCounters();
+                this._callsThisMonth++;
+                this._callsToday++;
+                this._callsThisMinute++;
+                this._lastCall = DateTime.Now;
             }
-            saveActions.StartDelayedAction("save", Save, TimeSpan.FromSeconds(1));
+            this.saveActions.StartDelayedAction("save", this.Save, TimeSpan.FromSeconds(1));
         }
 
         /// <summary>
@@ -99,17 +99,17 @@ namespace Walkabout.StockQuotes
         /// <returns></returns>
         public int GetSleep()
         {
-            CheckResetCounters();
+            this.CheckResetCounters();
             int result = 0;
-            if (Settings.ApiRequestsPerMonthLimit != 0 && _callsThisMonth > Settings.ApiRequestsPerMonthLimit)
+            if (this.Settings.ApiRequestsPerMonthLimit != 0 && this._callsThisMonth > this.Settings.ApiRequestsPerMonthLimit)
             {
                 throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
             }
-            else if (Settings.ApiRequestsPerDayLimit != 0 && _callsToday > Settings.ApiRequestsPerDayLimit)
+            else if (this.Settings.ApiRequestsPerDayLimit != 0 && this._callsToday > this.Settings.ApiRequestsPerDayLimit)
             {
                 throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
             }
-            else if (Settings.ApiRequestsPerMinuteLimit != 0 && _callsThisMinute >= Settings.ApiRequestsPerMinuteLimit)
+            else if (this.Settings.ApiRequestsPerMinuteLimit != 0 && this._callsThisMinute >= this.Settings.ApiRequestsPerMinuteLimit)
             {
                 result = 60000; // sleep to next minute.
             }
@@ -118,7 +118,7 @@ namespace Walkabout.StockQuotes
 
         public void Save()
         {
-            var fullPath = System.IO.Path.Combine(ProcessHelper.AppDataPath, _filename);
+            var fullPath = System.IO.Path.Combine(ProcessHelper.AppDataPath, this._filename);
             XmlSerializer s = new XmlSerializer(typeof(StockQuoteThrottle));
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;

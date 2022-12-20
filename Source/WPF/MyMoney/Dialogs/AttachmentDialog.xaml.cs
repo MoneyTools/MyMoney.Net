@@ -42,20 +42,20 @@ namespace Walkabout.Dialogs
 
         public AttachmentDialog()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            this.Loaded += new RoutedEventHandler(OnLoaded);
+            Loaded += new RoutedEventHandler(this.OnLoaded);
 
             string path = Settings.TheSettings.AttachmentDirectory;
             if (string.IsNullOrEmpty(path) || !System.IO.Directory.Exists(path))
             {
                 throw new Exception("Please ensure the AttachmentDirectory property is set to existing location");
             }
-            Directory = path;
+            this.Directory = path;
 
-            CanvasGrid.PreviewMouseDown += new MouseButtonEventHandler(CanvasGrid_MouseDown);
+            this.CanvasGrid.PreviewMouseDown += new MouseButtonEventHandler(this.CanvasGrid_MouseDown);
 
-            resizerBrush = (Brush)Resources["ResizerThumbBrush"];
+            this.resizerBrush = (Brush)this.Resources["ResizerThumbBrush"];
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -69,8 +69,8 @@ namespace Walkabout.Dialogs
 
         void CanvasGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Point pos = e.GetPosition(CanvasGrid);
-            HitTestResult result = VisualTreeHelper.HitTest(CanvasGrid, pos);
+            Point pos = e.GetPosition(this.CanvasGrid);
+            HitTestResult result = VisualTreeHelper.HitTest(this.CanvasGrid, pos);
 
             DependencyObject hit = result.VisualHit;
             if (hit != null)
@@ -78,55 +78,55 @@ namespace Walkabout.Dialogs
                 AttachmentDialogItem item = WpfHelper.FindAncestor<AttachmentDialogItem>(hit);
                 if (item != null)
                 {
-                    SelectItem(item);
+                    this.SelectItem(item);
                     return;
                 }
-                if (hit == resizer)
+                if (hit == this.resizer)
                 {
                     return;
                 }
             }
 
-            RemoveResizer();
-            selected = null;
+            this.RemoveResizer();
+            this.selected = null;
         }
 
         public AttachmentManager Manager { get; set; }
 
         public Settings Settings { get; set; }
 
-        public bool IsClosed { get { return closed; } }
+        public bool IsClosed { get { return this.closed; } }
 
         public Transaction Transaction
         {
-            get => transaction;
+            get => this.transaction;
             set
             {
-                transaction = value;
-                actions.StartDelayedAction("Sync", LoadAttachments, TimeSpan.FromMilliseconds(30));
+                this.transaction = value;
+                this.actions.StartDelayedAction("Sync", this.LoadAttachments, TimeSpan.FromMilliseconds(30));
             }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            loaded = true;
-            LoadAttachments();
+            this.loaded = true;
+            this.LoadAttachments();
         }
 
         private void LoadAttachments()
         {
-            if (loaded)
+            if (this.loaded)
             {
-                selected = null;
-                RemoveResizer();
-                Canvas.Children.Clear();
+                this.selected = null;
+                this.RemoveResizer();
+                this.Canvas.Children.Clear();
 
                 if (this.Transaction == null)
                 {
                     return;
                 }
 
-                foreach (string filePath in Manager.GetAttachments(this.Transaction))
+                foreach (string filePath in this.Manager.GetAttachments(this.Transaction))
                 {
                     try
                     {
@@ -136,12 +136,12 @@ namespace Walkabout.Dialogs
                             string.Compare(ext, ".gif", StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare(ext, ".bmp", StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            AddItem(new AttachmentDialogImageItem(filePath));
+                            this.AddItem(new AttachmentDialogImageItem(filePath));
                         }
                         else if (string.Compare(ext, ".xamlpackage", StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             // load an xamlpackage document.
-                            AddItem(new AttachmentDialogDocumentItem(filePath));
+                            this.AddItem(new AttachmentDialogDocumentItem(filePath));
                         }
                     }
                     catch
@@ -149,7 +149,7 @@ namespace Walkabout.Dialogs
                         // todo?
                     }
                 }
-                LayoutContent();
+                this.LayoutContent();
             }
         }
 
@@ -158,7 +158,7 @@ namespace Walkabout.Dialogs
             get
             {
                 int i = 0;
-                foreach (UIElement e in Canvas.Children)
+                foreach (UIElement e in this.Canvas.Children)
                 {
                     AttachmentDialogItem item = e as AttachmentDialogItem;
                     if (item != null)
@@ -173,33 +173,33 @@ namespace Walkabout.Dialogs
         void LayoutContent()
         {
             // Let the wrap panel do it's thing.
-            Canvas.UpdateLayout();
+            this.Canvas.UpdateLayout();
 
-            if (resizer != null)
+            if (this.resizer != null)
             {
-                MoveResizer(this.selected, GetUnscaledBounds(resizer.Bounds));
+                this.MoveResizer(this.selected, this.GetUnscaledBounds(this.resizer.Bounds));
             }
         }
 
         void SelectItem(AttachmentDialogItem item)
         {
             this.selected = item;
-            AddResizer(item, GetItemContentBounds(item));
+            this.AddResizer(item, this.GetItemContentBounds(item));
         }
 
         private void ClearSelection()
         {
-            selected = null;
-            RemoveResizer();
+            this.selected = null;
+            this.RemoveResizer();
         }
 
         public string Directory
         {
-            get { return storage; }
+            get { return this.storage; }
             set
             {
-                storage = value;
-                actions.StartDelayedAction("Sync", LoadAttachments, TimeSpan.FromMilliseconds(30));
+                this.storage = value;
+                this.actions.StartDelayedAction("Sync", this.LoadAttachments, TimeSpan.FromMilliseconds(30));
             }
         }
 
@@ -241,7 +241,7 @@ namespace Walkabout.Dialogs
                 // hmmm, reusing the device doesn't work because it somehow resets itself to capture higher resolution images.
                 bool hasDevice = false; //  device != null;
 
-                GetScannerAsync(new Action(() =>
+                this.GetScannerAsync(new Action(() =>
                 {
                     WIA.ImageFile imageFile = null;
 
@@ -269,10 +269,10 @@ namespace Walkabout.Dialogs
                         TempFilesManager.AddTempFile(temp);
 
                         AttachmentDialogImageItem image = new AttachmentDialogImageItem(temp);
-                        AddItem(image);
-                        LayoutContent();
-                        SelectItem(image);
-                        AutoCrop(image);
+                        this.AddItem(image);
+                        this.LayoutContent();
+                        this.SelectItem(image);
+                        this.AutoCrop(image);
                     }
                 }));
 
@@ -280,14 +280,14 @@ namespace Walkabout.Dialogs
             catch (Exception ex)
             {
                 device = null;
-                string message = GetWiaErrorMessage(ex);
+                string message = this.GetWiaErrorMessage(ex);
                 MessageBox.Show(this, message, "Scan Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void SetDirty()
         {
-            dirty = true;
+            this.dirty = true;
             CommandManager.InvalidateRequerySuggested();
         }
 
@@ -316,15 +316,15 @@ namespace Walkabout.Dialogs
         private void AddItem(AttachmentDialogItem item)
         {
             item.Margin = new Thickness(10);
-            item.ContentChanged -= OnContentChanged;
-            item.ContentChanged += OnContentChanged;
-            Canvas.Children.Add(item);
+            item.ContentChanged -= this.OnContentChanged;
+            item.ContentChanged += this.OnContentChanged;
+            this.Canvas.Children.Add(item);
         }
 
         void OnContentChanged(object sender, EventArgs e)
         {
             var item = (AttachmentDialogItem)sender;
-            OnItemChanged(item);
+            this.OnItemChanged(item);
         }
 
         private void OnItemChanged(AttachmentDialogItem item)
@@ -332,19 +332,19 @@ namespace Walkabout.Dialogs
             if (item != null)
             {
                 this.selected.InvalidateArrange();
-                LayoutContent();
-                SelectItem(this.selected); // fix up the resizer.
+                this.LayoutContent();
+                this.SelectItem(this.selected); // fix up the resizer.
                 this.SetDirty();
             }
         }
 
         private void OnItemRemoved(AttachmentDialogItem item)
         {
-            Canvas.Children.Remove(item);
-            if (item == selected)
+            this.Canvas.Children.Remove(item);
+            if (item == this.selected)
             {
-                RemoveResizer();
-                selected = null;
+                this.RemoveResizer();
+                this.selected = null;
             }
         }
 
@@ -353,48 +353,48 @@ namespace Walkabout.Dialogs
         /// </summary>
         private void AddResizer(AttachmentDialogItem item, Rect cropBounds)
         {
-            if (resizer == null)
+            if (this.resizer == null)
             {
-                resizer = new Resizer();
-                resizer.BorderBrush = resizer.ThumbBrush = this.resizerBrush;
-                resizer.ThumbSize = ResizerThumbSize; resizer.Resized += OnResized;
-                resizer.Resizing += OnResizing;
-                this.Adorners.Children.Add(resizer);
+                this.resizer = new Resizer();
+                this.resizer.BorderBrush = this.resizer.ThumbBrush = this.resizerBrush;
+                this.resizer.ThumbSize = ResizerThumbSize; this.resizer.Resized += this.OnResized;
+                this.resizer.Resizing += this.OnResizing;
+                this.Adorners.Children.Add(this.resizer);
             }
 
-            MoveResizer(item, cropBounds);
+            this.MoveResizer(item, cropBounds);
         }
 
         private void MoveResizer(AttachmentDialogItem item, Rect resizerBounds)
         {
             // Transform resizer so it is anchored around the selected image.
-            if (resizer != null && item != null)
+            if (this.resizer != null && item != null)
             {
-                resizer.LimitBounds = GetScaledBounds(item.ResizeLimit);
-                resizer.Bounds = GetScaledBounds(resizerBounds);
-                resizer.InvalidateArrange();
+                this.resizer.LimitBounds = this.GetScaledBounds(item.ResizeLimit);
+                this.resizer.Bounds = this.GetScaledBounds(resizerBounds);
+                this.resizer.InvalidateArrange();
             }
         }
 
         void OnResized(object sender, EventArgs e)
         {
-            SetDirty();
+            this.SetDirty();
         }
 
         void OnResizing(object sender, EventArgs e)
         {
             if (this.selected != null && this.selected.LiveResizable)
             {
-                this.selected.Resize(resizer.Bounds);
+                this.selected.Resize(this.resizer.Bounds);
             }
         }
 
         private void RemoveResizer()
         {
-            if (resizer != null)
+            if (this.resizer != null)
             {
-                this.Adorners.Children.Remove(resizer);
-                resizer = null;
+                this.Adorners.Children.Remove(this.resizer);
+                this.resizer = null;
             }
         }
 
@@ -402,47 +402,47 @@ namespace Walkabout.Dialogs
         {
             base.OnClosing(e);
 
-            actions.CancelAll();
-            if (dirty)
+            this.actions.CancelAll();
+            if (this.dirty)
             {
-                Save(this, null);
+                this.Save(this, null);
             }
 
-            Manager.FindAttachments(this.Transaction);
+            this.Manager.FindAttachments(this.Transaction);
 
-            closed = true;
+            this.closed = true;
             TempFilesManager.Cleanup();
         }
 
         private void ZoomIn(object sender, RoutedEventArgs e)
         {
-            ScaleTransform scale = Canvas.LayoutTransform as ScaleTransform;
+            ScaleTransform scale = this.Canvas.LayoutTransform as ScaleTransform;
             if (scale == null)
             {
-                Canvas.LayoutTransform = scale = new ScaleTransform(1, 1);
+                this.Canvas.LayoutTransform = scale = new ScaleTransform(1, 1);
             }
-            if (resizer != null)
+            if (this.resizer != null)
             {
-                Rect bounds = GetUnscaledBounds(resizer.Bounds);
+                Rect bounds = this.GetUnscaledBounds(this.resizer.Bounds);
                 scale.ScaleX = scale.ScaleY = (scale.ScaleY * 1.1);
-                CanvasGrid.UpdateLayout();
-                MoveResizer(selected, bounds);
+                this.CanvasGrid.UpdateLayout();
+                this.MoveResizer(this.selected, bounds);
             }
         }
 
         private void ZoomOut(object sender, RoutedEventArgs e)
         {
-            ScaleTransform scale = Canvas.LayoutTransform as ScaleTransform;
+            ScaleTransform scale = this.Canvas.LayoutTransform as ScaleTransform;
             if (scale == null)
             {
-                Canvas.LayoutTransform = scale = new ScaleTransform(1, 1);
+                this.Canvas.LayoutTransform = scale = new ScaleTransform(1, 1);
             }
-            if (resizer != null)
+            if (this.resizer != null)
             {
-                Rect bounds = GetUnscaledBounds(resizer.Bounds);
+                Rect bounds = this.GetUnscaledBounds(this.resizer.Bounds);
                 scale.ScaleX = scale.ScaleY = (scale.ScaleY / 1.1);
-                CanvasGrid.UpdateLayout();
-                MoveResizer(selected, bounds);
+                this.CanvasGrid.UpdateLayout();
+                this.MoveResizer(this.selected, bounds);
             }
         }
 
@@ -462,12 +462,12 @@ namespace Walkabout.Dialogs
             try
             {
                 int index = 0;
-                foreach (UIElement element in Canvas.Children)
+                foreach (UIElement element in this.Canvas.Children)
                 {
                     AttachmentDialogItem item = element as AttachmentDialogItem;
                     if (item != null)
                     {
-                        string fileName = Manager.GetUniqueFileName(this.Transaction, item.FileExtension);
+                        string fileName = this.Manager.GetUniqueFileName(this.Transaction, item.FileExtension);
                         string existing = item.FileName;
                         if (!string.IsNullOrEmpty(existing) && string.Compare(fileName, existing, StringComparison.OrdinalIgnoreCase) != 0)
                         {
@@ -478,10 +478,10 @@ namespace Walkabout.Dialogs
                         AttachmentDialogImageItem img = item as AttachmentDialogImageItem;
                         if (img != null)
                         {
-                            if (item == selected && resizer != null)
+                            if (item == this.selected && this.resizer != null)
                             {
                                 // crop it.
-                                Rect bounds = GetUnscaledBounds(resizer.Bounds);
+                                Rect bounds = this.GetUnscaledBounds(this.resizer.Bounds);
                                 img.Resize(bounds);
                             }
                         }
@@ -493,9 +493,9 @@ namespace Walkabout.Dialogs
                     }
                 }
 
-                ClearSelection();
-                LoadAttachments();
-                dirty = false;
+                this.ClearSelection();
+                this.LoadAttachments();
+                this.dirty = false;
             }
             catch (Exception ex)
             {
@@ -518,12 +518,12 @@ namespace Walkabout.Dialogs
         private Rect GetScaledBounds(Rect unscaledBounds)
         {
             Rect bounds = unscaledBounds;
-            return selected.Content.TransformToAncestor(CanvasGrid).TransformBounds(unscaledBounds);
+            return this.selected.Content.TransformToAncestor(this.CanvasGrid).TransformBounds(unscaledBounds);
         }
 
         private Rect GetUnscaledBounds(Rect scaledBounds)
         {
-            Rect bounds = CanvasGrid.TransformToDescendant(selected.Content).TransformBounds(scaledBounds);
+            Rect bounds = this.CanvasGrid.TransformToDescendant(this.selected.Content).TransformBounds(scaledBounds);
             if (bounds.Left < 0)
             {
                 bounds.Width += bounds.Left;
@@ -547,8 +547,8 @@ namespace Walkabout.Dialogs
                 {
                     string filePath = item.FileName;
                     TempFilesManager.DeleteFile(filePath);
-                    OnItemRemoved(item);
-                    SetDirty();
+                    this.OnItemRemoved(item);
+                    this.SetDirty();
                 }
             }
             catch (Exception ex)
@@ -559,15 +559,15 @@ namespace Walkabout.Dialogs
 
         private void Cut(object sender, ExecutedRoutedEventArgs e)
         {
-            Copy(sender, e);
-            Delete(sender, e);
+            this.Copy(sender, e);
+            this.Delete(sender, e);
         }
 
         private void Copy(object sender, ExecutedRoutedEventArgs e)
         {
-            if (selected != null)
+            if (this.selected != null)
             {
-                selected.Copy();
+                this.selected.Copy();
             }
         }
 
@@ -602,26 +602,26 @@ namespace Walkabout.Dialogs
 
             if (newItem != null)
             {
-                AddItem(newItem);
-                LayoutContent();
-                SelectItem(newItem);
-                SetDirty();
+                this.AddItem(newItem);
+                this.LayoutContent();
+                this.SelectItem(newItem);
+                this.SetDirty();
             }
         }
 
         private void HasSelectedItem(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (selected != null);
+            e.CanExecute = (this.selected != null);
         }
 
         private void HasSelectedImage(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (selected is AttachmentDialogImageItem);
+            e.CanExecute = (this.selected is AttachmentDialogImageItem);
         }
 
         private void CanSave(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = dirty && this.ItemCount > 0;
+            e.CanExecute = this.dirty && this.ItemCount > 0;
         }
 
         private static AttachmentDialog dialog = null;
@@ -726,7 +726,7 @@ namespace Walkabout.Dialogs
                 return;
             }
             img.RotateImage(90);
-            OnItemChanged(img);
+            this.OnItemChanged(img);
         }
 
         private void RotateLeft(object sender, ExecutedRoutedEventArgs e)
@@ -737,7 +737,7 @@ namespace Walkabout.Dialogs
                 return;
             }
             img.RotateImage(-90.0);
-            OnItemChanged(img);
+            this.OnItemChanged(img);
         }
 
         const double PrintMargin = 10;
@@ -749,7 +749,7 @@ namespace Walkabout.Dialogs
                 return;
             }
 
-            Rect bounds = GetItemContentBounds(this.selected);
+            Rect bounds = this.GetItemContentBounds(this.selected);
             double w = bounds.Width;
             double h = bounds.Height;
 
@@ -773,7 +773,7 @@ namespace Walkabout.Dialogs
             {
                 return;
             }
-            AutoCrop(img);
+            this.AutoCrop(img);
         }
 
         private void AutoCrop(AttachmentDialogImageItem img)
@@ -781,8 +781,8 @@ namespace Walkabout.Dialogs
             CannyEdgeDetector edgeDetector = new CannyEdgeDetector(img.Bitmap, 20, 80, 30);
             edgeDetector.DetectEdges();
             Rect bounds = edgeDetector.EdgeBounds;
-            AddResizer(img, bounds);
-            SetDirty();
+            this.AddResizer(img, bounds);
+            this.SetDirty();
         }
 
     }
@@ -868,7 +868,7 @@ namespace Walkabout.Dialogs
         {
             this.image = new Image();
             this.image.Source = source;
-            this.AddVisualChild(image);
+            this.AddVisualChild(this.image);
         }
 
         public AttachmentDialogImageItem(string filePath)
@@ -879,12 +879,12 @@ namespace Walkabout.Dialogs
 
             if (frame.Format != PixelFormats.Pbgra32)
             {
-                frame = ConvertImageFormat(frame);
+                frame = this.ConvertImageFormat(frame);
             }
 
             this.image = new Image();
             this.image.Source = frame;
-            this.AddVisualChild(image);
+            this.AddVisualChild(this.image);
         }
 
         private static BitmapFrame LoadImage(string filePath)
@@ -948,18 +948,18 @@ namespace Walkabout.Dialogs
 
         public override FrameworkElement Content
         {
-            get { return image; }
+            get { return this.image; }
         }
 
         public BitmapSource Bitmap
         {
-            get { return (BitmapSource)image.Source; }
-            set { image.Source = value; }
+            get { return (BitmapSource)this.image.Source; }
+            set { this.image.Source = value; }
         }
 
         public override void Copy()
         {
-            Clipboard.SetImage((BitmapSource)image.Source);
+            Clipboard.SetImage((BitmapSource)this.image.Source);
         }
 
 
@@ -967,9 +967,9 @@ namespace Walkabout.Dialogs
         {
             return new Image()
             {
-                Source = image.Source,
-                Width = image.Source.Width,
-                Height = image.Source.Height
+                Source = this.image.Source,
+                Width = this.image.Source.Width,
+                Height = this.image.Source.Height
             };
         }
 
@@ -987,7 +987,7 @@ namespace Walkabout.Dialogs
         {
             if (index == 0)
             {
-                return image;
+                return this.image;
             }
             return null;
         }
@@ -1002,19 +1002,19 @@ namespace Walkabout.Dialogs
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            image.Measure(availableSize);
-            return new Size(image.Source.Width, image.Source.Height);
+            this.image.Measure(availableSize);
+            return new Size(this.image.Source.Width, this.image.Source.Height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            image.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+            this.image.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
             return finalSize;
         }
 
         public override Rect ResizeLimit
         {
-            get { return new Rect(0, 0, image.Source.Width, image.Source.Height); }
+            get { return new Rect(0, 0, this.image.Source.Width, this.image.Source.Height); }
         }
 
         public override void Resize(Rect bounds)
@@ -1049,7 +1049,7 @@ namespace Walkabout.Dialogs
 
         internal void RotateImage(double degrees)
         {
-            ImageSource source = image.Source;
+            ImageSource source = this.image.Source;
 
             // then copy the image to a format we can handle.
             double w = source.Width;
@@ -1077,7 +1077,7 @@ namespace Walkabout.Dialogs
             img.Arrange(bounds);
             copy.Render(img);
 
-            image.Source = copy;
+            this.image.Source = copy;
         }
 
     }
@@ -1092,32 +1092,32 @@ namespace Walkabout.Dialogs
 
         public AttachmentDialogDocumentItem()
         {
-            richText = new RichTextBox();
-            richText.MinWidth = 600;
-            this.AddVisualChild(richText);
-            RegisterEvents();
+            this.richText = new RichTextBox();
+            this.richText.MinWidth = 600;
+            this.AddVisualChild(this.richText);
+            this.RegisterEvents();
         }
 
         public AttachmentDialogDocumentItem(string fileName)
         {
             this.FileName = fileName;
 
-            richText = new RichTextBox();
-            richText.MinWidth = 600;
+            this.richText = new RichTextBox();
+            this.richText.MinWidth = 600;
 
             using (FileStream fs = new FileStream(fileName, FileMode.Open))
             {
-                Load(fs, DataFormats.XamlPackage);
+                this.Load(fs, DataFormats.XamlPackage);
             }
 
-            this.AddVisualChild(richText);
-            RegisterEvents();
+            this.AddVisualChild(this.richText);
+            this.RegisterEvents();
         }
 
         public AttachmentDialogDocumentItem(IDataObject clipboard)
         {
-            richText = new RichTextBox();
-            richText.MinWidth = 600;
+            this.richText = new RichTextBox();
+            this.richText.MinWidth = 600;
 
             using (MemoryStream ms = new MemoryStream())
             {
@@ -1151,38 +1151,38 @@ namespace Walkabout.Dialogs
 
                 if (text != null)
                 {
-                    var content = new TextRange(richText.Document.ContentStart, richText.Document.ContentEnd);
+                    var content = new TextRange(this.richText.Document.ContentStart, this.richText.Document.ContentEnd);
                     content.Text = text;
                 }
                 else
                 {
-                    Load(ms, dataFormat);
+                    this.Load(ms, dataFormat);
                 }
             }
 
-            this.AddVisualChild(richText);
-            RegisterEvents();
+            this.AddVisualChild(this.richText);
+            this.RegisterEvents();
         }
 
         private void RegisterEvents()
         {
-            richText.TextChanged += richText_TextChanged;
+            this.richText.TextChanged += this.richText_TextChanged;
         }
 
         void richText_TextChanged(object sender, TextChangedEventArgs e)
         {
-            OnContentChanged();
+            this.OnContentChanged();
         }
 
         private void Load(Stream stream, string dataFormat)
         {
-            var content = new TextRange(richText.Document.ContentStart, richText.Document.ContentEnd);
+            var content = new TextRange(this.richText.Document.ContentStart, this.richText.Document.ContentEnd);
             content.Load(stream, dataFormat);
         }
 
         public override FrameworkElement Content
         {
-            get { return richText; }
+            get { return this.richText; }
         }
 
         public override string FileExtension
@@ -1204,17 +1204,17 @@ namespace Walkabout.Dialogs
         {
             // all we want to resize actually is the width of the richText box
             // the rest will flow from there...
-            richText.Width = newBounds.Width;
-            richText.ClearValue(RichTextBox.MinWidthProperty);
-            InvalidateArrange();
-            OnContentChanged();
+            this.richText.Width = newBounds.Width;
+            this.richText.ClearValue(RichTextBox.MinWidthProperty);
+            this.InvalidateArrange();
+            this.OnContentChanged();
         }
 
         public override void Copy()
         {
             try
             {
-                var content = new TextRange(richText.Document.ContentStart, richText.Document.ContentEnd);
+                var content = new TextRange(this.richText.Document.ContentStart, this.richText.Document.ContentEnd);
                 using (MemoryStream ms = new MemoryStream())
                 {
                     content.Save(ms, DataFormats.XamlPackage, true);
@@ -1240,9 +1240,9 @@ namespace Walkabout.Dialogs
         public override FrameworkElement CloneContent()
         {
             RichTextBox copy = new RichTextBox();
-            copy.MinWidth = richText.MinWidth;
+            copy.MinWidth = this.richText.MinWidth;
 
-            var content = new TextRange(richText.Document.ContentStart, richText.Document.ContentEnd);
+            var content = new TextRange(this.richText.Document.ContentStart, this.richText.Document.ContentEnd);
             using (MemoryStream ms = new MemoryStream())
             {
                 content.Save(ms, DataFormats.XamlPackage, true);
@@ -1258,7 +1258,7 @@ namespace Walkabout.Dialogs
         {
             this.FileName = fileName;
 
-            var content = new TextRange(richText.Document.ContentStart, richText.Document.ContentEnd);
+            var content = new TextRange(this.richText.Document.ContentStart, this.richText.Document.ContentEnd);
             using (MemoryStream ms = new MemoryStream())
             {
                 content.Save(ms, DataFormats.XamlPackage, true);
@@ -1277,7 +1277,7 @@ namespace Walkabout.Dialogs
         {
             if (index == 0)
             {
-                return richText;
+                return this.richText;
             }
             return null;
         }
@@ -1292,13 +1292,13 @@ namespace Walkabout.Dialogs
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            richText.Measure(availableSize);
-            return richText.DesiredSize;
+            this.richText.Measure(availableSize);
+            return this.richText.DesiredSize;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            richText.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+            this.richText.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
             return finalSize;
         }
 

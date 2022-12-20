@@ -10,8 +10,8 @@ namespace Walkabout.Dialogs
     {
         public PickYearDialog()
         {
-            InitializeComponent();
-            this.Loaded += new RoutedEventHandler(OnLoaded);
+            this.InitializeComponent();
+            Loaded += new RoutedEventHandler(this.OnLoaded);
         }
 
         public void SetPrompt(string text)

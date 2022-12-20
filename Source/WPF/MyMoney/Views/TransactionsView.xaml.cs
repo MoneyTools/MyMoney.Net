@@ -105,24 +105,24 @@ namespace Walkabout.Views
 
         public MoneyDataGrid TheActiveGrid
         {
-            get { return theGrid; }
-            set { theGrid = value; }
+            get { return this.theGrid; }
+            set { this.theGrid = value; }
         }
 
         public ListCollectionView PayeesAndTransferNames
         {
-            get { return new ListCollectionView(GetPayeesAndTransfersList()); }
+            get { return new ListCollectionView(this.GetPayeesAndTransfersList()); }
         }
 
         private List<string> GetPayeesAndTransfersList()
         {
             List<string> names = new List<string>();
-            foreach (Payee p in myMoney.Payees.GetPayees())
+            foreach (Payee p in this.myMoney.Payees.GetPayees())
             {
                 names.Add(p.Name);
             }
 
-            foreach (Account a in myMoney.Accounts.GetAccounts())
+            foreach (Account a in this.myMoney.Accounts.GetAccounts())
             {
                 names.Add(Transaction.GetTransferCaption(a, false));
                 names.Add(Transaction.GetTransferCaption(a, true));
@@ -140,7 +140,7 @@ namespace Walkabout.Views
         {
             get
             {
-                var list = myMoney.Securities.GetSortedSecurities();
+                var list = this.myMoney.Securities.GetSortedSecurities();
                 list.Insert(0, Security.None); // so user can remove the security.
                 return new ListCollectionView(list);
             }
@@ -148,8 +148,8 @@ namespace Walkabout.Views
 
         public ObservableCollection<InvestmentType> Activities
         {
-            get { return (ObservableCollection<InvestmentType>)GetValue(ActivitiesProperty); }
-            set { SetValue(ActivitiesProperty, value); }
+            get { return (ObservableCollection<InvestmentType>)this.GetValue(ActivitiesProperty); }
+            set { this.SetValue(ActivitiesProperty, value); }
         }
 
         public static readonly DependencyProperty ActivitiesProperty =
@@ -158,7 +158,7 @@ namespace Walkabout.Views
 
         public void UpdateActivities()
         {
-            ObservableCollection<InvestmentType> list = Activities;
+            ObservableCollection<InvestmentType> list = this.Activities;
             if (list == null)
             {
                 list = new ObservableCollection<InvestmentType>();
@@ -182,23 +182,23 @@ namespace Walkabout.Views
 
         private void OnOneLineViewChanged()
         {
-            ToggleShowLinesImage.Symbol = (OneLineView) ? Symbol.List : Symbol.ShowResults;
-            FireBeforeViewStateChanged();
+            this.ToggleShowLinesImage.Symbol = (this.OneLineView) ? Symbol.List : Symbol.ShowResults;
+            this.FireBeforeViewStateChanged();
             if (OneLineViewChanged != null)
             {
                 OneLineViewChanged(this, EventArgs.Empty);
             }
-            TheActiveGrid.AsyncScrollSelectedRowIntoView();
+            this.TheActiveGrid.AsyncScrollSelectedRowIntoView();
         }
 
         public bool OneLineView
         {
-            get { return (bool)GetValue(OneLineViewProperty); }
+            get { return (bool)this.GetValue(OneLineViewProperty); }
             set
             {
-                if (value != (bool)GetValue(OneLineViewProperty))
+                if (value != (bool)this.GetValue(OneLineViewProperty))
                 {
-                    SetValue(OneLineViewProperty, value);
+                    this.SetValue(OneLineViewProperty, value);
                 }
             }
         }
@@ -207,31 +207,31 @@ namespace Walkabout.Views
 
         private void OnToggleLines(object sender, RoutedEventArgs e)
         {
-            OneLineView = !OneLineView;
+            this.OneLineView = !this.OneLineView;
         }
 
         private void OnToggleShowSplits(object sender, RoutedEventArgs e)
         {
-            ViewAllSplits = !ViewAllSplits;
+            this.ViewAllSplits = !this.ViewAllSplits;
         }
 
         private void OnToggleShowSecurities_Checked(object sender, RoutedEventArgs e)
         {
-            if (portfolioReport != null)
+            if (this.portfolioReport != null)
             {
-                ToggleExpandAll.ToolTip = "Hide Details";
-                portfolioReport.ExpandAll();
-                ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "CollapseAllIcon");
+                this.ToggleExpandAll.ToolTip = "Hide Details";
+                this.portfolioReport.ExpandAll();
+                this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "CollapseAllIcon");
             }
         }
 
         private void OnToggleShowSecurities_Unchecked(object sender, RoutedEventArgs e)
         {
-            if (portfolioReport != null)
+            if (this.portfolioReport != null)
             {
-                ToggleExpandAll.ToolTip = "Show Details";
-                portfolioReport.CollapseAll();
-                ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
+                this.ToggleExpandAll.ToolTip = "Show Details";
+                this.portfolioReport.CollapseAll();
+                this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
             }
         }
 
@@ -247,41 +247,41 @@ namespace Walkabout.Views
 
         private void OnViewAllSplitsChanged()
         {
-            FireBeforeViewStateChanged();
+            this.FireBeforeViewStateChanged();
 
             // Toggle the Detail Split View 
-            if (ViewAllSplits == true)
+            if (this.ViewAllSplits == true)
             {
-                TheActiveGrid.RowDetailsTemplate = TryFindResource("myDataGridDetailMiniView") as DataTemplate;
-                TheActiveGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Visible;
-                splitVisibleRowId = this.SelectedRowId;
+                this.TheActiveGrid.RowDetailsTemplate = this.TryFindResource("myDataGridDetailMiniView") as DataTemplate;
+                this.TheActiveGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Visible;
+                this.splitVisibleRowId = this.SelectedRowId;
             }
             else
             {
-                TheActiveGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Collapsed;
-                splitVisibleRowId = -1;
+                this.TheActiveGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Collapsed;
+                this.splitVisibleRowId = -1;
             }
         }
 
         public bool ViewAllSplits
         {
-            get { return (bool)GetValue(ViewAllSplitsProperty); }
+            get { return (bool)this.GetValue(ViewAllSplitsProperty); }
             set
             {
-                SetValue(ViewAllSplitsProperty, value);
+                this.SetValue(ViewAllSplitsProperty, value);
 
                 //ToggleShowSplits.IsChecked = value;
 
-                ToggleShowSplits.ToolTip = value ? "Hide All Splits" : "Show All Splits";
+                this.ToggleShowSplits.ToolTip = value ? "Hide All Splits" : "Show All Splits";
 
-                ToggleShowSplitsImage.Symbol = value ? Symbol.ShowBcc : Symbol.HideBcc;
+                this.ToggleShowSplitsImage.Symbol = value ? Symbol.ShowBcc : Symbol.HideBcc;
             }
         }
 
         public TransactionFilter TransactionFilter
         {
-            get { return (TransactionFilter)GetValue(TransactionFilterProperty); }
-            set { SetValue(TransactionFilterProperty, value); }
+            get { return (TransactionFilter)this.GetValue(TransactionFilterProperty); }
+            set { this.SetValue(TransactionFilterProperty, value); }
         }
 
         private bool programaticFilterChange;
@@ -303,11 +303,11 @@ namespace Walkabout.Views
         private void UpdateUX()
         {
             bool someFilteringIsBeingApplied = false;
-            if (TransactionFilter != TransactionFilter.All)
+            if (this.TransactionFilter != TransactionFilter.All)
             {
                 someFilteringIsBeingApplied = true;
             }
-            else if (string.IsNullOrWhiteSpace(quickFilter) == false)
+            else if (string.IsNullOrWhiteSpace(this.quickFilter) == false)
             {
                 someFilteringIsBeingApplied = true;
             }
@@ -370,13 +370,13 @@ namespace Walkabout.Views
                     break;
             }
 
-            if (!programaticFilterChange)
+            if (!this.programaticFilterChange)
             {
                 if (this.currentDisplayName == TransactionViewName.Custom && this.activeAccount != null)
                 {
                     this.currentDisplayName = TransactionViewName.Account;
                 }
-                Refresh();
+                this.Refresh();
             }
         }
 
@@ -394,53 +394,53 @@ namespace Walkabout.Views
             {
 #endif
 
-                InitializeComponent();
+                this.InitializeComponent();
 
-                TheGrid_BankTransactionDetails.ParentMenu = this.ContextMenu;
-                TheGrid_BankTransactionDetails.CustomBeginEdit += OnCustomBeginEdit;
+                this.TheGrid_BankTransactionDetails.ParentMenu = this.ContextMenu;
+                this.TheGrid_BankTransactionDetails.CustomBeginEdit += this.OnCustomBeginEdit;
 
-                TheGrid_TransactionFromDetails.ParentMenu = this.ContextMenu;
-                TheGrid_TransactionFromDetails.CustomBeginEdit += OnCustomBeginEdit;
+                this.TheGrid_TransactionFromDetails.ParentMenu = this.ContextMenu;
+                this.TheGrid_TransactionFromDetails.CustomBeginEdit += this.OnCustomBeginEdit;
 
-                TheGrid_InvestmentActivity.ParentMenu = this.ContextMenu;
-                TheGrid_TransactionFromDetails.CustomBeginEdit += OnCustomBeginEdit;
+                this.TheGrid_InvestmentActivity.ParentMenu = this.ContextMenu;
+                this.TheGrid_TransactionFromDetails.CustomBeginEdit += this.OnCustomBeginEdit;
 
-                TheGrid_BySecurity.ParentMenu = this.ContextMenu;
-                TheGrid_BySecurity.CustomBeginEdit += OnCustomBeginEdit;
+                this.TheGrid_BySecurity.ParentMenu = this.ContextMenu;
+                this.TheGrid_BySecurity.CustomBeginEdit += this.OnCustomBeginEdit;
 
-                TheActiveGrid = TheGrid_BankTransactionDetails;
+                this.TheActiveGrid = this.TheGrid_BankTransactionDetails;
 
-                InvestmentAccountTabs.SelectionChanged += new SelectionChangedEventHandler(OnInvestmentAccountTabs_SelectionChanged);
+                this.InvestmentAccountTabs.SelectionChanged += new SelectionChangedEventHandler(this.OnInvestmentAccountTabs_SelectionChanged);
 
                 //
                 // Setup the grids and hide them, they were visible in the XAML in order to assist in designing
                 //
-                SetupGrid(TheGrid_BankTransactionDetails, true);
-                SetupGrid(TheGrid_TransactionFromDetails, true);
-                SetupGrid(TheGrid_InvestmentActivity, true);
-                SetupGrid(TheGrid_BySecurity, true);
+                this.SetupGrid(this.TheGrid_BankTransactionDetails, true);
+                this.SetupGrid(this.TheGrid_TransactionFromDetails, true);
+                this.SetupGrid(this.TheGrid_InvestmentActivity, true);
+                this.SetupGrid(this.TheGrid_BySecurity, true);
 
-                TheGrid_BankTransactionDetails.Visibility = System.Windows.Visibility.Collapsed;
-                TheGrid_TransactionFromDetails.Visibility = System.Windows.Visibility.Collapsed;
-                TheGrid_InvestmentActivity.Visibility = System.Windows.Visibility.Collapsed;
-                TheGrid_BySecurity.Visibility = System.Windows.Visibility.Collapsed;
-                InvestmentPortfolioView.Visibility = System.Windows.Visibility.Collapsed;
-                ToggleExpandAll.Visibility = System.Windows.Visibility.Collapsed;
+                this.TheGrid_BankTransactionDetails.Visibility = System.Windows.Visibility.Collapsed;
+                this.TheGrid_TransactionFromDetails.Visibility = System.Windows.Visibility.Collapsed;
+                this.TheGrid_InvestmentActivity.Visibility = System.Windows.Visibility.Collapsed;
+                this.TheGrid_BySecurity.Visibility = System.Windows.Visibility.Collapsed;
+                this.InvestmentPortfolioView.Visibility = System.Windows.Visibility.Collapsed;
+                this.ToggleExpandAll.Visibility = System.Windows.Visibility.Collapsed;
 
                 ContextMenu menu = this.ContextMenu;
                 menu.DataContext = this;
 
                 // setup initial state to be multi-line view
-                OneLineView = false;
-                OnOneLineViewChanged(); // initialize icon.
+                this.OneLineView = false;
+                this.OnOneLineViewChanged(); // initialize icon.
 
                 // setup initial state of split details view.
-                OnViewAllSplitsChanged();
+                this.OnViewAllSplitsChanged();
 
                 // setup initial transaction filter settings
-                OnTransactionFilterChanged();
+                this.OnTransactionFilterChanged();
 
-                this.Unloaded += OnTransactionViewUnloaded;
+                Unloaded += this.OnTransactionViewUnloaded;
 #if PerformanceBlocks
             }
 #endif
@@ -473,14 +473,14 @@ namespace Walkabout.Views
             if (row.IsSelected && args is MouseButtonEventArgs mouseArgs)
             {
                 DataGridColumn column = e.Column;
-                string name = GetHitFieldName(column, row, mouseArgs);
+                string name = this.GetHitFieldName(column, row, mouseArgs);
                 if (!string.IsNullOrEmpty(name))
                 {
                     e.Handled = true;
                     // lazy disptach to allow the actual editors to be created.
-                    Dispatcher.BeginInvoke(new Action(() =>
+                    this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        OnStartEdit(column, row, name);
+                        this.OnStartEdit(column, row, name);
                     }), System.Windows.Threading.DispatcherPriority.Background);
                 }
             }
@@ -528,7 +528,7 @@ namespace Walkabout.Views
 
         private void OnTransactionViewUnloaded(object sender, RoutedEventArgs e)
         {
-            delayedUpdates.CancelAll();
+            this.delayedUpdates.CancelAll();
         }
 
         private void SetupContextMenuBinding(ContextMenu menu, string itemname, DependencyProperty property, Binding binding)
@@ -542,23 +542,23 @@ namespace Walkabout.Views
 
         private void SetupGrid(MoneyDataGrid grid, bool supportDragDrop)
         {
-            grid.BeginningEdit += OnBeginEdit;
-            grid.RowEditEnding += OnDataGridCommit;
-            grid.PreviewKeyDown += new KeyEventHandler(OnDataGridPreviewKeyDown);
-            grid.KeyDown += new KeyEventHandler(OnDataGrid_KeyDown);
-            grid.SelectionChanged += new SelectionChangedEventHandler(TheGrid_SelectionChanged);
-            grid.CellEditEnding += new EventHandler<DataGridCellEditEndingEventArgs>(OnDataGridCellEditEnding);
+            grid.BeginningEdit += this.OnBeginEdit;
+            grid.RowEditEnding += this.OnDataGridCommit;
+            grid.PreviewKeyDown += new KeyEventHandler(this.OnDataGridPreviewKeyDown);
+            grid.KeyDown += new KeyEventHandler(this.OnDataGrid_KeyDown);
+            grid.SelectionChanged += new SelectionChangedEventHandler(this.TheGrid_SelectionChanged);
+            grid.CellEditEnding += new EventHandler<DataGridCellEditEndingEventArgs>(this.OnDataGridCellEditEnding);
             grid.SupportDragDrop = supportDragDrop;
             this.SearchArea.DataContext = this;
         }
 
         void TearDownGrid(DataGrid grid)
         {
-            grid.BeginningEdit -= OnBeginEdit;
-            grid.RowEditEnding -= OnDataGridCommit;
-            grid.PreviewKeyDown -= new KeyEventHandler(OnDataGridPreviewKeyDown);
-            grid.KeyDown -= new KeyEventHandler(OnDataGrid_KeyDown);
-            grid.SelectionChanged -= new SelectionChangedEventHandler(TheGrid_SelectionChanged);
+            grid.BeginningEdit -= this.OnBeginEdit;
+            grid.RowEditEnding -= this.OnDataGridCommit;
+            grid.PreviewKeyDown -= new KeyEventHandler(this.OnDataGridPreviewKeyDown);
+            grid.KeyDown -= new KeyEventHandler(this.OnDataGrid_KeyDown);
+            grid.SelectionChanged -= new SelectionChangedEventHandler(this.TheGrid_SelectionChanged);
         }
 
 
@@ -566,9 +566,9 @@ namespace Walkabout.Views
         {
             get
             {
-                if (TheActiveGrid.CurrentColumn != null)
+                if (this.TheActiveGrid.CurrentColumn != null)
                 {
-                    object header = TheActiveGrid.CurrentColumn.Header;
+                    object header = this.TheActiveGrid.CurrentColumn.Header;
                     if (header != null)
                     {
                         return header.ToString();
@@ -592,7 +592,7 @@ namespace Walkabout.Views
         {
             get
             {
-                DataGrid focus = FindDataGridContainingFocus();
+                DataGrid focus = this.FindDataGridContainingFocus();
                 if (focus != null && focus.Name == "TheGridForAmountSplit")
                 {
                     return true;
@@ -603,9 +603,9 @@ namespace Walkabout.Views
 
         private void OnDataGridPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (IsKeyboardFocusInsideSplitsDataGrid)
+            if (this.IsKeyboardFocusInsideSplitsDataGrid)
             {
-                MoneyDataGrid splitGrid = FindDataGridContainingFocus() as MoneyDataGrid;
+                MoneyDataGrid splitGrid = this.FindDataGridContainingFocus() as MoneyDataGrid;
                 if (splitGrid == e.Source)
                 {
                     switch (e.Key)
@@ -636,7 +636,7 @@ namespace Walkabout.Views
 
                         case Key.Insert:
                             {
-                                InsertNewRow();
+                                this.InsertNewRow();
                                 e.Handled = true;
                                 break;
                             }
@@ -650,18 +650,18 @@ namespace Walkabout.Views
                 switch (e.Key)
                 {
                     case Key.F12:
-                        TheActiveGrid.ClearAutoEdit();
+                        this.TheActiveGrid.ClearAutoEdit();
                         break;
 
                     case Key.Tab:
                         {
                             if (e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift))
                             {
-                                e.Handled = TheActiveGrid.MoveFocusToPreviousEditableField();
+                                e.Handled = this.TheActiveGrid.MoveFocusToPreviousEditableField();
                             }
                             else
                             {
-                                e.Handled = TheActiveGrid.MoveFocusToNextEditableField();
+                                e.Handled = this.TheActiveGrid.MoveFocusToNextEditableField();
                             }
                             break;
                         }
@@ -677,7 +677,7 @@ namespace Walkabout.Views
                                     t.Parent.BeginUpdate(true);
                                     try
                                     {
-                                        AutoPopulateCategory(t);
+                                        this.AutoPopulateCategory(t);
 
                                         // ACCEPTED
                                         if (t.Category != null || t.Transfer != null)
@@ -691,9 +691,9 @@ namespace Walkabout.Views
                                         t.Parent.EndUpdate();
                                     }
                                     // Move to the next row
-                                    SelectedRowIndex = SelectedRowIndex + 1;
+                                    this.SelectedRowIndex = this.SelectedRowIndex + 1;
 
-                                    TheActiveGrid.ClearAutoEdit();
+                                    this.TheActiveGrid.ClearAutoEdit();
                                     e.Handled = true;
                                 }
                             }
@@ -711,7 +711,7 @@ namespace Walkabout.Views
 
                     case Key.Insert:
                         {
-                            InsertNewRow();
+                            this.InsertNewRow();
                             e.Handled = true;
                             break;
                         }
@@ -722,13 +722,13 @@ namespace Walkabout.Views
                         {
                             if (this.IsEditing)
                             {
-                                if (CurrentColumnHeader.Contains("Payee"))
+                                if (this.CurrentColumnHeader.Contains("Payee"))
                                 {
-                                    EditModeSetToColumn("Payment");
+                                    this.EditModeSetToColumn("Payment");
                                 }
                                 else
                                 {
-                                    EditModeSetToColumn("Payee");
+                                    this.EditModeSetToColumn("Payee");
                                 }
                                 e.Handled = true;
                             }
@@ -743,7 +743,7 @@ namespace Walkabout.Views
                         {
                             if (this.IsEditing)
                             {
-                                EditModeSetToColumn("Payee");
+                                this.EditModeSetToColumn("Payee");
                                 e.Handled = true;
                             }
                         }
@@ -757,7 +757,7 @@ namespace Walkabout.Views
                         {
                             if (this.IsEditing)
                             {
-                                EditModeSetToColumn("Payment");
+                                this.EditModeSetToColumn("Payment");
                                 e.Handled = true;
                             }
                         }
@@ -765,7 +765,7 @@ namespace Walkabout.Views
 
 
                     case Key.Space:
-                        if (IsReconciling)
+                        if (this.IsReconciling)
                         {
                             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                             {
@@ -777,16 +777,16 @@ namespace Walkabout.Views
                                     try
                                     {
                                         // RECONCILED
-                                        ReconcileThisTransaction(t);
+                                        this.ReconcileThisTransaction(t);
                                     }
                                     finally
                                     {
                                         t.Parent.EndUpdate();
                                     }
                                     // Move to the next row
-                                    SelectedRowIndex = SelectedRowIndex + 1;
+                                    this.SelectedRowIndex = this.SelectedRowIndex + 1;
 
-                                    TheActiveGrid.ClearAutoEdit();
+                                    this.TheActiveGrid.ClearAutoEdit();
                                     e.Handled = true;
                                 }
                             }
@@ -803,23 +803,23 @@ namespace Walkabout.Views
         /// </summary>
         private void InsertNewRow()
         {
-            if (IsEditing)
+            if (this.IsEditing)
             {
-                Commit();
-                TheActiveGrid.CommitEdit(DataGridEditingUnit.Row, true);
+                this.Commit();
+                this.TheActiveGrid.CommitEdit(DataGridEditingUnit.Row, true);
             }
 
             Transaction t = this.SelectedTransaction;
             if (t != null && !t.IsReadOnly)
             {
-                Split s = selectedSplit as Split;
+                Split s = this.selectedSplit as Split;
                 if (s != null)
                 {
-                    InsertNewSplit();
+                    this.InsertNewSplit();
                 }
                 else
                 {
-                    InsertNewTransaction();
+                    this.InsertNewTransaction();
                 }
             }
         }
@@ -834,7 +834,7 @@ namespace Walkabout.Views
 
                 Split s = splits.NewSplit();
                 s.Category = t.Category;
-                Split currentSplit = selectedSplit as Split;
+                Split currentSplit = this.selectedSplit as Split;
                 if (currentSplit != null)
                 {
                     int current = splits.IndexOf(currentSplit);
@@ -872,12 +872,12 @@ namespace Walkabout.Views
             // TODO most of the transaction date are set to 00:00:00 
             // in the future we need to "reSort" all the seconds of all the transaction for that date for this account
             // For now we add 1 second to ensure that it is placed after the Date selected
-            Transaction insertThisTransaction = this.myMoney.Transactions.NewTransaction(ActiveAccount);
+            Transaction insertThisTransaction = this.myMoney.Transactions.NewTransaction(this.ActiveAccount);
             insertThisTransaction.Date = dateForNewTransaction.AddSeconds(1);
             this.myMoney.Transactions.AddTransaction(insertThisTransaction);
 
 
-            TheActiveGrid.SelectedItem = insertThisTransaction;
+            this.TheActiveGrid.SelectedItem = insertThisTransaction;
 
             //-----------------------------------------------------
             // Start Edit mode of the new added row
@@ -887,20 +887,20 @@ namespace Walkabout.Views
                 this.UpdateLayout();
                 this.TheActiveGrid.UpdateLayout();
 
-                Transaction tt = TheActiveGrid.SelectedItem as Transaction;
+                Transaction tt = this.TheActiveGrid.SelectedItem as Transaction;
 
                 //Debug.WriteLine("Current selected item is " + tt.Amount);
 
-                TheActiveGrid.SelectedItem = insertThisTransaction;
+                this.TheActiveGrid.SelectedItem = insertThisTransaction;
 
-                if (TheActiveGrid.SelectedItem == insertThisTransaction)
+                if (this.TheActiveGrid.SelectedItem == insertThisTransaction)
                 {
 
                     //-------------------------------------------------
                     // The new row should be selected now.
                     // We must get the "Payee" cell and put it in edit mode
                     //
-                    EditModeSetToColumn("Payee");
+                    this.EditModeSetToColumn("Payee");
                 }
             }), DispatcherPriority.ContextIdle);
         }
@@ -915,7 +915,7 @@ namespace Walkabout.Views
             DataGridCellInfo dgci = this.TheActiveGrid.SelectedCells[columnToEdit];
             if (dgci != null)
             {
-                DataGridCell dgc = TheActiveGrid.GetCell(TheActiveGrid.GetRowIndex(dgci), TheActiveGrid.GetColIndex(dgci));
+                DataGridCell dgc = this.TheActiveGrid.GetCell(this.TheActiveGrid.GetRowIndex(dgci), this.TheActiveGrid.GetColIndex(dgci));
                 if (dgc == null)
                 {
                     Debug.WriteLine("ERROR - Insert Row and Edit 'dgc' is NULL");
@@ -924,7 +924,7 @@ namespace Walkabout.Views
                 {
                     dgc.Focus();
                     Debug.WriteLineIf(dgc.IsFocused == false, "could not set focus on the new row cell");
-                    TheActiveGrid.BeginEdit();
+                    this.TheActiveGrid.BeginEdit();
                 }
             }
         }
@@ -934,17 +934,17 @@ namespace Walkabout.Views
             switch (e.Key)
             {
                 case Key.Space:
-                    if (IsReconciling)
+                    if (this.IsReconciling)
                     {
-                        ToggleTransactionStateReconciled(this.SelectedTransaction);
-                        SelectedRowIndex = SelectedRowIndex + 1; // Move to the next row
+                        this.ToggleTransactionStateReconciled(this.SelectedTransaction);
+                        this.SelectedRowIndex = this.SelectedRowIndex + 1; // Move to the next row
 
                         e.Handled = true;
                     }
                     break;
 
                 case Key.F6:
-                    if (SelectedTransaction.NonNullSplits.Unassigned != 0)
+                    if (this.SelectedTransaction.NonNullSplits.Unassigned != 0)
                     {
                         System.Windows.Controls.DataGrid dataGrid = sender as System.Windows.Controls.DataGrid;
                         if (dataGrid != null)
@@ -961,7 +961,7 @@ namespace Walkabout.Views
                                     TextBox tb = editors[0] as TextBox;
                                     if (tb != null)
                                     {
-                                        decimal newValue = s.Amount + SelectedTransaction.NonNullSplits.Unassigned;
+                                        decimal newValue = s.Amount + this.SelectedTransaction.NonNullSplits.Unassigned;
                                         tb.Text = Math.Abs(newValue).ToString();
                                     }
                                 }
@@ -1000,11 +1000,11 @@ namespace Walkabout.Views
                     }
                 }
 
-                if (committed.AmountError)
+                if (this.committed.AmountError)
                 {
                     // make sure the binding is reset to the original value.
-                    committed.OnChanged("Credit");
-                    committed.OnChanged("Debit");
+                    this.committed.OnChanged("Credit");
+                    this.committed.OnChanged("Debit");
                 }
             }
         }
@@ -1013,7 +1013,7 @@ namespace Walkabout.Views
 
         private void Rebalance()
         {
-            rebalancing = true;
+            this.rebalancing = true;
             if (this.activeAccount != null)
             {
                 this.myMoney.Rebalance(this.activeAccount);
@@ -1023,16 +1023,16 @@ namespace Walkabout.Views
                 this.myMoney.Rebalance(this.ActiveRental);
             }
 
-            if (isDisplayInvalid)
+            if (this.isDisplayInvalid)
             {
-                Refresh();
-                isDisplayInvalid = false;
+                this.Refresh();
+                this.isDisplayInvalid = false;
             }
             else
             {
-                RefreshVisibleColumns(TheActiveGrid.Name == "TheGrid_BySecurity" ? "RunningBalance" : "Balance");
+                this.RefreshVisibleColumns(this.TheActiveGrid.Name == "TheGrid_BySecurity" ? "RunningBalance" : "Balance");
             }
-            rebalancing = false;
+            this.rebalancing = false;
         }
 
         private void RefreshVisibleColumns(string colummName)
@@ -1040,7 +1040,7 @@ namespace Walkabout.Views
             var rows = this.TheActiveGrid.GetVisibleRows();
             if (rows != null)
             {
-                TransactionCollection c = TheActiveGrid.ItemsSource as TransactionCollection;
+                TransactionCollection c = this.TheActiveGrid.ItemsSource as TransactionCollection;
                 if (c != null)
                 {
                     for (int row = rows.Item1; row < rows.Item2 && row < c.Count; row++)
@@ -1093,12 +1093,12 @@ namespace Walkabout.Views
                     Transaction u = row.Item as Transaction;
                     if (t != u && u != null && t.Amount == u.Amount)
                     {
-                        Merge(t, u, true);
+                        this.Merge(t, u, true);
                     }
                 }
             }
 
-            ClearDragDropStyles(row);
+            this.ClearDragDropStyles(row);
         }
 
         private void Merge(Transaction t, Transaction u, bool promptForConfirmation)
@@ -1145,8 +1145,8 @@ namespace Walkabout.Views
                         mgr.MoveAttachments(u, t);
                     }
                     t.Merge(u);
-                    DeleteTransaction(u, false);
-                    TheActiveGrid.SelectedItem = t;
+                    this.DeleteTransaction(u, false);
+                    this.TheActiveGrid.SelectedItem = t;
                 }
                 catch (Exception ex)
                 {
@@ -1192,7 +1192,7 @@ namespace Walkabout.Views
 
         private void OnDataGridRowDragOver(object sender, DragEventArgs e)
         {
-            OnDataGridRowDragEnter(sender, e);
+            this.OnDataGridRowDragEnter(sender, e);
         }
 
         private void OnDataGridRowDragEnter(object sender, DragEventArgs e)
@@ -1211,7 +1211,7 @@ namespace Walkabout.Views
                         Transaction target = row.Item as Transaction;
                         if (target != null && t != target && t.Amount == target.Amount)
                         {
-                            SetDragDropStyles(row, DropType.Transaction);
+                            this.SetDragDropStyles(row, DropType.Transaction);
                             e.Effects = DragDropEffects.Move;
                         }
                     }
@@ -1223,9 +1223,9 @@ namespace Walkabout.Views
                     {
                         var files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-                        if (files.Length == 1 && IsValidAttachmentExtension(files[0]))
+                        if (files.Length == 1 && this.IsValidAttachmentExtension(files[0]))
                         {
-                            SetDragDropStyles(row, DropType.File);
+                            this.SetDragDropStyles(row, DropType.File);
                             e.Effects = DragDropEffects.Copy;
                         }
                     }
@@ -1244,24 +1244,24 @@ namespace Walkabout.Views
         private void OnDataGridRowDragLeave(object sender, DragEventArgs e)
         {
             DataGridRow row = (DataGridRow)sender;
-            ClearDragDropStyles(row);
+            this.ClearDragDropStyles(row);
         }
 
         private bool isEditing;
 
         private bool IsEditing
         {
-            get { return isEditing; }
+            get { return this.isEditing; }
             set
             {
-                isEditing = value;
-                ttf.IsEnabled = !value;
+                this.isEditing = value;
+                this.ttf.IsEnabled = !value;
             }
         }
 
         private void OnBeginEdit(object sender, DataGridBeginningEditEventArgs e)
         {
-            IsEditing = true;
+            this.IsEditing = true;
             DataGrid grid = (DataGrid)sender;
             DataGridColumn column = e.Column;
             DataGridRow row = e.Row;
@@ -1280,23 +1280,23 @@ namespace Walkabout.Views
 
         public MyMoney Money
         {
-            get { return myMoney; }
+            get { return this.myMoney; }
             set
             {
                 if (this.myMoney != null)
                 {
-                    myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                    this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
                 }
-                myMoney = value;
+                this.myMoney = value;
                 if (value != null)
                 {
-                    myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
+                    this.myMoney.Changed += new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
                 }
                 this.TheActiveGrid.ClearItemsSource();
 
-                if (this.IsVisible && currentDisplayName != TransactionViewName.None)
+                if (this.IsVisible && this.currentDisplayName != TransactionViewName.None)
                 {
-                    InvalidateDisplay();
+                    this.InvalidateDisplay();
                 }
             }
         }
@@ -1355,25 +1355,25 @@ namespace Walkabout.Views
 
         public void Commit()
         {
-            if (IsEditing)
+            if (this.IsEditing)
             {
-                TheActiveGrid.CommitEdit();
+                this.TheActiveGrid.CommitEdit();
                 // bugbug: change in behavior in Windows 8, you have to call commit twice to really commit!!!!!!!!!
-                TheActiveGrid.CommitEdit();
+                this.TheActiveGrid.CommitEdit();
             }
         }
 
         public bool CheckTransfers()
         {
-            Commit();
-            List<Transaction> dangling = myMoney.CheckTransfers();
+            this.Commit();
+            List<Transaction> dangling = this.myMoney.CheckTransfers();
             if (dangling.Count > 0)
             {
                 if (MessageBoxEx.Show(
                             "Dangling transfers have been found, do you want to fix them now?",
                             "Dangling Transfers", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
                 {
-                    ShowDanglingTransfers(dangling);
+                    this.ShowDanglingTransfers(dangling);
                     return false; // tell caller we found transfers, and user wants to fix them.
                 }
             }
@@ -1382,15 +1382,15 @@ namespace Walkabout.Views
 
         private void ShowDanglingTransfers(List<Transaction> dangling)
         {
-            FireBeforeViewStateChanged();
+            this.FireBeforeViewStateChanged();
             this.fixedList = null;
             this.lastQuery = null;
-            SwitchLayout("TheGrid_TransactionFromDetails");
-            SetActiveAccount(null, null, null, null, null);
+            this.SwitchLayout("TheGrid_TransactionFromDetails");
+            this.SetActiveAccount(null, null, null, null, null);
             Account danglingAccount = new Account() { Type = AccountType.Cash };
-            IList data = new TransactionCollection(myMoney, danglingAccount, dangling, true, false, null);
-            Display(data, TransactionViewName.DanglingTransfers, "Dangling transfers", SelectedRowId);
-            FireAfterViewStateChanged(SelectedRowId);
+            IList data = new TransactionCollection(this.myMoney, danglingAccount, dangling, true, false, null);
+            this.Display(data, TransactionViewName.DanglingTransfers, "Dangling transfers", this.SelectedRowId);
+            this.FireAfterViewStateChanged(this.SelectedRowId);
         }
 
         // request a new selected row on view refresh
@@ -1435,11 +1435,11 @@ namespace Walkabout.Views
                 TransactionViewState state = value as TransactionViewState;
                 if (state != null)
                 {
-                    viewStateLock++;
+                    this.viewStateLock++;
                     this.OneLineView = state.ViewOneLineView;
                     this.ViewAllSplits = state.ViewAllSplits;
                     this.QuickFilterUX.FilterText = this.quickFilter = state.QuickFilter;
-                    SetTransactionFilterNoUpdate(state.TransactionFilter);
+                    this.SetTransactionFilterNoUpdate(state.TransactionFilter);
                     this.InvestmentAccountTabs.SelectedIndex = this.selectedTab = state.TabIndex;
 
                     Account account = this.myMoney.Accounts.FindAccount(state.Account);
@@ -1447,7 +1447,7 @@ namespace Walkabout.Views
                     Security security = this.myMoney.Securities.FindSecurity(state.Security, false);
                     Category category = this.myMoney.Categories.FindCategory(state.Category);
                     RentBuilding building = this.myMoney.Buildings.FindByName(state.Rental);
-                    SetActiveAccount(account, category, payee, security, building);
+                    this.SetActiveAccount(account, category, payee, security, building);
 
                     this.currentDisplayName = state.CurrentDisplayName;
                     this.fixedList = state.CustomList;
@@ -1456,15 +1456,15 @@ namespace Walkabout.Views
 
                     if (state.Query != null)
                     {
-                        IsQueryPanelDisplayed = true;
-                        QueryPanel.Clear();
-                        QueryPanel.AddQuery(state.Query);
-                        QueryPanel.OnShow();
+                        this.IsQueryPanelDisplayed = true;
+                        this.QueryPanel.Clear();
+                        this.QueryPanel.AddQuery(state.Query);
+                        this.QueryPanel.OnShow();
                     }
 
-                    UpdateView();
+                    this.UpdateView();
 
-                    viewStateLock--;
+                    this.viewStateLock--;
                 }
             }
         }
@@ -1476,64 +1476,64 @@ namespace Walkabout.Views
                 case TransactionViewName.Account:
                     if (this.activeAccount != null)
                     {
-                        this.ViewTransactionsForSingleAccount(this.activeAccount, TransactionSelection.Specific, requestedRowId);
+                        this.ViewTransactionsForSingleAccount(this.activeAccount, TransactionSelection.Specific, this.requestedRowId);
                     }
                     break;
                 case TransactionViewName.ByPayee:
                     if (this.activePayee != null)
                     {
-                        this.ViewTransactionsForPayee(this.activePayee, requestedRowId);
+                        this.ViewTransactionsForPayee(this.activePayee, this.requestedRowId);
                     }
                     break;
                 case TransactionViewName.BySecurity:
                     if (this.activeSecurity != null)
                     {
-                        this.ViewTransactionsForSecurity(this.activeSecurity, requestedRowId);
+                        this.ViewTransactionsForSecurity(this.activeSecurity, this.requestedRowId);
                     }
                     break;
                 case TransactionViewName.ByCategory:
                 case TransactionViewName.ByCategoryCustom:
                     if (this.activeCategory != null)
                     {
-                        this.ViewTransactionsForCategory(this.activeCategory, requestedRowId);
+                        this.ViewTransactionsForCategory(this.activeCategory, this.requestedRowId);
                     }
                     break;
                 case TransactionViewName.Rental:
                     if (this.activeRental != null)
                     {
                         this.ViewTransactionsByRental(this.activeRental);
-                        this.SelectedRowId = requestedRowId;
+                        this.SelectedRowId = this.requestedRowId;
                     }
                     break;
                 case TransactionViewName.Portfolio:
-                    ShowInvestmentPortfolio(this.activeAccount);
-                    SwitchLayout("InvestmentPortfolioView");
+                    this.ShowInvestmentPortfolio(this.activeAccount);
+                    this.SwitchLayout("InvestmentPortfolioView");
                     break;
                 case TransactionViewName.ByQuery:
                     if (this.lastQuery != null)
                     {
-                        ViewTransactionsForAdvancedQuery(this.lastQuery);
+                        this.ViewTransactionsForAdvancedQuery(this.lastQuery);
                     }
                     else if (this.activeAccount != null)
                     {
-                        this.ViewTransactionsForSingleAccount(this.activeAccount, TransactionSelection.Specific, requestedRowId);
+                        this.ViewTransactionsForSingleAccount(this.activeAccount, TransactionSelection.Specific, this.requestedRowId);
                     }
                     break;
                 case TransactionViewName.Custom:
-                    ViewTransactions(this.fixedList);
+                    this.ViewTransactions(this.fixedList);
                     break;
                 case TransactionViewName.Transfers:
-                    ViewTransfers(this.activeAccount);
+                    this.ViewTransfers(this.activeAccount);
                     break;
                 case TransactionViewName.DanglingTransfers:
-                    List<Transaction> dangling = myMoney.CheckTransfers();
-                    ShowDanglingTransfers(dangling);
+                    List<Transaction> dangling = this.myMoney.CheckTransfers();
+                    this.ShowDanglingTransfers(dangling);
                     break;
                 default:
                     break;
             }
 
-            ShowBalance();
+            this.ShowBalance();
         }
 
         public bool IsReconciling { get { return this.reconciling; } }
@@ -1545,10 +1545,10 @@ namespace Walkabout.Views
         public void OnStartReconcile(Account a)
         {
             this.reconciling = true;
-            beforeState = this.ViewState;
-            SetTransactionFilterNoUpdate(TransactionFilter.Unreconciled);
+            this.beforeState = this.ViewState;
+            this.SetTransactionFilterNoUpdate(TransactionFilter.Unreconciled);
             this.OneLineView = true;
-            reconcilingTransactions = new Dictionary<Transaction, TransactionStatus>();
+            this.reconcilingTransactions = new Dictionary<Transaction, TransactionStatus>();
             // we normally scroll to the end, but this time we scroll to the top to show transactions most likely to be reconciled.
             this.ViewTransactionsForSingleAccount(a, TransactionSelection.First, 0);
         }
@@ -1556,13 +1556,13 @@ namespace Walkabout.Views
         public void OnEndReconcile(bool cancelled, bool hasStatement)
         {
             this.reconciling = false;
-            this.ViewState = beforeState;
-            SetReconciledState(cancelled);
+            this.ViewState = this.beforeState;
+            this.SetReconciledState(cancelled);
             if (!cancelled)
             {
-                SetHasStatement(hasStatement);
+                this.SetHasStatement(hasStatement);
             }
-            reconcilingTransactions = null;
+            this.reconcilingTransactions = null;
             this.StatmentReconcileDateEnd = null;
         }
 
@@ -1572,7 +1572,7 @@ namespace Walkabout.Views
             try
             {
                 // Clear reconciling flags and set reconciled date.            
-                foreach (Transaction t in reconcilingTransactions.Keys)
+                foreach (Transaction t in this.reconcilingTransactions.Keys)
                 {
                     t.HasStatement = hasStatement;
                 }
@@ -1589,12 +1589,12 @@ namespace Walkabout.Views
             try
             {
                 // Clear reconciling flags and set reconciled date.            
-                foreach (Transaction t in reconcilingTransactions.Keys)
+                foreach (Transaction t in this.reconcilingTransactions.Keys)
                 {
                     t.IsReconciling = false;
                     if (cancelled)
                     {
-                        t.Status = reconcilingTransactions[t];
+                        t.Status = this.reconcilingTransactions[t];
                         if (t.Status != TransactionStatus.Reconciled)
                         {
                             t.ReconciledDate = null;
@@ -1613,8 +1613,8 @@ namespace Walkabout.Views
         /// </summary>
         private void ShowReconciledState(DateTime statementDate)
         {
-            SetReconciledState(false);
-            reconcilingTransactions = new Dictionary<Transaction, TransactionStatus>();
+            this.SetReconciledState(false);
+            this.reconcilingTransactions = new Dictionary<Transaction, TransactionStatus>();
 
             this.myMoney.Transactions.BeginUpdate(false);
             try
@@ -1632,7 +1632,7 @@ namespace Walkabout.Views
                             {
                                 t.IsReconciling = true;
                                 t.ReconciledDate = statementDate; // in case user changed the statement date half way through reconciling!
-                                reconcilingTransactions[t] = t.Status;
+                                this.reconcilingTransactions[t] = t.Status;
                             }
                         }
                     }
@@ -1654,17 +1654,17 @@ namespace Walkabout.Views
             {
                 return;
             }
-            IsLatestStatement = isLatest;
-            StatmentReconcileDateBegin = begin;
-            StatmentReconcileDateEnd = end;
+            this.IsLatestStatement = isLatest;
+            this.StatmentReconcileDateBegin = begin;
+            this.StatmentReconcileDateEnd = end;
 
             if (this.ActiveAccount != null)
             {
                 // we normally scroll to the end, but this time we scroll to the top to show transactions most likely to be reconciled.
-                ViewTransactionsForSingleAccount(this.ActiveAccount, TransactionSelection.First, 0);
+                this.ViewTransactionsForSingleAccount(this.ActiveAccount, TransactionSelection.First, 0);
             }
 
-            ShowReconciledState(end);
+            this.ShowReconciledState(end);
         }
 
         public IEnumerable Rows
@@ -1692,7 +1692,7 @@ namespace Walkabout.Views
             get { return this.SelectedRow as Transaction; }
             set
             {
-                TransactionCollection c = TheActiveGrid.ItemsSource as TransactionCollection;
+                TransactionCollection c = this.TheActiveGrid.ItemsSource as TransactionCollection;
                 if (c != null)
                 {
                     if (!c.Contains(value))
@@ -1714,7 +1714,7 @@ namespace Walkabout.Views
                     this.site = value;
                     //TODO
                     //this.grid.ServiceProvider = value;
-                    OnSiteChanged();
+                    this.OnSiteChanged();
                 }
             }
         }
@@ -1751,24 +1751,24 @@ namespace Walkabout.Views
         {
             this.lastQuery = null;
             this.fixedList = null;
-            IList<Transaction> data = myMoney.Transactions.FindTransfersToAccount(a);
-            SetActiveAccount(null, null, null, null, null);
-            SwitchLayout("TheGrid_TransactionFromDetails");
-            Display(new TransactionCollection(myMoney, a, data, true, false, null), TransactionViewName.Transfers, "Transfers to " + a.Name, SelectedRowId);
+            IList<Transaction> data = this.myMoney.Transactions.FindTransfersToAccount(a);
+            this.SetActiveAccount(null, null, null, null, null);
+            this.SwitchLayout("TheGrid_TransactionFromDetails");
+            this.Display(new TransactionCollection(this.myMoney, a, data, true, false, null), TransactionViewName.Transfers, "Transfers to " + a.Name, this.SelectedRowId);
         }
 
         #region VIEWS
 
         private TransactionCollection GetTransactionsIncluding(Account a, bool accountChanged, bool filterOnInvestmentInfo, long selectedRowId)
         {
-            var data = this.myMoney.Transactions.GetTransactionsFrom(a, GetTransactionIncludePredicate());
+            var data = this.myMoney.Transactions.GetTransactionsFrom(a, this.GetTransactionIncludePredicate());
             bool found = (from t in data where t.Id == selectedRowId select t).Any();
-            if (!found && accountChanged && TransactionFilter != TransactionFilter.All && !this.programaticFilterChange)
+            if (!found && accountChanged && this.TransactionFilter != TransactionFilter.All && !this.programaticFilterChange)
             {
                 // remove transaction filter, we are probably jumping across accounts, and the filter on the target account makes the 
                 // desired transaction unreachable.
-                SetTransactionFilterNoUpdate(TransactionFilter.All);
-                data = this.myMoney.Transactions.GetTransactionsFrom(a, GetTransactionIncludePredicate());
+                this.SetTransactionFilterNoUpdate(TransactionFilter.All);
+                data = this.myMoney.Transactions.GetTransactionsFrom(a, this.GetTransactionIncludePredicate());
             }
             return new TransactionCollection(this.myMoney, this.ActiveAccount, data, false, filterOnInvestmentInfo, this.QuickFilter);
         }
@@ -1788,8 +1788,8 @@ namespace Walkabout.Views
                 using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
                 {
 #endif
-                    Commit();
-                    FireBeforeViewStateChanged();
+                    this.Commit();
+                    this.FireBeforeViewStateChanged();
 
                     this.fixedList = null;
                     this.lastQuery = null;
@@ -1805,21 +1805,21 @@ namespace Walkabout.Views
                         if (this.InvestmentAccountTabs.SelectedIndex == PortfolioTab)
                         {
                             layout = "InvestmentPortfolioView";
-                            UpdatePortfolio(this.ActiveAccount);
+                            this.UpdatePortfolio(this.ActiveAccount);
                         }
                         else
                         {
                             layout = "TheGrid_InvestmentActivity";
-                            data = GetTransactionsIncluding(a, accountChanged, true, selectedRowId);
+                            data = this.GetTransactionsIncluding(a, accountChanged, true, selectedRowId);
                         }
                     }
                     else
                     {
                         layout = "TheGrid_BankTransactionDetails";
-                        data = GetTransactionsIncluding(a, accountChanged, false, selectedRowId);
+                        data = this.GetTransactionsIncluding(a, accountChanged, false, selectedRowId);
                     }
 
-                    SwitchLayout(layout);
+                    this.SwitchLayout(layout);
 
                     if (data != null)
                     {
@@ -1869,10 +1869,10 @@ namespace Walkabout.Views
                                 }
                                 break;
                         }
-                        Display(data, TransactionViewName.Account, a.Name, selectedRowId);
+                        this.Display(data, TransactionViewName.Account, a.Name, selectedRowId);
                     }
 
-                    FireAfterViewStateChanged(selectedRowId == SelectedRowId ? SelectedRowId : -1);
+                    this.FireAfterViewStateChanged(selectedRowId == this.SelectedRowId ? this.SelectedRowId : -1);
 #if PerformanceBlocks
                 }
 #endif
@@ -1886,7 +1886,7 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.ViewTransactions))
             {
 #endif
-                FireBeforeViewStateChanged();
+                this.FireBeforeViewStateChanged();
 
                 List<Transaction> newList = new List<Transaction>();
                 Account account = null;
@@ -1921,7 +1921,7 @@ namespace Walkabout.Views
                 if (!skipped && this.fixedList == toView && this.programaticFilterChange)
                 {
                     // then user is filtering a previously set fixed list.
-                    var includeFilter = GetTransactionIncludePredicate();
+                    var includeFilter = this.GetTransactionIncludePredicate();
                     newList = new List<Transaction>(from t in newList where includeFilter(t) && !t.IsDeleted select t);
                 }
 
@@ -1932,8 +1932,8 @@ namespace Walkabout.Views
                 this.fixedList = newList;
                 this.quickFilter = filter;
 
-                SetTransactionFilterNoUpdate(TransactionFilter.Custom);
-                Commit();
+                this.SetTransactionFilterNoUpdate(TransactionFilter.Custom);
+                this.Commit();
                 string layout = this.TheActiveGrid.Name;
 
                 if (!multiple)
@@ -1956,11 +1956,11 @@ namespace Walkabout.Views
                     layout = "TheGrid_TransactionFromDetails";
                 }
 
-                SwitchLayout(layout);
-                SetActiveAccount(account, null, null, null, null);
-                IList data = new TransactionCollection(myMoney, account, newList, true, includeInvestmentInfo, filter);
-                Display(data, viewName, account != null ? account.Name : "Transactions", SelectedRowId);
-                FireAfterViewStateChanged(SelectedRowId);
+                this.SwitchLayout(layout);
+                this.SetActiveAccount(account, null, null, null, null);
+                IList data = new TransactionCollection(this.myMoney, account, newList, true, includeInvestmentInfo, filter);
+                this.Display(data, viewName, account != null ? account.Name : "Transactions", this.SelectedRowId);
+                this.FireAfterViewStateChanged(this.SelectedRowId);
 
 #if PerformanceBlocks
             }
@@ -1977,15 +1977,15 @@ namespace Walkabout.Views
                 p = this.myMoney.Payees.FindPayee(p.Name, false);
                 if (p != null)
                 {
-                    FireBeforeViewStateChanged();
+                    this.FireBeforeViewStateChanged();
                     this.fixedList = null;
                     this.lastQuery = null;
-                    SwitchLayout("TheGrid_TransactionFromDetails");
-                    SetActiveAccount(null, null, p, null, null);
-                    IList<Transaction> transactions = myMoney.Transactions.GetTransactionsByPayee(p, GetTransactionIncludePredicate());
-                    var data = new TransactionCollection(myMoney, null, transactions, true, false, this.QuickFilter);
-                    Display(data, TransactionViewName.ByPayee, "Payments to " + p.Name, selectedRowId);
-                    FireAfterViewStateChanged(selectedRowId);
+                    this.SwitchLayout("TheGrid_TransactionFromDetails");
+                    this.SetActiveAccount(null, null, p, null, null);
+                    IList<Transaction> transactions = this.myMoney.Transactions.GetTransactionsByPayee(p, this.GetTransactionIncludePredicate());
+                    var data = new TransactionCollection(this.myMoney, null, transactions, true, false, this.QuickFilter);
+                    this.Display(data, TransactionViewName.ByPayee, "Payments to " + p.Name, selectedRowId);
+                    this.FireAfterViewStateChanged(selectedRowId);
                 }
 #if PerformanceBlocks
             }
@@ -2000,18 +2000,18 @@ namespace Walkabout.Views
 #endif
                 if (s != null)
                 {
-                    FireBeforeViewStateChanged();
+                    this.FireBeforeViewStateChanged();
                     this.fixedList = null;
                     this.lastQuery = null;
-                    var transactions = RefreshViewBySecurity(s, selectedRowId);
-                    FireAfterViewStateChanged(selectedRowId);
+                    var transactions = this.RefreshViewBySecurity(s, selectedRowId);
+                    this.FireAfterViewStateChanged(selectedRowId);
 
                     // Async load of security info.
-                    var mgr = (StockQuoteManager)site.GetService(typeof(StockQuoteManager));
+                    var mgr = (StockQuoteManager)this.site.GetService(typeof(StockQuoteManager));
                     if (mgr != null)
                     {
-                        mgr.HistoryAvailable -= OnStockHistoryAvailable;
-                        mgr.HistoryAvailable += OnStockHistoryAvailable;
+                        mgr.HistoryAvailable -= this.OnStockHistoryAvailable;
+                        mgr.HistoryAvailable += this.OnStockHistoryAvailable;
                         if (!string.IsNullOrEmpty(s.Symbol))
                         {
                             mgr.BeginDownloadHistory(s.Symbol);
@@ -2025,11 +2025,11 @@ namespace Walkabout.Views
 
         public IList<Transaction> RefreshViewBySecurity(Security s, long selectedRowId)
         {
-            SwitchLayout("TheGrid_BySecurity");
-            SetActiveAccount(null, null, null, s, null);
-            IList<Transaction> transactions = myMoney.Transactions.GetTransactionsBySecurity(s, GetTransactionIncludePredicate());
-            var data = new TransactionCollection(myMoney, null, transactions, true, false, this.QuickFilter);
-            Display(data, TransactionViewName.BySecurity, "Investments in " + s.Name, selectedRowId);
+            this.SwitchLayout("TheGrid_BySecurity");
+            this.SetActiveAccount(null, null, null, s, null);
+            IList<Transaction> transactions = this.myMoney.Transactions.GetTransactionsBySecurity(s, this.GetTransactionIncludePredicate());
+            var data = new TransactionCollection(this.myMoney, null, transactions, true, false, this.QuickFilter);
+            this.Display(data, TransactionViewName.BySecurity, "Investments in " + s.Name, selectedRowId);
             return transactions;
         }
 
@@ -2040,7 +2040,7 @@ namespace Walkabout.Views
                 TransactionCollection tc = this.TheActiveGrid.ItemsSource as TransactionCollection;
                 if (tc != null)
                 {
-                    FillinMissingUnitPrices(this.ActiveSecurity, tc.GetOriginalTransactions());
+                    this.FillinMissingUnitPrices(this.ActiveSecurity, tc.GetOriginalTransactions());
                 }
             }
         }
@@ -2126,15 +2126,15 @@ namespace Walkabout.Views
 #endif
                 if (c != null)
                 {
-                    FireBeforeViewStateChanged();
+                    this.FireBeforeViewStateChanged();
                     this.fixedList = null;
                     this.lastQuery = null;
-                    SwitchLayout("TheGrid_TransactionFromDetails");
-                    SetActiveAccount(null, c, null, null, null);
-                    IList<Transaction> transactions = myMoney.Transactions.GetTransactionsByCategory(c, GetTransactionIncludePredicate());
-                    var data = new TransactionCollection(myMoney, null, transactions, true, false, this.QuickFilter);
-                    Display(data, TransactionViewName.ByCategory, "Transactions by Category " + c.Name, selectedRowId);
-                    FireAfterViewStateChanged(selectedRowId);
+                    this.SwitchLayout("TheGrid_TransactionFromDetails");
+                    this.SetActiveAccount(null, c, null, null, null);
+                    IList<Transaction> transactions = this.myMoney.Transactions.GetTransactionsByCategory(c, this.GetTransactionIncludePredicate());
+                    var data = new TransactionCollection(this.myMoney, null, transactions, true, false, this.QuickFilter);
+                    this.Display(data, TransactionViewName.ByCategory, "Transactions by Category " + c.Name, selectedRowId);
+                    this.FireAfterViewStateChanged(selectedRowId);
                 }
 #if PerformanceBlocks
             }
@@ -2149,14 +2149,14 @@ namespace Walkabout.Views
 #endif
                 if (c != null)
                 {
-                    FireBeforeViewStateChanged();
+                    this.FireBeforeViewStateChanged();
                     this.fixedList = null;
                     this.lastQuery = null;
-                    SwitchLayout("TheGrid_TransactionFromDetails");
-                    SetActiveAccount(null, c, null, null, null);
-                    var data = new TransactionCollection(myMoney, null, list, true, false, this.QuickFilter);
-                    Display(data, TransactionViewName.ByCategoryCustom, "Transactions by Category " + c.Name, SelectedRowId);
-                    FireAfterViewStateChanged(SelectedRowId);
+                    this.SwitchLayout("TheGrid_TransactionFromDetails");
+                    this.SetActiveAccount(null, c, null, null, null);
+                    var data = new TransactionCollection(this.myMoney, null, list, true, false, this.QuickFilter);
+                    this.Display(data, TransactionViewName.ByCategoryCustom, "Transactions by Category " + c.Name, this.SelectedRowId);
+                    this.FireAfterViewStateChanged(this.SelectedRowId);
                 }
 
 #if PerformanceBlocks
@@ -2172,14 +2172,14 @@ namespace Walkabout.Views
 #endif
                 if (p != null)
                 {
-                    FireBeforeViewStateChanged();
+                    this.FireBeforeViewStateChanged();
                     this.fixedList = null;
                     this.lastQuery = null;
-                    SwitchLayout("TheGrid_TransactionFromDetails");
-                    SetActiveAccount(null, null, p, null, null);
-                    var data = new TransactionCollection(myMoney, null, list, true, false, this.QuickFilter);
-                    Display(data, TransactionViewName.ByCategoryCustom, "Transactions by Payee " + p.Name, SelectedRowId);
-                    FireAfterViewStateChanged(SelectedRowId);
+                    this.SwitchLayout("TheGrid_TransactionFromDetails");
+                    this.SetActiveAccount(null, null, p, null, null);
+                    var data = new TransactionCollection(this.myMoney, null, list, true, false, this.QuickFilter);
+                    this.Display(data, TransactionViewName.ByCategoryCustom, "Transactions by Payee " + p.Name, this.SelectedRowId);
+                    this.FireAfterViewStateChanged(this.SelectedRowId);
                 }
 
 #if PerformanceBlocks
@@ -2198,14 +2198,14 @@ namespace Walkabout.Views
                 this.FireBeforeViewStateChanged();
                 this.fixedList = null;
                 this.SetActiveAccount(null, null, null, null, null);
-                SwitchLayout("TheGrid_TransactionFromDetails");
+                this.SwitchLayout("TheGrid_TransactionFromDetails");
 
                 this.lastQuery = query;
-                IList<Transaction> data = myMoney.Transactions.ExecuteQuery(query);
-                this.Display(new TransactionCollection(myMoney, null, data, true, false, this.QuickFilter),
-                    TransactionViewName.ByQuery, string.Empty, SelectedRowId);
-                SelectedRowIndex = TheActiveGrid.Items.Count - 1;
-                this.FireAfterViewStateChanged(SelectedRowId);
+                IList<Transaction> data = this.myMoney.Transactions.ExecuteQuery(query);
+                this.Display(new TransactionCollection(this.myMoney, null, data, true, false, this.QuickFilter),
+                    TransactionViewName.ByQuery, string.Empty, this.SelectedRowId);
+                this.SelectedRowIndex = this.TheActiveGrid.Items.Count - 1;
+                this.FireAfterViewStateChanged(this.SelectedRowId);
 
 #if PerformanceBlocks
             }
@@ -2215,11 +2215,11 @@ namespace Walkabout.Views
         internal void ViewInvestmentPortfolio()
         {
             // Show a special summary view of all investment positions.
-            FireBeforeViewStateChanged();
-            SwitchLayout("InvestmentPortfolioView");
-            SetActiveAccount(null, null, null, null, null);
-            ShowInvestmentPortfolio(null);
-            FireAfterViewStateChanged(SelectedRowId);
+            this.FireBeforeViewStateChanged();
+            this.SwitchLayout("InvestmentPortfolioView");
+            this.SetActiveAccount(null, null, null, null, null);
+            this.ShowInvestmentPortfolio(null);
+            this.FireAfterViewStateChanged(this.SelectedRowId);
         }
 
         PortfolioReport portfolioReport;
@@ -2236,41 +2236,41 @@ namespace Walkabout.Views
 
         internal void ShowInvestmentPortfolio(Account account)
         {
-            FireBeforeViewStateChanged();
-            UpdatePortfolio(account);
-            FireAfterViewStateChanged(SelectedRowId);
+            this.FireBeforeViewStateChanged();
+            this.UpdatePortfolio(account);
+            this.FireAfterViewStateChanged(this.SelectedRowId);
         }
 
         private void UpdatePortfolio(Account account)
         {
-            currentDisplayName = TransactionViewName.Portfolio;
-            layout = "InvestmentPortfolioView";
+            this.currentDisplayName = TransactionViewName.Portfolio;
+            this.layout = "InvestmentPortfolioView";
 
             FlowDocumentView view = this.InvestmentPortfolioView;
             HelpService.SetHelpKeyword(view, "Investment Portfolio");
-            SetActiveAccount(account, null, null, null, null);
+            this.SetActiveAccount(account, null, null, null, null);
             // if we are reconciling then show the positions held at statement date so the stock balances can be reconciled also.
-            DateTime reportDate = this.IsReconciling ? GetReconiledExclusiveEndDate() : DateTime.Now;
+            DateTime reportDate = this.IsReconciling ? this.GetReconiledExclusiveEndDate() : DateTime.Now;
             PortfolioReport report = new PortfolioReport(view, this.myMoney, account, this.ServiceProvider, reportDate);
-            report.DrillDown += OnReportDrillDown;
+            report.DrillDown += this.OnReportDrillDown;
             _ = view.Generate(report);
-            portfolioReport = report;
+            this.portfolioReport = report;
         }
 
         private void OnReportDrillDown(object sender, SecurityGroup e)
         {
             // create new report just for this drill down in security group.
-            FireBeforeViewStateChanged();
+            this.FireBeforeViewStateChanged();
 
-            currentDisplayName = TransactionViewName.Portfolio;
-            layout = "InvestmentPortfolioView";
+            this.currentDisplayName = TransactionViewName.Portfolio;
+            this.layout = "InvestmentPortfolioView";
 
             FlowDocumentView view = this.InvestmentPortfolioView;
             HelpService.SetHelpKeyword(view, "Investment Portfolio");
-            DateTime reportDate = this.IsReconciling ? GetReconiledExclusiveEndDate() : DateTime.Now;
+            DateTime reportDate = this.IsReconciling ? this.GetReconiledExclusiveEndDate() : DateTime.Now;
             PortfolioReport report = new PortfolioReport(view, this.myMoney, this.ServiceProvider, reportDate, e);
             _ = view.Generate(report);
-            FireAfterViewStateChanged(SelectedRowId);
+            this.FireAfterViewStateChanged(this.SelectedRowId);
         }
 
         internal void ViewTransactionsByRental(RentBuilding building)
@@ -2284,9 +2284,9 @@ namespace Walkabout.Views
                     this.FireBeforeViewStateChanged();
                     this.fixedList = null;
                     this.lastQuery = null;
-                    SwitchLayout("TheGrid_TransactionFromDetails");
+                    this.SwitchLayout("TheGrid_TransactionFromDetails");
                     this.SetActiveAccount(null, null, null, null, building);
-                    this.FireAfterViewStateChanged(SelectedRowId);
+                    this.FireAfterViewStateChanged(this.SelectedRowId);
                 }
 #if PerformanceBlocks
             }
@@ -2302,12 +2302,12 @@ namespace Walkabout.Views
                 this.FireBeforeViewStateChanged();
                 this.fixedList = null;
                 this.lastQuery = null;
-                SwitchLayout("TheGrid_TransactionFromDetails");
+                this.SwitchLayout("TheGrid_TransactionFromDetails");
                 this.SetActiveAccount(null, null, null, null, contextToView.Building);
-                IList<Transaction> data = myMoney.Transactions.GetTransactionsByCategory(contextToView.DepartmentCategory, contextToView.Year, false);
-                this.Display(new TransactionCollection(myMoney, null, data, true, false, this.QuickFilter),
-                    TransactionViewName.Rental, string.Format("{0} {1}", contextToView.Building.Name, contextToView.Year), SelectedRowId);
-                this.FireAfterViewStateChanged(SelectedRowId);
+                IList<Transaction> data = this.myMoney.Transactions.GetTransactionsByCategory(contextToView.DepartmentCategory, contextToView.Year, false);
+                this.Display(new TransactionCollection(this.myMoney, null, data, true, false, this.QuickFilter),
+                    TransactionViewName.Rental, string.Format("{0} {1}", contextToView.Building.Name, contextToView.Year), this.SelectedRowId);
+                this.FireAfterViewStateChanged(this.SelectedRowId);
 
 #if PerformanceBlocks
             }
@@ -2319,7 +2319,7 @@ namespace Walkabout.Views
         public Predicate<Transaction> GetTransactionIncludePredicate()
         {
             Predicate<Transaction> filter = null;
-            switch (TransactionFilter)
+            switch (this.TransactionFilter)
             {
                 case TransactionFilter.All:
                 case TransactionFilter.Custom:
@@ -2344,7 +2344,7 @@ namespace Walkabout.Views
                         filter = new Predicate<Transaction>((t) =>
                         {
                             return (t.Status == TransactionStatus.Reconciled && !t.Account.IsCategoryFund) ||
-                                    t.IsReconciling || IsIncludedInCurrentStatement(t);
+                                    t.IsReconciling || this.IsIncludedInCurrentStatement(t);
                         });
                     }
                     break;
@@ -2361,7 +2361,7 @@ namespace Walkabout.Views
                         filter = new Predicate<Transaction>((t) =>
                         {
                             return (t.Status != TransactionStatus.Reconciled && t.Status != TransactionStatus.Void && !t.Account.IsCategoryFund) ||
-                                    t.IsReconciling || IsIncludedInCurrentStatement(t);
+                                    t.IsReconciling || this.IsIncludedInCurrentStatement(t);
                         });
                     }
                     break;
@@ -2423,29 +2423,29 @@ namespace Walkabout.Views
         {
             get
             {
-                if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+                if (this.InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
                 {
                     return false;
                 }
-                return SelectedRow != null;
+                return this.SelectedRow != null;
             }
         }
         public bool CanCopy
         {
             get
             {
-                if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+                if (this.InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
                 {
                     return true;
                 }
-                return SelectedRow != null;
+                return this.SelectedRow != null;
             }
         }
         public bool CanPaste
         {
             get
             {
-                if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+                if (this.InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
                 {
                     return false;
                 }
@@ -2456,17 +2456,17 @@ namespace Walkabout.Views
         {
             get
             {
-                if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+                if (this.InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
                 {
                     return false;
                 }
-                return SelectedRow != null;
+                return this.SelectedRow != null;
             }
         }
 
         public void Cut()
         {
-            if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+            if (this.InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
             {
                 return;
             }
@@ -2477,7 +2477,7 @@ namespace Walkabout.Views
             Split s = selected as Split;
             if (t != null)
             {
-                DeleteTransaction(this.TheActiveGrid.SelectedIndex);
+                this.DeleteTransaction(this.TheActiveGrid.SelectedIndex);
             }
             else if (s != null)
             {
@@ -2505,14 +2505,14 @@ namespace Walkabout.Views
 
         public void Copy()
         {
-            if (QueryPanel.Visibility == Visibility.Visible &&
-                QueryPanel.ContainsKeyboardFocus())
+            if (this.QueryPanel.Visibility == Visibility.Visible &&
+                this.QueryPanel.ContainsKeyboardFocus())
             {
-                QueryPanel.Copy();
+                this.QueryPanel.Copy();
             }
-            else if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+            else if (this.InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
             {
-                InvestmentPortfolioView.Copy();
+                this.InvestmentPortfolioView.Copy();
             }
             else
             {
@@ -2525,19 +2525,19 @@ namespace Walkabout.Views
         {
             if (Clipboard.ContainsImage())
             {
-                if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+                if (this.InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
                 {
                     return;
                 }
 
-                PasteAttachment();
+                this.PasteAttachment();
             }
-            else if (QueryPanel.Visibility == Visibility.Visible &&
-                QueryPanel.ContainsKeyboardFocus())
+            else if (this.QueryPanel.Visibility == Visibility.Visible &&
+                this.QueryPanel.ContainsKeyboardFocus())
             {
-                QueryPanel.Paste();
+                this.QueryPanel.Paste();
             }
-            else if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+            else if (this.InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
             {
                 return;
             }
@@ -2661,27 +2661,27 @@ namespace Walkabout.Views
 
         public void Delete()
         {
-            if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+            if (this.InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
             {
                 return;
             }
             this.Commit();
 
-            object selected = selectedSplit;
+            object selected = this.selectedSplit;
             if (selected != null)
             {
                 Transaction parent = this.SelectedTransaction;
-                parent.NonNullSplits.Remove((Split)selectedSplit);
+                parent.NonNullSplits.Remove((Split)this.selectedSplit);
             }
             else
             {
-                DeleteTransaction(this.TheActiveGrid.SelectedIndex);
+                this.DeleteTransaction(this.TheActiveGrid.SelectedIndex);
             }
         }
 
         object CopySelection()
         {
-            object selected = selectedSplit;
+            object selected = this.selectedSplit;
             if (selected == null)
             {
                 selected = this.SelectedRow;
@@ -2728,7 +2728,7 @@ namespace Walkabout.Views
 
                     Transaction selected = this.SelectedTransaction;
                     StringReader sr = new StringReader(xml);
-                    XmlImporter importer = new XmlImporter(myMoney);
+                    XmlImporter importer = new XmlImporter(this.myMoney);
                     using (XmlReader r = XmlReader.Create(sr))
                     {
                         Transaction first = null;
@@ -2757,7 +2757,7 @@ namespace Walkabout.Views
                         }
                         if (first != null)
                         {
-                            Refresh();
+                            this.Refresh();
                             this.SelectedRowId = first.Id;
                         }
                     }
@@ -2775,14 +2775,14 @@ namespace Walkabout.Views
 
         private void FireBeforeViewStateChanged()
         {
-            if (viewStateLock == 0)
+            if (this.viewStateLock == 0)
             {
-                if (this.BeforeViewStateChanged != null)
+                if (BeforeViewStateChanged != null)
                 {
-                    this.BeforeViewStateChanged(this, new EventArgs());
+                    BeforeViewStateChanged(this, new EventArgs());
                 }
 
-                if (!quickFilterValueChanging && !refresh)
+                if (!this.quickFilterValueChanging && !this.refresh)
                 {
                     // since we are switching views, clear out the quick filter
                     // (but only if this is not the result of the quick filter being set or simply a refresh!)
@@ -2793,16 +2793,16 @@ namespace Walkabout.Views
 
         private void FireAfterViewStateChanged(long selectedRowId)
         {
-            if (this.AfterViewStateChanged != null)
+            if (AfterViewStateChanged != null)
             {
-                this.AfterViewStateChanged(this, new AfterViewStateChangedEventArgs(selectedRowId));
+                AfterViewStateChanged(this, new AfterViewStateChangedEventArgs(selectedRowId));
             }
-            UpdateUX();
-            ShowBalance();
-            RemoveInvisibleContent(TheGrid_BankTransactionDetails);
-            RemoveInvisibleContent(TheGrid_TransactionFromDetails);
-            RemoveInvisibleContent(TheGrid_InvestmentActivity);
-            RemoveInvisibleContent(TheGrid_BySecurity);
+            this.UpdateUX();
+            this.ShowBalance();
+            this.RemoveInvisibleContent(this.TheGrid_BankTransactionDetails);
+            this.RemoveInvisibleContent(this.TheGrid_TransactionFromDetails);
+            this.RemoveInvisibleContent(this.TheGrid_InvestmentActivity);
+            this.RemoveInvisibleContent(this.TheGrid_BySecurity);
         }
 
         private void RemoveInvisibleContent(MoneyDataGrid grid)
@@ -2843,7 +2843,7 @@ namespace Walkabout.Views
 
         public void FocusQuickFilter()
         {
-            QuickFilterUX.FocusTextBox();
+            this.QuickFilterUX.FocusTextBox();
         }
 
         string quickFilter = string.Empty;
@@ -2855,9 +2855,9 @@ namespace Walkabout.Views
             {
                 string trimmed = value == null ? null : value.Trim();
 
-                if (InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
+                if (this.InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
                 {
-                    InvestmentPortfolioView.QuickFilter = trimmed;
+                    this.InvestmentPortfolioView.QuickFilter = trimmed;
                 }
                 else if (this.quickFilter != trimmed)
                 {
@@ -2868,21 +2868,21 @@ namespace Walkabout.Views
                         // Quick Search  across Multiple Account
 
                         // Strip away the asterix.
-                        QuickFilterNoRefresh = trimmed.Remove(0, 1);
+                        this.QuickFilterNoRefresh = trimmed.Remove(0, 1);
 
                         // Get all the transaction matching the quick search "text"
-                        ViewTransactions(this.myMoney.Transactions.Items, this.quickFilter);
+                        this.ViewTransactions(this.myMoney.Transactions.Items, this.quickFilter);
                     }
                     else
                     {
                         //-----------------------------------------------------
                         // Quick search using the current view
                         //
-                        QuickFilterNoRefresh = value;
+                        this.QuickFilterNoRefresh = value;
 
                         TransactionCollection tc = this.Rows as TransactionCollection;
                         // for DisplayName.ByCategoryCustom we need to call Refresh.
-                        if (tc != null && currentDisplayName != TransactionViewName.ByCategoryCustom)
+                        if (tc != null && this.currentDisplayName != TransactionViewName.ByCategoryCustom)
                         {
                             object selection = this.TheActiveGrid.SelectedItem;
                             tc.Filter = value;
@@ -2890,11 +2890,11 @@ namespace Walkabout.Views
                         }
                         else
                         {
-                            Refresh();
+                            this.Refresh();
                         }
                     }
                 }
-                OnQuickFilterChanged();
+                this.OnQuickFilterChanged();
             }
         }
 
@@ -2906,7 +2906,7 @@ namespace Walkabout.Views
             {
                 QuickFilterChanged(this, EventArgs.Empty);
             }
-            ShowBalance();
+            this.ShowBalance();
         }
 
 
@@ -2918,7 +2918,7 @@ namespace Walkabout.Views
                 if (this.quickFilter != value)
                 {
                     this.quickFilter = value;
-                    UpdateUX();
+                    this.UpdateUX();
                     // No refresh invoked
                 }
             }
@@ -2928,9 +2928,9 @@ namespace Walkabout.Views
 
         private void OnQuickFilterValueChanged(object sender, string filter)
         {
-            quickFilterValueChanging = true;
+            this.quickFilterValueChanging = true;
             this.QuickFilter = filter;
-            quickFilterValueChanging = false;
+            this.quickFilterValueChanging = false;
         }
 
         public readonly static DependencyProperty IsQueryPanelDisplayedProperty = DependencyProperty.Register("IsQueryPanelDisplayed", typeof(bool), typeof(TransactionsView),
@@ -2988,12 +2988,12 @@ namespace Walkabout.Views
 
             get
             {
-                return (GetValue(IsQueryPanelDisplayedProperty) as bool?) == true ? true : false;
+                return (this.GetValue(IsQueryPanelDisplayedProperty) as bool?) == true ? true : false;
             }
 
             set
             {
-                SetValue(IsQueryPanelDisplayedProperty, value);
+                this.SetValue(IsQueryPanelDisplayedProperty, value);
             }
 
         }
@@ -3002,35 +3002,35 @@ namespace Walkabout.Views
         {
             object selected = e.AddedItems[0];
 
-            if (selected == FilterByNothing)
+            if (selected == this.FilterByNothing)
             {
                 this.TransactionFilter = TransactionFilter.All;
             }
-            else if (selected == FilterByReconciled)
+            else if (selected == this.FilterByReconciled)
             {
                 this.TransactionFilter = TransactionFilter.Reconciled;
             }
-            else if (selected == FilterByUnreconciled)
+            else if (selected == this.FilterByUnreconciled)
             {
                 this.TransactionFilter = TransactionFilter.Unreconciled;
             }
-            else if (selected == FilterByAccepted)
+            else if (selected == this.FilterByAccepted)
             {
                 this.TransactionFilter = TransactionFilter.Accepted;
             }
-            else if (selected == FilterByUnaccepted)
+            else if (selected == this.FilterByUnaccepted)
             {
                 this.TransactionFilter = TransactionFilter.Unaccepted;
             }
-            else if (selected == FilterByCategorized)
+            else if (selected == this.FilterByCategorized)
             {
                 this.TransactionFilter = TransactionFilter.Categorized;
             }
-            else if (selected == FilterByUncategorized)
+            else if (selected == this.FilterByUncategorized)
             {
                 this.TransactionFilter = TransactionFilter.Uncategorized;
             }
-            else if (selected == FilterByCustom)
+            else if (selected == this.FilterByCustom)
             {
                 // do nothing - this one is usually selected programatically.
             }
@@ -3075,7 +3075,7 @@ namespace Walkabout.Views
                     }
                     break;
                 case "InvestmentPortfolioView":
-                    HelpService.SetHelpKeyword(InvestmentPortfolioView, "Investment Portfolio");
+                    HelpService.SetHelpKeyword(this.InvestmentPortfolioView, "Investment Portfolio");
                     break;
                 case "TheGrid_InvestmentActivity":
                 case "TheGrid_BySecurity":
@@ -3088,46 +3088,46 @@ namespace Walkabout.Views
 
             if (name == "InvestmentPortfolioView")
             {
-                InvestmentPortfolioView.Visibility = Visibility.Visible;
-                ToggleExpandAll.IsChecked = false;
-                ToggleExpandAll.Visibility = System.Windows.Visibility.Visible;
+                this.InvestmentPortfolioView.Visibility = Visibility.Visible;
+                this.ToggleExpandAll.IsChecked = false;
+                this.ToggleExpandAll.Visibility = System.Windows.Visibility.Visible;
             }
             else
             {
-                InvestmentPortfolioView.Visibility = Visibility.Collapsed;
-                ToggleExpandAll.Visibility = System.Windows.Visibility.Collapsed;
-                if (TheActiveGrid != null)
+                this.InvestmentPortfolioView.Visibility = Visibility.Collapsed;
+                this.ToggleExpandAll.Visibility = System.Windows.Visibility.Collapsed;
+                if (this.TheActiveGrid != null)
                 {
-                    TheActiveGrid.Visibility = System.Windows.Visibility.Visible;
+                    this.TheActiveGrid.Visibility = System.Windows.Visibility.Visible;
                 }
             }
 
-            if (TheActiveGrid.Name == name)
+            if (this.TheActiveGrid.Name == name)
             {
-                if (TheActiveGrid.Visibility == System.Windows.Visibility.Visible)
+                if (this.TheActiveGrid.Visibility == System.Windows.Visibility.Visible)
                 {
                     // We already have the correct Grid Layout and it is being displayed
                     return true;
                 }
             }
-            TheActiveGrid.ClearItemsSource();
+            this.TheActiveGrid.ClearItemsSource();
 
             // Find the matching grid
             MoneyDataGrid dg = this.FindName(name) as MoneyDataGrid;
             if (dg != null)
             {
-                bool hasKeyboardFocus = TheActiveGrid.IsKeyboardFocusWithin;
-                if (TheActiveGrid != dg)
+                bool hasKeyboardFocus = this.TheActiveGrid.IsKeyboardFocusWithin;
+                if (this.TheActiveGrid != dg)
                 {
                     // Hide the current grid
-                    TheActiveGrid.Visibility = System.Windows.Visibility.Collapsed;
-                    TheActiveGrid = dg;
+                    this.TheActiveGrid.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TheActiveGrid = dg;
                 }
                 // Ensure that the new active grid is visible
-                TheActiveGrid.Visibility = System.Windows.Visibility.Visible;
+                this.TheActiveGrid.Visibility = System.Windows.Visibility.Visible;
                 if (hasKeyboardFocus)
                 {
-                    TheActiveGrid.Focus(); // and keep the focus on it.
+                    this.TheActiveGrid.Focus(); // and keep the focus on it.
                 }
                 return true;
             }
@@ -3139,28 +3139,28 @@ namespace Walkabout.Views
 
         private void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
-            if (rebalancing)
+            if (this.rebalancing)
             {
                 return;
             }
             // concatenate the updates so we can absorb an event storm here (e.g. OFX download).
-            lock (pendingUpdates)
+            lock (this.pendingUpdates)
             {
-                pendingUpdates.Add(args);
+                this.pendingUpdates.Add(args);
             }
-            delayedUpdates.StartDelayedAction("ProcessUpdates", HandleChanges, TimeSpan.FromMilliseconds(100));
+            this.delayedUpdates.StartDelayedAction("ProcessUpdates", this.HandleChanges, TimeSpan.FromMilliseconds(100));
         }
 
         void HandleChanges()
         {
             bool rebalance = false;
             List<ChangeEventArgs> list;
-            lock (pendingUpdates)
+            lock (this.pendingUpdates)
             {
-                list = new List<ChangeEventArgs>(pendingUpdates);
-                pendingUpdates.Clear();
+                list = new List<ChangeEventArgs>(this.pendingUpdates);
+                this.pendingUpdates.Clear();
             }
-            MoneyDataGrid grid = TheActiveGrid;
+            MoneyDataGrid grid = this.TheActiveGrid;
             if (grid != null)
             {
                 TransactionCollection tc = grid.ItemsSource as TransactionCollection;
@@ -3207,7 +3207,7 @@ namespace Walkabout.Views
                                 this.SelectedTransaction != null && this.SelectedTransaction.Investment != null &&
                                 this.SelectedTransaction.Investment.Security == s)
                             {
-                                string payee = GetUncomittedPayee();
+                                string payee = this.GetUncomittedPayee();
                                 if (string.IsNullOrEmpty(payee) && this.SelectedTransaction != null)
                                 {
                                     this.SelectedTransaction.Payee = this.myMoney.Payees.FindPayee(s.Name, true);
@@ -3269,7 +3269,7 @@ namespace Walkabout.Views
                 }
                 if (refresh)
                 {
-                    InvalidateDisplay();
+                    this.InvalidateDisplay();
                 }
             }
         }
@@ -3278,23 +3278,23 @@ namespace Walkabout.Views
 
         private void InvalidateDisplay()
         {
-            if (!isDisplayInvalid)
+            if (!this.isDisplayInvalid)
             {
-                isDisplayInvalid = true;
-                if (!IsEditing)
+                this.isDisplayInvalid = true;
+                if (!this.IsEditing)
                 {
-                    delayedUpdates.StartDelayedAction("Refresh", new Action(() =>
+                    this.delayedUpdates.StartDelayedAction("Refresh", new Action(() =>
                     {
-                        if (!IsEditing)
+                        if (!this.IsEditing)
                         {
                             try
                             {
-                                Refresh();
+                                this.Refresh();
                             }
                             catch
                             {
                             }
-                            isDisplayInvalid = false;
+                            this.isDisplayInvalid = false;
                         }
                     }), TimeSpan.FromMilliseconds(10));
                 }
@@ -3320,7 +3320,7 @@ namespace Walkabout.Views
             get
             {
                 object row = this.TheActiveGrid.SelectedItem;
-                long id = GetRowId(row);
+                long id = this.GetRowId(row);
 
                 // If we can't get a row id off the selected item (or there is no selected item) then
                 // user might be off the bottom in the new blank row area, so search back for a row 
@@ -3329,26 +3329,26 @@ namespace Walkabout.Views
                 while (id == -1 && i > 0)
                 {
                     i--;
-                    id = GetRowId(this.TheActiveGrid.Items[i]);
+                    id = this.GetRowId(this.TheActiveGrid.Items[i]);
                 }
                 return id;
             }
             set
             {
-                object row = FindItemById(value);
+                object row = this.FindItemById(value);
                 if (row != null)
                 {
                     // stop our event handler from doing a refresh which is not allowed in this scope.
-                    this.TheActiveGrid.SelectionChanged -= new SelectionChangedEventHandler(TheGrid_SelectionChanged);
+                    this.TheActiveGrid.SelectionChanged -= new SelectionChangedEventHandler(this.TheGrid_SelectionChanged);
                     this.TheActiveGrid.SelectedItem = row;
-                    this.TheActiveGrid.SelectionChanged += new SelectionChangedEventHandler(TheGrid_SelectionChanged);
+                    this.TheActiveGrid.SelectionChanged += new SelectionChangedEventHandler(this.TheGrid_SelectionChanged);
                 }
             }
         }
 
         internal object FindItemById(long id)
         {
-            return FindItemById(this.TheActiveGrid.ItemsSource, id);
+            return this.FindItemById(this.TheActiveGrid.ItemsSource, id);
         }
 
 
@@ -3376,12 +3376,12 @@ namespace Walkabout.Views
 
         private void Display(IList data, TransactionViewName name, string caption, long selectedRowId)
         {
-            currentDisplayName = name;
-            string layout = TheActiveGrid.Name;
+            this.currentDisplayName = name;
+            string layout = this.TheActiveGrid.Name;
 
-            if (ttf != null)
+            if (this.ttf != null)
             {
-                ttf.Dispose();
+                this.ttf.Dispose();
             }
 
             this.Commit();
@@ -3390,14 +3390,14 @@ namespace Walkabout.Views
 
             this.TheActiveGrid.SetItemsSource(data);
 
-            object selected = FindItemById(selectedRowId);
+            object selected = this.FindItemById(selectedRowId);
             if (selected != null)
             {
                 this.TheActiveGrid.SelectedItem = selected;
             }
             else if (selectedRowId == 0)
             {
-                SelectedRowIndex = 0;
+                this.SelectedRowIndex = 0;
             }
             else if (data != null && data.Count > 0)
             {
@@ -3409,7 +3409,7 @@ namespace Walkabout.Views
                 if (data is TransactionCollection)
                 {
                     this.ViewModel = (TransactionCollection)data;
-                    ttf = new TransactionTypeToFind(TheActiveGrid);
+                    this.ttf = new TransactionTypeToFind(this.TheActiveGrid);
                 }
                 else
                 {
@@ -3421,15 +3421,15 @@ namespace Walkabout.Views
                 this.ViewModel = null;
             }
 
-            UpdateActivities();
+            this.UpdateActivities();
         }
 
         private void OnInvestmentAccountTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            quickFilterValueChanging = true; // don't clear the filter on tab switches.
-            ViewTransactionsForSingleAccount(this.activeAccount, TransactionSelection.Current, 0);
-            ShowBalance();
-            quickFilterValueChanging = false;
+            this.quickFilterValueChanging = true; // don't clear the filter on tab switches.
+            this.ViewTransactionsForSingleAccount(this.activeAccount, TransactionSelection.Current, 0);
+            this.ShowBalance();
+            this.quickFilterValueChanging = false;
             this.TheActiveGrid.Focus();
             // Must update this field After we fire FireBeforeViewStateChanged.
             this.selectedTab = this.InvestmentAccountTabs.SelectedIndex;
@@ -3470,7 +3470,7 @@ namespace Walkabout.Views
                     msg += ", investments " + investmentValue.ToString("C");
                 }
 
-                ShowStatus(msg);
+                this.ShowStatus(msg);
             }
         }
 
@@ -3481,14 +3481,14 @@ namespace Walkabout.Views
         /// </summary>
         public void Refresh()
         {
-            if (!refresh && this.myMoney != null)
+            if (!this.refresh && this.myMoney != null)
             {
-                refresh = true;
+                this.refresh = true;
 
                 this.requestedRowId = this.SelectedRowId;
                 this.UpdateView();
 
-                refresh = false;
+                this.refresh = false;
             }
         }
 
@@ -3499,8 +3499,8 @@ namespace Walkabout.Views
         /// <returns></returns>
         private DateTime? GetUncomittedDate()
         {
-            DataGridRow row = TheActiveGrid.GetRowFromItem(TheActiveGrid.SelectedItem);
-            string date = TheActiveGrid.GetUncommittedColumnText(row, "Date");
+            DataGridRow row = this.TheActiveGrid.GetRowFromItem(this.TheActiveGrid.SelectedItem);
+            string date = this.TheActiveGrid.GetUncommittedColumnText(row, "Date");
             if (date != null)
             {
                 DateTime dt;
@@ -3517,18 +3517,18 @@ namespace Walkabout.Views
         /// </summary>
         private string GetUncomittedPayee()
         {
-            DataGridRow row = TheActiveGrid.GetRowFromItem(TheActiveGrid.SelectedItem);
+            DataGridRow row = this.TheActiveGrid.GetRowFromItem(this.TheActiveGrid.SelectedItem);
             if (row != null)
             {
-                return TheActiveGrid.GetUncommittedColumnText(row, "PayeeOrTransferCaption");
+                return this.TheActiveGrid.GetUncommittedColumnText(row, "PayeeOrTransferCaption");
             }
             return null;
         }
 
         private void SetUncommittedPayee(string payee)
         {
-            DataGridRow row = TheActiveGrid.GetRowFromItem(TheActiveGrid.SelectedItem);
-            TheActiveGrid.SetUncommittedColumnText(row, "PayeeOrTransferCaption", 0, payee);
+            DataGridRow row = this.TheActiveGrid.GetRowFromItem(this.TheActiveGrid.SelectedItem);
+            this.TheActiveGrid.SetUncommittedColumnText(row, "PayeeOrTransferCaption", 0, payee);
         }
 
         /// <summary>
@@ -3536,10 +3536,10 @@ namespace Walkabout.Views
         /// </summary>
         private string GetUncomittedCategory()
         {
-            DataGridRow row = TheActiveGrid.GetRowFromItem(TheActiveGrid.SelectedItem);
+            DataGridRow row = this.TheActiveGrid.GetRowFromItem(this.TheActiveGrid.SelectedItem);
             if (row != null)
             {
-                return TheActiveGrid.GetUncommittedColumnText(row, "PayeeOrTransferCaption", 1);
+                return this.TheActiveGrid.GetUncommittedColumnText(row, "PayeeOrTransferCaption", 1);
             }
             return null;
         }
@@ -3581,18 +3581,18 @@ namespace Walkabout.Views
             if (dataGrid != null)
             {
                 // Toggle the Detail Split View 
-                if (id == splitVisibleRowId && dataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.VisibleWhenSelected)
+                if (id == this.splitVisibleRowId && dataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.VisibleWhenSelected)
                 {
                     // Done editing the split. must be executed after any edit field is committed
                     // so we run this on the ContextIdle
-                    Dispatcher.BeginInvoke(new Action(() => RestoreSplitViewMode()), DispatcherPriority.ContextIdle);
+                    this.Dispatcher.BeginInvoke(new Action(() => this.RestoreSplitViewMode()), DispatcherPriority.ContextIdle);
                 }
                 else
                 {
                     // Show the Full Details Split inline DataGrid
-                    TheActiveGrid.RowDetailsTemplate = this.TryFindResource("myDataGridDetailView") as DataTemplate;
+                    this.TheActiveGrid.RowDetailsTemplate = this.TryFindResource("myDataGridDetailView") as DataTemplate;
                     dataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.VisibleWhenSelected;
-                    splitVisibleRowId = id;
+                    this.splitVisibleRowId = id;
                 }
             }
         }
@@ -3609,20 +3609,20 @@ namespace Walkabout.Views
                 object selected = e.AddedItems[0];
 
 
-                lastSelectedItem = selected;
+                this.lastSelectedItem = selected;
 
                 if (selected is Transaction)
                 {
                     //-------------------------------------------------------------
                     // The user just changed the selection of the current Transaction
                     // We now need to decide if we went to hide the Detail view or leave it as is
-                    if (TheActiveGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible)
+                    if (this.TheActiveGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible)
                     {
                         // Do not change any thing keep the Detail view in Mini mode 
                     }
-                    else if (splitVisibleRowId != this.SelectedRowId)
+                    else if (this.splitVisibleRowId != this.SelectedRowId)
                     {
-                        if (TheActiveGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.VisibleWhenSelected)
+                        if (this.TheActiveGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.VisibleWhenSelected)
                         {
                             // VisibleWhenSelected can only have been set by the user action of clicking on the "SPLIT" button
                             // Since we are now selecting an different Transaction we can hide the Detail view
@@ -3631,41 +3631,41 @@ namespace Walkabout.Views
                             // We need to refresh the items in order show the SPLIT button
                             // TheActiveGrid.Items.Refresh();
 
-                            RestoreSplitViewMode();
+                            this.RestoreSplitViewMode();
                         }
                     }
-                    selectedSplit = null;
+                    this.selectedSplit = null;
                     AttachmentDialog.OnSelectionChanged((Transaction)selected);
                 }
                 else if (selected is Split)
                 {
-                    selectedSplit = (Split)selected;
+                    this.selectedSplit = (Split)selected;
                 }
 
-                if (lazyShowConnector == null && !this.IsReconciling)
+                if (this.lazyShowConnector == null && !this.IsReconciling)
                 {
-                    lazyShowConnector = new DispatcherTimer(TimeSpan.FromMilliseconds(50), DispatcherPriority.Normal, ShowPotentialDuplicates, this.Dispatcher);
+                    this.lazyShowConnector = new DispatcherTimer(TimeSpan.FromMilliseconds(50), DispatcherPriority.Normal, this.ShowPotentialDuplicates, this.Dispatcher);
                 }
-                if (lazyShowConnector != null)
+                if (this.lazyShowConnector != null)
                 {
-                    lazyShowConnector.Stop();
-                    lazyShowConnector.Start();
+                    this.lazyShowConnector.Stop();
+                    this.lazyShowConnector.Start();
                 }
             }
             else if (e.RemovedItems.Count > 0)
             {
-                Transaction t = TheActiveGrid.SelectedItem as Transaction;
+                Transaction t = this.TheActiveGrid.SelectedItem as Transaction;
                 if (e.RemovedItems[0] is Split)
                 {
-                    selectedSplit = null;
+                    this.selectedSplit = null;
                 }
                 if (t == null)
                 {
-                    HideConnector();
+                    this.HideConnector();
                 }
-                else if (connector != null && connector.Source != t && connector.Target != t)
+                else if (this.connector != null && this.connector.Source != t && this.connector.Target != t)
                 {
-                    HideConnector();
+                    this.HideConnector();
                 }
             }
         }
@@ -3679,57 +3679,57 @@ namespace Walkabout.Views
 
         private void ShowPotentialDuplicates(object sender, EventArgs e)
         {
-            lazyShowConnector.Stop();
-            lazyShowConnector = null;
+            this.lazyShowConnector.Stop();
+            this.lazyShowConnector = null;
 
             Transaction t = this.SelectedTransaction;
             if (t != null)
             {
-                DataGridRow row = TheActiveGrid.GetRowFromItem(t);
+                DataGridRow row = this.TheActiveGrid.GetRowFromItem(t);
                 if (row != null)
                 {
-                    Settings settings = GetSettings();
+                    Settings settings = this.GetSettings();
                     TimeSpan range = settings.DuplicateRange;
                     TransactionCollection tc = this.TheActiveGrid.ItemsSource as TransactionCollection;
                     Transaction u = Transactions.FindPotentialDuplicate(t, tc, range);
                     if (u != null)
                     {
-                        ConnectAnchors(t, u);
+                        this.ConnectAnchors(t, u);
                         return;
                     }
                 }
             }
-            HideConnector();
+            this.HideConnector();
         }
 
         TransactionConnector connector;
 
         private void HideConnector()
         {
-            if (connector != null)
+            if (this.connector != null)
             {
-                bool hadFocus = connector.HasFocus;
-                connector.Disconnect();
-                connector = null;
+                bool hadFocus = this.connector.HasFocus;
+                this.connector.Disconnect();
+                this.connector = null;
                 if (hadFocus)
                 {
-                    TheActiveGrid.SetFocusOnSelectedRow(TheActiveGrid.SelectedItem, "Payee");
+                    this.TheActiveGrid.SetFocusOnSelectedRow(this.TheActiveGrid.SelectedItem, "Payee");
                 }
             }
         }
 
         private void ConnectAnchors(Transaction t, Transaction u)
         {
-            if (connector != null)
+            if (this.connector != null)
             {
                 this.connector.Connect(t, u);
             }
             else
             {
-                this.connector = new TransactionConnector(TheActiveGrid);
-                connector.Connect(t, u);
-                connector.Clicked += OnMergeButtonClick;
-                connector.Closed += OnConnectorClosed;
+                this.connector = new TransactionConnector(this.TheActiveGrid);
+                this.connector.Connect(t, u);
+                this.connector.Clicked += this.OnMergeButtonClick;
+                this.connector.Closed += this.OnConnectorClosed;
             }
         }
 
@@ -3741,7 +3741,7 @@ namespace Walkabout.Views
                 connector.Source.NotDuplicate = true;
                 connector.Target.NotDuplicate = true;
             }
-            HideConnector();
+            this.HideConnector();
         }
 
         void OnMergeButtonClick(object sender, EventArgs e)
@@ -3749,20 +3749,20 @@ namespace Walkabout.Views
             TransactionConnector connector = (TransactionConnector)sender;
             if (connector != null)
             {
-                Merge(connector.Source, connector.Target, false);
-                HideConnector();
-                TheActiveGrid.ClearAutoEdit();
+                this.Merge(connector.Source, connector.Target, false);
+                this.HideConnector();
+                this.TheActiveGrid.ClearAutoEdit();
             }
         }
 
         private void RestoreSplitViewMode()
         {
-            if (splitVisibleRowId != -1)
+            if (this.splitVisibleRowId != -1)
             {
                 //
                 // Split view is changing and we have a chance to cleanup any empty split that the user may have left behind
                 //
-                Transaction transactionLostSelection = this.Money.Transactions.FindTransactionById(splitVisibleRowId);
+                Transaction transactionLostSelection = this.Money.Transactions.FindTransactionById(this.splitVisibleRowId);
 
                 if (transactionLostSelection != null)
                 {
@@ -3776,15 +3776,15 @@ namespace Walkabout.Views
 
             if (this.ViewAllSplits)
             {
-                TheActiveGrid.RowDetailsTemplate = this.TryFindResource("myDataGridDetailMiniView") as DataTemplate;
-                TheActiveGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Visible;
-                splitVisibleRowId = this.SelectedRowId;
+                this.TheActiveGrid.RowDetailsTemplate = this.TryFindResource("myDataGridDetailMiniView") as DataTemplate;
+                this.TheActiveGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Visible;
+                this.splitVisibleRowId = this.SelectedRowId;
             }
             else
             {
-                TheActiveGrid.RowDetailsTemplate = this.TryFindResource("myDataGridDetailView") as DataTemplate;
-                TheActiveGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Collapsed;
-                splitVisibleRowId = -1;
+                this.TheActiveGrid.RowDetailsTemplate = this.TryFindResource("myDataGridDetailView") as DataTemplate;
+                this.TheActiveGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Collapsed;
+                this.splitVisibleRowId = -1;
             }
         }
 
@@ -3836,11 +3836,11 @@ namespace Walkabout.Views
         {
             get
             {
-                return viewModel;
+                return this.viewModel;
             }
             set
             {
-                viewModel = value;
+                this.viewModel = value;
                 if (ViewModelChanged != null)
                 {
                     ViewModelChanged(this, EventArgs.Empty);
@@ -3852,28 +3852,28 @@ namespace Walkabout.Views
 
         private void CanExecute_Accept(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = HasNonReadonlySelectedTransaction;
+            e.CanExecute = this.HasNonReadonlySelectedTransaction;
             e.Handled = true;
         }
 
         private void CanExecute_Void(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = HasNonReadonlySelectedTransaction;
+            e.CanExecute = this.HasNonReadonlySelectedTransaction;
             e.Handled = true;
         }
         private void CanExecute_Budgeted(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = HasNonReadonlySelectedTransaction;
+            e.CanExecute = this.HasNonReadonlySelectedTransaction;
             e.Handled = true;
         }
         private void CanExecute_Splits(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = HasNonReadonlySelectedTransaction;
+            e.CanExecute = this.HasNonReadonlySelectedTransaction;
             e.Handled = true;
         }
         private void CanExecute_RenamePayee(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = HasNonReadonlySelectedTransaction;
+            e.CanExecute = this.HasNonReadonlySelectedTransaction;
             e.Handled = true;
         }
         private void CanExecute_LookupPayee(object sender, CanExecuteRoutedEventArgs e)
@@ -3889,7 +3889,7 @@ namespace Walkabout.Views
 
         private void CanExecute_SetTaxDate(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = HasNonReadonlySelectedTransaction;
+            e.CanExecute = this.HasNonReadonlySelectedTransaction;
             e.Handled = true;
         }
 
@@ -3933,7 +3933,7 @@ namespace Walkabout.Views
 
         private void CanExecute_DeleteThisTransaction(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = TheActiveGrid.SelectedItem != null;
+            e.CanExecute = this.TheActiveGrid.SelectedItem != null;
             e.Handled = true;
         }
 
@@ -3944,7 +3944,7 @@ namespace Walkabout.Views
 
         void OnCommandAccept(object sender, RoutedEventArgs e)
         {
-            ToggleTransactionStateAccept(this.SelectedTransaction);
+            this.ToggleTransactionStateAccept(this.SelectedTransaction);
         }
 
         void OnCommandVoid(object sender, RoutedEventArgs e)
@@ -4013,10 +4013,10 @@ namespace Walkabout.Views
                     s.Category = t.Category;
                     splits.AddSplit(s);
                 }
-                t.Category = myMoney.Categories.Split;
+                t.Category = this.myMoney.Categories.Split;
                 this.TheActiveGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.VisibleWhenSelected;
                 t.OnChanged("NonNullSplits");
-                splitVisibleRowId = this.SelectedRowId;
+                this.splitVisibleRowId = this.SelectedRowId;
             }
         }
 
@@ -4048,7 +4048,7 @@ namespace Walkabout.Views
 
         void RenamePayee(Payee payee)
         {
-            RenamePayeeDialog dialog = RenamePayeeDialog.ShowDialogRenamePayee(site, this.myMoney, payee);
+            RenamePayeeDialog dialog = RenamePayeeDialog.ShowDialogRenamePayee(this.site, this.myMoney, payee);
             dialog.Owner = App.Current.MainWindow;
             dialog.ShowDialog();
         }
@@ -4141,44 +4141,44 @@ namespace Walkabout.Views
 
         void OnCommandGotoRelatedTransaction(object sender, RoutedEventArgs e)
         {
-            if (isEditing)
+            if (this.isEditing)
             {
                 this.Commit();
-                Dispatcher.BeginInvoke(new Action(JumpToRelatedTransaction), DispatcherPriority.Background);
+                this.Dispatcher.BeginInvoke(new Action(this.JumpToRelatedTransaction), DispatcherPriority.Background);
             }
             else
             {
-                JumpToRelatedTransaction();
+                this.JumpToRelatedTransaction();
             }
         }
 
         private void OnCommandGotoStatement(object sender, ExecutedRoutedEventArgs e)
         {
-            if (isEditing)
+            if (this.isEditing)
             {
                 this.Commit();
-                Dispatcher.BeginInvoke(new Action(OpenStatement), DispatcherPriority.Background);
+                this.Dispatcher.BeginInvoke(new Action(this.OpenStatement), DispatcherPriority.Background);
             }
             else
             {
-                OpenStatement();
+                this.OpenStatement();
             }
         }
 
 
         private void JumpToRelatedTransaction()
         {
-            Split split = lastSelectedItem as Split;
+            Split split = this.lastSelectedItem as Split;
             if (split != null)
             {
-                GotoRelated(split);
+                this.GotoRelated(split);
             }
             else
             {
                 Transaction t = this.SelectedTransaction;
                 if (t != null)
                 {
-                    GotoRelated(t);
+                    this.GotoRelated(t);
                 }
             }
         }
@@ -4202,7 +4202,7 @@ namespace Walkabout.Views
             Transfer u = split.Transfer;
             if (u != null)
             {
-                GotoTransaction(u.Transaction);
+                this.GotoTransaction(u.Transaction);
             }
         }
 
@@ -4211,11 +4211,11 @@ namespace Walkabout.Views
             Transfer u = t.Transfer;
             if (u != null)
             {
-                GotoTransaction(u.Transaction);
+                this.GotoTransaction(u.Transaction);
             }
             else if (t.Related != null)
             {
-                GotoTransaction(t.Related);
+                this.GotoTransaction(t.Related);
             }
             else if (t.IsSplit)
             {
@@ -4223,14 +4223,14 @@ namespace Walkabout.Views
                 {
                     if (s.Transfer != null)
                     {
-                        GotoTransaction(s.Transfer.Transaction);
+                        this.GotoTransaction(s.Transfer.Transaction);
                         break;
                     }
                 }
             }
             else
             {
-                AttempToMatchAndConvertPossibleTransfer(t);
+                this.AttempToMatchAndConvertPossibleTransfer(t);
             }
         }
 
@@ -4248,7 +4248,7 @@ namespace Walkabout.Views
             //
             // We are searching for the potential transfer transaction in another account.
             //
-            Settings settings = GetSettings();
+            Settings settings = this.GetSettings();
             int days = settings.TransferSearchDays; // starting point, but can grow from there (hence the loop).
             while (true)
             {
@@ -4268,7 +4268,7 @@ namespace Walkabout.Views
                 queryRows.Add(new QueryRow(Conjunction.And, DepositOrPayment, Operation.Equals, Math.Abs(t.amount).ToString()));
 
                 // Execute the search, this a blocking call
-                IList<Transaction> list = myMoney.Transactions.ExecuteQuery(queryRows.ToArray());
+                IList<Transaction> list = this.myMoney.Transactions.ExecuteQuery(queryRows.ToArray());
                 IList<Transaction> free = new List<Transaction>(from u in list where u.Transfer == null select u);
                 if (free.Count > 0)
                 {
@@ -4300,12 +4300,12 @@ namespace Walkabout.Views
                                 if (t.amount > 0)
                                 {
                                     // Money was transfered from the external account to this account
-                                    TransformTwoTrasactionIntoTransfer(found, t);
+                                    this.TransformTwoTrasactionIntoTransfer(found, t);
                                 }
                                 else
                                 {
                                     // Money was transfered from to external account
-                                    TransformTwoTrasactionIntoTransfer(t, found);
+                                    this.TransformTwoTrasactionIntoTransfer(t, found);
                                 }
                             }
                             return;
@@ -4377,7 +4377,7 @@ namespace Walkabout.Views
             Transaction t = this.SelectedTransaction;
             if (t != null && t.Account != null)
             {
-                ViewTransactionsForSingleAccount(t.Account, TransactionSelection.Specific, t.Id);
+                this.ViewTransactionsForSingleAccount(t.Account, TransactionSelection.Specific, t.Id);
             }
         }
 
@@ -4391,7 +4391,7 @@ namespace Walkabout.Views
             Transaction t = this.SelectedTransaction;
             if (t != null && t.Category != null)
             {
-                ViewTransactionsForCategory(t.Category, t.Id);
+                this.ViewTransactionsForCategory(t.Category, t.Id);
             }
         }
 
@@ -4401,21 +4401,21 @@ namespace Walkabout.Views
             Transaction t = this.SelectedTransaction;
             if (t != null && t.Payee != null)
             {
-                ViewTransactionsForPayee(t.Payee, t.Id);
+                this.ViewTransactionsForPayee(t.Payee, t.Id);
             }
         }
 
         void OnCommandViewTransactionsBySecurity(object sender, RoutedEventArgs e)
         {
-            Transaction t = TheActiveGrid.SelectedItem as Transaction;
-            Investment i = TheActiveGrid.SelectedItem as Investment;
+            Transaction t = this.TheActiveGrid.SelectedItem as Transaction;
+            Investment i = this.TheActiveGrid.SelectedItem as Investment;
             if (t != null)
             {
                 i = t.Investment;
             }
             if (i != null)
             {
-                ViewTransactionsForSecurity(i.Security, i.Id);
+                this.ViewTransactionsForSecurity(i.Security, i.Id);
             }
         }
 
@@ -4498,7 +4498,7 @@ namespace Walkabout.Views
 
         private void CanExecute_ToggleViewsAllSplits(object sender, CanExecuteRoutedEventArgs e)
         {
-            if (!IsEditing)
+            if (!this.IsEditing)
             {
                 //
                 // Only allow to toggle "show split view" when we are not in editing mode
@@ -4586,13 +4586,13 @@ namespace Walkabout.Views
                 {
                     if (t.Status != TransactionStatus.Reconciled)
                     {
-                        ReconcileThisTransaction(t);
+                        this.ReconcileThisTransaction(t);
                     }
                     else
                     {
-                        if (reconcilingTransactions.ContainsKey(t))
+                        if (this.reconcilingTransactions.ContainsKey(t))
                         {
-                            t.Status = reconcilingTransactions[t];
+                            t.Status = this.reconcilingTransactions[t];
                             if (t.Status == TransactionStatus.Reconciled)
                             {
                                 t.Status = TransactionStatus.Cleared;
@@ -4628,14 +4628,14 @@ namespace Walkabout.Views
         {
             if (t.Status != TransactionStatus.Reconciled)
             {
-                reconcilingTransactions[t] = t.Status;
+                this.reconcilingTransactions[t] = t.Status;
                 t.Status = TransactionStatus.Reconciled;
                 t.IsReconciling = true;
                 t.ReconciledDate = this.StatmentReconcileDateEnd;
             }
             if (t.Unaccepted)
             {
-                Settings settings = GetSettings();
+                Settings settings = this.GetSettings();
                 if (settings.AcceptReconciled)
                 {
                     t.Unaccepted = false;
@@ -4652,7 +4652,7 @@ namespace Walkabout.Views
             Split s = e.Row.DataContext as Split;
             if (s != null)
             {
-                Dispatcher.BeginInvoke(new Action(() =>
+                this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     s.Transaction.NonNullSplits.Rebalance(); // update split message.
                 }), DispatcherPriority.Background);
@@ -4668,16 +4668,16 @@ namespace Walkabout.Views
                 decimal salesTax = t.SalesTax;
                 decimal amount = t.Amount;
 
-                bool editedTax = TryGetDecimal(grid.GetUncommittedColumnText(e.Row, "SalesTax"), ref salesTax);
+                bool editedTax = this.TryGetDecimal(grid.GetUncommittedColumnText(e.Row, "SalesTax"), ref salesTax);
                 bool editedAmount = false;
-                if (TryGetDecimal(grid.GetUncommittedColumnText(e.Row, "Debit"), ref amount))
+                if (this.TryGetDecimal(grid.GetUncommittedColumnText(e.Row, "Debit"), ref amount))
                 {
                     amount = -amount;
                     editedAmount = true;
                 }
                 else
                 {
-                    editedAmount = TryGetDecimal(grid.GetUncommittedColumnText(e.Row, "Credit"), ref amount);
+                    editedAmount = this.TryGetDecimal(grid.GetUncommittedColumnText(e.Row, "Credit"), ref amount);
                 }
 
                 if (amount < 0)
@@ -4790,7 +4790,7 @@ namespace Walkabout.Views
                     return;
                 }
 
-                if (promptingNewCategory)
+                if (this.promptingNewCategory)
                 {
                     e.Handled = true;
                     return;
@@ -4811,15 +4811,15 @@ namespace Walkabout.Views
 
                 if (value == null && !string.IsNullOrEmpty(text) && this.isEditing)
                 {
-                    promptingNewCategory = true;
+                    this.promptingNewCategory = true;
                     try
                     {
                         e.Handled = true;
-                        value = EnterNewCategoryAsync(combo, text);
+                        value = this.EnterNewCategoryAsync(combo, text);
                     }
                     finally
                     {
-                        promptingNewCategory = false;
+                        this.promptingNewCategory = false;
                     }
                 }
 
@@ -4884,14 +4884,14 @@ namespace Walkabout.Views
                 t.UpdateCategoriesView();
                 // Auto-populate category (and/or Splits) from previous similar transaction.
                 // This saves a LOT of typing.
-                AutoPopulateCategory(t);
+                this.AutoPopulateCategory(t);
             }
 
         }
 
         private void AutoPopulateCategory(Transaction t)
         {
-            string payeeOrTransfer = GetUncomittedPayee();
+            string payeeOrTransfer = this.GetUncomittedPayee();
 
             if (string.IsNullOrEmpty(payeeOrTransfer))
             {
@@ -4899,7 +4899,7 @@ namespace Walkabout.Views
             }
 
             // don't blow away any pending category that the user has entered already.
-            string hasCategoryPending = GetUncomittedCategory();
+            string hasCategoryPending = this.GetUncomittedCategory();
 
             if (t != null && t.Category == null && string.IsNullOrEmpty(hasCategoryPending) && !string.IsNullOrEmpty(payeeOrTransfer))
             {
@@ -4908,7 +4908,7 @@ namespace Walkabout.Views
                 {
                     try
                     {
-                        DateTime? date = GetUncomittedDate();
+                        DateTime? date = this.GetUncomittedDate();
                         if (date.HasValue)
                         {
                             t.Date = date.Value;
@@ -4992,13 +4992,13 @@ namespace Walkabout.Views
         private void TheGridForAmountSplit_Loaded(object sender, RoutedEventArgs e)
         {
             MoneyDataGrid grid = (MoneyDataGrid)sender;
-            SetupGrid(grid, false);
+            this.SetupGrid(grid, false);
         }
 
         private void TheGridForAmountSplit_Unloaded(object sender, RoutedEventArgs e)
         {
             MoneyDataGrid grid = (MoneyDataGrid)sender;
-            TearDownGrid(grid);
+            this.TearDownGrid(grid);
         }
 
         private void OnScanAttachment(object sender, ExecutedRoutedEventArgs e)
@@ -5007,7 +5007,7 @@ namespace Walkabout.Views
             if (t != null)
             {
                 AttachmentManager rm = (AttachmentManager)this.site.GetService(typeof(AttachmentManager));
-                AttachmentDialog.ScanAttachments(t, rm, GetSettings());
+                AttachmentDialog.ScanAttachments(t, rm, this.GetSettings());
             }
         }
 
@@ -5032,8 +5032,8 @@ namespace Walkabout.Views
         private bool viewAllSplits;
         public bool ViewAllSplits
         {
-            get { return viewAllSplits; }
-            set { viewAllSplits = value; }
+            get { return this.viewAllSplits; }
+            set { this.viewAllSplits = value; }
         }
 
         public TransactionFilter TransactionFilter { get; set; }
@@ -5041,8 +5041,8 @@ namespace Walkabout.Views
         private bool viewOneLineView;
         public bool ViewOneLineView
         {
-            get { return viewOneLineView; }
-            set { viewOneLineView = value; }
+            get { return this.viewOneLineView; }
+            set { this.viewOneLineView = value; }
         }
 
         public TransactionViewName CurrentDisplayName;
@@ -5065,8 +5065,8 @@ namespace Walkabout.Views
         private int tabIndex;
         public int TabIndex
         {
-            get { return tabIndex; }
-            set { tabIndex = value; }
+            get { return this.tabIndex; }
+            set { this.tabIndex = value; }
         }
 
         public override void ReadXml(XmlReader r)
@@ -5127,7 +5127,7 @@ namespace Walkabout.Views
             }
             if (tempQuery.Count > 0)
             {
-                Query = tempQuery.ToArray();
+                this.Query = tempQuery.ToArray();
             }
         }
 
@@ -5168,7 +5168,7 @@ namespace Walkabout.Views
                 if (this.Query != null)
                 {
                     writer.WriteStartElement("Query");
-                    foreach (QueryRow row in Query)
+                    foreach (QueryRow row in this.Query)
                     {
                         writer.WriteStartElement("QueryRow");
                         row.WriteXml(writer);
@@ -5189,7 +5189,7 @@ namespace Walkabout.Views
         public void Serialize(XmlWriter w)
         {
             w.WriteStartElement("ViewState");
-            WriteXml(w);
+            this.WriteXml(w);
             w.WriteEndElement();
         }
 
@@ -5210,14 +5210,14 @@ namespace Walkabout.Views
         {
             this.grid = grid;
             this.resetDelay = 500;
-            RegisterEvents(true);
-            IsEnabled = true;
+            this.RegisterEvents(true);
+            this.IsEnabled = true;
 
             foreach (DataGridColumn c in grid.Columns)
             {
                 if (c.CanUserSort && c.SortDirection.HasValue)
                 {
-                    sorted = c;
+                    this.sorted = c;
                     break;
                 }
             }
@@ -5225,39 +5225,39 @@ namespace Walkabout.Views
 
         void grid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-            IsEnabled = true;
+            this.IsEnabled = true;
         }
 
         void grid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
-            IsEnabled = false;
+            this.IsEnabled = false;
         }
 
         void OnTextInput(object sender, TextCompositionEventArgs e)
         {
-            if (IsEnabled)
+            if (this.IsEnabled)
             {
                 uint tick = NativeMethods.TickCount;
                 string text = e.Text;
                 foreach (char ch in text)
                 {
                     if (ch < 0x20) return; // don't process control characters
-                    if (tick < start || tick < this.resetDelay || start < tick - this.resetDelay)
+                    if (tick < this.start || tick < this.resetDelay || this.start < tick - this.resetDelay)
                     {
-                        typedSoFar = ch.ToString();
+                        this.typedSoFar = ch.ToString();
                     }
                     else
                     {
-                        typedSoFar += ch.ToString();
+                        this.typedSoFar += ch.ToString();
                     }
                 }
-                int index = Find(typedSoFar);
+                int index = this.Find(this.typedSoFar);
                 if (index >= 0)
                 {
-                    grid.SelectedIndex = index;
-                    grid.ScrollIntoView(grid.SelectedItem);
+                    this.grid.SelectedIndex = index;
+                    this.grid.ScrollIntoView(this.grid.SelectedItem);
                 }
-                start = tick;
+                this.start = tick;
             }
         }
 
@@ -5274,23 +5274,23 @@ namespace Walkabout.Views
         {
             if (register)
             {
-                this.grid.BeginningEdit += new EventHandler<DataGridBeginningEditEventArgs>(grid_BeginningEdit);
-                this.grid.RowEditEnding += new EventHandler<DataGridRowEditEndingEventArgs>(grid_RowEditEnding);
-                this.grid.Sorting += new DataGridSortingEventHandler(grid_Sorting);
-                this.grid.PreviewTextInput += new TextCompositionEventHandler(OnTextInput);
+                this.grid.BeginningEdit += new EventHandler<DataGridBeginningEditEventArgs>(this.grid_BeginningEdit);
+                this.grid.RowEditEnding += new EventHandler<DataGridRowEditEndingEventArgs>(this.grid_RowEditEnding);
+                this.grid.Sorting += new DataGridSortingEventHandler(this.grid_Sorting);
+                this.grid.PreviewTextInput += new TextCompositionEventHandler(this.OnTextInput);
             }
             else
             {
-                this.grid.BeginningEdit -= new EventHandler<DataGridBeginningEditEventArgs>(grid_BeginningEdit);
-                this.grid.RowEditEnding -= new EventHandler<DataGridRowEditEndingEventArgs>(grid_RowEditEnding);
-                this.grid.Sorting -= new DataGridSortingEventHandler(grid_Sorting);
-                this.grid.PreviewTextInput -= new TextCompositionEventHandler(OnTextInput);
+                this.grid.BeginningEdit -= new EventHandler<DataGridBeginningEditEventArgs>(this.grid_BeginningEdit);
+                this.grid.RowEditEnding -= new EventHandler<DataGridRowEditEndingEventArgs>(this.grid_RowEditEnding);
+                this.grid.Sorting -= new DataGridSortingEventHandler(this.grid_Sorting);
+                this.grid.PreviewTextInput -= new TextCompositionEventHandler(this.OnTextInput);
             }
         }
 
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -5298,7 +5298,7 @@ namespace Walkabout.Views
         {
             if (disposing)
             {
-                RegisterEvents(false);
+                this.RegisterEvents(false);
             }
         }
     }
@@ -5313,17 +5313,17 @@ namespace Walkabout.Views
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         protected override int Find(string text)
         {
-            if (sorted != null && !string.IsNullOrEmpty(text))
+            if (this.sorted != null && !string.IsNullOrEmpty(text))
             {
                 int i = 0;
-                foreach (object o in grid.Items)
+                foreach (object o in this.grid.Items)
                 {
                     string value = string.Empty;
 
                     Transaction t = o as Transaction;
                     if (t != null)
                     {
-                        switch (sorted.SortMemberPath)
+                        switch (this.sorted.SortMemberPath)
                         {
                             case "Number":
                                 value = (t.Number == null) ? string.Empty : t.Number.ToString();
@@ -5377,7 +5377,7 @@ namespace Walkabout.Views
                         Investment it = o as Investment;
                         if (it != null)
                         {
-                            switch (sorted.SortMemberPath)
+                            switch (this.sorted.SortMemberPath)
                             {
                                 case "Security":
                                     value = it.Security == null ? string.Empty : it.Security.Name;
@@ -5438,7 +5438,7 @@ namespace Walkabout.Views
             this.filterOnInvestmentInfo = filterOnInvestmentInfo;
             this.Filter = filter;
             this.transactions = data;
-            constructing = false;
+            this.constructing = false;
         }
 
         // return the original unfiltered transactions
@@ -5455,23 +5455,23 @@ namespace Walkabout.Views
             set { this.prompt = value; }
         }
 
-        public Account Account { get => account; set => account = value; }
+        public Account Account { get => this.account; set => this.account = value; }
 
         protected override void InsertItem(int index, Transaction t)
         {
             base.InsertItem(index, t);
             if (t.Parent == null && !t.IsReadOnly)
             {
-                t.Parent = money.Transactions;
+                t.Parent = this.money.Transactions;
                 t.Id = -1; // Let the data model take care of transaction Id
                 t.Date = DateTime.Today;
 
                 if (t.Account == null)
                 {
-                    t.Account = account;
+                    t.Account = this.account;
                 }
                 // The Begin/EndUpdate stops the TransactionControl from doing a Refresh which is what we want.
-                if (!constructing)
+                if (!this.constructing)
                 {
                     this.money.BeginUpdate(this);
                     this.money.Transactions.AddTransaction(t);
@@ -5496,7 +5496,7 @@ namespace Walkabout.Views
                 }
                 else
                 {
-                    if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || !Prompt || ConfirmDelete())
+                    if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || !this.Prompt || this.ConfirmDelete())
                     {
                         this.money.BeginUpdate(this);
                         try
@@ -5522,8 +5522,8 @@ namespace Walkabout.Views
             {
                 return true;
             }
-            return Transactions.IsAnyFieldsMatching(t, filterToken, filterOnAccountName) || Transactions.IsSplitsMatching(t.Splits, filterToken) ||
-                        (filterOnInvestmentInfo && t.Investment != null && IsMatch(t.Investment, filterToken));
+            return Transactions.IsAnyFieldsMatching(t, filterToken, this.filterOnAccountName) || Transactions.IsSplitsMatching(t.Splits, filterToken) ||
+                        (this.filterOnInvestmentInfo && t.Investment != null && IsMatch(t.Investment, filterToken));
         }
 
         internal static bool IsMatch(Investment i, FilterLiteral filter)
@@ -5587,14 +5587,14 @@ namespace Walkabout.Views
 
         public TransactionCell()
         {
-            this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
-            this.Unloaded += (s, e) =>
+            DataContextChanged += new DependencyPropertyChangedEventHandler(this.OnDataContextChanged);
+            Unloaded += (s, e) =>
             {
-                OnUnloaded();
+                this.OnUnloaded();
             };
-            this.Loaded += (s, e) =>
+            Loaded += (s, e) =>
             {
-                OnLoaded();
+                this.OnLoaded();
             };
         }
 
@@ -5603,7 +5603,7 @@ namespace Walkabout.Views
             // stop listening
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
+                this.context.PropertyChanged -= this.OnPropertyChanged;
             }
         }
 
@@ -5612,9 +5612,9 @@ namespace Walkabout.Views
             // start listening
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
-                this.context.PropertyChanged += OnPropertyChanged;
-                UpdateUI();
+                this.context.PropertyChanged -= this.OnPropertyChanged;
+                this.context.PropertyChanged += this.OnPropertyChanged;
+                this.UpdateUI();
             }
         }
 
@@ -5625,7 +5625,7 @@ namespace Walkabout.Views
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
             DataGridCell cell = this.GetParentObject() as DataGridCell;
-            SetCell(cell);
+            this.SetCell(cell);
             base.OnVisualParentChanged(oldParent);
         }
 
@@ -5633,21 +5633,21 @@ namespace Walkabout.Views
         {
             if (this.cell != null)
             {
-                cell.Selected -= new RoutedEventHandler(OnCellSelectionChanged);
-                cell.Unselected -= new RoutedEventHandler(OnCellSelectionChanged);
+                this.cell.Selected -= new RoutedEventHandler(this.OnCellSelectionChanged);
+                this.cell.Unselected -= new RoutedEventHandler(this.OnCellSelectionChanged);
             }
             this.cell = newCell;
-            if (cell != null)
+            if (this.cell != null)
             {
-                cell.Selected += new RoutedEventHandler(OnCellSelectionChanged);
-                cell.Unselected += new RoutedEventHandler(OnCellSelectionChanged);
+                this.cell.Selected += new RoutedEventHandler(this.OnCellSelectionChanged);
+                this.cell.Unselected += new RoutedEventHandler(this.OnCellSelectionChanged);
             }
         }
 
         void OnCellSelectionChanged(object sender, RoutedEventArgs e)
         {
-            UpdateBackground();
-            UpdateForeground();
+            this.UpdateBackground();
+            this.UpdateForeground();
         }
 
         void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -5663,30 +5663,30 @@ namespace Walkabout.Views
             }
             if (t != this.context)
             {
-                SetContext(t);
-                UpdateUI();
+                this.SetContext(t);
+                this.UpdateUI();
             }
         }
 
         void UpdateUI()
         {
-            UpdateBackground();
-            UpdateForeground();
-            UpdateFontWeight();
-            UpdateBorder();
+            this.UpdateBackground();
+            this.UpdateForeground();
+            this.UpdateFontWeight();
+            this.UpdateBorder();
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)
         {
-            mouseOver = true;
-            UpdateBackground();
+            this.mouseOver = true;
+            this.UpdateBackground();
             base.OnMouseEnter(e);
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
-            mouseOver = false;
-            UpdateBackground();
+            this.mouseOver = false;
+            this.UpdateBackground();
             base.OnMouseLeave(e);
         }
 
@@ -5694,13 +5694,13 @@ namespace Walkabout.Views
         {
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
+                this.context.PropertyChanged -= this.OnPropertyChanged;
             }
             this.context = transaction;
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
-                this.context.PropertyChanged += OnPropertyChanged;
+                this.context.PropertyChanged -= this.OnPropertyChanged;
+                this.context.PropertyChanged += this.OnPropertyChanged;
             }
         }
 
@@ -5709,19 +5709,19 @@ namespace Walkabout.Views
             switch (e.PropertyName)
             {
                 case "IsReconciling":
-                    UpdateBackground();
+                    this.UpdateBackground();
                     break;
                 case "Unaccepted":
-                    UpdateFontWeight();
+                    this.UpdateFontWeight();
                     break;
                 case "IsDown":
-                    UpdateForeground();
+                    this.UpdateForeground();
                     break;
                 case "IsReadOnly":
-                    UpdateForeground();
+                    this.UpdateForeground();
                     break;
                 case "AttachmentDropTarget":
-                    UpdateBorder();
+                    this.UpdateBorder();
                     break;
             }
         }
@@ -5738,7 +5738,7 @@ namespace Walkabout.Views
                 </Trigger>
              */
             bool isReconciling = false;
-            bool isSelected = IsSelected;
+            bool isSelected = this.IsSelected;
             if (this.context != null)
             {
                 isReconciling = this.context.IsReconciling;
@@ -5746,7 +5746,7 @@ namespace Walkabout.Views
             Brush backgroundBrush = null;
             if (isSelected)
             {
-                if (mouseOver)
+                if (this.mouseOver)
                 {
                     backgroundBrush = AppTheme.Instance.GetThemedBrush("ListItemSelectedBackgroundMouseOverBrush");
                 }
@@ -5775,7 +5775,7 @@ namespace Walkabout.Views
         {
             get
             {
-                return (cell != null) ? cell.IsSelected : false;
+                return (this.cell != null) ? this.cell.IsSelected : false;
             }
         }
 
@@ -5794,7 +5794,7 @@ namespace Walkabout.Views
                 </DataTrigger>
              */
 
-            bool isSelected = IsSelected;
+            bool isSelected = this.IsSelected;
             bool isDown = false;
             bool isReadOnly = false;
             bool isUnaccepted = false;
@@ -5833,10 +5833,10 @@ namespace Walkabout.Views
 
             // establish the new color.
             var brush = AppTheme.Instance.GetThemedBrush(foregroundBrushName);
-            SetValue(TextBlock.ForegroundProperty, brush);
-            if (cell != null)
+            this.SetValue(TextBlock.ForegroundProperty, brush);
+            if (this.cell != null)
             {
-                cell.SetValue(TextBlock.ForegroundProperty, brush);
+                this.cell.SetValue(TextBlock.ForegroundProperty, brush);
             }
         }
 
@@ -5861,17 +5861,17 @@ namespace Walkabout.Views
             if (unaccepted)
             {
                 this.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-                if (cell != null)
+                if (this.cell != null)
                 {
-                    cell.SetValue(DataGridCell.FontWeightProperty, FontWeights.Bold);
+                    this.cell.SetValue(DataGridCell.FontWeightProperty, FontWeights.Bold);
                 }
             }
             else
             {
-                ClearValue(TextBlock.FontWeightProperty);
-                if (cell != null)
+                this.ClearValue(TextBlock.FontWeightProperty);
+                if (this.cell != null)
                 {
-                    cell.ClearValue(DataGridCell.FontWeightProperty);
+                    this.cell.ClearValue(DataGridCell.FontWeightProperty);
                 }
             }
         }
@@ -5880,7 +5880,7 @@ namespace Walkabout.Views
         {
             if (this.context != null && this.cell != null)
             {
-                if (cell.Column.SortMemberPath == "HasAttachment")
+                if (this.cell.Column.SortMemberPath == "HasAttachment")
                 {
                     if (this.context.AttachmentDropTarget)
                     {
@@ -5903,14 +5903,14 @@ namespace Walkabout.Views
 
         public TransactionAttachmentIcon()
         {
-            this.DataContextChanged += OnDataContextChanged;
-            this.Unloaded += (s, e) =>
+            DataContextChanged += this.OnDataContextChanged;
+            Unloaded += (s, e) =>
             {
-                OnUnloaded();
+                this.OnUnloaded();
             };
-            this.Loaded += (s, e) =>
+            Loaded += (s, e) =>
             {
-                OnLoaded();
+                this.OnLoaded();
             };
         }
 
@@ -5919,7 +5919,7 @@ namespace Walkabout.Views
             // stop listening
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnContextPropertyChanged;
+                this.context.PropertyChanged -= this.OnContextPropertyChanged;
             }
         }
 
@@ -5928,9 +5928,9 @@ namespace Walkabout.Views
             // start listening
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnContextPropertyChanged;
-                this.context.PropertyChanged += OnContextPropertyChanged;
-                UpdateIcon();
+                this.context.PropertyChanged -= this.OnContextPropertyChanged;
+                this.context.PropertyChanged += this.OnContextPropertyChanged;
+                this.UpdateIcon();
             }
         }
 
@@ -5939,7 +5939,7 @@ namespace Walkabout.Views
             if (e.NewValue != this.context)
             {
                 // WPF is recycling this object for a different row!
-                SetContext(e.NewValue as Transaction);
+                this.SetContext(e.NewValue as Transaction);
             }
         }
 
@@ -5947,21 +5947,21 @@ namespace Walkabout.Views
         {
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnContextPropertyChanged;
+                this.context.PropertyChanged -= this.OnContextPropertyChanged;
             }
             this.context = t;
             if (this.context != null)
             {
-                this.context.PropertyChanged += OnContextPropertyChanged;
+                this.context.PropertyChanged += this.OnContextPropertyChanged;
             }
-            UpdateIcon();
+            this.UpdateIcon();
         }
 
         private void OnContextPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "HasAttachment")
             {
-                UpdateIcon();
+                this.UpdateIcon();
             }
         }
 
@@ -6144,8 +6144,8 @@ namespace Walkabout.Views
             // Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, 
             //          Path=OneLineView, Converter={StaticResource FalseToVisible}}"
             this.view = view;
-            view.OneLineViewChanged -= new EventHandler(OnOneLineViewChanged);
-            view.OneLineViewChanged += new EventHandler(OnOneLineViewChanged);
+            view.OneLineViewChanged -= new EventHandler(this.OnOneLineViewChanged);
+            view.OneLineViewChanged += new EventHandler(this.OnOneLineViewChanged);
 
             this.MinWidth = 300;
             this.VerticalAlignment = VerticalAlignment.Top;
@@ -6164,11 +6164,11 @@ namespace Walkabout.Views
 
             if (!view.OneLineView || category != null || memo != null)
             {
-                CreateCategoryMemo(category, memo, dataItem);
+                this.CreateCategoryMemo(category, memo, dataItem);
                 if (view.OneLineView)
                 {
                     // hide the text blocks that contain these edited values for now.
-                    OnOneLineViewChanged(this, EventArgs.Empty);
+                    this.OnOneLineViewChanged(this, EventArgs.Empty);
                 }
             }
 
@@ -6176,20 +6176,20 @@ namespace Walkabout.Views
 
         public TransactionTextField PayeeField
         {
-            get { return payeeField; }
-            set { payeeField = value; }
+            get { return this.payeeField; }
+            set { this.payeeField = value; }
         }
 
         public TransactionTextField CategoryField
         {
-            get { return categoryField; }
-            set { categoryField = value; }
+            get { return this.categoryField; }
+            set { this.categoryField = value; }
         }
 
         public TransactionTextField MemoField
         {
-            get { return memoField; }
-            set { memoField = value; }
+            get { return this.memoField; }
+            set { this.memoField = value; }
         }
 
         void CreateCategoryMemo(Binding category, Binding memo, object dataItem)
@@ -6218,7 +6218,7 @@ namespace Walkabout.Views
 
         void OnOneLineViewChanged(object sender, EventArgs e)
         {
-            if (view.OneLineView)
+            if (this.view.OneLineView)
             {
                 if (this.categoryField != null) this.categoryField.Visibility = System.Windows.Visibility.Collapsed;
                 if (this.memoField != null) this.memoField.Visibility = System.Windows.Visibility.Collapsed;
@@ -6227,7 +6227,7 @@ namespace Walkabout.Views
             {
                 if (this.categoryField == null)
                 {
-                    CreateCategoryMemo(null, null, null);
+                    this.CreateCategoryMemo(null, null, null);
                 }
                 else
                 {
@@ -6314,17 +6314,17 @@ namespace Walkabout.Views
         public TransactionConnectorAdorner(UIElement adornedElement)
             : base(adornedElement)
         {
-            mainButton = new RoundedButton();
-            mainButton.Content = "Merge";
-            mainButton.ToolTip = "These transactions appear to be duplicates, click this button to merge them";
-            mainButton.CornerRadius = new CornerRadius(5);
-            mainButton.BorderThickness = new Thickness(3);
-            mainButton.FontWeight = FontWeights.Bold;
+            this.mainButton = new RoundedButton();
+            this.mainButton.Content = "Merge";
+            this.mainButton.ToolTip = "These transactions appear to be duplicates, click this button to merge them";
+            this.mainButton.CornerRadius = new CornerRadius(5);
+            this.mainButton.BorderThickness = new Thickness(3);
+            this.mainButton.FontWeight = FontWeights.Bold;
 
-            this.AddVisualChild(mainButton);
-            closeBox = new CloseBox();
-            this.AddVisualChild(closeBox);
-            closeBox.Opacity = 1;
+            this.AddVisualChild(this.mainButton);
+            this.closeBox = new CloseBox();
+            this.AddVisualChild(this.closeBox);
+            this.closeBox.Opacity = 1;
         }
 
         public Point StartPoint
@@ -6335,7 +6335,7 @@ namespace Walkabout.Views
                 if (this.startPoint != value)
                 {
                     this.startPoint = value;
-                    InvalidateVisual();
+                    this.InvalidateVisual();
                 }
             }
         }
@@ -6348,33 +6348,33 @@ namespace Walkabout.Views
                 if (this.endPoint != value)
                 {
                     this.endPoint = value;
-                    InvalidateVisual();
+                    this.InvalidateVisual();
                 }
             }
         }
 
         public bool StartOffscreen
         {
-            get => startOffscreen;
+            get => this.startOffscreen;
             set
             {
                 if (this.startOffscreen != value)
                 {
                     this.startOffscreen = value;
-                    InvalidateVisual();
+                    this.InvalidateVisual();
                 }
             }
         }
 
         public bool EndOffscreen
         {
-            get => endOffscreen;
+            get => this.endOffscreen;
             set
             {
                 if (this.endOffscreen != value)
                 {
                     this.endOffscreen = value;
-                    InvalidateVisual();
+                    this.InvalidateVisual();
                 }
             }
         }
@@ -6385,16 +6385,16 @@ namespace Walkabout.Views
 
         protected override Size MeasureOverride(Size constraint)
         {
-            mainButton.Measure(constraint);
-            closeBox.Measure(constraint);
+            this.mainButton.Measure(constraint);
+            this.closeBox.Measure(constraint);
 
-            CreateConnectorGeometry();
+            this.CreateConnectorGeometry();
 
-            if (connector != null)
+            if (this.connector != null)
             {
-                InvalidateVisual();
+                this.InvalidateVisual();
 
-                return connector.Bounds.Size;
+                return this.connector.Bounds.Size;
             }
             return constraint;
         }
@@ -6403,43 +6403,43 @@ namespace Walkabout.Views
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Brush stroke = (Brush)FindResource("TransactionConnectorBrush");
-            Brush foreground = (Brush)FindResource("TransactionConnectorForegroundBrush");
-            Brush background = (Brush)FindResource("TransactionConnectorButtonBackground");
-            Brush pressed = (Brush)FindResource("TransactionConnectorButtonPressedBackground");
-            Brush mouseOver = (Brush)FindResource("TransactionConnectorButtonMouseOverBackground");
+            Brush stroke = (Brush)this.FindResource("TransactionConnectorBrush");
+            Brush foreground = (Brush)this.FindResource("TransactionConnectorForegroundBrush");
+            Brush background = (Brush)this.FindResource("TransactionConnectorButtonBackground");
+            Brush pressed = (Brush)this.FindResource("TransactionConnectorButtonPressedBackground");
+            Brush mouseOver = (Brush)this.FindResource("TransactionConnectorButtonMouseOverBackground");
 
-            mainButton.Background = background;
-            mainButton.BorderBrush = stroke;
-            mainButton.Foreground = stroke;
-            mainButton.BorderThickness = new Thickness(strokeThickness);
-            mainButton.MouseOverBackground = mouseOver;
-            mainButton.MouseOverBorder = stroke;
-            mainButton.MouseOverForeground = foreground;
-            mainButton.MousePressedBackground = pressed;
-            mainButton.MousePressedBorder = stroke;
-            mainButton.MousePressedForeground = foreground;
+            this.mainButton.Background = background;
+            this.mainButton.BorderBrush = stroke;
+            this.mainButton.Foreground = stroke;
+            this.mainButton.BorderThickness = new Thickness(strokeThickness);
+            this.mainButton.MouseOverBackground = mouseOver;
+            this.mainButton.MouseOverBorder = stroke;
+            this.mainButton.MouseOverForeground = foreground;
+            this.mainButton.MousePressedBackground = pressed;
+            this.mainButton.MousePressedBorder = stroke;
+            this.mainButton.MousePressedForeground = foreground;
 
-            closeBox.Foreground = stroke;
-            closeBox.BorderThickness = new Thickness(1);
-            closeBox.Background = background;
-            closeBox.MouseOverBackground = mouseOver;
-            closeBox.MouseOverForeground = foreground;
-            closeBox.MousePressedBackground = pressed;
-            closeBox.MousePressedForeground = foreground;
+            this.closeBox.Foreground = stroke;
+            this.closeBox.BorderThickness = new Thickness(1);
+            this.closeBox.Background = background;
+            this.closeBox.MouseOverBackground = mouseOver;
+            this.closeBox.MouseOverForeground = foreground;
+            this.closeBox.MousePressedBackground = pressed;
+            this.closeBox.MousePressedForeground = foreground;
 
-            CreateConnectorGeometry();
+            this.CreateConnectorGeometry();
 
-            Size buttonSize = mainButton.DesiredSize;
+            Size buttonSize = this.mainButton.DesiredSize;
             Point pos = this.connectorCenter;
             pos.X -= (buttonSize.Width / 2);
             pos.Y -= (buttonSize.Height / 2);
 
-            mainButton.Arrange(new Rect(pos.X, pos.Y, buttonSize.Width + (2 * strokeThickness), buttonSize.Height + (2 * strokeThickness)));
+            this.mainButton.Arrange(new Rect(pos.X, pos.Y, buttonSize.Width + (2 * strokeThickness), buttonSize.Height + (2 * strokeThickness)));
 
-            pos.X += buttonSize.Width + (closeBox.DesiredSize.Width / 2) - strokeThickness;
-            pos.Y -= (closeBox.DesiredSize.Height / 2) - strokeThickness;
-            closeBox.Arrange(new Rect(pos.X, pos.Y, closeBox.DesiredSize.Width, closeBox.DesiredSize.Height));
+            pos.X += buttonSize.Width + (this.closeBox.DesiredSize.Width / 2) - strokeThickness;
+            pos.Y -= (this.closeBox.DesiredSize.Height / 2) - strokeThickness;
+            this.closeBox.Arrange(new Rect(pos.X, pos.Y, this.closeBox.DesiredSize.Width, this.closeBox.DesiredSize.Height));
 
             return base.ArrangeOverride(finalSize);
         }
@@ -6456,11 +6456,11 @@ namespace Walkabout.Views
         {
             if (index == 0)
             {
-                return mainButton;
+                return this.mainButton;
             }
             else if (index == 1)
             {
-                return closeBox;
+                return this.closeBox;
             }
             return null;
         }
@@ -6470,10 +6470,10 @@ namespace Walkabout.Views
             double arcSize = 10;
             double arcY = arcSize;
             double arcAngle = 90;
-            double offsetY = startPoint.Y;
-            double height = endPoint.Y - startPoint.Y;
+            double offsetY = this.startPoint.Y;
+            double height = this.endPoint.Y - this.startPoint.Y;
             SweepDirection direction = SweepDirection.Clockwise;
-            if (startPoint.Y > endPoint.Y)
+            if (this.startPoint.Y > this.endPoint.Y)
             {
                 // then the connector is going up, which means arcs are anti-clockwise.
                 arcY = -arcSize;
@@ -6481,15 +6481,15 @@ namespace Walkabout.Views
                 direction = SweepDirection.Counterclockwise;
             }
             double arcX = arcSize;
-            double x = startPoint.X;
+            double x = this.startPoint.X;
             PathFigure connector;
-            if (startOffscreen && endOffscreen)
+            if (this.startOffscreen && this.endOffscreen)
             {
                 connector = new PathFigure(new Point(x + connectorSize, offsetY), new PathSegment[] {
                     new LineSegment(new Point(x + connectorSize, height + offsetY - arcY), true)
                 }, false);
             }
-            else if (startOffscreen)
+            else if (this.startOffscreen)
             {
                 connector = new PathFigure(new Point(x + connectorSize, offsetY), new PathSegment[] {
                     new LineSegment(new Point(x + connectorSize, height + offsetY - arcY), true),
@@ -6497,7 +6497,7 @@ namespace Walkabout.Views
                     new LineSegment(new Point(x, height + offsetY), true),
                 }, false);
             }
-            else if (endOffscreen)
+            else if (this.endOffscreen)
             {
                 connector = new PathFigure(new Point(x, offsetY), new PathSegment[] {
                     new LineSegment(new Point(x + connectorSize - arcX, offsetY), true),
@@ -6519,9 +6519,9 @@ namespace Walkabout.Views
             var path = new PathGeometry();
             path.Figures.Add(connector);
 
-            Brush brush = (Brush)FindResource("TransactionConnectorBrush");
+            Brush brush = (Brush)this.FindResource("TransactionConnectorBrush");
 
-            this.connectorCenter = new Point(x + connectorSize, startPoint.Y + (height + penWidth) / 2);
+            this.connectorCenter = new Point(x + connectorSize, this.startPoint.Y + (height + penWidth) / 2);
             this.connector = path;
 
             return path;
@@ -6529,13 +6529,13 @@ namespace Walkabout.Views
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            Geometry path = CreateConnectorGeometry();
+            Geometry path = this.CreateConnectorGeometry();
             if (path == null)
             {
                 return;
             }
 
-            Brush brush = (Brush)FindResource("TransactionConnectorBrush");
+            Brush brush = (Brush)this.FindResource("TransactionConnectorBrush");
 
             drawingContext.DrawGeometry(null, new Pen(brush, penWidth) { LineJoin = PenLineJoin.Round }, path);
         }
@@ -6557,26 +6557,26 @@ namespace Walkabout.Views
         public TransactionConnector(MoneyDataGrid grid)
         {
             this.grid = grid;
-            this.grid.LoadingRow += OnRowLoadUnload;
-            this.grid.UnloadingRow += OnRowLoadUnload;
+            this.grid.LoadingRow += this.OnRowLoadUnload;
+            this.grid.UnloadingRow += this.OnRowLoadUnload;
             // we also have to watch scrolling in case the anchor moves too far offscreen
             // such that it becomes invalid...
-            grid.ScrollChanged += OnGridScrollChanged;
+            grid.ScrollChanged += this.OnGridScrollChanged;
         }
 
         void OnRowLoadUnload(object sender, DataGridRowEventArgs e)
         {
-            if (e.Row == sourceRow || e.Row == targetRow)
+            if (e.Row == this.sourceRow || e.Row == this.targetRow)
             {
                 // might need to reposition the adorner...
-                Connect(sourceTransaction, targetTransaction);
+                this.Connect(this.sourceTransaction, this.targetTransaction);
             }
         }
 
         void OnGridScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             // might need to reposition the adorner...
-            Connect(sourceTransaction, targetTransaction);
+            this.Connect(this.sourceTransaction, this.targetTransaction);
         }
 
         public Transaction Source { get { return this.sourceTransaction; } }
@@ -6604,21 +6604,21 @@ namespace Walkabout.Views
                 return;
             }
 
-            sourceRow = this.grid.GetRowFromItem(t);
-            targetRow = this.grid.GetRowFromItem(u);
+            this.sourceRow = this.grid.GetRowFromItem(t);
+            this.targetRow = this.grid.GetRowFromItem(u);
 
             Point startPoint = (this.adorner != null) ? this.adorner.StartPoint : new Point(0, 0);
             Point endPoint = (this.adorner != null) ? this.adorner.EndPoint : new Point(0, 0);
             bool startOffscreen = true;
             bool endOffscreen = true;
 
-            if (sourceRow != null)
+            if (this.sourceRow != null)
             {
-                sourceAnchor = sourceRow.FindFirstDescendantOfType<TransactionAnchor>();
-                if (sourceAnchor != null)
+                this.sourceAnchor = this.sourceRow.FindFirstDescendantOfType<TransactionAnchor>();
+                if (this.sourceAnchor != null)
                 {
                     startOffscreen = false;
-                    startPoint = sourceAnchor.TransformToAncestor(this.grid).Transform(new Point(0, sourceRow.ActualHeight / 2));
+                    startPoint = this.sourceAnchor.TransformToAncestor(this.grid).Transform(new Point(0, this.sourceRow.ActualHeight / 2));
                     if (startPoint.Y > this.grid.ActualHeight)
                     {
                         startOffscreen = true;
@@ -6636,13 +6636,13 @@ namespace Walkabout.Views
             {
                 startPoint.Y = (i < j) ? 0 : this.grid.ActualHeight;
             }
-            if (targetRow != null)
+            if (this.targetRow != null)
             {
-                targetAnchor = WpfHelper.FindFirstDescendantOfType<TransactionAnchor>(targetRow);
-                if (targetAnchor != null)
+                this.targetAnchor = WpfHelper.FindFirstDescendantOfType<TransactionAnchor>(this.targetRow);
+                if (this.targetAnchor != null)
                 {
                     endOffscreen = false;
-                    endPoint = targetAnchor.TransformToAncestor(this.grid).Transform(new Point(0, targetRow.ActualHeight / 2));
+                    endPoint = this.targetAnchor.TransformToAncestor(this.grid).Transform(new Point(0, this.targetRow.ActualHeight / 2));
 
                     if (endPoint.Y > this.grid.ActualHeight)
                     {
@@ -6654,7 +6654,7 @@ namespace Walkabout.Views
                         endOffscreen = true;
                         endPoint.Y = 0;
                     }
-                    if (sourceRow == null)
+                    if (this.sourceRow == null)
                     {
                         startPoint.X = endPoint.X;
                     }
@@ -6668,11 +6668,11 @@ namespace Walkabout.Views
             if (this.adorner == null)
             {
                 this.adorner = new TransactionConnectorAdorner(this.grid);
-                layer = AdornerLayer.GetAdornerLayer(this.grid);
-                layer.Add(this.adorner);
+                this.layer = AdornerLayer.GetAdornerLayer(this.grid);
+                this.layer.Add(this.adorner);
                 // relay these events up
-                this.adorner.MergeButton.Click += OnMainButtonClick;
-                this.adorner.CloseBox.Click += OnCloseBoxClick;
+                this.adorner.MergeButton.Click += this.OnMainButtonClick;
+                this.adorner.CloseBox.Click += this.OnCloseBoxClick;
             }
 
             this.adorner.StartOffscreen = startOffscreen;
@@ -6684,12 +6684,12 @@ namespace Walkabout.Views
 
         void OnCloseBoxClick(object sender, RoutedEventArgs e)
         {
-            OnClosed();
+            this.OnClosed();
         }
 
         void OnMainButtonClick(object sender, RoutedEventArgs e)
         {
-            OnClicked();
+            this.OnClicked();
         }
 
         public event EventHandler Clicked;
@@ -6700,7 +6700,7 @@ namespace Walkabout.Views
             {
                 Clicked(this, EventArgs.Empty);
             }
-            Disconnect();
+            this.Disconnect();
         }
 
         public event EventHandler Closed;
@@ -6711,36 +6711,36 @@ namespace Walkabout.Views
             {
                 Closed(this, EventArgs.Empty);
             }
-            Disconnect();
+            this.Disconnect();
         }
 
         internal void Disconnect()
         {
             if (this.sourceAnchor != null)
             {
-                sourceAnchor.DataContextChanged -= OnDataContextChanged;
+                this.sourceAnchor.DataContextChanged -= this.OnDataContextChanged;
             }
             if (this.targetAnchor != null)
             {
-                targetAnchor.DataContextChanged -= OnDataContextChanged;
+                this.targetAnchor.DataContextChanged -= this.OnDataContextChanged;
             }
             this.sourceAnchor = this.targetAnchor = null;
 
             if (this.layer != null)
             {
-                layer.Remove(this.adorner);
+                this.layer.Remove(this.adorner);
                 this.layer = null;
                 this.adorner = null;
             }
 
-            grid.ScrollChanged -= OnGridScrollChanged;
+            this.grid.ScrollChanged -= this.OnGridScrollChanged;
 
             this.sourceRow = this.targetRow = null;
         }
 
         void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            Disconnect();
+            this.Disconnect();
         }
 
 
@@ -6748,7 +6748,7 @@ namespace Walkabout.Views
         {
             get
             {
-                return (adorner != null && adorner.IsKeyboardFocusWithin);
+                return (this.adorner != null && this.adorner.IsKeyboardFocusWithin);
             }
         }
     }
@@ -6800,12 +6800,12 @@ namespace Walkabout.Views
                 {
                     return "";
                 }
-                return d.Value.ToString("N" + GetDecimalDigits(d.Value));
+                return d.Value.ToString("N" + this.GetDecimalDigits(d.Value));
             }
             else if (valueType == typeof(Decimal))
             {
                 decimal d = (decimal)value;
-                return d.ToString("N" + GetDecimalDigits(d));
+                return d.ToString("N" + this.GetDecimalDigits(d));
             }
             else if (valueType == typeof(DateTime))
             {
@@ -6868,7 +6868,7 @@ namespace Walkabout.Views
                 VerticalAlignment = VerticalAlignment.Top,
                 TextAlignment = TextAlignment.Right,
                 Style = (Style)cell.FindResource("DefaultTextBoxStyle"),
-                Name = this.SortMemberPath
+                Name = SortMemberPath
             };
             ModernWpf.Controls.Primitives.TextBoxHelper.SetIsEnabled(box, false);
 
@@ -6905,28 +6905,28 @@ namespace Walkabout.Views
             switch (this.SortMemberPath)
             {
                 case "SalesTax":
-                    f = (t) => GetStringValue(t.SalesTax);
+                    f = (t) => this.GetStringValue(t.SalesTax);
                     break;
                 case "Balance":
                     f = (t) => t.Balance.ToString("N"); // show zeros
                     break;
                 case "InvestmentUnits":
-                    f = (t) => GetStringValue(t.InvestmentUnits);
+                    f = (t) => this.GetStringValue(t.InvestmentUnits);
                     break;
                 case "InvestmentUnitPrice":
-                    f = (t) => GetStringValue(t.InvestmentUnitPrice);
+                    f = (t) => this.GetStringValue(t.InvestmentUnitPrice);
                     break;
                 case "CurrentUnits":
-                    f = (t) => t.Investment == null ? "" : GetStringValue(t.Investment.CurrentUnits);
+                    f = (t) => t.Investment == null ? "" : this.GetStringValue(t.Investment.CurrentUnits);
                     break;
                 case "RunningUnits":
-                    f = (t) => GetStringValue(t.RunningUnits, "N0");
+                    f = (t) => this.GetStringValue(t.RunningUnits, "N0");
                     break;
                 case "CurrentUnitPrice":
-                    f = (t) => t.Investment == null ? "" : GetStringValue(t.Investment.CurrentUnitPrice);
+                    f = (t) => t.Investment == null ? "" : this.GetStringValue(t.Investment.CurrentUnitPrice);
                     break;
                 case "RunningBalance":
-                    f = (t) => GetStringValue(t.RunningBalance);
+                    f = (t) => this.GetStringValue(t.RunningBalance);
                     break;
                 default:
                     throw new NotImplementedException("unexpected name " + this.SortMemberPath);
@@ -6936,7 +6936,7 @@ namespace Walkabout.Views
             {
                 TextAlignment = TextAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Top,
-                Style = this.TextBlockStyle
+                Style = TextBlockStyle
             };
 
         }
@@ -6961,8 +6961,8 @@ namespace Walkabout.Views
 
         public Style TextBlockStyle
         {
-            get { return (Style)GetValue(TextBlockStyleProperty); }
-            set { SetValue(TextBlockStyleProperty, value); }
+            get { return (Style)this.GetValue(TextBlockStyleProperty); }
+            set { this.SetValue(TextBlockStyleProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for TextBlockStyle.  This enables animation, styling, binding, etc...
@@ -7011,15 +7011,15 @@ namespace Walkabout.Views
                 this.SetBinding(TextBlock.TextProperty, binding);
             }
 
-            SetContext(dataItem as Transaction);
-            this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
-            this.Unloaded += (s, e) =>
+            this.SetContext(dataItem as Transaction);
+            DataContextChanged += new DependencyPropertyChangedEventHandler(this.OnDataContextChanged);
+            Unloaded += (s, e) =>
             {
-                OnUnloaded();
+                this.OnUnloaded();
             };
-            this.Loaded += (s, e) =>
+            Loaded += (s, e) =>
             {
-                OnLoaded();
+                this.OnLoaded();
             };
         }
 
@@ -7028,7 +7028,7 @@ namespace Walkabout.Views
             // stop listening
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
+                this.context.PropertyChanged -= this.OnPropertyChanged;
             }
         }
 
@@ -7037,9 +7037,9 @@ namespace Walkabout.Views
             // start listening
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
-                this.context.PropertyChanged += OnPropertyChanged;
-                UpdateLabel();
+                this.context.PropertyChanged -= this.OnPropertyChanged;
+                this.context.PropertyChanged += this.OnPropertyChanged;
+                this.UpdateLabel();
             }
         }
 
@@ -7058,7 +7058,7 @@ namespace Walkabout.Views
             }
             if (t != this.context)
             {
-                SetContext(t);
+                this.SetContext(t);
             }
         }
 
@@ -7066,15 +7066,15 @@ namespace Walkabout.Views
         {
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
+                this.context.PropertyChanged -= this.OnPropertyChanged;
             }
             this.context = transaction;
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
-                this.context.PropertyChanged += OnPropertyChanged;
+                this.context.PropertyChanged -= this.OnPropertyChanged;
+                this.context.PropertyChanged += this.OnPropertyChanged;
             }
-            UpdateLabel();
+            this.UpdateLabel();
         }
 
         private void SetText(string text)
@@ -7103,7 +7103,7 @@ namespace Walkabout.Views
             }
             else if (!string.IsNullOrEmpty(this.Text))
             {
-                SetText(string.Empty);
+                this.SetText(string.Empty);
             }
         }
 
@@ -7112,7 +7112,7 @@ namespace Walkabout.Views
             string name = e.PropertyName;
             if (name == this.fieldName)
             {
-                UpdateLabel();
+                this.UpdateLabel();
             }
         }
     }
@@ -7192,18 +7192,18 @@ namespace Walkabout.Views
         public TransactionStatusButton()
         {
             this.Child = this.button = new Button() { Padding = new Thickness(8, 0, 8, 0) };
-            this.button.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(OnStatusButtonClick);
-            this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
-            this.button.Content = label = new TextBlock();
+            this.button.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(this.OnStatusButtonClick);
+            DataContextChanged += new DependencyPropertyChangedEventHandler(this.OnDataContextChanged);
+            this.button.Content = this.label = new TextBlock();
             this.button.BorderBrush = Brushes.Transparent;
             this.button.Background = Brushes.Transparent;
-            this.Unloaded += (s, e) =>
+            Unloaded += (s, e) =>
             {
-                OnUnloaded();
+                this.OnUnloaded();
             };
-            this.Loaded += (s, e) =>
+            Loaded += (s, e) =>
             {
-                OnLoaded();
+                this.OnLoaded();
             };
         }
 
@@ -7212,7 +7212,7 @@ namespace Walkabout.Views
             // stop listening
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
+                this.context.PropertyChanged -= this.OnPropertyChanged;
             }
         }
 
@@ -7221,15 +7221,15 @@ namespace Walkabout.Views
             // start listening
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
-                this.context.PropertyChanged += OnPropertyChanged;
-                UpdateLabel();
+                this.context.PropertyChanged -= this.OnPropertyChanged;
+                this.context.PropertyChanged += this.OnPropertyChanged;
+                this.UpdateLabel();
             }
         }
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
-            SetView(WpfHelper.FindAncestor<TransactionsView>(this));
+            this.SetView(WpfHelper.FindAncestor<TransactionsView>(this));
             base.OnVisualParentChanged(oldParent);
         }
 
@@ -7251,23 +7251,23 @@ namespace Walkabout.Views
             }
             if (t != this.context)
             {
-                SetContext(t);
+                this.SetContext(t);
             }
 
-            UpdateLabel();
+            this.UpdateLabel();
         }
 
         void SetContext(Transaction transaction)
         {
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
+                this.context.PropertyChanged -= this.OnPropertyChanged;
             }
             this.context = transaction;
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
-                this.context.PropertyChanged += OnPropertyChanged;
+                this.context.PropertyChanged -= this.OnPropertyChanged;
+                this.context.PropertyChanged += this.OnPropertyChanged;
             }
         }
 
@@ -7276,33 +7276,33 @@ namespace Walkabout.Views
             switch (e.PropertyName)
             {
                 case "StatusString":
-                    UpdateLabel();
+                    this.UpdateLabel();
                     break;
             }
         }
 
         void UpdateLabel()
         {
-            label.Text = (this.context != null) ? this.context.StatusString : "";
+            this.label.Text = (this.context != null) ? this.context.StatusString : "";
 
             if (this.context != null)
             {
                 switch (this.context.Status)
                 {
                     case TransactionStatus.None:
-                        ToolTip = "";
+                        this.ToolTip = "";
                         break;
                     case TransactionStatus.Electronic:
-                        ToolTip = Walkabout.Properties.Resources.StatusElectronicTip;
+                        this.ToolTip = Walkabout.Properties.Resources.StatusElectronicTip;
                         break;
                     case TransactionStatus.Cleared:
-                        ToolTip = Walkabout.Properties.Resources.StatusClearedTip;
+                        this.ToolTip = Walkabout.Properties.Resources.StatusClearedTip;
                         break;
                     case TransactionStatus.Reconciled:
-                        ToolTip = Walkabout.Properties.Resources.StatusReconciledTip;
+                        this.ToolTip = Walkabout.Properties.Resources.StatusReconciledTip;
                         break;
                     case TransactionStatus.Void:
-                        ToolTip = Walkabout.Properties.Resources.StatusVoidTip;
+                        this.ToolTip = Walkabout.Properties.Resources.StatusVoidTip;
                         break;
                     default:
                         break;
@@ -7318,11 +7318,11 @@ namespace Walkabout.Views
             Transaction t = this.context;
             if (t != null)
             {
-                Dispatcher.BeginInvoke(new Action(() =>
+                this.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    if (view != null)
+                    if (this.view != null)
                     {
-                        view.ToggleTransactionStateReconciled(t);
+                        this.view.ToggleTransactionStateReconciled(t);
                     }
                 }));
             }
@@ -7447,14 +7447,14 @@ namespace Walkabout.Views
 
             this.Content = grid;
 
-            this.DataContextChanged += new DependencyPropertyChangedEventHandler(OnDataContextChanged);
-            this.Unloaded += (s, e) =>
+            DataContextChanged += new DependencyPropertyChangedEventHandler(this.OnDataContextChanged);
+            Unloaded += (s, e) =>
             {
-                OnUnloaded();
+                this.OnUnloaded();
             };
-            this.Loaded += (s, e) =>
+            Loaded += (s, e) =>
             {
-                OnLoaded();
+                this.OnLoaded();
             };
         }
 
@@ -7463,7 +7463,7 @@ namespace Walkabout.Views
             // stop listening
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
+                this.context.PropertyChanged -= this.OnPropertyChanged;
             }
         }
 
@@ -7472,44 +7472,44 @@ namespace Walkabout.Views
             // start listening
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
-                this.context.PropertyChanged += OnPropertyChanged;
-                UpdateButton();
-                UpdateLabel();
+                this.context.PropertyChanged -= this.OnPropertyChanged;
+                this.context.PropertyChanged += this.OnPropertyChanged;
+                this.UpdateButton();
+                this.UpdateLabel();
             }
         }
 
         // whether to show TextBox or TextLabel.
         public bool IsEditing
         {
-            get { return editing; }
-            set { editing = value; }
+            get { return this.editing; }
+            set { this.editing = value; }
         }
 
         private void FinishConstruction()
         {
             if (this.context != null && this.type != null)
             {
-                UpdateButton();
-                UpdateEditing();
-                SetBindings();
+                this.UpdateButton();
+                this.UpdateEditing();
+                this.SetBindings();
             }
             if (this.context == null)
             {
-                UpdateLabel();
+                this.UpdateLabel();
             }
         }
 
         // Debit or Credit
         public string Type
         {
-            get { return type; }
+            get { return this.type; }
             set
             {
-                type = value;
-                isDebit = value == "Debit";
-                editFieldEmpty = null;
-                FinishConstruction();
+                this.type = value;
+                this.isDebit = value == "Debit";
+                this.editFieldEmpty = null;
+                this.FinishConstruction();
             }
         }
 
@@ -7527,12 +7527,12 @@ namespace Walkabout.Views
                     ValidatesOnDataErrors = true,
                     ValidatesOnExceptions = true
                 };
-                editbox.SetBinding(TextBox.TextProperty, binding);
+                this.editbox.SetBinding(TextBox.TextProperty, binding);
             }
             if (this.label != null)
             {
                 // it is faster to bind the label manually.
-                UpdateLabel();
+                this.UpdateLabel();
             }
         }
 
@@ -7541,7 +7541,7 @@ namespace Walkabout.Views
             base.OnVisualParentChanged(oldParent);
             if (this.label == null && this.editbox == null)
             {
-                FinishConstruction();
+                this.FinishConstruction();
             }
         }
 
@@ -7558,13 +7558,13 @@ namespace Walkabout.Views
             }
             if (t != this.context)
             {
-                SetContext(t);
+                this.SetContext(t);
             }
 
             if (t == null)
             {
                 // recycling of last row.
-                UpdateLabel();
+                this.UpdateLabel();
             }
         }
 
@@ -7572,14 +7572,14 @@ namespace Walkabout.Views
         {
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
+                this.context.PropertyChanged -= this.OnPropertyChanged;
             }
             this.context = transaction;
             if (this.context != null)
             {
-                this.context.PropertyChanged -= OnPropertyChanged;
-                this.context.PropertyChanged += OnPropertyChanged;
-                FinishConstruction();
+                this.context.PropertyChanged -= this.OnPropertyChanged;
+                this.context.PropertyChanged += this.OnPropertyChanged;
+                this.FinishConstruction();
             }
         }
 
@@ -7587,7 +7587,7 @@ namespace Walkabout.Views
         {
             if (this.label != null)
             {
-                this.label.Text = GetCurrentValue();
+                this.label.Text = this.GetCurrentValue();
             }
         }
 
@@ -7597,10 +7597,10 @@ namespace Walkabout.Views
             {
                 return string.Empty;
             }
-            if (editedValue != null)
+            if (this.editedValue != null)
             {
                 decimal v;
-                if (decimal.TryParse(editedValue, out v))
+                if (decimal.TryParse(this.editedValue, out v))
                 {
                     if (v != 0)
                     {
@@ -7622,52 +7622,52 @@ namespace Walkabout.Views
         private void UpdateEditing()
         {
             Grid grid = (Grid)this.Content;
-            if (IsEditing)
+            if (this.IsEditing)
             {
-                if (editbox == null)
+                if (this.editbox == null)
                 {
-                    editbox = new TextBox()
+                    this.editbox = new TextBox()
                     {
                         TextAlignment = TextAlignment.Right,
                         VerticalAlignment = System.Windows.VerticalAlignment.Top,
                     };
-                    editbox.TextChanged += new TextChangedEventHandler(OnEditTextChanged);
-                    Grid.SetColumn(editbox, 1);
-                    grid.Children.Add(editbox);
-                    editbox.SetResourceReference(TextBlock.StyleProperty, "NumericTextBoxStyle");
+                    this.editbox.TextChanged += new TextChangedEventHandler(this.OnEditTextChanged);
+                    Grid.SetColumn(this.editbox, 1);
+                    grid.Children.Add(this.editbox);
+                    this.editbox.SetResourceReference(TextBlock.StyleProperty, "NumericTextBoxStyle");
                 }
 
-                if (label != null)
+                if (this.label != null)
                 {
                     // cleanup from previous recycling.                    
-                    grid.Children.Remove(label);
-                    label = null;
-                    editedValue = null;
+                    grid.Children.Remove(this.label);
+                    this.label = null;
+                    this.editedValue = null;
                 }
             }
             else
             {
-                if (label == null)
+                if (this.label == null)
                 {
-                    label = new TextBlock()
+                    this.label = new TextBlock()
                     {
                         Margin = new Thickness(10, 1, 3, 0), // ensures room for the split button.
                         TextAlignment = TextAlignment.Right,
                         VerticalAlignment = VerticalAlignment.Top
                     };
-                    label.SetResourceReference(TextBlock.StyleProperty, "DataTextBlockStyle");
+                    this.label.SetResourceReference(TextBlock.StyleProperty, "DataTextBlockStyle");
 
-                    Grid.SetColumn(label, 1);
-                    grid.Children.Add(label);
+                    Grid.SetColumn(this.label, 1);
+                    grid.Children.Add(this.label);
                 }
 
-                if (editbox != null)
+                if (this.editbox != null)
                 {
                     // cleanup from previous recycling.
-                    editedValue = editbox.Text;
-                    editbox.TextChanged -= new TextChangedEventHandler(OnEditTextChanged);
-                    grid.Children.Remove(editbox);
-                    editbox = null;
+                    this.editedValue = this.editbox.Text;
+                    this.editbox.TextChanged -= new TextChangedEventHandler(this.OnEditTextChanged);
+                    grid.Children.Remove(this.editbox);
+                    this.editbox = null;
                 }
             }
         }
@@ -7675,20 +7675,20 @@ namespace Walkabout.Views
         void OnEditTextChanged(object sender, TextChangedEventArgs e)
         {
             string value = this.editbox.Text;
-            SetEditFieldEmpty(string.IsNullOrEmpty(value));
+            this.SetEditFieldEmpty(string.IsNullOrEmpty(value));
         }
 
         public void OnEditCanceled()
         {
-            Restore();
-            SetEditFieldEmpty(string.IsNullOrEmpty(GetCurrentValue()));
+            this.Restore();
+            this.SetEditFieldEmpty(string.IsNullOrEmpty(this.GetCurrentValue()));
         }
 
         public void OnValidationError(Exception ex)
         {
             if (this.editbox != null)
             {
-                var binding = editbox.BindingGroup.BindingExpressions.FirstOrDefault();
+                var binding = this.editbox.BindingGroup.BindingExpressions.FirstOrDefault();
                 Validation.MarkInvalid(binding, new ValidationError(new ExceptionValidationRule(), binding, ex.Message, ex));
             }
         }
@@ -7696,23 +7696,23 @@ namespace Walkabout.Views
         private void SetEditFieldEmpty(bool empty)
         {
             // Ok, now we want the Debit field to take over from the Credit field and vice versa.
-            if (!editFieldEmpty.HasValue || editFieldEmpty.Value != empty)
+            if (!this.editFieldEmpty.HasValue || this.editFieldEmpty.Value != empty)
             {
-                editFieldEmpty = empty;
-                TransactionAmountControl opposition = GetOpposingField();
+                this.editFieldEmpty = empty;
+                TransactionAmountControl opposition = this.GetOpposingField();
                 if (opposition != null)
                 {
                     if (empty)
                     {
                         // restore opposing field to it's value
                         opposition.Restore();
-                        SwitchTransferCaption(opposition.isDebit ? false : true);
+                        this.SwitchTransferCaption(opposition.isDebit ? false : true);
                     }
                     else
                     {
                         // clear opposing field.   
                         opposition.Clear();
-                        SwitchTransferCaption(opposition.isDebit ? true : false);
+                        this.SwitchTransferCaption(opposition.isDebit ? true : false);
                     }
                 }
             }
@@ -7770,14 +7770,14 @@ namespace Walkabout.Views
 
         private void Restore()
         {
-            UpdateLabel();
+            this.UpdateLabel();
         }
 
         private void Clear()
         {
-            if (label != null)
+            if (this.label != null)
             {
-                label.Text = "";
+                this.label.Text = "";
             }
         }
 
@@ -7785,53 +7785,53 @@ namespace Walkabout.Views
 
         private void UpdateButton()
         {
-            if ((this.isDebit && context != null && context.HasDebitAndIsSplit) ||
-                (!this.isDebit && context != null && context.HasCreditAndIsSplit))
+            if ((this.isDebit && this.context != null && this.context.HasDebitAndIsSplit) ||
+                (!this.isDebit && this.context != null && this.context.HasCreditAndIsSplit))
             {
                 if (this.button == null)
                 {
                     if (this.IsEditing)
                     {
                         // create it right away so it doesn't flash when we enter edit mode.
-                        OnCreateButton(this, EventArgs.Empty);
-                        StopLazyButtonTimer();
+                        this.OnCreateButton(this, EventArgs.Empty);
+                        this.StopLazyButtonTimer();
                     }
                     else
                     {
-                        if (lazyButtonTimer == null)
+                        if (this.lazyButtonTimer == null)
                         {
-                            lazyButtonTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(200), DispatcherPriority.Normal, OnCreateButton, this.Dispatcher);
+                            this.lazyButtonTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(200), DispatcherPriority.Normal, this.OnCreateButton, this.Dispatcher);
                         }
-                        lazyButtonTimer.Stop();
-                        lazyButtonTimer.Start();
+                        this.lazyButtonTimer.Stop();
+                        this.lazyButtonTimer.Start();
                     }
                 }
                 else
                 {
-                    button.Visibility = Visibility.Visible;
+                    this.button.Visibility = Visibility.Visible;
                 }
             }
-            else if (context != null && this.type != null)
+            else if (this.context != null && this.type != null)
             {
-                if (button != null)
+                if (this.button != null)
                 {
                     // The button's OnDataCOntextChanged is very expensive, so it is cheaper to just remove
                     // the button than to try and recycle it since there are usually a lot more rows without
                     // splits than there are with splits.
                     Grid grid = (Grid)this.Content;
-                    grid.Children.Remove(button);
-                    button = null;
+                    grid.Children.Remove(this.button);
+                    this.button = null;
                 }
-                StopLazyButtonTimer();
+                this.StopLazyButtonTimer();
             }
         }
 
         private void StopLazyButtonTimer()
         {
-            if (lazyButtonTimer != null)
+            if (this.lazyButtonTimer != null)
             {
-                lazyButtonTimer.Stop();
-                lazyButtonTimer = null;
+                this.lazyButtonTimer.Stop();
+                this.lazyButtonTimer = null;
             }
         }
 
@@ -7840,19 +7840,19 @@ namespace Walkabout.Views
         /// </summary>
         private void OnCreateButton(object sender, EventArgs e)
         {
-            StopLazyButtonTimer();
-            if ((this.isDebit && context != null && context.HasDebitAndIsSplit) ||
-                (!this.isDebit && context != null && context.HasCreditAndIsSplit))
+            this.StopLazyButtonTimer();
+            if ((this.isDebit && this.context != null && this.context.HasDebitAndIsSplit) ||
+                (!this.isDebit && this.context != null && this.context.HasCreditAndIsSplit))
             {
-                if (button == null)
+                if (this.button == null)
                 {
                     Grid grid = (Grid)this.Content;
-                    button = new Button();
-                    button.FontSize = 8.0;
-                    button.SetResourceReference(Button.StyleProperty, "ButtonStyleSplitAmount");
-                    button.PreviewMouseLeftButtonDown += OnButtonSplitClicked;
-                    button.VerticalAlignment = System.Windows.VerticalAlignment.Top;
-                    grid.Children.Add(button);
+                    this.button = new Button();
+                    this.button.FontSize = 8.0;
+                    this.button.SetResourceReference(Button.StyleProperty, "ButtonStyleSplitAmount");
+                    this.button.PreviewMouseLeftButtonDown += this.OnButtonSplitClicked;
+                    this.button.VerticalAlignment = System.Windows.VerticalAlignment.Top;
+                    grid.Children.Add(this.button);
                 }
             }
         }
@@ -7878,13 +7878,13 @@ namespace Walkabout.Views
             {
                 case "HasDebitAndIsSplit":
                 case "HasCreditAndIsSplit":
-                    UpdateButton();
+                    this.UpdateButton();
                     break;
                 case "Credit":
                 case "Debit":
                 case "Amount":
-                    editedValue = null; // backing store has been updated after edit.
-                    UpdateLabel();
+                    this.editedValue = null; // backing store has been updated after edit.
+                    this.UpdateLabel();
                     break;
             }
         }

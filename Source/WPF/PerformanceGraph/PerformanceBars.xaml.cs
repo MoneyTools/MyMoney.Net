@@ -34,9 +34,9 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         public PerformanceBars()
         {
-            InitializeComponent();
-            gesture = new HoverGesture(this);
-            gesture.Hover += new MouseEventHandler(OnHover);
+            this.InitializeComponent();
+            this.gesture = new HoverGesture(this);
+            this.gesture.Hover += new MouseEventHandler(this.OnHover);
         }
 
         public Legend Legend { get; set; }
@@ -60,8 +60,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 if (this.frequency != value)
                 {
                     this.frequency = value;
-                    InvalidateMeasure();
-                    InvalidateArrange();
+                    this.InvalidateMeasure();
+                    this.InvalidateArrange();
                 }
             }
         }
@@ -76,33 +76,33 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         public IEnumerable<PerformanceEventArrivedEventArgs> Data
         {
-            get { return rawdata; }
+            get { return this.rawdata; }
             set
             {
-                gesture.HidePopup();
+                this.gesture.HidePopup();
                 if (value == null)
                 {
-                    rawdata = new List<PerformanceEventArrivedEventArgs>();
+                    this.rawdata = new List<PerformanceEventArrivedEventArgs>();
                 }
                 else
                 {
-                    rawdata = new List<PerformanceEventArrivedEventArgs>(value);
+                    this.rawdata = new List<PerformanceEventArrivedEventArgs>(value);
                 }
-                FindMatchingPairs();
-                PrepareLegend();
-                InvalidateMeasure();
-                InvalidateArrange();
-                InvalidateVisual();
+                this.FindMatchingPairs();
+                this.PrepareLegend();
+                this.InvalidateMeasure();
+                this.InvalidateArrange();
+                this.InvalidateVisual();
             }
         }
 
         void FindMatchingPairs()
         {
-            data = new List<BeginEndEvent>();
+            this.data = new List<BeginEndEvent>();
             Dictionary<PerformanceEventArrivedEventArgsKey, PerformanceEventArrivedEventArgs> open = new Dictionary<PerformanceEventArrivedEventArgsKey, PerformanceEventArrivedEventArgs>();
-            start = long.MaxValue;
-            end = 0;
-            foreach (PerformanceEventArrivedEventArgs e in rawdata)
+            this.start = long.MaxValue;
+            this.end = 0;
+            foreach (PerformanceEventArrivedEventArgs e in this.rawdata)
             {
                 PerformanceEventArrivedEventArgsKey key = new PerformanceEventArrivedEventArgsKey(e);
                 if (e.EventId == BeginEvent)
@@ -114,15 +114,15 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                     PerformanceEventArrivedEventArgs s;
                     if (open.TryGetValue(key, out s))
                     {
-                        if (s.Timestamp < start)
+                        if (s.Timestamp < this.start)
                         {
-                            start = s.Timestamp;
+                            this.start = s.Timestamp;
                         }
-                        if (e.Timestamp > end)
+                        if (e.Timestamp > this.end)
                         {
-                            end = e.Timestamp;
+                            this.end = e.Timestamp;
                         }
-                        data.Add(new BeginEndEvent() { Begin = s, End = e });
+                        this.data.Add(new BeginEndEvent() { Begin = s, End = e });
                     }
                 }
             }
@@ -133,38 +133,38 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
-            renderSize = sizeInfo.NewSize;
+            this.renderSize = sizeInfo.NewSize;
             base.OnRenderSizeChanged(sizeInfo);
         }
 
         protected override Size MeasureOverride(Size constraint)
         {
             base.MeasureOverride(constraint);
-            if (ZoomToFit)
+            if (this.ZoomToFit)
             {
                 return new Size(0, 0);
             }
             else
             {
-                if (data == null || data.Count == 0) return new Size(0, 0);
+                if (this.data == null || this.data.Count == 0) return new Size(0, 0);
 
-                double ticksPerLabel = (zoom * frequency);
-                double scale = pixelsPerLabel / ticksPerLabel;
+                double ticksPerLabel = (this.zoom * this.frequency);
+                double scale = this.pixelsPerLabel / ticksPerLabel;
 
-                double width = (double)(end - start) * scale;
-                return new Size((2 * HorizontalMargin) + width, renderSize.Height);
+                double width = (double)(this.end - this.start) * scale;
+                return new Size((2 * HorizontalMargin) + width, this.renderSize.Height);
             }
         }
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            InvalidateVisual();
+            this.InvalidateVisual();
             return base.ArrangeOverride(arrangeBounds);
         }
 
         public void ZoomIn()
         {
-            this.Zoom = ZoomIn(this.zoom);
+            this.Zoom = this.ZoomIn(this.zoom);
         }
 
         private double ZoomIn(double z)
@@ -175,7 +175,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         public void ZoomOut()
         {
-            this.Zoom = ZoomOut(this.zoom);
+            this.Zoom = this.ZoomOut(this.zoom);
         }
 
         private double ZoomOut(double z)
@@ -187,22 +187,22 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         public double Zoom
         {
-            get { return zoom; }
+            get { return this.zoom; }
             set
             {
-                zoom = value;
-                zoomToFit = false;
-                InvalidateMeasure();
-                InvalidateArrange();
-                InvalidateVisual();
+                this.zoom = value;
+                this.zoomToFit = false;
+                this.InvalidateMeasure();
+                this.InvalidateArrange();
+                this.InvalidateVisual();
             }
         }
 
         bool zoomToFit = true;
         public bool ZoomToFit
         {
-            get { return zoomToFit; }
-            set { zoomToFit = value; InvalidateMeasure(); }
+            get { return this.zoomToFit; }
+            set { this.zoomToFit = value; this.InvalidateMeasure(); }
         }
 
         List<Color> colors = new List<Color>(new Color[] {
@@ -217,11 +217,11 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         Color GetColor(int i)
         {
-            while (i >= colors.Count)
+            while (i >= this.colors.Count)
             {
-                colors.Add(Color.FromRgb((byte)randColors.Next(0, 200), (byte)randColors.Next(0, 200), (byte)randColors.Next(0, 200)));
+                this.colors.Add(Color.FromRgb((byte)this.randColors.Next(0, 200), (byte)this.randColors.Next(0, 200), (byte)this.randColors.Next(0, 200)));
             }
-            return colors[i];
+            return this.colors[i];
         }
 
         Rect extent = new Rect(0, 0, 0, 0);
@@ -230,22 +230,22 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         void PrepareLegend()
         {
-            Legend.Clear();
-            legendColors = new Dictionary<PerformanceEventArrivedEventArgsKey, Tuple<int, Color>>();
+            this.Legend.Clear();
+            this.legendColors = new Dictionary<PerformanceEventArrivedEventArgsKey, Tuple<int, Color>>();
 
-            foreach (BeginEndEvent record in data)
+            foreach (BeginEndEvent record in this.data)
             {
                 PerformanceEventArrivedEventArgs begin = record.Begin;
                 PerformanceEventArrivedEventArgs e = record.End;
 
                 Tuple<int, Color> style;
                 PerformanceEventArrivedEventArgsKey key = new PerformanceEventArrivedEventArgsKey(begin);
-                if (!legendColors.TryGetValue(key, out style))
+                if (!this.legendColors.TryGetValue(key, out style))
                 {
-                    int i = legendColors.Count;
-                    Color color = GetColor(i);
-                    legendColors[key] = style = new Tuple<int, Color>(i, color);
-                    Legend.AddItem(color, key.Label);
+                    int i = this.legendColors.Count;
+                    Color color = this.GetColor(i);
+                    this.legendColors[key] = style = new Tuple<int, Color>(i, color);
+                    this.Legend.AddItem(color, key.Label);
                 }
             }
         }
@@ -255,15 +255,15 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         {
             drawingContext.DrawRectangle(Brushes.White, null, new Rect(new Point(0, 0), this.RenderSize));
 
-            gesture.HidePopup();
-            if (data == null || data.Count == 0) return;
+            this.gesture.HidePopup();
+            if (this.data == null || this.data.Count == 0) return;
 
-            long span = end - start; // ticks
+            long span = this.end - this.start; // ticks
 
-            double ticksPerLabel = (zoom * frequency);
-            double scale = pixelsPerLabel / ticksPerLabel;
+            double ticksPerLabel = (this.zoom * this.frequency);
+            double scale = this.pixelsPerLabel / ticksPerLabel;
 
-            if (ZoomToFit)
+            if (this.ZoomToFit)
             {
                 //double labels = (int)(this.ActualWidth / pixelsPerLabel);
                 //while (ticksPerLabel * labels > span)
@@ -280,30 +280,30 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 //}                
             }
 
-            extent = Rect.Empty;
+            this.extent = Rect.Empty;
 
             double maxy = 0;
             double maxx = 0;
 
-            foreach (BeginEndEvent record in data)
+            foreach (BeginEndEvent record in this.data)
             {
                 PerformanceEventArrivedEventArgs begin = record.Begin;
                 PerformanceEventArrivedEventArgs e = record.End;
 
                 Brush color = null;
                 PerformanceEventArrivedEventArgsKey key = new PerformanceEventArrivedEventArgsKey(begin);
-                Tuple<int, Color> style = legendColors[key];
+                Tuple<int, Color> style = this.legendColors[key];
                 color = new SolidColorBrush(style.Item2);
 
                 double y = 20 + style.Item1 * 22;
-                double x = HorizontalMargin + (double)(begin.Timestamp - start) * (double)scale;
+                double x = HorizontalMargin + (double)(begin.Timestamp - this.start) * (double)scale;
                 double w = (double)(e.Timestamp - begin.Timestamp) * (double)scale;
                 Rect bounds = new Rect(x, y, w, 20);
                 maxy = Math.Max(maxy, y + 20);
                 maxx = Math.Max(maxx, x + w);
                 drawingContext.DrawRectangle(color, new Pen(color, 1), bounds);
                 record.Bounds = bounds;
-                extent = Rect.Union(extent, bounds);
+                this.extent = Rect.Union(this.extent, bounds);
             }
 
             // Draw scale
@@ -315,7 +315,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             drawingContext.DrawLine(pen, new Point(HorizontalMargin, maxy), new Point(maxx, maxy));
 
             double unit = 0;
-            double unitStep = zoom; // zoom is inverse .
+            double unitStep = this.zoom; // zoom is inverse .
             string units = "s"; // seconds;
             if (unitStep.ToString("N").StartsWith("0.0"))
             {
@@ -328,7 +328,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 units = "μs";
             }
 
-            int digits = GetDigits(zoom);
+            int digits = GetDigits(this.zoom);
             var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
 
             for (double i = 0; i < span; i += ticksPerLabel)
@@ -355,13 +355,13 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             Point pos = e.GetPosition(this);
             foreach (double inflation in new double[] { 0, 2, 5, 10, 20 })
             {
-                foreach (BeginEndEvent record in data)
+                foreach (BeginEndEvent record in this.data)
                 {
                     Rect bounds = record.Bounds;
                     bounds.Inflate(inflation, inflation);
                     if (bounds.Contains(pos))
                     {
-                        Popup popup = gesture.CreatePopup(GetPopupContent(record));
+                        Popup popup = this.gesture.CreatePopup(this.GetPopupContent(record));
                         popup.IsOpen = true;
                         return;
                     }
@@ -376,7 +376,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             content.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
 
             long span = evt.End.Timestamp - evt.Begin.Timestamp;
-            double seconds = (double)span / (double)PerformanceFrequency;
+            double seconds = (double)span / (double)this.PerformanceFrequency;
 
             string units = "s"; // seconds;
             if (seconds.ToString("N").StartsWith("0.0"))
@@ -390,10 +390,10 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 units = "μs";
             }
 
-            AddRow(content, "Component", evt.Begin.ComponentName);
-            AddRow(content, "Category", evt.Begin.CategoryName);
-            AddRow(content, "Measurement", evt.Begin.MeasurementName);
-            AddRow(content, "Time", seconds.ToString("N3") + units);
+            this.AddRow(content, "Component", evt.Begin.ComponentName);
+            this.AddRow(content, "Category", evt.Begin.CategoryName);
+            this.AddRow(content, "Measurement", evt.Begin.MeasurementName);
+            this.AddRow(content, "Time", seconds.ToString("N3") + units);
 
             return content;
         }

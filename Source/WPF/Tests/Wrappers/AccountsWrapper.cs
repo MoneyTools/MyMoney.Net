@@ -17,7 +17,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return Accounts.Count > 0;
+                return this.Accounts.Count > 0;
             }
         }
 
@@ -26,7 +26,7 @@ namespace Walkabout.Tests.Wrappers
             get
             {
                 List<string> names = new List<string>();
-                foreach (AutomationElement e in Items)
+                foreach (AutomationElement e in this.Items)
                 {
                     string name = e.Current.Name;
                     if (!name.Contains("AccountSectionHeader"))
@@ -43,7 +43,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return !string.IsNullOrEmpty(SelectedAccount);
+                return !string.IsNullOrEmpty(this.SelectedAccount);
             }
         }
 
@@ -51,7 +51,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                foreach (AutomationElement e in Selection)
+                foreach (AutomationElement e in this.Selection)
                 {
                     string name = e.Current.Name;
                     if (!name.Contains("AccountSectionHeader"))
@@ -65,12 +65,12 @@ namespace Walkabout.Tests.Wrappers
 
         public void AddAccount(string baseName, string type)
         {
-            string name = GetUniqueCaption(baseName);
+            string name = this.GetUniqueCaption(baseName);
 
             ContextMenu menu = new ContextMenu(this.Element, true);
             menu.InvokeMenuItem("NewAccount");
 
-            MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(Element.Current.ProcessId);
+            MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(this.Element.Current.ProcessId);
             AutomationElement child = mainWindow.Element.FindChildWindow("Account", 5);
             if (child != null)
             {
@@ -86,14 +86,14 @@ namespace Walkabout.Tests.Wrappers
 
         internal bool DeleteAccount(int index)
         {
-            AutomationElement item = Select(index);
+            AutomationElement item = this.Select(index);
             string name = item.Current.Name;
             if (!name.Contains("AccountSectionHeader"))
             {
                 ContextMenu menu = new ContextMenu(item, true);
                 menu.InvokeMenuItem("DeleteAccount");
 
-                MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(Element.Current.ProcessId);
+                MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(this.Element.Current.ProcessId);
 
                 AutomationElement child = mainWindow.Element.FindChildWindow("Delete Account: " + item.Current.AutomationId, 5);
                 if (child != null)
@@ -116,7 +116,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void SelectAccount(int index)
         {
-            Select(index);
+            this.Select(index);
         }
     }
 }

@@ -22,10 +22,10 @@ namespace Walkabout.Utilities
         /// class</param>
         public HlsColor(Color c)
         {
-            red = c.R;
-            green = c.G;
-            blue = c.B;
-            ToHLS();
+            this.red = c.R;
+            this.green = c.G;
+            this.blue = c.B;
+            this.ToHLS();
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Walkabout.Utilities
             this.Hue = hue;
             this.Luminance = luminance;
             this.Saturation = saturation;
-            ToRGB();
+            this.ToRGB();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Walkabout.Utilities
             this.red = red;
             this.green = green;
             this.blue = blue;
-            ToHLS();
+            this.ToHLS();
         }
 
         /// <summary>
@@ -83,9 +83,9 @@ namespace Walkabout.Utilities
         {
         }
 
-        public byte Red { get { return red; } }
-        public byte Green { get { return green; } }
-        public byte Blue { get { return blue; } }
+        public byte Red { get { return this.red; } }
+        public byte Green { get { return this.green; } }
+        public byte Blue { get { return this.blue; } }
 
         /// <summary>
         /// Gets or sets the Luminance (0.0 to 1.0) of the colour.
@@ -96,7 +96,7 @@ namespace Walkabout.Utilities
         {
             get
             {
-                return luminance;
+                return this.luminance;
             }
             set
             {
@@ -104,8 +104,8 @@ namespace Walkabout.Utilities
                 {
                     throw new ArgumentOutOfRangeException("value", "Luminance must be between 0.0 and 1.0");
                 }
-                luminance = value;
-                ToRGB();
+                this.luminance = value;
+                this.ToRGB();
             }
         }
 
@@ -118,7 +118,7 @@ namespace Walkabout.Utilities
         {
             get
             {
-                return hue;
+                return this.hue;
             }
             set
             {
@@ -126,8 +126,8 @@ namespace Walkabout.Utilities
                 {
                     throw new ArgumentOutOfRangeException("value", "Hue must be between 0.0 and 360.0");
                 }
-                hue = value;
-                ToRGB();
+                this.hue = value;
+                this.ToRGB();
             }
         }
 
@@ -140,7 +140,7 @@ namespace Walkabout.Utilities
         {
             get
             {
-                return saturation;
+                return this.saturation;
             }
             set
             {
@@ -148,8 +148,8 @@ namespace Walkabout.Utilities
                 {
                     throw new ArgumentOutOfRangeException("value", "Saturation must be between 0.0 and 1.0");
                 }
-                saturation = value;
-                ToRGB();
+                this.saturation = value;
+                this.ToRGB();
             }
         }
 
@@ -160,15 +160,15 @@ namespace Walkabout.Utilities
         {
             get
             {
-                Color c = Color.FromRgb(red, green, blue);
+                Color c = Color.FromRgb(this.red, this.green, this.blue);
                 return c;
             }
             set
             {
-                red = value.R;
-                green = value.G;
-                blue = value.B;
-                ToHLS();
+                this.red = value.R;
+                this.green = value.G;
+                this.blue = value.B;
+                this.ToHLS();
             }
         }
 
@@ -178,12 +178,12 @@ namespace Walkabout.Utilities
         /// </summary>
         public void Lighten(float percent)
         {
-            luminance *= (1.0f + percent);
-            if (luminance > 1.0f)
+            this.luminance *= (1.0f + percent);
+            if (this.luminance > 1.0f)
             {
-                luminance = 1.0f;
+                this.luminance = 1.0f;
             }
-            ToRGB();
+            this.ToRGB();
         }
 
         /// <summary>
@@ -192,78 +192,78 @@ namespace Walkabout.Utilities
         /// </summary>
         public void Darken(float percent)
         {
-            luminance *= (1 - percent);
-            ToRGB();
+            this.luminance *= (1 - percent);
+            this.ToRGB();
         }
 
         private void ToHLS()
         {
-            byte minval = Math.Min(red, Math.Min(green, blue));
-            byte maxval = Math.Max(red, Math.Max(green, blue));
+            byte minval = Math.Min(this.red, Math.Min(this.green, this.blue));
+            byte maxval = Math.Max(this.red, Math.Max(this.green, this.blue));
 
             float mdiff = (float)(maxval - minval);
             float msum = (float)(maxval + minval);
 
-            luminance = msum / 510.0f;
+            this.luminance = msum / 510.0f;
 
             if (maxval == minval)
             {
-                saturation = 0.0f;
-                hue = 0.0f;
+                this.saturation = 0.0f;
+                this.hue = 0.0f;
             }
             else
             {
-                float rnorm = (maxval - red) / mdiff;
-                float gnorm = (maxval - green) / mdiff;
-                float bnorm = (maxval - blue) / mdiff;
+                float rnorm = (maxval - this.red) / mdiff;
+                float gnorm = (maxval - this.green) / mdiff;
+                float bnorm = (maxval - this.blue) / mdiff;
 
-                saturation = (luminance <= 0.5f) ? (mdiff / msum) : (mdiff /
+                this.saturation = (this.luminance <= 0.5f) ? (mdiff / msum) : (mdiff /
                  (510.0f - msum));
 
-                if (red == maxval)
+                if (this.red == maxval)
                 {
-                    hue = 60.0f * (6.0f + bnorm - gnorm);
+                    this.hue = 60.0f * (6.0f + bnorm - gnorm);
                 }
-                if (green == maxval)
+                if (this.green == maxval)
                 {
-                    hue = 60.0f * (2.0f + rnorm - bnorm);
+                    this.hue = 60.0f * (2.0f + rnorm - bnorm);
                 }
-                if (blue == maxval)
+                if (this.blue == maxval)
                 {
-                    hue = 60.0f * (4.0f + gnorm - rnorm);
+                    this.hue = 60.0f * (4.0f + gnorm - rnorm);
                 }
-                if (hue > 360.0f)
+                if (this.hue > 360.0f)
                 {
-                    hue = hue - 360.0f;
+                    this.hue = this.hue - 360.0f;
                 }
             }
         }
 
         private void ToRGB()
         {
-            if (saturation == 0.0)
+            if (this.saturation == 0.0)
             {
-                red = (byte)(luminance * 255.0F);
-                green = red;
-                blue = red;
+                this.red = (byte)(this.luminance * 255.0F);
+                this.green = this.red;
+                this.blue = this.red;
             }
             else
             {
                 float rm1;
                 float rm2;
 
-                if (luminance <= 0.5f)
+                if (this.luminance <= 0.5f)
                 {
-                    rm2 = luminance + luminance * saturation;
+                    rm2 = this.luminance + this.luminance * this.saturation;
                 }
                 else
                 {
-                    rm2 = luminance + saturation - luminance * saturation;
+                    rm2 = this.luminance + this.saturation - this.luminance * this.saturation;
                 }
-                rm1 = 2.0f * luminance - rm2;
-                red = ToRGB1(rm1, rm2, hue + 120.0f);
-                green = ToRGB1(rm1, rm2, hue);
-                blue = ToRGB1(rm1, rm2, hue - 120.0f);
+                rm1 = 2.0f * this.luminance - rm2;
+                this.red = ToRGB1(rm1, rm2, this.hue + 120.0f);
+                this.green = ToRGB1(rm1, rm2, this.hue);
+                this.blue = ToRGB1(rm1, rm2, this.hue - 120.0f);
             }
         }
 

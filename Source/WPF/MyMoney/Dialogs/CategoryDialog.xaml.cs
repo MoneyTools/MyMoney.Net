@@ -46,7 +46,7 @@ namespace Walkabout.Dialogs
             get { return this.category; }
             set
             {
-                SetCategory(value);
+                this.SetCategory(value);
             }
         }
 
@@ -55,7 +55,7 @@ namespace Walkabout.Dialogs
             get { return this.transfer; }
             set
             {
-                SetTransfer(value);
+                this.SetTransfer(value);
             }
         }
 
@@ -98,9 +98,9 @@ namespace Walkabout.Dialogs
             this.nfi.NumberDecimalDigits = 2;
             this.nfi.CurrencyNegativePattern = 0;
 
-            InitializeComponent();
+            this.InitializeComponent();
 
-            labelMessage.Visibility = Visibility.Collapsed;
+            this.labelMessage.Visibility = Visibility.Collapsed;
             this.comboBoxType.Items.Add(CategoryType.None);
             this.comboBoxType.Items.Add(CategoryType.Income);
             this.comboBoxType.Items.Add(CategoryType.Expense);
@@ -109,13 +109,13 @@ namespace Walkabout.Dialogs
 
             this.categories = money.Categories;
 
-            taxCategories.Insert(0, new TaxCategory()); // empty item allows user to clear the tax category.
-            ListCollectionView view = new ListCollectionView(taxCategories);
+            this.taxCategories.Insert(0, new TaxCategory()); // empty item allows user to clear the tax category.
+            ListCollectionView view = new ListCollectionView(this.taxCategories);
             this.comboTaxCategory.ItemsSource = view;
 
-            RefreshCategories();
+            this.RefreshCategories();
 
-            Category categoryFound = categories.FindCategory(categoryName);
+            Category categoryFound = this.categories.FindCategory(categoryName);
             if (categoryFound == null)
             {
                 this.comboBoxCategory.Text = categoryName;
@@ -123,10 +123,10 @@ namespace Walkabout.Dialogs
             }
             else
             {
-                SetCategory(categoryFound);
+                this.SetCategory(categoryFound);
             }
 
-            okButton.Click += new RoutedEventHandler(OnOkButton_Click);
+            this.okButton.Click += new RoutedEventHandler(this.OnOkButton_Click);
         }
 
         TextBox CategoryNameTextBox
@@ -140,7 +140,7 @@ namespace Walkabout.Dialogs
 
         internal void Select(string p)
         {
-            TextBox edit = CategoryNameTextBox;
+            TextBox edit = this.CategoryNameTextBox;
             if (edit != null)
             {
                 string s = edit.Text;
@@ -157,10 +157,10 @@ namespace Walkabout.Dialogs
             }
             else
             {
-                Dispatcher.BeginInvoke(new Action(() =>
+                this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     // try again.
-                    Select(p);
+                    this.Select(p);
                 }), DispatcherPriority.Background);
             }
         }
@@ -198,7 +198,7 @@ namespace Walkabout.Dialogs
 
             foreach (Category c in this.categories.GetCategories())
             {
-                items.Add(new IntelliComboBoxItem(GetListLabel(c), c.Name, c));
+                items.Add(new IntelliComboBoxItem(this.GetListLabel(c), c.Name, c));
             }
 
             foreach (Account a in this.money.Accounts.GetAccounts())
@@ -226,29 +226,29 @@ namespace Walkabout.Dialogs
             this.category = c;
             this.transfer = null;
             this.comboBoxType.IsEnabled = this.textBoxDescription.IsEnabled = true;
-            if (category == null)
+            if (this.category == null)
             {
                 this.comboBoxCategory.Text = string.Empty;
                 this.textBoxDescription.Text = string.Empty;
                 this.comboBoxType.Text = string.Empty;
                 this.comboTaxCategory.SelectedItem = null;
-                ColorPicker.Color = Colors.Transparent;
+                this.ColorPicker.Color = Colors.Transparent;
             }
             else
             {
-                this.textBoxDescription.Text = category.Description;
-                this.comboBoxType.SelectedItem = category.Type;
+                this.textBoxDescription.Text = this.category.Description;
+                this.comboBoxType.SelectedItem = this.category.Type;
                 this.comboBoxCategory.Text = c.Name;
 
-                this.comboTaxCategory.SelectedItem = taxCategories.Find(c.TaxRefNum);
-                ColorPicker.Color = Colors.Transparent;
+                this.comboTaxCategory.SelectedItem = this.taxCategories.Find(c.TaxRefNum);
+                this.ColorPicker.Color = Colors.Transparent;
 
                 try
                 {
-                    string ic = category.InheritedColor;
+                    string ic = this.category.InheritedColor;
                     if (!string.IsNullOrEmpty(ic))
                     {
-                        ColorPicker.Color = ColorAndBrushGenerator.GenerateNamedColor(ic);
+                        this.ColorPicker.Color = ColorAndBrushGenerator.GenerateNamedColor(ic);
                     }
                 }
                 catch
@@ -264,7 +264,7 @@ namespace Walkabout.Dialogs
             this.comboBoxType.Text = string.Empty;
             this.textBoxDescription.Text = string.Empty;
             this.comboBoxType.IsEnabled = this.textBoxDescription.IsEnabled = false;
-            if (transfer != null)
+            if (this.transfer != null)
             {
                 this.comboBoxCategory.Text = "Transfer to/from:" + a.Name;
             }
@@ -283,7 +283,7 @@ namespace Walkabout.Dialogs
 
         void OnOkButton_Click(object sender, RoutedEventArgs e)
         {
-            Add();
+            this.Add();
             this.DialogResult = true;
             this.Close();
         }
@@ -298,7 +298,7 @@ namespace Walkabout.Dialogs
                 foreach (Category child in c.Subcategories)
                 {
                     child.Type = c.Type;
-                    PropagateCategoryTypeToChildren(child);
+                    this.PropagateCategoryTypeToChildren(child);
                 }
             }
         }
@@ -310,7 +310,7 @@ namespace Walkabout.Dialogs
                 return;
             }
 
-            money.Categories.BeginUpdate(true);
+            this.money.Categories.BeginUpdate(true);
             try
             {
                 IntelliComboBoxItem item = (IntelliComboBoxItem)this.comboBoxCategory.SelectedItem;
@@ -344,7 +344,7 @@ namespace Walkabout.Dialogs
                 if (this.category.Type != type)
                 {
                     this.category.Type = type;
-                    PropagateCategoryTypeToChildren(this.category);
+                    this.PropagateCategoryTypeToChildren(this.category);
                 }
 
                 var picker = this.ColorPicker;
@@ -355,7 +355,7 @@ namespace Walkabout.Dialogs
             finally
             {
                 // if parent categories were added then set their type & color also.            
-                money.Categories.EndUpdate();
+                this.money.Categories.EndUpdate();
             }
         }
 
@@ -383,7 +383,7 @@ namespace Walkabout.Dialogs
         private void ColorPickerPanel_ColorChanged(object sender, EventArgs e)
         {
             ColorPickerPanel picker = (ColorPickerPanel)sender;
-            Rectangle r = (Rectangle)ColorDropDown.Content;
+            Rectangle r = (Rectangle)this.ColorDropDown.Content;
             Color color = picker.Color;
             SolidColorBrush brush = new SolidColorBrush(color);
             r.Fill = brush;

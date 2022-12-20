@@ -14,18 +14,18 @@ namespace Walkabout.Utilities
 
         public SimpleGraph()
         {
-            Nodes = new Dictionary<string, SimpleGraphNode>();
-            Links = new List<SimpleGraphLink>();
+            this.Nodes = new Dictionary<string, SimpleGraphNode>();
+            this.Links = new List<SimpleGraphLink>();
         }
 
         public SimpleGraphNode AddOrGetNode(string Id)
         {
             SimpleGraphNode node;
 
-            if (Nodes.TryGetValue(Id, out node) == false)
+            if (this.Nodes.TryGetValue(Id, out node) == false)
             {
                 node = new SimpleGraphNode(Id);
-                Nodes.Add(Id, node);
+                this.Nodes.Add(Id, node);
             }
 
             return node;
@@ -33,8 +33,8 @@ namespace Walkabout.Utilities
 
         public SimpleGraphLink GetOrAddLink(string source, string target)
         {
-            SimpleGraphNode nodeSource = AddOrGetNode(source);
-            SimpleGraphNode nodeTarget = AddOrGetNode(target);
+            SimpleGraphNode nodeSource = this.AddOrGetNode(source);
+            SimpleGraphNode nodeTarget = this.AddOrGetNode(target);
 
             SimpleGraphLink link = new SimpleGraphLink(nodeSource, nodeTarget);
 
@@ -45,12 +45,12 @@ namespace Walkabout.Utilities
                 nodeSource.LinkTarget.Add(nodeTarget);
 
                 // Also update the global Links on the Graph
-                Links.Add(link);
+                this.Links.Add(link);
             }
             else
             {
                 // This link already exist
-                foreach (SimpleGraphLink l in Links)
+                foreach (SimpleGraphLink l in this.Links)
                 {
                     if (l.Source == nodeSource && l.Target == nodeTarget)
                     {
@@ -69,7 +69,7 @@ namespace Walkabout.Utilities
         /// <param name="file"></param>
         public void Save(string file, string optionalStyles)
         {
-            XmlDocument doc = ToXml(optionalStyles);
+            XmlDocument doc = this.ToXml(optionalStyles);
             doc.Save(file);
         }
 
@@ -86,7 +86,7 @@ namespace Walkabout.Utilities
             doc.DocumentElement.AppendChild(rootNodes);
 
 
-            foreach (SimpleGraphNode sgn in Nodes.Values)
+            foreach (SimpleGraphNode sgn in this.Nodes.Values)
             {
                 XmlElement n = doc.CreateElement("Node", ns);
                 n.SetAttribute("Id", sgn.Id);
@@ -103,7 +103,7 @@ namespace Walkabout.Utilities
             XmlNode rootLinks = doc.CreateElement("Links", ns);
             doc.DocumentElement.AppendChild(rootLinks);
 
-            foreach (SimpleGraphLink sgl in Links)
+            foreach (SimpleGraphLink sgl in this.Links)
             {
                 XmlElement l = doc.CreateElement("Link", ns);
                 l.SetAttribute("Source", sgl.Source.Id);
@@ -130,7 +130,7 @@ namespace Walkabout.Utilities
         public SimpleGraphNode(string Id)
         {
             this.Id = Id;
-            LinkTarget = new List<SimpleGraphNode>();
+            this.LinkTarget = new List<SimpleGraphNode>();
         }
 
         public string Label { get; set; }
@@ -143,8 +143,8 @@ namespace Walkabout.Utilities
 
         public SimpleGraphLink(SimpleGraphNode source, SimpleGraphNode target)
         {
-            Source = source;
-            Target = target;
+            this.Source = source;
+            this.Target = target;
         }
     }
 
@@ -158,13 +158,13 @@ namespace Walkabout.Utilities
             SimpleGraphProperty sgp = new SimpleGraphProperty();
             sgp.Id = id;
             sgp.Value = value;
-            Properties.Add(sgp);
+            this.Properties.Add(sgp);
             return sgp;
         }
 
         public SimpleGraphProperty GetProperty(string id)
         {
-            foreach (SimpleGraphProperty sgp in Properties)
+            foreach (SimpleGraphProperty sgp in this.Properties)
             {
                 if (sgp.Id == id)
                 {

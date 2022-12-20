@@ -26,23 +26,23 @@ namespace Walkabout.Views.Controls
 
         public MyMoney MyMoney
         {
-            get { return myMoney; }
+            get { return this.myMoney; }
             set
             {
                 if (this.myMoney != null)
                 {
-                    myMoney.Payees.Changed -= new EventHandler<ChangeEventArgs>(OnPayeesChanged);
-                    myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(OnBalanceChanged);
-                    myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(OnTransactionsChanged);
+                    this.myMoney.Payees.Changed -= new EventHandler<ChangeEventArgs>(this.OnPayeesChanged);
+                    this.myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(this.OnBalanceChanged);
+                    this.myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(this.OnTransactionsChanged);
                 }
-                myMoney = value;
+                this.myMoney = value;
                 if (value != null)
                 {
-                    myMoney.Payees.Changed += new EventHandler<ChangeEventArgs>(OnPayeesChanged);
-                    myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(OnBalanceChanged);
-                    myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(OnTransactionsChanged);
+                    this.myMoney.Payees.Changed += new EventHandler<ChangeEventArgs>(this.OnPayeesChanged);
+                    this.myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(this.OnBalanceChanged);
+                    this.myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(this.OnTransactionsChanged);
 
-                    OnPayeesChanged(this, new ChangeEventArgs(myMoney.Payees, null, ChangeType.Reloaded));
+                    this.OnPayeesChanged(this, new ChangeEventArgs(this.myMoney.Payees, null, ChangeType.Reloaded));
                 }
             }
         }
@@ -59,9 +59,9 @@ namespace Walkabout.Views.Controls
             get { return this.listbox1.SelectedItem as Payee; }
             set
             {
-                selection = value;
+                this.selection = value;
                 this.listbox1.SelectedItem = value;
-                listbox1.ScrollIntoView(value);
+                this.listbox1.ScrollIntoView(value);
             }
         }
 
@@ -78,12 +78,12 @@ namespace Walkabout.Views.Controls
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.PayeesControlInitialize))
             {
 #endif
-                InitializeComponent();
-                this.MouseUp += new MouseButtonEventHandler(OnMouseUp);
-                this.listbox1.SelectionChanged += new SelectionChangedEventHandler(OnSelectionChanged);
-                this.dragDropSupport = new DragAndDrop(listbox1, this.dragDropformatNameForPayee, OnDragSource, OnDropTarget, OnDropSourceOnTarget, false);
-                this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(OnIsVisibleChanged);
-                this.Unloaded += (s, e) =>
+                this.InitializeComponent();
+                MouseUp += new MouseButtonEventHandler(this.OnMouseUp);
+                this.listbox1.SelectionChanged += new SelectionChangedEventHandler(this.OnSelectionChanged);
+                this.dragDropSupport = new DragAndDrop(this.listbox1, this.dragDropformatNameForPayee, this.OnDragSource, this.OnDropTarget, this.OnDropSourceOnTarget, false);
+                IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
+                Unloaded += (s, e) =>
                 {
                     this.dragDropSupport.Disconnect();
                     this.MyMoney = null;
@@ -95,16 +95,16 @@ namespace Walkabout.Views.Controls
 
         void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (!loaded)
+            if (!this.loaded)
             {
-                GetAllPayees(lastActiveFilter);
+                this.GetAllPayees(this.lastActiveFilter);
             }
         }
 
         public void Filter(string filterText)
         {
-            lastActiveFilter = filterText;
-            GetAllPayees(filterText);
+            this.lastActiveFilter = filterText;
+            this.GetAllPayees(filterText);
         }
 
         void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -112,9 +112,9 @@ namespace Walkabout.Views.Controls
             if (e.AddedItems.Count > 0)
             {
                 Payee p = e.AddedItems[0] as Payee;
-                if (p != selection)
+                if (p != this.selection)
                 {
-                    selection = p;
+                    this.selection = p;
                     if (SelectionChanged != null)
                     {
                         SelectionChanged(this, EventArgs.Empty);
@@ -133,17 +133,17 @@ namespace Walkabout.Views.Controls
         {
             if (e.XButton1 == MouseButtonState.Pressed)
             {
-                if (this.MouseButtonBackwardChanged != null)
+                if (MouseButtonBackwardChanged != null)
                 {
-                    this.MouseButtonBackwardChanged(this, new EventArgs());
+                    MouseButtonBackwardChanged(this, new EventArgs());
                 }
             }
 
             if (e.XButton2 == MouseButtonState.Pressed)
             {
-                if (this.MouseButtonForwardChanged != null)
+                if (MouseButtonForwardChanged != null)
                 {
-                    this.MouseButtonForwardChanged(this, new EventArgs());
+                    MouseButtonForwardChanged(this, new EventArgs());
                 }
             }
         }
@@ -165,7 +165,7 @@ namespace Walkabout.Views.Controls
                 {
                     returnSource = new DragDropSource();
                     returnSource.DataSource = payee;
-                    returnSource.VisualForDraginSource = CreateDragVisual(payee);
+                    returnSource.VisualForDraginSource = this.CreateDragVisual(payee);
                 }
             }
 
@@ -177,7 +177,7 @@ namespace Walkabout.Views.Controls
             Border visual = new Border();
             visual.SetResourceReference(Window.BackgroundProperty, "SystemControlHighlightAccent3RevealBackgroundBrush");
             visual.SetResourceReference(Window.ForegroundProperty, "SystemControlPageTextBaseHighBrush");
-            var label = new TextBlock() { Text = p.Name, Margin = new Thickness(5), FontSize = this.FontSize, FontFamily = this.FontFamily };
+            var label = new TextBlock() { Text = p.Name, Margin = new Thickness(5), FontSize = FontSize, FontFamily = FontFamily };
             visual.Child = label;
             return visual;
         }
@@ -205,7 +205,7 @@ namespace Walkabout.Views.Controls
         /// <param name="target">Payee that was dropped on</param>
         private void OnDropSourceOnTarget(object source, object target, DragDropEffects dropEffect)
         {
-            Rename(source as Payee, target as Payee);
+            this.Rename(source as Payee, target as Payee);
         }
 
         #endregion
@@ -214,7 +214,7 @@ namespace Walkabout.Views.Controls
         {
             if (this.IsVisible)
             {
-                GetAllPayees(this.lastActiveFilter);
+                this.GetAllPayees(this.lastActiveFilter);
             }
         }
 
@@ -222,7 +222,7 @@ namespace Walkabout.Views.Controls
         {
             if (this.IsVisible)
             {
-                GetAllPayees(this.lastActiveFilter);
+                this.GetAllPayees(this.lastActiveFilter);
             }
         }
 
@@ -232,14 +232,14 @@ namespace Walkabout.Views.Controls
 
             if (string.IsNullOrWhiteSpace(filter))
             {
-                list = myMoney.Payees.GetPayeesAsList();
+                list = this.myMoney.Payees.GetPayeesAsList();
             }
             else
             {
-                list = myMoney.Payees.GetPayeesAsList(filter);
+                list = this.myMoney.Payees.GetPayeesAsList(filter);
             }
             list.Sort(new PayeeComparer2());
-            loaded = list.Count > 0;
+            this.loaded = list.Count > 0;
             this.listbox1.ItemsSource = list;
         }
 
@@ -251,18 +251,18 @@ namespace Walkabout.Views.Controls
         private void OnMenuItem_Rename(object sender, RoutedEventArgs e)
         {
             Payee p = this.listbox1.SelectedItem as Payee;
-            Rename(p);
+            this.Rename(p);
         }
 
         private void OnMenuItem_Delete(object sender, RoutedEventArgs e)
         {
             Payee p = this.listbox1.SelectedItem as Payee;
-            DeletePayee(p);
+            this.DeletePayee(p);
         }
 
         Payee Rename(Payee p)
         {
-            return Rename(p, p);
+            return this.Rename(p, p);
         }
 
         Payee Rename(Payee fromPayee, Payee renameToThisPayee)
@@ -272,11 +272,11 @@ namespace Walkabout.Views.Controls
             dialog.Owner = App.Current.MainWindow;
             if (dialog.ShowDialog() == true)
             {
-                HashSet<Payee> used = myMoney.GetUsedPayees();
+                HashSet<Payee> used = this.myMoney.GetUsedPayees();
                 if (!used.Contains(fromPayee))
                 {
                     // remove it now so that our list UI is updated...
-                    Payees payees = myMoney.Payees;
+                    Payees payees = this.myMoney.Payees;
                     payees.RemovePayee(fromPayee);
                 }
             }
@@ -288,10 +288,10 @@ namespace Walkabout.Views.Controls
 
         public Payee DeletePayee(Payee p)
         {
-            Payees payees = myMoney.Payees;
-            if (myMoney.GetUsedPayees().Contains(p))
+            Payees payees = this.myMoney.Payees;
+            if (this.myMoney.GetUsedPayees().Contains(p))
             {
-                p = Rename(p);
+                p = this.Rename(p);
             }
             else
             {
@@ -354,7 +354,7 @@ namespace Walkabout.Views.Controls
             Payee p = this.listbox1.SelectedItem as Payee;
             if (p != null)
             {
-                DeletePayee(p);
+                this.DeletePayee(p);
             }
         }
 

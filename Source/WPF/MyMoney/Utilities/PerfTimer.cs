@@ -33,34 +33,34 @@ namespace Walkabout.Utilities
 
         public PerfTimer()
         {
-            QueryPerformanceFrequency(ref m_Freq);
+            QueryPerformanceFrequency(ref this.m_Freq);
         }
 
         public void Start()
         {
-            m_Start = GetTime();
-            m_End = m_Start;
+            this.m_Start = GetTime();
+            this.m_End = this.m_Start;
         }
 
         public void Stop()
         {
-            m_End = GetTime();
-            m_Ticks += m_End - m_Start;
+            this.m_End = GetTime();
+            this.m_Ticks += this.m_End - this.m_Start;
         }
 
         public long GetDuration()
         { // in milliseconds.            
-            return GetMilliseconds(GetTicks());
+            return this.GetMilliseconds(this.GetTicks());
         }
 
         public long GetMilliseconds(long ticks)
         {
-            return (ticks * (long)1000) / m_Freq;
+            return (ticks * (long)1000) / this.m_Freq;
         }
 
         public long GetTicks()
         {
-            return m_Ticks;
+            return this.m_Ticks;
         }
 
         public static long GetTime()
@@ -74,32 +74,32 @@ namespace Walkabout.Utilities
         // then get the median, average and percent variation.
         public void Count(long ms)
         {
-            if (m_Min == 0) m_Min = ms;
-            if (ms < m_Min) m_Min = ms;
-            if (ms > m_Max) m_Max = ms;
-            m_Sum += ms;
-            m_Count++;
+            if (this.m_Min == 0) this.m_Min = ms;
+            if (ms < this.m_Min) this.m_Min = ms;
+            if (ms > this.m_Max) this.m_Max = ms;
+            this.m_Sum += ms;
+            this.m_Count++;
         }
 
         public long Min()
         {
-            return m_Min;
+            return this.m_Min;
         }
 
         public long Max()
         {
-            return m_Max;
+            return this.m_Max;
         }
 
         public double Median()
         {
-            return TwoDecimals(m_Min + ((m_Max - m_Min) / 2.0));
+            return TwoDecimals(this.m_Min + ((this.m_Max - this.m_Min) / 2.0));
         }
 
         public double PercentError()
         {
-            double spread = (m_Max - m_Min) / 2.0;
-            double percent = TwoDecimals((double)(spread * 100.0) / (double)(m_Min));
+            double spread = (this.m_Max - this.m_Min) / 2.0;
+            double percent = TwoDecimals((double)(spread * 100.0) / (double)(this.m_Min));
             return percent;
         }
 
@@ -110,13 +110,13 @@ namespace Walkabout.Utilities
 
         public long Average()
         {
-            if (m_Count == 0) return 0;
-            return m_Sum / m_Count;
+            if (this.m_Count == 0) return 0;
+            return this.m_Sum / this.m_Count;
         }
 
         public void Clear()
         {
-            m_Start = m_End = m_Min = m_Max = m_Sum = m_Count = m_Ticks = 0;
+            this.m_Start = this.m_End = this.m_Min = this.m_Max = this.m_Sum = this.m_Count = this.m_Ticks = 0;
         }
     }
 }

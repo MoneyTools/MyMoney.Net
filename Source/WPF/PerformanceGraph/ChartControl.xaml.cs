@@ -37,9 +37,9 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         public ChartControl()
         {
-            InitializeComponent();
-            hover = new HoverGesture(this);
-            hover.Hover += new MouseEventHandler(OnHover);
+            this.InitializeComponent();
+            this.hover = new HoverGesture(this);
+            this.hover.Hover += new MouseEventHandler(this.OnHover);
             this.Background = Brushes.White;
         }
 
@@ -55,36 +55,36 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         {
             get
             {
-                return units;
+                return this.units;
             }
             set
             {
-                units = value;
-                UpdateLabels();
+                this.units = value;
+                this.UpdateLabels();
             }
         }
 
         double zoom = 1;
         public double Zoom
         {
-            get { return zoom; }
-            set { zoom = value; zoomToFit = false; InvalidateMeasure(); }
+            get { return this.zoom; }
+            set { this.zoom = value; this.zoomToFit = false; this.InvalidateMeasure(); }
         }
 
         bool zoomToFit = true;
         public bool ZoomToFit
         {
-            get { return zoomToFit; }
-            set { zoomToFit = value; InvalidateMeasure(); }
+            get { return this.zoomToFit; }
+            set { this.zoomToFit = value; this.InvalidateMeasure(); }
         }
 
         public bool ShowTrendLine
         {
-            get { return TrendLine.Visibility == System.Windows.Visibility.Visible; }
+            get { return this.TrendLine.Visibility == System.Windows.Visibility.Visible; }
             set
             {
-                TrendLine.Visibility = value ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
-                LineLabel.Visibility = TrendLine.Visibility;
+                this.TrendLine.Visibility = value ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+                this.LineLabel.Visibility = this.TrendLine.Visibility;
             }
         }
 
@@ -92,27 +92,27 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         {
             get
             {
-                return data;
+                return this.data;
             }
             set
             {
-                SetLineData(value);
+                this.SetLineData(value);
             }
         }
 
         private void UpdateLabels()
         {
-            if (data.Count == 0)
+            if (this.data.Count == 0)
             {
-                Max.Text = string.Empty;
-                Min.Text = string.Empty;
+                this.Max.Text = string.Empty;
+                this.Min.Text = string.Empty;
             }
             else
             {
-                Max.Text = max.ToString("N0") + " " + Units;
-                Min.Text = min.ToString("N0");
+                this.Max.Text = this.max.ToString("N0") + " " + this.Units;
+                this.Min.Text = this.min.ToString("N0");
             }
-            XMax.Text = data.Count.ToString("N0");
+            this.XMax.Text = this.data.Count.ToString("N0");
         }
 
         private PathGeometry CreateGeometry(List<Point> data)
@@ -135,15 +135,15 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
-            renderSize = sizeInfo.NewSize;
-            InvalidateArrange();
+            this.renderSize = sizeInfo.NewSize;
+            this.InvalidateArrange();
             base.OnRenderSizeChanged(sizeInfo);
         }
 
         protected override Size MeasureOverride(Size constraint)
         {
             base.MeasureOverride(constraint);
-            if (zoomToFit)
+            if (this.zoomToFit)
             {
                 return new Size(0, 0);
             }
@@ -154,13 +154,13 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 {
                     w = 0;
                 }
-                return new Size((w * Zoom) + YAxis.RenderSize.Width + 20, renderSize.Height);
+                return new Size((w * this.Zoom) + this.YAxis.RenderSize.Width + 20, this.renderSize.Height);
             }
         }
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            LayoutGraph(arrangeBounds);
+            this.LayoutGraph(arrangeBounds);
             return base.ArrangeOverride(arrangeBounds);
         }
 
@@ -170,16 +170,16 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         private void LayoutGraph(Size size)
         {
-            PathGeometry path = LineGraph.Data as PathGeometry;
-            if (path != null && data != null && points != null)
+            PathGeometry path = this.LineGraph.Data as PathGeometry;
+            if (path != null && this.data != null && this.points != null)
             {
                 Rect bounds = this.bounds;
-                double yw = YAxis.RenderSize.Width;
+                double yw = this.YAxis.RenderSize.Width;
                 var w = size.Width - yw - 20;
                 var h = size.Height - 80;
-                if (zoomToFit)
+                if (this.zoomToFit)
                 {
-                    zoom = w / bounds.Width;
+                    this.zoom = w / bounds.Width;
                 }
                 var ymargin = TopMargin;
 
@@ -187,58 +187,58 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 {
                     TransformGroup g = new TransformGroup();
                     g.Children.Add(new TranslateTransform(0, -bounds.Top));
-                    g.Children.Add(new ScaleTransform(zoom, -h / bounds.Height));
+                    g.Children.Add(new ScaleTransform(this.zoom, -h / bounds.Height));
                     g.Children.Add(new TranslateTransform(LeftMargin, h + ymargin));
 
                     List<Point> pts = new List<Point>();
-                    foreach (Point p in points)
+                    foreach (Point p in this.points)
                     {
                         Point t = g.Transform(p);
                         pts.Add(t);
                     }
-                    scaled = pts;
+                    this.scaled = pts;
 
-                    LineGraph.Data = CreateGeometry(pts);
+                    this.LineGraph.Data = this.CreateGeometry(pts);
 
                     Rect newBounds = g.TransformBounds(bounds);
-                    Border.Width = newBounds.Width;
-                    Border.Height = newBounds.Height;
+                    this.Border.Width = newBounds.Width;
+                    this.Border.Height = newBounds.Height;
 
-                    double xMean = Mean(from p in pts select p.X);
-                    double yMean = Mean(from p in pts select p.Y);
-                    double xVariance = Variance(from p in pts select p.X);
-                    double yVariance = Variance(from p in pts select p.Y);
-                    double covariance = Covariance(pts);
+                    double xMean = this.Mean(from p in pts select p.X);
+                    double yMean = this.Mean(from p in pts select p.Y);
+                    double xVariance = this.Variance(from p in pts select p.X);
+                    double yVariance = this.Variance(from p in pts select p.Y);
+                    double covariance = this.Covariance(pts);
 
                     double b = covariance / xVariance;
                     double a = yMean - (b * xMean);
-                    TrendLine.X1 = 0;
-                    TrendLine.X2 = w;
-                    TrendLine.Y1 = a;
-                    TrendLine.Y2 = a + (b * w);
+                    this.TrendLine.X1 = 0;
+                    this.TrendLine.X2 = w;
+                    this.TrendLine.Y1 = a;
+                    this.TrendLine.Y2 = a + (b * w);
 
                     // now run on the raw data
-                    xMean = Mean(from p in points select p.X);
-                    yMean = Mean(from p in points select p.Y);
-                    xVariance = Variance(from p in points select p.X);
-                    yVariance = Variance(from p in points select p.Y);
-                    covariance = Covariance(points);
+                    xMean = this.Mean(from p in this.points select p.X);
+                    yMean = this.Mean(from p in this.points select p.Y);
+                    xVariance = this.Variance(from p in this.points select p.X);
+                    yVariance = this.Variance(from p in this.points select p.Y);
+                    covariance = this.Covariance(this.points);
 
                     double realb = covariance / xVariance;
                     double reala = yMean - (b * xMean);
-                    LineLabel.Content = string.Format("y = {0} + {1}x", reala.ToString("N0"), realb.ToString("N0"));
+                    this.LineLabel.Content = string.Format("y = {0} + {1}x", reala.ToString("N0"), realb.ToString("N0"));
 
                     g = new TransformGroup();
-                    g.Children.Add(new RotateTransform(Math.Atan((TrendLine.Y2 - TrendLine.Y1) / (TrendLine.X2 - TrendLine.X2))));
+                    g.Children.Add(new RotateTransform(Math.Atan((this.TrendLine.Y2 - this.TrendLine.Y1) / (this.TrendLine.X2 - this.TrendLine.X2))));
                     g.Children.Add(new TranslateTransform(0, a - 20));
-                    LineLabel.RenderTransform = g;
+                    this.LineLabel.RenderTransform = g;
                 }
             }
         }
 
         public double Variance(IEnumerable<double> values)
         {
-            double mean = Mean(values);
+            double mean = this.Mean(values);
             double variance = 0;
             foreach (double d in values)
             {
@@ -304,19 +304,19 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 {
                     if (e.EventId == PerformanceData.EndEvent)
                     {
-                        data.Add(e);
-                        min = Math.Min(e.Ticks, min);
-                        max = Math.Max(e.Ticks, max);
+                        this.data.Add(e);
+                        this.min = Math.Min(e.Ticks, this.min);
+                        this.max = Math.Max(e.Ticks, this.max);
                         pts.Add(new Point(x++, (double)e.Ticks));
                         sum += (double)e.Ticks;
                     }
                 }
             }
 
-            if (RemoveSpikes && x > 0)
+            if (this.RemoveSpikes && x > 0)
             {
-                min = 0;
-                max = 0;
+                this.min = 0;
+                this.max = 0;
                 var filtered = new List<PerformanceEventArrivedEventArgs>();
                 double avg = sum / x;
                 double stddev = 0;
@@ -331,82 +331,82 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 x = 0;
                 // remove all spikes greater than 3 times the standard deviation.
                 double spike = stddev * 3;
-                max = 0;
+                this.max = 0;
                 List<Point> flattened = new List<Point>();
-                for (int i = 0; i < data.Count; i++)
+                for (int i = 0; i < this.data.Count; i++)
                 {
                     Point p = pts[i];
                     double dev = Math.Abs(p.Y - avg);
                     if (dev < spike)
                     {
-                        var e = data[i];
-                        min = Math.Min(e.Ticks, min);
-                        max = Math.Max(e.Ticks, max);
+                        var e = this.data[i];
+                        this.min = Math.Min(e.Ticks, this.min);
+                        this.max = Math.Max(e.Ticks, this.max);
                         flattened.Add(p);
                         filtered.Add(e);
-                        max = Math.Max(p.Y, max);
+                        this.max = Math.Max(p.Y, this.max);
                     }
                 }
                 pts = flattened;
                 this.data = filtered;
             }
 
-            if (max > 0)
+            if (this.max > 0)
             {
                 // now do some auto-scaling
-                Units = "Ticks";
-                unitConversion = 1;
+                this.Units = "Ticks";
+                this.unitConversion = 1;
                 double ticksPerMicrosecond = (double)Stopwatch.Frequency / (double)1000000;
-                if (max > ticksPerMicrosecond)
+                if (this.max > ticksPerMicrosecond)
                 {
-                    unitConversion = ticksPerMicrosecond;
-                    Units = "μs";
+                    this.unitConversion = ticksPerMicrosecond;
+                    this.Units = "μs";
                 }
                 double ticksPerMillisecond = (double)Stopwatch.Frequency / (double)1000;
-                if (max > ticksPerMillisecond)
+                if (this.max > ticksPerMillisecond)
                 {
-                    unitConversion = ticksPerMillisecond;
-                    Units = "ms";
+                    this.unitConversion = ticksPerMillisecond;
+                    this.Units = "ms";
                 }
 
                 double ticksPerSecond = (double)Stopwatch.Frequency;
-                if (max > ticksPerSecond)
+                if (this.max > ticksPerSecond)
                 {
-                    unitConversion = ticksPerSecond;
-                    Units = "s";
+                    this.unitConversion = ticksPerSecond;
+                    this.Units = "s";
                 }
 
                 for (int i = 0; i < pts.Count; i++)
                 {
                     Point p = pts[i];
-                    p.Y = p.Y / unitConversion;
+                    p.Y = p.Y / this.unitConversion;
                     pts[i] = p;
                 }
             }
 
             this.points = pts;
-            if (points != null)
+            if (this.points != null)
             {
-                min = double.MaxValue;
-                max = double.MinValue;
-                foreach (Point p in points)
+                this.min = double.MaxValue;
+                this.max = double.MinValue;
+                foreach (Point p in this.points)
                 {
                     double v = p.Y;
-                    if (v < min)
+                    if (v < this.min)
                     {
-                        min = v;
+                        this.min = v;
                     }
-                    if (v > max)
+                    if (v > this.max)
                     {
-                        max = v;
+                        this.max = v;
                     }
                 }
 
-                var geometry = CreateGeometry(points);
-                LineGraph.Data = geometry;
-                bounds = geometry.Bounds;
-                UpdateLabels();
-                InvalidateArrange();
+                var geometry = this.CreateGeometry(this.points);
+                this.LineGraph.Data = geometry;
+                this.bounds = geometry.Bounds;
+                this.UpdateLabels();
+                this.InvalidateArrange();
             }
         }
 
@@ -414,23 +414,23 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            Connector.Visibility = System.Windows.Visibility.Hidden;
-            Dot.Visibility = System.Windows.Visibility.Hidden;
-            int closest = FindClosestPoint(e);
+            this.Connector.Visibility = System.Windows.Visibility.Hidden;
+            this.Dot.Visibility = System.Windows.Visibility.Hidden;
+            int closest = this.FindClosestPoint(e);
             if (closest >= 0)
             {
-                Point p = scaled[closest];
-                Canvas.SetLeft(Dot, p.X - Dot.Width / 2);
-                Canvas.SetTop(Dot, p.Y - Dot.Height / 2);
-                Dot.Visibility = System.Windows.Visibility.Visible;
+                Point p = this.scaled[closest];
+                Canvas.SetLeft(this.Dot, p.X - this.Dot.Width / 2);
+                Canvas.SetTop(this.Dot, p.Y - this.Dot.Height / 2);
+                this.Dot.Visibility = System.Windows.Visibility.Visible;
             }
             base.OnMouseMove(e);
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
-            Connector.Visibility = System.Windows.Visibility.Hidden;
-            Dot.Visibility = System.Windows.Visibility.Hidden;
+            this.Connector.Visibility = System.Windows.Visibility.Hidden;
+            this.Dot.Visibility = System.Windows.Visibility.Hidden;
             base.OnMouseLeave(e);
         }
 
@@ -439,15 +439,15 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         int FindClosestPoint(MouseEventArgs e)
         {
             int closest = -1;
-            if (scaled != null)
+            if (this.scaled != null)
             {
                 Point pos = e.GetPosition(this);
                 pos.X += CursorHotSpot.X;
                 pos.Y += CursorHotSpot.Y;
                 double length = double.MaxValue;
-                for (int i = 0; i < scaled.Count; i++)
+                for (int i = 0; i < this.scaled.Count; i++)
                 {
-                    Point p = scaled[i];
+                    Point p = this.scaled[i];
                     Vector v = pos - p;
                     double l = v.Length;
                     if (l < length)
@@ -462,35 +462,35 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         void OnHover(object sender, MouseEventArgs e)
         {
-            Connector.Visibility = System.Windows.Visibility.Hidden;
-            Dot.Visibility = System.Windows.Visibility.Hidden;
-            if (scaled != null)
+            this.Connector.Visibility = System.Windows.Visibility.Hidden;
+            this.Dot.Visibility = System.Windows.Visibility.Hidden;
+            if (this.scaled != null)
             {
-                int closest = FindClosestPoint(e);
+                int closest = this.FindClosestPoint(e);
                 if (closest >= 0)
                 {
-                    Grid grid = GetPopupContent(closest);
+                    Grid grid = this.GetPopupContent(closest);
                     if (grid != null)
                     {
-                        Popup popup = hover.CreatePopup(grid);
+                        Popup popup = this.hover.CreatePopup(grid);
                         popup.Opened += (sender2, args) =>
                         {
                             try
                             {
-                                Point p = scaled[closest];
+                                Point p = this.scaled[closest];
                                 Point topleft = new Point(0, 0);
                                 topleft = popup.Child.PointToScreen(topleft);
                                 topleft = this.PointFromScreen(topleft);
 
-                                Connector.X1 = topleft.X;
-                                Connector.Y1 = topleft.Y;
-                                Connector.X2 = p.X;
-                                Connector.Y2 = p.Y;
-                                Connector.Visibility = System.Windows.Visibility.Visible;
+                                this.Connector.X1 = topleft.X;
+                                this.Connector.Y1 = topleft.Y;
+                                this.Connector.X2 = p.X;
+                                this.Connector.Y2 = p.Y;
+                                this.Connector.Visibility = System.Windows.Visibility.Visible;
 
-                                Canvas.SetLeft(Dot, p.X - Dot.Width / 2);
-                                Canvas.SetTop(Dot, p.Y - Dot.Height / 2);
-                                Dot.Visibility = System.Windows.Visibility.Visible;
+                                Canvas.SetLeft(this.Dot, p.X - this.Dot.Width / 2);
+                                Canvas.SetTop(this.Dot, p.Y - this.Dot.Height / 2);
+                                this.Dot.Visibility = System.Windows.Visibility.Visible;
                             }
                             catch
                             {
@@ -513,16 +513,16 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         {
             Grid content = null;
 
-            if (index < data.Count)
+            if (index < this.data.Count)
             {
-                PerformanceEventArrivedEventArgs args = data[index];
+                PerformanceEventArrivedEventArgs args = this.data[index];
 
                 content = new Grid();
                 content.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
                 content.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
 
                 ulong span = args.Ticks;
-                double seconds = (double)span / (double)PerformanceFrequency;
+                double seconds = (double)span / (double)this.PerformanceFrequency;
 
                 string units = "s"; // seconds;
                 if (seconds.ToString("N").StartsWith("0.0"))
@@ -536,10 +536,10 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                     units = "μs";
                 }
 
-                AddRow(content, "Component", args.ComponentName);
-                AddRow(content, "Category", args.CategoryName);
-                AddRow(content, "Measurement", args.MeasurementName);
-                AddRow(content, "Time", seconds.ToString("N3") + units);
+                this.AddRow(content, "Component", args.ComponentName);
+                this.AddRow(content, "Category", args.CategoryName);
+                this.AddRow(content, "Measurement", args.MeasurementName);
+                this.AddRow(content, "Time", seconds.ToString("N3") + units);
             }
             return content;
         }

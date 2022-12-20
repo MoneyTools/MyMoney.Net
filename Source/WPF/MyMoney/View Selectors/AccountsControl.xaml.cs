@@ -77,34 +77,34 @@ namespace Walkabout.Views.Controls
 
         public MyMoney MyMoney
         {
-            get { return myMoney; }
+            get { return this.myMoney; }
             set
             {
                 if (this.myMoney != null)
                 {
-                    myMoney.Accounts.Changed -= new EventHandler<ChangeEventArgs>(OnAccountsChanged);
-                    myMoney.Changed -= new EventHandler<ChangeEventArgs>(OnMoneyChanged);
-                    myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(OnBalanceChanged);
+                    this.myMoney.Accounts.Changed -= new EventHandler<ChangeEventArgs>(this.OnAccountsChanged);
+                    this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
+                    this.myMoney.Rebalanced -= new EventHandler<ChangeEventArgs>(this.OnBalanceChanged);
                 }
-                myMoney = value;
+                this.myMoney = value;
 
                 if (value != null)
                 {
-                    myMoney.Accounts.Changed += new EventHandler<ChangeEventArgs>(OnAccountsChanged);
-                    myMoney.Changed += new EventHandler<ChangeEventArgs>(OnMoneyChanged);
-                    myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(OnBalanceChanged);
-                    OnAccountsChanged(this, new ChangeEventArgs(myMoney.Accounts, null, ChangeType.Reloaded));
+                    this.myMoney.Accounts.Changed += new EventHandler<ChangeEventArgs>(this.OnAccountsChanged);
+                    this.myMoney.Changed += new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
+                    this.myMoney.Rebalanced += new EventHandler<ChangeEventArgs>(this.OnBalanceChanged);
+                    this.OnAccountsChanged(this, new ChangeEventArgs(this.myMoney.Accounts, null, ChangeType.Reloaded));
                 }
                 else
                 {
-                    Select(null);
+                    this.Select(null);
                 }
             }
         }
 
         void OnBalanceChanged(object sender, ChangeEventArgs args)
         {
-            delayedActions.StartDelayedAction("rebind", Rebind, TimeSpan.FromMilliseconds(30));
+            this.delayedActions.StartDelayedAction("rebind", this.Rebind, TimeSpan.FromMilliseconds(30));
         }
 
 
@@ -114,7 +114,7 @@ namespace Walkabout.Views.Controls
             {
                 if (args.Item is Account)
                 {
-                    delayedActions.StartDelayedAction("rebind", Rebind, TimeSpan.FromMilliseconds(30));
+                    this.delayedActions.StartDelayedAction("rebind", this.Rebind, TimeSpan.FromMilliseconds(30));
                     return;
                 }
                 args = args.Next;
@@ -131,9 +131,9 @@ namespace Walkabout.Views.Controls
                 {
                     this.Selected = item;
                 }
-                else if (!DisplayClosedAccounts)
+                else if (!this.DisplayClosedAccounts)
                 {
-                    DisplayClosedAccounts = true;
+                    this.DisplayClosedAccounts = true;
                     this.SelectedAccount = value;
                 }
             }
@@ -142,7 +142,7 @@ namespace Walkabout.Views.Controls
         public AccountViewModel Selected
         {
             get { return this.listBox1.SelectedItem as AccountViewModel; }
-            set { Select(value); }
+            set { this.Select(value); }
         }
 
         private bool displayClosedAccounts = false;
@@ -162,11 +162,11 @@ namespace Walkabout.Views.Controls
         #region IClipboardClient SUPPORT
         public bool CanCut
         {
-            get { return SelectedAccount != null; }
+            get { return this.SelectedAccount != null; }
         }
         public bool CanCopy
         {
-            get { return SelectedAccount != null; }
+            get { return this.SelectedAccount != null; }
         }
         public bool CanPaste
         {
@@ -174,14 +174,14 @@ namespace Walkabout.Views.Controls
         }
         public bool CanDelete
         {
-            get { return SelectedAccount != null; }
+            get { return this.SelectedAccount != null; }
         }
         public void Cut()
         {
-            Account a = SelectedAccount;
+            Account a = this.SelectedAccount;
             if (a != null)
             {
-                a = DeleteAccount(a);
+                a = this.DeleteAccount(a);
                 CopyToClipboard(a);
             }
         }
@@ -197,17 +197,17 @@ namespace Walkabout.Views.Controls
 
         public void Copy()
         {
-            Account a = SelectedAccount;
+            Account a = this.SelectedAccount;
             CopyToClipboard(a);
         }
 
         public void Delete()
         {
-            Account a = SelectedAccount;
+            Account a = this.SelectedAccount;
 
             if (a != null)
             {
-                DeleteAccount(a);
+                this.DeleteAccount(a);
             }
         }
 
@@ -231,10 +231,10 @@ namespace Walkabout.Views.Controls
 
         public void SetTextBlock(TextBlock statusControl)
         {
-            statusArea = statusControl;
-            if (statusArea != null)
+            this.statusArea = statusControl;
+            if (this.statusArea != null)
             {
-                statusArea.FontSize = 11;
+                this.statusArea.FontSize = 11;
             }
         }
 
@@ -247,13 +247,13 @@ namespace Walkabout.Views.Controls
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AccountsControlInitialize))
             {
 #endif
-                InitializeComponent();
+                this.InitializeComponent();
 
-                this.listBox1.PreviewMouseDown += new MouseButtonEventHandler(listBox1_PreviewMouseDown);
-                this.listBox1.SelectionChanged += new SelectionChangedEventHandler(OnListBoxSelectionChanged);
-                this.listBox1.MouseDoubleClick += new MouseButtonEventHandler(OnListBoxMouseDoubleClick);
+                this.listBox1.PreviewMouseDown += new MouseButtonEventHandler(this.listBox1_PreviewMouseDown);
+                this.listBox1.SelectionChanged += new SelectionChangedEventHandler(this.OnListBoxSelectionChanged);
+                this.listBox1.MouseDoubleClick += new MouseButtonEventHandler(this.OnListBoxMouseDoubleClick);
 
-                foreach (object o in AccountsControlContextMenu.Items)
+                foreach (object o in this.AccountsControlContextMenu.Items)
                 {
                     MenuItem m = o as MenuItem;
                     if (m != null)
@@ -263,7 +263,7 @@ namespace Walkabout.Views.Controls
                 }
 
                 this.listBox1.ItemsSource = this.items;
-                UpdateContextMenuView();
+                this.UpdateContextMenuView();
 #if PerformanceBlocks
             }
 #endif
@@ -275,7 +275,7 @@ namespace Walkabout.Views.Controls
             if (!this.HitScrollBar(pos) && e.ChangedButton == MouseButton.Left)
             {
                 uint delay = NativeMethods.GetDoubleClickTime();
-                delayedActions.StartDelayedAction("SingleClick", OnShowAllTransactions, TimeSpan.FromMilliseconds(delay + 100));
+                this.delayedActions.StartDelayedAction("SingleClick", this.OnShowAllTransactions, TimeSpan.FromMilliseconds(delay + 100));
             }
         }
 
@@ -283,13 +283,13 @@ namespace Walkabout.Views.Controls
         {
             // ok, we have a single click, time to tell the transaction view to show all transactions
             // (undo any filtering user has selected, or "custom" view created from a report).
-            RaiseSelectionEvent(this.selected, true);
+            this.RaiseSelectionEvent(this.selected, true);
         }
 
         void OnListBoxMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            delayedActions.CancelDelayedAction("SingleClick");
-            object item = GetElementFromPoint(listBox1, e.GetPosition(listBox1));
+            this.delayedActions.CancelDelayedAction("SingleClick");
+            object item = this.GetElementFromPoint(this.listBox1, e.GetPosition(this.listBox1));
 
             if (item is AccountViewModel m)
             {
@@ -301,7 +301,7 @@ namespace Walkabout.Views.Controls
                 {
                     this.Selected = m;
                     Account a = this.SelectedAccount;
-                    EditDetails(a);
+                    this.EditDetails(a);
                 }
             }
         }
@@ -336,11 +336,11 @@ namespace Walkabout.Views.Controls
             if ((e.ChangeType == ChangeType.TransientChanged || e.ChangeType == ChangeType.Changed) && e.Item is Account && e.Name == "Balance")
             {
                 // then we only need to rebalance the headers.  The AccountItemViewModel balances are auto-updated by that view model.
-                UpdateSectionHeaderBalances();
+                this.UpdateSectionHeaderBalances();
             }
             else
             {
-                Rebind();
+                this.Rebind();
             }
         }
 
@@ -357,15 +357,15 @@ namespace Walkabout.Views.Controls
 
         void Rebind()
         {
-            UpdateContextMenuView();
+            this.UpdateContextMenuView();
 
             this.hideEvents = true;
-            if (myMoney != null)
+            if (this.myMoney != null)
             {
                 //---------------------------------------------------------
                 // First make a copy of the collection in order to
                 // help LINQ do it's magic over the collection
-                List<Account> inputList = new List<Account>(myMoney.Accounts.GetAccounts(!this.displayClosedAccounts));
+                List<Account> inputList = new List<Account>(this.myMoney.Accounts.GetAccounts(!this.displayClosedAccounts));
 
                 var selected = this.SelectedAccount;
 
@@ -399,9 +399,9 @@ namespace Walkabout.Views.Controls
                 sh = BundleAccount("Loans", this.items, accountOfTypeLoan);
                 netWorth += sh.BalanceInNormalizedCurrencyValue;
 
-                if (statusArea != null)
+                if (this.statusArea != null)
                 {
-                    statusArea.Text = netWorth.ToString("C");
+                    this.statusArea.Text = netWorth.ToString("C");
                 }
 
                 if (selected != null)
@@ -424,7 +424,7 @@ namespace Walkabout.Views.Controls
             set
             {
                 this.displayClosedAccounts = value;
-                Rebind();
+                this.Rebind();
             }
         }
 
@@ -460,7 +460,7 @@ namespace Walkabout.Views.Controls
         {
             this.listBox1.SelectedItem = item;
             this.listBox1.ScrollIntoView(item);
-            SetSelected(item);
+            this.SetSelected(item);
         }
 
         void SetSelected(AccountViewModel item)
@@ -481,9 +481,9 @@ namespace Walkabout.Views.Controls
 
         void OnListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            delayedActions.CancelDelayedAction("SingleClick");
+            this.delayedActions.CancelDelayedAction("SingleClick");
             object selected = (e.AddedItems.Count > 0) ? e.AddedItems[0] : null;
-            RaiseSelectionEvent(selected as AccountViewModel, false);
+            this.RaiseSelectionEvent(selected as AccountViewModel, false);
         }
 
         void RaiseSelectionEvent(AccountViewModel selected, bool force)
@@ -497,11 +497,11 @@ namespace Walkabout.Views.Controls
 
             if ((force || this.selected != selected) && SelectionChanged != null)
             {
-                SetSelected(selected);
+                this.SetSelected(selected);
 
                 // checked it really is a different account (could be different object
                 // but the same account because of a rebind).
-                if (!hideEvents)
+                if (!this.hideEvents)
                 {
                     SelectionChanged(this, EventArgs.Empty);
                 }
@@ -563,20 +563,20 @@ namespace Walkabout.Views.Controls
         {
             if (a.Type == AccountType.Loan)
             {
-                Walkabout.Dialogs.LoanDialog dialog = new Dialogs.LoanDialog(myMoney, a);
+                Walkabout.Dialogs.LoanDialog dialog = new Dialogs.LoanDialog(this.myMoney, a);
                 dialog.Owner = App.Current.MainWindow;
                 if (dialog.ShowDialog() == true)
                 {
-                    myMoney.Rebalance(a);
+                    this.myMoney.Rebalance(a);
                 }
             }
             else
             {
-                Walkabout.Dialogs.AccountDialog dialog = new Dialogs.AccountDialog(myMoney, a, this.Site);
+                Walkabout.Dialogs.AccountDialog dialog = new Dialogs.AccountDialog(this.myMoney, a, this.Site);
                 dialog.Owner = App.Current.MainWindow;
                 if (dialog.ShowDialog() == true)
                 {
-                    myMoney.Rebalance(a);
+                    this.myMoney.Rebalance(a);
                 }
             }
         }
@@ -623,7 +623,7 @@ namespace Walkabout.Views.Controls
             Account a = this.SelectedAccount;
             if (a != null)
             {
-                EditDetails(a);
+                this.EditDetails(a);
             }
         }
 
@@ -784,7 +784,7 @@ namespace Walkabout.Views.Controls
             {
                 try
                 {
-                    Export(a, fd.FileName);
+                    this.Export(a, fd.FileName);
                 }
                 catch (Exception ex)
                 {
@@ -802,12 +802,12 @@ namespace Walkabout.Views.Controls
 
         private void OnToggleShowClosedAccounts(object sender, ExecutedRoutedEventArgs e)
         {
-            if (this.SelectedAccount != null && this.SelectedAccount.IsClosed && DisplayClosedAccounts)
+            if (this.SelectedAccount != null && this.SelectedAccount.IsClosed && this.DisplayClosedAccounts)
             {
                 // then de-select it since user doesn't want to see closed accounts any more.
                 this.Selected = null;
             }
-            this.DisplayClosedAccounts = !DisplayClosedAccounts;
+            this.DisplayClosedAccounts = !this.DisplayClosedAccounts;
         }
 
         private void CanToggleShowClosedAccounts(object sender, CanExecuteRoutedEventArgs e)
@@ -832,7 +832,7 @@ namespace Walkabout.Views.Controls
             {
                 try
                 {
-                    ExportList(fd.FileName);
+                    this.ExportList(fd.FileName);
                 }
                 catch (Exception ex)
                 {
@@ -872,7 +872,7 @@ namespace Walkabout.Views.Controls
                 if (fd.ShowDialog() == true)
                 {
                     var file = fd.FileName;
-                    ImportCsv(a, file);
+                    this.ImportCsv(a, file);
                 }
             }
         }
@@ -882,7 +882,7 @@ namespace Walkabout.Views.Controls
             try
             {
                 // load existing csv map if we have one.
-                var map = LoadMap(account);
+                var map = this.LoadMap(account);
                 var ti = new CsvTransactionImporter(this.myMoney, account, map);
                 CsvImporter importer = new CsvImporter(this.myMoney, ti);
                 importer.Import(fileName);
@@ -929,7 +929,7 @@ namespace Walkabout.Views.Controls
                 if (this.selected != value)
                 {
                     this.selected = value;
-                    OnSelectedChanged();
+                    this.OnSelectedChanged();
                 }
             }
         }
@@ -954,12 +954,12 @@ namespace Walkabout.Views.Controls
         public AccountItemViewModel(Account a)
         {
             this.account = a;
-            this.account.PropertyChanged += OnPropertyChanged;
+            this.account.PropertyChanged += this.OnPropertyChanged;
         }
 
         ~AccountItemViewModel()
         {
-            this.account.PropertyChanged -= OnPropertyChanged;
+            this.account.PropertyChanged -= this.OnPropertyChanged;
         }
 
         public override bool Equals(object obj)
@@ -978,33 +978,33 @@ namespace Walkabout.Views.Controls
 
         protected override void OnSelectedChanged()
         {
-            OnPropertyChanged("NameForeground");
-            OnPropertyChanged("BalanceForeground");
+            this.OnPropertyChanged("NameForeground");
+            this.OnPropertyChanged("BalanceForeground");
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            OnPropertyChanged(e.PropertyName);
+            this.OnPropertyChanged(e.PropertyName);
             switch (e.PropertyName)
             {
                 case "Unaccepted":
-                    OnPropertyChanged("NameForeground");
-                    OnPropertyChanged("FontWeight");
+                    this.OnPropertyChanged("NameForeground");
+                    this.OnPropertyChanged("FontWeight");
                     break;
                 case "Name":
-                    OnPropertyChanged("TooltipRow1");
+                    this.OnPropertyChanged("TooltipRow1");
                     break;
                 case "BalanceNormalized":
                 case "Balance":
-                    OnPropertyChanged("BalanceForeground");
-                    OnPropertyChanged("Balance");
+                    this.OnPropertyChanged("BalanceForeground");
+                    this.OnPropertyChanged("Balance");
                     break;
                 case "LastBalance":
-                    OnPropertyChanged("TooltipRow2");
-                    OnPropertyChanged("WarningIcon");
-                    OnPropertyChanged("IconTooltip");
-                    OnPropertyChanged("WarningIconVisibility");
-                    OnPropertyChanged("WarningIconTooltip");
+                    this.OnPropertyChanged("TooltipRow2");
+                    this.OnPropertyChanged("WarningIcon");
+                    this.OnPropertyChanged("IconTooltip");
+                    this.OnPropertyChanged("WarningIconVisibility");
+                    this.OnPropertyChanged("WarningIconTooltip");
                     break;
             }
         }
@@ -1013,7 +1013,7 @@ namespace Walkabout.Views.Controls
 
         public string Name
         {
-            get => account.Name;
+            get => this.account.Name;
         }
 
         public decimal Balance
@@ -1082,7 +1082,7 @@ namespace Walkabout.Views.Controls
         {
             get
             {
-                return account.Name + ": " + account.AccountId;
+                return this.account.Name + ": " + this.account.AccountId;
             }
         }
 
@@ -1120,7 +1120,7 @@ namespace Walkabout.Views.Controls
         {
             get
             {
-                if (WarningIconVisibility == Visibility.Visible)
+                if (this.WarningIconVisibility == Visibility.Visible)
                 {
                     return new Uri("pack://application:,,,/MyMoney;component/Dialogs/Icons/Warning.png");
                 }
@@ -1195,21 +1195,21 @@ namespace Walkabout.Views.Controls
 
         public decimal BalanceInNormalizedCurrencyValue
         {
-            get => balanceNormalized;
+            get => this.balanceNormalized;
             set
             {
-                if (balanceNormalized != value)
+                if (this.balanceNormalized != value)
                 {
-                    balanceNormalized = value;
-                    OnPropertyChanged("BalanceInNormalizedCurrencyValue");
-                    OnPropertyChanged("BalanceForeground");
+                    this.balanceNormalized = value;
+                    this.OnPropertyChanged("BalanceInNormalizedCurrencyValue");
+                    this.OnPropertyChanged("BalanceForeground");
                 }
             }
         }
 
         protected override void OnSelectedChanged()
         {
-            OnPropertyChanged("BalanceForeground");
+            this.OnPropertyChanged("BalanceForeground");
         }
 
         public Brush BalanceForeground
@@ -1244,9 +1244,9 @@ namespace Walkabout.Views.Controls
         internal void UpdateBalance()
         {
             decimal balance = 0;
-            if (Accounts != null)
+            if (this.Accounts != null)
             {
-                foreach (Account a in Accounts)
+                foreach (Account a in this.Accounts)
                 {
                     balance += a.BalanceNormalized;
                 }

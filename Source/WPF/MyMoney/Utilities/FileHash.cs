@@ -16,8 +16,8 @@ namespace Walkabout.Utilities
         public HashedFile(string path)
         {
             // start with a weak hash code for speed.
-            fileLength = new FileInfo(path).Length;
-            hashCode = (int)fileLength;
+            this.fileLength = new FileInfo(path).Length;
+            this.hashCode = (int)this.fileLength;
             this.path = path;
         }
 
@@ -31,12 +31,12 @@ namespace Walkabout.Utilities
             {
                 hashBuffer = new byte[prefixLength];
             }
-            hashCode = 0;
-            hash = ComputeSha256Hash(this.path);
-            foreach (byte b in hash)
+            this.hashCode = 0;
+            this.hash = this.ComputeSha256Hash(this.path);
+            foreach (byte b in this.hash)
             {
-                hashCode ^= ~b;
-                hashCode <<= 1;
+                this.hashCode ^= ~b;
+                this.hashCode <<= 1;
             }
         }
 
@@ -59,7 +59,7 @@ namespace Walkabout.Utilities
 
         public override int GetHashCode()
         {
-            return hashCode;
+            return this.hashCode;
         }
 
         public override bool Equals(object obj)
@@ -85,19 +85,19 @@ namespace Walkabout.Utilities
         /// <returns>True if the hashes are the same</returns>
         internal bool HashEquals(HashedFile other)
         {
-            if (hashCode != other.hashCode)
+            if (this.hashCode != other.hashCode)
             {
                 return false;
             }
 
-            if (hash == null)
+            if (this.hash == null)
             {
                 return true;
             }
 
-            for (int i = 0; i < hash.Length; i++)
+            for (int i = 0; i < this.hash.Length; i++)
             {
-                if (hash[i] != other.hash[i])
+                if (this.hash[i] != other.hash[i])
                 {
                     return false;
                 }

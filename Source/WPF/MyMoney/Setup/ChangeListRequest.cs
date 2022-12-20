@@ -32,35 +32,35 @@ namespace Walkabout.Setup
 
         public void BeginGetChangeList(Uri setupHost)
         {
-            Task.Run(() => GetChangeList(setupHost));
+            Task.Run(() => this.GetChangeList(setupHost));
         }
 
         public event EventHandler<SetupRequestEventArgs> Completed
         {
             add
             {
-                if (handlers == null)
+                if (this.handlers == null)
                 {
-                    handlers = new EventHandlerCollection<SetupRequestEventArgs>();
+                    this.handlers = new EventHandlerCollection<SetupRequestEventArgs>();
                 }
-                handlers.AddHandler(value);
+                this.handlers.AddHandler(value);
             }
             remove
             {
-                if (handlers != null)
+                if (this.handlers != null)
                 {
-                    handlers.RemoveHandler(value);
+                    this.handlers.RemoveHandler(value);
                 }
             }
         }
 
         private void OnCompleted(XDocument doc, bool newVersion = false)
         {
-            changeList = doc;
+            this.changeList = doc;
 
-            if (handlers != null && handlers.HasListeners)
+            if (this.handlers != null && this.handlers.HasListeners)
             {
-                handlers.RaiseEvent(this, new SetupRequestEventArgs() { Changes = doc, NewVersionAvailable = newVersion });
+                this.handlers.RaiseEvent(this, new SetupRequestEventArgs() { Changes = doc, NewVersionAvailable = newVersion });
             }
         }
 
@@ -70,10 +70,10 @@ namespace Walkabout.Setup
         {
             try
             {
-                XDocument changelist = GetDocument(new Uri(host, "changes.xml"));
+                XDocument changelist = this.GetDocument(new Uri(host, "changes.xml"));
                 if (changelist == null || changelist.Root == null)
                 {
-                    OnCompleted(null);
+                    this.OnCompleted(null);
                     return;
                 }
 
@@ -85,11 +85,11 @@ namespace Walkabout.Setup
                 Version latest = Version.Parse(version);
                 Version current = Version.Parse(currentVersion);
 
-                OnCompleted(changelist, current < latest);
+                this.OnCompleted(changelist, current < latest);
             }
             catch
             {
-                OnCompleted(null);
+                this.OnCompleted(null);
                 return;
             }
         }

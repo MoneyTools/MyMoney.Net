@@ -28,14 +28,14 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
         public override void ParseUserData(uint eventId, BinaryReader reader)
         {
             int id = (int)eventId;
-            Event = WpfEventTraceWatcher.GetEvent(id);
-            if (Event != null)
+            this.Event = WpfEventTraceWatcher.GetEvent(id);
+            if (this.Event != null)
             {
-                if (Event.StartId == id)
+                if (this.Event.StartId == id)
                 {
                     this.EventId = 1; // bugbug
                 }
-                else if (Event.StopId == id)
+                else if (this.Event.StopId == id)
                 {
                     this.EventId = 2; // bugbug
                 }

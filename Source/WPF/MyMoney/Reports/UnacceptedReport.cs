@@ -21,7 +21,7 @@ namespace Walkabout.Reports
         {
             writer.WriteHeading("Unaccepted Transactions");
 
-            Transactions transactions = myMoney.Transactions;
+            Transactions transactions = this.myMoney.Transactions;
             foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
             {
                 if (a.IsClosed)

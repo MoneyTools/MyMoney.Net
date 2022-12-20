@@ -17,12 +17,12 @@ namespace Walkabout.Controls
 
         public ColorPickerPanel()
         {
-            InitializeComponent();
-            DataContext = this;
+            this.InitializeComponent();
+            this.DataContext = this;
 
-            GrayScale.MouseDown += new MouseButtonEventHandler(GrayScale_MouseDown);
-            GrayScale.MouseMove += new MouseEventHandler(GrayScale_MouseMove);
-            GrayScale.MouseUp += new MouseButtonEventHandler(GrayScale_MouseUp);
+            this.GrayScale.MouseDown += new MouseButtonEventHandler(this.GrayScale_MouseDown);
+            this.GrayScale.MouseMove += new MouseEventHandler(this.GrayScale_MouseMove);
+            this.GrayScale.MouseUp += new MouseButtonEventHandler(this.GrayScale_MouseUp);
         }
 
         public event EventHandler ColorChanged;
@@ -31,28 +31,28 @@ namespace Walkabout.Controls
 
         void GrayScale_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            isDown = false;
+            this.isDown = false;
         }
 
         void GrayScale_MouseMove(object sender, MouseEventArgs e)
         {
-            if (isDown)
+            if (this.isDown)
             {
-                SetColorAt(e.GetPosition(GrayScale));
+                this.SetColorAt(e.GetPosition(this.GrayScale));
             }
         }
 
         void GrayScale_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            isDown = true;
-            SetColorAt(e.GetPosition(GrayScale));
-            Focus();
+            this.isDown = true;
+            this.SetColorAt(e.GetPosition(this.GrayScale));
+            this.Focus();
         }
 
         public Color Color
         {
-            get { return (Color)GetValue(ColorProperty); }
-            set { SetValue(ColorProperty, value); }
+            get { return (Color)this.GetValue(ColorProperty); }
+            set { this.SetValue(ColorProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Color.  This enables animation, styling, binding, etc...
@@ -87,7 +87,7 @@ namespace Walkabout.Controls
         {
             Color c = this.Color;
             HlsColor hls = new HlsColor(c);
-            hls.Luminance = (float)LuminanceSlider.Value;
+            hls.Luminance = (float)this.LuminanceSlider.Value;
             Color nc = hls.Color;
             this.Color = Color.FromArgb(c.A, nc.R, nc.G, nc.B);
         }
@@ -101,21 +101,21 @@ namespace Walkabout.Controls
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
             Size result = base.ArrangeOverride(arrangeBounds);
-            CreateBitmap();
+            this.CreateBitmap();
             return result;
         }
 
         void CreateBitmap()
         {
-            bitmap = new RenderTargetBitmap((int)Rainbow.ActualWidth, (int)Rainbow.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-            bitmap.Render(this.Rainbow);
-            bitmap.Render(this.GrayScale);
+            this.bitmap = new RenderTargetBitmap((int)this.Rainbow.ActualWidth, (int)this.Rainbow.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            this.bitmap.Render(this.Rainbow);
+            this.bitmap.Render(this.GrayScale);
         }
 
         private void SetColorAt(Point pos)
         {
             byte[] pixels = new byte[4];
-            bitmap.CopyPixels(new Int32Rect((int)Math.Max(0, Math.Min(bitmap.Width - 1, pos.X)), (int)Math.Max(0, Math.Min(bitmap.Height - 1, pos.Y)), 1, 1), pixels, 4, 0);
+            this.bitmap.CopyPixels(new Int32Rect((int)Math.Max(0, Math.Min(this.bitmap.Width - 1, pos.X)), (int)Math.Max(0, Math.Min(this.bitmap.Height - 1, pos.Y)), 1, 1), pixels, 4, 0);
 
             // there is a premultiply on the alpha value that we have to reverse.
             double alpha = (double)pixels[3];

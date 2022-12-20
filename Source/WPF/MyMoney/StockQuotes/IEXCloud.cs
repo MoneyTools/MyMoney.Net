@@ -29,27 +29,27 @@ namespace Walkabout.StockQuotes
 
         public IEXCloud(StockServiceSettings settings, string logPath)
         {
-            _settings = settings;
+            this._settings = settings;
             settings.Name = FriendlyName;
-            _logPath = logPath;
-            _throttle = StockQuoteThrottle.Load("IEXTradingThrottle.xml");
-            _throttle.Settings = settings;
+            this._logPath = logPath;
+            this._throttle = StockQuoteThrottle.Load("IEXTradingThrottle.xml");
+            this._throttle.Settings = settings;
         }
 
-        public bool IsEnabled => !string.IsNullOrEmpty(_settings?.ApiKey);
+        public bool IsEnabled => !string.IsNullOrEmpty(this._settings?.ApiKey);
 
-        public int PendingCount { get { return (_pending == null) ? 0 : _pending.Count; } }
+        public int PendingCount { get { return (this._pending == null) ? 0 : this._pending.Count; } }
 
-        public int DownloadsCompleted { get { return _completed; } }
+        public int DownloadsCompleted { get { return this._completed; } }
 
         public void Cancel()
         {
-            _cancelled = true;
-            if (_current != null)
+            this._cancelled = true;
+            if (this._current != null)
             {
                 try
                 {
-                    _current.Abort();
+                    this._current.Abort();
                 }
                 catch { }
             }
@@ -99,13 +99,13 @@ namespace Walkabout.StockQuotes
 
         private void OnSuspended(bool suspended)
         {
-            _suspended = suspended;
+            this._suspended = suspended;
             if (Suspended != null)
             {
                 Suspended(this, suspended);
             }
         }
-        public bool IsSuspended { get { return _suspended; } }
+        public bool IsSuspended { get { return this._suspended; } }
 
         public static StockServiceSettings GetDefaultSettings()
         {
@@ -127,42 +127,42 @@ namespace Walkabout.StockQuotes
 
         public void BeginFetchQuote(string symbol)
         {
-            BeginFetchQuotes(new List<string>(new string[] { symbol }));
+            this.BeginFetchQuotes(new List<string>(new string[] { symbol }));
         }
 
         public bool SupportsBatchQuotes { get { return true; } }
 
         public void BeginFetchQuotes(List<string> symbols)
         {
-            if (string.IsNullOrEmpty(_settings.ApiKey))
+            if (string.IsNullOrEmpty(this._settings.ApiKey))
             {
-                OnComplete(true, Walkabout.Properties.Resources.ConfigureStockQuoteService);
+                this.OnComplete(true, Walkabout.Properties.Resources.ConfigureStockQuoteService);
                 return;
             }
 
             int count = 0;
-            if (_pending == null)
+            if (this._pending == null)
             {
-                _pending = new HashSet<string>(symbols);
-                count = _pending.Count;
+                this._pending = new HashSet<string>(symbols);
+                count = this._pending.Count;
             }
             else
             {
-                lock (_pending)
+                lock (this._pending)
                 {
                     // merge the lists.
                     foreach (string s in symbols)
                     {
-                        _pending.Add(s);
+                        this._pending.Add(s);
                     }
-                    count = _pending.Count;
+                    count = this._pending.Count;
                 }
             }
-            _cancelled = false;
-            if (_downloadThread == null)
+            this._cancelled = false;
+            if (this._downloadThread == null)
             {
-                _downloadThread = new Thread(new ThreadStart(DownloadQuotes));
-                _downloadThread.Start();
+                this._downloadThread = new Thread(new ThreadStart(this.DownloadQuotes));
+                this._downloadThread.Start();
             }
         }
 
@@ -174,16 +174,16 @@ namespace Walkabout.StockQuotes
                 int max_batch = 100;
                 List<string> batch = new List<string>();
                 int remaining = 0;
-                while (!_cancelled)
+                while (!this._cancelled)
                 {
                     string symbol = null;
-                    lock (_pending)
+                    lock (this._pending)
                     {
-                        if (_pending.Count > 0)
+                        if (this._pending.Count > 0)
                         {
-                            symbol = _pending.FirstOrDefault();
-                            _pending.Remove(symbol);
-                            remaining = _pending.Count;
+                            symbol = this._pending.FirstOrDefault();
+                            this._pending.Remove(symbol);
+                            remaining = this._pending.Count;
                         }
                     }
                     if (symbol == null)
@@ -197,11 +197,11 @@ namespace Walkabout.StockQuotes
                     {
                         // skip securities that have no symbol.
                     }
-                    else if (symbol.IndexOfAny(illegalUrlChars) >= 0)
+                    else if (symbol.IndexOfAny(this.illegalUrlChars) >= 0)
                     {
                         // since we are passing the symbol on an HTTP URI line, we can't pass Uri illegal characters...
-                        OnSymbolNotFound(symbol);
-                        OnError(string.Format(Walkabout.Properties.Resources.SkippingSecurityIllegalSymbol, symbol));
+                        this.OnSymbolNotFound(symbol);
+                        this.OnError(string.Format(Walkabout.Properties.Resources.SkippingSecurityIllegalSymbol, symbol));
                     }
                     else
                     {
@@ -211,47 +211,47 @@ namespace Walkabout.StockQuotes
                     if (batch.Count() == max_batch || remaining == 0)
                     {
                         // even it if tails we consider the job completed from a status point of view.
-                        _completed += batch.Count;
+                        this._completed += batch.Count;
                         string symbols = string.Join(",", batch);
                         try
                         {
                             // this service doesn't want too many calls per second.
-                            int ms = _throttle.GetSleep();
-                            while (ms > 0 && !_cancelled)
+                            int ms = this._throttle.GetSleep();
+                            while (ms > 0 && !this._cancelled)
                             {
                                 if (ms > 1000)
                                 {
                                     int seconds = ms / 1000;
-                                    OnError("IEXCloud service needs to sleep for " + seconds + " seconds");
+                                    this.OnError("IEXCloud service needs to sleep for " + seconds + " seconds");
                                 }
                                 else
                                 {
-                                    OnError("IEXCloud service needs to sleep for " + ms.ToString() + " ms");
+                                    this.OnError("IEXCloud service needs to sleep for " + ms.ToString() + " ms");
                                 }
-                                OnSuspended(true);
-                                while (!_cancelled && ms > 0)
+                                this.OnSuspended(true);
+                                while (!this._cancelled && ms > 0)
                                 {
                                     Thread.Sleep(1000);
                                     ms -= 1000;
                                 }
-                                OnSuspended(false);
-                                ms = _throttle.GetSleep();
+                                this.OnSuspended(false);
+                                ms = this._throttle.GetSleep();
                             }
-                            if (_cancelled)
+                            if (this._cancelled)
                             {
                                 break;
                             }
 
-                            string uri = string.Format(address, symbols, _settings.ApiKey);
+                            string uri = string.Format(address, symbols, this._settings.ApiKey);
                             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
                             req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
                             req.Method = "GET";
                             req.Timeout = 10000;
                             req.UseDefaultCredentials = false;
-                            _current = req;
+                            this._current = req;
 
                             WebResponse resp = req.GetResponse();
-                            _throttle.RecordCall();
+                            this._throttle.RecordCall();
                             using (Stream stm = resp.GetResponseStream())
                             {
                                 using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
@@ -265,12 +265,12 @@ namespace Walkabout.StockQuotes
                                         StockQuote q = (from i in result where string.Compare(i.Symbol, s, StringComparison.OrdinalIgnoreCase) == 0 select i).FirstOrDefault();
                                         if (q == null)
                                         {
-                                            OnError(string.Format("No quote returned for symbol {0}", s));
-                                            OnSymbolNotFound(s);
+                                            this.OnError(string.Format("No quote returned for symbol {0}", s));
+                                            this.OnSymbolNotFound(s);
                                         }
                                         else
                                         {
-                                            OnQuoteAvailable(q);
+                                            this.OnQuoteAvailable(q);
                                         }
                                     }
                                 }
@@ -279,19 +279,19 @@ namespace Walkabout.StockQuotes
                             Thread.Sleep(1000); // there is also a minimum sleep between requests that we must enforce.
 
                             symbols = string.Join(", ", batch);
-                            OnError(string.Format(Walkabout.Properties.Resources.FetchedStockQuotes, symbols));
+                            this.OnError(string.Format(Walkabout.Properties.Resources.FetchedStockQuotes, symbols));
 
                         }
                         catch (System.Net.WebException we)
                         {
                             if (we.Status != WebExceptionStatus.RequestCanceled)
                             {
-                                OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbols) + "\r\n" + we.Message);
+                                this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbols) + "\r\n" + we.Message);
                             }
                             else
                             {
                                 // we cancelled, so bail. 
-                                _cancelled = true;
+                                this._cancelled = true;
                                 break;
                             }
 
@@ -304,8 +304,8 @@ namespace Walkabout.StockQuotes
                                     case HttpStatusCode.ServiceUnavailable:
                                     case HttpStatusCode.InternalServerError:
                                     case HttpStatusCode.Unauthorized:
-                                        OnError(http.StatusDescription);
-                                        _cancelled = true;
+                                        this.OnError(http.StatusDescription);
+                                        this._cancelled = true;
                                         break;
                                 }
                             }
@@ -313,28 +313,28 @@ namespace Walkabout.StockQuotes
                         catch (Exception e)
                         {
                             // continue
-                            OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbols) + "\r\n" + e.Message);
+                            this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbols) + "\r\n" + e.Message);
                         }
                         batch.Clear();
                     }
 
-                    _current = null;
+                    this._current = null;
                 }
             }
             catch
             {
             }
-            if (PendingCount == 0)
+            if (this.PendingCount == 0)
             {
-                OnComplete(true, "IEXCloud download complete");
+                this.OnComplete(true, "IEXCloud download complete");
             }
             else
             {
-                OnComplete(false, "IEXCloud download cancelled");
+                this.OnComplete(false, "IEXCloud download cancelled");
             }
-            _downloadThread = null;
-            _current = null;
-            _completed = 0;
+            this._downloadThread = null;
+            this._current = null;
+            this._completed = 0;
         }
 
 
@@ -401,10 +401,10 @@ namespace Walkabout.StockQuotes
 
         public async Task<bool> UpdateHistory(StockQuoteHistory history)
         {
-            if (!_downloadError)
+            if (!this._downloadError)
             {
-                _downloadError = true;
-                OnComplete(true, "Download history is not supported by IEXCloud service");
+                this._downloadError = true;
+                this.OnComplete(true, "Download history is not supported by IEXCloud service");
             }
             await Task.Delay(0);
             return false;

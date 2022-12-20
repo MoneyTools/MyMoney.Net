@@ -28,9 +28,9 @@ namespace Walkabout.Views.Controls
 
         public OfxDownloadControl()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            OfxEventTree.SelectedItemChanged += new RoutedPropertyChangedEventHandler<object>(OnSelectedItemChanged);
+            this.OfxEventTree.SelectedItemChanged += new RoutedPropertyChangedEventHandler<object>(this.OnSelectedItemChanged);
         }
 
         public event EventHandler<OfxDocumentControlSelectionChangedEventArgs> SelectionChanged;
@@ -51,7 +51,7 @@ namespace Walkabout.Views.Controls
         {
             this.myMoney = money;
             this.ofxFiles = files;
-            Start();
+            this.Start();
         }
 
         public void Cancel()
@@ -72,12 +72,12 @@ namespace Walkabout.Views.Controls
             this.myMoney = money;
             this.accounts = accounts;
             this.ofxFiles = null;
-            Start();
+            this.Start();
         }
 
         private void Start()
         {
-            OfxThread thread = new OfxThread(myMoney, accounts, this.ofxFiles, AccountHelper.PickAccount, this.Dispatcher);
+            OfxThread thread = new OfxThread(this.myMoney, this.accounts, this.ofxFiles, AccountHelper.PickAccount, this.Dispatcher);
             this.syncThreads.Add(thread);
             thread.Status += new OfxDownloadProgress(this.OnSyncUpdate);
             thread.Start();
@@ -87,7 +87,7 @@ namespace Walkabout.Views.Controls
         {
             List<OnlineAccount> list = new List<OnlineAccount>();
             list.Add(account);
-            OfxThread thread = new OfxThread(myMoney, list, null, AccountHelper.PickAccount, this.Dispatcher);
+            OfxThread thread = new OfxThread(this.myMoney, list, null, AccountHelper.PickAccount, this.Dispatcher);
             this.syncThreads.Add(thread);
             thread.Status += new OfxDownloadProgress(this.OnSyncUpdate);
             thread.Start();
@@ -107,7 +107,7 @@ namespace Walkabout.Views.Controls
                 this.Progress.Visibility = Visibility.Collapsed;
             }
 
-            int count = PreprocessEntries(e.Entries);
+            int count = this.PreprocessEntries(e.Entries);
             Debug.WriteLine("Found {0} OfxDownloadData entries", count);
 
             this.OfxEventTree.ItemsSource = e.Entries;
@@ -121,9 +121,9 @@ namespace Walkabout.Views.Controls
                 //item.OfxError
                 if (item.Children != null)
                 {
-                    count += PreprocessEntries(item.Children);
+                    count += this.PreprocessEntries(item.Children);
                 }
-                PreprocessEntry(item);
+                this.PreprocessEntry(item);
                 count++;
             }
             return count;
@@ -166,7 +166,7 @@ namespace Walkabout.Views.Controls
                         if (result == MessageBoxResult.Yes)
                         {
                             oa.OnDelete();
-                            foreach (Account a in myMoney.Accounts.GetAccounts())
+                            foreach (Account a in this.myMoney.Accounts.GetAccounts())
                             {
                                 if (a.OnlineAccount == oa)
                                 {
@@ -196,28 +196,28 @@ namespace Walkabout.Views.Controls
                     case OfxErrorCode.AUTHTOKENInvalid:
                         ofxData.LinkCaption = "";
                         ofxData.Message = "Getting authorization token...";
-                        GetAuthenticationToken(ofxData, ofxData.OfxError);
+                        this.GetAuthenticationToken(ofxData, ofxData.OfxError);
                         return;
                     case OfxErrorCode.MFAChallengeAuthenticationRequired:
                         ofxData.LinkCaption = "";
                         ofxData.Message = "Getting MFA challenge questions...";
-                        GetMFAChallenge(ofxData);
+                        this.GetMFAChallenge(ofxData);
                         return;
                     case OfxErrorCode.MustChangeUSERPASS:
                         ofxData.LinkCaption = "";
                         ofxData.Message = "Getting new password...";
-                        GetNewPassword(ofxData);
+                        this.GetNewPassword(ofxData);
                         return;
                     case OfxErrorCode.SignonInvalid:
                         ofxData.LinkCaption = "";
                         ofxData.Message = "Logging in ...";
-                        GetLogin(ofxData);
+                        this.GetLogin(ofxData);
                         return;
                 }
 
-                if (ofxData.LinkCaption == tryAgainCaption)
+                if (ofxData.LinkCaption == this.tryAgainCaption)
                 {
-                    SyncOneAccount(ofxData.OnlineAccount);
+                    this.SyncOneAccount(ofxData.OnlineAccount);
                     return;
                 }
 
@@ -330,10 +330,10 @@ h2 { font-size: 12pt; }";
 
         private void GetMFAChallenge(OfxDownloadData ofxData)
         {
-            challenge = new OfxMfaChallengeRequest(ofxData.OnlineAccount, this.myMoney);
-            challenge.UserData = ofxData;
-            challenge.Completed += OnChallengeCompleted;
-            challenge.BeginMFAChallenge();
+            this.challenge = new OfxMfaChallengeRequest(ofxData.OnlineAccount, this.myMoney);
+            this.challenge.UserData = ofxData;
+            this.challenge.Completed += this.OnChallengeCompleted;
+            this.challenge.BeginMFAChallenge();
         }
 
         void OnChallengeCompleted(object sender, EventArgs e)
@@ -391,7 +391,7 @@ h2 { font-size: 12pt; }";
             var info = OfxRequest.GetSignonInfo(this.myMoney, ofxData.OnlineAccount);
             if (info != null)
             {
-                PromptForAuthToken(ofxData, info, code);
+                this.PromptForAuthToken(ofxData, info, code);
 
                 if (string.IsNullOrWhiteSpace(ofxData.OnlineAccount.AuthToken))
                 {

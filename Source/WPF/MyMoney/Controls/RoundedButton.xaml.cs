@@ -14,35 +14,35 @@ namespace Walkabout.Controls
 
         public RoundedButton()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         void SaveNormalColors()
         {
-            if (normalBackground == null)
+            if (this.normalBackground == null)
             {
-                normalBackground = this.Background;
-                normalForeground = this.Foreground;
-                normalBorder = this.BorderBrush;
+                this.normalBackground = this.Background;
+                this.normalForeground = this.Foreground;
+                this.normalBorder = this.BorderBrush;
             }
         }
 
         void UpdateColors()
         {
-            SaveNormalColors();
+            this.SaveNormalColors();
 
-            Brush background = normalBackground;
-            Brush foreground = normalForeground;
-            Brush border = normalBorder;
+            Brush background = this.normalBackground;
+            Brush foreground = this.normalForeground;
+            Brush border = this.normalBorder;
 
-            if (IsMouseOver)
+            if (this.IsMouseOver)
             {
                 background = this.MouseOverBackground;
                 border = this.MouseOverBorder;
                 foreground = this.MouseOverForeground;
             }
 
-            if (IsPressed)
+            if (this.IsPressed)
             {
                 background = this.MousePressedBackground;
                 border = this.MousePressedBorder;
@@ -57,36 +57,36 @@ namespace Walkabout.Controls
         protected override void OnMouseEnter(System.Windows.Input.MouseEventArgs args)
         {
             base.OnMouseEnter(args);
-            Dispatcher.BeginInvoke(new Action(() =>
+            this.Dispatcher.BeginInvoke(new Action(() =>
             {
-                UpdateColors();
+                this.UpdateColors();
             }));
         }
 
         protected override void OnMouseLeave(System.Windows.Input.MouseEventArgs e)
         {
             base.OnMouseLeave(e);
-            Dispatcher.BeginInvoke(new Action(() =>
+            this.Dispatcher.BeginInvoke(new Action(() =>
             {
-                UpdateColors();
+                this.UpdateColors();
             }));
         }
 
         protected override void OnMouseDown(System.Windows.Input.MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
-            Dispatcher.BeginInvoke(new Action(() =>
+            this.Dispatcher.BeginInvoke(new Action(() =>
             {
-                UpdateColors();
+                this.UpdateColors();
             }));
         }
 
         protected override void OnMouseUp(System.Windows.Input.MouseButtonEventArgs e)
         {
             base.OnMouseUp(e);
-            Dispatcher.BeginInvoke(new Action(() =>
+            this.Dispatcher.BeginInvoke(new Action(() =>
             {
-                UpdateColors();
+                this.UpdateColors();
             }));
         }
     }

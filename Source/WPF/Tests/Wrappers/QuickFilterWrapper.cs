@@ -19,19 +19,19 @@ namespace Walkabout.Tests.Wrappers
 
         public string GetFilter()
         {
-            return e.GetTextBox("InputFilterText");
+            return this.e.GetTextBox("InputFilterText");
         }
 
         public void SetFilter(string filter)
         {
-            var box = e.SetTextBox("InputFilterText", filter);
+            var box = this.e.SetTextBox("InputFilterText", filter);
             Win32.SetFocus(Win32.HWND.Cast(new IntPtr(box.Current.NativeWindowHandle)));
             Input.TapKey(System.Windows.Input.Key.Enter);
         }
 
         public void ClearSearch()
         {
-            e.ClickButton("ClearFilter");
+            this.e.ClickButton("ClearFilter");
         }
 
         public bool IsVisible

@@ -24,10 +24,10 @@ namespace Walkabout.Controls
         /// </summary>
         public AppSettings()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            settings = Settings.TheSettings;
-            this.IsVisibleChanged += OnIsVisibleChanged;
+            this.settings = Settings.TheSettings;
+            IsVisibleChanged += this.OnIsVisibleChanged;
 
             int year = DateTime.Now.Year;
             for (int i = 0; i < 12; i++)
@@ -37,13 +37,13 @@ namespace Walkabout.Controls
                 this.comboBoxFiscalYear.Items.Add(label);
             }
 
-            foreach (var theme in themes.Keys)
+            foreach (var theme in this.themes.Keys)
             {
-                comboBoxTheme.Items.Add(theme);
+                this.comboBoxTheme.Items.Add(theme);
             }
-            comboBoxTheme.SelectedItem = settings.Theme;
+            this.comboBoxTheme.SelectedItem = this.settings.Theme;
 
-            textBoxTransferSearchDays.Text = settings.TransferSearchDays.ToString();
+            this.textBoxTransferSearchDays.Text = this.settings.TransferSearchDays.ToString();
         }
 
         internal void SetSite(IServiceProvider site)
@@ -61,15 +61,15 @@ namespace Walkabout.Controls
                 if (b)
                 {
                     this.checkBoxRentalSupport.IsChecked = this.databaseSettings.RentalManagement;
-                    this.checkBoxPlaySounds.IsChecked = settings.PlaySounds;
-                    this.checkBoxAcceptReconciled.IsChecked = settings.AcceptReconciled;
+                    this.checkBoxPlaySounds.IsChecked = this.settings.PlaySounds;
+                    this.checkBoxAcceptReconciled.IsChecked = this.settings.AcceptReconciled;
                     this.comboBoxFiscalYear.SelectedIndex = this.databaseSettings.FiscalYearStart;
 
-                    foreach (string theme in comboBoxTheme.Items)
+                    foreach (string theme in this.comboBoxTheme.Items)
                     {
-                        if (themes[theme] == settings.Theme)
+                        if (this.themes[theme] == this.settings.Theme)
                         {
-                            comboBoxTheme.SelectedIndex = comboBoxTheme.Items.IndexOf(theme);
+                            this.comboBoxTheme.SelectedIndex = this.comboBoxTheme.Items.IndexOf(theme);
                         }
                     }
                 }
@@ -106,7 +106,7 @@ namespace Walkabout.Controls
 
         private void OnFiscalYearChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.databaseSettings.FiscalYearStart = comboBoxFiscalYear.SelectedIndex;
+            this.databaseSettings.FiscalYearStart = this.comboBoxFiscalYear.SelectedIndex;
         }
 
         private void OnRentalSupportChanged(object sender, RoutedEventArgs e)
@@ -116,7 +116,7 @@ namespace Walkabout.Controls
 
         private void OnPlaySoundsChanged(object sender, RoutedEventArgs e)
         {
-            settings.PlaySounds = this.checkBoxPlaySounds.IsChecked == true;
+            this.settings.PlaySounds = this.checkBoxPlaySounds.IsChecked == true;
         }
 
         private void OnThemeChanged(object sender, SelectionChangedEventArgs e)
@@ -124,24 +124,24 @@ namespace Walkabout.Controls
             if (e.AddedItems.Count > 0)
             {
                 string name = (string)e.AddedItems[0];
-                if (themes.TryGetValue(name, out string theme))
+                if (this.themes.TryGetValue(name, out string theme))
                 {
-                    settings.Theme = theme;
+                    this.settings.Theme = theme;
                 }
             }
         }
 
         private void OnTransferDaysChanged(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(textBoxTransferSearchDays.Text, out int x) && x > 0)
+            if (int.TryParse(this.textBoxTransferSearchDays.Text, out int x) && x > 0)
             {
-                settings.TransferSearchDays = x;
+                this.settings.TransferSearchDays = x;
             }
         }
 
         private void OnAcceptReconciledChanged(object sender, RoutedEventArgs e)
         {
-            settings.AcceptReconciled = this.checkBoxAcceptReconciled.IsChecked == true;
+            this.settings.AcceptReconciled = this.checkBoxAcceptReconciled.IsChecked == true;
         }
     }
 }

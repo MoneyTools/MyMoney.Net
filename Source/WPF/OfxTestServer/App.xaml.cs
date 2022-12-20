@@ -11,7 +11,7 @@ namespace OfxTestServer
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            CommandLineArgs = e.Args;
+            this.CommandLineArgs = e.Args;
             base.OnStartup(e);
         }
     }

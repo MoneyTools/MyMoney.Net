@@ -19,7 +19,7 @@ namespace Walkabout.Views
 
         public RentInputControl()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
         public void FocusQuickFilter()
         {
@@ -27,10 +27,10 @@ namespace Walkabout.Views
 
         public RentInputControl(RentalBuildingSingleYear month)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            yearMonth = month;
-            this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(RentInputControl_IsVisibleChanged);
+            this.yearMonth = month;
+            IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.RentInputControl_IsVisibleChanged);
         }
 
 
@@ -38,8 +38,8 @@ namespace Walkabout.Views
         {
             if (this.IsVisible)
             {
-                OnBeforeViewStateChanged();
-                OnAfterViewStateChanged();
+                this.OnBeforeViewStateChanged();
+                this.OnAfterViewStateChanged();
             }
         }
 
@@ -50,20 +50,20 @@ namespace Walkabout.Views
         {
             if (e.EditAction == DataGridEditAction.Commit)
             {
-                if (dispatcherTimer == null)
+                if (this.dispatcherTimer == null)
                 {
-                    dispatcherTimer = new DispatcherTimer();
-                    dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-                    dispatcherTimer.Interval = new TimeSpan(0, 0, 5);
+                    this.dispatcherTimer = new DispatcherTimer();
+                    this.dispatcherTimer.Tick += new EventHandler(this.dispatcherTimer_Tick);
+                    this.dispatcherTimer.Interval = new TimeSpan(0, 0, 5);
                 }
-                dispatcherTimer.Stop();
-                dispatcherTimer.Start();
+                this.dispatcherTimer.Stop();
+                this.dispatcherTimer.Start();
             }
         }
 
         void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            dispatcherTimer.Stop();
+            this.dispatcherTimer.Stop();
 
             try
             {
@@ -113,8 +113,8 @@ namespace Walkabout.Views
 
         public IServiceProvider ServiceProvider
         {
-            get { return sp; }
-            set { sp = value; }
+            get { return this.sp; }
+            set { this.sp = value; }
         }
 
         public void Commit()

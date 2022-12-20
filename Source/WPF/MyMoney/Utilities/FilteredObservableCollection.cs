@@ -26,7 +26,7 @@ namespace Walkabout.Utilities
         protected FilteredObservableCollection(IEnumerable<T> collection, string filter)
         {
             this.original = collection;
-            SetFilter(filter);
+            this.SetFilter(filter);
         }
 
         public string Filter
@@ -36,7 +36,7 @@ namespace Walkabout.Utilities
             {
                 if (this.filter != value)
                 {
-                    SetFilter(value);
+                    this.SetFilter(value);
                 }
             }
         }
@@ -60,12 +60,12 @@ namespace Walkabout.Utilities
             timer.Start();
             int count = 0;
             int found = 0;
-            foreach (T item in original)
+            foreach (T item in this.original)
             {
                 count++;
                 if (expr == null || expr.IsMatch(this, item))
                 {
-                    Add(item);
+                    this.Add(item);
                 }
             }
             timer.Stop();

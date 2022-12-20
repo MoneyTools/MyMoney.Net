@@ -23,8 +23,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         public HoverGesture(FrameworkElement target)
         {
             this.target = target;
-            this.target.MouseMove += new MouseEventHandler(OnMouseMove);
-            this.target.MouseLeave += new MouseEventHandler(OnMouseLeave);
+            this.target.MouseMove += new MouseEventHandler(this.OnMouseMove);
+            this.target.MouseLeave += new MouseEventHandler(this.OnMouseLeave);
         }
 
         public event MouseEventHandler Hover;
@@ -32,14 +32,14 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         protected void OnMouseMove(object sender, MouseEventArgs e)
         {
-            HidePopup();
-            if (hover == null)
+            this.HidePopup();
+            if (this.hover == null)
             {
-                hover = new DispatcherTimer(TimeSpan.FromMilliseconds(100), DispatcherPriority.Normal, OnHoverTick, target.Dispatcher);
+                this.hover = new DispatcherTimer(TimeSpan.FromMilliseconds(100), DispatcherPriority.Normal, this.OnHoverTick, this.target.Dispatcher);
             }
-            lastMoveEvent = e;
-            lastMoveTime = TickCount;
-            hover.Start();
+            this.lastMoveEvent = e;
+            this.lastMoveTime = this.TickCount;
+            this.hover.Start();
         }
 
         uint TickCount
@@ -50,30 +50,30 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         private void OnHoverTick(object sender, EventArgs e)
         {
-            if (lastMoveTime != 0 && TickCount - lastMoveTime >= 300)
+            if (this.lastMoveTime != 0 && this.TickCount - this.lastMoveTime >= 300)
             {
-                OnHover(lastMoveEvent);
-                if (hover != null)
+                this.OnHover(this.lastMoveEvent);
+                if (this.hover != null)
                 {
-                    hover.Stop();
+                    this.hover.Stop();
                 }
             }
         }
 
         protected void OnMouseLeave(object sender, MouseEventArgs e)
         {
-            if (!PopupContainsMouse(e))
+            if (!this.PopupContainsMouse(e))
             {
-                HidePopup();
+                this.HidePopup();
             }
-            lastMoveTime = 0;
+            this.lastMoveTime = 0;
         }
 
         private bool PopupContainsMouse(MouseEventArgs e)
         {
-            if (popup == null) return false;
-            Rect bounds = new Rect(new Point(0, 0), popup.RenderSize);
-            return bounds.Contains(e.GetPosition(popup));
+            if (this.popup == null) return false;
+            Rect bounds = new Rect(new Point(0, 0), this.popup.RenderSize);
+            return bounds.Contains(e.GetPosition(this.popup));
         }
 
         protected void OnHover(MouseEventArgs e)
@@ -87,27 +87,27 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         public Popup CreatePopup(FrameworkElement content)
         {
             Border border;
-            if (popup == null)
+            if (this.popup == null)
             {
-                popup = new Popup();
+                this.popup = new Popup();
                 border = new Border();
                 border.Background = Brushes.LemonChiffon;
-                popup.Child = border;
+                this.popup.Child = border;
             }
 
-            border = (Border)popup.Child;
+            border = (Border)this.popup.Child;
             border.Child = content;
-            popup.Placement = PlacementMode.Mouse;
-            return popup;
+            this.popup.Placement = PlacementMode.Mouse;
+            return this.popup;
         }
 
         Popup popup;
 
         public void HidePopup()
         {
-            if (popup != null)
+            if (this.popup != null)
             {
-                popup.IsOpen = false;
+                this.popup.IsOpen = false;
             }
             if (Hidden != null)
             {

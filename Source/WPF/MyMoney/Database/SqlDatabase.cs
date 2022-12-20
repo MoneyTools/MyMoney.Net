@@ -96,32 +96,32 @@ namespace Walkabout.Data
 
         public string DatabasePath
         {
-            get { return path; }
-            set { path = value; }
+            get { return this.path; }
+            set { this.path = value; }
         }
 
         public string Server
         {
-            get { return server; }
-            set { server = value; }
+            get { return this.server; }
+            set { this.server = value; }
         }
 
         public string UserId
         {
-            get { return userId; }
-            set { userId = value; }
+            get { return this.userId; }
+            set { this.userId = value; }
         }
 
         public string Password
         {
-            get { return password; }
+            get { return this.password; }
             set
             {
-                if (password != null && password != value)
+                if (this.password != null && this.password != value)
                 {
-                    OnPasswordChanged(password, value);
+                    this.OnPasswordChanged(this.password, value);
                 }
-                password = value;
+                this.password = value;
             }
         }
 
@@ -133,7 +133,7 @@ namespace Walkabout.Data
 
         public string BackupPath
         {
-            get { return backupPath; }
+            get { return this.backupPath; }
             set { this.backupPath = value; }
         }
 
@@ -151,13 +151,13 @@ namespace Walkabout.Data
         {
             get
             {
-                if (string.IsNullOrEmpty(server))
+                if (string.IsNullOrEmpty(this.server))
                 {
                     return false;
                 }
                 try
                 {
-                    using (SqlConnection con = new SqlConnection(GetConnectionString(false)))
+                    using (SqlConnection con = new SqlConnection(this.GetConnectionString(false)))
                     {
                         con.Open();
                         SqlCommand cmd = new SqlCommand("select name from sysdatabases", con);
@@ -184,13 +184,13 @@ namespace Walkabout.Data
 
         public virtual string GetDatabaseFullPath()
         {
-            if (string.IsNullOrEmpty(server))
+            if (string.IsNullOrEmpty(this.server))
             {
                 return null;
             }
             try
             {
-                using (SqlConnection con = new SqlConnection(GetConnectionString(false)))
+                using (SqlConnection con = new SqlConnection(this.GetConnectionString(false)))
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand("select name, filename from sysdatabases", con);
@@ -253,24 +253,24 @@ namespace Walkabout.Data
         public void AclDatabasePath(string path)
         {
             var networkService = "NT AUTHORITY\\NETWORK SERVICE";
-            SecurityService.AddWritePermission(networkService, path);
+            this.SecurityService.AddWritePermission(networkService, path);
         }
 
         public virtual void Create()
         {
-            Disconnect();
-            string conStr = GetConnectionString(false);
+            this.Disconnect();
+            string conStr = this.GetConnectionString(false);
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 con.Open();
 
-                if (!Exists)
+                if (!this.Exists)
                 {
                     string createCommand = null;
                     string dir = Path.GetDirectoryName(this.DatabasePath);
                     if (!string.IsNullOrEmpty(dir))
                     {
-                        AclDatabasePath(dir);
+                        this.AclDatabasePath(dir);
                         string logPhysicalPath = Path.Combine(Path.GetDirectoryName(this.DatabasePath), Path.GetFileNameWithoutExtension(this.DatabasePath) + ".ldf");
                         createCommand = string.Format(@"Create Database {0} ON PRIMARY (NAME = Data, FILENAME = '{1}') LOG ON (NAME = Log, FILENAME = '{2}')",
                                                         this.DatabaseName, this.DatabasePath, logPhysicalPath);
@@ -304,7 +304,7 @@ namespace Walkabout.Data
             {
                 try
                 {
-                    Connect();
+                    this.Connect();
                     return false;
                 }
                 catch
@@ -332,8 +332,8 @@ namespace Walkabout.Data
                     Debug.Assert(attrs.Length == 1, "A class must have one and only one TableMapping attribute");
                     TableMapping mapping = attrs[0] as TableMapping;
                     mapping.ObjectType = t;
-                    tableNames.Add(mapping.TableName);
-                    CreateOrUpdateTable(mapping);
+                    this.tableNames.Add(mapping.TableName);
+                    this.CreateOrUpdateTable(mapping);
                 }
             }
         }
@@ -386,7 +386,7 @@ namespace Walkabout.Data
                 StringBuilder log = new StringBuilder();
 
                 // the hard part, figure out if table needs to be altered...                
-                TableMapping actual = LoadTableMetadata(mapping.TableName);
+                TableMapping actual = this.LoadTableMetadata(mapping.TableName);
                 List<ColumnMapping> renames = new List<ColumnMapping>();
                 StringBuilder sb = new StringBuilder();
                 // See if any new columns need to be added.
@@ -497,7 +497,7 @@ namespace Walkabout.Data
 
         public virtual bool DropTable(string name)
         {
-            object result = ExecuteScalar("DROP TABLE '" + name + "'");
+            object result = this.ExecuteScalar("DROP TABLE '" + name + "'");
             return (result != null);
         }
 
@@ -521,11 +521,11 @@ namespace Walkabout.Data
 
         private void IncrementProgress(string name)
         {
-            progressValue++;
-            if ((100 * ((double)progressValue - (double)progressLastReport) / (double)progressMax) > 1.0 && status != null)
+            this.progressValue++;
+            if ((100 * ((double)this.progressValue - (double)this.progressLastReport) / (double)this.progressMax) > 1.0 && this.status != null)
             {
-                status.ShowProgress("Loading database:", 0, progressMax, progressValue);
-                progressLastReport = progressValue;
+                this.status.ShowProgress("Loading database:", 0, this.progressMax, this.progressValue);
+                this.progressLastReport = this.progressValue;
             }
         }
 
@@ -534,7 +534,7 @@ namespace Walkabout.Data
         {
             this.status = status;
 
-            log.Clear();
+            this.log.Clear();
 
             this.LazyCreateTables();
             MyMoney money = new MyMoney();
@@ -545,14 +545,14 @@ namespace Walkabout.Data
 
                 if (status != null)
                 {
-                    progressMax = 0;
-                    progressValue = 0;
-                    progressLastReport = 0;
-                    foreach (string name in tableNames)
+                    this.progressMax = 0;
+                    this.progressValue = 0;
+                    this.progressLastReport = 0;
+                    foreach (string name in this.tableNames)
                     {
-                        progressMax += CountTableRows(name);
+                        this.progressMax += this.CountTableRows(name);
                     }
-                    status.ShowProgress("Loading database:", 0, progressMax, progressValue);
+                    status.ShowProgress("Loading database:", 0, this.progressMax, this.progressValue);
                 }
                 this.ReadOnlineAccounts(money.OnlineAccounts, money);
                 this.ReadCategories(money.Categories, money);  // Must populate the Categories before the Account, since the Account now have 2 fields pointing to Categories
@@ -590,32 +590,32 @@ namespace Walkabout.Data
 
         public void Save(MyMoney money)
         {
-            log.Clear();
+            this.log.Clear();
 
             using (var tran = this.Connect().BeginTransaction())
             {
-                transaction = tran as SqlTransaction;
+                this.transaction = tran as SqlTransaction;
                 try
                 {
-                    UpdateOnlineAccounts(money.OnlineAccounts);
-                    UpdateAccounts(money.Accounts);
-                    UpdatePayees(money.Payees);
-                    UpdateAliases(money.Aliases);
-                    UpdateAccountAliases(money.AccountAliases);
-                    UpdateCategories(money.Categories);
-                    UpdateCurrencies(money.Currencies);
-                    UpdateTransactions(money.Transactions);
-                    UpdateSecurities(money.Securities);
-                    UpdateStockSplits(money.StockSplits);
-                    UpdateBuildings(money.Buildings);
-                    UpdateLoanPayments(money.LoanPayments);
-                    UpdateTransactionExtras(money.TransactionExtras);
+                    this.UpdateOnlineAccounts(money.OnlineAccounts);
+                    this.UpdateAccounts(money.Accounts);
+                    this.UpdatePayees(money.Payees);
+                    this.UpdateAliases(money.Aliases);
+                    this.UpdateAccountAliases(money.AccountAliases);
+                    this.UpdateCategories(money.Categories);
+                    this.UpdateCurrencies(money.Currencies);
+                    this.UpdateTransactions(money.Transactions);
+                    this.UpdateSecurities(money.Securities);
+                    this.UpdateStockSplits(money.StockSplits);
+                    this.UpdateBuildings(money.Buildings);
+                    this.UpdateLoanPayments(money.LoanPayments);
+                    this.UpdateTransactionExtras(money.TransactionExtras);
 
                     tran.Commit();
                 }
                 finally
                 {
-                    transaction = null;
+                    this.transaction = null;
                 }
             }
         }
@@ -625,8 +625,8 @@ namespace Walkabout.Data
 
         public void UpdateBuildings(RentBuildings buildings)
         {
-            UpdateRentUnits(buildings.Units);
-            UpdateRentBuildings(buildings);
+            this.UpdateRentUnits(buildings.Units);
+            this.UpdateRentBuildings(buildings);
         }
 
         public static bool IsSqlExpressInstalled
@@ -731,7 +731,7 @@ namespace Walkabout.Data
         /// </summary>
         public virtual System.Data.Common.DbConnection Connect()
         {
-            return ConnectSqlServer();
+            return this.ConnectSqlServer();
         }
 
         public virtual void Disconnect()
@@ -766,7 +766,7 @@ namespace Walkabout.Data
                 {
                     this.sqlConnection.Dispose();
                 }
-                this.sqlConnection = new SqlConnection(GetConnectionString(true));
+                this.sqlConnection = new SqlConnection(this.GetConnectionString(true));
                 this.sqlConnection.Open();
             }
             return this.sqlConnection;
@@ -781,7 +781,7 @@ namespace Walkabout.Data
             object result = null;
             try
             {
-                using (SqlCommand command = new SqlCommand(cmd, ConnectSqlServer(), transaction))
+                using (SqlCommand command = new SqlCommand(cmd, this.ConnectSqlServer(), this.transaction))
                 {
                     result = command.ExecuteScalar();
                 }
@@ -796,7 +796,7 @@ namespace Walkabout.Data
 
         public virtual string GetLog()
         {
-            return log.ToString();
+            return this.log.ToString();
         }
 
         public virtual DataSet QueryDataSet(string query)
@@ -810,7 +810,7 @@ namespace Walkabout.Data
             {
                 using (DataSet dataSet = new DataSet())
                 {
-                    using (SqlDataAdapter da = new SqlDataAdapter(query, ConnectSqlServer()))
+                    using (SqlDataAdapter da = new SqlDataAdapter(query, this.ConnectSqlServer()))
                     {
                         da.Fill(dataSet, "Results");
                     }
@@ -834,7 +834,7 @@ namespace Walkabout.Data
             this.log.AppendLine(cmd);
             try
             {
-                using (SqlCommand command = new SqlCommand(cmd, ConnectSqlServer(), transaction))
+                using (SqlCommand command = new SqlCommand(cmd, this.ConnectSqlServer(), this.transaction))
                 {
                     command.CommandTimeout = 30;
                     command.ExecuteNonQuery();
@@ -853,7 +853,7 @@ namespace Walkabout.Data
 
             try
             {
-                using (SqlCommand command = new SqlCommand(cmd, ConnectSqlServer(), transaction))
+                using (SqlCommand command = new SqlCommand(cmd, this.ConnectSqlServer(), this.transaction))
                 {
                     return command.ExecuteReader();
                 }
@@ -867,8 +867,8 @@ namespace Walkabout.Data
 
         public virtual void Delete()
         {
-            Disconnect();
-            string conStr = GetConnectionString(false);
+            this.Disconnect();
+            string conStr = this.GetConnectionString(false);
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 con.Open();
@@ -892,8 +892,8 @@ namespace Walkabout.Data
 
         public void AddLogin(string userName, string password)
         {
-            ExecuteScalar("sp_addLogin '" + userName + "','" + password + "'");
-            ExecuteScalar("sp_addsrvrolemember '" + userName + "','sysadmin'");
+            this.ExecuteScalar("sp_addLogin '" + userName + "','" + password + "'");
+            this.ExecuteScalar("sp_addsrvrolemember '" + userName + "','sysadmin'");
 
 
             // Have to turn on mixed mode.
@@ -989,12 +989,12 @@ namespace Walkabout.Data
         #region TABLE ACCCOUNTS
         public void ReadAccounts(Accounts accts, MyMoney money)
         {
-            IDataReader reader = ExecuteReader("SELECT Id,AccountId,Name,Type,Description,OnlineAccount,OpeningBalance,LastSync,LastBalance,SyncGuid,Flags,Currency,WebSite,ReconcileWarning,CategoryIdForPrincipal,CategoryIdForInterest,OfxAccountId FROM Accounts");
+            IDataReader reader = this.ExecuteReader("SELECT Id,AccountId,Name,Type,Description,OnlineAccount,OpeningBalance,LastSync,LastBalance,SyncGuid,Flags,Currency,WebSite,ReconcileWarning,CategoryIdForPrincipal,CategoryIdForInterest,OfxAccountId FROM Accounts");
             accts.BeginUpdate(false);
             accts.Clear();
             while (reader.Read())
             {
-                IncrementProgress("Accounts");
+                this.IncrementProgress("Accounts");
                 int id = reader.GetInt32(0);
                 Account a = accts.AddAccount(id);
                 a.AccountId = ReadDbString(reader, 1);
@@ -1088,13 +1088,13 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
 
             foreach (Account a in accounts)
@@ -1108,7 +1108,7 @@ namespace Walkabout.Data
 
         private int CountTableRows(string tableName)
         {
-            using (IDataReader reader = ExecuteReader("SELECT Count(*) as Count FROM " + tableName))
+            using (IDataReader reader = this.ExecuteReader("SELECT Count(*) as Count FROM " + tableName))
             {
                 while (reader.Read())
                 {
@@ -1124,11 +1124,11 @@ namespace Walkabout.Data
         public void ReadOnlineAccounts(OnlineAccounts onlineAccounts, MyMoney money)
         {
             onlineAccounts.Clear();
-            IDataReader reader = ExecuteReader("SELECT Id,Name,Institution,OFX,FID,UserId,Password,BankId,BranchId,BrokerId,OfxVersion,LogoUrl,AppId,AppVersion,ClientUid,UserCred1,UserCred2,AuthToken,AccessKey,UserKey,UserKeyExpireDate FROM OnlineAccounts");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Name,Institution,OFX,FID,UserId,Password,BankId,BranchId,BrokerId,OfxVersion,LogoUrl,AppId,AppVersion,ClientUid,UserCred1,UserCred2,AuthToken,AccessKey,UserKey,UserKeyExpireDate FROM OnlineAccounts");
             onlineAccounts.BeginUpdate(false);
             while (reader.Read())
             {
-                IncrementProgress("OnlineAccounts");
+                this.IncrementProgress("OnlineAccounts");
                 int id = reader.GetInt32(0);
                 OnlineAccount i = onlineAccounts.AddOnlineAccount(id);
                 i.Name = ReadDbString(reader, 1);
@@ -1227,13 +1227,13 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
 
             foreach (OnlineAccount i in accounts)
@@ -1250,11 +1250,11 @@ namespace Walkabout.Data
         public void ReadPayees(Payees payees, MyMoney money)
         {
             payees.Clear();
-            IDataReader reader = ExecuteReader("SELECT Id,Name FROM Payees");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Name FROM Payees");
             payees.BeginUpdate(false);
             while (reader.Read())
             {
-                IncrementProgress("Payees");
+                this.IncrementProgress("Payees");
                 int id = reader.GetInt32(0);
                 Payee p = payees.AddPayee(id);
                 p.Name = ReadDbString(reader, 1);
@@ -1268,11 +1268,11 @@ namespace Walkabout.Data
         public void ReadAliases(Aliases aliases, MyMoney money)
         {
             Payees payees = money.Payees;
-            IDataReader reader = ExecuteReader("SELECT Id,Pattern,Payee,Flags FROM Aliases");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Pattern,Payee,Flags FROM Aliases");
             aliases.BeginUpdate(false);
             while (reader.Read())
             {
-                IncrementProgress("Aliases");
+                this.IncrementProgress("Aliases");
                 int id = reader.GetInt32(0);
                 Alias a = aliases.AddAlias(id);
                 string pattern = ReadDbString(reader, 1);
@@ -1299,11 +1299,11 @@ namespace Walkabout.Data
 
         private void ReadAccountAliases(AccountAliases accountAliases, MyMoney money)
         {
-            IDataReader reader = ExecuteReader("SELECT Id,Pattern,AccountId,Flags FROM AccountAliases");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Pattern,AccountId,Flags FROM AccountAliases");
             accountAliases.BeginUpdate(false);
             while (reader.Read())
             {
-                IncrementProgress("Aliases");
+                this.IncrementProgress("Aliases");
                 int id = reader.GetInt32(0);
                 AccountAlias a = accountAliases.AddAlias(id);
                 string pattern = ReadDbString(reader, 1);
@@ -1329,11 +1329,11 @@ namespace Walkabout.Data
 
         private void ReadTransactionExtras(TransactionExtras extras, MyMoney money)
         {
-            IDataReader reader = ExecuteReader("SELECT [Id],[Transaction],[TaxYear],[TaxDate] FROM TransactionExtras");
+            IDataReader reader = this.ExecuteReader("SELECT [Id],[Transaction],[TaxYear],[TaxDate] FROM TransactionExtras");
             extras.BeginUpdate(false);
             while (reader.Read())
             {
-                IncrementProgress("Aliases");
+                this.IncrementProgress("Aliases");
                 int id = reader.GetInt32(0);
                 var a = extras.AddExtra(id);
                 int transaction = reader.GetInt32(1);
@@ -1384,14 +1384,14 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
 
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
             foreach (Payee p in payees)
             {
@@ -1440,14 +1440,14 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
 
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
             foreach (Alias a in aliases)
             {
@@ -1490,14 +1490,14 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
 
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
             foreach (AccountAlias a in accountAliases)
             {
@@ -1558,14 +1558,14 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
 
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
             foreach (TransactionExtra e in extras)
             {
@@ -1588,12 +1588,12 @@ namespace Walkabout.Data
 
             collection.Clear();
 
-            IDataReader reader = ExecuteReader("SELECT Id,Name,Address,PurchasedDate,PurchasedPrice,LandValue,EstimatedValue," +
+            IDataReader reader = this.ExecuteReader("SELECT Id,Name,Address,PurchasedDate,PurchasedPrice,LandValue,EstimatedValue," +
                 "CategoryForIncome, CategoryForTaxes, CategoryForInterest, CategoryForRepairs, CategoryForMaintenance,CategoryForManagement,ownershipName1,ownershipName2,OwnershipPercentage1,OwnershipPercentage2,Note FROM RentBuildings");
             collection.BeginUpdate(false);
             while (reader.Read())
             {
-                IncrementProgress("RentBuildings");
+                this.IncrementProgress("RentBuildings");
                 RentBuilding r = new RentBuilding(collection);
                 r.Id = reader.GetInt32(0);
                 r.Name = ReadDbString(reader, 1);
@@ -1710,14 +1710,14 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
 
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
             foreach (RentBuilding p in buildings)
             {
@@ -1735,11 +1735,11 @@ namespace Walkabout.Data
         public void ReadRentUnits(RentUnits collection, MyMoney money)
         {
             collection.Clear();
-            IDataReader reader = ExecuteReader("SELECT Id,Building,Name,Renter,Note FROM RentUnits");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Building,Name,Renter,Note FROM RentUnits");
             collection.BeginUpdate(false);
             while (reader.Read())
             {
-                IncrementProgress("RentUnits");
+                this.IncrementProgress("RentUnits");
                 RentUnit r = new RentUnit(collection);
                 r.Id = reader.GetInt32(0);
                 r.Building = reader.GetInt32(1);
@@ -1789,14 +1789,14 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
 
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
 
             foreach (RentUnit x in units)
@@ -1815,11 +1815,11 @@ namespace Walkabout.Data
         public void ReadLoanPayments(LoanPayments collection, MyMoney money)
         {
             collection.Clear();
-            IDataReader reader = ExecuteReader("SELECT Id, AccountId,Date,Principal,Interest,Memo FROM LoanPayments");
+            IDataReader reader = this.ExecuteReader("SELECT Id, AccountId,Date,Principal,Interest,Memo FROM LoanPayments");
             collection.BeginUpdate(false);
             while (reader.Read())
             {
-                IncrementProgress("LoanPayments");
+                this.IncrementProgress("LoanPayments");
                 LoanPayment x = new LoanPayment(collection);
                 x.BatchMode = true;
                 x.Id = reader.GetInt32(0);
@@ -1882,13 +1882,13 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
 
             foreach (LoanPayment i in loans)
@@ -1907,11 +1907,11 @@ namespace Walkabout.Data
         public void ReadCategories(Categories categories, MyMoney money)
         {
             categories.Clear();
-            IDataReader reader = ExecuteReader("SELECT [Id],[Name],[Description],[Type],[ParentId],[Budget],[Frequency],[Balance],[Color],[TaxRefNum] FROM Categories");
+            IDataReader reader = this.ExecuteReader("SELECT [Id],[Name],[Description],[Type],[ParentId],[Budget],[Frequency],[Balance],[Color],[TaxRefNum] FROM Categories");
             categories.BeginUpdate(false);
             while (reader.Read())
             {
-                IncrementProgress("Categories");
+                this.IncrementProgress("Categories");
                 int id = reader.GetInt32(0);
                 Category c = new Category(categories);
                 c.Id = id;
@@ -2004,13 +2004,13 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
 
             foreach (Category c in categories)
@@ -2027,12 +2027,12 @@ namespace Walkabout.Data
         public void ReadCurrencies(Currencies currencies, MyMoney money)
         {
             currencies.Clear();
-            IDataReader reader = ExecuteReader("SELECT Id,Symbol,Name,Ratio,LastRatio FROM Currencies");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Symbol,Name,Ratio,LastRatio FROM Currencies");
             currencies.BeginUpdate(false);
 
             while (reader.Read())
             {
-                IncrementProgress("Currencies");
+                this.IncrementProgress("Currencies");
                 int id = reader.GetInt32(0);
                 Currency s = currencies.AddCurrency(id);
                 s.Symbol = ReadDbString(reader, 1);
@@ -2082,13 +2082,13 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate && sb.Length > 0)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
 
             foreach (Currency s in currencies)
@@ -2107,11 +2107,11 @@ namespace Walkabout.Data
         public void ReadSecurities(Securities securities, MyMoney money)
         {
             securities.Clear();
-            IDataReader reader = ExecuteReader("SELECT Id,Name,Symbol,Price,LastPrice,CuspId,SecurityType,Taxable,PriceDate FROM Securities");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Name,Symbol,Price,LastPrice,CuspId,SecurityType,Taxable,PriceDate FROM Securities");
             securities.BeginUpdate(false);
             while (reader.Read())
             {
-                IncrementProgress("Securities");
+                this.IncrementProgress("Securities");
                 int id = reader.GetInt32(0);
                 Security s = securities.AddSecurity(id);
                 s.Name = ReadDbString(reader, 1);
@@ -2172,13 +2172,13 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
 
             foreach (Security s in securities)
@@ -2196,11 +2196,11 @@ namespace Walkabout.Data
         void ReadStockSplits(StockSplits splits, MyMoney money)
         {
             splits.Clear();
-            IDataReader reader = ExecuteReader("SELECT Id,Date,Security,Numerator,Denominator FROM StockSplits");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Date,Security,Numerator,Denominator FROM StockSplits");
             splits.BeginUpdate(false);
             while (reader.Read())
             {
-                IncrementProgress("StockSplits");
+                this.IncrementProgress("StockSplits");
 
                 int sid = reader.GetInt32(2);
                 long id = reader.GetInt64(0);
@@ -2258,13 +2258,13 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
 
             foreach (StockSplit s in stockSplits)
@@ -2285,12 +2285,12 @@ namespace Walkabout.Data
 
             ArrayList errors = new ArrayList();
 
-            IDataReader reader = ExecuteReader("SELECT Id,Number,Date,Amount,Account,Status,Memo,Payee,Category,FITID,SalesTax,Flags,ReconciledDate,BudgetBalanceDate,MergeDate,OriginalPayee FROM Transactions");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Number,Date,Amount,Account,Status,Memo,Payee,Category,FITID,SalesTax,Flags,ReconciledDate,BudgetBalanceDate,MergeDate,OriginalPayee FROM Transactions");
             transactions.BeginUpdate(false);
 
             while (reader.Read())
             {
-                IncrementProgress("Transactions");
+                this.IncrementProgress("Transactions");
                 long id = reader.GetInt64(0);
                 Transaction t = transactions.AddTransaction(id);
 
@@ -2320,10 +2320,10 @@ namespace Walkabout.Data
 
             reader.Close();
             // Load the splits.
-            reader = ExecuteReader("SELECT [Id],[Transaction],[Amount],[Category],[Memo],[Transfer],[Payee],[Flags],[BudgetBalanceDate] FROM Splits ORDER BY [Transaction],[Id]");
+            reader = this.ExecuteReader("SELECT [Id],[Transaction],[Amount],[Category],[Memo],[Transfer],[Payee],[Flags],[BudgetBalanceDate] FROM Splits ORDER BY [Transaction],[Id]");
             while (reader.Read())
             {
-                IncrementProgress("Splits");
+                this.IncrementProgress("Splits");
                 int id = reader.GetInt32(0);
                 long transactionid = reader.GetInt64(1);
                 Transaction t = transactions.FindTransactionById(transactionid);
@@ -2383,7 +2383,7 @@ namespace Walkabout.Data
 
             reader.Close();
             // now we can resolve the transfers
-            reader = ExecuteReader("SELECT Id,Transfer,TransferSplit FROM Transactions WHERE NOT Transfer = -1 ");
+            reader = this.ExecuteReader("SELECT Id,Transfer,TransferSplit FROM Transactions WHERE NOT Transfer = -1 ");
             while (reader.Read())
             {
                 long id = reader.GetInt64(0);
@@ -2433,7 +2433,7 @@ namespace Walkabout.Data
 
             reader.Close();
 
-            ReadInvestments(transactions, money);
+            this.ReadInvestments(transactions, money);
 
             // recompute state of Payee objects 
             foreach (Transaction t in transactions)
@@ -2538,23 +2538,23 @@ namespace Walkabout.Data
 
                 if (t.Splits != null)
                 {
-                    UpdateSplits(t.Splits);
+                    this.UpdateSplits(t.Splits);
                 }
 
                 if (t.Investment != null)
                 {
-                    UpdateInvestment(t.Investment);
+                    this.UpdateInvestment(t.Investment);
                 }
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
 
             foreach (Transaction t in transactions)
@@ -2606,13 +2606,13 @@ namespace Walkabout.Data
 
                 if (!this.SupportsBatchUpdate)
                 {
-                    ExecuteScalar(sb.ToString());
+                    this.ExecuteScalar(sb.ToString());
                     sb.Length = 0;
                 }
             }
             if (this.SupportsBatchUpdate)
             {
-                ExecuteScalar(sb.ToString());
+                this.ExecuteScalar(sb.ToString());
             }
 
             foreach (Split s in splits)
@@ -2630,7 +2630,7 @@ namespace Walkabout.Data
         private IDataReader ReadInvestments(Transactions transactions, MyMoney money)
         {
             // Load investment transaction details.
-            IDataReader reader = ExecuteReader("SELECT Id,Security,UnitPrice,Units,Commission,InvestmentType,TradeType,TaxExempt,Withholding,MarkUpDown,Taxes,Fees,[Load]  FROM Investments");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Security,UnitPrice,Units,Commission,InvestmentType,TradeType,TaxExempt,Withholding,MarkUpDown,Taxes,Fees,[Load]  FROM Investments");
             while (reader.Read())
             {
                 long id = reader.GetInt64(0);
@@ -2714,7 +2714,7 @@ namespace Walkabout.Data
                 sb.AppendLine(string.Format("DELETE FROM Investments WHERE Id={0};", i.Id.ToString()));
             }
 
-            ExecuteScalar(sb.ToString());
+            this.ExecuteScalar(sb.ToString());
             i.OnUpdated();
         }
 
@@ -2731,10 +2731,10 @@ namespace Walkabout.Data
             {
                 throw new ApplicationException("You have not specified a database name yet");
             }
-            ExecuteNonQuery("alter database [" + this.DatabaseName + "] set recovery simple");
-            ExecuteNonQuery("checkpoint");
-            ExecuteNonQuery("alter database [" + this.DatabaseName + "] set recovery full");
-            ExecuteNonQuery("backup database [" + this.DatabaseName + "] to disk = '" + backupPath + "' with init");
+            this.ExecuteNonQuery("alter database [" + this.DatabaseName + "] set recovery simple");
+            this.ExecuteNonQuery("checkpoint");
+            this.ExecuteNonQuery("alter database [" + this.DatabaseName + "] set recovery full");
+            this.ExecuteNonQuery("backup database [" + this.DatabaseName + "] to disk = '" + backupPath + "' with init");
         }
 
         public static SqlServerDatabase Restore(string server, string databasePath, string userId, string password, string backupPath)
@@ -2754,7 +2754,7 @@ namespace Walkabout.Data
 
         public void Restore()
         {
-            string cstr = GetConnectionString(false);
+            string cstr = this.GetConnectionString(false);
             SqlConnection con = new SqlConnection(cstr);
             using (con)
             {
@@ -2762,10 +2762,10 @@ namespace Walkabout.Data
                 try
                 {
                     string dir = Path.GetDirectoryName(this.DatabasePath);
-                    AclDatabasePath(dir);
-                    string cmd = "RESTORE DATABASE [" + DatabaseName + "] FROM DISK = '" + backupPath + "' WITH REPLACE";
+                    this.AclDatabasePath(dir);
+                    string cmd = "RESTORE DATABASE [" + this.DatabaseName + "] FROM DISK = '" + this.backupPath + "' WITH REPLACE";
                     // Get the logical to physical file mapping.
-                    using (SqlCommand command = new SqlCommand("RESTORE FILELISTONLY FROM DISK='" + backupPath + "'", con))
+                    using (SqlCommand command = new SqlCommand("RESTORE FILELISTONLY FROM DISK='" + this.backupPath + "'", con))
                     {
                         SqlDataReader reader = command.ExecuteReader();
                         while (reader.Read())
@@ -2886,18 +2886,18 @@ namespace Walkabout.Data
             if (File.Exists(mdfPhysicalPath))
             {
 
-                string conStr = GetConnectionString(false);
+                string conStr = this.GetConnectionString(false);
                 using (SqlConnection con = new SqlConnection(conStr))
                 {
                     con.Open();
 
-                    if (!Exists)
+                    if (!this.Exists)
                     {
                         string attachCommand = null;
                         string dir = Path.GetDirectoryName(this.DatabasePath);
                         if (!string.IsNullOrEmpty(dir))
                         {
-                            AclDatabasePath(dir);
+                            this.AclDatabasePath(dir);
                             attachCommand = string.Format(@"CREATE DATABASE {0} ON (FILENAME = '{1}'), (FILENAME = '{2}') FOR ATTACH",
                                                             this.DatabaseName, mdfPhysicalPath, logPhysicalPath);
                         }
@@ -2919,7 +2919,7 @@ namespace Walkabout.Data
 
         public virtual bool TableExists(string tableName)
         {
-            object result = ExecuteScalar("select * from INFORMATION_SCHEMA.tables where table_name = '" + tableName + "'");
+            object result = this.ExecuteScalar("select * from INFORMATION_SCHEMA.tables where table_name = '" + tableName + "'");
             return (result != null);
         }
 
@@ -2930,7 +2930,7 @@ namespace Walkabout.Data
         /// <returns>Returns the list of columns found</returns>
         public virtual List<ColumnMapping> GetTableSchema(string tableName)
         {
-            var reader = ExecuteReader("select COLUMN_NAME,IS_NULLABLE,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH from INFORMATION_SCHEMA.COLUMNS where table_name = '" + tableName + "'");
+            var reader = this.ExecuteReader("select COLUMN_NAME,IS_NULLABLE,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH from INFORMATION_SCHEMA.COLUMNS where table_name = '" + tableName + "'");
 
             List<ColumnMapping> columns = new List<ColumnMapping>();
             // ok, this is the hard part, we need to diff the table in SQL with the object Type and see if the table

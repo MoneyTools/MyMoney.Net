@@ -15,54 +15,54 @@ namespace Walkabout.Charts
 
         public RentalChart()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         double highestMarkValue = 0;
 
         public void RenderChart()
         {
-            MaingGrid.Children.Clear();
-            MaingGrid.ColumnDefinitions.Clear();
+            this.MaingGrid.Children.Clear();
+            this.MaingGrid.ColumnDefinitions.Clear();
 
-            SetHightValue();
+            this.SetHightValue();
 
             int columnIndex = 0;
-            foreach (RentalData pl in ProfitsAndLostEntries)
+            foreach (RentalData pl in this.ProfitsAndLostEntries)
             {
                 ColumnDefinition cd = new ColumnDefinition();
                 cd.Width = new GridLength(100, GridUnitType.Star);
-                MaingGrid.ColumnDefinitions.Add(cd);
+                this.MaingGrid.ColumnDefinitions.Add(cd);
 
                 ColumnDefinition seperator = new ColumnDefinition();
                 seperator.Width = new GridLength(10, GridUnitType.Star);
-                MaingGrid.ColumnDefinitions.Add(seperator);
+                this.MaingGrid.ColumnDefinitions.Add(seperator);
 
                 RentalChartColumn rentalChartColumn = new RentalChartColumn();
                 rentalChartColumn.MyRentalData = pl;
 
                 Grid.SetColumn(rentalChartColumn, columnIndex);
-                MaingGrid.Children.Add(rentalChartColumn);
+                this.MaingGrid.Children.Add(rentalChartColumn);
                 columnIndex += 2;
             }
 
-            UpdateChartLayout();
+            this.UpdateChartLayout();
         }
 
         private void SetHightValue()
         {
-            highestMarkValue = 0;
+            this.highestMarkValue = 0;
 
-            foreach (RentalData pl in ProfitsAndLostEntries)
+            foreach (RentalData pl in this.ProfitsAndLostEntries)
             {
-                highestMarkValue = Math.Max(this.highestMarkValue, pl.Income);
-                highestMarkValue = Math.Max(this.highestMarkValue, pl.Expense);
+                this.highestMarkValue = Math.Max(this.highestMarkValue, pl.Income);
+                this.highestMarkValue = Math.Max(this.highestMarkValue, pl.Expense);
             }
         }
 
         private void MaingGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdateChartLayout();
+            this.UpdateChartLayout();
         }
 
         int whatExpenseIsAtTheBottom = 0;
@@ -74,18 +74,18 @@ namespace Walkabout.Charts
                 double maxHeight = this.ActualHeight * .90;
                 pfcol.BarForIncome.Height = pfcol.MyRentalData.Income / this.highestMarkValue * maxHeight;
                 pfcol.BarForExpense.Height = pfcol.MyRentalData.Expense / this.highestMarkValue * maxHeight;
-                pfcol.SetExpensesDistribution(whatExpenseIsAtTheBottom);
+                pfcol.SetExpensesDistribution(this.whatExpenseIsAtTheBottom);
             }
         }
 
         private void MaingGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            whatExpenseIsAtTheBottom--;
-            if (whatExpenseIsAtTheBottom < 0)
+            this.whatExpenseIsAtTheBottom--;
+            if (this.whatExpenseIsAtTheBottom < 0)
             {
-                whatExpenseIsAtTheBottom = 4;
+                this.whatExpenseIsAtTheBottom = 4;
             }
-            UpdateChartLayout();
+            this.UpdateChartLayout();
         }
     }
 

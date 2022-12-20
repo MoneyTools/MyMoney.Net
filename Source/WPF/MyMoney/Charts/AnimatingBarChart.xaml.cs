@@ -45,21 +45,21 @@ namespace LovettSoftware.Charts
 
         public AnimatingBarChart()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.HoverDelayMilliseconds = 250;
             this.AnimationGrowthMilliseconds = 250;
             this.AnimationRippleMilliseconds = 20;
             this.AnimationColorMilliseconds = 120;
-            this.IsVisibleChanged += OnVisibleChanged;
+            IsVisibleChanged += this.OnVisibleChanged;
         }
 
         private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue is bool b && !b)
             {
-                HideToolTip();
+                this.HideToolTip();
             }
-            OnDelayedUpdate();
+            this.OnDelayedUpdate();
         }
 
         private void HideToolTip()
@@ -100,8 +100,8 @@ namespace LovettSoftware.Charts
 
         public Brush LineBrush
         {
-            get { return (Brush)GetValue(LineBrushProperty); }
-            set { SetValue(LineBrushProperty, value); }
+            get { return (Brush)this.GetValue(LineBrushProperty); }
+            set { this.SetValue(LineBrushProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for LineBrush.  This enables animation, styling, binding, etc...
@@ -115,8 +115,8 @@ namespace LovettSoftware.Charts
 
         public double LineThickness
         {
-            get { return (double)GetValue(LineThicknessProperty); }
-            set { SetValue(LineThicknessProperty, value); }
+            get { return (double)this.GetValue(LineThicknessProperty); }
+            set { this.SetValue(LineThicknessProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for LineThickness.  This enables animation, styling, binding, etc...
@@ -131,8 +131,8 @@ namespace LovettSoftware.Charts
 
         public Orientation Orientation
         {
-            get { return (Orientation)GetValue(OrientationProperty); }
-            set { SetValue(OrientationProperty, value); }
+            get { return (Orientation)this.GetValue(OrientationProperty); }
+            set { this.SetValue(OrientationProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for AxisOrientation.  This enables animation, styling, binding, etc...
@@ -149,8 +149,8 @@ namespace LovettSoftware.Charts
         /// </summary>
         public ChartData Data
         {
-            get { return (ChartData)GetValue(ChartDataProperty); }
-            set { SetValue(ChartDataProperty, value); }
+            get { return (ChartData)this.GetValue(ChartDataProperty); }
+            set { this.SetValue(ChartDataProperty, value); }
         }
 
         public static readonly DependencyProperty ChartDataProperty =
@@ -163,10 +163,10 @@ namespace LovettSoftware.Charts
 
         private void OnDataChanged(object newValue)
         {
-            HideToolTip();
+            this.HideToolTip();
             if (newValue == null)
             {
-                ResetVisuals();
+                this.ResetVisuals();
             }
             else if (newValue is ChartData data)
             {
@@ -177,7 +177,7 @@ namespace LovettSoftware.Charts
                     int cols = first.Count;
                     foreach (var series in s)
                     {
-                        var seriesDefaultColor = GetRandomColor();
+                        var seriesDefaultColor = this.GetRandomColor();
                         if (series.Values.Count != cols)
                         {
                             throw new Exception("All series must have the same number of columns");
@@ -204,27 +204,27 @@ namespace LovettSoftware.Charts
                         }
                     }
                 }
-                OnDelayedUpdate();
+                this.OnDelayedUpdate();
             }
         }
 
         void ResetVisuals()
         {
-            ChartCanvas.Children.Clear();
-            bars.Clear();
-            tipColumn = null;
-            inside = null;
-            mouseOverAnimationCompleted = false;
+            this.ChartCanvas.Children.Clear();
+            this.bars.Clear();
+            this.tipColumn = null;
+            this.inside = null;
+            this.mouseOverAnimationCompleted = false;
         }
 
         private void OnDelayedUpdate()
         {
-            actions.StartDelayedAction("update", UpdateChart, TimeSpan.FromMilliseconds(10));
+            this.actions.StartDelayedAction("update", this.UpdateChart, TimeSpan.FromMilliseconds(10));
         }
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            OnDelayedUpdate();
+            this.OnDelayedUpdate();
             return base.ArrangeOverride(arrangeBounds);
         }
 
@@ -236,28 +236,28 @@ namespace LovettSoftware.Charts
         {
             double w = this.ActualWidth;
             double h = this.ActualHeight;
-            if (Data == null || Data.Series.Count == 0 || w == 0 || h == 0)
+            if (this.Data == null || this.Data.Series.Count == 0 || w == 0 || h == 0)
             {
-                ResetVisuals();
+                this.ResetVisuals();
             }
             else if (this.Visibility == Visibility.Visible)
             {
                 if (this.Orientation == Orientation.Horizontal)
                 {
-                    HorizontalLayout();
+                    this.HorizontalLayout();
                 }
                 else
                 {
-                    VerticalLayout();
+                    this.VerticalLayout();
                 }
             }
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
-            actions.CancelDelayedAction("hover");
-            tipColumn = null;
-            OnExitColumn();
+            this.actions.CancelDelayedAction("hover");
+            this.tipColumn = null;
+            this.OnExitColumn();
             base.OnMouseLeave(e);
         }
 
@@ -271,7 +271,7 @@ namespace LovettSoftware.Charts
 
             ChartDataValue value = info.Data;
             var tip = this.ToolTip as ToolTip;
-            var content = ToolTipGenerator != null ? ToolTipGenerator(value) : new TextBlock() { Text = value.Label + "\r\n" + value.Value };
+            var content = this.ToolTipGenerator != null ? this.ToolTipGenerator(value) : new TextBlock() { Text = value.Label + "\r\n" + value.Value };
             if (tip == null)
             {
                 tip = new ToolTip()
@@ -292,7 +292,7 @@ namespace LovettSoftware.Charts
             tip.VerticalOffset = -tip.ActualHeight;
 
             // notify any interested listeners
-            var h = this.ColumnHover;
+            var h = ColumnHover;
             if (h != null)
             {
                 h(this, value);
@@ -302,7 +302,7 @@ namespace LovettSoftware.Charts
 
         ColumnInfo FindColumn(Point pos)
         {
-            for (int i = 0, n = bars.Count; i < n; i++)
+            for (int i = 0, n = this.bars.Count; i < n; i++)
             {
                 var info = this.bars[i];
                 var r = info.Bounds;
@@ -321,22 +321,22 @@ namespace LovettSoftware.Charts
         protected override void OnPreviewMouseMove(MouseEventArgs e)
         {
             var pos = e.GetPosition(this);
-            var info = FindColumn(pos);
+            var info = this.FindColumn(pos);
             if (info != null)
             {
-                OnEnterColumn(info);
-                HideToolTip();
+                this.OnEnterColumn(info);
+                this.HideToolTip();
                 this.movePos = pos;
                 this.tipColumn = info;
-                actions.StartDelayedAction("hover", () =>
+                this.actions.StartDelayedAction("hover", () =>
                 {
-                    OnHover();
-                }, TimeSpan.FromMilliseconds(HoverDelayMilliseconds));
+                    this.OnHover();
+                }, TimeSpan.FromMilliseconds(this.HoverDelayMilliseconds));
             }
             else
             {
                 this.tipColumn = null;
-                OnExitColumn();
+                this.OnExitColumn();
             }
             base.OnPreviewMouseMove(e);
         }
@@ -347,47 +347,47 @@ namespace LovettSoftware.Charts
             {
                 var color = info.Color;
                 Polygon r = info.Shape;
-                if (inside == null || r != inside.Shape)
+                if (this.inside == null || r != this.inside.Shape)
                 {
-                    if (inside != null)
+                    if (this.inside != null)
                     {
-                        OnExitColumn();
+                        this.OnExitColumn();
                     }
 
-                    var duration = new Duration(TimeSpan.FromMilliseconds(AnimationColorMilliseconds));
+                    var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationColorMilliseconds));
                     var brush = r.Fill as SolidColorBrush;
-                    var highlight = GetMouseOverColor(color);
+                    var highlight = this.GetMouseOverColor(color);
                     var mouseOverAnimation = new ColorAnimation() { To = highlight, Duration = duration };
                     mouseOverAnimation.Completed += (s, e) =>
                     {
                         this.mouseOverAnimationCompleted = true;
-                        if (info != inside)
+                        if (info != this.inside)
                         {
                             brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = color, Duration = duration });
                         }
                     };
                     this.mouseOverAnimationCompleted = false;
                     brush.BeginAnimation(SolidColorBrush.ColorProperty, mouseOverAnimation);
-                    inside = info;
+                    this.inside = info;
                 }
             }
         }
 
         void OnExitColumn()
         {
-            if (inside != null && this.mouseOverAnimationCompleted)
+            if (this.inside != null && this.mouseOverAnimationCompleted)
             {
-                var duration = new Duration(TimeSpan.FromMilliseconds(AnimationColorMilliseconds));
-                var brush = inside.Shape.Fill as SolidColorBrush;
-                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = inside.Color, Duration = duration });
+                var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationColorMilliseconds));
+                var brush = this.inside.Shape.Fill as SolidColorBrush;
+                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = this.inside.Color, Duration = duration });
             }
-            inside = null;
+            this.inside = null;
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             var pos = e.GetPosition(this);
-            var info = FindColumn(pos);
+            var info = this.FindColumn(pos);
             if (info != null)
             {
                 ChartDataValue value = info.Data;
@@ -403,7 +403,7 @@ namespace LovettSoftware.Charts
             int index = 0;
             Size minMax = new Size();
             bool firstSeries = true;
-            foreach (var series in Data.Series)
+            foreach (var series in this.Data.Series)
             {
                 foreach (var item in series.Values)
                 {
@@ -412,14 +412,14 @@ namespace LovettSoftware.Charts
                         continue;
                     }
                     ColumnInfo info = null;
-                    if (index < bars.Count)
+                    if (index < this.bars.Count)
                     {
-                        info = bars[index];
+                        info = this.bars[index];
                     }
                     else
                     {
                         info = new ColumnInfo();
-                        bars.Add(info);
+                        this.bars.Add(info);
                     }
                     info.Data = item;
                     info.Color = item.Color.Value;
@@ -429,15 +429,15 @@ namespace LovettSoftware.Charts
                         var block = info.Label;
                         if (block == null)
                         {
-                            block = new TextBlock() { Foreground = this.Foreground };
+                            block = new TextBlock() { Foreground = Foreground };
                             info.Label = block;
                         }
                         block.Text = item.Label;
                         block.BeginAnimation(TextBlock.OpacityProperty, null);
                         block.Opacity = 0;
-                        ChartCanvas.Children.Add(block); // so it measures properly.
+                        this.ChartCanvas.Children.Add(block); // so it measures properly.
                         block.Measure(new Size(100, 100));
-                        ChartCanvas.Children.Remove(block);
+                        this.ChartCanvas.Children.Remove(block);
                         var size = block.DesiredSize;
                         minMax.Width = Math.Max(minMax.Width, size.Width);
                         minMax.Height = Math.Max(minMax.Height, size.Height);
@@ -451,7 +451,7 @@ namespace LovettSoftware.Charts
                 firstSeries = false;
             }
 
-            bars.RemoveRange(index, bars.Count - index);
+            this.bars.RemoveRange(index, this.bars.Count - index);
 
             return minMax;
         }
@@ -463,7 +463,7 @@ namespace LovettSoftware.Charts
         {
             double maxValue = 0;
             double minValue = 0;
-            foreach (var series in Data.Series)
+            foreach (var series in this.Data.Series)
             {
                 foreach (var item in series.Values)
                 {
@@ -488,50 +488,50 @@ namespace LovettSoftware.Charts
             {
                 TextBlock label = null;
                 Polygon line = null;
-                if (i < axisLabels.Count)
+                if (i < this.axisLabels.Count)
                 {
-                    label = axisLabels[i];
-                    line = axisLines[i];
+                    label = this.axisLabels[i];
+                    line = this.axisLines[i];
                 }
                 else
                 {
-                    label = new TextBlock() { Foreground = this.Foreground };
-                    axisLabels.Add(label);
-                    line = new Polygon() { Stroke = this.LineBrush, StrokeThickness = this.LineThickness, Points = new PointCollection() };
-                    axisLines.Add(line);
+                    label = new TextBlock() { Foreground = Foreground };
+                    this.axisLabels.Add(label);
+                    line = new Polygon() { Stroke = LineBrush, StrokeThickness = LineThickness, Points = new PointCollection() };
+                    this.axisLines.Add(line);
                 }
-                ChartCanvas.Children.Add(line);
+                this.ChartCanvas.Children.Add(line);
                 label.Text = r.ToString("N0");
-                ChartCanvas.Children.Add(label);
+                this.ChartCanvas.Children.Add(label);
                 label.Measure(new Size(100, 100));
                 minMax.Width = Math.Max(minMax.Width, label.DesiredSize.Width);
                 minMax.Height = Math.Max(minMax.Height, label.DesiredSize.Height);
                 i++;
             }
 
-            axisLabels.RemoveRange(i, axisLabels.Count - i);
-            axisLines.RemoveRange(i, axisLines.Count - i);
+            this.axisLabels.RemoveRange(i, this.axisLabels.Count - i);
+            this.axisLines.RemoveRange(i, this.axisLines.Count - i);
 
             return minMax;
         }
 
         private void VerticalLayout()
         {
-            ChartCanvas.Children.Clear();
+            this.ChartCanvas.Children.Clear();
 
             var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationGrowthMilliseconds));
 
-            int columns = GetVisibleColumns();
+            int columns = this.GetVisibleColumns();
             double w = this.ActualWidth;
             double h = this.ActualHeight;
 
-            Size axisLabelSize = AddAxisLabels(out AxisTickSpacer scale);
+            Size axisLabelSize = this.AddAxisLabels(out AxisTickSpacer scale);
 
             var min = scale.GetNiceMin();
             var max = scale.GetNiceMax();
             var spacing = scale.GetTickSpacing();
 
-            Size labelSize = CreateColumnInfos();
+            Size labelSize = this.CreateColumnInfos();
 
             double labelGap = 10;
             double labelMargin = labelSize.Width + labelGap + labelGap;
@@ -542,7 +542,7 @@ namespace LovettSoftware.Charts
             w -= labelMargin; // allocate space at the left column labels.
             h -= axisLabelSize.Height + labelGap + labelGap;
 
-            int numSeries = Data.Series.Count;
+            int numSeries = this.Data.Series.Count;
             double seriesHeight = h / columns;
             double innerGap = numSeries > 1 ? 2 : 0; // gap between columns in a series
             double seriesGap = seriesHeight / (3 * numSeries); // gap between series
@@ -563,8 +563,8 @@ namespace LovettSoftware.Charts
             for (var r = min; r <= max; r += spacing)
             {
                 double xpos = labelMargin + zero + (r * w / range);
-                var label = axisLabels[i];
-                var line = axisLines[i];
+                var label = this.axisLabels[i];
+                var line = this.axisLines[i];
                 var mid = label.DesiredSize.Width / 2;
                 Canvas.SetLeft(label, xpos > mid ? xpos - mid : xpos + labelGap);
                 Canvas.SetTop(label, h + labelGap);
@@ -621,7 +621,7 @@ namespace LovettSoftware.Charts
                         info.Shape = polygon;
                     }
 
-                    var start = TimeSpan.FromMilliseconds(index * AnimationRippleMilliseconds);
+                    var start = TimeSpan.FromMilliseconds(index * this.AnimationRippleMilliseconds);
 
                     if (info.Label != null)
                     {
@@ -659,7 +659,7 @@ namespace LovettSoftware.Charts
                                 BeginTime = start
                             });
 
-                            ChartCanvas.Children.Add(block);
+                            this.ChartCanvas.Children.Add(block);
                         }
                     }
 
@@ -678,7 +678,7 @@ namespace LovettSoftware.Charts
                     y += columnHeight;
                     poly.Add(new Point() { X = x + s, Y = y });
                     poly.Add(new Point() { X = x, Y = y, });
-                    ChartCanvas.Children.Add(polygon);
+                    this.ChartCanvas.Children.Add(polygon);
 
                     polygon.BeginAnimation(Polygon.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration, BeginTime = start });
                     brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = color, Duration = duration, BeginTime = start });
@@ -692,30 +692,30 @@ namespace LovettSoftware.Charts
         private int GetVisibleColumns()
         {
             int count = 0;
-            if (Data.Series.Count > 0)
+            if (this.Data.Series.Count > 0)
             {
-                count = (from i in Data.Series[0].Values where !i.Hidden select i).Count();
+                count = (from i in this.Data.Series[0].Values where !i.Hidden select i).Count();
             }
             return count;
         }
 
         private void HorizontalLayout()
         {
-            ChartCanvas.Children.Clear();
+            this.ChartCanvas.Children.Clear();
 
             var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationGrowthMilliseconds));
 
-            int columns = GetVisibleColumns();
+            int columns = this.GetVisibleColumns();
             double w = this.ActualWidth;
             double h = this.ActualHeight;
 
-            Size axisLabelSize = AddAxisLabels(out AxisTickSpacer scale);
+            Size axisLabelSize = this.AddAxisLabels(out AxisTickSpacer scale);
 
             var min = scale.GetNiceMin();
             var max = scale.GetNiceMax();
             var spacing = scale.GetTickSpacing();
 
-            Size labelSize = CreateColumnInfos();
+            Size labelSize = this.CreateColumnInfos();
 
             double labelGap = this.FontSize / 3;
             double labelMargin = labelSize.Height + labelGap + labelGap;
@@ -727,7 +727,7 @@ namespace LovettSoftware.Charts
             double axisLabelGap = axisLabelSize.Width + labelGap + labelGap;
             w -= axisLabelGap; // allocate space for axis labels.
 
-            int numSeries = Data.Series.Count;
+            int numSeries = this.Data.Series.Count;
             double seriesWidth = w / columns;
             double innerGap = numSeries > 1 ? 2 : 0; // gap between columns in a series
             double seriesGap = seriesWidth / (3 * numSeries); // gap between series
@@ -748,8 +748,8 @@ namespace LovettSoftware.Charts
             for (var r = min; r <= max; r += spacing)
             {
                 double ypos = (h - zero) - (r * h / range);
-                var label = axisLabels[i];
-                var line = axisLines[i];
+                var label = this.axisLabels[i];
+                var line = this.axisLines[i];
                 var mid = label.DesiredSize.Height / 2;
                 Canvas.SetLeft(label, labelGap);
                 Canvas.SetTop(label, ypos - mid);
@@ -787,7 +787,7 @@ namespace LovettSoftware.Charts
                     double s = (dataValue.Value * h / range);
                     Color color = dataValue.Color.Value;
 
-                    var start = TimeSpan.FromMilliseconds(index * AnimationRippleMilliseconds);
+                    var start = TimeSpan.FromMilliseconds(index * this.AnimationRippleMilliseconds);
                     ColumnInfo info = this.bars[col + (index * columns)];
                     Polygon polygon = info.Shape;
                     SolidColorBrush brush = null;
@@ -843,7 +843,7 @@ namespace LovettSoftware.Charts
                                 Duration = duration,
                                 BeginTime = start
                             });
-                            ChartCanvas.Children.Add(block);
+                            this.ChartCanvas.Children.Add(block);
                         }
                     }
 
@@ -863,7 +863,7 @@ namespace LovettSoftware.Charts
                     poly.Add(new Point() { X = x, Y = y - s });
                     poly.Add(new Point() { X = x, Y = y });
 
-                    ChartCanvas.Children.Add(polygon);
+                    this.ChartCanvas.Children.Add(polygon);
                     polygon.BeginAnimation(Polygon.PointsProperty, new PointCollectionAnimation() { To = poly, Duration = duration, BeginTime = start });
                     brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = color, Duration = duration, BeginTime = start });
                     index++;
@@ -876,7 +876,7 @@ namespace LovettSoftware.Charts
 
         private Color GetRandomColor()
         {
-            return Color.FromRgb((byte)rand.Next(80, 200), (byte)rand.Next(80, 200), (byte)rand.Next(80, 200));
+            return Color.FromRgb((byte)this.rand.Next(80, 200), (byte)this.rand.Next(80, 200), (byte)this.rand.Next(80, 200));
         }
 
     }

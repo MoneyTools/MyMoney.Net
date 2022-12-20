@@ -35,11 +35,11 @@ namespace Walkabout.Tests
         {
             get
             {
-                return testContextInstance;
+                return this.testContextInstance;
             }
             set
             {
-                testContextInstance = value;
+                this.testContextInstance = value;
             }
         }
 
@@ -74,27 +74,27 @@ namespace Walkabout.Tests
                 int seed = Environment.TickCount;
                 // int seed = 272222602; // Bug with ListCollectionView: 'Sorting' is not allowed during an AddNew or EditItem transaction.
                 // seed = 313591431;  // Another variation of the above, sometimes even CancelEdit throws!
-                random = new Random(seed);
-                TestContext.WriteLine("Model Seed = " + seed);
+                this.random = new Random(seed);
+                this.TestContext.WriteLine("Model Seed = " + seed);
 
-                model = new DgmlTestModel(this, new TestLog(TestContext), random, vsDgmlMonitorTimeout);
+                this.model = new DgmlTestModel(this, new TestLog(this.TestContext), this.random, vsDgmlMonitorTimeout);
 
-                string fileName = FindTestModel("TestModel.dgml");
-                model.Load(fileName);
+                string fileName = this.FindTestModel("TestModel.dgml");
+                this.model.Load(fileName);
                 Thread.Sleep(2000); // let graph load.
                 int delay = 0; // 1000 is handy for debugging.
-                model.Run(new Predicate<DgmlTestModel>((m) => { return m.StatesExecuted > 500; }), delay);
+                this.model.Run(new Predicate<DgmlTestModel>((m) => { return m.StatesExecuted > 500; }), delay);
             }
             catch
             {
                 string temp = Path.GetTempPath() + "\\Screen.png";
                 Win32.CaptureScreen(temp, System.Drawing.Imaging.ImageFormat.Png);
-                TestContext.WriteLine("ScreenCapture: " + temp);
+                this.TestContext.WriteLine("ScreenCapture: " + temp);
                 throw;
             }
             finally
             {
-                Terminate();
+                this.Terminate();
             }
         }
 
@@ -157,26 +157,26 @@ namespace Walkabout.Tests
         {
             if (testProcess == null)
             {
-                EnsureCleanState();
+                this.EnsureCleanState();
                 string exe = typeof(Walkabout.MainWindow).Assembly.Location;
 
-                ResignAssembly(exe);
+                this.ResignAssembly(exe);
 
                 // find the ofx test server, this file is created by the OfxTestServer project.
-                string path = FindFileInParent(Path.GetDirectoryName(exe), "ServerConfig.txt");
+                string path = this.FindFileInParent(Path.GetDirectoryName(exe), "ServerConfig.txt");
                 string serverExePath = File.ReadAllText(path).Trim();
 
                 // start ofx test server
                 string serverExe = Path.Combine(Path.GetDirectoryName(serverExePath), Path.GetFileNameWithoutExtension(serverExePath) + ".exe");
                 serverProcess = Process.Start(new ProcessStartInfo(serverExe));
                 serverProcess.WaitForInputIdle();
-                ofxServerWindow = OfxServerWindowWrapper.FindMainWindow(serverProcess.Id);
+                this.ofxServerWindow = OfxServerWindowWrapper.FindMainWindow(serverProcess.Id);
 
                 // start money
                 ProcessStartInfo psi = new ProcessStartInfo(exe, "/nosettings");
                 testProcess = Process.Start(psi);
                 testProcess.WaitForInputIdle();
-                window = MainWindowWrapper.FindMainWindow(testProcess.Id);
+                this.window = MainWindowWrapper.FindMainWindow(testProcess.Id);
             }
         }
 
@@ -210,12 +210,12 @@ namespace Walkabout.Tests
 
         void Interactive()
         {
-            if (window.IsBlocked)
+            if (this.window.IsBlocked)
             {
                 throw new Exception("Main window is blocked by an unexpected modal dialog");
             }
-            window.WaitForInputIdle(500);
-            if (window.IsNotResponding)
+            this.window.WaitForInputIdle(500);
+            if (this.window.IsNotResponding)
             {
                 throw new Exception("Main window is hung!");
             }
@@ -224,7 +224,7 @@ namespace Walkabout.Tests
         void Terminate()
         {
             Cleanup();
-            model.Stop();
+            this.model.Stop();
         }
 
         static void Cleanup()
@@ -253,7 +253,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                return model.StatesExecuted > creationTime + 50;
+                return this.model.StatesExecuted > this.creationTime + 50;
             }
         }
 
@@ -264,28 +264,28 @@ namespace Walkabout.Tests
 
         void CreateNewDatabase()
         {
-            createNewDatabaseDialog = CreateDatabaseDialogWrapper.FindCreateDatabaseDialogWindow(testProcess.Id, 1, false);
-            if (createNewDatabaseDialog == null)
+            this.createNewDatabaseDialog = CreateDatabaseDialogWrapper.FindCreateDatabaseDialogWindow(testProcess.Id, 1, false);
+            if (this.createNewDatabaseDialog == null)
             {
                 // send "File.New" command.
-                window.New();
-                createNewDatabaseDialog = CreateDatabaseDialogWrapper.FindCreateDatabaseDialogWindow(testProcess.Id, 5, true);
-                if (createNewDatabaseDialog == null)
+                this.window.New();
+                this.createNewDatabaseDialog = CreateDatabaseDialogWrapper.FindCreateDatabaseDialogWindow(testProcess.Id, 5, true);
+                if (this.createNewDatabaseDialog == null)
                 {
                     throw new Exception("Why didn't Window.New work?");
                 }
-                isLoaded = false; // stop us from exiting until dialog is fulfilled.
+                this.isLoaded = false; // stop us from exiting until dialog is fulfilled.
             }
-            creationTime = model.StatesExecuted;
+            this.creationTime = this.model.StatesExecuted;
         }
 
         void EnterCreateDatabase()
         {
-            ClearTransactionViewState();
-            window.ResetReport();
+            this.ClearTransactionViewState();
+            this.window.ResetReport();
             this.hasOnlineAccounts = false;
             this.onlineAccounts = null;
-            sampleData = false;
+            this.sampleData = false;
         }
 
         static IDatabase database;
@@ -321,7 +321,7 @@ namespace Walkabout.Tests
         {
             int index = 2;
             string databasePath = System.IO.Path.GetFullPath(string.Format(baseNamePattern, ""));
-            while (!DeleteFileWithRetries(databasePath, 1))
+            while (!this.DeleteFileWithRetries(databasePath, 1))
             {
                 databasePath = System.IO.Path.GetFullPath(string.Format(baseNamePattern, index.ToString()));
                 index++;
@@ -355,32 +355,32 @@ namespace Walkabout.Tests
 
         void CreateSqliteDatabase()
         {
-            string databasePath = GetFreeDatabase("TestDatabase{0}.mmdb");
-            createNewDatabaseDialog.CreateSqliteDatabase(databasePath);
-            isLoaded = true;
-            createNewDatabaseDialog = null;
+            string databasePath = this.GetFreeDatabase("TestDatabase{0}.mmdb");
+            this.createNewDatabaseDialog.CreateSqliteDatabase(databasePath);
+            this.isLoaded = true;
+            this.createNewDatabaseDialog = null;
             Database = new SqliteDatabase() { DatabasePath = databasePath };
         }
 
         void CreateXmlDatabase()
         {
-            databasePath = GetFreeDatabase("TestDatabase{0}.xml");
-            DeleteFileWithRetries(databasePath, 1);
-            createNewDatabaseDialog.CreateXmlDatabase(databasePath);
-            isLoaded = true;
-            createNewDatabaseDialog = null;
+            databasePath = this.GetFreeDatabase("TestDatabase{0}.xml");
+            this.DeleteFileWithRetries(databasePath, 1);
+            this.createNewDatabaseDialog.CreateXmlDatabase(databasePath);
+            this.isLoaded = true;
+            this.createNewDatabaseDialog = null;
             Database = new XmlStore(databasePath, null);
         }
 
         void CreateBinaryXmlDatabase()
         {
-            databasePath = GetFreeDatabase("TestDatabase.bxml");
-            DeleteFileWithRetries(databasePath, 1);
-            createNewDatabaseDialog.CreateBinaryXmlDatabase(databasePath);
-            isLoaded = true;
-            createNewDatabaseDialog = null;
+            databasePath = this.GetFreeDatabase("TestDatabase.bxml");
+            this.DeleteFileWithRetries(databasePath, 1);
+            this.createNewDatabaseDialog.CreateBinaryXmlDatabase(databasePath);
+            this.isLoaded = true;
+            this.createNewDatabaseDialog = null;
             Database = new BinaryXmlStore(databasePath, null);
-            ClearTransactionViewState();
+            this.ClearTransactionViewState();
         }
 
         void PopulateData()
@@ -392,7 +392,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                return !sampleData;
+                return !this.sampleData;
             }
         }
 
@@ -400,17 +400,17 @@ namespace Walkabout.Tests
 
         void AddSampleData()
         {
-            ContextMenu subMenu = window.MainMenu.OpenSubMenu("MenuHelp");
+            ContextMenu subMenu = this.window.MainMenu.OpenSubMenu("MenuHelp");
             subMenu.InvokeMenuItem("MenuSampleData");
 
-            AutomationElement msgbox = window.Element.FindChildWindow("Add Sample Data", 5);
+            AutomationElement msgbox = this.window.Element.FindChildWindow("Add Sample Data", 5);
             if (msgbox != null)
             {
                 MessageBoxWrapper mbox = new MessageBoxWrapper(msgbox);
                 mbox.ClickYes();
             }
 
-            AutomationElement child = window.Element.FindChildWindow("Sample Database Options", 10);
+            AutomationElement child = this.window.Element.FindChildWindow("Sample Database Options", 10);
             if (child != null)
             {
                 SampleDataDialogWrapper cd = new SampleDataDialogWrapper(child);
@@ -418,13 +418,13 @@ namespace Walkabout.Tests
             }
 
             Thread.Sleep(5000);
-            window.WaitForInputIdle(5000);
+            this.window.WaitForInputIdle(5000);
 
-            Save();
+            this.Save();
 
-            window.WaitForInputIdle(5000);
+            this.window.WaitForInputIdle(5000);
 
-            sampleData = true;
+            this.sampleData = true;
 
             // give database time to flush...
             Thread.Sleep(2000);
@@ -437,7 +437,7 @@ namespace Walkabout.Tests
                 retries--;
                 try
                 {
-                    money = Load();
+                    money = this.Load();
                 }
                 catch (Exception e)
                 {
@@ -468,27 +468,27 @@ namespace Walkabout.Tests
             payees.Sort();
             SamplePayees = payees.ToArray();
 
-            ClearTransactionViewState();
+            this.ClearTransactionViewState();
         }
 
         bool IsDirty
         {
             get
             {
-                return window.Title.Contains("*");
+                return this.window.Title.Contains("*");
             }
         }
 
         void Save()
         {
-            window.Save();
+            this.window.Save();
         }
 
         bool DatabaseLoaded
         {
             get
             {
-                return isLoaded;
+                return this.isLoaded;
             }
         }
 
@@ -509,14 +509,14 @@ namespace Walkabout.Tests
 
         void DownloadAccounts()
         {
-            onlineAccounts = window.DownloadAccounts();
+            this.onlineAccounts = this.window.DownloadAccounts();
         }
 
         internal bool NoAccountsDownloaded
         {
             get
             {
-                return !hasOnlineAccounts;
+                return !this.hasOnlineAccounts;
             }
         }
 
@@ -524,7 +524,7 @@ namespace Walkabout.Tests
         {
             get
             {
-                return hasOnlineAccounts;
+                return this.hasOnlineAccounts;
             }
         }
 
@@ -534,23 +534,23 @@ namespace Walkabout.Tests
 
         internal void ConnectToBank()
         {
-            onlineAccounts.WaitForGetBankList();
+            this.onlineAccounts.WaitForGetBankList();
 
             for (int retries = 5; retries > 0; retries--)
             {
-                onlineAccounts.Name = OnlineBankName;
-                onlineAccounts.Institution = "bankofhope";
-                onlineAccounts.FID = "1234";
-                onlineAccounts.OfxAddress = OfxServerUrl;
-                onlineAccounts.AppId = "QWIN";
-                onlineAccounts.AppVersion = "1700";
+                this.onlineAccounts.Name = OnlineBankName;
+                this.onlineAccounts.Institution = "bankofhope";
+                this.onlineAccounts.FID = "1234";
+                this.onlineAccounts.OfxAddress = OfxServerUrl;
+                this.onlineAccounts.AppId = "QWIN";
+                this.onlineAccounts.AppVersion = "1700";
 
-                if (onlineAccounts.Element.IsButtonEnabled("ButtonVerify"))
+                if (this.onlineAccounts.Element.IsButtonEnabled("ButtonVerify"))
                 {
                     // give connect button time to react...
-                    passwordDialog = onlineAccounts.ClickConnect();
+                    this.passwordDialog = this.onlineAccounts.ClickConnect();
 
-                    if (passwordDialog != null)
+                    if (this.passwordDialog != null)
                     {
                         return;
                     }
@@ -569,28 +569,28 @@ namespace Walkabout.Tests
 
         internal void SignOnToBank()
         {
-            ofxServerWindow.UserName = passwordDialog.UserName = "test";
-            ofxServerWindow.Password = passwordDialog.Password = "1234";
+            this.ofxServerWindow.UserName = this.passwordDialog.UserName = "test";
+            this.ofxServerWindow.Password = this.passwordDialog.Password = "1234";
 
             bool mfa = false;
-            if (random.Next(0, 2) == 0)
+            if (this.random.Next(0, 2) == 0)
             {
                 // turn on MFA challenge
-                ofxServerWindow.MFAChallengeRequired = mfa = true;
+                this.ofxServerWindow.MFAChallengeRequired = mfa = true;
             }
             else
             {
                 // turn it off by selecting something else.                
-                ofxServerWindow.UseAdditionalCredentials = true;
+                this.ofxServerWindow.UseAdditionalCredentials = true;
             }
 
-            passwordDialog.ClickOk();
-            passwordDialog = null;
+            this.passwordDialog.ClickOk();
+            this.passwordDialog = null;
 
             // give the old password dialog time to go away!
             Thread.Sleep(1000);
 
-            AutomationElement challenge = onlineAccounts.Element.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "PasswordDialog"), 10, 500);
+            AutomationElement challenge = this.onlineAccounts.Element.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "PasswordDialog"), 10, 500);
 
             if (mfa && challenge == null)
             {
@@ -601,7 +601,7 @@ namespace Walkabout.Tests
             {
                 if (challenge.Current.Name.Contains("Multi"))
                 {
-                    challengeDialog = new PasswordDialogWrapper(challenge);
+                    this.challengeDialog = new PasswordDialogWrapper(challenge);
                 }
                 else if (mfa)
                 {
@@ -611,32 +611,32 @@ namespace Walkabout.Tests
 
         }
 
-        internal bool IsChallenged { get { return challengeDialog != null; } }
-        internal bool NoChallenge { get { return challengeDialog == null; } }
+        internal bool IsChallenged { get { return this.challengeDialog != null; } }
+        internal bool NoChallenge { get { return this.challengeDialog == null; } }
 
         internal void AnswerChallenge()
         {
-            challengeDialog.SetUserDefinedField("MFA13", "1234");
-            challengeDialog.SetUserDefinedField("123", "Newcastle");
-            challengeDialog.SetUserDefinedField("MFA16", "HigginBothum");
+            this.challengeDialog.SetUserDefinedField("MFA13", "1234");
+            this.challengeDialog.SetUserDefinedField("123", "Newcastle");
+            this.challengeDialog.SetUserDefinedField("MFA16", "HigginBothum");
 
-            challengeDialog.ClickOk();
-            challengeDialog = null;
+            this.challengeDialog.ClickOk();
+            this.challengeDialog = null;
         }
 
         internal void AddOnlineAccounts()
         {
             for (int retries = 5; retries > 0; retries--)
             {
-                foreach (var item in onlineAccounts.GetOnlineAccounts())
+                foreach (var item in this.onlineAccounts.GetOnlineAccounts())
                 {
                     if (item.HasAddButton)
                     {
                         item.ClickAdd();
-                        hasOnlineAccounts = true;
+                        this.hasOnlineAccounts = true;
 
                         string title = "Select Account for: " + item.Id;
-                        MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(onlineAccounts.Element.Current.ProcessId);
+                        MainWindowWrapper mainWindow = MainWindowWrapper.FindMainWindow(this.onlineAccounts.Element.Current.ProcessId);
                         AutomationElement child = mainWindow.Element.FindChildWindow(title, 5);
                         if (child != null)
                         {
@@ -660,12 +660,12 @@ namespace Walkabout.Tests
 
         internal void DismissOnlineAccounts()
         {
-            onlineAccounts.ClickOk();
+            this.onlineAccounts.ClickOk();
         }
 
         internal bool HasOnlineAccount
         {
-            get { return hasOnlineAccounts; }
+            get { return this.hasOnlineAccounts; }
         }
 
         internal void DownloadTransactions()
@@ -674,12 +674,12 @@ namespace Walkabout.Tests
 
         internal void Synchronize()
         {
-            window.Synchronize();
+            this.window.Synchronize();
         }
 
         internal void SelectDownloadTransactions()
         {
-            var charts = window.GetChartsArea();
+            var charts = this.window.GetChartsArea();
             DownloadDetailsWrapper details = charts.SelectDownload();
 
             for (int retries = 5; retries > 0; retries--)
@@ -710,35 +710,35 @@ namespace Walkabout.Tests
 
         internal void ViewTrends()
         {
-            var charts = window.GetChartsArea();
+            var charts = this.window.GetChartsArea();
             charts.SelectTrends();
         }
 
         internal void ViewIncomes()
         {
-            var charts = window.GetChartsArea();
+            var charts = this.window.GetChartsArea();
             charts.SelectIncomes();
         }
 
         internal void ViewExpenses()
         {
-            var charts = window.GetChartsArea();
+            var charts = this.window.GetChartsArea();
             charts.SelectExpenses();
         }
 
         internal void ViewStock()
         {
-            if (IsSecuritySelected)
+            if (this.IsSecuritySelected)
             {
-                var charts = window.GetChartsArea();
+                var charts = this.window.GetChartsArea();
                 charts.SelectStock();
             }
         }
         internal void ViewHistory()
         {
-            if (window.IsCategorySelected || window.IsPayeeSelected)
+            if (this.window.IsCategorySelected || this.window.IsPayeeSelected)
             {
-                var charts = window.GetChartsArea();
+                var charts = this.window.GetChartsArea();
                 charts.SelectHistory();
             }
         }
@@ -750,13 +750,13 @@ namespace Walkabout.Tests
 
         void OpenAttachmentDialog()
         {
-            AssertSelectedTransaction();
-            attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
+            this.AssertSelectedTransaction();
+            this.attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
         }
 
         void PasteImageAttachment()
         {
-            Assert.IsNotNull(attachmentDialog);
+            Assert.IsNotNull(this.attachmentDialog);
 
             var border = new System.Windows.Controls.Border()
             {
@@ -781,10 +781,10 @@ namespace Walkabout.Tests
             bitmap.Render(border);
             Clipboard.SetImage(bitmap);
 
-            attachmentDialog.ClickPaste();
+            this.attachmentDialog.ClickPaste();
 
             // verify image exists
-            var image = attachmentDialog.ScrollViewer.FindImage();
+            var image = this.attachmentDialog.ScrollViewer.FindImage();
 
             Assert.IsNotNull(image);
         }
@@ -793,27 +793,27 @@ namespace Walkabout.Tests
         {
             get
             {
-                Assert.IsNotNull(attachmentDialog);
-                var image = attachmentDialog.ScrollViewer.FindImage(0);
+                Assert.IsNotNull(this.attachmentDialog);
+                var image = this.attachmentDialog.ScrollViewer.FindImage(0);
                 return (image != null);
             }
         }
 
         void RotateAttachmentRight()
         {
-            Assert.IsNotNull(attachmentDialog);
-            attachmentDialog.ClickRotateRight();
+            Assert.IsNotNull(this.attachmentDialog);
+            this.attachmentDialog.ClickRotateRight();
         }
 
         void RotateAttachmentLeft()
         {
-            Assert.IsNotNull(attachmentDialog);
-            attachmentDialog.ClickRotateLeft();
+            Assert.IsNotNull(this.attachmentDialog);
+            this.attachmentDialog.ClickRotateLeft();
         }
 
         void PasteTextAttachment()
         {
-            Assert.IsNotNull(attachmentDialog);
+            Assert.IsNotNull(this.attachmentDialog);
 
             Clipboard.Clear();
 
@@ -821,20 +821,20 @@ namespace Walkabout.Tests
 containing some random text
 to make sure attachments work.");
 
-            attachmentDialog.WaitForInputIdle(50);
-            attachmentDialog.ClickPaste();
+            this.attachmentDialog.WaitForInputIdle(50);
+            this.attachmentDialog.ClickPaste();
 
             // verify RichTextBox
-            var box = attachmentDialog.ScrollViewer.FindRichText();
+            var box = this.attachmentDialog.ScrollViewer.FindRichText();
 
             Assert.IsNotNull(box);
         }
 
         void CloseAttachmentDialog()
         {
-            Assert.IsNotNull(attachmentDialog);
-            attachmentDialog.Close();
-            attachmentDialog = null;
+            Assert.IsNotNull(this.attachmentDialog);
+            this.attachmentDialog.Close();
+            this.attachmentDialog = null;
         }
 
         #endregion 
@@ -843,7 +843,7 @@ to make sure attachments work.");
 
         void ViewCategories()
         {
-            window.ViewCategories();
+            this.window.ViewCategories();
         }
 
         void EnterCategories()
@@ -853,15 +853,15 @@ to make sure attachments work.");
 
         void SelectCategory()
         {
-            CategoriesWrapper categories = window.ViewCategories();
+            CategoriesWrapper categories = this.window.ViewCategories();
 
             List<AutomationElement> topLevelCategories = categories.Categories;
             if (topLevelCategories.Count > 0)
             {
-                int i = random.Next(0, topLevelCategories.Count);
+                int i = this.random.Next(0, topLevelCategories.Count);
                 categories.Select(topLevelCategories[i]);
-                window.ResetReport();
-                window.WaitForInputIdle(500);
+                this.window.ResetReport();
+                this.window.WaitForInputIdle(500);
             }
         }
 
@@ -869,7 +869,7 @@ to make sure attachments work.");
         {
             get
             {
-                return !window.HasCategories;
+                return !this.window.HasCategories;
             }
         }
 
@@ -877,7 +877,7 @@ to make sure attachments work.");
         {
             get
             {
-                return window.IsCategorySelected;
+                return this.window.IsCategorySelected;
             }
         }
         #endregion 
@@ -885,26 +885,26 @@ to make sure attachments work.");
         #region Payees
         void ViewPayees()
         {
-            window.ViewPayees();
+            this.window.ViewPayees();
         }
 
         bool IsPayeeSelected
         {
             get
             {
-                return window.IsPayeeSelected;
+                return this.window.IsPayeeSelected;
             }
         }
 
         void SelectPayee()
         {
-            PayeesWrapper payees = window.ViewPayees();
+            PayeesWrapper payees = this.window.ViewPayees();
             if (payees.Count > 0)
             {
-                int i = random.Next(0, payees.Count);
+                int i = this.random.Next(0, payees.Count);
                 payees.Select(i);
-                window.ResetReport();
-                window.WaitForInputIdle(500);
+                this.window.ResetReport();
+                this.window.WaitForInputIdle(500);
             }
         }
 
@@ -914,26 +914,26 @@ to make sure attachments work.");
 
         void ViewSecurities()
         {
-            window.ViewSecurities();
+            this.window.ViewSecurities();
         }
 
         bool IsSecuritySelected
         {
             get
             {
-                return window.IsSecuritySelected;
+                return this.window.IsSecuritySelected;
             }
         }
 
         void SelectSecurity()
         {
-            SecuritiesWrapper securities = window.ViewSecurities();
+            SecuritiesWrapper securities = this.window.ViewSecurities();
             if (securities.Count > 0)
             {
-                int i = random.Next(0, securities.Count);
+                int i = this.random.Next(0, securities.Count);
                 securities.Select(i);
-                window.ResetReport();
-                window.WaitForInputIdle(500);
+                this.window.ResetReport();
+                this.window.WaitForInputIdle(500);
             }
         }
 
@@ -943,19 +943,19 @@ to make sure attachments work.");
 
         void ViewAccounts()
         {
-            accounts = window.ViewAccounts();
+            this.accounts = this.window.ViewAccounts();
         }
 
         void EnterAccounts()
         {
-            accounts = window.ViewAccounts();
+            this.accounts = this.window.ViewAccounts();
         }
 
         bool HasAccounts
         {
             get
             {
-                return accounts != null ? accounts.HasAccounts : false;
+                return this.accounts != null ? this.accounts.HasAccounts : false;
             }
         }
 
@@ -963,7 +963,7 @@ to make sure attachments work.");
         {
             get
             {
-                return window.IsAccountSelected;
+                return this.window.IsAccountSelected;
             }
         }
 
@@ -971,30 +971,30 @@ to make sure attachments work.");
 
         void AddAccount()
         {
-            string type = AccountTypes[random.Next(0, AccountTypes.Length)];
+            string type = AccountTypes[this.random.Next(0, AccountTypes.Length)];
             string name = (type == "Checking") ? "My Bank" : ((type == "Credit") ? "My Credit Card" : "My Investments");
-            accounts.AddAccount(name, type);
-            ClearTransactionViewState();
+            this.accounts.AddAccount(name, type);
+            this.ClearTransactionViewState();
         }
 
         void DeleteAccount()
         {
-            int index = random.Next(0, accounts.Accounts.Count);
-            accounts.Select(index);
-            string name = accounts.SelectedAccount;
+            int index = this.random.Next(0, this.accounts.Accounts.Count);
+            this.accounts.Select(index);
+            string name = this.accounts.SelectedAccount;
             if (name != null && name.Contains(OnlineBankName))
             {
-                hasOnlineAccounts = false;
+                this.hasOnlineAccounts = false;
             }
-            accounts.DeleteAccount(index);
-            ClearTransactionViewState();
+            this.accounts.DeleteAccount(index);
+            this.ClearTransactionViewState();
         }
 
         void SelectAccount()
         {
-            accounts.SelectAccount(random.Next(0, accounts.Accounts.Count));
-            window.ResetReport();
-            ClearTransactionViewState();
+            this.accounts.SelectAccount(this.random.Next(0, this.accounts.Accounts.Count));
+            this.window.ResetReport();
+            this.ClearTransactionViewState();
         }
         #endregion 
 
@@ -1007,10 +1007,10 @@ to make sure attachments work.");
 
         void FocusTransactionView()
         {
-            window.CloseReport();
-            this.transactions = window.FindTransactionGrid();
+            this.window.CloseReport();
+            this.transactions = this.window.FindTransactionGrid();
             this.quickFilter = null;
-            window.WaitForInputIdle(200);
+            this.window.WaitForInputIdle(200);
 
             var selection = this.transactions.Selection;
             if (selection == null && this.transactions.Count > 0)
@@ -1034,7 +1034,7 @@ to make sure attachments work.");
                 throw new Exception("Cannot select a transaction right now");
             }
 
-            selectedTransaction = this.transactions.Select(random.Next(0, this.transactions.Count));
+            this.selectedTransaction = this.transactions.Select(this.random.Next(0, this.transactions.Count));
             this.editedValues = new TransactionDetails();
         }
 
@@ -1043,7 +1043,7 @@ to make sure attachments work.");
             // sort by a random column.
             if (this.transactions != null)
             {
-                int i = random.Next(0, this.transactions.Columns.Count);
+                int i = this.random.Next(0, this.transactions.Columns.Count);
                 TransactionViewColumn column = this.transactions.Columns.GetColumn(i);
 
                 this.transactions.SortBy(column);
@@ -1057,8 +1057,8 @@ to make sure attachments work.");
                 throw new Exception("Cannot delete a transaction right now");
             }
 
-            this.transactions.Delete(random.Next(0, this.transactions.Count));
-            selectedTransaction = null;
+            this.transactions.Delete(this.random.Next(0, this.transactions.Count));
+            this.selectedTransaction = null;
             this.editedValues = null;
         }
 
@@ -1069,29 +1069,29 @@ to make sure attachments work.");
                 throw new Exception("Cannot edit a transaction right now");
             }
 
-            selectedTransaction = this.transactions.AddNew();
+            this.selectedTransaction = this.transactions.AddNew();
             this.editedValues = new TransactionDetails();
-            selectedTransaction.Select();
+            this.selectedTransaction.Select();
         }
 
         void EditSelectedTransaction()
         {
-            AssertSelectedTransaction();
-            selectedTransaction.Focus();
+            this.AssertSelectedTransaction();
+            this.selectedTransaction.Focus();
         }
 
         private void AssertSelectedTransaction()
         {
-            if (transactions == null)
+            if (this.transactions == null)
             {
-                FocusTransactionView();
+                this.FocusTransactionView();
             }
 
             // caller is about to operate on this selection, so make sure it's up to date!            
-            this.selectedTransaction = transactions.Selection;
+            this.selectedTransaction = this.transactions.Selection;
             if (this.selectedTransaction == null)
             {
-                SelectTransaction();
+                this.SelectTransaction();
                 if (this.selectedTransaction == null)
                 {
                     throw new Exception("No selected transaction");
@@ -1107,14 +1107,14 @@ to make sure attachments work.");
         {
             get
             {
-                AccountsWrapper accounts = window.ViewAccounts();
+                AccountsWrapper accounts = this.window.ViewAccounts();
                 return accounts.Accounts.Count > 1 && this.transactions != null && this.transactions.IsBankAccount;
             }
         }
 
         void AddTransfer()
         {
-            AccountsWrapper accounts = window.ViewAccounts();
+            AccountsWrapper accounts = this.window.ViewAccounts();
             List<string> names = accounts.Accounts;
             string sel = accounts.SelectedAccount;
             if (sel != null)
@@ -1125,20 +1125,20 @@ to make sure attachments work.");
             {
                 throw new Exception("There is a bug in the model, it should not have attempted to add a transfer at this time since there are not enough accounts");
             }
-            string transferTo = names[random.Next(0, names.Count)];
+            string transferTo = names[this.random.Next(0, names.Count)];
 
-            AssertSelectedTransaction();
-            selectedTransaction.SetPayee("Transfer to: " + transferTo);
-            selectedTransaction.SetCategory("");
-            selectedTransaction.SetSalesTax(0);
-            selectedTransaction.SetAmount(GetRandomDecimal(-500, 500));
+            this.AssertSelectedTransaction();
+            this.selectedTransaction.SetPayee("Transfer to: " + transferTo);
+            this.selectedTransaction.SetCategory("");
+            this.selectedTransaction.SetSalesTax(0);
+            this.selectedTransaction.SetAmount(this.GetRandomDecimal(-500, 500));
         }
 
         bool RandomBoolean
         {
             get
             {
-                return random.Next(0, 2) == 1;
+                return this.random.Next(0, 2) == 1;
             }
         }
 
@@ -1148,16 +1148,16 @@ to make sure attachments work.");
 
         void EditDate()
         {
-            AssertSelectedTransaction();
+            this.AssertSelectedTransaction();
             this.editedValues.Date = DateTime.Now.ToShortDateString();
-            selectedTransaction.SetDate(this.editedValues.Date);
+            this.selectedTransaction.SetDate(this.editedValues.Date);
         }
 
         void EditPayee()
         {
-            AssertSelectedTransaction();
-            this.editedValues.Payee = GetRandomPayee();
-            selectedTransaction.SetPayee(editedValues.Payee);
+            this.AssertSelectedTransaction();
+            this.editedValues.Payee = this.GetRandomPayee();
+            this.selectedTransaction.SetPayee(this.editedValues.Payee);
         }
 
         static string[] SamplePayees = new string[] {
@@ -1166,42 +1166,42 @@ to make sure attachments work.");
 
         private string GetRandomPayee()
         {
-            int index = random.Next(0, SamplePayees.Length);
+            int index = this.random.Next(0, SamplePayees.Length);
             return SamplePayees[index];
         }
 
         void EditCategory()
         {
-            AssertSelectedTransaction();
-            string cat = GetRandomCategory();
+            this.AssertSelectedTransaction();
+            string cat = this.GetRandomCategory();
             this.editedValues.Category = cat;
-            selectedTransaction.Focus();
-            selectedTransaction.SetCategory(cat);
+            this.selectedTransaction.Focus();
+            this.selectedTransaction.SetCategory(cat);
 
             // now move focus to next field to trigger the new category dialog (if necessary)
             Thread.Sleep(30);
             Input.TapKey(System.Windows.Input.Key.Tab);
             Thread.Sleep(30);
 
-            AutomationElement child = window.Element.FindChildWindow("Category", 2);
-            categoryDialogVisible = (child != null);
+            AutomationElement child = this.window.Element.FindChildWindow("Category", 2);
+            this.categoryDialogVisible = (child != null);
         }
 
         bool categoryDialogVisible;
 
         bool NoCategoryDialog
         {
-            get { return !categoryDialogVisible; }
+            get { return !this.categoryDialogVisible; }
         }
 
         bool CategoryDialogShowing
         {
-            get { return categoryDialogVisible; }
+            get { return this.categoryDialogVisible; }
         }
 
         void CategoryDetails()
         {
-            AutomationElement child = window.Element.FindChildWindow("Category", 4);
+            AutomationElement child = this.window.Element.FindChildWindow("Category", 4);
             if (child != null)
             {
                 // todo: edit more of the category properties...
@@ -1216,64 +1216,64 @@ to make sure attachments work.");
 
         private string GetRandomCategory()
         {
-            int index = random.Next(0, SampleCategories.Length);
+            int index = this.random.Next(0, SampleCategories.Length);
             return SampleCategories[index];
         }
 
 
         void EditMemo()
         {
-            AssertSelectedTransaction();
+            this.AssertSelectedTransaction();
             this.editedValues.Memo = DateTime.Now.ToLongTimeString();
-            selectedTransaction.SetMemo(this.editedValues.Memo);
+            this.selectedTransaction.SetMemo(this.editedValues.Memo);
         }
 
         void EditDeposit()
         {
-            AssertSelectedTransaction();
-            decimal amount = GetRandomDecimal(0, 10000);
+            this.AssertSelectedTransaction();
+            decimal amount = this.GetRandomDecimal(0, 10000);
             this.editedValues.Amount = amount;
-            selectedTransaction.SetAmount(amount);
+            this.selectedTransaction.SetAmount(amount);
         }
 
         void EditPayment()
         {
-            AssertSelectedTransaction();
-            decimal amount = -GetRandomDecimal(0, 10000);
+            this.AssertSelectedTransaction();
+            decimal amount = -this.GetRandomDecimal(0, 10000);
             this.editedValues.Amount = amount;
-            selectedTransaction.SetAmount(amount);
+            this.selectedTransaction.SetAmount(amount);
         }
 
         void EditSalesTax()
         {
-            AssertSelectedTransaction();
-            decimal salesTax = GetRandomDecimal(0, 20);
+            this.AssertSelectedTransaction();
+            decimal salesTax = this.GetRandomDecimal(0, 20);
             this.editedValues.SalesTax = salesTax;
-            selectedTransaction.SetSalesTax(salesTax);
+            this.selectedTransaction.SetSalesTax(salesTax);
         }
 
         decimal GetRandomDecimal(double min, double max)
         {
             double range = Math.Abs(max - min);
-            return (decimal)(Math.Round(range * random.NextDouble() * 100) / 100 + min);
+            return (decimal)(Math.Round(range * this.random.NextDouble() * 100) / 100 + min);
         }
 
         void VerifyNewTransaction()
         {
-            AssertSelectedTransaction();
+            this.AssertSelectedTransaction();
 
-            AreEqual(this.editedValues.SalesTax, selectedTransaction.GetSalesTax(), "Sales tax");
-            AreEqual(this.editedValues.Amount, selectedTransaction.GetAmount(), "Amount");
-            AreEqual(this.editedValues.Payee, selectedTransaction.GetPayee(), "Payee");
-            AreEqual(this.editedValues.Category, selectedTransaction.GetCategory(), "Category");
+            this.AreEqual(this.editedValues.SalesTax, this.selectedTransaction.GetSalesTax(), "Sales tax");
+            this.AreEqual(this.editedValues.Amount, this.selectedTransaction.GetAmount(), "Amount");
+            this.AreEqual(this.editedValues.Payee, this.selectedTransaction.GetPayee(), "Payee");
+            this.AreEqual(this.editedValues.Category, this.selectedTransaction.GetCategory(), "Category");
 
             // Ensure that the date is in the same format as we expect it 
-            string dateInTransactionAsString = selectedTransaction.GetDate();
+            string dateInTransactionAsString = this.selectedTransaction.GetDate();
             string dateTransactionAsNormalizedString = DateTime.Parse(dateInTransactionAsString).ToShortDateString();
             string dateEditedAsNormalizedString = DateTime.Parse(this.editedValues.Date).ToShortDateString();
-            AreEqual(dateEditedAsNormalizedString, dateTransactionAsNormalizedString, "Category");
+            this.AreEqual(dateEditedAsNormalizedString, dateTransactionAsNormalizedString, "Category");
 
-            AreEqual(this.editedValues.Memo, selectedTransaction.GetMemo(), "Memo");
+            this.AreEqual(this.editedValues.Memo, this.selectedTransaction.GetMemo(), "Memo");
         }
 
         private void DumpChildren(AutomationElement e, string indent)
@@ -1283,7 +1283,7 @@ to make sure attachments work.");
             AutomationElement child = TreeWalker.RawViewWalker.GetFirstChild(e);
             while (child != null)
             {
-                DumpChildren(child, indent + "  ");
+                this.DumpChildren(child, indent + "  ");
                 child = TreeWalker.RawViewWalker.GetNextSibling(child);
             }
         }
@@ -1291,9 +1291,9 @@ to make sure attachments work.");
 
         void NavigateTransfer()
         {
-            AssertSelectedTransaction();
-            transactions.NavigateTransfer();
-            this.selectedTransaction = transactions.Selection;
+            this.AssertSelectedTransaction();
+            this.transactions.NavigateTransfer();
+            this.selectedTransaction = this.transactions.Selection;
         }
 
         void AreEqual(string expected, string actual, string name)
@@ -1325,7 +1325,7 @@ to make sure attachments work.");
         {
             get
             {
-                this.transactions = window.FindTransactionGrid();
+                this.transactions = this.window.FindTransactionGrid();
                 this.quickFilter = null;
                 return this.transactions != null && this.transactions.IsEditable;
             }
@@ -1335,7 +1335,7 @@ to make sure attachments work.");
         {
             get
             {
-                this.transactions = window.FindTransactionGrid();
+                this.transactions = this.window.FindTransactionGrid();
                 this.quickFilter = null;
                 return this.transactions != null && this.transactions.HasTransactions;
             }
@@ -1345,7 +1345,7 @@ to make sure attachments work.");
         {
             get
             {
-                return !IsEditable && !HasTransaction;
+                return !this.IsEditable && !this.HasTransaction;
             }
         }
 
@@ -1402,8 +1402,8 @@ to make sure attachments work.");
 
         void ClearTransactionViewState()
         {
-            selectedTransaction = null;
-            transactions = null;
+            this.selectedTransaction = null;
+            this.transactions = null;
         }
 
         #endregion
@@ -1412,27 +1412,27 @@ to make sure attachments work.");
 
         void NetWorthReport()
         {
-            window.NetWorthReport();
-            ClearTransactionViewState();
+            this.window.NetWorthReport();
+            this.ClearTransactionViewState();
         }
 
         void TaxReport()
         {
-            window.TaxReport();
-            ClearTransactionViewState();
+            this.window.TaxReport();
+            this.ClearTransactionViewState();
         }
 
         void PortfolioReport()
         {
-            window.PortfolioReport();
-            ClearTransactionViewState();
+            this.window.PortfolioReport();
+            this.ClearTransactionViewState();
         }
         #endregion
 
         #region Export
         void Export()
         {
-            FocusTransactionView();
+            this.FocusTransactionView();
         }
 
         void ExportCsv()
@@ -1440,10 +1440,10 @@ to make sure attachments work.");
             if (this.transactions != null)
             {
                 var name = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "test.csv");
-                DeleteFileWithRetries(name, 10);
+                this.DeleteFileWithRetries(name, 10);
                 this.transactions.Export(name);
 
-                AutomationElement child = window.Element.FindChildWindow("Save As", 10);
+                AutomationElement child = this.window.Element.FindChildWindow("Save As", 10);
                 if (child != null)
                 {
                     SaveAsDialogWrapper sd = new SaveAsDialogWrapper(child);
@@ -1464,9 +1464,9 @@ to make sure attachments work.");
         {
             // See if it is our good friend the stock quote guy which happens when
             // internet is unavailable, or stock quote service is down.
-            if (window != null)
+            if (this.window != null)
             {
-                AutomationElement msgbox = window.Element.FindChildWindow("Error Fetching Stock Quotes", 3);
+                AutomationElement msgbox = this.window.Element.FindChildWindow("Error Fetching Stock Quotes", 3);
                 if (msgbox != null)
                 {
                     MessageBoxWrapper mbox = new MessageBoxWrapper(msgbox);
@@ -1501,8 +1501,8 @@ to make sure attachments work.");
                 }
                 catch (Exception ex)
                 {
-                    TestContext.WriteLine("### Error deleting file: " + fileName);
-                    TestContext.WriteLine("### " + ex.Message);
+                    this.TestContext.WriteLine("### Error deleting file: " + fileName);
+                    this.TestContext.WriteLine("### " + ex.Message);
                 }
             }
             return false;
@@ -1524,7 +1524,7 @@ to make sure attachments work.");
 
             public override void WriteLine(string msg)
             {
-                context.WriteLine(msg);
+                this.context.WriteLine(msg);
                 Debug.WriteLine(msg);
             }
         }

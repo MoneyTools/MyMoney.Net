@@ -16,14 +16,14 @@ namespace Walkabout.Dialogs
 
         public RentBuilding TheBuilding
         {
-            get { return theBuilding; }
+            get { return this.theBuilding; }
             set
             {
-                theBuilding = value;
-                editingBuilding = value.ShallowCopy();
-                this.DataContext = editingBuilding;
-                this.Units.ItemsSource = editingBuilding.Units;
-                UpdateUI();
+                this.theBuilding = value;
+                this.editingBuilding = value.ShallowCopy();
+                this.DataContext = this.editingBuilding;
+                this.Units.ItemsSource = this.editingBuilding.Units;
+                this.UpdateUI();
             }
         }
 
@@ -31,8 +31,8 @@ namespace Walkabout.Dialogs
         {
             this.money = money;
 
-            InitializeComponent();
-            UpdateUI();
+            this.InitializeComponent();
+            this.UpdateUI();
 
         }
 
@@ -47,40 +47,40 @@ namespace Walkabout.Dialogs
 
             get
             {
-                if (categories == null)
+                if (this.categories == null)
                 {
-                    categories = new List<Category>();
+                    this.categories = new List<Category>();
                     Category na = new Category() { Name = "--N/A--", Id = -1 };
-                    categories.Add(na);
+                    this.categories.Add(na);
 
                     foreach (Category c in this.money.Categories.SortedCategories)
                     {
-                        categories.Add(c);
+                        this.categories.Add(c);
                     }
                 }
-                return categories;
+                return this.categories;
             }
         }
 
 
         private void ButtonOk(object sender, RoutedEventArgs e)
         {
-            theBuilding.Name = editingBuilding.Name;
+            this.theBuilding.Name = this.editingBuilding.Name;
 
-            theBuilding.Address = editingBuilding.Address;
-            theBuilding.Note = editingBuilding.Note;
-            theBuilding.CategoryForIncome = editingBuilding.CategoryForIncome;
-            theBuilding.CategoryForInterest = editingBuilding.CategoryForInterest;
-            theBuilding.CategoryForMaintenance = editingBuilding.CategoryForMaintenance;
-            theBuilding.CategoryForManagement = editingBuilding.CategoryForManagement;
-            theBuilding.CategoryForRepairs = editingBuilding.CategoryForRepairs;
-            theBuilding.CategoryForTaxes = editingBuilding.CategoryForTaxes;
+            this.theBuilding.Address = this.editingBuilding.Address;
+            this.theBuilding.Note = this.editingBuilding.Note;
+            this.theBuilding.CategoryForIncome = this.editingBuilding.CategoryForIncome;
+            this.theBuilding.CategoryForInterest = this.editingBuilding.CategoryForInterest;
+            this.theBuilding.CategoryForMaintenance = this.editingBuilding.CategoryForMaintenance;
+            this.theBuilding.CategoryForManagement = this.editingBuilding.CategoryForManagement;
+            this.theBuilding.CategoryForRepairs = this.editingBuilding.CategoryForRepairs;
+            this.theBuilding.CategoryForTaxes = this.editingBuilding.CategoryForTaxes;
 
-            theBuilding.OwnershipName1 = editingBuilding.OwnershipName1;
-            theBuilding.OwnershipName2 = editingBuilding.OwnershipName2;
+            this.theBuilding.OwnershipName1 = this.editingBuilding.OwnershipName1;
+            this.theBuilding.OwnershipName2 = this.editingBuilding.OwnershipName2;
 
-            theBuilding.OwnershipPercentage1 = editingBuilding.OwnershipPercentage1;
-            theBuilding.OwnershipPercentage2 = editingBuilding.OwnershipPercentage2;
+            this.theBuilding.OwnershipPercentage1 = this.editingBuilding.OwnershipPercentage1;
+            this.theBuilding.OwnershipPercentage2 = this.editingBuilding.OwnershipPercentage2;
 
 
             this.DialogResult = true;

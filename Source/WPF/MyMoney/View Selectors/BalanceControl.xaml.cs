@@ -36,7 +36,7 @@ namespace Walkabout.Views.Controls
 
         public BalanceControl()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.TextBoxStatementBalance.LostFocus += new RoutedEventHandler(this.StatementBalance_LostFocus);
         }
@@ -44,20 +44,20 @@ namespace Walkabout.Views.Controls
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
             base.OnVisualParentChanged(oldParent);
-            RegisterFocusEvents(VisualTreeHelper.GetParent(this) != null);
+            this.RegisterFocusEvents(VisualTreeHelper.GetParent(this) != null);
         }
 
         private void RegisterFocusEvents(bool register)
         {
-            if (register && !eventWired)
+            if (register && !this.eventWired)
             {
-                Keyboard.AddPreviewGotKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(TooltipTracker));
-                eventWired = true;
+                Keyboard.AddPreviewGotKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(this.TooltipTracker));
+                this.eventWired = true;
             }
-            else if (!register && eventWired)
+            else if (!register && this.eventWired)
             {
-                Keyboard.RemoveGotKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(TooltipTracker));
-                eventWired = false;
+                Keyboard.RemoveGotKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(this.TooltipTracker));
+                this.eventWired = false;
             }
         }
 
@@ -75,7 +75,7 @@ namespace Walkabout.Views.Controls
                     text = tooltip.ToString();
                 }
             }
-            TextBlockMessage.Text = text;
+            this.TextBlockMessage.Text = text;
         }
 
 
@@ -118,9 +118,9 @@ namespace Walkabout.Views.Controls
                 previous.Add(stmt.Date);
             }
 
-            previousReconciliations = new List<string>(from d in previous orderby d ascending select d.ToShortDateString());
-            previousReconciliations.Add(""); // add one more so user has to move selection to select a previous statement.
-            this.ComboBoxPreviousReconcileDates.ItemsSource = previousReconciliations;
+            this.previousReconciliations = new List<string>(from d in previous orderby d ascending select d.ToShortDateString());
+            this.previousReconciliations.Add(""); // add one more so user has to move selection to select a previous statement.
+            this.ComboBoxPreviousReconcileDates.ItemsSource = this.previousReconciliations;
 
             this.AccountInfo.Text = string.Format("{0} ({1})", a.Name, a.AccountId);
 
@@ -133,7 +133,7 @@ namespace Walkabout.Views.Controls
             else
             {
                 string lastDate = estdate.ToShortDateString();
-                if (previousReconciliations.Contains(lastDate))
+                if (this.previousReconciliations.Contains(lastDate))
                 {
                     this.SelectedPreviousStatement = estdate;
                 }
@@ -142,35 +142,35 @@ namespace Walkabout.Views.Controls
                     Debug.WriteLine("Hmmm, there were no transactions with the Account.LastBalance date set as the ReconciledDate?");
                 }
             }
-            this.ComboBoxPreviousReconcileDates.SelectedIndex = previousReconciliations.Count - 1;
-            estdate = GetNextStatementDate(this.SelectedPreviousStatement);
-            this.ComboBoxPreviousReconcileDates.SelectionChanged -= new SelectionChangedEventHandler(ComboBoxPreviousReconcileDates_SelectionChanged);
-            this.ComboBoxPreviousReconcileDates.SelectionChanged += new SelectionChangedEventHandler(ComboBoxPreviousReconcileDates_SelectionChanged);
+            this.ComboBoxPreviousReconcileDates.SelectedIndex = this.previousReconciliations.Count - 1;
+            estdate = this.GetNextStatementDate(this.SelectedPreviousStatement);
+            this.ComboBoxPreviousReconcileDates.SelectionChanged -= new SelectionChangedEventHandler(this.ComboBoxPreviousReconcileDates_SelectionChanged);
+            this.ComboBoxPreviousReconcileDates.SelectionChanged += new SelectionChangedEventHandler(this.ComboBoxPreviousReconcileDates_SelectionChanged);
 
             this.StatementDate = estdate;
 
-            this.myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(Transactions_Changed);
+            this.myMoney.Transactions.Changed += new EventHandler<ChangeEventArgs>(this.Transactions_Changed);
 
             this.interestCategory = (this.account.Type == AccountType.Brokerage) ?
                 this.myMoney.Categories.InvestmentInterest : this.myMoney.Categories.InterestEarned;
 
-            FindInterestTransaction(estdate);
+            this.FindInterestTransaction(estdate);
 
-            this.StatementDatePicker.KeyDown -= new KeyEventHandler(ChildKeyDown);
-            this.StatementDatePicker.KeyDown += new KeyEventHandler(ChildKeyDown);
-            this.StatementDatePicker.SelectedDateChanged -= new EventHandler<SelectionChangedEventArgs>(OnStatementDateChanged);
-            this.StatementDatePicker.SelectedDateChanged += new EventHandler<SelectionChangedEventArgs>(OnStatementDateChanged);
-            this.TextBoxStatementBalance.KeyDown -= new KeyEventHandler(ChildKeyDown);
-            this.TextBoxStatementBalance.KeyDown += new KeyEventHandler(ChildKeyDown);
-            this.TextBoxInterestEarned.LostFocus -= new RoutedEventHandler(TextBoxInterestEarned_LostFocus);
-            this.TextBoxInterestEarned.LostFocus += new RoutedEventHandler(TextBoxInterestEarned_LostFocus);
+            this.StatementDatePicker.KeyDown -= new KeyEventHandler(this.ChildKeyDown);
+            this.StatementDatePicker.KeyDown += new KeyEventHandler(this.ChildKeyDown);
+            this.StatementDatePicker.SelectedDateChanged -= new EventHandler<SelectionChangedEventArgs>(this.OnStatementDateChanged);
+            this.StatementDatePicker.SelectedDateChanged += new EventHandler<SelectionChangedEventArgs>(this.OnStatementDateChanged);
+            this.TextBoxStatementBalance.KeyDown -= new KeyEventHandler(this.ChildKeyDown);
+            this.TextBoxStatementBalance.KeyDown += new KeyEventHandler(this.ChildKeyDown);
+            this.TextBoxInterestEarned.LostFocus -= new RoutedEventHandler(this.TextBoxInterestEarned_LostFocus);
+            this.TextBoxInterestEarned.LostFocus += new RoutedEventHandler(this.TextBoxInterestEarned_LostFocus);
             this.initializing = false;
 
             // setup initial values.
-            UpdateBalances(estdate);
+            this.UpdateBalances(estdate);
 
-            this.Loaded -= new RoutedEventHandler(OnLoad);
-            this.Loaded += new RoutedEventHandler(OnLoad);
+            Loaded -= new RoutedEventHandler(this.OnLoad);
+            Loaded += new RoutedEventHandler(this.OnLoad);
         }
 
         DateTime GetNextStatementDate(DateTime date)
@@ -188,11 +188,11 @@ namespace Walkabout.Views.Controls
         {
             this.interestTransaction = null;
             DateTime prevMonth = date.AddDays(-31);
-            IList<Transaction> list = this.myMoney.Transactions.GetTransactionsByCategory(interestCategory, null);
+            IList<Transaction> list = this.myMoney.Transactions.GetTransactionsByCategory(this.interestCategory, null);
             for (int i = list.Count - 1; i >= 0; i--)
             { // most likely to be at the end of the list.
                 Transaction t = (Transaction)list[i];
-                if (t.Account == this.account && t.Category == interestCategory && t.Date <= date && t.Date > prevMonth &&
+                if (t.Account == this.account && t.Category == this.interestCategory && t.Date <= date && t.Date > prevMonth &&
                     t.Status != TransactionStatus.Reconciled && t.Status != TransactionStatus.Void)
                 {
                     this.interestTransaction = t;
@@ -215,7 +215,7 @@ namespace Walkabout.Views.Controls
                 decimal d = this.myMoney.ReconciledBalance(this.account, this.StatementDate);
                 this.LastBalance = d;
                 this.FindInterestTransaction(this.StatementDate);
-                this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, GetNextStatementDate(this.StatementDate));
+                this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, this.GetNextStatementDate(this.StatementDate));
             }
             catch (Exception)
             {
@@ -231,7 +231,7 @@ namespace Walkabout.Views.Controls
 
         void OnStatementDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateBalances(this.StatementDate);
+            this.UpdateBalances(this.StatementDate);
         }
 
 
@@ -245,7 +245,7 @@ namespace Walkabout.Views.Controls
             decimal d = this.myMoney.ReconciledBalance(this.account, statementDate);
             this.LastBalance = d;
 
-            this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, GetNextStatementDate(statementDate));
+            this.YourNewBalance = this.myMoney.ReconciledBalance(this.account, this.GetNextStatementDate(statementDate));
 
             // in case we are re-editing a previously reconciled statement.
             this.statement = this.statements.GetStatement(this.account, statementDate);
@@ -280,14 +280,14 @@ namespace Walkabout.Views.Controls
                 StatementDateChanged(this, EventArgs.Empty);
             }
 
-            CheckDone(false);
+            this.CheckDone(false);
         }
 
         public bool IsLatestStatement
         {
             get
             {
-                return (string)this.ComboBoxPreviousReconcileDates.SelectedItem == previousReconciliations.Last();
+                return (string)this.ComboBoxPreviousReconcileDates.SelectedItem == this.previousReconciliations.Last();
             }
         }
 
@@ -316,7 +316,7 @@ namespace Walkabout.Views.Controls
             {
                 this.lastBalance = value;
                 this.TextBlockPreviousBalance.Text = value.ToString("C");
-                SetColor(this.TextBlockPreviousBalance, value);
+                this.SetColor(this.TextBlockPreviousBalance, value);
             }
         }
 
@@ -334,7 +334,7 @@ namespace Walkabout.Views.Controls
             set
             {
                 this.TextBoxStatementBalance.Text = value.ToString("C");
-                SetColor(this.TextBoxStatementBalance, value);
+                this.SetColor(this.TextBoxStatementBalance, value);
             }
         }
 
@@ -355,8 +355,8 @@ namespace Walkabout.Views.Controls
             {
 
                 this.TextBlockCurrentBalance.Text = value.ToString("C");
-                SetColor(this.TextBlockCurrentBalance, value);
-                CheckDone(true);
+                this.SetColor(this.TextBlockCurrentBalance, value);
+                this.CheckDone(true);
             }
         }
 
@@ -378,7 +378,7 @@ namespace Walkabout.Views.Controls
             set
             {
                 this.TextBlockCurrentDelta.Text = value.ToString("C");
-                SetColor(this.TextBlockCurrentDelta, value);
+                this.SetColor(this.TextBlockCurrentDelta, value);
             }
         }
 
@@ -402,7 +402,7 @@ namespace Walkabout.Views.Controls
                     this.interestTransaction.Amount = value;
                 }
                 this.TextBoxInterestEarned.Text = value.ToString("C");
-                SetColor(this.TextBoxInterestEarned, value);
+                this.SetColor(this.TextBoxInterestEarned, value);
             }
         }
 
@@ -411,7 +411,7 @@ namespace Walkabout.Views.Controls
         {
             this.CongratsButton.Visibility = System.Windows.Visibility.Collapsed;
 
-            if (initializing) return;
+            if (this.initializing) return;
 
             if (this.YourNewBalance == -this.NewBalance && this.NewBalance != 0)
             {
@@ -436,9 +436,9 @@ namespace Walkabout.Views.Controls
                 }
 
                 this.CongratsButton.Visibility = System.Windows.Visibility.Visible;
-                if (!played && celebrate)
+                if (!this.played && celebrate)
                 {
-                    played = true;
+                    this.played = true;
                 }
             }
             else
@@ -450,7 +450,7 @@ namespace Walkabout.Views.Controls
                 this.Done.IsEnabled = false;
             }
 
-            this.Delta = NewBalance - YourNewBalance;
+            this.Delta = this.NewBalance - this.YourNewBalance;
         }
 
         void SetColor(FrameworkElement e, decimal d)
@@ -488,7 +488,7 @@ namespace Walkabout.Views.Controls
                 try
                 {
                     d = decimal.Parse(s, NumberStyles.Currency | NumberStyles.AllowParentheses | NumberStyles.AllowCurrencySymbol);
-                    SetColor(textBox, d);
+                    this.SetColor(textBox, d);
                 }
                 catch (Exception e)
                 {
@@ -498,7 +498,7 @@ namespace Walkabout.Views.Controls
             if (msg != null)
             {
                 MessageBoxEx.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Dispatcher.BeginInvoke(new Action(() =>
+                this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     textBox.Focus();
                     textBox.SelectAll();
@@ -514,9 +514,9 @@ namespace Walkabout.Views.Controls
             {
                 return;
             }
-            if (CheckValidDecimal("new balance", this.TextBoxStatementBalance))
+            if (this.CheckValidDecimal("new balance", this.TextBoxStatementBalance))
             {
-                CheckDone(true);
+                this.CheckDone(true);
             }
         }
 
@@ -525,11 +525,11 @@ namespace Walkabout.Views.Controls
             bool hasStatement = false;
             try
             {
-                this.myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(Transactions_Changed);
+                this.myMoney.Transactions.Changed -= new EventHandler<ChangeEventArgs>(this.Transactions_Changed);
 
                 if (!cancelled)
                 {
-                    var fileName = StatementFileName.Text.Trim('"');
+                    var fileName = this.StatementFileName.Text.Trim('"');
                     if (!string.IsNullOrEmpty(fileName) && !System.IO.File.Exists(fileName))
                     {
                         throw new Exception("File not found: " + fileName);
@@ -548,8 +548,8 @@ namespace Walkabout.Views.Controls
             catch (Exception ex)
             {
                 MessageBoxEx.Show(ex.Message, "Error with Statement file", MessageBoxButton.OK, MessageBoxImage.Error);
-                StatementFileName.Focus();
-                StatementFileName.SelectAll();
+                this.StatementFileName.Focus();
+                this.StatementFileName.SelectAll();
                 return;
             }
             this.interestTransaction = null;
@@ -563,7 +563,7 @@ namespace Walkabout.Views.Controls
         {
             if (e.Key == Key.Escape)
             {
-                OnDone(true);
+                this.OnDone(true);
                 e.Handled = true;
                 return;
             }
@@ -572,7 +572,7 @@ namespace Walkabout.Views.Controls
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            OnDone(true);
+            this.OnDone(true);
         }
 
         private void TextBoxInterestEarned_LostFocus(object sender, RoutedEventArgs e)
@@ -593,7 +593,7 @@ namespace Walkabout.Views.Controls
             if (this.interestTransaction != null)
             {
                 this.interestTransaction.Amount = value;
-                if (value == 0 && weAddedInterest)
+                if (value == 0 && this.weAddedInterest)
                 {
                     this.myMoney.Transactions.RemoveTransaction(this.interestTransaction);
                     this.interestTransaction = null;
@@ -608,22 +608,22 @@ namespace Walkabout.Views.Controls
             {
                 this.account.LastBalance = this.StatementDate;
             }
-            OnDone(false);
+            this.OnDone(false);
         }
 
         private void PreviousBalanceHelp_Click(object sender, RoutedEventArgs e)
         {
-            TextBlockMessage.Text = (string)TextBlockPreviousBalance.ToolTip;
+            this.TextBlockMessage.Text = (string)this.TextBlockPreviousBalance.ToolTip;
         }
 
         private void CurrentBalanceHelp_Click(object sender, RoutedEventArgs e)
         {
-            TextBlockMessage.Text = (string)TextBlockCurrentBalance.ToolTip;
+            this.TextBlockMessage.Text = (string)this.TextBlockCurrentBalance.ToolTip;
         }
 
         private void CurrentDeltaHelp_Click(object sender, RoutedEventArgs e)
         {
-            TextBlockMessage.Text = (string)TextBlockCurrentDelta.ToolTip;
+            this.TextBlockMessage.Text = (string)this.TextBlockCurrentDelta.ToolTip;
         }
 
 
@@ -653,7 +653,7 @@ namespace Walkabout.Views.Controls
 
         private void TextBoxStatementBalance_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SetColor(this.TextBoxStatementBalance, this.NewBalance);
+            this.SetColor(this.TextBoxStatementBalance, this.NewBalance);
         }
 
         /// <summary>
@@ -664,7 +664,7 @@ namespace Walkabout.Views.Controls
         private void OnBalanceValueSign_Clicked(object sender, RoutedEventArgs e)
         {
             this.NewBalance = -this.NewBalance;
-            CheckDone(true);
+            this.CheckDone(true);
         }
 
         private void TextBoxStatementBalance_KeyDown(object sender, KeyEventArgs e)
@@ -683,7 +683,7 @@ namespace Walkabout.Views.Controls
             {
                 box.Focus();
                 // stop mouse up undoing the SelectAll in this case.
-                captured = this.CaptureMouse();
+                this.captured = this.CaptureMouse();
                 e.Handled = true;
             }
         }
@@ -692,7 +692,7 @@ namespace Walkabout.Views.Controls
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
-            if (captured)
+            if (this.captured)
             {
                 this.ReleaseMouseCapture();
                 e.Handled = true;
@@ -707,7 +707,7 @@ namespace Walkabout.Views.Controls
             od.CheckFileExists = true;
             if (od.ShowDialog() == true)
             {
-                StatementFileName.Text = od.FileName;
+                this.StatementFileName.Text = od.FileName;
             }
         }
 
@@ -715,7 +715,7 @@ namespace Walkabout.Views.Controls
 
         private void OnStatementFileLostFocus(object sender, RoutedEventArgs e)
         {
-            statementFileDate = this.StatementDate;
+            this.statementFileDate = this.StatementDate;
         }
     }
 

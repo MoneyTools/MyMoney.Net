@@ -15,15 +15,15 @@ namespace Walkabout.Views
         public RentBuilding Building { get; set; }
         public string BuildingName { get; set; }
         public string Period { get; set; }
-        public string Owner1 { get { return string.Format("{0} {1}%", Building.OwnershipName1, Building.OwnershipPercentage1.ToString()); } }
-        public string Owner2 { get { return string.Format("{0} {1}%", Building.OwnershipName2, Building.OwnershipPercentage2.ToString()); } }
+        public string Owner1 { get { return string.Format("{0} {1}%", this.Building.OwnershipName1, this.Building.OwnershipPercentage1.ToString()); } }
+        public string Owner2 { get { return string.Format("{0} {1}%", this.Building.OwnershipName2, this.Building.OwnershipPercentage2.ToString()); } }
 
         public decimal TotalIncomes { get; set; }
         public decimal TotalExpenses
         {
             get
             {
-                return TotalExpensesTaxes + TotalExpensesRepairs + TotalExpensesMaintenance + TotalExpensesManagement + TotalExpensesInterest;
+                return this.TotalExpensesTaxes + this.TotalExpensesRepairs + this.TotalExpensesMaintenance + this.TotalExpensesManagement + this.TotalExpensesInterest;
             }
         }
 
@@ -41,7 +41,7 @@ namespace Walkabout.Views
         {
             get
             {
-                return TotalIncomes + TotalExpenses; // Expenses is tallied in negative value -100
+                return this.TotalIncomes + this.TotalExpenses; // Expenses is tallied in negative value -100
             }
         }
 
@@ -49,7 +49,7 @@ namespace Walkabout.Views
         {
             get
             {
-                return TotalProfit * Building.OwnershipPercentage1 / 100;
+                return this.TotalProfit * this.Building.OwnershipPercentage1 / 100;
             }
         }
 
@@ -57,15 +57,15 @@ namespace Walkabout.Views
         {
             get
             {
-                return TotalProfit * Building.OwnershipPercentage2 / 100;
+                return this.TotalProfit * this.Building.OwnershipPercentage2 / 100;
             }
         }
 
         public RentSummaryView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DataContext = this;
-            this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(RentSummary_IsVisibleChanged);
+            IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.RentSummary_IsVisibleChanged);
         }
 
 
@@ -73,8 +73,8 @@ namespace Walkabout.Views
         {
             if (this.IsVisible)
             {
-                OnBeforeViewStateChanged();
-                OnAfterViewStateChanged();
+                this.OnBeforeViewStateChanged();
+                this.OnAfterViewStateChanged();
             }
         }
 
@@ -91,7 +91,7 @@ namespace Walkabout.Views
             this.TotalExpensesMaintenance = value.TotalExpense.TotalMaintenance;
             this.TotalExpensesInterest = value.TotalExpense.TotalInterest;
 
-            UpdateAllDataBindings();
+            this.UpdateAllDataBindings();
         }
 
 
@@ -107,30 +107,30 @@ namespace Walkabout.Views
             this.TotalExpensesManagement = value.Departments[4].Total;
             this.TotalExpensesInterest = value.Departments[5].Total;
 
-            UpdateAllDataBindings();
+            this.UpdateAllDataBindings();
         }
 
         void UpdateAllDataBindings()
         {
-            OnPropertyChanged("Building");
-            OnPropertyChanged("BuildingName");
-            OnPropertyChanged("Period");
+            this.OnPropertyChanged("Building");
+            this.OnPropertyChanged("BuildingName");
+            this.OnPropertyChanged("Period");
 
-            OnPropertyChanged("TotalIncomes");
+            this.OnPropertyChanged("TotalIncomes");
 
-            OnPropertyChanged("TotalExpenses");
-            OnPropertyChanged("TotalExpensesTaxes");
-            OnPropertyChanged("TotalExpensesRepairs");
-            OnPropertyChanged("TotalExpensesManagement");
-            OnPropertyChanged("TotalExpensesMaintenance");
-            OnPropertyChanged("TotalExpensesInterest");
+            this.OnPropertyChanged("TotalExpenses");
+            this.OnPropertyChanged("TotalExpensesTaxes");
+            this.OnPropertyChanged("TotalExpensesRepairs");
+            this.OnPropertyChanged("TotalExpensesManagement");
+            this.OnPropertyChanged("TotalExpensesMaintenance");
+            this.OnPropertyChanged("TotalExpensesInterest");
 
-            OnPropertyChanged("TotalProfit");
-            OnPropertyChanged("TotalProfitOwner1");
-            OnPropertyChanged("TotalProfitOwner2");
+            this.OnPropertyChanged("TotalProfit");
+            this.OnPropertyChanged("TotalProfitOwner1");
+            this.OnPropertyChanged("TotalProfitOwner2");
 
-            OnPropertyChanged("Owner1");
-            OnPropertyChanged("Owner2");
+            this.OnPropertyChanged("Owner1");
+            this.OnPropertyChanged("Owner2");
 
         }
 
@@ -178,8 +178,8 @@ namespace Walkabout.Views
 
         public IServiceProvider ServiceProvider
         {
-            get { return sp; }
-            set { sp = value; }
+            get { return this.sp; }
+            set { this.sp = value; }
         }
 
         public void Commit()

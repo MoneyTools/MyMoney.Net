@@ -25,28 +25,28 @@ namespace Walkabout.Tests.Wrappers
             this.window = window;
         }
 
-        public AutomationElement Element { get { return window; } }
+        public AutomationElement Element { get { return this.window; } }
 
         public virtual void Close()
         {
-            window.ClickButton("CloseButton");
+            this.window.ClickButton("CloseButton");
         }
 
         public void Minimize()
         {
-            window.ClickButton("MinimizeButton");
+            this.window.ClickButton("MinimizeButton");
         }
 
         public void Maximize()
         {
-            window.ClickButton("MaximizeRestoreButton");
+            this.window.ClickButton("MaximizeRestoreButton");
         }
 
         public bool HasModalChildWindow
         {
             get
             {
-                AutomationElement childWindow = window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, "Window"));
+                AutomationElement childWindow = this.window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, "Window"));
                 if (childWindow != null && !childWindow.Current.IsOffscreen)
                 {
                     WindowPattern wp = (WindowPattern)childWindow.GetCurrentPattern(WindowPattern.Pattern);
@@ -60,7 +60,7 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return State == WindowInteractionState.BlockedByModalWindow || HasModalChildWindow;
+                return this.State == WindowInteractionState.BlockedByModalWindow || this.HasModalChildWindow;
             }
         }
 
@@ -69,7 +69,7 @@ namespace Walkabout.Tests.Wrappers
             get
             {
 
-                return State == WindowInteractionState.ReadyForUserInteraction || State == WindowInteractionState.Running && !HasModalChildWindow;
+                return this.State == WindowInteractionState.ReadyForUserInteraction || this.State == WindowInteractionState.Running && !this.HasModalChildWindow;
             }
         }
 
@@ -78,7 +78,7 @@ namespace Walkabout.Tests.Wrappers
             get
             {
 
-                return State == WindowInteractionState.NotResponding;
+                return this.State == WindowInteractionState.NotResponding;
             }
         }
 
@@ -86,14 +86,14 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                WindowPattern wp = (WindowPattern)window.GetCurrentPattern(WindowPattern.Pattern);
+                WindowPattern wp = (WindowPattern)this.window.GetCurrentPattern(WindowPattern.Pattern);
                 return wp.Current.WindowInteractionState;
             }
         }
 
         public void WaitForInputIdle(int milliseconds)
         {
-            WindowPattern wp = (WindowPattern)window.GetCurrentPattern(WindowPattern.Pattern);
+            WindowPattern wp = (WindowPattern)this.window.GetCurrentPattern(WindowPattern.Pattern);
             wp.WaitForInputIdle(milliseconds);
         }
     }

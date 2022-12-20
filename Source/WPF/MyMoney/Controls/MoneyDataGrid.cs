@@ -45,19 +45,19 @@ namespace Walkabout.Controls
 
         public MoneyDataGrid()
         {
-            this.Loaded += OnLoaded;
+            Loaded += this.OnLoaded;
         }
 
         public ContextMenu ParentMenu { get; set; }
 
         void OnLoaded(object sender, RoutedEventArgs e)
         {
-            OnContentMarginChanged();
+            this.OnContentMarginChanged();
             MainWindow w = Window.GetWindow(this) as MainWindow;
             if (w != null)
             {
-                w.Deactivated -= OnWindowDeactivated;
-                w.Deactivated += OnWindowDeactivated;
+                w.Deactivated -= this.OnWindowDeactivated;
+                w.Deactivated += this.OnWindowDeactivated;
             }
         }
 
@@ -65,14 +65,14 @@ namespace Walkabout.Controls
         {
             // Then there is a popup dialog that left a dangling mouseDown, so we
             // have to ignore this one.
-            dragging = false;
-            mouseDown = false;
+            this.dragging = false;
+            this.mouseDown = false;
         }
 
         public Thickness ContentMargin
         {
-            get { return (Thickness)GetValue(ContentMarginProperty); }
-            set { SetValue(ContentMarginProperty, value); }
+            get { return (Thickness)this.GetValue(ContentMarginProperty); }
+            set { this.SetValue(ContentMarginProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for ContentMargin.  This enables animation, styling, binding, etc...
@@ -93,18 +93,18 @@ namespace Walkabout.Controls
             var presenter = this.GetRowsPresenter();
             if (presenter != null)
             {
-                presenter.Margin = ContentMargin;
+                presenter.Margin = this.ContentMargin;
             }
         }
 
         protected override void OnSorting(DataGridSortingEventArgs eventArgs)
         {
-            sorted = eventArgs.Column;
+            this.sorted = eventArgs.Column;
 
             ListSortDirection direction = ListSortDirection.Ascending;
-            if (sorted.SortDirection.HasValue)
+            if (this.sorted.SortDirection.HasValue)
             {
-                direction = sorted.SortDirection.Value;
+                direction = this.sorted.SortDirection.Value;
                 if (direction == ListSortDirection.Ascending)
                 {
                     direction = ListSortDirection.Descending;
@@ -113,7 +113,7 @@ namespace Walkabout.Controls
                 {
                     direction = ListSortDirection.Ascending;
                 }
-                sorted.SortDirection = direction;
+                this.sorted.SortDirection = direction;
             }
 
             // user is sorting the grid, but we will still add our secondary sort order
@@ -122,25 +122,25 @@ namespace Walkabout.Controls
 
             // No idea why DataGrid doesn't do this for us, but this method ensures the 
             // selected row stays in view when you sort.
-            AsyncScrollSelectedRowIntoView();
+            this.AsyncScrollSelectedRowIntoView();
         }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            ScrollViewer viewer = GetScrollViewer();
+            ScrollViewer viewer = this.GetScrollViewer();
             if (viewer != null)
             {
-                viewer.RequestBringIntoView -= OnRequestBringIntoView;
-                viewer.RequestBringIntoView += OnRequestBringIntoView;
-                viewer.ScrollChanged -= OnScrollChanged;
-                viewer.ScrollChanged += OnScrollChanged;
+                viewer.RequestBringIntoView -= this.OnRequestBringIntoView;
+                viewer.RequestBringIntoView += this.OnRequestBringIntoView;
+                viewer.ScrollChanged -= this.OnScrollChanged;
+                viewer.ScrollChanged += this.OnScrollChanged;
             }
 
-            OnContentMarginChanged();
+            this.OnContentMarginChanged();
 
             // Behavior change on windows 8, we have to do this after the template is loaded.
-            AsyncScrollSelectedRowIntoView();
+            this.AsyncScrollSelectedRowIntoView();
         }
 
         public event ScrollChangedEventHandler ScrollChanged;
@@ -162,7 +162,7 @@ namespace Walkabout.Controls
 
         public void ClearItemsSource()
         {
-            SetItemsSource(null);
+            this.SetItemsSource(null);
         }
 
         // There is a weird bug in DataGrid that blows if there is a sort in place when items are changed.
@@ -212,7 +212,7 @@ namespace Walkabout.Controls
                 }
             }
 
-            var sorted = RemoveSort();
+            var sorted = this.RemoveSort();
             if (sorted != null)
             {
                 this.sorted = sorted;
@@ -229,9 +229,9 @@ namespace Walkabout.Controls
                 if (MessageBoxEx.Show(ex.ToString() + "\n\nDo you want to try again?", "Debug Error", MessageBoxButton.OKCancel, MessageBoxImage.Error) == MessageBoxResult.OK)
                 {
                     // and try again later...at low priority so that the UI has a chance to settle down...
-                    delayedActions.StartDelayedAction("SetItemsSource", () =>
+                    this.delayedActions.StartDelayedAction("SetItemsSource", () =>
                     {
-                        SetItemsSource(items);
+                        this.SetItemsSource(items);
                     }, TimeSpan.FromMilliseconds(10));
                 }
             }
@@ -242,33 +242,33 @@ namespace Walkabout.Controls
             base.OnItemsChanged(e);
 
             // maintain the current sort order selected by the user
-            if (sorted != null && this.Columns.Contains(sorted) && !sorting && e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add
+            if (this.sorted != null && this.Columns.Contains(this.sorted) && !this.sorting && e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add
                 && e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
             {
-                SortByColumn(sorted.SortMemberPath, sorted.SortDirection.HasValue ? sorted.SortDirection.Value : ListSortDirection.Ascending);
+                this.SortByColumn(this.sorted.SortMemberPath, this.sorted.SortDirection.HasValue ? this.sorted.SortDirection.Value : ListSortDirection.Ascending);
             }
-            AsyncScrollSelectedRowIntoView();
+            this.AsyncScrollSelectedRowIntoView();
         }
 
 
         public void AsyncScrollSelectedRowIntoView()
         {
-            if (!sorting)
+            if (!this.sorting)
             {
                 object selected = this.SelectedItem;
                 bool hadFocus = this.IsKeyboardFocusWithin;
                 if (selected != null)
                 {
-                    delayedActions.StartDelayedAction("ScrollIntoView", () =>
+                    this.delayedActions.StartDelayedAction("ScrollIntoView", () =>
                     {
                         if (selected == this.SelectedItem)
                         {
                             this.ScrollIntoView(selected);
                             if (hadFocus)
                             {
-                                if (previousCurrentCell != null && previousCurrentCell.Header != null)
+                                if (this.previousCurrentCell != null && this.previousCurrentCell.Header != null)
                                 {
-                                    string name = previousCurrentCell.Header.ToString();
+                                    string name = this.previousCurrentCell.Header.ToString();
                                     this.SetFocusOnSelectedRow(selected, name);
                                 }
                             }
@@ -292,7 +292,7 @@ namespace Walkabout.Controls
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         {
             base.OnSelectionChanged(e);
-            AsyncScrollSelectedRowIntoView();
+            this.AsyncScrollSelectedRowIntoView();
         }
 
 
@@ -312,7 +312,7 @@ namespace Walkabout.Controls
 
         public DataGridCell GetCell(int row, int column)
         {
-            DataGridRow rowContainer = GetRow(row);
+            DataGridRow rowContainer = this.GetRow(row);
 
             if (rowContainer != null)
             {
@@ -366,7 +366,7 @@ namespace Walkabout.Controls
 
         public int GetRowIndex(DataGridCellInfo dgci)
         {
-            DataGridRow dgrow = GetRowFromItem(dgci.Item);
+            DataGridRow dgrow = this.GetRowFromItem(dgci.Item);
             if (dgrow == null)
             {
                 // MessageBoxEx.Show("Please debug me", "Internal Error");
@@ -409,7 +409,7 @@ namespace Walkabout.Controls
             DataGridRow row = this.ItemContainerGenerator.ContainerFromItem(selected) as DataGridRow;
             if (row != null)
             {
-                int columnToFocus = GetColumnIndexByTemplateHeader(columnHeader);
+                int columnToFocus = this.GetColumnIndexByTemplateHeader(columnHeader);
                 if (columnToFocus < 0)
                 {
                     return false;
@@ -418,9 +418,9 @@ namespace Walkabout.Controls
                 if (dgci != null)
                 {
                     int rowIndex = row.GetIndex();
-                    int colIndex = GetColIndex(dgci);
+                    int colIndex = this.GetColIndex(dgci);
                     row.ApplyTemplate();
-                    DataGridCell dgc = GetCell(rowIndex, colIndex);
+                    DataGridCell dgc = this.GetCell(rowIndex, colIndex);
                     if (dgc != null)
                     {
                         dgc.Focus();
@@ -455,7 +455,7 @@ namespace Walkabout.Controls
 
         private void SortByColumn(string column, ListSortDirection direction)
         {
-            sorting = true;
+            this.sorting = true;
             try
             {
                 ICollectionView dataView = CollectionViewSource.GetDefaultView(this.ItemsSource);
@@ -469,10 +469,10 @@ namespace Walkabout.Controls
                     HashSet<string> sort = new HashSet<string>();
                     sort.Add(column);
 
-                    if (!string.IsNullOrEmpty(SecondarySortOrder))
+                    if (!string.IsNullOrEmpty(this.SecondarySortOrder))
                     {
                         // Add additional sort descriptions, so long as they are not redundant.
-                        foreach (string secondary in SecondarySortOrder.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
+                        foreach (string secondary in this.SecondarySortOrder.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
                         {
                             if (!sort.Contains(secondary))
                             {
@@ -485,11 +485,11 @@ namespace Walkabout.Controls
                     //refresh the view which in turn refresh the grid
                     dataView.Refresh();
 
-                    delayedActions.StartDelayedAction("Sort", () =>
+                    this.delayedActions.StartDelayedAction("Sort", () =>
                     {
                         try
                         {
-                            sorting = true;
+                            this.sorting = true;
                             foreach (DataGridColumn c in this.Columns)
                             {
                                 if (c.SortMemberPath == column)
@@ -502,7 +502,7 @@ namespace Walkabout.Controls
                         }
                         finally
                         {
-                            sorting = false;
+                            this.sorting = false;
                         }
                     }, TimeSpan.FromMilliseconds(10));
                 }
@@ -510,7 +510,7 @@ namespace Walkabout.Controls
             }
             finally
             {
-                sorting = false;
+                this.sorting = false;
             }
         }
 
@@ -550,7 +550,7 @@ namespace Walkabout.Controls
         protected override void OnPreviewMouseRightButtonDown(System.Windows.Input.MouseButtonEventArgs e)
         {
             base.OnPreviewMouseRightButtonDown(e);
-            cellChangeEvent = InputEventType.RightMouseButton;
+            this.cellChangeEvent = InputEventType.RightMouseButton;
             this.Focus();
         }
 
@@ -568,14 +568,14 @@ namespace Walkabout.Controls
 
             if (this.CurrentCell != null && this.CurrentCell.Column != null && this.CurrentCell.Column.Header != null)
             {
-                previousCurrentCell = this.CurrentCell.Column;
+                this.previousCurrentCell = this.CurrentCell.Column;
             }
 
             // Automatically enter edit mode on the next cell that we enter.
-            if (cellChangeEvent == InputEventType.TabKey || cellChangeEvent == InputEventType.LeftMouseButton)
+            if (this.cellChangeEvent == InputEventType.TabKey || this.cellChangeEvent == InputEventType.LeftMouseButton)
             {
                 object selected = this.SelectedItem;
-                Dispatcher.BeginInvoke(new Action(() =>
+                this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     if (this.SelectedItem == selected && this.CurrentCell != null)
                     {
@@ -583,7 +583,7 @@ namespace Walkabout.Controls
                     }
                 }), DispatcherPriority.Background);
             }
-            ClearAutoEdit();
+            this.ClearAutoEdit();
         }
 
         /// <summary>
@@ -591,7 +591,7 @@ namespace Walkabout.Controls
         /// </summary>
         public void ClearAutoEdit()
         {
-            cellChangeEvent = InputEventType.None;
+            this.cellChangeEvent = InputEventType.None;
         }
 
 
@@ -619,7 +619,7 @@ namespace Walkabout.Controls
                 if (editor.IsKeyboardFocusWithin && i + 1 < editors.Count)
                 {
                     editor = editors[i + 1];
-                    OnStartEdit(editor);
+                    this.OnStartEdit(editor);
                     return true;
                 }
             }
@@ -660,7 +660,7 @@ namespace Walkabout.Controls
                 if (editor.IsKeyboardFocusWithin && i - 1 >= 0)
                 {
                     editor = editors[i - 1];
-                    OnStartEdit(editor);
+                    this.OnStartEdit(editor);
                     return true;
                 }
             }
@@ -710,7 +710,7 @@ namespace Walkabout.Controls
         protected override void OnBeginningEdit(DataGridBeginningEditEventArgs e)
         {
             base.OnBeginningEdit(e);
-            isEditing = true;
+            this.isEditing = true;
 
             if (!e.Cancel)
             {
@@ -728,9 +728,9 @@ namespace Walkabout.Controls
                 }
                 if (row.IsSelected)
                 {
-                    Dispatcher.BeginInvoke(new Action(() =>
+                    this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        OnStartEdit(column, row, args);
+                        this.OnStartEdit(column, row, args);
                     }), System.Windows.Threading.DispatcherPriority.Background);
                 }
             }
@@ -739,7 +739,7 @@ namespace Walkabout.Controls
         protected override void OnRowEditEnding(DataGridRowEditEndingEventArgs e)
         {
             base.OnRowEditEnding(e);
-            isEditing = false;
+            this.isEditing = false;
         }
 
         public bool IsEditing { get { return this.isEditing; } }
@@ -749,7 +749,7 @@ namespace Walkabout.Controls
             Control editor = this.GetCellEditor(column, row, args);
             if (editor != null)
             {
-                Dispatcher.BeginInvoke(new Action(() =>
+                this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     this.OnStartEdit(editor);
                 }), System.Windows.Threading.DispatcherPriority.Background);
@@ -918,7 +918,7 @@ namespace Walkabout.Controls
 
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            cellChangeEvent = InputEventType.LeftMouseButton;
+            this.cellChangeEvent = InputEventType.LeftMouseButton;
             DataGrid grid = this;
             this.downPosition = e.GetPosition(grid);
             ScrollBar sb = WpfHelper.FindAncestor<ScrollBar>(e.OriginalSource as DependencyObject);
@@ -927,8 +927,8 @@ namespace Walkabout.Controls
                 Thumb thumb = WpfHelper.FindAncestor<Thumb>(e.OriginalSource as DependencyObject);
                 if (thumb == null)
                 {
-                    editBox = WpfHelper.FindAncestor<TextBox>(e.OriginalSource as DependencyObject);
-                    mouseDown = true;
+                    this.editBox = WpfHelper.FindAncestor<TextBox>(e.OriginalSource as DependencyObject);
+                    this.mouseDown = true;
                 }
             }
         }
@@ -937,14 +937,14 @@ namespace Walkabout.Controls
         {
             MoneyDataGrid grid = this;
 
-            if (mouseDown && !dragging && grid.SelectedItem != null && !e.Handled && SupportDragDrop)
+            if (this.mouseDown && !this.dragging && grid.SelectedItem != null && !e.Handled && this.SupportDragDrop)
             {
                 Point pos = e.GetPosition(grid);
 
-                if ((pos - downPosition).Length > Threshold)
+                if ((pos - this.downPosition).Length > Threshold)
                 {
                     TextBox hit = null;
-                    if (IsEditing)
+                    if (this.IsEditing)
                     {
                         HitTestResult result = VisualTreeHelper.HitTest(grid, pos);
                         if (result != null && result.VisualHit != null)
@@ -952,33 +952,33 @@ namespace Walkabout.Controls
                             hit = WpfHelper.FindAncestor<TextBox>(result.VisualHit);
                         }
                     }
-                    if (hit != editBox || !IsEditing)
+                    if (hit != this.editBox || !this.IsEditing)
                     {
                         // we have moved outside the current row, so must be trying to do a drag/drop
                         try
                         {
                             e.Handled = true;
-                            CommitEdit();
+                            this.CommitEdit();
                             DragDrop.DoDragDrop(grid, grid.SelectedItem, System.Windows.DragDropEffects.All);
-                            StopAutoScrolling();
+                            this.StopAutoScrolling();
                         }
                         catch (Exception ex)
                         {
                             MessageBoxEx.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
-                    dragging = false;
-                    mouseDown = false;
-                    editBox = null;
+                    this.dragging = false;
+                    this.mouseDown = false;
+                    this.editBox = null;
                 }
             }
         }
 
         protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
         {
-            dragging = false;
-            mouseDown = false;
-            editBox = null;
+            this.dragging = false;
+            this.mouseDown = false;
+            this.editBox = null;
         }
 
         const double AutoScrollMargin = 50;
@@ -989,7 +989,7 @@ namespace Walkabout.Controls
 
             if (e.Action == DragAction.Cancel || e.Action == DragAction.Drop)
             {
-                StopAutoScrolling();
+                this.StopAutoScrolling();
             }
             else if (e.Action == DragAction.Continue)
             {
@@ -998,28 +998,28 @@ namespace Walkabout.Controls
                 if (pt.Y < AutoScrollMargin)
                 {
                     // start scrolling scroll up
-                    StartAutoScrolling(pt.Y - AutoScrollMargin);
+                    this.StartAutoScrolling(pt.Y - AutoScrollMargin);
                 }
                 else if (pt.Y > height - AutoScrollMargin)
                 {
                     // start scrolling scroll down.
-                    StartAutoScrolling(pt.Y - (height - AutoScrollMargin));
+                    this.StartAutoScrolling(pt.Y - (height - AutoScrollMargin));
                 }
                 else
                 {
                     // stop autoscrolling.
-                    StopAutoScrolling();
+                    this.StopAutoScrolling();
                 }
             }
         }
 
         private void StopAutoScrolling()
         {
-            if (scrollTimer != null)
+            if (this.scrollTimer != null)
             {
-                scrollTimer.Tick -= OnScrollTimerTick;
-                scrollTimer.Stop();
-                scrollTimer = null;
+                this.scrollTimer.Tick -= this.OnScrollTimerTick;
+                this.scrollTimer.Stop();
+                this.scrollTimer = null;
             }
         }
 
@@ -1029,18 +1029,18 @@ namespace Walkabout.Controls
 
         private void StartAutoScrolling(double distanceFromMargin)
         {
-            scrollSpeed = distanceFromMargin;
-            if (scrollTimer == null)
+            this.scrollSpeed = distanceFromMargin;
+            if (this.scrollTimer == null)
             {
-                scrollTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(InitialDelay), DispatcherPriority.Normal, OnScrollTimerTick, this.Dispatcher);
-                scrollTimer.Start();
+                this.scrollTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(InitialDelay), DispatcherPriority.Normal, this.OnScrollTimerTick, this.Dispatcher);
+                this.scrollTimer.Start();
             }
             else
             {
                 // speed increases linearly as distance from AutoScrollMargin increases
                 // Speed is inverse delay so the delay = InitialDelay - abs(distance).
                 double slope = (InitialDelay / AutoScrollMargin);
-                nextInterval = Math.Max(1, InitialDelay - (Math.Abs(distanceFromMargin) * slope));
+                this.nextInterval = Math.Max(1, InitialDelay - (Math.Abs(distanceFromMargin) * slope));
             }
         }
 
@@ -1049,12 +1049,12 @@ namespace Walkabout.Controls
 
         private ScrollViewer GetScrollViewer()
         {
-            if (scrollViewer == null && this.Template != null)
+            if (this.scrollViewer == null && this.Template != null)
             {
-                scrollViewer = this.Template.FindName("DG_ScrollViewer", this) as ScrollViewer;
-                if (scrollViewer == null)
+                this.scrollViewer = this.Template.FindName("DG_ScrollViewer", this) as ScrollViewer;
+                if (this.scrollViewer == null)
                 {
-                    scrollViewer = this.FindFirstDescendantOfType<ScrollViewer>();
+                    this.scrollViewer = this.FindFirstDescendantOfType<ScrollViewer>();
                 }
             }
             return this.scrollViewer;
@@ -1062,7 +1062,7 @@ namespace Walkabout.Controls
 
         public Tuple<int, int> GetVisibleRows()
         {
-            ScrollViewer sv = GetScrollViewer();
+            ScrollViewer sv = this.GetScrollViewer();
             if (sv != null)
             {
                 int firstRow = (int)sv.VerticalOffset;
@@ -1074,7 +1074,7 @@ namespace Walkabout.Controls
 
         private DataGridRowsPresenter GetRowsPresenter()
         {
-            ScrollViewer viewer = GetScrollViewer();
+            ScrollViewer viewer = this.GetScrollViewer();
             if (viewer != null)
             {
                 ScrollContentPresenter scp = viewer.FindName("PART_ScrollContentPresenter") as ScrollContentPresenter;
@@ -1085,7 +1085,7 @@ namespace Walkabout.Controls
 
         private IEnumerable<DataGridColumnHeader> GetDataGridColumnHeaders()
         {
-            ScrollViewer viewer = GetScrollViewer();
+            ScrollViewer viewer = this.GetScrollViewer();
             if (viewer != null)
             {
                 DataGridColumnHeadersPresenter result = viewer.FindName("PART_ColumnHeadersPresenter") as DataGridColumnHeadersPresenter;
@@ -1097,14 +1097,14 @@ namespace Walkabout.Controls
 
         private void OnScrollTimerTick(object sender, EventArgs e)
         {
-            ScrollViewer scrollViewer = GetScrollViewer();
+            ScrollViewer scrollViewer = this.GetScrollViewer();
             if (scrollViewer != null)
             {
-                if (scrollSpeed < 0)
+                if (this.scrollSpeed < 0)
                 {
                     scrollViewer.LineUp();
                 }
-                else if (scrollSpeed > 0)
+                else if (this.scrollSpeed > 0)
                 {
                     // if the last line is already visible, then we don't need to scroll any further.
                     bool scroll = true;
@@ -1123,9 +1123,9 @@ namespace Walkabout.Controls
                     }
                 }
             }
-            if (scrollTimer != null)
+            if (this.scrollTimer != null)
             {
-                scrollTimer.Interval = TimeSpan.FromMilliseconds(nextInterval);
+                this.scrollTimer.Interval = TimeSpan.FromMilliseconds(this.nextInterval);
             }
 
         }

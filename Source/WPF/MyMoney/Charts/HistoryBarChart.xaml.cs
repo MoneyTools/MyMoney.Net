@@ -25,8 +25,8 @@ namespace Walkabout.Charts
 
         public HistoryChartColumn Data
         {
-            get { return data; }
-            set { data = value; }
+            get { return this.data; }
+            set { this.data = value; }
         }
 
         public ColumnLabel(string label)
@@ -36,7 +36,7 @@ namespace Walkabout.Charts
 
         public override string ToString()
         {
-            return label;
+            return this.label;
         }
     }
 
@@ -59,7 +59,7 @@ namespace Walkabout.Charts
         {
             get
             {
-                HistoryDataValue first = Values != null ? Values.FirstOrDefault() : null;
+                HistoryDataValue first = this.Values != null ? this.Values.FirstOrDefault() : null;
                 return (first != null) ? first.Date : DateTime.Now;
             }
         }
@@ -67,7 +67,7 @@ namespace Walkabout.Charts
         {
             get
             {
-                HistoryDataValue last = Values != null ? Values.LastOrDefault() : null;
+                HistoryDataValue last = this.Values != null ? this.Values.LastOrDefault() : null;
                 return (last != null) ? last.Date : DateTime.Now;
             }
         }
@@ -87,17 +87,17 @@ namespace Walkabout.Charts
 
         public HistoryBarChart()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            RangeCombo.Items.Add(HistoryRange.Year);
-            RangeCombo.Items.Add(HistoryRange.Month);
-            RangeCombo.Items.Add(HistoryRange.Day);
-            RangeCombo.SelectedIndex = 0;
-            RangeCombo.SelectionChanged += new SelectionChangedEventHandler(RangeCombo_SelectionChanged);
+            this.RangeCombo.Items.Add(HistoryRange.Year);
+            this.RangeCombo.Items.Add(HistoryRange.Month);
+            this.RangeCombo.Items.Add(HistoryRange.Day);
+            this.RangeCombo.SelectedIndex = 0;
+            this.RangeCombo.SelectionChanged += new SelectionChangedEventHandler(this.RangeCombo_SelectionChanged);
 
-            this.IsVisibleChanged += new DependencyPropertyChangedEventHandler(HistoryBarChart_IsVisibleChanged);
+            IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.HistoryBarChart_IsVisibleChanged);
 
-            Chart.ToolTipGenerator = OnGenerateTip;
+            this.Chart.ToolTipGenerator = this.OnGenerateTip;
         }
 
         private UIElement OnGenerateTip(ChartDataValue value)
@@ -110,12 +110,12 @@ namespace Walkabout.Charts
 
         void HistoryBarChart_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            DelayedUpdate();
+            this.DelayedUpdate();
         }
 
         void DelayedUpdate()
         {
-            delayedActions.StartDelayedAction("update", UpdateChart, TimeSpan.FromMilliseconds(1));
+            this.delayedActions.StartDelayedAction("update", this.UpdateChart, TimeSpan.FromMilliseconds(1));
         }
 
         /// <summary>
@@ -123,23 +123,23 @@ namespace Walkabout.Charts
         /// </summary>
         public HistoryChartColumn Selection
         {
-            get { return selection; }
+            get { return this.selection; }
             set
             {
-                selection = value;
-                DelayedUpdate();
+                this.selection = value;
+                this.DelayedUpdate();
             }
         }
 
         public int FiscalYearStart
         {
-            get => fiscalYearStart;
+            get => this.fiscalYearStart;
             set
             {
-                if (fiscalYearStart != value)
+                if (this.fiscalYearStart != value)
                 {
-                    fiscalYearStart = value;
-                    DelayedUpdate();
+                    this.fiscalYearStart = value;
+                    this.DelayedUpdate();
                 }
             }
         }
@@ -159,51 +159,51 @@ namespace Walkabout.Charts
             if (e.UserData is HistoryChartColumn data)
             {
                 this.selection = data;
-                OnSelectionChanged();
+                this.OnSelectionChanged();
             }
             else if (e.UserData is ColumnLabel label)
             {
                 this.selection = label.Data;
-                OnSelectionChanged();
+                this.OnSelectionChanged();
             }
         }
 
         void RangeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (selection != null && e.AddedItems.Count > 0 && e.AddedItems[0] is HistoryRange newRange)
+            if (this.selection != null && e.AddedItems.Count > 0 && e.AddedItems[0] is HistoryRange newRange)
             {
-                selection.Range = newRange;
+                this.selection.Range = newRange;
             }
-            UpdateChart();
+            this.UpdateChart();
         }
 
         bool updating;
 
         public void UpdateChart()
         {
-            if (updating)
+            if (this.updating)
             {
                 return;
             }
-            updating = true;
+            this.updating = true;
 
             try
             {
-                collection.Clear();
+                this.collection.Clear();
 
                 if (this.Selection == null)
                 {
-                    Chart.Data = null;
+                    this.Chart.Data = null;
                     return;
                 }
 
-                RangeCombo.SelectedItem = this.Selection.Range;
+                this.RangeCombo.SelectedItem = this.Selection.Range;
 
                 IEnumerable<HistoryDataValue> rows = this.Selection.Values;
 
                 if (rows == null || !this.IsVisible || !rows.Any())
                 {
-                    Chart.Data = null;
+                    this.Chart.Data = null;
                     return;
                 }
 
@@ -215,7 +215,7 @@ namespace Walkabout.Charts
                     brush = Brushes.DarkSlateBlue;
                 }
 
-                ComputeInversion(rows);
+                this.ComputeInversion(rows);
 
                 var lastItem = rows.LastOrDefault();
                 DateTime startDate = DateTime.Now;
@@ -256,7 +256,7 @@ namespace Walkabout.Charts
                         continue;
                     }
                     decimal amount = t.Value;
-                    if (invert)
+                    if (this.invert)
                     {
                         amount = -amount;
                     }
@@ -273,7 +273,7 @@ namespace Walkabout.Charts
                         if (bucket.Count > 0 || started)
                         {
                             started = true;
-                            AddColumn(startDate, range, total, bucket, brush);
+                            this.AddColumn(startDate, range, total, bucket, brush);
                         }
                         startDate = endDate;
                         switch (range)
@@ -300,15 +300,15 @@ namespace Walkabout.Charts
 
                 if (bucket.Count > 0 || started)
                 {
-                    AddColumn(startDate, range, total, bucket, brush);
+                    this.AddColumn(startDate, range, total, bucket, brush);
                 }
 
-                while (collection.Count > maxColumns)
+                while (this.collection.Count > maxColumns)
                 {
-                    collection.RemoveAt(0);
+                    this.collection.RemoveAt(0);
                 }
 
-                ComputeLinearRegression();
+                this.ComputeLinearRegression();
 
                 Color c = Colors.Black;
                 if (brush is SolidColorBrush sc)
@@ -331,7 +331,7 @@ namespace Walkabout.Charts
                 }
 
                 data.AddSeries(series);
-                Chart.Data = data;
+                this.Chart.Data = data;
             }
             catch (Exception ex)
             {
@@ -339,29 +339,29 @@ namespace Walkabout.Charts
             }
             finally
             {
-                updating = false;
+                this.updating = false;
             }
         }
 
         private void ComputeLinearRegression()
         {
             // Compute linear regression
-            int count = collection.Count;
+            int count = this.collection.Count;
             if (count == 0)
             {
                 return;
             }
 
             // skip the first and/or last column if they don't seem to have enough data (they may have incomplete year/month).
-            double sum = (from c in collection select c.Values.Count()).Sum();
+            double sum = (from c in this.collection select c.Values.Count()).Sum();
             double avg = sum / count;
 
-            HistoryChartColumn first = collection[0];
-            HistoryChartColumn last = collection[count - 1];
+            HistoryChartColumn first = this.collection[0];
+            HistoryChartColumn last = this.collection[count - 1];
 
             double x = 0;
             List<Point> points = new List<Point>();
-            foreach (HistoryChartColumn c in collection)
+            foreach (HistoryChartColumn c in this.collection)
             {
                 if ((c == last || c == last) && c.Values.Count() < (avg / 2))
                 {
@@ -377,7 +377,7 @@ namespace Walkabout.Charts
 
             // create "Average" points that represent this line.
             x = 0;
-            foreach (HistoryChartColumn c in collection)
+            foreach (HistoryChartColumn c in this.collection)
             {
                 double y = a + (b * x);
                 c.Average = (decimal)y;
@@ -401,10 +401,10 @@ namespace Walkabout.Charts
                     negatives++;
                 }
             }
-            invert = false;
+            this.invert = false;
             if (negatives > count / 2)
             {
-                invert = true;
+                this.invert = true;
             }
         }
 
@@ -442,12 +442,12 @@ namespace Walkabout.Charts
 
             HistoryChartColumn column = new HistoryChartColumn() { Amount = total, Range = columnRange, Label = clabel, Values = bucket, Brush = brush };
             clabel.Data = column;
-            collection.Add(column);
+            this.collection.Add(column);
         }
 
         private void OnExport(object sender, RoutedEventArgs e)
         {
-            var data = Chart.Data;
+            var data = this.Chart.Data;
             if (data != null && data.Series != null && data.Series.Count > 0)
             {
                 data.Export();

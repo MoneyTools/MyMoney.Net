@@ -12,36 +12,36 @@ namespace Walkabout.Dialogs
     {
         public SampleDatabaseOptions()
         {
-            InitializeComponent();
-            EnableButtons();
+            this.InitializeComponent();
+            this.EnableButtons();
         }
 
         private void EnableButtons()
         {
             decimal pay;
             double inflation;
-            if (ButtonOk != null)
+            if (this.ButtonOk != null)
             {
-                Message.Text = "";
+                this.Message.Text = "";
 
                 bool templateExists = false;
-                if (!string.IsNullOrEmpty(TextBoxTemplate.Text))
+                if (!string.IsNullOrEmpty(this.TextBoxTemplate.Text))
                 {
-                    templateExists = File.Exists(TextBoxTemplate.Text);
+                    templateExists = File.Exists(this.TextBoxTemplate.Text);
                     if (!templateExists)
                     {
-                        Message.Text = "Template file not found";
+                        this.Message.Text = "Template file not found";
                     }
                 }
 
-                ButtonOk.IsEnabled = templateExists && (!string.IsNullOrEmpty(Employer) && decimal.TryParse(TextBoxPaycheck.Text, out pay) &&
-                    double.TryParse(TextBoxInflation.Text.Replace("%", string.Empty), out inflation));
+                this.ButtonOk.IsEnabled = templateExists && (!string.IsNullOrEmpty(this.Employer) && decimal.TryParse(this.TextBoxPaycheck.Text, out pay) &&
+                    double.TryParse(this.TextBoxInflation.Text.Replace("%", string.Empty), out inflation));
             }
         }
 
         public string Employer
         {
-            get { return TextBoxEmployer.Text; }
+            get { return this.TextBoxEmployer.Text; }
         }
 
         public decimal PayCheck
@@ -49,7 +49,7 @@ namespace Walkabout.Dialogs
             get
             {
                 decimal pay = 0;
-                decimal.TryParse(TextBoxPaycheck.Text, out pay);
+                decimal.TryParse(this.TextBoxPaycheck.Text, out pay);
                 return pay;
             }
         }
@@ -59,46 +59,46 @@ namespace Walkabout.Dialogs
             get
             {
                 double inflation = 0;
-                double.TryParse(TextBoxInflation.Text.Replace("%", string.Empty), out inflation);
+                double.TryParse(this.TextBoxInflation.Text.Replace("%", string.Empty), out inflation);
                 return inflation;
             }
         }
 
         private void TextBoxEmployer_TextChanged(object sender, TextChangedEventArgs e)
         {
-            EnableButtons();
+            this.EnableButtons();
         }
 
         private void TextBoxPaycheck_TextChanged(object sender, TextChangedEventArgs e)
         {
-            EnableButtons();
+            this.EnableButtons();
         }
 
         private void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
-            Close();
+            this.Close();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            TextBoxEmployer.Focus();
+            this.TextBoxEmployer.Focus();
         }
 
         private void TextBoxInflation_TextChanged(object sender, TextChangedEventArgs e)
         {
-            EnableButtons();
+            this.EnableButtons();
         }
 
         private void TextBoxTemplate_TextChanged(object sender, TextChangedEventArgs e)
         {
-            EnableButtons();
+            this.EnableButtons();
         }
 
         public string SampleData
         {
-            get { return TextBoxTemplate.Text; }
-            set { TextBoxTemplate.Text = value; }
+            get { return this.TextBoxTemplate.Text; }
+            set { this.TextBoxTemplate.Text = value; }
         }
 
         private void OnBrowseTemplate(object sender, RoutedEventArgs e)

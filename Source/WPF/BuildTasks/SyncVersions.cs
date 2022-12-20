@@ -28,12 +28,12 @@ namespace MyMoneyBuildTasks
         {
             if (!System.IO.File.Exists(this.MasterVersionFile))
             {
-                Log.LogError("Cannot find master version file: " + this.MasterVersionFile);
+                this.Log.LogError("Cannot find master version file: " + this.MasterVersionFile);
                 return false;
             }
             if (!System.IO.File.Exists(this.CSharpVersionFile))
             {
-                Log.LogError("Cannot find C# version file: " + this.CSharpVersionFile);
+                this.Log.LogError("Cannot find C# version file: " + this.CSharpVersionFile);
                 return false;
             }
 
@@ -45,16 +45,16 @@ namespace MyMoneyBuildTasks
             Version v;
             if (string.IsNullOrEmpty(version) || !Version.TryParse(version, out v))
             {
-                Log.LogError("Could not find valid valid version number in : " + this.MasterVersionFile);
+                this.Log.LogError("Could not find valid valid version number in : " + this.MasterVersionFile);
                 return false;
             }
 
-            Log.LogMessage(MessageImportance.High, "SyncVersions to " + v.ToString());
+            this.Log.LogMessage(MessageImportance.High, "SyncVersions to " + v.ToString());
 
-            bool result = UpdateCSharpVersion(v);
-            result &= UpdatePackageManifest(v);
-            result &= UpdateApplicationProjectFile(v);
-            result &= CheckUpdatesFile(v);
+            bool result = this.UpdateCSharpVersion(v);
+            result &= this.UpdatePackageManifest(v);
+            result &= this.UpdateApplicationProjectFile(v);
+            result &= this.CheckUpdatesFile(v);
             return result;
         }
 
@@ -90,7 +90,7 @@ namespace MyMoneyBuildTasks
                 }
                 catch (Exception ex)
                 {
-                    Log.LogError("file '" + CSharpVersionFile + "' edit failed: " + ex.Message);
+                    this.Log.LogError("file '" + this.CSharpVersionFile + "' edit failed: " + ex.Message);
                 }
             }
             // return that there is no error.
@@ -101,7 +101,7 @@ namespace MyMoneyBuildTasks
         {
             if (!System.IO.File.Exists(this.ApplicationProjectFile))
             {
-                Log.LogError("ApplicationProjectFile file not found: " + this.ApplicationProjectFile);
+                this.Log.LogError("ApplicationProjectFile file not found: " + this.ApplicationProjectFile);
                 return false;
             }
             try
@@ -133,13 +133,13 @@ namespace MyMoneyBuildTasks
 
                 if (changed)
                 {
-                    Log.LogMessage(MessageImportance.High, "SyncVersions updating " + this.ApplicationProjectFile);
+                    this.Log.LogMessage(MessageImportance.High, "SyncVersions updating " + this.ApplicationProjectFile);
                     doc.Save(this.ApplicationProjectFile);
                 }
             }
             catch (Exception ex)
             {
-                Log.LogError("file '" + this.AppManifestFile + "' edit failed: " + ex.Message);
+                this.Log.LogError("file '" + this.AppManifestFile + "' edit failed: " + ex.Message);
                 return false;
             }
 
@@ -152,7 +152,7 @@ namespace MyMoneyBuildTasks
         {
             if (!System.IO.File.Exists(this.AppManifestFile))
             {
-                Log.LogError("AppManifest file not found: " + this.AppManifestFile);
+                this.Log.LogError("AppManifest file not found: " + this.AppManifestFile);
                 return false;
             }
 
@@ -174,13 +174,13 @@ namespace MyMoneyBuildTasks
 
                 if (changed)
                 {
-                    Log.LogMessage(MessageImportance.High, "SyncVersions updating " + this.AppManifestFile);
+                    this.Log.LogMessage(MessageImportance.High, "SyncVersions updating " + this.AppManifestFile);
                     doc.Save(this.AppManifestFile);
                 }
             }
             catch (Exception ex)
             {
-                Log.LogError("file '" + this.AppManifestFile + "' edit failed: " + ex.Message);
+                this.Log.LogError("file '" + this.AppManifestFile + "' edit failed: " + ex.Message);
                 return false;
             }
             // return that there is no error.
@@ -191,7 +191,7 @@ namespace MyMoneyBuildTasks
         {
             if (!System.IO.File.Exists(this.UpdatesFile))
             {
-                Log.LogError("File not found: " + this.UpdatesFile);
+                this.Log.LogError("File not found: " + this.UpdatesFile);
                 return false;
             }
 
@@ -202,12 +202,12 @@ namespace MyMoneyBuildTasks
                 XElement firstVersion = doc.Root.Element("change");
                 if (firstVersion == null || v.ToString() != (string)firstVersion.Attribute("version"))
                 {
-                    Log.LogMessage(MessageImportance.High, "Please remember to add new version section to : " + this.UpdatesFile);
+                    this.Log.LogMessage(MessageImportance.High, "Please remember to add new version section to : " + this.UpdatesFile);
                 }
             }
             catch (Exception ex)
             {
-                Log.LogError("CheckUpdatesFile failed: " + ex.Message);
+                this.Log.LogError("CheckUpdatesFile failed: " + ex.Message);
                 return false;
             }
             // return that there is no error.

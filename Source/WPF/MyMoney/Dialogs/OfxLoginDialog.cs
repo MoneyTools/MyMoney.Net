@@ -74,7 +74,7 @@ namespace Walkabout.Dialogs
                 this.SetUserDefinedField("UserCred2", this.account.UserCred2);
             }
 
-            this.OkClicked += new EventHandler<OkEventArgs>((s, e) =>
+            OkClicked += new EventHandler<OkEventArgs>((s, e) =>
             {
                 this.account.UserId = this.UserName;
                 this.account.Password = this.PasswordConfirmation;

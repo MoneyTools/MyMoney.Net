@@ -17,7 +17,7 @@ namespace Walkabout.Tests.Wrappers
 
         public override void Close()
         {
-            window.ClickButtonByName("Close");
+            this.window.ClickButtonByName("Close");
         }
 
         public static ExcelWindowWrapper FindExcelWindow(string name, int retries, bool throwIfNotFound)

@@ -51,17 +51,17 @@ namespace Walkabout.Views.Controls
         {
             this.Focusable = true;
             this.end = DateTime.Now;
-            this.start = Step(end, this.range, this.years, -1);
-            InitializeComponent();
-            this.MouseWheel += new MouseWheelEventHandler(TrendGraph_MouseWheel);
-            this.IsVisibleChanged += TransactionGraph_IsVisibleChanged;
-            Chart.ToolTipGenerator = OnGenerateTip;
+            this.start = Step(this.end, this.range, this.years, -1);
+            this.InitializeComponent();
+            MouseWheel += new MouseWheelEventHandler(this.TrendGraph_MouseWheel);
+            IsVisibleChanged += this.TransactionGraph_IsVisibleChanged;
+            this.Chart.ToolTipGenerator = this.OnGenerateTip;
         }
 
         public Color Series1Color
         {
-            get { return (Color)GetValue(Series1ColorProperty); }
-            set { SetValue(Series1ColorProperty, value); }
+            get { return (Color)this.GetValue(Series1ColorProperty); }
+            set { this.SetValue(Series1ColorProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
@@ -71,8 +71,8 @@ namespace Walkabout.Views.Controls
 
         public Color Series2Color
         {
-            get { return (Color)GetValue(Series2ColorProperty); }
-            set { SetValue(Series2ColorProperty, value); }
+            get { return (Color)this.GetValue(Series2ColorProperty); }
+            set { this.SetValue(Series2ColorProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
@@ -82,8 +82,8 @@ namespace Walkabout.Views.Controls
 
         public Color Series3Color
         {
-            get { return (Color)GetValue(Series3ColorProperty); }
-            set { SetValue(Series3ColorProperty, value); }
+            get { return (Color)this.GetValue(Series3ColorProperty); }
+            set { this.SetValue(Series3ColorProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
@@ -92,8 +92,8 @@ namespace Walkabout.Views.Controls
 
         public Color Series4Color
         {
-            get { return (Color)GetValue(Series4ColorProperty); }
-            set { SetValue(Series4ColorProperty, value); }
+            get { return (Color)this.GetValue(Series4ColorProperty); }
+            set { this.SetValue(Series4ColorProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
@@ -103,8 +103,8 @@ namespace Walkabout.Views.Controls
 
         public Color Series5Color
         {
-            get { return (Color)GetValue(Series5ColorProperty); }
-            set { SetValue(Series5ColorProperty, value); }
+            get { return (Color)this.GetValue(Series5ColorProperty); }
+            set { this.SetValue(Series5ColorProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
@@ -114,8 +114,8 @@ namespace Walkabout.Views.Controls
 
         public Color Series6Color
         {
-            get { return (Color)GetValue(Series6ColorProperty); }
-            set { SetValue(Series6ColorProperty, value); }
+            get { return (Color)this.GetValue(Series6ColorProperty); }
+            set { this.SetValue(Series6ColorProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
@@ -125,8 +125,8 @@ namespace Walkabout.Views.Controls
 
         public Color Series7Color
         {
-            get { return (Color)GetValue(Series7ColorProperty); }
-            set { SetValue(Series7ColorProperty, value); }
+            get { return (Color)this.GetValue(Series7ColorProperty); }
+            set { this.SetValue(Series7ColorProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
@@ -135,8 +135,8 @@ namespace Walkabout.Views.Controls
 
         public Color Series8Color
         {
-            get { return (Color)GetValue(Series8ColorProperty); }
-            set { SetValue(Series8ColorProperty, value); }
+            get { return (Color)this.GetValue(Series8ColorProperty); }
+            set { this.SetValue(Series8ColorProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Series1Color.  This enables animation, styling, binding, etc...
@@ -150,14 +150,14 @@ namespace Walkabout.Views.Controls
 
         private void OnSeriesColorChanged()
         {
-            delayedActions.StartDelayedAction("update", Relayout, TimeSpan.FromMilliseconds(10));
+            this.delayedActions.StartDelayedAction("update", this.Relayout, TimeSpan.FromMilliseconds(10));
         }
 
         private void Relayout()
         {
             if (this.Visibility == Visibility.Visible)
             {
-                GenerateGraph();
+                this.GenerateGraph();
             }
         }
 
@@ -173,19 +173,19 @@ namespace Walkabout.Views.Controls
         {
             if ((bool)e.NewValue)
             {
-                GenerateGraph();
+                this.GenerateGraph();
             }
         }
 
         public IServiceProvider ServiceProvider
         {
-            get { return sp; }
-            set { sp = value; }
+            get { return this.sp; }
+            set { this.sp = value; }
         }
 
         public bool ShowBalance { get; set; }
 
-        public TrendGraphSeries SelectedSeries { get { return selected; } }
+        public TrendGraphSeries SelectedSeries { get { return this.selected; } }
 
         public object SelectedItem
         {
@@ -227,7 +227,7 @@ namespace Walkabout.Views.Controls
             this.menuItemYearToDate.IsChecked = this.yearToDate;
             this.menuItemShowAll.IsChecked = this.showAll;
             this.series = state.Series;
-            GenerateGraph();
+            this.GenerateGraph();
         }
 
         static DateTime Step(DateTime start, CalendarRange range, int years, int direction)
@@ -271,11 +271,11 @@ namespace Walkabout.Views.Controls
                 int direction = spinIndex < 0 ? -1 : 1;
                 spinIndex = Math.Abs(spinIndex);
 
-                if (spinIndex >= mouseWheelDateSteps.Length)
+                if (spinIndex >= this.mouseWheelDateSteps.Length)
                 {
-                    spinIndex = mouseWheelDateSteps.Length - 1;
+                    spinIndex = this.mouseWheelDateSteps.Length - 1;
                 }
-                CalendarRange scrollAmount = mouseWheelDateSteps[spinIndex];
+                CalendarRange scrollAmount = this.mouseWheelDateSteps[spinIndex];
 
                 if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
@@ -293,8 +293,8 @@ namespace Walkabout.Views.Controls
                     this.showAll = false;
                 }
 
-                Pin();
-                delayedActions.StartDelayedAction("update_graph", GenerateGraph, TimeSpan.FromMilliseconds(100));
+                this.Pin();
+                this.delayedActions.StartDelayedAction("update_graph", this.GenerateGraph, TimeSpan.FromMilliseconds(100));
             }
         }
 
@@ -314,7 +314,7 @@ namespace Walkabout.Views.Controls
                 this.generator = value;
                 if (this.Visibility == Visibility.Visible)
                 {
-                    GenerateGraph();
+                    this.GenerateGraph();
                 }
             }
         }
@@ -325,14 +325,14 @@ namespace Walkabout.Views.Controls
 
         public void GenerateGraph()
         {
-            chartData = new ChartData();
+            this.chartData = new ChartData();
 
-            TimeSpan span = (end - start);
+            TimeSpan span = (this.end - this.start);
             int days = span.Days;
 
-            if (generator != null)
+            if (this.generator != null)
             {
-                this.data = new List<TrendValue>(generator.Generate());
+                this.data = new List<TrendValue>(this.generator.Generate());
                 if (this.data.Count > 0)
                 {
                     if (this.yearToDate)
@@ -350,32 +350,32 @@ namespace Walkabout.Views.Controls
                             {
                                 continue;
                             }
-                            if (d.Date < start)
+                            if (d.Date < this.start)
                             {
                                 this.start = d.Date;
                             }
-                            if (d.Date > end)
+                            if (d.Date > this.end)
                             {
                                 this.end = d.Date;
                             }
                         }
                     }
 
-                    if (series > 1)
+                    if (this.series > 1)
                     {
-                        DateTime previous = start.AddDays(-days * (series - 1));
-                        for (int i = 1; i < series; i++)
+                        DateTime previous = this.start.AddDays(-days * (this.series - 1));
+                        for (int i = 1; i < this.series; i++)
                         {
                             DateTime next = previous.AddDays(days);
-                            AddSeries(previous, next, GetColor(i));
+                            this.AddSeries(previous, next, this.GetColor(i));
                             previous = next;
                         }
                     }
-                    selected = AddSeries(this.start, this.end, GetColor(0));
+                    this.selected = this.AddSeries(this.start, this.end, this.GetColor(0));
                 }
             }
 
-            Chart.Data = chartData;
+            this.Chart.Data = this.chartData;
         }
 
         private Color GetColor(int index)
@@ -399,7 +399,7 @@ namespace Walkabout.Views.Controls
                 case 7:
                     return this.Series8Color;
                 default:
-                    return Color.FromRgb((byte)rand.Next(0, 255), (byte)rand.Next(0, 255), (byte)rand.Next(0, 255));
+                    return Color.FromRgb((byte)this.rand.Next(0, 255), (byte)this.rand.Next(0, 255), (byte)this.rand.Next(0, 255));
             }
         }
 
@@ -418,8 +418,8 @@ namespace Walkabout.Views.Controls
             ChartCategory cat = new ChartCategory();
             cat.WpfColor = color;
 
-            nfi.NumberDecimalDigits = 2;
-            nfi.CurrencyNegativePattern = 0;
+            this.nfi.NumberDecimalDigits = 2;
+            this.nfi.CurrencyNegativePattern = 0;
 
             TimeSpan span = (end - start);
             int days = span.Days;
@@ -434,9 +434,9 @@ namespace Walkabout.Views.Controls
             }
 
             TrendGraphSeries s = new TrendGraphSeries(cat.Name);
-            chartData.AddSeries(s);
+            this.chartData.AddSeries(s);
 
-            s.Flipped = generator.IsFlipped;
+            s.Flipped = this.generator.IsFlipped;
 
             IList<ChartDataValue> timeData = s.Values;
 
@@ -460,7 +460,7 @@ namespace Walkabout.Views.Controls
                     // Accumulate them and the accumulated value for the day will be displayed
                     if (last != v.Date)
                     {
-                        AddDatum(lastv, last, v.Date, timeData);
+                        this.AddDatum(lastv, last, v.Date, timeData);
                     }
                     last = v.Date;
                 }
@@ -468,7 +468,7 @@ namespace Walkabout.Views.Controls
             }
 
             // Put the last item on the graph
-            AddDatum(lastv, last, end.AddDays(1), timeData);
+            this.AddDatum(lastv, last, end.AddDays(1), timeData);
 
             //s.Accumulate = false;
             //s.Color = color;
@@ -499,9 +499,9 @@ namespace Walkabout.Views.Controls
         {
             this.yearToDate = !this.yearToDate;
             this.showAll = false;
-            menuItemYearToDate.IsChecked = this.yearToDate;
+            this.menuItemYearToDate.IsChecked = this.yearToDate;
             this.menuItemShowAll.IsChecked = this.showAll;
-            GenerateGraph();
+            this.GenerateGraph();
         }
 
         void OnNext(object sender, RoutedEventArgs e)
@@ -517,8 +517,8 @@ namespace Walkabout.Views.Controls
                 this.end = Step(this.start, this.range, 1, 1);
             }
             this.showAll = false;
-            Pin();
-            GenerateGraph();
+            this.Pin();
+            this.GenerateGraph();
         }
 
         void OnPrevious(object sender, RoutedEventArgs e)
@@ -536,44 +536,44 @@ namespace Walkabout.Views.Controls
             this.yearToDate = false;
             this.showAll = false;
 
-            GenerateGraph();
+            this.GenerateGraph();
         }
 
         void OnZoomIn(object sender, RoutedEventArgs e)
         {
-            if (range > CalendarRange.Daily)
+            if (this.range > CalendarRange.Daily)
             {
-                if (years > 1)
+                if (this.years > 1)
                 {
-                    years--;
+                    this.years--;
                 }
                 else
                 {
-                    range = (CalendarRange)(range - 1);
+                    this.range = (CalendarRange)(this.range - 1);
                 }
                 this.end = Step(this.start, this.range, this.years, 1);
                 this.yearToDate = false;
                 this.showAll = false;
-                Pin();
-                GenerateGraph();
+                this.Pin();
+                this.GenerateGraph();
             }
         }
 
         void OnZoomOut(object sender, RoutedEventArgs e)
         {
-            if (range == CalendarRange.Annually)
+            if (this.range == CalendarRange.Annually)
             {
                 this.years++;
             }
             else
             {
-                range = (CalendarRange)(range + 1);
+                this.range = (CalendarRange)(this.range + 1);
             }
             this.end = Step(this.start, this.range, this.years, 1);
             this.yearToDate = false;
             this.showAll = false;
-            Pin();
-            GenerateGraph();
+            this.Pin();
+            this.GenerateGraph();
         }
 
         void OnSetRange(object sender, RoutedEventArgs e)
@@ -593,22 +593,22 @@ namespace Walkabout.Views.Controls
                 this.showAll = false;
                 this.menuItemYearToDate.IsChecked = this.yearToDate;
                 this.menuItemShowAll.IsChecked = this.showAll;
-                GenerateGraph();
+                this.GenerateGraph();
             }
         }
 
         void OnAddSeries(object sender, RoutedEventArgs e)
         {
-            series++;
-            GenerateGraph();
+            this.series++;
+            this.GenerateGraph();
         }
 
         void OnRemoveSeries(object sender, RoutedEventArgs e)
         {
-            if (series > 1)
+            if (this.series > 1)
             {
-                series--;
-                GenerateGraph();
+                this.series--;
+                this.GenerateGraph();
             }
         }
 
@@ -644,7 +644,7 @@ namespace Walkabout.Views.Controls
 
         private void CanExecute_ZoomIn(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = range > CalendarRange.Daily;
+            e.CanExecute = this.range > CalendarRange.Daily;
         }
 
         private void CanExecute_ZoomOut(object sender, CanExecuteRoutedEventArgs e)
@@ -681,20 +681,20 @@ namespace Walkabout.Views.Controls
             this.showAll = true;
             this.menuItemYearToDate.IsChecked = this.yearToDate;
             this.menuItemShowAll.IsChecked = this.showAll;
-            GenerateGraph();
+            this.GenerateGraph();
         }
 
         private void OnExportData(object sender, ExecutedRoutedEventArgs e)
         {
-            if (chartData != null && chartData.Series != null && chartData.Series.Count > 0)
+            if (this.chartData != null && this.chartData.Series != null && this.chartData.Series.Count > 0)
             {
-                chartData.Export();
+                this.chartData.Export();
             }
         }
 
         private void CanExecute_ExportData(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = chartData != null && chartData.Series != null && chartData.Series.Count > 0;
+            e.CanExecute = this.chartData != null && this.chartData.Series != null && this.chartData.Series.Count > 0;
         }
     }
 
@@ -710,15 +710,15 @@ namespace Walkabout.Views.Controls
 
         public DateTime Start
         {
-            get { return start; }
-            set { start = value; }
+            get { return this.start; }
+            set { this.start = value; }
         }
         DateTime end;
 
         public DateTime End
         {
-            get { return end; }
-            set { end = value; }
+            get { return this.end; }
+            set { this.end = value; }
         }
 
     }

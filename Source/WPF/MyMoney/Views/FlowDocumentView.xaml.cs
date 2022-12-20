@@ -24,45 +24,45 @@ namespace Walkabout.Views
 
         public FlowDocumentView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         public void FocusQuickFilter()
         {
-            QuickFilterUX.FocusTextBox();
+            this.QuickFilterUX.FocusTextBox();
         }
 
         public bool ShowSearchStrip
         {
             get
             {
-                return SearchArea.Visibility == System.Windows.Visibility.Visible;
+                return this.SearchArea.Visibility == System.Windows.Visibility.Visible;
             }
             set
             {
-                SearchArea.Visibility = value ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+                this.SearchArea.Visibility = value ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             }
         }
 
         public void AddControl(Control control)
         {
-            ButtonStrip.Children.Add(control);
+            this.ButtonStrip.Children.Add(control);
         }
 
         bool generatingReport;
 
         public async Task Generate(IReport report)
         {
-            if (!generatingReport)
+            if (!this.generatingReport)
             {
-                generatingReport = true;
+                this.generatingReport = true;
                 try
                 {
-                    await InternalGenerate(report);
+                    await this.InternalGenerate(report);
                 }
                 finally
                 {
-                    generatingReport = false;
+                    this.generatingReport = false;
                 }
             }
         }
@@ -72,7 +72,7 @@ namespace Walkabout.Views
             this.report = report;
             this.Viewer.Document.Blocks.Clear();
             this.writer = null;
-            ResetExpandAllToggleButton();
+            this.ResetExpandAllToggleButton();
 
             Paragraph p = new Paragraph();
             p.Inlines.Add(new Run() { Text = "Loading..." });
@@ -83,8 +83,8 @@ namespace Walkabout.Views
             FlowDocumentReportWriter writer = new FlowDocumentReportWriter(this.Viewer.Document, pixelsPerDip);
             await report.Generate(writer);
             this.writer = writer;
-            ResetExpandAllToggleButton();
-            OnAfterViewStateChanged();
+            this.ResetExpandAllToggleButton();
+            this.OnAfterViewStateChanged();
         }
 
         public FlowDocumentScrollViewer DocumentViewer
@@ -94,7 +94,7 @@ namespace Walkabout.Views
 
         public void AddWidget(UIElement e)
         {
-            Grid.Children.Add(e);
+            this.Grid.Children.Add(e);
         }
 
         #region IView 
@@ -131,8 +131,8 @@ namespace Walkabout.Views
 
         public IServiceProvider ServiceProvider
         {
-            get { return serviceProvider; }
-            set { serviceProvider = value; }
+            get { return this.serviceProvider; }
+            set { this.serviceProvider = value; }
         }
 
         public void Commit()
@@ -148,8 +148,8 @@ namespace Walkabout.Views
 
         public object SelectedRow
         {
-            get { return selectedRow; }
-            set { selectedRow = value; }
+            get { return this.selectedRow; }
+            set { this.selectedRow = value; }
         }
 
         public ViewState ViewState
@@ -174,20 +174,20 @@ namespace Walkabout.Views
 
         public string QuickFilter
         {
-            get { return quickFilter; }
+            get { return this.quickFilter; }
             set
             {
                 FlowDocumentScrollViewer viewer = this.Viewer;
                 FlowDocument doc = viewer.Document;
 
-                if (quickFilter != value || findManager == null)
+                if (this.quickFilter != value || this.findManager == null)
                 {
-                    findManager = new FindManager(doc);
+                    this.findManager = new FindManager(doc);
                 }
 
-                quickFilter = value;
+                this.quickFilter = value;
 
-                TextRange textRange = findManager.FindNext(value);
+                TextRange textRange = this.findManager.FindNext(value);
 
                 if (textRange != null)
                 {
@@ -200,19 +200,19 @@ namespace Walkabout.Views
                     }
                 }
 
-                SetFindString(quickFilter);
+                this.SetFindString(this.quickFilter);
             }
         }
 
         private void SetFindString(string text)
         {
-            DependencyObject findToolBarHost = Viewer.Template.FindName("PART_FindToolBarHost", Viewer) as DependencyObject;
+            DependencyObject findToolBarHost = this.Viewer.Template.FindName("PART_FindToolBarHost", this.Viewer) as DependencyObject;
             if (findToolBarHost != null)
             {
                 TextBox box = findToolBarHost.FindFirstDescendantOfType<TextBox>();
                 if (box != null)
                 {
-                    box.Text = quickFilter;
+                    box.Text = this.quickFilter;
                 }
             }
         }
@@ -254,34 +254,34 @@ namespace Walkabout.Views
 
         private void OnQuickFilterValueChanged(object sender, string filter)
         {
-            QuickFilter = filter;
+            this.QuickFilter = filter;
         }
 
         bool resetting;
 
         private void OnToggleExpandAll_Checked(object sender, RoutedEventArgs e)
         {
-            if (resetting) return;
-            ToggleExpandAll.ToolTip = "Hide Details";
-            if (writer != null) writer.ExpandAll();
-            ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "CollapseAllIcon");
+            if (this.resetting) return;
+            this.ToggleExpandAll.ToolTip = "Hide Details";
+            if (this.writer != null) this.writer.ExpandAll();
+            this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "CollapseAllIcon");
         }
 
         private void OnToggleExpandAll_Unchecked(object sender, RoutedEventArgs e)
         {
-            if (resetting) return;
-            ToggleExpandAll.ToolTip = "Show Details";
-            if (writer != null) writer.CollapseAll();
-            ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
+            if (this.resetting) return;
+            this.ToggleExpandAll.ToolTip = "Show Details";
+            if (this.writer != null) this.writer.CollapseAll();
+            this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
         }
         void ResetExpandAllToggleButton()
         {
-            resetting = true;
-            this.ToggleExpandAll.IsEnabled = (writer != null) ? writer.CanExpandCollapse : false;
+            this.resetting = true;
+            this.ToggleExpandAll.IsEnabled = (this.writer != null) ? this.writer.CanExpandCollapse : false;
             this.ToggleExpandAll.ToolTip = "Show Details";
             this.ToggleExpandAll.IsChecked = false;
-            ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
-            resetting = false;
+            this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
+            this.resetting = false;
         }
 
 

@@ -33,14 +33,14 @@ namespace Walkabout.StockQuotes
 
         public AlphaVantage(StockServiceSettings settings, string logPath)
         {
-            _settings = settings;
-            _throttle = StockQuoteThrottle.Load("AlphaVantageThrottle.xml");
-            _throttle.Settings = settings;
+            this._settings = settings;
+            this._throttle = StockQuoteThrottle.Load("AlphaVantageThrottle.xml");
+            this._throttle.Settings = settings;
             settings.Name = FriendlyName;
-            _logPath = logPath;
+            this._logPath = logPath;
         }
 
-        public bool IsEnabled => !string.IsNullOrEmpty(_settings?.ApiKey);
+        public bool IsEnabled => !string.IsNullOrEmpty(this._settings?.ApiKey);
 
         public static StockServiceSettings GetDefaultSettings()
         {
@@ -60,18 +60,18 @@ namespace Walkabout.StockQuotes
             return settings.Name == FriendlyName;
         }
 
-        public int PendingCount { get { return (_pending == null) ? 0 : _pending.Count; } }
+        public int PendingCount { get { return (this._pending == null) ? 0 : this._pending.Count; } }
 
-        public int DownloadsCompleted { get { return _completed; } }
+        public int DownloadsCompleted { get { return this._completed; } }
 
         public void Cancel()
         {
-            _cancelled = true;
-            if (_current != null)
+            this._cancelled = true;
+            if (this._current != null)
             {
                 try
                 {
-                    _current.Abort();
+                    this._current.Abort();
                 }
                 catch { }
             }
@@ -121,41 +121,41 @@ namespace Walkabout.StockQuotes
 
         private void OnSuspended(bool suspended)
         {
-            _suspended = suspended;
+            this._suspended = suspended;
             if (Suspended != null)
             {
                 Suspended(this, suspended);
             }
         }
 
-        public bool IsSuspended { get { return _suspended; } }
+        public bool IsSuspended { get { return this._suspended; } }
 
         public void BeginFetchQuote(string symbol)
         {
-            if (string.IsNullOrEmpty(_settings.ApiKey))
+            if (string.IsNullOrEmpty(this._settings.ApiKey))
             {
-                OnComplete(true, Walkabout.Properties.Resources.ConfigureStockQuoteService);
+                this.OnComplete(true, Walkabout.Properties.Resources.ConfigureStockQuoteService);
                 return;
             }
 
-            if (_pending == null)
+            if (this._pending == null)
             {
-                _pending = new HashSet<string>();
-                _pending.Add(symbol);
+                this._pending = new HashSet<string>();
+                this._pending.Add(symbol);
             }
             else
             {
-                lock (_pending)
+                lock (this._pending)
                 {
                     // merge the lists.                    
-                    _pending.Add(symbol);
+                    this._pending.Add(symbol);
                 }
             }
-            _cancelled = false;
-            if (_downloadThread == null)
+            this._cancelled = false;
+            if (this._downloadThread == null)
             {
-                _downloadThread = new Thread(new ThreadStart(DownloadQuotes));
-                _downloadThread.Start();
+                this._downloadThread = new Thread(new ThreadStart(this.DownloadQuotes));
+                this._downloadThread.Start();
             }
         }
 
@@ -170,29 +170,29 @@ namespace Walkabout.StockQuotes
         {
             try
             {
-                while (!_cancelled)
+                while (!this._cancelled)
                 {
                     int remaining = 0;
                     string symbol = null;
-                    lock (_pending)
+                    lock (this._pending)
                     {
-                        if (_pending.Count == 0)
+                        if (this._pending.Count == 0)
                         {
-                            lock (_retry)
+                            lock (this._retry)
                             {
-                                foreach (var item in _retry)
+                                foreach (var item in this._retry)
                                 {
-                                    _completed--;
-                                    _pending.Add(item);
+                                    this._completed--;
+                                    this._pending.Add(item);
                                 }
-                                _retry.Clear();
+                                this._retry.Clear();
                             }
                         }
-                        if (_pending.Count > 0)
+                        if (this._pending.Count > 0)
                         {
-                            symbol = _pending.FirstOrDefault();
-                            _pending.Remove(symbol);
-                            remaining = _pending.Count;
+                            symbol = this._pending.FirstOrDefault();
+                            this._pending.Remove(symbol);
+                            remaining = this._pending.Count;
                         }
                     }
                     if (symbol == null)
@@ -201,62 +201,62 @@ namespace Walkabout.StockQuotes
                         break;
                     }
                     // even if it fails, we consider the job complete (from a progress point of view).
-                    _completed++;
+                    this._completed++;
 
                     // weed out any securities that have no symbol or have a 
                     if (string.IsNullOrEmpty(symbol))
                     {
                         // skip securities that have no symbol.
                     }
-                    else if (symbol.IndexOfAny(illegalUrlChars) >= 0)
+                    else if (symbol.IndexOfAny(this.illegalUrlChars) >= 0)
                     {
                         // since we are passing the symbol on an HTTP URI line, we can't pass Uri illegal characters...
-                        OnError(string.Format(Walkabout.Properties.Resources.SkippingSecurityIllegalSymbol, symbol));
-                        OnSymbolNotFound(symbol);
+                        this.OnError(string.Format(Walkabout.Properties.Resources.SkippingSecurityIllegalSymbol, symbol));
+                        this.OnSymbolNotFound(symbol);
                     }
                     else
                     {
                         try
                         {
                             // this service doesn't want too many calls per second.
-                            int ms = _throttle.GetSleep();
+                            int ms = this._throttle.GetSleep();
                             while (ms > 0)
                             {
                                 if (ms > 1000)
                                 {
                                     int seconds = ms / 1000;
-                                    OnError("AlphaVantage quote service needs to sleep for " + seconds + " seconds");
+                                    this.OnError("AlphaVantage quote service needs to sleep for " + seconds + " seconds");
                                 }
                                 else
                                 {
-                                    OnError("AlphaVantage quote service needs to sleep for " + ms.ToString() + " ms");
+                                    this.OnError("AlphaVantage quote service needs to sleep for " + ms.ToString() + " ms");
                                 }
-                                OnSuspended(true);
-                                while (!_cancelled && ms > 0)
+                                this.OnSuspended(true);
+                                while (!this._cancelled && ms > 0)
                                 {
                                     Thread.Sleep(1000);
                                     ms -= 1000;
                                 }
-                                OnSuspended(false);
-                                ms = _throttle.GetSleep();
+                                this.OnSuspended(false);
+                                ms = this._throttle.GetSleep();
                             }
-                            if (_cancelled)
+                            if (this._cancelled)
                             {
                                 break;
                             }
 
-                            string uri = string.Format(address, symbol, _settings.ApiKey);
+                            string uri = string.Format(address, symbol, this._settings.ApiKey);
                             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
                             req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
                             req.Method = "GET";
                             req.Timeout = 10000;
                             req.UseDefaultCredentials = false;
-                            _current = req;
+                            this._current = req;
 
                             Debug.WriteLine("AlphaVantage fetching quote " + symbol);
 
                             WebResponse resp = req.GetResponse();
-                            _throttle.RecordCall();
+                            this._throttle.RecordCall();
                             using (Stream stm = resp.GetResponseStream())
                             {
                                 using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
@@ -266,8 +266,8 @@ namespace Walkabout.StockQuotes
                                     StockQuote quote = ParseStockQuote(o);
                                     if (quote == null || quote.Symbol == null)
                                     {
-                                        OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol));
-                                        OnSymbolNotFound(symbol);
+                                        this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol));
+                                        this.OnSymbolNotFound(symbol);
                                     }
                                     else if (string.Compare(quote.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
@@ -275,23 +275,23 @@ namespace Walkabout.StockQuotes
                                     }
                                     else
                                     {
-                                        OnQuoteAvailable(quote);
+                                        this.OnQuoteAvailable(quote);
                                     }
                                 }
                             }
 
-                            OnError(string.Format(Walkabout.Properties.Resources.FetchedStockQuotes, symbol));
+                            this.OnError(string.Format(Walkabout.Properties.Resources.FetchedStockQuotes, symbol));
                         }
                         catch (System.Net.WebException we)
                         {
                             if (we.Status != WebExceptionStatus.RequestCanceled)
                             {
-                                OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + we.Message);
+                                this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + we.Message);
                             }
                             else
                             {
                                 // we cancelled, so bail. 
-                                _cancelled = true;
+                                this._cancelled = true;
                                 break;
                             }
 
@@ -304,8 +304,8 @@ namespace Walkabout.StockQuotes
                                     case HttpStatusCode.ServiceUnavailable:
                                     case HttpStatusCode.InternalServerError:
                                     case HttpStatusCode.Unauthorized:
-                                        OnError(http.StatusDescription);
-                                        _cancelled = true;
+                                        this.OnError(http.StatusDescription);
+                                        this._cancelled = true;
                                         break;
                                 }
                             }
@@ -317,13 +317,13 @@ namespace Walkabout.StockQuotes
 
                             if (message.Contains("Please visit https://www.alphavantage.co/premium/"))
                             {
-                                lock (_retry)
+                                lock (this._retry)
                                 {
-                                    _retry.Add(symbol);
+                                    this._retry.Add(symbol);
                                 }
-                                _throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
+                                this._throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
                             }
-                            OnComplete(PendingCount == 0, message);
+                            this.OnComplete(this.PendingCount == 0, message);
                         }
 
                         Thread.Sleep(1000); // this is so we don't starve out the download service.
@@ -333,17 +333,17 @@ namespace Walkabout.StockQuotes
             catch
             {
             }
-            _completed = 0;
-            if (PendingCount == 0)
+            this._completed = 0;
+            if (this.PendingCount == 0)
             {
-                OnComplete(true, "AlphaVantage download complete");
+                this.OnComplete(true, "AlphaVantage download complete");
             }
             else
             {
-                OnComplete(false, "AlphaVantage download cancelled");
+                this.OnComplete(false, "AlphaVantage download cancelled");
             }
-            _downloadThread = null;
-            _current = null;
+            this._downloadThread = null;
+            this._current = null;
         }
 
         private static StockQuote ParseStockQuote(JObject o)
@@ -427,12 +427,12 @@ namespace Walkabout.StockQuotes
                     bool historyComplete = history.IsComplete();
                     if (historyComplete)
                     {
-                        OnError(string.Format("History for symbol {0} is already up to date", symbol));
+                        this.OnError(string.Format("History for symbol {0} is already up to date", symbol));
                     }
                     else
                     {
                         // this service doesn't want too many calls per second.
-                        int ms = _throttle.GetSleep();
+                        int ms = this._throttle.GetSleep();
                         while (ms > 0)
                         {
                             string message = null;
@@ -440,27 +440,27 @@ namespace Walkabout.StockQuotes
                             int amount = (ms > 1000) ? ms / 1000 : ms;
                             message = string.Format("AlphaVantage history service needs to sleep for {0} {1}", suffix, amount);
 
-                            OnComplete(PendingCount == 0, message);
-                            while (!_cancelled && ms > 0)
+                            this.OnComplete(this.PendingCount == 0, message);
+                            while (!this._cancelled && ms > 0)
                             {
                                 Thread.Sleep(1000);
                                 ms -= 1000;
                             }
-                            ms = _throttle.GetSleep();
+                            ms = this._throttle.GetSleep();
                         }
-                        if (!_cancelled)
+                        if (!this._cancelled)
                         {
                             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
                             req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
                             req.Method = "GET";
                             req.Timeout = 10000;
                             req.UseDefaultCredentials = false;
-                            _current = req;
+                            this._current = req;
 
-                            OnError("AlphaVantage fetching history for " + symbol);
+                            this.OnError("AlphaVantage fetching history for " + symbol);
 
                             WebResponse resp = req.GetResponse();
-                            _throttle.RecordCall();
+                            this._throttle.RecordCall();
 
                             using (Stream stm = resp.GetResponseStream())
                             {
@@ -468,11 +468,11 @@ namespace Walkabout.StockQuotes
                                 {
                                     string json = sr.ReadToEnd();
                                     JObject o = JObject.Parse(json);
-                                    var newHistory = ParseTimeSeries(o);
+                                    var newHistory = this.ParseTimeSeries(o);
 
                                     if (string.Compare(newHistory.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
-                                        OnError(string.Format("History for symbol {0} return different symbol {1}", symbol, newHistory.Symbol));
+                                        this.OnError(string.Format("History for symbol {0} return different symbol {1}", symbol, newHistory.Symbol));
                                     }
                                     else
                                     {
@@ -489,13 +489,13 @@ namespace Walkabout.StockQuotes
                 catch (Exception ex)
                 {
                     string message = ex.Message;
-                    OnError(message);
+                    this.OnError(message);
                     if (message.Contains("Please visit https://www.alphavantage.co/premium/"))
                     {
-                        _throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
+                        this._throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
                     }
                 }
-                OnComplete(PendingCount == 0, null);
+                this.OnComplete(this.PendingCount == 0, null);
 
             }));
             return updated;

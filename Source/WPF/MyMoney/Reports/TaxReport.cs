@@ -32,14 +32,14 @@ namespace Walkabout.Reports
         {
             this.fiscalYearStart = fiscalYearStart;
             this.view = view;
-            SetStartDate(DateTime.Now.Year);
+            this.SetStartDate(DateTime.Now.Year);
             this.money = money;
         }
 
         private void SetStartDate(int year)
         {
-            this.startDate = new DateTime(year, fiscalYearStart + 1, 1);
-            if (fiscalYearStart > 0)
+            this.startDate = new DateTime(year, this.fiscalYearStart + 1, 1);
+            if (this.fiscalYearStart > 0)
             {
                 // Note: "FY2020" means July 2019 to July 2020, in other words
                 // it is the end date that represents the year.
@@ -90,7 +90,7 @@ namespace Walkabout.Reports
             {
                 byYearCombo.SelectedIndex = selected;
             }
-            byYearCombo.SelectionChanged += OnYearChanged;
+            byYearCombo.SelectionChanged += this.OnYearChanged;
             byYearCombo.Margin = new Thickness(10, 0, 0, 0);
 
             heading.Inlines.Add(new InlineUIContainer(byYearCombo));
@@ -110,7 +110,7 @@ namespace Walkabout.Reports
             consolidateCombo.Items.Add("Date Acquired");
             consolidateCombo.Items.Add("Date Sold");
             consolidateCombo.SelectedIndex = this.consolidateOnDateSold ? 1 : 0;
-            consolidateCombo.SelectionChanged += OnConsolidateComboSelectionChanged;
+            consolidateCombo.SelectionChanged += this.OnConsolidateComboSelectionChanged;
 
             writer.WriteParagraph("Consolidate securities by: ");
             Paragraph prompt = fwriter.CurrentParagraph;
@@ -120,21 +120,21 @@ namespace Walkabout.Reports
             CheckBox checkBox = new CheckBox();
             checkBox.Content = "Capital Gains Only";
             checkBox.IsChecked = this.capitalGainsOnly;
-            checkBox.Checked += OnCapitalGainsOnlyChanged;
-            checkBox.Unchecked += OnCapitalGainsOnlyChanged;
+            checkBox.Checked += this.OnCapitalGainsOnlyChanged;
+            checkBox.Unchecked += this.OnCapitalGainsOnlyChanged;
             writer.WriteParagraph("");
             Paragraph checkBoxParagraph = fwriter.CurrentParagraph;
             checkBoxParagraph.Inlines.Add(new InlineUIContainer(checkBox));
 
-            if (!capitalGainsOnly)
+            if (!this.capitalGainsOnly)
             {
                 // find all tax related categories and summarize accordingly.
-                GenerateCategories(writer);
+                this.GenerateCategories(writer);
             }
-            GenerateCapitalGains(writer);
+            this.GenerateCapitalGains(writer);
 
-            FlowDocument document = view.DocumentViewer.Document;
-            document.Blocks.InsertAfter(document.Blocks.FirstBlock, new BlockUIContainer(CreateExportTxfButton()));
+            FlowDocument document = this.view.DocumentViewer.Document;
+            document.Blocks.InsertAfter(document.Blocks.FirstBlock, new BlockUIContainer(this.CreateExportTxfButton()));
             return Task.CompletedTask;
         }
 
@@ -183,7 +183,7 @@ namespace Walkabout.Reports
         {
             CheckBox checkBox = (CheckBox)sender;
             this.capitalGainsOnly = checkBox.IsChecked == true;
-            _ = view.Generate(this);
+            _ = this.view.Generate(this);
         }
 
         private void OnConsolidateComboSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -191,7 +191,7 @@ namespace Walkabout.Reports
             ComboBox box = (ComboBox)sender;
             int index = (int)box.SelectedIndex;
             this.consolidateOnDateSold = index == 1;
-            _ = view.Generate(this);
+            _ = this.view.Generate(this);
         }
 
         private void OnYearChanged(object sender, SelectionChangedEventArgs e)
@@ -204,8 +204,8 @@ namespace Walkabout.Reports
             }
             if (int.TryParse(label, out int year))
             {
-                SetStartDate(year);
-                _ = view.Generate(this);
+                this.SetStartDate(year);
+                _ = this.view.Generate(this);
             }
         }
 
@@ -218,9 +218,9 @@ namespace Walkabout.Reports
         {
             decimal total = 0;
 
-            foreach (Transaction t in money.Transactions)
+            foreach (Transaction t in this.money.Transactions)
             {
-                if (InRange(t.Date) && !t.IsDeleted && t.Status != TransactionStatus.Void)
+                if (this.InRange(t.Date) && !t.IsDeleted && t.Status != TransactionStatus.Void)
                 {
                     total += t.NetSalesTax;
                 }
@@ -244,7 +244,7 @@ namespace Walkabout.Reports
                 }
             }
 
-            if ((from u in calculator.Unknown where InRange(u.DateSold) select u).Any())
+            if ((from u in calculator.Unknown where this.InRange(u.DateSold) select u).Any())
             {
                 writer.WriteHeading("Capital Gains with Unknown Cost Basis");
 
@@ -276,14 +276,14 @@ namespace Walkabout.Reports
 
                 foreach (var data in calculator.Unknown)
                 {
-                    if (!InRange(data.DateSold)) continue;
+                    if (!this.InRange(data.DateSold)) continue;
                     writer.StartRow();
                     writer.StartCell();
                     writer.WriteParagraph(data.Security.Name);
                     writer.EndCell();
 
                     writer.StartCell();
-                    writer.WriteNumber(Rounded(data.UnitsSold, 3));
+                    writer.WriteNumber(this.Rounded(data.UnitsSold, 3));
                     writer.EndCell();
 
                     writer.StartCell();
@@ -306,14 +306,14 @@ namespace Walkabout.Reports
             {
                 decimal total = 0;
                 writer.WriteHeading("Short Term Capital Gains and Losses");
-                WriteHeaders(writer);
+                this.WriteHeaders(writer);
                 foreach (var data in calculator.ShortTerm)
                 {
-                    if (!InRange(data.DateSold)) continue;
-                    WriteCapitalGains(writer, data);
+                    if (!this.InRange(data.DateSold)) continue;
+                    this.WriteCapitalGains(writer, data);
                     total += data.TotalGain;
                 }
-                WriteCapitalGainsTotal(writer, total);
+                this.WriteCapitalGainsTotal(writer, total);
                 writer.EndTable();
             }
 
@@ -321,14 +321,14 @@ namespace Walkabout.Reports
             {
                 decimal total = 0;
                 writer.WriteHeading("Long Term Capital Gains and Losses");
-                WriteHeaders(writer);
+                this.WriteHeaders(writer);
                 foreach (var data in calculator.LongTerm)
                 {
-                    if (!InRange(data.DateSold)) continue;
-                    WriteCapitalGains(writer, data);
+                    if (!this.InRange(data.DateSold)) continue;
+                    this.WriteCapitalGains(writer, data);
                     total += data.TotalGain;
                 }
-                WriteCapitalGainsTotal(writer, total);
+                this.WriteCapitalGainsTotal(writer, total);
             }
             writer.EndTable();
         }
@@ -376,7 +376,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(Rounded(data.UnitsSold, 3));
+            writer.WriteNumber(this.Rounded(data.UnitsSold, 3));
             writer.EndCell();
 
             writer.StartCell();
@@ -421,7 +421,7 @@ namespace Walkabout.Reports
         private void GenerateCategories(IReportWriter writer)
         {
             TaxCategoryCollection taxCategories = new TaxCategoryCollection();
-            List<TaxCategory> list = taxCategories.GenerateGroups(money, this.startDate, this.endDate);
+            List<TaxCategory> list = taxCategories.GenerateGroups(this.money, this.startDate, this.endDate);
 
             if (list == null)
             {
@@ -450,7 +450,7 @@ namespace Walkabout.Reports
             writer.EndCell();
             writer.EndRow();
 
-            decimal tax = GetSalesTax();
+            decimal tax = this.GetSalesTax();
 
             writer.StartRow();
             writer.StartCell();
@@ -556,14 +556,14 @@ namespace Walkabout.Reports
 
         private Button CreateExportTxfButton()
         {
-            Button button = CreateReportButton("Icons/TurboTax.png", "Export", "Export .txf file format for TuboTax");
+            Button button = this.CreateReportButton("Icons/TurboTax.png", "Export", "Export .txf file format for TuboTax");
 
             button.HorizontalAlignment = HorizontalAlignment.Left;
             button.Margin = new Thickness(10);
 
             button.Click += new RoutedEventHandler((s, args) =>
             {
-                OnExportTaxInfoAsTxf();
+                this.OnExportTaxInfoAsTxf();
             });
             return button;
         }
@@ -588,7 +588,7 @@ namespace Walkabout.Reports
                 try
                 {
                     string filename = fd.FileName;
-                    Export(filename);
+                    this.Export(filename);
                 }
                 catch (Exception ex)
                 {

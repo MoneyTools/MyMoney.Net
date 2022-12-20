@@ -13,11 +13,11 @@ namespace Walkabout.Dialogs
         List<string> months = new List<string>();
         public TaxReportDialog()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.Year = DateTime.Now.Year;
 
-            this.Loaded += new RoutedEventHandler(OnLoaded);
+            Loaded += new RoutedEventHandler(this.OnLoaded);
 
             for (int i = 0; i < 12; i++)
             {
@@ -31,19 +31,19 @@ namespace Walkabout.Dialogs
         void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.YearText.Focus();
-            this.YearText.SelectionStart = YearText.Text.Length;
+            this.YearText.SelectionStart = this.YearText.Text.Length;
         }
 
         public bool ConsolidateSecuritiesOnDateSold
         {
-            get { return ConsolidateSecuritiesCombo.SelectedIndex > 0; }
-            set { ConsolidateSecuritiesCombo.SelectedIndex = (value ? 1 : 0); }
+            get { return this.ConsolidateSecuritiesCombo.SelectedIndex > 0; }
+            set { this.ConsolidateSecuritiesCombo.SelectedIndex = (value ? 1 : 0); }
         }
 
         public bool CapitalGainsOnly
         {
-            get { return CapitalGainsOnlyCheckBox.IsChecked == true; }
-            set { CapitalGainsOnlyCheckBox.IsChecked = value; }
+            get { return this.CapitalGainsOnlyCheckBox.IsChecked == true; }
+            set { this.CapitalGainsOnlyCheckBox.IsChecked = value; }
         }
 
         public int Year
@@ -51,7 +51,7 @@ namespace Walkabout.Dialogs
             get
             {
                 int result = 0;
-                if (int.TryParse(YearText.Text, out result) && result < 100)
+                if (int.TryParse(this.YearText.Text, out result) && result < 100)
                 {
                     result += 2000;
                 }
@@ -59,7 +59,7 @@ namespace Walkabout.Dialogs
             }
             set
             {
-                YearText.Text = value.ToString();
+                this.YearText.Text = value.ToString();
             }
         }
 
@@ -84,7 +84,7 @@ namespace Walkabout.Dialogs
         private void YearText_TextChanged(object sender, TextChangedEventArgs e)
         {
             int result = 0;
-            this.OK.IsEnabled = int.TryParse(YearText.Text, out result);
+            this.OK.IsEnabled = int.TryParse(this.YearText.Text, out result);
         }
     }
 }

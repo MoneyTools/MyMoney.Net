@@ -28,61 +28,61 @@ namespace Walkabout.Sgml
 
         public Attribute(string name, string value, char quote)
         {
-            Name = name;
-            LocalName = name;
-            ParseXmlns(name);
+            this.Name = name;
+            this.LocalName = name;
+            this.ParseXmlns(name);
 
-            _value = value;
-            QuoteChar = quote;
+            this._value = value;
+            this.QuoteChar = quote;
         }
 
         private void ParseXmlns(string name)
         {
-            LocalName = name;
-            Prefix = "";
-            NamespaceURI = "";
+            this.LocalName = name;
+            this.Prefix = "";
+            this.NamespaceURI = "";
             if (name == "xmlns")
             {
-                LocalName = "xmlns";
-                NamespaceURI = XmlnsUri;
+                this.LocalName = "xmlns";
+                this.NamespaceURI = XmlnsUri;
             }
             else if (name.StartsWith("xmlns:"))
             {
-                Prefix = "xmlns";
-                LocalName = name.Substring(6);
-                NamespaceURI = XmlnsUri;
+                this.Prefix = "xmlns";
+                this.LocalName = name.Substring(6);
+                this.NamespaceURI = XmlnsUri;
             }
             else
             {
                 int i = name.IndexOf(':');
                 if (i > 0)
                 {
-                    Prefix = name.Substring(0, i);
-                    LocalName = name.Substring(i + 1);
+                    this.Prefix = name.Substring(0, i);
+                    this.LocalName = name.Substring(i + 1);
                 }
             }
         }
 
         public void Reset(string name, string value, char quote)
         {
-            Name = name;
-            _value = value;
-            QuoteChar = quote;
-            DtdType = null;
-            ParseXmlns(name);
+            this.Name = name;
+            this._value = value;
+            this.QuoteChar = quote;
+            this.DtdType = null;
+            this.ParseXmlns(name);
         }
 
         public string Value
         {
             get
             {
-                if (_value != null) return _value;
-                if (DtdType != null) return DtdType.Default;
+                if (this._value != null) return this._value;
+                if (this.DtdType != null) return this.DtdType.Default;
                 return null;
             }
             set
             {
-                _value = value;
+                this._value = value;
             }
         }
 
@@ -90,7 +90,7 @@ namespace Walkabout.Sgml
         {
             get
             {
-                return (_value == null);
+                return (this._value == null);
             }
         }
         string _value;
@@ -117,90 +117,90 @@ namespace Walkabout.Sgml
 
         public Node(string name, XmlNodeType nt, string value)
         {
-            Name = name;
-            NodeType = nt;
-            Value = value;
-            IsEmpty = true;
-            ParseNamespacePrefix(name);
+            this.Name = name;
+            this.NodeType = nt;
+            this.Value = value;
+            this.IsEmpty = true;
+            this.ParseNamespacePrefix(name);
         }
 
         private void ParseNamespacePrefix(string name)
         {
-            Prefix = "";
-            LocalName = "";
-            NamespaceURI = "";
+            this.Prefix = "";
+            this.LocalName = "";
+            this.NamespaceURI = "";
 
             if (name != null)
             {
                 int i = name.IndexOf(':');
                 if (i > 0)
                 {
-                    Prefix = name.Substring(0, i);
-                    LocalName = name.Substring(i + 1);
+                    this.Prefix = name.Substring(0, i);
+                    this.LocalName = name.Substring(i + 1);
                 }
                 else
                 {
-                    Prefix = "";
-                    LocalName = name;
+                    this.Prefix = "";
+                    this.LocalName = name;
                 }
             }
         }
 
         public void Reset(string name, XmlNodeType nt, string value)
         {
-            Value = value;
-            Name = name;
-            NodeType = nt;
-            Space = XmlSpace.None;
-            XmlLang = null;
-            IsEmpty = true;
-            _attcount = 0;
-            DtdType = null;
-            ParseNamespacePrefix(name);
+            this.Value = value;
+            this.Name = name;
+            this.NodeType = nt;
+            this.Space = XmlSpace.None;
+            this.XmlLang = null;
+            this.IsEmpty = true;
+            this._attcount = 0;
+            this.DtdType = null;
+            this.ParseNamespacePrefix(name);
 
         }
         public Attribute AddAttribute(string name, string value, char quotechar, bool ignoreCase)
         {
-            if (_attcount == _attsize)
+            if (this._attcount == this._attsize)
             {
-                int newsize = _attsize + 10;
+                int newsize = this._attsize + 10;
                 Attribute[] newarray = new Attribute[newsize];
-                if (_attributes != null)
-                    Array.Copy(_attributes, newarray, _attsize);
-                _attsize = newsize;
-                _attributes = newarray;
+                if (this._attributes != null)
+                    Array.Copy(this._attributes, newarray, this._attsize);
+                this._attsize = newsize;
+                this._attributes = newarray;
             }
-            for (int i = 0; i < _attcount; i++)
+            for (int i = 0; i < this._attcount; i++)
             {
-                if ((ignoreCase && string.Compare(_attributes[i].Name, name, StringComparison.OrdinalIgnoreCase) == 0)
-                    || (object)_attributes[i].Name == (object)name)
+                if ((ignoreCase && string.Compare(this._attributes[i].Name, name, StringComparison.OrdinalIgnoreCase) == 0)
+                    || (object)this._attributes[i].Name == (object)name)
                 {
                     return null; // ignore duplicates!
                 }
             }
-            Attribute a = _attributes[_attcount];
+            Attribute a = this._attributes[this._attcount];
             if (a == null)
             {
                 a = new Attribute(name, value, quotechar);
-                _attributes[_attcount] = a;
+                this._attributes[this._attcount] = a;
             }
             else
             {
                 a.Reset(name, value, quotechar);
             }
-            _attcount++;
+            this._attcount++;
             return a;
         }
 
         public void RemoveAttribute(string name)
         {
-            for (int i = 0; i < _attcount; i++)
+            for (int i = 0; i < this._attcount; i++)
             {
-                if (_attributes[i].Name == name)
+                if (this._attributes[i].Name == name)
                 {
-                    _attributes[i] = null;
-                    Array.Copy(_attributes, i + 1, _attributes, i, _attcount - i - 1);
-                    _attcount--;
+                    this._attributes[i] = null;
+                    Array.Copy(this._attributes, i + 1, this._attributes, i, this._attcount - i - 1);
+                    this._attcount--;
                     return;
                 }
             }
@@ -219,17 +219,17 @@ namespace Walkabout.Sgml
         {
             get
             {
-                return _attcount;
+                return this._attcount;
             }
         }
 
         public int GetAttribute(string name)
         {
-            if (_attcount > 0)
+            if (this._attcount > 0)
             {
-                for (int i = 0; i < _attcount; i++)
+                for (int i = 0; i < this._attcount; i++)
                 {
-                    Attribute a = _attributes[i];
+                    Attribute a = this._attributes[i];
                     if (a.Name == name)
                     {
                         return i;
@@ -241,9 +241,9 @@ namespace Walkabout.Sgml
 
         public Attribute GetAttribute(int i)
         {
-            if (i >= 0 && i < _attcount)
+            if (i >= 0 && i < this._attcount)
             {
-                Attribute a = _attributes[i];
+                Attribute a = this._attributes[i];
                 return a;
             }
             return null;
@@ -313,9 +313,9 @@ namespace Walkabout.Sgml
 
         public SgmlReader()
         {
-            _nametable = new NameTable();
-            _mgr = new XmlNamespaceManager(_nametable);
-            Init();
+            this._nametable = new NameTable();
+            this._mgr = new XmlNamespaceManager(this._nametable);
+            this.Init();
         }
 
         public bool IgnoreCase { get; set; }
@@ -328,32 +328,32 @@ namespace Walkabout.Sgml
         {
             get
             {
-                LazyLoadDtd(this._baseUri);
-                return _dtd;
+                this.LazyLoadDtd(this._baseUri);
+                return this._dtd;
             }
-            set { _dtd = value; }
+            set { this._dtd = value; }
         }
 
         private void LazyLoadDtd(Uri baseUri)
         {
-            if (_dtd == null)
+            if (this._dtd == null)
             {
-                if (_syslit == null || _syslit == string.Empty)
+                if (this._syslit == null || this._syslit == string.Empty)
                 {
 
                 }
                 else
                 {
-                    if (_syslit.IndexOf("://") > 0)
+                    if (this._syslit.IndexOf("://") > 0)
                     {
-                        baseUri = new Uri(_syslit);
+                        baseUri = new Uri(this._syslit);
                     }
                     else
                     {
                         // probably a local filename.
-                        baseUri = new Uri("file://" + _syslit.Replace("\\", "/"));
+                        baseUri = new Uri("file://" + this._syslit.Replace("\\", "/"));
                     }
-                    _dtd = SgmlDtd.Parse(baseUri, _docType, _pubid, _syslit, _subset, _proxy, _nametable);
+                    this._dtd = SgmlDtd.Parse(baseUri, this._docType, this._pubid, this._syslit, this._subset, this._proxy, this._nametable);
                 }
             }
         }
@@ -363,8 +363,8 @@ namespace Walkabout.Sgml
         /// </summary>
         public string DocType
         {
-            get { return _docType; }
-            set { _docType = value; }
+            get { return this._docType; }
+            set { this._docType = value; }
         }
 
         /// <summary>
@@ -372,8 +372,8 @@ namespace Walkabout.Sgml
         /// </summary>
         public string PublicIdentifier
         {
-            get { return _pubid; }
-            set { _pubid = value; }
+            get { return this._pubid; }
+            set { this._pubid = value; }
         }
 
         /// <summary>
@@ -381,8 +381,8 @@ namespace Walkabout.Sgml
         /// </summary>
         public string SystemLiteral
         {
-            get { return _syslit; }
-            set { _syslit = value; }
+            get { return this._syslit; }
+            set { this._syslit = value; }
         }
 
         /// <summary>
@@ -390,8 +390,8 @@ namespace Walkabout.Sgml
         /// </summary>
         public string InternalSubset
         {
-            get { return _subset; }
-            set { _subset = value; }
+            get { return this._subset; }
+            set { this._subset = value; }
         }
 
         /// <summary>
@@ -400,8 +400,8 @@ namespace Walkabout.Sgml
         /// </summary>
         public TextReader InputStream
         {
-            get { return _inputStream; }
-            set { _inputStream = value; Init(); }
+            get { return this._inputStream; }
+            set { this._inputStream = value; this.Init(); }
         }
 
         /// <summary>
@@ -410,8 +410,8 @@ namespace Walkabout.Sgml
         /// </summary>
         public string WebProxy
         {
-            get { return _proxy; }
-            set { _proxy = value; }
+            get { return this._proxy; }
+            set { this._proxy = value; }
         }
 
         /// <summary>
@@ -421,7 +421,7 @@ namespace Walkabout.Sgml
         /// </summary>
         public void SetBaseUri(string uri)
         {
-            _baseUri = new Uri(uri);
+            this._baseUri = new Uri(uri);
         }
 
         /// <summary>
@@ -429,20 +429,20 @@ namespace Walkabout.Sgml
         /// </summary>
         public string Href
         {
-            get { return _href; }
+            get { return this._href; }
             set
             {
-                _href = value;
-                Init();
-                if (_baseUri == null)
+                this._href = value;
+                this.Init();
+                if (this._baseUri == null)
                 {
-                    if (_href.IndexOf("://") > 0)
+                    if (this._href.IndexOf("://") > 0)
                     {
-                        _baseUri = new Uri(_href);
+                        this._baseUri = new Uri(this._href);
                     }
                     else
                     {
-                        _baseUri = new Uri("file:///" + Directory.GetCurrentDirectory() + "//");
+                        this._baseUri = new Uri("file:///" + Directory.GetCurrentDirectory() + "//");
                     }
                 }
             }
@@ -453,8 +453,8 @@ namespace Walkabout.Sgml
         /// </summary>
         public TextWriter ErrorLog
         {
-            get { return _log; }
-            set { _log = value; }
+            get { return this._log; }
+            set { this._log = value; }
         }
 
         /// <summary>
@@ -462,94 +462,94 @@ namespace Walkabout.Sgml
         /// </summary>
         public string ErrorLogFile
         {
-            get { return _ErrorLogFile; }
+            get { return this._ErrorLogFile; }
             set
             {
-                _ErrorLogFile = value;
+                this._ErrorLogFile = value;
                 this.ErrorLog = new StreamWriter(value);
             }
         }
 
         void Log(string msg, params string[] args)
         {
-            if (ErrorLog != null)
+            if (this.ErrorLog != null)
             {
                 string err = String.Format(msg, args);
-                if (_lastError != _current)
+                if (this._lastError != this._current)
                 {
-                    err = err + "    " + _current.Context();
-                    _lastError = _current;
-                    ErrorLog.WriteLine("### Error:" + err);
+                    err = err + "    " + this._current.Context();
+                    this._lastError = this._current;
+                    this.ErrorLog.WriteLine("### Error:" + err);
                 }
                 else
                 {
                     string path = string.Empty;
-                    if (_current.ResolvedUri != null)
+                    if (this._current.ResolvedUri != null)
                     {
-                        path = _current.ResolvedUri.AbsolutePath;
+                        path = this._current.ResolvedUri.AbsolutePath;
                     }
-                    ErrorLog.WriteLine("### Error in " +
+                    this.ErrorLog.WriteLine("### Error in " +
                         path + "#" +
-                        _current.Name +
-                        ", line " + _current.Line + ", position " + _current.LinePosition + ": " +
+                        this._current.Name +
+                        ", line " + this._current.Line + ", position " + this._current.LinePosition + ": " +
                         err);
                 }
             }
         }
         void Log(string msg, char ch)
         {
-            Log(msg, ch.ToString());
+            this.Log(msg, ch.ToString());
         }
 
 
         void Init()
         {
-            _state = State.Initial;
-            _stack = new Node[10];
-            _size = 10;
-            _depth = 0;
-            _node = Push(null, XmlNodeType.Document, null);
-            _node.IsEmpty = false;
-            _sb = new StringBuilder();
-            _name = new StringBuilder();
-            _poptodepth = 0;
-            _current = null;
-            _partial = '\0';
-            _endTag = null;
-            _a = null;
-            _apos = 0;
-            _newnode = null;
-            _poptodepth = 0;
-            _rootCount = 0;
+            this._state = State.Initial;
+            this._stack = new Node[10];
+            this._size = 10;
+            this._depth = 0;
+            this._node = this.Push(null, XmlNodeType.Document, null);
+            this._node.IsEmpty = false;
+            this._sb = new StringBuilder();
+            this._name = new StringBuilder();
+            this._poptodepth = 0;
+            this._current = null;
+            this._partial = '\0';
+            this._endTag = null;
+            this._a = null;
+            this._apos = 0;
+            this._newnode = null;
+            this._poptodepth = 0;
+            this._rootCount = 0;
         }
 
         void Grow()
         {
             int inc = 10;
-            int newsize = _size + inc;
+            int newsize = this._size + inc;
             Node[] narray = new Node[newsize];
-            Array.Copy(_stack, narray, _size);
-            _size = newsize;
-            _stack = narray;
+            Array.Copy(this._stack, narray, this._size);
+            this._size = newsize;
+            this._stack = narray;
         }
 
         Node Push(string name, XmlNodeType nt, string value)
         {
-            if (_depth == _size) Grow();
+            if (this._depth == this._size) this.Grow();
             Node result;
-            if (_stack[_depth] == null)
+            if (this._stack[this._depth] == null)
             {
                 result = new Node(name, nt, value);
-                _stack[_depth] = result;
+                this._stack[this._depth] = result;
             }
             else
             {
-                result = _stack[_depth];
+                result = this._stack[this._depth];
                 result.Reset(name, nt, value);
             }
-            _depth++;
-            _node = result;
-            _mgr.PushScope();
+            this._depth++;
+            this._node = result;
+            this._mgr.PushScope();
             return result;
         }
 
@@ -557,24 +557,24 @@ namespace Walkabout.Sgml
         {
             // we have to do a deep clone of the Node object because
             // it is reused in the stack.
-            Node n2 = Push(n.Name, n.NodeType, n.Value);
+            Node n2 = this.Push(n.Name, n.NodeType, n.Value);
             n2.DtdType = n.DtdType;
             n2.IsEmpty = n.IsEmpty;
             n2.Space = n.Space;
             n2.XmlLang = n.XmlLang;
             n2.CurrentState = n.CurrentState;
             n2.CopyAttributes(n, this.IgnoreCase);
-            _node = n2;
+            this._node = n2;
             return n2;
         }
 
         void Pop()
         {
-            if (_depth > 1)
+            if (this._depth > 1)
             {
-                _depth--;
-                _node = _stack[_depth - 1];
-                _mgr.PopScope();
+                this._depth--;
+                this._node = this._stack[this._depth - 1];
+                this._mgr.PopScope();
             }
         }
 
@@ -582,19 +582,19 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (_state == State.Attr)
+                if (this._state == State.Attr)
                 {
                     return XmlNodeType.Attribute;
                 }
-                else if (_state == State.AttrValue)
+                else if (this._state == State.AttrValue)
                 {
                     return XmlNodeType.Text;
                 }
-                else if (_state == State.EndTag || _state == State.AutoClose || _state == State.AutoCloseTextOnly)
+                else if (this._state == State.EndTag || this._state == State.AutoClose || this._state == State.AutoCloseTextOnly)
                 {
                     return XmlNodeType.EndElement;
                 }
-                return _node.NodeType;
+                return this._node.NodeType;
             }
         }
 
@@ -603,17 +603,17 @@ namespace Walkabout.Sgml
             get
             {
                 string result = null;
-                if (_state == State.Attr)
+                if (this._state == State.Attr)
                 {
-                    result = _a.Name;
+                    result = this._a.Name;
                 }
-                else if (_state == State.AttrValue)
+                else if (this._state == State.AttrValue)
                 {
                     result = null;
                 }
                 else
                 {
-                    result = _node.Name;
+                    result = this._node.Name;
                 }
 
                 return result;
@@ -625,17 +625,17 @@ namespace Walkabout.Sgml
             get
             {
                 string result = null;
-                if (_state == State.Attr)
+                if (this._state == State.Attr)
                 {
-                    result = _a.LocalName;
+                    result = this._a.LocalName;
                 }
-                else if (_state == State.AttrValue)
+                else if (this._state == State.AttrValue)
                 {
                     result = null;
                 }
                 else
                 {
-                    result = _node.LocalName;
+                    result = this._node.LocalName;
                 }
 
                 return result;
@@ -647,13 +647,13 @@ namespace Walkabout.Sgml
             get
             {
                 string result = String.Empty;
-                if (_state == State.Attr)
+                if (this._state == State.Attr)
                 {
-                    result = _a.NamespaceURI;
+                    result = this._a.NamespaceURI;
                 }
                 else
                 {
-                    result = _node.NamespaceURI;
+                    result = this._node.NamespaceURI;
                 }
                 return result;
             }
@@ -664,13 +664,13 @@ namespace Walkabout.Sgml
             get
             {
                 string result = String.Empty;
-                if (_state == State.Attr)
+                if (this._state == State.Attr)
                 {
-                    result = _a.Prefix;
+                    result = this._a.Prefix;
                 }
                 else
                 {
-                    result = _node.Prefix;
+                    result = this._node.Prefix;
                 }
                 return result;
             }
@@ -680,11 +680,11 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (_state == State.Attr || _state == State.AttrValue)
+                if (this._state == State.Attr || this._state == State.AttrValue)
                 {
                     return true;
                 }
-                return (_node.Value != null);
+                return (this._node.Value != null);
             }
         }
 
@@ -692,11 +692,11 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (_state == State.Attr || _state == State.AttrValue)
+                if (this._state == State.Attr || this._state == State.AttrValue)
                 {
-                    return _a.Value;
+                    return this._a.Value;
                 }
-                return _node.Value;
+                return this._node.Value;
             }
         }
 
@@ -704,15 +704,15 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (_state == State.Attr)
+                if (this._state == State.Attr)
                 {
-                    return _depth;
+                    return this._depth;
                 }
-                else if (_state == State.AttrValue)
+                else if (this._state == State.AttrValue)
                 {
-                    return _depth + 1;
+                    return this._depth + 1;
                 }
-                return _depth - 1;
+                return this._depth - 1;
             }
         }
 
@@ -720,7 +720,7 @@ namespace Walkabout.Sgml
         {
             get
             {
-                return _baseUri == null ? string.Empty : _baseUri.AbsoluteUri;
+                return this._baseUri == null ? string.Empty : this._baseUri.AbsoluteUri;
             }
         }
 
@@ -728,9 +728,9 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (_state == State.Markup || _state == State.Attr || _state == State.AttrValue)
+                if (this._state == State.Markup || this._state == State.Attr || this._state == State.AttrValue)
                 {
-                    return _node.IsEmpty;
+                    return this._node.IsEmpty;
                 }
                 return false;
             }
@@ -739,8 +739,8 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (_state == State.Attr || _state == State.AttrValue)
-                    return _a.IsDefault;
+                if (this._state == State.Attr || this._state == State.AttrValue)
+                    return this._a.IsDefault;
                 return false;
             }
         }
@@ -748,7 +748,7 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (_a != null) return _a.QuoteChar;
+                if (this._a != null) return this._a.QuoteChar;
                 return '\0';
             }
         }
@@ -757,9 +757,9 @@ namespace Walkabout.Sgml
         {
             get
             {
-                for (int i = _depth - 1; i > 1; i--)
+                for (int i = this._depth - 1; i > 1; i--)
                 {
-                    XmlSpace xs = _stack[i].Space;
+                    XmlSpace xs = this._stack[i].Space;
                     if (xs != XmlSpace.None) return xs;
                 }
                 return XmlSpace.None;
@@ -770,9 +770,9 @@ namespace Walkabout.Sgml
         {
             get
             {
-                for (int i = _depth - 1; i > 1; i--)
+                for (int i = this._depth - 1; i > 1; i--)
                 {
-                    string xmllang = _stack[i].XmlLang;
+                    string xmllang = this._stack[i].XmlLang;
                     if (xmllang != null) return xmllang;
                 }
                 return String.Empty;
@@ -783,11 +783,11 @@ namespace Walkabout.Sgml
         {
             get
             {
-                return _whitespaceHandling;
+                return this._whitespaceHandling;
             }
             set
             {
-                _whitespaceHandling = value;
+                this._whitespaceHandling = value;
             }
         }
 
@@ -795,35 +795,35 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (_state == State.Attr || _state == State.AttrValue)
+                if (this._state == State.Attr || this._state == State.AttrValue)
                     return 0;
-                if (_node.NodeType == XmlNodeType.Element ||
-                    _node.NodeType == XmlNodeType.DocumentType)
-                    return _node.AttributeCount;
+                if (this._node.NodeType == XmlNodeType.Element ||
+                    this._node.NodeType == XmlNodeType.DocumentType)
+                    return this._node.AttributeCount;
                 return 0;
             }
         }
 
         public override string GetAttribute(string name)
         {
-            if (_state != State.Attr && _state != State.AttrValue)
+            if (this._state != State.Attr && this._state != State.AttrValue)
             {
-                int i = _node.GetAttribute(name);
-                if (i >= 0) return GetAttribute(i);
+                int i = this._node.GetAttribute(name);
+                if (i >= 0) return this.GetAttribute(i);
             }
             return null;
         }
 
         public override string GetAttribute(string name, string namespaceURI)
         {
-            return GetAttribute(name); // SGML has no namespaces.
+            return this.GetAttribute(name); // SGML has no namespaces.
         }
 
         public override string GetAttribute(int i)
         {
-            if (_state != State.Attr && _state != State.AttrValue)
+            if (this._state != State.Attr && this._state != State.AttrValue)
             {
-                Attribute a = _node.GetAttribute(i);
+                Attribute a = this._node.GetAttribute(i);
                 if (a != null)
                     return a.Value;
             }
@@ -834,7 +834,7 @@ namespace Walkabout.Sgml
         {
             get
             {
-                return GetAttribute(i);
+                return this.GetAttribute(i);
             }
         }
 
@@ -842,7 +842,7 @@ namespace Walkabout.Sgml
         {
             get
             {
-                return GetAttribute(name);
+                return this.GetAttribute(name);
             }
         }
 
@@ -850,16 +850,16 @@ namespace Walkabout.Sgml
         {
             get
             {
-                return GetAttribute(name, namespaceURI);
+                return this.GetAttribute(name, namespaceURI);
             }
         }
 
         public override bool MoveToAttribute(string name)
         {
-            int i = _node.GetAttribute(name);
+            int i = this._node.GetAttribute(name);
             if (i >= 0)
             {
-                MoveToAttribute(i);
+                this.MoveToAttribute(i);
                 return true;
             }
             return false;
@@ -867,18 +867,18 @@ namespace Walkabout.Sgml
 
         public override bool MoveToAttribute(string name, string ns)
         {
-            return MoveToAttribute(name);
+            return this.MoveToAttribute(name);
         }
 
         public override void MoveToAttribute(int i)
         {
-            Attribute a = _node.GetAttribute(i);
+            Attribute a = this._node.GetAttribute(i);
             if (a != null)
             {
-                _apos = i;
-                _a = a;
-                _node.CurrentState = _state;//save current state.
-                _state = State.Attr;
+                this._apos = i;
+                this._a = a;
+                this._node.CurrentState = this._state;//save current state.
+                this._state = State.Attr;
                 return;
             }
             throw new IndexOutOfRangeException();
@@ -886,9 +886,9 @@ namespace Walkabout.Sgml
 
         public override bool MoveToFirstAttribute()
         {
-            if (_node.AttributeCount > 0)
+            if (this._node.AttributeCount > 0)
             {
-                MoveToAttribute(0);
+                this.MoveToAttribute(0);
                 return true;
             }
             return false;
@@ -896,13 +896,13 @@ namespace Walkabout.Sgml
 
         public override bool MoveToNextAttribute()
         {
-            if (_state != State.Attr && _state != State.AttrValue)
+            if (this._state != State.Attr && this._state != State.AttrValue)
             {
-                return MoveToFirstAttribute();
+                return this.MoveToFirstAttribute();
             }
-            if (_apos < _node.AttributeCount - 1)
+            if (this._apos < this._node.AttributeCount - 1)
             {
-                MoveToAttribute(_apos + 1);
+                this.MoveToAttribute(this._apos + 1);
                 return true;
             }
             return false;
@@ -910,22 +910,22 @@ namespace Walkabout.Sgml
 
         public override bool MoveToElement()
         {
-            if (_state == State.Attr || _state == State.AttrValue)
+            if (this._state == State.Attr || this._state == State.AttrValue)
             {
-                _state = _node.CurrentState;
-                _a = null;
+                this._state = this._node.CurrentState;
+                this._a = null;
                 return true;
             }
-            return (_node.NodeType == XmlNodeType.Element);
+            return (this._node.NodeType == XmlNodeType.Element);
         }
 
         bool IsTextOnly
         {
             get
             {
-                if (_node != null)
+                if (this._node != null)
                 {
-                    ElementDecl e = _node.DtdType;
+                    ElementDecl e = this._node.DtdType;
                     if (e != null)
                     {
                         ContentModel m = e.ContentModel;
@@ -946,40 +946,40 @@ namespace Walkabout.Sgml
 
         public override bool Read()
         {
-            if (_current == null)
+            if (this._current == null)
             {
-                LazyLoadDtd(this._baseUri);
+                this.LazyLoadDtd(this._baseUri);
 
                 if (this.Href != null)
                 {
-                    _current = new Entity("#document", null, _href, this._proxy);
+                    this._current = new Entity("#document", null, this._href, this._proxy);
                 }
                 else if (this._inputStream != null)
                 {
-                    _current = new Entity("#document", null, this._inputStream, _proxy);
+                    this._current = new Entity("#document", null, this._inputStream, this._proxy);
                 }
                 else
                 {
                     throw new InvalidOperationException("You must specify input either via Href or InputStream properties");
                 }
-                _current.Open(null, _baseUri);
-                _baseUri = _current.ResolvedUri;
+                this._current.Open(null, this._baseUri);
+                this._baseUri = this._current.ResolvedUri;
             }
 
             bool foundnode = false;
             while (!foundnode)
             {
-                switch (_state)
+                switch (this._state)
                 {
                     case State.Initial:
-                        _state = State.Markup;
-                        _current.ReadChar();
+                        this._state = State.Markup;
+                        this._current.ReadChar();
                         goto case State.Markup;
                     case State.Eof:
-                        if (_current.Parent != null)
+                        if (this._current.Parent != null)
                         {
-                            _current.Close();
-                            _current = _current.Parent;
+                            this._current.Close();
+                            this._current = this._current.Parent;
                         }
                         else
                         {
@@ -987,71 +987,71 @@ namespace Walkabout.Sgml
                         }
                         break;
                     case State.EndTag:
-                        if (this._endTag == (object)_node.Name)
+                        if (this._endTag == (object)this._node.Name)
                         {
-                            Pop(); // we're done!
-                            _state = State.Markup;
+                            this.Pop(); // we're done!
+                            this._state = State.Markup;
                             goto case State.Markup;
                         }
-                        Pop(); // close one element
+                        this.Pop(); // close one element
                         foundnode = true;// return another end element.
                         break;
                     case State.Markup:
-                        if (_node.IsEmpty)
+                        if (this._node.IsEmpty)
                         {
-                            Pop();
+                            this.Pop();
                         }
-                        foundnode = ParseMarkup();
+                        foundnode = this.ParseMarkup();
                         break;
                     case State.PartialTag:
-                        Pop(); // remove text node.
-                        _state = State.Markup;
-                        if (_partial != '/' && IsTextOnly)
+                        this.Pop(); // remove text node.
+                        this._state = State.Markup;
+                        if (this._partial != '/' && this.IsTextOnly)
                         {
-                            _state = State.AutoCloseTextOnly;
+                            this._state = State.AutoCloseTextOnly;
                             foundnode = true;
                         }
                         else
                         {
-                            foundnode = ParseTag(_partial);
+                            foundnode = this.ParseTag(this._partial);
                         }
                         break;
                     case State.AutoCloseTextOnly:
-                        Pop(); // remove start tag.
-                        _state = State.Markup;
-                        foundnode = ParseTag(_partial);
+                        this.Pop(); // remove start tag.
+                        this._state = State.Markup;
+                        foundnode = this.ParseTag(this._partial);
                         break;
                     case State.AutoClose:
-                        Pop(); // close next node.
-                        if (_depth <= _poptodepth)
+                        this.Pop(); // close next node.
+                        if (this._depth <= this._poptodepth)
                         {
-                            _state = State.Markup;
-                            var n = Push(_newnode); // now we're ready to start the new node.
-                            n.NamespaceURI = _mgr.LookupNamespace(_newnode.Prefix);
-                            _state = State.Markup;
+                            this._state = State.Markup;
+                            var n = this.Push(this._newnode); // now we're ready to start the new node.
+                            n.NamespaceURI = this._mgr.LookupNamespace(this._newnode.Prefix);
+                            this._state = State.Markup;
                         }
                         foundnode = true;
                         break;
                     case State.CData:
-                        foundnode = ParseCData();
+                        foundnode = this.ParseCData();
                         break;
                     case State.Attr:
                         goto case State.AttrValue;
                     case State.AttrValue:
-                        _state = State.Markup;
+                        this._state = State.Markup;
                         goto case State.Markup;
                     case State.Text:
-                        Pop();
+                        this.Pop();
                         goto case State.Markup;
                     case State.PartialText:
-                        if (ParseText(_current.Lastchar, false))
+                        if (this.ParseText(this._current.Lastchar, false))
                         {
-                            _node.NodeType = XmlNodeType.Whitespace;
+                            this._node.NodeType = XmlNodeType.Whitespace;
                         }
                         foundnode = true;
                         break;
                 }
-                if (foundnode && _node.NodeType == XmlNodeType.Whitespace && _whitespaceHandling == WhitespaceHandling.None)
+                if (foundnode && this._node.NodeType == XmlNodeType.Whitespace && this._whitespaceHandling == WhitespaceHandling.None)
                 {
                     // strip out whitespace (caller is probably pretty printing the XML).
                     foundnode = false;
@@ -1062,28 +1062,28 @@ namespace Walkabout.Sgml
 
         bool ParseMarkup()
         {
-            char ch = _current.Lastchar;
+            char ch = this._current.Lastchar;
             if (ch == '<')
             {
-                ch = _current.ReadChar();
-                return ParseTag(ch);
+                ch = this._current.ReadChar();
+                return this.ParseTag(ch);
             }
             else if (ch != Entity.EOF)
             {
-                if (_node.DtdType != null && _node.DtdType.ContentModel.DeclaredContent == DeclaredContent.CDATA)
+                if (this._node.DtdType != null && this._node.DtdType.ContentModel.DeclaredContent == DeclaredContent.CDATA)
                 {
                     // e.g. SCRIPT or STYLE tags which contain unparsed character data.
-                    _partial = '\0';
-                    _state = State.CData;
+                    this._partial = '\0';
+                    this._state = State.CData;
                     return false;
                 }
-                else if (ParseText(ch, true))
+                else if (this.ParseText(ch, true))
                 {
-                    _node.NodeType = XmlNodeType.Whitespace;
+                    this._node.NodeType = XmlNodeType.Whitespace;
                 }
                 return true;
             }
-            _state = State.Eof;
+            this._state = State.Eof;
             return false;
         }
 
@@ -1092,24 +1092,24 @@ namespace Walkabout.Sgml
         {
             if (ch == '!')
             {
-                ch = _current.ReadChar();
+                ch = this._current.ReadChar();
                 if (ch == '-')
                 {
-                    return ParseComment();
+                    return this.ParseComment();
                 }
                 else if (ch != '_' && !Char.IsLetter(ch))
                 {
                     // perhaps it's one of those nasty office document hacks like '<![if ! ie ]>'
-                    string value = _current.ScanToEnd(_sb, "Recovering", ">"); // skip it
-                    Log("Ignoring invalid markup '<!" + value + ">");
+                    string value = this._current.ScanToEnd(this._sb, "Recovering", ">"); // skip it
+                    this.Log("Ignoring invalid markup '<!" + value + ">");
                     return false;
                 }
                 else
                 {
-                    string name = _current.ScanToken(_sb, _declterm, false);
+                    string name = this._current.ScanToken(this._sb, _declterm, false);
                     if (name == "DOCTYPE")
                     {
-                        ParseDocType();
+                        this.ParseDocType();
                         // In SGML DOCTYPE SYSTEM attribute is optional, but in XML it is required,
                         // therefore if there is a PUBLIC identifier, but no SYSTEM literal then
                         // remove the PUBLIC identifier.
@@ -1117,29 +1117,29 @@ namespace Walkabout.Sgml
                         {
                             this._node.RemoveAttribute("PUBLIC");
                         }
-                        _node.NodeType = XmlNodeType.DocumentType;
+                        this._node.NodeType = XmlNodeType.DocumentType;
                         return true;
                     }
                     else
                     {
-                        Log("Invalid declaration '<!{0}...'.  Expecting '<!DOCTYPE' only.", name);
-                        _current.ScanToEnd(null, "Recovering", ">"); // skip it
+                        this.Log("Invalid declaration '<!{0}...'.  Expecting '<!DOCTYPE' only.", name);
+                        this._current.ScanToEnd(null, "Recovering", ">"); // skip it
                         return false;
                     }
                 }
             }
             else if (ch == '?')
             {
-                _current.ReadChar();// consume the '?' character.
-                ParsePI();
+                this._current.ReadChar();// consume the '?' character.
+                this.ParsePI();
             }
             else if (ch == '/')
             {
-                return ParseEndTag();
+                return this.ParseEndTag();
             }
             else
             {
-                return ParseStartTag(ch);
+                return this.ParseStartTag(ch);
             }
             return true;
         }
@@ -1151,61 +1151,61 @@ namespace Walkabout.Sgml
         {
             if (_tagterm.IndexOf(ch) >= 0)
             {
-                _sb.Length = 0;
-                _sb.Append('<');
-                _state = State.PartialText;
+                this._sb.Length = 0;
+                this._sb.Append('<');
+                this._state = State.PartialText;
                 return false;
             }
-            string name = _current.ScanToken(_sb, _tagterm, false);
-            name = _nametable.Add(name);
-            Node n = Push(name, XmlNodeType.Element, null);
+            string name = this._current.ScanToken(this._sb, _tagterm, false);
+            name = this._nametable.Add(name);
+            Node n = this.Push(name, XmlNodeType.Element, null);
             n.IsEmpty = false;
 
-            Validate(n);
-            ch = _current.SkipWhitespace();
+            this.Validate(n);
+            ch = this._current.SkipWhitespace();
             while (ch != Entity.EOF && ch != '>')
             {
                 if (ch == '/')
                 {
                     n.IsEmpty = true;
-                    ch = _current.ReadChar();
+                    ch = this._current.ReadChar();
                     if (ch != '>')
                     {
-                        Log("Expected empty start tag '/>' sequence instead of '{0}'", ch);
-                        _current.ScanToEnd(null, "Recovering", ">");
+                        this.Log("Expected empty start tag '/>' sequence instead of '{0}'", ch);
+                        this._current.ScanToEnd(null, "Recovering", ">");
                         return false;
                     }
                     break;
                 }
                 else if (ch == '<')
                 {
-                    Log("Start tag '{0}' is missing '>'", name);
+                    this.Log("Start tag '{0}' is missing '>'", name);
                     break;
                 }
-                string aname = _current.ScanToken(_sb, _aterm, false);
-                ch = _current.SkipWhitespace();
+                string aname = this._current.ScanToken(this._sb, _aterm, false);
+                ch = this._current.SkipWhitespace();
                 string value = null;
                 char quote = '\0';
                 if (ch == '=')
                 {
-                    _current.ReadChar();
-                    ch = _current.SkipWhitespace();
+                    this._current.ReadChar();
+                    ch = this._current.SkipWhitespace();
                     if (ch == '\'' || ch == '\"')
                     {
                         quote = ch;
-                        value = ScanLiteral(_sb, ch);
+                        value = this.ScanLiteral(this._sb, ch);
                     }
                     else if (ch != '>')
                     {
                         string term = _avterm;
-                        value = _current.ScanToken(_sb, term, false);
+                        value = this._current.ScanToken(this._sb, term, false);
                     }
                 }
-                aname = _nametable.Add(aname);
-                Attribute a = n.AddAttribute(aname, value, quote, IgnoreCase);
+                aname = this._nametable.Add(aname);
+                Attribute a = n.AddAttribute(aname, value, quote, this.IgnoreCase);
                 if (a == null)
                 {
-                    Log("Duplicate attribute '{0}' ignored", aname);
+                    this.Log("Duplicate attribute '{0}' ignored", aname);
                 }
                 else
                 {
@@ -1218,73 +1218,73 @@ namespace Walkabout.Sgml
                     {
                         prefix = "";
                     }
-                    _mgr.AddNamespace(prefix, a.Value);
+                    this._mgr.AddNamespace(prefix, a.Value);
                 }
-                ch = _current.SkipWhitespace();
+                ch = this._current.SkipWhitespace();
             }
 
 
-            n.NamespaceURI = _mgr.LookupNamespace(n.Prefix);
+            n.NamespaceURI = this._mgr.LookupNamespace(n.Prefix);
 
             if (ch == Entity.EOF)
             {
-                _current.Error("Unexpected EOF parsing start tag '{0}'", name);
+                this._current.Error("Unexpected EOF parsing start tag '{0}'", name);
             }
             else if (ch == '>')
             {
-                _current.ReadChar(); // consume '>'
+                this._current.ReadChar(); // consume '>'
             }
             if (this.Depth == 1)
             {
-                if (_rootCount == 1)
+                if (this._rootCount == 1)
                 {
                     // Hmmm, we found another root level tag, soooo, the only
                     // thing we can do to keep this a valid XML document is stop
-                    _state = State.Eof;
+                    this._state = State.Eof;
                     return false;
                 }
-                _rootCount++;
+                this._rootCount++;
             }
-            ValidateContent(n);
+            this.ValidateContent(n);
             return true;
         }
 
         bool ParseEndTag()
         {
-            _state = State.EndTag;
-            _current.ReadChar(); // consume '/' char.
-            string name = _current.ScanToken(_sb, _tagterm, false);
-            char ch = _current.SkipWhitespace();
+            this._state = State.EndTag;
+            this._current.ReadChar(); // consume '/' char.
+            string name = this._current.ScanToken(this._sb, _tagterm, false);
+            char ch = this._current.SkipWhitespace();
             if (ch != '>')
             {
-                Log("Expected empty start tag '/>' sequence instead of '{0}'", ch);
-                _current.ScanToEnd(null, "Recovering", ">");
+                this.Log("Expected empty start tag '/>' sequence instead of '{0}'", ch);
+                this._current.ScanToEnd(null, "Recovering", ">");
             }
-            _current.ReadChar(); // consume '>'
+            this._current.ReadChar(); // consume '>'
 
             // Make sure there's a matching start tag for it.
-            _endTag = _nametable.Add(name);
-            _node = _stack[_depth - 1];
-            for (int i = _depth - 1; i > 0; i--)
+            this._endTag = this._nametable.Add(name);
+            this._node = this._stack[this._depth - 1];
+            for (int i = this._depth - 1; i > 0; i--)
             {
-                if ((object)_stack[i].Name == _endTag)
+                if ((object)this._stack[i].Name == this._endTag)
                     return true;
             }
-            Log("No matching start tag for '</{0}>'", name);
-            _state = State.Markup;
+            this.Log("No matching start tag for '</{0}>'", name);
+            this._state = State.Markup;
             return false;
         }
 
         bool ParseComment()
         {
-            char ch = _current.ReadChar();
+            char ch = this._current.ReadChar();
             if (ch != '-')
             {
-                Log("Expecting comment '<!--' but found {0}", ch);
-                _current.ScanToEnd(null, "Comment", ">");
+                this.Log("Expecting comment '<!--' but found {0}", ch);
+                this._current.ScanToEnd(null, "Comment", ">");
                 return false;
             }
-            string value = _current.ScanToEnd(_sb, "Comment", "-->");
+            string value = this._current.ScanToEnd(this._sb, "Comment", "-->");
 
             // Make sure it's a valid comment!
             int i = value.IndexOf("--");
@@ -1307,18 +1307,18 @@ namespace Walkabout.Sgml
             {
                 value += " "; // '-' cannot be last character
             }
-            Push(null, XmlNodeType.Comment, value);
+            this.Push(null, XmlNodeType.Comment, value);
             return true;
         }
 
         static string _dtterm = " \t\r\n>";
         void ParseDocType()
         {
-            char ch = _current.SkipWhitespace();
-            string name = _current.ScanToken(_sb, _dtterm, false);
-            name = _nametable.Add(name);
-            Push(name, XmlNodeType.DocumentType, null);
-            ch = _current.SkipWhitespace();
+            char ch = this._current.SkipWhitespace();
+            string name = this._current.ScanToken(this._sb, _dtterm, false);
+            name = this._nametable.Add(name);
+            this.Push(name, XmlNodeType.DocumentType, null);
+            ch = this._current.SkipWhitespace();
             if (ch != '>')
             {
                 string subset = string.Empty;
@@ -1327,117 +1327,117 @@ namespace Walkabout.Sgml
 
                 if (ch != '[')
                 {
-                    string token = _current.ScanToken(_sb, _dtterm, false);
-                    token = _nametable.Add(token.ToUpper());
+                    string token = this._current.ScanToken(this._sb, _dtterm, false);
+                    token = this._nametable.Add(token.ToUpper());
                     if (token == "PUBLIC")
                     {
-                        ch = _current.SkipWhitespace();
+                        ch = this._current.SkipWhitespace();
                         if (ch == '\"' || ch == '\'')
                         {
-                            pubid = _current.ScanLiteral(_sb, ch);
-                            _node.AddAttribute(token, pubid, ch, IgnoreCase);
+                            pubid = this._current.ScanLiteral(this._sb, ch);
+                            this._node.AddAttribute(token, pubid, ch, this.IgnoreCase);
                         }
                     }
                     else if (token != "SYSTEM")
                     {
-                        Log("Unexpected token in DOCTYPE '{0}'", token);
-                        _current.ScanToEnd(null, "DOCTYPE", ">");
+                        this.Log("Unexpected token in DOCTYPE '{0}'", token);
+                        this._current.ScanToEnd(null, "DOCTYPE", ">");
                     }
-                    ch = _current.SkipWhitespace();
+                    ch = this._current.SkipWhitespace();
                     if (ch == '\"' || ch == '\'')
                     {
-                        token = _nametable.Add("SYSTEM");
-                        syslit = _current.ScanLiteral(_sb, ch);
-                        _node.AddAttribute(token, syslit, ch, IgnoreCase);
+                        token = this._nametable.Add("SYSTEM");
+                        syslit = this._current.ScanLiteral(this._sb, ch);
+                        this._node.AddAttribute(token, syslit, ch, this.IgnoreCase);
                     }
-                    ch = _current.SkipWhitespace();
+                    ch = this._current.SkipWhitespace();
                 }
                 if (ch == '[')
                 {
-                    subset = _current.ScanToEnd(_sb, "Internal Subset", "]");
-                    _node.Value = subset;
+                    subset = this._current.ScanToEnd(this._sb, "Internal Subset", "]");
+                    this._node.Value = subset;
                 }
-                ch = _current.SkipWhitespace();
+                ch = this._current.SkipWhitespace();
                 if (ch != '>')
                 {
-                    Log("Expecting end of DOCTYPE tag, but found '{0}'", ch);
-                    _current.ScanToEnd(null, "DOCTYPE", ">");
+                    this.Log("Expecting end of DOCTYPE tag, but found '{0}'", ch);
+                    this._current.ScanToEnd(null, "DOCTYPE", ">");
                 }
 
-                if (_dtd == null)
+                if (this._dtd == null)
                 {
                     this._docType = name;
                     this._pubid = pubid;
                     this._syslit = syslit;
                     this._subset = subset;
-                    LazyLoadDtd(_current.ResolvedUri);
+                    this.LazyLoadDtd(this._current.ResolvedUri);
                 }
             }
-            _current.ReadChar();
+            this._current.ReadChar();
         }
 
         static string _piterm = " \t\r\n?";
         bool ParsePI()
         {
-            string name = _current.ScanToken(_sb, _piterm, false);
+            string name = this._current.ScanToken(this._sb, _piterm, false);
             string value = null;
-            if (_current.Lastchar != '?')
+            if (this._current.Lastchar != '?')
             {
-                value = _current.ScanToEnd(_sb, "Processing Instruction", "?>");
+                value = this._current.ScanToEnd(this._sb, "Processing Instruction", "?>");
             }
             else
             {
                 // error recovery.
-                value = _current.ScanToEnd(_sb, "Processing Instruction", ">");
+                value = this._current.ScanToEnd(this._sb, "Processing Instruction", ">");
             }
-            Push(_nametable.Add(name), XmlNodeType.ProcessingInstruction, value);
+            this.Push(this._nametable.Add(name), XmlNodeType.ProcessingInstruction, value);
             return true;
         }
 
         bool ParseText(char ch, bool newtext)
         {
-            bool ws = !newtext || _current.IsWhitespace;
-            if (newtext) _sb.Length = 0;
+            bool ws = !newtext || this._current.IsWhitespace;
+            if (newtext) this._sb.Length = 0;
             //_sb.Append(ch);
             //ch = _current.ReadChar();
-            _state = State.Text;
+            this._state = State.Text;
             while (ch != Entity.EOF)
             {
                 if (ch == '<')
                 {
-                    ch = _current.ReadChar();
+                    ch = this._current.ReadChar();
                     if (ch == '/' || ch == '!' || ch == '?' || Char.IsLetter(ch))
                     {
                         // Hit a tag, so return XmlNodeType.Text token
                         // and remember we partially started a new tag.
-                        _state = State.PartialTag;
-                        _partial = ch;
+                        this._state = State.PartialTag;
+                        this._partial = ch;
                         break;
                     }
                     else
                     {
                         // not a tag, so just proceed.
-                        _sb.Append('<');
-                        _sb.Append(ch);
+                        this._sb.Append('<');
+                        this._sb.Append(ch);
                         ws = false;
-                        ch = _current.ReadChar();
+                        ch = this._current.ReadChar();
                     }
                 }
                 else if (ch == '&')
                 {
-                    ExpandEntity(_sb, '<');
+                    this.ExpandEntity(this._sb, '<');
                     ws = false;
-                    ch = _current.Lastchar;
+                    ch = this._current.Lastchar;
                 }
                 else
                 {
-                    if (!_current.IsWhitespace) ws = false;
-                    _sb.Append(ch);
-                    ch = _current.ReadChar();
+                    if (!this._current.IsWhitespace) ws = false;
+                    this._sb.Append(ch);
+                    ch = this._current.ReadChar();
                 }
             }
-            string value = _sb.ToString();
-            Push(null, XmlNodeType.Text, value);
+            string value = this._sb.ToString();
+            this.Push(null, XmlNodeType.Text, value);
             return ws;
         }
 
@@ -1446,21 +1446,21 @@ namespace Walkabout.Sgml
         public string ScanLiteral(StringBuilder sb, char quote)
         {
             sb.Length = 0;
-            char ch = _current.ReadChar();
+            char ch = this._current.ReadChar();
             while (ch != Entity.EOF && ch != quote)
             {
                 if (ch == '&')
                 {
-                    ExpandEntity(_sb, quote);
-                    ch = _current.Lastchar;
+                    this.ExpandEntity(this._sb, quote);
+                    ch = this._current.Lastchar;
                 }
                 else
                 {
                     sb.Append(ch);
-                    ch = _current.ReadChar();
+                    ch = this._current.ReadChar();
                 }
             }
-            _current.ReadChar(); // consume end quote.          
+            this._current.ReadChar(); // consume end quote.          
             return sb.ToString();
         }
 
@@ -1471,22 +1471,22 @@ namespace Walkabout.Sgml
             // text is not returned as text but CDATA (since it may contain angle brackets).
             // And initial whitespace is ignored.  It terminates when we hit the
             // end tag for the current CDATA node (e.g. </style>).
-            bool ws = _current.IsWhitespace;
-            _sb.Length = 0;
+            bool ws = this._current.IsWhitespace;
+            this._sb.Length = 0;
             char ch;
-            if (_partial != '\0')
+            if (this._partial != '\0')
             {
-                Pop(); // pop the CDATA
-                switch (_partial)
+                this.Pop(); // pop the CDATA
+                switch (this._partial)
                 {
                     case '!':
-                        _partial = ' '; // and pop the comment next time around
-                        return ParseComment();
+                        this._partial = ' '; // and pop the comment next time around
+                        return this.ParseComment();
                     case '?':
-                        _partial = ' '; // and pop the PI next time around
-                        return ParsePI();
+                        this._partial = ' '; // and pop the PI next time around
+                        return this.ParsePI();
                     case '/':
-                        _state = State.EndTag;
+                        this._state = State.EndTag;
                         return true;    // we are done!
                     case ' ':
                         break; // means we just needed to pop the CDATA.
@@ -1494,61 +1494,61 @@ namespace Walkabout.Sgml
             }
             // if _partial == '!' then parse the comment and return
             // if _partial == '?' then parse the processing instruction and return.
-            ch = _current.ReadChar();
+            ch = this._current.ReadChar();
             while (ch != Entity.EOF)
             {
                 if (ch == '<')
                 {
-                    ch = _current.ReadChar();
+                    ch = this._current.ReadChar();
                     if (ch == '!')
                     {
-                        ch = _current.ReadChar();
+                        ch = this._current.ReadChar();
                         if (ch == '-')
                         {
                             // return what CDATA we have accumulated so far
                             // then parse the comment and return to here.
                             if (ws)
                             {
-                                _partial = ' '; // pop comment next time through
-                                return ParseComment();
+                                this._partial = ' '; // pop comment next time through
+                                return this.ParseComment();
                             }
                             else
                             {
                                 // return what we've accumulated so far then come
                                 // back in and parse the comment.
-                                _partial = '!';
+                                this._partial = '!';
                                 break;
                             }
                         }
                         else
                         {
                             // not a comment, so ignore it and continue on.
-                            _sb.Append('<');
-                            _sb.Append('!');
-                            _sb.Append(ch);
+                            this._sb.Append('<');
+                            this._sb.Append('!');
+                            this._sb.Append(ch);
                             ws = false;
                         }
                     }
                     else if (ch == '?')
                     {
                         // processing instruction.
-                        _current.ReadChar();// consume the '?' character.
+                        this._current.ReadChar();// consume the '?' character.
                         if (ws)
                         {
-                            _partial = ' '; // pop PI next time through
-                            return ParsePI();
+                            this._partial = ' '; // pop PI next time through
+                            return this.ParsePI();
                         }
                         else
                         {
-                            _partial = '?';
+                            this._partial = '?';
                             break;
                         }
                     }
                     else if (ch == '/')
                     {
                         // see if this is the end tag for this CDATA node.
-                        string temp = _sb.ToString();
-                        if (ParseEndTag() && _endTag == (object)_node.Name)
+                        string temp = this._sb.ToString();
+                        if (this.ParseEndTag() && this._endTag == (object)this._node.Name)
                         {
                             if (ws)
                             {
@@ -1558,87 +1558,87 @@ namespace Walkabout.Sgml
                             else
                             {
                                 // return CDATA text then the end tag
-                                _partial = '/';
-                                _sb.Length = 0; // restore buffer!
-                                _sb.Append(temp);
-                                _state = State.CData;
+                                this._partial = '/';
+                                this._sb.Length = 0; // restore buffer!
+                                this._sb.Append(temp);
+                                this._state = State.CData;
                                 break;
                             }
                         }
                         else
                         {
                             // wrong end tag, so continue on.
-                            _sb.Length = 0; // restore buffer!
-                            _sb.Append(temp);
-                            _sb.Append("</" + _endTag + ">");
+                            this._sb.Length = 0; // restore buffer!
+                            this._sb.Append(temp);
+                            this._sb.Append("</" + this._endTag + ">");
                             ws = false;
                         }
                     }
                     else
                     {
                         // must be just part of the CDATA block, so proceed.
-                        _sb.Append('<');
-                        _sb.Append(ch);
+                        this._sb.Append('<');
+                        this._sb.Append(ch);
                         ws = false;
                     }
                 }
                 else
                 {
-                    if (!_current.IsWhitespace && ws) ws = false;
-                    _sb.Append(ch);
+                    if (!this._current.IsWhitespace && ws) ws = false;
+                    this._sb.Append(ch);
                 }
-                ch = _current.ReadChar();
+                ch = this._current.ReadChar();
             }
-            string value = _sb.ToString();
-            Push(null, XmlNodeType.CDATA, value);
-            if (_partial == '\0')
-                _partial = ' ';// force it to pop this CDATA next time in.
+            string value = this._sb.ToString();
+            this.Push(null, XmlNodeType.CDATA, value);
+            if (this._partial == '\0')
+                this._partial = ' ';// force it to pop this CDATA next time in.
             return true;
         }
 
         void ExpandEntity(StringBuilder sb, char terminator)
         {
-            char ch = _current.ReadChar();
+            char ch = this._current.ReadChar();
             if (ch == '#')
             {
-                string charent = _current.ExpandCharEntity();
+                string charent = this._current.ExpandCharEntity();
                 sb.Append(charent);
-                ch = _current.ReadChar();
+                ch = this._current.ReadChar();
             }
             else
             {
-                _name.Length = 0;
+                this._name.Length = 0;
                 while (ch != Entity.EOF &&
                     (Char.IsLetter(ch) || ch == '_' || ch == '-'))
                 {
-                    _name.Append(ch);
-                    ch = _current.ReadChar();
+                    this._name.Append(ch);
+                    ch = this._current.ReadChar();
                 }
-                string name = _name.ToString();
-                if (_dtd != null && name != string.Empty)
+                string name = this._name.ToString();
+                if (this._dtd != null && name != string.Empty)
                 {
-                    Entity e = (Entity)_dtd.FindEntity(name);
+                    Entity e = (Entity)this._dtd.FindEntity(name);
                     if (e != null)
                     {
                         if (e.Internal)
                         {
                             sb.Append(e.Literal);
                             if (ch != terminator)
-                                ch = _current.ReadChar();
+                                ch = this._current.ReadChar();
                             return;
                         }
                         else
                         {
-                            Entity ex = new Entity(name, e.PublicId, e.Uri, _current.Proxy);
-                            e.Open(_current, new Uri(e.Uri));
-                            _current = ex;
-                            _current.ReadChar();
+                            Entity ex = new Entity(name, e.PublicId, e.Uri, this._current.Proxy);
+                            e.Open(this._current, new Uri(e.Uri));
+                            this._current = ex;
+                            this._current.ReadChar();
                             return;
                         }
                     }
                     else
                     {
-                        Log("Undefined entity '{0}'", name);
+                        this.Log("Undefined entity '{0}'", name);
                     }
                 }
                 // Entity is not defined, so just keep it in with the rest of the
@@ -1648,7 +1648,7 @@ namespace Walkabout.Sgml
                 if (ch != terminator)
                 {
                     sb.Append(ch);
-                    ch = _current.ReadChar();
+                    ch = this._current.ReadChar();
                 }
             }
         }
@@ -1657,21 +1657,21 @@ namespace Walkabout.Sgml
         {
             get
             {
-                return _state == State.Eof;
+                return this._state == State.Eof;
             }
         }
 
         public override void Close()
         {
-            if (_current != null)
+            if (this._current != null)
             {
-                _current.Close();
-                _current = null;
+                this._current.Close();
+                this._current = null;
             }
-            if (_log != null)
+            if (this._log != null)
             {
-                _log.Close();
-                _log = null;
+                this._log.Close();
+                this._log = null;
             }
         }
 
@@ -1679,18 +1679,18 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (_state == State.Initial) return ReadState.Initial;
-                else if (_state == State.Eof) return ReadState.EndOfFile;
+                if (this._state == State.Initial) return ReadState.Initial;
+                else if (this._state == State.Eof) return ReadState.EndOfFile;
                 return ReadState.Interactive;
             }
         }
 
         public override string ReadString()
         {
-            if (_node.NodeType == XmlNodeType.Element)
+            if (this._node.NodeType == XmlNodeType.Element)
             {
-                _sb.Length = 0;
-                while (Read())
+                this._sb.Length = 0;
+                while (this.Read())
                 {
                     switch (this.NodeType)
                     {
@@ -1698,15 +1698,15 @@ namespace Walkabout.Sgml
                         case XmlNodeType.SignificantWhitespace:
                         case XmlNodeType.Whitespace:
                         case XmlNodeType.Text:
-                            _sb.Append(_node.Value);
+                            this._sb.Append(this._node.Value);
                             break;
                         default:
-                            return _sb.ToString();
+                            return this._sb.ToString();
                     }
                 }
-                return _sb.ToString();
+                return this._sb.ToString();
             }
-            return _node.Value;
+            return this._node.Value;
         }
 
 
@@ -1719,12 +1719,12 @@ namespace Walkabout.Sgml
                 switch (this.NodeType)
                 {
                     case XmlNodeType.Element:
-                        Read();
+                        this.Read();
                         while (!this.EOF && this.NodeType != XmlNodeType.EndElement)
                         {
                             xw.WriteNode(this, true);
                         }
-                        Read(); // consume the end tag
+                        this.Read(); // consume the end tag
                         break;
                     case XmlNodeType.Attribute:
                         sw.Write(this.Value);
@@ -1754,7 +1754,7 @@ namespace Walkabout.Sgml
         {
             get
             {
-                return _nametable;
+                return this._nametable;
             }
         }
 
@@ -1771,12 +1771,12 @@ namespace Walkabout.Sgml
 
         public override bool ReadAttributeValue()
         {
-            if (_state == State.Attr)
+            if (this._state == State.Attr)
             {
-                _state = State.AttrValue;
+                this._state = State.AttrValue;
                 return true;
             }
-            else if (_state == State.AttrValue)
+            else if (this._state == State.AttrValue)
             {
                 return false;
             }
@@ -1785,9 +1785,9 @@ namespace Walkabout.Sgml
 
         void Validate(Node node)
         {
-            if (_dtd != null)
+            if (this._dtd != null)
             {
-                ElementDecl e = _dtd.FindElement(node.Name);
+                ElementDecl e = this._dtd.FindElement(node.Name);
                 if (e != null)
                 {
                     node.DtdType = e;
@@ -1814,7 +1814,7 @@ namespace Walkabout.Sgml
 
         void ValidateContent(Node node)
         {
-            if (_dtd != null)
+            if (this._dtd != null)
             {
                 // See if this element is allowed inside the current element.
                 // If it isn't, then auto-close elements until we find one
@@ -1822,20 +1822,20 @@ namespace Walkabout.Sgml
 
                 string name = node.Name;
                 int i = 0;
-                int top = _depth - 2;
-                if (_dtd.FindElement(name) != null)
+                int top = this._depth - 2;
+                if (this._dtd.FindElement(name) != null)
                 {
                     // it is a known element, let's see if it's allowed in the
                     // current context.
                     for (i = top; i > 0; i--)
                     {
-                        Node n = _stack[i];
+                        Node n = this._stack[i];
                         ElementDecl f = n.DtdType;
                         if (f != null)
                         {
-                            if (f.Name == _dtd.Name)
+                            if (f.Name == this._dtd.Name)
                                 break; // can't pop the root element.
-                            if (f.CanContain(name, _dtd))
+                            if (f.CanContain(name, this._dtd))
                             {
                                 break;
                             }
@@ -1862,7 +1862,7 @@ namespace Walkabout.Sgml
                 }
                 else if (i < top)
                 {
-                    if (i == top - 1 && name == _stack[top].Name)
+                    if (i == top - 1 && name == this._stack[top].Name)
                     {
                         // e.g. p not allowed inside p, not an interesting error.
                     }
@@ -1872,15 +1872,15 @@ namespace Walkabout.Sgml
                         for (int k = top; k >= i + 1; k--)
                         {
                             if (closing != string.Empty) closing += ",";
-                            closing += "<" + _stack[k].Name + ">";
+                            closing += "<" + this._stack[k].Name + ">";
                         }
-                        Log("Element '{0}' not allowed inside '{1}', closing {2}.",
-                            name, _stack[top].Name, closing);
+                        this.Log("Element '{0}' not allowed inside '{1}', closing {2}.",
+                            name, this._stack[top].Name, closing);
                     }
-                    _state = State.AutoClose;
-                    _newnode = node;
-                    Pop(); // save this new node until we pop the others
-                    _poptodepth = i + 1;
+                    this._state = State.AutoClose;
+                    this._newnode = node;
+                    this.Pop(); // save this new node until we pop the others
+                    this._poptodepth = i + 1;
                 }
             }
         }

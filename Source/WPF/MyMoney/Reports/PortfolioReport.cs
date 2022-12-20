@@ -55,11 +55,11 @@ namespace Walkabout.Reports
             this.view = view;
             this.reportDate = asOfDate;
             this.cache = (StockQuoteCache)serviceProvider.GetService(typeof(StockQuoteCache));
-            view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
-            view.PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+            view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
+            view.PreviewMouseLeftButtonUp += this.OnPreviewMouseLeftButtonUp;
             view.Unloaded += (s, e) =>
             {
-                this.view.PreviewMouseLeftButtonUp -= OnPreviewMouseLeftButtonUp;
+                this.view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
             };
         }
 
@@ -83,21 +83,21 @@ namespace Walkabout.Reports
 
         private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Point pos = e.GetPosition(view);
+            Point pos = e.GetPosition(this.view);
 
-            if (mouseDownPara != null && Math.Abs(downPos.X - pos.X) < 5 && Math.Abs(downPos.Y - pos.Y) < 5)
+            if (this.mouseDownPara != null && Math.Abs(this.downPos.X - pos.X) < 5 && Math.Abs(this.downPos.Y - pos.Y) < 5)
             {
-                string name = (string)mouseDownPara.Tag;
+                string name = (string)this.mouseDownPara.Tag;
                 // navigate to show the cell.Data rows.
-                IViewNavigator nav = serviceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
+                IViewNavigator nav = this.serviceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
                 nav.ViewTransactionsBySecurity(this.myMoney.Securities.FindSecurity(name, false));
             }
         }
 
         private void OnReportCellMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            mouseDownPara = (Paragraph)sender;
-            downPos = e.GetPosition(this.view);
+            this.mouseDownPara = (Paragraph)sender;
+            this.downPos = e.GetPosition(this.view);
         }
 
         decimal totalMarketValue;
@@ -143,28 +143,28 @@ namespace Walkabout.Reports
 
         public override Task Generate(IReportWriter writer)
         {
-            generating = true;
+            this.generating = true;
             try
             {
-                InternalGenerate(writer);
+                this.InternalGenerate(writer);
             }
             finally
             {
-                generating = false;
+                this.generating = false;
             }
             return Task.CompletedTask;
         }
 
         private void InternalGenerate(IReportWriter writer)
         {
-            flowwriter = writer as FlowDocumentReportWriter;
+            this.flowwriter = writer as FlowDocumentReportWriter;
 
-            calc = new CostBasisCalculator(this.myMoney, this.reportDate);
+            this.calc = new CostBasisCalculator(this.myMoney, this.reportDate);
             if (this.selectedGroup != null)
             {
                 bool found = false;
                 // user may have changed the reportDate, so we may need to recompute this.
-                foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(this.selectedGroup.Filter))
+                foreach (var securityTypeGroup in this.calc.GetHoldingsBySecurityType(this.selectedGroup.Filter))
                 {
                     if (securityTypeGroup.Type == this.selectedGroup.Type)
                     {
@@ -185,7 +185,7 @@ namespace Walkabout.Reports
             string heading = null;
             if (this.selectedGroup != null)
             {
-                heading = "Investment Portfolio - " + GetTaxStatusPrefix(this.selectedGroup.TaxStatus) + GetSecurityTypeCaption(this.selectedGroup.Type);
+                heading = "Investment Portfolio - " + this.GetTaxStatusPrefix(this.selectedGroup.TaxStatus) + this.GetSecurityTypeCaption(this.selectedGroup.Type);
             }
             else if (this.accountGroup != null)
             {
@@ -193,10 +193,10 @@ namespace Walkabout.Reports
             }
             else if (this.account != null)
             {
-                heading = "Investment Portfolio Summary for " + account.Name;
-                if (!string.IsNullOrEmpty(account.AccountId))
+                heading = "Investment Portfolio Summary for " + this.account.Name;
+                if (!string.IsNullOrEmpty(this.account.AccountId))
                 {
-                    heading += " (" + account.AccountId + ")";
+                    heading += " (" + this.account.AccountId + ")";
                 }
             }
             else
@@ -206,23 +206,23 @@ namespace Walkabout.Reports
 
             writer.WriteHeading(heading);
 
-            Paragraph pheading = flowwriter.CurrentParagraph;
+            Paragraph pheading = this.flowwriter.CurrentParagraph;
 
             DatePicker picker = new DatePicker();
             // byYearCombo.SelectionChanged += OnYearChanged;
             picker.Margin = new Thickness(10, 0, 0, 0);
             picker.SelectedDate = this.reportDate;
             picker.DisplayDate = this.reportDate;
-            picker.SelectedDateChanged += Picker_SelectedDateChanged;
+            picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
             pheading.Inlines.Add(new InlineUIContainer(picker));
 
-            if (reportDate.Date != DateTime.Today)
+            if (this.reportDate.Date != DateTime.Today)
             {
-                writer.WriteSubHeading("As of " + reportDate.Date.AddDays(-1).ToLongDateString());
+                writer.WriteSubHeading("As of " + this.reportDate.Date.AddDays(-1).ToLongDateString());
             }
 
-            totalMarketValue = 0;
-            totalGainLoss = 0;
+            this.totalMarketValue = 0;
+            this.totalGainLoss = 0;
 
             // outer table contains 2 columns, left is the summary table, right is the pie chart.
             writer.StartTable();
@@ -251,29 +251,29 @@ namespace Walkabout.Reports
             var series = new ChartDataSeries() { Name = "Portfolio" };
 
             IList<ChartDataValue> data = series.Values;
-            if (account == null)
+            if (this.account == null)
             {
                 if (this.selectedGroup != null)
                 {
-                    WriteSummary(writer, data, this.selectedGroup.TaxStatus, null, false, false);
+                    this.WriteSummary(writer, data, this.selectedGroup.TaxStatus, null, false, false);
                 }
                 else if (this.accountGroup != null)
                 {
-                    WriteCashBalanceSummary(writer, data, this.accountGroup);
+                    this.WriteCashBalanceSummary(writer, data, this.accountGroup);
                 }
                 else
                 {
-                    WriteSummary(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a); }), true, false);
-                    WriteSummary(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a); }), true, false);
-                    WriteSummary(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && IsInvestmentAccount(a); }), true, false);
+                    this.WriteSummary(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && this.IsInvestmentAccount(a); }), true, false);
+                    this.WriteSummary(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && this.IsInvestmentAccount(a); }), true, false);
+                    this.WriteSummary(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && this.IsInvestmentAccount(a); }), true, false);
                 }
             }
             else
             {
-                WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == account; }), false, true);
+                this.WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == this.account; }), false, true);
             }
 
-            WriteHeaderRow(writer, "Total", totalMarketValue.ToString("C"), this.accountGroup != null ? "" : totalGainLoss.ToString("C"));
+            this.WriteHeaderRow(writer, "Total", this.totalMarketValue.ToString("C"), this.accountGroup != null ? "" : this.totalGainLoss.ToString("C"));
             writer.EndTable();
 
             writer.EndCell();
@@ -286,8 +286,8 @@ namespace Walkabout.Reports
             chart.VerticalAlignment = VerticalAlignment.Top;
             chart.HorizontalContentAlignment = HorizontalAlignment.Left;
             chart.Series = series;
-            chart.ToolTipGenerator = OnGenerateToolTip;
-            chart.PieSliceClicked += OnPieSliceClicked;
+            chart.ToolTipGenerator = this.OnGenerateToolTip;
+            chart.PieSliceClicked += this.OnPieSliceClicked;
 
             writer.StartCell();
             writer.WriteElement(chart);
@@ -298,16 +298,16 @@ namespace Walkabout.Reports
 
             if (this.accountGroup == null)
             {
-                totalMarketValue = 0;
-                totalGainLoss = 0;
+                this.totalMarketValue = 0;
+                this.totalGainLoss = 0;
 
                 if (this.selectedGroup != null)
                 {
-                    WriteDetails(writer, this.selectedGroup.TaxStatus, this.selectedGroup);
+                    this.WriteDetails(writer, this.selectedGroup.TaxStatus, this.selectedGroup);
                 }
                 else
                 {
-                    List<SecuritySale> errors = new List<SecuritySale>(calc.GetPendingSales(new Predicate<Account>((a) => { return a == account; })));
+                    List<SecuritySale> errors = new List<SecuritySale>(this.calc.GetPendingSales(new Predicate<Account>((a) => { return a == this.account; })));
                     if (errors.Count > 0)
                     {
                         writer.WriteSubHeading("Pending Sales");
@@ -318,15 +318,15 @@ namespace Walkabout.Reports
                         }
                     }
 
-                    if (account == null)
+                    if (this.account == null)
                     {
-                        WriteDetails(writer, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && IsInvestmentAccount(a); }));
-                        WriteDetails(writer, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && IsInvestmentAccount(a); }));
-                        WriteDetails(writer, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxFree && !a.IsTaxDeferred && IsInvestmentAccount(a); }));
+                        this.WriteDetails(writer, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && this.IsInvestmentAccount(a); }));
+                        this.WriteDetails(writer, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && this.IsInvestmentAccount(a); }));
+                        this.WriteDetails(writer, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxFree && !a.IsTaxDeferred && this.IsInvestmentAccount(a); }));
                     }
                     else
                     {
-                        WriteDetails(writer, account.TaxStatus, new Predicate<Account>((a) => { return a == account; }));
+                        this.WriteDetails(writer, this.account.TaxStatus, new Predicate<Account>((a) => { return a == this.account; }));
                     }
                 }
             }
@@ -336,7 +336,7 @@ namespace Walkabout.Reports
 
         private void Picker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!generating)
+            if (!this.generating)
             {
                 DatePicker picker = (DatePicker)sender;
                 if (picker.SelectedDate.HasValue)
@@ -353,7 +353,7 @@ namespace Walkabout.Reports
                         {
                             this.accountGroup.Date = newDate;
                         }
-                        _ = view.Generate(this);
+                        _ = this.view.Generate(this);
                     }
                 }
             }
@@ -468,7 +468,7 @@ namespace Walkabout.Reports
             writer.StartExpandableRowGroup();
 
             decimal averageUnitPrice = currentQuantity == 0 ? 0 : costBasis / currentQuantity;
-            WriteRow(writer, false, false, FontWeights.Bold, null, current.Name, current.Name, currentQuantity, price, marketValue, averageUnitPrice, costBasis, gainLoss);
+            this.WriteRow(writer, false, false, FontWeights.Bold, null, current.Name, current.Name, currentQuantity, price, marketValue, averageUnitPrice, costBasis, gainLoss);
 
             foreach (SecurityPurchase i in bySecurity)
             {
@@ -483,7 +483,7 @@ namespace Walkabout.Reports
                 // as a gain or loss, it will be accounted for under MarketValue, but it will be misleading as a "Gain".  So we tweak the value here.
                 marketValue = i.FuturesFactor * i.UnitsRemaining * price;
                 gainLoss = (i.CostBasisPerUnit == 0) ? 0 : marketValue - i.TotalCostBasis;
-                WriteRow(writer, false, false, FontWeights.Normal, i.DatePurchased, i.Security.Name, i.Security.Name,
+                this.WriteRow(writer, false, false, FontWeights.Normal, i.DatePurchased, i.Security.Name, i.Security.Name,
                     i.UnitsRemaining, price, marketValue, i.CostBasisPerUnit, i.TotalCostBasis, gainLoss);
             }
 
@@ -492,27 +492,27 @@ namespace Walkabout.Reports
 
         public void ExpandAll()
         {
-            if (flowwriter != null)
+            if (this.flowwriter != null)
             {
-                flowwriter.ExpandAll();
+                this.flowwriter.ExpandAll();
             }
         }
 
         public void CollapseAll()
         {
-            if (flowwriter != null)
+            if (this.flowwriter != null)
             {
-                flowwriter.CollapseAll();
+                this.flowwriter.CollapseAll();
             }
         }
 
         private void WriteDetails(IReportWriter writer, TaxStatus status, Predicate<Account> filter)
         {
             // compute summary
-            foreach (var securityTypeGroup in calc.GetHoldingsBySecurityType(filter))
+            foreach (var securityTypeGroup in this.calc.GetHoldingsBySecurityType(filter))
             {
                 securityTypeGroup.TaxStatus = status; // inherited from the account types we are filtering here.
-                WriteDetails(writer, status, securityTypeGroup);
+                this.WriteDetails(writer, status, securityTypeGroup);
             }
         }
 
@@ -546,10 +546,10 @@ namespace Walkabout.Reports
             bool foundSecuritiesInGroup = false;
             SecurityType st = securityTypeGroup.Type;
 
-            string prefix = GetTaxStatusPrefix(status);
+            string prefix = this.GetTaxStatusPrefix(status);
             string caption = prefix + Security.GetSecurityTypeCaption(st);
 
-            IList<SecurityGroup> groups = calc.RegroupBySecurity(securityTypeGroup);
+            IList<SecurityGroup> groups = this.calc.RegroupBySecurity(securityTypeGroup);
             foreach (SecurityGroup g in groups)
             {
                 foreach (var i in g.Purchases)
@@ -588,12 +588,12 @@ namespace Walkabout.Reports
                 }
                 if (foundSecuritiesInGroup)
                 {
-                    WriteSecurities(writer, g.Purchases, ref marketValue, ref costBasis, ref gainLoss);
+                    this.WriteSecurities(writer, g.Purchases, ref marketValue, ref costBasis, ref gainLoss);
                 }
             }
 
             writer.StartFooterRow();
-            WriteRow(writer, true, true, FontWeights.Bold, null, "Total", null, null, null, marketValue, null, costBasis, gainLoss);
+            this.WriteRow(writer, true, true, FontWeights.Bold, null, "Total", null, null, null, marketValue, null, costBasis, gainLoss);
             // only close the table 
             writer.EndTable();
         }
@@ -601,7 +601,7 @@ namespace Walkabout.Reports
         private void WriteCashBalanceSummary(IReportWriter writer, IList<ChartDataValue> data, AccountGroup group)
         {
             decimal total = 0;
-            WriteHeaderRow(writer, "Account", "Cash Balance", null);
+            this.WriteHeaderRow(writer, "Account", "Cash Balance", null);
             foreach (var account in this.myMoney.Accounts.GetAccounts())
             {
                 if (this.accountGroup.Filter(account))
@@ -610,7 +610,7 @@ namespace Walkabout.Reports
                     if (balance != 0)
                     {
                         var caption = account.Name;
-                        var color = GetRandomColor();
+                        var color = this.GetRandomColor();
                         data.Add(new ChartDataValue()
                         {
                             Value = (double)balance.RoundToNearestCent(),
@@ -619,7 +619,7 @@ namespace Walkabout.Reports
                             UserData = account
                         });
 
-                        WriteSummaryRow(writer, color, caption, balance.ToString("C"), null);
+                        this.WriteSummaryRow(writer, color, caption, balance.ToString("C"), null);
                         total += balance;
                     }
                 }
@@ -630,7 +630,7 @@ namespace Walkabout.Reports
         private void WriteSummary(IReportWriter writer, IList<ChartDataValue> data, TaxStatus taxStatus, Predicate<Account> filter, bool subtotal, bool includeCashBalance)
         {
             bool wroteSectionHeader = false;
-            string prefix = GetTaxStatusPrefix(taxStatus);
+            string prefix = this.GetTaxStatusPrefix(taxStatus);
             string caption = prefix + "Investments";
             decimal totalSectionMarketValue = 0;
             decimal totalSectionGainValue = 0;
@@ -639,11 +639,11 @@ namespace Walkabout.Reports
             IList<SecurityGroup> groups = null;
             if (this.selectedGroup != null)
             {
-                groups = calc.RegroupBySecurity(this.selectedGroup);
+                groups = this.calc.RegroupBySecurity(this.selectedGroup);
             }
             else
             {
-                groups = calc.GetHoldingsBySecurityType(filter);
+                groups = this.calc.GetHoldingsBySecurityType(filter);
             }
 
             // compute summary
@@ -682,11 +682,11 @@ namespace Walkabout.Reports
                 {
                     if (!wroteSectionHeader)
                     {
-                        WriteHeaderRow(writer, caption, "Market Value", "Taxable Gains");
+                        this.WriteHeaderRow(writer, caption, "Market Value", "Taxable Gains");
                         wroteSectionHeader = true;
                     }
 
-                    var color = GetRandomColor();
+                    var color = this.GetRandomColor();
                     if (securityGroup.Security != null && this.selectedGroup != null)
                     {
                         caption = securityGroup.Security.Name;
@@ -708,7 +708,7 @@ namespace Walkabout.Reports
                     {
                         caption = "    " + Security.GetSecurityTypeCaption(st);
                     }
-                    WriteSummaryRow(writer, color, caption, marketValue.ToString("C"), gainLoss.ToString("C"));
+                    this.WriteSummaryRow(writer, color, caption, marketValue.ToString("C"), gainLoss.ToString("C"));
                     rowCount++;
                 }
 
@@ -719,7 +719,7 @@ namespace Walkabout.Reports
             if (includeCashBalance)
             {
                 decimal cashBalance = this.myMoney.GetCashBalanceNormalized(this.reportDate, filter);
-                var color = GetRandomColor();
+                var color = this.GetRandomColor();
                 data.Add(new ChartDataValue()
                 {
                     Value = (double)cashBalance.RoundToNearestCent(),
@@ -727,7 +727,7 @@ namespace Walkabout.Reports
                     Color = color
                 });
 
-                WriteSummaryRow(writer, color, "Cash", cashBalance.ToString("C"), "");
+                this.WriteSummaryRow(writer, color, "Cash", cashBalance.ToString("C"), "");
 
                 rowCount++;
                 totalSectionMarketValue += cashBalance;
@@ -735,11 +735,11 @@ namespace Walkabout.Reports
 
             if (wroteSectionHeader && subtotal && rowCount > 1)
             {
-                WriteSummaryRow(writer, Colors.Transparent, "    SubTotal", totalSectionMarketValue.ToString("C"), totalSectionGainValue.ToString("C"));
+                this.WriteSummaryRow(writer, Colors.Transparent, "    SubTotal", totalSectionMarketValue.ToString("C"), totalSectionGainValue.ToString("C"));
             }
 
-            totalMarketValue += totalSectionMarketValue;
-            totalGainLoss += totalSectionGainValue;
+            this.totalMarketValue += totalSectionMarketValue;
+            this.totalGainLoss += totalSectionGainValue;
         }
 
         private static void WriteRowHeaders(IReportWriter writer)
@@ -812,7 +812,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteHyperlink(description, FontStyles.Normal, weight, OnReportCellMouseDown);
+            writer.WriteHyperlink(description, FontStyles.Normal, weight, this.OnReportCellMouseDown);
             writer.EndCell();
 
             writer.StartCell();
@@ -882,7 +882,7 @@ namespace Walkabout.Reports
 
         private Color GetRandomColor()
         {
-            return Color.FromRgb((byte)rand.Next(80, 200), (byte)rand.Next(80, 200), (byte)rand.Next(80, 200));
+            return Color.FromRgb((byte)this.rand.Next(80, 200), (byte)this.rand.Next(80, 200), (byte)this.rand.Next(80, 200));
         }
 
     }

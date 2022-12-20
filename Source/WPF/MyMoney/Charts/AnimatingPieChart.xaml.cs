@@ -29,12 +29,12 @@ namespace LovettSoftware.Charts
 
         public AnimatingPieChart()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.HoverDelayMilliseconds = 250;
             this.AnimationGrowthMilliseconds = 250;
             this.AnimationColorMilliseconds = 250;
-            this.IsVisibleChanged += OnVisibleChanged;
+            IsVisibleChanged += this.OnVisibleChanged;
         }
 
         public int HoverDelayMilliseconds { get; set; }
@@ -52,10 +52,10 @@ namespace LovettSoftware.Charts
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            if (previousArrangeBounds != arrangeBounds)
+            if (this.previousArrangeBounds != arrangeBounds)
             {
-                OnDelayedUpdate();
-                previousArrangeBounds = arrangeBounds;
+                this.OnDelayedUpdate();
+                this.previousArrangeBounds = arrangeBounds;
             }
             return base.ArrangeOverride(arrangeBounds);
         }
@@ -65,9 +65,9 @@ namespace LovettSoftware.Charts
         {
             if (e.NewValue is bool b && !b)
             {
-                HideToolTip();
+                this.HideToolTip();
             }
-            OnDelayedUpdate();
+            this.OnDelayedUpdate();
         }
 
         private void HideToolTip()
@@ -87,8 +87,8 @@ namespace LovettSoftware.Charts
 
         public ChartDataSeries Series
         {
-            get { return (ChartDataSeries)GetValue(PieSeriesProperty); }
-            set { SetValue(PieSeriesProperty, value); }
+            get { return (ChartDataSeries)this.GetValue(PieSeriesProperty); }
+            set { this.SetValue(PieSeriesProperty, value); }
         }
 
         public static readonly DependencyProperty PieSeriesProperty =
@@ -101,10 +101,10 @@ namespace LovettSoftware.Charts
 
         private void OnSeriesChanged(object newValue)
         {
-            HideToolTip();
+            this.HideToolTip();
             if (newValue == null || this.Series.Values.Count == 0)
             {
-                ResetVisuals();
+                this.ResetVisuals();
             }
             else
             {
@@ -112,24 +112,24 @@ namespace LovettSoftware.Charts
                 {
                     if (!dv.Color.HasValue || dv.Color.Value == Colors.Transparent)
                     {
-                        dv.Color = GetRandomColor();
+                        dv.Color = this.GetRandomColor();
                     }
                 }
-                OnDelayedUpdate();
+                this.OnDelayedUpdate();
             }
         }
 
         private void ResetVisuals()
         {
-            ChartCanvas.Children.Clear();
-            slices.Clear();
-            inside = null;
-            mouseOverAnimationCompleted = false;
+            this.ChartCanvas.Children.Clear();
+            this.slices.Clear();
+            this.inside = null;
+            this.mouseOverAnimationCompleted = false;
         }
 
         private void OnDelayedUpdate()
         {
-            actions.StartDelayedAction("update", UpdateChart, TimeSpan.FromMilliseconds(10));
+            this.actions.StartDelayedAction("update", this.UpdateChart, TimeSpan.FromMilliseconds(10));
         }
 
         public event EventHandler<ChartDataValue> PieSliceHover;
@@ -179,9 +179,9 @@ namespace LovettSoftware.Charts
             foreach (var item in this.Series.Values)
             {
                 PieSlice slice = null;
-                if (i < slices.Count)
+                if (i < this.slices.Count)
                 {
-                    slice = slices[i];
+                    slice = this.slices[i];
                     oldStart = slice.StartAngle;
                     oldEnd = slice.EndAngle;
                     slice.Center = center;
@@ -189,8 +189,8 @@ namespace LovettSoftware.Charts
                 }
                 else
                 {
-                    slice = new PieSlice(ChartCanvas, Colors.Transparent, center, size);
-                    slices.Add(slice);
+                    slice = new PieSlice(this.ChartCanvas, Colors.Transparent, center, size);
+                    this.slices.Add(slice);
                 }
 
                 if (item.Hidden)
@@ -214,15 +214,15 @@ namespace LovettSoftware.Charts
                 {
                     end = 359.99;
                 }
-                AnimateSlice(sb, slice, oldStart, start, oldEnd, end, item.Color.Value);
+                this.AnimateSlice(sb, slice, oldStart, start, oldEnd, end, item.Color.Value);
                 sum += value;
                 i++;
             }
 
-            while (slices.Count > i)
+            while (this.slices.Count > i)
             {
-                ChartCanvas.Children.Remove(slices[i].Path);
-                slices.RemoveAt(i);
+                this.ChartCanvas.Children.Remove(this.slices[i].Path);
+                this.slices.RemoveAt(i);
             }
 
             this.BeginStoryboard(sb);
@@ -230,7 +230,7 @@ namespace LovettSoftware.Charts
 
         void AnimateSlice(Storyboard sb, PieSlice slice, double a1, double a2, double a3, double a4, Color c)
         {
-            var duration1 = new Duration(TimeSpan.FromMilliseconds(AnimationGrowthMilliseconds));
+            var duration1 = new Duration(TimeSpan.FromMilliseconds(this.AnimationGrowthMilliseconds));
 
             var animation1 = new DoubleAnimation()
             {
@@ -254,7 +254,7 @@ namespace LovettSoftware.Charts
             Storyboard.SetTarget(animation2, slice);
             Storyboard.SetTargetProperty(animation2, new PropertyPath(PieSlice.EndAngleProperty)); // end of the slice.
 
-            var duration2 = new Duration(TimeSpan.FromMilliseconds(AnimationColorMilliseconds));
+            var duration2 = new Duration(TimeSpan.FromMilliseconds(this.AnimationColorMilliseconds));
             SolidColorBrush stroke = (SolidColorBrush)slice.Path.Stroke;
             SolidColorBrush fill = (SolidColorBrush)slice.Path.Fill;
             stroke.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation(c, duration2));
@@ -273,8 +273,8 @@ namespace LovettSoftware.Charts
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
-            actions.CancelDelayedAction("hover");
-            OnExitSlice();
+            this.actions.CancelDelayedAction("hover");
+            this.OnExitSlice();
             base.OnMouseLeave(e);
         }
 
@@ -288,7 +288,7 @@ namespace LovettSoftware.Charts
 
             ChartDataValue value = slice.Data;
             var tip = this.ToolTip as ToolTip;
-            var content = ToolTipGenerator != null ? ToolTipGenerator(value) : new TextBlock() { Text = value.Label + "\r\n" + value.Value };
+            var content = this.ToolTipGenerator != null ? this.ToolTipGenerator(value) : new TextBlock() { Text = value.Label + "\r\n" + value.Value };
             if (tip == null)
             {
                 tip = new ToolTip()
@@ -309,7 +309,7 @@ namespace LovettSoftware.Charts
             tip.VerticalOffset = -tip.ActualHeight;
 
             // notify any interested listeners
-            var h = this.PieSliceHover;
+            var h = PieSliceHover;
             if (h != null)
             {
                 h(this, value);
@@ -319,7 +319,7 @@ namespace LovettSoftware.Charts
 
         PieSlice FindSlice(Point pos)
         {
-            for (int i = 0, n = slices.Count; i < n; i++)
+            for (int i = 0, n = this.slices.Count; i < n; i++)
             {
                 var slice = this.slices[i];
                 var p = slice.Path;
@@ -333,21 +333,21 @@ namespace LovettSoftware.Charts
 
         protected override void OnPreviewMouseMove(MouseEventArgs e)
         {
-            var pos = e.GetPosition(ChartCanvas);
-            var slice = FindSlice(pos);
+            var pos = e.GetPosition(this.ChartCanvas);
+            var slice = this.FindSlice(pos);
             if (slice != null)
             {
-                OnEnterSlice(slice);
-                HideToolTip();
+                this.OnEnterSlice(slice);
+                this.HideToolTip();
                 this.movePos = pos;
-                actions.StartDelayedAction("hover", () =>
+                this.actions.StartDelayedAction("hover", () =>
                 {
-                    OnHover();
-                }, TimeSpan.FromMilliseconds(HoverDelayMilliseconds));
+                    this.OnHover();
+                }, TimeSpan.FromMilliseconds(this.HoverDelayMilliseconds));
             }
             else
             {
-                OnExitSlice();
+                this.OnExitSlice();
             }
             base.OnPreviewMouseMove(e);
         }
@@ -358,46 +358,46 @@ namespace LovettSoftware.Charts
             {
                 var brush = (SolidColorBrush)slice.Path.Fill;
                 var color = slice.Color;
-                if (inside == null || slice != inside)
+                if (this.inside == null || slice != this.inside)
                 {
-                    if (inside != null)
+                    if (this.inside != null)
                     {
-                        OnExitSlice();
+                        this.OnExitSlice();
                     }
 
-                    var duration = new Duration(TimeSpan.FromMilliseconds(AnimationColorMilliseconds));
-                    var highlight = GetMouseOverColor(color);
+                    var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationColorMilliseconds));
+                    var highlight = this.GetMouseOverColor(color);
                     var mouseOverAnimation = new ColorAnimation() { To = highlight, Duration = duration };
                     mouseOverAnimation.Completed += (s, e) =>
                     {
                         this.mouseOverAnimationCompleted = true;
-                        if (slice != inside)
+                        if (slice != this.inside)
                         {
                             brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = color, Duration = duration });
                         }
                     };
                     this.mouseOverAnimationCompleted = false;
                     brush.BeginAnimation(SolidColorBrush.ColorProperty, mouseOverAnimation);
-                    inside = slice;
+                    this.inside = slice;
                 }
             }
         }
 
         void OnExitSlice()
         {
-            if (inside != null && this.mouseOverAnimationCompleted)
+            if (this.inside != null && this.mouseOverAnimationCompleted)
             {
-                var duration = new Duration(TimeSpan.FromMilliseconds(AnimationColorMilliseconds));
-                var brush = (SolidColorBrush)inside.Path.Fill;
-                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = inside.Color, Duration = duration });
+                var duration = new Duration(TimeSpan.FromMilliseconds(this.AnimationColorMilliseconds));
+                var brush = (SolidColorBrush)this.inside.Path.Fill;
+                brush.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation() { To = this.inside.Color, Duration = duration });
             }
-            inside = null;
+            this.inside = null;
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            var pos = e.GetPosition(ChartCanvas);
-            var slice = FindSlice(pos);
+            var pos = e.GetPosition(this.ChartCanvas);
+            var slice = this.FindSlice(pos);
             if (slice != null)
             {
                 ChartDataValue value = slice.Data;
@@ -432,21 +432,21 @@ namespace LovettSoftware.Charts
 
             public Visibility Visibility
             {
-                get => path.Visibility;
-                set { path.Visibility = value; }
+                get => this.path.Visibility;
+                set { this.path.Visibility = value; }
             }
 
             public Color Color { get; set; }
 
-            public Path Path => path;
+            public Path Path => this.path;
 
             public ChartDataValue Data { get; set; }
 
 
             public double StartAngle
             {
-                get { return (double)GetValue(StartAngleProperty); }
-                set { SetValue(StartAngleProperty, value); }
+                get { return (double)this.GetValue(StartAngleProperty); }
+                set { this.SetValue(StartAngleProperty, value); }
             }
 
             // Using a DependencyProperty as the backing store for StartAngle.  This enables animation, styling, binding, etc...
@@ -462,43 +462,43 @@ namespace LovettSoftware.Charts
             {
                 var center = this.Center;
                 var size = this.Size;
-                double x1 = center.X + Math.Cos(StartAngle * Math.PI / 180) * size.Width;
-                double y1 = center.Y + Math.Sin(StartAngle * Math.PI / 180) * size.Height;
-                double x2 = center.X + Math.Cos(EndAngle * Math.PI / 180) * size.Width;
-                double y2 = center.Y + Math.Sin(EndAngle * Math.PI / 180) * size.Height;
+                double x1 = center.X + Math.Cos(this.StartAngle * Math.PI / 180) * size.Width;
+                double y1 = center.Y + Math.Sin(this.StartAngle * Math.PI / 180) * size.Height;
+                double x2 = center.X + Math.Cos(this.EndAngle * Math.PI / 180) * size.Width;
+                double y2 = center.Y + Math.Sin(this.EndAngle * Math.PI / 180) * size.Height;
                 var p1 = new Point(x1, y1);
                 var p2 = new Point(x2, y2);
 
-                if (line1 == null)
+                if (this.line1 == null)
                 {
                     PathGeometry g = new PathGeometry();
                     this.line1 = new LineSegment(p1, true);
                     this.arc = new ArcSegment(p2, size, 0, false, SweepDirection.Clockwise, true);
                     this.line2 = new LineSegment(center, true);
                     this.figure = new PathFigure(center, new PathSegment[] {
-                        line1,
-                        arc,
-                        line2
+                        this.line1,
+                        this.arc,
+                        this.line2
                     }, true);
-                    g.Figures.Add(figure);
-                    path.Data = g;
+                    g.Figures.Add(this.figure);
+                    this.path.Data = g;
                 }
                 else
                 {
-                    figure.StartPoint = center;
-                    line1.Point = p1;
-                    line2.Point = center;
-                    arc.Point = p2;
+                    this.figure.StartPoint = center;
+                    this.line1.Point = p1;
+                    this.line2.Point = center;
+                    this.arc.Point = p2;
                 }
 
-                arc.Size = size;
-                arc.IsLargeArc = (EndAngle - StartAngle) > 180;
+                this.arc.Size = size;
+                this.arc.IsLargeArc = (this.EndAngle - this.StartAngle) > 180;
             }
 
             public double EndAngle
             {
-                get { return (double)GetValue(EndAngleProperty); }
-                set { SetValue(EndAngleProperty, value); }
+                get { return (double)this.GetValue(EndAngleProperty); }
+                set { this.SetValue(EndAngleProperty, value); }
             }
 
             public static readonly DependencyProperty EndAngleProperty =
@@ -506,8 +506,8 @@ namespace LovettSoftware.Charts
 
             public Point Center
             {
-                get { return (Point)GetValue(CenterProperty); }
-                set { SetValue(CenterProperty, value); }
+                get { return (Point)this.GetValue(CenterProperty); }
+                set { this.SetValue(CenterProperty, value); }
             }
 
             public static readonly DependencyProperty CenterProperty =
@@ -515,8 +515,8 @@ namespace LovettSoftware.Charts
 
             public Size Size
             {
-                get { return (Size)GetValue(SizeProperty); }
-                set { SetValue(SizeProperty, value); }
+                get { return (Size)this.GetValue(SizeProperty); }
+                set { this.SetValue(SizeProperty, value); }
             }
 
             public static readonly DependencyProperty SizeProperty =
@@ -527,7 +527,7 @@ namespace LovettSoftware.Charts
 
         private Color GetRandomColor()
         {
-            return Color.FromRgb((byte)rand.Next(80, 200), (byte)rand.Next(80, 200), (byte)rand.Next(80, 200));
+            return Color.FromRgb((byte)this.rand.Next(80, 200), (byte)this.rand.Next(80, 200), (byte)this.rand.Next(80, 200));
         }
 
     }

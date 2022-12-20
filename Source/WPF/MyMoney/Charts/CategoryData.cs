@@ -26,7 +26,7 @@ namespace Walkabout.Charts
         public Category Category { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
-        public List<Transaction> Transactions { get { return transactions; } }
+        public List<Transaction> Transactions { get { return this.transactions; } }
 
         public string Name
         {
@@ -35,22 +35,22 @@ namespace Walkabout.Charts
 
         public string FormattedValue
         {
-            get { return Total.ToString("C2"); }
+            get { return this.Total.ToString("C2"); }
         }
 
         public Brush Background
         {
             get
             {
-                if (background == null)
+                if (this.background == null)
                 {
-                    background = ColorAndBrushGenerator.CreateLinearBrushFromSolidColor(this.Color, 45);
+                    this.background = ColorAndBrushGenerator.CreateLinearBrushFromSolidColor(this.Color, 45);
                 }
-                return background;
+                return this.background;
             }
             set
             {
-                background = value;
+                this.background = value;
             }
         }
 
@@ -85,16 +85,16 @@ namespace Walkabout.Charts
             {
                 if (this.color == null)
                 {
-                    this.color = GetColorFromCategoryName(name);
+                    this.color = GetColorFromCategoryName(this.name);
                 }
-                return color ?? Colors.Transparent;
+                return this.color ?? Colors.Transparent;
             }
             set
             {
                 this.color = value;
 
                 // Reset the color
-                background = ColorAndBrushGenerator.CreateLinearBrushFromSolidColor(value, 45);
+                this.background = ColorAndBrushGenerator.CreateLinearBrushFromSolidColor(value, 45);
             }
 
         }
@@ -102,11 +102,11 @@ namespace Walkabout.Charts
 
         public double Total
         {
-            get { return total; }
+            get { return this.total; }
             set
             {
-                total = value;
-                OnPropertyChanged("Total");
+                this.total = value;
+                this.OnPropertyChanged("Total");
             }
         }
 
