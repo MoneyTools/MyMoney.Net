@@ -9,7 +9,7 @@ using System.Xml;
 namespace Walkabout.Utilities
 {
 
-    static internal class InternetExplorer
+    internal static class InternetExplorer
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "rc")]
         public static void OpenUrl(IntPtr owner, Uri url)

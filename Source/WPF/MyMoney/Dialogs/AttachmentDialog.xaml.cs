@@ -36,9 +36,9 @@ namespace Walkabout.Dialogs
         private Transaction transaction;
         private DelayedActions actions = new DelayedActions();
 
-        public readonly static RoutedUICommand CommandRotateRight = new RoutedUICommand("Rotate Right", "CommandRotateRight", typeof(MainWindow));
-        public readonly static RoutedUICommand CommandRotateLeft = new RoutedUICommand("Rotate Left", "CommandRotateLeft", typeof(MainWindow));
-        public readonly static RoutedUICommand CommandCropImage = new RoutedUICommand("Crop", "CommandCropImage", typeof(MainWindow));
+        public static readonly RoutedUICommand CommandRotateRight = new RoutedUICommand("Rotate Right", "CommandRotateRight", typeof(MainWindow));
+        public static readonly RoutedUICommand CommandRotateLeft = new RoutedUICommand("Rotate Left", "CommandRotateLeft", typeof(MainWindow));
+        public static readonly RoutedUICommand CommandCropImage = new RoutedUICommand("Crop", "CommandCropImage", typeof(MainWindow));
 
         public AttachmentDialog()
         {

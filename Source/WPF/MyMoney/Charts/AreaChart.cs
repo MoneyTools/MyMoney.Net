@@ -576,7 +576,7 @@ namespace LovettSoftware.Charts
 
     }
 
-    static public class ChartColors
+    public static class ChartColors
     {
         private static IList<Color> colors;
         private static Random r;

@@ -82,7 +82,7 @@ namespace Walkabout.Dialogs
 
     internal static class AccountHelper
     {
-        static public Account PickAccount(MyMoney money, Account accountTemplate, string prompt)
+        public static Account PickAccount(MyMoney money, Account accountTemplate, string prompt)
         {
             SelectAccountDialog frm = new SelectAccountDialog();
             if (accountTemplate != null)

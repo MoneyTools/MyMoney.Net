@@ -5,7 +5,7 @@ using System.IO;
 namespace Walkabout.Utilities
 {
 
-    static public class Sounds
+    public static class Sounds
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2211:NonConstantFieldsShouldNotBeVisible")]
         public static bool PlaySounds = true;

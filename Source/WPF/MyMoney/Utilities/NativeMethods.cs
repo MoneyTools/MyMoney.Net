@@ -10,7 +10,7 @@ namespace Walkabout.Utilities
     /// Summary description for NativeMethods.
     /// </summary>
     [CLSCompliantAttribute(false)]
-    static public class NativeMethods
+    public static class NativeMethods
     {
         public const int SW_SHOWNORMAL = 1;
         public const int SW_SHOWMINIMIZED = 2;

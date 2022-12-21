@@ -1579,7 +1579,7 @@ namespace Walkabout.Data
             t.Category = cat;
         }
 
-        static public void Categorize(Split s, Category cat)
+        public static void Categorize(Split s, Category cat)
         {
             s.Category = cat;
         }
@@ -5571,7 +5571,7 @@ namespace Walkabout.Data
             this.Total = 0;
         }
 
-        override public string ToString()
+        public override string ToString()
         {
             return string.Format("{0} {1}", this.Name, this.Total);
         }
@@ -7943,7 +7943,7 @@ namespace Walkabout.Data
             }
         }
 
-        static public decimal RangeToDaily(decimal budget, CalendarRange r, int years)
+        public static decimal RangeToDaily(decimal budget, CalendarRange r, int years)
         {
             switch (r)
             {
@@ -7969,7 +7969,7 @@ namespace Walkabout.Data
             return 0;
         }
 
-        static public decimal DailyToRange(decimal budget, CalendarRange r, int years)
+        public static decimal DailyToRange(decimal budget, CalendarRange r, int years)
         {
             switch (r)
             {
@@ -8436,7 +8436,7 @@ namespace Walkabout.Data
 
         public Security(Securities container) : base(container) { }
 
-        public readonly static Security None;
+        public static readonly Security None;
 
         public override void OnChanged(string name)
         {
@@ -10175,7 +10175,7 @@ namespace Walkabout.Data
 
         #region FILTER TRANSACTION HELPERS
 
-        static public bool IsAnyFieldsMatching(Transaction t, FilterLiteral filter, bool includeAccountField)
+        public static bool IsAnyFieldsMatching(Transaction t, FilterLiteral filter, bool includeAccountField)
         {
             //
             // Optionally the Account field name can be included in the Filter
@@ -10193,7 +10193,7 @@ namespace Walkabout.Data
                    filter.MatchDecimal(t.amount);
         }
 
-        static public bool IsSplitsMatching(Splits splits, FilterLiteral filter)
+        public static bool IsSplitsMatching(Splits splits, FilterLiteral filter)
         {
             if (splits != null)
             {

@@ -2953,7 +2953,7 @@ namespace Walkabout.Views
             this.quickFilterValueChanging = false;
         }
 
-        public readonly static DependencyProperty IsQueryPanelDisplayedProperty = DependencyProperty.Register("IsQueryPanelDisplayed", typeof(bool), typeof(TransactionsView),
+        public static readonly DependencyProperty IsQueryPanelDisplayedProperty = DependencyProperty.Register("IsQueryPanelDisplayed", typeof(bool), typeof(TransactionsView),
           new FrameworkPropertyMetadata(false, OnIsQueryPanelDisplayed)
           );
 
@@ -3825,30 +3825,30 @@ namespace Walkabout.Views
 
         #region MENUS COMMNANDS
 
-        public readonly static RoutedUICommand CommandCopySplits = new RoutedUICommand("CopySplits", "CommandCopySplits", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandPasteSplits = new RoutedUICommand("PasteSplits", "CommandPasteSplits", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandAccept = new RoutedUICommand("Accept", "CommandAccept", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandVoid = new RoutedUICommand("Void", "CommandVoid", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandSplits = new RoutedUICommand("Splits", "CommandSplits", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandRenamePayee = new RoutedUICommand("RenamePayee", "CommandRenamePayee", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandLookupPayee = new RoutedUICommand("LookupPayee", "CommandLookupPayee", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandRecategorize = new RoutedUICommand("Recategorize", "CommandRecategorize", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandSetTaxDate = new RoutedUICommand("SetTaxDate", "CommandSetTaxDate", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandGotoRelatedTransaction = new RoutedUICommand("GotoRelatedTransaction", "CommandGotoRelatedTransaction", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandGotoStatement = new RoutedUICommand("GotoStatement", "CommandGotoStatement", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewTransactionsByAccount = new RoutedUICommand("ViewTransactionsByAccount", "CommandViewTransactionsByAccount", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewSimilarTransactions = new RoutedUICommand("ViewSimilarTransactions", "CommandViewSimilarTransactions", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewTransactionsByCategory = new RoutedUICommand("ViewTransactionsByCategory", "CommandViewTransactionsByCategory", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewTransactionsByPayee = new RoutedUICommand("ViewTransactionsByPayee", "CommandViewTransactionsByPayee", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewTransactionsBySecurity = new RoutedUICommand("ViewTransactionsBySecurity", "CommandViewTransactionsBySecurity", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewSecurity = new RoutedUICommand("CommandViewSecurity", "CommandViewSecurity", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewCategory = new RoutedUICommand("CommandViewCategory", "CommandViewCategory", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandCopySplits = new RoutedUICommand("CopySplits", "CommandCopySplits", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandPasteSplits = new RoutedUICommand("PasteSplits", "CommandPasteSplits", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandAccept = new RoutedUICommand("Accept", "CommandAccept", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandVoid = new RoutedUICommand("Void", "CommandVoid", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandSplits = new RoutedUICommand("Splits", "CommandSplits", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandRenamePayee = new RoutedUICommand("RenamePayee", "CommandRenamePayee", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandLookupPayee = new RoutedUICommand("LookupPayee", "CommandLookupPayee", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandRecategorize = new RoutedUICommand("Recategorize", "CommandRecategorize", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandSetTaxDate = new RoutedUICommand("SetTaxDate", "CommandSetTaxDate", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandGotoRelatedTransaction = new RoutedUICommand("GotoRelatedTransaction", "CommandGotoRelatedTransaction", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandGotoStatement = new RoutedUICommand("GotoStatement", "CommandGotoStatement", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandViewTransactionsByAccount = new RoutedUICommand("ViewTransactionsByAccount", "CommandViewTransactionsByAccount", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandViewSimilarTransactions = new RoutedUICommand("ViewSimilarTransactions", "CommandViewSimilarTransactions", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandViewTransactionsByCategory = new RoutedUICommand("ViewTransactionsByCategory", "CommandViewTransactionsByCategory", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandViewTransactionsByPayee = new RoutedUICommand("ViewTransactionsByPayee", "CommandViewTransactionsByPayee", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandViewTransactionsBySecurity = new RoutedUICommand("ViewTransactionsBySecurity", "CommandViewTransactionsBySecurity", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandViewSecurity = new RoutedUICommand("CommandViewSecurity", "CommandViewSecurity", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandViewCategory = new RoutedUICommand("CommandViewCategory", "CommandViewCategory", typeof(TransactionsView));
 
-        public readonly static RoutedUICommand CommandViewToggleOneLineView = new RoutedUICommand("View ToggleOneLineView", "ViewToggleOneLineView", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandViewToggleAllSplits = new RoutedUICommand("View Toggle View All Splits", "ViewToggleViewAllSplits", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandViewToggleOneLineView = new RoutedUICommand("View ToggleOneLineView", "ViewToggleOneLineView", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandViewToggleAllSplits = new RoutedUICommand("View Toggle View All Splits", "ViewToggleViewAllSplits", typeof(TransactionsView));
 
-        public readonly static RoutedUICommand CommandViewExport = new RoutedUICommand("Export", "CommandViewExport", typeof(TransactionsView));
-        public readonly static RoutedUICommand CommandScanAttachment = new RoutedUICommand("ScanAttachment", "CommandScanAttachment", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandViewExport = new RoutedUICommand("Export", "CommandViewExport", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandScanAttachment = new RoutedUICommand("ScanAttachment", "CommandScanAttachment", typeof(TransactionsView));
 
         #region CAN EXECUTE
 

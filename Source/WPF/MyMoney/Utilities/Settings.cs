@@ -835,7 +835,7 @@ namespace Walkabout.Configuration
         }
 
 
-        static private Point DeserializePoint(XmlReader r)
+        private static Point DeserializePoint(XmlReader r)
         {
             Point p = new Point();
             if (r.IsEmptyElement)
@@ -860,7 +860,7 @@ namespace Walkabout.Configuration
             return p;
         }
 
-        static private Size DeserializeSize(XmlReader r)
+        private static Size DeserializeSize(XmlReader r)
         {
             Size s = new Size();
             if (r.IsEmptyElement)
@@ -895,7 +895,7 @@ namespace Walkabout.Configuration
             return s;
         }
 
-        static private DateTime DeserializeDateTime(XmlReader r)
+        private static DateTime DeserializeDateTime(XmlReader r)
         {
             if (r.IsEmptyElement)
             {
@@ -925,7 +925,7 @@ namespace Walkabout.Configuration
             return new DateTime();
         }
 
-        static private TimeSpan DeserializeTimeSpan(XmlReader r)
+        private static TimeSpan DeserializeTimeSpan(XmlReader r)
         {
             if (r.IsEmptyElement)
             {
@@ -945,13 +945,13 @@ namespace Walkabout.Configuration
             }
             return new TimeSpan();
         }
-        static private void SerializePoint(XmlWriter w, Point p)
+        private static void SerializePoint(XmlWriter w, Point p)
         {
             w.WriteElementString("X", p.X.ToString());
             w.WriteElementString("Y", p.Y.ToString());
         }
 
-        static private void SerializeSize(XmlWriter w, string name, Size s)
+        private static void SerializeSize(XmlWriter w, string name, Size s)
         {
             w.WriteStartElement(name);
             w.WriteElementString("Width", s.Width.ToString());
@@ -959,14 +959,14 @@ namespace Walkabout.Configuration
             w.WriteEndElement();
         }
 
-        static private void SerializeDateTime(XmlWriter w, string name, DateTime dt)
+        private static void SerializeDateTime(XmlWriter w, string name, DateTime dt)
         {
             w.WriteStartElement(name);
             w.WriteString(XmlConvert.ToString(dt, XmlDateTimeSerializationMode.Utc));
             w.WriteEndElement();
         }
 
-        static private void SerializeTimeSpan(XmlWriter w, string name, TimeSpan span)
+        private static void SerializeTimeSpan(XmlWriter w, string name, TimeSpan span)
         {
             w.WriteStartElement(name);
             w.WriteString(XmlConvert.ToString(span));

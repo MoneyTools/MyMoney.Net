@@ -141,7 +141,7 @@ namespace Walkabout.Tests.Interop
                 return lhs._value != rhs._value;
             }
 
-            override public bool Equals(object oCompare)
+            public override bool Equals(object oCompare)
             {
                 HWND temp = Cast((HWND)oCompare);
                 return this._value == temp._value;

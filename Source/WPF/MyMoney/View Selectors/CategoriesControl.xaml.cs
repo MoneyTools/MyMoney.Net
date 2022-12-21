@@ -749,7 +749,7 @@ namespace Walkabout.Views.Controls
             ShowDetails(this.MyMoney, this.Selected);
         }
 
-        static public void ShowDetails(MyMoney money, Category c)
+        public static void ShowDetails(MyMoney money, Category c)
         {
             if (c != null)
             {

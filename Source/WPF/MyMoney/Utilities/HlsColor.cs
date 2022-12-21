@@ -267,7 +267,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        static private byte ToRGB1(float rm1, float rm2, float rh)
+        private static byte ToRGB1(float rm1, float rm2, float rh)
         {
             if (rh > 360.0f)
             {

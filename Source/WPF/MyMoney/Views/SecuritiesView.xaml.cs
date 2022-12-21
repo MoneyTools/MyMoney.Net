@@ -22,8 +22,8 @@ namespace Walkabout.Views
     /// </summary>
     public partial class SecuritiesView : UserControl, IView
     {
-        public readonly static RoutedUICommand CommandToggleAllSplits = new RoutedUICommand("View Toggle View All Splits", "CommandToggleAllSplits", typeof(SecuritiesView));
-        public readonly static RoutedUICommand CommandShowRelatedTransactions = new RoutedUICommand("Show Related Transactions", "CommandShowRelatedTransactions", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandToggleAllSplits = new RoutedUICommand("View Toggle View All Splits", "CommandToggleAllSplits", typeof(SecuritiesView));
+        public static readonly RoutedUICommand CommandShowRelatedTransactions = new RoutedUICommand("Show Related Transactions", "CommandShowRelatedTransactions", typeof(TransactionsView));
 
         public SecuritiesView()
         {

@@ -18,7 +18,7 @@ namespace Walkabout.Views.Controls
     public partial class SecuritiesControl : UserControl, IClipboardClient
     {
         #region COMMANDS
-        public readonly static RoutedUICommand CommandDeletePayee = new RoutedUICommand("Delete", "CommandDeletePayee", typeof(SecuritiesControl));
+        public static readonly RoutedUICommand CommandDeletePayee = new RoutedUICommand("Delete", "CommandDeletePayee", typeof(SecuritiesControl));
 
         #endregion
 

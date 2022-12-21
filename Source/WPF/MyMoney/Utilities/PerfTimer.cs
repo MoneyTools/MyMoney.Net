@@ -115,7 +115,7 @@ namespace Walkabout.Utilities
             return percent;
         }
 
-        static public double TwoDecimals(double i)
+        public static double TwoDecimals(double i)
         {
             return Math.Round(i * 100) / 100;
         }

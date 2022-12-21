@@ -23,7 +23,7 @@ namespace Walkabout.Views
     {
         #region MENUS COMMNANDS
 
-        public readonly static RoutedUICommand CommandGotoRelatedTransaction = new RoutedUICommand("GotoRelatedTransaction", "CommandGotoRelatedTransaction", typeof(LoansView));
+        public static readonly RoutedUICommand CommandGotoRelatedTransaction = new RoutedUICommand("GotoRelatedTransaction", "CommandGotoRelatedTransaction", typeof(LoansView));
 
         #endregion
 

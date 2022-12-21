@@ -6,67 +6,67 @@ namespace Walkabout.Commands
     {
 
         // FILE 
-        public readonly static RoutedUICommand CommandFileImport;
-        public readonly static RoutedUICommand CommandFileExportGraph;
-        public readonly static RoutedUICommand CommandFileExtensionAssociation;
-        public readonly static RoutedUICommand CommandFileAddUser;
-        public readonly static RoutedUICommand CommandFileBackup;
-        public readonly static RoutedUICommand CommandFileRestore;
-        public readonly static RoutedUICommand CommandRevertChanges;
-        public readonly static RoutedUICommand CommandOpenContainingFolder;
+        public static readonly RoutedUICommand CommandFileImport;
+        public static readonly RoutedUICommand CommandFileExportGraph;
+        public static readonly RoutedUICommand CommandFileExtensionAssociation;
+        public static readonly RoutedUICommand CommandFileAddUser;
+        public static readonly RoutedUICommand CommandFileBackup;
+        public static readonly RoutedUICommand CommandFileRestore;
+        public static readonly RoutedUICommand CommandRevertChanges;
+        public static readonly RoutedUICommand CommandOpenContainingFolder;
 
         // VIEW
-        public readonly static RoutedUICommand CommandViewSecurities;
-        public readonly static RoutedUICommand CommandViewCurrencies;
-        public readonly static RoutedUICommand CommandViewAliases;
-        public readonly static RoutedUICommand CommandViewOptions;
-        public readonly static RoutedUICommand CommandToggleTheme;
+        public static readonly RoutedUICommand CommandViewSecurities;
+        public static readonly RoutedUICommand CommandViewCurrencies;
+        public static readonly RoutedUICommand CommandViewAliases;
+        public static readonly RoutedUICommand CommandViewOptions;
+        public static readonly RoutedUICommand CommandToggleTheme;
 
         // History
-        public readonly static RoutedUICommand CommandBack;
-        public readonly static RoutedUICommand CommandForward;
+        public static readonly RoutedUICommand CommandBack;
+        public static readonly RoutedUICommand CommandForward;
 
         // REPORTS
-        public readonly static RoutedUICommand CommandReportBudget;
-        public readonly static RoutedUICommand CommandReportNetWorth;
-        public readonly static RoutedUICommand CommandReportInvestment;
-        public readonly static RoutedUICommand CommandTaxReport;
-        public readonly static RoutedUICommand CommandW2Report;
-        public readonly static RoutedUICommand CommandReportCashFlow;
-        public readonly static RoutedUICommand CommandReportUnaccepted;
+        public static readonly RoutedUICommand CommandReportBudget;
+        public static readonly RoutedUICommand CommandReportNetWorth;
+        public static readonly RoutedUICommand CommandReportInvestment;
+        public static readonly RoutedUICommand CommandTaxReport;
+        public static readonly RoutedUICommand CommandW2Report;
+        public static readonly RoutedUICommand CommandReportCashFlow;
+        public static readonly RoutedUICommand CommandReportUnaccepted;
 
         // QUERY
-        public readonly static RoutedUICommand CommandQueryShowForm;
-        public readonly static RoutedUICommand CommandQueryRun;
-        public readonly static RoutedUICommand CommandQueryClear;
-        public readonly static RoutedUICommand CommandQueryAdhoc;
-        public readonly static RoutedUICommand CommandQueryShowLastUpdate;
+        public static readonly RoutedUICommand CommandQueryShowForm;
+        public static readonly RoutedUICommand CommandQueryRun;
+        public static readonly RoutedUICommand CommandQueryClear;
+        public static readonly RoutedUICommand CommandQueryAdhoc;
+        public static readonly RoutedUICommand CommandQueryShowLastUpdate;
 
         // ONLINE
-        public readonly static RoutedUICommand CommandOnlineSyncAccount;
-        public readonly static RoutedUICommand CommandOnlineUpdateSecurities;
-        public readonly static RoutedUICommand CommandDownloadAccounts;
-        public readonly static RoutedUICommand CommandStockQuoteServiceOptions;
+        public static readonly RoutedUICommand CommandOnlineSyncAccount;
+        public static readonly RoutedUICommand CommandOnlineUpdateSecurities;
+        public static readonly RoutedUICommand CommandDownloadAccounts;
+        public static readonly RoutedUICommand CommandStockQuoteServiceOptions;
 
         // Help
-        public readonly static RoutedUICommand CommandHelpAbout;
-        public readonly static RoutedUICommand CommandViewHelp;
-        public readonly static RoutedUICommand CommandAddSampleData;
-        public readonly static RoutedUICommand CommandTroubleshootCheckTransfer;
-        public readonly static RoutedUICommand CommandViewChanges;
+        public static readonly RoutedUICommand CommandHelpAbout;
+        public static readonly RoutedUICommand CommandViewHelp;
+        public static readonly RoutedUICommand CommandAddSampleData;
+        public static readonly RoutedUICommand CommandTroubleshootCheckTransfer;
+        public static readonly RoutedUICommand CommandViewChanges;
 
         // ContextMenu on Graphs & Charts
-        public readonly static RoutedUICommand CommandYearToDate;
-        public readonly static RoutedUICommand CommandNext;
-        public readonly static RoutedUICommand CommandPrevious;
-        public readonly static RoutedUICommand CommandSetRange;
-        public readonly static RoutedUICommand CommandShowAll;
-        public readonly static RoutedUICommand CommandZoomIn;
-        public readonly static RoutedUICommand CommandZoomOut;
-        public readonly static RoutedUICommand CommandAddSeries;
-        public readonly static RoutedUICommand CommandRemoveSeries;
-        public readonly static RoutedUICommand CommandShowBudget;
-        public readonly static RoutedUICommand CommandExportData;
+        public static readonly RoutedUICommand CommandYearToDate;
+        public static readonly RoutedUICommand CommandNext;
+        public static readonly RoutedUICommand CommandPrevious;
+        public static readonly RoutedUICommand CommandSetRange;
+        public static readonly RoutedUICommand CommandShowAll;
+        public static readonly RoutedUICommand CommandZoomIn;
+        public static readonly RoutedUICommand CommandZoomOut;
+        public static readonly RoutedUICommand CommandAddSeries;
+        public static readonly RoutedUICommand CommandRemoveSeries;
+        public static readonly RoutedUICommand CommandShowBudget;
+        public static readonly RoutedUICommand CommandExportData;
 
 
         static AppCommands()

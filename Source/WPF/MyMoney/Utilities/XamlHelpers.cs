@@ -145,7 +145,7 @@ namespace Walkabout.Utilities
         }
 
         // Enumerate all the descendants of the visual object.
-        static public FrameworkElement FindDescendantElement(Visual myVisual, string nameId)
+        public static FrameworkElement FindDescendantElement(Visual myVisual, string nameId)
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(myVisual); i++)
             {

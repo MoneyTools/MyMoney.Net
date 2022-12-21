@@ -211,7 +211,7 @@ namespace Walkabout.Views.Controls
             return complete.ToArray();
         }
 
-        static public QueryRow GetQueryRow(DataRow row)
+        public static QueryRow GetQueryRow(DataRow row)
         {
             QueryRow q = new QueryRow();
             if (!(row["Field"] is DBNull))
