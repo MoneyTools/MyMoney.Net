@@ -409,7 +409,7 @@ namespace Walkabout.WpfConverters
                 {
                     return SqlDecimal.Null;
                 }
-                return new SqlDecimal((decimal)System.Convert.ToDecimal(value));
+                return new SqlDecimal(System.Convert.ToDecimal(value));
             }
 
             if (value is decimal)

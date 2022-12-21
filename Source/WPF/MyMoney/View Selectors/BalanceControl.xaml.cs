@@ -191,7 +191,7 @@ namespace Walkabout.Views.Controls
             IList<Transaction> list = this.myMoney.Transactions.GetTransactionsByCategory(this.interestCategory, null);
             for (int i = list.Count - 1; i >= 0; i--)
             { // most likely to be at the end of the list.
-                Transaction t = (Transaction)list[i];
+                Transaction t = list[i];
                 if (t.Account == this.account && t.Category == this.interestCategory && t.Date <= date && t.Date > prevMonth &&
                     t.Status != TransactionStatus.Reconciled && t.Status != TransactionStatus.Void)
                 {

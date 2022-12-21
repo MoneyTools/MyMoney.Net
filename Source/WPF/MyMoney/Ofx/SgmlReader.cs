@@ -173,7 +173,7 @@ namespace Walkabout.Sgml
             for (int i = 0; i < this._attcount; i++)
             {
                 if ((ignoreCase && string.Compare(this._attributes[i].Name, name, StringComparison.OrdinalIgnoreCase) == 0)
-                    || (object)this._attributes[i].Name == (object)name)
+                    || this._attributes[i].Name == (object)name)
                 {
                     return null; // ignore duplicates!
                 }
@@ -1617,7 +1617,7 @@ namespace Walkabout.Sgml
                 string name = this._name.ToString();
                 if (this._dtd != null && name != string.Empty)
                 {
-                    Entity e = (Entity)this._dtd.FindEntity(name);
+                    Entity e = this._dtd.FindEntity(name);
                     if (e != null)
                     {
                         if (e.Internal)

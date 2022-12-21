@@ -134,7 +134,7 @@ namespace Walkabout
                 //-----------------------------------------------------------------
                 // ACCOUNTS CONTROL
                 this.accountsControl = new AccountsControl();
-                this.accountsControl.Site = (IServiceProvider)this;
+                this.accountsControl.Site = this;
                 this.accountsControl.TabIndex = 1;
                 this.accountsControl.Name = "AccountsControl";
                 this.accountsControl.MyMoney = this.myMoney;
@@ -150,7 +150,7 @@ namespace Walkabout
                 this.categoriesControl.TabIndex = 2;
                 this.categoriesControl.Name = "CategoriesControl";
                 this.categoriesControl.MyMoney = this.myMoney;
-                this.categoriesControl.Site = (IServiceProvider)this;
+                this.categoriesControl.Site = this;
 
                 //-----------------------------------------------------------------
                 // PAYEES CONTROL
@@ -158,7 +158,7 @@ namespace Walkabout
                 this.payeesControl.TabIndex = 3;
                 this.payeesControl.Name = "PayeesControl";
                 this.payeesControl.MyMoney = this.myMoney;
-                this.payeesControl.Site = (IServiceProvider)this;
+                this.payeesControl.Site = this;
 
                 //-----------------------------------------------------------------
                 // STOCKS CONTROL
@@ -402,7 +402,7 @@ namespace Walkabout
 
         void OfxDownloadControl_SelectionChanged(object sender, OfxDocumentControlSelectionChangedEventArgs e)
         {
-            IViewNavigator navigator = (IViewNavigator)this;
+            IViewNavigator navigator = this;
             var data = e.Data;
             if (data != null && data.Added != null && data.Added.Count > 0)
             {
@@ -658,7 +658,7 @@ namespace Walkabout
 
                 this.SetCurrentView<TransactionsView>();
                 this.TransactionView.Money = this.myMoney;
-                IView view = (IView)this.TransactionView;
+                IView view = this.TransactionView;
 
                 // try again to restore the selected account/payee, whatever, since we now have loaded data to play with
                 ViewState state = this.settings.GetViewState(view.GetType());
@@ -710,7 +710,7 @@ namespace Walkabout
 
         private void SetupStockQuoteManager(MyMoney money)
         {
-            this.quotes = new StockQuoteManager((IServiceProvider)this, this.settings.StockServiceSettings, this.GetStockQuotePath());
+            this.quotes = new StockQuoteManager(this, this.settings.StockServiceSettings, this.GetStockQuotePath());
             this.quotes.DownloadComplete += new EventHandler<EventArgs>(this.OnStockDownloadComplete);
             this.quotes.HistoryAvailable += this.OnStockQuoteHistoryAvailable;
             this.cache = new StockQuoteCache(money, this.quotes.DownloadLog);
@@ -1139,7 +1139,7 @@ namespace Walkabout
                 if (iView != null)
                 {
 
-                    iView.ServiceProvider = (IServiceProvider)this;
+                    iView.ServiceProvider = this;
                     iView.BeforeViewStateChanged += new EventHandler(this.OnBeforeViewStateChanged);
                     iView.AfterViewStateChanged += new EventHandler<AfterViewStateChangedEventArgs>(this.OnAfterViewStateChanged);
                     iView.Money = this.myMoney;
@@ -2733,7 +2733,7 @@ namespace Walkabout
                         TransactionViewState state = vs.State as TransactionViewState;
                         if (state != null)
                         {
-                            TransactionsView view = (TransactionsView)this.TransactionView;
+                            TransactionsView view = this.TransactionView;
                             string account = view.ActiveAccount != null ? view.ActiveAccount.Name : null;
                             string payee = view.ActivePayee != null ? view.ActivePayee.Name : null;
                             string category = view.ActiveCategory != null ? view.ActiveCategory.Name : null;
@@ -2778,7 +2778,7 @@ namespace Walkabout
                     Transaction t = this.TransactionGraph.SelectedItem as Transaction;
                     if (t != null)
                     {
-                        IView view = (IView)this.TransactionView;
+                        IView view = this.TransactionView;
                         view.SelectedRow = t;
                     }
                 }
@@ -3156,7 +3156,7 @@ namespace Walkabout
         private void PieChartSelectionChanged(object sender, EventArgs e)
         {
             CategoryChart chart = (CategoryChart)sender;
-            CategoryData data = (CategoryData)chart.Selection;
+            CategoryData data = chart.Selection;
             if (data != null)
             {
                 TransactionsView view = this.SetCurrentView<TransactionsView>();
@@ -3315,7 +3315,7 @@ namespace Walkabout
             }
             else if (service == typeof(IStatusService))
             {
-                return (IStatusService)this;
+                return this;
             }
             else if (service == typeof(QueryViewControl))
             {
@@ -4367,7 +4367,7 @@ namespace Walkabout
         {
             Account temp = new Account();
             temp.Type = AccountType.Checking;
-            OnlineAccountDialog od = new OnlineAccountDialog(this.myMoney, temp, (IServiceProvider)this);
+            OnlineAccountDialog od = new OnlineAccountDialog(this.myMoney, temp, this);
             od.Owner = this;
             od.ShowDialog();
         }

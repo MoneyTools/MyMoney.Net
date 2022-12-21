@@ -549,7 +549,7 @@ namespace Walkabout.Views.Controls
                 }
                 else
                 {
-                    this.range = (CalendarRange)(this.range - 1);
+                    this.range = this.range - 1;
                 }
                 this.end = Step(this.start, this.range, this.years, 1);
                 this.yearToDate = false;
@@ -567,7 +567,7 @@ namespace Walkabout.Views.Controls
             }
             else
             {
-                this.range = (CalendarRange)(this.range + 1);
+                this.range = this.range + 1;
             }
             this.end = Step(this.start, this.range, this.years, 1);
             this.yearToDate = false;

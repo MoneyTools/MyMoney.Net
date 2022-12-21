@@ -142,7 +142,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 double ticksPerLabel = (this.zoom * this.frequency);
                 double scale = this.pixelsPerLabel / ticksPerLabel;
 
-                double width = (double)(this.end - this.start) * scale;
+                double width = (this.end - this.start) * scale;
                 return new Size((2 * HorizontalMargin) + width, this.renderSize.Height);
             }
         }
@@ -287,8 +287,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 color = new SolidColorBrush(style.Item2);
 
                 double y = 20 + style.Item1 * 22;
-                double x = HorizontalMargin + (double)(begin.Timestamp - this.start) * (double)scale;
-                double w = (double)(e.Timestamp - begin.Timestamp) * (double)scale;
+                double x = HorizontalMargin + (begin.Timestamp - this.start) * (double)scale;
+                double w = (e.Timestamp - begin.Timestamp) * (double)scale;
                 Rect bounds = new Rect(x, y, w, 20);
                 maxy = Math.Max(maxy, y + 20);
                 maxx = Math.Max(maxx, x + w);
@@ -367,7 +367,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             content.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
 
             long span = evt.End.Timestamp - evt.Begin.Timestamp;
-            double seconds = (double)span / (double)this.PerformanceFrequency;
+            double seconds = span / (double)this.PerformanceFrequency;
 
             string units = "s"; // seconds;
             if (seconds.ToString("N").StartsWith("0.0"))

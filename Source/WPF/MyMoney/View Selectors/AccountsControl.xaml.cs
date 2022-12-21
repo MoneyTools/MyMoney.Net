@@ -1085,7 +1085,7 @@ namespace Walkabout.Views.Controls
         {
             get
             {
-                DateTime dt = (DateTime)this.account.LastBalance;
+                DateTime dt = this.account.LastBalance;
                 if (dt != DateTime.MinValue)
                 {
                     return string.Format("Last Balanced {0}", dt.ToShortDateString());

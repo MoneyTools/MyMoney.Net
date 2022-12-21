@@ -1019,7 +1019,7 @@ namespace Walkabout.Dialogs
 
         public override void Resize(Rect bounds)
         {
-            BitmapSource bitmap = (BitmapSource)this.Bitmap;
+            BitmapSource bitmap = this.Bitmap;
 
             double dpiX = bitmap.DpiX / 96;
             double dpiY = bitmap.DpiY / 96;

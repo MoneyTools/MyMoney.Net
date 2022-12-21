@@ -394,7 +394,7 @@ namespace Walkabout.Views
         /// <param name="e"></param>
         void OnCommandGotoRelatedTransaction(object sender, RoutedEventArgs e)
         {
-            LoanPaymentAggregation l = this.CurrentSelectedItem as LoanPaymentAggregation;
+            LoanPaymentAggregation l = this.CurrentSelectedItem;
 
             if (l != null && l.Transaction != null)
             {

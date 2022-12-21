@@ -76,13 +76,13 @@ namespace Walkabout.Utilities
 
         internal static double ConvertToDeviceIndependentPixels(int pixels)
         {
-            return (double)pixels * 96 / (double)DPI;
+            return (double)pixels * 96 / DPI;
         }
 
 
         internal static int ConvertFromDeviceIndependentPixels(double pixels)
         {
-            return (int)(pixels * (double)DPI / 96);
+            return (int)(pixels * DPI / 96);
         }
 
     }

@@ -201,8 +201,8 @@ namespace Walkabout.Utilities
             byte minval = Math.Min(this.red, Math.Min(this.green, this.blue));
             byte maxval = Math.Max(this.red, Math.Max(this.green, this.blue));
 
-            float mdiff = (float)(maxval - minval);
-            float msum = (float)(maxval + minval);
+            float mdiff = maxval - minval;
+            float msum = maxval + minval;
 
             this.luminance = msum / 510.0f;
 

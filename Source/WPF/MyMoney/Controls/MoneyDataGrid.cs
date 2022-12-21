@@ -665,11 +665,11 @@ namespace Walkabout.Controls
             }
             {
                 // Shift tab goes backwards.
-                DataGridColumn c = this.CurrentColumn as DataGridColumn;
+                DataGridColumn c = this.CurrentColumn;
                 int i = this.Columns.IndexOf(c) - 1;
                 for (int n = this.Columns.Count; i >= 0; i--)
                 {
-                    DataGridColumn next = this.Columns[i] as DataGridColumn;
+                    DataGridColumn next = this.Columns[i];
                     if (next != null && !next.IsReadOnly)
                     {
                         this.CurrentColumn = next;

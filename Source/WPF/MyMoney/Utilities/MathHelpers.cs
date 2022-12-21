@@ -38,7 +38,7 @@ namespace Walkabout.Utilities
             {
                 return 0;
             }
-            return Math.Sqrt((double)(totalSquares / (double)count));
+            return Math.Sqrt((double)(totalSquares / count));
         }
 
         /// <summary>

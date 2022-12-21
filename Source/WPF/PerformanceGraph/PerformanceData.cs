@@ -45,12 +45,12 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             uint now = (uint)Environment.TickCount;
             if (now > this.lastCheck + 1000 && this.data.Count > this.PurgeThreshold)
             {
-                double seconds = (double)latest / (double)this.PerformanceFrequency;
+                double seconds = latest / (double)this.PerformanceFrequency;
                 double deleteDate = seconds - this.HistoryLength.TotalSeconds;
                 for (int i = 0; i < this.data.Count; i++)
                 {
                     PerformanceEventArrivedEventArgs args = this.data[i];
-                    seconds = (double)args.Timestamp / (double)this.PerformanceFrequency;
+                    seconds = args.Timestamp / (double)this.PerformanceFrequency;
                     if (seconds > deleteDate)
                     {
                         if (i > 0)

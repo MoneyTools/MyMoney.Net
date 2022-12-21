@@ -262,7 +262,7 @@ namespace Walkabout.Views
 
             protected override void RemoveItem(int index)
             {
-                Currency currency = (Currency)this[index];
+                Currency currency = this[index];
 
                 base.RemoveItem(index);
 

@@ -222,10 +222,10 @@ namespace Walkabout.Controls
                         width = 0;
                     }
 
-                    FrameworkElement control = WpfHelper.FindDescendantElement(customHeader, nameIdOfQuickFilter) as FrameworkElement;
+                    FrameworkElement control = WpfHelper.FindDescendantElement(customHeader, nameIdOfQuickFilter);
                     if (control == null)
                     {
-                        control = WpfHelper.FindDescendantElement(customHeader, nameIdOfStatusControl) as FrameworkElement;
+                        control = WpfHelper.FindDescendantElement(customHeader, nameIdOfStatusControl);
                     }
 
                     if (control != null)
@@ -250,7 +250,7 @@ namespace Walkabout.Controls
         {
             if (this.currentlyExpandedExpander != null)
             {
-                Expander expanderLoosing = this.currentlyExpandedExpander as Expander;
+                Expander expanderLoosing = this.currentlyExpandedExpander;
                 expanderLoosing.IsExpanded = false;
                 this.SetRowHeight(this.currentlyExpandedExpander, GridUnitType.Auto);
             }

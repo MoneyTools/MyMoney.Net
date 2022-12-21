@@ -894,7 +894,7 @@ namespace Walkabout.Data
                 string tnamespace = this.nameTable.Add(namespaceURI ?? string.Empty);
                 foreach (BinaryXmlAttribute a in this.currentElement.Attributes)
                 {
-                    if ((object)a.Name == (object)tname && (object)a.Namespace == (object)tnamespace)
+                    if (a.Name == (object)tname && a.Namespace == (object)tnamespace)
                     {
                         return a.Value.ToString();
                     }
@@ -910,7 +910,7 @@ namespace Walkabout.Data
                 string tname = this.nameTable.Add(name);
                 foreach (BinaryXmlAttribute a in this.currentElement.Attributes)
                 {
-                    if ((object)a.Name == (object)tname)
+                    if (a.Name == (object)tname)
                     {
                         return a.Value.ToString();
                     }
@@ -953,7 +953,7 @@ namespace Walkabout.Data
                 int i = 0;
                 foreach (BinaryXmlAttribute a in this.currentElement.Attributes)
                 {
-                    if ((object)a.Name == (object)tname && (object)a.Namespace == (object)tnamespace)
+                    if (a.Name == (object)tname && a.Namespace == (object)tnamespace)
                     {
                         this.SetCurrentAttribute(i);
                         return true;
@@ -988,7 +988,7 @@ namespace Walkabout.Data
                 int i = 0;
                 foreach (BinaryXmlAttribute a in this.currentElement.Attributes)
                 {
-                    if ((object)a.Name == (object)tname)
+                    if (a.Name == (object)tname)
                     {
                         this.SetCurrentAttribute(i);
                         return true;

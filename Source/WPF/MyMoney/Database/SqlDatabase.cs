@@ -522,7 +522,7 @@ namespace Walkabout.Data
         private void IncrementProgress(string name)
         {
             this.progressValue++;
-            if ((100 * ((double)this.progressValue - (double)this.progressLastReport) / (double)this.progressMax) > 1.0 && this.status != null)
+            if ((100 * (this.progressValue - (double)this.progressLastReport) / this.progressMax) > 1.0 && this.status != null)
             {
                 this.status.ShowProgress("Loading database:", 0, this.progressMax, this.progressValue);
                 this.progressLastReport = this.progressValue;

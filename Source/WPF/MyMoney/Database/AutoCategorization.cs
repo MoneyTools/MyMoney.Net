@@ -66,7 +66,7 @@ namespace Walkabout.Data
             decimal amount = t.Amount;
             for (int i = 0; i < len; i++)
             {
-                Transaction u = list[i] as Transaction;
+                Transaction u = list[i];
                 if (amount == 0)
                 {
                     // we can't use the probabilities when the amount is zero, so we just return

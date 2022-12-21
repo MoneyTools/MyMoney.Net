@@ -225,7 +225,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
                 case TdhInType.Double:
                     break;
                 case TdhInType.Boolean:
-                    return (bool)(Marshal.ReadInt32(dataPtr) != 0);
+                    return Marshal.ReadInt32(dataPtr) != 0;
                 case TdhInType.Binary:
                     break;
                 case TdhInType.Guid:

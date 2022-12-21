@@ -67,7 +67,7 @@ namespace Walkabout.Utilities
 
         public CredentialType CredentialType
         {
-            get { return (CredentialType)this.type; }
+            get { return this.type; }
             set { this.type = value; }
         }
 

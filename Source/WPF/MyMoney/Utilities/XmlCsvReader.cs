@@ -466,7 +466,7 @@ namespace Walkabout.Utilities
                 string n = this._nt.Add(name);
                 for (int i = 0; i < this._names.Length; i++)
                 {
-                    if ((object)this._names[i] == (object)n)
+                    if (this._names[i] == (object)n)
                         return i;
                 }
                 throw new Exception("Attribute '" + name + "' not found.");

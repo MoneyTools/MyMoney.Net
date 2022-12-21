@@ -137,7 +137,7 @@ namespace Walkabout.Utilities
 
             // Interpolate the points, but in a left to right sweeping motion
             // where column growth happens in 1/10th of the allocated duration (0.1 on our 0-1 clock scale).
-            double end = (double)this.ptsTo.Count;
+            double end = this.ptsTo.Count;
 
             for (int i = 0; i < this.ptsTo.Count; i++)
             {

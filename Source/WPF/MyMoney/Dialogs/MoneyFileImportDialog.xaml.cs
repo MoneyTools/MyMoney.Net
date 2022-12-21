@@ -209,7 +209,7 @@ namespace Walkabout.Dialogs
             List<Transaction> newTransactions = new List<Transaction>();
             for (int i = 0, n = transactions.Count; i < n; i++)
             {
-                double percent = ((double)i * 100.0) / (double)n;
+                double percent = (i * 100.0) / n;
                 a.PercentComplete = (int)percent;
                 Transaction t = transactions[i];
                 Transaction u = this.myMoney.Transactions.FindTransactionById(t.Id);

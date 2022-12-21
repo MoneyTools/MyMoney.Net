@@ -55,7 +55,7 @@ namespace Walkabout.Utilities
 
         public long GetMilliseconds(long ticks)
         {
-            return (ticks * (long)1000) / this.m_Freq;
+            return (ticks * 1000) / this.m_Freq;
         }
 
         public long GetTicks()
@@ -99,7 +99,7 @@ namespace Walkabout.Utilities
         public double PercentError()
         {
             double spread = (this.m_Max - this.m_Min) / 2.0;
-            double percent = TwoDecimals((double)(spread * 100.0) / (double)(this.m_Min));
+            double percent = TwoDecimals((double)(spread * 100.0) / this.m_Min);
             return percent;
         }
 

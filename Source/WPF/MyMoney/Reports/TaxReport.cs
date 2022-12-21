@@ -189,7 +189,7 @@ namespace Walkabout.Reports
         private void OnConsolidateComboSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox box = (ComboBox)sender;
-            int index = (int)box.SelectedIndex;
+            int index = box.SelectedIndex;
             this.consolidateOnDateSold = index == 1;
             _ = this.view.Generate(this);
         }

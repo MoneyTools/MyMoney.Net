@@ -301,8 +301,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                         this.data.Add(e);
                         this.min = Math.Min(e.Ticks, this.min);
                         this.max = Math.Max(e.Ticks, this.max);
-                        pts.Add(new Point(x++, (double)e.Ticks));
-                        sum += (double)e.Ticks;
+                        pts.Add(new Point(x++, e.Ticks));
+                        sum += e.Ticks;
                     }
                 }
             }
@@ -350,20 +350,20 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 // now do some auto-scaling
                 this.Units = "Ticks";
                 this.unitConversion = 1;
-                double ticksPerMicrosecond = (double)Stopwatch.Frequency / (double)1000000;
+                double ticksPerMicrosecond = Stopwatch.Frequency / (double)1000000;
                 if (this.max > ticksPerMicrosecond)
                 {
                     this.unitConversion = ticksPerMicrosecond;
                     this.Units = "μs";
                 }
-                double ticksPerMillisecond = (double)Stopwatch.Frequency / (double)1000;
+                double ticksPerMillisecond = Stopwatch.Frequency / (double)1000;
                 if (this.max > ticksPerMillisecond)
                 {
                     this.unitConversion = ticksPerMillisecond;
                     this.Units = "ms";
                 }
 
-                double ticksPerSecond = (double)Stopwatch.Frequency;
+                double ticksPerSecond = Stopwatch.Frequency;
                 if (this.max > ticksPerSecond)
                 {
                     this.unitConversion = ticksPerSecond;
@@ -516,7 +516,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 content.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
 
                 ulong span = args.Ticks;
-                double seconds = (double)span / (double)this.PerformanceFrequency;
+                double seconds = span / (double)this.PerformanceFrequency;
 
                 string units = "s"; // seconds;
                 if (seconds.ToString("N").StartsWith("0.0"))

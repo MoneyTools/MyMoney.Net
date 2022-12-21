@@ -111,7 +111,7 @@ namespace Walkabout.Assitance
                 int count = sa.Frequency;
 
                 // by scaling the payee frequencies to match the above desired count.
-                double ratio = (double)count / (double)totalFrequency;
+                double ratio = count / (double)totalFrequency;
 
                 if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
                 {
@@ -531,7 +531,7 @@ namespace Walkabout.Assitance
                 }
 
                 // add inflation
-                amount = this.Inflate(amount, (int)(daysFromStart / 30), (decimal)monthlyInflation);
+                amount = this.Inflate(amount, daysFromStart / 30, (decimal)monthlyInflation);
 
                 Transaction t = transactions.NewTransaction(a);
                 t.Payee = p;

@@ -65,7 +65,7 @@ namespace Walkabout.Tests.Interop
 
         public static void SendMouseInput(int x, int y, int data, SendMouseInputFlags flags)
         {
-            SendMouseInput((double)x, (double)y, data, flags);
+            SendMouseInput(x, (double)y, data, flags);
         }
 
         /// <summary>
@@ -304,7 +304,7 @@ namespace Walkabout.Tests.Interop
             Win32.INPUT ki = new Win32.INPUT();
 
             ki.type = Win32.INPUT_KEYBOARD;
-            ki.union.keyboardInput.wVk = (short)0;
+            ki.union.keyboardInput.wVk = 0;
             ki.union.keyboardInput.wScan = (short)key;
             ki.union.keyboardInput.dwFlags = Win32.KEYEVENTF_UNICODE | (press ? 0 : Win32.KEYEVENTF_KEYUP);
             ki.union.keyboardInput.time = Environment.TickCount & Int32.MaxValue;

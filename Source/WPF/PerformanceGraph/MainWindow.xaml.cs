@@ -349,7 +349,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
             if (count > 0)
             {
-                double avg = (double)sum / (double)count;
+                double avg = sum / (double)count;
                 avg /= this.Chart.UnitConversion;
                 this.AverageStatus.Text = "Average: " + avg.ToString("G2") + this.Chart.Units;
             }

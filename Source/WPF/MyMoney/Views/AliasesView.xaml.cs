@@ -180,7 +180,7 @@ namespace Walkabout.Views
 
             protected override void RemoveItem(int index)
             {
-                Alias alias = (Alias)this[index];
+                Alias alias = this[index];
 
                 base.RemoveItem(index);
 

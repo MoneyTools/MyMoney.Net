@@ -2156,12 +2156,12 @@ namespace Walkabout.Data
         public Account FindAccount(string name)
         {
             if (name == null || name.Length == 0) return null;
-            return (Account)this.accountIndex[name];
+            return this.accountIndex[name];
         }
 
         public Account FindAccountAt(int id)
         {
-            return (Account)this.accounts[id];
+            return this.accounts[id];
         }
 
         public Account FindAccountByAccountId(string accountId)
@@ -2931,8 +2931,8 @@ namespace Walkabout.Data
     {
         public int Compare(Account x, Account y)
         {
-            Account a = (Account)x;
-            Account b = (Account)y;
+            Account a = x;
+            Account b = y;
             if (a == null && b != null) return -1;
             if (a != null && b == null) return 1;
             if (a == null && b == null) return 0;
@@ -3065,13 +3065,13 @@ namespace Walkabout.Data
         {
             if (name == null) return null;
             // find or add account of givien name
-            OnlineAccount result = (OnlineAccount)this.instIndex[name];
+            OnlineAccount result = this.instIndex[name];
             return result;
         }
 
         public OnlineAccount FindOnlineAccountAt(int id)
         {
-            return (OnlineAccount)this.onlineAccounts[id];
+            return this.onlineAccounts[id];
         }
 
         public bool RemoveOnlineAccount(OnlineAccount i, bool forceRemoveAfterSave = false)
@@ -3539,8 +3539,8 @@ namespace Walkabout.Data
     {
         public int Compare(OnlineAccount x, OnlineAccount y)
         {
-            OnlineAccount a = (OnlineAccount)x;
-            OnlineAccount b = (OnlineAccount)y;
+            OnlineAccount a = x;
+            OnlineAccount b = y;
             if (a == null && b != null) return -1;
             if (a != null && b == null) return 1;
             string n = a.Name;
@@ -4102,8 +4102,8 @@ namespace Walkabout.Data
     {
         public int Compare(Currency x, Currency y)
         {
-            Currency a = (Currency)x;
-            Currency b = (Currency)y;
+            Currency a = x;
+            Currency b = y;
             if (a == null && b != null) return -1;
             if (a != null && b == null) return 1;
             if (a == null && b == null) return 0;
@@ -4461,7 +4461,7 @@ namespace Walkabout.Data
         {
             if (name == null) return null;
             // find or add account of givien name
-            Payee result = (Payee)this.payeeIndex[name];
+            Payee result = this.payeeIndex[name];
             if (result == null && add)
             {
                 result = this.AddPayee(this.nextPayee++);
@@ -4474,7 +4474,7 @@ namespace Walkabout.Data
 
         public Payee FindPayeeAt(int id)
         {
-            return (Payee)this.payees[id];
+            return this.payees[id];
         }
 
         // todo: there should be no references left at this point...
@@ -5294,8 +5294,8 @@ namespace Walkabout.Data
     {
         public int Compare(Payee x, Payee y)
         {
-            Payee a = (Payee)x;
-            Payee b = (Payee)y;
+            Payee a = x;
+            Payee b = y;
             if (a == null && b != null) return -1;
             if (a != null && b == null) return 1;
             string n = a.Name;
@@ -6027,7 +6027,7 @@ namespace Walkabout.Data
 
         public RentBuilding Find(string key)
         {
-            return (RentBuilding)this.rentBuildings[key];
+            return this.rentBuildings[key];
         }
 
         public RentBuilding FindByName(string name)
@@ -6499,7 +6499,7 @@ namespace Walkabout.Data
             {
                 if (this.collection.ContainsKey(id))
                 {
-                    return this.collection[id] as RentUnit;
+                    return this.collection[id];
                 }
             }
             return null;
@@ -6777,7 +6777,7 @@ namespace Walkabout.Data
         public Category FindCategory(string name)
         {
             if (name == null || name.Length == 0) return null;
-            return (Category)this.categoryIndex[name];
+            return this.categoryIndex[name];
         }
 
         public Category GetOrCreateCategory(string name, CategoryType type)
@@ -6805,7 +6805,7 @@ namespace Walkabout.Data
 
         public Category FindCategoryById(int id)
         {
-            return (Category)this.categories[id];
+            return this.categories[id];
         }
 
         // todo: there should be no references left at this point...
@@ -7156,7 +7156,7 @@ namespace Walkabout.Data
             {
                 for (int i = this.subcategories.Count - 1; i >= 0; i--)
                 {
-                    Category c = this.subcategories[i] as Category;
+                    Category c = this.subcategories[i];
                     c.OnDelete();
                 }
             }
@@ -7856,7 +7856,7 @@ namespace Walkabout.Data
         {
             if (name == null || name.Length == 0) return null;
             Security result = null;
-            result = (Security)this.securityIndex[name];
+            result = this.securityIndex[name];
             if (result == null && add)
             {
                 result = this.AddSecurity(this.nextSecurity);
@@ -7901,7 +7901,7 @@ namespace Walkabout.Data
 
         public Security FindSecurityAt(int id)
         {
-            return (Security)this.securities[id];
+            return this.securities[id];
         }
 
         // todo: there should be no references left at this point...
@@ -8718,7 +8718,7 @@ namespace Walkabout.Data
 
         public Transaction FindTransactionById(long id)
         {
-            return (Transaction)this.transactions[id];
+            return this.transactions[id];
         }
 
         public Transaction FindFITID(string fitid, Account a)
@@ -11496,7 +11496,7 @@ namespace Walkabout.Data
 
         public bool Merge(Transaction t)
         {
-            MyMoney money = (MyMoney)this.MyMoney;
+            MyMoney money = this.MyMoney;
             bool rc = false;
 
             if (t.CategoryName == money.Categories.TransferToDeletedAccount.Name ||
@@ -12300,7 +12300,7 @@ namespace Walkabout.Data
                 {
                     foreach (var de in this.splits)
                     {
-                        Split s = (Split)de.Value;
+                        Split s = de.Value;
                         if (!s.IsDeleted)
                         {
                             count++;
@@ -12632,7 +12632,7 @@ namespace Walkabout.Data
         public Split FindSplit(int id)
         {
             if (this.splits == null) return null;
-            return (Split)this.splits[id];
+            return this.splits[id];
         }
 
 
@@ -14050,7 +14050,7 @@ namespace Walkabout.Data
 
         public StockSplit FindStockSplitById(long id)
         {
-            return (StockSplit)this.stockSplits[id];
+            return this.stockSplits[id];
         }
 
         public StockSplit FindStockSplitByDate(Security s, DateTime date)

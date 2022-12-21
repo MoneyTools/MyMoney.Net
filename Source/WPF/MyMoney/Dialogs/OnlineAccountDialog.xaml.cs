@@ -735,7 +735,7 @@ namespace Walkabout.Dialogs
 
                 if (info.AuthTokenRequired.ConvertYesNoToBoolean() && string.IsNullOrEmpty(this.editing.AuthToken))
                 {
-                    bool result = (bool)this.Dispatcher.Invoke(new Func<bool>(() =>
+                    bool result = this.Dispatcher.Invoke(new Func<bool>(() =>
                     {
                         return this.PromptForAuthToken(info, OfxErrorCode.AUTHTOKENRequired);
                     }));

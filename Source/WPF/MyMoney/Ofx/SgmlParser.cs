@@ -377,15 +377,15 @@ namespace Walkabout.Sgml
                     int p = 0;
                     if (ch >= '0' && ch <= '9')
                     {
-                        p = (int)(ch - '0');
+                        p = ch - '0';
                     }
                     else if (ch >= 'a' && ch <= 'f')
                     {
-                        p = (int)(ch - 'a') + 10;
+                        p = ch - 'a' + 10;
                     }
                     else if (ch >= 'A' && ch <= 'F')
                     {
-                        p = (int)(ch - 'A') + 10;
+                        p = ch - 'A' + 10;
                     }
                     else
                     {
@@ -401,7 +401,7 @@ namespace Walkabout.Sgml
                 {
                     if (ch >= '0' && ch <= '9')
                     {
-                        v = (v * 10) + (int)(ch - '0');
+                        v = (v * 10) + (ch - '0');
                     }
                     else
                     {
@@ -537,7 +537,7 @@ namespace Walkabout.Sgml
             {
                 foreach (string s in this.Exclusions)
                 {
-                    if ((object)s == (object)name) // XmlNameTable optimization
+                    if (s == (object)name) // XmlNameTable optimization
                         return false;
                     if (ignoreCase && string.Compare(s, name, StringComparison.OrdinalIgnoreCase) == 0)
                     {
@@ -549,7 +549,7 @@ namespace Walkabout.Sgml
             {
                 foreach (string s in this.Inclusions)
                 {
-                    if ((object)s == (object)name) // XmlNameTable optimization
+                    if (s == (object)name) // XmlNameTable optimization
                         return true;
                     if (ignoreCase && string.Compare(s, name, StringComparison.OrdinalIgnoreCase) == 0)
                     {

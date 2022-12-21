@@ -865,7 +865,7 @@ namespace Walkabout.Views
 
         protected override void RemoveItem(int index)
         {
-            Security security = (Security)this[index];
+            Security security = this[index];
 
             foreach (Transaction t in this.money.Transactions)
             {

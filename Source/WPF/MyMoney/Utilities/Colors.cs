@@ -36,7 +36,7 @@ namespace Walkabout.Utilities
                     else
                     {
 
-                        long uniqueValue = (long)name.GetHashCode();
+                        long uniqueValue = name.GetHashCode();
                         long a = uniqueValue & 0xFF000000;
                         a = a >> 24;
                         long r = uniqueValue & 0x00FF0000;

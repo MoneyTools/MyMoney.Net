@@ -118,7 +118,7 @@ namespace Walkabout.Utilities
                     pixels[i + 0] = b;
                     pixels[i + 1] = b;
                     pixels[i + 2] = b;
-                    pixels[i + 3] = (byte)255;
+                    pixels[i + 3] = 255;
                     //4 bytes per pixel
                     i += 4;
                 }//end for j
@@ -156,9 +156,9 @@ namespace Walkabout.Utilities
 
                 for (int x = 0; x < rowSize; x += bytesPerPixel)
                 {
-                    double r = (double)pixels[x + 2];
-                    double g = (double)pixels[x + 1];
-                    double b = (double)pixels[x + 0];
+                    double r = pixels[x + 2];
+                    double g = pixels[x + 1];
+                    double b = pixels[x + 0];
                     double sum = r + g + b;
                     if (sum < clampThreshold)
                     {
@@ -402,7 +402,7 @@ namespace Walkabout.Utilities
                             sum = sum + ((float)data[i + k, j + l] * this.gaussianKernel[limit + k, limit + l]);
                         }
                     }
-                    output[i, j] = (int)(Math.Round(sum / (float)this.kernelWeight));
+                    output[i, j] = (int)(Math.Round(sum / this.kernelWeight));
                 }
 
             }

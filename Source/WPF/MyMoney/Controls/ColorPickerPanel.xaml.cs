@@ -65,7 +65,7 @@ namespace Walkabout.Controls
             HlsColor hls = new HlsColor(c);
             ColorPickerPanel panel = (ColorPickerPanel)d;
             panel.LuminanceSlider.Value = hls.Luminance;
-            panel.TransparencySlider.Value = (double)c.A / 255.0;
+            panel.TransparencySlider.Value = c.A / 255.0;
             panel.OnColorChanged();
         }
 
@@ -118,10 +118,10 @@ namespace Walkabout.Controls
             this.bitmap.CopyPixels(new Int32Rect((int)Math.Max(0, Math.Min(this.bitmap.Width - 1, pos.X)), (int)Math.Max(0, Math.Min(this.bitmap.Height - 1, pos.Y)), 1, 1), pixels, 4, 0);
 
             // there is a premultiply on the alpha value that we have to reverse.
-            double alpha = (double)pixels[3];
-            double r = (double)pixels[2];
-            double g = (double)pixels[1];
-            double b = (double)pixels[0];
+            double alpha = pixels[3];
+            double r = pixels[2];
+            double g = pixels[1];
+            double b = pixels[0];
             if (alpha != 0)
             {
                 r = (r * 255) / alpha;

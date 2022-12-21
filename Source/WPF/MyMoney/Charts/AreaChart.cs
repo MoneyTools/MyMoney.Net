@@ -604,7 +604,7 @@ namespace LovettSoftware.Charts
                 Color c = Color.FromRgb((byte)r.Next(80, 255), (byte)r.Next(80, 255), (byte)r.Next(80, 255));
                 colors.Add(c);
             }
-            return (Color)colors[i];
+            return colors[i];
         }
 
     }
