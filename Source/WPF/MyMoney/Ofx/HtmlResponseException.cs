@@ -2,9 +2,9 @@
 
 namespace Walkabout.Ofx
 {
-    class HtmlResponseException : Exception
+    internal class HtmlResponseException : Exception
     {
-        string html;
+        private string html;
 
         public string Html
         {

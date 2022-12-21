@@ -5,7 +5,7 @@ using Walkabout.Tests.Interop;
 
 namespace Walkabout.Tests.Wrappers
 {
-    class ExcelWindowWrapper : DialogWrapper
+    internal class ExcelWindowWrapper : DialogWrapper
     {
         private ExcelWindowWrapper(AutomationElement e) : base(e)
         {

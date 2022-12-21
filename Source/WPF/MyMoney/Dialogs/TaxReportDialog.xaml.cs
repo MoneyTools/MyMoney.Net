@@ -10,7 +10,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class TaxReportDialog : BaseDialog
     {
-        List<string> months = new List<string>();
+        private List<string> months = new List<string>();
         public TaxReportDialog()
         {
             this.InitializeComponent();
@@ -28,7 +28,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.YearText.Focus();
             this.YearText.SelectionStart = this.YearText.Text.Length;
@@ -37,7 +37,7 @@ namespace Walkabout.Dialogs
         public bool ConsolidateSecuritiesOnDateSold
         {
             get { return this.ConsolidateSecuritiesCombo.SelectedIndex > 0; }
-            set { this.ConsolidateSecuritiesCombo.SelectedIndex = (value ? 1 : 0); }
+            set { this.ConsolidateSecuritiesCombo.SelectedIndex = value ? 1 : 0; }
         }
 
         public bool CapitalGainsOnly

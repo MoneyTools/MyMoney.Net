@@ -85,13 +85,12 @@ namespace Walkabout.Migrate
             }
         }
 
+        private static DataContractSerializer TransactionSerializer = new DataContractSerializer(typeof(Transaction));
+        private static DataContractSerializer InvestmentSerializer = new DataContractSerializer(typeof(Investment));
+        private static DataContractSerializer SplitSerializer = new DataContractSerializer(typeof(Split));
+        private static DataContractSerializer AccountSerializer = new DataContractSerializer(typeof(Account));
 
-        static DataContractSerializer TransactionSerializer = new DataContractSerializer(typeof(Transaction));
-        static DataContractSerializer InvestmentSerializer = new DataContractSerializer(typeof(Investment));
-        static DataContractSerializer SplitSerializer = new DataContractSerializer(typeof(Split));
-        static DataContractSerializer AccountSerializer = new DataContractSerializer(typeof(Account));
-
-        void ExportToXml(XmlWriter writer, IEnumerable<object> data)
+        private void ExportToXml(XmlWriter writer, IEnumerable<object> data)
         {
             // write out the referenced accounts first.
             writer.WriteStartElement("Accounts");
@@ -162,7 +161,7 @@ namespace Walkabout.Migrate
             }
         }
 
-        void ExportToCsv(StreamWriter writer, IEnumerable<object> data)
+        private void ExportToCsv(StreamWriter writer, IEnumerable<object> data)
         {
             bool first = true;
             bool containsInvestmentInfo = false;

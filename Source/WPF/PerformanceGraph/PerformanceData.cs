@@ -154,7 +154,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
         }
 
-        void WriteEventCategory(XmlWriter w, PerformanceEventArrivedEventArgs e)
+        private void WriteEventCategory(XmlWriter w, PerformanceEventArrivedEventArgs e)
         {
             w.WriteAttributeString("Component", e.ComponentName);
             w.WriteAttributeString("Category", e.CategoryName);
@@ -194,11 +194,11 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
             if (this.Category != null)
             {
-                result = result * 100 + this.Category.GetHashCode();
+                result = (result * 100) + this.Category.GetHashCode();
             }
             if (this.Measurement != null)
             {
-                result = result * 10 + this.Measurement.GetHashCode();
+                result = (result * 10) + this.Measurement.GetHashCode();
             }
             return result;
         }

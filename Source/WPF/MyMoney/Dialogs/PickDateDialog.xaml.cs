@@ -24,7 +24,7 @@ namespace Walkabout.Dialogs
             this.Title = title;
         }
 
-        void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.DatePicker.Focus();
         }

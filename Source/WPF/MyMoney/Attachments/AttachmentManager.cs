@@ -99,7 +99,7 @@ namespace Walkabout.Attachments
             }
         }
 
-        void OnBeforeSplitTransferChanged(object sender, SplitTransferChangedEventArgs e)
+        private void OnBeforeSplitTransferChanged(object sender, SplitTransferChangedEventArgs e)
         {
             Split split = e.Split;
             Transfer transfer = e.NewValue;
@@ -119,7 +119,7 @@ namespace Walkabout.Attachments
             }
         }
 
-        void OnBeforeTransferChanged(object sender, TransferChangedEventArgs e)
+        private void OnBeforeTransferChanged(object sender, TransferChangedEventArgs e)
         {
             Transaction t = e.Transaction;
             Transfer tran = e.NewValue;
@@ -138,7 +138,7 @@ namespace Walkabout.Attachments
             }
         }
 
-        void OnMoneyChanged(object sender, ChangeEventArgs args)
+        private void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
             while (args != null)
             {
@@ -180,7 +180,7 @@ namespace Walkabout.Attachments
             }
         }
 
-        void OnTransactionsChanged(object sender, ChangeEventArgs args)
+        private void OnTransactionsChanged(object sender, ChangeEventArgs args)
         {
             while (args != null)
             {
@@ -202,7 +202,7 @@ namespace Walkabout.Attachments
             }
         }
 
-        void OnAccountsChanged(object sender, ChangeEventArgs args)
+        private void OnAccountsChanged(object sender, ChangeEventArgs args)
         {
             while (args != null)
             {
@@ -411,7 +411,7 @@ namespace Walkabout.Attachments
         }
     }
 
-    class AttachmentWatcher
+    internal class AttachmentWatcher
     {
         private ConcurrentQueue<Account> accountQueue;
         private ConcurrentQueue<Transaction> transactionQueue;
@@ -470,7 +470,7 @@ namespace Walkabout.Attachments
             }
         }
 
-        void StartThread()
+        private void StartThread()
         {
             if (!this.threadRunning)
             {

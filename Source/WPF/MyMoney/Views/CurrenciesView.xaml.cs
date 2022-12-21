@@ -46,7 +46,7 @@ namespace Walkabout.Views
         {
         }
 
-        void SetupGrid(DataGrid grid)
+        private void SetupGrid(DataGrid grid)
         {
             grid.BeginningEdit += this.OnBeginEdit;
             grid.RowEditEnding += this.OnDataGridCommit;
@@ -54,8 +54,7 @@ namespace Walkabout.Views
             grid.SelectionChanged += new SelectionChangedEventHandler(this.OnGridSelectionChanged);
         }
 
-
-        void TearDownGrid(DataGrid grid)
+        private void TearDownGrid(DataGrid grid)
         {
             grid.BeginningEdit -= this.OnBeginEdit;
             grid.RowEditEnding -= this.OnDataGridCommit;
@@ -68,8 +67,7 @@ namespace Walkabout.Views
             get { return this.CurrenciesDataGrid.SelectedItem as Security; }
         }
 
-
-        object lastSelectedItem;
+        private object lastSelectedItem;
 
         private void OnGridSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -110,7 +108,7 @@ namespace Walkabout.Views
             }
         }
 
-        DataGrid FindDataGridContainingFocus()
+        private DataGrid FindDataGridContainingFocus()
         {
             DependencyObject e = Keyboard.FocusedElement as DependencyObject;
             while (e != null && !(e is DataGrid))
@@ -120,7 +118,7 @@ namespace Walkabout.Views
             return e as DataGrid;
         }
 
-        void OnDataGridPreviewKeyDown(object sender, KeyEventArgs e)
+        private void OnDataGridPreviewKeyDown(object sender, KeyEventArgs e)
         {
             MoneyDataGrid grid = (MoneyDataGrid)sender;
 
@@ -155,14 +153,14 @@ namespace Walkabout.Views
             }
         }
 
-        bool IsEditing { get; set; }
+        private bool IsEditing { get; set; }
 
-        void OnBeginEdit(object sender, DataGridBeginningEditEventArgs e)
+        private void OnBeginEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             this.IsEditing = true;
         }
 
-        void OnDataGridCommit(object sender, DataGridRowEditEndingEventArgs e)
+        private void OnDataGridCommit(object sender, DataGridRowEditEndingEventArgs e)
         {
             this.IsEditing = false;
         }
@@ -181,12 +179,11 @@ namespace Walkabout.Views
             }
         }
 
-
-        void OnMoneyChanged(object sender, ChangeEventArgs args)
+        private void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
         }
 
-        void ShowCurrencies()
+        private void ShowCurrencies()
         {
             try
             {
@@ -206,7 +203,7 @@ namespace Walkabout.Views
             }
         }
 
-        DataGridColumn RemoveSort(DataGrid grid)
+        private DataGridColumn RemoveSort(DataGrid grid)
         {
             DataGridColumn result = null;
             foreach (DataGridColumn c in grid.Columns)
@@ -226,10 +223,10 @@ namespace Walkabout.Views
         /// <summary>
         /// Manages the collection of securities displayed in the grid.
         /// </summary>
-        class CurrencyCollection : FilteredObservableCollection<Currency>
+        private class CurrencyCollection : FilteredObservableCollection<Currency>
         {
-            MyMoney money;
-            CurrenciesView view;
+            private MyMoney money;
+            private CurrenciesView view;
 
             public CurrencyCollection(CurrenciesView view, MyMoney money, string filter)
                 : base(money.Currencies.GetCurrencies(), filter)
@@ -281,7 +278,7 @@ namespace Walkabout.Views
 
         #region IView
 
-        MyMoney money;
+        private MyMoney money;
 
         public MyMoney Money
         {
@@ -313,7 +310,7 @@ namespace Walkabout.Views
 
         public event EventHandler BeforeViewStateChanged;
 
-        void OnBeforeViewStateChanged()
+        private void OnBeforeViewStateChanged()
         {
             if (BeforeViewStateChanged != null)
             {
@@ -323,7 +320,7 @@ namespace Walkabout.Views
 
         public event EventHandler<AfterViewStateChangedEventArgs> AfterViewStateChanged;
 
-        void OnAfterViewStateChanged()
+        private void OnAfterViewStateChanged()
         {
             if (AfterViewStateChanged != null)
             {
@@ -331,7 +328,7 @@ namespace Walkabout.Views
             }
         }
 
-        IServiceProvider sp;
+        private IServiceProvider sp;
 
         public IServiceProvider ServiceProvider
         {
@@ -412,7 +409,7 @@ namespace Walkabout.Views
             return CurrenciesViewState.Deserialize(reader);
         }
 
-        string quickFilter;
+        private string quickFilter;
 
         public string QuickFilter
         {
@@ -437,15 +434,14 @@ namespace Walkabout.Views
     {
         public string SelectedSecurity { get; set; }
 
-
-        int sort = -1;
+        private int sort = -1;
         public int SortedColumn
         {
             get { return this.sort; }
             set { this.sort = value; }
         }
 
-        ListSortDirection? direction;
+        private ListSortDirection? direction;
 
         public ListSortDirection? SortDirection
         {

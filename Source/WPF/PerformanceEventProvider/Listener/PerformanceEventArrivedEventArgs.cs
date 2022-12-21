@@ -9,10 +9,10 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 {
     public sealed class PerformanceEventArrivedEventArgs : EventArrivedEventArgs
     {
-        ComponentId component;
-        CategoryId category;
-        MeasurementId measurement;
-        const int BeginEvent = 1;
+        private ComponentId component;
+        private CategoryId category;
+        private MeasurementId measurement;
+        private const int BeginEvent = 1;
 
         public PerformanceEventArrivedEventArgs()
         {

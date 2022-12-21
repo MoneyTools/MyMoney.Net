@@ -68,8 +68,7 @@ namespace Walkabout.Views
             IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.RentSummary_IsVisibleChanged);
         }
 
-
-        void RentSummary_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void RentSummary_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (this.IsVisible)
             {
@@ -110,7 +109,7 @@ namespace Walkabout.Views
             this.UpdateAllDataBindings();
         }
 
-        void UpdateAllDataBindings()
+        private void UpdateAllDataBindings()
         {
             this.OnPropertyChanged("Building");
             this.OnPropertyChanged("BuildingName");
@@ -137,7 +136,7 @@ namespace Walkabout.Views
         // INotifyPropertyChanged event
         public event PropertyChangedEventHandler PropertyChanged;
 
-        void OnPropertyChanged(string name)
+        private void OnPropertyChanged(string name)
         {
             if (PropertyChanged != null)
             {
@@ -156,7 +155,7 @@ namespace Walkabout.Views
 
         public event EventHandler BeforeViewStateChanged;
 
-        void OnBeforeViewStateChanged()
+        private void OnBeforeViewStateChanged()
         {
             if (BeforeViewStateChanged != null)
             {
@@ -166,7 +165,7 @@ namespace Walkabout.Views
 
         public event EventHandler<AfterViewStateChangedEventArgs> AfterViewStateChanged;
 
-        void OnAfterViewStateChanged()
+        private void OnAfterViewStateChanged()
         {
             if (AfterViewStateChanged != null)
             {
@@ -174,7 +173,7 @@ namespace Walkabout.Views
             }
         }
 
-        IServiceProvider sp;
+        private IServiceProvider sp;
 
         public IServiceProvider ServiceProvider
         {
@@ -218,7 +217,7 @@ namespace Walkabout.Views
             return null;
         }
 
-        string quickFilter;
+        private string quickFilter;
 
         public string QuickFilter
         {

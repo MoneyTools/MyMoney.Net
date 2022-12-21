@@ -21,14 +21,14 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class MoneyFileImportDialog : BaseDialog, IStatusService
     {
-        MyMoney myMoney;
-        string loadingStatusPrompt;
-        CancellationTokenSource cancelSource;
-        bool busy;
-        ObservableCollection<AccountImportState> list;
-        AttachmentManager myAttachments;
-        StatementManager myStatements;
-        Dispatcher dispatcher;
+        private MyMoney myMoney;
+        private string loadingStatusPrompt;
+        private CancellationTokenSource cancelSource;
+        private bool busy;
+        private ObservableCollection<AccountImportState> list;
+        private AttachmentManager myAttachments;
+        private StatementManager myStatements;
+        private Dispatcher dispatcher;
 
         public MoneyFileImportDialog()
         {
@@ -209,7 +209,7 @@ namespace Walkabout.Dialogs
             List<Transaction> newTransactions = new List<Transaction>();
             for (int i = 0, n = transactions.Count; i < n; i++)
             {
-                double percent = (i * 100.0) / n;
+                double percent = i * 100.0 / n;
                 a.PercentComplete = (int)percent;
                 Transaction t = transactions[i];
                 Transaction u = this.myMoney.Transactions.FindTransactionById(t.Id);
@@ -317,7 +317,7 @@ namespace Walkabout.Dialogs
         }
     }
 
-    class DemoList : ObservableCollection<AccountImportState>
+    internal class DemoList : ObservableCollection<AccountImportState>
     {
         public DemoList()
         {
@@ -329,14 +329,14 @@ namespace Walkabout.Dialogs
         }
     }
 
-    class AccountImportState : INotifyPropertyChanged
+    internal class AccountImportState : INotifyPropertyChanged
     {
 
         public Account Account { get; set; }
 
         public List<Transaction> Changed { get; set; }
 
-        string name;
+        private string name;
 
         public string Name
         {
@@ -351,7 +351,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        string status;
+        private string status;
 
         public string Status
         {
@@ -365,7 +365,8 @@ namespace Walkabout.Dialogs
                 }
             }
         }
-        int percentComplete;
+
+        private int percentComplete;
 
         public int PercentComplete
         {
@@ -381,8 +382,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-
-        bool loading;
+        private bool loading;
 
         public bool Loading
         {
@@ -407,7 +407,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        DispatcherTimer timer;
+        private DispatcherTimer timer;
 
         private void StopTimer()
         {
@@ -436,7 +436,7 @@ namespace Walkabout.Dialogs
             this.ThrottledUpdate();
         }
 
-        void ThrottledUpdate()
+        private void ThrottledUpdate()
         {
             this.OnPropertyChanged("PercentComplete");
             if (this.Modified != 0)
@@ -446,7 +446,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        bool done;
+        private bool done;
 
         public bool Done
         {
@@ -468,7 +468,7 @@ namespace Walkabout.Dialogs
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        void OnPropertyChanged(string name)
+        private void OnPropertyChanged(string name)
         {
             if (PropertyChanged != null)
             {

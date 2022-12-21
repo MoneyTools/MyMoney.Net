@@ -9,8 +9,8 @@ namespace Walkabout.Data
 {
     public class TableMapping : Attribute
     {
-        List<ColumnMapping> columns;
-        Type objectType;
+        private List<ColumnMapping> columns;
+        private Type objectType;
 
         public string TableName { get; set; }
 
@@ -174,12 +174,12 @@ namespace Walkabout.Data
     /// For example, Investments contains "Security" object, but in the database we store the Security.Id only.
     /// So the KeyProperty is the "Id" property of the Security object.
     /// </summary>
-    class ColumnObjectMapping : ColumnMapping
+    internal class ColumnObjectMapping : ColumnMapping
     {
         public string KeyProperty { get; set; }
     }
 
-    class MappingEngine
+    internal class MappingEngine
     {
         internal static List<ColumnMapping> GetColumnsFromObject(Type objectType)
         {

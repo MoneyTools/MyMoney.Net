@@ -9,8 +9,8 @@ namespace Walkabout.Migrate
 {
     public class XmlImporter : Importer
     {
-        Dictionary<long, long> remappedIds = new Dictionary<long, long>();
-        Account last;
+        private Dictionary<long, long> remappedIds = new Dictionary<long, long>();
+        private Account last;
 
         public XmlImporter(MyMoney money) : base(money)
         {
@@ -58,10 +58,10 @@ namespace Walkabout.Migrate
             return c;
         }
 
-        static DataContractSerializer AccountSerializer = new DataContractSerializer(typeof(Account));
-        static DataContractSerializer TransactionSerializer = new DataContractSerializer(typeof(Transaction));
-        static DataContractSerializer InvestmentSerializer = new DataContractSerializer(typeof(Investment));
-        static DataContractSerializer SplitSerializer = new DataContractSerializer(typeof(Split));
+        private static DataContractSerializer AccountSerializer = new DataContractSerializer(typeof(Account));
+        private static DataContractSerializer TransactionSerializer = new DataContractSerializer(typeof(Transaction));
+        private static DataContractSerializer InvestmentSerializer = new DataContractSerializer(typeof(Investment));
+        private static DataContractSerializer SplitSerializer = new DataContractSerializer(typeof(Split));
 
         /// <summary>
         /// Import the given XML content which can contain Account, Transaction, Investment or Split objects.
@@ -188,7 +188,7 @@ namespace Walkabout.Migrate
             t.Status = TransactionStatus.None;
 
             // remove the nont-duplicate flag.
-            t.Flags = t.Flags & ~(TransactionFlags.NotDuplicate);
+            t.Flags = t.Flags & ~TransactionFlags.NotDuplicate;
 
             long originalId = t.Id;
             t.Id = -1;

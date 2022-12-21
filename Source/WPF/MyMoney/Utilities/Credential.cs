@@ -25,10 +25,10 @@ namespace Walkabout.Utilities
     [StructLayout(LayoutKind.Sequential)]
     internal struct CREDENTIAL_ATTRIBUTE
     {
-        string Keyword;
-        int Flags;
-        int ValueSize;
-        IntPtr Value; // LPBYTE 
+        private string Keyword;
+        private int Flags;
+        private int ValueSize;
+        private IntPtr Value; // LPBYTE 
     };
 
     public enum CredentialPersistence
@@ -40,14 +40,14 @@ namespace Walkabout.Utilities
 
     public class Credential : IDisposable
     {
-        SecureString password;
-        string userName;
-        string targetName;
-        string targetAlias;
-        string description;
-        CredentialType type;
-        CredentialPersistence persist;
-        DateTime lastWriteTime;
+        private SecureString password;
+        private string userName;
+        private string targetName;
+        private string targetAlias;
+        private string description;
+        private CredentialType type;
+        private CredentialPersistence persist;
+        private DateTime lastWriteTime;
 
         public Credential(string targetName, CredentialType type)
         {

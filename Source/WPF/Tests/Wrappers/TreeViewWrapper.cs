@@ -6,7 +6,7 @@ namespace Walkabout.Tests.Wrappers
 {
     public class TreeViewWrapper
     {
-        AutomationElement element;
+        private AutomationElement element;
 
         public TreeViewWrapper(AutomationElement e)
         {

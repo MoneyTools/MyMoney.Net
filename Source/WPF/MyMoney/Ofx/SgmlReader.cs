@@ -15,7 +15,7 @@ using System.Xml;
 
 namespace Walkabout.Sgml
 {
-    class Attribute
+    internal class Attribute
     {
         public string Name;
         public string LocalName;
@@ -98,14 +98,15 @@ namespace Walkabout.Sgml
         {
             get
             {
-                return (this._value == null);
+                return this._value == null;
             }
         }
-        string _value;
+
+        private string _value;
 
     }
 
-    class Node
+    internal class Node
     {
         public XmlNodeType NodeType;
         public string Value;
@@ -118,10 +119,9 @@ namespace Walkabout.Sgml
         public string NamespaceURI;
         public ElementDecl DtdType;
         public State CurrentState;
-
-        Attribute[] _attributes;
-        int _attsize;
-        int _attcount;
+        private Attribute[] _attributes;
+        private int _attsize;
+        private int _attcount;
 
         public Node(string name, XmlNodeType nt, string value)
         {
@@ -261,7 +261,7 @@ namespace Walkabout.Sgml
         }
     }
 
-    enum State
+    internal enum State
     {
         Initial,
         Markup,
@@ -283,44 +283,41 @@ namespace Walkabout.Sgml
     /// </summary>
     public class SgmlReader : XmlReader
     {
-        SgmlDtd _dtd;
-        Entity _current;
-        State _state;
-        XmlNameTable _nametable;
-        XmlNamespaceManager _mgr;
-        char _partial;
-        object _endTag;
+        private SgmlDtd _dtd;
+        private Entity _current;
+        private State _state;
+        private XmlNameTable _nametable;
+        private XmlNamespaceManager _mgr;
+        private char _partial;
+        private object _endTag;
+        private Node[] _stack;
+        private int _depth;
+        private int _size;
+        private Node _node; // current node (except for attributes)
+                            // Attributes are handled separately using these members.
 
-        Node[] _stack;
-        int _depth;
-        int _size;
+        private Attribute _a;
+        private int _apos; // which attribute are we positioned on in the collection.
 
-        Node _node; // current node (except for attributes)
-        // Attributes are handled separately using these members.
-        Attribute _a;
-        int _apos; // which attribute are we positioned on in the collection.
-
-        Uri _baseUri;
-
-        StringBuilder _sb;
-        StringBuilder _name;
-        TextWriter _log;
+        private Uri _baseUri;
+        private StringBuilder _sb;
+        private StringBuilder _name;
+        private TextWriter _log;
 
         // autoclose support
-        Node _newnode;
-        int _poptodepth;
-        int _rootCount;
-
-        string _href;
-        string _ErrorLogFile;
-        Entity _lastError;
-        string _proxy;
-        TextReader _inputStream;
-        string _syslit;
-        string _pubid;
-        string _subset;
-        string _docType;
-        WhitespaceHandling _whitespaceHandling;
+        private Node _newnode;
+        private int _poptodepth;
+        private int _rootCount;
+        private string _href;
+        private string _ErrorLogFile;
+        private Entity _lastError;
+        private string _proxy;
+        private TextReader _inputStream;
+        private string _syslit;
+        private string _pubid;
+        private string _subset;
+        private string _docType;
+        private WhitespaceHandling _whitespaceHandling;
 
         public SgmlReader()
         {
@@ -481,7 +478,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        void Log(string msg, params string[] args)
+        private void Log(string msg, params string[] args)
         {
             if (this.ErrorLog != null)
             {
@@ -507,13 +504,13 @@ namespace Walkabout.Sgml
                 }
             }
         }
-        void Log(string msg, char ch)
+
+        private void Log(string msg, char ch)
         {
             this.Log(msg, ch.ToString());
         }
 
-
-        void Init()
+        private void Init()
         {
             this._state = State.Initial;
             this._stack = new Node[10];
@@ -534,7 +531,7 @@ namespace Walkabout.Sgml
             this._rootCount = 0;
         }
 
-        void Grow()
+        private void Grow()
         {
             int inc = 10;
             int newsize = this._size + inc;
@@ -544,7 +541,7 @@ namespace Walkabout.Sgml
             this._stack = narray;
         }
 
-        Node Push(string name, XmlNodeType nt, string value)
+        private Node Push(string name, XmlNodeType nt, string value)
         {
             if (this._depth == this._size)
             {
@@ -568,7 +565,7 @@ namespace Walkabout.Sgml
             return result;
         }
 
-        Node Push(Node n)
+        private Node Push(Node n)
         {
             // we have to do a deep clone of the Node object because
             // it is reused in the stack.
@@ -583,7 +580,7 @@ namespace Walkabout.Sgml
             return n2;
         }
 
-        void Pop()
+        private void Pop()
         {
             if (this._depth > 1)
             {
@@ -699,7 +696,7 @@ namespace Walkabout.Sgml
                 {
                     return true;
                 }
-                return (this._node.Value != null);
+                return this._node.Value != null;
             }
         }
 
@@ -955,10 +952,10 @@ namespace Walkabout.Sgml
                 this._a = null;
                 return true;
             }
-            return (this._node.NodeType == XmlNodeType.Element);
+            return this._node.NodeType == XmlNodeType.Element;
         }
 
-        bool IsTextOnly
+        private bool IsTextOnly
         {
             get
             {
@@ -1099,7 +1096,7 @@ namespace Walkabout.Sgml
             return true;
         }
 
-        bool ParseMarkup()
+        private bool ParseMarkup()
         {
             char ch = this._current.Lastchar;
             if (ch == '<')
@@ -1126,8 +1123,9 @@ namespace Walkabout.Sgml
             return false;
         }
 
-        static string _declterm = " \t\r\n>";
-        bool ParseTag(char ch)
+        private static string _declterm = " \t\r\n>";
+
+        private bool ParseTag(char ch)
         {
             if (ch == '!')
             {
@@ -1183,10 +1181,11 @@ namespace Walkabout.Sgml
             return true;
         }
 
-        static string _tagterm = " \t\r\n/>";
-        static string _aterm = " \t\r\n=/>";
-        static string _avterm = " \t\r\n>";
-        bool ParseStartTag(char ch)
+        private static string _tagterm = " \t\r\n/>";
+        private static string _aterm = " \t\r\n=/>";
+        private static string _avterm = " \t\r\n>";
+
+        private bool ParseStartTag(char ch)
         {
             if (_tagterm.IndexOf(ch) >= 0)
             {
@@ -1288,7 +1287,7 @@ namespace Walkabout.Sgml
             return true;
         }
 
-        bool ParseEndTag()
+        private bool ParseEndTag()
         {
             this._state = State.EndTag;
             this._current.ReadChar(); // consume '/' char.
@@ -1316,7 +1315,7 @@ namespace Walkabout.Sgml
             return false;
         }
 
-        bool ParseComment()
+        private bool ParseComment()
         {
             char ch = this._current.ReadChar();
             if (ch != '-')
@@ -1355,8 +1354,9 @@ namespace Walkabout.Sgml
             return true;
         }
 
-        static string _dtterm = " \t\r\n>";
-        void ParseDocType()
+        private static string _dtterm = " \t\r\n>";
+
+        private void ParseDocType()
         {
             char ch = this._current.SkipWhitespace();
             string name = this._current.ScanToken(this._sb, _dtterm, false);
@@ -1420,8 +1420,9 @@ namespace Walkabout.Sgml
             this._current.ReadChar();
         }
 
-        static string _piterm = " \t\r\n?";
-        bool ParsePI()
+        private static string _piterm = " \t\r\n?";
+
+        private bool ParsePI()
         {
             string name = this._current.ScanToken(this._sb, _piterm, false);
             string value = null;
@@ -1438,7 +1439,7 @@ namespace Walkabout.Sgml
             return true;
         }
 
-        bool ParseText(char ch, bool newtext)
+        private bool ParseText(char ch, bool newtext)
         {
             bool ws = !newtext || this._current.IsWhitespace;
             if (newtext)
@@ -1515,7 +1516,7 @@ namespace Walkabout.Sgml
             return sb.ToString();
         }
 
-        bool ParseCData()
+        private bool ParseCData()
         {
             // Like ParseText(), only it doesn't allow elements in the content.  
             // It allows comments and processing instructions and text only and
@@ -1654,7 +1655,7 @@ namespace Walkabout.Sgml
             return true;
         }
 
-        void ExpandEntity(StringBuilder sb, char terminator)
+        private void ExpandEntity(StringBuilder sb, char terminator)
         {
             char ch = this._current.ReadChar();
             if (ch == '#')
@@ -1851,7 +1852,7 @@ namespace Walkabout.Sgml
             throw new InvalidOperationException("Not on an attribute.");
         }
 
-        void Validate(Node node)
+        private void Validate(Node node)
         {
             if (this._dtd != null)
             {
@@ -1867,7 +1868,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        static void ValidateAttribute(Node node, Attribute a)
+        private static void ValidateAttribute(Node node, Attribute a)
         {
             ElementDecl e = node.DtdType;
             if (e != null)
@@ -1880,7 +1881,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        void ValidateContent(Node node)
+        private void ValidateContent(Node node)
         {
             if (this._dtd != null)
             {

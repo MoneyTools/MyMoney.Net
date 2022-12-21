@@ -4,9 +4,9 @@ namespace Walkabout.Utilities
 {
     public class UndoManager
     {
-        ArrayList stack = new ArrayList();
-        int pos;
-        int max;
+        private ArrayList stack = new ArrayList();
+        private int pos;
+        private int max;
 
         public UndoManager(int maxHistory)
         {

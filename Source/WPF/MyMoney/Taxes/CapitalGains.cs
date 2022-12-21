@@ -16,9 +16,9 @@ namespace Walkabout.Taxes
     /// </summary>
     public class CapitalGainsTaxCalculator : CostBasisCalculator
     {
-        List<SecuritySale> unknown = new List<SecuritySale>();
-        List<SecuritySale> shortTerm = new List<SecuritySale>();
-        List<SecuritySale> longTerm = new List<SecuritySale>();
+        private List<SecuritySale> unknown = new List<SecuritySale>();
+        private List<SecuritySale> shortTerm = new List<SecuritySale>();
+        private List<SecuritySale> longTerm = new List<SecuritySale>();
 
         /// <summary>
         /// Compute capital gains associated with stock sales and whether they are long term or short term gains.

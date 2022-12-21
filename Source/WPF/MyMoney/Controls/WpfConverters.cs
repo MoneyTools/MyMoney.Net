@@ -217,7 +217,7 @@ namespace Walkabout.WpfConverters
             return g;
         }
 
-        enum TrackStyle
+        private enum TrackStyle
         {
             Empty,
             Full,
@@ -229,12 +229,11 @@ namespace Walkabout.WpfConverters
             CloseLinked
         }
 
-
-        static Brush lineColorBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x44, 0x7F, 0xFF)); // Light semi-transparent blue
-        static CornerRadius shapeAdd = new CornerRadius(0, 5, 5, 0);
-        static CornerRadius shapeSubtract = new CornerRadius(5, 0, 0, 5);
-        static CornerRadius shapeStart = new CornerRadius(5);
-        static CornerRadius shapeStop = new CornerRadius(5);
+        private static Brush lineColorBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x44, 0x7F, 0xFF)); // Light semi-transparent blue
+        private static CornerRadius shapeAdd = new CornerRadius(0, 5, 5, 0);
+        private static CornerRadius shapeSubtract = new CornerRadius(5, 0, 0, 5);
+        private static CornerRadius shapeStart = new CornerRadius(5);
+        private static CornerRadius shapeStop = new CornerRadius(5);
 
         /// <summary>
         /// 

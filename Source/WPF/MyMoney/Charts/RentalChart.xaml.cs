@@ -18,7 +18,7 @@ namespace Walkabout.Charts
             this.InitializeComponent();
         }
 
-        double highestMarkValue = 0;
+        private double highestMarkValue = 0;
 
         public void RenderChart()
         {
@@ -65,7 +65,7 @@ namespace Walkabout.Charts
             this.UpdateChartLayout();
         }
 
-        int whatExpenseIsAtTheBottom = 0;
+        private int whatExpenseIsAtTheBottom = 0;
 
         private void UpdateChartLayout()
         {

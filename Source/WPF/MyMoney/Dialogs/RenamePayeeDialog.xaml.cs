@@ -16,8 +16,8 @@ namespace Walkabout.Dialogs
     {
         #region PROPERTIES
 
-        EventHandler<ChangeEventArgs> handler;
-        DelayedActions delayedActions = new DelayedActions();
+        private EventHandler<ChangeEventArgs> handler;
+        private DelayedActions delayedActions = new DelayedActions();
 
         private MyMoney money;
 
@@ -157,7 +157,7 @@ namespace Walkabout.Dialogs
             this.CheckState();
         }
 
-        void CheckState()
+        private void CheckState()
         {
             this.EnableButtons();
             if (!string.IsNullOrWhiteSpace(this.textBox1.Text))
@@ -166,7 +166,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void OnComboBox1_TextChanged(object sender, RoutedEventArgs e)
+        private void OnComboBox1_TextChanged(object sender, RoutedEventArgs e)
         {
             this.EnableButtons();
         }
@@ -207,7 +207,7 @@ namespace Walkabout.Dialogs
             base.OnClosed(e);
         }
 
-        void OnOkButton_Click(object sender, RoutedEventArgs e)
+        private void OnOkButton_Click(object sender, RoutedEventArgs e)
         {
             Payee q = this.money.Payees.FindPayee(this.Value, true);
             string pattern = this.Pattern;
@@ -341,12 +341,12 @@ namespace Walkabout.Dialogs
 
         }
 
-        void OnPayees_Changed(object sender, ChangeEventArgs args)
+        private void OnPayees_Changed(object sender, ChangeEventArgs args)
         {
             this.LoadPayees();
         }
 
-        void LoadPayees()
+        private void LoadPayees()
         {
             if (this.money != null)
             {

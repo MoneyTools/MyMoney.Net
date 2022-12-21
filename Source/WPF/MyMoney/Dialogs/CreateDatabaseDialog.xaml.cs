@@ -205,7 +205,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void EnableControls()
+        private void EnableControls()
         {
             bool okEnabled = false;
             if (this.TextBoxSqliteDatabaseFile == null)

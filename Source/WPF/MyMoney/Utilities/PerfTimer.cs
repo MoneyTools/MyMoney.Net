@@ -12,14 +12,14 @@ namespace Walkabout.Utilities
 
     internal class PerfTimer
     {
-        long m_Start;
-        long m_End;
-        long m_Freq;
-        long m_Min;
-        long m_Max;
-        long m_Count;
-        long m_Sum;
-        long m_Ticks;
+        private long m_Start;
+        private long m_End;
+        private long m_Freq;
+        private long m_Min;
+        private long m_Max;
+        private long m_Count;
+        private long m_Sum;
+        private long m_Ticks;
 
         [DllImport("KERNEL32.DLL", EntryPoint = "QueryPerformanceCounter", SetLastError = true,
                     CharSet = CharSet.Unicode, ExactSpelling = true,
@@ -55,7 +55,7 @@ namespace Walkabout.Utilities
 
         public long GetMilliseconds(long ticks)
         {
-            return (ticks * 1000) / this.m_Freq;
+            return ticks * 1000 / this.m_Freq;
         }
 
         public long GetTicks()

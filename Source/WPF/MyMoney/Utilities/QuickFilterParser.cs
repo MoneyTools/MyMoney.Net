@@ -5,8 +5,7 @@ using System.Text;
 
 namespace Walkabout.Utilities
 {
-
-    enum QuickFilterToken // also happen to be in order or precidence.
+    internal enum QuickFilterToken // also happen to be in order or precidence.
     {
         None,
         Literal,
@@ -19,7 +18,7 @@ namespace Walkabout.Utilities
 
     internal class QuickFilterParser<T>
     {
-        Stack<Filter<T>> stack = new Stack<Filter<T>>();
+        private Stack<Filter<T>> stack = new Stack<Filter<T>>();
 
         private Filter<T> Combine(Filter<T> right, Filter<T> top)
         {
@@ -282,8 +281,7 @@ namespace Walkabout.Utilities
 
     }
 
-
-    abstract class Filter<T>
+    internal abstract class Filter<T>
     {
         public abstract QuickFilterToken Precidence { get; }
 
@@ -299,7 +297,7 @@ namespace Walkabout.Utilities
         public abstract SimpleGraphNode WriteTo(SimpleGraph g);
     }
 
-    class FilterKeyword<T> : Filter<T>
+    internal class FilterKeyword<T> : Filter<T>
     {
         public FilterKeyword(FilterLiteral keyword)
         {
@@ -325,7 +323,7 @@ namespace Walkabout.Utilities
         }
     }
 
-    class FilterAnd<T> : Filter<T>
+    internal class FilterAnd<T> : Filter<T>
     {
         public Filter<T> Left { get; set; }
         public Filter<T> Right { get; set; }
@@ -367,7 +365,7 @@ namespace Walkabout.Utilities
         }
     }
 
-    class FilterOr<T> : Filter<T>
+    internal class FilterOr<T> : Filter<T>
     {
         public Filter<T> Left { get; set; }
         public Filter<T> Right { get; set; }
@@ -409,7 +407,7 @@ namespace Walkabout.Utilities
         }
     }
 
-    class FilterNot<T> : Filter<T>
+    internal class FilterNot<T> : Filter<T>
     {
         public Filter<T> Right { get; set; }
 
@@ -441,7 +439,7 @@ namespace Walkabout.Utilities
         }
     }
 
-    class FilterParens<T> : Filter<T>
+    internal class FilterParens<T> : Filter<T>
     {
         public Filter<T> Expression { get; set; }
 
@@ -476,11 +474,11 @@ namespace Walkabout.Utilities
     /// </summary>
     public class FilterLiteral
     {
-        string _keyword;
-        bool notDecimal;
-        decimal? _decimal;
-        bool notDate;
-        DateTime? _date;
+        private string _keyword;
+        private bool notDecimal;
+        private decimal? _decimal;
+        private bool notDate;
+        private DateTime? _date;
 
         public FilterLiteral(string keyword)
         {

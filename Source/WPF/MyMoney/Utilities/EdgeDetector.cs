@@ -22,13 +22,13 @@ namespace Walkabout.Utilities
     /// </summary>
     public class CannyEdgeDetector
     {
-        const int DefaultMaskSize = 5;
-        const int DefaultSigma = 1;
-        const float DefaultMaxHysteresisThresh = 20F;
-        const float DefaultMinHysteresisThresh = 10F;
-        const int DefaultMinimumEdgeLength = 10;
-        const int BlackThreshold = 3;
-        const int WhiteThreshold = 252;
+        private const int DefaultMaskSize = 5;
+        private const int DefaultSigma = 1;
+        private const float DefaultMaxHysteresisThresh = 20F;
+        private const float DefaultMinHysteresisThresh = 10F;
+        private const int DefaultMinimumEdgeLength = 10;
+        private const int BlackThreshold = 3;
+        private const int WhiteThreshold = 252;
 
         private int width, height;
         private BitmapSource bitmap;
@@ -89,7 +89,7 @@ namespace Walkabout.Utilities
         {
             var format = System.Windows.Media.PixelFormats.Pbgra32;
             int bitsPerPixel = format.BitsPerPixel;
-            int stride = (this.width * bitsPerPixel + 7) / 8;
+            int stride = ((this.width * bitsPerPixel) + 7) / 8;
             int bytesPerPixel = format.BitsPerPixel / 8;
 
             // 4 bytes per pixel.
@@ -124,14 +124,14 @@ namespace Walkabout.Utilities
                 }//end for j
 
                 // account for any padding at the end of the stride so we're ready for new row...
-                i += (stride - (this.width * 4));
+                i += stride - (this.width * 4);
             }//end for i
 
             return BitmapSource.Create(this.width, this.height, 96, 96, System.Windows.Media.PixelFormats.Pbgra32, null, pixels, stride);
         }      // Display Grey Image
 
 
-        const double clampThreshold = 30;
+        private const double clampThreshold = 30;
 
         /// <summary>
         /// Convert the image to a gray-scale integer array for quick easy access.
@@ -141,7 +141,7 @@ namespace Walkabout.Utilities
             this.greyImage = new int[this.width, this.height];  //[Row,Column]
 
             int bitsPerPixel = this.bitmap.Format.BitsPerPixel;
-            int stride = (this.bitmap.PixelWidth * bitsPerPixel + 7) / 8;
+            int stride = ((this.bitmap.PixelWidth * bitsPerPixel) + 7) / 8;
             int bytesPerPixel = this.bitmap.Format.BitsPerPixel / 8;
             if (bytesPerPixel != 4 && bytesPerPixel != 3)
             {
@@ -166,7 +166,7 @@ namespace Walkabout.Utilities
                     }
                     if (sum > (255 * 3) - clampThreshold)
                     {
-                        sum = (255 * 3);
+                        sum = 255 * 3;
                     }
                     this.greyImage[x / bytesPerPixel, y] = (int)(sum / 3.0);
                 }
@@ -316,7 +316,7 @@ namespace Walkabout.Utilities
 
             float min = 1000;
 
-            int halfKernel = (SizeofKernel / 2);
+            int halfKernel = SizeofKernel / 2;
             int kernelMax = halfKernel;
             if (kernelMax * 2 != SizeofKernel)
             {
@@ -328,7 +328,7 @@ namespace Walkabout.Utilities
             {
                 for (j = -halfKernel; j < kernelMax; j++)
                 {
-                    Kernel[halfKernel + i, halfKernel + j] = ((1 / D1) * (float)Math.Exp(-(i * i + j * j) / D2));
+                    Kernel[halfKernel + i, halfKernel + j] = 1 / D1 * (float)Math.Exp(-((i * i) + (j * j)) / D2);
                     if (Kernel[halfKernel + i, halfKernel + j] < min)
                     {
                         min = Kernel[halfKernel + i, halfKernel + j];
@@ -403,7 +403,7 @@ namespace Walkabout.Utilities
                             sum = sum + ((float)data[i + k, j + l] * this.gaussianKernel[limit + k, limit + l]);
                         }
                     }
-                    output[i, j] = (int)(Math.Round(sum / this.kernelWeight));
+                    output[i, j] = (int)Math.Round(sum / this.kernelWeight);
                 }
 
             }
@@ -454,8 +454,8 @@ namespace Walkabout.Utilities
             // the gaussian filter creates a blank margin around the edge.
             // We don't want to mistakenly think those are edges, so we do not include
             // that margin in the differential.
-            int startX = (int)this.margin.Left + Math.Max(this.kernelSize / 2 + 1, halfFilterWidth);
-            int startY = (int)this.margin.Top + Math.Max(this.kernelSize / 2 + 1, halfFilterHeight);
+            int startX = (int)this.margin.Left + Math.Max((this.kernelSize / 2) + 1, halfFilterWidth);
+            int startY = (int)this.margin.Top + Math.Max((this.kernelSize / 2) + 1, halfFilterHeight);
 
             int maxX = (int)this.margin.Right - startX;
             int maxY = (int)this.margin.Bottom - startY;
@@ -469,7 +469,7 @@ namespace Walkabout.Utilities
                     {
                         for (int l = -halfFilterHeight; l < halfFilterY; l++)
                         {
-                            sum = sum + data[i + k, j + l] * filter[halfFilterWidth + k, halfFilterHeight + l];
+                            sum = sum + (data[i + k, j + l] * filter[halfFilterWidth + k, halfFilterHeight + l]);
                         }
                     }
                     output[i, j] = sum;
@@ -551,11 +551,11 @@ namespace Walkabout.Utilities
             }
         }
 
-        const float VerticalAngle = (float)(90 * Math.PI / 180); // radians
-        const float HorizontalMinimum = (float)(22.5 * Math.PI / 180); // radians
-        const float HorizontalMaximum = (float)(157.5 * Math.PI / 180); // radians
-        const float VerticalMinimum = (float)(67.5 * Math.PI / 180); // radians
-        const float VerticalMaximum = (float)(112.5 * Math.PI / 180); // radians
+        private const float VerticalAngle = (float)(90 * Math.PI / 180); // radians
+        private const float HorizontalMinimum = (float)(22.5 * Math.PI / 180); // radians
+        private const float HorizontalMaximum = (float)(157.5 * Math.PI / 180); // radians
+        private const float VerticalMinimum = (float)(67.5 * Math.PI / 180); // radians
+        private const float VerticalMaximum = (float)(112.5 * Math.PI / 180); // radians
 
         private float[,] NonMaximumSuppression(float[,] gradient)
         {
@@ -649,7 +649,7 @@ namespace Walkabout.Utilities
             return result;
         }
 
-        enum Direction
+        private enum Direction
         {
             None,
             TopLeft, TopCenter, TopRight,
@@ -657,7 +657,7 @@ namespace Walkabout.Utilities
             BottomLeft, BottomCenter, BottomRight
         }
 
-        class IntPoint
+        private class IntPoint
         {
             public int X;
             public int Y;

@@ -32,8 +32,8 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             }
         }
 
-        static Dictionary<int, WpfEvent> events;
-        static Dictionary<string, WpfEvent> tasks = new Dictionary<string, WpfEvent>();
+        private static Dictionary<int, WpfEvent> events;
+        private static Dictionary<string, WpfEvent> tasks = new Dictionary<string, WpfEvent>();
 
         private static void FindEvents(string manifest)
         {

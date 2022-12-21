@@ -20,7 +20,7 @@ namespace Walkabout.Charts
             public string Label { get; set; }
         };
 
-        ObservableCollection<LoanPaymentAggregation> payments;
+        private ObservableCollection<LoanPaymentAggregation> payments;
 
         public ObservableCollection<LoanPaymentAggregation> LoanPayments
         {
@@ -48,7 +48,7 @@ namespace Walkabout.Charts
             return tip;
         }
 
-        void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             this.UpdateChart();
         }

@@ -19,13 +19,13 @@ namespace LovettSoftware.Charts
     /// </summary>
     public partial class AnimatingPieChart : UserControl
     {
-        DelayedActions actions = new DelayedActions();
-        List<PieSlice> slices = new List<PieSlice>();
-        Point movePos;
-        PieSlice inside;
-        Size previousArrangeBounds = Size.Empty;
-        bool mouseOverAnimationCompleted = false;
-        Random rand = new Random(Environment.TickCount);
+        private DelayedActions actions = new DelayedActions();
+        private List<PieSlice> slices = new List<PieSlice>();
+        private Point movePos;
+        private PieSlice inside;
+        private Size previousArrangeBounds = Size.Empty;
+        private bool mouseOverAnimationCompleted = false;
+        private Random rand = new Random(Environment.TickCount);
 
         public AnimatingPieChart()
         {
@@ -152,20 +152,20 @@ namespace LovettSoftware.Charts
             double c = Math.Floor(m / 2);
 
             double total = (from d in this.Series.Values where !d.Hidden select Math.Abs(d.Value)).Sum();
-            Point center = new Point(c + (w - m) / 2, c + (h - m) / 2);
+            Point center = new Point(c + ((w - m) / 2), c + ((h - m) / 2));
 
             switch (this.HorizontalContentAlignment)
             {
                 case HorizontalAlignment.Left:
-                    center = new Point(this.Margin.Left + c, c + (h - m) / 2);
+                    center = new Point(this.Margin.Left + c, c + ((h - m) / 2));
                     break;
                 case HorizontalAlignment.Right:
-                    center = new Point(this.Width - this.Margin.Left - c, c + (h - m) / 2);
+                    center = new Point(this.Width - this.Margin.Left - c, c + ((h - m) / 2));
                     break;
                 case HorizontalAlignment.Center:
                 case HorizontalAlignment.Stretch: // not supported.
                 default:
-                    center = new Point(c + (w - m) / 2, c + (h - m) / 2);
+                    center = new Point(c + ((w - m) / 2), c + ((h - m) / 2));
                     break;
             }
 
@@ -208,8 +208,8 @@ namespace LovettSoftware.Charts
 
                 slice.Data = item;
                 slice.Color = item.Color.Value;
-                double start = total == 0 ? 0 : (sum * 360) / total;
-                double end = total == 0 ? 360 : ((sum + value) * 360) / total;
+                double start = total == 0 ? 0 : sum * 360 / total;
+                double end = total == 0 ? 360 : (sum + value) * 360 / total;
                 if (end == 360)
                 {
                     end = 359.99;
@@ -228,7 +228,7 @@ namespace LovettSoftware.Charts
             this.BeginStoryboard(sb);
         }
 
-        void AnimateSlice(Storyboard sb, PieSlice slice, double a1, double a2, double a3, double a4, Color c)
+        private void AnimateSlice(Storyboard sb, PieSlice slice, double a1, double a2, double a3, double a4, Color c)
         {
             var duration1 = new Duration(TimeSpan.FromMilliseconds(this.AnimationGrowthMilliseconds));
 
@@ -317,7 +317,7 @@ namespace LovettSoftware.Charts
 
         }
 
-        PieSlice FindSlice(Point pos)
+        private PieSlice FindSlice(Point pos)
         {
             for (int i = 0, n = this.slices.Count; i < n; i++)
             {
@@ -383,7 +383,7 @@ namespace LovettSoftware.Charts
             }
         }
 
-        void OnExitSlice()
+        private void OnExitSlice()
         {
             if (this.inside != null && this.mouseOverAnimationCompleted)
             {
@@ -408,13 +408,13 @@ namespace LovettSoftware.Charts
             }
         }
 
-        class PieSlice : DependencyObject
+        private class PieSlice : DependencyObject
         {
-            Path path;
-            PathFigure figure;
-            LineSegment line1;
-            LineSegment line2;
-            ArcSegment arc;
+            private Path path;
+            private PathFigure figure;
+            private LineSegment line1;
+            private LineSegment line2;
+            private ArcSegment arc;
 
 
             public PieSlice(Canvas owner, Color color, Point center, Size size)
@@ -462,10 +462,10 @@ namespace LovettSoftware.Charts
             {
                 var center = this.Center;
                 var size = this.Size;
-                double x1 = center.X + Math.Cos(this.StartAngle * Math.PI / 180) * size.Width;
-                double y1 = center.Y + Math.Sin(this.StartAngle * Math.PI / 180) * size.Height;
-                double x2 = center.X + Math.Cos(this.EndAngle * Math.PI / 180) * size.Width;
-                double y2 = center.Y + Math.Sin(this.EndAngle * Math.PI / 180) * size.Height;
+                double x1 = center.X + (Math.Cos(this.StartAngle * Math.PI / 180) * size.Width);
+                double y1 = center.Y + (Math.Sin(this.StartAngle * Math.PI / 180) * size.Height);
+                double x2 = center.X + (Math.Cos(this.EndAngle * Math.PI / 180) * size.Width);
+                double y2 = center.Y + (Math.Sin(this.EndAngle * Math.PI / 180) * size.Height);
                 var p1 = new Point(x1, y1);
                 var p2 = new Point(x2, y2);
 

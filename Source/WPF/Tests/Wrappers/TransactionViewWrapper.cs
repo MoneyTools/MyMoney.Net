@@ -11,10 +11,9 @@ namespace Walkabout.Tests.Wrappers
 {
     public class TransactionViewWrapper
     {
-        MainWindowWrapper window;
-        AutomationElement control;
-
-        static Dictionary<string, TransactionViewColumns> mapping;
+        private MainWindowWrapper window;
+        private AutomationElement control;
+        private static Dictionary<string, TransactionViewColumns> mapping;
 
         static TransactionViewWrapper()
         {
@@ -398,8 +397,8 @@ namespace Walkabout.Tests.Wrappers
 
     public class TransactionViewItem
     {
-        TransactionViewWrapper view;
-        AutomationElement item;
+        private TransactionViewWrapper view;
+        private AutomationElement item;
 
         public TransactionViewItem(TransactionViewWrapper view, AutomationElement item)
         {
@@ -666,10 +665,10 @@ namespace Walkabout.Tests.Wrappers
 
     public class TransactionViewColumn
     {
-        string header;
-        string name;
-        string datatype;
-        int index;
+        private string header;
+        private string name;
+        private string datatype;
+        private int index;
 
         protected TransactionViewColumn(string header)
         {
@@ -964,7 +963,7 @@ namespace Walkabout.Tests.Wrappers
 
     public class CompoundTransactionViewColumn : TransactionViewColumn
     {
-        List<TransactionViewColumn> columns = new List<TransactionViewColumn>();
+        private List<TransactionViewColumn> columns = new List<TransactionViewColumn>();
 
         public CompoundTransactionViewColumn(string header, params TransactionViewColumn[] cols)
             : base(header)
@@ -997,7 +996,7 @@ namespace Walkabout.Tests.Wrappers
 
     public class TransactionViewColumns
     {
-        List<TransactionViewColumn> columns = new List<TransactionViewColumn>();
+        private List<TransactionViewColumn> columns = new List<TransactionViewColumn>();
 
         public TransactionViewColumns(params TransactionViewColumn[] cols)
         {

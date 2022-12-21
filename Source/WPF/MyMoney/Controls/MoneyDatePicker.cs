@@ -19,7 +19,7 @@ namespace Walkabout.Controls
     /// </summary>
     public class MoneyDatePicker : DatePicker
     {
-        TextBox box;
+        private TextBox box;
 
         public MoneyDatePicker()
         {

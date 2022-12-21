@@ -31,8 +31,8 @@ namespace Walkabout.Views
         {
         }
 
-        Account accountSelected;
-        Loan loanAccount;
+        private Account accountSelected;
+        private Loan loanAccount;
 
 
         public Account AccountSelected
@@ -64,8 +64,7 @@ namespace Walkabout.Views
             set { this.loanAccount.Payments = value; }
         }
 
-
-        LoanPaymentAggregation CurrentSelectedItem
+        private LoanPaymentAggregation CurrentSelectedItem
         {
             get { return this.TheDataGrid.SelectedValue as LoanPaymentAggregation; }
         }
@@ -86,7 +85,7 @@ namespace Walkabout.Views
 
         public event EventHandler BeforeViewStateChanged;
 
-        void OnBeforeViewStateChanged()
+        private void OnBeforeViewStateChanged()
         {
             if (BeforeViewStateChanged != null)
             {
@@ -96,7 +95,7 @@ namespace Walkabout.Views
 
         public event EventHandler<AfterViewStateChangedEventArgs> AfterViewStateChanged;
 
-        void OnAfterViewStateChanged()
+        private void OnAfterViewStateChanged()
         {
             if (AfterViewStateChanged != null)
             {
@@ -104,7 +103,7 @@ namespace Walkabout.Views
             }
         }
 
-        IServiceProvider sp;
+        private IServiceProvider sp;
 
         public IServiceProvider ServiceProvider
         {
@@ -112,8 +111,7 @@ namespace Walkabout.Views
             set { this.sp = value; }
         }
 
-
-        IStatusService status;
+        private IStatusService status;
         public IStatusService ServiceStatus
         {
             get
@@ -177,9 +175,9 @@ namespace Walkabout.Views
             }
         }
 
+        private int viewStateLock;
 
-        int viewStateLock;
-        void FireBeforeViewStateChanged()
+        private void FireBeforeViewStateChanged()
         {
             if (this.viewStateLock == 0 && BeforeViewStateChanged != null)
             {
@@ -188,8 +186,7 @@ namespace Walkabout.Views
 
         }
 
-
-        void FireAfterViewStateChanged()
+        private void FireAfterViewStateChanged()
         {
             if (AfterViewStateChanged != null)
             {
@@ -198,8 +195,7 @@ namespace Walkabout.Views
             this.ServiceStatus.ShowMessage(this.CreateStatusText());
         }
 
-
-        string CreateStatusText()
+        private string CreateStatusText()
         {
             return this.LoanPayments.Count.ToString() + " Payments";
         }
@@ -211,7 +207,7 @@ namespace Walkabout.Views
             return new ViewState();
         }
 
-        string quickFilter;
+        private string quickFilter;
 
         public string QuickFilter
         {
@@ -252,7 +248,7 @@ namespace Walkabout.Views
 
         private void TheDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
-            if (((Walkabout.Data.LoanPaymentAggregation)(e.Row.Item)).IsReadOnly == true)
+            if (((Walkabout.Data.LoanPaymentAggregation)e.Row.Item).IsReadOnly == true)
             {
                 e.Cancel = false;
             }
@@ -263,11 +259,10 @@ namespace Walkabout.Views
         //
         // Used for know what field on the row was edited
         //
-        decimal editingPrincipalBefore;
-        decimal editingInterestBefore;
-        decimal editingPercentageBefore;
-
-        LoanPaymentAggregation currentEditRow;
+        private decimal editingPrincipalBefore;
+        private decimal editingInterestBefore;
+        private decimal editingPercentageBefore;
+        private LoanPaymentAggregation currentEditRow;
 
         private void TheDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
@@ -294,7 +289,7 @@ namespace Walkabout.Views
             }
         }
 
-        void Rebalance()
+        private void Rebalance()
         {
             // Priority 1) to the PERCENTAGE FIELD
             if (this.editingPercentageBefore != this.currentEditRow.Percentage)
@@ -392,7 +387,7 @@ namespace Walkabout.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OnCommandGotoRelatedTransaction(object sender, RoutedEventArgs e)
+        private void OnCommandGotoRelatedTransaction(object sender, RoutedEventArgs e)
         {
             LoanPaymentAggregation l = this.CurrentSelectedItem;
 

@@ -14,10 +14,10 @@ namespace Walkabout.Dialogs
     /// </summary>
     public class ChangePasswordDialog : PasswordWindow
     {
-        OnlineAccount account;
-        MyMoney money;
-        string newPasswordFieldId = "NewPassword";
-        string confirmPasswordFieldId = "ConfirmNewPassword";
+        private OnlineAccount account;
+        private MyMoney money;
+        private string newPasswordFieldId = "NewPassword";
+        private string confirmPasswordFieldId = "ConfirmNewPassword";
 
         public ChangePasswordDialog(OfxSignOnInfo info, OnlineAccount account, MyMoney money)
         {
@@ -86,9 +86,9 @@ namespace Walkabout.Dialogs
             this.cancelled = true;
         }
 
-        string newPassword; // so thread can access it.
-        bool cancelled;
-        string logFile;
+        private string newPassword; // so thread can access it.
+        private bool cancelled;
+        private string logFile;
 
         // background thread
         private void ChangePassword()

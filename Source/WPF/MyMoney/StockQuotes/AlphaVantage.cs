@@ -15,21 +15,21 @@ namespace Walkabout.StockQuotes
     /// <summary>
     /// Class that wraps the https://www.alphavantage.co/ API 
     /// </summary>
-    class AlphaVantage : IStockQuoteService
+    internal class AlphaVantage : IStockQuoteService
     {
-        static string FriendlyName = "https://www.alphavantage.co/";
-        const string address = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={0}&apikey={1}";
-        char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
-        StockServiceSettings _settings;
-        HashSet<string> _pending;
-        HashSet<string> _retry = new HashSet<string>();
-        int _completed;
-        HttpWebRequest _current;
-        bool _cancelled;
-        bool _suspended;
-        Thread _downloadThread;
-        string _logPath;
-        StockQuoteThrottle _throttle;
+        private static string FriendlyName = "https://www.alphavantage.co/";
+        private const string address = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={0}&apikey={1}";
+        private char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
+        private StockServiceSettings _settings;
+        private HashSet<string> _pending;
+        private HashSet<string> _retry = new HashSet<string>();
+        private int _completed;
+        private HttpWebRequest _current;
+        private bool _cancelled;
+        private bool _suspended;
+        private Thread _downloadThread;
+        private string _logPath;
+        private StockQuoteThrottle _throttle;
 
         public AlphaVantage(StockServiceSettings settings, string logPath)
         {

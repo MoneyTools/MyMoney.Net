@@ -178,7 +178,7 @@ namespace Walkabout.Utilities
         /// </summary>
         public void Lighten(float percent)
         {
-            this.luminance *= (1.0f + percent);
+            this.luminance *= 1.0f + percent;
             if (this.luminance > 1.0f)
             {
                 this.luminance = 1.0f;
@@ -192,7 +192,7 @@ namespace Walkabout.Utilities
         /// </summary>
         public void Darken(float percent)
         {
-            this.luminance *= (1 - percent);
+            this.luminance *= 1 - percent;
             this.ToRGB();
         }
 
@@ -254,13 +254,13 @@ namespace Walkabout.Utilities
 
                 if (this.luminance <= 0.5f)
                 {
-                    rm2 = this.luminance + this.luminance * this.saturation;
+                    rm2 = this.luminance + (this.luminance * this.saturation);
                 }
                 else
                 {
-                    rm2 = this.luminance + this.saturation - this.luminance * this.saturation;
+                    rm2 = this.luminance + this.saturation - (this.luminance * this.saturation);
                 }
-                rm1 = 2.0f * this.luminance - rm2;
+                rm1 = (2.0f * this.luminance) - rm2;
                 this.red = ToRGB1(rm1, rm2, this.hue + 120.0f);
                 this.green = ToRGB1(rm1, rm2, this.hue);
                 this.blue = ToRGB1(rm1, rm2, this.hue - 120.0f);
@@ -280,7 +280,7 @@ namespace Walkabout.Utilities
 
             if (rh < 60.0f)
             {
-                rm1 = rm1 + (rm2 - rm1) * rh / 60.0f;
+                rm1 = rm1 + ((rm2 - rm1) * rh / 60.0f);
             }
             else if (rh < 180.0f)
             {
@@ -288,7 +288,7 @@ namespace Walkabout.Utilities
             }
             else if (rh < 240.0f)
             {
-                rm1 = rm1 + (rm2 - rm1) * (240.0f - rh) / 60.0f;
+                rm1 = rm1 + ((rm2 - rm1) * (240.0f - rh) / 60.0f);
             }
 
             return (byte)(rm1 * 255);

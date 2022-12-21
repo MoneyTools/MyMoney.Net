@@ -27,7 +27,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
     public class EventTraceSession
     {
-        bool stopProcessing;
+        private bool stopProcessing;
         private string eventLogSessionName;
         private long sessionHandle;
         private ulong traceHandle = 0;
@@ -43,8 +43,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             this.eventLogSessionName = eventLogSessionName;
         }
 
-
-        static Guid sessionGuid = Guid.NewGuid();
+        private static Guid sessionGuid = Guid.NewGuid();
 
         private void CopyString(String s, IntPtr buffer)
         {
@@ -57,7 +56,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             Marshal.WriteInt16(buffer, 0);
         }
 
-        string LogFilePath
+        private string LogFilePath
         {
             get
             {
@@ -136,10 +135,10 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         public long SessionHandle { get { return this.sessionHandle; } }
 
-        const uint RealTime = 0x00000100;
-        const uint EventRecord = 0x10000000;
-        const uint PrivateLoggerMode = 0x00000800;
-        const ulong INVALID_HANDLE_VALUE = unchecked((ulong)(-1));
+        private const uint RealTime = 0x00000100;
+        private const uint EventRecord = 0x10000000;
+        private const uint PrivateLoggerMode = 0x00000800;
+        private const ulong INVALID_HANDLE_VALUE = unchecked((ulong)-1);
         private IAsyncResult asyncResult;
 
         public void OpenTraceLog(string logFileName)
@@ -174,7 +173,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             }
         }
 
-        int refCount;
+        private int refCount;
 
         public void StartTracing()
         {
@@ -284,7 +283,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         public event EventHandler TraceComplete;
 
-        void OnTraceComplete()
+        private void OnTraceComplete()
         {
             if (TraceComplete != null)
             {
@@ -311,7 +310,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             session.EventArrived += new EventHandler<EventRecordArgs>(this.InternalEventArrived);
         }
 
-        void InternalEventArrived(object sender, EventRecordArgs e)
+        private void InternalEventArrived(object sender, EventRecordArgs e)
         {
             if (e.EventRecord.EventHeader.ProviderId == this.providerId && EventArrived != null)
             {
@@ -371,7 +370,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             }
         }
 
-        void StartTracing()
+        private void StartTracing()
         {
             this.session.StartTracing();
 
@@ -401,7 +400,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             }
         }
 
-        void StopTracing()
+        private void StopTracing()
         {
             this.session.StopTracing();
         }

@@ -4,9 +4,9 @@ using System.Windows.Automation;
 
 namespace Walkabout.Tests.Wrappers
 {
-    class ChartsAreaWrapper
+    internal class ChartsAreaWrapper
     {
-        AutomationElement charts;
+        private AutomationElement charts;
 
         public ChartsAreaWrapper(AutomationElement charts)
         {

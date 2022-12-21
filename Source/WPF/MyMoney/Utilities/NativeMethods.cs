@@ -47,8 +47,8 @@ namespace Walkabout.Utilities
         public const int QS_INPUT = QS_MOUSE | QS_KEY | QS_RAWINPUT;
         public const int QS_ALLEVENTS = QS_INPUT | QS_POSTMESSAGE | QS_TIMER |
             QS_PAINT | QS_HOTKEY;
-        public const int QS_ALLINPUT = (QS_INPUT | QS_POSTMESSAGE | QS_TIMER |
-            QS_PAINT | QS_HOTKEY);
+        public const int QS_ALLINPUT = QS_INPUT | QS_POSTMESSAGE | QS_TIMER |
+            QS_PAINT | QS_HOTKEY;
 
         [DllImport("user32.dll", EntryPoint = "SetParent",
              SetLastError = true, ExactSpelling = true,

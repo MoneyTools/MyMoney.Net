@@ -17,7 +17,7 @@ using System.Xml;
 
 namespace Walkabout.Utilities
 {
-    enum State
+    internal enum State
     {
         Initial,
         Root,
@@ -38,22 +38,22 @@ namespace Walkabout.Utilities
     /// </summary>
     public class XmlCsvReader : XmlReader
     {
-        CsvReader _csvReader;
-        Uri _baseUri;
-        Uri _href;
-        string _root = "root";
-        string _rowname = "row";
-        XmlNameTable _nt;
-        string[] _names;
-        State _state = State.Initial;
-        int _attr = 0;
-        bool _asAttrs = false;
-        bool _firstRowHasColumnNames = false;
-        char _delimiter;
-        string _proxy;
-        Encoding _encoding;
+        private CsvReader _csvReader;
+        private Uri _baseUri;
+        private Uri _href;
+        private string _root = "root";
+        private string _rowname = "row";
+        private XmlNameTable _nt;
+        private string[] _names;
+        private State _state = State.Initial;
+        private int _attr = 0;
+        private bool _asAttrs = false;
+        private bool _firstRowHasColumnNames = false;
+        private char _delimiter;
+        private string _proxy;
+        private Encoding _encoding;
 
-        void Init()
+        private void Init()
         {
             this._state = State.Initial;
             this._attr = 0;
@@ -256,7 +256,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        void ReadColumnNames()
+        private void ReadColumnNames()
         {
             if (this._csvReader.Read())
             {
@@ -481,7 +481,7 @@ namespace Walkabout.Utilities
             return null;
         }
 
-        int GetOrdinal(string name)
+        private int GetOrdinal(string name)
         {
             if (this._names != null)
             {
@@ -813,22 +813,21 @@ namespace Walkabout.Utilities
 
     }
 
-    class CsvReader
+    internal class CsvReader
     {
-        TextReader _r;
-        char[] _buffer;
-        int _pos;
-        int _used;
+        private TextReader _r;
+        private char[] _buffer;
+        private int _pos;
+        private int _used;
 
         // assumes end of record delimiter is {CR}{LF}, {CR}, or {LF}
         // possible values are {CR}{LF}, {CR}, {LF}, ';', ',', '\t'
         // char _recDelim;
 
-        char _colDelim; // possible values ',', ';', '\t', '|'
-        char _quoteChar;
-
-        ArrayList _values;
-        int _fields;
+        private char _colDelim; // possible values ',', ';', '\t', '|'
+        private char _quoteChar;
+        private ArrayList _values;
+        private int _fields;
 
         public CsvReader(Uri location, Encoding encoding, string proxy, int bufsize)
         {  // the location of the .csv file
@@ -870,7 +869,7 @@ namespace Walkabout.Utilities
             get { return this._r; }
         }
 
-        const int EOF = 0xffff;
+        private const int EOF = 0xffff;
 
         public bool Read()
         { // read a record.
@@ -881,7 +880,7 @@ namespace Walkabout.Utilities
                 return false;
             }
 
-            while (ch != 0 && ch == '\r' || ch == '\n' || ch == ' ')
+            while ((ch != 0 && ch == '\r') || ch == '\n' || ch == ' ')
             {
                 ch = this.ReadChar();
             }
@@ -974,7 +973,7 @@ namespace Walkabout.Utilities
 
         public string this[int i] { get { return ((StringBuilder)this._values[i]).ToString(); } }
 
-        char ReadChar()
+        private char ReadChar()
         {
             if (this._pos == this._used)
             {
@@ -988,7 +987,7 @@ namespace Walkabout.Utilities
             return this._buffer[this._pos++];
         }
 
-        StringBuilder AddField()
+        private StringBuilder AddField()
         {
             if (this._fields == this._values.Count)
             {

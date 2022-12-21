@@ -278,7 +278,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        static DateTime[] knownClosures = new DateTime[]
+        private static DateTime[] knownClosures = new DateTime[]
         {
             new DateTime(2018, 12, 5), // honor of President George Bush
             new DateTime(2012, 10, 30), // Hurrican Sandy
@@ -328,7 +328,7 @@ namespace Walkabout.StockQuotes
             }
             // There are some random stock market closures which we can't keep track of easily, so
             // make sure we are not missing more than 1% of the history.
-            return (missing < count * 0.01);
+            return missing < count * 0.01;
         }
 
 

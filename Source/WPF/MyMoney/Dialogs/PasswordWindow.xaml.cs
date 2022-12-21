@@ -24,7 +24,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class PasswordWindow : BaseDialog
     {
-        Dictionary<string, TextBox> userDefined = new Dictionary<string, TextBox>();
+        private Dictionary<string, TextBox> userDefined = new Dictionary<string, TextBox>();
 
         public PasswordWindow()
         {
@@ -37,7 +37,7 @@ namespace Walkabout.Dialogs
             SizeChanged += this.PasswordWindow_SizeChanged;
         }
 
-        void PasswordWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void PasswordWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             this.TextBlockIntroMessage.Width = Math.Max(0, e.NewSize.Width - 20);
         }
@@ -93,7 +93,7 @@ namespace Walkabout.Dialogs
             set
             {
                 this.TextBlockUserNamePrompt.Text = value;
-                this.TextBlockUserNamePrompt.Visibility = this.TextBoxUserName.Visibility = (string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible);
+                this.TextBlockUserNamePrompt.Visibility = this.TextBoxUserName.Visibility = string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 
@@ -103,13 +103,13 @@ namespace Walkabout.Dialogs
             set
             {
                 this.TextBlockPasswordPrompt.Text = value;
-                this.TextBlockPasswordPrompt.Visibility = this.PasswordBox.Visibility = (string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible);
+                this.TextBlockPasswordPrompt.Visibility = this.PasswordBox.Visibility = string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 
         public string RealPassword { get; set; }
 
-        void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -262,7 +262,7 @@ namespace Walkabout.Dialogs
             this.ButtonCancel.IsEnabled = !this.buttonsDisabled;
         }
 
-        bool buttonsDisabled;
+        private bool buttonsDisabled;
 
         public void DisableButtons()
         {

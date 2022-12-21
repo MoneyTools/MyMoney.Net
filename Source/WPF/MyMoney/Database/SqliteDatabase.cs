@@ -165,7 +165,7 @@ namespace Walkabout.Data
         {
             //object result = ExecuteScalar("select * from INFORMATION_SCHEMA.tables where table_name = '" + mapping.TableName + "'");
             object result = this.ExecuteScalar("SELECT tbl_name FROM sqlite_master where tbl_name='" + name + "'");
-            return (result != null);
+            return result != null;
         }
 
         /// <summary>

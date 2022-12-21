@@ -128,7 +128,7 @@ namespace Walkabout.Utilities
             else
             {
                 returnValue = easeIn((timeFraction - 0.5) * 2, start, delta / 2, power);
-                returnValue += (delta / 2);
+                returnValue += delta / 2;
             }
             return returnValue;
         }

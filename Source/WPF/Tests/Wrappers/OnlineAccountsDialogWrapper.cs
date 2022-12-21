@@ -205,10 +205,10 @@ namespace Walkabout.Tests.Wrappers
 
     public class OnlineAccountItem
     {
-        AutomationElement item;
-        AutomationElement id;
-        AutomationElement name;
-        AutomationElement iconButton;
+        private AutomationElement item;
+        private AutomationElement id;
+        private AutomationElement name;
+        private AutomationElement iconButton;
 
         public OnlineAccountItem(AutomationElement item)
         {

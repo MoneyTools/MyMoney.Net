@@ -2,7 +2,7 @@
 
 namespace Walkabout.Tests.Wrappers
 {
-    class SecuritiesWrapper : ListViewWrapper
+    internal class SecuritiesWrapper : ListViewWrapper
     {
         public SecuritiesWrapper(AutomationElement e)
             : base(e)

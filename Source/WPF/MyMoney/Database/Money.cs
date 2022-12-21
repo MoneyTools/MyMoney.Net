@@ -28,11 +28,11 @@ namespace Walkabout.Data
 
     public class ChangeEventArgs : EventArgs
     {
-        object item;
-        string name;
-        ChangeType type;
-        ChangeEventArgs next;
-        object source;
+        private object item;
+        private string name;
+        private ChangeType type;
+        private ChangeEventArgs next;
+        private object source;
 
         public ChangeEventArgs(object item, string name, ChangeType type)
         {
@@ -93,10 +93,10 @@ namespace Walkabout.Data
 
     }
 
-    class BatchSync
+    internal class BatchSync
     {
-        object syncObject = new object();
-        int refCount;
+        private object syncObject = new object();
+        private int refCount;
 
         public int Increment()
         {
@@ -138,15 +138,15 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public abstract class PersistentContainer : INotifyPropertyChanged, IEnumerable<PersistentObject>
     {
-        BatchSync batched;
-        bool changePending;
-        bool saveChangeHistory;
-        ChangeEventArgs head;
-        ChangeEventArgs tail;
-        PersistentObject parent;
-        EventHandlerCollection<ChangeEventArgs> handlers;
+        private BatchSync batched;
+        private bool changePending;
+        private bool saveChangeHistory;
+        private ChangeEventArgs head;
+        private ChangeEventArgs tail;
+        private PersistentObject parent;
+        private EventHandlerCollection<ChangeEventArgs> handlers;
 
-        BatchSync GetBatched()
+        private BatchSync GetBatched()
         {
             if (this.batched == null)
             {
@@ -242,7 +242,7 @@ namespace Walkabout.Data
             }
         }
 
-        void SendEvent(object sender, ChangeEventArgs args)
+        private void SendEvent(object sender, ChangeEventArgs args)
         {
             if (this.handlers != null && this.handlers.HasListeners)
             {
@@ -361,8 +361,8 @@ namespace Walkabout.Data
     [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class PersistentObject : INotifyPropertyChanged
     {
-        EventHandlerCollection<ChangeEventArgs> handlers;
-        EventHandlerCollection<PropertyChangedEventHandler, PropertyChangedEventArgs> propertyChangeHandlers;
+        private EventHandlerCollection<ChangeEventArgs> handlers;
+        private EventHandlerCollection<PropertyChangedEventHandler, PropertyChangedEventArgs> propertyChangeHandlers;
 
         [XmlIgnore]
         public bool BatchMode;
@@ -425,7 +425,7 @@ namespace Walkabout.Data
             }
         }
 
-        ChangeType change = ChangeType.Inserted;
+        private ChangeType change = ChangeType.Inserted;
 
         [XmlIgnore]
         public PersistentContainer Parent { get; set; }
@@ -511,13 +511,13 @@ namespace Walkabout.Data
             this.change = ChangeType.Changed;
         }
 
-        BatchSync batched;
-        bool changePending;
-        ChangeEventArgs head;
-        ChangeEventArgs tail;
-        object changeSource;
+        private BatchSync batched;
+        private bool changePending;
+        private ChangeEventArgs head;
+        private ChangeEventArgs tail;
+        private object changeSource;
 
-        BatchSync GetBatched()
+        private BatchSync GetBatched()
         {
             if (this.batched == null)
             {
@@ -601,7 +601,7 @@ namespace Walkabout.Data
             return false;
         }
 
-        void SendEvent(object sender, ChangeEventArgs args)
+        private void SendEvent(object sender, ChangeEventArgs args)
         {
             if (this.handlers != null && this.handlers.HasListeners)
             {
@@ -1142,7 +1142,7 @@ namespace Walkabout.Data
             }
         }
 
-        HashSet<Account> balancePending = new HashSet<Account>();
+        private HashSet<Account> balancePending = new HashSet<Account>();
 
         public override void EndUpdate()
         {
@@ -1314,7 +1314,7 @@ namespace Walkabout.Data
         }
 
         // for re-entrancy guard.
-        HashSet<Transfer> removing = new HashSet<Transfer>();
+        private HashSet<Transfer> removing = new HashSet<Transfer>();
 
         public bool RemoveTransfer(Transfer t)
         {
@@ -1516,7 +1516,7 @@ namespace Walkabout.Data
 
         public event EventHandler<TransferChangedEventArgs> BeforeTransferChanged;
 
-        bool ignoreOnTransferChanged;
+        private bool ignoreOnTransferChanged;
 
         internal void OnTransferChanged(Transaction transaction, Transfer value)
         {
@@ -1544,7 +1544,7 @@ namespace Walkabout.Data
 
         public event EventHandler<SplitTransferChangedEventArgs> BeforeSplitTransferChanged;
 
-        bool ignoreOnSplitTransferChanged;
+        private bool ignoreOnSplitTransferChanged;
 
         internal void OnSplitTransferChanged(Split split, Transfer value)
         {
@@ -2064,7 +2064,7 @@ namespace Walkabout.Data
 
     public class ErrorEventArgs : EventArgs
     {
-        Exception error;
+        private Exception error;
 
         public Exception Exception { get { return this.error; } }
 
@@ -2078,9 +2078,9 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Accounts : PersistentContainer, ICollection<Account>
     {
-        int NextAccount = 0;
-        Hashtable<int, Account> accounts = new Hashtable<int, Account>(); // id->Account
-        Hashtable<string, Account> accountIndex = new Hashtable<string, Account>(); // name->Account
+        private int NextAccount = 0;
+        private Hashtable<int, Account> accounts = new Hashtable<int, Account>(); // id->Account
+        private Hashtable<string, Account> accountIndex = new Hashtable<string, Account>(); // name->Account
 
         // for serialization only
         public Accounts()
@@ -2202,7 +2202,7 @@ namespace Walkabout.Data
             return null;
         }
 
-        const string CategoryAccountPrefix = "Category: ";
+        private const string CategoryAccountPrefix = "Category: ";
 
         public Account FindCategoryFund(Category c)
         {
@@ -2449,28 +2449,28 @@ namespace Walkabout.Data
     [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Account : PersistentObject
     {
-        int id = -1;
-        string accountId;
-        string ofxAccountId;
-        string name;
-        string description;
-        AccountType type;
-        decimal openingBalance;
-        decimal balance;
-        string currency;
-        decimal accountCurrencyRatio;
-        int onlineAccountId;
-        OnlineAccount onlineAccount;
-        string webSite;
-        int reconcileWarning;
-        DateTime lastSync;
-        DateTime lastBalance;
-        int unaccepted;
-        SqlGuid syncGuid;
-        AccountFlags flags;
-        Category category; // for category funds.
-        Category categoryForPrincipal;  // For Loan accounts
-        Category categoryForInterest;   // For Loan accounts
+        private int id = -1;
+        private string accountId;
+        private string ofxAccountId;
+        private string name;
+        private string description;
+        private AccountType type;
+        private decimal openingBalance;
+        private decimal balance;
+        private string currency;
+        private decimal accountCurrencyRatio;
+        private int onlineAccountId;
+        private OnlineAccount onlineAccount;
+        private string webSite;
+        private int reconcileWarning;
+        private DateTime lastSync;
+        private DateTime lastBalance;
+        private int unaccepted;
+        private SqlGuid syncGuid;
+        private AccountFlags flags;
+        private Category category; // for category funds.
+        private Category categoryForPrincipal;  // For Loan accounts
+        private Category categoryForInterest;   // For Loan accounts
 
         public Account()
         { // for serialization
@@ -2570,7 +2570,7 @@ namespace Walkabout.Data
         {
             get
             {
-                return (this.IsTaxDeferred) ? TaxStatus.TaxDeferred :
+                return this.IsTaxDeferred ? TaxStatus.TaxDeferred :
                     (this.IsTaxFree ? TaxStatus.TaxFree : TaxStatus.Taxable);
             }
             set
@@ -2583,11 +2583,11 @@ namespace Walkabout.Data
                         break;
                     case TaxStatus.TaxDeferred:
                         // remove mututally exclusive TaxFree flag and add TaxDeferred
-                        this.flags = (this.flags & ~(AccountFlags.TaxFree)) | AccountFlags.TaxDeferred;
+                        this.flags = (this.flags & ~AccountFlags.TaxFree) | AccountFlags.TaxDeferred;
                         break;
                     case TaxStatus.TaxFree:
                         // remove mututally exclusive TaxDeferred flag and add TaxFree
-                        this.flags = (this.flags & ~(AccountFlags.TaxDeferred)) | AccountFlags.TaxFree;
+                        this.flags = (this.flags & ~AccountFlags.TaxDeferred) | AccountFlags.TaxFree;
                         break;
                     default:
                         break;
@@ -2931,7 +2931,7 @@ namespace Walkabout.Data
 
         #region Serialization Hack
 
-        string categoryForPrincipalName;
+        private string categoryForPrincipalName;
 
         /// <summary>
         /// for serialization only
@@ -2943,7 +2943,7 @@ namespace Walkabout.Data
             set { this.categoryForPrincipalName = value; }
         }
 
-        string categoryForInterestName;
+        private string categoryForInterestName;
 
         /// <summary>
         /// for serialization only
@@ -2975,7 +2975,7 @@ namespace Walkabout.Data
 
     }
 
-    class AccountComparer : IComparer<Account>
+    internal class AccountComparer : IComparer<Account>
     {
         public int Compare(Account x, Account y)
         {
@@ -3021,9 +3021,9 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class OnlineAccounts : PersistentContainer, ICollection<OnlineAccount>
     {
-        int NextOnlineAccount;
-        Hashtable<int, OnlineAccount> onlineAccounts = new Hashtable<int, OnlineAccount>();
-        Hashtable<string, OnlineAccount> instIndex = new Hashtable<string, OnlineAccount>();
+        private int NextOnlineAccount;
+        private Hashtable<int, OnlineAccount> onlineAccounts = new Hashtable<int, OnlineAccount>();
+        private Hashtable<string, OnlineAccount> instIndex = new Hashtable<string, OnlineAccount>();
 
         public OnlineAccounts()
         { // for serialization
@@ -3237,28 +3237,28 @@ namespace Walkabout.Data
     [TableMapping(TableName = "OnlineAccounts")]
     public class OnlineAccount : PersistentObject
     {
-        int id = -1;
-        string name;
-        string institution;
-        string ofx;
-        string fid;
-        string userid;
-        string password;
-        string userCred1;
-        string userCred2;
-        string authToken;
-        string bankId;
-        string brokerId;
-        string branchId;
-        string ofxVersion;
-        string logoUrl;
-        string appId = "QWIN";
-        string appVersion = "1700";
-        string sessionCookie;
-        string clientUid;
-        string accessKey;
-        string userKey;
-        DateTime? userKeyExpireDate;
+        private int id = -1;
+        private string name;
+        private string institution;
+        private string ofx;
+        private string fid;
+        private string userid;
+        private string password;
+        private string userCred1;
+        private string userCred2;
+        private string authToken;
+        private string bankId;
+        private string brokerId;
+        private string branchId;
+        private string ofxVersion;
+        private string logoUrl;
+        private string appId = "QWIN";
+        private string appVersion = "1700";
+        private string sessionCookie;
+        private string clientUid;
+        private string accessKey;
+        private string userKey;
+        private DateTime? userKeyExpireDate;
 
         public OnlineAccount()
         { // for serializer
@@ -3622,7 +3622,7 @@ namespace Walkabout.Data
         public string Answer { get; set; }
     }
 
-    class OnlineAccountComparer : IComparer<OnlineAccount>
+    internal class OnlineAccountComparer : IComparer<OnlineAccount>
     {
         public int Compare(OnlineAccount x, OnlineAccount y)
         {
@@ -3658,8 +3658,8 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Aliases : PersistentContainer, ICollection<Alias>
     {
-        int nextAlias;
-        Hashtable<int, Alias> aliases = new Hashtable<int, Alias>();
+        private int nextAlias;
+        private Hashtable<int, Alias> aliases = new Hashtable<int, Alias>();
 
         public Aliases()
         {
@@ -3892,8 +3892,8 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class AccountAliases : PersistentContainer, ICollection<AccountAlias>
     {
-        int nextAlias;
-        Hashtable<int, AccountAlias> aliases = new Hashtable<int, AccountAlias>();
+        private int nextAlias;
+        private Hashtable<int, AccountAlias> aliases = new Hashtable<int, AccountAlias>();
 
         public AccountAliases()
         {
@@ -4138,11 +4138,11 @@ namespace Walkabout.Data
     [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Currency : PersistentObject
     {
-        int id = -1;
-        string name;
-        string symbol;
-        decimal ratio;
-        decimal lastRatio;
+        private int id = -1;
+        private string name;
+        private string symbol;
+        private decimal ratio;
+        private decimal lastRatio;
 
         public Currency()
         { // for serialization
@@ -4229,7 +4229,7 @@ namespace Walkabout.Data
 
     }
 
-    class CurrencyComparer : IComparer<Currency>
+    internal class CurrencyComparer : IComparer<Currency>
     {
         public int Compare(Currency x, Currency y)
         {
@@ -4276,9 +4276,9 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Currencies : PersistentContainer, ICollection<Currency>
     {
-        int nextCurrency;
-        Hashtable<int, Currency> currencies = new Hashtable<int, Currency>();
-        Hashtable<string, Currency> quickLookup = new Hashtable<string, Currency>();
+        private int nextCurrency;
+        private Hashtable<int, Currency> currencies = new Hashtable<int, Currency>();
+        private Hashtable<string, Currency> quickLookup = new Hashtable<string, Currency>();
 
         public Currencies()
         {
@@ -4406,7 +4406,7 @@ namespace Walkabout.Data
                 return amount;
             }
 
-            return (amount * from.Ratio) / to.Ratio;
+            return amount * from.Ratio / to.Ratio;
         }
 
 
@@ -4542,9 +4542,9 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Payees : PersistentContainer, ICollection<Payee>
     {
-        int nextPayee;
-        Hashtable<int, Payee> payees = new Hashtable<int, Payee>();
-        Hashtable<string, Payee> payeeIndex = new Hashtable<string, Payee>();
+        private int nextPayee;
+        private Hashtable<int, Payee> payees = new Hashtable<int, Payee>();
+        private Hashtable<string, Payee> payeeIndex = new Hashtable<string, Payee>();
 
         public Payees()
         {
@@ -4827,10 +4827,10 @@ namespace Walkabout.Data
     [TableMapping(TableName = "Payees")]
     public class Payee : PersistentObject
     {
-        int id = -1;
-        int unaccepted;
-        int uncategorized;
-        string name;
+        private int id = -1;
+        private int unaccepted;
+        private int uncategorized;
+        private string name;
 
         public Payee()
         { // for serialization only
@@ -4945,12 +4945,12 @@ namespace Walkabout.Data
     [TableMapping(TableName = "Aliases")]
     public class Alias : PersistentObject
     {
-        int id = -1;
-        string pattern;
-        AliasType type;
-        int payeeId;
-        Payee payee;
-        Regex regex;
+        private int id = -1;
+        private string pattern;
+        private AliasType type;
+        private int payeeId;
+        private Payee payee;
+        private Regex regex;
 
         public Alias()
         { // for serialization only
@@ -5008,7 +5008,7 @@ namespace Walkabout.Data
 
         // for storage.
         [DataMember]
-        int PayeeId
+        private int PayeeId
         {
             get { return this.payeeId; }
             set { this.payeeId = value; }
@@ -5043,7 +5043,7 @@ namespace Walkabout.Data
                     this.regex = new Regex(this.pattern);
                 }
                 Match m = this.regex.Match(payee);
-                match = (m != null && m.Success && m.Index == 0 && m.Length == payee.Length);
+                match = m != null && m.Success && m.Index == 0 && m.Length == payee.Length;
             }
             else
             {
@@ -5063,11 +5063,11 @@ namespace Walkabout.Data
     [TableMapping(TableName = "AccountAliases")]
     public class AccountAlias : PersistentObject
     {
-        int id = -1;
-        string pattern;
-        AliasType type;
-        string accountId;
-        Regex regex;
+        private int id = -1;
+        private string pattern;
+        private AliasType type;
+        private string accountId;
+        private Regex regex;
 
         public AccountAlias()
         { // for serialization only
@@ -5143,10 +5143,10 @@ namespace Walkabout.Data
     [TableMapping(TableName = "TransactionExtras")]
     public class TransactionExtra : PersistentObject
     {
-        int id = -1;
-        long transaction = -1;
-        int taxYear = -1;
-        DateTime? taxDate;
+        private int id = -1;
+        private long transaction = -1;
+        private int taxYear = -1;
+        private DateTime? taxDate;
 
         public TransactionExtra()
         { // for serialization only
@@ -5219,9 +5219,9 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class TransactionExtras : PersistentContainer, ICollection<TransactionExtra>
     {
-        int nextId;
-        Hashtable<int, TransactionExtra> items = new Hashtable<int, TransactionExtra>();
-        Hashtable<long, TransactionExtra> byTransactionId = new Hashtable<long, TransactionExtra>();
+        private int nextId;
+        private Hashtable<int, TransactionExtra> items = new Hashtable<int, TransactionExtra>();
+        private Hashtable<long, TransactionExtra> byTransactionId = new Hashtable<long, TransactionExtra>();
 
         public TransactionExtras()
         {
@@ -5584,15 +5584,14 @@ namespace Walkabout.Data
     {
         public List<RentalBuildingSingleYearSingleDepartment> Departments { get; set; }
 
-
-        int yearStart;
+        private int yearStart;
 
         public int YearStart
         {
             get { return this.yearStart; }
         }
 
-        int yearEnd;
+        private int yearEnd;
 
         public int YearEnd
         {
@@ -5689,37 +5688,30 @@ namespace Walkabout.Data
     {
         #region PRIVATE PROPERTIES
 
-        int id = -1;
-        string name;
+        private int id = -1;
+        private string name;
 
         //
         // Account and Category associated to this Rental
         //
-        int categoryForIncome;
-        int categoryForTaxes;
-        int categoryForInterest;
-        int categoryForRepairs;
-        int categoryForMaintenance;
-        int categoryForManagement;
-
-        string address;
-        DateTime purchasedDate = DateTime.Now;
-        decimal purchasedPrice = 1;
-        decimal estimatedValue = 2;
-        decimal landValue = 1;
-
-        string ownershipName1;
-        string ownershipName2;
-        decimal ownershipPercentage1;
-        decimal ownershipPercentage2;
-
-        string note;
-
-
-
-
-        int yearStart = int.MaxValue;
-        int yearEnd = int.MinValue;
+        private int categoryForIncome;
+        private int categoryForTaxes;
+        private int categoryForInterest;
+        private int categoryForRepairs;
+        private int categoryForMaintenance;
+        private int categoryForManagement;
+        private string address;
+        private DateTime purchasedDate = DateTime.Now;
+        private decimal purchasedPrice = 1;
+        private decimal estimatedValue = 2;
+        private decimal landValue = 1;
+        private string ownershipName1;
+        private string ownershipName2;
+        private decimal ownershipPercentage1;
+        private decimal ownershipPercentage2;
+        private string note;
+        private int yearStart = int.MaxValue;
+        private int yearEnd = int.MinValue;
 
         #endregion
 
@@ -6128,7 +6120,7 @@ namespace Walkabout.Data
             return string.Format("{0}", this.id);
         }
 
-        List<RentUnit> units = new List<RentUnit>();
+        private List<RentUnit> units = new List<RentUnit>();
 
         [XmlIgnore]
         public List<RentUnit> Units
@@ -6278,7 +6270,7 @@ namespace Walkabout.Data
             return true;
         }
 
-        ThreadSafeObservableCollection<RentBuilding> observableCollection = new ThreadSafeObservableCollection<RentBuilding>();
+        private ThreadSafeObservableCollection<RentBuilding> observableCollection = new ThreadSafeObservableCollection<RentBuilding>();
 
         public ObservableCollection<RentBuilding> GetList()
         {
@@ -6512,11 +6504,11 @@ namespace Walkabout.Data
     {
         #region PRIVATE PROPERTIES
 
-        int id;
-        int building;
-        string name;
-        string renter;
-        string note;
+        private int id;
+        private int building;
+        private string name;
+        private string renter;
+        private string note;
         #endregion
 
 
@@ -6645,8 +6637,8 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class RentUnits : PersistentContainer, ICollection<RentUnit>
     {
-        int nextUnit;
-        Hashtable<int, RentUnit> collection = new Hashtable<int, RentUnit>();
+        private int nextUnit;
+        private Hashtable<int, RentUnit> collection = new Hashtable<int, RentUnit>();
 
 
         // for serialization only
@@ -6788,9 +6780,9 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Categories : PersistentContainer, ICollection<Category>
     {
-        int nextCategory;
-        Hashtable<int, Category> categories = new Hashtable<int, Category>();
-        Hashtable<string, Category> categoryIndex = new Hashtable<string, Category>();
+        private int nextCategory;
+        private Hashtable<int, Category> categories = new Hashtable<int, Category>();
+        private Hashtable<string, Category> categoryIndex = new Hashtable<string, Category>();
 
         // for serialization only
         public Categories()
@@ -7152,7 +7144,7 @@ namespace Walkabout.Data
             return n.CompareTo(m);
         }
 
-        void AddParents(Category c)
+        private void AddParents(Category c)
         {
             string name = c.Name;
             int i = name.LastIndexOf(":");
@@ -7354,21 +7346,20 @@ namespace Walkabout.Data
     [TableMapping(TableName = "Categories")]
     public class Category : PersistentObject
     {
-        int id = -1;
-        string label;
-        string name; // full name
-        string description;
-        CategoryType type;
-        decimal budget;
-        CalendarRange range;
-        decimal balance;
-        bool isEditing;
-        string colorString;
-        int taxRefNum;
-
-        int parentid = -1;
-        Category parent; // parent category
-        ThreadSafeObservableCollection<Category> subcategories;
+        private int id = -1;
+        private string label;
+        private string name; // full name
+        private string description;
+        private CategoryType type;
+        private decimal budget;
+        private CalendarRange range;
+        private decimal balance;
+        private bool isEditing;
+        private string colorString;
+        private int taxRefNum;
+        private int parentid = -1;
+        private Category parent; // parent category
+        private ThreadSafeObservableCollection<Category> subcategories;
 
         public Category()
         {
@@ -7552,7 +7543,7 @@ namespace Walkabout.Data
             }
         }
 
-        void OnNameChanged(string old)
+        private void OnNameChanged(string old)
         {
             this.RenameSubcategories();
             this.OnNameChanged(old, this.name);
@@ -7940,8 +7931,7 @@ namespace Walkabout.Data
             return false;
         }
 
-
-        void RenameSubcategories()
+        private void RenameSubcategories()
         {
             if (this.subcategories != null)
             {
@@ -7960,21 +7950,21 @@ namespace Walkabout.Data
                 case CalendarRange.Annually:
                     return budget / (years * 365);
                 case CalendarRange.BiMonthly:
-                    return (budget * 6) / 365;
+                    return budget * 6 / 365;
                 case CalendarRange.Daily:
                     return budget;
                 case CalendarRange.Monthly:
-                    return (budget * 12) / 365;
+                    return budget * 12 / 365;
                 case CalendarRange.Quarterly:
-                    return (budget * 3) / 365;
+                    return budget * 3 / 365;
                 case CalendarRange.SemiAnnually:
-                    return (budget * 2) / 365;
+                    return budget * 2 / 365;
                 case CalendarRange.TriMonthly:
-                    return (budget * 4) / 365;
+                    return budget * 4 / 365;
                 case CalendarRange.Weekly:
-                    return (budget * 52) / 365;
+                    return budget * 52 / 365;
                 case CalendarRange.BiWeekly:
-                    return (budget * 26) / 365;
+                    return budget * 26 / 365;
             }
             return 0;
         }
@@ -7986,21 +7976,21 @@ namespace Walkabout.Data
                 case CalendarRange.Annually:
                     return budget * years * 365;
                 case CalendarRange.BiMonthly:
-                    return (budget * 365) / 6;
+                    return budget * 365 / 6;
                 case CalendarRange.Daily:
                     return budget;
                 case CalendarRange.Monthly:
-                    return (budget * 365) / 12;
+                    return budget * 365 / 12;
                 case CalendarRange.Quarterly:
-                    return (budget * 365) / 3;
+                    return budget * 365 / 3;
                 case CalendarRange.SemiAnnually:
-                    return (budget * 365) / 2;
+                    return budget * 365 / 2;
                 case CalendarRange.TriMonthly:
-                    return (budget * 365) / 4;
+                    return budget * 365 / 4;
                 case CalendarRange.Weekly:
-                    return (budget * 365) / 52;
+                    return budget * 365 / 52;
                 case CalendarRange.BiWeekly:
-                    return (budget * 365) / 26;
+                    return budget * 365 / 26;
             }
             return 0;
         }
@@ -8060,9 +8050,9 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Securities : PersistentContainer, ICollection<Security>
     {
-        int nextSecurity;
-        Hashtable<int, Security> securities = new Hashtable<int, Security>();
-        Hashtable<string, Security> securityIndex = new Hashtable<string, Security>();
+        private int nextSecurity;
+        private Hashtable<int, Security> securities = new Hashtable<int, Security>();
+        private Hashtable<string, Security> securityIndex = new Hashtable<string, Security>();
 
 
         // for serialization only
@@ -8422,17 +8412,17 @@ namespace Walkabout.Data
     [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Security : PersistentObject
     {
-        int id = -1;
-        string name;
-        string symbol;
-        decimal price;
-        DateTime priceDate;
-        decimal lastPrice;
-        string cuspid;
-        bool expanded;
-        SecurityType type;
-        YesNo taxable;
-        ObservableStockSplits splits;
+        private int id = -1;
+        private string name;
+        private string symbol;
+        private decimal price;
+        private DateTime priceDate;
+        private decimal lastPrice;
+        private string cuspid;
+        private bool expanded;
+        private SecurityType type;
+        private YesNo taxable;
+        private ObservableStockSplits splits;
 
 
         static Security()
@@ -8656,7 +8646,7 @@ namespace Walkabout.Data
 
         public override int GetHashCode()
         {
-            int rc = (!string.IsNullOrEmpty(this.Name) ? this.Name.GetHashCode() : 0);
+            int rc = !string.IsNullOrEmpty(this.Name) ? this.Name.GetHashCode() : 0;
             if (!string.IsNullOrEmpty(this.Symbol))
             {
                 rc += this.symbol.GetHashCode();
@@ -8818,7 +8808,7 @@ namespace Walkabout.Data
         }
     }
 
-    class SecurityComparer : IComparer<Security>
+    internal class SecurityComparer : IComparer<Security>
     {
         public int Compare(Security x, Security y)
         {
@@ -8826,7 +8816,7 @@ namespace Walkabout.Data
         }
     }
 
-    class SecuritySymbolComparer : IComparer<Security>
+    internal class SecuritySymbolComparer : IComparer<Security>
     {
         public int Compare(Security a, Security b)
         {
@@ -8918,8 +8908,8 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Transactions : PersistentContainer, ICollection<Transaction>
     {
-        long nextTransaction;
-        Hashtable<long, Transaction> transactions = new Hashtable<long, Transaction>();
+        private long nextTransaction;
+        private Hashtable<long, Transaction> transactions = new Hashtable<long, Transaction>();
 
         public Transactions()
         { // for serialization
@@ -9220,7 +9210,7 @@ namespace Walkabout.Data
                 u.Account == t.Account &&
                 u.Number == t.Number &&
                 // ignore transfers for now
-                (t.Transfer == null && u.Transfer == null) &&
+                t.Transfer == null && u.Transfer == null &&
                 // if user has already marked both as not duplicates, then skip it.
                 (!t.NotDuplicate || !u.NotDuplicate) &&
                 // and if they are investment transactions the stock type and unit quanities have to be the same
@@ -9361,7 +9351,7 @@ namespace Walkabout.Data
         }
 
         // the critical details must match, other details can be filled in by electronic download.
-        static bool InvestmentDetailsMatch(Transaction t, Transaction u)
+        private static bool InvestmentDetailsMatch(Transaction t, Transaction u)
         {
             Investment i = t.Investment;
             Investment j = t.Investment;
@@ -9375,8 +9365,8 @@ namespace Walkabout.Data
                 return false;
             }
 
-            return (i.Security == j.Security && i.Units == j.Units && i.UnitPrice == j.UnitPrice &&
-                    i.Type == j.Type && i.TradeType == j.TradeType);
+            return i.Security == j.Security && i.Units == j.Units && i.UnitPrice == j.UnitPrice &&
+                    i.Type == j.Type && i.TradeType == j.TradeType;
         }
 
         private bool DatesMatch(Transaction u, Transaction t)
@@ -10333,8 +10323,8 @@ namespace Walkabout.Data
     //================================================================================
     public class TransferChangedEventArgs : EventArgs
     {
-        Transaction transaction;
-        Transfer transfer;
+        private Transaction transaction;
+        private Transfer transfer;
 
         public TransferChangedEventArgs(Transaction t, Transfer newValue)
         {
@@ -10350,8 +10340,8 @@ namespace Walkabout.Data
     //================================================================================
     public class SplitTransferChangedEventArgs : EventArgs
     {
-        Split split;
-        Transfer transfer;
+        private Split split;
+        private Transfer transfer;
 
         public SplitTransferChangedEventArgs(Split s, Transfer newValue)
         {
@@ -10420,36 +10410,36 @@ namespace Walkabout.Data
     [TableMapping(TableName = "Transactions")]
     public class Transaction : PersistentObject
     {
-        long id = -1;
-        Account account; // that this transaction originated.
-        DateTime date;
+        private long id = -1;
+        private Account account; // that this transaction originated.
+        private DateTime date;
         internal decimal amount;
-        decimal salesTax;
-        TransactionStatus status;
-        string memo;
-        Payee payee;
-        Category category;
-        string number; // requires value.Length < 10
-        Investment investment;
-        Transfer transfer;
-        string fitid;
+        private decimal salesTax;
+        private TransactionStatus status;
+        private string memo;
+        private Payee payee;
+        private Category category;
+        private string number; // requires value.Length < 10
+        private Investment investment;
+        private Transfer transfer;
+        private string fitid;
         internal Account to; // for debugging only.        
-        decimal balance;
-        decimal runningUnits;
-        decimal runningBalance;
-        string routingPath;
-        TransactionFlags flags;
-        DateTime? reconciledDate;
-        Splits splits;
-        string pendingTransfer;
-        DateTime? budgetBalanceDate;
-        Transaction related;
-        Split relatedSplit;
-        DateTime? mergeDate;
-        string originalPayee; // before auto-aliasing, helps with future merging.
-        TransactionViewFlags viewState; // ui transient state only, not persisted.
+        private decimal balance;
+        private decimal runningUnits;
+        private decimal runningBalance;
+        private string routingPath;
+        private TransactionFlags flags;
+        private DateTime? reconciledDate;
+        private Splits splits;
+        private string pendingTransfer;
+        private DateTime? budgetBalanceDate;
+        private Transaction related;
+        private Split relatedSplit;
+        private DateTime? mergeDate;
+        private string originalPayee; // before auto-aliasing, helps with future merging.
+        private TransactionViewFlags viewState; // ui transient state only, not persisted.
 
-        enum TransactionViewFlags : byte
+        private enum TransactionViewFlags : byte
         {
             None,
             TransactionDropTarget = 1,
@@ -10575,7 +10565,7 @@ namespace Walkabout.Data
             }
         }
 
-        string accountName;
+        private string accountName;
 
         // for serialization
         [DataMember]
@@ -10657,7 +10647,7 @@ namespace Walkabout.Data
             }
         }
 
-        string payeeName;
+        private string payeeName;
         // for serialization
         [DataMember]
         public string PayeeName
@@ -10762,9 +10752,7 @@ namespace Walkabout.Data
             }
         }
 
-
-
-        string categoryName;
+        private string categoryName;
         // for serialization;
         [DataMember]
         public string CategoryName
@@ -10973,10 +10961,10 @@ namespace Walkabout.Data
 
         public static bool IsTransferCaption(string value)
         {
-            return (value.StartsWith(Walkabout.Properties.Resources.TransferFromPrefix) ||
+            return value.StartsWith(Walkabout.Properties.Resources.TransferFromPrefix) ||
                     value.StartsWith(Walkabout.Properties.Resources.TransferToPrefix) ||
                     value.StartsWith(Walkabout.Properties.Resources.TransferToClosedAccountPrefix) ||
-                    value.StartsWith(Walkabout.Properties.Resources.TransferFromClosedAccountPrefix));
+                    value.StartsWith(Walkabout.Properties.Resources.TransferFromClosedAccountPrefix);
         }
 
         /// <summary>
@@ -10990,11 +10978,11 @@ namespace Walkabout.Data
             string caption = null;
             if (account.IsClosed)
             {
-                caption = (isFrom) ? Walkabout.Properties.Resources.TransferFromClosedAccountPrefix : Walkabout.Properties.Resources.TransferToClosedAccountPrefix;
+                caption = isFrom ? Walkabout.Properties.Resources.TransferFromClosedAccountPrefix : Walkabout.Properties.Resources.TransferToClosedAccountPrefix;
             }
             else
             {
-                caption = (isFrom) ? Walkabout.Properties.Resources.TransferFromPrefix : Walkabout.Properties.Resources.TransferToPrefix;
+                caption = isFrom ? Walkabout.Properties.Resources.TransferFromPrefix : Walkabout.Properties.Resources.TransferToPrefix;
             }
             caption += account.Name;
             return caption;
@@ -11116,7 +11104,7 @@ namespace Walkabout.Data
             }
         }
 
-        string transferName; // for serialization only.
+        private string transferName; // for serialization only.
 
         [DataMember]
         public string TransferName
@@ -11125,11 +11113,11 @@ namespace Walkabout.Data
             set { this.transferName = value; }
         }
 
-        long transferId = -1;
+        private long transferId = -1;
 
         // serialization
         [DataMember]
-        long TransferId
+        private long TransferId
         {
             get { return this.transferId; }
             set { this.transferId = value; }
@@ -11247,12 +11235,12 @@ namespace Walkabout.Data
             }
         }
 
-        void SetFlag(TransactionFlags flag)
+        private void SetFlag(TransactionFlags flag)
         {
             this.Flags |= flag;
         }
 
-        void ClearFlag(TransactionFlags flag)
+        private void ClearFlag(TransactionFlags flag)
         {
             this.Flags ^= flag;
         }
@@ -11435,7 +11423,7 @@ namespace Walkabout.Data
 
                     if (this.transfer != null)
                     {
-                        bool sameCurrency = (this.transfer.Transaction.Account.NonNullCurrency == this.Account.NonNullCurrency);
+                        bool sameCurrency = this.transfer.Transaction.Account.NonNullCurrency == this.Account.NonNullCurrency;
 
                         if ((this.amount == 0 && this.IsInserted) || sameCurrency)
                         {
@@ -11480,7 +11468,7 @@ namespace Walkabout.Data
             this.OnChanged("Amount");
         }
 
-        void OnAmountChanged(decimal oldValue, decimal newValue)
+        private void OnAmountChanged(decimal oldValue, decimal newValue)
         {
             decimal diff = newValue - oldValue;
             if (this.IsBudgeted && !this.IsFake)
@@ -11641,9 +11629,9 @@ namespace Walkabout.Data
             }
         }
 
-        uint lastSet;
+        private uint lastSet;
 
-        void SetDebitCredit(SqlDecimal value)
+        private void SetDebitCredit(SqlDecimal value)
         {
             if (!value.IsNull)
             {
@@ -11729,7 +11717,7 @@ namespace Walkabout.Data
             get { return this.related; }
         }
 
-        int transferSplitId = -1;
+        private int transferSplitId = -1;
 
         /// <summary>
         /// This is a hack purely here to force this column to be created in the database, it is not used in memory.
@@ -11737,7 +11725,7 @@ namespace Walkabout.Data
         /// </summary>
         [DataMember]
         [ColumnMapping(ColumnName = "TransferSplit", AllowNulls = true)]
-        int TransferSplit
+        private int TransferSplit
         {
             get { return this.transferSplitId; }
             set { this.transferSplitId = value; }
@@ -12656,8 +12644,8 @@ namespace Walkabout.Data
     /// </summary>
     public class PayeeIndex
     {
-        MyMoney money;
-        Dictionary<string, HashSet<Account>> map = new Dictionary<string, HashSet<Account>>();
+        private MyMoney money;
+        private Dictionary<string, HashSet<Account>> map = new Dictionary<string, HashSet<Account>>();
 
         public PayeeIndex(MyMoney money)
         {
@@ -12732,11 +12720,11 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Splits : PersistentContainer, ICollection<Split>
     {
-        Transaction transaction;
-        int nextSplit;
-        Hashtable<int, Split> splits;
-        decimal unassigned;
-        decimal? amountMinusSalesTax;
+        private Transaction transaction;
+        private int nextSplit;
+        private Hashtable<int, Split> splits;
+        private decimal unassigned;
+        private decimal? amountMinusSalesTax;
 
         public Splits()
         { // for serialization.
@@ -12815,7 +12803,7 @@ namespace Walkabout.Data
             }
         }
 
-        bool balancing;
+        private bool balancing;
 
         public decimal Rebalance()
         {
@@ -12938,8 +12926,7 @@ namespace Walkabout.Data
             return -1;
         }
 
-
-        string message;
+        private string message;
 
         public string SplitsBalanceMessage
         {
@@ -12954,7 +12941,7 @@ namespace Walkabout.Data
             }
         }
 
-        SplitsObservableCollection theSplits;
+        private SplitsObservableCollection theSplits;
 
         public ObservableCollection<Split> ObservableCollection
         {
@@ -12975,9 +12962,9 @@ namespace Walkabout.Data
             }
         }
 
-        class SplitsObservableCollection : ThreadSafeObservableCollection<Split>
+        private class SplitsObservableCollection : ThreadSafeObservableCollection<Split>
         {
-            Splits parent;
+            private Splits parent;
 
             public SplitsObservableCollection(Splits splits)
             {
@@ -12991,12 +12978,12 @@ namespace Walkabout.Data
                 this.Rebalance();
             }
 
-            void OnParentChanged(object sender, ChangeEventArgs args)
+            private void OnParentChanged(object sender, ChangeEventArgs args)
             {
                 this.Rebalance();
             }
 
-            MyMoney MyMoney
+            private MyMoney MyMoney
             {
                 get
                 {
@@ -13040,7 +13027,7 @@ namespace Walkabout.Data
                 this.parent.FireChangeEvent(this, this, "Count", ChangeType.Changed);
             }
 
-            void Rebalance()
+            private void Rebalance()
             {
                 if (this.parent != null)
                 {
@@ -13115,7 +13102,7 @@ namespace Walkabout.Data
 
         public void AddSplit(Split s)
         {
-            int len = (this.theSplits != null ? this.theSplits.Count : 0);
+            int len = this.theSplits != null ? this.theSplits.Count : 0;
             this.Insert(len, s);
         }
 
@@ -13455,17 +13442,17 @@ namespace Walkabout.Data
     [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Split : PersistentObject
     {
-        Transaction transaction;
-        int id = -1;
-        Category category;
-        Payee payee;
+        private Transaction transaction;
+        private int id = -1;
+        private Category category;
+        private Payee payee;
         internal decimal amount; // so we can keep transfer's in sync
-        Transfer transfer;
-        string memo;
+        private Transfer transfer;
+        private string memo;
         internal Account to; // for debugging only
-        string pendingTransfer;
-        SplitFlags flags;
-        DateTime? budgetBalanceDate;
+        private string pendingTransfer;
+        private SplitFlags flags;
+        private DateTime? budgetBalanceDate;
 
         public Split()
             : base(null)
@@ -13522,7 +13509,7 @@ namespace Walkabout.Data
             }
         }
 
-        string categoryName;
+        private string categoryName;
         // for serialization;
         [DataMember]
         public string CategoryName
@@ -13547,7 +13534,7 @@ namespace Walkabout.Data
             }
         }
 
-        string payeeName;
+        private string payeeName;
         // for serialization
         [DataMember]
         public string PayeeName
@@ -13603,7 +13590,7 @@ namespace Walkabout.Data
             this.OnChanged("Amount");
         }
 
-        long transferId = -1;
+        private long transferId = -1;
 
         [DataMember]
         public long TransferId
@@ -13724,13 +13711,12 @@ namespace Walkabout.Data
             }
         }
 
-
-        void SetFlag(SplitFlags flag)
+        private void SetFlag(SplitFlags flag)
         {
             this.Flags |= flag;
         }
 
-        void ClearFlag(SplitFlags flag)
+        private void ClearFlag(SplitFlags flag)
         {
             this.Flags ^= flag;
         }
@@ -13919,7 +13905,7 @@ namespace Walkabout.Data
         }
 
         [XmlIgnore]
-        MyMoney MyMoney
+        private MyMoney MyMoney
         {
             get
             {
@@ -13936,7 +13922,7 @@ namespace Walkabout.Data
             }
         }
 
-        void OnAmountChanged(decimal oldValue, decimal newValue)
+        private void OnAmountChanged(decimal oldValue, decimal newValue)
         {
             if (!this.BatchMode && this.transaction != null && this.transaction.IsBudgeted && !this.transaction.IsFake)
             {
@@ -13975,7 +13961,7 @@ namespace Walkabout.Data
 
     }
 
-    class SplitIdComparer : IComparer<Split>
+    internal class SplitIdComparer : IComparer<Split>
     {
         public int Compare(Split a, Split b)
         {
@@ -14011,23 +13997,24 @@ namespace Walkabout.Data
     [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class Investment : PersistentObject
     {
-        long id;
-        Security security;
-        decimal unitprice;
-        decimal units;
-        decimal commission;
-        InvestmentType type = InvestmentType.None;
-        InvestmentTradeType tradeType = InvestmentTradeType.None;
-        bool taxExempt;
-        decimal withholding;
-        decimal markupdown;
-        decimal taxes;
-        decimal fees;
-        decimal load;
+        private long id;
+        private Security security;
+        private decimal unitprice;
+        private decimal units;
+        private decimal commission;
+        private InvestmentType type = InvestmentType.None;
+        private InvestmentTradeType tradeType = InvestmentTradeType.None;
+        private bool taxExempt;
+        private decimal withholding;
+        private decimal markupdown;
+        private decimal taxes;
+        private decimal fees;
+        private decimal load;
+
         // post stock split
-        decimal currentUnits;
-        decimal currentUnitPrice;
-        Transaction transaction;
+        private decimal currentUnits;
+        private decimal currentUnitPrice;
+        private Transaction transaction;
 
         public Investment()
         { // for serialization 
@@ -14075,7 +14062,7 @@ namespace Walkabout.Data
             }
         }
 
-        string securityName; // used for serialization only.
+        private string securityName; // used for serialization only.
 
         [DataMember]
         public string SecurityName
@@ -14293,7 +14280,7 @@ namespace Walkabout.Data
         public decimal GainLoss { get { return this.MarketValue - this.CostBasis; } }
 
         [XmlIgnore]
-        public decimal PercentGainLoss { get { return this.CostBasis == 0 ? 0 : (this.GainLoss * 100) / this.CostBasis; } }
+        public decimal PercentGainLoss { get { return this.CostBasis == 0 ? 0 : this.GainLoss * 100 / this.CostBasis; } }
 
         [XmlIgnore]
         public bool IsDown { get { return this.GainLoss < 0; } }
@@ -14302,8 +14289,8 @@ namespace Walkabout.Data
         {
             if (s.Date > this.Date && s.Denominator != 0 && s.Numerator != 0)
             {
-                this.currentUnits = (this.currentUnits * s.Numerator) / s.Denominator;
-                this.currentUnitPrice = (this.currentUnitPrice * s.Denominator) / s.Numerator;
+                this.currentUnits = this.currentUnits * s.Numerator / s.Denominator;
+                this.currentUnitPrice = this.currentUnitPrice * s.Denominator / s.Numerator;
             }
         }
 
@@ -14346,10 +14333,10 @@ namespace Walkabout.Data
     /// </summary>
     public class ObservableStockSplits : ThreadSafeObservableCollection<StockSplit>
     {
-        Security security;
-        StockSplits splits;
-        bool initializing;
-        bool syncSync;
+        private Security security;
+        private StockSplits splits;
+        private bool initializing;
+        private bool syncSync;
 
         public ObservableStockSplits(Security security, MyMoney money)
         {
@@ -14530,8 +14517,8 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class StockSplits : PersistentContainer, ICollection<StockSplit>
     {
-        long nextStockSplit;
-        Hashtable<long, StockSplit> stockSplits = new Hashtable<long, StockSplit>();
+        private long nextStockSplit;
+        private Hashtable<long, StockSplit> stockSplits = new Hashtable<long, StockSplit>();
 
         // for serialization only
         public StockSplits()
@@ -14711,14 +14698,14 @@ namespace Walkabout.Data
     [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class StockSplit : PersistentObject
     {
-        long id = -1;
-        Security security;
-        DateTime date;
+        private long id = -1;
+        private Security security;
+        private DateTime date;
 
         // If numerator is less than denominator then it is a stock split, otherwise
         // it is a reverse stock split.
-        decimal numerator;
-        decimal denominator;
+        private decimal numerator;
+        private decimal denominator;
 
         public StockSplit()
         { // for serialization
@@ -14820,7 +14807,7 @@ namespace Walkabout.Data
 
     public class TransactionException : Exception
     {
-        Transaction t;
+        private Transaction t;
 
         public TransactionException(Transaction t, string message)
             : base(message)
@@ -14831,7 +14818,7 @@ namespace Walkabout.Data
         public Transaction Transaction { get { return this.t; } }
     }
 
-    class MoneyException : Exception
+    internal class MoneyException : Exception
     {
         public MoneyException(string message)
             : base(message)

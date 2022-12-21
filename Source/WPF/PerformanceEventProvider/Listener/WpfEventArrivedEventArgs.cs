@@ -50,7 +50,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
             }
         }
 
-        static long frequency = 0;
+        private static long frequency = 0;
 
         [DllImport("Kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]

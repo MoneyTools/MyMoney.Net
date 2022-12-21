@@ -2,9 +2,9 @@
 
 namespace Walkabout.Tests.Wrappers
 {
-    class HyperlinkWrapper
+    internal class HyperlinkWrapper
     {
-        AutomationElement e;
+        private AutomationElement e;
 
         public HyperlinkWrapper(AutomationElement e)
         {

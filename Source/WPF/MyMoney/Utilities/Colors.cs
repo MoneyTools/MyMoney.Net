@@ -9,11 +9,11 @@ using System.Windows.Shapes;
 
 namespace Walkabout.Utilities
 {
-    static class ColorAndBrushGenerator
+    internal static class ColorAndBrushGenerator
     {
-        static Dictionary<string, Color> cachedColors = new Dictionary<string, Color>();
-        static Dictionary<string, Brush> cachedBrushes = new Dictionary<string, Brush>();
-        static ColorConverter cc = new ColorConverter();
+        private static Dictionary<string, Color> cachedColors = new Dictionary<string, Color>();
+        private static Dictionary<string, Brush> cachedBrushes = new Dictionary<string, Brush>();
+        private static ColorConverter cc = new ColorConverter();
 
         public static Color GenerateNamedColor(string name)
         {

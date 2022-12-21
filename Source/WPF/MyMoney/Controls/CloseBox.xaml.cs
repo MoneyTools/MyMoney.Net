@@ -10,17 +10,16 @@ namespace Walkabout.Controls
     /// </summary>
     public partial class CloseBox : CustomizableButton
     {
-
-        Brush normalBackground;
-        Brush normalBorder;
-        Brush normalForeground;
+        private Brush normalBackground;
+        private Brush normalBorder;
+        private Brush normalForeground;
 
         public CloseBox()
         {
             this.InitializeComponent();
         }
 
-        void SaveNormalColors()
+        private void SaveNormalColors()
         {
             if (this.normalBackground == null)
             {
@@ -30,7 +29,7 @@ namespace Walkabout.Controls
             }
         }
 
-        void UpdateColors()
+        private void UpdateColors()
         {
             this.SaveNormalColors();
 

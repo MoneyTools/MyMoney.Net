@@ -97,7 +97,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnBalanceChanged(object sender, ChangeEventArgs args)
+        private void OnBalanceChanged(object sender, ChangeEventArgs args)
         {
             this.delayedActions.StartDelayedAction("rebind", this.Rebind, TimeSpan.FromMilliseconds(30));
         }
@@ -181,7 +181,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        static void CopyToClipboard(Account a)
+        private static void CopyToClipboard(Account a)
         {
             if (a != null)
             {
@@ -264,7 +264,7 @@ namespace Walkabout.Views.Controls
 #endif
         }
 
-        void listBox1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void listBox1_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             Point pos = e.GetPosition(this);
             if (!this.HitScrollBar(pos) && e.ChangedButton == MouseButton.Left)
@@ -281,7 +281,7 @@ namespace Walkabout.Views.Controls
             this.RaiseSelectionEvent(this.selected, true);
         }
 
-        void OnListBoxMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void OnListBoxMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             this.delayedActions.CancelDelayedAction("SingleClick");
             object item = this.GetElementFromPoint(this.listBox1, e.GetPosition(this.listBox1));
@@ -314,7 +314,7 @@ namespace Walkabout.Views.Controls
 
                 object item = hostingControl.ItemContainerGenerator.ItemFromContainer(element);
 
-                bool itemFound = !(item.Equals(DependencyProperty.UnsetValue));
+                bool itemFound = !item.Equals(DependencyProperty.UnsetValue);
 
                 if (itemFound)
                 {
@@ -339,7 +339,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void UpdateSectionHeaderBalances()
+        private void UpdateSectionHeaderBalances()
         {
             foreach (var item in this.items)
             {
@@ -350,7 +350,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void Rebind()
+        private void Rebind()
         {
             this.UpdateContextMenuView();
 
@@ -449,16 +449,16 @@ namespace Walkabout.Views.Controls
         }
 
         // our idea of what is selected.  We only raise SelectionChanged event if this doesn't match.
-        AccountViewModel selected;
+        private AccountViewModel selected;
 
-        void Select(AccountViewModel item)
+        private void Select(AccountViewModel item)
         {
             this.listBox1.SelectedItem = item;
             this.listBox1.ScrollIntoView(item);
             this.SetSelected(item);
         }
 
-        void SetSelected(AccountViewModel item)
+        private void SetSelected(AccountViewModel item)
         {
             if (item != this.selected)
             {
@@ -474,14 +474,14 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.delayedActions.CancelDelayedAction("SingleClick");
             object selected = (e.AddedItems.Count > 0) ? e.AddedItems[0] : null;
             this.RaiseSelectionEvent(selected as AccountViewModel, false);
         }
 
-        void RaiseSelectionEvent(AccountViewModel selected, bool force)
+        private void RaiseSelectionEvent(AccountViewModel selected, bool force)
         {
             AccountSectionHeader ash = selected as AccountSectionHeader;
 
@@ -554,7 +554,7 @@ namespace Walkabout.Views.Controls
             return account;
         }
 
-        void EditDetails(Account a)
+        private void EditDetails(Account a)
         {
             if (a.Type == AccountType.Loan)
             {
@@ -576,7 +576,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void Export(Account a, string filename)
+        private void Export(Account a, string filename)
         {
             if (filename.ToLowerInvariant().EndsWith(".txf"))
             {
@@ -643,7 +643,7 @@ namespace Walkabout.Views.Controls
         private void CanSynchronizeAccount(object sender, CanExecuteRoutedEventArgs e)
         {
             Account a = this.SelectedAccount;
-            e.CanExecute = (a != null && a.OnlineAccount != null);
+            e.CanExecute = a != null && a.OnlineAccount != null;
             e.Handled = true;
         }
 
@@ -1154,7 +1154,7 @@ namespace Walkabout.Views.Controls
                 {
                     int months = DateTime.Now.Month - a.LastBalance.Month;
                     int years = DateTime.Now.Year - a.LastBalance.Year;
-                    months += (years * 12);
+                    months += years * 12;
                     return string.Format("Reminder: you have not balanced this account in {0} months\n" +
                            "You can change this reminder using 'Reconcile Warning' in the account properties", months);
                 }

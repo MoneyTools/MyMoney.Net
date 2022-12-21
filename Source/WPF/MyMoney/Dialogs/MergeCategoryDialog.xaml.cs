@@ -11,9 +11,9 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class MergeCategoryDialog : BaseDialog
     {
-        MyMoney _money;
-        string _statusFormat;
-        Category _source;
+        private MyMoney _money;
+        private string _statusFormat;
+        private Category _source;
 
         public MergeCategoryDialog()
         {

@@ -19,7 +19,7 @@ namespace EdgeDetectionTest
     /// </summary>
     public partial class MainWindow : Window
     {
-        Dispatcher dispatcher;
+        private Dispatcher dispatcher;
 
         public MainWindow()
         {
@@ -68,7 +68,7 @@ namespace EdgeDetectionTest
             }
         }
 
-        void OnEdgeDetected(object sender, EdgeDetectedEventArgs e)
+        private void OnEdgeDetected(object sender, EdgeDetectedEventArgs e)
         {
             this.dispatcher.BeginInvoke(new Action(() =>
             {

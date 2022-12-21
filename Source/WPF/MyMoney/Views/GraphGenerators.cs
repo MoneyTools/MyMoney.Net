@@ -13,13 +13,13 @@ using Walkabout.Views.Controls;
 
 namespace Walkabout.Views
 {
-    class TransactionGraphGenerator : IGraphGenerator
+    internal class TransactionGraphGenerator : IGraphGenerator
     {
-        NumberFormatInfo nfi = new NumberFormatInfo();
-        IEnumerable data;
-        Account account;
-        Category category;
-        TransactionViewName viewName;
+        private NumberFormatInfo nfi = new NumberFormatInfo();
+        private IEnumerable data;
+        private Account account;
+        private Category category;
+        private TransactionViewName viewName;
 
         public TransactionGraphGenerator(IEnumerable data, Account account, Category category, TransactionViewName viewName)
         {
@@ -35,8 +35,8 @@ namespace Walkabout.Views
         {
             get
             {
-                return ((this.account != null && this.account.Type == AccountType.Credit) ||
-                        (this.category != null && this.category.Type == CategoryType.Expense));
+                return (this.account != null && this.account.Type == AccountType.Credit) ||
+                        (this.category != null && this.category.Type == CategoryType.Expense);
             }
         }
 
@@ -96,13 +96,13 @@ namespace Walkabout.Views
     /// This class computes the TrendGraph for brokerage and retirement accounts by computing the 
     /// historical daily market value of a given account.  The trick is doing this efficiently...
     /// </summary>
-    class BrokerageAccountGraphGenerator : IGraphGenerator
+    internal class BrokerageAccountGraphGenerator : IGraphGenerator
     {
-        MyMoney myMoney;
-        StockQuoteCache cache;
-        Account account;
-        Dictionary<string, List<StockSplit>> pendingSplits = new Dictionary<string, List<StockSplit>>();
-        List<TrendValue> graph = new List<TrendValue>();
+        private MyMoney myMoney;
+        private StockQuoteCache cache;
+        private Account account;
+        private Dictionary<string, List<StockSplit>> pendingSplits = new Dictionary<string, List<StockSplit>>();
+        private List<TrendValue> graph = new List<TrendValue>();
 
 
         public BrokerageAccountGraphGenerator(MyMoney money, StockQuoteCache cache, Account account)
@@ -368,8 +368,8 @@ namespace Walkabout.Views
             {
                 if (purchase.DatePurchased < split.Date)
                 {
-                    purchase.UnitsRemaining = (purchase.UnitsRemaining * split.Numerator) / split.Denominator;
-                    purchase.CostBasisPerUnit = (purchase.CostBasisPerUnit * split.Denominator) / split.Numerator;
+                    purchase.UnitsRemaining = purchase.UnitsRemaining * split.Numerator / split.Denominator;
+                    purchase.CostBasisPerUnit = purchase.CostBasisPerUnit * split.Denominator / split.Numerator;
                     total += purchase.UnitsRemaining;
                 }
             }
@@ -379,8 +379,8 @@ namespace Walkabout.Views
             {
                 if (pending.DateSold < split.Date)
                 {
-                    pending.UnitsSold = (pending.UnitsSold * split.Numerator) / split.Denominator;
-                    pending.SalePricePerUnit = (pending.SalePricePerUnit * split.Denominator) / split.Numerator;
+                    pending.UnitsSold = pending.UnitsSold * split.Numerator / split.Denominator;
+                    pending.SalePricePerUnit = pending.SalePricePerUnit * split.Denominator / split.Numerator;
                 }
             }
 
@@ -404,12 +404,11 @@ namespace Walkabout.Views
 
     }
 
-    class SecurityGraphGenerator : IGraphGenerator
+    internal class SecurityGraphGenerator : IGraphGenerator
     {
-        NumberFormatInfo nfi = new NumberFormatInfo();
-
-        StockQuoteHistory history;
-        Security security;
+        private NumberFormatInfo nfi = new NumberFormatInfo();
+        private StockQuoteHistory history;
+        private Security security;
 
         public SecurityGraphGenerator(StockQuoteHistory history, Security security)
         {

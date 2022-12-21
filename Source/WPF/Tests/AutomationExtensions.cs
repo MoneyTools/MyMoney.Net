@@ -5,7 +5,7 @@ using Walkabout.Tests.Wrappers;
 
 namespace Walkabout.Tests
 {
-    static class AutomationExtensions
+    internal static class AutomationExtensions
     {
         internal static AutomationElement FindFirstWithRetries(this AutomationElement parent, TreeScope scope, Condition condition, int retries = 5, int millisecondDelay = 200)
         {

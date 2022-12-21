@@ -8,12 +8,12 @@ using System.Windows.Threading;
 
 namespace Microsoft.VisualStudio.PerformanceGraph
 {
-    class HoverGesture
+    internal class HoverGesture
     {
-        DispatcherTimer hover;
-        uint lastMoveTime;
-        MouseEventArgs lastMoveEvent;
-        FrameworkElement target;
+        private DispatcherTimer hover;
+        private uint lastMoveTime;
+        private MouseEventArgs lastMoveEvent;
+        private FrameworkElement target;
 
         public HoverGesture(FrameworkElement target)
         {
@@ -37,7 +37,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             this.hover.Start();
         }
 
-        uint TickCount
+        private uint TickCount
         {
             get { return (uint)Environment.TickCount; }
         }
@@ -100,7 +100,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             return this.popup;
         }
 
-        Popup popup;
+        private Popup popup;
 
         public void HidePopup()
         {

@@ -19,14 +19,14 @@ namespace Walkabout.Reports
     //=========================================================================================
     public class TaxReport : Report
     {
-        FlowDocumentView view;
-        MyMoney money;
-        DateTime startDate;
-        DateTime endDate;
-        bool consolidateOnDateSold;
-        bool capitalGainsOnly;
-        int fiscalYearStart;
-        const string FiscalPrefix = "FY ";
+        private FlowDocumentView view;
+        private MyMoney money;
+        private DateTime startDate;
+        private DateTime endDate;
+        private bool consolidateOnDateSold;
+        private bool capitalGainsOnly;
+        private int fiscalYearStart;
+        private const string FiscalPrefix = "FY ";
 
         public TaxReport(FlowDocumentView view, MyMoney money, int fiscalYearStart)
         {
@@ -138,7 +138,7 @@ namespace Walkabout.Reports
             return Task.CompletedTask;
         }
 
-        void WriteHeaders(IReportWriter writer)
+        private void WriteHeaders(IReportWriter writer)
         {
             writer.StartTable();
             writer.StartColumnDefinitions();
@@ -380,7 +380,7 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        void WriteCapitalGains(IReportWriter writer, SecuritySale data)
+        private void WriteCapitalGains(IReportWriter writer, SecuritySale data)
         {
             writer.StartRow();
             writer.StartCell();
@@ -539,7 +539,7 @@ namespace Walkabout.Reports
             writer.EndTable();
         }
 
-        string Rounded(decimal value, int decimals)
+        private string Rounded(decimal value, int decimals)
         {
             decimal rounded = Math.Round(value, decimals, MidpointRounding.AwayFromZero);
             // for some odd reason decimal.ToString() always adds 3 decimal places so you get "23.000" instead of "23".

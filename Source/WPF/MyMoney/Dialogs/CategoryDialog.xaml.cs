@@ -34,12 +34,11 @@ namespace Walkabout.Dialogs
             }
         }
 
-
-        Categories categories;
-        Category category;
-        Account transfer;
-        NumberFormatInfo nfi = new NumberFormatInfo();
-        TaxCategoryCollection taxCategories = new TaxCategoryCollection();
+        private Categories categories;
+        private Category category;
+        private Account transfer;
+        private NumberFormatInfo nfi = new NumberFormatInfo();
+        private TaxCategoryCollection taxCategories = new TaxCategoryCollection();
 
         public Category Category
         {
@@ -129,7 +128,7 @@ namespace Walkabout.Dialogs
             this.okButton.Click += new RoutedEventHandler(this.OnOkButton_Click);
         }
 
-        TextBox CategoryNameTextBox
+        private TextBox CategoryNameTextBox
         {
             get
             {
@@ -176,7 +175,7 @@ namespace Walkabout.Dialogs
             });
         }
 
-        string GetListLabel(Category c)
+        private string GetListLabel(Category c)
         {
             if (c.ParentCategory == null)
             {
@@ -195,7 +194,7 @@ namespace Walkabout.Dialogs
             return sb.ToString();
         }
 
-        void RefreshCategories()
+        private void RefreshCategories()
         {
             ItemCollection items = this.comboBoxCategory.Items;
             items.Clear();
@@ -215,17 +214,17 @@ namespace Walkabout.Dialogs
             }
         }
 
-        ColorPickerPanel ColorPicker
+        private ColorPickerPanel ColorPicker
         {
             get
             {
                 var flyout = this.ColorDropDown.Flyout; // for some reason the Flyout class with the Content property is not public!
                 var pi = flyout.GetType().GetProperty("Content", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-                return ((ColorPickerPanel)pi.GetValue(flyout, null));
+                return (ColorPickerPanel)pi.GetValue(flyout, null);
             }
         }
 
-        void SetCategory(Category c)
+        private void SetCategory(Category c)
         {
             this.category = c;
             this.transfer = null;
@@ -261,7 +260,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void SetTransfer(Account a)
+        private void SetTransfer(Account a)
         {
             this.transfer = a;
             this.category = null;
@@ -284,8 +283,7 @@ namespace Walkabout.Dialogs
             base.OnClosed(e);
         }
 
-
-        void OnOkButton_Click(object sender, RoutedEventArgs e)
+        private void OnOkButton_Click(object sender, RoutedEventArgs e)
         {
             this.Add();
             this.DialogResult = true;
@@ -307,7 +305,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void Add()
+        private void Add()
         {
             if (this.transfer != null)
             {

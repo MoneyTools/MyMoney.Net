@@ -126,8 +126,8 @@ namespace Walkabout.Tests.Interop
                 // The key ting here is that unlike points in coordinate geometry, pixels take up
                 // space, so are often better treated like rectangles - and if you want to target
                 // a particular pixel, target its rectangle's midpoint, not its edge.
-                x = ((x - vscreenLeft) * 65536) / vscreenWidth + 65536 / (vscreenWidth * 2);
-                y = ((y - vscreenTop) * 65536) / vscreenHeight + 65536 / (vscreenHeight * 2);
+                x = ((x - vscreenLeft) * 65536 / vscreenWidth) + (65536 / (vscreenWidth * 2));
+                y = ((y - vscreenTop) * 65536 / vscreenHeight) + (65536 / (vscreenHeight * 2));
 
                 intflags |= Win32.MOUSEEVENTF_VIRTUALDESK;
             }

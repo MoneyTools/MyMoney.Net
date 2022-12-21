@@ -21,8 +21,7 @@ namespace Walkabout
 
     public partial class App : Application
     {
-
-        void MyApplicationStartup(object sender, StartupEventArgs e)
+        private void MyApplicationStartup(object sender, StartupEventArgs e)
         {
             Settings settings = null;
 
@@ -194,7 +193,7 @@ namespace Walkabout
         {
 
             // What's the process name of this application running
-            string applicationName = ((System.Windows.Application.ResourceAssembly).ManifestModule).Name;
+            string applicationName = System.Windows.Application.ResourceAssembly.ManifestModule.Name;
 
             // Strip the file extension
             applicationName = Path.GetFileNameWithoutExtension(applicationName);

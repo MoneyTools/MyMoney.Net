@@ -2,9 +2,9 @@
 
 namespace Walkabout.Tests.Wrappers
 {
-    class IncomeChartWrapper
+    internal class IncomeChartWrapper
     {
-        AutomationElement e;
+        private AutomationElement e;
 
         public IncomeChartWrapper(AutomationElement e)
         {

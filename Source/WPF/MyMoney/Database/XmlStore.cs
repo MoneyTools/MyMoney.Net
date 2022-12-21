@@ -13,9 +13,9 @@ namespace Walkabout.Data
 {
     public class XmlStore : IDatabase
     {
-        string filename;
-        string backup;
-        string password;
+        private string filename;
+        private string backup;
+        private string password;
 
         public XmlStore(string filename, string password)
         {
@@ -180,7 +180,7 @@ namespace Walkabout.Data
     /// </summary>
     public class BinaryXmlStore : XmlStore
     {
-        string filename;
+        private string filename;
 
         public BinaryXmlStore(string filename, string password)
             : base(filename, password)
@@ -335,24 +335,24 @@ namespace Walkabout.Data
 
     public class BinaryXmlWriter : XmlWriter
     {
-        Stream stream;
-        BinaryWriter writer;
-        XmlNamespaceManager mgr;
-        NameTable nameTable;
-        WriteState state = WriteState.Start;
+        private Stream stream;
+        private BinaryWriter writer;
+        private XmlNamespaceManager mgr;
+        private NameTable nameTable;
+        private WriteState state = WriteState.Start;
 
         #region Auto Namespaces
 
-        class XmlNamespaceDefinition
+        private class XmlNamespaceDefinition
         {
             public string Prefix;
             public string NamespaceUri;
         }
 
-        List<XmlNamespaceDefinition> namespaceStack = new List<XmlNamespaceDefinition>();
-        int namespacePos;
+        private List<XmlNamespaceDefinition> namespaceStack = new List<XmlNamespaceDefinition>();
+        private int namespacePos;
 
-        void PushNewNamespace(string prefix, string namespaceUri)
+        private void PushNewNamespace(string prefix, string namespaceUri)
         {
             XmlNamespaceDefinition def;
             if (this.namespacePos < this.namespaceStack.Count)
@@ -369,7 +369,7 @@ namespace Walkabout.Data
             this.namespacePos++;
         }
 
-        void SetNamespaceDefined(string prefix, string nsuri)
+        private void SetNamespaceDefined(string prefix, string nsuri)
         {
             for (int i = 0; i < this.namespacePos; i++)
             {
@@ -382,7 +382,7 @@ namespace Walkabout.Data
             }
         }
 
-        void WriteAutoNamespaces()
+        private void WriteAutoNamespaces()
         {
             if (this.namespacePos > 0)
             {
@@ -473,7 +473,7 @@ namespace Walkabout.Data
             {
                 this.EndStartTag(false);
             }
-            int outsize = ((count - index) * 4) / 3;
+            int outsize = (count - index) * 4 / 3;
             char[] chars = new char[outsize + 4];
             Convert.ToBase64CharArray(buffer, index, count, chars, 0);
             this.writer.Write((short)XmlNodeTypeToken.Base64);
@@ -596,8 +596,8 @@ namespace Walkabout.Data
             this.writer.Write(buffer, index, count);
         }
 
-        bool writingNamespace;
-        string prefix;
+        private bool writingNamespace;
+        private string prefix;
 
         public override void WriteStartAttribute(string prefix, string localName, string ns)
         {
@@ -780,24 +780,24 @@ namespace Walkabout.Data
 
     public class BinaryXmlReader : XmlReader
     {
-        string baseUri;
-        Stream stream;
-        BinaryXmlElement currentElement;
-        int attributePos; // position in MoveToNextAttribute
-        BinaryXmlAttribute currentAttribute; // in MoveToNextAttribute
-        object value;
-        List<BinaryXmlElement> elementStack = new List<BinaryXmlElement>();
-        int elementDepth;
-        bool isElementEmpty;
-        BinaryReader reader;
-        XmlNodeType nodeType = XmlNodeType.None;
-        ReadState state = ReadState.Initial;
-        XmlNodeTypeToken token = XmlNodeTypeToken.None;
-        XmlNameTable nameTable = new NameTable();
-        XmlNamespaceManager mgr;
-        BinaryXmlElement leafNode = new BinaryXmlElement();
+        private string baseUri;
+        private Stream stream;
+        private BinaryXmlElement currentElement;
+        private int attributePos; // position in MoveToNextAttribute
+        private BinaryXmlAttribute currentAttribute; // in MoveToNextAttribute
+        private object value;
+        private List<BinaryXmlElement> elementStack = new List<BinaryXmlElement>();
+        private int elementDepth;
+        private bool isElementEmpty;
+        private BinaryReader reader;
+        private XmlNodeType nodeType = XmlNodeType.None;
+        private ReadState state = ReadState.Initial;
+        private XmlNodeTypeToken token = XmlNodeTypeToken.None;
+        private XmlNameTable nameTable = new NameTable();
+        private XmlNamespaceManager mgr;
+        private BinaryXmlElement leafNode = new BinaryXmlElement();
 
-        class BinaryXmlAttribute
+        private class BinaryXmlAttribute
         {
             public string Prefix;
             public string Name;
@@ -806,7 +806,7 @@ namespace Walkabout.Data
             public XmlNodeTypeToken Token;
         }
 
-        class BinaryXmlElement
+        private class BinaryXmlElement
         {
             public string Prefix;
             public string Name;
@@ -1252,7 +1252,7 @@ namespace Walkabout.Data
             throw new NotImplementedException();
         }
 
-        int bufferPos;
+        private int bufferPos;
 
         public override int ReadContentAsBase64(byte[] buffer, int index, int count)
         {
@@ -1580,7 +1580,7 @@ namespace Walkabout.Data
                     a.Namespace = "http://www.w3.org/2000/xmlns/";
                     this.mgr.AddNamespace(a.Name, (string)a.Value);
                 }
-                else if ((string.IsNullOrEmpty(a.Prefix) && a.Name == "xmlns"))
+                else if (string.IsNullOrEmpty(a.Prefix) && a.Name == "xmlns")
                 {
                     a.Namespace = "http://www.w3.org/2000/xmlns/";
                     this.mgr.AddNamespace(string.Empty, (string)a.Value);
@@ -1589,7 +1589,7 @@ namespace Walkabout.Data
                 next = (XmlNodeTypeToken)this.reader.ReadInt16();// consume EndAttribute
             }
 
-            this.isElementEmpty = (next == XmlNodeTypeToken.EmptyEndStartTag);
+            this.isElementEmpty = next == XmlNodeTypeToken.EmptyEndStartTag;
         }
 
         private byte[] ReadBase64()

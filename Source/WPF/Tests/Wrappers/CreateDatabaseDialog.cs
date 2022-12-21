@@ -5,9 +5,9 @@ using Walkabout.Tests.Interop;
 
 namespace Walkabout.Tests.Wrappers
 {
-    class CreateDatabaseDialogWrapper
+    internal class CreateDatabaseDialogWrapper
     {
-        AutomationElement window;
+        private AutomationElement window;
 
         private CreateDatabaseDialogWrapper(AutomationElement e)
         {

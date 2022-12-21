@@ -20,9 +20,9 @@ namespace Walkabout.Controls
     /// </summary>
     public class SingleLineTextBlock : Control
     {
-        string text;
+        private string text;
 
-        class TextProperties
+        private class TextProperties
         {
             public FlowDirection FlowDirection;
             public TextAlignment TextAlignment;
@@ -37,8 +37,9 @@ namespace Walkabout.Controls
             public double PixelsPerDip;
             public Typeface Typeface;
         }
-        TextProperties _properties;
-        FormattedText _formatted;
+
+        private TextProperties _properties;
+        private FormattedText _formatted;
 
         public SingleLineTextBlock()
         {
@@ -83,7 +84,7 @@ namespace Walkabout.Controls
             ((SingleLineTextBlock)d).OnTextChanged();
         }
 
-        void OnTextChanged()
+        private void OnTextChanged()
         {
             this.text = this.Text;
             this._formatted = null;
@@ -97,7 +98,7 @@ namespace Walkabout.Controls
             base.OnVisualParentChanged(oldParent);
         }
 
-        void InvalidateAll()
+        private void InvalidateAll()
         {
             this._properties = null;
             this._formatted = null;

@@ -7,8 +7,8 @@ namespace Walkabout.Utilities
     /// </summary>
     public static class UiDispatcher
     {
-        static Dispatcher dispatcher;
-        static int uiThreadId;
+        private static Dispatcher dispatcher;
+        private static int uiThreadId;
 
         public static Dispatcher CurrentDispatcher
         {

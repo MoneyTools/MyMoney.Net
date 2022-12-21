@@ -6,10 +6,10 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 {
     public class MeasurementBlockEventArgs : EventArrivedEventArgs
     {
-        const int BeginEvent = 1;
-        const int EndEvent = 2;
-        const int StepEvent = 3;
-        const int MarkEvent = 4;
+        private const int BeginEvent = 1;
+        private const int EndEvent = 2;
+        private const int StepEvent = 3;
+        private const int MarkEvent = 4;
 
         public override void ParseUserData(uint eventId, BinaryReader reader)
         {
@@ -41,7 +41,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
         /// BinaryReader.ReadString doesn't work because it was written by native provider as a binary blob dumped from a pinned
         /// string buffer.  So the bytes were not written in the usual order matching BinaryWriter.Write string.
         /// </summary>
-        string ReadLittleEndianString(BinaryReader reader)
+        private string ReadLittleEndianString(BinaryReader reader)
         {
             StringBuilder sb = new StringBuilder();
             int next;

@@ -58,14 +58,12 @@ namespace Walkabout.Views.Controls
             }
         }
 
-
-
-        object selection;
+        private object selection;
         #endregion
 
         #region EVENTS
 
-        void OnBalanceChanged(object sender, ChangeEventArgs args)
+        private void OnBalanceChanged(object sender, ChangeEventArgs args)
         {
             this.ReloadTreeView();
         }
@@ -83,9 +81,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-
-
-        void OnTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void OnTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (SelectionChanged != null)
             {
@@ -93,7 +89,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
             {
@@ -103,8 +99,7 @@ namespace Walkabout.Views.Controls
         public event EventHandler MouseButtonBackwardChanged;
         public event EventHandler MouseButtonForwardChanged;
 
-
-        void OnMouseUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.XButton1 == MouseButtonState.Pressed)
             {
@@ -169,7 +164,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        bool EditProperties(RentBuilding a)
+        private bool EditProperties(RentBuilding a)
         {
             Walkabout.Dialogs.BuildingDialog dialog = new Dialogs.BuildingDialog(this.myMoney);
             dialog.TheBuilding = a;

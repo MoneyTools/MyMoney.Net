@@ -8,10 +8,10 @@ namespace Walkabout.Controls
 {
     public class Resizer : FrameworkElement
     {
-        Rect limit;
-        Rect bounds;
-        Rect initialBounds;
-        DispatcherTimer timer;
+        private Rect limit;
+        private Rect bounds;
+        private Rect initialBounds;
+        private DispatcherTimer timer;
 
         public Resizer()
         {
@@ -98,7 +98,7 @@ namespace Walkabout.Controls
             set { this.thumbSize = value; }
         }
 
-        Brush thumbBrush = Brushes.Navy;
+        private Brush thumbBrush = Brushes.Navy;
 
         public Brush ThumbBrush
         {
@@ -106,7 +106,7 @@ namespace Walkabout.Controls
             set { this.thumbBrush = value; }
         }
 
-        Brush borderBrush = Brushes.Navy;
+        private Brush borderBrush = Brushes.Navy;
 
         public Brush BorderBrush
         {
@@ -114,11 +114,10 @@ namespace Walkabout.Controls
             set { this.borderBrush = value; }
         }
 
-        static Brush SmokyGlassBrush = new SolidColorBrush(Color.FromArgb(0xA0, 0xe0, 0xe0, 0xff));
-        double thumbSize = 8;
-
-        double[] dashes = new double[] { 3, 3 };
-        double offset = 0;
+        private static Brush SmokyGlassBrush = new SolidColorBrush(Color.FromArgb(0xA0, 0xe0, 0xe0, 0xff));
+        private double thumbSize = 8;
+        private double[] dashes = new double[] { 3, 3 };
+        private double offset = 0;
 
         protected override void OnRender(DrawingContext drawingContext)
         {
@@ -156,10 +155,10 @@ namespace Walkabout.Controls
 
         }
 
-        enum Corner { None, Middle, TopLeft, TopMiddle, TopRight, MiddleLeft, MiddleRight, BottomLeft, BottomMiddle, BottomRight };
+        private enum Corner { None, Middle, TopLeft, TopMiddle, TopRight, MiddleLeft, MiddleRight, BottomLeft, BottomMiddle, BottomRight };
 
-        Corner dragging;
-        Point mouseDownPosition;
+        private Corner dragging;
+        private Point mouseDownPosition;
 
         protected override void OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -384,7 +383,7 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(this.bounds.Left + this.bounds.Width / 2 - this.thumbSize / 2, this.bounds.Top - this.thumbSize, this.thumbSize, this.thumbSize);
+                Rect result = new Rect(this.bounds.Left + (this.bounds.Width / 2) - (this.thumbSize / 2), this.bounds.Top - this.thumbSize, this.thumbSize, this.thumbSize);
                 result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }
@@ -402,7 +401,7 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(this.bounds.Left - this.thumbSize, this.bounds.Top + this.bounds.Height / 2 - this.thumbSize / 2, this.thumbSize, this.thumbSize);
+                Rect result = new Rect(this.bounds.Left - this.thumbSize, this.bounds.Top + (this.bounds.Height / 2) - (this.thumbSize / 2), this.thumbSize, this.thumbSize);
                 result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }
@@ -412,7 +411,7 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(this.bounds.Right, this.bounds.Top + this.bounds.Height / 2 - this.thumbSize / 2, this.thumbSize, this.thumbSize);
+                Rect result = new Rect(this.bounds.Right, this.bounds.Top + (this.bounds.Height / 2) - (this.thumbSize / 2), this.thumbSize, this.thumbSize);
                 result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }
@@ -432,7 +431,7 @@ namespace Walkabout.Controls
         {
             get
             {
-                Rect result = new Rect(this.bounds.Left + this.bounds.Width / 2 - this.thumbSize / 2, this.bounds.Bottom, this.thumbSize, this.thumbSize);
+                Rect result = new Rect(this.bounds.Left + (this.bounds.Width / 2) - (this.thumbSize / 2), this.bounds.Bottom, this.thumbSize, this.thumbSize);
                 result.Offset(-this.limit.Left, -this.limit.Top);
                 return result;
             }

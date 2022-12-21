@@ -402,7 +402,7 @@ namespace Walkabout
             this.BeginLoadDatabase();
         }
 
-        void OfxDownloadControl_SelectionChanged(object sender, OfxDocumentControlSelectionChangedEventArgs e)
+        private void OfxDownloadControl_SelectionChanged(object sender, OfxDocumentControlSelectionChangedEventArgs e)
         {
             IViewNavigator navigator = this;
             var data = e.Data;
@@ -412,29 +412,29 @@ namespace Walkabout
             }
         }
 
-        void OnShowOutputWindow(object sender, RoutedEventArgs e)
+        private void OnShowOutputWindow(object sender, RoutedEventArgs e)
         {
             this.ShowOutputWindow();
         }
 
-        void ShowOutputWindow()
+        private void ShowOutputWindow()
         {
             this.TabOutput.Visibility = System.Windows.Visibility.Visible;
             this.TabForGraphs.SelectedItem = this.TabOutput;
         }
 
-        void OnHideOutputWindow(object sender, RoutedEventArgs e)
+        private void OnHideOutputWindow(object sender, RoutedEventArgs e)
         {
             this.HideOutputWindow();
         }
 
-        void HideOutputWindow()
+        private void HideOutputWindow()
         {
             this.TabOutput.Visibility = System.Windows.Visibility.Collapsed;
             this.TabForGraphs.SelectedItem = this.TabTrends;
         }
 
-        void ClearOutput()
+        private void ClearOutput()
         {
             this.OutputView.Clear();
             this.HideOutputWindow();
@@ -445,7 +445,7 @@ namespace Walkabout
             this.OnHideOutputWindow(sender, e);
         }
 
-        void OnMainWindowLoaded(object sender, RoutedEventArgs e)
+        private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
         {
 #if PerformanceBlocks
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.Loaded))
@@ -467,12 +467,12 @@ namespace Walkabout
 #endif
         }
 
-        void TransactionView_QuickFilterChanged(object sender, EventArgs e)
+        private void TransactionView_QuickFilterChanged(object sender, EventArgs e)
         {
             this.SetChartsDirty();
         }
 
-        void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             // Log it to error window instead of crashing the app
             if (e.IsTerminating)
@@ -501,9 +501,9 @@ namespace Walkabout
         }
 
         // stop re-entrancy
-        bool handlingException;
+        private bool handlingException;
 
-        void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             if (this.handlingException)
             {
@@ -526,7 +526,7 @@ namespace Walkabout
             }
         }
 
-        bool HandleUnhandledException(object exceptionObject)
+        private bool HandleUnhandledException(object exceptionObject)
         {
             Exception ex = exceptionObject as Exception;
             string message = null;
@@ -582,7 +582,7 @@ namespace Walkabout
             }
         }
 
-        void StopTracking()
+        private void StopTracking()
         {
             using (this.tracker)
             {
@@ -600,7 +600,7 @@ namespace Walkabout
             }
         }
 
-        void StartTracking()
+        private void StartTracking()
         {
             this.tracker = new ChangeTracker(this.myMoney, this);
             this.tracker.DirtyChanged += new EventHandler(this.OnDirtyChanged);
@@ -612,7 +612,7 @@ namespace Walkabout
             this.myMoney.Changed += new EventHandler<ChangeEventArgs>(this.OnChangedUI);
         }
 
-        void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             MyMoney money = (MyMoney)e.NewValue;
             if (money != this.myMoney)
@@ -730,7 +730,7 @@ namespace Walkabout
             this.HideDownloadTab();
         }
 
-        void AfterLoadChecks()
+        private void AfterLoadChecks()
         {
             this.myMoney.BeginUpdate(this);
             try
@@ -779,12 +779,12 @@ namespace Walkabout
             this.CheckCrashLog();
         }
 
-        void OnStockDownloadComplete(object sender, EventArgs e)
+        private void OnStockDownloadComplete(object sender, EventArgs e)
         {
             this.settings.LastStockRequest = DateTime.Today;
         }
 
-        void CategoriesControl_SelectedTransactionChanged(object sender, EventArgs e)
+        private void CategoriesControl_SelectedTransactionChanged(object sender, EventArgs e)
         {
             bool isTransactionViewAlready = this.CurrentView is TransactionViewState;
             // This happens when there is an error budgeting a transaction, so we want to display the transaction so it can be fixed.
@@ -795,7 +795,7 @@ namespace Walkabout
             }
         }
 
-        void OnToolBoxFilterUpdated(object sender, string filter)
+        private void OnToolBoxFilterUpdated(object sender, string filter)
         {
             if (sender is CategoriesControl)
             {
@@ -818,11 +818,11 @@ namespace Walkabout
 
         #region Command Line
 
-        bool emptyWindow;
-        string newDatabaseName;
-        bool noSettings;
+        private bool emptyWindow;
+        private string newDatabaseName;
+        private bool noSettings;
 
-        void ParseCommandLine()
+        private void ParseCommandLine()
         {
             string[] args = Environment.GetCommandLineArgs();
             for (int i = 1, n = args.Length; i < n; i++)
@@ -867,7 +867,7 @@ namespace Walkabout
             }
         }
 
-        void ShowUsage()
+        private void ShowUsage()
         {
             MessageBoxEx.Show(@"Usage MyMoney.exe [options]
 
@@ -917,7 +917,7 @@ namespace Walkabout
         }
 
 #if DEBUG
-        int lastHandlerCount;
+        private int lastHandlerCount;
 #endif
 
         private void OnSelectionChangeFor_Account(object sender, EventArgs e)
@@ -1120,7 +1120,7 @@ namespace Walkabout
             set { this.EditingZone.Content = value; }
         }
 
-        Dictionary<Type, IView> cacheViews = new Dictionary<Type, IView>();
+        private Dictionary<Type, IView> cacheViews = new Dictionary<Type, IView>();
 
         /// <summary>
         /// Get or create a single instance of any IView implementation
@@ -1214,7 +1214,7 @@ namespace Walkabout
 
         #region Mouse & Keyboard Handling
 
-        IClipboardClient GetClipboardClient(IInputElement f)
+        private IClipboardClient GetClipboardClient(IInputElement f)
         {
             if (f == null)
             {
@@ -1271,7 +1271,7 @@ namespace Walkabout
             return null;
         }
 
-        void OnKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
+        private void OnKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
         {
         }
 
@@ -1458,7 +1458,7 @@ namespace Walkabout
 
         public bool HasDatabase { get { return this.database != null || this.isLoading; } }
 
-        void OnThemeChanged(string themeToApply)
+        private void OnThemeChanged(string themeToApply)
         {
             if (themeToApply == "Dark")
             {
@@ -1472,7 +1472,7 @@ namespace Walkabout
             }
         }
 
-        void LoadConfig()
+        private void LoadConfig()
         {
             if (!File.Exists(this.settings.ConfigFile) || this.noSettings)
             {
@@ -1512,7 +1512,7 @@ namespace Walkabout
             }
         }
 
-        void SaveConfig()
+        private void SaveConfig()
         {
             Settings s = this.settings;
             if (this.TransactionView.QueryPanel != null)
@@ -1569,7 +1569,7 @@ namespace Walkabout
             tgraph.SetGraphState(state);
         }
 
-        void SaveViewStateOfCurrentView()
+        private void SaveViewStateOfCurrentView()
         {
             IView view = this.CurrentView;
             if (view != null)
@@ -1582,12 +1582,11 @@ namespace Walkabout
             }
         }
 
-
-        class ViewCommand : Command
+        private class ViewCommand : Command
         {
-            MainWindow window;
-            ViewState state;
-            IView view;
+            private MainWindow window;
+            private ViewState state;
+            private IView view;
 
             public ViewState State { get { return this.state; } }
             public IView View { get { return this.view; } }
@@ -1734,7 +1733,7 @@ namespace Walkabout
 
         #region Caption
 
-        void UpdateCaption(string caption)
+        private void UpdateCaption(string caption)
         {
             this.caption = caption;
             string database = this.database != null ? Path.GetFileName(this.database.DatabasePath) : string.Empty;
@@ -1764,7 +1763,7 @@ namespace Walkabout
 
         private bool isLoading;
 
-        void BeginLoadDatabase()
+        private void BeginLoadDatabase()
         {
             this.Cursor = Cursors.Wait;
             try
@@ -2488,7 +2487,7 @@ namespace Walkabout
             }
         }
 
-        void OnDirtyChanged(object sender, EventArgs e)
+        private void OnDirtyChanged(object sender, EventArgs e)
         {
             if (this.isLoading) // ignore these.
             {
@@ -2593,7 +2592,7 @@ namespace Walkabout
             this.HideBalancePanel(e.Balanced, e.HasStatement);
         }
 
-        void HideBalancePanel(bool balanced, bool hasStatement)
+        private void HideBalancePanel(bool balanced, bool hasStatement)
         {
             if (this.balanceControl != null)
             {
@@ -2615,7 +2614,7 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
         }
 
-        AfterViewStateChangedEventArgs viewStateChanging;
+        private AfterViewStateChangedEventArgs viewStateChanging;
 
         private void OnAfterViewStateChanged(object sender, AfterViewStateChangedEventArgs e)
         {
@@ -3111,9 +3110,9 @@ namespace Walkabout
             this.HistoryChart.Selection = selection;
         }
 
-        bool generatingTrendGraph;
+        private bool generatingTrendGraph;
 
-        async void UpdateTransactionGraph(IEnumerable data, Account account, Category category)
+        private async void UpdateTransactionGraph(IEnumerable data, Account account, Category category)
         {
             if (account != null && (account.Type == AccountType.Retirement || account.Type == AccountType.Brokerage))
             {
@@ -3483,7 +3482,7 @@ namespace Walkabout
 
         #region Reports Menu        
 
-        void OnFlowDocumentViewClosed(object sender, EventArgs e)
+        private void OnFlowDocumentViewClosed(object sender, EventArgs e)
         {
             this.SetCurrentView<TransactionsView>();
         }
@@ -3850,7 +3849,7 @@ namespace Walkabout
 
         private void OnCommandCanOpenContainingFolder(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (this.database != null ? System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(this.database.DatabasePath)) : false);
+            e.CanExecute = this.database != null ? System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(this.database.DatabasePath)) : false;
         }
 
         private void OnCommandOpenContainingFolder(object sender, ExecutedRoutedEventArgs e)
@@ -4331,12 +4330,12 @@ namespace Walkabout
 
         #region ONLINE
 
-        void OnAccountsPanelShowTransfers(object sender, ChangeEventArgs e)
+        private void OnAccountsPanelShowTransfers(object sender, ChangeEventArgs e)
         {
             this.ShowTransfers((Account)e.Item);
         }
 
-        void OnAccountsPanelSyncAccount(object sender, ChangeEventArgs e)
+        private void OnAccountsPanelSyncAccount(object sender, ChangeEventArgs e)
         {
             this.SyncAccount((Account)e.Item);
         }
@@ -4353,9 +4352,9 @@ namespace Walkabout
             this.DoSync(accounts);
         }
 
-        bool isSynchronizing;
+        private bool isSynchronizing;
 
-        void DoSync(List<OnlineAccount> accounts)
+        private void DoSync(List<OnlineAccount> accounts)
         {
             this.isSynchronizing = true;
             try
@@ -4459,7 +4458,7 @@ namespace Walkabout
             this.StatusMessage.Content = string.Empty;
         }
 
-        ChangeListRequest changeList;
+        private ChangeListRequest changeList;
 
         /// <summary>
         ///  Check if version has changed, and if so show version update info.
@@ -4522,7 +4521,7 @@ namespace Walkabout
             }
         }
 
-        void OnInstallButtonClick(object sender, EventArgs e)
+        private void OnInstallButtonClick(object sender, EventArgs e)
         {
             if (!this.SaveIfDirty("Save your changes before installing new version?", null))
             {

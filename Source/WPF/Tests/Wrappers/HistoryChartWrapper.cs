@@ -2,9 +2,9 @@
 
 namespace Walkabout.Tests.Wrappers
 {
-    class HistoryChartWrapper
+    internal class HistoryChartWrapper
     {
-        AutomationElement e;
+        private AutomationElement e;
 
         public HistoryChartWrapper(AutomationElement e)
         {

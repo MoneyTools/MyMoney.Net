@@ -19,8 +19,8 @@ namespace Walkabout.Charts
             this.InitializeComponent();
         }
 
-        List<object> fields = null;
-        List<string> fieldLabels = null;
+        private List<object> fields = null;
+        private List<string> fieldLabels = null;
 
         internal void SetExpensesDistribution(int whatExpenseIsAtTheBottom)
         {

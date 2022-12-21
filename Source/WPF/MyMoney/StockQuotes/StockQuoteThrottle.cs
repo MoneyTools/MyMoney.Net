@@ -7,13 +7,13 @@ namespace Walkabout.StockQuotes
 {
     public class StockQuoteThrottle
     {
-        DateTime _lastCall = DateTime.MinValue;
-        int _callsThisMinute;
-        int _callsToday;
-        int _callsThisMonth;
-        string _filename;
-        object _sync = new object();
-        DelayedActions saveActions = new DelayedActions();
+        private DateTime _lastCall = DateTime.MinValue;
+        private int _callsThisMinute;
+        private int _callsToday;
+        private int _callsThisMonth;
+        private string _filename;
+        private object _sync = new object();
+        private DelayedActions saveActions = new DelayedActions();
 
         public StockQuoteThrottle()
         {

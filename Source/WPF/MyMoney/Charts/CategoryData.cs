@@ -11,11 +11,11 @@ namespace Walkabout.Charts
     /// </summary>
     public class CategoryData : INotifyPropertyChanged
     {
-        string name;
-        double total;
-        Color? color;
-        Brush background;
-        List<Transaction> transactions = new List<Transaction>();
+        private string name;
+        private double total;
+        private Color? color;
+        private Brush background;
+        private List<Transaction> transactions = new List<Transaction>();
 
         public CategoryData(Category c)
         {
@@ -54,9 +54,9 @@ namespace Walkabout.Charts
             }
         }
 
-        static bool IsSpecialCategory(string name)
+        private static bool IsSpecialCategory(string name)
         {
-            return (name == "Unknown" || name == "Xfer from Deleted Account" || name == "Xfer to Deleted Account");
+            return name == "Unknown" || name == "Xfer from Deleted Account" || name == "Xfer to Deleted Account";
         }
 
         public static Color GetColorFromCategoryName(string name)
@@ -113,7 +113,7 @@ namespace Walkabout.Charts
         // INotifyPropertyChanged event
         public event PropertyChangedEventHandler PropertyChanged;
 
-        void OnPropertyChanged(string name)
+        private void OnPropertyChanged(string name)
         {
             if (PropertyChanged != null)
             {

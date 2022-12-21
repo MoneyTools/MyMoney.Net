@@ -8,11 +8,11 @@ using System.Xml.Linq;
 
 namespace FindUnusedStyles
 {
-    class Program
+    internal class Program
     {
-        static XName emptyName;
+        private static XName emptyName;
 
-        static void PrintUsage()
+        private static void PrintUsage()
         {
             Console.WriteLine("Usage: FindUnusedStyles [--import dir]* dir");
             Console.WriteLine("Loads all .xaml files and reports any x:Key names that are unreferenced.");
@@ -20,7 +20,7 @@ namespace FindUnusedStyles
         }
 
         [STAThread]
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
             List<string> imports = new List<string>();
             string dir = null;
@@ -57,8 +57,7 @@ namespace FindUnusedStyles
             return 0;
         }
 
-
-        Dictionary<string, Type> cache = new Dictionary<string, Type>();
+        private Dictionary<string, Type> cache = new Dictionary<string, Type>();
 
         private void CacheWpfTypes()
         {
@@ -158,8 +157,8 @@ namespace FindUnusedStyles
             }
         }
 
-        SortedDictionary<string, XName> sysControlReferences = new SortedDictionary<string, XName>();
-        Dictionary<string, XElement> keyedResources = new Dictionary<string, XElement>();
+        private SortedDictionary<string, XName> sysControlReferences = new SortedDictionary<string, XName>();
+        private Dictionary<string, XElement> keyedResources = new Dictionary<string, XElement>();
 
         private XDocument LoadXaml(string xaml)
         {
@@ -174,13 +173,13 @@ namespace FindUnusedStyles
             return null;
         }
 
-        const string XmlNsUri = "http://www.w3.org/2000/xmlns/";
-        const string XamlNsUri = "http://schemas.microsoft.com/winfx/2006/xaml";
-        const string XamlTypeName = "{http://schemas.microsoft.com/winfx/2006/xaml}Type";
-        const string XamlStaticName = "{http://schemas.microsoft.com/winfx/2006/xaml}Static";
-        const string ClrNamespacePrefix = "clr-namespace:";
+        private const string XmlNsUri = "http://www.w3.org/2000/xmlns/";
+        private const string XamlNsUri = "http://schemas.microsoft.com/winfx/2006/xaml";
+        private const string XamlTypeName = "{http://schemas.microsoft.com/winfx/2006/xaml}Type";
+        private const string XamlStaticName = "{http://schemas.microsoft.com/winfx/2006/xaml}Static";
+        private const string ClrNamespacePrefix = "clr-namespace:";
 
-        XName QualifyName(string name, NamespaceScope scope)
+        private XName QualifyName(string name, NamespaceScope scope)
         {
             var parts = name.Split(':');
             if (parts.Length == 2)
@@ -546,7 +545,7 @@ namespace FindUnusedStyles
             }
         }
 
-        class BindingInfo
+        private class BindingInfo
         {
             public XName Path;
             public string RelativeSource;
@@ -560,7 +559,7 @@ namespace FindUnusedStyles
             public string Source;
         }
 
-        XName ParseResourceReference(string value, NamespaceScope scope)
+        private XName ParseResourceReference(string value, NamespaceScope scope)
         {
             value = value.Trim(BindingChars).Trim();
             string[] parts = value.Split(WhitespaceChars, StringSplitOptions.RemoveEmptyEntries);
@@ -624,7 +623,7 @@ namespace FindUnusedStyles
             return null;
         }
 
-        XName QualifyPath(string value, NamespaceScope scope)
+        private XName QualifyPath(string value, NamespaceScope scope)
         {
             if (value.StartsWith("("))
             {
@@ -642,7 +641,7 @@ namespace FindUnusedStyles
             return this.QualifyName(value, scope);
         }
 
-        BindingInfo ParseBinding(string value, NamespaceScope scope)
+        private BindingInfo ParseBinding(string value, NamespaceScope scope)
         {
             BindingInfo bindingInfo = new BindingInfo();
             value = value.Trim(BindingChars).Trim();
@@ -745,8 +744,8 @@ namespace FindUnusedStyles
             return bindingInfo;
         }
 
-        static char[] BindingChars = new char[] { '{', '}' };
-        static char[] WhitespaceChars = new char[] { ' ', '\t', '\r', '\n' };
+        private static char[] BindingChars = new char[] { '{', '}' };
+        private static char[] WhitespaceChars = new char[] { ' ', '\t', '\r', '\n' };
 
         private void CheckReferences(XName element, string value, NamespaceScope local, Styles localStyles)
         {
@@ -831,7 +830,7 @@ namespace FindUnusedStyles
             Console.ForegroundColor = saved;
         }
 
-        class NamespaceScope
+        private class NamespaceScope
         {
             public NamespaceScope Parent;
             public Dictionary<string, string> Namespaces = new Dictionary<string, string>();
@@ -862,7 +861,7 @@ namespace FindUnusedStyles
             }
         }
 
-        class StyleInfo
+        private class StyleInfo
         {
             public string FileName;
             public XElement Element;
@@ -871,13 +870,13 @@ namespace FindUnusedStyles
             public long RefCount;
         }
 
-        class Styles
+        private class Styles
         {
             public Styles Parent;
             public string FileName;
             public Dictionary<XName, StyleInfo> keys = new Dictionary<XName, StyleInfo>();
             public Dictionary<XName, Dictionary<XName, StyleInfo>> targetTypes = new Dictionary<XName, Dictionary<XName, StyleInfo>>();
-            Dictionary<string, Type> cache;
+            private Dictionary<string, Type> cache;
 
             public Styles(Dictionary<string, Type> cache) { this.cache = cache; }
 

@@ -14,10 +14,10 @@ namespace Walkabout.Setup
 {
     internal class ChangeInfoFormatter : Report
     {
-        string previousVersion;
-        XDocument doc;
-        FlowDocumentView view;
-        bool installButton;
+        private string previousVersion;
+        private XDocument doc;
+        private FlowDocumentView view;
+        private bool installButton;
 
         public event EventHandler InstallButtonClick;
 
@@ -176,7 +176,7 @@ namespace Walkabout.Setup
             return button;
         }
 
-        void OnInstallLatest(object sender, RoutedEventArgs e)
+        private void OnInstallLatest(object sender, RoutedEventArgs e)
         {
             this.OnInstallButtonClick();
         }

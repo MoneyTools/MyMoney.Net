@@ -17,7 +17,7 @@ namespace Walkabout.Dialogs
 
         public MyMoney Money { get; set; }
 
-        Account editingAccount = new Account();
+        private Account editingAccount = new Account();
 
         public Account EditingAccount
         {
@@ -27,9 +27,9 @@ namespace Walkabout.Dialogs
             }
         }
 
-        Account theAccount = new Account();
-        List<OnlineAccount> newOnlineAccounts = new List<OnlineAccount>();
-        ObservableCollection<object> onlineAccounts = new ObservableCollection<object>();
+        private Account theAccount = new Account();
+        private List<OnlineAccount> newOnlineAccounts = new List<OnlineAccount>();
+        private ObservableCollection<object> onlineAccounts = new ObservableCollection<object>();
 
         public Account TheAccount
         {
@@ -45,7 +45,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        const string NewLabel = "New...";
+        private const string NewLabel = "New...";
 
         public LoanDialog(MyMoney money, Account a)
         {
@@ -85,7 +85,7 @@ namespace Walkabout.Dialogs
 
 
         // Insert account in sorted order.
-        void InsertAccount(OnlineAccount oa)
+        private void InsertAccount(OnlineAccount oa)
         {
             for (int i = 0, n = this.onlineAccounts.Count; i < n; i++)
             {
@@ -99,7 +99,7 @@ namespace Walkabout.Dialogs
             this.onlineAccounts.Add(oa);
         }
 
-        OnlineAccount GetMatchingOnlineAccount(string name)
+        private OnlineAccount GetMatchingOnlineAccount(string name)
         {
             foreach (OnlineAccount oa in this.Money.OnlineAccounts.Items)
             {

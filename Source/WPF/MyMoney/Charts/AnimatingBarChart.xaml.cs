@@ -20,14 +20,14 @@ namespace LovettSoftware.Charts
     /// </summary>
     public partial class AnimatingBarChart : UserControl
     {
-        DelayedActions actions = new DelayedActions();
-        ColumnInfo tipColumn;
-        Point movePos;
-        ColumnInfo inside;
-        bool mouseOverAnimationCompleted = false;
-        Random rand = new Random(Environment.TickCount);
+        private DelayedActions actions = new DelayedActions();
+        private ColumnInfo tipColumn;
+        private Point movePos;
+        private ColumnInfo inside;
+        private bool mouseOverAnimationCompleted = false;
+        private Random rand = new Random(Environment.TickCount);
 
-        class ColumnInfo
+        private class ColumnInfo
         {
             public TextBlock Label;
             public Rect Bounds;
@@ -38,10 +38,9 @@ namespace LovettSoftware.Charts
 
         // this is maintained for hit testing only since the mouse events don't seem to be 
         // working on the animated Rectangles.
-        List<ColumnInfo> bars = new List<ColumnInfo>();
-
-        List<Polygon> axisLines = new List<Polygon>();
-        List<TextBlock> axisLabels = new List<TextBlock>();
+        private List<ColumnInfo> bars = new List<ColumnInfo>();
+        private List<Polygon> axisLines = new List<Polygon>();
+        private List<TextBlock> axisLabels = new List<TextBlock>();
 
         public AnimatingBarChart()
         {
@@ -208,7 +207,7 @@ namespace LovettSoftware.Charts
             }
         }
 
-        void ResetVisuals()
+        private void ResetVisuals()
         {
             this.ChartCanvas.Children.Clear();
             this.bars.Clear();
@@ -300,7 +299,7 @@ namespace LovettSoftware.Charts
 
         }
 
-        ColumnInfo FindColumn(Point pos)
+        private ColumnInfo FindColumn(Point pos)
         {
             for (int i = 0, n = this.bars.Count; i < n; i++)
             {
@@ -373,7 +372,7 @@ namespace LovettSoftware.Charts
             }
         }
 
-        void OnExitColumn()
+        private void OnExitColumn()
         {
             if (this.inside != null && this.mouseOverAnimationCompleted)
             {
@@ -551,7 +550,7 @@ namespace LovettSoftware.Charts
             double columnHeight = seriesHeight / numSeries;
             columnHeight -= innerGap;
 
-            double range = (max - min);
+            double range = max - min;
             double zero = 0;
             if (min < 0)
             {
@@ -598,7 +597,7 @@ namespace LovettSoftware.Charts
                     {
                         continue;
                     }
-                    double s = (dataValue.Value * w / range);
+                    double s = dataValue.Value * w / range;
                     Color color = dataValue.Color.Value;
 
                     ColumnInfo info = this.bars[col + (index * columns)];
@@ -638,7 +637,7 @@ namespace LovettSoftware.Charts
                             xpos = x - labelGap - size.Width;
                         }
 
-                        Rect bounds = new Rect() { X = xpos, Y = y + (seriesHeight - size.Height) / 2, Width = size.Width, Height = size.Height };
+                        Rect bounds = new Rect() { X = xpos, Y = y + ((seriesHeight - size.Height) / 2), Width = size.Width, Height = size.Height };
                         Rect inflated = bounds;
                         inflated.Inflate(this.FontSize / 2, 0);
                         if (inflated.IntersectsWith(previousLabel))
@@ -736,18 +735,18 @@ namespace LovettSoftware.Charts
             double columnWidth = seriesWidth / numSeries;
             columnWidth -= innerGap;
 
-            double range = (max - min);
+            double range = max - min;
             double zero = 0;
             if (min < 0)
             {
-                zero = (Math.Abs(min) * h / range);
+                zero = Math.Abs(min) * h / range;
             }
 
             // layout the axis labels and lines
             int i = 0;
             for (var r = min; r <= max; r += spacing)
             {
-                double ypos = (h - zero) - (r * h / range);
+                double ypos = h - zero - (r * h / range);
                 var label = this.axisLabels[i];
                 var line = this.axisLines[i];
                 var mid = label.DesiredSize.Height / 2;
@@ -784,7 +783,7 @@ namespace LovettSoftware.Charts
                     {
                         continue;
                     }
-                    double s = (dataValue.Value * h / range);
+                    double s = dataValue.Value * h / range;
                     Color color = dataValue.Color.Value;
 
                     var start = TimeSpan.FromMilliseconds(index * this.AnimationRippleMilliseconds);
@@ -823,7 +822,7 @@ namespace LovettSoftware.Charts
                             ypos = y + labelGap;
                         }
 
-                        Rect bounds = new Rect() { X = x + (seriesWidth - size.Width) / 2, Y = ypos, Width = size.Width, Height = size.Height };
+                        Rect bounds = new Rect() { X = x + ((seriesWidth - size.Width) / 2), Y = ypos, Width = size.Width, Height = size.Height };
                         Rect inflated = bounds;
                         inflated.Inflate(this.FontSize / 2, 0);
                         if (inflated.IntersectsWith(previousLabel))

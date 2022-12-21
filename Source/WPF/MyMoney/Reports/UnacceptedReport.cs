@@ -10,7 +10,7 @@ namespace Walkabout.Reports
     /// </summary>
     public class UnacceptedReport : Report
     {
-        MyMoney myMoney;
+        private MyMoney myMoney;
 
         public UnacceptedReport(MyMoney money)
         {

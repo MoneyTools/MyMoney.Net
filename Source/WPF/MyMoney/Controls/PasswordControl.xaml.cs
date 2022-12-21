@@ -15,7 +15,7 @@ namespace Walkabout.Controls
             Loaded += this.PasswordControl_Loaded;
         }
 
-        void PasswordControl_Loaded(object sender, RoutedEventArgs e)
+        private void PasswordControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.PasswordField.Name = this.Name;
             this.Name += "Control";

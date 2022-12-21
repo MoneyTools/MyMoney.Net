@@ -481,8 +481,7 @@ namespace Walkabout.Configuration
             this.persist = save;
         }
 
-
-        string _fileName;
+        private string _fileName;
 
         public string ConfigFile
         {
@@ -490,9 +489,8 @@ namespace Walkabout.Configuration
             set { this._fileName = value; }
         }
 
-        XmlDocument doc = new XmlDocument();
-
-        Hashtable map = new Hashtable();
+        private XmlDocument doc = new XmlDocument();
+        private Hashtable map = new Hashtable();
 
         public System.Xml.Schema.XmlSchema GetSchema()
         {
@@ -720,7 +718,7 @@ namespace Walkabout.Configuration
                     }
                     else if (t == typeof(string))
                     {
-                        w.WriteElementString(key, ((string)value));
+                        w.WriteElementString(key, (string)value);
                     }
                     else if (t == typeof(string[]))
                     {
@@ -1091,7 +1089,7 @@ namespace Walkabout.Configuration
             return state;
         }
 
-        static int ReadInt(XmlReader r, int defValue)
+        private static int ReadInt(XmlReader r, int defValue)
         {
             try
             {
@@ -1104,7 +1102,7 @@ namespace Walkabout.Configuration
             }
         }
 
-        static bool ReadBoolean(XmlReader r, bool defValue)
+        private static bool ReadBoolean(XmlReader r, bool defValue)
         {
             try
             {
@@ -1117,8 +1115,7 @@ namespace Walkabout.Configuration
             }
         }
 
-
-        static DateTime ReadDateTime(XmlReader r, DateTime defValue)
+        private static DateTime ReadDateTime(XmlReader r, DateTime defValue)
         {
             try
             {

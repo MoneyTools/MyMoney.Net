@@ -24,7 +24,7 @@ namespace Walkabout.Reports
 
     internal class CashFlowColumns
     {
-        Dictionary<string, CashFlowCell> columns = new Dictionary<string, CashFlowCell>();
+        private Dictionary<string, CashFlowCell> columns = new Dictionary<string, CashFlowCell>();
 
         public void AddValue(string key, Transaction data, decimal amount)
         {
@@ -91,16 +91,16 @@ namespace Walkabout.Reports
     //=========================================================================================
     public class CashFlowReport : Report
     {
-        FlowDocumentView view;
-        MyMoney myMoney;
-        bool byYear;
-        int fiscalYearStart;
-        DateTime startDate;
-        DateTime endDate;
-        Dictionary<Category, CashFlowColumns> byCategory;
-        Dictionary<string, int> monthMap;
-        List<string> columns;
-        IServiceProvider serviceProvider;
+        private FlowDocumentView view;
+        private MyMoney myMoney;
+        private bool byYear;
+        private int fiscalYearStart;
+        private DateTime startDate;
+        private DateTime endDate;
+        private Dictionary<Category, CashFlowColumns> byCategory;
+        private Dictionary<string, int> monthMap;
+        private List<string> columns;
+        private IServiceProvider serviceProvider;
 
         public CashFlowReport(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart)
         {
@@ -170,7 +170,7 @@ namespace Walkabout.Reports
             {
                 return this.IsExpense(c.ParentCategory);
             }
-            return (c.Type == CategoryType.Expense);
+            return c.Type == CategoryType.Expense;
         }
 
         private bool IsIncome(Category c)
@@ -179,7 +179,7 @@ namespace Walkabout.Reports
             {
                 return this.IsIncome(c.ParentCategory);
             }
-            return (c.Type == CategoryType.Income || c.Type == CategoryType.Savings);
+            return c.Type == CategoryType.Income || c.Type == CategoryType.Savings;
         }
 
         private bool IsUnknown(Category c)
@@ -194,7 +194,7 @@ namespace Walkabout.Reports
             {
                 return this.IsInvestment(c.ParentCategory);
             }
-            return (c.Type == CategoryType.Investments);
+            return c.Type == CategoryType.Investments;
         }
 
         public void Regenerate()
@@ -223,7 +223,7 @@ namespace Walkabout.Reports
             DateTime start = this.startDate;
             while (start < this.endDate)
             {
-                DateTime end = (this.byYear) ? start.AddYears(1) : start.AddMonths(1);
+                DateTime end = this.byYear ? start.AddYears(1) : start.AddMonths(1);
                 string columnName = start.ToString("MM/yyyy");
                 if (this.byYear)
                 {
@@ -276,7 +276,7 @@ namespace Walkabout.Reports
             byYearMonthCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
             byYearMonthCombo.Items.Add("by years");
             byYearMonthCombo.Items.Add("by month");
-            byYearMonthCombo.SelectedIndex = (this.byYear ? 0 : 1);
+            byYearMonthCombo.SelectedIndex = this.byYear ? 0 : 1;
             byYearMonthCombo.SelectionChanged += this.OnByYearMonthChanged;
 
             heading.Inlines.Add(new InlineUIContainer(byYearMonthCombo));
@@ -385,7 +385,7 @@ namespace Walkabout.Reports
             return button;
         }
 
-        string GetCategoryCaption(Category c)
+        private string GetCategoryCaption(Category c)
         {
             return c.Name;
         }
@@ -580,8 +580,8 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        CashFlowCell mouseDownCell;
-        Point downPos;
+        private CashFlowCell mouseDownCell;
+        private Point downPos;
 
         private void OnReportCellMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

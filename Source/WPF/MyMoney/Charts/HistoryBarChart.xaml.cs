@@ -20,8 +20,8 @@ namespace Walkabout.Charts
 
     public class ColumnLabel
     {
-        string label;
-        HistoryChartColumn data;
+        private string label;
+        private HistoryChartColumn data;
 
         public HistoryChartColumn Data
         {
@@ -80,10 +80,10 @@ namespace Walkabout.Charts
     public partial class HistoryBarChart : UserControl
     {
         private DelayedActions delayedActions = new DelayedActions();
-        ObservableCollection<HistoryChartColumn> collection = new ObservableCollection<HistoryChartColumn>();
-        bool invert;
-        int fiscalYearStart;
-        HistoryChartColumn selection;
+        private ObservableCollection<HistoryChartColumn> collection = new ObservableCollection<HistoryChartColumn>();
+        private bool invert;
+        private int fiscalYearStart;
+        private HistoryChartColumn selection;
 
         public HistoryBarChart()
         {
@@ -108,12 +108,12 @@ namespace Walkabout.Charts
             return tip;
         }
 
-        void HistoryBarChart_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void HistoryBarChart_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             this.DelayedUpdate();
         }
 
-        void DelayedUpdate()
+        private void DelayedUpdate()
         {
             this.delayedActions.StartDelayedAction("update", this.UpdateChart, TimeSpan.FromMilliseconds(1));
         }
@@ -146,7 +146,7 @@ namespace Walkabout.Charts
 
         public event EventHandler SelectionChanged;
 
-        void OnSelectionChanged()
+        private void OnSelectionChanged()
         {
             if (SelectionChanged != null)
             {
@@ -168,7 +168,7 @@ namespace Walkabout.Charts
             }
         }
 
-        void RangeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RangeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.selection != null && e.AddedItems.Count > 0 && e.AddedItems[0] is HistoryRange newRange)
             {
@@ -177,7 +177,7 @@ namespace Walkabout.Charts
             this.UpdateChart();
         }
 
-        bool updating;
+        private bool updating;
 
         public void UpdateChart()
         {

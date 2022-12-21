@@ -18,8 +18,8 @@ namespace Walkabout.Views
     /// </summary>
     public partial class FlowDocumentView : UserControl, IView
     {
-        IReport report;
-        IReportWriter writer;
+        private IReport report;
+        private IReportWriter writer;
 
         public FlowDocumentView()
         {
@@ -48,7 +48,7 @@ namespace Walkabout.Views
             this.ButtonStrip.Children.Add(control);
         }
 
-        bool generatingReport;
+        private bool generatingReport;
 
         public async Task Generate(IReport report)
         {
@@ -126,7 +126,7 @@ namespace Walkabout.Views
             }
         }
 
-        IServiceProvider serviceProvider;
+        private IServiceProvider serviceProvider;
 
         public IServiceProvider ServiceProvider
         {
@@ -143,7 +143,7 @@ namespace Walkabout.Views
             get { return string.Empty; }
         }
 
-        object selectedRow;
+        private object selectedRow;
 
         public object SelectedRow
         {
@@ -168,8 +168,8 @@ namespace Walkabout.Views
             return new ViewState();
         }
 
-        FindManager findManager;
-        string quickFilter;
+        private FindManager findManager;
+        private string quickFilter;
 
         public string QuickFilter
         {
@@ -256,7 +256,7 @@ namespace Walkabout.Views
             this.QuickFilter = filter;
         }
 
-        bool resetting;
+        private bool resetting;
 
         private void OnToggleExpandAll_Checked(object sender, RoutedEventArgs e)
         {
@@ -289,7 +289,8 @@ namespace Walkabout.Views
 
             this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
         }
-        void ResetExpandAllToggleButton()
+
+        private void ResetExpandAllToggleButton()
         {
             this.resetting = true;
             this.ToggleExpandAll.IsEnabled = (this.writer != null) ? this.writer.CanExpandCollapse : false;
@@ -305,7 +306,7 @@ namespace Walkabout.Views
     /// <summary>
     /// Todo: serialize this if we can, so restart can show the same report.
     /// </summary>
-    class ReportViewState : ViewState
+    internal class ReportViewState : ViewState
     {
         public IReport report;
 

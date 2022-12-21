@@ -54,8 +54,8 @@ namespace Walkabout.Utilities
             double variance = 0;
             foreach (double d in values)
             {
-                double diff = (d - mean);
-                variance += (diff * diff);
+                double diff = d - mean;
+                variance += diff * diff;
             }
             return variance;
         }

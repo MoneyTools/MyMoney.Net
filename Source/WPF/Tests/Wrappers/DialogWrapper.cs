@@ -64,7 +64,7 @@ namespace Walkabout.Tests.Wrappers
             get
             {
 
-                return this.State == WindowInteractionState.ReadyForUserInteraction || this.State == WindowInteractionState.Running && !this.HasModalChildWindow;
+                return this.State == WindowInteractionState.ReadyForUserInteraction || (this.State == WindowInteractionState.Running && !this.HasModalChildWindow);
             }
         }
 

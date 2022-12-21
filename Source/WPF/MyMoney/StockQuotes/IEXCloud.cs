@@ -10,22 +10,23 @@ using System.Threading.Tasks;
 
 namespace Walkabout.StockQuotes
 {
-    class IEXCloud : IStockQuoteService
+    internal class IEXCloud : IStockQuoteService
     {
-        static string FriendlyName = "https://iexcloud.io/";
+        private static string FriendlyName = "https://iexcloud.io/";
+
         // See https://iextrading.com/developer/docs/#batch-requests
-        const string address = "https://cloud.iexapis.com/stable/stock/market/batch?symbols={0}&types=quote&range=1m&last=1&token={1}";
-        char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
-        StockServiceSettings _settings;
-        HashSet<string> _pending;
-        int _completed;
-        Thread _downloadThread;
-        HttpWebRequest _current;
-        bool _cancelled;
-        bool _suspended;
-        string _logPath;
-        bool _downloadError;
-        StockQuoteThrottle _throttle;
+        private const string address = "https://cloud.iexapis.com/stable/stock/market/batch?symbols={0}&types=quote&range=1m&last=1&token={1}";
+        private char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
+        private StockServiceSettings _settings;
+        private HashSet<string> _pending;
+        private int _completed;
+        private Thread _downloadThread;
+        private HttpWebRequest _current;
+        private bool _cancelled;
+        private bool _suspended;
+        private string _logPath;
+        private bool _downloadError;
+        private StockQuoteThrottle _throttle;
 
         public IEXCloud(StockServiceSettings settings, string logPath)
         {

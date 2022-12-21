@@ -35,7 +35,7 @@ namespace Walkabout.Views.Controls
 
         public event EventHandler<OfxDocumentControlSelectionChangedEventArgs> SelectionChanged;
 
-        void OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             OfxDownloadData selection = e.NewValue as OfxDownloadData;
             if (selection != null && selection.Added.Count > 0)
@@ -93,7 +93,7 @@ namespace Walkabout.Views.Controls
             thread.Start();
         }
 
-        void OnSyncUpdate(int min, int max, int value, OfxDownloadEventArgs e)
+        private void OnSyncUpdate(int min, int max, int value, OfxDownloadEventArgs e)
         {
             this.Progress.Minimum = min;
             this.Progress.Maximum = max;
@@ -113,7 +113,7 @@ namespace Walkabout.Views.Controls
             this.OfxEventTree.ItemsSource = e.Entries;
         }
 
-        int PreprocessEntries(IEnumerable<OfxDownloadData> list)
+        private int PreprocessEntries(IEnumerable<OfxDownloadData> list)
         {
             int count = 0;
             foreach (OfxDownloadData item in list)
@@ -129,7 +129,7 @@ namespace Walkabout.Views.Controls
             return count;
         }
 
-        void PreprocessEntry(OfxDownloadData entry)
+        private void PreprocessEntry(OfxDownloadData entry)
         {
             switch (entry.OfxError)
             {
@@ -182,7 +182,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        string tryAgainCaption;
+        private string tryAgainCaption;
 
         private void OnDetailsClick(object sender, RoutedEventArgs e)
         {
@@ -326,7 +326,7 @@ h2 { font-size: 12pt; }";
             }
         }
 
-        OfxMfaChallengeRequest challenge;
+        private OfxMfaChallengeRequest challenge;
 
         private void GetMFAChallenge(OfxDownloadData ofxData)
         {
@@ -336,7 +336,7 @@ h2 { font-size: 12pt; }";
             this.challenge.BeginMFAChallenge();
         }
 
-        void OnChallengeCompleted(object sender, EventArgs e)
+        private void OnChallengeCompleted(object sender, EventArgs e)
         {
             OfxMfaChallengeRequest req = (OfxMfaChallengeRequest)sender;
 

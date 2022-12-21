@@ -6,8 +6,8 @@ namespace Walkabout.Database
 {
     public class MoneyDataObject : System.Windows.IDataObject
     {
-        PersistentObject data;
-        string xml;
+        private PersistentObject data;
+        private string xml;
 
         public MoneyDataObject(PersistentObject data)
         {
@@ -48,15 +48,15 @@ namespace Walkabout.Database
 
         public bool GetDataPresent(Type format)
         {
-            return (format == typeof(string) ||
-                    format == typeof(MoneyDataObject));
+            return format == typeof(string) ||
+                    format == typeof(MoneyDataObject);
         }
 
         public bool GetDataPresent(string format)
         {
-            return (format == DataFormats.Text ||
+            return format == DataFormats.Text ||
                 format == DataFormats.GetDataFormat("XML").Name ||
-                format == DataFormats.GetDataFormat(typeof(MoneyDataObject).FullName).Name);
+                format == DataFormats.GetDataFormat(typeof(MoneyDataObject).FullName).Name;
         }
 
         public bool GetDataPresent(string format, bool autoConvert)

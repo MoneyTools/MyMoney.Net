@@ -58,14 +58,14 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
         }
 
-        double zoom = 1;
+        private double zoom = 1;
         public double Zoom
         {
             get { return this.zoom; }
             set { this.zoom = value; this.zoomToFit = false; this.InvalidateMeasure(); }
         }
 
-        bool zoomToFit = true;
+        private bool zoomToFit = true;
         public bool ZoomToFit
         {
             get { return this.zoomToFit; }
@@ -125,7 +125,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             return geometry;
         }
 
-        Size renderSize;
+        private Size renderSize;
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
@@ -158,9 +158,9 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             return base.ArrangeOverride(arrangeBounds);
         }
 
-        List<Point> scaled;
-        const double LeftMargin = 10;
-        const double TopMargin = 40;
+        private List<Point> scaled;
+        private const double LeftMargin = 10;
+        private const double TopMargin = 40;
 
         private void LayoutGraph(Size size)
         {
@@ -404,7 +404,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
         }
 
-        static Point CursorHotSpot = new Point(-26, 0);
+        private static Point CursorHotSpot = new Point(-26, 0);
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
@@ -414,8 +414,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             if (closest >= 0)
             {
                 Point p = this.scaled[closest];
-                Canvas.SetLeft(this.Dot, p.X - this.Dot.Width / 2);
-                Canvas.SetTop(this.Dot, p.Y - this.Dot.Height / 2);
+                Canvas.SetLeft(this.Dot, p.X - (this.Dot.Width / 2));
+                Canvas.SetTop(this.Dot, p.Y - (this.Dot.Height / 2));
                 this.Dot.Visibility = System.Windows.Visibility.Visible;
             }
             base.OnMouseMove(e);
@@ -430,7 +430,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         #region Hover Tips
 
-        int FindClosestPoint(MouseEventArgs e)
+        private int FindClosestPoint(MouseEventArgs e)
         {
             int closest = -1;
             if (this.scaled != null)
@@ -454,7 +454,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             return closest;
         }
 
-        void OnHover(object sender, MouseEventArgs e)
+        private void OnHover(object sender, MouseEventArgs e)
         {
             this.Connector.Visibility = System.Windows.Visibility.Hidden;
             this.Dot.Visibility = System.Windows.Visibility.Hidden;
@@ -482,8 +482,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                                 this.Connector.Y2 = p.Y;
                                 this.Connector.Visibility = System.Windows.Visibility.Visible;
 
-                                Canvas.SetLeft(this.Dot, p.X - this.Dot.Width / 2);
-                                Canvas.SetTop(this.Dot, p.Y - this.Dot.Height / 2);
+                                Canvas.SetLeft(this.Dot, p.X - (this.Dot.Width / 2));
+                                Canvas.SetTop(this.Dot, p.Y - (this.Dot.Height / 2));
                                 this.Dot.Visibility = System.Windows.Visibility.Visible;
                             }
                             catch
@@ -503,7 +503,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             throw new NotImplementedException();
         }
 
-        Grid GetPopupContent(int index)
+        private Grid GetPopupContent(int index)
         {
             Grid content = null;
 
@@ -538,7 +538,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             return content;
         }
 
-        void AddRow(Grid grid, string label, string value)
+        private void AddRow(Grid grid, string label, string value)
         {
             int row = grid.RowDefinitions.Count;
             grid.RowDefinitions.Add(new RowDefinition());

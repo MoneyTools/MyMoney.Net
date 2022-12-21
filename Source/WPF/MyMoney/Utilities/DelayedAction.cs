@@ -11,7 +11,7 @@ namespace Walkabout.Utilities
     /// </summary>
     public class DelayedActions
     {
-        Dictionary<string, DelayedAction> pending = new Dictionary<string, DelayedAction>();
+        private Dictionary<string, DelayedAction> pending = new Dictionary<string, DelayedAction>();
 
         public void StartDelayedAction(string name, Action action, TimeSpan delay)
         {
@@ -44,12 +44,11 @@ namespace Walkabout.Utilities
             }
         }
 
-
-        class DelayedAction
+        private class DelayedAction
         {
-            System.Threading.Timer delayTimer;
-            Action delayedAction;
-            uint startTime;
+            private System.Threading.Timer delayTimer;
+            private Action delayedAction;
+            private uint startTime;
 
             /// <summary>
             /// Start a count down with the given delay, and fire the given action when it reaches zero.

@@ -4,10 +4,10 @@ using System.Windows.Automation;
 
 namespace Walkabout.Tests.Wrappers
 {
-    class DownloadDetailsWrapper
+    internal class DownloadDetailsWrapper
     {
-        AutomationElement panel;
-        AutomationElement tree;
+        private AutomationElement panel;
+        private AutomationElement tree;
 
         public DownloadDetailsWrapper(AutomationElement panel)
         {
@@ -42,9 +42,9 @@ namespace Walkabout.Tests.Wrappers
         }
     }
 
-    class DownloadedOnlineAccountWrapper
+    internal class DownloadedOnlineAccountWrapper
     {
-        AutomationElement treeitem;
+        private AutomationElement treeitem;
 
         public DownloadedOnlineAccountWrapper(AutomationElement treeitem)
         {
@@ -75,9 +75,9 @@ namespace Walkabout.Tests.Wrappers
         }
     }
 
-    class DownloadedAccountWrapper
+    internal class DownloadedAccountWrapper
     {
-        AutomationElement treeitem;
+        private AutomationElement treeitem;
 
         public DownloadedAccountWrapper(AutomationElement treeitem)
         {

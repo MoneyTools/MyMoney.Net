@@ -13,10 +13,10 @@ namespace Walkabout.Charts
     /// </summary>
     public partial class ChartLegend : UserControl
     {
-        DelayedActions actions = new DelayedActions();
-        ControlTemplate swatchTemplate = null;
+        private DelayedActions actions = new DelayedActions();
+        private ControlTemplate swatchTemplate = null;
 
-        class Row
+        private class Row
         {
             public ToggleButton button;
             public TextBlock label;
@@ -24,7 +24,7 @@ namespace Walkabout.Charts
             public ChartDataValue item;
         }
 
-        List<Row> elements = new List<Row>();
+        private List<Row> elements = new List<Row>();
 
         public ChartLegend()
         {

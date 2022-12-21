@@ -498,7 +498,7 @@ namespace Walkabout.Data
         public virtual bool DropTable(string name)
         {
             object result = this.ExecuteScalar("DROP TABLE '" + name + "'");
-            return (result != null);
+            return result != null;
         }
 
 
@@ -515,9 +515,9 @@ namespace Walkabout.Data
 
         #region IDatabase
 
-        int progressMax;
-        int progressLastReport;
-        int progressValue;
+        private int progressMax;
+        private int progressLastReport;
+        private int progressValue;
 
         private void IncrementProgress(string name)
         {
@@ -586,7 +586,7 @@ namespace Walkabout.Data
             return money;
         }
 
-        SqlTransaction transaction;
+        private SqlTransaction transaction;
 
         public void Save(MyMoney money)
         {
@@ -937,7 +937,7 @@ namespace Walkabout.Data
             }
         }
 
-        static string DBString(string s)
+        private static string DBString(string s)
         {
             if (s == null)
             {
@@ -947,7 +947,7 @@ namespace Walkabout.Data
             return s.Replace("'", "''").Replace("\r", "\\r").Replace("\n", "\\n");
         }
 
-        static string TwoDigit(int i)
+        private static string TwoDigit(int i)
         {
             if (i < 10)
             {
@@ -957,7 +957,7 @@ namespace Walkabout.Data
             return i.ToString();
         }
 
-        static string DBDateTime(DateTime dt)
+        private static string DBDateTime(DateTime dt)
         {
             if (dt == DateTime.MinValue)
             {
@@ -969,7 +969,7 @@ namespace Walkabout.Data
             }
         }
 
-        static string DBNullableDateTime(DateTime? ndt)
+        private static string DBNullableDateTime(DateTime? ndt)
         {
             if (!ndt.HasValue)
             {
@@ -989,7 +989,7 @@ namespace Walkabout.Data
             }
         }
 
-        static string DBGuid(SqlGuid guid)
+        private static string DBGuid(SqlGuid guid)
         {
             if (guid.IsNull)
             {
@@ -999,7 +999,7 @@ namespace Walkabout.Data
             return "'" + guid.ToString() + "'";
         }
 
-        static string DBDecimal(decimal value)
+        private static string DBDecimal(decimal value)
         {
             return "'" + value.ToString("G", CultureInfo.InvariantCulture) + "'";
         }
@@ -2335,7 +2335,7 @@ namespace Walkabout.Data
 
 
         #region TABLE STOCK SPLITS
-        void ReadStockSplits(StockSplits splits, MyMoney money)
+        private void ReadStockSplits(StockSplits splits, MyMoney money)
         {
             splits.Clear();
             IDataReader reader = this.ExecuteReader("SELECT Id,Date,Security,Numerator,Denominator FROM StockSplits");
@@ -3134,7 +3134,7 @@ namespace Walkabout.Data
         public virtual bool TableExists(string tableName)
         {
             object result = this.ExecuteScalar("select * from INFORMATION_SCHEMA.tables where table_name = '" + tableName + "'");
-            return (result != null);
+            return result != null;
         }
 
         /// <summary>
@@ -3225,7 +3225,7 @@ namespace Walkabout.Data
     }
 
     // This is a fake SQL type so we can differentiate between "char" and "nchar"
-    class SqlAscii
+    internal class SqlAscii
     {
     }
 
@@ -3263,9 +3263,9 @@ namespace Walkabout.Data
 
     public class DataError
     {
-        long id;
-        int sid;
-        string msg;
+        private long id;
+        private int sid;
+        private string msg;
 
         public DataError(long id, string error)
         {

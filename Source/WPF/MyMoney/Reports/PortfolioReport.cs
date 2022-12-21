@@ -21,20 +21,20 @@ namespace Walkabout.Reports
     //=========================================================================================
     public class PortfolioReport : Report
     {
-        MyMoney myMoney;
-        Account account;
-        FlowDocumentReportWriter flowwriter;
-        CostBasisCalculator calc;
-        IServiceProvider serviceProvider;
-        FlowDocumentView view;
-        Paragraph mouseDownPara;
-        Point downPos;
-        DateTime reportDate;
-        StockQuoteCache cache;
-        SecurityGroup selectedGroup;
-        AccountGroup accountGroup;
-        Random rand = new Random(Environment.TickCount);
-        bool generating;
+        private MyMoney myMoney;
+        private Account account;
+        private FlowDocumentReportWriter flowwriter;
+        private CostBasisCalculator calc;
+        private IServiceProvider serviceProvider;
+        private FlowDocumentView view;
+        private Paragraph mouseDownPara;
+        private Point downPos;
+        private DateTime reportDate;
+        private StockQuoteCache cache;
+        private SecurityGroup selectedGroup;
+        private AccountGroup accountGroup;
+        private Random rand = new Random(Environment.TickCount);
+        private bool generating;
 
         public event EventHandler<SecurityGroup> DrillDown;
 
@@ -99,8 +99,8 @@ namespace Walkabout.Reports
             this.downPos = e.GetPosition(this.view);
         }
 
-        decimal totalMarketValue;
-        decimal totalGainLoss;
+        private decimal totalMarketValue;
+        private decimal totalGainLoss;
 
         private void WriteSummaryRow(IReportWriter writer, Color c, String col1, String col2, String col3)
         {
@@ -393,7 +393,7 @@ namespace Walkabout.Reports
             return caption;
         }
 
-        bool IsInvestmentAccount(Account a)
+        private bool IsInvestmentAccount(Account a)
         {
             return a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement;
         }
@@ -851,7 +851,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            decimal percent = costBasis == 0 ? 0 : (gainLoss / costBasis) * 100;
+            decimal percent = costBasis == 0 ? 0 : gainLoss / costBasis * 100;
             writer.WriteNumber(percent.ToString("N0"));
             writer.EndCell();
 

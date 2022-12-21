@@ -9,8 +9,8 @@ namespace Walkabout.Data
 {
     public class CsvStore : IDatabase
     {
-        string fileName;
-        IEnumerable rows;
+        private string fileName;
+        private IEnumerable rows;
 
         public CsvStore(string fileName, IEnumerable rows)
         {

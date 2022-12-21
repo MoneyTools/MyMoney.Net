@@ -2,7 +2,7 @@
 
 namespace Walkabout.Tests.Wrappers
 {
-    class AccountPickerWrapper : DialogWrapper
+    internal class AccountPickerWrapper : DialogWrapper
     {
         internal AccountPickerWrapper(AutomationElement e)
                : base(e)

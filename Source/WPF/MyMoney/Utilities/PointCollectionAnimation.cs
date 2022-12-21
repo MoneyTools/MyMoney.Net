@@ -106,10 +106,10 @@ namespace Walkabout.Utilities
             get { return (bool)this.GetValue(IsCumulativeProperty); }
         }
 
-        PointCollection ptsDst1 = new PointCollection();
-        PointCollection ptsDst2 = new PointCollection();
-        PointCollection ptsTo = new PointCollection();
-        bool flip;
+        private PointCollection ptsDst1 = new PointCollection();
+        private PointCollection ptsDst2 = new PointCollection();
+        private PointCollection ptsTo = new PointCollection();
+        private bool flip;
 
 
         protected override PointCollection GetCurrentValueCore(
@@ -151,8 +151,8 @@ namespace Walkabout.Utilities
             {
                 double fromX = (i < ptsFrom.Count) ? ptsFrom[i].X : 0;
                 double fromY = (i < ptsFrom.Count) ? ptsFrom[i].Y : 0;
-                ptsDst.Add(new Point((1 - progress) * fromX + progress * this.ptsTo[i].X,
-                                     (1 - progress) * fromY + progress * this.ptsTo[i].Y));
+                ptsDst.Add(new Point(((1 - progress) * fromX) + (progress * this.ptsTo[i].X),
+                                     ((1 - progress) * fromY) + (progress * this.ptsTo[i].Y)));
             }
 
             // If IsAdditive, add the base values to ptsDst

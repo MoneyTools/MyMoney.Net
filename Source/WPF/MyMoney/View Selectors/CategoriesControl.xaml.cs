@@ -87,7 +87,7 @@ namespace Walkabout.Views.Controls
 
         #region PROPERTIES
 
-        MyMoney money;
+        private MyMoney money;
 
         public MyMoney MyMoney
         {
@@ -150,11 +150,11 @@ namespace Walkabout.Views.Controls
 
         #region DataContext
 
-        bool insideUpdateRoots;
-        CategoryBalance total;
-        string filterCategory;
+        private bool insideUpdateRoots;
+        private CategoryBalance total;
+        private string filterCategory;
 
-        void UpdateRoots()
+        private void UpdateRoots()
         {
             if (this.insideUpdateRoots)
             {
@@ -275,8 +275,7 @@ namespace Walkabout.Views.Controls
             return newFilteredList;
         }
 
-
-        bool AddRootIfOneOrMoreChildMatchFilder(Category rootCategory, Category category, List<Category> newFilteredList)
+        private bool AddRootIfOneOrMoreChildMatchFilder(Category rootCategory, Category category, List<Category> newFilteredList)
         {
 
             if (category.HasSubcategories)
@@ -300,7 +299,7 @@ namespace Walkabout.Views.Controls
             return false;
         }
 
-        void UpdateBalance()
+        private void UpdateBalance()
         {
             if (this.total != null)
             {
@@ -325,7 +324,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void SyncCollections(ObservableCollection<Category> newList, ObservableCollection<Category> master)
+        private void SyncCollections(ObservableCollection<Category> newList, ObservableCollection<Category> master)
         {
             HashSet<Category> masterLookup = new HashSet<Category>(master);
             HashSet<Category> newLookup = new HashSet<Category>(newList);
@@ -365,12 +364,12 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnTreeViewLoaded(object sender, RoutedEventArgs e)
+        private void OnTreeViewLoaded(object sender, RoutedEventArgs e)
         {
             this.ExpandGroups();
         }
 
-        void ExpandGroups()
+        private void ExpandGroups()
         {
             foreach (CategoryGroup g in this.treeView.Items)
             {
@@ -432,7 +431,7 @@ namespace Walkabout.Views.Controls
 
         /// <summary>
         /// Returns true if this item was collapsed and is now expanded.
-        bool ExpandThisItem(ItemsControl parent, object item)
+        private bool ExpandThisItem(ItemsControl parent, object item)
         {
             TreeViewItem childNode = parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
             if (childNode != null && !childNode.IsExpanded)
@@ -448,7 +447,7 @@ namespace Walkabout.Views.Controls
             return false;
         }
 
-        bool SelectThisItem(ItemsControl parent, object item)
+        private bool SelectThisItem(ItemsControl parent, object item)
         {
             TreeViewItem childItem = parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
             if (childItem != null)
@@ -545,9 +544,9 @@ namespace Walkabout.Views.Controls
 
         public event EventHandler SelectedTransactionChanged;
 
-        void OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            Category dataBoundItemTreeview = (this.treeView.SelectedItem as Category);
+            Category dataBoundItemTreeview = this.treeView.SelectedItem as Category;
             if (dataBoundItemTreeview != null)
             {
                 if (SelectionChanged != null)
@@ -555,7 +554,7 @@ namespace Walkabout.Views.Controls
                     SelectionChanged(this, EventArgs.Empty);
                 }
             }
-            CategoryGroup group = (this.treeView.SelectedItem as CategoryGroup);
+            CategoryGroup group = this.treeView.SelectedItem as CategoryGroup;
             if (group != null)
             {
                 if (GroupSelectionChanged != null)
@@ -606,7 +605,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnSelectedTransactionChanged(IEnumerable<Transaction> selection)
+        private void OnSelectedTransactionChanged(IEnumerable<Transaction> selection)
         {
             this.SelectedTransactions = selection;
             if (SelectedTransactionChanged != null)
@@ -615,7 +614,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (this.treeView.ItemsSource == null)
             {
@@ -642,7 +641,7 @@ namespace Walkabout.Views.Controls
 
         #region Clipboard Support
 
-        static void CopyToClipboard(Category c)
+        private static void CopyToClipboard(Category c)
         {
             if (c != null)
             {
@@ -722,7 +721,7 @@ namespace Walkabout.Views.Controls
             this.SetCurrentItemInEditMode();
         }
 
-        void ExpandAll(ItemsControl items, bool expand)
+        private void ExpandAll(ItemsControl items, bool expand)
         {
             ItemContainerGenerator itemContainerGenerator = items.ItemContainerGenerator;
 
@@ -745,8 +744,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-
-        void ShowDetails()
+        private void ShowDetails()
         {
             ShowDetails(this.MyMoney, this.Selected);
         }
@@ -777,7 +775,7 @@ namespace Walkabout.Views.Controls
             this.MyMoney.EndUpdate();
         }
 
-        Account GetCategoryFund(Category c)
+        private Account GetCategoryFund(Category c)
         {
             Account fund = this.MyMoney.Accounts.FindCategoryFund(c);
             if (fund == null)
@@ -791,11 +789,10 @@ namespace Walkabout.Views.Controls
 
         #region DragDrop
 
-        DragAndDrop dragDropSupport;
-        string dragDropformatNameForCategory = "MyMoneyCategory";
+        private DragAndDrop dragDropSupport;
+        private string dragDropformatNameForCategory = "MyMoneyCategory";
 
-
-        Walkabout.Utilities.DragDropSource OnDragDropObjectSource(object source)
+        private Walkabout.Utilities.DragDropSource OnDragDropObjectSource(object source)
         {
             if (this.IsEditing)
             {
@@ -827,7 +824,7 @@ namespace Walkabout.Views.Controls
             return visual;
         }
 
-        DragDropTarget OnDragDropObjectTarget(object source, object target, DragDropEffects dropEfffect)
+        private DragDropTarget OnDragDropObjectTarget(object source, object target, DragDropEffects dropEfffect)
         {
             if (this.IsEditing)
             {
@@ -905,7 +902,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void Merge(Category source, Category target)
+        private void Merge(Category source, Category target)
         {
             var sourceTransactions = this.MyMoney.Transactions.GetTransactionsByCategory(source, null);
             foreach (Transaction t in sourceTransactions)
@@ -932,8 +929,8 @@ namespace Walkabout.Views.Controls
 
         #region EDIT RENAMING
 
-        TextBox editorForRenaming;
-        Category categoryBeingRenamed;
+        private TextBox editorForRenaming;
+        private Category categoryBeingRenamed;
 
         public bool IsEditing
         {
@@ -960,7 +957,7 @@ namespace Walkabout.Views.Controls
             e.CanExecute = this.Selected != null;
         }
 
-        void OnRenameNode_StopEditing()
+        private void OnRenameNode_StopEditing()
         {
             this.editorForRenaming = null;
             if (this.categoryBeingRenamed != null)
@@ -969,7 +966,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnRenameNode_CommitAndStopEditing()
+        private void OnRenameNode_CommitAndStopEditing()
         {
             if (this.editorForRenaming != null)
             {

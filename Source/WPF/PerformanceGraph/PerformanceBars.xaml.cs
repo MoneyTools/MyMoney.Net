@@ -15,13 +15,14 @@ namespace Microsoft.VisualStudio.PerformanceGraph
     /// </summary>
     public partial class PerformanceBars : UserControl
     {
-        double pixelsPerLabel = 50; // 50 pixels per label on the X-Axis.
-        long frequency;
+        private double pixelsPerLabel = 50; // 50 pixels per label on the X-Axis.
+        private long frequency;
+
         // one tick mark is 1 second or 'frequency' ticks       
         // zoom=2 means twice as many ticks per tick mark (which means we zoomed out).
         // zoom=0.5 means half as many (which means we zoomed in).
-        double zoom = 1;
-        HoverGesture gesture;
+        private double zoom = 1;
+        private HoverGesture gesture;
 
         public PerformanceBars()
         {
@@ -32,7 +33,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         public Legend Legend { get; set; }
 
-        class BeginEndEvent
+        private class BeginEndEvent
         {
             public PerformanceEventArrivedEventArgs Begin;
             public PerformanceEventArrivedEventArgs End;
@@ -61,13 +62,12 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
         }
 
-        const int BeginEvent = 1;
-        const int EndEvent = 2;
-
-        List<PerformanceEventArrivedEventArgs> rawdata;
-        List<BeginEndEvent> data;
-        long start; // earliest timestamp
-        long end; // last timestamp + duration of event.
+        private const int BeginEvent = 1;
+        private const int EndEvent = 2;
+        private List<PerformanceEventArrivedEventArgs> rawdata;
+        private List<BeginEndEvent> data;
+        private long start; // earliest timestamp
+        private long end; // last timestamp + duration of event.
 
         public IEnumerable<PerformanceEventArrivedEventArgs> Data
         {
@@ -91,7 +91,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
         }
 
-        void FindMatchingPairs()
+        private void FindMatchingPairs()
         {
             this.data = new List<BeginEndEvent>();
             Dictionary<PerformanceEventArrivedEventArgsKey, PerformanceEventArrivedEventArgs> open = new Dictionary<PerformanceEventArrivedEventArgsKey, PerformanceEventArrivedEventArgs>();
@@ -123,8 +123,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
         }
 
-        const double HorizontalMargin = 10;
-        Size renderSize;
+        private const double HorizontalMargin = 10;
+        private Size renderSize;
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
@@ -146,7 +146,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                     return new Size(0, 0);
                 }
 
-                double ticksPerLabel = (this.zoom * this.frequency);
+                double ticksPerLabel = this.zoom * this.frequency;
                 double scale = this.pixelsPerLabel / ticksPerLabel;
 
                 double width = (this.end - this.start) * scale;
@@ -196,24 +196,23 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
         }
 
-        bool zoomToFit = true;
+        private bool zoomToFit = true;
         public bool ZoomToFit
         {
             get { return this.zoomToFit; }
             set { this.zoomToFit = value; this.InvalidateMeasure(); }
         }
 
-        List<Color> colors = new List<Color>(new Color[] {
+        private List<Color> colors = new List<Color>(new Color[] {
             Colors.Green,
             Colors.Blue,
             Colors.Red,
             Colors.Navy,
             Colors.Teal,
             Colors.Violet });
+        private Random randColors = new Random();
 
-        Random randColors = new Random();
-
-        Color GetColor(int i)
+        private Color GetColor(int i)
         {
             while (i >= this.colors.Count)
             {
@@ -222,11 +221,10 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             return this.colors[i];
         }
 
-        Rect extent = new Rect(0, 0, 0, 0);
+        private Rect extent = new Rect(0, 0, 0, 0);
+        private Dictionary<PerformanceEventArrivedEventArgsKey, Tuple<int, Color>> legendColors = new Dictionary<PerformanceEventArrivedEventArgsKey, Tuple<int, Color>>();
 
-        Dictionary<PerformanceEventArrivedEventArgsKey, Tuple<int, Color>> legendColors = new Dictionary<PerformanceEventArrivedEventArgsKey, Tuple<int, Color>>();
-
-        void PrepareLegend()
+        private void PrepareLegend()
         {
             this.Legend.Clear();
             this.legendColors = new Dictionary<PerformanceEventArrivedEventArgsKey, Tuple<int, Color>>();
@@ -261,7 +259,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
             long span = this.end - this.start; // ticks
 
-            double ticksPerLabel = (this.zoom * this.frequency);
+            double ticksPerLabel = this.zoom * this.frequency;
             double scale = this.pixelsPerLabel / ticksPerLabel;
 
             if (this.ZoomToFit)
@@ -296,8 +294,8 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 Tuple<int, Color> style = this.legendColors[key];
                 color = new SolidColorBrush(style.Item2);
 
-                double y = 20 + style.Item1 * 22;
-                double x = HorizontalMargin + (begin.Timestamp - this.start) * (double)scale;
+                double y = 20 + (style.Item1 * 22);
+                double x = HorizontalMargin + ((begin.Timestamp - this.start) * (double)scale);
                 double w = (e.Timestamp - begin.Timestamp) * (double)scale;
                 Rect bounds = new Rect(x, y, w, 20);
                 maxy = Math.Max(maxy, y + 20);
@@ -351,7 +349,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         }
 
-        void OnHover(object sender, MouseEventArgs e)
+        private void OnHover(object sender, MouseEventArgs e)
         {
             Point pos = e.GetPosition(this);
             foreach (double inflation in new double[] { 0, 2, 5, 10, 20 })
@@ -370,7 +368,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
         }
 
-        Grid GetPopupContent(BeginEndEvent evt)
+        private Grid GetPopupContent(BeginEndEvent evt)
         {
             Grid content = new Grid();
             content.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
@@ -399,7 +397,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             return content;
         }
 
-        void AddRow(Grid grid, string label, string value)
+        private void AddRow(Grid grid, string label, string value)
         {
             int row = grid.RowDefinitions.Count;
             grid.RowDefinitions.Add(new RowDefinition());

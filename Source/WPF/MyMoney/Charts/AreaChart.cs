@@ -25,19 +25,19 @@ namespace LovettSoftware.Charts
     /// </summary>
     public class AreaChart : Grid
     {
-        NumberFormatInfo nfi;
-        ChartData data;
-        Size controlSize = new Size(1000, 200);
-        double graphMin = 0;
-        double graphMax = 0;
-        double graphWidth = 0;
-        List<Geometry> geometries = new List<Geometry>();
-        ScaleTransform scale;
-        TransformGroup transform;
-        Shape pointer;
-        Border tooltip;
-        ChartDataSeries selectedSeries;
-        StackPanel legend;
+        private NumberFormatInfo nfi;
+        private ChartData data;
+        private Size controlSize = new Size(1000, 200);
+        private double graphMin = 0;
+        private double graphMax = 0;
+        private double graphWidth = 0;
+        private List<Geometry> geometries = new List<Geometry>();
+        private ScaleTransform scale;
+        private TransformGroup transform;
+        private Shape pointer;
+        private Border tooltip;
+        private ChartDataSeries selectedSeries;
+        private StackPanel legend;
 
         public AreaChart()
         {
@@ -81,8 +81,7 @@ namespace LovettSoftware.Charts
             }
         }
 
-
-        void Relayout()
+        private void Relayout()
         {
             this.HidePointer();
             this.Children.Clear();
@@ -110,7 +109,7 @@ namespace LovettSoftware.Charts
             return result;
         }
 
-        void TransformGraph()
+        private void TransformGraph()
         {
             this.transform = new TransformGroup();
             double height = this.graphMax - this.graphMin;
@@ -132,7 +131,7 @@ namespace LovettSoftware.Charts
 
         public ChartDataSeries SelectedSeries { get { return this.selectedSeries; } set { this.selectedSeries = value; this.OnSelectedSeriesChanged(); } }
 
-        void UpdatePointer(Point pos)
+        private void UpdatePointer(Point pos)
         {
             if (this.data != null && this.data.Series.Count > 0 && this.scale != null && this.scale.ScaleX > 0)
             {
@@ -143,7 +142,7 @@ namespace LovettSoftware.Charts
 
                 Point legendPos = this.TransformToDescendant(this.legend).Transform(pos);
                 Rect legendArea = new Rect(0, 0, this.legend.ActualWidth, this.legend.ActualHeight);
-                bool insideLegend = (legendArea.Contains(legendPos));
+                bool insideLegend = legendArea.Contains(legendPos);
 
                 if (this.pointer == null)
                 {
@@ -249,7 +248,7 @@ namespace LovettSoftware.Charts
             throw new NotImplementedException();
         }
 
-        void HidePointer()
+        private void HidePointer()
         {
             this.Selected = null;
             if (this.pointer != null)
@@ -277,7 +276,7 @@ namespace LovettSoftware.Charts
             base.OnMouseMove(e);
         }
 
-        void ShowAreaGraph()
+        private void ShowAreaGraph()
         {
             this.graphMin = 0;
             this.graphMax = 0;
@@ -306,7 +305,7 @@ namespace LovettSoftware.Charts
             this.Children.Add(this.legend);
         }
 
-        void PopulateTheChart(StackPanel legend)
+        private void PopulateTheChart(StackPanel legend)
         {
             this.selectedSeries = null;
 
@@ -374,7 +373,7 @@ namespace LovettSoftware.Charts
             }
         }
 
-        void AddLengenEntry(StackPanel legend, ChartDataSeries s, Path shape)
+        private void AddLengenEntry(StackPanel legend, ChartDataSeries s, Path shape)
         {
             StackPanel legendEntry = new StackPanel();
             legendEntry.Margin = new Thickness(2);
@@ -404,7 +403,7 @@ namespace LovettSoftware.Charts
             legendEntry.Children.Add(label);
         }
 
-        void OnLegendEntryMouseEnter(object sender, MouseEventArgs e)
+        private void OnLegendEntryMouseEnter(object sender, MouseEventArgs e)
         {
             StackPanel legendEntry = (StackPanel)sender;
             legendEntry.Background = new SolidColorBrush(Color.FromArgb(0x40, 0x00, 0x00, 0x00));
@@ -416,7 +415,7 @@ namespace LovettSoftware.Charts
             legendEntry.Background = Brushes.Transparent;
         }
 
-        void OnSelectLegendEntry(object sender, MouseButtonEventArgs e)
+        private void OnSelectLegendEntry(object sender, MouseButtonEventArgs e)
         {
             // bring this legend entry to the front so user can see item values.
             StackPanel legendEntry = (StackPanel)sender;
@@ -459,7 +458,7 @@ namespace LovettSoftware.Charts
 
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        void AddSeries(Grid grid, ChartDataSeries s, double availableHeight)
+        private void AddSeries(Grid grid, ChartDataSeries s, double availableHeight)
         {
             int index = 0;
             // Add the actual grid columns
@@ -484,14 +483,13 @@ namespace LovettSoftware.Charts
 
     public class ChartColumn : StackPanel
     {
-        ChartDataValue value;
-        Rectangle r;
-        double currentValue;
-        double availableHeight;
-        double range;
-        TextBlock vtext;
-
-        static DependencyProperty ColumnValueProperty = DependencyProperty.Register("ColumnValue", typeof(double), typeof(ChartColumn));
+        private ChartDataValue value;
+        private Rectangle r;
+        private double currentValue;
+        private double availableHeight;
+        private double range;
+        private TextBlock vtext;
+        private static DependencyProperty ColumnValueProperty = DependencyProperty.Register("ColumnValue", typeof(double), typeof(ChartColumn));
 
         public ChartColumn(ChartDataValue cv, NumberFormatInfo nfi, Color c1, double colWidth, double availableHeight, double range)
         {
@@ -559,7 +557,7 @@ namespace LovettSoftware.Charts
             set
             {
                 this.currentValue = value;
-                double height = (Math.Abs(value) * this.availableHeight) / this.range;
+                double height = Math.Abs(value) * this.availableHeight / this.range;
                 this.r.Height = height;
             }
         }
@@ -580,9 +578,8 @@ namespace LovettSoftware.Charts
 
     static public class ChartColors
     {
-
-        static IList<Color> colors;
-        static Random r;
+        private static IList<Color> colors;
+        private static Random r;
 
         public static Color GetColor(int i)
         {

@@ -12,7 +12,7 @@ namespace Walkabout.Controls
 
         public event RoutedEventHandler FilterChanged;
 
-        ListCollectionView view;
+        private ListCollectionView view;
 
         protected override void OnItemsSourceChanged(System.Collections.IEnumerable oldValue, System.Collections.IEnumerable newValue)
         {
@@ -39,7 +39,7 @@ namespace Walkabout.Controls
             }
         }
 
-        void OnEditKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private void OnEditKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             TextBox box = (TextBox)sender;
             string filter = box.Text;
@@ -62,7 +62,7 @@ namespace Walkabout.Controls
             get; set;
         }
 
-        void SetFilter(string text)
+        private void SetFilter(string text)
         {
             this.Filter = text;
             var e = new RoutedEventArgs(FilterChangedEvent);

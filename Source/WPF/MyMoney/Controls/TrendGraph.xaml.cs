@@ -36,16 +36,16 @@ namespace Walkabout.Views.Controls
     /// </summary>
     public partial class TrendGraph : UserControl
     {
-        CalendarRange range = CalendarRange.Annually;
-        int years = 1;
-        DateTime start;
-        DateTime end;
-        bool yearToDate;
-        bool showAll;
-        int series = 1;
-        IServiceProvider sp;
-        DelayedActions delayedActions = new DelayedActions();
-        Random rand = new Random(Environment.TickCount);
+        private CalendarRange range = CalendarRange.Annually;
+        private int years = 1;
+        private DateTime start;
+        private DateTime end;
+        private bool yearToDate;
+        private bool showAll;
+        private int series = 1;
+        private IServiceProvider sp;
+        private DelayedActions delayedActions = new DelayedActions();
+        private Random rand = new Random(Environment.TickCount);
 
         public TrendGraph()
         {
@@ -230,7 +230,7 @@ namespace Walkabout.Views.Controls
             this.GenerateGraph();
         }
 
-        static DateTime Step(DateTime start, CalendarRange range, int years, int direction)
+        private static DateTime Step(DateTime start, CalendarRange range, int years, int direction)
         {
             switch (range)
             {
@@ -256,14 +256,14 @@ namespace Walkabout.Views.Controls
             return start;
         }
 
-        CalendarRange[] mouseWheelDateSteps = {
+        private CalendarRange[] mouseWheelDateSteps = {
             0,
             CalendarRange.Monthly,
             CalendarRange.SemiAnnually,
             CalendarRange.Annually
             };
 
-        void TrendGraph_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void TrendGraph_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (e.Delta != 0)
             {
@@ -319,15 +319,15 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        IGraphGenerator generator;
-        List<TrendValue> data = null;
-        ChartData chartData;
+        private IGraphGenerator generator;
+        private List<TrendValue> data = null;
+        private ChartData chartData;
 
         public void GenerateGraph()
         {
             this.chartData = new ChartData();
 
-            TimeSpan span = (this.end - this.start);
+            TimeSpan span = this.end - this.start;
             int days = span.Days;
 
             if (this.generator != null)
@@ -403,15 +403,15 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        uint ToUint(string s)
+        private uint ToUint(string s)
         {
             uint v = 0;
             uint.TryParse(s, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out v);
             return v;
         }
 
-        TrendGraphSeries selected;
-        NumberFormatInfo nfi = new NumberFormatInfo();
+        private TrendGraphSeries selected;
+        private NumberFormatInfo nfi = new NumberFormatInfo();
 
         private TrendGraphSeries AddSeries(DateTime start, DateTime end, Color color)
         {
@@ -421,7 +421,7 @@ namespace Walkabout.Views.Controls
             this.nfi.NumberDecimalDigits = 2;
             this.nfi.CurrencyNegativePattern = 0;
 
-            TimeSpan span = (end - start);
+            TimeSpan span = end - start;
             int days = span.Days;
             if (days > 360)
             {
@@ -479,7 +479,7 @@ namespace Walkabout.Views.Controls
             return s;
         }
 
-        void AddDatum(TrendValue v, DateTime start, DateTime end, IList<ChartDataValue> timeData)
+        private void AddDatum(TrendValue v, DateTime start, DateTime end, IList<ChartDataValue> timeData)
         {
             // for this math to work, we have to ignore "time" in the dates.
             start = start.Date;
@@ -495,7 +495,7 @@ namespace Walkabout.Views.Controls
             return;
         }
 
-        void OnYearToDate(object sender, RoutedEventArgs e)
+        private void OnYearToDate(object sender, RoutedEventArgs e)
         {
             this.yearToDate = !this.yearToDate;
             this.showAll = false;
@@ -504,7 +504,7 @@ namespace Walkabout.Views.Controls
             this.GenerateGraph();
         }
 
-        void OnNext(object sender, RoutedEventArgs e)
+        private void OnNext(object sender, RoutedEventArgs e)
         {
             if (this.range == CalendarRange.Annually)
             {
@@ -521,7 +521,7 @@ namespace Walkabout.Views.Controls
             this.GenerateGraph();
         }
 
-        void OnPrevious(object sender, RoutedEventArgs e)
+        private void OnPrevious(object sender, RoutedEventArgs e)
         {
             if (this.range == CalendarRange.Annually)
             {
@@ -539,7 +539,7 @@ namespace Walkabout.Views.Controls
             this.GenerateGraph();
         }
 
-        void OnZoomIn(object sender, RoutedEventArgs e)
+        private void OnZoomIn(object sender, RoutedEventArgs e)
         {
             if (this.range > CalendarRange.Daily)
             {
@@ -559,7 +559,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnZoomOut(object sender, RoutedEventArgs e)
+        private void OnZoomOut(object sender, RoutedEventArgs e)
         {
             if (this.range == CalendarRange.Annually)
             {
@@ -576,7 +576,7 @@ namespace Walkabout.Views.Controls
             this.GenerateGraph();
         }
 
-        void OnSetRange(object sender, RoutedEventArgs e)
+        private void OnSetRange(object sender, RoutedEventArgs e)
         {
             ReportRangeDialog frm = new ReportRangeDialog();
             frm.Title = "Graph Range";
@@ -597,13 +597,13 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnAddSeries(object sender, RoutedEventArgs e)
+        private void OnAddSeries(object sender, RoutedEventArgs e)
         {
             this.series++;
             this.GenerateGraph();
         }
 
-        void OnRemoveSeries(object sender, RoutedEventArgs e)
+        private void OnRemoveSeries(object sender, RoutedEventArgs e)
         {
             if (this.series > 1)
             {
@@ -612,7 +612,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void Pin()
+        private void Pin()
         {
             if (this.end > DateTime.Today)
             {
@@ -701,7 +701,7 @@ namespace Walkabout.Views.Controls
 
     public class TrendGraphSeries : ChartDataSeries
     {
-        DateTime start;
+        private DateTime start;
 
         public TrendGraphSeries(string title)
             : base(title)
@@ -713,7 +713,8 @@ namespace Walkabout.Views.Controls
             get { return this.start; }
             set { this.start = value; }
         }
-        DateTime end;
+
+        private DateTime end;
 
         public DateTime End
         {

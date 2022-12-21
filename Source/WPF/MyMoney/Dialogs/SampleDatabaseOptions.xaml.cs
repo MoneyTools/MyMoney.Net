@@ -34,8 +34,8 @@ namespace Walkabout.Dialogs
                     }
                 }
 
-                this.ButtonOk.IsEnabled = templateExists && (!string.IsNullOrEmpty(this.Employer) && decimal.TryParse(this.TextBoxPaycheck.Text, out pay) &&
-                    double.TryParse(this.TextBoxInflation.Text.Replace("%", string.Empty), out inflation));
+                this.ButtonOk.IsEnabled = templateExists && !string.IsNullOrEmpty(this.Employer) && decimal.TryParse(this.TextBoxPaycheck.Text, out pay) &&
+                    double.TryParse(this.TextBoxInflation.Text.Replace("%", string.Empty), out inflation);
             }
         }
 

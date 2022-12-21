@@ -16,10 +16,10 @@ namespace Walkabout.Views
     /// </summary>
     public partial class AliasesView : UserControl, IView
     {
-        bool payeesDirty;
-        bool dirty;
-        Alias rowEdit;
-        DelayedActions delayedActions = new DelayedActions();
+        private bool payeesDirty;
+        private bool dirty;
+        private Alias rowEdit;
+        private DelayedActions delayedActions = new DelayedActions();
 
         public AliasesView()
         {
@@ -35,7 +35,7 @@ namespace Walkabout.Views
             };
         }
 
-        void AliasDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        private void AliasDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
             // There seems to be a bug in WPF where this is called before the final editing cell is committed!
             // For example, I change Alias type to Regex, hit ENTER and this is called before Alias.Type is changed to Regex!
@@ -43,7 +43,7 @@ namespace Walkabout.Views
             this.delayedActions.StartDelayedAction("FindConflicts", this.FindConflicts, TimeSpan.FromMilliseconds(30));
         }
 
-        void FindConflicts()
+        private void FindConflicts()
         {
             if (this.rowEdit != null)
             {
@@ -58,7 +58,7 @@ namespace Walkabout.Views
             }
         }
 
-        void AliasesView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void AliasesView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue)
             {
@@ -72,8 +72,7 @@ namespace Walkabout.Views
             }
         }
 
-
-        void ShowAliases()
+        private void ShowAliases()
         {
             this.AliasDataGrid.SetItemsSource(new AliasCollection(this.Money, this.quickFilter));
             this.PayeeList = new ListCollectionView(this.GetPayeesList());
@@ -111,7 +110,7 @@ namespace Walkabout.Views
             combo.FilterPredicate = new Predicate<object>((o) => { return o.ToString().IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0; });
         }
 
-        List<AliasType> aliasTypes = new List<AliasType>(new AliasType[] { AliasType.None, AliasType.Regex });
+        private List<AliasType> aliasTypes = new List<AliasType>(new AliasType[] { AliasType.None, AliasType.Regex });
 
         public IList<AliasType> AliasTypes
         {
@@ -145,9 +144,9 @@ namespace Walkabout.Views
         /// <summary>
         /// Manages the collection of aliases displayed in the grid.
         /// </summary>
-        class AliasCollection : FilteredObservableCollection<Alias>
+        private class AliasCollection : FilteredObservableCollection<Alias>
         {
-            MyMoney money;
+            private MyMoney money;
 
             public AliasCollection(MyMoney money, string filter)
                 : base(money.Aliases.GetAliases(true), filter)
@@ -194,7 +193,7 @@ namespace Walkabout.Views
 
         #region IView
 
-        MyMoney money;
+        private MyMoney money;
 
         public MyMoney Money
         {
@@ -217,7 +216,7 @@ namespace Walkabout.Views
             }
         }
 
-        void OnMoneyChanged(object sender, ChangeEventArgs e)
+        private void OnMoneyChanged(object sender, ChangeEventArgs e)
         {
             AliasCollection view = this.AliasDataGrid.ItemsSource as AliasCollection;
 
@@ -242,14 +241,14 @@ namespace Walkabout.Views
                 }
                 e = e.Next;
             }
-            if (this.dirty || this.payeesDirty && this.IsVisible)
+            if (this.dirty || (this.payeesDirty && this.IsVisible))
             {
                 // start delayed update
                 this.delayedActions.StartDelayedAction("RefreshList", this.RefreshList, TimeSpan.FromMilliseconds(50));
             }
         }
 
-        void RefreshList()
+        private void RefreshList()
         {
             if (this.payeesDirty)
             {
@@ -278,7 +277,7 @@ namespace Walkabout.Views
 
         public event EventHandler BeforeViewStateChanged;
 
-        void OnBeforeViewStateChanged()
+        private void OnBeforeViewStateChanged()
         {
             if (BeforeViewStateChanged != null)
             {
@@ -288,7 +287,7 @@ namespace Walkabout.Views
 
         public event EventHandler<AfterViewStateChangedEventArgs> AfterViewStateChanged;
 
-        void OnAfterViewStateChanged()
+        private void OnAfterViewStateChanged()
         {
             if (AfterViewStateChanged != null)
             {
@@ -296,7 +295,7 @@ namespace Walkabout.Views
             }
         }
 
-        IServiceProvider sp;
+        private IServiceProvider sp;
 
         public IServiceProvider ServiceProvider
         {
@@ -344,7 +343,7 @@ namespace Walkabout.Views
             this.QuickFilterUX.FocusTextBox();
         }
 
-        string quickFilter;
+        private string quickFilter;
 
         public string QuickFilter
         {

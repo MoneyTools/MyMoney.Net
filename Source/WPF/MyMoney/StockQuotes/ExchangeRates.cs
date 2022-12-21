@@ -9,11 +9,10 @@ namespace Walkabout.StockQuotes
 {
     public class ExchangeRates : IDisposable
     {
-        MyMoney myMoney;
-
-        Thread quotesThread;
-        bool stop;
-        List<CurrencyCode> queue = new List<CurrencyCode>(); // list of securities to fetch
+        private MyMoney myMoney;
+        private Thread quotesThread;
+        private bool stop;
+        private List<CurrencyCode> queue = new List<CurrencyCode>(); // list of securities to fetch
 
         public ExchangeRates()
         {
@@ -70,7 +69,7 @@ namespace Walkabout.StockQuotes
 
         }
 
-        void GetRates()
+        private void GetRates()
         {
             while (!this.stop)
             {
@@ -106,7 +105,7 @@ namespace Walkabout.StockQuotes
             this.quotesThread = null;
         }
 
-        decimal GetExchangeRate(CurrencyCode fromCurrency, CurrencyCode toCurrency)
+        private decimal GetExchangeRate(CurrencyCode fromCurrency, CurrencyCode toCurrency)
         {
             decimal d = 0;
             try

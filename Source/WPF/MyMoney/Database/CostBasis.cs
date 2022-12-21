@@ -475,10 +475,10 @@ namespace Walkabout.Data
     /// </summary>
     public class CostBasisCalculator
     {
-        MyMoney myMoney;
-        DateTime toDate;
-        Dictionary<Account, AccountHoldings> byAccount = new Dictionary<Account, AccountHoldings>();
-        List<SecuritySale> sales = new List<SecuritySale>();
+        private MyMoney myMoney;
+        private DateTime toDate;
+        private Dictionary<Account, AccountHoldings> byAccount = new Dictionary<Account, AccountHoldings>();
+        private List<SecuritySale> sales = new List<SecuritySale>();
 
         /// <summary>
         /// Compute capital gains associated with stock sales and whether they are long term or short term gains.
@@ -683,8 +683,8 @@ namespace Walkabout.Data
                 decimal total = 0;
                 foreach (SecurityPurchase purchase in holding.GetPurchases(s))
                 {
-                    purchase.UnitsRemaining = (purchase.UnitsRemaining * split.Numerator) / split.Denominator;
-                    purchase.CostBasisPerUnit = (purchase.CostBasisPerUnit * split.Denominator) / split.Numerator;
+                    purchase.UnitsRemaining = purchase.UnitsRemaining * split.Numerator / split.Denominator;
+                    purchase.CostBasisPerUnit = purchase.CostBasisPerUnit * split.Denominator / split.Numerator;
                     total += purchase.UnitsRemaining;
                 }
 
@@ -693,8 +693,8 @@ namespace Walkabout.Data
                 {
                     if (pending.DateSold < split.Date)
                     {
-                        pending.UnitsSold = (pending.UnitsSold * split.Numerator) / split.Denominator;
-                        pending.SalePricePerUnit = (pending.SalePricePerUnit * split.Denominator) / split.Numerator;
+                        pending.UnitsSold = pending.UnitsSold * split.Numerator / split.Denominator;
+                        pending.SalePricePerUnit = pending.SalePricePerUnit * split.Denominator / split.Numerator;
                     }
                 }
 

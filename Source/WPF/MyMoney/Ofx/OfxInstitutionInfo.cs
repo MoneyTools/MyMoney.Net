@@ -268,7 +268,7 @@
             if (this.fields.TryGetValue(name, out field))
             {
                 // see if ofxhome is more recent
-                setit = (lastvalidation.HasValue && (!field.LastChange.HasValue || field.LastChange.Value < lastvalidation.Value));
+                setit = lastvalidation.HasValue && (!field.LastChange.HasValue || field.LastChange.Value < lastvalidation.Value);
             }
             else
             {
@@ -447,11 +447,8 @@
             return result;
         }
 
-
-
-        static List<OfxInstitutionInfo> providerListCache;
-
-        static string OfxHomeProviderList = "http://www.ofxhome.com/api.php?all=yes";
+        private static List<OfxInstitutionInfo> providerListCache;
+        private static string OfxHomeProviderList = "http://www.ofxhome.com/api.php?all=yes";
 
         public static List<OfxInstitutionInfo> GetCachedBankList()
         {
@@ -672,7 +669,7 @@
             }
         }
 
-        static string OfxHomeProviderInfo = "http://www.ofxhome.com/api.php?lookup={0}";
+        private static string OfxHomeProviderInfo = "http://www.ofxhome.com/api.php?lookup={0}";
 
         public static OfxInstitutionInfo GetProviderInformation(OfxInstitutionInfo provider)
         {

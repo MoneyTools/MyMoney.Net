@@ -9,7 +9,7 @@ namespace Walkabout.Utilities
     /// <typeparam name="TValue">The type of value</typeparam>
     public class Hashtable<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>
     {
-        Dictionary<TKey, TValue> implementation = new Dictionary<TKey, TValue>();
+        private Dictionary<TKey, TValue> implementation = new Dictionary<TKey, TValue>();
 
         public TValue this[TKey key]
         {

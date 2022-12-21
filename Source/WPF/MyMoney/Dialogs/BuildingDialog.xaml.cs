@@ -10,9 +10,9 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class BuildingDialog : BaseDialog
     {
-        MyMoney money;
-        RentBuilding editingBuilding = new RentBuilding();
-        RentBuilding theBuilding = new RentBuilding();
+        private MyMoney money;
+        private RentBuilding editingBuilding = new RentBuilding();
+        private RentBuilding theBuilding = new RentBuilding();
 
         public RentBuilding TheBuilding
         {
@@ -36,11 +36,11 @@ namespace Walkabout.Dialogs
 
         }
 
-        void UpdateUI()
+        private void UpdateUI()
         {
         }
 
-        List<Category> categories;
+        private List<Category> categories;
 
         public IList Categories
         {

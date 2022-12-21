@@ -8,9 +8,9 @@ using Walkabout.Ofx;
 
 namespace Walkabout.Dialogs
 {
-    class OfxLoginDialog : PasswordWindow
+    internal class OfxLoginDialog : PasswordWindow
     {
-        OnlineAccount account;
+        private OnlineAccount account;
 
         public OfxLoginDialog(OfxSignOnInfo info, OnlineAccount account, List<Block> prompt, OfxErrorCode code, string error)
         {

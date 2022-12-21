@@ -47,12 +47,11 @@ namespace Walkabout.Views.Controls
             }
         }
 
-
-        object selection;
+        private object selection;
 
         public event EventHandler SelectionChanged;
 
-        string lastActiveFilter = string.Empty;
+        private string lastActiveFilter = string.Empty;
 
         public Payee Selected
         {
@@ -65,9 +64,9 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        DragAndDrop dragDropSupport;
-        string dragDropformatNameForPayee = "MyMoneyPayee";
-        bool loaded;
+        private DragAndDrop dragDropSupport;
+        private string dragDropformatNameForPayee = "MyMoneyPayee";
+        private bool loaded;
 
         #endregion
 
@@ -93,7 +92,7 @@ namespace Walkabout.Views.Controls
 #endif
         }
 
-        void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (!this.loaded)
             {
@@ -107,7 +106,7 @@ namespace Walkabout.Views.Controls
             this.GetAllPayees(filterText);
         }
 
-        void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
             {
@@ -128,8 +127,7 @@ namespace Walkabout.Views.Controls
         public event EventHandler MouseButtonBackwardChanged;
         public event EventHandler MouseButtonForwardChanged;
 
-
-        void OnMouseUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.XButton1 == MouseButtonState.Pressed)
             {
@@ -153,7 +151,7 @@ namespace Walkabout.Views.Controls
 
         #region DRAG DROP SUPPORT
 
-        Walkabout.Utilities.DragDropSource OnDragSource(object source)
+        private Walkabout.Utilities.DragDropSource OnDragSource(object source)
         {
             Walkabout.Utilities.DragDropSource returnSource = null;
 
@@ -182,7 +180,7 @@ namespace Walkabout.Views.Controls
             return visual;
         }
 
-        DragDropTarget OnDropTarget(object source, object target, DragDropEffects dropEfffect)
+        private DragDropTarget OnDropTarget(object source, object target, DragDropEffects dropEfffect)
         {
             ListBoxItem listBoxItemControl = WpfHelper.FindAncestor<ListBoxItem>((DependencyObject)target);
             if (listBoxItemControl != null)
@@ -218,7 +216,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnTransactionsChanged(object sender, ChangeEventArgs args)
+        private void OnTransactionsChanged(object sender, ChangeEventArgs args)
         {
             if (this.IsVisible)
             {
@@ -243,7 +241,7 @@ namespace Walkabout.Views.Controls
             this.listbox1.ItemsSource = list;
         }
 
-        void OnBalanceChanged(object sender, ChangeEventArgs args)
+        private void OnBalanceChanged(object sender, ChangeEventArgs args)
         {
             // TODO
         }
@@ -260,12 +258,12 @@ namespace Walkabout.Views.Controls
             this.DeletePayee(p);
         }
 
-        Payee Rename(Payee p)
+        private Payee Rename(Payee p)
         {
             return this.Rename(p, p);
         }
 
-        Payee Rename(Payee fromPayee, Payee renameToThisPayee)
+        private Payee Rename(Payee fromPayee, Payee renameToThisPayee)
         {
             RenamePayeeDialog dialog = RenamePayeeDialog.ShowDialogRenamePayee(this.Site, this.myMoney, fromPayee, renameToThisPayee);
 
@@ -334,7 +332,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        static void CopyToClipboard(Payee p)
+        private static void CopyToClipboard(Payee p)
         {
             if (p != null)
             {

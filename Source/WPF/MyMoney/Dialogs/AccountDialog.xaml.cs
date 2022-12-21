@@ -17,13 +17,13 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class AccountDialog : BaseDialog
     {
-        IServiceProvider serviceProvider;
-        MyMoney money;
-        Account editingAccount = new Account();
-        Account theAccount = new Account();
-        List<OnlineAccount> newOnlineAccounts = new List<OnlineAccount>();
-        ObservableCollection<object> onlineAccounts = new ObservableCollection<object>();
-        const string NewLabel = "New...";
+        private IServiceProvider serviceProvider;
+        private MyMoney money;
+        private Account editingAccount = new Account();
+        private Account theAccount = new Account();
+        private List<OnlineAccount> newOnlineAccounts = new List<OnlineAccount>();
+        private ObservableCollection<object> onlineAccounts = new ObservableCollection<object>();
+        private const string NewLabel = "New...";
 
         public Account TheAccount
         {
@@ -93,18 +93,18 @@ namespace Walkabout.Dialogs
             Closed += this.AccountDialog_Closed;
         }
 
-        void OnMoneyChanged(object sender, ChangeEventArgs args)
+        private void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
             this.OnOnlineAccountsChanged(sender, args);
             this.OnCurrencyDataChanged(sender, args);
         }
 
-        void AccountDialog_Closed(object sender, EventArgs e)
+        private void AccountDialog_Closed(object sender, EventArgs e)
         {
             this.money.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);
         }
 
-        void OnOnlineAccountsChanged(object sender, ChangeEventArgs args)
+        private void OnOnlineAccountsChanged(object sender, ChangeEventArgs args)
         {
             bool changed = false;
             while (args != null)
@@ -126,7 +126,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void OnCurrencyDataChanged(object sender, ChangeEventArgs args)
+        private void OnCurrencyDataChanged(object sender, ChangeEventArgs args)
         {
             bool changed = false;
             while (args != null)
@@ -143,7 +143,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void UpdateRateText()
+        private void UpdateRateText()
         {
             this.TextRate.Text = "";
 
@@ -160,15 +160,15 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void UpdateUI()
+        private void UpdateUI()
         {
             this.UpdateOnlineAccounts();
             this.UpdateRateText();
         }
 
-        bool updating;
+        private bool updating;
 
-        void UpdateOnlineAccounts()
+        private void UpdateOnlineAccounts()
         {
             this.updating = true;
 
@@ -206,7 +206,7 @@ namespace Walkabout.Dialogs
         }
 
         // Insert account in sorted order.
-        void InsertAccount(OnlineAccount oa)
+        private void InsertAccount(OnlineAccount oa)
         {
             for (int i = 0, n = this.onlineAccounts.Count; i < n; i++)
             {
@@ -220,7 +220,7 @@ namespace Walkabout.Dialogs
             this.onlineAccounts.Add(oa);
         }
 
-        OnlineAccount GetMatchingOnlineAccount(string name)
+        private OnlineAccount GetMatchingOnlineAccount(string name)
         {
             foreach (OnlineAccount oa in this.money.OnlineAccounts.Items)
             {
@@ -407,7 +407,7 @@ namespace Walkabout.Dialogs
             this.Close();
         }
 
-        static char[] InvalidNameChars = new char[] { '{', '}', ':' };
+        private static char[] InvalidNameChars = new char[] { '{', '}', ':' };
 
         private void OnNameChanged(object sender, TextChangedEventArgs e)
         {

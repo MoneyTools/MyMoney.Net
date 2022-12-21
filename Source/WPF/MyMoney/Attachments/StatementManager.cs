@@ -30,7 +30,7 @@ namespace Walkabout.Attachments
             this.UpdateNameMap();
         }
 
-        void UpdateNameMap()
+        private void UpdateNameMap()
         {
             // save the original account names, in case the account is renamed.
             this.nameMap = new Dictionary<Account, string>();
@@ -432,17 +432,17 @@ namespace Walkabout.Attachments
             }
         }
 
-        void OnMoneyChanged(object sender, ChangeEventArgs args)
+        private void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
             this.HandleChanges(args);
         }
 
-        void OnAccountsChanged(object sender, ChangeEventArgs args)
+        private void OnAccountsChanged(object sender, ChangeEventArgs args)
         {
             this.HandleChanges(args);
         }
 
-        void HandleChanges(ChangeEventArgs args)
+        private void HandleChanges(ChangeEventArgs args)
         {
             while (args != null)
             {
@@ -507,7 +507,7 @@ namespace Walkabout.Attachments
             Task.Run(this.Load);
         }
 
-        void CheckFileHashes(StatementIndex index)
+        private void CheckFileHashes(StatementIndex index)
         {
             if (index.Items == null)
             {
@@ -631,7 +631,7 @@ namespace Walkabout.Attachments
             return null;
         }
 
-        static string Sha256Hash(string fileName)
+        private static string Sha256Hash(string fileName)
         {
             byte[] contents = File.ReadAllBytes(fileName);
             var crypt = new System.Security.Cryptography.SHA256Managed();

@@ -55,8 +55,7 @@ namespace Walkabout.Utilities
             }
         }
 
-
-        List<string> files = new List<string>();
+        private List<string> files = new List<string>();
 
         public static void AddTempFile(string file)
         {

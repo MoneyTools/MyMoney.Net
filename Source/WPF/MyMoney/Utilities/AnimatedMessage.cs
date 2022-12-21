@@ -5,14 +5,14 @@ namespace Walkabout.Utilities
 {
     public delegate void SetMessageHandler(string value);
 
-    class AnimatedMessage
+    internal class AnimatedMessage
     {
-        SetMessageHandler handler;
-        int startPos;
-        string initialValue;
-        string finalValue;
-        DelayedActions actions = new DelayedActions();
-        TimeSpan delay;
+        private SetMessageHandler handler;
+        private int startPos;
+        private string initialValue;
+        private string finalValue;
+        private DelayedActions actions = new DelayedActions();
+        private TimeSpan delay;
 
         public AnimatedMessage(SetMessageHandler handler)
         {

@@ -49,12 +49,11 @@ namespace Walkabout.Views.Controls
             }
         }
 
-
-        object selection;
+        private object selection;
 
         public event EventHandler SelectionChanged;
 
-        string lastActiveFilter = string.Empty;
+        private string lastActiveFilter = string.Empty;
 
         public Security Selected
         {
@@ -67,9 +66,9 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        DragAndDrop dragDropSupport;
-        string dragDropformatNameForSecurity = "MyMoneySecurity";
-        bool loaded;
+        private DragAndDrop dragDropSupport;
+        private string dragDropformatNameForSecurity = "MyMoneySecurity";
+        private bool loaded;
         #endregion
 
 
@@ -94,7 +93,7 @@ namespace Walkabout.Views.Controls
 #endif
         }
 
-        void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (!this.loaded)
             {
@@ -108,7 +107,7 @@ namespace Walkabout.Views.Controls
             this.GetAllSecurities(filterText);
         }
 
-        void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
             {
@@ -129,8 +128,7 @@ namespace Walkabout.Views.Controls
         public event EventHandler MouseButtonBackwardChanged;
         public event EventHandler MouseButtonForwardChanged;
 
-
-        void OnMouseUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.XButton1 == MouseButtonState.Pressed)
             {
@@ -154,7 +152,7 @@ namespace Walkabout.Views.Controls
 
         #region DRAG DROP SUPPORT
 
-        Walkabout.Utilities.DragDropSource OnDragSource(object source)
+        private Walkabout.Utilities.DragDropSource OnDragSource(object source)
         {
             Walkabout.Utilities.DragDropSource returnSource = null;
 
@@ -183,8 +181,7 @@ namespace Walkabout.Views.Controls
             return visual;
         }
 
-
-        DragDropTarget OnDropTarget(object source, object target, DragDropEffects dropEfffect)
+        private DragDropTarget OnDropTarget(object source, object target, DragDropEffects dropEfffect)
         {
             ListBoxItem listBoxItemControl = WpfHelper.FindAncestor<ListBoxItem>((DependencyObject)target);
             if (listBoxItemControl != null)
@@ -220,7 +217,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnTransactionsChanged(object sender, ChangeEventArgs args)
+        private void OnTransactionsChanged(object sender, ChangeEventArgs args)
         {
             if (this.IsVisible)
             {
@@ -251,7 +248,7 @@ namespace Walkabout.Views.Controls
             this.listbox1.ItemsSource = list;
         }
 
-        void OnBalanceChanged(object sender, ChangeEventArgs args)
+        private void OnBalanceChanged(object sender, ChangeEventArgs args)
         {
             // TODO
         }
@@ -273,12 +270,12 @@ namespace Walkabout.Views.Controls
             this.DeleteSecurity(x);
         }
 
-        Security Rename(Security p)
+        private Security Rename(Security p)
         {
             return this.Rename(p, p);
         }
 
-        Security Rename(Security fromSecurity, Security renameToThisSecurity)
+        private Security Rename(Security fromSecurity, Security renameToThisSecurity)
         {
             if (MessageBox.Show(string.Format(Properties.Resources.RenameSecurity, fromSecurity.Name, renameToThisSecurity.Name),
                 Properties.Resources.MergeSecurityCaption, MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -347,7 +344,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        static void CopyToClipboard(Security s)
+        private static void CopyToClipboard(Security s)
         {
             if (s != null)
             {

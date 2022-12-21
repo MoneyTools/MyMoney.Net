@@ -13,7 +13,7 @@ namespace Walkabout.Controls
     /// </summary>
     public partial class ColorPickerPanel : UserControl
     {
-        RenderTargetBitmap bitmap;
+        private RenderTargetBitmap bitmap;
 
         public ColorPickerPanel()
         {
@@ -27,14 +27,14 @@ namespace Walkabout.Controls
 
         public event EventHandler ColorChanged;
 
-        bool isDown;
+        private bool isDown;
 
-        void GrayScale_MouseUp(object sender, MouseButtonEventArgs e)
+        private void GrayScale_MouseUp(object sender, MouseButtonEventArgs e)
         {
             this.isDown = false;
         }
 
-        void GrayScale_MouseMove(object sender, MouseEventArgs e)
+        private void GrayScale_MouseMove(object sender, MouseEventArgs e)
         {
             if (this.isDown)
             {
@@ -42,7 +42,7 @@ namespace Walkabout.Controls
             }
         }
 
-        void GrayScale_MouseDown(object sender, MouseButtonEventArgs e)
+        private void GrayScale_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.isDown = true;
             this.SetColorAt(e.GetPosition(this.GrayScale));
@@ -69,7 +69,7 @@ namespace Walkabout.Controls
             panel.OnColorChanged();
         }
 
-        void OnColorChanged()
+        private void OnColorChanged()
         {
             if (ColorChanged != null)
             {
@@ -105,7 +105,7 @@ namespace Walkabout.Controls
             return result;
         }
 
-        void CreateBitmap()
+        private void CreateBitmap()
         {
             this.bitmap = new RenderTargetBitmap((int)this.Rainbow.ActualWidth, (int)this.Rainbow.ActualHeight, 96, 96, PixelFormats.Pbgra32);
             this.bitmap.Render(this.Rainbow);
@@ -124,9 +124,9 @@ namespace Walkabout.Controls
             double b = pixels[0];
             if (alpha != 0)
             {
-                r = (r * 255) / alpha;
-                g = (g * 255) / alpha;
-                b = (b * 255) / alpha;
+                r = r * 255 / alpha;
+                g = g * 255 / alpha;
+                b = b * 255 / alpha;
             }
             Color color = Color.FromArgb((byte)alpha, (byte)r, (byte)g, (byte)b);
             this.Color = color;

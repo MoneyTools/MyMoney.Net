@@ -3,7 +3,7 @@ using System.Windows.Automation;
 
 namespace Walkabout.Tests.Wrappers
 {
-    class CategoriesWrapper : TreeViewWrapper
+    internal class CategoriesWrapper : TreeViewWrapper
     {
         public CategoriesWrapper(AutomationElement e)
             : base(e)

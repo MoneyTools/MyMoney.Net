@@ -13,11 +13,10 @@ namespace Walkabout.Controls
     /// </summary>
     public partial class Accordion : UserControl
     {
-        const int ExpandAnimationMilliseconds = 250;
-        const string nameIdOfQuickFilter = "QuickFilter";
-        const string nameIdOfStatusControl = "Status";
-
-        Expander currentlyExpandedExpander;
+        private const int ExpandAnimationMilliseconds = 250;
+        private const string nameIdOfQuickFilter = "QuickFilter";
+        private const string nameIdOfStatusControl = "Status";
+        private Expander currentlyExpandedExpander;
 
         public event RoutedEventHandler Expanded;
 
@@ -74,7 +73,7 @@ namespace Walkabout.Controls
             this.Add(header, id, content, false);
         }
 
-        Dictionary<string, Expander> tabs = new Dictionary<string, Expander>();
+        private Dictionary<string, Expander> tabs = new Dictionary<string, Expander>();
 
         public bool ContainsTab(string name)
         {
@@ -199,7 +198,7 @@ namespace Walkabout.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OnExpanderToAdd_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnExpanderToAdd_SizeChanged(object sender, SizeChangedEventArgs e)
         {
 
             Expander expander = sender as Expander;
@@ -246,7 +245,7 @@ namespace Walkabout.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OnExpanderExpanded(object sender, RoutedEventArgs e)
+        private void OnExpanderExpanded(object sender, RoutedEventArgs e)
         {
             if (this.currentlyExpandedExpander != null)
             {
@@ -278,7 +277,7 @@ namespace Walkabout.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OnExpanderCollapsed(object sender, RoutedEventArgs e)
+        private void OnExpanderCollapsed(object sender, RoutedEventArgs e)
         {
             if (this.currentlyExpandedExpander != null)
             {
@@ -297,7 +296,7 @@ namespace Walkabout.Controls
 
         }
 
-        void OnFilterValueChanged(object sender, string filter)
+        private void OnFilterValueChanged(object sender, string filter)
         {
             if (FilterUpdated != null)
             {
@@ -305,7 +304,8 @@ namespace Walkabout.Controls
             }
 
         }
-        void SetRowHeight(object expander, GridUnitType gu)
+
+        private void SetRowHeight(object expander, GridUnitType gu)
         {
             if (expander != null)
             {
@@ -314,7 +314,7 @@ namespace Walkabout.Controls
             }
         }
 
-        void RemoveRow(object expanderToRemove)
+        private void RemoveRow(object expanderToRemove)
         {
             int row = Grid.GetRow(expanderToRemove as UIElement);
             this.MainGrid.RowDefinitions[row].Height = new GridLength(0);

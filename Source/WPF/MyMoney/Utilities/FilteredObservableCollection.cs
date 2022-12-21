@@ -15,8 +15,8 @@ namespace Walkabout.Utilities
     /// <typeparam name="T">The items in the collection</typeparam>
     public abstract class FilteredObservableCollection<T> : ObservableCollection<T>
     {
-        string filter;
-        IEnumerable<T> original;
+        private string filter;
+        private IEnumerable<T> original;
 
         protected FilteredObservableCollection(IEnumerable<T> collection) : base(collection)
         {

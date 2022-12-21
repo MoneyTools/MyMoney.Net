@@ -39,7 +39,7 @@ namespace Walkabout.Utilities
             EditUrl(owner, path);
         }
 
-        static string Transform(string path)
+        private static string Transform(string path)
         {
 
             Uri uri = new Uri(path);

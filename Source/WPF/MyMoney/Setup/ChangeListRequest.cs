@@ -19,9 +19,9 @@ namespace Walkabout.Setup
     /// </summary>
     public class ChangeListRequest
     {
-        Settings settings;
-        XDocument changeList;
-        EventHandlerCollection<SetupRequestEventArgs> handlers;
+        private Settings settings;
+        private XDocument changeList;
+        private EventHandlerCollection<SetupRequestEventArgs> handlers;
 
         public ChangeListRequest(Settings settings)
         {
@@ -64,7 +64,7 @@ namespace Walkabout.Setup
             }
         }
 
-        static XNamespace asmNamespace = XNamespace.Get("urn:schemas-microsoft-com:asm.v1");
+        private static XNamespace asmNamespace = XNamespace.Get("urn:schemas-microsoft-com:asm.v1");
 
         private void GetChangeList(Uri host)
         {

@@ -4,9 +4,9 @@ using Walkabout.Views;
 
 namespace Walkabout.Utilities
 {
-    class FlowDocumentViewClipboardClient : IClipboardClient
+    internal class FlowDocumentViewClipboardClient : IClipboardClient
     {
-        FlowDocumentView view;
+        private FlowDocumentView view;
         public FlowDocumentViewClipboardClient(FlowDocumentView f)
         {
             this.view = f;
@@ -37,9 +37,10 @@ namespace Walkabout.Utilities
         {
         }
     }
-    class TextBoxClipboardClient : IClipboardClient
+
+    internal class TextBoxClipboardClient : IClipboardClient
     {
-        TextBox box;
+        private TextBox box;
         public TextBoxClipboardClient(TextBox b)
         {
             this.box = b;
@@ -74,9 +75,9 @@ namespace Walkabout.Utilities
         }
     }
 
-    class ComboBoxClipboardClient : IClipboardClient
+    internal class ComboBoxClipboardClient : IClipboardClient
     {
-        ComboBox box;
+        private ComboBox box;
         public ComboBoxClipboardClient(ComboBox b)
         {
             this.box = b;
@@ -128,9 +129,9 @@ namespace Walkabout.Utilities
         }
     }
 
-    class RichTextBoxClipboardClient : IClipboardClient
+    internal class RichTextBoxClipboardClient : IClipboardClient
     {
-        RichTextBox box;
+        private RichTextBox box;
         public RichTextBoxClipboardClient(RichTextBox b)
         {
             this.box = b;

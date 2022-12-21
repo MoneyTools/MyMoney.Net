@@ -9,7 +9,7 @@ namespace Walkabout.Charts
 
     public class ChartData
     {
-        IList<ChartDataSeries> allSeries = new List<ChartDataSeries>();
+        private IList<ChartDataSeries> allSeries = new List<ChartDataSeries>();
 
         public ChartData()
         {
@@ -108,11 +108,11 @@ namespace Walkabout.Charts
 
     public class ChartDataValue
     {
-        double value;
-        string label;
-        object userdata;
-        Color? color;
-        bool hidden; // for filtering out values.
+        private double value;
+        private string label;
+        private object userdata;
+        private Color? color;
+        private bool hidden; // for filtering out values.
 
         public ChartDataValue()
         {
@@ -159,9 +159,9 @@ namespace Walkabout.Charts
 
     public class ChartCategory
     {
-        int color;
-        object wpfcolor;
-        string name;
+        private int color;
+        private object wpfcolor;
+        private string name;
 
         public ChartCategory()
         {

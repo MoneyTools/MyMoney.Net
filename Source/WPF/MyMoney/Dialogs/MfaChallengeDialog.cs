@@ -45,7 +45,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        XDocument phraseTable;
+        private XDocument phraseTable;
 
         private XDocument GetPhraseTable()
         {

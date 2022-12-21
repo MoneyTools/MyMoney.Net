@@ -7,10 +7,10 @@ namespace Walkabout.Data
 {
     internal class AutoCategorization
     {
-        KNearestNeighbor<Category> singleNeighbors = new KNearestNeighbor<Category>();
-        KNearestNeighbor<Category> splitNeighbors = new KNearestNeighbor<Category>();
-        int splitCount;
-        int normalCount;
+        private KNearestNeighbor<Category> singleNeighbors = new KNearestNeighbor<Category>();
+        private KNearestNeighbor<Category> splitNeighbors = new KNearestNeighbor<Category>();
+        private int splitCount;
+        private int normalCount;
 
         /// <summary>
         /// Find the best category match for given payee and amount from past history of transactions and splits.

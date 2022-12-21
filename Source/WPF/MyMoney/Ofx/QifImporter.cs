@@ -115,7 +115,7 @@ namespace Walkabout.Migrate
                             break;
                         case "Invst":
                             at = AccountType.Brokerage;
-                            accountTypeMismatch = (a.Type != AccountType.Brokerage && a.Type != AccountType.Retirement);
+                            accountTypeMismatch = a.Type != AccountType.Brokerage && a.Type != AccountType.Retirement;
                             break;
 
                         case "Oth A":
@@ -426,7 +426,7 @@ namespace Walkabout.Migrate
             }
         }
 
-        static decimal ParseDecimal(string input)
+        private static decimal ParseDecimal(string input)
         {
             string d = input.Trim();
             if (input.Trim() == string.Empty)

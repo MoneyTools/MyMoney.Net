@@ -16,15 +16,15 @@ namespace Walkabout.Charts
     /// </summary>
     public partial class CategoryChart : UserControl
     {
-        IList<Transaction> transactions;
-        bool dataDirty;
-        bool chartDirty;
-        Category unassigned;
-        Category transferredIn;
-        Category transferredOut;
-        Category filter;
-        CategoryData selection;
-        Dictionary<Category, CategoryData> map = new Dictionary<Category, CategoryData>();
+        private IList<Transaction> transactions;
+        private bool dataDirty;
+        private bool chartDirty;
+        private Category unassigned;
+        private Category transferredIn;
+        private Category transferredOut;
+        private Category filter;
+        private CategoryData selection;
+        private Dictionary<Category, CategoryData> map = new Dictionary<Category, CategoryData>();
 
         public CategoryChart()
         {
@@ -63,7 +63,7 @@ namespace Walkabout.Charts
             return tip;
         }
 
-        void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue)
             {
@@ -93,7 +93,7 @@ namespace Walkabout.Charts
 
         public event EventHandler SelectionChanged;
 
-        void OnSelectionChanged()
+        private void OnSelectionChanged()
         {
             if (SelectionChanged != null)
             {
@@ -310,8 +310,7 @@ namespace Walkabout.Charts
             this.TotalAmount.Text = string.Format("{0:C2}", this.NetAmount);
         }
 
-
-        bool WillTally(Transaction t, Category c, decimal total, bool expense)
+        private bool WillTally(Transaction t, Category c, decimal total, bool expense)
         {
             // ALERT: this method has to be kept in sync with Tally
 
@@ -365,7 +364,7 @@ namespace Walkabout.Charts
             return true;
         }
 
-        bool Tally(Transaction t, Category c, decimal total, bool expense)
+        private bool Tally(Transaction t, Category c, decimal total, bool expense)
         {
             // ALERT: this method has to be kept in sync with WillTally
 

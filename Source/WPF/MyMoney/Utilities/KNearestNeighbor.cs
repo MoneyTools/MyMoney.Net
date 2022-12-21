@@ -9,7 +9,7 @@ namespace Walkabout.Utilities
     /// </summary>
     public class KNearestNeighbor<T>
     {
-        class Feature<U>
+        private class Feature<U>
         {
             internal U label;
             internal List<object> Data = new List<object>();
@@ -21,8 +21,8 @@ namespace Walkabout.Utilities
             }
         }
 
-        int total = 0;
-        Dictionary<T, Feature<T>> features = new Dictionary<T, Feature<T>>();
+        private int total = 0;
+        private Dictionary<T, Feature<T>> features = new Dictionary<T, Feature<T>>();
 
         /// <summary>
         /// Add a data object with associated category and value.
@@ -49,7 +49,7 @@ namespace Walkabout.Utilities
             get { return this.total; }
         }
 
-        class DataScore<U> : IComparable<DataScore<T>>
+        private class DataScore<U> : IComparable<DataScore<T>>
         {
             public object Data;
             public decimal Score;
@@ -108,7 +108,7 @@ namespace Walkabout.Utilities
             SortedSet<DataScore<T>> combined = new SortedSet<DataScore<T>>();
             foreach (var item in byCategory)
             {
-                foreach (var pick in (from i in item.Value.Take(k) select i))
+                foreach (var pick in from i in item.Value.Take(k) select i)
                 {
                     combined.Add(pick);
                 }

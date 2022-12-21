@@ -107,7 +107,7 @@ namespace Walkabout.Tests.Interop
         [StructLayout(LayoutKind.Sequential)]
         public struct HWND
         {
-            IntPtr _value;
+            private IntPtr _value;
 
             public static HWND Cast(IntPtr hwnd)
             {
@@ -365,7 +365,7 @@ namespace Walkabout.Tests.Interop
         /// <param name="hwnd"></param>
         /// <returns></returns>
         [DllImport("User32", CharSet = CharSet.Unicode)]
-        static extern int GetWindowTextLength(IntPtr hwnd);
+        private static extern int GetWindowTextLength(IntPtr hwnd);
 
         /// <summary>
         /// Gets the window text natively
@@ -375,7 +375,7 @@ namespace Walkabout.Tests.Interop
         /// <param name="nMaxCount"></param>
         /// <returns></returns>
         [DllImport("User32", CharSet = CharSet.Unicode)]
-        static extern int GetWindowText(IntPtr hWnd, IntPtr lpString, int nMaxCount);
+        private static extern int GetWindowText(IntPtr hWnd, IntPtr lpString, int nMaxCount);
 
         /// <summary>
         /// Gets the window text in a managed friendly way
@@ -426,10 +426,10 @@ namespace Walkabout.Tests.Interop
         }
 
         [DllImport("user32.dll")]
-        static extern int GetWindowRect(IntPtr hwnd, ref RECT bounds);
+        private static extern int GetWindowRect(IntPtr hwnd, ref RECT bounds);
 
         [StructLayout(LayoutKind.Sequential)]
-        struct RECT
+        private struct RECT
         {
             public int Left;
             public int Top;
@@ -460,7 +460,7 @@ namespace Walkabout.Tests.Interop
         }
 
         [DllImport("user32.dll")]
-        static extern bool EnumWindows(WindowEnumProc lpEnumFunc, IntPtr lParam);
+        private static extern bool EnumWindows(WindowEnumProc lpEnumFunc, IntPtr lParam);
 
 
         [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]

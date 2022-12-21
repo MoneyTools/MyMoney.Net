@@ -17,10 +17,10 @@ namespace Walkabout.Views
     /// </summary>
     public class ChangeTracker : IDisposable
     {
-        MyMoney myMoney;
-        Dictionary<Type, ChangeList> changes;
-        bool isDirty;
-        IViewNavigator navigator;
+        private MyMoney myMoney;
+        private Dictionary<Type, ChangeList> changes;
+        private bool isDirty;
+        private IViewNavigator navigator;
 
         public ChangeTracker(MyMoney money, IViewNavigator navigator)
         {
@@ -54,7 +54,7 @@ namespace Walkabout.Views
             }
         }
 
-        void OnDirtyChanged()
+        private void OnDirtyChanged()
         {
             if (DirtyChanged != null)
             {
@@ -62,7 +62,7 @@ namespace Walkabout.Views
             }
         }
 
-        class ChangeList
+        private class ChangeList
         {
             public Type owner;
             public HashSet<object> inserted = new HashSet<object>();
@@ -120,7 +120,7 @@ namespace Walkabout.Views
             }
         }
 
-        void OnMoneyChanged(object sender, ChangeEventArgs args)
+        private void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
             while (args != null)
             {

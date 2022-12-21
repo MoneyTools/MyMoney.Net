@@ -13,9 +13,9 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class StockQuoteServiceDialog : BaseDialog
     {
-        StockQuoteManager _stockQuotes;
-        List<StockServiceSettings> _list;
-        StockServiceSettings _selection;
+        private StockQuoteManager _stockQuotes;
+        private List<StockServiceSettings> _list;
+        private StockServiceSettings _selection;
 
         public StockQuoteServiceDialog()
         {

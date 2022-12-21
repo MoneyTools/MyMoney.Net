@@ -2,9 +2,9 @@
 
 namespace Walkabout.Tests.Wrappers
 {
-    class ExpensesChartWrapper
+    internal class ExpensesChartWrapper
     {
-        AutomationElement e;
+        private AutomationElement e;
 
         public ExpensesChartWrapper(AutomationElement e)
         {

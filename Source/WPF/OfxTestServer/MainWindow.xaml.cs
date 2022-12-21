@@ -10,7 +10,7 @@ namespace OfxTestServer
     /// </summary>
     public partial class MainWindow : Window
     {
-        OfxServer server;
+        private OfxServer server;
 
         public MainWindow()
         {

@@ -4,7 +4,7 @@ using System.Windows.Automation;
 
 namespace Walkabout.Tests.Wrappers
 {
-    class AccountsWrapper : ListViewWrapper
+    internal class AccountsWrapper : ListViewWrapper
     {
         public AccountsWrapper(AutomationElement e) : base(e)
         {

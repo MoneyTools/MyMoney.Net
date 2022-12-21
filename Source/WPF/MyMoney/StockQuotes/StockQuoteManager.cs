@@ -24,21 +24,21 @@ namespace Walkabout.StockQuotes
     /// </summary>
     public class StockQuoteManager : IDisposable
     {
-        MyMoney myMoney;
-        StringBuilder errorLog = new StringBuilder();
-        bool hasError;
-        bool disposed;
-        HashSet<string> fetched = new HashSet<string>(); // list that we have already fetched.
-        IStatusService status;
-        IServiceProvider provider;
-        List<StockServiceSettings> _settings;
-        List<IStockQuoteService> _services = new List<IStockQuoteService>();
-        DownloadLog _downloadLog = new DownloadLog();
-        List<StockQuote> _batch = new List<StockQuote>();
-        HashSet<string> _unknown = new HashSet<string>();
-        HistoryDownloader _downloader;
-        string _logPath;
-        bool _firstError = true;
+        private MyMoney myMoney;
+        private StringBuilder errorLog = new StringBuilder();
+        private bool hasError;
+        private bool disposed;
+        private HashSet<string> fetched = new HashSet<string>(); // list that we have already fetched.
+        private IStatusService status;
+        private IServiceProvider provider;
+        private List<StockServiceSettings> _settings;
+        private List<IStockQuoteService> _services = new List<IStockQuoteService>();
+        private DownloadLog _downloadLog = new DownloadLog();
+        private List<StockQuote> _batch = new List<StockQuote>();
+        private HashSet<string> _unknown = new HashSet<string>();
+        private HistoryDownloader _downloader;
+        private string _logPath;
+        private bool _firstError = true;
 
         public StockQuoteManager(IServiceProvider provider, List<StockServiceSettings> settings, string logPath)
         {
@@ -140,7 +140,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        Tuple<int, int> GetProgress()
+        private Tuple<int, int> GetProgress()
         {
             int max = 0;
             int value = 0;
@@ -184,7 +184,7 @@ namespace Walkabout.StockQuotes
             return result;
         }
 
-        void OnMoneyChanged(object sender, ChangeEventArgs args)
+        private void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
             if (this.processingResults)
             {
@@ -252,7 +252,7 @@ namespace Walkabout.StockQuotes
             this.BeginGetQuotes(combined);
         }
 
-        void BeginGetQuotes(HashSet<Security> toFetch)
+        private void BeginGetQuotes(HashSet<Security> toFetch)
         {
             this._firstError = true;
             if (this._services.Count == 0 || toFetch.Count == 0)
@@ -435,7 +435,7 @@ namespace Walkabout.StockQuotes
             this.AddError(e);
         }
 
-        EventHandlerCollection<EventArgs> handlers;
+        private EventHandlerCollection<EventArgs> handlers;
 
         public event EventHandler<EventArgs> DownloadComplete
         {
@@ -456,7 +456,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        void OnDownloadComplete()
+        private void OnDownloadComplete()
         {
             if (this.handlers != null && this.handlers.HasListeners)
             {
@@ -500,7 +500,7 @@ namespace Walkabout.StockQuotes
             get { return this._logPath; }
         }
 
-        static void EnsurePathExists(string path)
+        private static void EnsurePathExists(string path)
         {
             if (!string.IsNullOrEmpty(path))
             {
@@ -511,7 +511,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        void StopThread()
+        private void StopThread()
         {
             foreach (var item in this._services)
             {
@@ -527,7 +527,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        bool processingResults;
+        private bool processingResults;
 
         private void ProcessResults(List<StockQuote> results)
         {
@@ -589,16 +589,14 @@ namespace Walkabout.StockQuotes
             this.errorLog = new StringBuilder();
         }
 
-
-        void OnShowLogFile(object sender, RoutedEventArgs e)
+        private void OnShowLogFile(object sender, RoutedEventArgs e)
         {
             Hyperlink link = (Hyperlink)sender;
             Uri uri = link.NavigateUri;
             InternetExplorer.OpenUrl(IntPtr.Zero, uri.AbsoluteUri);
         }
 
-
-        void AddError(string msg)
+        private void AddError(string msg)
         {
             if (!string.IsNullOrWhiteSpace(msg))
             {
@@ -607,7 +605,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        void ProcessResult(StockQuote quote)
+        private void ProcessResult(StockQuote quote)
         {
             string symbol = quote.Symbol;
             decimal price = quote.Close;
@@ -669,11 +667,11 @@ namespace Walkabout.StockQuotes
     /// </summary>
     public class DownloadLog
     {
-        ConcurrentDictionary<string, StockQuoteHistory> database = new ConcurrentDictionary<string, StockQuoteHistory>();
-        ConcurrentDictionary<string, DownloadInfo> _downloaded = new ConcurrentDictionary<string, DownloadInfo>();
-        DelayedActions delayedActions = new DelayedActions();
-        string _logFolder;
-        ConcurrentDictionary<string, StockQuote> _downloadedQuotes = new ConcurrentDictionary<string, StockQuote>();
+        private ConcurrentDictionary<string, StockQuoteHistory> database = new ConcurrentDictionary<string, StockQuoteHistory>();
+        private ConcurrentDictionary<string, DownloadInfo> _downloaded = new ConcurrentDictionary<string, DownloadInfo>();
+        private DelayedActions delayedActions = new DelayedActions();
+        private string _logFolder;
+        private ConcurrentDictionary<string, StockQuote> _downloadedQuotes = new ConcurrentDictionary<string, StockQuote>();
 
         public DownloadLog() { this.Downloaded = new List<DownloadInfo>(); }
 
@@ -861,14 +859,14 @@ namespace Walkabout.StockQuotes
 
     }
 
-    class HistoryDownloader
+    internal class HistoryDownloader
     {
-        object _downloadSync = new object();
-        List<string> _downloadBatch;
-        bool _downloadingHistory;
-        IStockQuoteService _service;
-        DownloadLog _downloadLog;
-        CancellationTokenSource tokenSource;
+        private object _downloadSync = new object();
+        private List<string> _downloadBatch;
+        private bool _downloadingHistory;
+        private IStockQuoteService _service;
+        private DownloadLog _downloadLog;
+        private CancellationTokenSource tokenSource;
 
         public HistoryDownloader(IStockQuoteService service, DownloadLog log)
         {
@@ -880,7 +878,7 @@ namespace Walkabout.StockQuotes
 
         public event EventHandler<StockQuoteHistory> HistoryAvailable;
 
-        void OnHistoryAvailable(StockQuoteHistory history)
+        private void OnHistoryAvailable(StockQuoteHistory history)
         {
             this._downloadLog.AddHistory(history);
 
@@ -1012,7 +1010,7 @@ namespace Walkabout.StockQuotes
             this.OnError("Download history complete");
         }
 
-        void OnError(string message)
+        private void OnError(string message)
         {
             if (Error != null)
             {

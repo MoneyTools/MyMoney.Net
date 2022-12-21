@@ -11,7 +11,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class AddLoginDialog : BaseDialog
     {
-        SqlServerDatabase database;
+        private SqlServerDatabase database;
 
         public AddLoginDialog()
         {
@@ -21,13 +21,13 @@ namespace Walkabout.Dialogs
             this.ConfirmPasswordBox.GotFocus += new RoutedEventHandler(this.OnPasswordBoxGotFocus);
         }
 
-        void OnTextBoxGotFocus(object sender, RoutedEventArgs e)
+        private void OnTextBoxGotFocus(object sender, RoutedEventArgs e)
         {
             TextBox textBox = (TextBox)sender;
             textBox.SelectAll();
         }
 
-        void OnPasswordBoxGotFocus(object sender, RoutedEventArgs e)
+        private void OnPasswordBoxGotFocus(object sender, RoutedEventArgs e)
         {
             PasswordBox textBox = (PasswordBox)sender;
             textBox.SelectAll();

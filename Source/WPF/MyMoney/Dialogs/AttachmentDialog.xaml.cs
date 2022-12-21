@@ -32,7 +32,7 @@ namespace Walkabout.Dialogs
         private AttachmentDialogItem selected;
         private string storage;
         private Brush resizerBrush;
-        const double ResizerThumbSize = 12;
+        private const double ResizerThumbSize = 12;
         private Transaction transaction;
         private DelayedActions actions = new DelayedActions();
 
@@ -67,7 +67,7 @@ namespace Walkabout.Dialogs
             base.OnPreviewKeyDown(e);
         }
 
-        void CanvasGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        private void CanvasGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Point pos = e.GetPosition(this.CanvasGrid);
             HitTestResult result = VisualTreeHelper.HitTest(this.CanvasGrid, pos);
@@ -170,7 +170,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void LayoutContent()
+        private void LayoutContent()
         {
             // Let the wrap panel do it's thing.
             this.Canvas.UpdateLayout();
@@ -181,7 +181,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void SelectItem(AttachmentDialogItem item)
+        private void SelectItem(AttachmentDialogItem item)
         {
             this.selected = item;
             this.AddResizer(item, this.GetItemContentBounds(item));
@@ -230,8 +230,8 @@ namespace Walkabout.Dialogs
             completionHandler();
         }
 
-        static WIA.Device device;
-        static WIA.ICommonDialog globalDialog;
+        private static WIA.Device device;
+        private static WIA.ICommonDialog globalDialog;
 
         private void Scan(object sender, RoutedEventArgs e)
         {
@@ -321,7 +321,7 @@ namespace Walkabout.Dialogs
             this.Canvas.Children.Add(item);
         }
 
-        void OnContentChanged(object sender, EventArgs e)
+        private void OnContentChanged(object sender, EventArgs e)
         {
             var item = (AttachmentDialogItem)sender;
             this.OnItemChanged(item);
@@ -376,12 +376,12 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void OnResized(object sender, EventArgs e)
+        private void OnResized(object sender, EventArgs e)
         {
             this.SetDirty();
         }
 
-        void OnResizing(object sender, EventArgs e)
+        private void OnResizing(object sender, EventArgs e)
         {
             if (this.selected != null && this.selected.LiveResizable)
             {
@@ -424,7 +424,7 @@ namespace Walkabout.Dialogs
             if (this.resizer != null)
             {
                 Rect bounds = this.GetUnscaledBounds(this.resizer.Bounds);
-                scale.ScaleX = scale.ScaleY = (scale.ScaleY * 1.1);
+                scale.ScaleX = scale.ScaleY = scale.ScaleY * 1.1;
                 this.CanvasGrid.UpdateLayout();
                 this.MoveResizer(this.selected, bounds);
             }
@@ -440,7 +440,7 @@ namespace Walkabout.Dialogs
             if (this.resizer != null)
             {
                 Rect bounds = this.GetUnscaledBounds(this.resizer.Bounds);
-                scale.ScaleX = scale.ScaleY = (scale.ScaleY / 1.1);
+                scale.ScaleX = scale.ScaleY = scale.ScaleY / 1.1;
                 this.CanvasGrid.UpdateLayout();
                 this.MoveResizer(this.selected, bounds);
             }
@@ -611,12 +611,12 @@ namespace Walkabout.Dialogs
 
         private void HasSelectedItem(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (this.selected != null);
+            e.CanExecute = this.selected != null;
         }
 
         private void HasSelectedImage(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (this.selected is AttachmentDialogImageItem);
+            e.CanExecute = this.selected is AttachmentDialogImageItem;
         }
 
         private void CanSave(object sender, CanExecuteRoutedEventArgs e)
@@ -740,7 +740,7 @@ namespace Walkabout.Dialogs
             this.OnItemChanged(img);
         }
 
-        const double PrintMargin = 10;
+        private const double PrintMargin = 10;
 
         private void Print(object sender, ExecutedRoutedEventArgs e)
         {
@@ -791,7 +791,7 @@ namespace Walkabout.Dialogs
     ///  This class wraps an item in the attachment dialog and keeps track of it's file name
     ///  and file type.
     /// </summary>
-    abstract class AttachmentDialogItem : FrameworkElement
+    internal abstract class AttachmentDialogItem : FrameworkElement
     {
         /// <summary>
         /// The content being rendered in this item.
@@ -860,9 +860,9 @@ namespace Walkabout.Dialogs
     /// This class implements the abstract AttachmentDialogItem by
     /// wrapping an Image as the content
     /// </summary>
-    class AttachmentDialogImageItem : AttachmentDialogItem
+    internal class AttachmentDialogImageItem : AttachmentDialogItem
     {
-        Image image;
+        private Image image;
 
         public AttachmentDialogImageItem(BitmapSource source)
         {
@@ -1086,9 +1086,9 @@ namespace Walkabout.Dialogs
     /// This class implements the abstract AttachmentDialogItem by
     /// wrapping a RichTextBox as the content
     /// </summary>
-    class AttachmentDialogDocumentItem : AttachmentDialogItem
+    internal class AttachmentDialogDocumentItem : AttachmentDialogItem
     {
-        RichTextBox richText;
+        private RichTextBox richText;
 
         public AttachmentDialogDocumentItem()
         {
@@ -1169,7 +1169,7 @@ namespace Walkabout.Dialogs
             this.richText.TextChanged += this.richText_TextChanged;
         }
 
-        void richText_TextChanged(object sender, TextChangedEventArgs e)
+        private void richText_TextChanged(object sender, TextChangedEventArgs e)
         {
             this.OnContentChanged();
         }
@@ -1304,7 +1304,7 @@ namespace Walkabout.Dialogs
 
     }
 
-    enum WiaErrorCode
+    internal enum WiaErrorCode
     {
         NONE,
         WIA_ERROR_GENERAL_ERROR,

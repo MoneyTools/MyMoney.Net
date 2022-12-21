@@ -14,11 +14,11 @@ namespace Walkabout.Data
 
     public class AsyncSqlQuery
     {
-        string connectionString;
-        string query;
-        bool cancelled;
-        SqlCommand asyncCommand;
-        EventHandlerCollection<SqlQueryResultArgs> handlers;
+        private string connectionString;
+        private string query;
+        private bool cancelled;
+        private SqlCommand asyncCommand;
+        private EventHandlerCollection<SqlQueryResultArgs> handlers;
 
         internal AsyncSqlQuery()
         {

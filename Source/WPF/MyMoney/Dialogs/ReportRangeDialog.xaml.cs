@@ -95,7 +95,7 @@ namespace Walkabout.Dialogs
             this.okButton.Click += new RoutedEventHandler(this.OnOkButton_Click);
         }
 
-        bool showInterval;
+        private bool showInterval;
 
         public bool ShowInterval
         {
@@ -115,8 +115,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-
-        void OnOkButton_Click(object sender, RoutedEventArgs e)
+        private void OnOkButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
             this.Close();
@@ -125,7 +124,7 @@ namespace Walkabout.Dialogs
 
     }
 
-    class CheckItem
+    internal class CheckItem
     {
         public bool IsChecked { get; set; }
         public object Content { get; set; }

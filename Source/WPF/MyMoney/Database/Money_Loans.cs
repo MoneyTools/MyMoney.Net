@@ -192,7 +192,7 @@ namespace Walkabout.Data
             }
             else
             {
-                l.Percentage = ((l.Interest * 12) / runningBalance) * 100;
+                l.Percentage = l.Interest * 12 / runningBalance * 100;
             }
         }
 
@@ -316,8 +316,8 @@ namespace Walkabout.Data
     [CollectionDataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class LoanPayments : PersistentContainer, ICollection<LoanPayment>
     {
-        int nextItemToAdd = 0;
-        Hashtable<int, LoanPayment> collection = new Hashtable<int, LoanPayment>();
+        private int nextItemToAdd = 0;
+        private Hashtable<int, LoanPayment> collection = new Hashtable<int, LoanPayment>();
 
 
         // for serialization only
@@ -463,12 +463,12 @@ namespace Walkabout.Data
     [TableMapping(TableName = "LoanPayments")]
     public class LoanPayment : PersistentObject
     {
-        int id;
-        int accountId;
-        DateTime date;
-        decimal principal;
-        decimal interest;
-        string memo;
+        private int id;
+        private int accountId;
+        private DateTime date;
+        private decimal principal;
+        private decimal interest;
+        private string memo;
 
         public decimal Payment
         {
@@ -597,7 +597,7 @@ namespace Walkabout.Data
 
     public class LoanPaymentAggregation : INotifyPropertyChanged
     {
-        Account accountId;
+        private Account accountId;
         public Account Account
         {
             get { return this.accountId; }
@@ -621,7 +621,7 @@ namespace Walkabout.Data
 
         public Transaction Transaction { get; set; }
 
-        DateTime date;
+        private DateTime date;
         public DateTime Date
         {
             get { return this.date; }
@@ -649,8 +649,7 @@ namespace Walkabout.Data
 
         public Category Category { get; set; }
 
-
-        decimal principal;
+        private decimal principal;
         public decimal Principal
         {
             get { return this.principal; }
@@ -673,7 +672,7 @@ namespace Walkabout.Data
             }
         }
 
-        decimal interest;
+        private decimal interest;
         public decimal Interest
         {
             get { return this.interest; }
@@ -716,7 +715,7 @@ namespace Walkabout.Data
 
         }
 
-        decimal percentage;
+        private decimal percentage;
         public decimal Percentage
         {
             get { return this.percentage; }
@@ -739,7 +738,7 @@ namespace Walkabout.Data
             }
         }
 
-        decimal balance;
+        private decimal balance;
         public decimal Balance
         {
             get { return this.balance; }

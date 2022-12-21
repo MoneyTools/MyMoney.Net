@@ -14,8 +14,8 @@ namespace Walkabout.Controls
     /// </summary>
     public partial class CalculatorControl : UserControl
     {
-        TextBox text;
-        double memory;
+        private TextBox text;
+        private double memory;
 
         public CalculatorControl()
         {
@@ -51,8 +51,7 @@ namespace Walkabout.Controls
         public static readonly DependencyProperty SimulateDownProperty =
             DependencyProperty.RegisterAttached("SimulateDown", typeof(bool), typeof(CalculatorControl), new UIPropertyMetadata(false));
 
-
-        void AnimateClick(Button b)
+        private void AnimateClick(Button b)
         {
             b.Background = (Brush)this.Resources["SimulateDownBrush"];
             BooleanAnimationUsingKeyFrames a = new BooleanAnimationUsingKeyFrames();
@@ -66,7 +65,7 @@ namespace Walkabout.Controls
             b.BeginAnimation(SimulateDownProperty, a);
         }
 
-        void OnTextKeyDown(object sender, KeyEventArgs e)
+        private void OnTextKeyDown(object sender, KeyEventArgs e)
         {
             bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
             if (e.Key == Key.OemPlus)
@@ -184,7 +183,7 @@ namespace Walkabout.Controls
             }
         }
 
-        void UpdateValue(double v)
+        private void UpdateValue(double v)
         {
             this.text.Text = v.ToString("N2");
         }

@@ -55,7 +55,7 @@ namespace Walkabout.Data
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        void RaisePropertyChanged(string propertyName)
+        private void RaisePropertyChanged(string propertyName)
         {
             var handler = PropertyChanged;
             if (handler != null)
@@ -64,11 +64,11 @@ namespace Walkabout.Data
             }
         }
 
-        Field field;
-        string value;
-        Operation op;
-        Conjunction con;
-        Regex regex;
+        private Field field;
+        private string value;
+        private Operation op;
+        private Conjunction con;
+        private Regex regex;
 
         public QueryRow()
         {
@@ -207,7 +207,7 @@ namespace Walkabout.Data
             }
         }
 
-        static bool TryParseBoolean(string value, bool defaultValue)
+        private static bool TryParseBoolean(string value, bool defaultValue)
         {
             bool result;
             if (bool.TryParse(value, out result))
@@ -218,7 +218,7 @@ namespace Walkabout.Data
             return defaultValue;
         }
 
-        static decimal TryParseDecimal(string value, decimal defaultValue)
+        private static decimal TryParseDecimal(string value, decimal defaultValue)
         {
             decimal result;
             if (decimal.TryParse(value, out result))
@@ -229,7 +229,7 @@ namespace Walkabout.Data
             return defaultValue;
         }
 
-        static int TryParseInteger(string value, int defaultValue)
+        private static int TryParseInteger(string value, int defaultValue)
         {
             int result;
             if (Int32.TryParse(value, out result))
@@ -240,7 +240,7 @@ namespace Walkabout.Data
             return defaultValue;
         }
 
-        static DateTime TryParseDate(string value, DateTime defaultValue)
+        private static DateTime TryParseDate(string value, DateTime defaultValue)
         {
             DateTime result;
             if (DateTime.TryParse(value, out result))

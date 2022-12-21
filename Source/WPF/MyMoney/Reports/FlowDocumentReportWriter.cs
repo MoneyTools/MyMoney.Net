@@ -13,15 +13,15 @@ namespace Walkabout.Reports
 {
     public class FlowDocumentReportWriter : IReportWriter
     {
-        FlowDocument doc;
-        Section section;
-        NestedTableState current = new NestedTableState();
-        Stack<NestedTableState> nested = new Stack<NestedTableState>();
-        List<ToggleButton> expandableRowGroups = new List<ToggleButton>();
-        List<TableRow> groupedRows;
-        double pixelsPerDip;
+        private FlowDocument doc;
+        private Section section;
+        private NestedTableState current = new NestedTableState();
+        private Stack<NestedTableState> nested = new Stack<NestedTableState>();
+        private List<ToggleButton> expandableRowGroups = new List<ToggleButton>();
+        private List<TableRow> groupedRows;
+        private double pixelsPerDip;
 
-        class NestedTableState
+        private class NestedTableState
         {
             internal Table table;
             internal TableRow row;
@@ -201,8 +201,8 @@ namespace Walkabout.Reports
             this.current.table = table;
         }
 
-        double maxWidth;
-        double tableWidth;
+        private double maxWidth;
+        private double tableWidth;
 
         public double MaxWidth { get { return this.maxWidth; } }
 
@@ -211,7 +211,7 @@ namespace Walkabout.Reports
             this.tableWidth = 0;
         }
 
-        class ColumnWidthExtensions
+        private class ColumnWidthExtensions
         {
             public double MinWidth { get; set; }
             public double MaxWidth { get; set; }
@@ -279,8 +279,8 @@ namespace Walkabout.Reports
             this.current.row.Style = this.doc.Resources["RowFooterStyle"] as Style;
         }
 
-        ToggleButton expander; // current one
-        bool firstExpandableRow;
+        private ToggleButton expander; // current one
+        private bool firstExpandableRow;
 
         // this will add an expander to the beginning of the next row that can be used to 
         // expand/collapse all rows inside this group.
@@ -304,7 +304,7 @@ namespace Walkabout.Reports
             this.firstExpandableRow = false;
         }
 
-        void OnExpanderUnchecked(object sender, RoutedEventArgs e)
+        private void OnExpanderUnchecked(object sender, RoutedEventArgs e)
         {
             ToggleButton button = (ToggleButton)sender;
             List<TableRow> rows = button.Tag as List<TableRow>;
@@ -319,7 +319,7 @@ namespace Walkabout.Reports
             }
         }
 
-        void OnExpanderChecked(object sender, RoutedEventArgs e)
+        private void OnExpanderChecked(object sender, RoutedEventArgs e)
         {
             ToggleButton button = (ToggleButton)sender;
             TableRow previousRow = Walkabout.Utilities.WpfHelper.FindAncestor<TableRow>(button);

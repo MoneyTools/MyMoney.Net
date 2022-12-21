@@ -38,9 +38,9 @@ namespace Walkabout.Controls
     /// </summary>
     public class MoneyDataGrid : DataGrid
     {
-        DataGridColumn sorted;
-        bool isEditing;
-        DelayedActions delayedActions = new DelayedActions();
+        private DataGridColumn sorted;
+        private bool isEditing;
+        private DelayedActions delayedActions = new DelayedActions();
 
         public MoneyDataGrid()
         {
@@ -49,7 +49,7 @@ namespace Walkabout.Controls
 
         public ContextMenu ParentMenu { get; set; }
 
-        void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.OnContentMarginChanged();
             MainWindow w = Window.GetWindow(this) as MainWindow;
@@ -144,7 +144,7 @@ namespace Walkabout.Controls
 
         public event ScrollChangedEventHandler ScrollChanged;
 
-        void OnScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (ScrollChanged != null)
             {
@@ -152,7 +152,7 @@ namespace Walkabout.Controls
             }
         }
 
-        void OnRequestBringIntoView(object sender, RequestBringIntoViewEventArgs e)
+        private void OnRequestBringIntoView(object sender, RequestBringIntoViewEventArgs e)
         {
             // this is handy for debugging and finding out why the selected row is not being scrolled into view
             // when we expect it to.
@@ -450,7 +450,7 @@ namespace Walkabout.Controls
             return child;
         }
 
-        bool sorting;
+        private bool sorting;
 
         private void SortByColumn(string column, ListSortDirection direction)
         {
@@ -544,7 +544,7 @@ namespace Walkabout.Controls
             RightMouseButton
         }
 
-        InputEventType cellChangeEvent;
+        private InputEventType cellChangeEvent;
 
         protected override void OnPreviewMouseRightButtonDown(System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -559,7 +559,7 @@ namespace Walkabout.Controls
             base.OnPreviewKeyDown(e);
         }
 
-        DataGridColumn previousCurrentCell;
+        private DataGridColumn previousCurrentCell;
 
         protected override void OnCurrentCellChanged(EventArgs e)
         {
@@ -980,7 +980,7 @@ namespace Walkabout.Controls
             this.editBox = null;
         }
 
-        const double AutoScrollMargin = 50;
+        private const double AutoScrollMargin = 50;
 
         protected override void OnQueryContinueDrag(QueryContinueDragEventArgs e)
         {
@@ -1022,9 +1022,9 @@ namespace Walkabout.Controls
             }
         }
 
-        double scrollSpeed;
-        double nextInterval;
-        const double InitialDelay = 300;
+        private double scrollSpeed;
+        private double nextInterval;
+        private const double InitialDelay = 300;
 
         private void StartAutoScrolling(double distanceFromMargin)
         {
@@ -1038,13 +1038,13 @@ namespace Walkabout.Controls
             {
                 // speed increases linearly as distance from AutoScrollMargin increases
                 // Speed is inverse delay so the delay = InitialDelay - abs(distance).
-                double slope = (InitialDelay / AutoScrollMargin);
+                double slope = InitialDelay / AutoScrollMargin;
                 this.nextInterval = Math.Max(1, InitialDelay - (Math.Abs(distanceFromMargin) * slope));
             }
         }
 
-        DispatcherTimer scrollTimer;
-        ScrollViewer scrollViewer;
+        private DispatcherTimer scrollTimer;
+        private ScrollViewer scrollViewer;
 
         private ScrollViewer GetScrollViewer()
         {
@@ -1114,7 +1114,7 @@ namespace Walkabout.Controls
                         double height = scrollViewer.ActualHeight;
                         DataGridRow lastRow = this.GetRow(this.Items.Count - 1);
                         Point pos = lastRow.TransformToAncestor(scrollViewer).Transform(new Point(0, 0));
-                        scroll = (pos.Y + lastRow.DesiredSize.Height > height + 16);
+                        scroll = pos.Y + lastRow.DesiredSize.Height > height + 16;
                     }
                     if (scroll)
                     {

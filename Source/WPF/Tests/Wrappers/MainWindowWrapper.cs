@@ -8,10 +8,10 @@ namespace Walkabout.Tests.Wrappers
 {
     public class MainWindowWrapper : DialogWrapper
     {
-        AccountsWrapper accounts;
-        CategoriesWrapper categories;
-        PayeesWrapper payees;
-        SecuritiesWrapper securities;
+        private AccountsWrapper accounts;
+        private CategoriesWrapper categories;
+        private PayeesWrapper payees;
+        private SecuritiesWrapper securities;
 
         private MainWindowWrapper(AutomationElement e) : base(e)
         {
@@ -251,7 +251,7 @@ namespace Walkabout.Tests.Wrappers
             return new ChartsAreaWrapper(charts);
         }
 
-        bool reportOpen;
+        private bool reportOpen;
 
         public void ResetReport()
         {

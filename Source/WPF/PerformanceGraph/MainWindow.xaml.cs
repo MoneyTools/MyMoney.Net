@@ -177,7 +177,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             this.recording = false;
         }
 
-        bool paused;
+        private bool paused;
         private void OnPause(object sender, RoutedEventArgs e)
         {
             CheckBox box = (CheckBox)sender;
@@ -196,7 +196,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             this.Chart.ShowTrendLine = box.IsChecked == true;
         }
 
-        bool removeSpikes;
+        private bool removeSpikes;
         private void OnRemoveSpikes(object sender, RoutedEventArgs e)
         {
             CheckBox box = (CheckBox)sender;
@@ -365,7 +365,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         public static readonly DependencyProperty HorizontalScrollProperty =
             DependencyProperty.Register("HorizontalScroll", typeof(double), typeof(MainWindow), new UIPropertyMetadata((double)0, OnHorizontalScrollChanged));
 
-        static void OnHorizontalScrollChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private static void OnHorizontalScrollChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             MainWindow window = (MainWindow)sender;
             double v = (double)e.NewValue;
@@ -494,7 +494,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
                 if (this.recording && me != null)
                 {
-                    if (!this.filter || (this.CategoryFilter == null || me.Category == this.CategoryFilter))
+                    if (!this.filter || this.CategoryFilter == null || me.Category == this.CategoryFilter)
                     {
                         string cat = me.Category;
                         string comp = null;
@@ -538,7 +538,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         }
 
-        void OnFilterChanged(object sender, RoutedEventArgs e)
+        private void OnFilterChanged(object sender, RoutedEventArgs e)
         {
             CheckBox cb = (CheckBox)sender;
             this.filter = cb.IsChecked == true;
@@ -563,7 +563,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
         }
 
-        void OnTraceComplete(object sender, EventArgs e)
+        private void OnTraceComplete(object sender, EventArgs e)
         {
             this.paused = false;
         }

@@ -13,11 +13,11 @@ namespace Walkabout.Utilities
         }
     }
 
-    class RecentFilesMenu
+    internal class RecentFilesMenu
     {
-        List<string> recentFiles = new List<string>();
-        const int maxRecentFiles = 10;
-        MenuItem parent;
+        private List<string> recentFiles = new List<string>();
+        private const int maxRecentFiles = 10;
+        private MenuItem parent;
 
         public event EventHandler<RecentFileEventArgs> RecentFileSelected;
 
@@ -49,7 +49,7 @@ namespace Walkabout.Utilities
             this.SyncRecentFilesMenu();
         }
 
-        void AddRecentFileName(string fileName)
+        private void AddRecentFileName(string fileName)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace Walkabout.Utilities
             this.SyncRecentFilesMenu();
         }
 
-        void SyncRecentFilesMenu()
+        private void SyncRecentFilesMenu()
         {
             // Synchronize menu items.
             this.parent.Items.Clear();

@@ -19,11 +19,11 @@ namespace Walkabout.Tests
     [TestClass]
     public class ScenarioTests
     {
-        static Process testProcess;
-        MainWindowWrapper window;
-        OfxServerWindowWrapper ofxServerWindow;
-        Random random;
-        static Process serverProcess;
+        private static Process testProcess;
+        private MainWindowWrapper window;
+        private OfxServerWindowWrapper ofxServerWindow;
+        private Random random;
+        private static Process serverProcess;
         private TestContext testContextInstance;
         private const int vsDgmlMonitorTimeout = 3000;
 
@@ -62,7 +62,7 @@ namespace Walkabout.Tests
             Console.WriteLine("TestCleanup");
         }
 
-        DgmlTestModel model;
+        private DgmlTestModel model;
 
         [TestMethod]
         public void RunModel()
@@ -98,7 +98,7 @@ namespace Walkabout.Tests
             }
         }
 
-        string FindTestModel(string filename)
+        private string FindTestModel(string filename)
         {
             string path = new Uri(this.GetType().Assembly.Location).LocalPath;
 
@@ -117,24 +117,23 @@ namespace Walkabout.Tests
         }
 
         #region Model State
-        bool isLoaded;
-        CreateDatabaseDialogWrapper createNewDatabaseDialog;
-        static string databasePath;
+        private bool isLoaded;
+        private CreateDatabaseDialogWrapper createNewDatabaseDialog;
+        private static string databasePath;
+        private AccountsWrapper accounts;
+        private TransactionViewWrapper transactions;
+        private QuickFilterWrapper quickFilter;
+        private int creationTime;
+        private TransactionViewItem selectedTransaction;
+        private TransactionDetails editedValues;
 
-        AccountsWrapper accounts;
-        TransactionViewWrapper transactions;
-        QuickFilterWrapper quickFilter;
-        int creationTime;
-        TransactionViewItem selectedTransaction;
-        TransactionDetails editedValues;
-
-        #endregion 
+        #endregion
 
         #region Start 
 
-        const string OfxServerUrl = "http://localhost:3000/ofx/test/";
+        private const string OfxServerUrl = "http://localhost:3000/ofx/test/";
 
-        string FindFileInParent(string start, string name)
+        private string FindFileInParent(string start, string name)
         {
             do
             {
@@ -153,7 +152,7 @@ namespace Walkabout.Tests
             } while (true);
         }
 
-        void Start()
+        private void Start()
         {
             if (testProcess == null)
             {
@@ -188,7 +187,7 @@ namespace Walkabout.Tests
         {
         }
 
-        string GetSqlServerName()
+        private string GetSqlServerName()
         {
             bool sqlExpress = Walkabout.Data.SqlServerDatabase.IsSqlExpressInstalled;
             bool localDb = Walkabout.Data.SqlServerDatabase.IsSqlLocalDbInstalled;
@@ -204,11 +203,11 @@ namespace Walkabout.Tests
             return null;
         }
 
-        void EnsureCleanState()
+        private void EnsureCleanState()
         {
         }
 
-        void Interactive()
+        private void Interactive()
         {
             if (this.window.IsBlocked)
             {
@@ -221,13 +220,13 @@ namespace Walkabout.Tests
             }
         }
 
-        void Terminate()
+        private void Terminate()
         {
             Cleanup();
             this.model.Stop();
         }
 
-        static void Cleanup()
+        private static void Cleanup()
         {
             if (testProcess != null)
             {
@@ -249,7 +248,7 @@ namespace Walkabout.Tests
             Database = null;
         }
 
-        bool StartOver
+        private bool StartOver
         {
             get
             {
@@ -258,11 +257,11 @@ namespace Walkabout.Tests
         }
 
 
-        #endregion 
+        #endregion
 
         #region Database
 
-        void CreateNewDatabase()
+        private void CreateNewDatabase()
         {
             this.createNewDatabaseDialog = CreateDatabaseDialogWrapper.FindCreateDatabaseDialogWindow(testProcess.Id, 1, false);
             if (this.createNewDatabaseDialog == null)
@@ -279,7 +278,7 @@ namespace Walkabout.Tests
             this.creationTime = this.model.StatesExecuted;
         }
 
-        void EnterCreateDatabase()
+        private void EnterCreateDatabase()
         {
             this.ClearTransactionViewState();
             this.window.ResetReport();
@@ -288,9 +287,9 @@ namespace Walkabout.Tests
             this.sampleData = false;
         }
 
-        static IDatabase database;
+        private static IDatabase database;
 
-        static IDatabase Database
+        private static IDatabase Database
         {
             get { return database; }
             set
@@ -317,7 +316,7 @@ namespace Walkabout.Tests
             return result;
         }
 
-        string GetFreeDatabase(string baseNamePattern)
+        private string GetFreeDatabase(string baseNamePattern)
         {
             int index = 2;
             string databasePath = System.IO.Path.GetFullPath(string.Format(baseNamePattern, ""));
@@ -337,7 +336,7 @@ namespace Walkabout.Tests
             return databasePath;
         }
 
-        bool IsSqlCeInstalled
+        private bool IsSqlCeInstalled
         {
             get
             {
@@ -345,7 +344,7 @@ namespace Walkabout.Tests
             }
         }
 
-        bool IsSqlExpressInstalled
+        private bool IsSqlExpressInstalled
         {
             get
             {
@@ -353,7 +352,7 @@ namespace Walkabout.Tests
             }
         }
 
-        void CreateSqliteDatabase()
+        private void CreateSqliteDatabase()
         {
             string databasePath = this.GetFreeDatabase("TestDatabase{0}.mmdb");
             this.createNewDatabaseDialog.CreateSqliteDatabase(databasePath);
@@ -362,7 +361,7 @@ namespace Walkabout.Tests
             Database = new SqliteDatabase() { DatabasePath = databasePath };
         }
 
-        void CreateXmlDatabase()
+        private void CreateXmlDatabase()
         {
             databasePath = this.GetFreeDatabase("TestDatabase{0}.xml");
             this.DeleteFileWithRetries(databasePath, 1);
@@ -372,7 +371,7 @@ namespace Walkabout.Tests
             Database = new XmlStore(databasePath, null);
         }
 
-        void CreateBinaryXmlDatabase()
+        private void CreateBinaryXmlDatabase()
         {
             databasePath = this.GetFreeDatabase("TestDatabase.bxml");
             this.DeleteFileWithRetries(databasePath, 1);
@@ -383,12 +382,12 @@ namespace Walkabout.Tests
             this.ClearTransactionViewState();
         }
 
-        void PopulateData()
+        private void PopulateData()
         {
             // group
         }
 
-        bool NoSampleData
+        private bool NoSampleData
         {
             get
             {
@@ -396,9 +395,9 @@ namespace Walkabout.Tests
             }
         }
 
-        bool sampleData;
+        private bool sampleData;
 
-        void AddSampleData()
+        private void AddSampleData()
         {
             ContextMenu subMenu = this.window.MainMenu.OpenSubMenu("MenuHelp");
             subMenu.InvokeMenuItem("MenuSampleData");
@@ -471,7 +470,7 @@ namespace Walkabout.Tests
             this.ClearTransactionViewState();
         }
 
-        bool IsDirty
+        private bool IsDirty
         {
             get
             {
@@ -479,12 +478,12 @@ namespace Walkabout.Tests
             }
         }
 
-        void Save()
+        private void Save()
         {
             this.window.Save();
         }
 
-        bool DatabaseLoaded
+        private bool DatabaseLoaded
         {
             get
             {
@@ -492,7 +491,7 @@ namespace Walkabout.Tests
             }
         }
 
-        bool CreateDatabasePrompt
+        private bool CreateDatabasePrompt
         {
             get
             {
@@ -500,14 +499,14 @@ namespace Walkabout.Tests
             }
         }
 
-        OnlineAccountsDialogWrapper onlineAccounts;
-        bool hasOnlineAccounts;
+        private OnlineAccountsDialogWrapper onlineAccounts;
+        private bool hasOnlineAccounts;
 
-        void EnterDownloadedAccounts()
+        private void EnterDownloadedAccounts()
         {
         }
 
-        void DownloadAccounts()
+        private void DownloadAccounts()
         {
             this.onlineAccounts = this.window.DownloadAccounts();
         }
@@ -528,9 +527,8 @@ namespace Walkabout.Tests
             }
         }
 
-        const string OnlineBankName = "Last Chance Bank Of Hope";
-
-        PasswordDialogWrapper passwordDialog;
+        private const string OnlineBankName = "Last Chance Bank Of Hope";
+        private PasswordDialogWrapper passwordDialog;
 
         internal void ConnectToBank()
         {
@@ -565,7 +563,7 @@ namespace Walkabout.Tests
             throw new Exception("Can't seem to get the connect button to work");
         }
 
-        PasswordDialogWrapper challengeDialog;
+        private PasswordDialogWrapper challengeDialog;
 
         internal void SignOnToBank()
         {
@@ -742,19 +740,19 @@ namespace Walkabout.Tests
                 charts.SelectHistory();
             }
         }
-        #endregion 
+        #endregion
 
         #region Attachments
 
-        AttachmentDialogWrapper attachmentDialog;
+        private AttachmentDialogWrapper attachmentDialog;
 
-        void OpenAttachmentDialog()
+        private void OpenAttachmentDialog()
         {
             this.AssertSelectedTransaction();
             this.attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
         }
 
-        void PasteImageAttachment()
+        private void PasteImageAttachment()
         {
             Assert.IsNotNull(this.attachmentDialog);
 
@@ -789,29 +787,29 @@ namespace Walkabout.Tests
             Assert.IsNotNull(image);
         }
 
-        bool HasAttachmentImage
+        private bool HasAttachmentImage
         {
             get
             {
                 Assert.IsNotNull(this.attachmentDialog);
                 var image = this.attachmentDialog.ScrollViewer.FindImage(0);
-                return (image != null);
+                return image != null;
             }
         }
 
-        void RotateAttachmentRight()
+        private void RotateAttachmentRight()
         {
             Assert.IsNotNull(this.attachmentDialog);
             this.attachmentDialog.ClickRotateRight();
         }
 
-        void RotateAttachmentLeft()
+        private void RotateAttachmentLeft()
         {
             Assert.IsNotNull(this.attachmentDialog);
             this.attachmentDialog.ClickRotateLeft();
         }
 
-        void PasteTextAttachment()
+        private void PasteTextAttachment()
         {
             Assert.IsNotNull(this.attachmentDialog);
 
@@ -830,28 +828,28 @@ to make sure attachments work.");
             Assert.IsNotNull(box);
         }
 
-        void CloseAttachmentDialog()
+        private void CloseAttachmentDialog()
         {
             Assert.IsNotNull(this.attachmentDialog);
             this.attachmentDialog.Close();
             this.attachmentDialog = null;
         }
 
-        #endregion 
+        #endregion
 
         #region Categories
 
-        void ViewCategories()
+        private void ViewCategories()
         {
             this.window.ViewCategories();
         }
 
-        void EnterCategories()
+        private void EnterCategories()
         {
             // noop
         }
 
-        void SelectCategory()
+        private void SelectCategory()
         {
             CategoriesWrapper categories = this.window.ViewCategories();
 
@@ -865,7 +863,7 @@ to make sure attachments work.");
             }
         }
 
-        bool HasNoCategories
+        private bool HasNoCategories
         {
             get
             {
@@ -873,22 +871,22 @@ to make sure attachments work.");
             }
         }
 
-        bool IsCategorySelected
+        private bool IsCategorySelected
         {
             get
             {
                 return this.window.IsCategorySelected;
             }
         }
-        #endregion 
+        #endregion
 
         #region Payees
-        void ViewPayees()
+        private void ViewPayees()
         {
             this.window.ViewPayees();
         }
 
-        bool IsPayeeSelected
+        private bool IsPayeeSelected
         {
             get
             {
@@ -896,7 +894,7 @@ to make sure attachments work.");
             }
         }
 
-        void SelectPayee()
+        private void SelectPayee()
         {
             PayeesWrapper payees = this.window.ViewPayees();
             if (payees.Count > 0)
@@ -908,16 +906,16 @@ to make sure attachments work.");
             }
         }
 
-        #endregion 
+        #endregion
 
         #region Securities
 
-        void ViewSecurities()
+        private void ViewSecurities()
         {
             this.window.ViewSecurities();
         }
 
-        bool IsSecuritySelected
+        private bool IsSecuritySelected
         {
             get
             {
@@ -925,7 +923,7 @@ to make sure attachments work.");
             }
         }
 
-        void SelectSecurity()
+        private void SelectSecurity()
         {
             SecuritiesWrapper securities = this.window.ViewSecurities();
             if (securities.Count > 0)
@@ -941,17 +939,17 @@ to make sure attachments work.");
 
         #region Accounts 
 
-        void ViewAccounts()
+        private void ViewAccounts()
         {
             this.accounts = this.window.ViewAccounts();
         }
 
-        void EnterAccounts()
+        private void EnterAccounts()
         {
             this.accounts = this.window.ViewAccounts();
         }
 
-        bool HasAccounts
+        private bool HasAccounts
         {
             get
             {
@@ -959,7 +957,7 @@ to make sure attachments work.");
             }
         }
 
-        bool IsAccountSelected
+        private bool IsAccountSelected
         {
             get
             {
@@ -967,9 +965,9 @@ to make sure attachments work.");
             }
         }
 
-        static string[] AccountTypes = new string[] { "Checking", "Credit", "Brokerage" };
+        private static string[] AccountTypes = new string[] { "Checking", "Credit", "Brokerage" };
 
-        void AddAccount()
+        private void AddAccount()
         {
             string type = AccountTypes[this.random.Next(0, AccountTypes.Length)];
             string name = (type == "Checking") ? "My Bank" : ((type == "Credit") ? "My Credit Card" : "My Investments");
@@ -977,7 +975,7 @@ to make sure attachments work.");
             this.ClearTransactionViewState();
         }
 
-        void DeleteAccount()
+        private void DeleteAccount()
         {
             int index = this.random.Next(0, this.accounts.Accounts.Count);
             this.accounts.Select(index);
@@ -990,22 +988,22 @@ to make sure attachments work.");
             this.ClearTransactionViewState();
         }
 
-        void SelectAccount()
+        private void SelectAccount()
         {
             this.accounts.SelectAccount(this.random.Next(0, this.accounts.Accounts.Count));
             this.window.ResetReport();
             this.ClearTransactionViewState();
         }
-        #endregion 
+        #endregion
 
         #region Transaction View
 
-        void TransactionView()
+        private void TransactionView()
         {
             // group
         }
 
-        void FocusTransactionView()
+        private void FocusTransactionView()
         {
             this.window.CloseReport();
             this.transactions = this.window.FindTransactionGrid();
@@ -1027,7 +1025,7 @@ to make sure attachments work.");
             this.editedValues = new TransactionDetails();
         }
 
-        void SelectTransaction()
+        private void SelectTransaction()
         {
             if (this.transactions == null || !this.transactions.HasTransactions)
             {
@@ -1038,7 +1036,7 @@ to make sure attachments work.");
             this.editedValues = new TransactionDetails();
         }
 
-        void SortByColumn()
+        private void SortByColumn()
         {
             // sort by a random column.
             if (this.transactions != null)
@@ -1050,7 +1048,7 @@ to make sure attachments work.");
             }
         }
 
-        void DeleteSelectedTransaction()
+        private void DeleteSelectedTransaction()
         {
             if (this.transactions == null || !this.transactions.HasTransactions)
             {
@@ -1062,7 +1060,7 @@ to make sure attachments work.");
             this.editedValues = null;
         }
 
-        void AddNewTransaction()
+        private void AddNewTransaction()
         {
             if (this.transactions == null)
             {
@@ -1074,7 +1072,7 @@ to make sure attachments work.");
             this.selectedTransaction.Select();
         }
 
-        void EditSelectedTransaction()
+        private void EditSelectedTransaction()
         {
             this.AssertSelectedTransaction();
             this.selectedTransaction.Focus();
@@ -1103,7 +1101,7 @@ to make sure attachments work.");
             }
         }
 
-        bool CanTransfer
+        private bool CanTransfer
         {
             get
             {
@@ -1112,7 +1110,7 @@ to make sure attachments work.");
             }
         }
 
-        void AddTransfer()
+        private void AddTransfer()
         {
             AccountsWrapper accounts = this.window.ViewAccounts();
             List<string> names = accounts.Accounts;
@@ -1134,7 +1132,7 @@ to make sure attachments work.");
             this.selectedTransaction.SetAmount(this.GetRandomDecimal(-500, 500));
         }
 
-        bool RandomBoolean
+        private bool RandomBoolean
         {
             get
             {
@@ -1142,25 +1140,25 @@ to make sure attachments work.");
             }
         }
 
-        void EnterNewTransaction()
+        private void EnterNewTransaction()
         {
         }
 
-        void EditDate()
+        private void EditDate()
         {
             this.AssertSelectedTransaction();
             this.editedValues.Date = DateTime.Now.ToShortDateString();
             this.selectedTransaction.SetDate(this.editedValues.Date);
         }
 
-        void EditPayee()
+        private void EditPayee()
         {
             this.AssertSelectedTransaction();
             this.editedValues.Payee = this.GetRandomPayee();
             this.selectedTransaction.SetPayee(this.editedValues.Payee);
         }
 
-        static string[] SamplePayees = new string[] {
+        private static string[] SamplePayees = new string[] {
             "Costco", "Safeway", "Bank of America", "ARCO", "McDonalds", "Starbucks", "Comcast", "State Farm Insurance", "Home Depot", "Amazon"
         };
 
@@ -1170,7 +1168,7 @@ to make sure attachments work.");
             return SamplePayees[index];
         }
 
-        void EditCategory()
+        private void EditCategory()
         {
             this.AssertSelectedTransaction();
             string cat = this.GetRandomCategory();
@@ -1184,22 +1182,22 @@ to make sure attachments work.");
             Thread.Sleep(30);
 
             AutomationElement child = this.window.Element.FindChildWindow("Category", 2);
-            this.categoryDialogVisible = (child != null);
+            this.categoryDialogVisible = child != null;
         }
 
-        bool categoryDialogVisible;
+        private bool categoryDialogVisible;
 
-        bool NoCategoryDialog
+        private bool NoCategoryDialog
         {
             get { return !this.categoryDialogVisible; }
         }
 
-        bool CategoryDialogShowing
+        private bool CategoryDialogShowing
         {
             get { return this.categoryDialogVisible; }
         }
 
-        void CategoryDetails()
+        private void CategoryDetails()
         {
             AutomationElement child = this.window.Element.FindChildWindow("Category", 4);
             if (child != null)
@@ -1210,7 +1208,7 @@ to make sure attachments work.");
             }
         }
 
-        static string[] SampleCategories = new string[] {
+        private static string[] SampleCategories = new string[] {
             "Home:Supplies", "Food:Groceries", "Home:Mortgage", "Auto:Fuel", "Food:Dinner", "Food:Treats", "Internet", "Insurance:Home", "Home:Repairs", "Education:Books"
         };
 
@@ -1220,15 +1218,14 @@ to make sure attachments work.");
             return SampleCategories[index];
         }
 
-
-        void EditMemo()
+        private void EditMemo()
         {
             this.AssertSelectedTransaction();
             this.editedValues.Memo = DateTime.Now.ToLongTimeString();
             this.selectedTransaction.SetMemo(this.editedValues.Memo);
         }
 
-        void EditDeposit()
+        private void EditDeposit()
         {
             this.AssertSelectedTransaction();
             decimal amount = this.GetRandomDecimal(0, 10000);
@@ -1236,7 +1233,7 @@ to make sure attachments work.");
             this.selectedTransaction.SetAmount(amount);
         }
 
-        void EditPayment()
+        private void EditPayment()
         {
             this.AssertSelectedTransaction();
             decimal amount = -this.GetRandomDecimal(0, 10000);
@@ -1244,7 +1241,7 @@ to make sure attachments work.");
             this.selectedTransaction.SetAmount(amount);
         }
 
-        void EditSalesTax()
+        private void EditSalesTax()
         {
             this.AssertSelectedTransaction();
             decimal salesTax = this.GetRandomDecimal(0, 20);
@@ -1252,13 +1249,13 @@ to make sure attachments work.");
             this.selectedTransaction.SetSalesTax(salesTax);
         }
 
-        decimal GetRandomDecimal(double min, double max)
+        private decimal GetRandomDecimal(double min, double max)
         {
             double range = Math.Abs(max - min);
-            return (decimal)(Math.Round(range * this.random.NextDouble() * 100) / 100 + min);
+            return (decimal)((Math.Round(range * this.random.NextDouble() * 100) / 100) + min);
         }
 
-        void VerifyNewTransaction()
+        private void VerifyNewTransaction()
         {
             this.AssertSelectedTransaction();
 
@@ -1288,22 +1285,14 @@ to make sure attachments work.");
             }
         }
 
-
-        void NavigateTransfer()
+        private void NavigateTransfer()
         {
             this.AssertSelectedTransaction();
             this.transactions.NavigateTransfer();
             this.selectedTransaction = this.transactions.Selection;
         }
 
-        void AreEqual(string expected, string actual, string name)
-        {
-            if (expected != actual)
-            {
-                throw new Exception(string.Format("{0} does not match, expected {0}, but found '{1}'", name, expected, actual));
-            }
-        }
-        void AreEqual(decimal expected, decimal actual, string name)
+        private void AreEqual(string expected, string actual, string name)
         {
             if (expected != actual)
             {
@@ -1311,7 +1300,15 @@ to make sure attachments work.");
             }
         }
 
-        class TransactionDetails
+        private void AreEqual(decimal expected, decimal actual, string name)
+        {
+            if (expected != actual)
+            {
+                throw new Exception(string.Format("{0} does not match, expected {0}, but found '{1}'", name, expected, actual));
+            }
+        }
+
+        private class TransactionDetails
         {
             public string Date;
             public string Payee;
@@ -1321,7 +1318,7 @@ to make sure attachments work.");
             public string Memo;
         }
 
-        bool IsEditable
+        private bool IsEditable
         {
             get
             {
@@ -1331,7 +1328,7 @@ to make sure attachments work.");
             }
         }
 
-        bool HasTransaction
+        private bool HasTransaction
         {
             get
             {
@@ -1341,7 +1338,7 @@ to make sure attachments work.");
             }
         }
 
-        bool IsEmptyReadOnly
+        private bool IsEmptyReadOnly
         {
             get
             {
@@ -1349,7 +1346,7 @@ to make sure attachments work.");
             }
         }
 
-        bool HasEnoughTransactions
+        private bool HasEnoughTransactions
         {
             get
             {
@@ -1357,15 +1354,15 @@ to make sure attachments work.");
             }
         }
 
-        bool IsTransferTransactionSelected
+        private bool IsTransferTransactionSelected
         {
             get
             {
-                return (this.selectedTransaction != null && this.selectedTransaction.IsTransfer);
+                return this.selectedTransaction != null && this.selectedTransaction.IsTransfer;
             }
         }
 
-        bool HasAttachableTransaction
+        private bool HasAttachableTransaction
         {
             get
             {
@@ -1374,8 +1371,7 @@ to make sure attachments work.");
             }
         }
 
-
-        bool HasSelectedTransaction
+        private bool HasSelectedTransaction
         {
             get
             {
@@ -1383,7 +1379,7 @@ to make sure attachments work.");
             }
         }
 
-        void SearchTransactionView()
+        private void SearchTransactionView()
         {
             if (this.transactions != null && this.quickFilter == null)
             {
@@ -1400,7 +1396,7 @@ to make sure attachments work.");
             }
         }
 
-        void ClearTransactionViewState()
+        private void ClearTransactionViewState()
         {
             this.selectedTransaction = null;
             this.transactions = null;
@@ -1410,19 +1406,19 @@ to make sure attachments work.");
 
         #region Reports
 
-        void NetWorthReport()
+        private void NetWorthReport()
         {
             this.window.NetWorthReport();
             this.ClearTransactionViewState();
         }
 
-        void TaxReport()
+        private void TaxReport()
         {
             this.window.TaxReport();
             this.ClearTransactionViewState();
         }
 
-        void PortfolioReport()
+        private void PortfolioReport()
         {
             this.window.PortfolioReport();
             this.ClearTransactionViewState();
@@ -1430,12 +1426,12 @@ to make sure attachments work.");
         #endregion
 
         #region Export
-        void Export()
+        private void Export()
         {
             this.FocusTransactionView();
         }
 
-        void ExportCsv()
+        private void ExportCsv()
         {
             if (this.transactions != null)
             {
@@ -1508,9 +1504,9 @@ to make sure attachments work.");
             return false;
         }
 
-        class TestLog : TextWriter
+        private class TestLog : TextWriter
         {
-            TestContext context;
+            private TestContext context;
 
             public TestLog(TestContext context)
             {

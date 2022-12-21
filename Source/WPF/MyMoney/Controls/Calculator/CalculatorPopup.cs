@@ -16,15 +16,15 @@ namespace Walkabout.Controls
     /// </summary>
     public class CalculatorPopup : Popup
     {
-        CalculatorControl calculator;
-        TextBox attached;
+        private CalculatorControl calculator;
+        private TextBox attached;
 
         public CalculatorPopup()
         {
             this.Child = this.calculator = new CalculatorControl();
         }
 
-        static CalculatorPopup sharedPopup;
+        private static CalculatorPopup sharedPopup;
 
         public static CalculatorPopup StaticCalculatorPopup
         {
@@ -52,7 +52,7 @@ namespace Walkabout.Controls
         public static readonly DependencyProperty CalculatorEnabledProperty =
             DependencyProperty.RegisterAttached("CalculatorEnabled", typeof(bool), typeof(CalculatorPopup), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(OnCalculatorEnabledChanged)));
 
-        static void OnCalculatorEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnCalculatorEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             TextBox editor = d as TextBox;
             if (editor != null)
@@ -70,7 +70,7 @@ namespace Walkabout.Controls
             }
         }
 
-        void OnKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
+        private void OnKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
         {
             if (e.OldFocus == this.attached)
             {
@@ -91,7 +91,7 @@ namespace Walkabout.Controls
             }
         }
 
-        void Attach(TextBox box)
+        private void Attach(TextBox box)
         {
             this.IsOpen = false;
             if (this.attached != null)
@@ -107,7 +107,7 @@ namespace Walkabout.Controls
             }
         }
 
-        void TextBoxPreviewKeyDown(object sender, KeyEventArgs e)
+        private void TextBoxPreviewKeyDown(object sender, KeyEventArgs e)
         {
             bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
             switch (e.Key)

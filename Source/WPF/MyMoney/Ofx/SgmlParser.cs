@@ -66,13 +66,13 @@ namespace Walkabout.Sgml
             }
         }
 
-        Uri _resolvedUri;
-        TextReader _stm;
-        bool _weOwnTheStream;
+        private Uri _resolvedUri;
+        private TextReader _stm;
+        private bool _weOwnTheStream;
 
         public int Line;
-        int _LineStart;
-        int _absolutePos;
+        private int _LineStart;
+        private int _absolutePos;
         public char Lastchar;
         public bool IsWhitespace;
 
@@ -459,7 +459,7 @@ namespace Walkabout.Sgml
             return Convert.ToChar(v).ToString();
         }
 
-        static int[] CtrlMap = new int[] {
+        private static int[] CtrlMap = new int[] {
             // This is the windows-1252 mapping of the code points 0x80 through 0x9f.
             8364, 129, 8218, 402, 8222, 8230, 8224, 8225, 710, 8240, 352, 8249, 338, 141,
             381, 143, 144, 8216, 8217, 8220, 8221, 8226, 8211, 8212, 732, 8482, 353, 8250,
@@ -510,7 +510,7 @@ namespace Walkabout.Sgml
 
         public static bool IsLiteralType(string token)
         {
-            return (token == "CDATA" || token == "SDATA" || token == "PI");
+            return token == "CDATA" || token == "SDATA" || token == "PI";
         }
 
         public void SetLiteralType(string token)
@@ -933,7 +933,7 @@ namespace Walkabout.Sgml
 
     public class AttList : IEnumerable
     {
-        Hashtable AttDefs;
+        private Hashtable AttDefs;
 
         public AttList(bool ignoreCase)
         {
@@ -969,14 +969,13 @@ namespace Walkabout.Sgml
     public class SgmlDtd
     {
         public string Name;
-
-        Hashtable _elements;
-        Hashtable _pentities;
-        Hashtable _entities;
-        StringBuilder _sb;
-        Entity _current;
-        XmlNameTable _nt;
-        bool _ignoreCase;
+        private Hashtable _elements;
+        private Hashtable _pentities;
+        private Hashtable _entities;
+        private StringBuilder _sb;
+        private Entity _current;
+        private XmlNameTable _nt;
+        private bool _ignoreCase;
 
         public SgmlDtd(string name, XmlNameTable nt, bool ignoreCase = false)
         {
@@ -1057,14 +1056,14 @@ namespace Walkabout.Sgml
         }
 
         //-------------------------------- Parser -------------------------
-        void PushEntity(Uri baseUri, Entity e)
+        private void PushEntity(Uri baseUri, Entity e)
         {
             e.Open(this._current, baseUri);
             this._current = e;
             this._current.ReadChar();
         }
 
-        void PopEntity()
+        private void PopEntity()
         {
             if (this._current != null)
             {
@@ -1081,7 +1080,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        void Parse()
+        private void Parse()
         {
             char ch = this._current.Lastchar;
             while (true)
@@ -1127,7 +1126,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        void ParseMarkup()
+        private void ParseMarkup()
         {
             char ch = this._current.ReadChar();
             if (ch != '!')
@@ -1171,7 +1170,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        char ParseDeclComments()
+        private char ParseDeclComments()
         {
             char ch = this._current.Lastchar;
             while (ch == '-')
@@ -1181,7 +1180,7 @@ namespace Walkabout.Sgml
             return ch;
         }
 
-        char ParseDeclComment(bool full)
+        private char ParseDeclComment(bool full)
         {
             int start = this._current.Line;
             // -^-...--
@@ -1196,7 +1195,7 @@ namespace Walkabout.Sgml
             return this._current.SkipWhitespace();
         }
 
-        void ParseMarkedSection()
+        private void ParseMarkedSection()
         {
             // <![^ name [ ... ]]>
             this._current.ReadChar(); // move to next char.
@@ -1215,12 +1214,12 @@ namespace Walkabout.Sgml
             }
         }
 
-        static void ParseIncludeSection()
+        private static void ParseIncludeSection()
         {
             throw new NotImplementedException("Include Section");
         }
 
-        void ParseIgnoreSection()
+        private void ParseIgnoreSection()
         {
             int start = this._current.Line;
             // <!-^-...-->
@@ -1233,7 +1232,7 @@ namespace Walkabout.Sgml
             this._current.ScanToEnd(this._sb, "Conditional Section", "]]>");
         }
 
-        string ScanName(string term)
+        private string ScanName(string term)
         {
             // skip whitespace, scan name (which may be parameter entity reference
             // which is then expanded to a name)
@@ -1256,7 +1255,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        Entity ParseParameterEntity(string term)
+        private Entity ParseParameterEntity(string term)
         {
             // almost the same as _current.ScanToken, except we also terminate on ';'
             char ch = this._current.ReadChar();
@@ -1271,7 +1270,7 @@ namespace Walkabout.Sgml
             return e;
         }
 
-        Entity GetParameterEntity(string name)
+        private Entity GetParameterEntity(string name)
         {
             Entity e = (Entity)this._pentities[name];
             if (e == null)
@@ -1282,12 +1281,12 @@ namespace Walkabout.Sgml
             return e;
         }
 
-        static string _ws = " \r\n\t";
+        private static string _ws = " \r\n\t";
 
-        void ParseEntity()
+        private void ParseEntity()
         {
             char ch = this._current.SkipWhitespace();
-            bool pe = (ch == '%');
+            bool pe = ch == '%';
             if (pe)
             {
                 // parameter entity.
@@ -1367,13 +1366,13 @@ namespace Walkabout.Sgml
             }
         }
 
-        void ParseElementDecl()
+        private void ParseElementDecl()
         {
             char ch = this._current.SkipWhitespace();
             string[] names = this.ParseNameGroup(ch, true);
-            bool sto = (Char.ToLower(this._current.SkipWhitespace()) == 'o'); // start tag optional?   
+            bool sto = Char.ToLower(this._current.SkipWhitespace()) == 'o'; // start tag optional?   
             this._current.ReadChar();
-            bool eto = (Char.ToLower(this._current.SkipWhitespace()) == 'o'); // end tag optional? 
+            bool eto = Char.ToLower(this._current.SkipWhitespace()) == 'o'; // end tag optional? 
             this._current.ReadChar();
             ch = this._current.SkipWhitespace();
             ContentModel cm = this.ParseContentModel(ch);
@@ -1433,8 +1432,9 @@ namespace Walkabout.Sgml
             }
         }
 
-        static string _ngterm = " \r\n\t|,)";
-        string[] ParseNameGroup(char ch, bool nmtokens)
+        private static string _ngterm = " \r\n\t|,)";
+
+        private string[] ParseNameGroup(char ch, bool nmtokens)
         {
             ArrayList names = new ArrayList();
             if (ch == '(')
@@ -1477,7 +1477,7 @@ namespace Walkabout.Sgml
             return (string[])names.ToArray(typeof(String));
         }
 
-        void ParseNameList(ArrayList names, bool nmtokens)
+        private void ParseNameList(ArrayList names, bool nmtokens)
         {
             char ch = this._current.Lastchar;
             ch = this._current.SkipWhitespace();
@@ -1507,8 +1507,9 @@ namespace Walkabout.Sgml
             }
         }
 
-        static string _dcterm = " \r\n\t>";
-        ContentModel ParseContentModel(char ch)
+        private static string _dcterm = " \r\n\t>";
+
+        private ContentModel ParseContentModel(char ch)
         {
             ContentModel cm = new ContentModel();
             if (ch == '(')
@@ -1537,8 +1538,9 @@ namespace Walkabout.Sgml
             return cm;
         }
 
-        static string _cmterm = " \r\n\t,&|()?+*";
-        void ParseModel(char cmt, ContentModel cm)
+        private static string _cmterm = " \r\n\t,&|()?+*";
+
+        private void ParseModel(char cmt, ContentModel cm)
         {
             // Called when part of the model is made up of the contents of a parameter entity
             int depth = cm.CurrentDepth;
@@ -1616,7 +1618,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        void ParseAttList()
+        private void ParseAttList()
         {
             char ch = this._current.SkipWhitespace();
             string[] names = this.ParseNameGroup(ch, true);
@@ -1633,8 +1635,9 @@ namespace Walkabout.Sgml
             }
         }
 
-        static string _peterm = " \t\r\n>";
-        void ParseAttList(AttList list, char term)
+        private static string _peterm = " \t\r\n>";
+
+        private void ParseAttList(AttList list, char term)
         {
             char ch = this._current.SkipWhitespace();
             while (ch != term)
@@ -1660,7 +1663,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        AttDef ParseAttDef(char ch)
+        private AttDef ParseAttDef(char ch)
         {
             ch = this._current.SkipWhitespace();
             string name = this._nt.Add(this.ScanName(_ws));
@@ -1692,7 +1695,7 @@ namespace Walkabout.Sgml
 
         }
 
-        void ParseAttType(char ch, AttDef attdef)
+        private void ParseAttType(char ch, AttDef attdef)
         {
             if (ch == '%')
             {
@@ -1729,7 +1732,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        void ParseAttDefault(char ch, AttDef attdef)
+        private void ParseAttDefault(char ch, AttDef attdef)
         {
             if (ch == '%')
             {

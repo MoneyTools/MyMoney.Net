@@ -6,7 +6,7 @@ namespace Walkabout.Tests.Wrappers
 {
     public class QuickFilterWrapper
     {
-        AutomationElement e;
+        private AutomationElement e;
 
         public QuickFilterWrapper(AutomationElement e)
         {

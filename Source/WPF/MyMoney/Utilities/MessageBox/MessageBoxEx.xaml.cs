@@ -35,7 +35,7 @@ namespace Walkabout.Utilities
             PreviewKeyDown += new KeyEventHandler(this.MessageBoxEx_PreviewKeyDown);
         }
 
-        void MessageBoxEx_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void MessageBoxEx_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.C || e.Key == Key.Insert)
             {
@@ -56,7 +56,7 @@ namespace Walkabout.Utilities
         {
             this.SetButtonVisibility(this.Buttons);
 
-            if (this.MessageImageSource == MessageBoxImage.None && this.Buttons == MessageBoxButton.YesNo || this.Buttons == MessageBoxButton.YesNoCancel)
+            if ((this.MessageImageSource == MessageBoxImage.None && this.Buttons == MessageBoxButton.YesNo) || this.Buttons == MessageBoxButton.YesNoCancel)
             {
                 // if no Image is supplied but yet this looks like a question then lets use a Question image
                 this.MessageImageSource = MessageBoxImage.Question;
@@ -120,7 +120,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        void OnRequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        private void OnRequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
             if (e.Uri != null)
             {
@@ -128,8 +128,7 @@ namespace Walkabout.Utilities
             }
         }
 
-
-        void SetImageStyle()
+        private void SetImageStyle()
         {
             // These are blending colors so they don't need to be themed.
             byte alpha = 0x80;
@@ -181,7 +180,7 @@ namespace Walkabout.Utilities
             UiDispatcher.BeginInvoke(new Action(() =>
             {
                 MessageBoxEx mb = new MessageBoxEx();
-                mb.MaxWidth = (SystemParameters.PrimaryScreenWidth * 2) / 3;
+                mb.MaxWidth = SystemParameters.PrimaryScreenWidth * 2 / 3;
                 mb.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 mb.SizeToContent = SizeToContent.WidthAndHeight;
                 mb.Title = title;
@@ -263,8 +262,7 @@ namespace Walkabout.Utilities
             //  this.Result = MessageBoxResult.Yes;
         }
 
-
-        void SetButtonVisibility(MessageBoxButton buttonOption)
+        private void SetButtonVisibility(MessageBoxButton buttonOption)
         {
             Button defaultButton = null;
             switch (buttonOption)

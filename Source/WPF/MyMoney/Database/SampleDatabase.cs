@@ -22,8 +22,8 @@ namespace Walkabout.Assitance
         private Account checking;
         private string stockQuotePath;
         private StockQuoteManager manager;
-        Random rand = new Random();
-        Dictionary<string, StockQuoteHistory> quotes = new Dictionary<string, StockQuoteHistory>();
+        private Random rand = new Random();
+        private Dictionary<string, StockQuoteHistory> quotes = new Dictionary<string, StockQuoteHistory>();
 
         public SampleDatabase(MyMoney money, StockQuoteManager manager, string stockQuotePath)
         {
@@ -224,10 +224,10 @@ namespace Walkabout.Assitance
             return this.rand.Next(100);
         }
 
-        class Ownership
+        private class Ownership
         {
             // how much of each stock is owned in each account.
-            Dictionary<Account, Dictionary<string, decimal>> owned = new Dictionary<Account, Dictionary<string, decimal>>();
+            private Dictionary<Account, Dictionary<string, decimal>> owned = new Dictionary<Account, Dictionary<string, decimal>>();
 
             public void AddUnits(Account a, string symbol, decimal units)
             {
@@ -444,7 +444,7 @@ namespace Walkabout.Assitance
             Debug.Assert(this.checking != null); // the .xml file must have a checking account.
             DateTime today = DateTime.Today;
             DateTime first = today.AddYears(-Years);
-            double biMonthlyInfation = (inflation / 24);
+            double biMonthlyInfation = inflation / 24;
 
             DateTime date = new DateTime(first.Year, 1, 1);
             this.money.BeginUpdate(this);
@@ -471,7 +471,7 @@ namespace Walkabout.Assitance
                     date = date.AddMonths(1);
                     date = new DateTime(date.Year, date.Month, 1);
                 }
-                paycheck += (paycheck * (decimal)biMonthlyInfation) / 100M;
+                paycheck += paycheck * (decimal)biMonthlyInfation / 100M;
             }
             this.money.EndUpdate();
         }
@@ -485,7 +485,7 @@ namespace Walkabout.Assitance
             DateTime start = new DateTime(first.Year, 1, 1); // start in January
             TimeSpan span = today - first;
             int totalDays = (int)span.TotalDays;
-            double monthlyInflation = (inflation / 12);
+            double monthlyInflation = inflation / 12;
 
             this.money.BeginUpdate(this);
             Transactions transactions = this.money.Transactions;
@@ -585,7 +585,7 @@ namespace Walkabout.Assitance
         {
             while (months-- > 0)
             {
-                amount += (amount * monthlyInflation) / 100M;
+                amount += amount * monthlyInflation / 100M;
             }
             return amount;
         }
@@ -707,7 +707,7 @@ namespace Walkabout.Assitance
         }
     }
 
-    class SampleTransaction
+    internal class SampleTransaction
     {
         public SampleAccount Account { get; set; }
         public SamplePayee Payee { get; set; }

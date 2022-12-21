@@ -19,17 +19,17 @@ namespace Walkabout.Views.Controls
     /// </summary>
     public partial class BalanceControl : UserControl
     {
-        MyMoney myMoney;
-        Account account;
+        private MyMoney myMoney;
+        private Account account;
         private StatementManager statements;
-        Category interestCategory;
-        Transaction interestTransaction;
-        bool weAddedInterest;
-        bool played;
-        bool initializing;
-        decimal lastBalance;
-        List<string> previousReconciliations;
-        bool eventWired;
+        private Category interestCategory;
+        private Transaction interestTransaction;
+        private bool weAddedInterest;
+        private bool played;
+        private bool initializing;
+        private decimal lastBalance;
+        private List<string> previousReconciliations;
+        private bool eventWired;
         private StatementItem statement;
 
         public event EventHandler<BalanceEventArgs> Balanced;
@@ -173,7 +173,7 @@ namespace Walkabout.Views.Controls
             Loaded += new RoutedEventHandler(this.OnLoad);
         }
 
-        DateTime GetNextStatementDate(DateTime date)
+        private DateTime GetNextStatementDate(DateTime date)
         {
             if (date.AddDays(1).Month != date.Month)
             {
@@ -184,7 +184,7 @@ namespace Walkabout.Views.Controls
             return date.AddMonths(1);
         }
 
-        void FindInterestTransaction(DateTime date)
+        private void FindInterestTransaction(DateTime date)
         {
             this.interestTransaction = null;
             DateTime prevMonth = date.AddDays(-31);
@@ -229,7 +229,7 @@ namespace Walkabout.Views.Controls
 
         public event EventHandler StatementDateChanged;
 
-        void OnStatementDateChanged(object sender, SelectionChangedEventArgs e)
+        private void OnStatementDateChanged(object sender, SelectionChangedEventArgs e)
         {
             this.UpdateBalances(this.StatementDate);
         }
@@ -406,8 +406,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-
-        void CheckDone(bool celebrate)
+        private void CheckDone(bool celebrate)
         {
             this.CongratsButton.Visibility = System.Windows.Visibility.Collapsed;
 
@@ -456,7 +455,7 @@ namespace Walkabout.Views.Controls
             this.Delta = this.NewBalance - this.YourNewBalance;
         }
 
-        void SetColor(FrameworkElement e, decimal d)
+        private void SetColor(FrameworkElement e, decimal d)
         {
             Brush brush = d >= 0 ? AppTheme.Instance.GetThemedBrush("PositiveCurrencyForegroundBrush") :
                 AppTheme.Instance.GetThemedBrush("NegativeCurrencyForegroundBrush");
@@ -477,7 +476,7 @@ namespace Walkabout.Views.Controls
 
         }
 
-        bool CheckValidDecimal(string name, TextBox textBox)
+        private bool CheckValidDecimal(string name, TextBox textBox)
         {
             string msg = null;
             string s = textBox.Text.Trim();
@@ -523,7 +522,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnDone(bool cancelled)
+        private void OnDone(bool cancelled)
         {
             bool hasStatement = false;
             try
@@ -691,7 +690,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        bool captured;
+        private bool captured;
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
@@ -714,7 +713,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        DateTime? statementFileDate;
+        private DateTime? statementFileDate;
 
         private void OnStatementFileLostFocus(object sender, RoutedEventArgs e)
         {
@@ -724,8 +723,8 @@ namespace Walkabout.Views.Controls
 
     public class BalanceEventArgs : EventArgs
     {
-        bool balanced;
-        bool hasStatement;
+        private bool balanced;
+        private bool hasStatement;
         public BalanceEventArgs(bool balanced, bool hasStatement)
         {
             this.balanced = balanced;

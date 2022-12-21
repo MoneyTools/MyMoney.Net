@@ -33,7 +33,7 @@ namespace Walkabout.Migrate
                 using (var reader = XmlReader.Create(fileName))
                 {
                     var s = new XmlSerializer(typeof(CsvMap));
-                    var map = (CsvMap)(s.Deserialize(reader));
+                    var map = (CsvMap)s.Deserialize(reader);
                     map.FileName = fileName;
                     return map;
                 }
@@ -59,12 +59,13 @@ namespace Walkabout.Migrate
 
     internal class CsvTransactionImporter : CsvFieldWriter
     {
-        MyMoney money;
-        Account account;
-        CsvMap map;
-        List<TBag> typedData = new List<TBag>();
+        private MyMoney money;
+        private Account account;
+        private CsvMap map;
+        private List<TBag> typedData = new List<TBag>();
+
         // this is what we "can" import...
-        string[] fields = new string[] { "Date", "Payee", "Memo", "Amount" };
+        private string[] fields = new string[] { "Date", "Payee", "Memo", "Amount" };
 
         public CsvTransactionImporter(MyMoney money, Account account, CsvMap map)
         {
@@ -178,7 +179,7 @@ namespace Walkabout.Migrate
             }
         }
 
-        bool HeadersMatch(IEnumerable<string> headers)
+        private bool HeadersMatch(IEnumerable<string> headers)
         {
             if (this.map.Fields != null)
             {
@@ -267,7 +268,7 @@ namespace Walkabout.Migrate
             }
         }
 
-        class TBag
+        private class TBag
         {
             public DateTime Date;
             public string Memo;
@@ -294,11 +295,11 @@ namespace Walkabout.Migrate
 
     public class CsvImporter : Importer
     {
-        int _quoteChar;
-        int _fieldDelimiter = ',';
-        List<StringBuilder> _fields = new List<StringBuilder>();
-        int _fieldCount;
-        CsvFieldWriter _writer;
+        private int _quoteChar;
+        private int _fieldDelimiter = ',';
+        private List<StringBuilder> _fields = new List<StringBuilder>();
+        private int _fieldCount;
+        private CsvFieldWriter _writer;
 
         public CsvImporter(MyMoney money, CsvFieldWriter writer) : base(money)
         {
@@ -327,7 +328,7 @@ namespace Walkabout.Migrate
                 {
                     if (this._fieldCount > 0)
                     {
-                        var values = (from f in this._fields select f.ToString());
+                        var values = from f in this._fields select f.ToString();
                         if (rows == 0)
                         {
                             // first row might be row headers e.g. "Trans. Date,Post Date,Description,Amount,Category"
@@ -344,7 +345,7 @@ namespace Walkabout.Migrate
             return rows;
         }
 
-        StringBuilder AddField()
+        private StringBuilder AddField()
         {
             if (this._fieldCount == this._fields.Count)
             {

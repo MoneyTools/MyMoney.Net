@@ -13,8 +13,7 @@ namespace Walkabout.Views
     /// </summary>
     public partial class RentInputControl : UserControl, IView
     {
-
-        RentalBuildingSingleYear yearMonth;
+        private RentalBuildingSingleYear yearMonth;
 
 
         public RentInputControl()
@@ -33,8 +32,7 @@ namespace Walkabout.Views
             IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.RentInputControl_IsVisibleChanged);
         }
 
-
-        void RentInputControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void RentInputControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (this.IsVisible)
             {
@@ -43,8 +41,7 @@ namespace Walkabout.Views
             }
         }
 
-
-        DispatcherTimer dispatcherTimer = null;
+        private DispatcherTimer dispatcherTimer = null;
 
         private void TheDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
@@ -61,7 +58,7 @@ namespace Walkabout.Views
             }
         }
 
-        void dispatcherTimer_Tick(object sender, EventArgs e)
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
             this.dispatcherTimer.Stop();
 
@@ -91,7 +88,7 @@ namespace Walkabout.Views
 
         public event EventHandler BeforeViewStateChanged;
 
-        void OnBeforeViewStateChanged()
+        private void OnBeforeViewStateChanged()
         {
             if (BeforeViewStateChanged != null)
             {
@@ -101,7 +98,7 @@ namespace Walkabout.Views
 
         public event EventHandler<AfterViewStateChangedEventArgs> AfterViewStateChanged;
 
-        void OnAfterViewStateChanged()
+        private void OnAfterViewStateChanged()
         {
             if (AfterViewStateChanged != null)
             {
@@ -109,7 +106,7 @@ namespace Walkabout.Views
             }
         }
 
-        IServiceProvider sp;
+        private IServiceProvider sp;
 
         public IServiceProvider ServiceProvider
         {
@@ -153,7 +150,7 @@ namespace Walkabout.Views
             return null;
         }
 
-        string quickFilter;
+        private string quickFilter;
 
         public string QuickFilter
         {

@@ -8,9 +8,8 @@ namespace Walkabout.Help
 {
     internal class HelpService : DependencyObject
     {
-        static string WebPath = @"https://github.com/clovett/MyMoney.Net/wiki/";
-
-        static List<WeakReference> dependencyObjects = new List<WeakReference>();
+        private static string WebPath = @"https://github.com/clovett/MyMoney.Net/wiki/";
+        private static List<WeakReference> dependencyObjects = new List<WeakReference>();
 
         internal static void Initialize()
         {
@@ -88,7 +87,7 @@ namespace Walkabout.Help
         /// <summary>
         /// This class listens to the F1 help key in a way that does not keep the target object alive.
         /// </summary>
-        class HelpKeyEventRouter
+        private class HelpKeyEventRouter
         {
             public HelpKeyEventRouter(DependencyObject listener)
             {

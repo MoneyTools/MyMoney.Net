@@ -6,12 +6,11 @@ namespace Walkabout.Utilities
 {
     internal class HashedFile : IEquatable<HashedFile>
     {
-        byte[] hash;
-        long fileLength;
-        int hashCode;
-        string path;
-
-        static HashAlgorithm hasher = HashAlgorithm.Create("SHA256");
+        private byte[] hash;
+        private long fileLength;
+        private int hashCode;
+        private string path;
+        private static HashAlgorithm hasher = HashAlgorithm.Create("SHA256");
 
         public HashedFile(string path)
         {
@@ -23,7 +22,7 @@ namespace Walkabout.Utilities
 
         public long FileLength { get { return this.fileLength; } }
 
-        static byte[] hashBuffer = null;
+        private static byte[] hashBuffer = null;
 
         public void SetSha1PrefixHash(int prefixLength)
         {
@@ -121,10 +120,10 @@ namespace Walkabout.Utilities
             }
         }
 
-        static byte[] buffer1 = new byte[65536];
-        static byte[] buffer2 = new byte[65536];
+        private static byte[] buffer1 = new byte[65536];
+        private static byte[] buffer2 = new byte[65536];
 
-        static bool StreamEquals(Stream s1, Stream s2)
+        private static bool StreamEquals(Stream s1, Stream s2)
         {
             while (true)
             {

@@ -17,17 +17,17 @@ namespace Walkabout.Taxes
     // This class prepares an estimated W2 from the splits found in paycheck deposits.
     public class W2Report : Report
     {
-        FlowDocumentView view;
-        MyMoney myMoney;
-        DateTime startDate;
-        DateTime endDate;
-        IServiceProvider serviceProvider;
-        Point downPos;
-        int fiscalYearStart;
-        Category selectedCategory;
-        TaxCategoryCollection taxCategories;
-        Dictionary<Category, List<Transaction>> transactionsByCategory;
-        const string FiscalPrefix = "FY ";
+        private FlowDocumentView view;
+        private MyMoney myMoney;
+        private DateTime startDate;
+        private DateTime endDate;
+        private IServiceProvider serviceProvider;
+        private Point downPos;
+        private int fiscalYearStart;
+        private Category selectedCategory;
+        private TaxCategoryCollection taxCategories;
+        private Dictionary<Category, List<Transaction>> transactionsByCategory;
+        private const string FiscalPrefix = "FY ";
 
         public W2Report(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart)
         {
@@ -202,7 +202,7 @@ namespace Walkabout.Taxes
             return Task.CompletedTask;
         }
 
-        bool GenerateForm(TaxForm form, IReportWriter writer, ICollection<Transaction> transactions)
+        private bool GenerateForm(TaxForm form, IReportWriter writer, ICollection<Transaction> transactions)
         {
             var byCategory = new Dictionary<Category, decimal>();
 
@@ -365,7 +365,7 @@ namespace Walkabout.Taxes
             }
         }
 
-        string GetCategoryCaption(Category c)
+        private string GetCategoryCaption(Category c)
         {
             return c.Name;
         }

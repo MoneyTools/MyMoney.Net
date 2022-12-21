@@ -24,21 +24,23 @@ namespace Walkabout.Dialogs
     /// </summary>
     public class AccountListItem : INotifyPropertyChanged
     {
-        string accountId;
+        private string accountId;
 
         public string AccountId
         {
             get { return this.accountId; }
             set { this.accountId = value; this.OnPropertyChanged("AccountId"); }
         }
-        string name;
+
+        private string name;
 
         public string Name
         {
             get { return this.name; }
             set { this.name = value; this.OnPropertyChanged("Name"); }
         }
-        bool isNew;
+
+        private bool isNew;
 
         public bool IsNew
         {
@@ -46,7 +48,7 @@ namespace Walkabout.Dialogs
             set { this.isNew = value; this.OnPropertyChanged("IsNew"); }
         }
 
-        bool userAdded;
+        private bool userAdded;
 
         public bool UserAdded
         {
@@ -54,7 +56,7 @@ namespace Walkabout.Dialogs
             set { this.userAdded = value; this.OnPropertyChanged("UserAdded"); }
         }
 
-        bool isDisconnected;
+        private bool isDisconnected;
 
         public bool IsDisconnected
         {
@@ -62,7 +64,7 @@ namespace Walkabout.Dialogs
             set { this.isDisconnected = value; this.OnPropertyChanged("IsDisconnected"); }
         }
 
-        bool warning;
+        private bool warning;
 
         public bool HasWarning
         {
@@ -70,8 +72,7 @@ namespace Walkabout.Dialogs
             set { this.warning = value; this.OnPropertyChanged("HasWarning"); }
         }
 
-
-        string tooltip;
+        private string tooltip;
 
         public string ToolTipMessage
         {
@@ -100,18 +101,18 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class OnlineAccountDialog : BaseDialog
     {
-        MyMoney money;
-        Account account = new Account();
-        OnlineAccount editing = new OnlineAccount();
-        ObservableCollection<string> versions = new ObservableCollection<string>();
-        ListCollectionView view;
-        DispatcherTimer queueProcessor;
-        List<AccountListItem> found; // found during "signup" process.
-        TextBox editor;
-        string successPrompt;
-        ProfileResponse profile;
-        bool debugging;
-        IServiceProvider serviceProvider;
+        private MyMoney money;
+        private Account account = new Account();
+        private OnlineAccount editing = new OnlineAccount();
+        private ObservableCollection<string> versions = new ObservableCollection<string>();
+        private ListCollectionView view;
+        private DispatcherTimer queueProcessor;
+        private List<AccountListItem> found; // found during "signup" process.
+        private TextBox editor;
+        private string successPrompt;
+        private ProfileResponse profile;
+        private bool debugging;
+        private IServiceProvider serviceProvider;
 
         public OnlineAccountDialog(MyMoney money, Account account, IServiceProvider sp)
         {
@@ -157,7 +158,7 @@ namespace Walkabout.Dialogs
             Loaded += new RoutedEventHandler(this.OnLoaded);
         }
 
-        void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.GetBankListProgress.Visibility = System.Windows.Visibility.Visible;
             this.ComboBoxName.Visibility = System.Windows.Visibility.Collapsed;
@@ -169,8 +170,8 @@ namespace Walkabout.Dialogs
             }));
         }
 
-        object pendingVerify;
-        object pendingSignon;
+        private object pendingVerify;
+        private object pendingSignon;
 
         protected override void OnClosed(EventArgs e)
         {
@@ -215,7 +216,7 @@ namespace Walkabout.Dialogs
         /// Add another OFX version in numeric order.
         /// </summary>
         /// <returns>Returns the index into the versions array for the new version</returns>
-        int InsertVersion(string version)
+        private int InsertVersion(string version)
         {
             double x = 0;
             if (!string.IsNullOrEmpty(version) && double.TryParse(version, out x))
@@ -240,9 +241,10 @@ namespace Walkabout.Dialogs
             // invalid
             return -1;
         }
-        bool updating;
 
-        OfxInstitutionInfo FindProvider(string name)
+        private bool updating;
+
+        private OfxInstitutionInfo FindProvider(string name)
         {
             if (this.providers != null)
             {
@@ -257,9 +259,9 @@ namespace Walkabout.Dialogs
             return null;
         }
 
-        List<OfxInstitutionInfo> providers;
+        private List<OfxInstitutionInfo> providers;
 
-        void GetBankList()
+        private void GetBankList()
         {
             // show the cached list first.
             this.providers = OfxInstitutionInfo.GetCachedBankList();
@@ -269,7 +271,7 @@ namespace Walkabout.Dialogs
             this.ShowBankList();
         }
 
-        void ShowBankList()
+        private void ShowBankList()
         {
             UiDispatcher.BeginInvoke(new Action(() =>
             {
@@ -369,7 +371,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void OnProcessQueue(object sender, EventArgs e)
+        private void OnProcessQueue(object sender, EventArgs e)
         {
             OfxInstitutionInfo info = null;
 
@@ -397,9 +399,9 @@ namespace Walkabout.Dialogs
             Task.Run(() => this.GetUpdatedBankInfo(info));
         }
 
-        ConcurrentQueue<OfxInstitutionInfo> fetchQueue = new ConcurrentQueue<OfxInstitutionInfo>();
+        private ConcurrentQueue<OfxInstitutionInfo> fetchQueue = new ConcurrentQueue<OfxInstitutionInfo>();
 
-        void OnComboBoxNameSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnComboBoxNameSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!this.updating)
             {
@@ -417,7 +419,7 @@ namespace Walkabout.Dialogs
             }));
         }
 
-        void Enqueue(OfxInstitutionInfo info)
+        private void Enqueue(OfxInstitutionInfo info)
         {
             if (info != null)
             {
@@ -430,7 +432,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void OnComboBoxNameChanged(object sender, TextChangedEventArgs e)
+        private void OnComboBoxNameChanged(object sender, TextChangedEventArgs e)
         {
             if (!this.updating)
             {
@@ -439,9 +441,9 @@ namespace Walkabout.Dialogs
             this.UpdateButtonState();
         }
 
-        string filter;
+        private string filter;
 
-        void OnComboBoxNameChanged()
+        private void OnComboBoxNameChanged()
         {
             OfxInstitutionInfo ps = this.FindProvider(this.ComboBoxName.Text);
             // check for null here allows the user to rename this institution.
@@ -521,8 +523,7 @@ namespace Walkabout.Dialogs
                     !string.IsNullOrWhiteSpace(this.TextBoxOfxAddress.Text);
         }
 
-
-        void GetUpdatedBankInfo(OfxInstitutionInfo provider)
+        private void GetUpdatedBankInfo(OfxInstitutionInfo provider)
         {
             OfxInstitutionInfo ps = OfxInstitutionInfo.GetProviderInformation(provider);
 
@@ -542,9 +543,9 @@ namespace Walkabout.Dialogs
 
         }
 
-        OfxInstitutionInfo selected;
+        private OfxInstitutionInfo selected;
 
-        void UpdateInstitutionInfo(OfxInstitutionInfo ps)
+        private void UpdateInstitutionInfo(OfxInstitutionInfo ps)
         {
             if (ps == null)
             {
@@ -718,13 +719,13 @@ namespace Walkabout.Dialogs
             }
         }
 
-        OfxMfaChallengeRequest challenge;
+        private OfxMfaChallengeRequest challenge;
 
         /// <summary>
         /// Background thread to connect to bank
         /// </summary>
         /// <param name="state"></param>
-        void StartSignup()
+        private void StartSignup()
         {
             var id = new object();
             this.pendingSignon = id;
@@ -785,7 +786,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void OnMfaChallengeCompleted(object sender, EventArgs e)
+        private void OnMfaChallengeCompleted(object sender, EventArgs e)
         {
             this.OnChallengeCompleted(sender, e);
 
@@ -817,7 +818,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        object signupRequest;
+        private object signupRequest;
 
         private void Signup()
         {
@@ -837,7 +838,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        OfxErrorCode GetSignOnCode(OFX ofx)
+        private OfxErrorCode GetSignOnCode(OFX ofx)
         {
             if (ofx != null)
             {
@@ -943,7 +944,7 @@ namespace Walkabout.Dialogs
             this.HandleUnexpectedError(ex);
         }
 
-        void PromptForPassword(OfxSignOnInfo info, List<Block> prompt, OfxErrorCode code, string errorMessage, Action continuation)
+        private void PromptForPassword(OfxSignOnInfo info, List<Block> prompt, OfxErrorCode code, string errorMessage, Action continuation)
         {
             if (info != null && info.AuthTokenRequired.ConvertYesNoToBoolean() && string.IsNullOrEmpty(this.editing.AuthToken))
             {
@@ -969,7 +970,7 @@ namespace Walkabout.Dialogs
             }
         }
 
-        void OnChallengeCompleted(object sender, EventArgs e)
+        private void OnChallengeCompleted(object sender, EventArgs e)
         {
             OfxMfaChallengeRequest req = (OfxMfaChallengeRequest)sender;
             Action continuation = (Action)req.UserData;
@@ -1142,7 +1143,7 @@ namespace Walkabout.Dialogs
             this.ResizeListColumns();
         }
 
-        Typeface typeface;
+        private Typeface typeface;
 
         private double MeasureListString(string s)
         {
@@ -1188,12 +1189,12 @@ namespace Walkabout.Dialogs
 
         }
 
-        string GetResolveButtonCaption()
+        private string GetResolveButtonCaption()
         {
             return "Click here to select an account to match with this online account";
         }
 
-        AccountListItem FindMatchingOnlineAccount(AccountInfoResponse ar)
+        private AccountListItem FindMatchingOnlineAccount(AccountInfoResponse ar)
         {
             AccountType type = AccountType.Checking;
             string id = null;
@@ -1420,7 +1421,7 @@ namespace Walkabout.Dialogs
         /// <summary>
         /// Background thread to connect to bank and verify OFX support
         /// </summary>
-        void StartVerify()
+        private void StartVerify()
         {
             if (this.pendingVerify != null)
             {

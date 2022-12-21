@@ -2,7 +2,7 @@
 
 namespace Walkabout.Tests.Wrappers
 {
-    class PayeesWrapper : ListViewWrapper
+    internal class PayeesWrapper : ListViewWrapper
     {
         public PayeesWrapper(AutomationElement e)
             : base(e)

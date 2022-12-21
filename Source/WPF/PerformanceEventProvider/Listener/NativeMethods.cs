@@ -46,19 +46,19 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct ENABLE_TRACE_PARAMETERS
     {
-        int Version;
-        int EnableProperty;
-        int ControlFlags;
-        Guid SourceId;
-        IntPtr EnableFilterDesc; // EVENT_FILTER_DESCRIPTOR 
+        private int Version;
+        private int EnableProperty;
+        private int ControlFlags;
+        private Guid SourceId;
+        private IntPtr EnableFilterDesc; // EVENT_FILTER_DESCRIPTOR 
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct EVENT_FILTER_DESCRIPTOR
     {
-        long Ptr;
-        int Size;
-        int Type;
+        private long Ptr;
+        private int Size;
+        private int Type;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

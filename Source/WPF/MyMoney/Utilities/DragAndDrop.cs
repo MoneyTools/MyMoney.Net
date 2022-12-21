@@ -12,22 +12,18 @@ namespace Walkabout.Utilities
     {
         #region PROPERTIES
 
-        bool isMouseDown = false;
-        Point dragStartPoint;
-
-        string formatName;
-        bool isDragging = false;
-        bool mergePrompt;
-
-        Window dragdropWindow;
-        AdornerLayer adornerLayer;
-        Adorner lastAdornerUsed;
-
-
-        FrameworkElement mainControl;
-        OnIsDragSourceValid calledBackForValidatingSource;
-        OnIsValidDropTarget calledBackForValidatingTarget;
-        OnApplyDragDrop calledBackFinalDropOperation;
+        private bool isMouseDown = false;
+        private Point dragStartPoint;
+        private string formatName;
+        private bool isDragging = false;
+        private bool mergePrompt;
+        private Window dragdropWindow;
+        private AdornerLayer adornerLayer;
+        private Adorner lastAdornerUsed;
+        private FrameworkElement mainControl;
+        private OnIsDragSourceValid calledBackForValidatingSource;
+        private OnIsValidDropTarget calledBackForValidatingTarget;
+        private OnApplyDragDrop calledBackFinalDropOperation;
 
         #endregion
 
@@ -73,7 +69,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
             {
@@ -83,9 +79,9 @@ namespace Walkabout.Utilities
             }
         }
 
-        object dragSourceStartedFrom;
+        private object dragSourceStartedFrom;
 
-        void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             this.isDragging = false;
             this.isMouseDown = false;
@@ -102,7 +98,7 @@ namespace Walkabout.Utilities
             this.mainControl.PreviewKeyDown -= this.MainControl_PreviewKeyDown;
         }
 
-        void OnPreviewMouseMove(object sender, MouseEventArgs e)
+        private void OnPreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (this.isMouseDown == false)
             {
@@ -127,7 +123,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        void OnPreviewDragEnter(object sender, DragEventArgs e)
+        private void OnPreviewDragEnter(object sender, DragEventArgs e)
         {
             if (this.UpdateEffects(e) == true)
             {
@@ -135,7 +131,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        void OnDrop(object sender, DragEventArgs e)
+        private void OnDrop(object sender, DragEventArgs e)
         {
             if (this.isDragging && e.Data.GetDataPresent(this.formatName))
             {
@@ -164,7 +160,7 @@ namespace Walkabout.Utilities
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OnDragSourceGiveFeedback(object sender, System.Windows.GiveFeedbackEventArgs e)
+        private void OnDragSourceGiveFeedback(object sender, System.Windows.GiveFeedbackEventArgs e)
         {
             if (this.isDragging)
             {
@@ -178,7 +174,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        void OnDragSourceQueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        private void OnDragSourceQueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
             if (this.isDragging)
             {
@@ -227,8 +223,7 @@ namespace Walkabout.Utilities
             }
         }
 
-
-        void AttemptToScrollUp(int speed)
+        private void AttemptToScrollUp(int speed)
         {
             // Attemp to scroll up
             ScrollViewer sv = this.mainControl.FindFirstDescendantOfType<ScrollViewer>();
@@ -241,7 +236,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        void AttemptToScrollDown(int speed)
+        private void AttemptToScrollDown(int speed)
         {
             // Attemp to scroll up
             ScrollViewer sv = WpfHelper.FindFirstDescendantOfType<ScrollViewer>(this.mainControl);
@@ -254,8 +249,8 @@ namespace Walkabout.Utilities
             }
         }
 
-        object previousPossibleDropTarget;
-        DragDropEffects currentEffect = DragDropEffects.None;
+        private object previousPossibleDropTarget;
+        private DragDropEffects currentEffect = DragDropEffects.None;
 
         private bool UpdateEffects(DragEventArgs e)
         {
@@ -369,7 +364,7 @@ namespace Walkabout.Utilities
 
         #region DRAG WINDOW
 
-        TextBlock instruction;
+        private TextBlock instruction;
 
         public void CreateDragDropWindow(FrameworkElement dragVisual)
         {
@@ -428,7 +423,7 @@ namespace Walkabout.Utilities
         /// <summary>
         /// Place the drag/drop main window at location of the mouse
         /// </summary>
-        void UpdateWindowLocation()
+        private void UpdateWindowLocation()
         {
             if (this.dragdropWindow != null)
             {
@@ -442,7 +437,7 @@ namespace Walkabout.Utilities
         /// <summary>
         /// Remove the nice transparent drag/drop feedback
         /// </summary>
-        void DestroyDragDropWindow()
+        private void DestroyDragDropWindow()
         {
             if (this.dragdropWindow != null)
             {

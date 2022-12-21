@@ -39,10 +39,8 @@ namespace Walkabout.Views.Controls
 
         #region Properties
 
-        ObservableCollection<QueryRow> queryRows = new ObservableCollection<QueryRow>();
-
-
-        List<Conjunction> listOfConjunctions;
+        private ObservableCollection<QueryRow> queryRows = new ObservableCollection<QueryRow>();
+        private List<Conjunction> listOfConjunctions;
 
         public List<Conjunction> ListOfConjunctions
         {
@@ -59,7 +57,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        List<Field> listOfFields;
+        private List<Field> listOfFields;
         public List<Field> ListOfFields
         {
             get
@@ -85,8 +83,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-
-        List<string> listOfOperations;
+        private List<string> listOfOperations;
         public List<string> ListOfOperations
         {
             get
@@ -109,27 +106,26 @@ namespace Walkabout.Views.Controls
             }
         }
 
-
-        bool isEditing;
+        private bool isEditing;
         #endregion
 
         #region Data Grid Event
 
-        DataGridBeginningEditEventArgs editingArgs;
+        private DataGridBeginningEditEventArgs editingArgs;
 
-        void OnDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        private void OnDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             this.isEditing = true;
             this.editingArgs = e;
         }
 
-        void OnDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        private void OnDataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
             this.isEditing = false;
             this.editingArgs = null;
         }
 
-        void OnDataGrid1_CurrentCellChanged(object sender, EventArgs e)
+        private void OnDataGrid1_CurrentCellChanged(object sender, EventArgs e)
         {
             // Edit as soon as you click on a cell
             // if we don't do this the user has to click twice on the cell in order to edit (Very anoying)
@@ -159,7 +155,7 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        void OnDataGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void OnDataGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Delete && !(e.OriginalSource is TextBox))
             {
@@ -240,7 +236,7 @@ namespace Walkabout.Views.Controls
 
         #region Serialize
 
-        static string Serialize(QueryRow[] query)
+        private static string Serialize(QueryRow[] query)
         {
             StringWriter sw = new StringWriter();
             XmlTextWriter w = new XmlTextWriter(sw);
@@ -300,7 +296,7 @@ namespace Walkabout.Views.Controls
             get { return true; } // todo: efficiently keep track of whether we have any selected rows.
         }
 
-        List<QueryRow> GetSelectedRows()
+        private List<QueryRow> GetSelectedRows()
         {
             List<QueryRow> list = new List<QueryRow>();
             for (int i = 0, n = this.queryRows.Count; i < n; i++)

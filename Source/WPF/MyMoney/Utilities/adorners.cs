@@ -6,8 +6,8 @@ namespace Walkabout.Utilities
 {
     public class AdornerDropTarget : Adorner
     {
-        Brush brush;
-        Pen pen;
+        private Brush brush;
+        private Pen pen;
 
         // Be sure to call the base class constructor.
         public AdornerDropTarget(FrameworkElement adornedElement)

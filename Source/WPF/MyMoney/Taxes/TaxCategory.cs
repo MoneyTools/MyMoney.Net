@@ -99,7 +99,7 @@ namespace Walkabout.Taxes
                 Level = ParseInt(tokens[0]),
                 RefNum = ParseInt(tokens[1]),
                 Name = tokens[2],
-                MultipleAllowed = (tokens[3] == "Y"),
+                MultipleAllowed = tokens[3] == "Y",
                 SortOrder = ParseSortOrder(tokens[4]),
                 DefaultSign = ParseSign(tokens[5]),
                 RecordFormat = ParseInt(tokens[6]),
@@ -122,7 +122,7 @@ namespace Walkabout.Taxes
             StringBuilder sb = new StringBuilder();
             for (int i = 0, n = line.Length; i < n; i++)
             {
-                bool push = (i == n - 1);
+                bool push = i == n - 1;
 
                 char ch = line[i];
                 if (ch == '"')
@@ -205,16 +205,16 @@ namespace Walkabout.Taxes
 
     public class TaxCategoryCollection : List<TaxCategory>
     {
-        const string TableStartMarker = "^ START OF TABLE";
-        const string TableEndMarker = "^ END OF TABLE";
+        private const string TableStartMarker = "^ START OF TABLE";
+        private const string TableEndMarker = "^ END OF TABLE";
 
         public TaxCategoryCollection()
         {
             this.Load();
         }
 
-        static Dictionary<string, TaxForm> forms = null;
-        static Dictionary<int, TaxCategory> byRef = null;
+        private static Dictionary<string, TaxForm> forms = null;
+        private static Dictionary<int, TaxCategory> byRef = null;
 
         public TaxCategory Find(int refNum)
         {

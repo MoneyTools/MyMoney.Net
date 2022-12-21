@@ -30,18 +30,18 @@ namespace Walkabout.Ofx
 
     public class OfxDownloadData : INotifyPropertyChanged
     {
-        string message;
-        Exception error;
-        OnlineAccount online;
-        Account account;
-        string fileName;
-        bool isError;
-        bool isDownloading;
-        bool success;
-        ThreadSafeObservableCollection<OfxDownloadData> children;
-        List<Transaction> added = new List<Transaction>();
-        OfxErrorCode ofxError;
-        string linkCaption = "Details...";
+        private string message;
+        private Exception error;
+        private OnlineAccount online;
+        private Account account;
+        private string fileName;
+        private bool isError;
+        private bool isDownloading;
+        private bool success;
+        private ThreadSafeObservableCollection<OfxDownloadData> children;
+        private List<Transaction> added = new List<Transaction>();
+        private OfxErrorCode ofxError;
+        private string linkCaption = "Details...";
 
         public OfxDownloadData(OnlineAccount online, Account account)
         {
@@ -151,7 +151,7 @@ namespace Walkabout.Ofx
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        void OnPropertyChanged(String name)
+        private void OnPropertyChanged(String name)
         {
             UiDispatcher.BeginInvoke(new Action(() =>
             {
@@ -166,7 +166,7 @@ namespace Walkabout.Ofx
 
     public class OfxDownloadEventArgs : EventArgs
     {
-        ThreadSafeObservableCollection<OfxDownloadData> list;
+        private ThreadSafeObservableCollection<OfxDownloadData> list;
 
         public OfxDownloadEventArgs()
         {
@@ -202,7 +202,7 @@ namespace Walkabout.Ofx
         }
     }
 
-    class LogFileInfo
+    internal class LogFileInfo
     {
         public string Path { get; set; }
     }
@@ -212,11 +212,11 @@ namespace Walkabout.Ofx
 
         public event OfxDownloadProgress Status;
 
-        IList list;
-        string[] files;
-        MyMoney myMoney;
-        OfxRequest.PickAccountDelegate resolverWhenMissingAccountId;
-        Dispatcher dispatcher;
+        private IList list;
+        private string[] files;
+        private MyMoney myMoney;
+        private OfxRequest.PickAccountDelegate resolverWhenMissingAccountId;
+        private Dispatcher dispatcher;
 
         public OfxThread(MyMoney myMoney, IList list, string[] files, OfxRequest.PickAccountDelegate resolverWhenMissingAccountId, Dispatcher uiThreadDispatcher)
         {
@@ -254,9 +254,9 @@ namespace Walkabout.Ofx
             }
         }
 
-        DelayedActions delayedActions = new DelayedActions();
+        private DelayedActions delayedActions = new DelayedActions();
 
-        void UpdateStatusOnUIThread(int min, int max, int value, OfxDownloadEventArgs e)
+        private void UpdateStatusOnUIThread(int min, int max, int value, OfxDownloadEventArgs e)
         {
             this.delayedActions.StartDelayedAction("UpdateStatus", () =>
             {
@@ -267,7 +267,7 @@ namespace Walkabout.Ofx
             }, TimeSpan.FromMilliseconds(10));
         }
 
-        void LoadImports()
+        private void LoadImports()
         {
             Thread.CurrentThread.Name = "Synchronize";
             var downloadArgs = new OfxDownloadEventArgs();
@@ -354,11 +354,11 @@ namespace Walkabout.Ofx
             }
         }
 
-        OfxDownloadEventArgs downloadEventArgs;
-        ConcurrentQueue<OfxDownloadData> work = new ConcurrentQueue<OfxDownloadData>();
-        int completed;
+        private OfxDownloadEventArgs downloadEventArgs;
+        private ConcurrentQueue<OfxDownloadData> work = new ConcurrentQueue<OfxDownloadData>();
+        private int completed;
 
-        void Synchronize()
+        private void Synchronize()
         {
             this.downloadEventArgs = new OfxDownloadEventArgs();
             int count = this.list.Count;
@@ -386,9 +386,9 @@ namespace Walkabout.Ofx
             }
         }
 
-        List<OfxRequest> pending = new List<OfxRequest>();
+        private List<OfxRequest> pending = new List<OfxRequest>();
 
-        void SyncAccount()
+        private void SyncAccount()
         {
             Thread.CurrentThread.Name = "Synchronize";
 
@@ -476,14 +476,14 @@ namespace Walkabout.Ofx
 
     public class OfxRequest
     {
-        OnlineAccount onlineAccount;
-        Account account;
-        MyMoney myMoney;
-        Hashtable truidMap = new Hashtable(); // trnuid -> Account
-        DateTime start;
-        Dictionary<string, SecurityInfo> securityInfo; // uniqueId -> SecurityInfo.
-        PickAccountDelegate callerPickAccount;
-        HashSet<string> skippedAccounts = new HashSet<string>();
+        private OnlineAccount onlineAccount;
+        private Account account;
+        private MyMoney myMoney;
+        private Hashtable truidMap = new Hashtable(); // trnuid -> Account
+        private DateTime start;
+        private Dictionary<string, SecurityInfo> securityInfo; // uniqueId -> SecurityInfo.
+        private PickAccountDelegate callerPickAccount;
+        private HashSet<string> skippedAccounts = new HashSet<string>();
 
         public OfxRequest(OnlineAccount oa, MyMoney m, PickAccountDelegate resolveMissingAccountId)
         {
@@ -529,19 +529,19 @@ namespace Walkabout.Ofx
             return isodate;
         }
 
-        static string GetIsoDate(DateTime dt)
+        private static string GetIsoDate(DateTime dt)
         {
             return dt.Year.ToString() + dt.Month.ToString("D2") + dt.Day.ToString("D2");
         }
 
-        enum OfxRequestType
+        private enum OfxRequestType
         {
             BankRequest,
             CreditRequest,
             InvestmentRequest
         }
 
-        static OfxRequestType GetRequestType(Account a)
+        private static OfxRequestType GetRequestType(Account a)
         {
             switch (a.Type)
             {
@@ -662,7 +662,7 @@ namespace Walkabout.Ofx
             return doc;
         }
 
-        XDocument GetSignupRequest()
+        private XDocument GetSignupRequest()
         {
             XDocument doc = this.GetSignonRequest(true);
 
@@ -680,7 +680,7 @@ namespace Walkabout.Ofx
             return doc;
         }
 
-        XElement GetBankRequest(IList accounts)
+        private XElement GetBankRequest(IList accounts)
         {
 
             XElement br = new XElement("BANKMSGSRQV1");
@@ -722,7 +722,7 @@ namespace Walkabout.Ofx
         /// <summary>
         /// Very similar structure to GetBankRequest, just different XML element names at various levels.
         /// </summary>
-        XElement GetCreditRequest(IList accounts)
+        private XElement GetCreditRequest(IList accounts)
         {
             XElement cr = new XElement("CREDITCARDMSGSRQV1");
             this.start = DateTime.MinValue;
@@ -756,7 +756,7 @@ namespace Walkabout.Ofx
         /// <summary>
         /// Figure out what date range to ask for.
         /// </summary>
-        DateTime GetStatementRequestRange(Account a)
+        private DateTime GetStatementRequestRange(Account a)
         {
             DateTime dt = a.LastSync;
             if (dt == DateTime.MinValue)
@@ -776,8 +776,7 @@ namespace Walkabout.Ofx
             return dt;
         }
 
-
-        XElement GetInvestmentRequest(IList accounts)
+        private XElement GetInvestmentRequest(IList accounts)
         {
             XElement br = new XElement("INVSTMTMSGSRQV1");
             this.start = DateTime.MinValue;
@@ -813,7 +812,7 @@ namespace Walkabout.Ofx
             return br;
         }
 
-        static string GetOfxType(AccountType t)
+        private static string GetOfxType(AccountType t)
         {
             switch (t)
             {
@@ -832,8 +831,7 @@ namespace Walkabout.Ofx
             throw new InvalidOperationException("Should not be trying to use this account type here");
         }
 
-
-        string FormatRequest(XDocument doc, string oldFileUid, string newFileUid, out Encoding encoding)
+        private string FormatRequest(XDocument doc, string oldFileUid, string newFileUid, out Encoding encoding)
         {
             bool version2 = this.onlineAccount.OfxVersion != null && this.onlineAccount.OfxVersion.StartsWith("2");
 
@@ -946,7 +944,7 @@ NEWFILEUID:{1}
             }
         }
 
-        HttpWebRequest pending;
+        private HttpWebRequest pending;
 
         public void Cancel()
         {
@@ -968,7 +966,7 @@ NEWFILEUID:{1}
             }
         }
 
-        XDocument SendOfxRequest(XDocument doc, string oldFileUid, string newFileUid)
+        private XDocument SendOfxRequest(XDocument doc, string oldFileUid, string newFileUid)
         {
             Encoding encoding = null;
             string msg = this.FormatRequest(doc, oldFileUid, newFileUid, out encoding);
@@ -1070,7 +1068,7 @@ NEWFILEUID:{1}
             return headers;
         }
 
-        static string GetResponseBody(HttpWebResponse resp)
+        private static string GetResponseBody(HttpWebResponse resp)
         {
             try
             {
@@ -1085,7 +1083,7 @@ NEWFILEUID:{1}
             }
         }
 
-        static void EnsurePathExists(string path)
+        private static void EnsurePathExists(string path)
         {
             if (!Directory.Exists(path))
             {
@@ -1841,8 +1839,7 @@ NEWFILEUID:{1}
             return stm;
         }
 
-
-        static string GetLogFileLocation(XDocument doc)
+        private static string GetLogFileLocation(XDocument doc)
         {
             LogFileInfo log = doc.Annotation<LogFileInfo>();
             if (log != null)
@@ -1966,7 +1963,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             }
         }
 
-        void ProcessCreditCardResponse(XElement cc, OfxDownloadData results)
+        private void ProcessCreditCardResponse(XElement cc, OfxDownloadData results)
         {
             List<Tuple<Account, XElement>> pending = new List<Tuple<Account, XElement>>();
 
@@ -2026,8 +2023,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             }
         }
 
-
-        void ProcessBankResponse(XElement br, OfxDownloadData results)
+        private void ProcessBankResponse(XElement br, OfxDownloadData results)
         {
             List<Tuple<Account, XElement>> pending = new List<Tuple<Account, XElement>>();
 
@@ -2089,7 +2085,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             }
         }
 
-        void ProcessInvestmentResponse(XElement ir, OfxDownloadData results)
+        private void ProcessInvestmentResponse(XElement ir, OfxDownloadData results)
         {
             List<Tuple<Account, XElement>> pending = new List<Tuple<Account, XElement>>();
 
@@ -2173,7 +2169,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         /// in the future we could also reconcile the UNITS with what we think we are holding.
         /// </summary>
         /// <param name="invPosList"></param>
-        void ProcessInvestmentPositions(XElement invPosList)
+        private void ProcessInvestmentPositions(XElement invPosList)
         {
             /*
                 <INVPOSLIST>
@@ -2232,7 +2228,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             }
         }
 
-        void ProcessInvestmentTransactionList(Account a, XElement tranList, OfxDownloadData results)
+        private void ProcessInvestmentTransactionList(Account a, XElement tranList, OfxDownloadData results)
         {
             if (tranList == null)
             {
@@ -2392,7 +2388,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         }
 
-        Transaction ProcessInvestmentBuy(Account a, XElement buy)
+        private Transaction ProcessInvestmentBuy(Account a, XElement buy)
         {
             // Turns out the shape of these elements are the same regardless of whether the outer element is
             // BUYMF, BUYSTOCK, BUYOTHER, or BUYDEBT.
@@ -2544,7 +2540,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             return t;
         }
 
-        Transaction ProcessInvestmentSell(Account a, XElement sell)
+        private Transaction ProcessInvestmentSell(Account a, XElement sell)
         {
             // Turns out the shape of these elements are the same regardless of whether the outer element is
             // SELLMF, SELLSTOCK, SELLOTHER, or SELLDEBT.
@@ -2641,7 +2637,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             return t;
         }
 
-        Transaction ProcessInvestmentTransfer(Account a, XElement transfer)
+        private Transaction ProcessInvestmentTransfer(Account a, XElement transfer)
         {
             Transaction t = this.ProcessInvestmentTransaction(a, transfer);
             t.Investment = t.GetOrCreateInvestment();
@@ -2722,7 +2718,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             return t;
         }
 
-        Transaction ProcessIncomeExpense(Account a, XElement income)
+        private Transaction ProcessIncomeExpense(Account a, XElement income)
         {
             /*
               <INCOME>
@@ -2780,7 +2776,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             return t;
         }
 
-        Category GetIncomeCategory(XElement incomeElement)
+        private Category GetIncomeCategory(XElement incomeElement)
         {
             Category cat = null;
             string type = incomeElement.SelectElementValue("INCOMETYPE");
@@ -2805,7 +2801,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             return cat;
         }
 
-        Transaction ProcessInvestmentBankTransaction(Account a, XElement e)
+        private Transaction ProcessInvestmentBankTransaction(Account a, XElement e)
         {
             /*
              <INVBANKTRAN>
@@ -2882,7 +2878,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             return t;
         }
 
-        Transaction ProcessMarginInterest(Account a, XElement e)
+        private Transaction ProcessMarginInterest(Account a, XElement e)
         {
             if (e == null)
             {
@@ -2910,7 +2906,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             }
         }
 
-        Security ProcessSecId(XElement secId)
+        private Security ProcessSecId(XElement secId)
         {
             if (secId == null)
             {
@@ -2944,7 +2940,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         }
 
         // Little wrapper to hold onto OFX info returned with statement.
-        class SecurityInfo
+        private class SecurityInfo
         {
             public string UniqueId { get; set; }
             public string Name { get; set; }
@@ -2963,14 +2959,14 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             public override bool Equals(object obj)
             {
                 SecurityInfo si = obj as SecurityInfo;
-                return (si != null && si.UniqueId == this.UniqueId);
+                return si != null && si.UniqueId == this.UniqueId;
             }
         }
 
         /// <summary>
         /// Read SECLISTMSGSRSV1/SECLIST
         /// </summary>
-        Dictionary<string, SecurityInfo> ReadSecurityInfo(XDocument doc)
+        private Dictionary<string, SecurityInfo> ReadSecurityInfo(XDocument doc)
         {
             var result = new Dictionary<string, SecurityInfo>();
             XElement secList = doc.SelectElement("OFX/SECLISTMSGSRSV1/SECLIST");
@@ -3379,7 +3375,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         public delegate Account PickAccountDelegate(MyMoney money, Account accountTemplate, string prompt);
 
-        static Regex ObfuscatedId = new Regex("([X]+)([0-9]+)");
+        private static Regex ObfuscatedId = new Regex("([X]+)([0-9]+)");
 
         private bool AccoundIdMatches(string downloadedId, string localId)
         {
@@ -3607,11 +3603,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
     public class OfxException : Exception
     {
-        OfxErrorCode ofxError;
-        string code;
-        string httpHeaders;
-        string response;
-        Account account;
+        private OfxErrorCode ofxError;
+        private string code;
+        private string httpHeaders;
+        private string response;
+        private Account account;
 
         public OfxException(string message)
             : base(message)
@@ -3645,10 +3641,9 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
     /// </summary>
     public class OfxMfaChallengeRequest
     {
-        OnlineAccount onlineAccount;
-        MyMoney money;
-
-        string challengeLog;
+        private OnlineAccount onlineAccount;
+        private MyMoney money;
+        private string challengeLog;
 
         public OfxMfaChallengeRequest(OnlineAccount onlineAccount, MyMoney m)
         {
@@ -3850,9 +3845,9 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
     }
 
-    class StringTrimmingXmlReader : XmlReader
+    internal class StringTrimmingXmlReader : XmlReader
     {
-        XmlReader inner;
+        private XmlReader inner;
         public StringTrimmingXmlReader(XmlReader inner)
         {
             this.inner = inner;

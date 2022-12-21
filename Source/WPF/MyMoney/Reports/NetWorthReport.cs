@@ -20,14 +20,14 @@ namespace Walkabout.Reports
     //=========================================================================================
     public class NetWorthReport : Report
     {
-        FlowDocumentView view;
-        MyMoney myMoney;
-        Random rand = new Random(Environment.TickCount);
-        byte minRandColor, maxRandColor;
-        DateTime reportDate;
-        StockQuoteCache cache;
-        bool generating;
-        bool filterOutClosedAccounts = false;
+        private FlowDocumentView view;
+        private MyMoney myMoney;
+        private Random rand = new Random(Environment.TickCount);
+        private byte minRandColor, maxRandColor;
+        private DateTime reportDate;
+        private StockQuoteCache cache;
+        private bool generating;
+        private bool filterOutClosedAccounts = false;
 
         public event EventHandler<SecurityGroup> SecurityDrillDown;
         public event EventHandler<AccountGroup> CashBalanceDrillDown;
@@ -294,7 +294,7 @@ namespace Walkabout.Reports
                 if (picker.SelectedDate.HasValue)
                 {
                     this.reportDate = picker.SelectedDate.Value;
-                    this.filterOutClosedAccounts = (this.reportDate >= DateTime.Today);
+                    this.filterOutClosedAccounts = this.reportDate >= DateTime.Today;
                     _ = this.view.Generate(this);
                 }
             }
@@ -424,7 +424,7 @@ namespace Walkabout.Reports
             return new Tuple<decimal, bool>(balance, hasNoneType);
         }
 
-        bool IsBankAccount(Account a)
+        private bool IsBankAccount(Account a)
         {
             if (a.Type == AccountType.Credit || // we'll show credit accounts as liabilities later.
                 a.Type == AccountType.Asset ||
@@ -438,7 +438,7 @@ namespace Walkabout.Reports
             return true;
         }
 
-        bool IsInvestmentAccount(Account a)
+        private bool IsInvestmentAccount(Account a)
         {
             return a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement;
         }

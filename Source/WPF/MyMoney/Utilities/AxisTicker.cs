@@ -2,7 +2,7 @@
 
 namespace Walkabout.Utilities
 {
-    class AxisTickSpacer
+    internal class AxisTickSpacer
     {
         private double minPoint;
         private double maxPoint;

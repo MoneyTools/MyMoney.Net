@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Walkabout.Utilities
 {
-    class UsHolidays
+    internal class UsHolidays
     {
-        HashSet<DateTime> holidays;
-        int year;
+        private HashSet<DateTime> holidays;
+        private int year;
 
         public UsHolidays() { }
 
@@ -118,13 +118,13 @@ namespace Walkabout.Utilities
             int e = b % 4;
             int f = (b + 8) / 25;
             int g = (b - f + 1) / 3;
-            int h = (19 * a + b - d - g + 15) % 30;
+            int h = ((19 * a) + b - d - g + 15) % 30;
             int i = c / 4;
             int k = c % 4;
-            int l = (32 + 2 * e + 2 * i - h - k) % 7;
-            int m = (a + 11 * h + 22 * l) / 451;
-            int month = (h + l - 7 * m + 114) / 31;
-            int day = ((h + l - 7 * m + 114) % 31) + 1;
+            int l = (32 + (2 * e) + (2 * i) - h - k) % 7;
+            int m = (a + (11 * h) + (22 * l)) / 451;
+            int month = (h + l - (7 * m) + 114) / 31;
+            int day = ((h + l - (7 * m) + 114) % 31) + 1;
             return new DateTime(year, month, day);
         }
 
@@ -134,7 +134,7 @@ namespace Walkabout.Utilities
         }
 
         // Helper methods ============================================================
-        static DateTime MoveFordwards(DateTime date)
+        private static DateTime MoveFordwards(DateTime date)
         {
             if (date.DayOfWeek == DayOfWeek.Saturday)
             {
@@ -147,7 +147,7 @@ namespace Walkabout.Utilities
             return date;
         }
 
-        static DateTime MoveClosestWorkday(DateTime date)
+        private static DateTime MoveClosestWorkday(DateTime date)
         {
             if (date.DayOfWeek == DayOfWeek.Saturday)
             {
@@ -160,7 +160,7 @@ namespace Walkabout.Utilities
             return date;
         }
 
-        static DateTime GetFirstMonday(int year, int month)
+        private static DateTime GetFirstMonday(int year, int month)
         {
             /*             
             Sunday = 0,
@@ -175,19 +175,18 @@ namespace Walkabout.Utilities
             return date.AddDays((8 - (int)date.DayOfWeek) % 7);
         }
 
-
-        static DateTime GetFirstThursday(int year, int month)
+        private static DateTime GetFirstThursday(int year, int month)
         {
             DateTime date = new DateTime(year, month, 1);
             return date.AddDays((11 - (int)date.DayOfWeek) % 7);
         }
 
-        static DateTime GetThirdMonday(int year, int month)
+        private static DateTime GetThirdMonday(int year, int month)
         {
             return GetFirstMonday(year, month).AddDays(14);
         }
 
-        static DateTime GetLastMonday(int year, int month)
+        private static DateTime GetLastMonday(int year, int month)
         {
             DateTime date = GetFirstMonday(year, month).AddDays(14);
             while (true)
@@ -202,7 +201,7 @@ namespace Walkabout.Utilities
             return date;
         }
 
-        static DateTime GetForthThursday(int year, int month)
+        private static DateTime GetForthThursday(int year, int month)
         {
             return GetFirstThursday(year, month).AddDays(21);
         }
