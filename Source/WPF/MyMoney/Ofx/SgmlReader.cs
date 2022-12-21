@@ -76,8 +76,16 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (this._value != null) return this._value;
-                if (this.DtdType != null) return this.DtdType.Default;
+                if (this._value != null)
+                {
+                    return this._value;
+                }
+
+                if (this.DtdType != null)
+                {
+                    return this.DtdType.Default;
+                }
+
                 return null;
             }
             set
@@ -166,7 +174,10 @@ namespace Walkabout.Sgml
                 int newsize = this._attsize + 10;
                 Attribute[] newarray = new Attribute[newsize];
                 if (this._attributes != null)
+                {
                     Array.Copy(this._attributes, newarray, this._attsize);
+                }
+
                 this._attsize = newsize;
                 this._attributes = newarray;
             }
@@ -535,7 +546,11 @@ namespace Walkabout.Sgml
 
         Node Push(string name, XmlNodeType nt, string value)
         {
-            if (this._depth == this._size) this.Grow();
+            if (this._depth == this._size)
+            {
+                this.Grow();
+            }
+
             Node result;
             if (this._stack[this._depth] == null)
             {
@@ -740,7 +755,10 @@ namespace Walkabout.Sgml
             get
             {
                 if (this._state == State.Attr || this._state == State.AttrValue)
+                {
                     return this._a.IsDefault;
+                }
+
                 return false;
             }
         }
@@ -748,7 +766,11 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (this._a != null) return this._a.QuoteChar;
+                if (this._a != null)
+                {
+                    return this._a.QuoteChar;
+                }
+
                 return '\0';
             }
         }
@@ -760,7 +782,10 @@ namespace Walkabout.Sgml
                 for (int i = this._depth - 1; i > 1; i--)
                 {
                     XmlSpace xs = this._stack[i].Space;
-                    if (xs != XmlSpace.None) return xs;
+                    if (xs != XmlSpace.None)
+                    {
+                        return xs;
+                    }
                 }
                 return XmlSpace.None;
             }
@@ -773,7 +798,10 @@ namespace Walkabout.Sgml
                 for (int i = this._depth - 1; i > 1; i--)
                 {
                     string xmllang = this._stack[i].XmlLang;
-                    if (xmllang != null) return xmllang;
+                    if (xmllang != null)
+                    {
+                        return xmllang;
+                    }
                 }
                 return String.Empty;
             }
@@ -796,10 +824,16 @@ namespace Walkabout.Sgml
             get
             {
                 if (this._state == State.Attr || this._state == State.AttrValue)
+                {
                     return 0;
+                }
+
                 if (this._node.NodeType == XmlNodeType.Element ||
                     this._node.NodeType == XmlNodeType.DocumentType)
+                {
                     return this._node.AttributeCount;
+                }
+
                 return 0;
             }
         }
@@ -809,7 +843,10 @@ namespace Walkabout.Sgml
             if (this._state != State.Attr && this._state != State.AttrValue)
             {
                 int i = this._node.GetAttribute(name);
-                if (i >= 0) return this.GetAttribute(i);
+                if (i >= 0)
+                {
+                    return this.GetAttribute(i);
+                }
             }
             return null;
         }
@@ -825,7 +862,9 @@ namespace Walkabout.Sgml
             {
                 Attribute a = this._node.GetAttribute(i);
                 if (a != null)
+                {
                     return a.Value;
+                }
             }
             throw new IndexOutOfRangeException();
         }
@@ -1268,7 +1307,9 @@ namespace Walkabout.Sgml
             for (int i = this._depth - 1; i > 0; i--)
             {
                 if ((object)this._stack[i].Name == this._endTag)
+                {
                     return true;
+                }
             }
             this.Log("No matching start tag for '</{0}>'", name);
             this._state = State.Markup;
@@ -1292,7 +1333,10 @@ namespace Walkabout.Sgml
             {
                 int j = i + 2;
                 while (j < value.Length && value[j] == '-')
+                {
                     j++;
+                }
+
                 if (i > 0)
                 {
                     value = value.Substring(0, i - 1) + "-" + value.Substring(j);
@@ -1397,7 +1441,10 @@ namespace Walkabout.Sgml
         bool ParseText(char ch, bool newtext)
         {
             bool ws = !newtext || this._current.IsWhitespace;
-            if (newtext) this._sb.Length = 0;
+            if (newtext)
+            {
+                this._sb.Length = 0;
+            }
             //_sb.Append(ch);
             //ch = _current.ReadChar();
             this._state = State.Text;
@@ -1431,7 +1478,11 @@ namespace Walkabout.Sgml
                 }
                 else
                 {
-                    if (!this._current.IsWhitespace) ws = false;
+                    if (!this._current.IsWhitespace)
+                    {
+                        ws = false;
+                    }
+
                     this._sb.Append(ch);
                     ch = this._current.ReadChar();
                 }
@@ -1584,7 +1635,11 @@ namespace Walkabout.Sgml
                 }
                 else
                 {
-                    if (!this._current.IsWhitespace && ws) ws = false;
+                    if (!this._current.IsWhitespace && ws)
+                    {
+                        ws = false;
+                    }
+
                     this._sb.Append(ch);
                 }
                 ch = this._current.ReadChar();
@@ -1592,7 +1647,10 @@ namespace Walkabout.Sgml
             string value = this._sb.ToString();
             this.Push(null, XmlNodeType.CDATA, value);
             if (this._partial == '\0')
+            {
                 this._partial = ' ';// force it to pop this CDATA next time in.
+            }
+
             return true;
         }
 
@@ -1624,7 +1682,10 @@ namespace Walkabout.Sgml
                         {
                             sb.Append(e.Literal);
                             if (ch != terminator)
+                            {
                                 ch = this._current.ReadChar();
+                            }
+
                             return;
                         }
                         else
@@ -1679,8 +1740,15 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (this._state == State.Initial) return ReadState.Initial;
-                else if (this._state == State.Eof) return ReadState.EndOfFile;
+                if (this._state == State.Initial)
+                {
+                    return ReadState.Initial;
+                }
+                else if (this._state == State.Eof)
+                {
+                    return ReadState.EndOfFile;
+                }
+
                 return ReadState.Interactive;
             }
         }
@@ -1834,7 +1902,10 @@ namespace Walkabout.Sgml
                         if (f != null)
                         {
                             if (f.Name == this._dtd.Name)
+                            {
                                 break; // can't pop the root element.
+                            }
+
                             if (f.CanContain(name, this._dtd))
                             {
                                 break;
@@ -1871,7 +1942,11 @@ namespace Walkabout.Sgml
                         string closing = string.Empty;
                         for (int k = top; k >= i + 1; k--)
                         {
-                            if (closing != string.Empty) closing += ",";
+                            if (closing != string.Empty)
+                            {
+                                closing += ",";
+                            }
+
                             closing += "<" + this._stack[k].Name + ">";
                         }
                         this.Log("Element '{0}' not allowed inside '{1}', closing {2}.",

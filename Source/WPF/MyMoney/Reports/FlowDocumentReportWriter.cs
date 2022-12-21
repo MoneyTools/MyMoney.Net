@@ -400,7 +400,11 @@ namespace Walkabout.Reports
 
         public void StartCell(int rowSpan, int colSpan)
         {
-            if (this.current.row == null) this.StartRow();
+            if (this.current.row == null)
+            {
+                this.StartRow();
+            }
+
             this.current.cell = new TableCell();
             if (rowSpan != 1)
             {

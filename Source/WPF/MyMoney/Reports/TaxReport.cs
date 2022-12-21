@@ -276,7 +276,11 @@ namespace Walkabout.Reports
 
                 foreach (var data in calculator.Unknown)
                 {
-                    if (!this.InRange(data.DateSold)) continue;
+                    if (!this.InRange(data.DateSold))
+                    {
+                        continue;
+                    }
+
                     writer.StartRow();
                     writer.StartCell();
                     writer.WriteParagraph(data.Security.Name);
@@ -309,7 +313,11 @@ namespace Walkabout.Reports
                 this.WriteHeaders(writer);
                 foreach (var data in calculator.ShortTerm)
                 {
-                    if (!this.InRange(data.DateSold)) continue;
+                    if (!this.InRange(data.DateSold))
+                    {
+                        continue;
+                    }
+
                     this.WriteCapitalGains(writer, data);
                     total += data.TotalGain;
                 }
@@ -324,7 +332,11 @@ namespace Walkabout.Reports
                 this.WriteHeaders(writer);
                 foreach (var data in calculator.LongTerm)
                 {
-                    if (!this.InRange(data.DateSold)) continue;
+                    if (!this.InRange(data.DateSold))
+                    {
+                        continue;
+                    }
+
                     this.WriteCapitalGains(writer, data);
                     total += data.TotalGain;
                 }

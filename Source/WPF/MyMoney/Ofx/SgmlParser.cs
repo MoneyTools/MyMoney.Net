@@ -53,8 +53,15 @@ namespace Walkabout.Sgml
         {
             get
             {
-                if (this._resolvedUri != null) return this._resolvedUri;
-                else if (this.Parent != null) return this.Parent.ResolvedUri;
+                if (this._resolvedUri != null)
+                {
+                    return this._resolvedUri;
+                }
+                else if (this.Parent != null)
+                {
+                    return this.Parent.ResolvedUri;
+                }
+
                 return null;
             }
         }
@@ -122,7 +129,9 @@ namespace Walkabout.Sgml
             if (this.Internal)
             {
                 if (this.Literal != null)
+                {
                     this._stm = new StringReader(this.Literal);
+                }
             }
             else if (this.Uri == null)
             {
@@ -147,7 +156,11 @@ namespace Walkabout.Sgml
                             drive = path.Substring(0, i + 1);
                         }
                         string s = Path.Combine(baseUri.LocalPath, this.Uri);
-                        if (s.Substring(1, 2) == ":\\") drive = string.Empty;
+                        if (s.Substring(1, 2) == ":\\")
+                        {
+                            drive = string.Empty;
+                        }
+
                         string uri = "file:///" + drive + s;
                         this._resolvedUri = new Uri(uri);
                     }
@@ -175,7 +188,11 @@ namespace Walkabout.Sgml
                         //Console.WriteLine("Fetching:" + ResolvedUri.AbsoluteUri);
                         HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(this.ResolvedUri);
                         wr.Timeout = 10000; // in case this is running in an ASPX page.
-                        if (this.Proxy != null) wr.Proxy = new WebProxy(this.Proxy);
+                        if (this.Proxy != null)
+                        {
+                            wr.Proxy = new WebProxy(this.Proxy);
+                        }
+
                         wr.PreAuthenticate = false;
                         // Pass the credentials of the process. 
                         wr.Credentials = CredentialCache.DefaultCredentials;
@@ -193,7 +210,11 @@ namespace Walkabout.Sgml
                         {
                             int j = contentType.IndexOf("=", i);
                             int k = contentType.IndexOf(";", j);
-                            if (k < 0) k = contentType.Length;
+                            if (k < 0)
+                            {
+                                k = contentType.Length;
+                            }
+
                             if (j > 0)
                             {
                                 j++;
@@ -292,7 +313,11 @@ namespace Walkabout.Sgml
 
         public string ScanToEnd(StringBuilder sb, string type, string terminators)
         {
-            if (sb != null) sb.Length = 0;
+            if (sb != null)
+            {
+                sb.Length = 0;
+            }
+
             int start = this.Line;
             // This method scans over a chunk of text looking for the
             // termination sequence specified by the 'terminators' parameter.
@@ -326,7 +351,10 @@ namespace Walkabout.Sgml
                             while (i - j >= 0)
                             {
                                 if (terminators[i - j] != terminators[state - j])
+                                {
                                     break;
+                                }
+
                                 j++;
                             }
                             if (j > i)
@@ -347,20 +375,33 @@ namespace Walkabout.Sgml
                             sb.Append(terminators[k]);
                         }
                         if (i > 0) // see if we've matched this char or not
+                        {
                             sb.Append(ch); // if not then append it to buffer.
+                        }
                     }
                     state = newstate;
                     next = terminators[newstate];
                 }
                 else
                 {
-                    if (sb != null) sb.Append(ch);
+                    if (sb != null)
+                    {
+                        sb.Append(ch);
+                    }
                 }
                 ch = this.ReadChar();
             }
-            if (ch == 0) this.Error(type + " starting on line {0} was never closed", start);
+            if (ch == 0)
+            {
+                this.Error(type + " starting on line {0} was never closed", start);
+            }
+
             this.ReadChar(); // consume last char in termination sequence.
-            if (sb != null) return sb.ToString();
+            if (sb != null)
+            {
+                return sb.ToString();
+            }
+
             return string.Empty;
         }
 
@@ -538,7 +579,10 @@ namespace Walkabout.Sgml
                 foreach (string s in this.Exclusions)
                 {
                     if (s == (object)name) // XmlNameTable optimization
+                    {
                         return false;
+                    }
+
                     if (ignoreCase && string.Compare(s, name, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return true;
@@ -550,7 +594,10 @@ namespace Walkabout.Sgml
                 foreach (string s in this.Inclusions)
                 {
                     if (s == (object)name) // XmlNameTable optimization
+                    {
                         return true;
+                    }
+
                     if (ignoreCase && string.Compare(s, name, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return true;
@@ -585,7 +632,11 @@ namespace Walkabout.Sgml
 
         public int PopGroup()
         {
-            if (this.CurrentDepth == 0) return -1;
+            if (this.CurrentDepth == 0)
+            {
+                return -1;
+            }
+
             this.CurrentDepth--;
             this.Model.Parent.AddGroup(this.Model);
             this.Model = this.Model.Parent;
@@ -629,7 +680,10 @@ namespace Walkabout.Sgml
         public bool CanContain(string name, SgmlDtd dtd)
         {
             if (this.DeclaredContent != DeclaredContent.Default)
+            {
                 return false; // empty or text only node.
+            }
+
             return this.Model.CanContain(name, dtd);
         }
     }
@@ -737,7 +791,9 @@ namespace Walkabout.Sgml
                 {
                     string s = (string)obj;
                     if (s == name || (dtd.IgnoreCase && string.Compare(s, name, StringComparison.OrdinalIgnoreCase) == 0))
+                    {
                         return true;
+                    }
                 }
             }
             // didn't find it, so do a more expensive search over child elements
@@ -755,7 +811,9 @@ namespace Walkabout.Sgml
                             // tricky case, the start tag is optional so element may be
                             // allowed inside this guy!
                             if (e.CanContain(name, dtd))
+                            {
                                 return true;
+                            }
                         }
                     }
                 }
@@ -763,7 +821,9 @@ namespace Walkabout.Sgml
                 {
                     Group m = (Group)obj;
                     if (m.CanContain(name, dtd))
+                    {
                         return true;
+                    }
                 }
             }
             return false;
@@ -922,7 +982,11 @@ namespace Walkabout.Sgml
         {
             this._ignoreCase = ignoreCase;
             this._nt = nt;
-            if (name != null) this.Name = this._nt.Add(name);
+            if (name != null)
+            {
+                this.Name = this._nt.Add(name);
+            }
+
             if (ignoreCase)
             {
                 this._elements = new Hashtable(StringComparer.OrdinalIgnoreCase);
@@ -1002,7 +1066,11 @@ namespace Walkabout.Sgml
 
         void PopEntity()
         {
-            if (this._current != null) this._current.Close();
+            if (this._current != null)
+            {
+                this._current.Close();
+            }
+
             if (this._current.Parent != null)
             {
                 this._current = this._current.Parent;
@@ -1023,7 +1091,10 @@ namespace Walkabout.Sgml
                     case Entity.EOF:
                         this.PopEntity();
                         if (this._current == null)
+                        {
                             return;
+                        }
+
                         ch = this._current.Lastchar;
                         break;
                     case ' ':
@@ -1068,7 +1139,11 @@ namespace Walkabout.Sgml
             if (ch == '-')
             {
                 ch = this._current.ReadChar();
-                if (ch != '-') this._current.Error("Expecting comment '<!--' but found {0}", ch);
+                if (ch != '-')
+                {
+                    this._current.Error("Expecting comment '<!--' but found {0}", ch);
+                }
+
                 this._current.ScanToEnd(this._sb, "Comment", "-->");
             }
             else if (ch == '[')
@@ -1112,7 +1187,11 @@ namespace Walkabout.Sgml
             // -^-...--
             // This method scans over a comment inside a markup declaration.
             char ch = this._current.ReadChar();
-            if (full && ch != '-') this._current.Error("Expecting comment delimiter '--' but found {0}", ch);
+            if (full && ch != '-')
+            {
+                this._current.Error("Expecting comment delimiter '--' but found {0}", ch);
+            }
+
             this._current.ScanToEnd(this._sb, "Markup Comment", "--");
             return this._current.SkipWhitespace();
         }
@@ -1146,7 +1225,11 @@ namespace Walkabout.Sgml
             int start = this._current.Line;
             // <!-^-...-->
             char ch = this._current.SkipWhitespace();
-            if (ch != '[') this._current.Error("Expecting '[' but found {0}", ch);
+            if (ch != '[')
+            {
+                this._current.Error("Expecting '[' but found {0}", ch);
+            }
+
             this._current.ScanToEnd(this._sb, "Conditional Section", "]]>");
         }
 
@@ -1160,7 +1243,11 @@ namespace Walkabout.Sgml
                 Entity e = this.ParseParameterEntity(term);
                 ch = this._current.Lastchar;
                 // bugbug - need to support external and nested parameter entities
-                if (!e.Internal) throw new NotSupportedException("External parameter entity resolution");
+                if (!e.Internal)
+                {
+                    throw new NotSupportedException("External parameter entity resolution");
+                }
+
                 return e.Literal.Trim();
             }
             else
@@ -1176,7 +1263,10 @@ namespace Walkabout.Sgml
             string name = this._current.ScanToken(this._sb, ";" + term, false);
             name = this._nt.Add(name);
             if (this._current.Lastchar == ';')
+            {
                 this._current.ReadChar();
+            }
+
             Entity e = this.GetParameterEntity(name);
             return e;
         }
@@ -1184,7 +1274,11 @@ namespace Walkabout.Sgml
         Entity GetParameterEntity(string name)
         {
             Entity e = (Entity)this._pentities[name];
-            if (e == null) this._current.Error("Reference to undefined parameter entity '{0}'", name);
+            if (e == null)
+            {
+                this._current.Error("Reference to undefined parameter entity '{0}'", name);
+            }
+
             return e;
         }
 
@@ -1255,13 +1349,22 @@ namespace Walkabout.Sgml
             }
             ch = this._current.SkipWhitespace();
             if (ch == '-')
+            {
                 ch = this.ParseDeclComments();
+            }
+
             if (ch != '>')
             {
                 this._current.Error("Expecting end of entity declaration '>' but found '{0}'", ch);
             }
-            if (pe) this._pentities[e.Name] = e;
-            else this._entities[e.Name] = e;
+            if (pe)
+            {
+                this._pentities[e.Name] = e;
+            }
+            else
+            {
+                this._entities[e.Name] = e;
+            }
         }
 
         void ParseElementDecl()
@@ -1298,7 +1401,9 @@ namespace Walkabout.Sgml
             }
 
             if (ch == '-')
+            {
                 ch = this.ParseDeclComments();
+            }
 
             if (ch == '+')
             {
@@ -1312,8 +1417,9 @@ namespace Walkabout.Sgml
             }
 
             if (ch == '-')
+            {
                 ch = this.ParseDeclComments();
-
+            }
 
             if (ch != '>')
             {
@@ -1355,7 +1461,10 @@ namespace Walkabout.Sgml
                         names.Add(atom);
                     }
                     ch = this._current.SkipWhitespace();
-                    if (ch == '|' || ch == ',') ch = this._current.ReadChar();
+                    if (ch == '|' || ch == ',')
+                    {
+                        ch = this._current.ReadChar();
+                    }
                 }
                 this._current.ReadChar(); // consume ')'
             }
@@ -1559,19 +1668,25 @@ namespace Walkabout.Sgml
 
             ch = this._current.SkipWhitespace();
             if (ch == '-')
+            {
                 ch = this.ParseDeclComments();
+            }
 
             this.ParseAttType(ch, attdef);
 
             ch = this._current.SkipWhitespace();
             if (ch == '-')
+            {
                 ch = this.ParseDeclComments();
+            }
 
             this.ParseAttDefault(ch, attdef);
 
             ch = this._current.SkipWhitespace();
             if (ch == '-')
+            {
                 ch = this.ParseDeclComments();
+            }
 
             return attdef;
 

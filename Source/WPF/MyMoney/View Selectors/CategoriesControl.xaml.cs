@@ -156,7 +156,11 @@ namespace Walkabout.Views.Controls
 
         void UpdateRoots()
         {
-            if (this.insideUpdateRoots) return;
+            if (this.insideUpdateRoots)
+            {
+                return;
+            }
+
             this.insideUpdateRoots = true;
 
             try

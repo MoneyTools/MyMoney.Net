@@ -43,7 +43,11 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         {
             get
             {
-                if (this.frequency == 0) return System.Diagnostics.Stopwatch.Frequency;
+                if (this.frequency == 0)
+                {
+                    return System.Diagnostics.Stopwatch.Frequency;
+                }
+
                 return this.frequency;
             }
             set
@@ -137,7 +141,10 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             }
             else
             {
-                if (this.data == null || this.data.Count == 0) return new Size(0, 0);
+                if (this.data == null || this.data.Count == 0)
+                {
+                    return new Size(0, 0);
+                }
 
                 double ticksPerLabel = (this.zoom * this.frequency);
                 double scale = this.pixelsPerLabel / ticksPerLabel;
@@ -247,7 +254,10 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             drawingContext.DrawRectangle(Brushes.White, null, new Rect(new Point(0, 0), this.RenderSize));
 
             this.gesture.HidePopup();
-            if (this.data == null || this.data.Count == 0) return;
+            if (this.data == null || this.data.Count == 0)
+            {
+                return;
+            }
 
             long span = this.end - this.start; // ticks
 

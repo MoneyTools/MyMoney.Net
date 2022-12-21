@@ -78,7 +78,10 @@ namespace Walkabout.Utilities
             var b = File.ReadAllBytes(file2);
             for (int i = 0; i < a.Length; i++)
             {
-                if (a[i] != b[i]) return false;
+                if (a[i] != b[i])
+                {
+                    return false;
+                }
             }
             return true;
         }

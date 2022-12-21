@@ -330,8 +330,9 @@ namespace Walkabout.Utilities
                 {
                     Kernel[halfKernel + i, halfKernel + j] = ((1 / D1) * (float)Math.Exp(-(i * i + j * j) / D2));
                     if (Kernel[halfKernel + i, halfKernel + j] < min)
+                    {
                         min = Kernel[halfKernel + i, halfKernel + j];
-
+                    }
                 }
             }
             int mult = (int)(1 / min);

@@ -84,14 +84,20 @@ namespace Walkabout.Utilities
         /// null.</returns>
         public static DependencyObject GetParentObject(this DependencyObject child)
         {
-            if (child == null) return null;
+            if (child == null)
+            {
+                return null;
+            }
 
             //handle content elements separately
             ContentElement contentElement = child as ContentElement;
             if (contentElement != null)
             {
                 DependencyObject parent = ContentOperations.GetParent(contentElement);
-                if (parent != null) return parent;
+                if (parent != null)
+                {
+                    return parent;
+                }
 
                 FrameworkContentElement fce = contentElement as FrameworkContentElement;
                 return fce != null ? fce.Parent : null;
@@ -102,7 +108,10 @@ namespace Walkabout.Utilities
             if (frameworkElement != null)
             {
                 DependencyObject parent = frameworkElement.Parent;
-                if (parent != null) return parent;
+                if (parent != null)
+                {
+                    return parent;
+                }
             }
 
             //if it's not a ContentElement/FrameworkElement, rely on VisualTreeHelper

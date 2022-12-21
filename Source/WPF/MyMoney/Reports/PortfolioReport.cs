@@ -675,7 +675,10 @@ namespace Walkabout.Reports
                     }
                 }
 
-                if (taxStatus == TaxStatus.TaxFree) gainLoss = 0;
+                if (taxStatus == TaxStatus.TaxFree)
+                {
+                    gainLoss = 0;
+                }
 
                 if (count > 0)
                 {

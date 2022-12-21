@@ -222,7 +222,11 @@ namespace LovettSoftware.Charts
                     }
 
                     double value = v.Value;
-                    if (series.Flipped) value = -value;
+                    if (series.Flipped)
+                    {
+                        value = -value;
+                    }
+
                     Point pointerPosition = this.transform.Transform(new Point(i, value));
                     this.pointer.RenderTransform = new TranslateTransform(pointerPosition.X, pointerPosition.Y);
                     this.pointer.Visibility = System.Windows.Visibility.Visible;
@@ -335,7 +339,11 @@ namespace LovettSoftware.Charts
                     foreach (ChartDataValue cv in s.Values)
                     {
                         double v = cv.Value;
-                        if (flip) v = -v;
+                        if (flip)
+                        {
+                            v = -v;
+                        }
+
                         figure.Segments.Add(new LineSegment(new Point(x, v), true));
                         x++;
                     }

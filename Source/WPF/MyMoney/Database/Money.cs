@@ -261,7 +261,10 @@ namespace Walkabout.Data
         {
             // batched updates
             if (this.IsUpdating && !this.saveChangeHistory)
+            {
                 saveChangeHistory = this.saveChangeHistory;
+            }
+
             this.GetBatched().Increment();
             this.saveChangeHistory = saveChangeHistory;
         }
@@ -307,7 +310,9 @@ namespace Walkabout.Data
             foreach (PersistentObject pe in this)
             {
                 if (pe.IsDeleted)
+                {
                     list.Add(pe);
+                }
             }
             foreach (PersistentObject pe in list)
             {
@@ -438,7 +443,9 @@ namespace Walkabout.Data
         {
             // This is done when database is updated.
             if (this.change != ChangeType.Deleted)
+            {
                 this.change = ChangeType.None;
+            }
         }
 
         public virtual void OnInserted()
@@ -485,8 +492,9 @@ namespace Walkabout.Data
         public virtual void OnNameChanged(string oldName, string newName)
         {
             if (this.Parent != null)
+            {
                 this.Parent.OnNameChanged(this, oldName, newName);
-
+            }
         }
 
         [XmlIgnore]
@@ -665,7 +673,11 @@ namespace Walkabout.Data
 
         protected static string Truncate(string s, int length)
         {
-            if (s == null) return s;
+            if (s == null)
+            {
+                return s;
+            }
+
             if (s.Length > length)
             {
                 return s.Substring(0, length);
@@ -880,7 +892,10 @@ namespace Walkabout.Data
             Hashtable<string, Security> map = new Hashtable<string, Security>();
             foreach (Security s in this.Securities.GetSecurities())
             {
-                if (string.IsNullOrEmpty(s.Symbol)) continue;
+                if (string.IsNullOrEmpty(s.Symbol))
+                {
+                    continue;
+                }
 
                 if (map.ContainsKey(s.Symbol))
                 {
@@ -2095,7 +2110,10 @@ namespace Walkabout.Data
         public override void OnNameChanged(object o, string oldName, string newName)
         {
             if (oldName != null && this.accountIndex.ContainsKey(oldName))
+            {
                 this.accountIndex.Remove(oldName);
+            }
+
             this.accountIndex[newName] = (Account)o;
         }
 
@@ -2114,7 +2132,11 @@ namespace Walkabout.Data
         {
             Account a = new Account(this);
             a.Id = id;
-            if (this.NextAccount <= id) this.NextAccount = id + 1;
+            if (this.NextAccount <= id)
+            {
+                this.NextAccount = id + 1;
+            }
+
             this.accounts[id] = a;
             return a;
         }
@@ -2155,7 +2177,11 @@ namespace Walkabout.Data
 
         public Account FindAccount(string name)
         {
-            if (name == null || name.Length == 0) return null;
+            if (name == null || name.Length == 0)
+            {
+                return null;
+            }
+
             return this.accountIndex[name];
         }
 
@@ -2257,10 +2283,15 @@ namespace Walkabout.Data
             if (a.IsInserted || forceRemoveAfterSave)
             {
                 if (this.accounts.ContainsKey(a.Id))
+                {
                     this.accounts.Remove(a.Id);
+                }
+
                 string name = a.Name;
                 if (name != null && this.accountIndex.ContainsKey(name))
+                {
                     this.accountIndex.Remove(name);
+                }
             }
             a.OnDelete();
 
@@ -2486,8 +2517,15 @@ namespace Walkabout.Data
             {
                 if (this.IsClosed != value)
                 {
-                    if (value) this.flags |= AccountFlags.Closed;
-                    else this.flags = this.flags & ~AccountFlags.Closed;
+                    if (value)
+                    {
+                        this.flags |= AccountFlags.Closed;
+                    }
+                    else
+                    {
+                        this.flags = this.flags & ~AccountFlags.Closed;
+                    }
+
                     this.OnChanged("IsClosed");
                 }
             }
@@ -2501,8 +2539,15 @@ namespace Walkabout.Data
             {
                 if (this.IsBudgeted != value)
                 {
-                    if (value) this.flags |= AccountFlags.Budgeted;
-                    else this.flags = this.flags & ~AccountFlags.Budgeted;
+                    if (value)
+                    {
+                        this.flags |= AccountFlags.Budgeted;
+                    }
+                    else
+                    {
+                        this.flags = this.flags & ~AccountFlags.Budgeted;
+                    }
+
                     this.OnChanged("IsBudgeted");
                 }
             }
@@ -2812,7 +2857,10 @@ namespace Walkabout.Data
                 {
                     bool notify = (value == 0 && this.unaccepted != 0) || (value != 0 && this.unaccepted == 0);
                     this.unaccepted = value;
-                    if (notify) this.OnChanged("Unaccepted");
+                    if (notify)
+                    {
+                        this.OnChanged("Unaccepted");
+                    }
                 }
             }
         }
@@ -2933,14 +2981,38 @@ namespace Walkabout.Data
         {
             Account a = x;
             Account b = y;
-            if (a == null && b != null) return -1;
-            if (a != null && b == null) return 1;
-            if (a == null && b == null) return 0;
+            if (a == null && b != null)
+            {
+                return -1;
+            }
+
+            if (a != null && b == null)
+            {
+                return 1;
+            }
+
+            if (a == null && b == null)
+            {
+                return 0;
+            }
+
             string n = a.Name;
             string m = b.Name;
-            if (n == null && m != null) return -1;
-            if (n != null && m == null) return 1;
-            if (n == null && m == null) return 0;
+            if (n == null && m != null)
+            {
+                return -1;
+            }
+
+            if (n != null && m == null)
+            {
+                return 1;
+            }
+
+            if (n == null && m == null)
+            {
+                return 0;
+            }
+
             return n.CompareTo(m);
         }
     }
@@ -3014,7 +3086,10 @@ namespace Walkabout.Data
         public override void OnNameChanged(object o, string oldName, string newName)
         {
             if (oldName != null && this.instIndex.ContainsKey(oldName))
+            {
                 this.instIndex.Remove(oldName);
+            }
+
             this.instIndex[newName] = (OnlineAccount)o;
         }
 
@@ -3023,7 +3098,11 @@ namespace Walkabout.Data
         {
             OnlineAccount result = new OnlineAccount(this);
             result.Id = id;
-            if (this.NextOnlineAccount <= id) this.NextOnlineAccount = id + 1;
+            if (this.NextOnlineAccount <= id)
+            {
+                this.NextOnlineAccount = id + 1;
+            }
+
             this.onlineAccounts.Add(id, result);
             this.FireChangeEvent(this, result, null, ChangeType.Inserted);
             return result;
@@ -3063,7 +3142,10 @@ namespace Walkabout.Data
 
         public OnlineAccount FindOnlineAccount(string name)
         {
-            if (name == null) return null;
+            if (name == null)
+            {
+                return null;
+            }
             // find or add account of givien name
             OnlineAccount result = this.instIndex[name];
             return result;
@@ -3079,9 +3161,14 @@ namespace Walkabout.Data
             if (i.IsInserted || forceRemoveAfterSave)
             {
                 if (this.onlineAccounts.ContainsKey(i.Id))
+                {
                     this.onlineAccounts.Remove(i.Id);
+                }
+
                 if (this.instIndex.ContainsKey(i.Name))
+                {
                     this.instIndex.Remove(i.Name);
+                }
             }
             i.OnDelete();
             return true;
@@ -3541,12 +3628,28 @@ namespace Walkabout.Data
         {
             OnlineAccount a = x;
             OnlineAccount b = y;
-            if (a == null && b != null) return -1;
-            if (a != null && b == null) return 1;
+            if (a == null && b != null)
+            {
+                return -1;
+            }
+
+            if (a != null && b == null)
+            {
+                return 1;
+            }
+
             string n = a.Name;
             string m = b.Name;
-            if (n == null && m != null) return -1;
-            if (n != null && m == null) return 1;
+            if (n == null && m != null)
+            {
+                return -1;
+            }
+
+            if (n != null && m == null)
+            {
+                return 1;
+            }
+
             return n.CompareTo(m);
         }
     }
@@ -3585,7 +3688,11 @@ namespace Walkabout.Data
             lock (this.aliases)
             {
                 result.Id = id;
-                if (this.nextAlias <= id) this.nextAlias = id + 1;
+                if (this.nextAlias <= id)
+                {
+                    this.nextAlias = id + 1;
+                }
+
                 this.aliases[id] = result;
             }
             this.FireChangeEvent(this, result, null, ChangeType.Inserted);
@@ -3616,7 +3723,11 @@ namespace Walkabout.Data
 
         public Alias FindAlias(string pattern)
         {
-            if (pattern == null) return null;
+            if (pattern == null)
+            {
+                return null;
+            }
+
             lock (this.aliases)
             {
                 foreach (Alias a in this.aliases.Values)
@@ -3632,7 +3743,11 @@ namespace Walkabout.Data
 
         public Alias FindMatchingAlias(string payee)
         {
-            if (payee == null) return null;
+            if (payee == null)
+            {
+                return null;
+            }
+
             lock (this.aliases)
             {
                 foreach (Alias a in this.aliases.Values)
@@ -3700,7 +3815,9 @@ namespace Walkabout.Data
             foreach (Alias a in this.aliases.Values)
             {
                 if (a.IsDeleted)
+                {
                     list.Add(a);
+                }
             }
             foreach (Alias a in list)
             {
@@ -3805,7 +3922,11 @@ namespace Walkabout.Data
             lock (this.aliases)
             {
                 result.Id = id;
-                if (this.nextAlias <= id) this.nextAlias = id + 1;
+                if (this.nextAlias <= id)
+                {
+                    this.nextAlias = id + 1;
+                }
+
                 this.aliases[id] = result;
             }
             this.FireChangeEvent(this, result, null, ChangeType.Inserted);
@@ -3848,7 +3969,11 @@ namespace Walkabout.Data
 
         public AccountAlias FindAlias(string pattern)
         {
-            if (pattern == null) return null;
+            if (pattern == null)
+            {
+                return null;
+            }
+
             lock (this.aliases)
             {
                 foreach (var a in this.aliases.Values)
@@ -3864,7 +3989,11 @@ namespace Walkabout.Data
 
         public AccountAlias FindMatchingAlias(string accoundId)
         {
-            if (string.IsNullOrEmpty(accoundId)) return null;
+            if (string.IsNullOrEmpty(accoundId))
+            {
+                return null;
+            }
+
             lock (this.aliases)
             {
                 foreach (var a in this.aliases.Values)
@@ -3932,7 +4061,9 @@ namespace Walkabout.Data
             foreach (AccountAlias a in this.aliases.Values)
             {
                 if (a.IsDeleted)
+                {
                     list.Add(a);
+                }
             }
             foreach (var a in list)
             {
@@ -4104,14 +4235,38 @@ namespace Walkabout.Data
         {
             Currency a = x;
             Currency b = y;
-            if (a == null && b != null) return -1;
-            if (a != null && b == null) return 1;
-            if (a == null && b == null) return 0;
+            if (a == null && b != null)
+            {
+                return -1;
+            }
+
+            if (a != null && b == null)
+            {
+                return 1;
+            }
+
+            if (a == null && b == null)
+            {
+                return 0;
+            }
+
             string n = a.Symbol;
             string m = b.Symbol;
-            if (n == null && m != null) return -1;
-            if (n != null && m == null) return 1;
-            if (n == null && m == null) return 0;
+            if (n == null && m != null)
+            {
+                return -1;
+            }
+
+            if (n != null && m == null)
+            {
+                return 1;
+            }
+
+            if (n == null && m == null)
+            {
+                return 0;
+            }
+
             return n.CompareTo(m);
         }
     }
@@ -4159,7 +4314,11 @@ namespace Walkabout.Data
             lock (this.currencies)
             {
                 currency.Id = id;
-                if (this.nextCurrency <= id) this.nextCurrency = id + 1;
+                if (this.nextCurrency <= id)
+                {
+                    this.nextCurrency = id + 1;
+                }
+
                 this.currencies[id] = currency;
 
                 this.ResetCache();
@@ -4254,10 +4413,14 @@ namespace Walkabout.Data
         public Currency FindCurrency(string currencySymbol)
         {
             if (string.IsNullOrWhiteSpace(currencySymbol))
+            {
                 return null;
+            }
 
             if (this.currencies.Count == 0)
+            {
                 return null;
+            }
 
             lock (this.currencies)
             {
@@ -4415,7 +4578,10 @@ namespace Walkabout.Data
             if (o is Payee)
             {
                 if (oldName != null && this.payeeIndex.ContainsKey(oldName))
+                {
                     this.payeeIndex.Remove(oldName);
+                }
+
                 this.payeeIndex[newName] = (Payee)o;
             }
         }
@@ -4432,7 +4598,11 @@ namespace Walkabout.Data
             lock (this.payees)
             {
                 result.Id = id;
-                if (this.nextPayee <= id) this.nextPayee = id + 1;
+                if (this.nextPayee <= id)
+                {
+                    this.nextPayee = id + 1;
+                }
+
                 this.payees[id] = result;
             }
             return result;
@@ -4459,7 +4629,10 @@ namespace Walkabout.Data
 
         public Payee FindPayee(string name, bool add)
         {
-            if (name == null) return null;
+            if (name == null)
+            {
+                return null;
+            }
             // find or add account of givien name
             Payee result = this.payeeIndex[name];
             if (result == null && add)
@@ -4492,7 +4665,9 @@ namespace Walkabout.Data
                     }
                 }
                 if (this.payeeIndex.ContainsKey(p.Name))
+                {
                     this.payeeIndex.Remove(p.Name);
+                }
 
                 MyMoney money = this.Parent as MyMoney;
                 if (money != null)
@@ -5100,7 +5275,11 @@ namespace Walkabout.Data
             lock (this.items)
             {
                 result.Id = id;
-                if (this.nextId <= id) this.nextId = id + 1;
+                if (this.nextId <= id)
+                {
+                    this.nextId = id + 1;
+                }
+
                 this.items[id] = result;
             }
             this.FireChangeEvent(this, result, null, ChangeType.Inserted);
@@ -5296,12 +5475,28 @@ namespace Walkabout.Data
         {
             Payee a = x;
             Payee b = y;
-            if (a == null && b != null) return -1;
-            if (a != null && b == null) return 1;
+            if (a == null && b != null)
+            {
+                return -1;
+            }
+
+            if (a != null && b == null)
+            {
+                return 1;
+            }
+
             string n = a.Name;
             string m = b.Name;
-            if (n == null && m != null) return -1;
-            if (n != null && m == null) return 1;
+            if (n == null && m != null)
+            {
+                return -1;
+            }
+
+            if (n != null && m == null)
+            {
+                return 1;
+            }
+
             return n.CompareTo(m);
         }
     }
@@ -5310,12 +5505,28 @@ namespace Walkabout.Data
     {
         public int Compare(Payee x, Payee y)
         {
-            if (x == null && y != null) return -1;
-            if (x != null && y == null) return 1;
+            if (x == null && y != null)
+            {
+                return -1;
+            }
+
+            if (x != null && y == null)
+            {
+                return 1;
+            }
+
             string n = x.Name;
             string m = y.Name;
-            if (n == null && m != null) return -1;
-            if (n != null && m == null) return 1;
+            if (n == null && m != null)
+            {
+                return -1;
+            }
+
+            if (n != null && m == null)
+            {
+                return 1;
+            }
+
             return n.CompareTo(m);
         }
     }
@@ -6032,7 +6243,10 @@ namespace Walkabout.Data
 
         public RentBuilding FindByName(string name)
         {
-            if (string.IsNullOrEmpty(name)) return null;
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
 
             foreach (RentBuilding r in this.rentBuildings.Values)
             {
@@ -6770,19 +6984,29 @@ namespace Walkabout.Data
         public override void OnNameChanged(object o, string oldName, string newName)
         {
             if (oldName != null && this.categoryIndex.ContainsKey(oldName))
+            {
                 this.categoryIndex.Remove(oldName);
+            }
+
             this.categoryIndex[newName] = (Category)o;
         }
 
         public Category FindCategory(string name)
         {
-            if (name == null || name.Length == 0) return null;
+            if (name == null || name.Length == 0)
+            {
+                return null;
+            }
+
             return this.categoryIndex[name];
         }
 
         public Category GetOrCreateCategory(string name, CategoryType type)
         {
-            if (name == null || name.Length == 0) return null;
+            if (name == null || name.Length == 0)
+            {
+                return null;
+            }
 
             Category result = null;
             this.categoryIndex.TryGetValue(name, out result);
@@ -6822,7 +7046,9 @@ namespace Walkabout.Data
             }
 
             if (this.categoryIndex.ContainsKey(c.Name))
+            {
                 this.categoryIndex.Remove(c.Name);
+            }
 
             // mark it for deletion on next save
             c.OnDelete();
@@ -6901,12 +7127,28 @@ namespace Walkabout.Data
 
         private int CategoryComparer(Category a, Category b)
         {
-            if (a == null && b != null) return -1;
-            if (a != null && b == null) return 1;
+            if (a == null && b != null)
+            {
+                return -1;
+            }
+
+            if (a != null && b == null)
+            {
+                return 1;
+            }
+
             string n = a.Name;
             string m = b.Name;
-            if (n == null && m != null) return -1;
-            if (n != null && m == null) return 1;
+            if (n == null && m != null)
+            {
+                return -1;
+            }
+
+            if (n != null && m == null)
+            {
+                return 1;
+            }
+
             return n.CompareTo(m);
         }
 
@@ -7204,14 +7446,22 @@ namespace Walkabout.Data
         {
             get
             {
-                if (this.parent == null) return this;
+                if (this.parent == null)
+                {
+                    return this;
+                }
+
                 return this.parent.Root;
             }
         }
 
         public static string Combine(string name, string suffix)
         {
-            if (name == null) return suffix;
+            if (name == null)
+            {
+                return suffix;
+            }
+
             return name.Trim() + ":" + suffix.Trim();
         }
 
@@ -7549,7 +7799,11 @@ namespace Walkabout.Data
             }
 
             c.parent = this;
-            if (this.subcategories == null) this.subcategories = new ThreadSafeObservableCollection<Category>();
+            if (this.subcategories == null)
+            {
+                this.subcategories = new ThreadSafeObservableCollection<Category>();
+            }
+
             this.subcategories.Add(c);
         }
 
@@ -7560,7 +7814,11 @@ namespace Walkabout.Data
                 c.parent.RemoveSubcategory(c);
             }
             c.parent = this;
-            if (this.subcategories == null) this.subcategories = new ThreadSafeObservableCollection<Category>();
+            if (this.subcategories == null)
+            {
+                this.subcategories = new ThreadSafeObservableCollection<Category>();
+            }
+
             this.subcategories.Add(c);
             c.Name = c.GetFullName();
             this.FireChangeEvent(this, null, ChangeType.ChildChanged);
@@ -7634,12 +7892,23 @@ namespace Walkabout.Data
         /// <returns></returns>
         public bool Contains(Category child)
         {
-            if (child == null) return false;
-            if (child == this) return true;
+            if (child == null)
+            {
+                return false;
+            }
+
+            if (child == this)
+            {
+                return true;
+            }
+
             do
             {
                 child = child.ParentCategory;
-                if (child == this) return true;
+                if (child == this)
+                {
+                    return true;
+                }
             } while (child != null);
             return false;
         }
@@ -7653,11 +7922,19 @@ namespace Walkabout.Data
         /// <returns></returns>
         public bool Contains(string substring)
         {
-            if (substring == null) return false;
+            if (substring == null)
+            {
+                return false;
+            }
+
             Category c = this;
             do
             {
-                if (substring == c.Label) return true;
+                if (substring == c.Label)
+                {
+                    return true;
+                }
+
                 c = c.ParentCategory;
             } while (c != null);
             return false;
@@ -7730,7 +8007,11 @@ namespace Walkabout.Data
 
         public bool Matches(object o, Operation op)
         {
-            if (o == null) return false;
+            if (o == null)
+            {
+                return false;
+            }
+
             string s = o.ToString();
             switch (op)
             {
@@ -7817,7 +8098,11 @@ namespace Walkabout.Data
         {
             Security s = new Security(this);
             s.Id = id;
-            if (this.nextSecurity <= id) this.nextSecurity = id + 1;
+            if (this.nextSecurity <= id)
+            {
+                this.nextSecurity = id + 1;
+            }
+
             this.securities[id] = s;
             this.FireChangeEvent(this, s, null, ChangeType.Inserted);
             return s;
@@ -7854,7 +8139,11 @@ namespace Walkabout.Data
 
         public Security FindSecurity(string name, bool add)
         {
-            if (name == null || name.Length == 0) return null;
+            if (name == null || name.Length == 0)
+            {
+                return null;
+            }
+
             Security result = null;
             result = this.securityIndex[name];
             if (result == null && add)
@@ -7870,11 +8159,17 @@ namespace Walkabout.Data
         public Security FindSecurityById(string name)
         {
             name = name.Trim();
-            if (name == null || name.Length == 0) return null;
+            if (name == null || name.Length == 0)
+            {
+                return null;
+            }
+
             foreach (Security s in this.securities.Values)
             {
                 if (s.CuspId != null && string.Compare(s.CuspId, name, StringComparison.InvariantCultureIgnoreCase) == 0)
+                {
                     return s;
+                }
             }
             return null;
         }
@@ -7882,11 +8177,17 @@ namespace Walkabout.Data
         public Security FindSymbol(string name, bool add)
         {
             name = name.Trim();
-            if (name == null || name.Length == 0) return null;
+            if (name == null || name.Length == 0)
+            {
+                return null;
+            }
+
             foreach (Security s in this.securities.Values)
             {
                 if (string.Compare(s.Symbol, name, StringComparison.InvariantCultureIgnoreCase) == 0)
+                {
                     return s;
+                }
             }
             Security result = null;
             if (add)
@@ -7919,7 +8220,9 @@ namespace Walkabout.Data
 
             string name = s.Name;
             if (!string.IsNullOrEmpty(name) && this.securityIndex.ContainsKey(name))
+            {
                 this.securityIndex.Remove(name);
+            }
 
             // mark it for removal on next save
             s.OnDelete();
@@ -8276,9 +8579,21 @@ namespace Walkabout.Data
         {
             // bugbug: this is only so that we can show a short symbol in the investment grid, if we need to
             // change this to the Name then we could use a ValueConverter instead.
-            if (!string.IsNullOrEmpty(this.Symbol)) return this.Symbol;
-            if (!string.IsNullOrEmpty(this.CuspId)) return this.CuspId;
-            if (!string.IsNullOrEmpty(this.Name)) return this.Name;
+            if (!string.IsNullOrEmpty(this.Symbol))
+            {
+                return this.Symbol;
+            }
+
+            if (!string.IsNullOrEmpty(this.CuspId))
+            {
+                return this.CuspId;
+            }
+
+            if (!string.IsNullOrEmpty(this.Name))
+            {
+                return this.Name;
+            }
+
             return "";
         }
 
@@ -8351,15 +8666,42 @@ namespace Walkabout.Data
 
         public static int Compare(Security a, Security b)
         {
-            if (a == null && b != null) return -1;
-            if (a != null && b == null) return 1;
-            if (a == null && b == null) return 0;
-            if (a == b) return 0;
+            if (a == null && b != null)
+            {
+                return -1;
+            }
+
+            if (a != null && b == null)
+            {
+                return 1;
+            }
+
+            if (a == null && b == null)
+            {
+                return 0;
+            }
+
+            if (a == b)
+            {
+                return 0;
+            }
+
             string n = a.Name;
             string m = b.Name;
-            if (n == null && m != null) return -1;
-            if (n != null && m == null) return 1;
-            if (n == null && m == null) return 0;
+            if (n == null && m != null)
+            {
+                return -1;
+            }
+
+            if (n != null && m == null)
+            {
+                return 1;
+            }
+
+            if (n == null && m == null)
+            {
+                return 0;
+            }
 
             var rc = n.CompareTo(m);
             if (rc != 0)
@@ -8369,9 +8711,20 @@ namespace Walkabout.Data
 
             n = a.Symbol;
             m = b.Symbol;
-            if (n == null && m != null) return -1;
-            if (n != null && m == null) return 1;
-            if (n == null && m == null) return 0;
+            if (n == null && m != null)
+            {
+                return -1;
+            }
+
+            if (n != null && m == null)
+            {
+                return 1;
+            }
+
+            if (n == null && m == null)
+            {
+                return 0;
+            }
 
             return n.CompareTo(m);
         }
@@ -8477,14 +8830,38 @@ namespace Walkabout.Data
     {
         public int Compare(Security a, Security b)
         {
-            if (a == null && b != null) return -1;
-            if (a != null && b == null) return 1;
-            if (a == null && b == null) return 0;
+            if (a == null && b != null)
+            {
+                return -1;
+            }
+
+            if (a != null && b == null)
+            {
+                return 1;
+            }
+
+            if (a == null && b == null)
+            {
+                return 0;
+            }
+
             string n = a.Symbol;
             string m = b.Symbol;
-            if (n == null && m != null) return -1;
-            if (n != null && m == null) return 1;
-            if (n == null && m == null) return 0;
+            if (n == null && m != null)
+            {
+                return -1;
+            }
+
+            if (n != null && m == null)
+            {
+                return 1;
+            }
+
+            if (n == null && m == null)
+            {
+                return 0;
+            }
+
             return n.CompareTo(m);
         }
     }
@@ -8577,7 +8954,10 @@ namespace Walkabout.Data
                 foreach (Transaction t in this.transactions.Values)
                 {
                     if (t.IsDeleted)
+                    {
                         continue;
+                    }
+
                     list.Add(t);
                 }
                 return list.ToArray();
@@ -8618,7 +8998,11 @@ namespace Walkabout.Data
 
             lock (this.transactions)
             {
-                if (this.nextTransaction <= id) this.nextTransaction = id + 1;
+                if (this.nextTransaction <= id)
+                {
+                    this.nextTransaction = id + 1;
+                }
+
                 this.transactions[t.Id] = t;
             }
             this.FireChangeEvent(this, t, null, ChangeType.Inserted);
@@ -8726,7 +9110,9 @@ namespace Walkabout.Data
             foreach (Transaction t in this.transactions.Values)
             {
                 if (t.FITID == fitid && t.Account == a)
+                {
                     return t;
+                }
             }
             return null;
         }
@@ -8848,9 +9234,20 @@ namespace Walkabout.Data
 
         private static bool IsPotentialDuplicate(Investment u, Investment v)
         {
-            if (u != null && v == null) return false;
-            if (u == null && v != null) return false;
-            if (u == null && v == null) return true;
+            if (u != null && v == null)
+            {
+                return false;
+            }
+
+            if (u == null && v != null)
+            {
+                return false;
+            }
+
+            if (u == null && v == null)
+            {
+                return true;
+            }
 
             return u.TradeType == v.TradeType &&
                 u.Units == v.Units &&
@@ -8920,7 +9317,11 @@ namespace Walkabout.Data
                 Alias alias = aliases.FindMatchingAlias(t.PayeeName);
                 if (alias != null)
                 {
-                    if (string.IsNullOrEmpty(t.Memo)) t.Memo = t.PayeeName;
+                    if (string.IsNullOrEmpty(t.Memo))
+                    {
+                        t.Memo = t.PayeeName;
+                    }
+
                     t.OriginalPayee = t.PayeeName;
                     t.Payee = alias.Payee;
                 }
@@ -8932,11 +9333,19 @@ namespace Walkabout.Data
                     // Merge new details with matching transaction.
                     u.FITID = t.FITID;
                     if (string.IsNullOrEmpty(u.Number) && t.Number != null)
+                    {
                         u.Number = t.Number;
+                    }
+
                     if (string.IsNullOrEmpty(u.Memo) && t.Memo != null)
+                    {
                         u.Memo = t.Memo;
+                    }
+
                     if (u.Status == TransactionStatus.None)
+                    {
                         u.Status = TransactionStatus.Electronic;
+                    }
 
                     Investment i = t.Investment;
                     Investment j = u.Investment;
@@ -8956,8 +9365,15 @@ namespace Walkabout.Data
         {
             Investment i = t.Investment;
             Investment j = t.Investment;
-            if (i == null) return j == null;
-            if (j == null) return false;
+            if (i == null)
+            {
+                return j == null;
+            }
+
+            if (j == null)
+            {
+                return false;
+            }
 
             return (i.Security == j.Security && i.Units == j.Units && i.UnitPrice == j.UnitPrice &&
                     i.Type == j.Type && i.TradeType == j.TradeType);
@@ -9028,7 +9444,10 @@ namespace Walkabout.Data
                         }
                         else if (this.DatesMatch(u, t) && this.PayeesMatch(t, u))
                         {
-                            if (best == null) best = u;
+                            if (best == null)
+                            {
+                                best = u;
+                            }
                         }
                     }
                 }
@@ -9080,7 +9499,10 @@ namespace Walkabout.Data
             foreach (Transaction t in this.transactions.Values)
             {
                 if (t.IsDeleted)
+                {
                     continue;
+                }
+
                 view.Add(t);
             }
             view.Sort(new TransactionComparerByDate());
@@ -9093,7 +9515,10 @@ namespace Walkabout.Data
             foreach (Transaction t in this.transactions.Values)
             {
                 if (t.IsDeleted)
+                {
                     continue;
+                }
+
                 view.Add(t);
             }
             view.Sort(new TransactionComparerByTaxDate());
@@ -9108,7 +9533,9 @@ namespace Walkabout.Data
                 foreach (Transaction t in this.transactions.Values)
                 {
                     if (t.IsDeleted || t.Account != a)
+                    {
                         continue;
+                    }
 
                     view.Add(t);
                 }
@@ -9126,7 +9553,9 @@ namespace Walkabout.Data
                 foreach (Transaction t in this.transactions.Values)
                 {
                     if (t.IsDeleted || t.Account != a)
+                    {
                         continue;
+                    }
 
                     if (t.Date > date)
                     {
@@ -9146,7 +9575,9 @@ namespace Walkabout.Data
                 foreach (Transaction t in this.transactions.Values)
                 {
                     if (t.IsDeleted || t.Account != a || (include != null && !include(t)))
+                    {
                         continue;
+                    }
 
                     view.Add(t);
                 }
@@ -9241,7 +9672,9 @@ namespace Walkabout.Data
                     foreach (Transaction t in this.GetTransactionsFrom(a))
                     {
                         if (t.Unaccepted)
+                        {
                             unaccepted++;
+                        }
 
                         if (!t.IsDeleted && t.Status != TransactionStatus.Void)
                         {
@@ -9368,7 +9801,9 @@ namespace Walkabout.Data
                 }
 
                 if (t.IsDeleted || t.Status != TransactionStatus.Reconciled || td > std)
+                {
                     continue;
+                }
 
                 balance += t.Amount;
             }
@@ -9384,7 +9819,10 @@ namespace Walkabout.Data
             {
                 DateTime td = new DateTime(t.Date.Year, t.Date.Month, t.Date.Day);
                 if (t.IsDeleted || t.Status == TransactionStatus.Void || td > et)
+                {
                     continue;
+                }
+
                 balance += t.Amount;
             }
             return balance;
@@ -9396,7 +9834,9 @@ namespace Walkabout.Data
             foreach (Transaction t in this.transactions.Values)
             {
                 if (t.IsDeleted)
+                {
                     continue;
+                }
 
                 if (t.ContainsTransferTo(a))
                 {
@@ -9426,10 +9866,14 @@ namespace Walkabout.Data
             foreach (Transaction t in this.transactions.Values)
             {
                 if (t.IsDeleted)
+                {
                     continue;
+                }
 
                 if (include != null && !include(t))
+                {
                     continue;
+                }
 
                 bool splitItUp = false;
                 bool splitHasPayee = false;
@@ -9486,10 +9930,14 @@ namespace Walkabout.Data
             foreach (Transaction t in this.GetAllTransactionsByDate())
             {
                 if (t.IsDeleted || t.Investment == null)
+                {
                     continue;
+                }
 
                 if (include != null && !include(t))
+                {
                     continue;
+                }
 
                 if (t.Investment.Security == s)
                 {
@@ -9587,10 +10035,14 @@ namespace Walkabout.Data
             foreach (Transaction t in this.transactions.Values)
             {
                 if (t.IsDeleted)
+                {
                     continue;
+                }
 
                 if (include != null && !include(t))
+                {
                     continue;
+                }
 
                 if (t.IsSplit)
                 {
@@ -9643,7 +10095,9 @@ namespace Walkabout.Data
             foreach (Transaction t in this.transactions.Values)
             {
                 if (t.IsDeleted)
+                {
                     continue;
+                }
 
                 if (t.Date.Year == filterYear)
                 {
@@ -9694,7 +10148,9 @@ namespace Walkabout.Data
             foreach (Transaction t in this.transactions.Values)
             {
                 if (t.IsDeleted)
+                {
                     continue;
+                }
 
                 // todo: what about splits?
                 bool matches = true;
@@ -10146,7 +10602,10 @@ namespace Walkabout.Data
                 {
                     this.date = value;
                     if (this.Transfer != null)
+                    {
                         this.Transfer.Transaction.date = value;
+                    }
+
                     this.OnChanged("Date");
                 }
             }
@@ -10355,7 +10814,10 @@ namespace Walkabout.Data
                 {
                     this.memo = Truncate(value, 255);
                     if (this.Transfer != null)
+                    {
                         this.Transfer.Transaction.memo = this.memo;
+                    }
+
                     this.OnChanged("Memo");
                 }
             }
@@ -10457,7 +10919,9 @@ namespace Walkabout.Data
             get
             {
                 if (this.pendingTransfer != null)
+                {
                     return this.pendingTransfer;
+                }
 
                 if (this.transfer != null)
                 {
@@ -10499,7 +10963,10 @@ namespace Walkabout.Data
                 return GetTransferCaption(transfer.Transaction.Account, isFrom);
             }
 
-            if (this.payee == null) return string.Empty;
+            if (this.payee == null)
+            {
+                return string.Empty;
+            }
 
             return this.PayeeNameNotNull;
         }
@@ -10654,7 +11121,7 @@ namespace Walkabout.Data
         [DataMember]
         public string TransferName
         {
-            get { if (this.transfer != null) return this.transfer.Transaction.Account.Name; return this.transferName; }
+            get { if (this.transfer != null) { return this.transfer.Transaction.Account.Name; } return this.transferName; }
             set { this.transferName = value; }
         }
 
@@ -10920,7 +11387,11 @@ namespace Walkabout.Data
             }
             set
             {
-                if (value == null) return;
+                if (value == null)
+                {
+                    return;
+                }
+
                 switch (value.Trim().ToLowerInvariant())
                 {
                     case "":
@@ -11138,7 +11609,7 @@ namespace Walkabout.Data
         public SqlDecimal Tax
         {
             get { return (this.salesTax > 0) ? new SqlDecimal(this.salesTax) : SqlDecimal.Null; }
-            set { if (!value.IsNull) this.SalesTax = (decimal)value; this.OnChanged("Tax"); }
+            set { if (!value.IsNull) { this.SalesTax = (decimal)value; } this.OnChanged("Tax"); }
         }
 
         [XmlIgnore]
@@ -11146,7 +11617,13 @@ namespace Walkabout.Data
         public SqlDecimal Credit
         {
             get { return (this.Amount > 0) ? new SqlDecimal(this.Amount) : SqlDecimal.Null; }
-            set { if (!value.IsNull) this.SetDebitCredit(value); }
+            set
+            {
+                if (!value.IsNull)
+                {
+                    this.SetDebitCredit(value);
+                }
+            }
         }
 
 
@@ -11155,7 +11632,13 @@ namespace Walkabout.Data
         public SqlDecimal Debit
         {
             get { return (this.Amount <= 0) ? new SqlDecimal(-this.Amount) : SqlDecimal.Null; }
-            set { if (!value.IsNull) this.SetDebitCredit(-value); }
+            set
+            {
+                if (!value.IsNull)
+                {
+                    this.SetDebitCredit(-value);
+                }
+            }
         }
 
         uint lastSet;
@@ -11269,7 +11752,11 @@ namespace Walkabout.Data
             }
             set
             {
-                if (this.splits != null) this.splits.RemoveAll();
+                if (this.splits != null)
+                {
+                    this.splits.RemoveAll();
+                }
+
                 this.splits = value;
                 if (value != null)
                 {
@@ -11285,7 +11772,10 @@ namespace Walkabout.Data
             get
             {
                 if (this.splits == null)
+                {
                     this.splits = new Splits(this, this);
+                }
+
                 return this.splits;
             }
         }
@@ -11306,7 +11796,11 @@ namespace Walkabout.Data
 
         public Split FindSplit(int id)
         {
-            if (this.splits == null) return null;
+            if (this.splits == null)
+            {
+                return null;
+            }
+
             return this.splits.FindSplit(id);
         }
 
@@ -12259,9 +12753,15 @@ namespace Walkabout.Data
             if (!base.FireChangeEvent(sender, item, name, type))
             {
                 if (sender is Split)
+                {
                     this.Rebalance();
+                }
+
                 if (this.transaction != null && this.transaction.Parent != null)
+                {
                     this.transaction.Parent.FireChangeEvent(sender, item, name, type);
+                }
+
                 return false;
             }
             return true;
@@ -12331,7 +12831,10 @@ namespace Walkabout.Data
                         foreach (Split s in this.splits.Values)
                         {
                             if (s.IsDeleted)
+                            {
                                 continue;
+                            }
+
                             total += s.Amount;
                         }
                     }
@@ -12575,7 +13078,9 @@ namespace Walkabout.Data
         public void Insert(int index, Split s)
         {
             if (this.splits == null)
+            {
                 this.splits = new Hashtable<int, Split>();
+            }
 
             if (s.Id == -1)
             {
@@ -12624,32 +13129,50 @@ namespace Walkabout.Data
         {
             Split s = new Split(this);
             s.Id = id;
-            if (id >= this.nextSplit) this.nextSplit = id + 1;
+            if (id >= this.nextSplit)
+            {
+                this.nextSplit = id + 1;
+            }
+
             this.AddSplit(s);
             return s;
         }
 
         public Split FindSplit(int id)
         {
-            if (this.splits == null) return null;
+            if (this.splits == null)
+            {
+                return null;
+            }
+
             return this.splits[id];
         }
 
 
         public Split FindSplitContainingCategory(Category c)
         {
-            if (this.splits == null) return null;
+            if (this.splits == null)
+            {
+                return null;
+            }
+
             foreach (Split s in this.GetSplits())
             {
                 if (c.Contains(s.Category))
+                {
                     return s;
+                }
             }
             return null;
         }
 
         public bool RemoveSplit(Split s, bool forceRemoveAfterSave = false)
         {
-            if (this.splits == null) return false;
+            if (this.splits == null)
+            {
+                return false;
+            }
+
             s.Transfer = null; // remove the transfer.
             if (s.IsInserted || forceRemoveAfterSave)
             {
@@ -12677,7 +13200,11 @@ namespace Walkabout.Data
         public IList<Split> GetSplits()
         {
             List<Split> list = new List<Split>();
-            if (this.splits == null) return list;
+            if (this.splits == null)
+            {
+                return list;
+            }
+
             foreach (Split s in this.splits.Values)
             {
                 if (!s.IsDeleted)
@@ -13091,7 +13618,9 @@ namespace Walkabout.Data
             get
             {
                 if (this.pendingTransfer != null)
+                {
                     return this.pendingTransfer;
+                }
 
                 if (this.transfer != null)
                 {
@@ -13152,14 +13681,14 @@ namespace Walkabout.Data
         public SqlDecimal Credit
         {
             get { return (this.Amount > 0) ? new SqlDecimal(this.Amount) : SqlDecimal.Null; }
-            set { if (!value.IsNull) this.Amount = (decimal)value; this.OnChanged("Debit"); this.OnChanged("Credit"); }
+            set { if (!value.IsNull) { this.Amount = (decimal)value; } this.OnChanged("Debit"); this.OnChanged("Credit"); }
         }
 
         [XmlIgnore]
         public SqlDecimal Debit
         {
             get { return (this.Amount <= 0) ? new SqlDecimal(-this.Amount) : SqlDecimal.Null; }
-            set { if (!value.IsNull) this.Amount = -value.Value; this.OnChanged("Debit"); this.OnChanged("Credit"); }
+            set { if (!value.IsNull) { this.Amount = -value.Value; } this.OnChanged("Debit"); this.OnChanged("Credit"); }
         }
 
         [XmlIgnore]
@@ -13342,7 +13871,10 @@ namespace Walkabout.Data
                 return Walkabout.Data.Transaction.GetTransferCaption(transfer.Transaction.Account, isFrom);
             }
 
-            if (this.payee == null) return string.Empty;
+            if (this.payee == null)
+            {
+                return string.Empty;
+            }
 
             return this.Payee != null ? this.payee.Name : "";
         }
@@ -13447,8 +13979,16 @@ namespace Walkabout.Data
     {
         public int Compare(Split a, Split b)
         {
-            if (a == null && b != null) return -1;
-            if (a != null && b == null) return 1;
+            if (a == null && b != null)
+            {
+                return -1;
+            }
+
+            if (a != null && b == null)
+            {
+                return 1;
+            }
+
             return a.Id - b.Id;
         }
     }
@@ -14025,7 +14565,11 @@ namespace Walkabout.Data
         {
             StockSplit s = new StockSplit(this);
             s.Id = id;
-            if (this.nextStockSplit <= id) this.nextStockSplit = id + 1;
+            if (this.nextStockSplit <= id)
+            {
+                this.nextStockSplit = id + 1;
+            }
+
             this.stockSplits[id] = s;
             this.FireChangeEvent(this, s, null, ChangeType.Inserted);
             return s;

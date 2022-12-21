@@ -219,12 +219,21 @@ namespace Walkabout.Views.Controls
         {
             QueryRow q = new QueryRow();
             if (!(row["Field"] is DBNull))
+            {
                 q.Field = (Field)row["Field"];
+            }
+
             if (!(row["Operation"] is DBNull))
+            {
                 q.Operation = (Operation)row["Operation"];
+            }
+
             q.Value = row["Value"] as string;
             if (!(row["Conjunction"] is DBNull))
+            {
                 q.Conjunction = (Conjunction)row["Conjunction"];
+            }
+
             return q;
         }
         #endregion

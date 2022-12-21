@@ -411,7 +411,10 @@ namespace Walkabout.Views.Controls
         {
             this.CongratsButton.Visibility = System.Windows.Visibility.Collapsed;
 
-            if (this.initializing) return;
+            if (this.initializing)
+            {
+                return;
+            }
 
             if (this.YourNewBalance == -this.NewBalance && this.NewBalance != 0)
             {

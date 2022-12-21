@@ -1236,7 +1236,10 @@ namespace Walkabout.Views
         {
             var extension = Path.GetExtension(filePath).ToLower();
             if (extension == ".jpg" || extension == ".png" || extension == ".gif" || extension == ".bmp")
+            {
                 return true;
+            }
+
             return false;
         }
 
@@ -1413,11 +1416,30 @@ namespace Walkabout.Views
                     vs.SelectedRow = this.SelectedRowId;
                 }
 
-                if (this.ActiveAccount != null) vs.Account = this.ActiveAccount.Name;
-                if (this.ActiveCategory != null) vs.Category = this.ActiveCategory.Name;
-                if (this.ActivePayee != null) vs.Payee = this.ActivePayee.Name;
-                if (this.ActiveSecurity != null) vs.Security = this.ActiveSecurity.Name;
-                if (this.ActiveRental != null) vs.Rental = this.ActiveRental.Name;
+                if (this.ActiveAccount != null)
+                {
+                    vs.Account = this.ActiveAccount.Name;
+                }
+
+                if (this.ActiveCategory != null)
+                {
+                    vs.Category = this.ActiveCategory.Name;
+                }
+
+                if (this.ActivePayee != null)
+                {
+                    vs.Payee = this.ActivePayee.Name;
+                }
+
+                if (this.ActiveSecurity != null)
+                {
+                    vs.Security = this.ActiveSecurity.Name;
+                }
+
+                if (this.ActiveRental != null)
+                {
+                    vs.Rental = this.ActiveRental.Name;
+                }
 
                 if (vs.Account == null && vs.Category == null && vs.Payee == null && vs.Security == null && vs.Rental == null)
                 {
@@ -3305,10 +3327,16 @@ namespace Walkabout.Views
         private long GetRowId(object row)
         {
             Transaction t = row as Transaction;
-            if (t != null) return t.Id;
+            if (t != null)
+            {
+                return t.Id;
+            }
 
             Investment i = row as Investment;
-            if (i != null) return i.Id;
+            if (i != null)
+            {
+                return i.Id;
+            }
 
             return -1;
         }
@@ -3358,9 +3386,16 @@ namespace Walkabout.Views
                 foreach (object obj in data)
                 {
                     Transaction t = obj as Transaction;
-                    if (t != null && t.Id == id) return t;
+                    if (t != null && t.Id == id)
+                    {
+                        return t;
+                    }
+
                     Investment i = obj as Investment;
-                    if (i != null && i.Id == id) return i;
+                    if (i != null && i.Id == id)
+                    {
+                        return i;
+                    }
                 }
             }
             return null;
@@ -5071,7 +5106,10 @@ namespace Walkabout.Views
         public override void ReadXml(XmlReader r)
         {
 
-            if (r.IsEmptyElement) return;
+            if (r.IsEmptyElement)
+            {
+                return;
+            }
 
             List<QueryRow> tempQuery = new List<QueryRow>();
 
@@ -5240,7 +5278,11 @@ namespace Walkabout.Views
                 string text = e.Text;
                 foreach (char ch in text)
                 {
-                    if (ch < 0x20) return; // don't process control characters
+                    if (ch < 0x20)
+                    {
+                        return; // don't process control characters
+                    }
+
                     if (tick < this.start || tick < this.resetDelay || this.start < tick - this.resetDelay)
                     {
                         this.typedSoFar = ch.ToString();
@@ -6219,8 +6261,15 @@ namespace Walkabout.Views
         {
             if (this.view.OneLineView)
             {
-                if (this.categoryField != null) this.categoryField.Visibility = System.Windows.Visibility.Collapsed;
-                if (this.memoField != null) this.memoField.Visibility = System.Windows.Visibility.Collapsed;
+                if (this.categoryField != null)
+                {
+                    this.categoryField.Visibility = System.Windows.Visibility.Collapsed;
+                }
+
+                if (this.memoField != null)
+                {
+                    this.memoField.Visibility = System.Windows.Visibility.Collapsed;
+                }
             }
             else
             {
@@ -6834,12 +6883,20 @@ namespace Walkabout.Views
             }
             else if (targetType == typeof(Decimal))
             {
-                if (string.IsNullOrWhiteSpace(s)) return 0D;
+                if (string.IsNullOrWhiteSpace(s))
+                {
+                    return 0D;
+                }
+
                 return decimal.Parse(s);
             }
             else if (targetType == typeof(DateTime))
             {
-                if (string.IsNullOrWhiteSpace(s)) return DateTime.Now;
+                if (string.IsNullOrWhiteSpace(s))
+                {
+                    return DateTime.Now;
+                }
+
                 return DateTime.Parse(s);
             }
             else if (targetType == typeof(string))

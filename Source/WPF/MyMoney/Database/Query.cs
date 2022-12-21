@@ -211,7 +211,10 @@ namespace Walkabout.Data
         {
             bool result;
             if (bool.TryParse(value, out result))
+            {
                 return result;
+            }
+
             return defaultValue;
         }
 
@@ -219,7 +222,10 @@ namespace Walkabout.Data
         {
             decimal result;
             if (decimal.TryParse(value, out result))
+            {
                 return result;
+            }
+
             return defaultValue;
         }
 
@@ -227,7 +233,10 @@ namespace Walkabout.Data
         {
             int result;
             if (Int32.TryParse(value, out result))
+            {
                 return result;
+            }
+
             return defaultValue;
         }
 
@@ -235,7 +244,10 @@ namespace Walkabout.Data
         {
             DateTime result;
             if (DateTime.TryParse(value, out result))
+            {
                 return result;
+            }
+
             return defaultValue;
         }
 
@@ -335,17 +347,32 @@ namespace Walkabout.Data
 
         public bool Matches(string value)
         {
-            if (value == null) value = "";
+            if (value == null)
+            {
+                value = "";
+            }
+
             string s = this.value;
-            if (s == null) s = "";
+            if (s == null)
+            {
+                s = "";
+            }
 
             switch (this.op)
             {
                 case Operation.None:
                     return false;
                 case Operation.Contains:
-                    if (string.IsNullOrEmpty(s)) return string.IsNullOrEmpty(value);
-                    if (string.IsNullOrEmpty(value)) return string.IsNullOrEmpty(s);
+                    if (string.IsNullOrEmpty(s))
+                    {
+                        return string.IsNullOrEmpty(value);
+                    }
+
+                    if (string.IsNullOrEmpty(value))
+                    {
+                        return string.IsNullOrEmpty(s);
+                    }
+
                     return value.IndexOf(s, StringComparison.OrdinalIgnoreCase) >= 0;
                 case Operation.Equals:
                     return string.Compare(s, value, StringComparison.OrdinalIgnoreCase) == 0;
@@ -358,8 +385,16 @@ namespace Walkabout.Data
                 case Operation.LessThanEquals:
                     return string.Compare(s, value, StringComparison.OrdinalIgnoreCase) <= 0;
                 case Operation.NotContains:
-                    if (string.IsNullOrEmpty(s)) return !string.IsNullOrEmpty(value);
-                    if (string.IsNullOrEmpty(value)) return !string.IsNullOrEmpty(s);
+                    if (string.IsNullOrEmpty(s))
+                    {
+                        return !string.IsNullOrEmpty(value);
+                    }
+
+                    if (string.IsNullOrEmpty(value))
+                    {
+                        return !string.IsNullOrEmpty(s);
+                    }
+
                     return value.IndexOf(s, StringComparison.OrdinalIgnoreCase) < 0;
                 case Operation.NotEquals:
                     return string.Compare(s, value, StringComparison.OrdinalIgnoreCase) != 0;

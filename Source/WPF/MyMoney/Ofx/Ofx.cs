@@ -1034,7 +1034,11 @@ NEWFILEUID:{1}
             }
             finally
             {
-                if (resp != null) resp.Close();
+                if (resp != null)
+                {
+                    resp.Close();
+                }
+
                 this.pending = null;
             }
         }
@@ -1520,7 +1524,10 @@ NEWFILEUID:{1}
 
         public void Sync(IList accounts, OfxDownloadData results, Dispatcher dispatcher)
         {
-            if (accounts.Count == 0) return;
+            if (accounts.Count == 0)
+            {
+                return;
+            }
 
             XDocument doc = this.GetSignonRequest(true);
 
@@ -1838,7 +1845,11 @@ NEWFILEUID:{1}
         static string GetLogFileLocation(XDocument doc)
         {
             LogFileInfo log = doc.Annotation<LogFileInfo>();
-            if (log != null) return log.Path;
+            if (log != null)
+            {
+                return log.Path;
+            }
+
             return null;
         }
 
@@ -2223,7 +2234,10 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         void ProcessInvestmentTransactionList(Account a, XElement tranList, OfxDownloadData results)
         {
-            if (tranList == null) return;
+            if (tranList == null)
+            {
+                return;
+            }
 
             Transactions register = this.myMoney.Transactions;
 
@@ -2444,7 +2458,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
              * 
              * So I think we have to force it to be a negative since it is a BUY
              */
-            if (buy == null) return null;
+            if (buy == null)
+            {
+                return null;
+            }
+
             string type = buy.Name.LocalName;
 
 
@@ -2552,11 +2570,18 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 <SELLTYPE>SELL</SELLTYPE>
               </SELLSTOCK>
              */
-            if (sell == null) return null;
+            if (sell == null)
+            {
+                return null;
+            }
+
             string type = sell.Name.LocalName;
 
             XElement invSell = sell.Element("INVSELL");
-            if (invSell == null) return null;
+            if (invSell == null)
+            {
+                return null;
+            }
 
             Transaction t = this.ProcessInvestmentTransaction(a, invSell);
 
@@ -2719,7 +2744,10 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
              * or
              * <INVEXPENSE>
             */
-            if (income == null) return null;
+            if (income == null)
+            {
+                return null;
+            }
 
             Transaction t = this.ProcessInvestmentTransaction(a, income);
 
@@ -2791,7 +2819,10 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 <SUBACCTFUND>CASH</SUBACCTFUND>
              </INVBANKTRAN>
              */
-            if (e == null) return null;
+            if (e == null)
+            {
+                return null;
+            }
 
             Transactions register = this.myMoney.Transactions;
             Transaction t = register.NewTransaction(a);
@@ -2853,7 +2884,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         Transaction ProcessMarginInterest(Account a, XElement e)
         {
-            if (e == null) return null;
+            if (e == null)
+            {
+                return null;
+            }
+
             Transaction t = this.ProcessInvestmentTransaction(a, e);
             t.Category = this.myMoney.Categories.InvestmentInterest;
             return t;
@@ -2862,7 +2897,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         private static void ProcessCurrency(XElement currency, Transaction t)
         {
-            if (currency == null) return;
+            if (currency == null)
+            {
+                return;
+            }
+
             string symbol = currency.SelectElementValue("CURSYM").GetNormalizedValue();
 
             if (symbol != "USD")
@@ -2873,12 +2912,22 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         Security ProcessSecId(XElement secId)
         {
-            if (secId == null) return null;
+            if (secId == null)
+            {
+                return null;
+            }
+
             string uniqueId = secId.SelectElementValue("UNIQUEID").GetNormalizedValue();
-            if (string.IsNullOrEmpty(uniqueId)) return null;
+            if (string.IsNullOrEmpty(uniqueId))
+            {
+                return null;
+            }
 
             string idType = secId.SelectElementValue("UNIQUEIDTYPE").GetNormalizedValue();
-            if (string.IsNullOrEmpty(uniqueId)) idType = "CUSIP";
+            if (string.IsNullOrEmpty(uniqueId))
+            {
+                idType = "CUSIP";
+            }
 
             SecurityInfo info = null;
             if (this.securityInfo.TryGetValue(uniqueId, out info))
@@ -3099,7 +3148,9 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     DateTime dt = ParseOfxDate(sr.SelectExpectedElement("DTPOSTED").Value.GetNormalizedValue());
                     decimal amount = decimal.Parse(sr.SelectExpectedElement("TRNAMT").Value.GetNormalizedValue());
                     if (amount == 0 && a.Type == AccountType.Credit)
+                    {
                         continue; // ignore those annoying credit checks.
+                    }
 
                     string number = null;
 
@@ -3143,7 +3194,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         for (i = memo.Length - 1; i > 0; i--)
                         {
                             char ch = memo[i];
-                            if (ch == ' ') break;
+                            if (ch == ' ')
+                            {
+                                break;
+                            }
+
                             if (!Char.IsDigit(memo[i]))
                             {
                                 isnumber = false;
@@ -3173,7 +3228,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                             memo = null;
                         }
                     }
-                    if (memo == payee) memo = null;
+                    if (memo == payee)
+                    {
+                        memo = null;
+                    }
+
                     if (string.IsNullOrEmpty(payee))
                     {
                         payee = memo;
@@ -3188,7 +3247,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         Alias alias = this.myMoney.Aliases.FindMatchingAlias(payee);
                         if (alias != null)
                         {
-                            if (memo == null || memo == string.Empty) memo = payee;
+                            if (memo == null || memo == string.Empty)
+                            {
+                                memo = payee;
+                            }
+
                             t.Payee = alias.Payee;
                         }
                         else
@@ -3437,7 +3500,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     XElement message = statusElement.Element("MESSAGE");
                     if (message != null)
                     {
-                        if (reason != null) reason += ", ";
+                        if (reason != null)
+                        {
+                            reason += ", ";
+                        }
+
                         reason += message.Value?.Trim();
                     }
                     return msg + reason;

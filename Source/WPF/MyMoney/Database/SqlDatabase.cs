@@ -639,12 +639,19 @@ namespace Walkabout.Data
                     // http://msdn.microsoft.com/en-us/library/bb264562(SQL.90).aspx
                     using (RegistryKey Key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Microsoft SQL Server\\", false))
                     {
-                        if (Key == null) return false;
+                        if (Key == null)
+                        {
+                            return false;
+                        }
+
                         string[] strNames;
                         strNames = Key.GetSubKeyNames();
 
                         //If we cannot find a SQL Server registry key, we don't have SQL Server Express installed
-                        if (strNames.Length == 0) return false;
+                        if (strNames.Length == 0)
+                        {
+                            return false;
+                        }
 
                         foreach (string s in strNames)
                         {
@@ -688,12 +695,19 @@ namespace Walkabout.Data
                     // http://msdn.microsoft.com/en-us/library/bb264562(SQL.90).aspx
                     using (RegistryKey Key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Microsoft SQL Server\\", false))
                     {
-                        if (Key == null) return false;
+                        if (Key == null)
+                        {
+                            return false;
+                        }
+
                         string[] strNames;
                         strNames = Key.GetSubKeyNames();
 
                         //If we cannot find a SQL Server registry key, we don't have SQL Server Express installed
-                        if (strNames.Length == 0) return false;
+                        if (strNames.Length == 0)
+                        {
+                            return false;
+                        }
 
                         foreach (string s in strNames)
                         {
@@ -774,7 +788,10 @@ namespace Walkabout.Data
 
         public virtual object ExecuteScalar(string cmd)
         {
-            if (cmd == null || cmd.Trim().Length == 0) return null;
+            if (cmd == null || cmd.Trim().Length == 0)
+            {
+                return null;
+            }
 
             this.log.AppendLine(cmd);
 
@@ -830,7 +847,11 @@ namespace Walkabout.Data
 
         public virtual void ExecuteNonQuery(string cmd)
         {
-            if (cmd == null || cmd.Trim().Length == 0) return;
+            if (cmd == null || cmd.Trim().Length == 0)
+            {
+                return;
+            }
+
             this.log.AppendLine(cmd);
             try
             {
@@ -918,22 +939,34 @@ namespace Walkabout.Data
 
         static string DBString(string s)
         {
-            if (s == null) return null;
+            if (s == null)
+            {
+                return null;
+            }
+
             return s.Replace("'", "''").Replace("\r", "\\r").Replace("\n", "\\n");
         }
 
         static string TwoDigit(int i)
         {
-            if (i < 10) return "0" + i;
+            if (i < 10)
+            {
+                return "0" + i;
+            }
+
             return i.ToString();
         }
 
         static string DBDateTime(DateTime dt)
         {
             if (dt == DateTime.MinValue)
+            {
                 return "NULL";
+            }
             else
+            {
                 return "'" + dt.Year + "-" + TwoDigit(dt.Month) + "-" + TwoDigit(dt.Day) + " " + TwoDigit(dt.Hour) + ":" + TwoDigit(dt.Minute) + ":" + TwoDigit(dt.Second) + "'";
+            }
         }
 
         static string DBNullableDateTime(DateTime? ndt)
@@ -946,16 +979,23 @@ namespace Walkabout.Data
             {
                 DateTime dt = ndt.Value;
                 if (dt == DateTime.MinValue)
+                {
                     return "NULL";
+                }
                 else
+                {
                     return "'" + dt.Year + "-" + TwoDigit(dt.Month) + "-" + TwoDigit(dt.Day) + " " + TwoDigit(dt.Hour) + ":" + TwoDigit(dt.Minute) + ":" + TwoDigit(dt.Second) + "'";
+                }
             }
         }
 
         static string DBGuid(SqlGuid guid)
         {
             if (guid.IsNull)
+            {
                 return "NULL";
+            }
+
             return "'" + guid.ToString() + "'";
         }
 
@@ -967,22 +1007,38 @@ namespace Walkabout.Data
         // return 0 if the column is null
         internal static int ReadInt32(IDataReader reader, int i)
         {
-            if (reader.IsDBNull(i)) return 0;
+            if (reader.IsDBNull(i))
+            {
+                return 0;
+            }
+
             return reader.GetInt32(i);
         }
 
         // return 0 if the column is null
         internal static decimal ReadDbDecimal(IDataReader reader, int i)
         {
-            if (reader.IsDBNull(i)) return 0;
+            if (reader.IsDBNull(i))
+            {
+                return 0;
+            }
+
             return reader.GetDecimal(i);
         }
 
         internal static string ReadDbString(IDataReader reader, int i)
         {
-            if (reader.IsDBNull(i)) return null;
+            if (reader.IsDBNull(i))
+            {
+                return null;
+            }
+
             string s = reader.GetString(i);
-            if (s != null) s = s.Trim();
+            if (s != null)
+            {
+                s = s.Trim();
+            }
+
             return s;
         }
 
@@ -1006,13 +1062,25 @@ namespace Walkabout.Data
                 a.OpeningBalance = reader.GetDecimal(6);
 
                 if (!reader.IsDBNull(7))
+                {
                     a.LastSync = reader.SafeGetDateTime(7);
+                }
+
                 if (!reader.IsDBNull(8))
+                {
                     a.LastBalance = reader.SafeGetDateTime(8);
+                }
+
                 if (!reader.IsDBNull(9))
+                {
                     a.SyncGuid = new SqlGuid(reader.GetGuid(9));
+                }
+
                 if (!reader.IsDBNull(10))
+                {
                     a.Flags = (AccountFlags)reader.GetInt32(10);
+                }
+
                 a.Currency = ReadDbString(reader, 11);
                 a.WebSite = ReadDbString(reader, 12);
                 a.ReconcileWarning = ReadInt32(reader, 13);
@@ -1030,7 +1098,11 @@ namespace Walkabout.Data
 
         public void UpdateAccounts(Accounts accounts)
         {
-            if (accounts.Count == 0) return;
+            if (accounts.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (Account a in accounts)
             {
@@ -1151,7 +1223,9 @@ namespace Walkabout.Data
                 i.AccessKey = ReadDbString(reader, 18);
                 i.UserKey = ReadDbString(reader, 19);
                 if (!reader.IsDBNull(20))
+                {
                     i.UserKeyExpireDate = reader.SafeGetDateTime(20);
+                }
 
                 i.OnUpdated();
             }
@@ -1162,7 +1236,11 @@ namespace Walkabout.Data
 
         public void UpdateOnlineAccounts(OnlineAccounts accounts)
         {
-            if (accounts.Count == 0) return;
+            if (accounts.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (OnlineAccount i in accounts)
             {
@@ -1357,7 +1435,11 @@ namespace Walkabout.Data
 
         public void UpdatePayees(Payees payees)
         {
-            if (payees.Count == 0) return;
+            if (payees.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (Payee p in payees)
             {
@@ -1409,7 +1491,11 @@ namespace Walkabout.Data
 
         public void UpdateAliases(Aliases aliases)
         {
-            if (aliases.Count == 0) return;
+            if (aliases.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (Alias a in aliases)
             {
@@ -1459,7 +1545,11 @@ namespace Walkabout.Data
 
         private void UpdateAccountAliases(AccountAliases accountAliases)
         {
-            if (accountAliases.Count == 0) return;
+            if (accountAliases.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (AccountAlias a in accountAliases)
             {
@@ -1510,7 +1600,11 @@ namespace Walkabout.Data
 
         private void UpdateTransactionExtras(TransactionExtras extras)
         {
-            if (extras.Count == 0) return;
+            if (extras.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (TransactionExtra e in extras)
             {
@@ -1630,7 +1724,11 @@ namespace Walkabout.Data
 
         public void UpdateRentBuildings(RentBuildings buildings)
         {
-            if (buildings.Count == 0) return;
+            if (buildings.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (RentBuilding p in buildings)
             {
@@ -1757,7 +1855,11 @@ namespace Walkabout.Data
 
         public void UpdateRentUnits(RentUnits units)
         {
-            if (units.Count == 0) return;
+            if (units.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (RentUnit x in units)
             {
@@ -1847,7 +1949,11 @@ namespace Walkabout.Data
 
         public void UpdateLoanPayments(LoanPayments loans)
         {
-            if (loans.Count == 0) return;
+            if (loans.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (LoanPayment i in loans)
             {
@@ -1960,7 +2066,11 @@ namespace Walkabout.Data
 
         public void UpdateCategories(Categories categories)
         {
-            if (categories.Count == 0) return;
+            if (categories.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (Category c in categories)
             {
@@ -2037,8 +2147,16 @@ namespace Walkabout.Data
                 Currency s = currencies.AddCurrency(id);
                 s.Symbol = ReadDbString(reader, 1);
                 s.Name = ReadDbString(reader, 2);
-                if (!reader.IsDBNull(3)) s.Ratio = reader.GetDecimal(3);
-                if (!reader.IsDBNull(4)) s.LastRatio = reader.GetDecimal(4);
+                if (!reader.IsDBNull(3))
+                {
+                    s.Ratio = reader.GetDecimal(3);
+                }
+
+                if (!reader.IsDBNull(4))
+                {
+                    s.LastRatio = reader.GetDecimal(4);
+                }
+
                 s.OnUpdated();
             }
             currencies.EndUpdate();
@@ -2049,7 +2167,11 @@ namespace Walkabout.Data
 
         public void UpdateCurrencies(Currencies currencies)
         {
-            if (currencies.Count == 0) return;
+            if (currencies.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (Currency s in currencies)
             {
@@ -2117,11 +2239,27 @@ namespace Walkabout.Data
                 s.Name = ReadDbString(reader, 1);
                 s.Symbol = ReadDbString(reader, 2);
                 s.Price = reader.GetDecimal(3);
-                if (!reader.IsDBNull(4)) s.LastPrice = reader.GetDecimal(4);
+                if (!reader.IsDBNull(4))
+                {
+                    s.LastPrice = reader.GetDecimal(4);
+                }
+
                 s.CuspId = ReadDbString(reader, 5);
-                if (!reader.IsDBNull(6)) s.SecurityType = (SecurityType)reader.GetInt32(6);
-                if (!reader.IsDBNull(7)) s.Taxable = (YesNo)reader.GetByte(7);
-                if (!reader.IsDBNull(8)) s.PriceDate = reader.SafeGetDateTime(8);
+                if (!reader.IsDBNull(6))
+                {
+                    s.SecurityType = (SecurityType)reader.GetInt32(6);
+                }
+
+                if (!reader.IsDBNull(7))
+                {
+                    s.Taxable = (YesNo)reader.GetByte(7);
+                }
+
+                if (!reader.IsDBNull(8))
+                {
+                    s.PriceDate = reader.SafeGetDateTime(8);
+                }
+
                 s.OnUpdated();
             }
             securities.EndUpdate();
@@ -2131,7 +2269,11 @@ namespace Walkabout.Data
 
         public void UpdateSecurities(Securities securities)
         {
-            if (securities.Count == 0) return;
+            if (securities.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (Security s in securities)
             {
@@ -2219,7 +2361,11 @@ namespace Walkabout.Data
 
         public void UpdateStockSplits(StockSplits stockSplits)
         {
-            if (stockSplits.Count == 0) return;
+            if (stockSplits.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (StockSplit s in stockSplits)
             {
@@ -2305,12 +2451,35 @@ namespace Walkabout.Data
                 t.Payee = money.Payees.FindPayeeAt(reader.GetInt32(7));
                 t.Category = money.Categories.FindCategoryById(reader.GetInt32(8));
                 t.FITID = ReadDbString(reader, 9);
-                if (!reader.IsDBNull(10)) t.SalesTax = reader.GetDecimal(10);
-                if (!reader.IsDBNull(11)) t.Flags = (TransactionFlags)reader.GetInt32(11);
-                if (!reader.IsDBNull(12)) t.ReconciledDate = reader.SafeGetDateTime(12);
-                if (!reader.IsDBNull(13)) t.BudgetBalanceDate = reader.SafeGetDateTime(13);
-                if (!reader.IsDBNull(14)) t.MergeDate = reader.SafeGetDateTime(14);
-                if (!reader.IsDBNull(15)) t.OriginalPayee = reader.GetString(15);
+                if (!reader.IsDBNull(10))
+                {
+                    t.SalesTax = reader.GetDecimal(10);
+                }
+
+                if (!reader.IsDBNull(11))
+                {
+                    t.Flags = (TransactionFlags)reader.GetInt32(11);
+                }
+
+                if (!reader.IsDBNull(12))
+                {
+                    t.ReconciledDate = reader.SafeGetDateTime(12);
+                }
+
+                if (!reader.IsDBNull(13))
+                {
+                    t.BudgetBalanceDate = reader.SafeGetDateTime(13);
+                }
+
+                if (!reader.IsDBNull(14))
+                {
+                    t.MergeDate = reader.SafeGetDateTime(14);
+                }
+
+                if (!reader.IsDBNull(15))
+                {
+                    t.OriginalPayee = reader.GetString(15);
+                }
 
                 t.BatchMode = false;
 
@@ -2371,14 +2540,24 @@ namespace Walkabout.Data
                 }
 
 
-                if (!reader.IsDBNull(7)) s.Flags = (SplitFlags)reader.GetInt32(7);
-                if (!reader.IsDBNull(8)) s.BudgetBalanceDate = reader.SafeGetDateTime(8);
+                if (!reader.IsDBNull(7))
+                {
+                    s.Flags = (SplitFlags)reader.GetInt32(7);
+                }
+
+                if (!reader.IsDBNull(8))
+                {
+                    s.BudgetBalanceDate = reader.SafeGetDateTime(8);
+                }
 
                 t.Splits.EndUpdate();
 
                 s.BatchMode = false;
                 s.OnUpdated();
-                if (t != null) t.OnUpdated();
+                if (t != null)
+                {
+                    t.OnUpdated();
+                }
             }
 
             reader.Close();
@@ -2468,7 +2647,11 @@ namespace Walkabout.Data
 
         public void UpdateTransactions(Transactions transactions)
         {
-            if (transactions.Count == 0) return;
+            if (transactions.Count == 0)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (Transaction t in transactions)
             {
@@ -2648,13 +2831,40 @@ namespace Walkabout.Data
                     i.Units = reader.GetDecimal(3);
                     i.Commission = reader.GetDecimal(4);
                     i.Type = (InvestmentType)reader.GetInt32(5);
-                    if (!reader.IsDBNull(6)) i.TradeType = (InvestmentTradeType)reader.GetInt32(6);
-                    if (!reader.IsDBNull(7)) i.TaxExempt = reader.GetBoolean(7);
-                    if (!reader.IsDBNull(8)) i.Withholding = reader.GetDecimal(8);
-                    if (!reader.IsDBNull(9)) i.MarkUpDown = reader.GetDecimal(9);
-                    if (!reader.IsDBNull(10)) i.Taxes = reader.GetDecimal(10);
-                    if (!reader.IsDBNull(11)) i.Fees = reader.GetDecimal(11);
-                    if (!reader.IsDBNull(12)) i.Load = reader.GetDecimal(12);
+                    if (!reader.IsDBNull(6))
+                    {
+                        i.TradeType = (InvestmentTradeType)reader.GetInt32(6);
+                    }
+
+                    if (!reader.IsDBNull(7))
+                    {
+                        i.TaxExempt = reader.GetBoolean(7);
+                    }
+
+                    if (!reader.IsDBNull(8))
+                    {
+                        i.Withholding = reader.GetDecimal(8);
+                    }
+
+                    if (!reader.IsDBNull(9))
+                    {
+                        i.MarkUpDown = reader.GetDecimal(9);
+                    }
+
+                    if (!reader.IsDBNull(10))
+                    {
+                        i.Taxes = reader.GetDecimal(10);
+                    }
+
+                    if (!reader.IsDBNull(11))
+                    {
+                        i.Fees = reader.GetDecimal(11);
+                    }
+
+                    if (!reader.IsDBNull(12))
+                    {
+                        i.Load = reader.GetDecimal(12);
+                    }
 
                     i.OnUpdated();
                     t.OnUpdated();
@@ -2666,7 +2876,11 @@ namespace Walkabout.Data
 
         public void UpdateInvestment(Investment i)
         {
-            if (i == null) return;
+            if (i == null)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             if (i.IsChanged)
             {

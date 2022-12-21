@@ -92,8 +92,15 @@ namespace Walkabout.Reports
 
                     foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
                     {
-                        if (a.IsTaxDeferred) hasTaxDeferred = true;
-                        if (a.IsTaxFree) hasTaxFree = true;
+                        if (a.IsTaxDeferred)
+                        {
+                            hasTaxDeferred = true;
+                        }
+
+                        if (a.IsTaxFree)
+                        {
+                            hasTaxFree = true;
+                        }
                     }
 
                     Predicate<Account> bankAccountFilter = (a) => { return this.IsBankAccount(a); };
@@ -393,7 +400,11 @@ namespace Walkabout.Reports
                         var color = this.GetRandomColor();
                         string caption = Security.GetSecurityTypeCaption(st);
                         string tooltip = caption;
-                        if (!string.IsNullOrEmpty(prefix)) tooltip = prefix + " " + tooltip;
+                        if (!string.IsNullOrEmpty(prefix))
+                        {
+                            tooltip = prefix + " " + tooltip;
+                        }
+
                         SecurityGroup group = groupsByType[st];
                         data.Add(new ChartDataValue() { Label = tooltip, Value = (double)Math.Abs(sb).RoundToNearestCent(), Color = color, UserData = group });
                         if (st == SecurityType.None)

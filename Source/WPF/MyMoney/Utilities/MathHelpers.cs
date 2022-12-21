@@ -19,7 +19,11 @@ namespace Walkabout.Utilities
                 sum += d;
                 count++;
             }
-            if (count == 0) return 0;
+            if (count == 0)
+            {
+                return 0;
+            }
+
             return sum / count;
         }
 
@@ -71,7 +75,11 @@ namespace Walkabout.Utilities
                 ysum += d.Y;
                 count++;
             }
-            if (count == 0) return 0;
+            if (count == 0)
+            {
+                return 0;
+            }
+
             double xMean = xsum / count;
             double yMean = ysum / count;
             double covariance = 0;

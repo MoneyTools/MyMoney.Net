@@ -394,7 +394,9 @@ namespace Walkabout
         private void OnRecentFileSelected(object sender, RecentFileEventArgs e)
         {
             if (!this.SaveIfDirty())
+            {
                 return;
+            }
 
             Settings.TheSettings.Database = e.FileName;
             this.BeginLoadDatabase();
@@ -2076,7 +2078,9 @@ namespace Walkabout
         private bool NewDatabase()
         {
             if (!this.SaveIfDirty())
+            {
                 return false;
+            }
 
             if (this.database == null ||
                 MessageBoxEx.Show("Are you sure you want to create a new money database?", "New Database",
@@ -2487,7 +2491,9 @@ namespace Walkabout
         void OnDirtyChanged(object sender, EventArgs e)
         {
             if (this.isLoading) // ignore these.
+            {
                 return;
+            }
 
             if (this.tracker.IsDirty)
             {
@@ -2814,7 +2820,11 @@ namespace Walkabout
         /// </summary>
         private Category GetParentCategory(Category c)
         {
-            if (c == null) return null;
+            if (c == null)
+            {
+                return null;
+            }
+
             return c.HasSubcategories ? c : (c.ParentCategory != null ? c.ParentCategory : c);
         }
 

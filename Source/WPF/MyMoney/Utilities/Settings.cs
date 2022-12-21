@@ -651,7 +651,11 @@ namespace Walkabout.Configuration
         public static QueryRow[] ReadQuery(XmlReader r)
         {
             ArrayList list = new ArrayList();
-            if (r.IsEmptyElement) return null;
+            if (r.IsEmptyElement)
+            {
+                return null;
+            }
+
             while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
             {
                 if (r.NodeType == XmlNodeType.Element)
@@ -691,7 +695,10 @@ namespace Walkabout.Configuration
             foreach (string key in keys)
             {
                 object value = this.map[key];
-                if (value == null) continue;
+                if (value == null)
+                {
+                    continue;
+                }
 
                 PropertyInfo pi = this.GetType().GetProperty(key);
                 if (pi != null)
@@ -833,7 +840,11 @@ namespace Walkabout.Configuration
         static private Point DeserializePoint(XmlReader r)
         {
             Point p = new Point();
-            if (r.IsEmptyElement) return p;
+            if (r.IsEmptyElement)
+            {
+                return p;
+            }
+
             while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
             {
                 if (r.NodeType == XmlNodeType.Element)
@@ -854,7 +865,11 @@ namespace Walkabout.Configuration
         static private Size DeserializeSize(XmlReader r)
         {
             Size s = new Size();
-            if (r.IsEmptyElement) return s;
+            if (r.IsEmptyElement)
+            {
+                return s;
+            }
+
             while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
             {
                 if (r.NodeType == XmlNodeType.Element)
@@ -884,7 +899,11 @@ namespace Walkabout.Configuration
 
         static private DateTime DeserializeDateTime(XmlReader r)
         {
-            if (r.IsEmptyElement) return new DateTime();
+            if (r.IsEmptyElement)
+            {
+                return new DateTime();
+            }
+
             if (r.Read())
             {
                 string s = r.ReadString();
@@ -910,7 +929,11 @@ namespace Walkabout.Configuration
 
         static private TimeSpan DeserializeTimeSpan(XmlReader r)
         {
-            if (r.IsEmptyElement) return new TimeSpan();
+            if (r.IsEmptyElement)
+            {
+                return new TimeSpan();
+            }
+
             if (r.Read())
             {
                 string s = r.ReadString();

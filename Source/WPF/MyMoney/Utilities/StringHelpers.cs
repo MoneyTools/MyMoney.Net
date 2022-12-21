@@ -38,16 +38,36 @@ namespace Walkabout.Utilities
 
         public static bool Matches(string a, string b)
         {
-            if (a == b) return true;
-            if (a == null && b.Length == 0) return true;
-            if (b == null && a.Length == 0) return true;
-            if (string.Compare(a, b, true) == 0) return true;
+            if (a == b)
+            {
+                return true;
+            }
+
+            if (a == null && b.Length == 0)
+            {
+                return true;
+            }
+
+            if (b == null && a.Length == 0)
+            {
+                return true;
+            }
+
+            if (string.Compare(a, b, true) == 0)
+            {
+                return true;
+            }
+
             return false;
         }
 
         public static int ParseEnum(Type t, string value, int defaultValue)
         {
-            if (string.IsNullOrEmpty(value)) return defaultValue;
+            if (string.IsNullOrEmpty(value))
+            {
+                return defaultValue;
+            }
+
             try
             {
                 return (int)Enum.Parse(t, value);

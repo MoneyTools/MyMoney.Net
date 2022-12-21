@@ -66,7 +66,11 @@ namespace Microsoft.VisualStudio.PerformanceGraph
 
         private bool PopupContainsMouse(MouseEventArgs e)
         {
-            if (this.popup == null) return false;
+            if (this.popup == null)
+            {
+                return false;
+            }
+
             Rect bounds = new Rect(new Point(0, 0), this.popup.RenderSize);
             return bounds.Contains(e.GetPosition(this.popup));
         }

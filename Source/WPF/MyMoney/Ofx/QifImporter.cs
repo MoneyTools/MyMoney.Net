@@ -429,7 +429,11 @@ namespace Walkabout.Migrate
         static decimal ParseDecimal(string input)
         {
             string d = input.Trim();
-            if (input.Trim() == string.Empty) return 0;
+            if (input.Trim() == string.Empty)
+            {
+                return 0;
+            }
+
             return decimal.Parse(d);
         }
 

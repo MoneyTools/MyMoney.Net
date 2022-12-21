@@ -79,7 +79,11 @@ namespace Walkabout.Utilities
             this._baseUri = location;
             this._encoding = encoding;
             this._nt = nametable;
-            if (nametable == null) this._nt = new NameTable();
+            if (nametable == null)
+            {
+                this._nt = new NameTable();
+            }
+
             this._csvReader = new CsvReader(location, encoding, null, 4096);
         }
 
@@ -243,7 +247,13 @@ namespace Walkabout.Utilities
         public char Delimiter
         {
             get { return this._delimiter; }
-            set { this._delimiter = value; if (this._csvReader != null) this._csvReader.Delimiter = value; }
+            set
+            {
+                this._delimiter = value; if (this._csvReader != null)
+                {
+                    this._csvReader.Delimiter = value;
+                }
+            }
         }
 
         void ReadColumnNames()
@@ -393,10 +403,14 @@ namespace Walkabout.Utilities
             get
             {
                 if (this._state == State.Row && this._asAttrs)
+                {
                     return true;
+                }
 
                 if (this._state == State.Field && this._csvReader[this._attr] == String.Empty)
+                {
                     return true;
+                }
 
                 return false;
             }
@@ -436,7 +450,10 @@ namespace Walkabout.Utilities
         {
             get
             {
-                if (!this._asAttrs) return 0;
+                if (!this._asAttrs)
+                {
+                    return 0;
+                }
 
                 if (this._state == State.Row || this._state == State.Attr || this._state == State.AttrValue)
                 {
@@ -448,13 +465,18 @@ namespace Walkabout.Utilities
 
         public override string GetAttribute(string name)
         {
-            if (!this._asAttrs) return null;
+            if (!this._asAttrs)
+            {
+                return null;
+            }
 
             if (this._state == State.Row || this._state == State.Attr || this._state == State.AttrValue)
             {
                 int i = this.GetOrdinal(name);
                 if (i >= 0)
+                {
                     return this.GetAttribute(i);
+                }
             }
             return null;
         }
@@ -467,7 +489,9 @@ namespace Walkabout.Utilities
                 for (int i = 0; i < this._names.Length; i++)
                 {
                     if (this._names[i] == (object)n)
+                    {
                         return i;
+                    }
                 }
                 throw new Exception("Attribute '" + name + "' not found.");
             }
@@ -477,13 +501,21 @@ namespace Walkabout.Utilities
 
         public override string GetAttribute(string name, string namespaceURI)
         {
-            if (namespaceURI != string.Empty && namespaceURI != null) return null;
+            if (namespaceURI != string.Empty && namespaceURI != null)
+            {
+                return null;
+            }
+
             return this.GetAttribute(name);
         }
 
         public override string GetAttribute(int i)
         {
-            if (!this._asAttrs) return null;
+            if (!this._asAttrs)
+            {
+                return null;
+            }
+
             if (this._state == State.Row || this._state == State.Attr || this._state == State.AttrValue)
             {
                 return this._csvReader[i];
@@ -517,11 +549,19 @@ namespace Walkabout.Utilities
 
         public override bool MoveToAttribute(string name)
         {
-            if (!this._asAttrs) return false;
+            if (!this._asAttrs)
+            {
+                return false;
+            }
+
             if (this._state == State.Row || this._state == State.Attr || this._state == State.AttrValue)
             {
                 int i = this.GetOrdinal(name);
-                if (i < 0) return false;
+                if (i < 0)
+                {
+                    return false;
+                }
+
                 this.MoveToAttribute(i);
             }
             return false;
@@ -529,7 +569,11 @@ namespace Walkabout.Utilities
 
         public override bool MoveToAttribute(string name, string ns)
         {
-            if (ns != string.Empty && ns != null) return false;
+            if (ns != string.Empty && ns != null)
+            {
+                return false;
+            }
+
             return this.MoveToAttribute(name);
         }
 
@@ -547,7 +591,11 @@ namespace Walkabout.Utilities
 
         public override bool MoveToFirstAttribute()
         {
-            if (!this._asAttrs) return false;
+            if (!this._asAttrs)
+            {
+                return false;
+            }
+
             if (this.AttributeCount > 0)
             {
                 this._attr = 0;
@@ -559,7 +607,11 @@ namespace Walkabout.Utilities
 
         public override bool MoveToNextAttribute()
         {
-            if (!this._asAttrs) return false;
+            if (!this._asAttrs)
+            {
+                return false;
+            }
+
             if (this._attr < this.AttributeCount - 1)
             {
                 this._attr = (this._state == State.Attr || this._state == State.AttrValue) ? this._attr + 1 : 0;
@@ -571,7 +623,10 @@ namespace Walkabout.Utilities
 
         public override bool MoveToElement()
         {
-            if (!this._asAttrs) return true;
+            if (!this._asAttrs)
+            {
+                return true;
+            }
 
             if (this._state == State.Root || this._state == State.EndRoot || this._state == State.Row)
             {
@@ -679,8 +734,15 @@ namespace Walkabout.Utilities
         {
             get
             {
-                if (this._state == State.Initial) return ReadState.Initial;
-                else if (this._state == State.Eof) return ReadState.EndOfFile;
+                if (this._state == State.Initial)
+                {
+                    return ReadState.Initial;
+                }
+                else if (this._state == State.Eof)
+                {
+                    return ReadState.EndOfFile;
+                }
+
                 return ReadState.Interactive;
             }
         }
@@ -778,7 +840,10 @@ namespace Walkabout.Utilities
             {
                 WebRequest wr = WebRequest.Create(location);
                 if (proxy != null && proxy != "")
+                {
                     wr.Proxy = new WebProxy(proxy);
+                }
+
                 wr.Credentials = CredentialCache.DefaultCredentials;
                 Stream stm = wr.GetResponse().GetResponseStream();
                 this._r = new StreamReader(stm, encoding, true);
@@ -811,10 +876,20 @@ namespace Walkabout.Utilities
         { // read a record.
             this._fields = 0;
             char ch = this.ReadChar();
-            if (ch == 0) return false;
+            if (ch == 0)
+            {
+                return false;
+            }
+
             while (ch != 0 && ch == '\r' || ch == '\n' || ch == ' ')
+            {
                 ch = this.ReadChar();
-            if (ch == 0) return false;
+            }
+
+            if (ch == 0)
+            {
+                return false;
+            }
 
             while (ch != 0 && ch != '\r' && ch != '\n')
             {
@@ -871,7 +946,10 @@ namespace Walkabout.Utilities
                     while (ch != 0 && ch != '\n' && ch != '\r')
                     {
                         if (ch == this._colDelim || (this._colDelim == '\0' && (ch == ',' || ch == ';' || ch == '\t' || ch == '|')))
+                        {
                             break;
+                        }
+
                         sb.Append(ch);
                         ch = this.ReadChar();
                     }

@@ -133,7 +133,9 @@ namespace Walkabout.Data
             }
             string tradeType = "";
             if (t.InvestmentType != InvestmentType.None)
+            {
                 tradeType = t.InvestmentType.ToString();
+            }
 
             writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\"",
                 t.Date.ToShortDateString(), t.PayeeName, category,

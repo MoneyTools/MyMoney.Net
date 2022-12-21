@@ -260,17 +260,33 @@ namespace Walkabout.Views
 
         private void OnToggleExpandAll_Checked(object sender, RoutedEventArgs e)
         {
-            if (this.resetting) return;
+            if (this.resetting)
+            {
+                return;
+            }
+
             this.ToggleExpandAll.ToolTip = "Hide Details";
-            if (this.writer != null) this.writer.ExpandAll();
+            if (this.writer != null)
+            {
+                this.writer.ExpandAll();
+            }
+
             this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "CollapseAllIcon");
         }
 
         private void OnToggleExpandAll_Unchecked(object sender, RoutedEventArgs e)
         {
-            if (this.resetting) return;
+            if (this.resetting)
+            {
+                return;
+            }
+
             this.ToggleExpandAll.ToolTip = "Show Details";
-            if (this.writer != null) this.writer.CollapseAll();
+            if (this.writer != null)
+            {
+                this.writer.CollapseAll();
+            }
+
             this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
         }
         void ResetExpandAllToggleButton()

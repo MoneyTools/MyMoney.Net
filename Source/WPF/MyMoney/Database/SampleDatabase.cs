@@ -661,8 +661,15 @@ namespace Walkabout.Assitance
                 }
                 else
                 {
-                    if (sc.Min > amount) sc.Min = (int)amount;
-                    if (sc.Max < amount) sc.Max = (int)amount;
+                    if (sc.Min > amount)
+                    {
+                        sc.Min = (int)amount;
+                    }
+
+                    if (sc.Max < amount)
+                    {
+                        sc.Max = (int)amount;
+                    }
                 }
                 sc.Frequency++;
             }

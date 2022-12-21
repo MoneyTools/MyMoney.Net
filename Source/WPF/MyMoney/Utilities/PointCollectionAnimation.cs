@@ -52,7 +52,9 @@ namespace Walkabout.Utilities
             if (this.To != null)
             {
                 foreach (Point pt in this.To)
+                {
                     this.ptsTo.Add(pt);
+                }
             }
             else if (this.By != null)
             {
@@ -116,7 +118,10 @@ namespace Walkabout.Utilities
             AnimationClock animationClock)
         {
             // Let’s hope this doesn’t happen too often
-            if (animationClock.CurrentProgress == null) return null;
+            if (animationClock.CurrentProgress == null)
+            {
+                return null;
+            }
 
             double progress = animationClock.CurrentProgress.Value;
             int count;
@@ -127,7 +132,10 @@ namespace Walkabout.Utilities
             if (this.To == null && this.By == null)
             {
                 this.ptsTo.Clear();
-                foreach (Point pt in defaultDestinationValue) this.ptsTo.Add(pt);
+                foreach (Point pt in defaultDestinationValue)
+                {
+                    this.ptsTo.Add(pt);
+                }
             }
 
             // Choose which destination collection to use

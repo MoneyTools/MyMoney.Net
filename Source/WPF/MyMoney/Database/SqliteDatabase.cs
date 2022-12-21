@@ -402,7 +402,10 @@ namespace Walkabout.Data
         {
             Debug.Assert(this.DbFlavor == DbFlavor.Sqlite);
 
-            if (cmd == null || cmd.Trim().Length == 0) return null;
+            if (cmd == null || cmd.Trim().Length == 0)
+            {
+                return null;
+            }
 
             this.AppendLog(cmd);
             object result = null;
@@ -460,7 +463,10 @@ namespace Walkabout.Data
         public override void ExecuteNonQuery(string cmd)
         {
             Debug.Assert(this.DbFlavor == DbFlavor.Sqlite);
-            if (cmd == null || cmd.Trim().Length == 0) return;
+            if (cmd == null || cmd.Trim().Length == 0)
+            {
+                return;
+            }
 
             this.AppendLog(cmd);
             try

@@ -52,11 +52,23 @@ namespace Walkabout.Dialogs
         private void buttonOk_Click(object sender, RoutedEventArgs e)
         {
             string user = this.ValidateInput(this.UserNameBox, "user name");
-            if (user == null) return;
+            if (user == null)
+            {
+                return;
+            }
+
             string pswd = this.ValidateInput(this.PasswordBox, "password");
-            if (pswd == null) return;
+            if (pswd == null)
+            {
+                return;
+            }
+
             string confirmed = this.ValidateInput(this.ConfirmPasswordBox, "password");
-            if (confirmed == null) return;
+            if (confirmed == null)
+            {
+                return;
+            }
+
             if (pswd != confirmed)
             {
                 MessageBoxEx.Show("The confirmation does not match the original password", "Error", MessageBoxButton.OK, MessageBoxImage.Error);

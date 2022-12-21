@@ -95,14 +95,22 @@ namespace Walkabout.Attachments
         public StatementItem GetStatement(Account a, DateTime date)
         {
             var statementIndex = this.GetOrCreateIndex(a);
-            if (statementIndex == null) return null;
+            if (statementIndex == null)
+            {
+                return null;
+            }
+
             return statementIndex.Items.Where(s => s.Date == date).FirstOrDefault();
         }
 
         public decimal GetStatementBalance(Account a, DateTime date)
         {
             var statementIndex = this.GetOrCreateIndex(a);
-            if (statementIndex == null) return 0;
+            if (statementIndex == null)
+            {
+                return 0;
+            }
+
             var statement = this.GetStatement(a, date);
             if (statement != null)
             {
@@ -114,7 +122,11 @@ namespace Walkabout.Attachments
         public string GetStatementFullPath(Account a, DateTime date)
         {
             var statementIndex = this.GetOrCreateIndex(a);
-            if (statementIndex == null) return "";
+            if (statementIndex == null)
+            {
+                return "";
+            }
+
             var statement = this.GetStatement(a, date);
             if (statement != null)
             {
@@ -229,7 +241,11 @@ namespace Walkabout.Attachments
         public bool AddStatement(Account a, DateTime date, string statementFile, decimal balance, bool flush = true)
         {
             var statementIndex = this.GetOrCreateIndex(a);
-            if (statementIndex == null) return false;
+            if (statementIndex == null)
+            {
+                return false;
+            }
+
             var statementDir = Path.GetDirectoryName(statementIndex.FileName);
 
             var statement = this.GetStatement(a, date);
@@ -313,7 +329,10 @@ namespace Walkabout.Attachments
         private void UpdateBundledPointers(string oldName, string newName)
         {
             string root = this.StatementsDirectory;
-            if (string.IsNullOrEmpty(root)) return;
+            if (string.IsNullOrEmpty(root))
+            {
+                return;
+            }
 
             foreach (var index in this.statements.Values)
             {

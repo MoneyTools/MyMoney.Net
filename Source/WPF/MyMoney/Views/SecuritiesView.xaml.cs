@@ -357,7 +357,11 @@ namespace Walkabout.Views
             get
             {
                 Security s = this.SecuritiesDataGrid.SelectedItem as Security;
-                if (s != null) return s.Id;
+                if (s != null)
+                {
+                    return s.Id;
+                }
+
                 return -1;
             }
         }
@@ -621,7 +625,10 @@ namespace Walkabout.Views
             ToggleButton button = (ToggleButton)sender;
             Security s = button.Tag as Security;
             int id = -1;
-            if (s != null) id = s.Id;
+            if (s != null)
+            {
+                id = s.Id;
+            }
 
             // Toggle the Detail Split View 
             if (id == this.splitVisibleRowId && this.SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.VisibleWhenSelected)
@@ -766,7 +773,10 @@ namespace Walkabout.Views
 
         public override void ReadXml(XmlReader r)
         {
-            if (r.IsEmptyElement) return;
+            if (r.IsEmptyElement)
+            {
+                return;
+            }
 
             while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
             {

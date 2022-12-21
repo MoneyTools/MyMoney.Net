@@ -42,7 +42,9 @@ namespace Walkabout.Data
             foreach (ColumnMapping c in this.columns)
             {
                 if (c.ColumnName == name)
+                {
                     return c;
+                }
             }
             return null;
         }
@@ -52,7 +54,9 @@ namespace Walkabout.Data
             foreach (ColumnMapping c in this.columns)
             {
                 if (!string.IsNullOrEmpty(c.OldColumnName) && c.OldColumnName == name)
+                {
                     return c;
+                }
             }
             return null;
         }

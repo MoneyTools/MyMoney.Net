@@ -178,7 +178,11 @@ namespace Walkabout.Dialogs
 
         string GetListLabel(Category c)
         {
-            if (c.ParentCategory == null) return c.Label;
+            if (c.ParentCategory == null)
+            {
+                return c.Label;
+            }
+
             StringBuilder sb = new StringBuilder();
             sb.Append(':');
             sb.Append(c.Label);

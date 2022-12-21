@@ -202,7 +202,11 @@ namespace Walkabout.Migrate
 
         public override void WriteRow(IEnumerable<string> values)
         {
-            if (this.map == null) return;
+            if (this.map == null)
+            {
+                return;
+            }
+
             int col = 0;
             TBag t = new TBag();
             foreach (var s in values)
@@ -370,11 +374,21 @@ namespace Walkabout.Migrate
             // read a record.
             int pos = 0;
             int len = line.Length;
-            if (pos >= len) return false;
+            if (pos >= len)
+            {
+                return false;
+            }
+
             char ch = line[pos++];
             while (pos < len && (ch == ' ' || ch == '\t'))
+            {
                 ch = line[pos++];
-            if (pos >= len) return false;
+            }
+
+            if (pos >= len)
+            {
+                return false;
+            }
 
             while (pos < len)
             {

@@ -125,7 +125,11 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                if (this.accounts != null) return this.accounts.IsAccountSelected;
+                if (this.accounts != null)
+                {
+                    return this.accounts.IsAccountSelected;
+                }
+
                 return false;
             }
         }
@@ -134,7 +138,11 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                if (this.categories != null) return this.categories.IsCategorySelected;
+                if (this.categories != null)
+                {
+                    return this.categories.IsCategorySelected;
+                }
+
                 return false;
             }
         }
@@ -143,7 +151,11 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                if (this.categories != null) return this.categories.HasCategories;
+                if (this.categories != null)
+                {
+                    return this.categories.HasCategories;
+                }
+
                 return false;
             }
         }
@@ -152,7 +164,11 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                if (this.payees != null) return this.payees.IsPayeeSelected;
+                if (this.payees != null)
+                {
+                    return this.payees.IsPayeeSelected;
+                }
+
                 return false;
             }
         }
@@ -161,7 +177,11 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                if (this.securities != null) return this.securities.IsSecuritySelected;
+                if (this.securities != null)
+                {
+                    return this.securities.IsSecuritySelected;
+                }
+
                 return false;
             }
         }

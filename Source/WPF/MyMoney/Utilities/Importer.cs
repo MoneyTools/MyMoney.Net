@@ -32,7 +32,10 @@ namespace Walkabout.Migrate
             foreach (Transaction u in this.Money.Transactions)
             {
                 if (u.IsDeleted)
+                {
                     continue;
+                }
+
                 if (u.Date == t.Date && u.Account == from && u.Payee == t.Payee)
                 {
                     if (u.IsSplit)
@@ -112,7 +115,9 @@ namespace Walkabout.Migrate
             foreach (Transaction u in this.Money.Transactions)
             {
                 if (u.IsDeleted)
+                {
                     continue;
+                }
 
                 if (!u.IsSplit && u.Date == t.Date && u.Account == to && u.Payee == t.Payee &&
                     u.Amount == -s.Amount && u.Category == s.Category)

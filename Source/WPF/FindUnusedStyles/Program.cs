@@ -312,7 +312,11 @@ namespace FindUnusedStyles
             var p = e.Parent;
             while (p != null)
             {
-                if (p.Name.LocalName == parentName) return true;
+                if (p.Name.LocalName == parentName)
+                {
+                    return true;
+                }
+
                 p = p.Parent;
             }
             return false;

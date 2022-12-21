@@ -67,7 +67,11 @@ namespace Walkabout.Setup
 
         public bool HasLatestVersion()
         {
-            if (this.doc == null) return true;
+            if (this.doc == null)
+            {
+                return true;
+            }
+
             foreach (XElement change in this.doc.Root.Elements("change"))
             {
                 string version = (string)change.Attribute("version");
@@ -82,7 +86,10 @@ namespace Walkabout.Setup
 
         public override Task Generate(IReportWriter writer)
         {
-            if (this.doc == null) return Task.CompletedTask;
+            if (this.doc == null)
+            {
+                return Task.CompletedTask;
+            }
 
             var document = this.view.DocumentViewer.Document;
 

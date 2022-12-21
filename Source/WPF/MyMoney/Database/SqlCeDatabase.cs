@@ -430,7 +430,10 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
         {
             Debug.Assert(this.DbFlavor == DbFlavor.SqlCE);
 
-            if (cmd == null || cmd.Trim().Length == 0) return null;
+            if (cmd == null || cmd.Trim().Length == 0)
+            {
+                return null;
+            }
 
             this.AppendLog(cmd);
 
@@ -486,7 +489,10 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
         public override void ExecuteNonQuery(string cmd)
         {
             Debug.Assert(this.DbFlavor == DbFlavor.SqlCE);
-            if (cmd == null || cmd.Trim().Length == 0) return;
+            if (cmd == null || cmd.Trim().Length == 0)
+            {
+                return;
+            }
 
             this.AppendLog(cmd);
             try

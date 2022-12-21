@@ -74,9 +74,21 @@ namespace Walkabout.Utilities
         // then get the median, average and percent variation.
         public void Count(long ms)
         {
-            if (this.m_Min == 0) this.m_Min = ms;
-            if (ms < this.m_Min) this.m_Min = ms;
-            if (ms > this.m_Max) this.m_Max = ms;
+            if (this.m_Min == 0)
+            {
+                this.m_Min = ms;
+            }
+
+            if (ms < this.m_Min)
+            {
+                this.m_Min = ms;
+            }
+
+            if (ms > this.m_Max)
+            {
+                this.m_Max = ms;
+            }
+
             this.m_Sum += ms;
             this.m_Count++;
         }
@@ -110,7 +122,11 @@ namespace Walkabout.Utilities
 
         public long Average()
         {
-            if (this.m_Count == 0) return 0;
+            if (this.m_Count == 0)
+            {
+                return 0;
+            }
+
             return this.m_Sum / this.m_Count;
         }
 

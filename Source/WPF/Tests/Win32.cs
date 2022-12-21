@@ -385,7 +385,11 @@ namespace Walkabout.Tests.Interop
         internal static string GetWindowText(IntPtr hwnd)
         {
             int len = GetWindowTextLength(hwnd);
-            if (len <= 0) return "";
+            if (len <= 0)
+            {
+                return "";
+            }
+
             len++; // include space for the null terminator.
             IntPtr buffer = Marshal.AllocCoTaskMem(len * 2);
             GetWindowText(hwnd, buffer, len);

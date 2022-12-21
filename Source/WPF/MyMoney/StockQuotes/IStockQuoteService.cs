@@ -462,7 +462,11 @@ namespace Walkabout.StockQuotes
 
         public void Deserialize(XmlReader r)
         {
-            if (r.IsEmptyElement) return;
+            if (r.IsEmptyElement)
+            {
+                return;
+            }
+
             while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
             {
                 if (r.NodeType == XmlNodeType.Element)

@@ -172,7 +172,11 @@ namespace Walkabout.Views
             get
             {
                 Security s = this.CurrenciesDataGrid.SelectedItem as Security;
-                if (s != null) return s.Id;
+                if (s != null)
+                {
+                    return s.Id;
+                }
+
                 return -1;
             }
         }
@@ -451,7 +455,10 @@ namespace Walkabout.Views
 
         public override void ReadXml(XmlReader r)
         {
-            if (r.IsEmptyElement) return;
+            if (r.IsEmptyElement)
+            {
+                return;
+            }
 
             while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
             {
