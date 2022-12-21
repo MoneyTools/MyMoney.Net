@@ -1,13 +1,13 @@
-﻿namespace Walkabout.Ofx
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Net;
-    using System.Xml.Linq;
-    using Walkabout.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Xml.Linq;
+using Walkabout.Data;
 
+namespace Walkabout.Ofx
+{
     /// <summary>
     /// This class represents a field that has date/time of last change information so we
     /// can merge do a better job of merging this information when it comes from multiple
