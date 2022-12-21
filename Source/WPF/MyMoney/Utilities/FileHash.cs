@@ -7,10 +7,10 @@ namespace Walkabout.Utilities
     internal class HashedFile : IEquatable<HashedFile>
     {
         private byte[] hash;
-        private long fileLength;
+        private readonly long fileLength;
         private int hashCode;
-        private string path;
-        private static HashAlgorithm hasher = HashAlgorithm.Create("SHA256");
+        private readonly string path;
+        private static readonly HashAlgorithm hasher = HashAlgorithm.Create("SHA256");
 
         public HashedFile(string path)
         {
@@ -120,8 +120,8 @@ namespace Walkabout.Utilities
             }
         }
 
-        private static byte[] buffer1 = new byte[65536];
-        private static byte[] buffer2 = new byte[65536];
+        private static readonly byte[] buffer1 = new byte[65536];
+        private static readonly byte[] buffer2 = new byte[65536];
 
         private static bool StreamEquals(Stream s1, Stream s2)
         {

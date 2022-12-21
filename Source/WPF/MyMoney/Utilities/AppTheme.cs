@@ -12,7 +12,7 @@ namespace Walkabout.Utilities
         private string _name;
         private ResourceDictionary _theme;
         public event EventHandler<string> ThemeChanged;
-        private Dictionary<string, SolidColorBrush> dynamicBrushes = new Dictionary<string, SolidColorBrush>();
+        private readonly Dictionary<string, SolidColorBrush> dynamicBrushes = new Dictionary<string, SolidColorBrush>();
         private static AppTheme _instance;
 
         public static AppTheme Instance

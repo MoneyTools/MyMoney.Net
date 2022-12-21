@@ -4,7 +4,7 @@ namespace Walkabout.Tests.Wrappers
 {
     internal class HistoryChartWrapper
     {
-        private AutomationElement e;
+        private readonly AutomationElement e;
 
         public HistoryChartWrapper(AutomationElement e)
         {

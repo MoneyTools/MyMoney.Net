@@ -19,13 +19,13 @@ namespace LovettSoftware.Charts
     /// </summary>
     public partial class AnimatingPieChart : UserControl
     {
-        private DelayedActions actions = new DelayedActions();
-        private List<PieSlice> slices = new List<PieSlice>();
+        private readonly DelayedActions actions = new DelayedActions();
+        private readonly List<PieSlice> slices = new List<PieSlice>();
         private Point movePos;
         private PieSlice inside;
         private Size previousArrangeBounds = Size.Empty;
         private bool mouseOverAnimationCompleted = false;
-        private Random rand = new Random(Environment.TickCount);
+        private readonly Random rand = new Random(Environment.TickCount);
 
         public AnimatingPieChart()
         {
@@ -410,7 +410,7 @@ namespace LovettSoftware.Charts
 
         private class PieSlice : DependencyObject
         {
-            private Path path;
+            private readonly Path path;
             private PathFigure figure;
             private LineSegment line1;
             private LineSegment line2;

@@ -278,7 +278,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        private static DateTime[] knownClosures = new DateTime[]
+        private static readonly DateTime[] knownClosures = new DateTime[]
         {
             new DateTime(2018, 12, 5), // honor of President George Bush
             new DateTime(2012, 10, 30), // Hurrican Sandy

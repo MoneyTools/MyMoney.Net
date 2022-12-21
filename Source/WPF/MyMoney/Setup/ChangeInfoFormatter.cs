@@ -14,10 +14,10 @@ namespace Walkabout.Setup
 {
     internal class ChangeInfoFormatter : Report
     {
-        private string previousVersion;
-        private XDocument doc;
-        private FlowDocumentView view;
-        private bool installButton;
+        private readonly string previousVersion;
+        private readonly XDocument doc;
+        private readonly FlowDocumentView view;
+        private readonly bool installButton;
 
         public event EventHandler InstallButtonClick;
 

@@ -14,7 +14,7 @@ namespace Walkabout.Data
     public partial class MyMoney : PersistentObject
     {
         private LoanPayments loanPayments;
-        private List<Loan> loans = new List<Loan>();
+        private readonly List<Loan> loans = new List<Loan>();
 
         [DataMember]
         public LoanPayments LoanPayments
@@ -317,7 +317,7 @@ namespace Walkabout.Data
     public class LoanPayments : PersistentContainer, ICollection<LoanPayment>
     {
         private int nextItemToAdd = 0;
-        private Hashtable<int, LoanPayment> collection = new Hashtable<int, LoanPayment>();
+        private readonly Hashtable<int, LoanPayment> collection = new Hashtable<int, LoanPayment>();
 
 
         // for serialization only

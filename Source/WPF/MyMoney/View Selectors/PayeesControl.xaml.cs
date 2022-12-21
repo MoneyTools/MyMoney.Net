@@ -64,8 +64,8 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        private DragAndDrop dragDropSupport;
-        private string dragDropformatNameForPayee = "MyMoneyPayee";
+        private readonly DragAndDrop dragDropSupport;
+        private readonly string dragDropformatNameForPayee = "MyMoneyPayee";
         private bool loaded;
 
         #endregion

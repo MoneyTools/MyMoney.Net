@@ -789,8 +789,8 @@ namespace Walkabout.Views.Controls
 
         #region DragDrop
 
-        private DragAndDrop dragDropSupport;
-        private string dragDropformatNameForCategory = "MyMoneyCategory";
+        private readonly DragAndDrop dragDropSupport;
+        private readonly string dragDropformatNameForCategory = "MyMoneyCategory";
 
         private Walkabout.Utilities.DragDropSource OnDragDropObjectSource(object source)
         {

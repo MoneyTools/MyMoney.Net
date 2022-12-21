@@ -10,10 +10,10 @@ namespace Walkabout.Tests.Wrappers
 {
     public class ContextMenu
     {
-        private AutomationElement control;
+        private readonly AutomationElement control;
         private bool isOpened;
-        private bool isPopupMenu;
-        private MainWindowWrapper root;
+        private readonly bool isPopupMenu;
+        private readonly MainWindowWrapper root;
 
         public ContextMenu(AutomationElement control, bool isPopupMenu)
         {

@@ -40,7 +40,7 @@ namespace Walkabout.Controls
     {
         private DataGridColumn sorted;
         private bool isEditing;
-        private DelayedActions delayedActions = new DelayedActions();
+        private readonly DelayedActions delayedActions = new DelayedActions();
 
         public MoneyDataGrid()
         {

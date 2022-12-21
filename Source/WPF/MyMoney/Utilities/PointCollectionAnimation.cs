@@ -106,9 +106,9 @@ namespace Walkabout.Utilities
             get { return (bool)this.GetValue(IsCumulativeProperty); }
         }
 
-        private PointCollection ptsDst1 = new PointCollection();
-        private PointCollection ptsDst2 = new PointCollection();
-        private PointCollection ptsTo = new PointCollection();
+        private readonly PointCollection ptsDst1 = new PointCollection();
+        private readonly PointCollection ptsDst2 = new PointCollection();
+        private readonly PointCollection ptsTo = new PointCollection();
         private bool flip;
 
 

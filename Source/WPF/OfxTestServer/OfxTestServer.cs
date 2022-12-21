@@ -28,12 +28,12 @@ namespace OfxTestServer
         private string _userCred1;
         private string _userCred2Label;
         private string _userCred2;
-        private ObservableCollection<MFAChallenge> _mfaChallenges = new ObservableCollection<MFAChallenge>();
+        private readonly ObservableCollection<MFAChallenge> _mfaChallenges = new ObservableCollection<MFAChallenge>();
         private bool _mfaPendingResponse;
         private string _authTokenLabel;
         private string _authToken;
         private bool _changePassword;
-        private Dispatcher _dispatcher;
+        private readonly Dispatcher _dispatcher;
         private string _accessKey;
 
         public OfxServer()

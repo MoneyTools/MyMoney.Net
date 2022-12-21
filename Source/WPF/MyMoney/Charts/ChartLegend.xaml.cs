@@ -13,7 +13,7 @@ namespace Walkabout.Charts
     /// </summary>
     public partial class ChartLegend : UserControl
     {
-        private DelayedActions actions = new DelayedActions();
+        private readonly DelayedActions actions = new DelayedActions();
         private ControlTemplate swatchTemplate = null;
 
         private class Row
@@ -24,7 +24,7 @@ namespace Walkabout.Charts
             public ChartDataValue item;
         }
 
-        private List<Row> elements = new List<Row>();
+        private readonly List<Row> elements = new List<Row>();
 
         public ChartLegend()
         {

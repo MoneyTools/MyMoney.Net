@@ -17,19 +17,19 @@ namespace Walkabout.StockQuotes
     /// </summary>
     internal class AlphaVantage : IStockQuoteService
     {
-        private static string FriendlyName = "https://www.alphavantage.co/";
+        private static readonly string FriendlyName = "https://www.alphavantage.co/";
         private const string address = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={0}&apikey={1}";
-        private char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
-        private StockServiceSettings _settings;
+        private readonly char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
+        private readonly StockServiceSettings _settings;
         private HashSet<string> _pending;
-        private HashSet<string> _retry = new HashSet<string>();
+        private readonly HashSet<string> _retry = new HashSet<string>();
         private int _completed;
         private HttpWebRequest _current;
         private bool _cancelled;
         private bool _suspended;
         private Thread _downloadThread;
-        private string _logPath;
-        private StockQuoteThrottle _throttle;
+        private readonly string _logPath;
+        private readonly StockQuoteThrottle _throttle;
 
         public AlphaVantage(StockServiceSettings settings, string logPath)
         {

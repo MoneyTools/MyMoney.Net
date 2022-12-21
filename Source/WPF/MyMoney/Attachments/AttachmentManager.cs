@@ -24,9 +24,9 @@ namespace Walkabout.Attachments
     /// </summary>
     public class AttachmentManager : IDisposable
     {
-        private MyMoney myMoney;
-        private AttachmentWatcher watcher;
-        private Dictionary<Account, string> nameMap;
+        private readonly MyMoney myMoney;
+        private readonly AttachmentWatcher watcher;
+        private readonly Dictionary<Account, string> nameMap;
 
         public AttachmentManager(MyMoney myMoney)
         {
@@ -413,11 +413,11 @@ namespace Walkabout.Attachments
 
     internal class AttachmentWatcher
     {
-        private ConcurrentQueue<Account> accountQueue;
-        private ConcurrentQueue<Transaction> transactionQueue;
+        private readonly ConcurrentQueue<Account> accountQueue;
+        private readonly ConcurrentQueue<Transaction> transactionQueue;
         private bool threadRunning;
-        private MyMoney money;
-        private AutoResetEvent threadStopEvent = new AutoResetEvent(false);
+        private readonly MyMoney money;
+        private readonly AutoResetEvent threadStopEvent = new AutoResetEvent(false);
 
         internal string AttachmentDirectory { get; set; }
 

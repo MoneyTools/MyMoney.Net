@@ -17,15 +17,15 @@ namespace Walkabout.Taxes
     // This class prepares an estimated W2 from the splits found in paycheck deposits.
     public class W2Report : Report
     {
-        private FlowDocumentView view;
-        private MyMoney myMoney;
+        private readonly FlowDocumentView view;
+        private readonly MyMoney myMoney;
         private DateTime startDate;
         private DateTime endDate;
-        private IServiceProvider serviceProvider;
+        private readonly IServiceProvider serviceProvider;
         private Point downPos;
-        private int fiscalYearStart;
+        private readonly int fiscalYearStart;
         private Category selectedCategory;
-        private TaxCategoryCollection taxCategories;
+        private readonly TaxCategoryCollection taxCategories;
         private Dictionary<Category, List<Transaction>> transactionsByCategory;
         private const string FiscalPrefix = "FY ";
 

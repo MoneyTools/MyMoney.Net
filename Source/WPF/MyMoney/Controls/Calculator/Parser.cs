@@ -37,7 +37,7 @@ namespace Walkabout.Controls
             public double Number;
         }
 
-        private List<Operation> stack = new List<Operation>();
+        private readonly List<Operation> stack = new List<Operation>();
 
         private enum Token
         {

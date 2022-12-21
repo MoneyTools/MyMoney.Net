@@ -11,7 +11,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class RecategorizeDialog : BaseDialog
     {
-        private MyMoney myMoney;
+        private readonly MyMoney myMoney;
         private Category from;
 
         public RecategorizeDialog(MyMoney money)

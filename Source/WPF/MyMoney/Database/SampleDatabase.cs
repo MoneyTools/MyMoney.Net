@@ -17,13 +17,13 @@ namespace Walkabout.Assitance
     /// </summary>
     public class SampleDatabase
     {
-        private MyMoney money;
+        private readonly MyMoney money;
         private const int Years = 10;
         private Account checking;
-        private string stockQuotePath;
-        private StockQuoteManager manager;
-        private Random rand = new Random();
-        private Dictionary<string, StockQuoteHistory> quotes = new Dictionary<string, StockQuoteHistory>();
+        private readonly string stockQuotePath;
+        private readonly StockQuoteManager manager;
+        private readonly Random rand = new Random();
+        private readonly Dictionary<string, StockQuoteHistory> quotes = new Dictionary<string, StockQuoteHistory>();
 
         public SampleDatabase(MyMoney money, StockQuoteManager manager, string stockQuotePath)
         {
@@ -227,7 +227,7 @@ namespace Walkabout.Assitance
         private class Ownership
         {
             // how much of each stock is owned in each account.
-            private Dictionary<Account, Dictionary<string, decimal>> owned = new Dictionary<Account, Dictionary<string, decimal>>();
+            private readonly Dictionary<Account, Dictionary<string, decimal>> owned = new Dictionary<Account, Dictionary<string, decimal>>();
 
             public void AddUnits(Account a, string symbol, decimal units)
             {

@@ -59,13 +59,13 @@ namespace Walkabout.Migrate
 
     internal class CsvTransactionImporter : CsvFieldWriter
     {
-        private MyMoney money;
-        private Account account;
-        private CsvMap map;
-        private List<TBag> typedData = new List<TBag>();
+        private readonly MyMoney money;
+        private readonly Account account;
+        private readonly CsvMap map;
+        private readonly List<TBag> typedData = new List<TBag>();
 
         // this is what we "can" import...
-        private string[] fields = new string[] { "Date", "Payee", "Memo", "Amount" };
+        private readonly string[] fields = new string[] { "Date", "Payee", "Memo", "Amount" };
 
         public CsvTransactionImporter(MyMoney money, Account account, CsvMap map)
         {
@@ -296,10 +296,10 @@ namespace Walkabout.Migrate
     public class CsvImporter : Importer
     {
         private int _quoteChar;
-        private int _fieldDelimiter = ',';
-        private List<StringBuilder> _fields = new List<StringBuilder>();
+        private readonly int _fieldDelimiter = ',';
+        private readonly List<StringBuilder> _fields = new List<StringBuilder>();
         private int _fieldCount;
-        private CsvFieldWriter _writer;
+        private readonly CsvFieldWriter _writer;
 
         public CsvImporter(MyMoney money, CsvFieldWriter writer) : base(money)
         {

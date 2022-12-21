@@ -11,11 +11,11 @@ namespace Walkabout.Charts
     /// </summary>
     public class CategoryData : INotifyPropertyChanged
     {
-        private string name;
+        private readonly string name;
         private double total;
         private Color? color;
         private Brush background;
-        private List<Transaction> transactions = new List<Transaction>();
+        private readonly List<Transaction> transactions = new List<Transaction>();
 
         public CategoryData(Category c)
         {

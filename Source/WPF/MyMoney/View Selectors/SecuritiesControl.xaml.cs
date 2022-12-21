@@ -66,8 +66,8 @@ namespace Walkabout.Views.Controls
             }
         }
 
-        private DragAndDrop dragDropSupport;
-        private string dragDropformatNameForSecurity = "MyMoneySecurity";
+        private readonly DragAndDrop dragDropSupport;
+        private readonly string dragDropformatNameForSecurity = "MyMoneySecurity";
         private bool loaded;
         #endregion
 

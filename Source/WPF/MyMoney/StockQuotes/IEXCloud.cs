@@ -12,21 +12,21 @@ namespace Walkabout.StockQuotes
 {
     internal class IEXCloud : IStockQuoteService
     {
-        private static string FriendlyName = "https://iexcloud.io/";
+        private static readonly string FriendlyName = "https://iexcloud.io/";
 
         // See https://iextrading.com/developer/docs/#batch-requests
         private const string address = "https://cloud.iexapis.com/stable/stock/market/batch?symbols={0}&types=quote&range=1m&last=1&token={1}";
-        private char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
-        private StockServiceSettings _settings;
+        private readonly char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
+        private readonly StockServiceSettings _settings;
         private HashSet<string> _pending;
         private int _completed;
         private Thread _downloadThread;
         private HttpWebRequest _current;
         private bool _cancelled;
         private bool _suspended;
-        private string _logPath;
+        private readonly string _logPath;
         private bool _downloadError;
-        private StockQuoteThrottle _throttle;
+        private readonly StockQuoteThrottle _throttle;
 
         public IEXCloud(StockServiceSettings settings, string logPath)
         {

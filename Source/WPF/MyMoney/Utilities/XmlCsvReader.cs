@@ -43,7 +43,7 @@ namespace Walkabout.Utilities
         private Uri _href;
         private string _root = "root";
         private string _rowname = "row";
-        private XmlNameTable _nt;
+        private readonly XmlNameTable _nt;
         private string[] _names;
         private State _state = State.Initial;
         private int _attr = 0;
@@ -815,8 +815,8 @@ namespace Walkabout.Utilities
 
     internal class CsvReader
     {
-        private TextReader _r;
-        private char[] _buffer;
+        private readonly TextReader _r;
+        private readonly char[] _buffer;
         private int _pos;
         private int _used;
 
@@ -826,7 +826,7 @@ namespace Walkabout.Utilities
 
         private char _colDelim; // possible values ',', ';', '\t', '|'
         private char _quoteChar;
-        private ArrayList _values;
+        private readonly ArrayList _values;
         private int _fields;
 
         public CsvReader(Uri location, Encoding encoding, string proxy, int bufsize)

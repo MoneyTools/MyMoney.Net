@@ -24,7 +24,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class PasswordWindow : BaseDialog
     {
-        private Dictionary<string, TextBox> userDefined = new Dictionary<string, TextBox>();
+        private readonly Dictionary<string, TextBox> userDefined = new Dictionary<string, TextBox>();
 
         public PasswordWindow()
         {

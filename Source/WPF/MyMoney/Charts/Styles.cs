@@ -8,7 +8,7 @@ namespace Walkabout.Charts
     /// </summary>
     internal static class StyleResources
     {
-        private static ResourceDictionary _resources;
+        private static readonly ResourceDictionary _resources;
 
         /// <summary>
         /// Construct static resource dictionary.

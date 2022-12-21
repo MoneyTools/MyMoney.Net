@@ -20,7 +20,7 @@ namespace Walkabout.Views
         private MyMoney myMoney;
         private Dictionary<Type, ChangeList> changes;
         private bool isDirty;
-        private IViewNavigator navigator;
+        private readonly IViewNavigator navigator;
 
         public ChangeTracker(MyMoney money, IViewNavigator navigator)
         {

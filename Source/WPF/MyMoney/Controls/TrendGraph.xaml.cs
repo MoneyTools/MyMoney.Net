@@ -44,8 +44,8 @@ namespace Walkabout.Views.Controls
         private bool showAll;
         private int series = 1;
         private IServiceProvider sp;
-        private DelayedActions delayedActions = new DelayedActions();
-        private Random rand = new Random(Environment.TickCount);
+        private readonly DelayedActions delayedActions = new DelayedActions();
+        private readonly Random rand = new Random(Environment.TickCount);
 
         public TrendGraph()
         {
@@ -256,7 +256,7 @@ namespace Walkabout.Views.Controls
             return start;
         }
 
-        private CalendarRange[] mouseWheelDateSteps = {
+        private readonly CalendarRange[] mouseWheelDateSteps = {
             0,
             CalendarRange.Monthly,
             CalendarRange.SemiAnnually,
@@ -411,7 +411,7 @@ namespace Walkabout.Views.Controls
         }
 
         private TrendGraphSeries selected;
-        private NumberFormatInfo nfi = new NumberFormatInfo();
+        private readonly NumberFormatInfo nfi = new NumberFormatInfo();
 
         private TrendGraphSeries AddSeries(DateTime start, DateTime end, Color color)
         {

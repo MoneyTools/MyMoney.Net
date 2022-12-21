@@ -20,12 +20,12 @@ namespace Walkabout.Reports
     //=========================================================================================
     public class NetWorthReport : Report
     {
-        private FlowDocumentView view;
-        private MyMoney myMoney;
-        private Random rand = new Random(Environment.TickCount);
-        private byte minRandColor, maxRandColor;
+        private readonly FlowDocumentView view;
+        private readonly MyMoney myMoney;
+        private readonly Random rand = new Random(Environment.TickCount);
+        private readonly byte minRandColor, maxRandColor;
         private DateTime reportDate;
-        private StockQuoteCache cache;
+        private readonly StockQuoteCache cache;
         private bool generating;
         private bool filterOutClosedAccounts = false;
 

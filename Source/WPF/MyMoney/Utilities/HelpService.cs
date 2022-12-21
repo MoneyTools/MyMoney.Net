@@ -8,8 +8,8 @@ namespace Walkabout.Help
 {
     internal class HelpService : DependencyObject
     {
-        private static string WebPath = @"https://github.com/clovett/MyMoney.Net/wiki/";
-        private static List<WeakReference> dependencyObjects = new List<WeakReference>();
+        private static readonly string WebPath = @"https://github.com/clovett/MyMoney.Net/wiki/";
+        private static readonly List<WeakReference> dependencyObjects = new List<WeakReference>();
 
         internal static void Initialize()
         {

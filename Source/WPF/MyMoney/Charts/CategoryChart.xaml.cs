@@ -19,9 +19,9 @@ namespace Walkabout.Charts
         private IList<Transaction> transactions;
         private bool dataDirty;
         private bool chartDirty;
-        private Category unassigned;
-        private Category transferredIn;
-        private Category transferredOut;
+        private readonly Category unassigned;
+        private readonly Category transferredIn;
+        private readonly Category transferredOut;
         private Category filter;
         private CategoryData selection;
         private Dictionary<Category, CategoryData> map = new Dictionary<Category, CategoryData>();

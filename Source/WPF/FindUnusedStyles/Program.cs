@@ -57,7 +57,7 @@ namespace FindUnusedStyles
             return 0;
         }
 
-        private Dictionary<string, Type> cache = new Dictionary<string, Type>();
+        private readonly Dictionary<string, Type> cache = new Dictionary<string, Type>();
 
         private void CacheWpfTypes()
         {
@@ -157,8 +157,8 @@ namespace FindUnusedStyles
             }
         }
 
-        private SortedDictionary<string, XName> sysControlReferences = new SortedDictionary<string, XName>();
-        private Dictionary<string, XElement> keyedResources = new Dictionary<string, XElement>();
+        private readonly SortedDictionary<string, XName> sysControlReferences = new SortedDictionary<string, XName>();
+        private readonly Dictionary<string, XElement> keyedResources = new Dictionary<string, XElement>();
 
         private XDocument LoadXaml(string xaml)
         {
@@ -744,8 +744,8 @@ namespace FindUnusedStyles
             return bindingInfo;
         }
 
-        private static char[] BindingChars = new char[] { '{', '}' };
-        private static char[] WhitespaceChars = new char[] { ' ', '\t', '\r', '\n' };
+        private static readonly char[] BindingChars = new char[] { '{', '}' };
+        private static readonly char[] WhitespaceChars = new char[] { ' ', '\t', '\r', '\n' };
 
         private void CheckReferences(XName element, string value, NamespaceScope local, Styles localStyles)
         {
@@ -876,7 +876,7 @@ namespace FindUnusedStyles
             public string FileName;
             public Dictionary<XName, StyleInfo> keys = new Dictionary<XName, StyleInfo>();
             public Dictionary<XName, Dictionary<XName, StyleInfo>> targetTypes = new Dictionary<XName, Dictionary<XName, StyleInfo>>();
-            private Dictionary<string, Type> cache;
+            private readonly Dictionary<string, Type> cache;
 
             public Styles(Dictionary<string, Type> cache) { this.cache = cache; }
 

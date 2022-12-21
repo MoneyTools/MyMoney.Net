@@ -9,7 +9,7 @@ namespace Walkabout.Migrate
 {
     public class XmlImporter : Importer
     {
-        private Dictionary<long, long> remappedIds = new Dictionary<long, long>();
+        private readonly Dictionary<long, long> remappedIds = new Dictionary<long, long>();
         private Account last;
 
         public XmlImporter(MyMoney money) : base(money)
@@ -58,10 +58,10 @@ namespace Walkabout.Migrate
             return c;
         }
 
-        private static DataContractSerializer AccountSerializer = new DataContractSerializer(typeof(Account));
-        private static DataContractSerializer TransactionSerializer = new DataContractSerializer(typeof(Transaction));
-        private static DataContractSerializer InvestmentSerializer = new DataContractSerializer(typeof(Investment));
-        private static DataContractSerializer SplitSerializer = new DataContractSerializer(typeof(Split));
+        private static readonly DataContractSerializer AccountSerializer = new DataContractSerializer(typeof(Account));
+        private static readonly DataContractSerializer TransactionSerializer = new DataContractSerializer(typeof(Transaction));
+        private static readonly DataContractSerializer InvestmentSerializer = new DataContractSerializer(typeof(Investment));
+        private static readonly DataContractSerializer SplitSerializer = new DataContractSerializer(typeof(Split));
 
         /// <summary>
         /// Import the given XML content which can contain Account, Transaction, Investment or Split objects.

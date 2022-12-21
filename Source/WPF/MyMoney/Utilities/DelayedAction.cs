@@ -11,7 +11,7 @@ namespace Walkabout.Utilities
     /// </summary>
     public class DelayedActions
     {
-        private Dictionary<string, DelayedAction> pending = new Dictionary<string, DelayedAction>();
+        private readonly Dictionary<string, DelayedAction> pending = new Dictionary<string, DelayedAction>();
 
         public void StartDelayedAction(string name, Action action, TimeSpan delay)
         {

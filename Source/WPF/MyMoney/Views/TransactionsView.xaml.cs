@@ -93,7 +93,7 @@ namespace Walkabout.Views
 
         private MyMoney myMoney;
         private TypeToFind ttf;
-        private DelayedActions delayedUpdates = new DelayedActions();
+        private readonly DelayedActions delayedUpdates = new DelayedActions();
 
         private IEnumerable<Transaction> fixedList;
         #endregion
@@ -3075,7 +3075,7 @@ namespace Walkabout.Views
 
         private string layout = string.Empty;
 
-        private Hashtable layoutInfo = new Hashtable();
+        private readonly Hashtable layoutInfo = new Hashtable();
 
         private bool SwitchLayout(string name)
         {
@@ -3155,7 +3155,7 @@ namespace Walkabout.Views
             return false;
         }
 
-        private List<ChangeEventArgs> pendingUpdates = new List<ChangeEventArgs>();
+        private readonly List<ChangeEventArgs> pendingUpdates = new List<ChangeEventArgs>();
 
         private void OnMoneyChanged(object sender, ChangeEventArgs args)
         {
@@ -5234,7 +5234,7 @@ namespace Walkabout.Views
         private uint start;
         protected DataGrid grid;
         private string typedSoFar;
-        private int resetDelay;
+        private readonly int resetDelay;
 
         public bool IsEnabled { get; set; }
 
@@ -5458,12 +5458,12 @@ namespace Walkabout.Views
 
     public class TransactionCollection : FilteredObservableCollection<Transaction>
     {
-        private MyMoney money;
+        private readonly MyMoney money;
         private Account account;
-        private bool filterOnInvestmentInfo; // whether to include investment info in the quick filtering
-        private bool filterOnAccountName; // whether to include account name in the quick filtering.
-        private bool constructing = true;
-        private IEnumerable<Transaction> transactions;
+        private readonly bool filterOnInvestmentInfo; // whether to include investment info in the quick filtering
+        private readonly bool filterOnAccountName; // whether to include account name in the quick filtering.
+        private readonly bool constructing = true;
+        private readonly IEnumerable<Transaction> transactions;
 
         public TransactionCollection(MyMoney money, Account a, IEnumerable<Transaction> data, bool filterOnAccountName, bool filterOnInvestmentInfo, string filter)
             : base(data)
@@ -6169,7 +6169,7 @@ namespace Walkabout.Views
 
     public class TransactionPayeeCategoryMemoField : StackPanel
     {
-        private TransactionsView view;
+        private readonly TransactionsView view;
         private TransactionTextField payeeField;
         private TransactionTextField categoryField;
         private TransactionTextField memoField;
@@ -6346,8 +6346,8 @@ namespace Walkabout.Views
         private const double connectorSize = 30;
         private const double penWidth = 5;
         private PathGeometry connector;
-        private RoundedButton mainButton;
-        private CloseBox closeBox;
+        private readonly RoundedButton mainButton;
+        private readonly CloseBox closeBox;
         private Point connectorCenter;
         private Point startPoint;
         private Point endPoint;
@@ -6595,7 +6595,7 @@ namespace Walkabout.Views
         private AdornerLayer layer;
         private DataGridRow sourceRow;
         private DataGridRow targetRow;
-        private MoneyDataGrid grid;
+        private readonly MoneyDataGrid grid;
 
         public TransactionConnector(MoneyDataGrid grid)
         {
@@ -7046,9 +7046,9 @@ namespace Walkabout.Views
     public class TransactionTextField : TextBlock
     {
         private Transaction context;
-        private string fieldName;
-        private bool hasBinding;
-        private Func<Transaction, string> getter;
+        private readonly string fieldName;
+        private readonly bool hasBinding;
+        private readonly Func<Transaction, string> getter;
 
         public TransactionTextField(string name, Func<Transaction, string> getter, Binding binding, object dataItem)
         {
@@ -7232,8 +7232,8 @@ namespace Walkabout.Views
     /// </summary>  
     public class TransactionStatusButton : Border
     {
-        private Button button;
-        private TextBlock label;
+        private readonly Button button;
+        private readonly TextBlock label;
         private Transaction context;
         private TransactionsView view;
 

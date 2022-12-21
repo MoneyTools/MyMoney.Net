@@ -7,7 +7,7 @@ namespace Walkabout.Tests.Wrappers
 {
     public class ListViewWrapper
     {
-        private AutomationElement element;
+        private readonly AutomationElement element;
 
         public ListViewWrapper(AutomationElement e)
         {

@@ -31,7 +31,7 @@ namespace LovettSoftware.Charts
         private double graphMin = 0;
         private double graphMax = 0;
         private double graphWidth = 0;
-        private List<Geometry> geometries = new List<Geometry>();
+        private readonly List<Geometry> geometries = new List<Geometry>();
         private ScaleTransform scale;
         private TransformGroup transform;
         private Shape pointer;
@@ -484,12 +484,12 @@ namespace LovettSoftware.Charts
     public class ChartColumn : StackPanel
     {
         private ChartDataValue value;
-        private Rectangle r;
+        private readonly Rectangle r;
         private double currentValue;
-        private double availableHeight;
-        private double range;
-        private TextBlock vtext;
-        private static DependencyProperty ColumnValueProperty = DependencyProperty.Register("ColumnValue", typeof(double), typeof(ChartColumn));
+        private readonly double availableHeight;
+        private readonly double range;
+        private readonly TextBlock vtext;
+        private static readonly DependencyProperty ColumnValueProperty = DependencyProperty.Register("ColumnValue", typeof(double), typeof(ChartColumn));
 
         public ChartColumn(ChartDataValue cv, NumberFormatInfo nfi, Color c1, double colWidth, double availableHeight, double range)
         {

@@ -15,14 +15,14 @@ namespace Microsoft.VisualStudio.PerformanceGraph
     /// </summary>
     public partial class PerformanceBars : UserControl
     {
-        private double pixelsPerLabel = 50; // 50 pixels per label on the X-Axis.
+        private readonly double pixelsPerLabel = 50; // 50 pixels per label on the X-Axis.
         private long frequency;
 
         // one tick mark is 1 second or 'frequency' ticks       
         // zoom=2 means twice as many ticks per tick mark (which means we zoomed out).
         // zoom=0.5 means half as many (which means we zoomed in).
         private double zoom = 1;
-        private HoverGesture gesture;
+        private readonly HoverGesture gesture;
 
         public PerformanceBars()
         {
@@ -203,14 +203,14 @@ namespace Microsoft.VisualStudio.PerformanceGraph
             set { this.zoomToFit = value; this.InvalidateMeasure(); }
         }
 
-        private List<Color> colors = new List<Color>(new Color[] {
+        private readonly List<Color> colors = new List<Color>(new Color[] {
             Colors.Green,
             Colors.Blue,
             Colors.Red,
             Colors.Navy,
             Colors.Teal,
             Colors.Violet });
-        private Random randColors = new Random();
+        private readonly Random randColors = new Random();
 
         private Color GetColor(int i)
         {

@@ -12,7 +12,7 @@ namespace Walkabout.StockQuotes
         private MyMoney myMoney;
         private Thread quotesThread;
         private bool stop;
-        private List<CurrencyCode> queue = new List<CurrencyCode>(); // list of securities to fetch
+        private readonly List<CurrencyCode> queue = new List<CurrencyCode>(); // list of securities to fetch
 
         public ExchangeRates()
         {

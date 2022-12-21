@@ -24,20 +24,20 @@ namespace Walkabout.StockQuotes
     /// </summary>
     public class StockQuoteManager : IDisposable
     {
-        private MyMoney myMoney;
+        private readonly MyMoney myMoney;
         private StringBuilder errorLog = new StringBuilder();
         private bool hasError;
         private bool disposed;
-        private HashSet<string> fetched = new HashSet<string>(); // list that we have already fetched.
-        private IStatusService status;
-        private IServiceProvider provider;
+        private readonly HashSet<string> fetched = new HashSet<string>(); // list that we have already fetched.
+        private readonly IStatusService status;
+        private readonly IServiceProvider provider;
         private List<StockServiceSettings> _settings;
         private List<IStockQuoteService> _services = new List<IStockQuoteService>();
-        private DownloadLog _downloadLog = new DownloadLog();
+        private readonly DownloadLog _downloadLog = new DownloadLog();
         private List<StockQuote> _batch = new List<StockQuote>();
-        private HashSet<string> _unknown = new HashSet<string>();
+        private readonly HashSet<string> _unknown = new HashSet<string>();
         private HistoryDownloader _downloader;
-        private string _logPath;
+        private readonly string _logPath;
         private bool _firstError = true;
 
         public StockQuoteManager(IServiceProvider provider, List<StockServiceSettings> settings, string logPath)
@@ -667,11 +667,11 @@ namespace Walkabout.StockQuotes
     /// </summary>
     public class DownloadLog
     {
-        private ConcurrentDictionary<string, StockQuoteHistory> database = new ConcurrentDictionary<string, StockQuoteHistory>();
-        private ConcurrentDictionary<string, DownloadInfo> _downloaded = new ConcurrentDictionary<string, DownloadInfo>();
-        private DelayedActions delayedActions = new DelayedActions();
+        private readonly ConcurrentDictionary<string, StockQuoteHistory> database = new ConcurrentDictionary<string, StockQuoteHistory>();
+        private readonly ConcurrentDictionary<string, DownloadInfo> _downloaded = new ConcurrentDictionary<string, DownloadInfo>();
+        private readonly DelayedActions delayedActions = new DelayedActions();
         private string _logFolder;
-        private ConcurrentDictionary<string, StockQuote> _downloadedQuotes = new ConcurrentDictionary<string, StockQuote>();
+        private readonly ConcurrentDictionary<string, StockQuote> _downloadedQuotes = new ConcurrentDictionary<string, StockQuote>();
 
         public DownloadLog() { this.Downloaded = new List<DownloadInfo>(); }
 
@@ -861,11 +861,11 @@ namespace Walkabout.StockQuotes
 
     internal class HistoryDownloader
     {
-        private object _downloadSync = new object();
+        private readonly object _downloadSync = new object();
         private List<string> _downloadBatch;
         private bool _downloadingHistory;
-        private IStockQuoteService _service;
-        private DownloadLog _downloadLog;
+        private readonly IStockQuoteService _service;
+        private readonly DownloadLog _downloadLog;
         private CancellationTokenSource tokenSource;
 
         public HistoryDownloader(IStockQuoteService service, DownloadLog log)

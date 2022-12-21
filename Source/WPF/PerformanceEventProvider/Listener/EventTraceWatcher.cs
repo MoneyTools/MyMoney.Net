@@ -28,7 +28,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
     public class EventTraceSession
     {
         private bool stopProcessing;
-        private string eventLogSessionName;
+        private readonly string eventLogSessionName;
         private long sessionHandle;
         private ulong traceHandle = 0;
         private IntPtr traceProperties;
@@ -297,10 +297,10 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
     {
         private readonly Guid providerId;
         private volatile bool enabled;
-        private ReaderWriterLockSlim rwlock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        private readonly ReaderWriterLockSlim rwlock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private Dictionary<byte[], TraceEventInfoWrapper> traceEventInfoCache = new Dictionary<byte[], TraceEventInfoWrapper>();
-        private HashSet<Guid> providers = new HashSet<Guid>();
-        private EventTraceSession session;
+        private readonly HashSet<Guid> providers = new HashSet<Guid>();
+        private readonly EventTraceSession session;
         public event EventHandler<EventArrivedEventArgs> EventArrived;
 
         public EventTraceWatcher(Guid providerId, EventTraceSession session)

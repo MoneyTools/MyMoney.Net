@@ -7,7 +7,7 @@ namespace Walkabout.Tests.Wrappers
 {
     internal class CreateDatabaseDialogWrapper
     {
-        private AutomationElement window;
+        private readonly AutomationElement window;
 
         private CreateDatabaseDialogWrapper(AutomationElement e)
         {

@@ -6,8 +6,8 @@ namespace Walkabout.Tests.Wrappers
 {
     internal class DownloadDetailsWrapper
     {
-        private AutomationElement panel;
-        private AutomationElement tree;
+        private readonly AutomationElement panel;
+        private readonly AutomationElement tree;
 
         public DownloadDetailsWrapper(AutomationElement panel)
         {
@@ -44,7 +44,7 @@ namespace Walkabout.Tests.Wrappers
 
     internal class DownloadedOnlineAccountWrapper
     {
-        private AutomationElement treeitem;
+        private readonly AutomationElement treeitem;
 
         public DownloadedOnlineAccountWrapper(AutomationElement treeitem)
         {
@@ -77,7 +77,7 @@ namespace Walkabout.Tests.Wrappers
 
     internal class DownloadedAccountWrapper
     {
-        private AutomationElement treeitem;
+        private readonly AutomationElement treeitem;
 
         public DownloadedAccountWrapper(AutomationElement treeitem)
         {

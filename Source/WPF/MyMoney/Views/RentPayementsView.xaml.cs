@@ -13,7 +13,7 @@ namespace Walkabout.Views
     /// </summary>
     public partial class RentInputControl : UserControl, IView
     {
-        private RentalBuildingSingleYear yearMonth;
+        private readonly RentalBuildingSingleYear yearMonth;
 
 
         public RentInputControl()

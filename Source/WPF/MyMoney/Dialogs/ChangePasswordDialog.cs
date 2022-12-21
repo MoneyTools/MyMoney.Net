@@ -14,10 +14,10 @@ namespace Walkabout.Dialogs
     /// </summary>
     public class ChangePasswordDialog : PasswordWindow
     {
-        private OnlineAccount account;
-        private MyMoney money;
-        private string newPasswordFieldId = "NewPassword";
-        private string confirmPasswordFieldId = "ConfirmNewPassword";
+        private readonly OnlineAccount account;
+        private readonly MyMoney money;
+        private readonly string newPasswordFieldId = "NewPassword";
+        private readonly string confirmPasswordFieldId = "ConfirmNewPassword";
 
         public ChangePasswordDialog(OfxSignOnInfo info, OnlineAccount account, MyMoney money)
         {

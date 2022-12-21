@@ -39,7 +39,7 @@ namespace Walkabout.Views.Controls
 
         #region Properties
 
-        private ObservableCollection<QueryRow> queryRows = new ObservableCollection<QueryRow>();
+        private readonly ObservableCollection<QueryRow> queryRows = new ObservableCollection<QueryRow>();
         private List<Conjunction> listOfConjunctions;
 
         public List<Conjunction> ListOfConjunctions

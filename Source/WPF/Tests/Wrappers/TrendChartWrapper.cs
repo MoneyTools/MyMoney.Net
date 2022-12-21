@@ -4,7 +4,7 @@ namespace Walkabout.Tests.Wrappers
 {
     internal class TrendChartWrapper
     {
-        private AutomationElement e;
+        private readonly AutomationElement e;
 
         public TrendChartWrapper(AutomationElement e)
         {

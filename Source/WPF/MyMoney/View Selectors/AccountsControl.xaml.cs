@@ -60,13 +60,13 @@ namespace Walkabout.Views.Controls
 
         #region PROPERTIES
 
-        private DelayedActions delayedActions = new DelayedActions();
+        private readonly DelayedActions delayedActions = new DelayedActions();
 
         public IServiceProvider Site { get; set; }
 
         private MyMoney myMoney;
 
-        private ObservableCollection<AccountViewModel> items = new ObservableCollection<AccountViewModel>();
+        private readonly ObservableCollection<AccountViewModel> items = new ObservableCollection<AccountViewModel>();
 
         public DatabaseSettings DatabaseSettings { get; set; }
 
@@ -944,7 +944,7 @@ namespace Walkabout.Views.Controls
 
     public class AccountItemViewModel : AccountViewModel
     {
-        private Account account;
+        private readonly Account account;
 
         public AccountItemViewModel(Account a)
         {

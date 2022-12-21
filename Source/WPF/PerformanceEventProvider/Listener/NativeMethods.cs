@@ -46,19 +46,19 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct ENABLE_TRACE_PARAMETERS
     {
-        private int Version;
-        private int EnableProperty;
-        private int ControlFlags;
+        private readonly int Version;
+        private readonly int EnableProperty;
+        private readonly int ControlFlags;
         private Guid SourceId;
-        private IntPtr EnableFilterDesc; // EVENT_FILTER_DESCRIPTOR 
+        private readonly IntPtr EnableFilterDesc; // EVENT_FILTER_DESCRIPTOR 
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct EVENT_FILTER_DESCRIPTOR
     {
-        private long Ptr;
-        private int Size;
-        private int Type;
+        private readonly long Ptr;
+        private readonly int Size;
+        private readonly int Type;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -257,7 +257,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
         {
             internal ushort StructStartIndex;
             internal ushort NumOfStructMembers;
-            private uint Padding;
+            private readonly uint Padding;
         }
 
         [FieldOffset(8)]
@@ -270,7 +270,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
         [FieldOffset(18)]
         internal ushort LengthPropertyIndex;
         [FieldOffset(20)]
-        private uint Reserved;
+        private readonly uint Reserved;
     }
 
     internal enum TemplateFlags

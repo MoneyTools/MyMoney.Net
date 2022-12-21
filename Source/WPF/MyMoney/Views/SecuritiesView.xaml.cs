@@ -840,8 +840,8 @@ namespace Walkabout.Views
     /// </summary>
     internal class SecurityCollection : FilteredObservableCollection<Security>
     {
-        private MyMoney money;
-        private SecuritiesView view;
+        private readonly MyMoney money;
+        private readonly SecuritiesView view;
 
         public SecurityCollection(SecuritiesView view, MyMoney money, string filter, bool showAllSecurities)
             : base(showAllSecurities ? money.Securities.GetSecurities() : money.GetOwnedSecurities(), filter)
@@ -899,7 +899,7 @@ namespace Walkabout.Views
 
     public class SecuritySelectionEventArgs : EventArgs
     {
-        private Security security;
+        private readonly Security security;
         public SecuritySelectionEventArgs(Security s)
         {
             this.security = s;

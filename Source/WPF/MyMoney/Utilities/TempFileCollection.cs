@@ -11,8 +11,8 @@ namespace Walkabout.Utilities
     /// </summary>
     public class TempFilesManager
     {
-        private DelayedActions actions = new DelayedActions();
-        private static TempFilesManager Instance = new TempFilesManager();
+        private readonly DelayedActions actions = new DelayedActions();
+        private static readonly TempFilesManager Instance = new TempFilesManager();
 
         public TempFilesManager()
         {
@@ -55,7 +55,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        private List<string> files = new List<string>();
+        private readonly List<string> files = new List<string>();
 
         public static void AddTempFile(string file)
         {

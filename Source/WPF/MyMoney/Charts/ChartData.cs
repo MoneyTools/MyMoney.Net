@@ -9,7 +9,7 @@ namespace Walkabout.Charts
 
     public class ChartData
     {
-        private IList<ChartDataSeries> allSeries = new List<ChartDataSeries>();
+        private readonly IList<ChartDataSeries> allSeries = new List<ChartDataSeries>();
 
         public ChartData()
         {

@@ -73,7 +73,7 @@ namespace Walkabout.Controls
             this.Add(header, id, content, false);
         }
 
-        private Dictionary<string, Expander> tabs = new Dictionary<string, Expander>();
+        private readonly Dictionary<string, Expander> tabs = new Dictionary<string, Expander>();
 
         public bool ContainsTab(string name)
         {

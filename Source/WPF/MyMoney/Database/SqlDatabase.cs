@@ -77,9 +77,9 @@ namespace Walkabout.Data
     public class SqlServerDatabase : IDatabase
     {
         #region Fields
-        private System.Collections.Generic.List<string> tableNames = new System.Collections.Generic.List<string>();
+        private readonly System.Collections.Generic.List<string> tableNames = new System.Collections.Generic.List<string>();
         private string path;
-        private StringBuilder log = new StringBuilder();
+        private readonly StringBuilder log = new StringBuilder();
 
         private IStatusService status;
 
@@ -3263,9 +3263,9 @@ namespace Walkabout.Data
 
     public class DataError
     {
-        private long id;
-        private int sid;
-        private string msg;
+        private readonly long id;
+        private readonly int sid;
+        private readonly string msg;
 
         public DataError(long id, string error)
         {

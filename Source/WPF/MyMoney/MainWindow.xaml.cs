@@ -51,10 +51,10 @@ namespace Walkabout
         internal static Uri DownloadSite = new Uri("https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/");
         internal static string InstallUrl = "https://github.com/clovett/myMoney.Net";
 
-        private DelayedActions delayedActions = new DelayedActions();
-        private Settings settings;
-        private UndoManager navigator;
-        private UndoManager manager;
+        private readonly DelayedActions delayedActions = new DelayedActions();
+        private readonly Settings settings;
+        private readonly UndoManager navigator;
+        private readonly UndoManager manager;
         private AttachmentManager attachmentManager;
         private StatementManager statementManager;
         private bool canSave;
@@ -66,22 +66,22 @@ namespace Walkabout
 
         //---------------------------------------------------------------------
         // The Toolbox controls
-        private AccountsControl accountsControl;
-        private CategoriesControl categoriesControl;
-        private PayeesControl payeesControl;
-        private SecuritiesControl securitiesControl;
+        private readonly AccountsControl accountsControl;
+        private readonly CategoriesControl categoriesControl;
+        private readonly PayeesControl payeesControl;
+        private readonly SecuritiesControl securitiesControl;
         private RentsControl rentsControl;
 
 
         private string caption;
         private BalanceControl balanceControl;
 
-        private ExchangeRates exchangeRates;
+        private readonly ExchangeRates exchangeRates;
         private StockQuoteManager quotes;
         private StockQuoteCache cache;
-        private int mainThreadId;
+        private readonly int mainThreadId;
         private uint loadTime = NativeMethods.TickCount;
-        private RecentFilesMenu recentFilesMenu;
+        private readonly RecentFilesMenu recentFilesMenu;
         private AnimatedMessage animatedStatus;
         #endregion
 
@@ -1120,7 +1120,7 @@ namespace Walkabout
             set { this.EditingZone.Content = value; }
         }
 
-        private Dictionary<Type, IView> cacheViews = new Dictionary<Type, IView>();
+        private readonly Dictionary<Type, IView> cacheViews = new Dictionary<Type, IView>();
 
         /// <summary>
         /// Get or create a single instance of any IView implementation
@@ -1584,9 +1584,9 @@ namespace Walkabout
 
         private class ViewCommand : Command
         {
-            private MainWindow window;
-            private ViewState state;
-            private IView view;
+            private readonly MainWindow window;
+            private readonly ViewState state;
+            private readonly IView view;
 
             public ViewState State { get { return this.state; } }
             public IView View { get { return this.view; } }
@@ -3866,7 +3866,7 @@ namespace Walkabout
             }
         }
 
-        private string FilterDgml = "DGML files (*.dgml)|*.dgml";
+        private readonly string FilterDgml = "DGML files (*.dgml)|*.dgml";
 
         private void OnCommandFileExportAccountMap(object sender, ExecutedRoutedEventArgs e)
         {

@@ -10,7 +10,7 @@ namespace Walkabout.Dialogs
 {
     internal class OfxLoginDialog : PasswordWindow
     {
-        private OnlineAccount account;
+        private readonly OnlineAccount account;
 
         public OfxLoginDialog(OfxSignOnInfo info, OnlineAccount account, List<Block> prompt, OfxErrorCode code, string error)
         {

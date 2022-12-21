@@ -23,9 +23,9 @@ namespace UnitTests
 
         private class TestMap : CsvFieldWriter
         {
-            private string[] headers = new string[] { "Trans. Date", "Post Date", "Description", "Amount", "Category" };
-            private string[] row1 = new string[] { "09/23/2022", "09/23/2022", "\"HLU*HULU,374413022733-U \"\"HULU.COM\"\"/BILLCAHLU*HULU, 374413022733-U\"", "14.35", "\"Services\"" };
-            private string[] row2 = new string[] { "09/22/2022", "09/22/2022", "\"APPLE.COM/BILL 866-712-7753 CAZZL0QAZNFC6A0\"", "5.42", "Merchandise" };
+            private readonly string[] headers = new string[] { "Trans. Date", "Post Date", "Description", "Amount", "Category" };
+            private readonly string[] row1 = new string[] { "09/23/2022", "09/23/2022", "\"HLU*HULU,374413022733-U \"\"HULU.COM\"\"/BILLCAHLU*HULU, 374413022733-U\"", "14.35", "\"Services\"" };
+            private readonly string[] row2 = new string[] { "09/22/2022", "09/22/2022", "\"APPLE.COM/BILL 866-712-7753 CAZZL0QAZNFC6A0\"", "5.42", "Merchandise" };
             private int row = 0;
 
             public TestMap()

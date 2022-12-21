@@ -10,7 +10,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class TaxReportDialog : BaseDialog
     {
-        private List<string> months = new List<string>();
+        private readonly List<string> months = new List<string>();
         public TaxReportDialog()
         {
             this.InitializeComponent();

@@ -17,12 +17,12 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class AccountDialog : BaseDialog
     {
-        private IServiceProvider serviceProvider;
-        private MyMoney money;
+        private readonly IServiceProvider serviceProvider;
+        private readonly MyMoney money;
         private Account editingAccount = new Account();
         private Account theAccount = new Account();
-        private List<OnlineAccount> newOnlineAccounts = new List<OnlineAccount>();
-        private ObservableCollection<object> onlineAccounts = new ObservableCollection<object>();
+        private readonly List<OnlineAccount> newOnlineAccounts = new List<OnlineAccount>();
+        private readonly ObservableCollection<object> onlineAccounts = new ObservableCollection<object>();
         private const string NewLabel = "New...";
 
         public Account TheAccount
@@ -407,7 +407,7 @@ namespace Walkabout.Dialogs
             this.Close();
         }
 
-        private static char[] InvalidNameChars = new char[] { '{', '}', ':' };
+        private static readonly char[] InvalidNameChars = new char[] { '{', '}', ':' };
 
         private void OnNameChanged(object sender, TextChangedEventArgs e)
         {

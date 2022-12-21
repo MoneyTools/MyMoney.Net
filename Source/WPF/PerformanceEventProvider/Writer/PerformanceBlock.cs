@@ -62,13 +62,13 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider
         //private static string performanceBlockProviderName = "Microsoft.VisualStudio.PerformanceBlock.4.0.0.0";
 
         // Instantiate event provider.
-        private static EventProvider etwProvider = new EventProvider(typeof(PerformanceBlock).GUID);
+        private static readonly EventProvider etwProvider = new EventProvider(typeof(PerformanceBlock).GUID);
 
-        private static TraceSwitch memReportingSwitch = new TraceSwitch("MemoryReporting", "defined in config file");
+        private static readonly TraceSwitch memReportingSwitch = new TraceSwitch("MemoryReporting", "defined in config file");
         private ComponentId component;
         private CategoryId category;
         private MeasurementId measurementId;
-        private Stopwatch timer = new Stopwatch();
+        private readonly Stopwatch timer = new Stopwatch();
 
         internal PerformanceBlock(ComponentId component, CategoryId category, MeasurementId measurementId, ulong size)
         {

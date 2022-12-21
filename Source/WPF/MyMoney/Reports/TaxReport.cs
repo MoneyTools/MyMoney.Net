@@ -19,13 +19,13 @@ namespace Walkabout.Reports
     //=========================================================================================
     public class TaxReport : Report
     {
-        private FlowDocumentView view;
-        private MyMoney money;
+        private readonly FlowDocumentView view;
+        private readonly MyMoney money;
         private DateTime startDate;
         private DateTime endDate;
         private bool consolidateOnDateSold;
         private bool capitalGainsOnly;
-        private int fiscalYearStart;
+        private readonly int fiscalYearStart;
         private const string FiscalPrefix = "FY ";
 
         public TaxReport(FlowDocumentView view, MyMoney money, int fiscalYearStart)

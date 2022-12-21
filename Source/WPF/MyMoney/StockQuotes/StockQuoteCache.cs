@@ -10,14 +10,14 @@ namespace Walkabout.StockQuotes
     /// </summary>
     public class StockQuoteCache
     {
-        private MyMoney myMoney;
-        private DownloadLog log;
+        private readonly MyMoney myMoney;
+        private readonly DownloadLog log;
         private IDictionary<Security, List<Investment>> transactionsBySecurity;
         private HashSet<Security> changed;
         private long lockCount;
 
         // For an O(1) Date => StockQuote lookup, so we index the stock quote history in a Dictionary here.
-        private Dictionary<Security, StockQuoteIndex> quoteIndex = new Dictionary<Security, StockQuoteIndex>();
+        private readonly Dictionary<Security, StockQuoteIndex> quoteIndex = new Dictionary<Security, StockQuoteIndex>();
 
         public StockQuoteCache(MyMoney money, DownloadLog log)
         {
@@ -172,7 +172,7 @@ namespace Walkabout.StockQuotes
 
         internal class StockQuoteIndex
         {
-            private Dictionary<DateTime, StockQuote> index = new Dictionary<DateTime, StockQuote>();
+            private readonly Dictionary<DateTime, StockQuote> index = new Dictionary<DateTime, StockQuote>();
 
             public StockQuoteIndex(StockQuoteHistory history)
             {
@@ -210,7 +210,7 @@ namespace Walkabout.StockQuotes
 
         private class UpdateLock : IDisposable
         {
-            private StockQuoteCache parent;
+            private readonly StockQuoteCache parent;
             public UpdateLock(StockQuoteCache parent)
             {
                 this.parent = parent;

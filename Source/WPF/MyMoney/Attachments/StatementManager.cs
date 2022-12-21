@@ -14,15 +14,15 @@ namespace Walkabout.Attachments
 {
     public class StatementManager
     {
-        private MyMoney myMoney;
-        private DelayedActions actions = new DelayedActions();
+        private readonly MyMoney myMoney;
+        private readonly DelayedActions actions = new DelayedActions();
         private Dictionary<Account, string> nameMap;
         private string statementsDir;
         private bool started;
         private bool loading;
         private bool loaded;
         // account name to index.
-        private ConcurrentDictionary<string, StatementIndex> statements = new ConcurrentDictionary<string, StatementIndex>();
+        private readonly ConcurrentDictionary<string, StatementIndex> statements = new ConcurrentDictionary<string, StatementIndex>();
 
         public StatementManager(MyMoney myMoney)
         {

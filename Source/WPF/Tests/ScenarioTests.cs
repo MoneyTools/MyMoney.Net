@@ -965,7 +965,7 @@ to make sure attachments work.");
             }
         }
 
-        private static string[] AccountTypes = new string[] { "Checking", "Credit", "Brokerage" };
+        private static readonly string[] AccountTypes = new string[] { "Checking", "Credit", "Brokerage" };
 
         private void AddAccount()
         {
@@ -1506,7 +1506,7 @@ to make sure attachments work.");
 
         private class TestLog : TextWriter
         {
-            private TestContext context;
+            private readonly TestContext context;
 
             public TestLog(TestContext context)
             {

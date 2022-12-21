@@ -24,7 +24,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
     public partial class MainWindow : Window
     {
         private long count;
-        private PerformanceData data = new PerformanceData();
+        private readonly PerformanceData data = new PerformanceData();
         private bool filter;
 
         public MainWindow()

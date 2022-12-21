@@ -19,7 +19,7 @@ namespace Walkabout.Views
         private bool payeesDirty;
         private bool dirty;
         private Alias rowEdit;
-        private DelayedActions delayedActions = new DelayedActions();
+        private readonly DelayedActions delayedActions = new DelayedActions();
 
         public AliasesView()
         {
@@ -110,7 +110,7 @@ namespace Walkabout.Views
             combo.FilterPredicate = new Predicate<object>((o) => { return o.ToString().IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0; });
         }
 
-        private List<AliasType> aliasTypes = new List<AliasType>(new AliasType[] { AliasType.None, AliasType.Regex });
+        private readonly List<AliasType> aliasTypes = new List<AliasType>(new AliasType[] { AliasType.None, AliasType.Regex });
 
         public IList<AliasType> AliasTypes
         {
@@ -146,7 +146,7 @@ namespace Walkabout.Views
         /// </summary>
         private class AliasCollection : FilteredObservableCollection<Alias>
         {
-            private MyMoney money;
+            private readonly MyMoney money;
 
             public AliasCollection(MyMoney money, string filter)
                 : base(money.Aliases.GetAliases(true), filter)

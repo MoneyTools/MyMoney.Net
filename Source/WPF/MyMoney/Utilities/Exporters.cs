@@ -13,7 +13,7 @@ namespace Walkabout.Migrate
 {
     public class Exporters
     {
-        private HashSet<Account> accounts = new HashSet<Account>();
+        private readonly HashSet<Account> accounts = new HashSet<Account>();
 
         public bool SupportXml { get; set; }
 
@@ -85,10 +85,10 @@ namespace Walkabout.Migrate
             }
         }
 
-        private static DataContractSerializer TransactionSerializer = new DataContractSerializer(typeof(Transaction));
-        private static DataContractSerializer InvestmentSerializer = new DataContractSerializer(typeof(Investment));
-        private static DataContractSerializer SplitSerializer = new DataContractSerializer(typeof(Split));
-        private static DataContractSerializer AccountSerializer = new DataContractSerializer(typeof(Account));
+        private static readonly DataContractSerializer TransactionSerializer = new DataContractSerializer(typeof(Transaction));
+        private static readonly DataContractSerializer InvestmentSerializer = new DataContractSerializer(typeof(Investment));
+        private static readonly DataContractSerializer SplitSerializer = new DataContractSerializer(typeof(Split));
+        private static readonly DataContractSerializer AccountSerializer = new DataContractSerializer(typeof(Account));
 
         private void ExportToXml(XmlWriter writer, IEnumerable<object> data)
         {
@@ -294,7 +294,7 @@ namespace Walkabout.Migrate
 
         }
 
-        private string styleForGraph_Accounts =
+        private readonly string styleForGraph_Accounts =
                 @"<Styles>
                         <Style TargetType=""Node"" GroupLabel=""Asset"" ValueLabel=""True"">
                             <Condition Expression=""HasCategory('Asset')"" />

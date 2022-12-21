@@ -200,12 +200,12 @@ namespace Walkabout.Data
     /// </summary>
     internal class SecurityFifoQueue
     {
-        private List<SecurityPurchase> list = new List<SecurityPurchase>();
+        private readonly List<SecurityPurchase> list = new List<SecurityPurchase>();
 
         /// <summary>
         /// list of pending sales that we couldn't cover before, we keep these until the matching Buy arrives.
         /// </summary>
-        private List<SecuritySale> pending = new List<SecuritySale>();
+        private readonly List<SecuritySale> pending = new List<SecuritySale>();
 
         /// <summary>
         /// The security that we are tracking with this queue.
@@ -337,7 +337,7 @@ namespace Walkabout.Data
     /// </summary>
     public class AccountHoldings
     {
-        private Dictionary<Security, SecurityFifoQueue> queues = new Dictionary<Security, SecurityFifoQueue>();
+        private readonly Dictionary<Security, SecurityFifoQueue> queues = new Dictionary<Security, SecurityFifoQueue>();
 
         public Account Account;
 
@@ -475,10 +475,10 @@ namespace Walkabout.Data
     /// </summary>
     public class CostBasisCalculator
     {
-        private MyMoney myMoney;
-        private DateTime toDate;
+        private readonly MyMoney myMoney;
+        private readonly DateTime toDate;
         private Dictionary<Account, AccountHoldings> byAccount = new Dictionary<Account, AccountHoldings>();
-        private List<SecuritySale> sales = new List<SecuritySale>();
+        private readonly List<SecuritySale> sales = new List<SecuritySale>();
 
         /// <summary>
         /// Compute capital gains associated with stock sales and whether they are long term or short term gains.

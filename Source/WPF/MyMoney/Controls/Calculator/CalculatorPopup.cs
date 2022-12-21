@@ -16,7 +16,7 @@ namespace Walkabout.Controls
     /// </summary>
     public class CalculatorPopup : Popup
     {
-        private CalculatorControl calculator;
+        private readonly CalculatorControl calculator;
         private TextBox attached;
 
         public CalculatorPopup()

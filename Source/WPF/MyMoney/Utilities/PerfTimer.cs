@@ -14,7 +14,7 @@ namespace Walkabout.Utilities
     {
         private long m_Start;
         private long m_End;
-        private long m_Freq;
+        private readonly long m_Freq;
         private long m_Min;
         private long m_Max;
         private long m_Count;

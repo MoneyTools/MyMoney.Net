@@ -286,8 +286,8 @@ namespace Walkabout.Sgml
         private SgmlDtd _dtd;
         private Entity _current;
         private State _state;
-        private XmlNameTable _nametable;
-        private XmlNamespaceManager _mgr;
+        private readonly XmlNameTable _nametable;
+        private readonly XmlNamespaceManager _mgr;
         private char _partial;
         private object _endTag;
         private Node[] _stack;
@@ -1123,7 +1123,7 @@ namespace Walkabout.Sgml
             return false;
         }
 
-        private static string _declterm = " \t\r\n>";
+        private static readonly string _declterm = " \t\r\n>";
 
         private bool ParseTag(char ch)
         {
@@ -1181,9 +1181,9 @@ namespace Walkabout.Sgml
             return true;
         }
 
-        private static string _tagterm = " \t\r\n/>";
-        private static string _aterm = " \t\r\n=/>";
-        private static string _avterm = " \t\r\n>";
+        private static readonly string _tagterm = " \t\r\n/>";
+        private static readonly string _aterm = " \t\r\n=/>";
+        private static readonly string _avterm = " \t\r\n>";
 
         private bool ParseStartTag(char ch)
         {
@@ -1354,7 +1354,7 @@ namespace Walkabout.Sgml
             return true;
         }
 
-        private static string _dtterm = " \t\r\n>";
+        private static readonly string _dtterm = " \t\r\n>";
 
         private void ParseDocType()
         {
@@ -1420,7 +1420,7 @@ namespace Walkabout.Sgml
             this._current.ReadChar();
         }
 
-        private static string _piterm = " \t\r\n?";
+        private static readonly string _piterm = " \t\r\n?";
 
         private bool ParsePI()
         {

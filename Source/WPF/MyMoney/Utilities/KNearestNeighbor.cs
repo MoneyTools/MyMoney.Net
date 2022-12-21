@@ -22,7 +22,7 @@ namespace Walkabout.Utilities
         }
 
         private int total = 0;
-        private Dictionary<T, Feature<T>> features = new Dictionary<T, Feature<T>>();
+        private readonly Dictionary<T, Feature<T>> features = new Dictionary<T, Feature<T>>();
 
         /// <summary>
         /// Add a data object with associated category and value.

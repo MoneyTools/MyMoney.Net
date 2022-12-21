@@ -6,8 +6,8 @@ namespace Walkabout.Database
 {
     public class MoneyDataObject : System.Windows.IDataObject
     {
-        private PersistentObject data;
-        private string xml;
+        private readonly PersistentObject data;
+        private readonly string xml;
 
         public MoneyDataObject(PersistentObject data)
         {

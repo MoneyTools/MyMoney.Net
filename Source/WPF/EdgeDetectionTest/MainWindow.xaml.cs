@@ -19,7 +19,7 @@ namespace EdgeDetectionTest
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Dispatcher dispatcher;
+        private readonly Dispatcher dispatcher;
 
         public MainWindow()
         {

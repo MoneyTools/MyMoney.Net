@@ -25,7 +25,7 @@ namespace Walkabout.Utilities
     /// <typeparam name="T">The type of EventHandlerArgs</typeparam>
     public class EventHandlerCollection<T, Q> where T : Delegate where Q : EventArgs
     {
-        private List<T> list = new List<T>();
+        private readonly List<T> list = new List<T>();
 
         public void AddHandler(T h)
         {

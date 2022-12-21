@@ -16,8 +16,8 @@ namespace Walkabout.Dialogs
     {
         #region PROPERTIES
 
-        private EventHandler<ChangeEventArgs> handler;
-        private DelayedActions delayedActions = new DelayedActions();
+        private readonly EventHandler<ChangeEventArgs> handler;
+        private readonly DelayedActions delayedActions = new DelayedActions();
 
         private MyMoney money;
 

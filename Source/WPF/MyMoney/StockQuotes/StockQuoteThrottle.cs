@@ -12,8 +12,8 @@ namespace Walkabout.StockQuotes
         private int _callsToday;
         private int _callsThisMonth;
         private string _filename;
-        private object _sync = new object();
-        private DelayedActions saveActions = new DelayedActions();
+        private readonly object _sync = new object();
+        private readonly DelayedActions saveActions = new DelayedActions();
 
         public StockQuoteThrottle()
         {

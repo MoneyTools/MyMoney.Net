@@ -11,9 +11,9 @@ namespace Walkabout.Tests.Wrappers
 {
     public class TransactionViewWrapper
     {
-        private MainWindowWrapper window;
+        private readonly MainWindowWrapper window;
         private AutomationElement control;
-        private static Dictionary<string, TransactionViewColumns> mapping;
+        private static readonly Dictionary<string, TransactionViewColumns> mapping;
 
         static TransactionViewWrapper()
         {
@@ -397,8 +397,8 @@ namespace Walkabout.Tests.Wrappers
 
     public class TransactionViewItem
     {
-        private TransactionViewWrapper view;
-        private AutomationElement item;
+        private readonly TransactionViewWrapper view;
+        private readonly AutomationElement item;
 
         public TransactionViewItem(TransactionViewWrapper view, AutomationElement item)
         {
@@ -665,9 +665,9 @@ namespace Walkabout.Tests.Wrappers
 
     public class TransactionViewColumn
     {
-        private string header;
-        private string name;
-        private string datatype;
+        private readonly string header;
+        private readonly string name;
+        private readonly string datatype;
         private int index;
 
         protected TransactionViewColumn(string header)
@@ -963,7 +963,7 @@ namespace Walkabout.Tests.Wrappers
 
     public class CompoundTransactionViewColumn : TransactionViewColumn
     {
-        private List<TransactionViewColumn> columns = new List<TransactionViewColumn>();
+        private readonly List<TransactionViewColumn> columns = new List<TransactionViewColumn>();
 
         public CompoundTransactionViewColumn(string header, params TransactionViewColumn[] cols)
             : base(header)
@@ -996,7 +996,7 @@ namespace Walkabout.Tests.Wrappers
 
     public class TransactionViewColumns
     {
-        private List<TransactionViewColumn> columns = new List<TransactionViewColumn>();
+        private readonly List<TransactionViewColumn> columns = new List<TransactionViewColumn>();
 
         public TransactionViewColumns(params TransactionViewColumn[] cols)
         {

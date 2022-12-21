@@ -14,16 +14,16 @@ namespace Walkabout.Utilities
 
         private bool isMouseDown = false;
         private Point dragStartPoint;
-        private string formatName;
+        private readonly string formatName;
         private bool isDragging = false;
-        private bool mergePrompt;
+        private readonly bool mergePrompt;
         private Window dragdropWindow;
         private AdornerLayer adornerLayer;
         private Adorner lastAdornerUsed;
-        private FrameworkElement mainControl;
-        private OnIsDragSourceValid calledBackForValidatingSource;
-        private OnIsValidDropTarget calledBackForValidatingTarget;
-        private OnApplyDragDrop calledBackFinalDropOperation;
+        private readonly FrameworkElement mainControl;
+        private readonly OnIsDragSourceValid calledBackForValidatingSource;
+        private readonly OnIsValidDropTarget calledBackForValidatingTarget;
+        private readonly OnApplyDragDrop calledBackFinalDropOperation;
 
         #endregion
 

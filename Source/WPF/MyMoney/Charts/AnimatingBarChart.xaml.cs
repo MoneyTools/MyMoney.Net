@@ -20,12 +20,12 @@ namespace LovettSoftware.Charts
     /// </summary>
     public partial class AnimatingBarChart : UserControl
     {
-        private DelayedActions actions = new DelayedActions();
+        private readonly DelayedActions actions = new DelayedActions();
         private ColumnInfo tipColumn;
         private Point movePos;
         private ColumnInfo inside;
         private bool mouseOverAnimationCompleted = false;
-        private Random rand = new Random(Environment.TickCount);
+        private readonly Random rand = new Random(Environment.TickCount);
 
         private class ColumnInfo
         {
@@ -38,9 +38,9 @@ namespace LovettSoftware.Charts
 
         // this is maintained for hit testing only since the mouse events don't seem to be 
         // working on the animated Rectangles.
-        private List<ColumnInfo> bars = new List<ColumnInfo>();
-        private List<Polygon> axisLines = new List<Polygon>();
-        private List<TextBlock> axisLabels = new List<TextBlock>();
+        private readonly List<ColumnInfo> bars = new List<ColumnInfo>();
+        private readonly List<Polygon> axisLines = new List<Polygon>();
+        private readonly List<TextBlock> axisLabels = new List<TextBlock>();
 
         public AnimatingBarChart()
         {

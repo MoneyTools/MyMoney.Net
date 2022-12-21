@@ -101,18 +101,18 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class OnlineAccountDialog : BaseDialog
     {
-        private MyMoney money;
-        private Account account = new Account();
-        private OnlineAccount editing = new OnlineAccount();
-        private ObservableCollection<string> versions = new ObservableCollection<string>();
+        private readonly MyMoney money;
+        private readonly Account account = new Account();
+        private readonly OnlineAccount editing = new OnlineAccount();
+        private readonly ObservableCollection<string> versions = new ObservableCollection<string>();
         private ListCollectionView view;
         private DispatcherTimer queueProcessor;
         private List<AccountListItem> found; // found during "signup" process.
         private TextBox editor;
-        private string successPrompt;
+        private readonly string successPrompt;
         private ProfileResponse profile;
-        private bool debugging;
-        private IServiceProvider serviceProvider;
+        private readonly bool debugging;
+        private readonly IServiceProvider serviceProvider;
 
         public OnlineAccountDialog(MyMoney money, Account account, IServiceProvider sp)
         {
@@ -399,7 +399,7 @@ namespace Walkabout.Dialogs
             Task.Run(() => this.GetUpdatedBankInfo(info));
         }
 
-        private ConcurrentQueue<OfxInstitutionInfo> fetchQueue = new ConcurrentQueue<OfxInstitutionInfo>();
+        private readonly ConcurrentQueue<OfxInstitutionInfo> fetchQueue = new ConcurrentQueue<OfxInstitutionInfo>();
 
         private void OnComboBoxNameSelectionChanged(object sender, SelectionChangedEventArgs e)
         {

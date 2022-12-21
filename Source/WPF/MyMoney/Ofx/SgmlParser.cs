@@ -459,7 +459,7 @@ namespace Walkabout.Sgml
             return Convert.ToChar(v).ToString();
         }
 
-        private static int[] CtrlMap = new int[] {
+        private static readonly int[] CtrlMap = new int[] {
             // This is the windows-1252 mapping of the code points 0x80 through 0x9f.
             8364, 129, 8218, 402, 8222, 8230, 8224, 8225, 710, 8240, 352, 8249, 338, 141,
             381, 143, 144, 8216, 8217, 8220, 8221, 8226, 8211, 8212, 732, 8482, 353, 8250,
@@ -933,7 +933,7 @@ namespace Walkabout.Sgml
 
     public class AttList : IEnumerable
     {
-        private Hashtable AttDefs;
+        private readonly Hashtable AttDefs;
 
         public AttList(bool ignoreCase)
         {
@@ -969,13 +969,13 @@ namespace Walkabout.Sgml
     public class SgmlDtd
     {
         public string Name;
-        private Hashtable _elements;
-        private Hashtable _pentities;
-        private Hashtable _entities;
-        private StringBuilder _sb;
+        private readonly Hashtable _elements;
+        private readonly Hashtable _pentities;
+        private readonly Hashtable _entities;
+        private readonly StringBuilder _sb;
         private Entity _current;
-        private XmlNameTable _nt;
-        private bool _ignoreCase;
+        private readonly XmlNameTable _nt;
+        private readonly bool _ignoreCase;
 
         public SgmlDtd(string name, XmlNameTable nt, bool ignoreCase = false)
         {
@@ -1281,7 +1281,7 @@ namespace Walkabout.Sgml
             return e;
         }
 
-        private static string _ws = " \r\n\t";
+        private static readonly string _ws = " \r\n\t";
 
         private void ParseEntity()
         {
@@ -1432,7 +1432,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        private static string _ngterm = " \r\n\t|,)";
+        private static readonly string _ngterm = " \r\n\t|,)";
 
         private string[] ParseNameGroup(char ch, bool nmtokens)
         {
@@ -1507,7 +1507,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        private static string _dcterm = " \r\n\t>";
+        private static readonly string _dcterm = " \r\n\t>";
 
         private ContentModel ParseContentModel(char ch)
         {
@@ -1538,7 +1538,7 @@ namespace Walkabout.Sgml
             return cm;
         }
 
-        private static string _cmterm = " \r\n\t,&|()?+*";
+        private static readonly string _cmterm = " \r\n\t,&|()?+*";
 
         private void ParseModel(char cmt, ContentModel cm)
         {
@@ -1635,7 +1635,7 @@ namespace Walkabout.Sgml
             }
         }
 
-        private static string _peterm = " \t\r\n>";
+        private static readonly string _peterm = " \t\r\n>";
 
         private void ParseAttList(AttList list, char term)
         {

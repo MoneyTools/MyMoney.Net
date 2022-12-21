@@ -225,8 +225,8 @@ namespace Walkabout.Views
         /// </summary>
         private class CurrencyCollection : FilteredObservableCollection<Currency>
         {
-            private MyMoney money;
-            private CurrenciesView view;
+            private readonly MyMoney money;
+            private readonly CurrenciesView view;
 
             public CurrencyCollection(CurrenciesView view, MyMoney money, string filter)
                 : base(money.Currencies.GetCurrencies(), filter)

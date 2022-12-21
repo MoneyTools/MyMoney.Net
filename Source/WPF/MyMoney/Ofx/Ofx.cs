@@ -32,14 +32,14 @@ namespace Walkabout.Ofx
     {
         private string message;
         private Exception error;
-        private OnlineAccount online;
-        private Account account;
-        private string fileName;
+        private readonly OnlineAccount online;
+        private readonly Account account;
+        private readonly string fileName;
         private bool isError;
         private bool isDownloading;
         private bool success;
-        private ThreadSafeObservableCollection<OfxDownloadData> children;
-        private List<Transaction> added = new List<Transaction>();
+        private readonly ThreadSafeObservableCollection<OfxDownloadData> children;
+        private readonly List<Transaction> added = new List<Transaction>();
         private OfxErrorCode ofxError;
         private string linkCaption = "Details...";
 
@@ -166,7 +166,7 @@ namespace Walkabout.Ofx
 
     public class OfxDownloadEventArgs : EventArgs
     {
-        private ThreadSafeObservableCollection<OfxDownloadData> list;
+        private readonly ThreadSafeObservableCollection<OfxDownloadData> list;
 
         public OfxDownloadEventArgs()
         {
@@ -212,11 +212,11 @@ namespace Walkabout.Ofx
 
         public event OfxDownloadProgress Status;
 
-        private IList list;
+        private readonly IList list;
         private string[] files;
-        private MyMoney myMoney;
-        private OfxRequest.PickAccountDelegate resolverWhenMissingAccountId;
-        private Dispatcher dispatcher;
+        private readonly MyMoney myMoney;
+        private readonly OfxRequest.PickAccountDelegate resolverWhenMissingAccountId;
+        private readonly Dispatcher dispatcher;
 
         public OfxThread(MyMoney myMoney, IList list, string[] files, OfxRequest.PickAccountDelegate resolverWhenMissingAccountId, Dispatcher uiThreadDispatcher)
         {
@@ -254,7 +254,7 @@ namespace Walkabout.Ofx
             }
         }
 
-        private DelayedActions delayedActions = new DelayedActions();
+        private readonly DelayedActions delayedActions = new DelayedActions();
 
         private void UpdateStatusOnUIThread(int min, int max, int value, OfxDownloadEventArgs e)
         {
@@ -355,7 +355,7 @@ namespace Walkabout.Ofx
         }
 
         private OfxDownloadEventArgs downloadEventArgs;
-        private ConcurrentQueue<OfxDownloadData> work = new ConcurrentQueue<OfxDownloadData>();
+        private readonly ConcurrentQueue<OfxDownloadData> work = new ConcurrentQueue<OfxDownloadData>();
         private int completed;
 
         private void Synchronize()
@@ -386,7 +386,7 @@ namespace Walkabout.Ofx
             }
         }
 
-        private List<OfxRequest> pending = new List<OfxRequest>();
+        private readonly List<OfxRequest> pending = new List<OfxRequest>();
 
         private void SyncAccount()
         {
@@ -478,12 +478,12 @@ namespace Walkabout.Ofx
     {
         private OnlineAccount onlineAccount;
         private Account account;
-        private MyMoney myMoney;
-        private Hashtable truidMap = new Hashtable(); // trnuid -> Account
+        private readonly MyMoney myMoney;
+        private readonly Hashtable truidMap = new Hashtable(); // trnuid -> Account
         private DateTime start;
         private Dictionary<string, SecurityInfo> securityInfo; // uniqueId -> SecurityInfo.
-        private PickAccountDelegate callerPickAccount;
-        private HashSet<string> skippedAccounts = new HashSet<string>();
+        private readonly PickAccountDelegate callerPickAccount;
+        private readonly HashSet<string> skippedAccounts = new HashSet<string>();
 
         public OfxRequest(OnlineAccount oa, MyMoney m, PickAccountDelegate resolveMissingAccountId)
         {
@@ -3375,7 +3375,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
         public delegate Account PickAccountDelegate(MyMoney money, Account accountTemplate, string prompt);
 
-        private static Regex ObfuscatedId = new Regex("([X]+)([0-9]+)");
+        private static readonly Regex ObfuscatedId = new Regex("([X]+)([0-9]+)");
 
         private bool AccoundIdMatches(string downloadedId, string localId)
         {
@@ -3604,9 +3604,9 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
     public class OfxException : Exception
     {
         private OfxErrorCode ofxError;
-        private string code;
-        private string httpHeaders;
-        private string response;
+        private readonly string code;
+        private readonly string httpHeaders;
+        private readonly string response;
         private Account account;
 
         public OfxException(string message)
@@ -3641,8 +3641,8 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
     /// </summary>
     public class OfxMfaChallengeRequest
     {
-        private OnlineAccount onlineAccount;
-        private MyMoney money;
+        private readonly OnlineAccount onlineAccount;
+        private readonly MyMoney money;
         private string challengeLog;
 
         public OfxMfaChallengeRequest(OnlineAccount onlineAccount, MyMoney m)
@@ -3847,7 +3847,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
     internal class StringTrimmingXmlReader : XmlReader
     {
-        private XmlReader inner;
+        private readonly XmlReader inner;
         public StringTrimmingXmlReader(XmlReader inner)
         {
             this.inner = inner;

@@ -32,7 +32,7 @@ namespace Walkabout.Configuration
         //
         public static Settings TheSettings { get; set; }
 
-        private bool persist;
+        private readonly bool persist;
 
         #region PROPERTIES
 
@@ -489,8 +489,8 @@ namespace Walkabout.Configuration
             set { this._fileName = value; }
         }
 
-        private XmlDocument doc = new XmlDocument();
-        private Hashtable map = new Hashtable();
+        private readonly XmlDocument doc = new XmlDocument();
+        private readonly Hashtable map = new Hashtable();
 
         public System.Xml.Schema.XmlSchema GetSchema()
         {
@@ -973,9 +973,9 @@ namespace Walkabout.Configuration
             w.WriteEndElement();
         }
 
-        private Dictionary<Type, ViewState> viewStates = new Dictionary<Type, ViewState>();
+        private readonly Dictionary<Type, ViewState> viewStates = new Dictionary<Type, ViewState>();
 
-        private Dictionary<Type, XmlElement> viewStateNodes = new Dictionary<Type, XmlElement>();
+        private readonly Dictionary<Type, XmlElement> viewStateNodes = new Dictionary<Type, XmlElement>();
 
 
         internal ViewState GetViewState(Type viewType)

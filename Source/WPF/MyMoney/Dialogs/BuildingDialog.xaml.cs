@@ -10,7 +10,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class BuildingDialog : BaseDialog
     {
-        private MyMoney money;
+        private readonly MyMoney money;
         private RentBuilding editingBuilding = new RentBuilding();
         private RentBuilding theBuilding = new RentBuilding();
 

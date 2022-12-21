@@ -13,7 +13,7 @@ namespace Walkabout.Data
 {
     public class XmlStore : IDatabase
     {
-        private string filename;
+        private readonly string filename;
         private string backup;
         private string password;
 
@@ -180,7 +180,7 @@ namespace Walkabout.Data
     /// </summary>
     public class BinaryXmlStore : XmlStore
     {
-        private string filename;
+        private readonly string filename;
 
         public BinaryXmlStore(string filename, string password)
             : base(filename, password)
@@ -335,10 +335,10 @@ namespace Walkabout.Data
 
     public class BinaryXmlWriter : XmlWriter
     {
-        private Stream stream;
-        private BinaryWriter writer;
-        private XmlNamespaceManager mgr;
-        private NameTable nameTable;
+        private readonly Stream stream;
+        private readonly BinaryWriter writer;
+        private readonly XmlNamespaceManager mgr;
+        private readonly NameTable nameTable;
         private WriteState state = WriteState.Start;
 
         #region Auto Namespaces
@@ -349,7 +349,7 @@ namespace Walkabout.Data
             public string NamespaceUri;
         }
 
-        private List<XmlNamespaceDefinition> namespaceStack = new List<XmlNamespaceDefinition>();
+        private readonly List<XmlNamespaceDefinition> namespaceStack = new List<XmlNamespaceDefinition>();
         private int namespacePos;
 
         private void PushNewNamespace(string prefix, string namespaceUri)
@@ -780,22 +780,22 @@ namespace Walkabout.Data
 
     public class BinaryXmlReader : XmlReader
     {
-        private string baseUri;
-        private Stream stream;
+        private readonly string baseUri;
+        private readonly Stream stream;
         private BinaryXmlElement currentElement;
         private int attributePos; // position in MoveToNextAttribute
         private BinaryXmlAttribute currentAttribute; // in MoveToNextAttribute
         private object value;
-        private List<BinaryXmlElement> elementStack = new List<BinaryXmlElement>();
+        private readonly List<BinaryXmlElement> elementStack = new List<BinaryXmlElement>();
         private int elementDepth;
         private bool isElementEmpty;
-        private BinaryReader reader;
+        private readonly BinaryReader reader;
         private XmlNodeType nodeType = XmlNodeType.None;
         private ReadState state = ReadState.Initial;
         private XmlNodeTypeToken token = XmlNodeTypeToken.None;
-        private XmlNameTable nameTable = new NameTable();
-        private XmlNamespaceManager mgr;
-        private BinaryXmlElement leafNode = new BinaryXmlElement();
+        private readonly XmlNameTable nameTable = new NameTable();
+        private readonly XmlNamespaceManager mgr;
+        private readonly BinaryXmlElement leafNode = new BinaryXmlElement();
 
         private class BinaryXmlAttribute
         {

@@ -25,10 +25,10 @@ namespace Walkabout.Utilities
     [StructLayout(LayoutKind.Sequential)]
     internal struct CREDENTIAL_ATTRIBUTE
     {
-        private string Keyword;
-        private int Flags;
-        private int ValueSize;
-        private IntPtr Value; // LPBYTE 
+        private readonly string Keyword;
+        private readonly int Flags;
+        private readonly int ValueSize;
+        private readonly IntPtr Value; // LPBYTE 
     };
 
     public enum CredentialPersistence

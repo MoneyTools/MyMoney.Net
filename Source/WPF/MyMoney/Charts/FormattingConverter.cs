@@ -8,7 +8,7 @@ namespace Walkabout.Charts
     [ValueConversion(typeof(object), typeof(string))]
     public class NumberConverter : IValueConverter
     {
-        private NumberFormatInfo nfi;
+        private readonly NumberFormatInfo nfi;
 
         public NumberConverter(NumberFormatInfo nfi)
         {

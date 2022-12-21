@@ -13,9 +13,9 @@ namespace Microsoft.VisualStudio.PerformanceGraph
     internal class PerformanceData
     {
         private List<PerformanceEventArrivedEventArgs> data = new List<PerformanceEventArrivedEventArgs>();
-        private HashSet<string> componentNames = new HashSet<string>();
-        private HashSet<string> categoryNames = new HashSet<string>();
-        private HashSet<string> measurements = new HashSet<string>();
+        private readonly HashSet<string> componentNames = new HashSet<string>();
+        private readonly HashSet<string> categoryNames = new HashSet<string>();
+        private readonly HashSet<string> measurements = new HashSet<string>();
 
         public const int BeginEvent = 1;
         public const int EndEvent = 2;

@@ -28,8 +28,8 @@ namespace Walkabout.Dialogs
         }
 
         private Account theAccount = new Account();
-        private List<OnlineAccount> newOnlineAccounts = new List<OnlineAccount>();
-        private ObservableCollection<object> onlineAccounts = new ObservableCollection<object>();
+        private readonly List<OnlineAccount> newOnlineAccounts = new List<OnlineAccount>();
+        private readonly ObservableCollection<object> onlineAccounts = new ObservableCollection<object>();
 
         public Account TheAccount
         {

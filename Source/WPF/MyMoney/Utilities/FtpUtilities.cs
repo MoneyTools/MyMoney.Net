@@ -55,7 +55,7 @@ namespace Walkabout.Utilities
             return;
         }
 
-        private static char[] WhitespaceChars = new char[] { ' ', '\t' };
+        private static readonly char[] WhitespaceChars = new char[] { ' ', '\t' };
 
         private static void ListDirectory(string target, string user, string password, List<string> files, List<string> subDirectories)
         {

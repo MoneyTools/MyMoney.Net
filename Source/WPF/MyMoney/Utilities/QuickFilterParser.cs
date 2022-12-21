@@ -18,7 +18,7 @@ namespace Walkabout.Utilities
 
     internal class QuickFilterParser<T>
     {
-        private Stack<Filter<T>> stack = new Stack<Filter<T>>();
+        private readonly Stack<Filter<T>> stack = new Stack<Filter<T>>();
 
         private Filter<T> Combine(Filter<T> right, Filter<T> top)
         {
@@ -474,7 +474,7 @@ namespace Walkabout.Utilities
     /// </summary>
     public class FilterLiteral
     {
-        private string _keyword;
+        private readonly string _keyword;
         private bool notDecimal;
         private decimal? _decimal;
         private bool notDate;

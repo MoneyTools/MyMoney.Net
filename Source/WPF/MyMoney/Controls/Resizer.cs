@@ -114,9 +114,9 @@ namespace Walkabout.Controls
             set { this.borderBrush = value; }
         }
 
-        private static Brush SmokyGlassBrush = new SolidColorBrush(Color.FromArgb(0xA0, 0xe0, 0xe0, 0xff));
+        private static readonly Brush SmokyGlassBrush = new SolidColorBrush(Color.FromArgb(0xA0, 0xe0, 0xe0, 0xff));
         private double thumbSize = 8;
-        private double[] dashes = new double[] { 3, 3 };
+        private readonly double[] dashes = new double[] { 3, 3 };
         private double offset = 0;
 
         protected override void OnRender(DrawingContext drawingContext)

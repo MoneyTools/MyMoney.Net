@@ -22,13 +22,13 @@ namespace Walkabout.Dialogs
     public partial class MoneyFileImportDialog : BaseDialog, IStatusService
     {
         private MyMoney myMoney;
-        private string loadingStatusPrompt;
+        private readonly string loadingStatusPrompt;
         private CancellationTokenSource cancelSource;
         private bool busy;
-        private ObservableCollection<AccountImportState> list;
+        private readonly ObservableCollection<AccountImportState> list;
         private AttachmentManager myAttachments;
         private StatementManager myStatements;
-        private Dispatcher dispatcher;
+        private readonly Dispatcher dispatcher;
 
         public MoneyFileImportDialog()
         {

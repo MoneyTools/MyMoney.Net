@@ -26,7 +26,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         private List<Point> points;
         private Rect bounds;
         private string units;
-        private HoverGesture hover;
+        private readonly HoverGesture hover;
         private double unitConversion;
 
         public ChartControl()

@@ -34,11 +34,11 @@ namespace Walkabout.Dialogs
             }
         }
 
-        private Categories categories;
+        private readonly Categories categories;
         private Category category;
         private Account transfer;
-        private NumberFormatInfo nfi = new NumberFormatInfo();
-        private TaxCategoryCollection taxCategories = new TaxCategoryCollection();
+        private readonly NumberFormatInfo nfi = new NumberFormatInfo();
+        private readonly TaxCategoryCollection taxCategories = new TaxCategoryCollection();
 
         public Category Category
         {

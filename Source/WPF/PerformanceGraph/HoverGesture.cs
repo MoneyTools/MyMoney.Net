@@ -13,7 +13,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
         private DispatcherTimer hover;
         private uint lastMoveTime;
         private MouseEventArgs lastMoveEvent;
-        private FrameworkElement target;
+        private readonly FrameworkElement target;
 
         public HoverGesture(FrameworkElement target)
         {

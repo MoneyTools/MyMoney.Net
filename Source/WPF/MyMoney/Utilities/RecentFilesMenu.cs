@@ -15,9 +15,9 @@ namespace Walkabout.Utilities
 
     internal class RecentFilesMenu
     {
-        private List<string> recentFiles = new List<string>();
+        private readonly List<string> recentFiles = new List<string>();
         private const int maxRecentFiles = 10;
-        private MenuItem parent;
+        private readonly MenuItem parent;
 
         public event EventHandler<RecentFileEventArgs> RecentFileSelected;
 

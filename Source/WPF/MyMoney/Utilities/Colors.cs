@@ -11,9 +11,9 @@ namespace Walkabout.Utilities
 {
     internal static class ColorAndBrushGenerator
     {
-        private static Dictionary<string, Color> cachedColors = new Dictionary<string, Color>();
-        private static Dictionary<string, Brush> cachedBrushes = new Dictionary<string, Brush>();
-        private static ColorConverter cc = new ColorConverter();
+        private static readonly Dictionary<string, Color> cachedColors = new Dictionary<string, Color>();
+        private static readonly Dictionary<string, Brush> cachedBrushes = new Dictionary<string, Brush>();
+        private static readonly ColorConverter cc = new ColorConverter();
 
         public static Color GenerateNamedColor(string name)
         {

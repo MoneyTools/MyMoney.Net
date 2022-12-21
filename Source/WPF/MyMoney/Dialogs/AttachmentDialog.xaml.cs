@@ -31,10 +31,10 @@ namespace Walkabout.Dialogs
         private bool dirty;
         private AttachmentDialogItem selected;
         private string storage;
-        private Brush resizerBrush;
+        private readonly Brush resizerBrush;
         private const double ResizerThumbSize = 12;
         private Transaction transaction;
-        private DelayedActions actions = new DelayedActions();
+        private readonly DelayedActions actions = new DelayedActions();
 
         public static readonly RoutedUICommand CommandRotateRight = new RoutedUICommand("Rotate Right", "CommandRotateRight", typeof(MainWindow));
         public static readonly RoutedUICommand CommandRotateLeft = new RoutedUICommand("Rotate Left", "CommandRotateLeft", typeof(MainWindow));
@@ -862,7 +862,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     internal class AttachmentDialogImageItem : AttachmentDialogItem
     {
-        private Image image;
+        private readonly Image image;
 
         public AttachmentDialogImageItem(BitmapSource source)
         {
@@ -1088,7 +1088,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     internal class AttachmentDialogDocumentItem : AttachmentDialogItem
     {
-        private RichTextBox richText;
+        private readonly RichTextBox richText;
 
         public AttachmentDialogDocumentItem()
         {

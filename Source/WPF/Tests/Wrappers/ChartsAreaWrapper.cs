@@ -6,7 +6,7 @@ namespace Walkabout.Tests.Wrappers
 {
     internal class ChartsAreaWrapper
     {
-        private AutomationElement charts;
+        private readonly AutomationElement charts;
 
         public ChartsAreaWrapper(AutomationElement charts)
         {

@@ -723,8 +723,8 @@ namespace Walkabout.Views.Controls
 
     public class BalanceEventArgs : EventArgs
     {
-        private bool balanced;
-        private bool hasStatement;
+        private readonly bool balanced;
+        private readonly bool hasStatement;
         public BalanceEventArgs(bool balanced, bool hasStatement)
         {
             this.balanced = balanced;

@@ -21,7 +21,7 @@ namespace Walkabout.Views.Controls
     /// </summary>
     public partial class OfxDownloadControl : UserControl
     {
-        private List<OfxThread> syncThreads = new List<OfxThread>();
+        private readonly List<OfxThread> syncThreads = new List<OfxThread>();
         private MyMoney myMoney;
         private List<OnlineAccount> accounts;
         private string[] ofxFiles;

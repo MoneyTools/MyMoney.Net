@@ -12,8 +12,8 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class FreeStyleQueryDialog : BaseDialog
     {
-        private IDatabase database;
-        private MyMoney myMoney;
+        private readonly IDatabase database;
+        private readonly MyMoney myMoney;
         private DataSet dataSet = new DataSet();
 
         public FreeStyleQueryDialog(MyMoney m, IDatabase database)

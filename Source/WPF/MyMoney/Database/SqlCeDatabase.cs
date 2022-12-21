@@ -15,10 +15,10 @@ namespace Walkabout.Data
     /// </summary>
     public class SqlCeEngine : IDisposable
     {
-        private object engine;
-        private Action<object> upgrade;
-        private Action<object> create;
-        private Action<object> dispose;
+        private readonly object engine;
+        private readonly Action<object> upgrade;
+        private readonly Action<object> create;
+        private readonly Action<object> dispose;
 
         internal SqlCeEngine(object engine, Action<object> upgrade, Action<object> create, Action<object> dispose)
         {
@@ -50,7 +50,7 @@ namespace Walkabout.Data
     /// </summary>    
     internal class SqlCeFactory
     {
-        private static Assembly assembly;
+        private static readonly Assembly assembly;
         private static Func<string, object> createEngine;
         private static Action<object> upgrade;
         private static Action<object> createDatabase;

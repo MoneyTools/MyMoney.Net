@@ -14,7 +14,7 @@ namespace Walkabout.Migrate
     /// </summary>
     public class TxfExporter
     {
-        private MyMoney money;
+        private readonly MyMoney money;
 
         public TxfExporter(MyMoney money)
         {

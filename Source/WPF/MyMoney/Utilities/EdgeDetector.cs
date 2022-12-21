@@ -30,20 +30,20 @@ namespace Walkabout.Utilities
         private const int BlackThreshold = 3;
         private const int WhiteThreshold = 252;
 
-        private int width, height;
-        private BitmapSource bitmap;
+        private readonly int width, height;
+        private readonly BitmapSource bitmap;
         private int[,] greyImage;
         private Thickness margin;
 
         //Gaussian Kernel Data
         private int[,] gaussianKernel;
         private int kernelWeight;
-        private int kernelSize = 5;
-        private float sigma = 1;   // for N=2 Sigma =0.85  N=5 Sigma =1, N=9 Sigma = 2    2*Sigma = (int)N/2
+        private readonly int kernelSize = 5;
+        private readonly float sigma = 1;   // for N=2 Sigma =0.85  N=5 Sigma =1, N=9 Sigma = 2    2*Sigma = (int)N/2
 
         //Canny Edge Detection Parameters
-        private float maxHysteresisThresh, minHysteresisThresh;
-        private int minEdgeLength = DefaultMinimumEdgeLength;
+        private readonly float maxHysteresisThresh, minHysteresisThresh;
+        private readonly int minEdgeLength = DefaultMinimumEdgeLength;
         private Rect edgeBounds;
 
         private float[,] derivativeX;

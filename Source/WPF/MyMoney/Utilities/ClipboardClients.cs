@@ -6,7 +6,7 @@ namespace Walkabout.Utilities
 {
     internal class FlowDocumentViewClipboardClient : IClipboardClient
     {
-        private FlowDocumentView view;
+        private readonly FlowDocumentView view;
         public FlowDocumentViewClipboardClient(FlowDocumentView f)
         {
             this.view = f;
@@ -40,7 +40,7 @@ namespace Walkabout.Utilities
 
     internal class TextBoxClipboardClient : IClipboardClient
     {
-        private TextBox box;
+        private readonly TextBox box;
         public TextBoxClipboardClient(TextBox b)
         {
             this.box = b;
@@ -77,7 +77,7 @@ namespace Walkabout.Utilities
 
     internal class ComboBoxClipboardClient : IClipboardClient
     {
-        private ComboBox box;
+        private readonly ComboBox box;
         public ComboBoxClipboardClient(ComboBox b)
         {
             this.box = b;
@@ -131,7 +131,7 @@ namespace Walkabout.Utilities
 
     internal class RichTextBoxClipboardClient : IClipboardClient
     {
-        private RichTextBox box;
+        private readonly RichTextBox box;
         public RichTextBoxClipboardClient(RichTextBox b)
         {
             this.box = b;

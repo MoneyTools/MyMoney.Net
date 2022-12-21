@@ -12,7 +12,7 @@ namespace Walkabout.Dialogs
     /// </summary>
     public partial class CsvImportDialog : BaseDialog
     {
-        private string[] fields;
+        private readonly string[] fields;
         private List<CsvFieldMap> map;
 
         public CsvImportDialog(string[] expectedColumns)

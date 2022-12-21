@@ -28,7 +28,7 @@ namespace Walkabout.Views
     /// </summary>
     public sealed class FindManager
     {
-        private FlowDocument inputDocument;
+        private readonly FlowDocument inputDocument;
         private TextPointer currentPosition;
 
         /// <summary>

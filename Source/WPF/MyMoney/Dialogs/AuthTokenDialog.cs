@@ -7,7 +7,7 @@ namespace Walkabout.Dialogs
 {
     public class AuthTokenDialog : PasswordWindow
     {
-        private string customFieldId = "AuthToken";
+        private readonly string customFieldId = "AuthToken";
 
         public AuthTokenDialog(OfxSignOnInfo info, OfxErrorCode code)
         {

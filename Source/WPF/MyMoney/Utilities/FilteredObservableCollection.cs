@@ -16,7 +16,7 @@ namespace Walkabout.Utilities
     public abstract class FilteredObservableCollection<T> : ObservableCollection<T>
     {
         private string filter;
-        private IEnumerable<T> original;
+        private readonly IEnumerable<T> original;
 
         protected FilteredObservableCollection(IEnumerable<T> collection) : base(collection)
         {

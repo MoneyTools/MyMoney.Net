@@ -21,19 +21,19 @@ namespace Walkabout.Reports
     //=========================================================================================
     public class PortfolioReport : Report
     {
-        private MyMoney myMoney;
-        private Account account;
+        private readonly MyMoney myMoney;
+        private readonly Account account;
         private FlowDocumentReportWriter flowwriter;
         private CostBasisCalculator calc;
-        private IServiceProvider serviceProvider;
-        private FlowDocumentView view;
+        private readonly IServiceProvider serviceProvider;
+        private readonly FlowDocumentView view;
         private Paragraph mouseDownPara;
         private Point downPos;
         private DateTime reportDate;
-        private StockQuoteCache cache;
+        private readonly StockQuoteCache cache;
         private SecurityGroup selectedGroup;
-        private AccountGroup accountGroup;
-        private Random rand = new Random(Environment.TickCount);
+        private readonly AccountGroup accountGroup;
+        private readonly Random rand = new Random(Environment.TickCount);
         private bool generating;
 
         public event EventHandler<SecurityGroup> DrillDown;

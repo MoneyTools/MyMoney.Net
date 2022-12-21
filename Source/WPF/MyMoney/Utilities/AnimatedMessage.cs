@@ -11,7 +11,7 @@ namespace Walkabout.Utilities
         private int startPos;
         private string initialValue;
         private string finalValue;
-        private DelayedActions actions = new DelayedActions();
+        private readonly DelayedActions actions = new DelayedActions();
         private TimeSpan delay;
 
         public AnimatedMessage(SetMessageHandler handler)

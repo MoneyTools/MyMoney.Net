@@ -13,13 +13,13 @@ namespace Walkabout.Reports
 {
     public class FlowDocumentReportWriter : IReportWriter
     {
-        private FlowDocument doc;
+        private readonly FlowDocument doc;
         private Section section;
         private NestedTableState current = new NestedTableState();
-        private Stack<NestedTableState> nested = new Stack<NestedTableState>();
-        private List<ToggleButton> expandableRowGroups = new List<ToggleButton>();
+        private readonly Stack<NestedTableState> nested = new Stack<NestedTableState>();
+        private readonly List<ToggleButton> expandableRowGroups = new List<ToggleButton>();
         private List<TableRow> groupedRows;
-        private double pixelsPerDip;
+        private readonly double pixelsPerDip;
 
         private class NestedTableState
         {

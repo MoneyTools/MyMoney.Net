@@ -20,7 +20,7 @@ namespace Walkabout.Charts
 
     public class ColumnLabel
     {
-        private string label;
+        private readonly string label;
         private HistoryChartColumn data;
 
         public HistoryChartColumn Data
@@ -79,8 +79,8 @@ namespace Walkabout.Charts
     /// </summary>
     public partial class HistoryBarChart : UserControl
     {
-        private DelayedActions delayedActions = new DelayedActions();
-        private ObservableCollection<HistoryChartColumn> collection = new ObservableCollection<HistoryChartColumn>();
+        private readonly DelayedActions delayedActions = new DelayedActions();
+        private readonly ObservableCollection<HistoryChartColumn> collection = new ObservableCollection<HistoryChartColumn>();
         private bool invert;
         private int fiscalYearStart;
         private HistoryChartColumn selection;

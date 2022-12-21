@@ -12,11 +12,11 @@ namespace Walkabout.Data
     internal class Encryption
     {
         // These settings cannot change.
-        private string saltValue = "Money Rocks";       // can be any string
-        private string initVector = "*B5good!+027XYZ."; // must be 16 bytes
-        private string hashAlgorithm = "SHA1";          // can be "MD5"
-        private int passwordIterations = 2;             // can be any number        
-        private int keySize = 256;                // can be 192 or 128
+        private readonly string saltValue = "Money Rocks";       // can be any string
+        private readonly string initVector = "*B5good!+027XYZ."; // must be 16 bytes
+        private readonly string hashAlgorithm = "SHA1";          // can be "MD5"
+        private readonly int passwordIterations = 2;             // can be any number        
+        private readonly int keySize = 256;                // can be 192 or 128
 
         /// <summary>
         /// Encrypts specified file using Rijndael symmetric key algorithm

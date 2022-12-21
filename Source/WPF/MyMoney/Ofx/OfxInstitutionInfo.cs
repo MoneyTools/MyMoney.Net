@@ -127,7 +127,7 @@ namespace Walkabout.Ofx
 
 
         // we keep track of each field change
-        private Dictionary<string, ChangeTrackedField> fields = new Dictionary<string, ChangeTrackedField>();
+        private readonly Dictionary<string, ChangeTrackedField> fields = new Dictionary<string, ChangeTrackedField>();
 
         private T GetValue<T>(string name)
         {
@@ -448,7 +448,7 @@ namespace Walkabout.Ofx
         }
 
         private static List<OfxInstitutionInfo> providerListCache;
-        private static string OfxHomeProviderList = "http://www.ofxhome.com/api.php?all=yes";
+        private static readonly string OfxHomeProviderList = "http://www.ofxhome.com/api.php?all=yes";
 
         public static List<OfxInstitutionInfo> GetCachedBankList()
         {
@@ -669,7 +669,7 @@ namespace Walkabout.Ofx
             }
         }
 
-        private static string OfxHomeProviderInfo = "http://www.ofxhome.com/api.php?lookup={0}";
+        private static readonly string OfxHomeProviderInfo = "http://www.ofxhome.com/api.php?lookup={0}";
 
         public static OfxInstitutionInfo GetProviderInformation(OfxInstitutionInfo provider)
         {

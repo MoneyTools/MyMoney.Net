@@ -264,8 +264,8 @@ namespace Walkabout.Tests
 
     public class DebugXmlReader : XmlReader
     {
-        private XmlReader wrapped;
-        private StringWriter sw = new StringWriter();
+        private readonly XmlReader wrapped;
+        private readonly StringWriter sw = new StringWriter();
 
         public DebugXmlReader(XmlReader wrapped)
         {

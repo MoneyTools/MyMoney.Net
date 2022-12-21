@@ -24,7 +24,7 @@ namespace Walkabout.Reports
 
     internal class CashFlowColumns
     {
-        private Dictionary<string, CashFlowCell> columns = new Dictionary<string, CashFlowCell>();
+        private readonly Dictionary<string, CashFlowCell> columns = new Dictionary<string, CashFlowCell>();
 
         public void AddValue(string key, Transaction data, decimal amount)
         {
@@ -91,16 +91,16 @@ namespace Walkabout.Reports
     //=========================================================================================
     public class CashFlowReport : Report
     {
-        private FlowDocumentView view;
-        private MyMoney myMoney;
+        private readonly FlowDocumentView view;
+        private readonly MyMoney myMoney;
         private bool byYear;
-        private int fiscalYearStart;
+        private readonly int fiscalYearStart;
         private DateTime startDate;
         private DateTime endDate;
         private Dictionary<Category, CashFlowColumns> byCategory;
         private Dictionary<string, int> monthMap;
         private List<string> columns;
-        private IServiceProvider serviceProvider;
+        private readonly IServiceProvider serviceProvider;
 
         public CashFlowReport(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart)
         {

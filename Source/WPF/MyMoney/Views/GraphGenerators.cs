@@ -15,11 +15,11 @@ namespace Walkabout.Views
 {
     internal class TransactionGraphGenerator : IGraphGenerator
     {
-        private NumberFormatInfo nfi = new NumberFormatInfo();
-        private IEnumerable data;
-        private Account account;
-        private Category category;
-        private TransactionViewName viewName;
+        private readonly NumberFormatInfo nfi = new NumberFormatInfo();
+        private readonly IEnumerable data;
+        private readonly Account account;
+        private readonly Category category;
+        private readonly TransactionViewName viewName;
 
         public TransactionGraphGenerator(IEnumerable data, Account account, Category category, TransactionViewName viewName)
         {
@@ -98,10 +98,10 @@ namespace Walkabout.Views
     /// </summary>
     internal class BrokerageAccountGraphGenerator : IGraphGenerator
     {
-        private MyMoney myMoney;
-        private StockQuoteCache cache;
-        private Account account;
-        private Dictionary<string, List<StockSplit>> pendingSplits = new Dictionary<string, List<StockSplit>>();
+        private readonly MyMoney myMoney;
+        private readonly StockQuoteCache cache;
+        private readonly Account account;
+        private readonly Dictionary<string, List<StockSplit>> pendingSplits = new Dictionary<string, List<StockSplit>>();
         private List<TrendValue> graph = new List<TrendValue>();
 
 
@@ -406,9 +406,9 @@ namespace Walkabout.Views
 
     internal class SecurityGraphGenerator : IGraphGenerator
     {
-        private NumberFormatInfo nfi = new NumberFormatInfo();
-        private StockQuoteHistory history;
-        private Security security;
+        private readonly NumberFormatInfo nfi = new NumberFormatInfo();
+        private readonly StockQuoteHistory history;
+        private readonly Security security;
 
         public SecurityGraphGenerator(StockQuoteHistory history, Security security)
         {

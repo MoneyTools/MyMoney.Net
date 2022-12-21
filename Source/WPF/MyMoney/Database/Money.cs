@@ -28,9 +28,9 @@ namespace Walkabout.Data
 
     public class ChangeEventArgs : EventArgs
     {
-        private object item;
-        private string name;
-        private ChangeType type;
+        private readonly object item;
+        private readonly string name;
+        private readonly ChangeType type;
         private ChangeEventArgs next;
         private object source;
 
@@ -95,7 +95,7 @@ namespace Walkabout.Data
 
     internal class BatchSync
     {
-        private object syncObject = new object();
+        private readonly object syncObject = new object();
         private int refCount;
 
         public int Increment()
@@ -1142,7 +1142,7 @@ namespace Walkabout.Data
             }
         }
 
-        private HashSet<Account> balancePending = new HashSet<Account>();
+        private readonly HashSet<Account> balancePending = new HashSet<Account>();
 
         public override void EndUpdate()
         {
@@ -2064,7 +2064,7 @@ namespace Walkabout.Data
 
     public class ErrorEventArgs : EventArgs
     {
-        private Exception error;
+        private readonly Exception error;
 
         public Exception Exception { get { return this.error; } }
 
@@ -4278,7 +4278,7 @@ namespace Walkabout.Data
     {
         private int nextCurrency;
         private Hashtable<int, Currency> currencies = new Hashtable<int, Currency>();
-        private Hashtable<string, Currency> quickLookup = new Hashtable<string, Currency>();
+        private readonly Hashtable<string, Currency> quickLookup = new Hashtable<string, Currency>();
 
         public Currencies()
         {
@@ -6270,7 +6270,7 @@ namespace Walkabout.Data
             return true;
         }
 
-        private ThreadSafeObservableCollection<RentBuilding> observableCollection = new ThreadSafeObservableCollection<RentBuilding>();
+        private readonly ThreadSafeObservableCollection<RentBuilding> observableCollection = new ThreadSafeObservableCollection<RentBuilding>();
 
         public ObservableCollection<RentBuilding> GetList()
         {
@@ -10323,8 +10323,8 @@ namespace Walkabout.Data
     //================================================================================
     public class TransferChangedEventArgs : EventArgs
     {
-        private Transaction transaction;
-        private Transfer transfer;
+        private readonly Transaction transaction;
+        private readonly Transfer transfer;
 
         public TransferChangedEventArgs(Transaction t, Transfer newValue)
         {
@@ -10340,8 +10340,8 @@ namespace Walkabout.Data
     //================================================================================
     public class SplitTransferChangedEventArgs : EventArgs
     {
-        private Split split;
-        private Transfer transfer;
+        private readonly Split split;
+        private readonly Transfer transfer;
 
         public SplitTransferChangedEventArgs(Split s, Transfer newValue)
         {
@@ -10433,8 +10433,8 @@ namespace Walkabout.Data
         private Splits splits;
         private string pendingTransfer;
         private DateTime? budgetBalanceDate;
-        private Transaction related;
-        private Split relatedSplit;
+        private readonly Transaction related;
+        private readonly Split relatedSplit;
         private DateTime? mergeDate;
         private string originalPayee; // before auto-aliasing, helps with future merging.
         private TransactionViewFlags viewState; // ui transient state only, not persisted.
@@ -12644,8 +12644,8 @@ namespace Walkabout.Data
     /// </summary>
     public class PayeeIndex
     {
-        private MyMoney money;
-        private Dictionary<string, HashSet<Account>> map = new Dictionary<string, HashSet<Account>>();
+        private readonly MyMoney money;
+        private readonly Dictionary<string, HashSet<Account>> map = new Dictionary<string, HashSet<Account>>();
 
         public PayeeIndex(MyMoney money)
         {
@@ -12964,7 +12964,7 @@ namespace Walkabout.Data
 
         private class SplitsObservableCollection : ThreadSafeObservableCollection<Split>
         {
-            private Splits parent;
+            private readonly Splits parent;
 
             public SplitsObservableCollection(Splits splits)
             {
@@ -14333,8 +14333,8 @@ namespace Walkabout.Data
     /// </summary>
     public class ObservableStockSplits : ThreadSafeObservableCollection<StockSplit>
     {
-        private Security security;
-        private StockSplits splits;
+        private readonly Security security;
+        private readonly StockSplits splits;
         private bool initializing;
         private bool syncSync;
 
@@ -14807,7 +14807,7 @@ namespace Walkabout.Data
 
     public class TransactionException : Exception
     {
-        private Transaction t;
+        private readonly Transaction t;
 
         public TransactionException(Transaction t, string message)
             : base(message)
