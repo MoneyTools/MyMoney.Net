@@ -10,7 +10,6 @@ using Walkabout.Utilities;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.Collections;
-using System.Diagnostics;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;

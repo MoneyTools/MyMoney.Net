@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.PerformanceData;
-using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Xml;
-using Walkabout.Migrate;
 using Walkabout.Controls;
+using Walkabout.Migrate;
 
 namespace Walkabout.Dialogs
 {

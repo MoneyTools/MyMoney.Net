@@ -1,15 +1,15 @@
-﻿using System;
-using System.Linq;
+﻿using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Walkabout.Data;
 using Walkabout.StockQuotes;
-using Walkabout.Views.Controls;
 using Walkabout.Utilities;
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+using Walkabout.Views.Controls;
 
 namespace Walkabout.Views
 {

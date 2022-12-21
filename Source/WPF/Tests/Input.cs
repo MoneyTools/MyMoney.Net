@@ -1,13 +1,11 @@
 namespace Walkabout.Tests.Interop
 {
+    using System;
+    using System.ComponentModel;
+    using System.Runtime.InteropServices;
     using System.Windows;
     using System.Windows.Automation;
     using System.Windows.Input;
-    using System.Security.Permissions;
-    using System.ComponentModel;
-    using System.Runtime.InteropServices;
-
-    using System;
 
     /// <summary>
     /// Flags for Input.SendMouseInput, indicate whether movement took place,

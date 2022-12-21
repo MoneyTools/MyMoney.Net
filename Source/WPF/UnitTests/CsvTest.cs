@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using Walkabout.Data;
 using Walkabout.Migrate;
-using Walkabout.Utilities;
 
 namespace UnitTests
 {

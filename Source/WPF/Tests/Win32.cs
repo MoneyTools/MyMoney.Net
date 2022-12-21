@@ -2,14 +2,14 @@ namespace Walkabout.Tests.Interop
 {
 
     using System;
-    using System.Runtime.InteropServices;
     using System.Collections.Generic;
-    using System.Windows;
-    using System.Windows.Automation;
     using System.Drawing;
     using System.Drawing.Imaging;
-    using System.Windows.Forms;
+    using System.Runtime.InteropServices;
     using System.Threading;
+    using System.Windows;
+    using System.Windows.Automation;
+    using System.Windows.Forms;
 
     ///<summary>
     ///This class is used to PInvoke for win32 functionality that I have not been

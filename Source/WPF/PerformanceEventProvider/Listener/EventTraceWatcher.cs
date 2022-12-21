@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 // Author: Daniel Vasquez Lopez
 //------------------------------------------------------------------------------
+using Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,8 +13,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Xml.Linq;
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop;
 
 namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 {

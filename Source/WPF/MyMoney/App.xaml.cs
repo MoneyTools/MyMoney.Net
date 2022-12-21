@@ -6,7 +6,6 @@ using System.IO;
 using Walkabout.Utilities;
 using Walkabout.Configuration;
 using System.Xml.Linq;
-using System.Xml;
 using Walkabout.Help;
 
 #if PerformanceBlocks

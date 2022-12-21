@@ -3,8 +3,6 @@
 //   (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using System.Runtime.InteropServices;
 
 namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 {

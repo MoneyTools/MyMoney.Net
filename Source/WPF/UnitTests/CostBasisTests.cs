@@ -1,12 +1,9 @@
-﻿using System;
-using System.Text;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Walkabout.Data;
-using Walkabout.Migrate;
-using Walkabout.Utilities;
 using Walkabout.Taxes;
+using Walkabout.Utilities;
 
 namespace Walkabout.Tests
 {

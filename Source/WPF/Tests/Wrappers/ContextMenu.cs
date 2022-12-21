@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Automation;
-using Walkabout.Tests.Interop;
-using System.Windows.Input;
-using System.Windows;
-using System.Threading;
 using System.Diagnostics;
+using System.Threading;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Input;
+using Walkabout.Tests.Interop;
 
 namespace Walkabout.Tests.Wrappers
 {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Xml;
-using Walkabout.Data;
+﻿using Walkabout.Data;
 
 namespace Walkabout.Migrate
 {

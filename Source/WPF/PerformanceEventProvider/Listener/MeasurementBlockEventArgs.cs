@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Text;
 
 namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 {

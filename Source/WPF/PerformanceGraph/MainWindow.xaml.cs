@@ -3,19 +3,18 @@
 //   (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
+using Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using System.Security;
-using System.Security.Principal;
-using Microsoft.Win32;
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener;
 
 namespace Microsoft.VisualStudio.PerformanceGraph
 {

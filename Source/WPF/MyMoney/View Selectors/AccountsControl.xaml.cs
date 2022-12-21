@@ -13,13 +13,8 @@ using Walkabout.Utilities;
 using Walkabout.Migrate;
 using System.IO;
 using Walkabout.Commands;
-using Walkabout.Configuration;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using System.Security.Principal;
-using System.Xml.Linq;
-using System.Windows.Forms.VisualStyles;
-using System.Windows.Media.Animation;
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 #endif

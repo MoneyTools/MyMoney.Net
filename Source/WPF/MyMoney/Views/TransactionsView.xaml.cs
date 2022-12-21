@@ -32,7 +32,6 @@ using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
 using System.Windows.Media.Animation;
 using ModernWpf.Controls;
-using Walkabout.Properties;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;

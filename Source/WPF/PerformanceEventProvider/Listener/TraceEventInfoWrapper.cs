@@ -5,11 +5,11 @@
 //------------------------------------------------------------------------------
 // Author: Daniel Vasquez Lopez
 //------------------------------------------------------------------------------
+using Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener;
 
 namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Interop
 {

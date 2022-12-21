@@ -1,14 +1,13 @@
-﻿using System;
-using System.Text;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Walkabout.Data;
+using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Linq;
-using System.Runtime.Serialization;
-using System.IO;
-using System.Diagnostics;
+using Walkabout.Data;
 
 namespace Walkabout.Tests
 {

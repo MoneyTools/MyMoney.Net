@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Automation;
-using Walkabout.Tests.Interop;
-using System.Threading;
+﻿using System.Windows.Automation;
 
 namespace Walkabout.Tests.Wrappers
 {

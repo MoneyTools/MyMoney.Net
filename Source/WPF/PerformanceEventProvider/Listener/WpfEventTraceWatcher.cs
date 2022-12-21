@@ -6,10 +6,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
 
 namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 {

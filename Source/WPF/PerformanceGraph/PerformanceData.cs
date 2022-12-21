@@ -3,15 +3,10 @@
 //   (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+using Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Xml;
-using System.Windows;
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener;
 
 namespace Microsoft.VisualStudio.PerformanceGraph
 {

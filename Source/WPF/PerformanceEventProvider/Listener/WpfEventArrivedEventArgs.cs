@@ -3,11 +3,7 @@
 //   (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener

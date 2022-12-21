@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml.Linq;
-using System.Windows.Controls;
-using System.Windows.Shapes;
-using System.Windows.Controls.Primitives;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace FindUnusedStyles
 {

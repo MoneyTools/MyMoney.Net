@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Windows;
 using Walkabout.Controls;
 using Walkabout.Data;
-using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs
