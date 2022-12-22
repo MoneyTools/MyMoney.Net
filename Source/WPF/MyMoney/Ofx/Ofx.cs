@@ -151,7 +151,7 @@ namespace Walkabout.Ofx
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged(String name)
+        private void OnPropertyChanged(string name)
         {
             UiDispatcher.BeginInvoke(new Action(() =>
             {
@@ -1760,7 +1760,7 @@ NEWFILEUID:{1}
                                     {
                                         try
                                         {
-                                            enc = Encoding.GetEncoding(Int32.Parse(value));
+                                            enc = Encoding.GetEncoding(int.Parse(value));
                                         }
                                         catch (Exception)
                                         {
@@ -3195,7 +3195,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                                 break;
                             }
 
-                            if (!Char.IsDigit(memo[i]))
+                            if (!char.IsDigit(memo[i]))
                             {
                                 isnumber = false;
                                 break;
@@ -3516,32 +3516,32 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             int len = s.Length;
             if (len >= 4)
             {
-                year = Int32.Parse(s.Substring(0, 4));
+                year = int.Parse(s.Substring(0, 4));
             }
             int month = now.Month;
             if (len >= 6)
             {
-                month = Int32.Parse(s.Substring(4, 2));
+                month = int.Parse(s.Substring(4, 2));
             }
             int day = now.Day;
             if (len >= 8)
             {
-                day = Int32.Parse(s.Substring(6, 2));
+                day = int.Parse(s.Substring(6, 2));
             }
             int hour = 0;
             if (len >= 10)
             {
-                hour = Int32.Parse(s.Substring(8, 2));
+                hour = int.Parse(s.Substring(8, 2));
             }
             int minute = 0;
             if (len >= 12)
             {
-                minute = Int32.Parse(s.Substring(10, 2));
+                minute = int.Parse(s.Substring(10, 2));
             }
             int second = 0;
             if (len >= 14)
             {
-                second = Int32.Parse(s.Substring(12, 2));
+                second = int.Parse(s.Substring(12, 2));
             }
             DateTime dt = new DateTime(year, month, day, hour, minute, second, 0);
 

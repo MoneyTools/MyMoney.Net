@@ -354,7 +354,7 @@ namespace OfxTestServer
                     code = (int)OfxErrors.SignonInvalid;
                 }
 
-                if (code == 0 && !String.IsNullOrEmpty(this._userCred1Label))
+                if (code == 0 && !string.IsNullOrEmpty(this._userCred1Label))
                 {
                     string cred1 = this.GetElementValue(sonrq, "USERCRED1");
                     if (this._userCred1 != cred1)
@@ -364,7 +364,7 @@ namespace OfxTestServer
                     }
                 }
 
-                if (code == 0 && !String.IsNullOrEmpty(this._userCred2Label))
+                if (code == 0 && !string.IsNullOrEmpty(this._userCred2Label))
                 {
 
                     string cred2 = this.GetElementValue(sonrq, "USERCRED2");
@@ -475,7 +475,7 @@ namespace OfxTestServer
                 }
             }
 
-            if (code == 0 && !String.IsNullOrEmpty(this._authTokenLabel) && !hasAccessKey)
+            if (code == 0 && !string.IsNullOrEmpty(this._authTokenLabel) && !hasAccessKey)
             {
 
                 string token = this.GetElementValue(sonrq, "AUTHTOKEN");
@@ -577,7 +577,7 @@ namespace OfxTestServer
 
                 XElement x = new XElement("MFACHALLENGE", new XElement("MFAPHRASEID", item.PhraseId));
 
-                if (!String.IsNullOrWhiteSpace(item.PhraseLabel))
+                if (!string.IsNullOrWhiteSpace(item.PhraseLabel))
                 {
                     x.Add(new XElement("MFAPHRASELABEL", item.PhraseLabel));
                 }

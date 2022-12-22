@@ -149,15 +149,15 @@ namespace Walkabout.Utilities
         [StructLayout(LayoutKind.Sequential)]
         private class CREDENTIAL
         {
-            public UInt32 Flags;
-            public UInt32 Type;
+            public uint Flags;
+            public uint Type;
             public IntPtr TargetName;
             public IntPtr Comment;
             public long LastWritten;
-            public UInt32 CredentialBlobSize;
+            public uint CredentialBlobSize;
             public IntPtr CredentialBlob;
-            public UInt32 Persist;
-            public UInt32 AttributeCount;
+            public uint Persist;
+            public uint AttributeCount;
             public IntPtr Attributes;
             public IntPtr TargetAlias;
             public IntPtr UserName;
@@ -323,7 +323,7 @@ namespace Walkabout.Utilities
             }
         }
 
-        public static SecureString ToSecureString(String s)
+        public static SecureString ToSecureString(string s)
         {
             SecureString ss = new SecureString();
             for (int i = 0, n = s.Length; i < n; i++)

@@ -139,7 +139,7 @@ namespace Walkabout.Taxes
                         sb.Append(ch);
                     }
                 }
-                else if (Char.IsWhiteSpace(ch))
+                else if (char.IsWhiteSpace(ch))
                 {
                     push = true;
                 }

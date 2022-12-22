@@ -81,7 +81,7 @@ namespace Walkabout.Views
         /// <remarks>
         /// This method will advance the<see cref="CurrentPosition"/> to next context position.
         /// </remarks>
-        public TextRange FindNext(String input, FindOptions findOptions = FindOptions.None)
+        public TextRange FindNext(string input, FindOptions findOptions = FindOptions.None)
         {
             TextRange textRange = this.GetTextRangeFromPosition(ref this.currentPosition, input, findOptions);
             return textRange;
@@ -99,11 +99,11 @@ namespace Walkabout.Views
         /// string withing the text container.
         /// </returns>
         public TextRange GetTextRangeFromPosition(ref TextPointer position,
-                                                  String input,
+                                                  string input,
                                                   FindOptions findOptions)
         {
-            Boolean matchCase = (findOptions & FindOptions.MatchCase) == FindOptions.MatchCase;
-            Boolean matchWholeWord = (findOptions & FindOptions.MatchWholeWord)
+            bool matchCase = (findOptions & FindOptions.MatchCase) == FindOptions.MatchCase;
+            bool matchWholeWord = (findOptions & FindOptions.MatchWholeWord)
                                                         == FindOptions.MatchWholeWord;
 
             TextRange textRange = null;
@@ -117,10 +117,10 @@ namespace Walkabout.Views
 
                 if (position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
                 {
-                    String textRun = position.GetTextInRun(LogicalDirection.Forward);
+                    string textRun = position.GetTextInRun(LogicalDirection.Forward);
                     StringComparison stringComparison = matchCase ?
                         StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
-                    Int32 indexInRun = textRun.IndexOf(input, stringComparison);
+                    int indexInRun = textRun.IndexOf(input, stringComparison);
 
                     if (indexInRun >= 0)
                     {
@@ -177,9 +177,9 @@ namespace Walkabout.Views
         /// </summary>
         /// <param name="character">character specified</param>
         /// <returns>Boolean value didicates if the specified character is a valid word character</returns>
-        private Boolean IsWordChar(Char character)
+        private bool IsWordChar(char character)
         {
-            return Char.IsLetterOrDigit(character) || character == '_';
+            return char.IsLetterOrDigit(character) || character == '_';
         }
 
         /// <summary>
@@ -187,9 +187,9 @@ namespace Walkabout.Views
         /// </summary>
         /// <param name="textRange"><see cref="TextRange"/>instance to test</param>
         /// <returns>test result</returns>
-        private Boolean IsWholeWord(TextRange textRange)
+        private bool IsWholeWord(TextRange textRange)
         {
-            Char[] chars = new Char[1];
+            char[] chars = new char[1];
 
             if (textRange.Start.CompareTo(this.inputDocument.ContentStart) == 0 || textRange.Start.IsAtLineStartPosition)
             {

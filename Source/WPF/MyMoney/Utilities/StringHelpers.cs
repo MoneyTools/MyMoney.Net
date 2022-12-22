@@ -135,7 +135,7 @@ namespace Walkabout.Utilities
                     }
                     char first = word[0];
                     string rest = word.Length > 1 ? word.Substring(1) : string.Empty;
-                    sb.Append(Char.ToUpper(first));
+                    sb.Append(char.ToUpper(first));
                     sb.Append(rest.ToLower());
                 }
             }

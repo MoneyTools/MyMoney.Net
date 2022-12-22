@@ -344,7 +344,7 @@ namespace Walkabout.Controls
             for (int i = 0, n = expression.Length; i < n; i++)
             {
                 char c = expression[i];
-                if (!Char.IsWhiteSpace(c))
+                if (!char.IsWhiteSpace(c))
                 {
                     switch (c)
                     {
@@ -373,12 +373,12 @@ namespace Walkabout.Controls
                             yield return Token.RightParen;
                             break;
                         default:
-                            if (Char.IsDigit(c) || c == '.')
+                            if (char.IsDigit(c) || c == '.')
                             {
                                 this.number = 0;
                                 double decimalFactor = 0;
 
-                                while (Char.IsDigit(c) || c == '.' || c == ',')
+                                while (char.IsDigit(c) || c == '.' || c == ',')
                                 {
                                     if (c == ',')
                                     {

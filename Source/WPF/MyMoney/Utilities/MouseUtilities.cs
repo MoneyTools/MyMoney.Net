@@ -17,8 +17,8 @@ namespace Walkabout.Utilities
         [StructLayout(LayoutKind.Sequential)]
         private struct Win32Point
         {
-            public Int32 X;
-            public Int32 Y;
+            public int X;
+            public int Y;
         };
 
         [DllImport("user32.dll")]

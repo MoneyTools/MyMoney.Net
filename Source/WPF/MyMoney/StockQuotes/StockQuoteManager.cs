@@ -834,7 +834,7 @@ namespace Walkabout.StockQuotes
                         {
                             log.Downloaded.Add(info);
                         }
-                        log.Downloaded.Sort((a, b) => String.Compare(a.Symbol, b.Symbol));
+                        log.Downloaded.Sort((a, b) => string.Compare(a.Symbol, b.Symbol));
                     }
 
 #if PerformanceBlocks

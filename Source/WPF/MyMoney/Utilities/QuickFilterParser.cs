@@ -217,7 +217,7 @@ namespace Walkabout.Utilities
                     token = QuickFilterToken.RightParen;
                     literal = ch.ToString();
                 }
-                else if (Char.IsWhiteSpace(ch))
+                else if (char.IsWhiteSpace(ch))
                 {
                     token = QuickFilterToken.Literal;
                     literal = sb.ToString();

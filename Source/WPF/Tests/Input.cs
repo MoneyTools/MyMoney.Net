@@ -286,7 +286,7 @@ namespace Walkabout.Tests.Interop
                 ki.union.keyboardInput.dwFlags |= Win32.KEYEVENTF_EXTENDEDKEY;
             }
 
-            ki.union.keyboardInput.time = Environment.TickCount & Int32.MaxValue;
+            ki.union.keyboardInput.time = Environment.TickCount & int.MaxValue;
             ki.union.keyboardInput.dwExtraInfo = new IntPtr(0);
             if (0 == Win32.SendInput(1, ref ki, Marshal.SizeOf(ki)))
             {
@@ -307,7 +307,7 @@ namespace Walkabout.Tests.Interop
             ki.union.keyboardInput.wVk = 0;
             ki.union.keyboardInput.wScan = (short)key;
             ki.union.keyboardInput.dwFlags = Win32.KEYEVENTF_UNICODE | (press ? 0 : Win32.KEYEVENTF_KEYUP);
-            ki.union.keyboardInput.time = Environment.TickCount & Int32.MaxValue;
+            ki.union.keyboardInput.time = Environment.TickCount & int.MaxValue;
             ki.union.keyboardInput.dwExtraInfo = new IntPtr(0);
             if (0 == Win32.SendInput(1, ref ki, Marshal.SizeOf(ki)))
             {

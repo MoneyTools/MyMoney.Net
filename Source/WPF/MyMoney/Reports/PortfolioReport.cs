@@ -102,7 +102,7 @@ namespace Walkabout.Reports
         private decimal totalMarketValue;
         private decimal totalGainLoss;
 
-        private void WriteSummaryRow(IReportWriter writer, Color c, String col1, String col2, String col3)
+        private void WriteSummaryRow(IReportWriter writer, Color c, string col1, string col2, string col3)
         {
             writer.StartCell();
             writer.WriteElement(new Rectangle() { Width = 20, Height = 16, Fill = new SolidColorBrush(c) });
@@ -122,7 +122,7 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        private void WriteHeaderRow(IReportWriter writer, String col1, String col2, String col3)
+        private void WriteHeaderRow(IReportWriter writer, string col1, string col2, string col3)
         {
             writer.StartHeaderRow();
             writer.StartCell(1, 2);

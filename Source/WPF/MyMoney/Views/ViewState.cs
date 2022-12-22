@@ -54,7 +54,7 @@ namespace Walkabout.Interfaces.Views
             string s = r.ReadString();
             try
             {
-                return Int32.Parse(s);
+                return int.Parse(s);
             }
             catch (Exception)
             {
@@ -72,11 +72,11 @@ namespace Walkabout.Interfaces.Views
                 {
                     if (r.Name == "Width")
                     {
-                        s.Width = Int32.Parse(r.ReadString());
+                        s.Width = int.Parse(r.ReadString());
                     }
                     else if (r.Name == "Height")
                     {
-                        s.Height = Int32.Parse(r.ReadString());
+                        s.Height = int.Parse(r.ReadString());
                     }
                 }
             }

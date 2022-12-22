@@ -361,7 +361,7 @@ namespace Walkabout.Migrate
 
         public List<string> GetFields()
         {
-            var result = new List<String>();
+            var result = new List<string>();
             for (int i = 0; i < this._fieldCount; i++)
             {
                 result.Add(this._fields[i].ToString());

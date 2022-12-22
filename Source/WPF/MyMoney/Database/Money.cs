@@ -196,7 +196,7 @@ namespace Walkabout.Data
         /// <param name="name">The property that was changed </param>
         /// <param name="type">The type of change being made</param>
         /// <returns>Returns true if the parent container or this container are in batching mode</returns>
-        public virtual bool FireChangeEvent(Object sender, object item, string name, ChangeType type)
+        public virtual bool FireChangeEvent(object sender, object item, string name, ChangeType type)
         {
             return this.FireChangeEvent(sender, new ChangeEventArgs(item, name, type));
         }
@@ -208,7 +208,7 @@ namespace Walkabout.Data
         /// <param name="item">The item that was changed</param>
         /// <param name="type">The type of change being made</param>
         /// <returns>Returns true if the parent container or this container are in batching mode</returns>
-        public virtual bool FireChangeEvent(Object sender, ChangeEventArgs args)
+        public virtual bool FireChangeEvent(object sender, ChangeEventArgs args)
         {
             if (this.GetBatched().Read() == 0)
             {
@@ -379,7 +379,7 @@ namespace Walkabout.Data
                 this.propertyChangeHandlers.AddHandler(value);
                 if (this.propertyChangeHandlers.ListenerCount > 500)
                 {
-                    Debug.WriteLine(String.Format("PropertyChanged handler leak detected on {0}", this.GetType().Name));
+                    Debug.WriteLine(string.Format("PropertyChanged handler leak detected on {0}", this.GetType().Name));
                 }
             }
             remove
@@ -413,7 +413,7 @@ namespace Walkabout.Data
                 this.handlers.AddHandler(value);
                 if (this.handlers.ListenerCount > 500)
                 {
-                    Debug.WriteLine(String.Format("Changed handler leak detected on {0}", this.GetType().Name));
+                    Debug.WriteLine(string.Format("Changed handler leak detected on {0}", this.GetType().Name));
                 }
             }
             remove
@@ -570,7 +570,7 @@ namespace Walkabout.Data
             this.FireChangeEvent(this, new ChangeEventArgs(item, name, type));
         }
 
-        public virtual bool FireChangeEvent(Object sender, ChangeEventArgs args)
+        public virtual bool FireChangeEvent(object sender, ChangeEventArgs args)
         {
             if (this.GetBatched().Read() > 0)
             {
@@ -1088,7 +1088,7 @@ namespace Walkabout.Data
         {
             if (a.Type != AccountType.Brokerage && a.Type != AccountType.Retirement)
             {
-                throw new MoneyException(String.Format("Received information for investment account on line {0}: {1}, but account {2} is of type {3}",
+                throw new MoneyException(string.Format("Received information for investment account on line {0}: {1}, but account {2} is of type {3}",
                     line, lineNumber, a.Name, a.Type.ToString()));
             }
         }
@@ -6292,7 +6292,7 @@ namespace Walkabout.Data
 
 
 
-        public override bool FireChangeEvent(Object sender, object item, string name, ChangeType type)
+        public override bool FireChangeEvent(object sender, object item, string name, ChangeType type)
         {
             if (sender == this && type == ChangeType.Reloaded)
             {
@@ -7165,7 +7165,7 @@ namespace Walkabout.Data
             }
         }
 
-        public override bool FireChangeEvent(Object sender, object item, string name, ChangeType type)
+        public override bool FireChangeEvent(object sender, object item, string name, ChangeType type)
         {
             if (sender == this && type == ChangeType.Reloaded)
             {
@@ -12736,7 +12736,7 @@ namespace Walkabout.Data
             this.transaction = t;
         }
 
-        public override bool FireChangeEvent(Object sender, object item, string name, ChangeType type)
+        public override bool FireChangeEvent(object sender, object item, string name, ChangeType type)
         {
             if (!base.FireChangeEvent(sender, item, name, type))
             {

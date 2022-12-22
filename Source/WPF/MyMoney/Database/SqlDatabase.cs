@@ -1110,46 +1110,46 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating account: " + a.Name);
                     sb.Append("UPDATE Accounts SET ");
-                    sb.Append(String.Format("AccountId='{0}'", DBString(a.AccountId)));
-                    sb.Append(String.Format(",OfxAccountId='{0}'", DBString(a.OfxAccountId)));
-                    sb.Append(String.Format(",Name='{0}'", DBString(a.Name)));
-                    sb.Append(String.Format(",Type={0}", ((int)a.Type).ToString()));
-                    sb.Append(String.Format(",Description='{0}'", DBString(a.Description)));
-                    sb.Append(String.Format(",OnlineAccount={0}", a.OnlineAccount != null ? a.OnlineAccount.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",OpeningBalance={0}", a.OpeningBalance.ToString()));
-                    sb.Append(String.Format(",LastSync={0}", DBDateTime(a.LastSync)));
-                    sb.Append(String.Format(",LastBalance={0}", DBDateTime(a.LastBalance)));
-                    sb.Append(String.Format(",SyncGuid={0}", DBGuid(a.SyncGuid)));
-                    sb.Append(String.Format(",Flags={0}", ((int)a.Flags).ToString()));
-                    sb.Append(String.Format(",Currency='{0}'", DBString(a.Currency)));
-                    sb.Append(String.Format(",WebSite='{0}'", DBString(a.WebSite)));
-                    sb.Append(String.Format(",ReconcileWarning={0}", a.ReconcileWarning));
-                    sb.Append(String.Format(",CategoryIdForPrincipal='{0}'", a.CategoryForPrincipal == null ? "-1" : a.CategoryForPrincipal.Id.ToString()));
-                    sb.Append(String.Format(",CategoryIdForInterest='{0}'", a.CategoryForInterest == null ? "-1" : a.CategoryForInterest.Id.ToString()));
+                    sb.Append(string.Format("AccountId='{0}'", DBString(a.AccountId)));
+                    sb.Append(string.Format(",OfxAccountId='{0}'", DBString(a.OfxAccountId)));
+                    sb.Append(string.Format(",Name='{0}'", DBString(a.Name)));
+                    sb.Append(string.Format(",Type={0}", ((int)a.Type).ToString()));
+                    sb.Append(string.Format(",Description='{0}'", DBString(a.Description)));
+                    sb.Append(string.Format(",OnlineAccount={0}", a.OnlineAccount != null ? a.OnlineAccount.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",OpeningBalance={0}", a.OpeningBalance.ToString()));
+                    sb.Append(string.Format(",LastSync={0}", DBDateTime(a.LastSync)));
+                    sb.Append(string.Format(",LastBalance={0}", DBDateTime(a.LastBalance)));
+                    sb.Append(string.Format(",SyncGuid={0}", DBGuid(a.SyncGuid)));
+                    sb.Append(string.Format(",Flags={0}", ((int)a.Flags).ToString()));
+                    sb.Append(string.Format(",Currency='{0}'", DBString(a.Currency)));
+                    sb.Append(string.Format(",WebSite='{0}'", DBString(a.WebSite)));
+                    sb.Append(string.Format(",ReconcileWarning={0}", a.ReconcileWarning));
+                    sb.Append(string.Format(",CategoryIdForPrincipal='{0}'", a.CategoryForPrincipal == null ? "-1" : a.CategoryForPrincipal.Id.ToString()));
+                    sb.Append(string.Format(",CategoryIdForInterest='{0}'", a.CategoryForInterest == null ? "-1" : a.CategoryForInterest.Id.ToString()));
 
-                    sb.AppendLine(String.Format(" WHERE Id={0};", a.Id));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", a.Id));
                 }
                 else if (a.IsInserted)
                 {
                     sb.AppendLine("-- inserting account: " + a.Name);
                     sb.Append("INSERT INTO Accounts (Id,AccountId,OfxAccountId,Name,Type,Description,OnlineAccount,OpeningBalance,LastSync,LastBalance,SyncGuid,Flags,Currency,WebSite,ReconcileWarning,CategoryIdForPrincipal,CategoryIdForInterest) VALUES (");
-                    sb.Append(String.Format("{0}", a.Id.ToString()));
-                    sb.Append(String.Format(",'{0}'", DBString(a.AccountId)));
-                    sb.Append(String.Format(",'{0}'", DBString(a.OfxAccountId)));
-                    sb.Append(String.Format(",'{0}'", DBString(a.Name)));
-                    sb.Append(String.Format(",{0}", ((int)a.Type).ToString()));
-                    sb.Append(String.Format(",'{0}'", DBString(a.Description)));
-                    sb.Append(String.Format(",{0}", a.OnlineAccount != null ? a.OnlineAccount.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",{0}", a.OpeningBalance.ToString()));
-                    sb.Append(String.Format(",{0}", DBDateTime(a.LastSync)));
-                    sb.Append(String.Format(",{0}", DBDateTime(a.LastBalance)));
-                    sb.Append(String.Format(",{0}", DBGuid(a.SyncGuid)));
-                    sb.Append(String.Format(",{0}", ((int)a.Flags).ToString()));
-                    sb.Append(String.Format(",'{0}'", DBString(a.Currency)));
-                    sb.Append(String.Format(",'{0}'", DBString(a.WebSite)));
-                    sb.Append(String.Format(",{0}", a.ReconcileWarning));
-                    sb.Append(String.Format(",'{0}'", a.CategoryForPrincipal == null ? "-1" : a.CategoryForPrincipal.Id.ToString()));
-                    sb.Append(String.Format(",'{0}'", a.CategoryForInterest == null ? "-1" : a.CategoryForInterest.Id.ToString()));
+                    sb.Append(string.Format("{0}", a.Id.ToString()));
+                    sb.Append(string.Format(",'{0}'", DBString(a.AccountId)));
+                    sb.Append(string.Format(",'{0}'", DBString(a.OfxAccountId)));
+                    sb.Append(string.Format(",'{0}'", DBString(a.Name)));
+                    sb.Append(string.Format(",{0}", ((int)a.Type).ToString()));
+                    sb.Append(string.Format(",'{0}'", DBString(a.Description)));
+                    sb.Append(string.Format(",{0}", a.OnlineAccount != null ? a.OnlineAccount.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",{0}", a.OpeningBalance.ToString()));
+                    sb.Append(string.Format(",{0}", DBDateTime(a.LastSync)));
+                    sb.Append(string.Format(",{0}", DBDateTime(a.LastBalance)));
+                    sb.Append(string.Format(",{0}", DBGuid(a.SyncGuid)));
+                    sb.Append(string.Format(",{0}", ((int)a.Flags).ToString()));
+                    sb.Append(string.Format(",'{0}'", DBString(a.Currency)));
+                    sb.Append(string.Format(",'{0}'", DBString(a.WebSite)));
+                    sb.Append(string.Format(",{0}", a.ReconcileWarning));
+                    sb.Append(string.Format(",'{0}'", a.CategoryForPrincipal == null ? "-1" : a.CategoryForPrincipal.Id.ToString()));
+                    sb.Append(string.Format(",'{0}'", a.CategoryForInterest == null ? "-1" : a.CategoryForInterest.Id.ToString()));
                     sb.AppendLine(");");
                 }
                 else if (a.IsDeleted)
@@ -1248,53 +1248,53 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating online account: " + i.Name);
                     sb.Append("UPDATE OnlineAccounts SET ");
-                    sb.Append(String.Format("Name='{0}'", DBString(i.Name)));
-                    sb.Append(String.Format(",Institution='{0}'", DBString(i.Institution)));
-                    sb.Append(String.Format(",OFX='{0}'", DBString(i.Ofx)));
-                    sb.Append(String.Format(",FID='{0}'", DBString(i.FID)));
-                    sb.Append(String.Format(",UserId='{0}'", DBString(i.UserId)));
-                    sb.Append(String.Format(",Password='{0}'", DBString(i.Password)));
-                    sb.Append(String.Format(",BankId='{0}'", DBString(i.BankId)));
-                    sb.Append(String.Format(",BranchId='{0}'", DBString(i.BranchId)));
-                    sb.Append(String.Format(",BrokerId='{0}'", DBString(i.BrokerId)));
-                    sb.Append(String.Format(",OfxVersion='{0}'", DBString(i.OfxVersion)));
-                    sb.Append(String.Format(",LogoUrl='{0}'", DBString(i.LogoUrl)));
-                    sb.Append(String.Format(",AppId='{0}'", DBString(i.AppId)));
-                    sb.Append(String.Format(",AppVersion='{0}'", DBString(i.AppVersion)));
-                    sb.Append(String.Format(",ClientUid='{0}'", DBString(i.ClientUid)));
-                    sb.Append(String.Format(",UserCred1='{0}'", DBString(i.UserCred1)));
-                    sb.Append(String.Format(",UserCred2='{0}'", DBString(i.UserCred2)));
-                    sb.Append(String.Format(",AuthToken='{0}'", DBString(i.AuthToken)));
-                    sb.Append(String.Format(",AccessKey='{0}'", DBString(i.AccessKey)));
-                    sb.Append(String.Format(",UserKey='{0}'", DBString(i.UserKey)));
-                    sb.Append(String.Format(",UserKeyExpireDate={0}", DBNullableDateTime(i.UserKeyExpireDate)));
-                    sb.AppendLine(String.Format(" WHERE Id={0};", i.Id));
+                    sb.Append(string.Format("Name='{0}'", DBString(i.Name)));
+                    sb.Append(string.Format(",Institution='{0}'", DBString(i.Institution)));
+                    sb.Append(string.Format(",OFX='{0}'", DBString(i.Ofx)));
+                    sb.Append(string.Format(",FID='{0}'", DBString(i.FID)));
+                    sb.Append(string.Format(",UserId='{0}'", DBString(i.UserId)));
+                    sb.Append(string.Format(",Password='{0}'", DBString(i.Password)));
+                    sb.Append(string.Format(",BankId='{0}'", DBString(i.BankId)));
+                    sb.Append(string.Format(",BranchId='{0}'", DBString(i.BranchId)));
+                    sb.Append(string.Format(",BrokerId='{0}'", DBString(i.BrokerId)));
+                    sb.Append(string.Format(",OfxVersion='{0}'", DBString(i.OfxVersion)));
+                    sb.Append(string.Format(",LogoUrl='{0}'", DBString(i.LogoUrl)));
+                    sb.Append(string.Format(",AppId='{0}'", DBString(i.AppId)));
+                    sb.Append(string.Format(",AppVersion='{0}'", DBString(i.AppVersion)));
+                    sb.Append(string.Format(",ClientUid='{0}'", DBString(i.ClientUid)));
+                    sb.Append(string.Format(",UserCred1='{0}'", DBString(i.UserCred1)));
+                    sb.Append(string.Format(",UserCred2='{0}'", DBString(i.UserCred2)));
+                    sb.Append(string.Format(",AuthToken='{0}'", DBString(i.AuthToken)));
+                    sb.Append(string.Format(",AccessKey='{0}'", DBString(i.AccessKey)));
+                    sb.Append(string.Format(",UserKey='{0}'", DBString(i.UserKey)));
+                    sb.Append(string.Format(",UserKeyExpireDate={0}", DBNullableDateTime(i.UserKeyExpireDate)));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", i.Id));
                 }
                 else if (i.IsInserted)
                 {
                     sb.AppendLine("-- inserting online account: " + i.Name);
                     sb.Append("INSERT INTO OnlineAccounts (Id,Name,Institution,OFX,FID,UserId,Password,BankId,BranchId,BrokerId,OfxVersion,LogoUrl,AppId,AppVersion,ClientUid,UserCred1,UserCred2,AuthToken,AccessKey,UserKey,UserKeyExpireDate) VALUES (");
-                    sb.Append(String.Format("{0}", i.Id.ToString()));
-                    sb.Append(String.Format(",'{0}'", DBString(i.Name)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.Institution)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.Ofx)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.FID)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.UserId)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.Password)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.BankId)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.BranchId)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.BrokerId)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.OfxVersion)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.LogoUrl)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.AppId)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.AppVersion)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.ClientUid)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.UserCred1)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.UserCred2)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.AuthToken)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.AccessKey)));
-                    sb.Append(String.Format(",'{0}'", DBString(i.UserKey)));
-                    sb.Append(String.Format(",{0}", DBNullableDateTime(i.UserKeyExpireDate)));
+                    sb.Append(string.Format("{0}", i.Id.ToString()));
+                    sb.Append(string.Format(",'{0}'", DBString(i.Name)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.Institution)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.Ofx)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.FID)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.UserId)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.Password)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.BankId)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.BranchId)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.BrokerId)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.OfxVersion)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.LogoUrl)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.AppId)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.AppVersion)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.ClientUid)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.UserCred1)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.UserCred2)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.AuthToken)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.AccessKey)));
+                    sb.Append(string.Format(",'{0}'", DBString(i.UserKey)));
+                    sb.Append(string.Format(",{0}", DBNullableDateTime(i.UserKeyExpireDate)));
                     sb.AppendLine(");");
                 }
                 else if (i.IsDeleted)
@@ -1447,15 +1447,15 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating payee: " + p.Name);
                     sb.Append("UPDATE Payees SET ");
-                    sb.Append(String.Format("Name='{0}'", DBString(p.Name)));
-                    sb.AppendLine(String.Format(" WHERE Id={0};", p.Id));
+                    sb.Append(string.Format("Name='{0}'", DBString(p.Name)));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", p.Id));
                 }
                 else if (p.IsInserted)
                 {
                     sb.AppendLine("-- inserting payee: " + p.Name);
                     sb.Append("INSERT INTO Payees (Id, Name) VALUES (");
-                    sb.Append(String.Format("{0}", p.Id.ToString()));
-                    sb.Append(String.Format(",'{0}'", DBString(p.Name)));
+                    sb.Append(string.Format("{0}", p.Id.ToString()));
+                    sb.Append(string.Format(",'{0}'", DBString(p.Name)));
                     sb.AppendLine(");");
                 }
                 else if (p.IsDeleted)
@@ -1503,19 +1503,19 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating alias: " + a.Pattern);
                     sb.Append("UPDATE Aliases SET ");
-                    sb.Append(String.Format("Pattern='{0}'", DBString(a.Pattern)));
-                    sb.Append(String.Format(",Payee='{0}'", a.Payee.Id));
-                    sb.Append(String.Format(",Flags='{0}'", ((int)a.AliasType).ToString()));
-                    sb.AppendLine(String.Format(" WHERE Id={0};", a.Id));
+                    sb.Append(string.Format("Pattern='{0}'", DBString(a.Pattern)));
+                    sb.Append(string.Format(",Payee='{0}'", a.Payee.Id));
+                    sb.Append(string.Format(",Flags='{0}'", ((int)a.AliasType).ToString()));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", a.Id));
                 }
                 else if (a.IsInserted)
                 {
                     sb.AppendLine("-- inserting alias: " + a.Pattern);
                     sb.Append("INSERT INTO Aliases (Id, Pattern, Payee, Flags) VALUES (");
-                    sb.Append(String.Format("{0}", a.Id));
-                    sb.Append(String.Format(",'{0}'", DBString(a.Pattern)));
-                    sb.Append(String.Format(",{0}", a.Payee.Id));
-                    sb.Append(String.Format(",{0}", ((int)a.AliasType).ToString()));
+                    sb.Append(string.Format("{0}", a.Id));
+                    sb.Append(string.Format(",'{0}'", DBString(a.Pattern)));
+                    sb.Append(string.Format(",{0}", a.Payee.Id));
+                    sb.Append(string.Format(",{0}", ((int)a.AliasType).ToString()));
                     sb.AppendLine(");");
                 }
                 else if (a.IsDeleted)
@@ -1557,19 +1557,19 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating account alias: " + a.Pattern);
                     sb.Append("UPDATE AccountAliases SET ");
-                    sb.Append(String.Format("Pattern='{0}'", DBString(a.Pattern)));
-                    sb.Append(String.Format(",AccountId='{0}'", a.AccountId));
-                    sb.Append(String.Format(",Flags='{0}'", ((int)a.AliasType).ToString()));
-                    sb.AppendLine(String.Format(" WHERE Id={0};", a.Id));
+                    sb.Append(string.Format("Pattern='{0}'", DBString(a.Pattern)));
+                    sb.Append(string.Format(",AccountId='{0}'", a.AccountId));
+                    sb.Append(string.Format(",Flags='{0}'", ((int)a.AliasType).ToString()));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", a.Id));
                 }
                 else if (a.IsInserted)
                 {
                     sb.AppendLine("-- inserting alias: " + a.Pattern);
                     sb.Append("INSERT INTO AccountAliases (Id, Pattern, AccountId, Flags) VALUES (");
-                    sb.Append(String.Format("{0}", a.Id));
-                    sb.Append(String.Format(",'{0}'", DBString(a.Pattern)));
-                    sb.Append(String.Format(",'{0}'", DBString(a.AccountId)));
-                    sb.Append(String.Format(",{0}", ((int)a.AliasType).ToString()));
+                    sb.Append(string.Format("{0}", a.Id));
+                    sb.Append(string.Format(",'{0}'", DBString(a.Pattern)));
+                    sb.Append(string.Format(",'{0}'", DBString(a.AccountId)));
+                    sb.Append(string.Format(",{0}", ((int)a.AliasType).ToString()));
                     sb.AppendLine(");");
                 }
                 else if (a.IsDeleted)
@@ -1612,17 +1612,17 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating transaction extra: " + e.Transaction);
                     sb.Append("UPDATE TransactionExtras SET ");
-                    sb.Append(String.Format("[Transaction]={0}", e.Transaction));
-                    sb.Append(String.Format(",[TaxYear]={0}", e.TaxYear));
+                    sb.Append(string.Format("[Transaction]={0}", e.Transaction));
+                    sb.Append(string.Format(",[TaxYear]={0}", e.TaxYear));
                     if (e.TaxDate.HasValue)
                     {
-                        sb.Append(String.Format(",[TaxDate]={0}", DBDateTime(e.TaxDate.Value)));
+                        sb.Append(string.Format(",[TaxDate]={0}", DBDateTime(e.TaxDate.Value)));
                     }
                     else
                     {
                         sb.Append(",[TaxDate]=NULL");
                     }
-                    sb.AppendLine(String.Format(" WHERE Id={0};", e.Id));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", e.Id));
                 }
                 else if (e.IsInserted)
                 {
@@ -1635,12 +1635,12 @@ namespace Walkabout.Data
                     {
                         sb.Append("INSERT INTO TransactionExtras ([Id], [Transaction], [TaxYear]) VALUES (");
                     }
-                    sb.Append(String.Format("{0}", e.Id));
-                    sb.Append(String.Format(",{0}", e.Transaction));
-                    sb.Append(String.Format(",{0}", e.TaxYear));
+                    sb.Append(string.Format("{0}", e.Id));
+                    sb.Append(string.Format(",{0}", e.Transaction));
+                    sb.Append(string.Format(",{0}", e.TaxYear));
                     if (e.TaxDate.HasValue)
                     {
-                        sb.Append(String.Format(",{0}", DBDateTime(e.TaxDate.Value)));
+                        sb.Append(string.Format(",{0}", DBDateTime(e.TaxDate.Value)));
                     }
                     sb.AppendLine(");");
                 }
@@ -1736,26 +1736,26 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating RentalBuildings : " + p.Name);
                     sb.Append("UPDATE RentBuildings SET ");
-                    sb.Append(String.Format("Name='{0}'", DBString(p.Name)));
-                    sb.Append(String.Format(", Address='{0}'", DBString(p.Address)));
-                    sb.Append(String.Format(", PurchasedPrice='{0}'", p.PurchasedPrice));
-                    sb.Append(String.Format(", LandValue='{0}'", p.LandValue));
-                    sb.Append(String.Format(", EstimatedValue='{0}'", p.EstimatedValue));
-                    sb.Append(String.Format(", CategoryForIncome='{0}'", p.CategoryForIncome));
-                    sb.Append(String.Format(", CategoryForTaxes='{0}'", p.CategoryForTaxes));
-                    sb.Append(String.Format(", CategoryForInterest='{0}'", p.CategoryForInterest));
-                    sb.Append(String.Format(", CategoryForRepairs='{0}'", p.CategoryForRepairs));
-                    sb.Append(String.Format(", CategoryForMaintenance='{0}'", p.CategoryForMaintenance));
-                    sb.Append(String.Format(", CategoryForManagement='{0}'", p.CategoryForManagement));
+                    sb.Append(string.Format("Name='{0}'", DBString(p.Name)));
+                    sb.Append(string.Format(", Address='{0}'", DBString(p.Address)));
+                    sb.Append(string.Format(", PurchasedPrice='{0}'", p.PurchasedPrice));
+                    sb.Append(string.Format(", LandValue='{0}'", p.LandValue));
+                    sb.Append(string.Format(", EstimatedValue='{0}'", p.EstimatedValue));
+                    sb.Append(string.Format(", CategoryForIncome='{0}'", p.CategoryForIncome));
+                    sb.Append(string.Format(", CategoryForTaxes='{0}'", p.CategoryForTaxes));
+                    sb.Append(string.Format(", CategoryForInterest='{0}'", p.CategoryForInterest));
+                    sb.Append(string.Format(", CategoryForRepairs='{0}'", p.CategoryForRepairs));
+                    sb.Append(string.Format(", CategoryForMaintenance='{0}'", p.CategoryForMaintenance));
+                    sb.Append(string.Format(", CategoryForManagement='{0}'", p.CategoryForManagement));
 
-                    sb.Append(String.Format(", OwnershipName1='{0}'", DBString(p.OwnershipName1)));
-                    sb.Append(String.Format(", OwnershipName2='{0}'", DBString(p.OwnershipName2)));
+                    sb.Append(string.Format(", OwnershipName1='{0}'", DBString(p.OwnershipName1)));
+                    sb.Append(string.Format(", OwnershipName2='{0}'", DBString(p.OwnershipName2)));
 
-                    sb.Append(String.Format(", OwnershipPercentage1='{0}'", p.OwnershipPercentage1));
-                    sb.Append(String.Format(", OwnershipPercentage2='{0}'", p.OwnershipPercentage2));
+                    sb.Append(string.Format(", OwnershipPercentage1='{0}'", p.OwnershipPercentage1));
+                    sb.Append(string.Format(", OwnershipPercentage2='{0}'", p.OwnershipPercentage2));
 
-                    sb.Append(String.Format(", Note='{0}'", DBString(p.Note)));
-                    sb.AppendLine(String.Format(" WHERE Id={0};", p.Id));
+                    sb.Append(string.Format(", Note='{0}'", DBString(p.Note)));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", p.Id));
                 }
                 else if (p.IsInserted)
                 {
@@ -1780,24 +1780,24 @@ namespace Walkabout.Data
                                 OwnershipPercentage2,
                                 Note) VALUES ("
                         );
-                    sb.Append(String.Format("'{0}'", p.Id.ToString()));
-                    sb.Append(String.Format(", '{0}'", DBString(p.Name)));
-                    sb.Append(String.Format(", '{0}'", DBString(p.Address)));
-                    sb.Append(String.Format(",  {0}", DBDateTime(p.PurchasedDate)));
-                    sb.Append(String.Format(", '{0}'", p.PurchasedPrice));
-                    sb.Append(String.Format(", '{0}'", p.LandValue));
-                    sb.Append(String.Format(", '{0}'", p.EstimatedValue));
-                    sb.Append(String.Format(", '{0}'", p.CategoryForIncome));
-                    sb.Append(String.Format(", '{0}'", p.CategoryForTaxes));
-                    sb.Append(String.Format(", '{0}'", p.CategoryForInterest));
-                    sb.Append(String.Format(", '{0}'", p.CategoryForRepairs));
-                    sb.Append(String.Format(", '{0}'", p.CategoryForMaintenance));
-                    sb.Append(String.Format(", '{0}'", p.CategoryForManagement));
-                    sb.Append(String.Format(", '{0}'", DBString(p.OwnershipName1)));
-                    sb.Append(String.Format(", '{0}'", DBString(p.OwnershipName2)));
-                    sb.Append(String.Format(", '{0}'", p.OwnershipPercentage1));
-                    sb.Append(String.Format(", '{0}'", p.OwnershipPercentage2));
-                    sb.Append(String.Format(", '{0}'", DBString(p.Note)));
+                    sb.Append(string.Format("'{0}'", p.Id.ToString()));
+                    sb.Append(string.Format(", '{0}'", DBString(p.Name)));
+                    sb.Append(string.Format(", '{0}'", DBString(p.Address)));
+                    sb.Append(string.Format(",  {0}", DBDateTime(p.PurchasedDate)));
+                    sb.Append(string.Format(", '{0}'", p.PurchasedPrice));
+                    sb.Append(string.Format(", '{0}'", p.LandValue));
+                    sb.Append(string.Format(", '{0}'", p.EstimatedValue));
+                    sb.Append(string.Format(", '{0}'", p.CategoryForIncome));
+                    sb.Append(string.Format(", '{0}'", p.CategoryForTaxes));
+                    sb.Append(string.Format(", '{0}'", p.CategoryForInterest));
+                    sb.Append(string.Format(", '{0}'", p.CategoryForRepairs));
+                    sb.Append(string.Format(", '{0}'", p.CategoryForMaintenance));
+                    sb.Append(string.Format(", '{0}'", p.CategoryForManagement));
+                    sb.Append(string.Format(", '{0}'", DBString(p.OwnershipName1)));
+                    sb.Append(string.Format(", '{0}'", DBString(p.OwnershipName2)));
+                    sb.Append(string.Format(", '{0}'", p.OwnershipPercentage1));
+                    sb.Append(string.Format(", '{0}'", p.OwnershipPercentage2));
+                    sb.Append(string.Format(", '{0}'", DBString(p.Note)));
                     sb.AppendLine(");");
                 }
                 else if (p.IsDeleted)
@@ -1867,20 +1867,20 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating RentUnits : " + x.Name);
                     sb.Append("UPDATE RentUnits SET ");
-                    sb.Append(String.Format("Name='{0}'", DBString(x.Name)));
-                    sb.Append(String.Format(", Renter='{0}'", DBString(x.Renter)));
-                    sb.Append(String.Format(", Note='{0}'", DBString(x.Note)));
-                    sb.AppendLine(String.Format(" WHERE Id={0} AND Building={1};", x.Id, x.Building));
+                    sb.Append(string.Format("Name='{0}'", DBString(x.Name)));
+                    sb.Append(string.Format(", Renter='{0}'", DBString(x.Renter)));
+                    sb.Append(string.Format(", Note='{0}'", DBString(x.Note)));
+                    sb.AppendLine(string.Format(" WHERE Id={0} AND Building={1};", x.Id, x.Building));
                 }
                 else if (x.IsInserted)
                 {
                     sb.AppendLine("-- inserting RentUnits : " + x.Name);
                     sb.Append("INSERT INTO RentUnits (Id, Building, Name, Renter, Note) VALUES (");
-                    sb.Append(String.Format("{0}", x.Id.ToString()));
-                    sb.Append(String.Format(", {0}", x.Building.ToString()));
-                    sb.Append(String.Format(",'{0}'", DBString(x.Name)));
-                    sb.Append(String.Format(",'{0}'", DBString(x.Renter)));
-                    sb.Append(String.Format(",'{0}'", DBString(x.Note)));
+                    sb.Append(string.Format("{0}", x.Id.ToString()));
+                    sb.Append(string.Format(", {0}", x.Building.ToString()));
+                    sb.Append(string.Format(",'{0}'", DBString(x.Name)));
+                    sb.Append(string.Format(",'{0}'", DBString(x.Renter)));
+                    sb.Append(string.Format(",'{0}'", DBString(x.Note)));
                     sb.AppendLine(");");
                 }
                 else if (x.IsDeleted)
@@ -1961,23 +1961,23 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating LoanPayments : " + i.Id);
                     sb.Append("UPDATE LoanPayments SET ");
-                    sb.Append(String.Format("Date={0}", DBDateTime(i.Date)));
-                    sb.Append(String.Format(",AccountId={0}", i.AccountId.ToString()));
-                    sb.Append(String.Format(",Principal='{0}'", i.Principal.ToString()));
-                    sb.Append(String.Format(",Interest='{0}'", i.Interest.ToString()));
-                    sb.Append(String.Format(",Memo='{0}'", i.Memo));
-                    sb.AppendLine(String.Format(" WHERE Id={0};", i.Id));
+                    sb.Append(string.Format("Date={0}", DBDateTime(i.Date)));
+                    sb.Append(string.Format(",AccountId={0}", i.AccountId.ToString()));
+                    sb.Append(string.Format(",Principal='{0}'", i.Principal.ToString()));
+                    sb.Append(string.Format(",Interest='{0}'", i.Interest.ToString()));
+                    sb.Append(string.Format(",Memo='{0}'", i.Memo));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", i.Id));
                 }
                 else if (i.IsInserted)
                 {
                     sb.AppendLine("-- inserting LoanPayments : " + i.Id);
                     sb.Append("INSERT INTO LoanPayments (Id,AccountId,Date,Principal,Interest,Memo) VALUES (");
-                    sb.Append(String.Format("{0}", i.Id.ToString()));
-                    sb.Append(String.Format(",{0}", i.AccountId.ToString()));
-                    sb.Append(String.Format(",{0}", DBDateTime(i.Date)));
-                    sb.Append(String.Format(",{0}", i.Principal));
-                    sb.Append(String.Format(",{0}", i.Interest));
-                    sb.Append(String.Format(",'{0}'", DBString(i.Memo)));
+                    sb.Append(string.Format("{0}", i.Id.ToString()));
+                    sb.Append(string.Format(",{0}", i.AccountId.ToString()));
+                    sb.Append(string.Format(",{0}", DBDateTime(i.Date)));
+                    sb.Append(string.Format(",{0}", i.Principal));
+                    sb.Append(string.Format(",{0}", i.Interest));
+                    sb.Append(string.Format(",'{0}'", DBString(i.Memo)));
                     sb.AppendLine(");");
                 }
                 else if (i.IsDeleted)
@@ -2078,32 +2078,32 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- udpating Categories : " + c.Name);
                     sb.Append("UPDATE Categories SET ");
-                    sb.Append(String.Format("Name='{0}'", DBString(c.Name)));
-                    sb.Append(String.Format(",Description='{0}'", DBString(c.Description)));
-                    sb.Append(String.Format(",Type={0}", (int)c.Type));
-                    sb.Append(String.Format(",ParentId={0}", c.ParentCategory != null ? c.ParentCategory.Id : -1));
-                    sb.Append(String.Format(",Budget={0}", c.Budget));
-                    sb.Append(String.Format(",Frequency={0}", (int)c.BudgetRange));
-                    sb.Append(String.Format(",Balance={0}", c.Balance));
-                    sb.Append(String.Format(",Color='{0}'", c.Color));
-                    sb.Append(String.Format(",TaxRefNum='{0}'", c.TaxRefNum));
+                    sb.Append(string.Format("Name='{0}'", DBString(c.Name)));
+                    sb.Append(string.Format(",Description='{0}'", DBString(c.Description)));
+                    sb.Append(string.Format(",Type={0}", (int)c.Type));
+                    sb.Append(string.Format(",ParentId={0}", c.ParentCategory != null ? c.ParentCategory.Id : -1));
+                    sb.Append(string.Format(",Budget={0}", c.Budget));
+                    sb.Append(string.Format(",Frequency={0}", (int)c.BudgetRange));
+                    sb.Append(string.Format(",Balance={0}", c.Balance));
+                    sb.Append(string.Format(",Color='{0}'", c.Color));
+                    sb.Append(string.Format(",TaxRefNum='{0}'", c.TaxRefNum));
 
-                    sb.AppendLine(String.Format(" WHERE Id={0};", c.Id));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", c.Id));
                 }
                 else if (c.IsInserted)
                 {
                     sb.AppendLine("-- inserting Categories : " + c.Name);
                     sb.Append("INSERT INTO Categories (Id,Name,Description,Type,ParentId,Budget,Frequency,Balance,Color,TaxRefNum) VALUES (");
-                    sb.Append(String.Format("{0}", c.Id.ToString()));
-                    sb.Append(String.Format(",'{0}'", DBString(c.Name)));
-                    sb.Append(String.Format(",'{0}'", DBString(c.Description)));
-                    sb.Append(String.Format(",{0}", (int)c.Type));
-                    sb.Append(String.Format(",{0}", c.ParentCategory != null ? c.ParentCategory.Id : -1));
-                    sb.Append(String.Format(",{0}", c.Budget.ToString()));
-                    sb.Append(String.Format(",{0}", (int)c.BudgetRange));
-                    sb.Append(String.Format(",{0}", c.Balance));
-                    sb.Append(String.Format(",'{0}'", c.Color));
-                    sb.Append(String.Format(",'{0}'", c.TaxRefNum));
+                    sb.Append(string.Format("{0}", c.Id.ToString()));
+                    sb.Append(string.Format(",'{0}'", DBString(c.Name)));
+                    sb.Append(string.Format(",'{0}'", DBString(c.Description)));
+                    sb.Append(string.Format(",{0}", (int)c.Type));
+                    sb.Append(string.Format(",{0}", c.ParentCategory != null ? c.ParentCategory.Id : -1));
+                    sb.Append(string.Format(",{0}", c.Budget.ToString()));
+                    sb.Append(string.Format(",{0}", (int)c.BudgetRange));
+                    sb.Append(string.Format(",{0}", c.Balance));
+                    sb.Append(string.Format(",'{0}'", c.Color));
+                    sb.Append(string.Format(",'{0}'", c.TaxRefNum));
                     sb.AppendLine(");");
                 }
                 else if (c.IsDeleted)
@@ -2179,21 +2179,21 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- inserting Currencies : " + s.Name);
                     sb.Append("UPDATE Currencies SET ");
-                    sb.Append(String.Format("Symbol='{0}'", DBString(s.Symbol)));
-                    sb.Append(String.Format(",Name='{0}'", DBString(s.Name)));
-                    sb.Append(String.Format(",Ratio={0}", s.Ratio));
-                    sb.Append(String.Format(",LastRatio={0}", s.LastRatio));
-                    sb.AppendLine(String.Format(" WHERE Id={0};", s.Id));
+                    sb.Append(string.Format("Symbol='{0}'", DBString(s.Symbol)));
+                    sb.Append(string.Format(",Name='{0}'", DBString(s.Name)));
+                    sb.Append(string.Format(",Ratio={0}", s.Ratio));
+                    sb.Append(string.Format(",LastRatio={0}", s.LastRatio));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", s.Id));
                 }
                 else if (s.IsInserted)
                 {
                     sb.AppendLine("-- updating Currencies : " + s.Name);
                     sb.Append("INSERT INTO Currencies VALUES (");
-                    sb.Append(String.Format("{0}", s.Id.ToString()));
-                    sb.Append(String.Format(",'{0}'", DBString(s.Name)));
-                    sb.Append(String.Format(",'{0}'", DBString(s.Symbol)));
-                    sb.Append(String.Format(",{0}", s.Ratio));
-                    sb.Append(String.Format(",{0}", s.LastRatio));
+                    sb.Append(string.Format("{0}", s.Id.ToString()));
+                    sb.Append(string.Format(",'{0}'", DBString(s.Name)));
+                    sb.Append(string.Format(",'{0}'", DBString(s.Symbol)));
+                    sb.Append(string.Format(",{0}", s.Ratio));
+                    sb.Append(string.Format(",{0}", s.LastRatio));
                     sb.AppendLine(");");
                 }
                 else if (s.IsDeleted)
@@ -2281,29 +2281,29 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating Securities : " + s.Name);
                     sb.Append("UPDATE Securities SET ");
-                    sb.Append(String.Format("Name='{0}'", DBString(s.Name)));
-                    sb.Append(String.Format(",Symbol='{0}'", DBString(s.Symbol)));
-                    sb.Append(String.Format(",Price={0}", s.Price));
-                    sb.Append(String.Format(",LastPrice={0}", s.LastPrice));
-                    sb.Append(String.Format(",CuspId='{0}'", s.CuspId));
-                    sb.Append(String.Format(",SecurityType={0}", (int)s.SecurityType));
-                    sb.Append(String.Format(",Taxable={0}", (byte)s.Taxable));
-                    sb.Append(String.Format(",PriceDate={0}", DBDateTime(s.PriceDate)));
-                    sb.AppendLine(String.Format(" WHERE Id={0};", s.Id));
+                    sb.Append(string.Format("Name='{0}'", DBString(s.Name)));
+                    sb.Append(string.Format(",Symbol='{0}'", DBString(s.Symbol)));
+                    sb.Append(string.Format(",Price={0}", s.Price));
+                    sb.Append(string.Format(",LastPrice={0}", s.LastPrice));
+                    sb.Append(string.Format(",CuspId='{0}'", s.CuspId));
+                    sb.Append(string.Format(",SecurityType={0}", (int)s.SecurityType));
+                    sb.Append(string.Format(",Taxable={0}", (byte)s.Taxable));
+                    sb.Append(string.Format(",PriceDate={0}", DBDateTime(s.PriceDate)));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", s.Id));
                 }
                 else if (s.IsInserted)
                 {
                     sb.AppendLine("-- inserting Securities : " + s.Name);
                     sb.Append("INSERT INTO Securities VALUES (");
-                    sb.Append(String.Format("{0}", s.Id.ToString()));
-                    sb.Append(String.Format(",'{0}'", DBString(s.Name)));
-                    sb.Append(String.Format(",'{0}'", DBString(s.Symbol)));
-                    sb.Append(String.Format(",{0}", s.Price));
-                    sb.Append(String.Format(",{0}", s.LastPrice));
-                    sb.Append(String.Format(",'{0}'", s.CuspId));
-                    sb.Append(String.Format(",{0}", (int)s.SecurityType));
-                    sb.Append(String.Format(",{0}", (byte)s.Taxable));
-                    sb.Append(String.Format(",{0}", DBDateTime(s.PriceDate)));
+                    sb.Append(string.Format("{0}", s.Id.ToString()));
+                    sb.Append(string.Format(",'{0}'", DBString(s.Name)));
+                    sb.Append(string.Format(",'{0}'", DBString(s.Symbol)));
+                    sb.Append(string.Format(",{0}", s.Price));
+                    sb.Append(string.Format(",{0}", s.LastPrice));
+                    sb.Append(string.Format(",'{0}'", s.CuspId));
+                    sb.Append(string.Format(",{0}", (int)s.SecurityType));
+                    sb.Append(string.Format(",{0}", (byte)s.Taxable));
+                    sb.Append(string.Format(",{0}", DBDateTime(s.PriceDate)));
                     sb.AppendLine(");");
                 }
                 else if (s.IsDeleted)
@@ -2375,11 +2375,11 @@ namespace Walkabout.Data
                     {
                         sb.AppendLine("-- updating StockSplits for : " + s.Security.Name);
                         sb.Append("UPDATE StockSplits SET ");
-                        sb.Append(String.Format("Date={0}", DBDateTime(s.Date)));
-                        sb.Append(String.Format(",Security={0}", s.Security.Id));
-                        sb.Append(String.Format(",Numerator={0}", s.Numerator));
-                        sb.Append(String.Format(",Denominator={0}", s.Denominator));
-                        sb.AppendLine(String.Format(" WHERE Id={0};", s.Id));
+                        sb.Append(string.Format("Date={0}", DBDateTime(s.Date)));
+                        sb.Append(string.Format(",Security={0}", s.Security.Id));
+                        sb.Append(string.Format(",Numerator={0}", s.Numerator));
+                        sb.Append(string.Format(",Denominator={0}", s.Denominator));
+                        sb.AppendLine(string.Format(" WHERE Id={0};", s.Id));
                     }
                 }
                 else if (s.IsInserted && s.Date != DateTime.MinValue)
@@ -2388,11 +2388,11 @@ namespace Walkabout.Data
                     {
                         sb.AppendLine("-- inserting StockSplits for : " + s.Security.Name);
                         sb.Append("INSERT INTO StockSplits VALUES (");
-                        sb.Append(String.Format("{0}", s.Id.ToString()));
-                        sb.Append(String.Format(",{0}", DBDateTime(s.Date)));
-                        sb.Append(String.Format(",{0}", s.Security.Id));
-                        sb.Append(String.Format(",{0}", s.Numerator));
-                        sb.Append(String.Format(",{0}", s.Denominator));
+                        sb.Append(string.Format("{0}", s.Id.ToString()));
+                        sb.Append(string.Format(",{0}", DBDateTime(s.Date)));
+                        sb.Append(string.Format(",{0}", s.Security.Id));
+                        sb.Append(string.Format(",{0}", s.Numerator));
+                        sb.Append(string.Format(",{0}", s.Denominator));
                         sb.AppendLine(");");
                     }
                 }
@@ -2665,24 +2665,24 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating Transaction : " + t.Number);
                     sb.Append("UPDATE Transactions SET ");
-                    sb.Append(String.Format("Number='{0}'", DBString(t.Number)));
-                    sb.Append(String.Format(",Account={0}", t.Account.Id));
-                    sb.Append(String.Format(",Date={0}", DBDateTime(t.Date)));
-                    sb.Append(String.Format(",Amount={0}", DBDecimal(t.Amount)));
-                    sb.Append(String.Format(",Status={0}", ((int)t.Status).ToString()));
-                    sb.Append(String.Format(",Memo='{0}'", DBString(t.Memo)));
-                    sb.Append(String.Format(",Payee={0}", t.Payee != null ? t.Payee.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",Category={0}", t.Category != null ? t.Category.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",Transfer={0}", t.Transfer != null && t.Transfer.Transaction != null ? t.Transfer.Transaction.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",TransferSplit={0}", t.Transfer != null && t.Transfer.Split != null ? t.Transfer.Split.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",FITID='{0}'", DBString(t.FITID)));
-                    sb.Append(String.Format(",SalesTax={0}", DBDecimal(t.SalesTax)));
-                    sb.Append(String.Format(",Flags={0}", (int)t.Flags));
-                    sb.Append(String.Format(",ReconciledDate={0}", DBNullableDateTime(t.ReconciledDate)));
-                    sb.Append(String.Format(",BudgetBalanceDate={0}", DBNullableDateTime(t.BudgetBalanceDate)));
-                    sb.Append(String.Format(",MergeDate={0}", DBNullableDateTime(t.MergeDate)));
-                    sb.Append(String.Format(",OriginalPayee='{0}'", DBString(t.OriginalPayee)));
-                    sb.AppendLine(String.Format(" WHERE Id={0};", t.Id));
+                    sb.Append(string.Format("Number='{0}'", DBString(t.Number)));
+                    sb.Append(string.Format(",Account={0}", t.Account.Id));
+                    sb.Append(string.Format(",Date={0}", DBDateTime(t.Date)));
+                    sb.Append(string.Format(",Amount={0}", DBDecimal(t.Amount)));
+                    sb.Append(string.Format(",Status={0}", ((int)t.Status).ToString()));
+                    sb.Append(string.Format(",Memo='{0}'", DBString(t.Memo)));
+                    sb.Append(string.Format(",Payee={0}", t.Payee != null ? t.Payee.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",Category={0}", t.Category != null ? t.Category.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",Transfer={0}", t.Transfer != null && t.Transfer.Transaction != null ? t.Transfer.Transaction.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",TransferSplit={0}", t.Transfer != null && t.Transfer.Split != null ? t.Transfer.Split.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",FITID='{0}'", DBString(t.FITID)));
+                    sb.Append(string.Format(",SalesTax={0}", DBDecimal(t.SalesTax)));
+                    sb.Append(string.Format(",Flags={0}", (int)t.Flags));
+                    sb.Append(string.Format(",ReconciledDate={0}", DBNullableDateTime(t.ReconciledDate)));
+                    sb.Append(string.Format(",BudgetBalanceDate={0}", DBNullableDateTime(t.BudgetBalanceDate)));
+                    sb.Append(string.Format(",MergeDate={0}", DBNullableDateTime(t.MergeDate)));
+                    sb.Append(string.Format(",OriginalPayee='{0}'", DBString(t.OriginalPayee)));
+                    sb.AppendLine(string.Format(" WHERE Id={0};", t.Id));
                 }
                 else if (t.IsInserted)
                 {
@@ -2693,24 +2693,24 @@ namespace Walkabout.Data
                     }
                     sb.AppendLine("-- inserting Transaction : " + t.Number);
                     sb.Append("INSERT INTO Transactions ([Id],[Number],[Account],[Date],[Amount],[Status],[Memo],[Payee],[Category],[Transfer],[TransferSplit],[FITID],[SalesTax],[Flags],[ReconciledDate],[BudgetBalanceDate],[MergeDate],[OriginalPayee]) VALUES (");
-                    sb.Append(String.Format("{0}", t.Id.ToString()));
-                    sb.Append(String.Format(",'{0}'", DBString(t.Number)));
-                    sb.Append(String.Format(",{0}", t.Account.Id));
-                    sb.Append(String.Format(",{0}", DBDateTime(t.Date)));
-                    sb.Append(String.Format(",{0}", DBDecimal(t.Amount)));
-                    sb.Append(String.Format(",{0}", ((int)t.Status).ToString()));
-                    sb.Append(String.Format(",'{0}'", DBString(t.Memo)));
-                    sb.Append(String.Format(",{0}", t.Payee != null ? t.Payee.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",{0}", t.Category != null ? t.Category.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",{0}", t.Transfer != null && t.Transfer.Transaction != null ? t.Transfer.Transaction.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",{0}", t.Transfer != null && t.Transfer.Split != null ? t.Transfer.Split.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",'{0}'", DBString(t.FITID)));
-                    sb.Append(String.Format(",{0}", DBDecimal(t.SalesTax)));
-                    sb.Append(String.Format(",{0}", (int)t.Flags));
-                    sb.Append(String.Format(",{0}", DBNullableDateTime(t.ReconciledDate)));
-                    sb.Append(String.Format(",{0}", DBNullableDateTime(t.BudgetBalanceDate)));
-                    sb.Append(String.Format(",{0}", DBNullableDateTime(t.MergeDate)));
-                    sb.Append(String.Format(",'{0}'", DBString(t.OriginalPayee)));
+                    sb.Append(string.Format("{0}", t.Id.ToString()));
+                    sb.Append(string.Format(",'{0}'", DBString(t.Number)));
+                    sb.Append(string.Format(",{0}", t.Account.Id));
+                    sb.Append(string.Format(",{0}", DBDateTime(t.Date)));
+                    sb.Append(string.Format(",{0}", DBDecimal(t.Amount)));
+                    sb.Append(string.Format(",{0}", ((int)t.Status).ToString()));
+                    sb.Append(string.Format(",'{0}'", DBString(t.Memo)));
+                    sb.Append(string.Format(",{0}", t.Payee != null ? t.Payee.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",{0}", t.Category != null ? t.Category.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",{0}", t.Transfer != null && t.Transfer.Transaction != null ? t.Transfer.Transaction.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",{0}", t.Transfer != null && t.Transfer.Split != null ? t.Transfer.Split.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",'{0}'", DBString(t.FITID)));
+                    sb.Append(string.Format(",{0}", DBDecimal(t.SalesTax)));
+                    sb.Append(string.Format(",{0}", (int)t.Flags));
+                    sb.Append(string.Format(",{0}", DBNullableDateTime(t.ReconciledDate)));
+                    sb.Append(string.Format(",{0}", DBNullableDateTime(t.BudgetBalanceDate)));
+                    sb.Append(string.Format(",{0}", DBNullableDateTime(t.MergeDate)));
+                    sb.Append(string.Format(",'{0}'", DBString(t.OriginalPayee)));
                     sb.AppendLine(");");
                 }
                 else if (t.IsDeleted)
@@ -2757,28 +2757,28 @@ namespace Walkabout.Data
                 {
                     sb.AppendLine("-- updating Split : " + s.Id);
                     sb.Append("UPDATE [Splits] SET ");
-                    sb.Append(String.Format("[Amount]={0}", s.Amount));
-                    sb.Append(String.Format(",[Category]={0}", s.Category != null ? s.Category.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",[Memo]='{0}'", DBString(s.Memo)));
-                    sb.Append(String.Format(",[Transfer]={0}", s.Transfer != null && s.Transfer.Transaction != null ? s.Transfer.Transaction.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",[Payee]={0}", s.Payee != null ? s.Payee.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",Flags={0}", (int)s.Flags));
-                    sb.Append(String.Format(",BudgetBalanceDate={0}", DBNullableDateTime(s.BudgetBalanceDate)));
-                    sb.AppendLine(String.Format(" WHERE [Id]={0} AND [Transaction]={1};", s.Id, s.Transaction.Id));
+                    sb.Append(string.Format("[Amount]={0}", s.Amount));
+                    sb.Append(string.Format(",[Category]={0}", s.Category != null ? s.Category.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",[Memo]='{0}'", DBString(s.Memo)));
+                    sb.Append(string.Format(",[Transfer]={0}", s.Transfer != null && s.Transfer.Transaction != null ? s.Transfer.Transaction.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",[Payee]={0}", s.Payee != null ? s.Payee.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",Flags={0}", (int)s.Flags));
+                    sb.Append(string.Format(",BudgetBalanceDate={0}", DBNullableDateTime(s.BudgetBalanceDate)));
+                    sb.AppendLine(string.Format(" WHERE [Id]={0} AND [Transaction]={1};", s.Id, s.Transaction.Id));
                 }
                 else if (s.IsInserted)
                 {
                     sb.AppendLine("-- inserting Split : " + s.Id);
                     sb.Append("INSERT INTO [Splits] ([Id],[Transaction],[Amount],[Category],[Memo],[Transfer],[Payee],[Flags],[BudgetBalanceDate]) VALUES (");
-                    sb.Append(String.Format("{0}", s.Id));
-                    sb.Append(String.Format(",{0}", s.Transaction.Id.ToString()));
-                    sb.Append(String.Format(",{0}", s.Amount));
-                    sb.Append(String.Format(",{0}", s.Category != null ? s.Category.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",'{0}'", DBString(s.Memo)));
-                    sb.Append(String.Format(",{0}", s.Transfer != null && s.Transfer.Transaction != null ? s.Transfer.Transaction.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",{0}", s.Payee != null ? s.Payee.Id.ToString() : "-1"));
-                    sb.Append(String.Format(",{0}", (int)s.Flags));
-                    sb.Append(String.Format(",{0}", DBNullableDateTime(s.BudgetBalanceDate)));
+                    sb.Append(string.Format("{0}", s.Id));
+                    sb.Append(string.Format(",{0}", s.Transaction.Id.ToString()));
+                    sb.Append(string.Format(",{0}", s.Amount));
+                    sb.Append(string.Format(",{0}", s.Category != null ? s.Category.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",'{0}'", DBString(s.Memo)));
+                    sb.Append(string.Format(",{0}", s.Transfer != null && s.Transfer.Transaction != null ? s.Transfer.Transaction.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",{0}", s.Payee != null ? s.Payee.Id.ToString() : "-1"));
+                    sb.Append(string.Format(",{0}", (int)s.Flags));
+                    sb.Append(string.Format(",{0}", DBNullableDateTime(s.BudgetBalanceDate)));
                     sb.AppendLine(");");
                 }
                 else if (s.IsDeleted)
@@ -2886,39 +2886,39 @@ namespace Walkabout.Data
             {
                 sb.AppendLine("-- updating Investment : " + i.Id);
                 sb.Append("UPDATE Investments SET ");
-                sb.Append(String.Format("Security={0}", i.Security == null ? -1 : i.Security.Id));
-                sb.Append(String.Format(",UnitPrice={0}", DBDecimal(i.UnitPrice)));
-                sb.Append(String.Format(",Units={0}", DBDecimal(i.Units)));
-                sb.Append(String.Format(",Commission={0}", DBDecimal(i.Commission)));
-                sb.Append(String.Format(",InvestmentType='{0}'", (int)i.Type));
-                sb.Append(String.Format(",TradeType='{0}'", (int)i.TradeType));
-                sb.Append(String.Format(",TaxExempt='{0}'", i.TaxExempt ? 1 : 0));
-                sb.Append(String.Format(",Withholding={0}", DBDecimal(i.Withholding)));
-                sb.Append(String.Format(",MarkUpDown={0}", DBDecimal(i.MarkUpDown))); ;
-                sb.Append(String.Format(",Taxes={0}", DBDecimal(i.Taxes))); ;
-                sb.Append(String.Format(",Fees={0}", DBDecimal(i.Fees))); ;
-                sb.Append(String.Format(",[Load]={0}", DBDecimal(i.Load)));
+                sb.Append(string.Format("Security={0}", i.Security == null ? -1 : i.Security.Id));
+                sb.Append(string.Format(",UnitPrice={0}", DBDecimal(i.UnitPrice)));
+                sb.Append(string.Format(",Units={0}", DBDecimal(i.Units)));
+                sb.Append(string.Format(",Commission={0}", DBDecimal(i.Commission)));
+                sb.Append(string.Format(",InvestmentType='{0}'", (int)i.Type));
+                sb.Append(string.Format(",TradeType='{0}'", (int)i.TradeType));
+                sb.Append(string.Format(",TaxExempt='{0}'", i.TaxExempt ? 1 : 0));
+                sb.Append(string.Format(",Withholding={0}", DBDecimal(i.Withholding)));
+                sb.Append(string.Format(",MarkUpDown={0}", DBDecimal(i.MarkUpDown))); ;
+                sb.Append(string.Format(",Taxes={0}", DBDecimal(i.Taxes))); ;
+                sb.Append(string.Format(",Fees={0}", DBDecimal(i.Fees))); ;
+                sb.Append(string.Format(",[Load]={0}", DBDecimal(i.Load)));
 
-                sb.AppendLine(String.Format(" WHERE Id={0};", i.Id));
+                sb.AppendLine(string.Format(" WHERE Id={0};", i.Id));
             }
             else if (i.IsInserted)
             {
                 sb.AppendLine("-- inserting Investment : " + i.Id);
                 sb.Append("INSERT INTO Investments (Id, Security, UnitPrice, Units, Commission, InvestmentType, TradeType, TaxExempt, Withholding, MarkUpDown, Taxes, Fees, [Load]) VALUES (");
-                sb.Append(String.Format("'{0}'", i.Id.ToString()));
-                sb.Append(String.Format(",'{0}'", i.Security == null ? -1 : i.Security.Id));
-                sb.Append(String.Format(",{0}", DBDecimal(i.UnitPrice)));
-                sb.Append(String.Format(",{0}", DBDecimal(i.Units)));
-                sb.Append(String.Format(",{0}", DBDecimal(i.Commission)));
-                sb.Append(String.Format(",'{0}'", (int)i.Type));
+                sb.Append(string.Format("'{0}'", i.Id.ToString()));
+                sb.Append(string.Format(",'{0}'", i.Security == null ? -1 : i.Security.Id));
+                sb.Append(string.Format(",{0}", DBDecimal(i.UnitPrice)));
+                sb.Append(string.Format(",{0}", DBDecimal(i.Units)));
+                sb.Append(string.Format(",{0}", DBDecimal(i.Commission)));
+                sb.Append(string.Format(",'{0}'", (int)i.Type));
 
-                sb.Append(String.Format(",'{0}'", (int)i.TradeType));
-                sb.Append(String.Format(",'{0}'", i.TaxExempt ? 1 : 0));
-                sb.Append(String.Format(",{0}", DBDecimal(i.Withholding)));
-                sb.Append(String.Format(",{0}", DBDecimal(i.MarkUpDown)));
-                sb.Append(String.Format(",{0}", DBDecimal(i.Taxes)));
-                sb.Append(String.Format(",{0}", DBDecimal(i.Fees)));
-                sb.Append(String.Format(",{0}", DBDecimal(i.Load)));
+                sb.Append(string.Format(",'{0}'", (int)i.TradeType));
+                sb.Append(string.Format(",'{0}'", i.TaxExempt ? 1 : 0));
+                sb.Append(string.Format(",{0}", DBDecimal(i.Withholding)));
+                sb.Append(string.Format(",{0}", DBDecimal(i.MarkUpDown)));
+                sb.Append(string.Format(",{0}", DBDecimal(i.Taxes)));
+                sb.Append(string.Format(",{0}", DBDecimal(i.Fees)));
+                sb.Append(string.Format(",{0}", DBDecimal(i.Load)));
 
                 sb.AppendLine(");");
             }

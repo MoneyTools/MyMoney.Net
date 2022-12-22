@@ -52,7 +52,7 @@ namespace Walkabout.Migrate
                     }
                     else
                     {
-                        string msg = String.Format("Would you like to merge this QIF data with the selected account?{0}\"{1}\"",
+                        string msg = string.Format("Would you like to merge this QIF data with the selected account?{0}\"{1}\"",
                             Environment.NewLine + Environment.NewLine,
                             currentlySelectedAccount.Name
                             );
@@ -126,14 +126,14 @@ namespace Walkabout.Migrate
                             break;
 
                         default:
-                            throw new Exception(String.Format("Account type {0} not supported", a.Type));
+                            throw new Exception(string.Format("Account type {0} not supported", a.Type));
 
                     }
                     if (merge)
                     {
                         if (accountTypeMismatch)
                         {
-                            throw new Exception(String.Format("Account type {0} in QIF doesn't match selected account type {1}", at, a.Type));
+                            throw new Exception(string.Format("Account type {0} in QIF doesn't match selected account type {1}", at, a.Type));
                         }
                     }
                     else
@@ -209,7 +209,7 @@ namespace Walkabout.Migrate
                                 //
                                 t.IsReconciling = true;
 
-                                t.Amount = Decimal.Parse(line);
+                                t.Amount = decimal.Parse(line);
 
                                 // Turn back normal mode
                                 t.IsReconciling = false;
@@ -414,7 +414,7 @@ namespace Walkabout.Migrate
                                 }
                                 break;
                             default:
-                                throw new Exception(String.Format("Unknown format '{0}' on line {1} : {2}", ltype, lineNumber, line));
+                                throw new Exception(string.Format("Unknown format '{0}' on line {1} : {2}", ltype, lineNumber, line));
                         }
                     }
                     line = r.ReadLine();

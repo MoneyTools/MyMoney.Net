@@ -333,7 +333,7 @@ namespace Walkabout.Utilities
         {
             get
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -341,7 +341,7 @@ namespace Walkabout.Utilities
         {
             get
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -351,7 +351,7 @@ namespace Walkabout.Utilities
             {
                 if (this._state == State.Attr || this._state == State.AttrValue || this._state == State.FieldValue)
                 {
-                    return this.Value != String.Empty;
+                    return this.Value != string.Empty;
                 }
                 return false;
             }
@@ -407,7 +407,7 @@ namespace Walkabout.Utilities
                     return true;
                 }
 
-                if (this._state == State.Field && this._csvReader[this._attr] == String.Empty)
+                if (this._state == State.Field && this._csvReader[this._attr] == string.Empty)
                 {
                     return true;
                 }
@@ -442,7 +442,7 @@ namespace Walkabout.Utilities
         {
             get
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -496,7 +496,7 @@ namespace Walkabout.Utilities
                 throw new Exception("Attribute '" + name + "' not found.");
             }
             // names are assigned a0, a1, a2, ...
-            return Int32.Parse(name.Substring(1));
+            return int.Parse(name.Substring(1));
         }
 
         public override string GetAttribute(string name, string namespaceURI)
@@ -753,7 +753,7 @@ namespace Walkabout.Utilities
             {
                 return this._csvReader[this._attr];
             }
-            return String.Empty;
+            return string.Empty;
         }
 
         public override string ReadInnerXml()

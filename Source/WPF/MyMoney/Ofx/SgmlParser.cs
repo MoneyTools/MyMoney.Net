@@ -14,7 +14,7 @@ namespace Walkabout.Sgml
 
     public class Entity
     {
-        public const Char EOF = (char)65535;
+        public const char EOF = (char)65535;
         public string Proxy;
 
         public Entity(string name, string pubid, string uri, string proxy)
@@ -260,21 +260,21 @@ namespace Walkabout.Sgml
         {
             sb.Length = 0;
             char ch = this.Lastchar;
-            if (nmtoken && ch != '_' && !Char.IsLetter(ch))
+            if (nmtoken && ch != '_' && !char.IsLetter(ch))
             {
                 throw new Exception(
-                    String.Format("Invalid name start character '{0}'", ch));
+                    string.Format("Invalid name start character '{0}'", ch));
             }
             while (ch != Entity.EOF && term.IndexOf(ch) < 0)
             {
-                if (!nmtoken || ch == '_' || ch == '.' || ch == '-' || ch == ':' || Char.IsLetterOrDigit(ch))
+                if (!nmtoken || ch == '_' || ch == '.' || ch == '-' || ch == ':' || char.IsLetterOrDigit(ch))
                 {
                     sb.Append(ch);
                 }
                 else
                 {
                     throw new Exception(
-                        String.Format("Invalid name character '{0}'", ch));
+                        string.Format("Invalid name character '{0}'", ch));
                 }
                 ch = this.ReadChar();
             }
@@ -473,18 +473,18 @@ namespace Walkabout.Sgml
 
         public void Error(string msg, char ch)
         {
-            string str = (ch == Entity.EOF) ? "EOF" : Char.ToString(ch);
-            throw new Exception(String.Format(msg, str));
+            string str = (ch == Entity.EOF) ? "EOF" : char.ToString(ch);
+            throw new Exception(string.Format(msg, str));
         }
 
         public void Error(string msg, int x)
         {
-            throw new Exception(String.Format(msg, x));
+            throw new Exception(string.Format(msg, x));
         }
 
         public void Error(string msg, string arg)
         {
-            throw new Exception(String.Format(msg, arg));
+            throw new Exception(string.Format(msg, arg));
         }
 
         public string Context()
@@ -496,11 +496,11 @@ namespace Walkabout.Sgml
                 string msg;
                 if (p.Internal)
                 {
-                    msg = String.Format("\nReferenced on line {0}, position {1} of internal entity '{2}'", p.Line, p.LinePosition, p.Name);
+                    msg = string.Format("\nReferenced on line {0}, position {1} of internal entity '{2}'", p.Line, p.LinePosition, p.Name);
                 }
                 else
                 {
-                    msg = String.Format("\nReferenced on line {0}, position {1} of '{2}' entity at [{3}]", p.Line, p.LinePosition, p.Name, p.ResolvedUri.AbsolutePath);
+                    msg = string.Format("\nReferenced on line {0}, position {1} of '{2}' entity at [{3}]", p.Line, p.LinePosition, p.Name, p.ResolvedUri.AbsolutePath);
                 }
                 sb.Append(msg);
                 p = p.Parent;
@@ -673,7 +673,7 @@ namespace Walkabout.Sgml
                     break;
                 default:
                     throw new Exception(
-                        String.Format("Declared content type '{0}' is not supported", dc));
+                        string.Format("Declared content type '{0}' is not supported", dc));
             }
         }
 
@@ -738,7 +738,7 @@ namespace Walkabout.Sgml
             if (!this.Mixed && this.Members.Count == 0)
             {
                 throw new Exception(
-                    String.Format("Missing token before connector '{0}'.", c)
+                    string.Format("Missing token before connector '{0}'.", c)
                     );
             }
             GroupType gt = GroupType.None;
@@ -757,7 +757,7 @@ namespace Walkabout.Sgml
             if (this.GroupType != GroupType.None && this.GroupType != gt)
             {
                 throw new Exception(
-                    String.Format("Connector '{0}' is inconsistent with {1} group.", c, this.GroupType.ToString())
+                    string.Format("Connector '{0}' is inconsistent with {1} group.", c, this.GroupType.ToString())
                     );
             }
             this.GroupType = gt;
@@ -787,7 +787,7 @@ namespace Walkabout.Sgml
             // Do a simple search of members.
             foreach (object obj in this.Members)
             {
-                if (obj is String)
+                if (obj is string)
                 {
                     string s = (string)obj;
                     if (s == name || (dtd.IgnoreCase && string.Compare(s, name, StringComparison.OrdinalIgnoreCase) == 0))
@@ -800,7 +800,7 @@ namespace Walkabout.Sgml
             // that have optional start tags and over child groups.
             foreach (object obj in this.Members)
             {
-                if (obj is String)
+                if (obj is string)
                 {
                     string s = (string)obj;
                     ElementDecl e = dtd.FindElement(s);
@@ -925,7 +925,7 @@ namespace Walkabout.Sgml
             }
             else
             {
-                throw new Exception(String.Format("Attribute value '{0}' not supported", token));
+                throw new Exception(string.Format("Attribute value '{0}' not supported", token));
             }
             return hasDefault;
         }
@@ -1370,9 +1370,9 @@ namespace Walkabout.Sgml
         {
             char ch = this._current.SkipWhitespace();
             string[] names = this.ParseNameGroup(ch, true);
-            bool sto = Char.ToLower(this._current.SkipWhitespace()) == 'o'; // start tag optional?   
+            bool sto = char.ToLower(this._current.SkipWhitespace()) == 'o'; // start tag optional?   
             this._current.ReadChar();
-            bool eto = Char.ToLower(this._current.SkipWhitespace()) == 'o'; // end tag optional? 
+            bool eto = char.ToLower(this._current.SkipWhitespace()) == 'o'; // end tag optional? 
             this._current.ReadChar();
             ch = this._current.SkipWhitespace();
             ContentModel cm = this.ParseContentModel(ch);
@@ -1474,7 +1474,7 @@ namespace Walkabout.Sgml
                 name = this._nt.Add(name);
                 names.Add(name);
             }
-            return (string[])names.ToArray(typeof(String));
+            return (string[])names.ToArray(typeof(string));
         }
 
         private void ParseNameList(ArrayList names, bool nmtokens)

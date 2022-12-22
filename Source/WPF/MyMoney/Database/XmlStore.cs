@@ -1239,7 +1239,7 @@ namespace Walkabout.Data
                 {
                     return XmlConvert.ToString((DateTime)this.value, "yyyy-MM-ddTHH:mm:ss");
                 }
-                else if (this.value is Boolean)
+                else if (this.value is bool)
                 {
                     return XmlConvert.ToString((bool)this.value);
                 }

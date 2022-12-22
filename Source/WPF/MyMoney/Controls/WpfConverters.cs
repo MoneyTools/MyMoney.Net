@@ -79,7 +79,7 @@ namespace Walkabout.WpfConverters
         }
     }
 
-    [ValueConversion(typeof(DateTime), typeof(String))]
+    [ValueConversion(typeof(DateTime), typeof(string))]
     public class MonthConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -442,7 +442,7 @@ namespace Walkabout.WpfConverters
 
                 decimal d = 0;
                 if (!string.IsNullOrWhiteSpace(stringVal) &&
-                    false == Decimal.TryParse(stringVal, NumberStyles.Currency, CultureInfo.CurrentCulture, out d))
+                    false == decimal.TryParse(stringVal, NumberStyles.Currency, CultureInfo.CurrentCulture, out d))
                 {
                     d = System.Convert.ToDecimal(stringVal, CultureInfo.GetCultureInfo("en-US"));
                 }

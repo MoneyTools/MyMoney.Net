@@ -232,7 +232,7 @@ namespace Walkabout.Data
         private static int TryParseInteger(string value, int defaultValue)
         {
             int result;
-            if (Int32.TryParse(value, out result))
+            if (int.TryParse(value, out result))
             {
                 return result;
             }
@@ -298,19 +298,19 @@ namespace Walkabout.Data
                 case Operation.Contains:
                     return this.Matches(value.ToString());
                 case Operation.Equals:
-                    return value == TryParseDecimal(this.value, Decimal.MaxValue);
+                    return value == TryParseDecimal(this.value, decimal.MaxValue);
                 case Operation.GreaterThan:
-                    return value >= TryParseDecimal(this.value, Decimal.MaxValue);
+                    return value >= TryParseDecimal(this.value, decimal.MaxValue);
                 case Operation.GreaterThanEquals:
-                    return value >= TryParseDecimal(this.value, Decimal.MaxValue);
+                    return value >= TryParseDecimal(this.value, decimal.MaxValue);
                 case Operation.LessThan:
-                    return value < TryParseDecimal(this.value, Decimal.MinValue);
+                    return value < TryParseDecimal(this.value, decimal.MinValue);
                 case Operation.LessThanEquals:
-                    return value <= TryParseDecimal(this.value, Decimal.MinValue);
+                    return value <= TryParseDecimal(this.value, decimal.MinValue);
                 case Operation.NotContains:
                     return this.Matches(value.ToString());
                 case Operation.NotEquals:
-                    return value != TryParseDecimal(this.value, Decimal.MaxValue);
+                    return value != TryParseDecimal(this.value, decimal.MaxValue);
                 case Operation.Regex:
                     return this.Matches(value.ToString());
             }
@@ -326,19 +326,19 @@ namespace Walkabout.Data
                 case Operation.Contains:
                     return this.Matches(value.ToString());
                 case Operation.Equals:
-                    return Math.Abs(value) == Math.Abs(TryParseInteger(this.value, Int32.MaxValue));
+                    return Math.Abs(value) == Math.Abs(TryParseInteger(this.value, int.MaxValue));
                 case Operation.GreaterThan:
-                    return Math.Abs(value) >= Math.Abs(TryParseInteger(this.value, Int32.MaxValue));
+                    return Math.Abs(value) >= Math.Abs(TryParseInteger(this.value, int.MaxValue));
                 case Operation.GreaterThanEquals:
-                    return Math.Abs(value) >= Math.Abs(TryParseInteger(this.value, Int32.MaxValue));
+                    return Math.Abs(value) >= Math.Abs(TryParseInteger(this.value, int.MaxValue));
                 case Operation.LessThan:
-                    return Math.Abs(value) < Math.Abs(TryParseInteger(this.value, Int32.MaxValue));
+                    return Math.Abs(value) < Math.Abs(TryParseInteger(this.value, int.MaxValue));
                 case Operation.LessThanEquals:
-                    return Math.Abs(value) <= Math.Abs(TryParseInteger(this.value, Int32.MaxValue));
+                    return Math.Abs(value) <= Math.Abs(TryParseInteger(this.value, int.MaxValue));
                 case Operation.NotContains:
                     return this.Matches(value.ToString());
                 case Operation.NotEquals:
-                    return Math.Abs(value) != Math.Abs(TryParseInteger(this.value, Int32.MaxValue));
+                    return Math.Abs(value) != Math.Abs(TryParseInteger(this.value, int.MaxValue));
                 case Operation.Regex:
                     return this.Matches(value.ToString());
             }

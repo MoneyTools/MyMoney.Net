@@ -39,7 +39,7 @@ namespace OfxTestServer
                     if (arg == "delay" && i < args.Length - 1)
                     {
                         var s = args[i + 1];
-                        Int32.TryParse(s, out delay);
+                        int.TryParse(s, out delay);
                         i++;
                     }
                 }

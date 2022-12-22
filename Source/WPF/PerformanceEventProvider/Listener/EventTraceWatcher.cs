@@ -45,7 +45,7 @@ namespace Microsoft.VisualStudio.Diagnostics.PerformanceProvider.Listener
 
         private static Guid sessionGuid = Guid.NewGuid();
 
-        private void CopyString(String s, IntPtr buffer)
+        private void CopyString(string s, IntPtr buffer)
         {
             for (int i = 0, n = s.Length; i < n; i++)
             {

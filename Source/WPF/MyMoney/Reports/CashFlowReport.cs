@@ -43,7 +43,7 @@ namespace Walkabout.Reports
             }
         }
 
-        public CashFlowCell GetCell(String key)
+        public CashFlowCell GetCell(string key)
         {
             CashFlowCell cell = null;
             if (!this.columns.TryGetValue(key, out cell))
@@ -53,7 +53,7 @@ namespace Walkabout.Reports
             return cell;
         }
 
-        public decimal GetValue(String key)
+        public decimal GetValue(string key)
         {
             CashFlowCell cell;
             this.columns.TryGetValue(key, out cell);
@@ -64,7 +64,7 @@ namespace Walkabout.Reports
             return 0;
         }
 
-        public List<Transaction> GetData(String key)
+        public List<Transaction> GetData(string key)
         {
             CashFlowCell cell;
             this.columns.TryGetValue(key, out cell);

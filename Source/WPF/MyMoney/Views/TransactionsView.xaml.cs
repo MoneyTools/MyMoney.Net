@@ -4319,7 +4319,7 @@ namespace Walkabout.Views
                                     "Transfer exists already", MessageBoxButton.OK, MessageBoxImage.Information);
                                 return;
                             }
-                            String message = "Account:  " + found.AccountName + '\n';
+                            string message = "Account:  " + found.AccountName + '\n';
                             message += "Date:  " + found.Date + '\n';
                             message += "Amount:  " + found.amount + '\n';
                             message += "Category:  " + found.CategoryFullName + '\n';
@@ -4358,7 +4358,7 @@ namespace Walkabout.Views
                     // two or more matching transactions were found, let the user know
                     default:
                         {
-                            String foundThese = "";
+                            string foundThese = "";
                             foreach (var found in list)
                             {
                                 foundThese += found.AccountName + ' ' + found.Date + ' ' + found.amount;
@@ -6845,7 +6845,7 @@ namespace Walkabout.Views
                 }
                 return d.Value.ToString("N" + this.GetDecimalDigits(d.Value));
             }
-            else if (valueType == typeof(Decimal))
+            else if (valueType == typeof(decimal))
             {
                 decimal d = (decimal)value;
                 return d.ToString("N" + this.GetDecimalDigits(d));
@@ -6876,7 +6876,7 @@ namespace Walkabout.Views
                 }
                 return SqlDecimal.Parse(s);
             }
-            else if (targetType == typeof(Decimal))
+            else if (targetType == typeof(decimal))
             {
                 if (string.IsNullOrWhiteSpace(s))
                 {

@@ -549,7 +549,7 @@ namespace Walkabout.Attachments
             var fname = NativeMethods.GetValidFileName(name);
             if (string.IsNullOrEmpty(fname))
             {
-                Debug.WriteLine(String.Format("Failed to compute a valid file name for account '{0}'", name));
+                Debug.WriteLine(string.Format("Failed to compute a valid file name for account '{0}'", name));
                 return null;
             }
             string dir = Path.Combine(path, fname);
@@ -574,7 +574,7 @@ namespace Walkabout.Attachments
             catch (Exception ex)
             {
                 // TODO: fix corrupt files?
-                Debug.WriteLine(String.Format("Failed to load statement index '{0}'", indexFile));
+                Debug.WriteLine(string.Format("Failed to load statement index '{0}'", indexFile));
                 Debug.WriteLine(ex.ToString());
             }
             return null;

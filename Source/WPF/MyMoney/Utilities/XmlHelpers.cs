@@ -92,7 +92,7 @@ namespace Walkabout.Utilities
             string s = cdef.GetAttribute(name);
             if (!string.IsNullOrEmpty(s))
             {
-                return Boolean.Parse(s);
+                return bool.Parse(s);
             }
             return null;
         }
@@ -102,7 +102,7 @@ namespace Walkabout.Utilities
             string s = cdef.GetAttribute(name);
             if (!string.IsNullOrEmpty(s))
             {
-                return Int32.Parse(s);
+                return int.Parse(s);
             }
             return null;
         }

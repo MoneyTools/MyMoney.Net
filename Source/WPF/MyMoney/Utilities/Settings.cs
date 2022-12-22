@@ -555,7 +555,7 @@ namespace Walkabout.Configuration
                         }
                         else if (t == typeof(int))
                         {
-                            pi.SetValue(this, Int32.Parse(r.ReadString()), null);
+                            pi.SetValue(this, int.Parse(r.ReadString()), null);
                         }
                         else if (t == typeof(string))
                         {
@@ -849,11 +849,11 @@ namespace Walkabout.Configuration
                 {
                     if (r.Name == "X")
                     {
-                        p.X = Int32.Parse(r.ReadString());
+                        p.X = int.Parse(r.ReadString());
                     }
                     else if (r.Name == "Y")
                     {
-                        p.Y = Int32.Parse(r.ReadString());
+                        p.Y = int.Parse(r.ReadString());
                     }
                 }
             }

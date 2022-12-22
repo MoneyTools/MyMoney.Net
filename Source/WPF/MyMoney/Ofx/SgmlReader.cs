@@ -482,7 +482,7 @@ namespace Walkabout.Sgml
         {
             if (this.ErrorLog != null)
             {
-                string err = String.Format(msg, args);
+                string err = string.Format(msg, args);
                 if (this._lastError != this._current)
                 {
                     err = err + "    " + this._current.Context();
@@ -658,7 +658,7 @@ namespace Walkabout.Sgml
         {
             get
             {
-                string result = String.Empty;
+                string result = string.Empty;
                 if (this._state == State.Attr)
                 {
                     result = this._a.NamespaceURI;
@@ -675,7 +675,7 @@ namespace Walkabout.Sgml
         {
             get
             {
-                string result = String.Empty;
+                string result = string.Empty;
                 if (this._state == State.Attr)
                 {
                     result = this._a.Prefix;
@@ -800,7 +800,7 @@ namespace Walkabout.Sgml
                         return xmllang;
                     }
                 }
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -1134,7 +1134,7 @@ namespace Walkabout.Sgml
                 {
                     return this.ParseComment();
                 }
-                else if (ch != '_' && !Char.IsLetter(ch))
+                else if (ch != '_' && !char.IsLetter(ch))
                 {
                     // perhaps it's one of those nasty office document hacks like '<![if ! ie ]>'
                     string value = this._current.ScanToEnd(this._sb, "Recovering", ">"); // skip it
@@ -1454,7 +1454,7 @@ namespace Walkabout.Sgml
                 if (ch == '<')
                 {
                     ch = this._current.ReadChar();
-                    if (ch == '/' || ch == '!' || ch == '?' || Char.IsLetter(ch))
+                    if (ch == '/' || ch == '!' || ch == '?' || char.IsLetter(ch))
                     {
                         // Hit a tag, so return XmlNodeType.Text token
                         // and remember we partially started a new tag.
@@ -1668,7 +1668,7 @@ namespace Walkabout.Sgml
             {
                 this._name.Length = 0;
                 while (ch != Entity.EOF &&
-                    (Char.IsLetter(ch) || ch == '_' || ch == '-'))
+                    (char.IsLetter(ch) || ch == '_' || ch == '-'))
                 {
                     this._name.Append(ch);
                     ch = this._current.ReadChar();
