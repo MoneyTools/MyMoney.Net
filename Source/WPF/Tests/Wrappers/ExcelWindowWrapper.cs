@@ -16,24 +16,28 @@ namespace Walkabout.Tests.Wrappers
             this.window.ClickButtonByName("Close");
         }
 
-        public static ExcelWindowWrapper FindExcelWindow(string name, int retries, bool throwIfNotFound)
+        public static ExcelWindowWrapper FindExcelWindow(string[] names, int retries, bool throwIfNotFound)
         {
             for (int i = 0; i < retries; i++)
             {
-                AutomationElement e = Win32.FindDesktopWindow(name);
-                if (e != null)
+                for (var n = 0; n < names.Length; n++)
                 {
-                    var result = new ExcelWindowWrapper(e);
-                    result.WaitForInputIdle(500);
-                    return result;
-                }
 
-                Thread.Sleep(1000);
+                    AutomationElement e = Win32.FindDesktopWindow(names[n]);
+                    if (e != null)
+                    {
+                        var result = new ExcelWindowWrapper(e);
+                        result.WaitForInputIdle(500);
+                        return result;
+                    }
+
+                    Thread.Sleep(500);
+                }
             }
 
             if (throwIfNotFound)
             {
-                throw new Exception("Excel window not found for name " + name);
+                throw new Exception("Excel window not found for name " + names);
             }
 
             return null;

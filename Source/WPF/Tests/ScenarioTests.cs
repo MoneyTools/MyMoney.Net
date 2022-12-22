@@ -1447,7 +1447,12 @@ to make sure attachments work.");
                     sd.ClickSave();
                 }
 
-                var excel = ExcelWindowWrapper.FindExcelWindow("test.csv - Excel", 10, true);
+                // first try with the CSV extension and without
+                var possibleWindowNames = new List<string> { "test.csv - Excel", "test - Excel" };
+                var excel = ExcelWindowWrapper.FindExcelWindow(
+                    possibleWindowNames.ToArray(),
+                    5,
+                    true);
                 excel.Close();
             }
         }

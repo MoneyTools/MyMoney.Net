@@ -109,7 +109,9 @@ namespace Walkabout.Tests
             Transaction s = test.Transactions.GetTransactionsFrom(b).FirstOrDefault();
             Assert.IsNotNull(s);
 
-            Assert.AreEqual(t.Date, s.Date);
+            // Only comparing the Dates not the times
+            Assert.AreEqual(t.Date.ToShortDateString(), s.Date.ToShortDateString());
+
             Assert.AreEqual(t.Amount, s.Amount);
             Assert.AreEqual(t.CategoryFullName, s.CategoryFullName);
             Assert.AreEqual(t.PayeeName, s.PayeeName);
