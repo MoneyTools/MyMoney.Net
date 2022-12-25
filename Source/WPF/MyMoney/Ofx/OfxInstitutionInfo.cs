@@ -377,7 +377,7 @@ namespace Walkabout.Ofx
                     string name = null;
                     string value = null;
 
-                    for (i = i + 1; i < n; i++)
+                    for (++i; i < n; i++)
                     {
                         ch = text[i];
                         if (ch == '}')

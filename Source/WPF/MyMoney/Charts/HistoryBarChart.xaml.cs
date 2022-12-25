@@ -429,7 +429,7 @@ namespace Walkabout.Charts
                     columnRange = HistoryRange.Month;
                     break;
                 case HistoryRange.Month:
-                    year = year - (100 * century);
+                    year -= 100 * century;
                     label = string.Format("{0:00}/{1:00}", start.Month, year);
                     columnRange = HistoryRange.Day;
                     break;

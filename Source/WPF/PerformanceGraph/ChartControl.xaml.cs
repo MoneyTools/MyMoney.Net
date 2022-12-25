@@ -373,7 +373,7 @@ namespace Microsoft.VisualStudio.PerformanceGraph
                 for (int i = 0; i < pts.Count; i++)
                 {
                     Point p = pts[i];
-                    p.Y = p.Y / this.unitConversion;
+                    p.Y /= this.unitConversion;
                     pts[i] = p;
                 }
             }

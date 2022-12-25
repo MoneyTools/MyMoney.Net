@@ -234,7 +234,7 @@ namespace Walkabout.Utilities
                 }
                 if (this.hue > 360.0f)
                 {
-                    this.hue = this.hue - 360.0f;
+                    this.hue -= 360.0f;
                 }
             }
         }
@@ -280,7 +280,7 @@ namespace Walkabout.Utilities
 
             if (rh < 60.0f)
             {
-                rm1 = rm1 + ((rm2 - rm1) * rh / 60.0f);
+                rm1 += (rm2 - rm1) * rh / 60.0f;
             }
             else if (rh < 180.0f)
             {
@@ -288,7 +288,7 @@ namespace Walkabout.Utilities
             }
             else if (rh < 240.0f)
             {
-                rm1 = rm1 + ((rm2 - rm1) * (240.0f - rh) / 60.0f);
+                rm1 += (rm2 - rm1) * (240.0f - rh) / 60.0f;
             }
 
             return (byte)(rm1 * 255);

@@ -346,7 +346,7 @@ namespace Walkabout.Utilities
                     {
                         Kernel[halfKernel + i, halfKernel + j] = (float)Math.Round(Kernel[halfKernel + i, halfKernel + j] * mult, 0);
                         this.gaussianKernel[halfKernel + i, halfKernel + j] = (int)Kernel[halfKernel + i, halfKernel + j];
-                        sum = sum + this.gaussianKernel[halfKernel + i, halfKernel + j];
+                        sum += this.gaussianKernel[halfKernel + i, halfKernel + j];
                     }
 
                 }
@@ -361,7 +361,7 @@ namespace Walkabout.Utilities
                     {
                         Kernel[halfKernel + i, halfKernel + j] = (float)Math.Round(Kernel[halfKernel + i, halfKernel + j], 0);
                         this.gaussianKernel[halfKernel + i, halfKernel + j] = (int)Kernel[halfKernel + i, halfKernel + j];
-                        sum = sum + this.gaussianKernel[halfKernel + i, halfKernel + j];
+                        sum += this.gaussianKernel[halfKernel + i, halfKernel + j];
                     }
 
                 }
@@ -400,7 +400,7 @@ namespace Walkabout.Utilities
                     {
                         for (l = -limit; l < limitUpper; l++)
                         {
-                            sum = sum + ((float)data[i + k, j + l] * this.gaussianKernel[limit + k, limit + l]);
+                            sum += (float)data[i + k, j + l] * this.gaussianKernel[limit + k, limit + l];
                         }
                     }
                     output[i, j] = (int)Math.Round(sum / this.kernelWeight);
@@ -469,7 +469,7 @@ namespace Walkabout.Utilities
                     {
                         for (int l = -halfFilterHeight; l < halfFilterY; l++)
                         {
-                            sum = sum + (data[i + k, j + l] * filter[halfFilterWidth + k, halfFilterHeight + l]);
+                            sum += data[i + k, j + l] * filter[halfFilterWidth + k, halfFilterHeight + l];
                         }
                     }
                     output[i, j] = sum;

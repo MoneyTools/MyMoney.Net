@@ -188,7 +188,7 @@ namespace Walkabout.Migrate
             t.Status = TransactionStatus.None;
 
             // remove the nont-duplicate flag.
-            t.Flags = t.Flags & ~TransactionFlags.NotDuplicate;
+            t.Flags &= ~TransactionFlags.NotDuplicate;
 
             long originalId = t.Id;
             t.Id = -1;

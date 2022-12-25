@@ -424,7 +424,7 @@ namespace Walkabout.Dialogs
             if (this.resizer != null)
             {
                 Rect bounds = this.GetUnscaledBounds(this.resizer.Bounds);
-                scale.ScaleX = scale.ScaleY = scale.ScaleY * 1.1;
+                scale.ScaleX = scale.ScaleY *= 1.1;
                 this.CanvasGrid.UpdateLayout();
                 this.MoveResizer(this.selected, bounds);
             }
@@ -440,7 +440,7 @@ namespace Walkabout.Dialogs
             if (this.resizer != null)
             {
                 Rect bounds = this.GetUnscaledBounds(this.resizer.Bounds);
-                scale.ScaleX = scale.ScaleY = scale.ScaleY / 1.1;
+                scale.ScaleX = scale.ScaleY /= 1.1;
                 this.CanvasGrid.UpdateLayout();
                 this.MoveResizer(this.selected, bounds);
             }

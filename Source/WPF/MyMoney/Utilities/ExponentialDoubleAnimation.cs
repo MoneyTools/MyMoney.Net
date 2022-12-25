@@ -103,7 +103,7 @@ namespace Walkabout.Utilities
             // math magic: simple exponential growth
             returnValue = Math.Pow(timeFraction, power);
             returnValue *= delta;
-            returnValue = returnValue + start;
+            returnValue += start;
             return returnValue;
         }
         private static double easeOut(double timeFraction, double start, double delta, double power)
@@ -113,7 +113,7 @@ namespace Walkabout.Utilities
             // math magic: simple exponential decay
             returnValue = Math.Pow(timeFraction, 1 / power);
             returnValue *= delta;
-            returnValue = returnValue + start;
+            returnValue += start;
             return returnValue;
         }
         private static double easeInOut(double timeFraction, double start, double delta, double power)

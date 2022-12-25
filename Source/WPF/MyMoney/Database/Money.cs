@@ -2523,7 +2523,7 @@ namespace Walkabout.Data
                     }
                     else
                     {
-                        this.flags = this.flags & ~AccountFlags.Closed;
+                        this.flags &= ~AccountFlags.Closed;
                     }
 
                     this.OnChanged("IsClosed");
@@ -2545,7 +2545,7 @@ namespace Walkabout.Data
                     }
                     else
                     {
-                        this.flags = this.flags & ~AccountFlags.Budgeted;
+                        this.flags &= ~AccountFlags.Budgeted;
                     }
 
                     this.OnChanged("IsBudgeted");
@@ -2579,7 +2579,7 @@ namespace Walkabout.Data
                 {
                     case TaxStatus.Taxable:
                         // remove any TaxDeferred or TaxFree flag.
-                        this.flags = this.flags & ~(AccountFlags.TaxDeferred | AccountFlags.TaxFree);
+                        this.flags &= ~(AccountFlags.TaxDeferred | AccountFlags.TaxFree);
                         break;
                     case TaxStatus.TaxDeferred:
                         // remove mututally exclusive TaxFree flag and add TaxDeferred
@@ -12356,7 +12356,7 @@ namespace Walkabout.Data
 
             // do not copy budgetting information outside of balancing the budget.
             // (Note: setting IsBudgetted to false will screw up the budget balance).
-            this.flags = this.flags & ~TransactionFlags.Budgeted;
+            this.flags &= ~TransactionFlags.Budgeted;
 
             if (duplicateTransfers)
             {
@@ -13795,7 +13795,7 @@ namespace Walkabout.Data
 
             // do not copy budgetting information outside of balancing the budget.
             // (Note: setting IsBudgetted to false will screw up the budget balance).
-            this.flags = this.flags & ~SplitFlags.Budgeted;
+            this.flags &= ~SplitFlags.Budgeted;
 
             if (this.payeeName != null)
             {

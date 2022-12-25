@@ -690,7 +690,7 @@ namespace Walkabout.Views
                                         t.Parent.EndUpdate();
                                     }
                                     // Move to the next row
-                                    this.SelectedRowIndex = this.SelectedRowIndex + 1;
+                                    this.SelectedRowIndex++;
 
                                     this.TheActiveGrid.ClearAutoEdit();
                                     e.Handled = true;
@@ -783,7 +783,7 @@ namespace Walkabout.Views
                                         t.Parent.EndUpdate();
                                     }
                                     // Move to the next row
-                                    this.SelectedRowIndex = this.SelectedRowIndex + 1;
+                                    this.SelectedRowIndex++;
 
                                     this.TheActiveGrid.ClearAutoEdit();
                                     e.Handled = true;
@@ -936,7 +936,7 @@ namespace Walkabout.Views
                     if (this.IsReconciling)
                     {
                         this.ToggleTransactionStateReconciled(this.SelectedTransaction);
-                        this.SelectedRowIndex = this.SelectedRowIndex + 1; // Move to the next row
+                        this.SelectedRowIndex++; // Move to the next row
 
                         e.Handled = true;
                     }
@@ -6819,7 +6819,7 @@ namespace Walkabout.Views
             {
                 digits++;
                 x *= 10;
-                x = x - (int)x;
+                x -= (int)x;
             }
             return Math.Max(Math.Min(digits, 5), 2);
         }

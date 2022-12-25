@@ -904,7 +904,7 @@ namespace OfxTestServer
                 var payee = this.GetRandomPayee(rand);
                 var range = payee.Max - payee.Min;
                 var amount = rand.NextDouble() * range;
-                amount = amount + payee.Min;
+                amount += payee.Min;
                 amount = Math.Round(amount, 2);
 
                 var type = "DEBIT";
@@ -923,7 +923,7 @@ namespace OfxTestServer
 
                 result.Add(e);
 
-                startDate = startDate + incr;
+                startDate += incr;
             }
 
             return result;

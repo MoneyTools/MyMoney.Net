@@ -397,7 +397,7 @@ namespace Walkabout.Controls
                                         int v = Convert.ToInt16(c) - Convert.ToInt16('0');
                                         if (decimalFactor > 0)
                                         {
-                                            this.number = this.number + (v / decimalFactor);
+                                            this.number += v / decimalFactor;
                                             decimalFactor *= 10;
                                         }
                                         else

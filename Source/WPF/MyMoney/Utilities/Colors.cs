@@ -38,11 +38,11 @@ namespace Walkabout.Utilities
 
                         long uniqueValue = name.GetHashCode();
                         long a = uniqueValue & 0xFF000000;
-                        a = a >> 24;
+                        a >>= 24;
                         long r = uniqueValue & 0x00FF0000;
-                        r = r >> 16;
+                        r >>= 16;
                         long g = uniqueValue & 0x0000FF00;
-                        g = g >> 8;
+                        g >>= 8;
                         long b = uniqueValue & 0x000000FF;
 
                         color = System.Windows.Media.Color.FromRgb((byte)r, (byte)g, (byte)b);
