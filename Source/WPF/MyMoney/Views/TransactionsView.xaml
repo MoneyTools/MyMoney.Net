@@ -209,7 +209,7 @@
         <DataTemplate x:Key="myTemplateSplitPayment">
             <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0" 
                             Grid.Column="1" Text="{Binding Debit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}"                            
-                            TextAlignment="Right" VerticalAlignment="Top" />
+                            TextAlignment="Right" VerticalAlignment="Top" Foreground="{DynamicResource ListItemForegroundBrush}"/>
         </DataTemplate>
         <DataTemplate x:Key="myTemplatePaymentEditInTheSplitDetailedView">
             <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Debit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right"/>
@@ -219,7 +219,7 @@
         <DataTemplate x:Key="myTemplateSplitDeposit">
             <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0" 
                             Grid.Column="1" Text="{Binding Credit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}"                            
-                            TextAlignment="Right" VerticalAlignment="Top" />
+                            TextAlignment="Right" VerticalAlignment="Top" Foreground="{DynamicResource ListItemForegroundBrush}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateDepositEditInTheSplitDetailedView" >
@@ -228,7 +228,7 @@
 
         <!-- Memo USED IN DETAILED SPLIT VIEW -->
         <DataTemplate x:Key="myTemplateSplitMemo">
-            <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0"  Text="{Binding Memo}"    VerticalAlignment="Top" />
+            <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0"  Text="{Binding Memo}"    VerticalAlignment="Top" Foreground="{DynamicResource ListItemForegroundBrush}" />
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateMemoEditInTheSplitDetailedView" >
@@ -237,7 +237,7 @@
 
         <!-- PAYEE ONLY -->
         <DataTemplate x:Key="myTemplateSplitPayee">
-            <TextBlock Text="{Binding PayeeOrTransferCaption, Converter={StaticResource NullableValueConverter}}" />
+            <TextBlock Text="{Binding PayeeOrTransferCaption, Converter={StaticResource NullableValueConverter}}" Foreground="{DynamicResource ListItemForegroundBrush}" />
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateSplitPayeeEdit">
@@ -258,7 +258,7 @@
 
         <!-- CATEGORY ONLY -->
         <DataTemplate x:Key="myTemplateSplitCategory">
-            <TextBlock Text="{Binding Category, Converter={StaticResource NullableValueConverter}}"/>
+            <TextBlock Text="{Binding Category, Converter={StaticResource NullableValueConverter}}" Foreground="{DynamicResource ListItemForegroundBrush}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateSplitCategoryEdit">
