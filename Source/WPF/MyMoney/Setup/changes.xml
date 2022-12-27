@@ -6,6 +6,7 @@
     - Improve handling of new statement file during balancing.
     - Reduce chart updates during trivial non-chart related changes.
     - Fix a couple null reference exceptions
+    - Fix split text color in dark mode (thanks to JP!)
   </change>
   <change version="2.0.1.8" date="12/17/2022">
     - Thanks to JP for improving some icon styles on the Balance Control.
