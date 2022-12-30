@@ -19,6 +19,7 @@
             <StackLayout Orientation="Vertical">
                 <StackLayout Orientation="Horizontal">
                     <Label Text="Money File" Margin="0,0,40,0" VerticalTextAlignment="Center" HorizontalOptions="StartAndExpand"/>
+                    <Button x:Name="OpenDemoData" Text="Demo Data" HorizontalOptions="EndAndExpand"/>
                     <Button x:Name="OpenFileLocation" Text="Open Location" HorizontalOptions="EndAndExpand"/>
                     <Button x:Name="AddSourceFolder" Text="Change" HorizontalOptions="EndAndExpand"/>                    
                 </StackLayout>

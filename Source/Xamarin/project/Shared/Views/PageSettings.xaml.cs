@@ -13,11 +13,18 @@ namespace XMoney
             this.PathToDataBase.Text = Settings.SourceDatabase;
 
             this.AddSourceFolder.Clicked += Button_Clicked;
+            this.OpenDemoData.Clicked += Button_DemoData;
             this.OpenFileLocation.Clicked += Button_OpenFileLocation;
 
             checkBoxShowClosedAccounts.IsChecked = Settings.Get().ShowClodedAccounts;
             checkBoxShowLoanProjection.IsChecked = Settings.Get().ShowLoanProjection;
             checkBoxRental.IsChecked = Settings.Get().ManageRentalProperties;
+        }
+
+        private async void Button_DemoData(object sender, EventArgs e)
+        {
+            Settings.SourceDatabase = "<Demo>";
+            await Navigation.PushAsync(new PageMain());
         }
 
         private void Button_OpenFileLocation(object sender, EventArgs e)

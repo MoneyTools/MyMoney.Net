@@ -164,6 +164,12 @@ namespace XMoney.ViewModels
             }
         }
 
+        public static void OnDemoData()
+        {
+            var account = new Accounts() { Id = 0, Name = "Bank of America", Type = (int)AccountType.Checking };
+            _cache.Add(account);
+        }
+
         public static void OnAllDataLoaded()
         {
             foreach (var item in _cache)

@@ -29,10 +29,21 @@ namespace XMoney.ViewModels
         public static void Cache(SQLiteConnection sqliteConnection)
         {
             _cache = (from x in sqliteConnection.Table<Payees>() select x).ToList();
+            _cacheIds();
+        }
+        private static void _cacheIds()
+        {
             foreach (var payee in _cache)
             {
                 _cacheIdToObject.Add(payee.Id, payee);
             }
+        }
+
+        public static void OnDemoData()
+        {
+            var payees = new Payees() { Id = 0, Name = "Home Depot" };
+            _cache.Add(payees);
+            _cacheIds();
         }
 
         public static void OnAllDataLoaded()

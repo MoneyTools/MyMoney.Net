@@ -17,12 +17,32 @@ namespace XMoney.ViewModels
 
         public bool LoadDatabase()
         {
+            if (Settings.SourceDatabase == "<Demo>")
+            {
+                Accounts.OnDemoData();
+                Payees.OnDemoData();
+                Categories.OnDemoData();
+                Transactions.OnDemoData();
+
+                Accounts.OnAllDataLoaded();
+                Payees.OnAllDataLoaded();
+                Categories.OnAllDataLoaded();
+                Transactions.OnAllDataLoaded();
+                Splits.OnAllDataLoaded();
+                LoanPayments.OnAllDataLoaded();
+                RentBuildings.OnAllDataLoaded();
+
+                return true;
+            }
+
             try
             {
                 this.dbConnection = this.OpenDatabase();
 
                 if (dbConnection != null)
                 {
+
+
                     var watch = Stopwatch.StartNew();
                     Accounts.Cache(this.dbConnection);
                     ShowElapsed(watch, "Accounts");

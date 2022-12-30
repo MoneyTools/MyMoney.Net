@@ -271,6 +271,13 @@ namespace XMoney.ViewModels
             return category == null ? "<unknown>" : category.Name;
         }
 
+        public static void OnDemoData()
+        {
+            var categories = new Categories() { Id = 1, Name = "Furnitures", Type = (int)CategoryTypes.Expenses };
+            _cache.Add(categories);
+        }
+
+
         public static void OnAllDataLoaded()
         {
             // Optimization - Top Category

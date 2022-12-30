@@ -136,6 +136,12 @@ namespace XMoney.ViewModels
             _cache = (from x in sqliteConnection.Table<Transactions>() select x).ToList();
         }
 
+        public static void OnDemoData()
+        {
+            var transation = new Transactions() { Id = 0, Account = 0, Date = "2022-02-25", Category = 1, Amount = (decimal)123.45 };
+            _cache.Add(transation);
+        }
+
         public static void OnAllDataLoaded()
         {
             // Nothing more to process
