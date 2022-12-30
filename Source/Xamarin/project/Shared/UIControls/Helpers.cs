@@ -35,5 +35,11 @@ namespace xMoney.UIControls
                 return value.ToString(CultureInfo.InvariantCulture);
             }
         }
+
+        public static bool isNarrow(double width)
+        {
+            return width < 600;
+        }
     }
+
 }

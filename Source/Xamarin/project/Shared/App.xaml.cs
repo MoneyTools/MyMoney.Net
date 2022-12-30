@@ -56,12 +56,20 @@ namespace XMoney
         public static bool IsSmallDevice()
         {
             // Get Metrics
-            var mainDisplayInfo = DeviceDisplay.MainDisplayInfo;
+            try
+            {
+                var mainDisplayInfo = DeviceDisplay.MainDisplayInfo;
 
-            // Width (in pixels)
-            var width = mainDisplayInfo.Width / mainDisplayInfo.Density;
+                // Width (in pixels)
+                var width = mainDisplayInfo.Width / mainDisplayInfo.Density;
 
-            return width <= smallWightResolution;
+                return width <= smallWightResolution;
+            }
+            catch
+            {
+                // survive this
+            }
+            return false;
         }
 
         public static double GetDeviceScreenDesity()

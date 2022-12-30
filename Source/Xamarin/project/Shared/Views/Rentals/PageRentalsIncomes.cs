@@ -137,7 +137,7 @@ namespace XMoney.Views
                 this.Content = new ScrollView
                 {
                     Content = stackList,
-                    Padding = new Thickness(0, 0, isSmallDevice ? 0 : 15, 0)
+                    Padding = new Thickness(0, 0, IsNarrow() ? 0 : 15, 0)
 
                 };
             }, TaskScheduler.FromCurrentSynchronizationContext());

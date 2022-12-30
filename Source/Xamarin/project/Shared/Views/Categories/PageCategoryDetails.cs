@@ -35,7 +35,7 @@ namespace XMoney.Views
             };
 
             {
-                int horizontalMargins = App.IsSmallDevice() ? 20 : 40;
+                int horizontalMargins = IsNarrow() ? 20 : 40;
 
                 var stack = new StackLayout()
                 {

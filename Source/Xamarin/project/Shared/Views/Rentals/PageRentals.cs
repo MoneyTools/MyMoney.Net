@@ -46,7 +46,7 @@ namespace XMoney.Views
             ApplySorting();
 
             var mainDisplayInfo = DeviceDisplay.MainDisplayInfo;
-            var isSmallDevice = App.IsSmallDevice();
+            var isSmallDevice = IsNarrow();
 
             foreach (var building in _list)
             {

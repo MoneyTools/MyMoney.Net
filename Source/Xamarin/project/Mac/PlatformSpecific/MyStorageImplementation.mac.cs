@@ -37,14 +37,13 @@ namespace VTeamWidgets
 
         public Task<FileResult> PickFile(string[] allowedTypes)
         {
-            // for consistency with other platforms, only allow selecting of a single file.
-            // would be nice if we passed a "file options" to override picking multiple files & directories
-            NSOpenPanel nSOpenPanel = new()
+            var nSOpenPanel = new NSOpenPanel()
             {
-                CanChooseFiles = true,
+                CanChooseFiles = true, // only allow selecting of a single file.
                 AllowsMultipleSelection = false,
                 CanChooseDirectories = false
             };
+
             var openPanel = nSOpenPanel;
 
             // macOS allows the file types to contain UTIs, filename extensions or a combination of the two.
@@ -93,18 +92,17 @@ namespace VTeamWidgets
 
         public Task<FileResult> PickFolder()
         {
-            // for consistency with other platforms, only allow selecting of a single file.
-            // would be nice if we passed a "file options" to override picking multiple files & directories
-            NSOpenPanel nSOpenPanel1 = new()
+
+            NSOpenPanel nSOpenPanel1 = new NSOpenPanel()
             {
                 CanChooseFiles = false,
                 AllowsMultipleSelection = false,
                 CanChooseDirectories = true
             };
+
             using (var nSOpenPanel = nSOpenPanel1)
             {
                 NSOpenPanel openPanel = nSOpenPanel;
-
 
                 nint result = openPanel.RunModal();
                 if (result == 1)

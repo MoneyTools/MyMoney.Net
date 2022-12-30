@@ -16,9 +16,6 @@ namespace XMoney.Views
             this.BackgroundColor = Color.White;
 
             Xamarin.Forms.NavigationPage.SetHasNavigationBar(this, true);
-
-            //NavigationPage.SetTitleFont(this, Font.SystemFontOfSize(NamedSize.Micro));
-
         }
 
 
@@ -41,6 +38,11 @@ namespace XMoney.Views
                     Padding = new Thickness(0);
                 }
             }
+        }
+
+        public bool IsNarrow()
+        {
+            return this.Width < 600;
         }
 
         public ToolbarItem AddToolBarButtonSetting()
@@ -271,7 +273,7 @@ namespace XMoney.Views
                 AlignContent = FlexAlignContent.Stretch,
             };
 
-            bool isDeviceNarrow = App.IsSmallDevice();
+            bool isDeviceNarrow = IsNarrow();
             if (isDeviceNarrow)
             {
                 view.Direction = FlexDirection.Column;
