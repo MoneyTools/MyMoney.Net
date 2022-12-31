@@ -391,6 +391,6 @@ Global
 		$0.CSharpFormattingPolicy = $11
 		$11.scope = text/x-csharp
 		outputpath = ../output/build/bin
-		version = 0.2
+		version = 0.3
 	EndGlobalSection
 EndGlobal

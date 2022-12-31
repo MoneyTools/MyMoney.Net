@@ -17,7 +17,7 @@
     <Description>MacOS version of xMoney application</Description>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
-    <ReleaseVersion>0.2</ReleaseVersion>
+    <ReleaseVersion>0.3</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,7 +41,7 @@
     </XamMacArch>
     <AOTMode>None</AOTMode>
     <PackageSigningKey>3rd Party Mac Developer Installer</PackageSigningKey>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -62,7 +62,7 @@
     <XamMacArch>
     </XamMacArch>
     <AOTMode>None</AOTMode>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="netstandard" />

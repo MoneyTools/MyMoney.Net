@@ -20,7 +20,7 @@
     </PackageCertificateKeyFile>
     <PackageCertificateThumbprint>7978AE304D18FB759CAA774C2C03DC914FAEA6DC</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <ReleaseVersion>0.2</ReleaseVersion>
+    <ReleaseVersion>0.3</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
