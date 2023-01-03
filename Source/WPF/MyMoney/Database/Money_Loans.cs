@@ -581,7 +581,7 @@ namespace Walkabout.Data
             LoanPayment loanEntry = null;
             try
             {
-                //DataContractSerializer xs = new DataContractSerializer(typeof(RentExpense));
+                //DataContractSerializer xs = new DataContractSerializer(typeof(RentExpense), MyMoney.GetKnownTypes());
                 //StringReader sr = new StringReader(xml);
                 //XmlTextReader r = new XmlTextReader(sr);
                 //loanEntry = (LoanPayment)xs.ReadObject(r);

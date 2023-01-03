@@ -292,7 +292,7 @@ namespace Walkabout.Data
 
         public virtual string Serialize()
         {
-            DataContractSerializer xs = new DataContractSerializer(this.GetType());
+            DataContractSerializer xs = new DataContractSerializer(this.GetType(), MyMoney.GetKnownTypes());
             using (StringWriter sw = new StringWriter())
             {
                 XmlTextWriter w = new XmlTextWriter(sw);
@@ -666,7 +666,7 @@ namespace Walkabout.Data
 
         public virtual void Serialize(XmlWriter w)
         {
-            DataContractSerializer xs = new DataContractSerializer(this.GetType());
+            DataContractSerializer xs = new DataContractSerializer(this.GetType(), MyMoney.GetKnownTypes());
             xs.WriteObject(w, this);
         }
 
@@ -703,6 +703,7 @@ namespace Walkabout.Data
         private RentBuildings buildings;
         private TransactionExtras extras;
         internal PayeeIndex payeeAccountIndex;
+        private bool watching;
 
         internal static Type[] GetKnownTypes()
         {
@@ -725,36 +726,102 @@ namespace Walkabout.Data
 
         public MyMoney()
         {
-            this.Accounts = new Accounts(this);
-            this.OnlineAccounts = new OnlineAccounts(this);
-            this.Payees = new Payees(this);
-            this.Aliases = new Aliases(this);
-            this.AccountAliases = new AccountAliases(this);
-            this.Categories = new Categories(this);
-            this.Currencies = new Currencies(this);
-            this.Transactions = new Transactions(this);
-            this.Securities = new Securities(this);
-            this.StockSplits = new StockSplits(this);
-            this.Buildings = new RentBuildings(this);
-            this.LoanPayments = new LoanPayments(this);
-            this.payeeAccountIndex = new PayeeIndex(this);
-            this.extras = new TransactionExtras(this);
-
-            EventHandler<ChangeEventArgs> handler = new EventHandler<ChangeEventArgs>(this.OnChanged);
-            this.Accounts.Changed += handler;
-            this.OnlineAccounts.Changed += handler;
-            this.Payees.Changed += handler;
-            this.Aliases.Changed += handler;
-            this.AccountAliases.Changed += handler;
-            this.Categories.Changed += handler;
-            this.Currencies.Changed += handler;
-            this.Transactions.Changed += handler;
-            this.Securities.Changed += handler;
-            this.StockSplits.Changed += handler;
-            this.Buildings.Changed += handler;
-            this.LoanPayments.Changed += handler;
-            this.TransactionExtras.Changed += handler;
+            this.LazyInitialize();
+            this.WatchChanges();
         }
+
+        void LazyInitialize()
+        {
+            // In the XmlSerialization case the MyMoney default constructor is never called!
+            // So, we may have to lazily initialize these fields in that case.
+            if (this.Accounts == null)
+            {
+                this.Accounts = new Accounts(this);
+            }
+            if (this.OnlineAccounts == null)
+            {
+                this.OnlineAccounts = new OnlineAccounts(this);
+            }
+            if (this.Payees == null)
+            {
+                this.Payees = new Payees(this);
+            }
+            if (this.Aliases == null)
+            {
+                this.Aliases = new Aliases(this);
+            }
+            if (this.AccountAliases == null)
+            {
+                this.AccountAliases = new AccountAliases(this);
+            }
+            if (this.Categories == null)
+            {
+                this.Categories = new Categories(this);
+            }
+            if (this.Currencies == null)
+            {
+                this.Currencies = new Currencies(this);
+            }
+            if (this.Transactions == null)
+            {
+                this.Transactions = new Transactions(this);
+            }
+            if (this.Securities == null)
+            {
+                this.Securities = new Securities(this);
+            }
+            if (this.StockSplits == null)
+            {
+                this.StockSplits = new StockSplits(this);
+            }
+            if (this.Buildings == null)
+            {
+                this.Buildings = new RentBuildings(this);
+            }
+            if (this.LoanPayments == null)
+            {
+                this.LoanPayments = new LoanPayments(this);
+            }
+            if (this.payeeAccountIndex == null)
+            {
+                this.payeeAccountIndex = new PayeeIndex(this);
+            }
+            if (this.extras == null)
+            {
+                this.extras = new TransactionExtras(this);
+            }
+        }
+
+        void WatchChanges()
+        {
+            if (!this.watching)
+            {
+                this.watching = true;
+                EventHandler<ChangeEventArgs> handler = new EventHandler<ChangeEventArgs>(this.OnChanged);
+                this.Accounts.Changed += handler;
+                this.OnlineAccounts.Changed += handler;
+                this.Payees.Changed += handler;
+                this.Aliases.Changed += handler;
+                this.AccountAliases.Changed += handler;
+                this.Categories.Changed += handler;
+                this.Currencies.Changed += handler;
+                this.Transactions.Changed += handler;
+                this.Securities.Changed += handler;
+                this.StockSplits.Changed += handler;
+                this.Buildings.Changed += handler;
+                this.LoanPayments.Changed += handler;
+                this.TransactionExtras.Changed += handler;
+            }
+        }
+
+        internal void OnLoaded()
+        {
+            this.LazyInitialize();
+            this.payeeAccountIndex.Reload();
+            this.Transactions.JoinExtras(this.TransactionExtras);
+            this.WatchChanges();
+        }
+
 
         [DataMember]
         public Accounts Accounts
@@ -775,12 +842,6 @@ namespace Walkabout.Data
         {
             get { return this.payees; }
             set { this.payees = value; this.payees.Parent = this; }
-        }
-
-        internal void OnLoaded()
-        {
-            this.payeeAccountIndex.Reload();
-            this.Transactions.JoinExtras(this.TransactionExtras);
         }
 
         [DataMember]
@@ -4922,7 +4983,7 @@ namespace Walkabout.Data
             Payee p = null;
             try
             {
-                DataContractSerializer xs = new DataContractSerializer(typeof(Payee));
+                DataContractSerializer xs = new DataContractSerializer(typeof(Payee), MyMoney.GetKnownTypes());
                 using (StringReader sr = new StringReader(xml))
                 {
                     XmlTextReader r = new XmlTextReader(sr);
@@ -6140,7 +6201,7 @@ namespace Walkabout.Data
             RentBuilding rentBuilding = null;
             try
             {
-                DataContractSerializer xs = new DataContractSerializer(typeof(RentBuilding));
+                DataContractSerializer xs = new DataContractSerializer(typeof(RentBuilding), MyMoney.GetKnownTypes());
                 using (StringReader sr = new StringReader(xml))
                 {
                     XmlTextReader r = new XmlTextReader(sr);
@@ -6617,7 +6678,7 @@ namespace Walkabout.Data
             RentUnit x = null;
             try
             {
-                DataContractSerializer xs = new DataContractSerializer(typeof(RentBuilding));
+                DataContractSerializer xs = new DataContractSerializer(typeof(RentBuilding), MyMoney.GetKnownTypes());
                 using (StringReader sr = new StringReader(xml))
                 {
                     XmlTextReader r = new XmlTextReader(sr);
@@ -9119,7 +9180,7 @@ namespace Walkabout.Data
         /// <param name="recurringCount">How many such transactions before we consider it a recurring type</param>
         /// <returns></returns>
         public static bool IsRecurring(Transaction t, Transaction u, IList<Transaction> tc,
-            decimal amountDeltaPercent = 3,
+            decimal amountDeltaPercent = 10,
             decimal daysDeltaPercent = 10,
             int recurringCount = 3)
         {
@@ -9157,14 +9218,17 @@ namespace Walkabout.Data
                     continue;
                 }
 
-                // if they are within 1% of each other and within 3 days of the prior time span
-                // then it is probably a recurring instance.
-                if (w.PayeeName == t.PayeeName && Math.Abs((w.Amount - t.Amount) * 100 / t.Amount) < amountDeltaPercent)
+                // if amount is within a given percentage of each other then it might be a recurring instance.
+                if (w.PayeeName == t.PayeeName)
                 {
-                    similarTransactions.Add(w);
-                    if (similarTransactions.Count > 10)
+                    var percentChange = Math.Abs((w.Amount - t.Amount) * 100 / t.Amount);
+                    if (percentChange < amountDeltaPercent)
                     {
-                        break; // should be enough.
+                        similarTransactions.Add(w);
+                        if (similarTransactions.Count > 10)
+                        {
+                            break; // should be enough.
+                        }
                     }
                 }
             }
@@ -13240,7 +13304,7 @@ namespace Walkabout.Data
         // deserialize the given splits and add to this set
         public void DeserializeInto(MyMoney money, string xml)
         {
-            DataContractSerializer xs = new DataContractSerializer(typeof(Splits));
+            DataContractSerializer xs = new DataContractSerializer(typeof(Splits), MyMoney.GetKnownTypes());
             using (StringReader sr = new StringReader(xml))
             {
                 Splits result = null;

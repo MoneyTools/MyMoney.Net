@@ -1969,6 +1969,7 @@ namespace Walkabout
                     newMoney = database.Load(this);
 
                     watch.Stop();
+                    Debug.WriteLine("Loaded database in {0} milliseconds", watch.ElapsedMilliseconds);
                 }
                 catch (Exception e)
                 {

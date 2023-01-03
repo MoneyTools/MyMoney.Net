@@ -195,7 +195,7 @@ namespace Walkabout.Data
         {
             MyMoney money = null;
 
-            DataContractSerializer serializer = new DataContractSerializer(typeof(MyMoney));
+            DataContractSerializer serializer = new DataContractSerializer(typeof(MyMoney), MyMoney.GetKnownTypes());
             if (!File.Exists(this.filename))
             {
                 money = new MyMoney();
@@ -245,7 +245,7 @@ namespace Walkabout.Data
         {
             PrepareSave(money);
 
-            DataContractSerializer serializer = new DataContractSerializer(typeof(MyMoney));
+            DataContractSerializer serializer = new DataContractSerializer(typeof(MyMoney), MyMoney.GetKnownTypes());
 
             string path = this.filename;
             bool encrypted = !string.IsNullOrWhiteSpace(this.Password);

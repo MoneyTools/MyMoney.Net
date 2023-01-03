@@ -85,10 +85,10 @@ namespace Walkabout.Migrate
             }
         }
 
-        private static readonly DataContractSerializer TransactionSerializer = new DataContractSerializer(typeof(Transaction));
-        private static readonly DataContractSerializer InvestmentSerializer = new DataContractSerializer(typeof(Investment));
-        private static readonly DataContractSerializer SplitSerializer = new DataContractSerializer(typeof(Split));
-        private static readonly DataContractSerializer AccountSerializer = new DataContractSerializer(typeof(Account));
+        private static readonly DataContractSerializer TransactionSerializer = new DataContractSerializer(typeof(Transaction), MyMoney.GetKnownTypes());
+        private static readonly DataContractSerializer InvestmentSerializer = new DataContractSerializer(typeof(Investment), MyMoney.GetKnownTypes());
+        private static readonly DataContractSerializer SplitSerializer = new DataContractSerializer(typeof(Split), MyMoney.GetKnownTypes());
+        private static readonly DataContractSerializer AccountSerializer = new DataContractSerializer(typeof(Account), MyMoney.GetKnownTypes());
 
         private void ExportToXml(XmlWriter writer, IEnumerable<object> data)
         {
