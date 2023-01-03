@@ -1875,6 +1875,7 @@ namespace Walkabout
 #endif
                 try
                 {
+                    this.ShowMessage("Loading...");
                     string ext = Path.GetExtension(databaseName).ToLowerInvariant();
                     if (ext == ".xml")
                     {
@@ -1969,10 +1970,10 @@ namespace Walkabout
                     newMoney = database.Load(this);
 
                     watch.Stop();
-                    Debug.WriteLine("Loaded database in {0} milliseconds", watch.ElapsedMilliseconds);
                 }
                 catch (Exception e)
                 {
+                    this.ShowMessage("");
                     MessageBoxEx.Show(e.Message, "Error Loading Database", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 #if PerformanceBlocks
@@ -1995,13 +1996,15 @@ namespace Walkabout
                     var msg = "Loaded from " + label + " in " + (int)watch.Elapsed.TotalMilliseconds + " milliseconds";
                     if (string.IsNullOrEmpty(password))
                     {
-                        string end = msg + " (database has no password!!)";
-                        this.AnimateStatus(msg, end);
+                        this.delayedActions.StartDelayedAction("NoPassword", () =>
+                        {
+                            string end = msg + " (database has no password!!)";
+                            this.AnimateStatus(msg, end);
+                        }, TimeSpan.FromSeconds(10));
                     }
-                    else
-                    {
-                        this.InternalShowMessage(msg);
-                    }
+
+                    this.InternalShowMessage(msg);
+                    this.skipMessagesUntil = DateTime.Now.AddSeconds(5);
 
                     this.recentFilesMenu.AddRecentFile(database.DatabasePath);
                 }));
@@ -4395,19 +4398,18 @@ namespace Walkabout
             this.InternalShowMessage(text);
         }
 
+        DateTime skipMessagesUntil = DateTime.MinValue;
+
         public void InternalShowMessage(string text)
         {
-            if (this.Dispatcher.Thread == System.Threading.Thread.CurrentThread)
+            if (DateTime.Now < skipMessagesUntil)
+            {
+                return;
+            }
+            UiDispatcher.BeginInvoke(new Action(() =>
             {
                 this.ShowMessageUIThread(text);
-            }
-            else
-            {
-                UiDispatcher.BeginInvoke(new Action(() =>
-                {
-                    this.ShowMessageUIThread(text);
-                }));
-            }
+            }));
         }
 
         private void ShowMessageUIThread(string text)
