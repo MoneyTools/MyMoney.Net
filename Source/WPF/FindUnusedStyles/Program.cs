@@ -764,7 +764,7 @@ namespace FindUnusedStyles
                     }
                 }
             }
-            else if (value.StartsWith('{'))
+            else if (value.StartsWith("{"))
             {
                 reference = this.ParseResourceReference(value, local);
             }

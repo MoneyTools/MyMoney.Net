@@ -2,8 +2,8 @@
 cd "%~dp0"
 if "%MODERNWPF%" == "" goto :nomodernwpf
 if not exist "%MODERNWPF%" goto :nomodernwpf
-if not exist FindUnusedStyles\bin\Debug\net5.0-windows\FindUnusedStyles.exe msbuild FindUnusedStyles\FindUnusedStyles.csproj
-FindUnusedStyles\bin\Debug\net5.0-windows\FindUnusedStyles.exe --import "%MODERNWPF%\ModernWpf\Styles" --import "%MODERNWPF%\ModernWpf\ThemeResources" .
+if not exist FindUnusedStyles\bin\Debug\FindUnusedStyles.exe msbuild FindUnusedStyles\FindUnusedStyles.csproj /p:Configuration=Release "/p:Platform=Any CPU"
+FindUnusedStyles\bin\Debug\FindUnusedStyles.exe --import "%MODERNWPF%\ModernWpf\Styles" --import "%MODERNWPF%\ModernWpf\ThemeResources" .
 
 goto :eof
 
