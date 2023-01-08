@@ -12086,7 +12086,7 @@ namespace Walkabout.Data
                 rc = true;
             }
 
-            if (this.date == null && t.date != null && this.date != t.date)
+            if (this.date != t.date)
             {
                 this.date = t.date;
                 rc = true;
