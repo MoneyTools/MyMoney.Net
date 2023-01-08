@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -1141,9 +1142,10 @@ namespace Walkabout.Configuration
         // Associate file extension with progID, description, icon and application
         public static void Associate(
             string extension,
-            string fullPathToApplication
-            )
+            string fullPathToApplication)
         {
+            Debug.Assert(OperatingSystem.IsWindows());
+
             string applicationFileName = Path.GetFileName(fullPathToApplication);
 
 
@@ -1179,30 +1181,6 @@ namespace Walkabout.Configuration
             catch
             {
             }
-
-
-
-            // SYSTEM WIDE NEEDS ADMIN RIGHT 
-
-            //Registry.ClassesRoot.CreateSubKey(".qif").SetValue("", "WalkAbout.exe", Microsoft.Win32.RegistryValueKind.String);
-
-            //try
-            //{
-            //    Registry.ClassesRoot.DeleteSubKeyTree("WalkAbout.exe\\shell\\open\\command");
-            //}
-            //catch
-            //{
-            //}
-
-            //try
-            //{
-
-            //    Registry.ClassesRoot.CreateSubKey("WalkAbout.exe\\shell\\open\\command").SetValue("", fullPathToApplication + "\"%1\"", Microsoft.Win32.RegistryValueKind.String);
-            //}
-            //catch (Exception e)
-            //{
-            //    MessageBoxEx.Show(e.Message);
-            //}
         }
 
 

@@ -1459,6 +1459,7 @@ namespace Walkabout
 
         private void OnThemeChanged(string themeToApply)
         {
+            Debug.Assert(OperatingSystem.IsWindows());
             if (themeToApply == "Dark")
             {
                 ModernWpf.ThemeManager.Current.ApplicationTheme = ModernWpf.ApplicationTheme.Dark;

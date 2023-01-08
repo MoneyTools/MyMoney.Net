@@ -18,7 +18,6 @@ namespace Walkabout
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-
     public partial class App : Application
     {
         private void MyApplicationStartup(object sender, StartupEventArgs e)

@@ -8,7 +8,17 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <RootNamespace>Walkabout</RootNamespace>
+    <SignAssembly>False</SignAssembly>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1416</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;1416</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <SupportedPlatform Include="Windows" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Remove="Service References\**" />
     <None Remove="Service References\**" />
@@ -58,7 +68,7 @@
     <Resource Include="Dialogs\Icons\Warning.png" />
     <Resource Include="Icons\App.ico" />
     <Resource Include="Dialogs\Icons\QuestionMark.png" />
-    <EmbeddedResource Include="Database\SampleData.xml"/>
+    <EmbeddedResource Include="Database\SampleData.xml" />
     <Resource Include="Icons\Error.png" />
     <EmbeddedResource Include="Charts\Icons\grab.cur" />
     <EmbeddedResource Include="Charts\Icons\grabbing.cur" />
@@ -66,7 +76,7 @@
     <Resource Include="Dialogs\Icons\CutHS.png" />
     <Resource Include="Dialogs\Icons\PasteHS.png" />
     <Resource Include="Dialogs\Icons\CopyHS.png" />
-    <EmbeddedResource Include="Ofx\OfxProviderList.xml"/>
+    <EmbeddedResource Include="Ofx\OfxProviderList.xml" />
     <EmbeddedResource Include="Ofx\OfxErrorTemplate.htm" />
     <Resource Include="Icons\TurboTax.png" />
     <Resource Include="Dialogs\Icons\delete_16x.png" />

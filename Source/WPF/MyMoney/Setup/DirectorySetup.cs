@@ -14,6 +14,7 @@ namespace Walkabout.Setup
         {
             // NOTE this is all windows specific code.
 
+            Debug.Assert(OperatingSystem.IsWindows());
             bool userHasControl = false;
 
             WindowsIdentity id = WindowsIdentity.GetCurrent();

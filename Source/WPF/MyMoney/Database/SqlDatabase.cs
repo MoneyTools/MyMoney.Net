@@ -253,6 +253,7 @@ namespace Walkabout.Data
         /// </summary>
         public void AclDatabasePath(string path)
         {
+            Debug.Assert(OperatingSystem.IsWindows());
             var accountId = new SecurityIdentifier(WellKnownSidType.NetworkServiceSid, null).Translate(typeof(NTAccount));
             this.SecurityService.AddWritePermission(accountId, path);
         }
@@ -636,6 +637,7 @@ namespace Walkabout.Data
             {
                 try
                 {
+                    Debug.Assert(OperatingSystem.IsWindows());
                     // got this code from this article:
                     // http://msdn.microsoft.com/en-us/library/bb264562(SQL.90).aspx
                     using (RegistryKey Key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Microsoft SQL Server\\", false))
@@ -695,6 +697,7 @@ namespace Walkabout.Data
             {
                 try
                 {
+                    Debug.Assert(OperatingSystem.IsWindows());
                     // got this code from this article:
                     // http://msdn.microsoft.com/en-us/library/bb264562(SQL.90).aspx
                     using (RegistryKey Key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Microsoft SQL Server\\", false))
@@ -921,6 +924,7 @@ namespace Walkabout.Data
             this.ExecuteScalar("sp_addsrvrolemember '" + userName + "','sysadmin'");
 
 
+            Debug.Assert(OperatingSystem.IsWindows());
             // Have to turn on mixed mode.
             // http://www.eggheadcafe.com/articles/20040703.asp
 

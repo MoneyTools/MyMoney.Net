@@ -637,7 +637,7 @@ namespace Walkabout.Attachments
         private static string Sha256Hash(string fileName)
         {
             byte[] contents = File.ReadAllBytes(fileName);
-            var crypt = new System.Security.Cryptography.SHA256Managed();
+            var crypt = System.Security.Cryptography.SHA256.Create();
             var hash = new StringBuilder();
             byte[] crypto = crypt.ComputeHash(contents);
             foreach (byte theByte in crypto)

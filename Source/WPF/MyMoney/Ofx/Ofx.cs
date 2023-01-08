@@ -1176,7 +1176,7 @@ NEWFILEUID:{1}
                 }
                 else
                 {
-                    throw ex;
+                    throw;
                 }
             }
 

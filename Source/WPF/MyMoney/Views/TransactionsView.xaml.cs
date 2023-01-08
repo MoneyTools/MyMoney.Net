@@ -181,6 +181,7 @@ namespace Walkabout.Views
 
         private void OnOneLineViewChanged()
         {
+            Debug.Assert(OperatingSystem.IsWindows());
             this.ToggleShowLinesImage.Symbol = this.OneLineView ? Symbol.List : Symbol.ShowResults;
             this.FireBeforeViewStateChanged();
             if (OneLineViewChanged != null)
@@ -267,6 +268,7 @@ namespace Walkabout.Views
             get { return (bool)this.GetValue(ViewAllSplitsProperty); }
             set
             {
+                Debug.Assert(OperatingSystem.IsWindows());
                 this.SetValue(ViewAllSplitsProperty, value);
 
                 //ToggleShowSplits.IsChecked = value;
@@ -6003,6 +6005,7 @@ namespace Walkabout.Views
 
         private void UpdateIcon()
         {
+            Debug.Assert(OperatingSystem.IsWindows());
             if (this.context == null || !this.context.HasAttachment)
             {
                 this.Child = null;
@@ -6027,6 +6030,7 @@ namespace Walkabout.Views
 
         internal static void SetFontSize(SymbolIcon icon, double fontSize)
         {
+            Debug.Assert(OperatingSystem.IsWindows());
             if (setter == null)
             {
                 setter = CompiledPropertySetter.CompileSetter<SymbolIcon, double>("FontSize",
@@ -6041,6 +6045,7 @@ namespace Walkabout.Views
 
         protected override FrameworkElement GenerateEditingElement(DataGridCell cell, object dataItem)
         {
+            Debug.Assert(OperatingSystem.IsWindows());
             var icon = new SymbolIcon()
             {
                 Symbol = Symbol.Attach,
@@ -6914,6 +6919,7 @@ namespace Walkabout.Views
              *     Text="{Binding Tax, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}, 
              *            Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" VerticalAlignment="Top"/>
              */
+            Debug.Assert(OperatingSystem.IsWindows());
             TextBox box = new TextBox()
             {
                 VerticalAlignment = VerticalAlignment.Top,
