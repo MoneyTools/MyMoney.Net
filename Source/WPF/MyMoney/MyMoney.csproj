@@ -52,17 +52,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <!--<EmbeddedResource Include="Ofx\OfxStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>OfxStrings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    -->
     <EmbeddedResource Include="Taxes\TxfSpec.txt" />
     <EmbeddedResource Include="Ofx\ofx160.dtd" />
     <Resource Include="Dialogs\Icons\CheckMark.png" />
