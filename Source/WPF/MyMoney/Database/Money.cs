@@ -7,10 +7,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Walkabout.Utilities;
 #if PerformanceBlocks
@@ -12736,33 +12736,33 @@ namespace Walkabout.Data
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.Model, MeasurementId.Indexing))
             {
 #endif
-                // now we can build the payee index, only need to do non-closed accounts
-                // since we don't care about old stale data in this index.
-                foreach (var t in this.money.Transactions)
+            // now we can build the payee index, only need to do non-closed accounts
+            // since we don't care about old stale data in this index.
+            foreach (var t in this.money.Transactions)
+            {
+                var account = t.Account;
+                if (account != null && !account.IsClosed)
                 {
-                    var account = t.Account;
-                    if (account != null && !account.IsClosed)
+                    if (t.IsSplit)
                     {
-                        if (t.IsSplit)
+                        foreach (var s in t.Splits)
                         {
-                            foreach (var s in t.Splits)
+                            string cap = s.PayeeOrTransferCaption;
+                            if (!string.IsNullOrEmpty(cap))
                             {
-                                string cap = s.PayeeOrTransferCaption;
-                                if (!string.IsNullOrEmpty(cap))
-                                {
-                                    this.GetOrCreate(cap, account);
-                                    continue;
-                                }
+                                this.GetOrCreate(cap, account);
+                                continue;
                             }
                         }
+                    }
 
-                        var caption = t.PayeeOrTransferCaption;
-                        if (!string.IsNullOrEmpty(caption))
-                        {
-                            this.GetOrCreate(caption, account);
-                        }
+                    var caption = t.PayeeOrTransferCaption;
+                    if (!string.IsNullOrEmpty(caption))
+                    {
+                        this.GetOrCreate(caption, account);
                     }
                 }
+            }
 #if PerformanceBlocks
             }
 #endif

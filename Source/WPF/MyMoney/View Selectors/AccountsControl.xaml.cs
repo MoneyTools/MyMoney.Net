@@ -1,20 +1,20 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Microsoft.Win32;
+using Walkabout.Commands;
 using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Dialogs;
-using Walkabout.Utilities;
 using Walkabout.Migrate;
-using System.IO;
-using Walkabout.Commands;
-using System.ComponentModel;
-using System.Collections.ObjectModel;
+using Walkabout.Utilities;
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 #endif
@@ -242,23 +242,23 @@ namespace Walkabout.Views.Controls
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AccountsControlInitialize))
             {
 #endif
-                this.InitializeComponent();
+            this.InitializeComponent();
 
-                this.listBox1.PreviewMouseDown += new MouseButtonEventHandler(this.listBox1_PreviewMouseDown);
-                this.listBox1.SelectionChanged += new SelectionChangedEventHandler(this.OnListBoxSelectionChanged);
-                this.listBox1.MouseDoubleClick += new MouseButtonEventHandler(this.OnListBoxMouseDoubleClick);
+            this.listBox1.PreviewMouseDown += new MouseButtonEventHandler(this.listBox1_PreviewMouseDown);
+            this.listBox1.SelectionChanged += new SelectionChangedEventHandler(this.OnListBoxSelectionChanged);
+            this.listBox1.MouseDoubleClick += new MouseButtonEventHandler(this.OnListBoxMouseDoubleClick);
 
-                foreach (object o in this.AccountsControlContextMenu.Items)
+            foreach (object o in this.AccountsControlContextMenu.Items)
+            {
+                MenuItem m = o as MenuItem;
+                if (m != null)
                 {
-                    MenuItem m = o as MenuItem;
-                    if (m != null)
-                    {
-                        m.CommandTarget = this;
-                    }
+                    m.CommandTarget = this;
                 }
+            }
 
-                this.listBox1.ItemsSource = this.items;
-                this.UpdateContextMenuView();
+            this.listBox1.ItemsSource = this.items;
+            this.UpdateContextMenuView();
 #if PerformanceBlocks
             }
 #endif

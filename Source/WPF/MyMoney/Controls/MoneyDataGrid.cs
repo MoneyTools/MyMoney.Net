@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Media;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.ComponentModel;
 using System.Windows.Data;
-using System.Windows;
-using Walkabout.Utilities;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
-using System.Collections;
+using Walkabout.Utilities;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;

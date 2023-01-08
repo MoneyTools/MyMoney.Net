@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Walkabout.Data;
-using System.IO;
 using Walkabout.Utilities;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Diagnostics;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -494,41 +494,41 @@ namespace Walkabout.Attachments
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.Model, MeasurementId.ScanAttachments))
             {
 #endif
-                try
-                {
-                    string path = this.AttachmentDirectory;
+            try
+            {
+                string path = this.AttachmentDirectory;
 
-                    if (!string.IsNullOrEmpty(path) && Directory.Exists(path) && this.money != null)
+                if (!string.IsNullOrEmpty(path) && Directory.Exists(path) && this.money != null)
+                {
+                    // process pending account checks
+                    Account a;
+                    while (this.accountQueue.TryDequeue(out a) && this.threadRunning)
                     {
-                        // process pending account checks
-                        Account a;
-                        while (this.accountQueue.TryDequeue(out a) && this.threadRunning)
-                        {
-                            this.FindAttachments(path, a);
-                        }
-
-                        // process pending individual transaction checks.
-                        List<Tuple<Transaction, bool>> toUpdate = new List<Tuple<Transaction, bool>>();
-                        Transaction t;
-                        while (this.transactionQueue.TryDequeue(out t) && this.threadRunning)
-                        {
-                            bool yes = this.HasAttachments(path, t);
-                            if (t.HasAttachment != yes)
-                            {
-                                toUpdate.Add(new Tuple<Transaction, bool>(t, yes));
-                            }
-                        }
-
-                        // Updating Money transactions has to happen on the UI thread.
-                        UiDispatcher.BeginInvoke(new Action(() =>
-                        {
-                            this.BatchUpdate(toUpdate);
-                        }));
+                        this.FindAttachments(path, a);
                     }
+
+                    // process pending individual transaction checks.
+                    List<Tuple<Transaction, bool>> toUpdate = new List<Tuple<Transaction, bool>>();
+                    Transaction t;
+                    while (this.transactionQueue.TryDequeue(out t) && this.threadRunning)
+                    {
+                        bool yes = this.HasAttachments(path, t);
+                        if (t.HasAttachment != yes)
+                        {
+                            toUpdate.Add(new Tuple<Transaction, bool>(t, yes));
+                        }
+                    }
+
+                    // Updating Money transactions has to happen on the UI thread.
+                    UiDispatcher.BeginInvoke(new Action(() =>
+                    {
+                        this.BatchUpdate(toUpdate);
+                    }));
                 }
-                catch
-                {
-                }
+            }
+            catch
+            {
+            }
 #if PerformanceBlocks
             }
 #endif
