@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -806,36 +805,36 @@ namespace Walkabout.StockQuotes
                 using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.LoadStockDownloadLog))
                 {
 #endif
-                    try
+                try
+                {
+                    XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
+                    using (XmlReader r = XmlReader.Create(filename))
                     {
-                        XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
-                        using (XmlReader r = XmlReader.Create(filename))
-                        {
-                            log = (DownloadLog)s.Deserialize(r);
-                        }
+                        log = (DownloadLog)s.Deserialize(r);
                     }
-                    catch (Exception)
-                    {
-                        // got corrupted? no problem, just start over.
-                        log = new DownloadLog();
-                    }
-                    log._logFolder = logFolder;
+                }
+                catch (Exception)
+                {
+                    // got corrupted? no problem, just start over.
+                    log = new DownloadLog();
+                }
+                log._logFolder = logFolder;
 
-                    // ensure unique list.
-                    foreach (var info in log.Downloaded.ToArray())
-                    {
-                        log._downloaded[info.Symbol] = info;
-                    }
+                // ensure unique list.
+                foreach (var info in log.Downloaded.ToArray())
+                {
+                    log._downloaded[info.Symbol] = info;
+                }
 
-                    if (log._downloaded.Count != log.Downloaded.Count)
+                if (log._downloaded.Count != log.Downloaded.Count)
+                {
+                    log.Downloaded.Clear();
+                    foreach (var info in log._downloaded.Values)
                     {
-                        log.Downloaded.Clear();
-                        foreach (var info in log._downloaded.Values)
-                        {
-                            log.Downloaded.Add(info);
-                        }
-                        log.Downloaded.Sort((a, b) => string.Compare(a.Symbol, b.Symbol));
+                        log.Downloaded.Add(info);
                     }
+                    log.Downloaded.Sort((a, b) => string.Compare(a.Symbol, b.Symbol));
+                }
 
 #if PerformanceBlocks
                 }
@@ -969,32 +968,32 @@ namespace Walkabout.StockQuotes
                     using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.DownloadStockQuoteHistory))
                     {
 #endif
-                        StockQuoteHistory history = null;
-                        var info = this._downloadLog.GetInfo(symbol);
-                        history = await this._downloadLog.GetHistory(symbol);
-                        if (history == null)
+                    StockQuoteHistory history = null;
+                    var info = this._downloadLog.GetInfo(symbol);
+                    history = await this._downloadLog.GetHistory(symbol);
+                    if (history == null)
+                    {
+                        history = new StockQuoteHistory() { Symbol = symbol };
+                    }
+                    if (info != null && info.Downloaded.Date == DateTime.Today && history != null && history.Complete)
+                    {
+                        // already up to date
+                    }
+                    else
+                    {
+                        try
                         {
-                            history = new StockQuoteHistory() { Symbol = symbol };
+                            await this._service.UpdateHistory(history);
                         }
-                        if (info != null && info.Downloaded.Date == DateTime.Today && history != null && history.Complete)
+                        catch (Exception ex)
                         {
-                            // already up to date
+                            this.OnError("Download history error: " + ex.Message);
                         }
-                        else
-                        {
-                            try
-                            {
-                                await this._service.UpdateHistory(history);
-                            }
-                            catch (Exception ex)
-                            {
-                                this.OnError("Download history error: " + ex.Message);
-                            }
-                        }
-                        if (history != null && history.History != null && history.History.Count != 0)
-                        {
-                            this.OnHistoryAvailable(history);
-                        }
+                    }
+                    if (history != null && history.History != null && history.History.Count != 0)
+                    {
+                        this.OnHistoryAvailable(history);
+                    }
 #if PerformanceBlocks
                     }
 #endif

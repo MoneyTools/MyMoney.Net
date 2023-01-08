@@ -65,8 +65,7 @@
 
     <DockPanel>
         <ui:CommandBar DockPanel.Dock="top" HorizontalAlignment="Left" >
-            <ui:AppBarButton x:Name="ScanButton" Click="Scan" Icon="Scan" ToolTip="Click here to scan a document"
-                             />
+            <!--<ui:AppBarButton x:Name="ScanButton" Click="Scan" Icon="Scan" ToolTip="Click here to scan a document" />-->
             <!--<Separator Width="30" Background="Transparent"/>-->
             <ui:AppBarButton x:Name="ZoomInButton" Click="ZoomIn" Icon="ZoomIn" ToolTip="Zoom in"/>
             <ui:AppBarButton x:Name="ZoomOutButton" Click="ZoomOut"  Icon="ZoomOut" ToolTip="Zoom out"/>

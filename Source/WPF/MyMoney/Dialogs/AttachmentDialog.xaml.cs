@@ -1,10 +1,7 @@
-﻿using ModernWpf.Controls;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -203,87 +200,87 @@ namespace Walkabout.Dialogs
             }
         }
 
-        private void GetScannerAsync(Action completionHandler)
-        {
-            if (device == null)
-            {
-                Task task = new Task(new Action(() =>
-                {
-                    if (globalDialog == null)
-                    {
-                        globalDialog = new WIA.CommonDialog();
-                    }
-                    try
-                    {
-                        device = globalDialog.ShowSelectDevice(DeviceType: WIA.WiaDeviceType.ScannerDeviceType, AlwaysSelectDevice: true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.Message);
-                    }
-                }));
+        //private void GetScannerAsync(Action completionHandler)
+        //{
+        //    if (device == null)
+        //    {
+        //        Task task = new Task(new Action(() =>
+        //        {
+        //            if (globalDialog == null)
+        //            {
+        //                globalDialog = new WIA.CommonDialog();
+        //            }
+        //            try
+        //            {
+        //                device = globalDialog.ShowSelectDevice(DeviceType: WIA.WiaDeviceType.ScannerDeviceType, AlwaysSelectDevice: true);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Debug.WriteLine(ex.Message);
+        //            }
+        //        }));
 
-                task.Start();
-                Task.WaitAll(task);
+        //        task.Start();
+        //        Task.WaitAll(task);
 
-            }
-            completionHandler();
-        }
+        //    }
+        //    completionHandler();
+        //}
 
-        private static WIA.Device device;
-        private static WIA.ICommonDialog globalDialog;
+        ////private static WIA.Device device;
+        ////private static WIA.ICommonDialog globalDialog;
 
-        private void Scan(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                AppBarButton button = sender as AppBarButton;
-                // hmmm, reusing the device doesn't work because it somehow resets itself to capture higher resolution images.
-                bool hasDevice = false; //  device != null;
+        //private void Scan(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        AppBarButton button = sender as AppBarButton;
+        //        // hmmm, reusing the device doesn't work because it somehow resets itself to capture higher resolution images.
+        //        bool hasDevice = false; //  device != null;
 
-                this.GetScannerAsync(new Action(() =>
-                {
-                    WIA.ImageFile imageFile = null;
+        //        this.GetScannerAsync(new Action(() =>
+        //        {
+        //            WIA.ImageFile imageFile = null;
 
-                    if (!hasDevice)
-                    {
-                        imageFile = globalDialog.ShowAcquireImage(DeviceType: WIA.WiaDeviceType.ScannerDeviceType,
-                                Bias: WIA.WiaImageBias.MinimizeSize, Intent: WIA.WiaImageIntent.TextIntent, AlwaysSelectDevice: false);
-                    }
-                    else
-                    {
-                        WIA.Item scannerItem = device.Items[1];
-                        const string wiaFormatPNG = "{B96B3CAF-0728-11D3-9D7B-0000F81EF32E}";
-                        object scanResult = globalDialog.ShowTransfer(scannerItem, wiaFormatPNG, false);
-                        imageFile = (WIA.ImageFile)scanResult;
-                    }
+        //            if (!hasDevice)
+        //            {
+        //                imageFile = globalDialog.ShowAcquireImage(DeviceType: WIA.WiaDeviceType.ScannerDeviceType,
+        //                        Bias: WIA.WiaImageBias.MinimizeSize, Intent: WIA.WiaImageIntent.TextIntent, AlwaysSelectDevice: false);
+        //            }
+        //            else
+        //            {
+        //                WIA.Item scannerItem = device.Items[1];
+        //                const string wiaFormatPNG = "{B96B3CAF-0728-11D3-9D7B-0000F81EF32E}";
+        //                object scanResult = globalDialog.ShowTransfer(scannerItem, wiaFormatPNG, false);
+        //                imageFile = (WIA.ImageFile)scanResult;
+        //            }
 
-                    if (imageFile != null)
-                    {
-                        string temp = System.IO.Path.GetTempFileName();
-                        if (File.Exists(temp))
-                        {
-                            File.Delete(temp);
-                        }
-                        imageFile.SaveFile(temp);
-                        TempFilesManager.AddTempFile(temp);
+        //            if (imageFile != null)
+        //            {
+        //                string temp = System.IO.Path.GetTempFileName();
+        //                if (File.Exists(temp))
+        //                {
+        //                    File.Delete(temp);
+        //                }
+        //                imageFile.SaveFile(temp);
+        //                TempFilesManager.AddTempFile(temp);
 
-                        AttachmentDialogImageItem image = new AttachmentDialogImageItem(temp);
-                        this.AddItem(image);
-                        this.LayoutContent();
-                        this.SelectItem(image);
-                        this.AutoCrop(image);
-                    }
-                }));
+        //                AttachmentDialogImageItem image = new AttachmentDialogImageItem(temp);
+        //                this.AddItem(image);
+        //                this.LayoutContent();
+        //                this.SelectItem(image);
+        //                this.AutoCrop(image);
+        //            }
+        //        }));
 
-            }
-            catch (Exception ex)
-            {
-                device = null;
-                string message = this.GetWiaErrorMessage(ex);
-                MessageBox.Show(this, message, "Scan Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        device = null;
+        //        string message = this.GetWiaErrorMessage(ex);
+        //        MessageBox.Show(this, message, "Scan Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //    }
+        //}
 
         private void SetDirty()
         {

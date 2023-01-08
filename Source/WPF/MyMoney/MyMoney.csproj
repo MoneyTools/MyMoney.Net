@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <Import Project="$(SolutionDir)/Version/Version.props" />
-  <UsingTask TaskName="MyMoneyBuildTasks.SyncVersions" AssemblyFile="$(SolutionDir)tools\MyMoneyBuildTasks.dll" />
   <PropertyGroup>
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\</SolutionDir>
     <ProjectType>Local</ProjectType>
@@ -65,7 +64,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG;PerformanceBlocks</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -93,7 +92,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;PerformanceBlocks</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
@@ -909,7 +908,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="WIA">
+    <!-- <COMReference Include="WIA">
       <Guid>{94A0E92D-43C0-494E-AC29-FD45948A5221}</Guid>
       <VersionMajor>1</VersionMajor>
       <VersionMinor>0</VersionMinor>
@@ -917,13 +916,7 @@
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PerformanceEventProvider\PerformanceEventProvider.csproj">
-      <Project>{6E3CDBAA-7DF1-4413-8501-58ACBBEA8034}</Project>
-      <Name>PerformanceEventProvider</Name>
-    </ProjectReference>
+    </COMReference> -->
   </ItemGroup>
   <ItemGroup>
     <PublishFile Include="Setup\changes.xml">
@@ -944,21 +937,4 @@
     <WCFMetadataStorage Include="Service References\RestfulWebServices\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent />
-  </PropertyGroup>
-  <Target Name="SyncVersionsTarget">
-    <SyncVersions MasterVersionFile="$(SolutionDir)Version\Version.props" CSharpVersionFile="$(SolutionDir)Version\Version.cs" ApplicationProjectFile="$(ProjectPath)" AppManifestFile="$(SolutionDir)MoneyPackage\Package.appxmanifest" UpdatesFile="$(SolutionDir)MyMoney\Setup\changes.xml" />
-  </Target>
-  <PropertyGroup>
-    <CoreBuildDependsOn>$(CoreBuildDependsOn);SyncVersionsTarget</CoreBuildDependsOn>
-  </PropertyGroup>
 </Project>
