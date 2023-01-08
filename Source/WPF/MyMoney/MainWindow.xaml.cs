@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -11,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml;
-using Microsoft.Win32;
+using System.Xml.Linq;
 using Walkabout.Assitance;
 using Walkabout.Attachments;
 using Walkabout.Charts;
@@ -19,20 +21,17 @@ using Walkabout.Configuration;
 using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Dialogs;
+using Walkabout.Help;
+using Walkabout.Interfaces.Views;
 using Walkabout.Migrate;
-using Walkabout.StockQuotes;
+using Walkabout.Ofx;
 using Walkabout.Reports;
+using Walkabout.Setup;
+using Walkabout.StockQuotes;
 using Walkabout.Taxes;
 using Walkabout.Utilities;
 using Walkabout.Views;
 using Walkabout.Views.Controls;
-using Walkabout.Setup;
-using System.Xml.Linq;
-using Walkabout.Help;
-using Walkabout.Ofx;
-using Walkabout.Interfaces.Views;
-using System.Deployment.Application;
-using System.Threading.Tasks;
 
 
 #if PerformanceBlocks
@@ -98,166 +97,166 @@ namespace Walkabout
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.MainWindowInitialize))
             {
 #endif
-                UiDispatcher.CurrentDispatcher = this.Dispatcher;
-                this.settings = settings;
-                this.settings.PropertyChanged += this.OnSettingsChanged;
+            UiDispatcher.CurrentDispatcher = this.Dispatcher;
+            this.settings = settings;
+            this.settings.PropertyChanged += this.OnSettingsChanged;
 
-                this.attachmentManager = new AttachmentManager(this.myMoney);
-                this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
+            this.attachmentManager = new AttachmentManager(this.myMoney);
+            this.attachmentManager.AttachmentDirectory = settings.AttachmentDirectory;
 
-                this.statementManager = new StatementManager(this.myMoney);
-                this.statementManager.StatementsDirectory = settings.StatementsDirectory;
+            this.statementManager = new StatementManager(this.myMoney);
+            this.statementManager.StatementsDirectory = settings.StatementsDirectory;
 
-                var stockService = settings.StockServiceSettings;
-                if (stockService == null)
-                {
-                    settings.StockServiceSettings = new List<StockServiceSettings>();
-                    settings.StockServiceSettings.Add(IEXCloud.GetDefaultSettings());
-                }
+            var stockService = settings.StockServiceSettings;
+            if (stockService == null)
+            {
+                settings.StockServiceSettings = new List<StockServiceSettings>();
+                settings.StockServiceSettings.Add(IEXCloud.GetDefaultSettings());
+            }
 
-                Walkabout.Utilities.UiDispatcher.CurrentDispatcher = this.Dispatcher;
-                this.mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-                this.OnThemeChanged(settings.Theme);
-                this.ParseCommandLine();
+            Walkabout.Utilities.UiDispatcher.CurrentDispatcher = this.Dispatcher;
+            this.mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            this.OnThemeChanged(settings.Theme);
+            this.ParseCommandLine();
 
-                this.navigator = new UndoManager(1000); // view state stack
-                this.manager = new UndoManager(1000);
+            this.navigator = new UndoManager(1000); // view state stack
+            this.manager = new UndoManager(1000);
 
 
-                System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
-                AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.OnUnhandledException);
-                App.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(this.OnDispatcherUnhandledException);
-                TaskScheduler.UnobservedTaskException += this.TaskScheduler_UnobservedTaskException;
+            System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.OnUnhandledException);
+            App.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(this.OnDispatcherUnhandledException);
+            TaskScheduler.UnobservedTaskException += this.TaskScheduler_UnobservedTaskException;
 
-                this.InitializeComponent();
+            this.InitializeComponent();
 
-                //-----------------------------------------------------------------
-                // ACCOUNTS CONTROL
-                this.accountsControl = new AccountsControl();
-                this.accountsControl.Site = this;
-                this.accountsControl.TabIndex = 1;
-                this.accountsControl.Name = "AccountsControl";
-                this.accountsControl.MyMoney = this.myMoney;
-                this.accountsControl.DatabaseSettings = this.databaseSettings;
-                this.accountsControl.SyncAccount += new EventHandler<ChangeEventArgs>(this.OnAccountsPanelSyncAccount);
-                this.accountsControl.BalanceAccount += new EventHandler<ChangeEventArgs>(this.OnAccountsPanelBalanceAccount);
-                this.accountsControl.ShowTransfers += new EventHandler<ChangeEventArgs>(this.OnAccountsPanelShowTransfers);
-                this.accountsControl.DisplayClosedAccounts = this.settings.DisplayClosedAccounts;
+            //-----------------------------------------------------------------
+            // ACCOUNTS CONTROL
+            this.accountsControl = new AccountsControl();
+            this.accountsControl.Site = this;
+            this.accountsControl.TabIndex = 1;
+            this.accountsControl.Name = "AccountsControl";
+            this.accountsControl.MyMoney = this.myMoney;
+            this.accountsControl.DatabaseSettings = this.databaseSettings;
+            this.accountsControl.SyncAccount += new EventHandler<ChangeEventArgs>(this.OnAccountsPanelSyncAccount);
+            this.accountsControl.BalanceAccount += new EventHandler<ChangeEventArgs>(this.OnAccountsPanelBalanceAccount);
+            this.accountsControl.ShowTransfers += new EventHandler<ChangeEventArgs>(this.OnAccountsPanelShowTransfers);
+            this.accountsControl.DisplayClosedAccounts = this.settings.DisplayClosedAccounts;
 
-                //-----------------------------------------------------------------
-                // CATEGORIES CONTROL
-                this.categoriesControl = new CategoriesControl();
-                this.categoriesControl.TabIndex = 2;
-                this.categoriesControl.Name = "CategoriesControl";
-                this.categoriesControl.MyMoney = this.myMoney;
-                this.categoriesControl.Site = this;
+            //-----------------------------------------------------------------
+            // CATEGORIES CONTROL
+            this.categoriesControl = new CategoriesControl();
+            this.categoriesControl.TabIndex = 2;
+            this.categoriesControl.Name = "CategoriesControl";
+            this.categoriesControl.MyMoney = this.myMoney;
+            this.categoriesControl.Site = this;
 
-                //-----------------------------------------------------------------
-                // PAYEES CONTROL
-                this.payeesControl = new PayeesControl();
-                this.payeesControl.TabIndex = 3;
-                this.payeesControl.Name = "PayeesControl";
-                this.payeesControl.MyMoney = this.myMoney;
-                this.payeesControl.Site = this;
+            //-----------------------------------------------------------------
+            // PAYEES CONTROL
+            this.payeesControl = new PayeesControl();
+            this.payeesControl.TabIndex = 3;
+            this.payeesControl.Name = "PayeesControl";
+            this.payeesControl.MyMoney = this.myMoney;
+            this.payeesControl.Site = this;
 
-                //-----------------------------------------------------------------
-                // STOCKS CONTROL
-                this.securitiesControl = new SecuritiesControl();
-                this.securitiesControl.TabIndex = 4;
-                this.securitiesControl.Name = "SecuritiesControl";
-                this.securitiesControl.MyMoney = this.myMoney;
+            //-----------------------------------------------------------------
+            // STOCKS CONTROL
+            this.securitiesControl = new SecuritiesControl();
+            this.securitiesControl.TabIndex = 4;
+            this.securitiesControl.Name = "SecuritiesControl";
+            this.securitiesControl.MyMoney = this.myMoney;
 
-                this.UpdateRentalManagement();
+            this.UpdateRentalManagement();
 
-                //-----------------------------------------------------------------
-                // Set the default view to be the Transaction view
-                this.SetCurrentView<TransactionsView>();
-                this.navigator.Pop();
+            //-----------------------------------------------------------------
+            // Set the default view to be the Transaction view
+            this.SetCurrentView<TransactionsView>();
+            this.navigator.Pop();
 
-                //-----------------------------------------------------------------
-                // These events must be set after view.ServiceProvider is set
-                //
-                this.accountsControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Account);
-                this.categoriesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Categories);
-                this.categoriesControl.GroupSelectionChanged += new EventHandler(this.OnSelectionChangeFor_CategoryGroup);
-                this.categoriesControl.SelectedTransactionChanged += new EventHandler(this.CategoriesControl_SelectedTransactionChanged);
-                this.payeesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Payees);
-                this.securitiesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Securities);
+            //-----------------------------------------------------------------
+            // These events must be set after view.ServiceProvider is set
+            //
+            this.accountsControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Account);
+            this.categoriesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Categories);
+            this.categoriesControl.GroupSelectionChanged += new EventHandler(this.OnSelectionChangeFor_CategoryGroup);
+            this.categoriesControl.SelectedTransactionChanged += new EventHandler(this.CategoriesControl_SelectedTransactionChanged);
+            this.payeesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Payees);
+            this.securitiesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Securities);
 
-                this.exchangeRates = new ExchangeRates();
+            this.exchangeRates = new ExchangeRates();
 
-                //-----------------------------------------------------------------
-                // Setup the "file import" module
-                //
-                FileSystemWatcher fsw = new FileSystemWatcher();
-                fsw.Path = ProcessHelper.ImportFileListFolder;
-                fsw.NotifyFilter = NotifyFilters.LastWrite;
-                fsw.Changed += new FileSystemEventHandler(this.OnImportFolderContentHasChanged);
-                fsw.EnableRaisingEvents = true;
+            //-----------------------------------------------------------------
+            // Setup the "file import" module
+            //
+            FileSystemWatcher fsw = new FileSystemWatcher();
+            fsw.Path = ProcessHelper.ImportFileListFolder;
+            fsw.NotifyFilter = NotifyFilters.LastWrite;
+            fsw.Changed += new FileSystemEventHandler(this.OnImportFolderContentHasChanged);
+            fsw.EnableRaisingEvents = true;
 
-                //-----------------------------------------------------------------
-                // Setup the ToolBox (aka Accordion)
-                //
-                this.toolBox.Add("ACCOUNTS", "AccountsSelector", this.accountsControl);
-                this.toolBox.Add("CATEGORIES", "CategoriesSelector", this.categoriesControl, true);
-                this.toolBox.Add("PAYEES", "PayeesSelector", this.payeesControl, true);
-                this.toolBox.Add("SECURITIES", "SecuritiesSelector", this.securitiesControl, true);
+            //-----------------------------------------------------------------
+            // Setup the ToolBox (aka Accordion)
+            //
+            this.toolBox.Add("ACCOUNTS", "AccountsSelector", this.accountsControl);
+            this.toolBox.Add("CATEGORIES", "CategoriesSelector", this.categoriesControl, true);
+            this.toolBox.Add("PAYEES", "PayeesSelector", this.payeesControl, true);
+            this.toolBox.Add("SECURITIES", "SecuritiesSelector", this.securitiesControl, true);
 
-                this.OnUpdateRentalTab();
+            this.OnUpdateRentalTab();
 
-                this.toolBox.Expanded += new RoutedEventHandler(this.OnToolBoxItemsExpanded);
-                this.toolBox.FilterUpdated += new Accordion.FilterEventHandler(this.OnToolBoxFilterUpdated);
+            this.toolBox.Expanded += new RoutedEventHandler(this.OnToolBoxItemsExpanded);
+            this.toolBox.FilterUpdated += new Accordion.FilterEventHandler(this.OnToolBoxFilterUpdated);
 
-                Keyboard.AddGotKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(this.OnKeyboardFocusChanged));
+            Keyboard.AddGotKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(this.OnKeyboardFocusChanged));
 
-                //---------------------------------------------------------------
-                // Setup the Graph area
-                //
-                this.PieChartExpenses.SelectionChanged += new EventHandler(this.PieChartSelectionChanged);
-                this.PieChartIncomes.SelectionChanged += new EventHandler(this.PieChartSelectionChanged);
+            //---------------------------------------------------------------
+            // Setup the Graph area
+            //
+            this.PieChartExpenses.SelectionChanged += new EventHandler(this.PieChartSelectionChanged);
+            this.PieChartIncomes.SelectionChanged += new EventHandler(this.PieChartSelectionChanged);
 
-                //-----------------------------------------------------------------
-                // Setup the Loan area
-                //
-                //this.LoanChart.MyMoney = this.myMoney;
+            //-----------------------------------------------------------------
+            // Setup the Loan area
+            //
+            //this.LoanChart.MyMoney = this.myMoney;
 
-                // Setup the HistoryChart
-                this.HistoryChart.SelectionChanged += new EventHandler(this.HistoryChart_SelectionChanged);
+            // Setup the HistoryChart
+            this.HistoryChart.SelectionChanged += new EventHandler(this.HistoryChart_SelectionChanged);
 
-                //-----------------------------------------------------------------
-                // Transaction Graph
-                //
-                this.TransactionGraph.MouseDown += new MouseButtonEventHandler(this.OnGraphMouseDown);
+            //-----------------------------------------------------------------
+            // Transaction Graph
+            //
+            this.TransactionGraph.MouseDown += new MouseButtonEventHandler(this.OnGraphMouseDown);
 
-                //-----------------------------------------------------------------
-                // Main context setup
-                //
-                this.DataContext = this.myMoney;
-                DataContextChanged += new DependencyPropertyChangedEventHandler(this.OnDataContextChanged);
+            //-----------------------------------------------------------------
+            // Main context setup
+            //
+            this.DataContext = this.myMoney;
+            DataContextChanged += new DependencyPropertyChangedEventHandler(this.OnDataContextChanged);
 
-                this.TransactionView.QuickFilterChanged += new EventHandler(this.TransactionView_QuickFilterChanged);
+            this.TransactionView.QuickFilterChanged += new EventHandler(this.TransactionView_QuickFilterChanged);
 
-                this.ButtonShowUpdateInfo.Visibility = System.Windows.Visibility.Collapsed;
+            this.ButtonShowUpdateInfo.Visibility = System.Windows.Visibility.Collapsed;
 
-                Loaded += new RoutedEventHandler(this.OnMainWindowLoaded);
+            Loaded += new RoutedEventHandler(this.OnMainWindowLoaded);
 
-                //----------------------------------------------------------------------
-                // Download tab
-                this.OfxDownloadControl.SelectionChanged += this.OfxDownloadControl_SelectionChanged;
-                this.TabDownload.Visibility = System.Windows.Visibility.Hidden;
+            //----------------------------------------------------------------------
+            // Download tab
+            this.OfxDownloadControl.SelectionChanged += this.OfxDownloadControl_SelectionChanged;
+            this.TabDownload.Visibility = System.Windows.Visibility.Hidden;
 
-                //----------------------------------------------------------------------
-                // Output Window
-                this.TabOutput.Visibility = System.Windows.Visibility.Collapsed;
-                this.AddHandler(OutputPane.ShowOutputEvent, new RoutedEventHandler(this.OnShowOutputWindow));
-                this.AddHandler(OutputPane.HideOutputEvent, new RoutedEventHandler(this.OnHideOutputWindow));
+            //----------------------------------------------------------------------
+            // Output Window
+            this.TabOutput.Visibility = System.Windows.Visibility.Collapsed;
+            this.AddHandler(OutputPane.ShowOutputEvent, new RoutedEventHandler(this.OnShowOutputWindow));
+            this.AddHandler(OutputPane.HideOutputEvent, new RoutedEventHandler(this.OnHideOutputWindow));
 
-                this.recentFilesMenu = new RecentFilesMenu(this.MenuRecentFiles);
-                this.recentFilesMenu.SetFiles(settings.RecentFiles);
-                this.recentFilesMenu.RecentFileSelected += this.OnRecentFileSelected;
+            this.recentFilesMenu = new RecentFilesMenu(this.MenuRecentFiles);
+            this.recentFilesMenu.SetFiles(settings.RecentFiles);
+            this.recentFilesMenu.RecentFileSelected += this.OnRecentFileSelected;
 
-                this.TransactionGraph.ServiceProvider = this;
-                this.AppSettingsPanel.Closed += this.OnAppSettingsPanelClosed;
+            this.TransactionGraph.ServiceProvider = this;
+            this.AppSettingsPanel.Closed += this.OnAppSettingsPanelClosed;
 
 #if PerformanceBlocks
             }
@@ -451,17 +450,17 @@ namespace Walkabout
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.Loaded))
             {
 #endif
-                if (!string.IsNullOrEmpty(this.newDatabaseName))
-                {
-                    // This only happens during testing when we launch the app with the "-nd" command line option.
-                    this.CreateNewDatabase(this.newDatabaseName);
-                }
-                else if (!this.emptyWindow)
-                {
-                    // windows 11 has a weird behavior where main window does not appear before the 
-                    // Open Database dialog unless we do this delay here.
-                    this.delayedActions.StartDelayedAction("loaddata", this.BeginLoadDatabase, TimeSpan.FromMilliseconds(1));
-                }
+            if (!string.IsNullOrEmpty(this.newDatabaseName))
+            {
+                // This only happens during testing when we launch the app with the "-nd" command line option.
+                this.CreateNewDatabase(this.newDatabaseName);
+            }
+            else if (!this.emptyWindow)
+            {
+                // windows 11 has a weird behavior where main window does not appear before the 
+                // Open Database dialog unless we do this delay here.
+                this.delayedActions.StartDelayedAction("loaddata", this.BeginLoadDatabase, TimeSpan.FromMilliseconds(1));
+            }
 #if PerformanceBlocks
             }
 #endif
@@ -1873,51 +1872,39 @@ namespace Walkabout
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.Model, MeasurementId.Load))
             {
 #endif
-                try
+            try
+            {
+                this.ShowMessage("Loading...");
+                string ext = Path.GetExtension(databaseName).ToLowerInvariant();
+                if (ext == ".xml")
                 {
-                    this.ShowMessage("Loading...");
-                    string ext = Path.GetExtension(databaseName).ToLowerInvariant();
-                    if (ext == ".xml")
+                    database = new XmlStore(databaseName, password)
                     {
-                        database = new XmlStore(databaseName, password)
-                        {
-                            UserId = userId,
-                            Password = password,
-                            BackupPath = backupPath,
-                        };
+                        UserId = userId,
+                        Password = password,
+                        BackupPath = backupPath,
+                    };
+                }
+                else if (ext == ".bxml")
+                {
+                    database = new BinaryXmlStore(databaseName, password)
+                    {
+                        UserId = userId,
+                        Password = password,
+                        BackupPath = backupPath,
+                    };
+                }
+                else if (databaseName.EndsWith(".sdf", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!SqlCeDatabase.IsSqlCEInstalled)
+                    {
+                        throw new Exception("SQL Express does not appear to be installed any more so we can't open your existing database. " +
+                            "If you want to open it, then please visit http://www.microsoft.com/download/en/details.aspx?id=184 to install " +
+                            "SQL Server Compact Edition 4.0 and try again");
                     }
-                    else if (ext == ".bxml")
+                    else
                     {
-                        database = new BinaryXmlStore(databaseName, password)
-                        {
-                            UserId = userId,
-                            Password = password,
-                            BackupPath = backupPath,
-                        };
-                    }
-                    else if (databaseName.EndsWith(".sdf", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (!SqlCeDatabase.IsSqlCEInstalled)
-                        {
-                            throw new Exception("SQL Express does not appear to be installed any more so we can't open your existing database. " +
-                                "If you want to open it, then please visit http://www.microsoft.com/download/en/details.aspx?id=184 to install " +
-                                "SQL Server Compact Edition 4.0 and try again");
-                        }
-                        else
-                        {
-                            database = new SqlCeDatabase()
-                            {
-                                DatabasePath = Path.GetFullPath(databaseName),
-                                UserId = userId,
-                                Password = password,
-                                BackupPath = backupPath
-                            };
-                            database.Create();
-                        }
-                    }
-                    else if (databaseName.EndsWith(".db", StringComparison.OrdinalIgnoreCase) || databaseName.EndsWith(".mmdb", StringComparison.OrdinalIgnoreCase))
-                    {
-                        database = new SqliteDatabase()
+                        database = new SqlCeDatabase()
                         {
                             DatabasePath = Path.GetFullPath(databaseName),
                             UserId = userId,
@@ -1926,56 +1913,68 @@ namespace Walkabout
                         };
                         database.Create();
                     }
-                    else
+                }
+                else if (databaseName.EndsWith(".db", StringComparison.OrdinalIgnoreCase) || databaseName.EndsWith(".mmdb", StringComparison.OrdinalIgnoreCase))
+                {
+                    database = new SqliteDatabase()
                     {
-                        database = new SqlServerDatabase()
-                        {
-                            Server = server,
-                            DatabasePath = databaseName,
-                            UserId = userId,
-                            Password = password,
-                            BackupPath = backupPath,
-                            SecurityService = new SecurityService()
-                        };
-                        database.Create();
-                    }
+                        DatabasePath = Path.GetFullPath(databaseName),
+                        UserId = userId,
+                        Password = password,
+                        BackupPath = backupPath
+                    };
+                    database.Create();
+                }
+                else
+                {
+                    database = new SqlServerDatabase()
+                    {
+                        Server = server,
+                        DatabasePath = databaseName,
+                        UserId = userId,
+                        Password = password,
+                        BackupPath = backupPath,
+                        SecurityService = new SecurityService()
+                    };
+                    database.Create();
+                }
 
 
-                    if (database.UpgradeRequired)
-                    {
-                        if (MessageBoxEx.Show(
-                            @"Your database needs to be upgraded to the latest format;
+                if (database.UpgradeRequired)
+                {
+                    if (MessageBoxEx.Show(
+                        @"Your database needs to be upgraded to the latest format;
                         \n
                         click YES to upgrade,
                         \n
                         click NO to leave your database untouched and abort loading",
-                            "Confirm upgrade",
-                            "Upgrade Required",
-                            MessageBoxButton.YesNo,
-                            MessageBoxImage.Question) == MessageBoxResult.Yes)
-                        {
-                            database.Upgrade();
-                        }
-                        else
-                        {
-                            return;
-                        }
+                        "Confirm upgrade",
+                        "Upgrade Required",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        database.Upgrade();
                     }
-
-                    DatabaseSecurity.SaveDatabasePassword(database.DatabasePath, password);
-
-                    this.loadTime = NativeMethods.TickCount;
-                    watch.Start();
-
-                    newMoney = database.Load(this);
-
-                    watch.Stop();
+                    else
+                    {
+                        return;
+                    }
                 }
-                catch (Exception e)
-                {
-                    this.ShowMessage("");
-                    MessageBoxEx.Show(e.Message, "Error Loading Database", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+
+                DatabaseSecurity.SaveDatabasePassword(database.DatabasePath, password);
+
+                this.loadTime = NativeMethods.TickCount;
+                watch.Start();
+
+                newMoney = database.Load(this);
+
+                watch.Stop();
+            }
+            catch (Exception e)
+            {
+                this.ShowMessage("");
+                MessageBoxEx.Show(e.Message, "Error Loading Database", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 #if PerformanceBlocks
             }
 #endif
@@ -2842,163 +2841,163 @@ namespace Walkabout
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.UpdateCharts))
             {
 #endif
-                this.myMoney.BeginUpdate(this);
-                try
+            this.myMoney.BeginUpdate(this);
+            try
+            {
+
+                if (this.CurrentView == this.TransactionView)
                 {
+                    //-------------------------------------------------------------
+                    // Only update the overtime graph if it is currently being displayed
 
-                    if (this.CurrentView == this.TransactionView)
+                    Category filter = this.TransactionView.ActiveCategory;
+
+                    bool pieChartSelected = this.TabExpenses.IsSelected || this.TabIncomes.IsSelected;
+
+                    if (this.TransactionView.ActiveCategory != null ||
+                        this.TransactionView.ActivePayee != null)
                     {
-                        //-------------------------------------------------------------
-                        // Only update the overtime graph if it is currently being displayed
+                        bool historyWasNotVisible = this.TabHistory.Visibility != System.Windows.Visibility.Visible;
+                        this.TabHistory.Visibility = System.Windows.Visibility.Visible;
+                        this.TabTrends.Visibility = System.Windows.Visibility.Visible;
 
-                        Category filter = this.TransactionView.ActiveCategory;
+                        this.UpdateHistoryChart();
 
-                        bool pieChartSelected = this.TabExpenses.IsSelected || this.TabIncomes.IsSelected;
-
-                        if (this.TransactionView.ActiveCategory != null ||
-                            this.TransactionView.ActivePayee != null)
+                        if ((historyWasNotVisible || this.TabLoan.IsSelected || this.TabRental.IsSelected) && !pieChartSelected)
                         {
-                            bool historyWasNotVisible = this.TabHistory.Visibility != System.Windows.Visibility.Visible;
-                            this.TabHistory.Visibility = System.Windows.Visibility.Visible;
-                            this.TabTrends.Visibility = System.Windows.Visibility.Visible;
-
-                            this.UpdateHistoryChart();
-
-                            if ((historyWasNotVisible || this.TabLoan.IsSelected || this.TabRental.IsSelected) && !pieChartSelected)
-                            {
-                                this.TabHistory.IsSelected = true;
-                            }
+                            this.TabHistory.IsSelected = true;
                         }
-                        else if (this.TransactionView.ActiveAccount != null)
-                        {
-                            this.TabTrends.Visibility = System.Windows.Visibility.Visible;
-                            this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
-                            if (this.TabLoan.IsSelected || this.TabRental.IsSelected || this.TabHistory.IsSelected)
-                            {
-                                this.HistoryChart.Selection = null;
-                                this.TabTrends.IsSelected = true;
-                            }
-                        }
-
-                        this.UpdateTransactionGraph(this.TransactionView.Rows, this.TransactionView.ActiveAccount, this.TransactionView.ActiveCategory);
-
-                        // expense categories.
-                        this.TabExpenses.Visibility = System.Windows.Visibility.Visible;
-                        Category parent = this.GetParentCategory(filter);
-                        IList<Transaction> rows = this.TransactionView.Rows as IList<Transaction>;
-
-                        if (parent != filter)
-                        {
-                            rows = this.myMoney.Transactions.GetTransactionsByCategory(parent, this.TransactionView.GetTransactionIncludePredicate());
-                        }
-                        if (parent == null)
-                        {
-                            // sometimes we have custom rows from a report, like cash flow report that is
-                            // a categorized group, but we didn't get a "filter" for it, but we can find this out here
-                            // so we get a nice pie chart breakdown of the reported rows.
-                            parent = this.FindCommonParent(rows);
-                        }
-
-                        this.PieChartExpenses.CategoryFilter = parent;
-                        this.PieChartExpenses.Unknown = this.myMoney.Categories.Unknown;
-                        this.PieChartExpenses.Transactions = rows;
-
-                        // income categories
-                        this.TabIncomes.Visibility = System.Windows.Visibility.Visible;
-
-                        this.PieChartIncomes.CategoryFilter = parent;
-                        this.PieChartIncomes.Unknown = this.myMoney.Categories.Unknown;
-                        this.PieChartIncomes.Transactions = rows;
-
-                        // view the stock history
-                        if (this.TransactionView.ActiveSecurity != null)
-                        {
-                            this.TabStock.Visibility = System.Windows.Visibility.Visible;
-                        }
-                        else
-                        {
-                            if (this.TabStock.IsSelected)
-                            {
-                                this.TabStock.IsSelected = false;
-                                this.TabTrends.IsSelected = true;
-                            }
-                            this.TabStock.Visibility = System.Windows.Visibility.Collapsed;
-                        }
-
-                        // Hide these Tabs
-                        this.TabLoan.Visibility = System.Windows.Visibility.Collapsed;
-                        this.TabRental.Visibility = System.Windows.Visibility.Collapsed;
-
                     }
-                    else if (this.CurrentView is LoansView)
+                    else if (this.TransactionView.ActiveAccount != null)
                     {
-                        this.TabLoan.Visibility = System.Windows.Visibility.Visible;
-                        this.TabLoan.IsSelected = true;
-
-                        // Hide these TABS
-                        this.TabTrends.Visibility = System.Windows.Visibility.Collapsed;
-                        this.TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
-                        this.TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
-                        this.TabStock.Visibility = System.Windows.Visibility.Collapsed;
+                        this.TabTrends.Visibility = System.Windows.Visibility.Visible;
                         this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
-
-                        LoansView loandView = this.CurrentView as LoansView;
-                        this.LoanChart.LoanPayments = loandView.LoanPayments;
-                    }
-                    else if (this.CurrentView is RentSummaryView)
-                    {
-                        // Show these TABS
-                        this.TabRental.Visibility = System.Windows.Visibility.Visible;
-                        this.TabRental.IsSelected = true;
-
-
-                        // Hide these TABS
-                        this.TabTrends.Visibility = System.Windows.Visibility.Collapsed;
-                        this.TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
-                        this.TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
-                        this.TabStock.Visibility = System.Windows.Visibility.Collapsed;
-                        this.TabLoan.Visibility = System.Windows.Visibility.Collapsed;
-                        this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
-
-                        // Set the data for the graph
-                        this.RentalChart.ProfitsAndLostEntries.Clear();
-
-                        if (this.RentalChart.IsVisible)
+                        if (this.TabLoan.IsSelected || this.TabRental.IsSelected || this.TabHistory.IsSelected)
                         {
-                            if (this.rentsControl.Selected is RentBuilding)
-                            {
-                                RentBuilding selected = this.rentsControl.Selected as RentBuilding;
-
-                                foreach (RentalBuildingSingleYear rbsy in selected.Years.Values)
-                                {
-                                    this.RentalChart.ProfitsAndLostEntries.Add(
-                                        new RentalData()
-                                        {
-                                            Label = rbsy.Period,
-                                            Income = Convert.ToDouble(Math.Abs(rbsy.TotalIncome)),
-                                            ExpenseTaxes = Convert.ToDouble(Math.Abs(rbsy.TotalExpensesGroup.TotalTaxes)),
-                                            ExpenseRepair = Convert.ToDouble(Math.Abs(rbsy.TotalExpensesGroup.TotalRepairs)),
-                                            ExpenseMaintenance = Convert.ToDouble(Math.Abs(rbsy.TotalExpensesGroup.TotalMaintenance)),
-                                            ExpenseManagement = Convert.ToDouble(Math.Abs(rbsy.TotalExpensesGroup.TotalManagement)),
-                                            ExpenseInterest = Convert.ToDouble(Math.Abs(rbsy.TotalExpensesGroup.TotalInterest))
-                                        });
-                                }
-                            }
-                            else if (this.rentsControl.Selected is Walkabout.Data.RentalBuildingSingleYear)
-                            {
-                                RentalBuildingSingleYear selected = this.rentsControl.Selected as RentalBuildingSingleYear;
-                            }
-
-                            this.RentalChart.ProfitsAndLostEntries.Reverse();
-                            this.RentalChart.RenderChart();
+                            this.HistoryChart.Selection = null;
+                            this.TabTrends.IsSelected = true;
                         }
-
                     }
+
+                    this.UpdateTransactionGraph(this.TransactionView.Rows, this.TransactionView.ActiveAccount, this.TransactionView.ActiveCategory);
+
+                    // expense categories.
+                    this.TabExpenses.Visibility = System.Windows.Visibility.Visible;
+                    Category parent = this.GetParentCategory(filter);
+                    IList<Transaction> rows = this.TransactionView.Rows as IList<Transaction>;
+
+                    if (parent != filter)
+                    {
+                        rows = this.myMoney.Transactions.GetTransactionsByCategory(parent, this.TransactionView.GetTransactionIncludePredicate());
+                    }
+                    if (parent == null)
+                    {
+                        // sometimes we have custom rows from a report, like cash flow report that is
+                        // a categorized group, but we didn't get a "filter" for it, but we can find this out here
+                        // so we get a nice pie chart breakdown of the reported rows.
+                        parent = this.FindCommonParent(rows);
+                    }
+
+                    this.PieChartExpenses.CategoryFilter = parent;
+                    this.PieChartExpenses.Unknown = this.myMoney.Categories.Unknown;
+                    this.PieChartExpenses.Transactions = rows;
+
+                    // income categories
+                    this.TabIncomes.Visibility = System.Windows.Visibility.Visible;
+
+                    this.PieChartIncomes.CategoryFilter = parent;
+                    this.PieChartIncomes.Unknown = this.myMoney.Categories.Unknown;
+                    this.PieChartIncomes.Transactions = rows;
+
+                    // view the stock history
+                    if (this.TransactionView.ActiveSecurity != null)
+                    {
+                        this.TabStock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        if (this.TabStock.IsSelected)
+                        {
+                            this.TabStock.IsSelected = false;
+                            this.TabTrends.IsSelected = true;
+                        }
+                        this.TabStock.Visibility = System.Windows.Visibility.Collapsed;
+                    }
+
+                    // Hide these Tabs
+                    this.TabLoan.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabRental.Visibility = System.Windows.Visibility.Collapsed;
+
                 }
-                finally
+                else if (this.CurrentView is LoansView)
                 {
-                    this.myMoney.EndUpdate();
+                    this.TabLoan.Visibility = System.Windows.Visibility.Visible;
+                    this.TabLoan.IsSelected = true;
+
+                    // Hide these TABS
+                    this.TabTrends.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabStock.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
+
+                    LoansView loandView = this.CurrentView as LoansView;
+                    this.LoanChart.LoanPayments = loandView.LoanPayments;
                 }
+                else if (this.CurrentView is RentSummaryView)
+                {
+                    // Show these TABS
+                    this.TabRental.Visibility = System.Windows.Visibility.Visible;
+                    this.TabRental.IsSelected = true;
+
+
+                    // Hide these TABS
+                    this.TabTrends.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabStock.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabLoan.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
+
+                    // Set the data for the graph
+                    this.RentalChart.ProfitsAndLostEntries.Clear();
+
+                    if (this.RentalChart.IsVisible)
+                    {
+                        if (this.rentsControl.Selected is RentBuilding)
+                        {
+                            RentBuilding selected = this.rentsControl.Selected as RentBuilding;
+
+                            foreach (RentalBuildingSingleYear rbsy in selected.Years.Values)
+                            {
+                                this.RentalChart.ProfitsAndLostEntries.Add(
+                                    new RentalData()
+                                    {
+                                        Label = rbsy.Period,
+                                        Income = Convert.ToDouble(Math.Abs(rbsy.TotalIncome)),
+                                        ExpenseTaxes = Convert.ToDouble(Math.Abs(rbsy.TotalExpensesGroup.TotalTaxes)),
+                                        ExpenseRepair = Convert.ToDouble(Math.Abs(rbsy.TotalExpensesGroup.TotalRepairs)),
+                                        ExpenseMaintenance = Convert.ToDouble(Math.Abs(rbsy.TotalExpensesGroup.TotalMaintenance)),
+                                        ExpenseManagement = Convert.ToDouble(Math.Abs(rbsy.TotalExpensesGroup.TotalManagement)),
+                                        ExpenseInterest = Convert.ToDouble(Math.Abs(rbsy.TotalExpensesGroup.TotalInterest))
+                                    });
+                            }
+                        }
+                        else if (this.rentsControl.Selected is Walkabout.Data.RentalBuildingSingleYear)
+                        {
+                            RentalBuildingSingleYear selected = this.rentsControl.Selected as RentalBuildingSingleYear;
+                        }
+
+                        this.RentalChart.ProfitsAndLostEntries.Reverse();
+                        this.RentalChart.RenderChart();
+                    }
+
+                }
+            }
+            finally
+            {
+                this.myMoney.EndUpdate();
+            }
 
 #if PerformanceBlocks
             }
@@ -4651,11 +4650,11 @@ namespace Walkabout
         {
             string version;
             GC.Collect();
-            if (ApplicationDeployment.IsNetworkDeployed)
-            {
-                version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
-            }
-            else
+            //if (ApplicationDeployment.IsNetworkDeployed)
+            //{
+            //    version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+            //}
+            //else
             {
                 version = this.GetType().Assembly.GetName().Version.ToString();
             }

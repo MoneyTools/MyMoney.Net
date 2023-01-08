@@ -1,12 +1,14 @@
-﻿namespace Walkabout.Utilities
+﻿using System.Security.Principal;
+
+namespace Walkabout.Utilities
 {
     public interface IDirectorySecurity
     {
         /// <summary>
         /// Give the specified account write permission on the given directory.
         /// </summary>
-        /// <param name="accountName">The account being added</param>
+        /// <param name="accountId">The account being added</param>
         /// <param name="path">The directory it needs access to</param>
-        void AddWritePermission(string accountName, string path);
+        void AddWritePermission(IdentityReference accountId, string path);
     }
 }

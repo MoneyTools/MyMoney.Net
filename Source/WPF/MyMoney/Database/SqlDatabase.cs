@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Windows;
 using Walkabout.Utilities;
@@ -252,8 +253,8 @@ namespace Walkabout.Data
         /// </summary>
         public void AclDatabasePath(string path)
         {
-            var networkService = "NT AUTHORITY\\NETWORK SERVICE";
-            this.SecurityService.AddWritePermission(networkService, path);
+            var accountId = new SecurityIdentifier(WellKnownSidType.NetworkServiceSid, null).Translate(typeof(NTAccount));
+            this.SecurityService.AddWritePermission(accountId, path);
         }
 
         public virtual void Create()
@@ -657,17 +658,20 @@ namespace Walkabout.Data
                         {
                             if (s.StartsWith("MSSQL") && s.EndsWith("SQLEXPRESS"))
                             {
-                                using (RegistryKey subKey = Key.OpenSubKey(s, false))
+                                using (RegistryKey? subKey = Key.OpenSubKey(s, false))
                                 {
-                                    using (RegistryKey setup = subKey.OpenSubKey("Setup", false))
+                                    if (subKey != null)
                                     {
-                                        if (setup != null)
+                                        using (RegistryKey? setup = subKey.OpenSubKey("Setup", false))
                                         {
-                                            string edition = (string)setup.GetValue("Edition");
-                                            if (edition == "Express Edition")
+                                            if (setup != null)
                                             {
-                                                //If there is at least one instance of SQL Server Express installed, return true
-                                                return true;
+                                                string edition = (string)setup.GetValue("Edition");
+                                                if (edition == "Express Edition")
+                                                {
+                                                    //If there is at least one instance of SQL Server Express installed, return true
+                                                    return true;
+                                                }
                                             }
                                         }
                                     }

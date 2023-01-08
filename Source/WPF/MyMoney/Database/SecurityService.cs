@@ -1,4 +1,5 @@
-﻿using Walkabout.Setup;
+﻿using System.Security.Principal;
+using Walkabout.Setup;
 using Walkabout.Utilities;
 
 namespace Walkabout.Data
@@ -7,9 +8,9 @@ namespace Walkabout.Data
     {
         #region IDirectorySecurity
 
-        public void AddWritePermission(string accountName, string path)
+        public void AddWritePermission(IdentityReference accountId, string path)
         {
-            DirectorySetup.AddWritePermission(accountName, path);
+            DirectorySetup.AddWritePermission(accountId, path);
         }
 
         #endregion 
