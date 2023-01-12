@@ -339,17 +339,20 @@ namespace Walkabout.Attachments
                 var changed = false;
                 foreach (var item in index.Items)
                 {
-                    var fullPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename));
-                    var parentDir = Path.GetDirectoryName(fullPath);
-                    var dirName = Path.GetFileName(parentDir);
-                    if (dirName == oldName)
+                    if (item.Filename != null)
                     {
-                        // oh then we need to redirect this link to the newName.
-                        var fileName = Path.GetFileName(item.Filename);
-                        var newPath = Path.Combine(Path.GetDirectoryName(parentDir), newName, fileName);
-                        var relative = FileHelpers.GetRelativePath(newPath, index.FileName);
-                        item.Filename = relative;
-                        changed = true;
+                        var fullPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(index.FileName), item.Filename));
+                        var parentDir = Path.GetDirectoryName(fullPath);
+                        var dirName = Path.GetFileName(parentDir);
+                        if (dirName == oldName)
+                        {
+                            // oh then we need to redirect this link to the newName.
+                            var fileName = Path.GetFileName(item.Filename);
+                            var newPath = Path.Combine(Path.GetDirectoryName(parentDir), newName, fileName);
+                            var relative = FileHelpers.GetRelativePath(newPath, index.FileName);
+                            item.Filename = relative;
+                            changed = true;
+                        }
                     }
                 }
                 if (changed)
