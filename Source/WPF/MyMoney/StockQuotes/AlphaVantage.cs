@@ -399,6 +399,10 @@ namespace Walkabout.StockQuotes
                     }
                 }
             }
+            else if (o.TryGetValue("Information", out value))
+            {
+                throw new Exception(value.ToString());
+            }
             return result;
         }
 
@@ -531,6 +535,10 @@ namespace Walkabout.StockQuotes
                         history.Symbol = (string)value;
                     }
                 }
+            }
+            else if (o.TryGetValue("Information", out value))
+            {
+                throw new Exception(value.ToString());
             }
             else
             {
