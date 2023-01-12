@@ -326,18 +326,20 @@ namespace Walkabout
 
         private void OnUpdateRentalTab()
         {
+            const string rentals = "RENTALS";
+
             if (this.rentsControl != null)
             {
-                if (!this.toolBox.ContainsTab("RENTS"))
+                if (!this.toolBox.ContainsTab(rentals))
                 {
-                    this.toolBox.Add("RENTS", "RentsSelector", this.rentsControl);
+                    this.toolBox.Add(rentals, "RentsSelector", this.rentsControl);
                 }
             }
             else
             {
-                if (this.toolBox.ContainsTab("RENTS"))
+                if (this.toolBox.ContainsTab(rentals))
                 {
-                    this.toolBox.RemoveTab("RENTS");
+                    this.toolBox.RemoveTab(rentals);
                 }
             }
         }
