@@ -6340,7 +6340,8 @@ namespace Walkabout.Data
                 this.observableCollection.Clear();
                 this.AggregateBuildingInformation((MyMoney)this.Parent);
 
-                foreach (RentBuilding r in this.rentBuildings.Values)
+                // sorted by Rental Names
+                foreach (RentBuilding r in this.rentBuildings.Values.OrderBy(item => { return item.Name; }))
                 {
                     if (!r.IsDeleted)
                     {
