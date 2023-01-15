@@ -409,7 +409,7 @@ namespace Walkabout.Dialogs
                 return;
             }
 
-            Task.Run(() => this.GetUpdatedBankInfo(info));
+            _ = this.GetUpdatedBankInfo(info);
         }
 
         private readonly ConcurrentQueue<OfxInstitutionInfo> fetchQueue = new ConcurrentQueue<OfxInstitutionInfo>();
@@ -536,9 +536,9 @@ namespace Walkabout.Dialogs
                     !string.IsNullOrWhiteSpace(this.TextBoxOfxAddress.Text);
         }
 
-        private void GetUpdatedBankInfo(OfxInstitutionInfo provider)
+        private async Task GetUpdatedBankInfo(OfxInstitutionInfo provider)
         {
-            OfxInstitutionInfo ps = OfxInstitutionInfo.GetProviderInformation(provider);
+            OfxInstitutionInfo ps = await OfxInstitutionInfo.GetProviderInformation(provider, this.cancellation.Token);
 
             if (this.selected != provider)
             {
