@@ -6093,7 +6093,7 @@ namespace Walkabout.Views
             box.SetResourceReference(TextBox.StyleProperty, "GridTextBoxStyle");
             box.SetBinding(TextBox.TextProperty, new Binding("Number")
             {
-                StringFormat = "N",
+                StringFormat = "N2",
                 Converter = new NullableValueConverter(),
                 Mode = BindingMode.TwoWay,
                 ValidatesOnDataErrors = true,
@@ -6951,7 +6951,7 @@ namespace Walkabout.Views
             {
                 binding = new Binding(this.SortMemberPath)
                 {
-                    StringFormat = "N"
+                    StringFormat = "N2"
                 };
             }
 
@@ -6962,7 +6962,7 @@ namespace Walkabout.Views
                     f = (t) => this.GetStringValue(t.SalesTax);
                     break;
                 case "Balance":
-                    f = (t) => t.Balance.ToString("N"); // show zeros
+                    f = (t) => t.Balance.ToString("N2"); // show zeros
                     break;
                 case "InvestmentUnits":
                     f = (t) => this.GetStringValue(t.InvestmentUnits);
@@ -7004,7 +7004,7 @@ namespace Walkabout.Views
             return GetStringValue(s.Value);
         }
 
-        private string GetStringValue(decimal d, string format = "N")
+        private string GetStringValue(decimal d, string format = "N2")
         {
             if (d == 0)
             {
@@ -7658,7 +7658,7 @@ namespace Walkabout.Views
                 {
                     if (v != 0)
                     {
-                        return v.ToString("N");
+                        return v.ToString("N2");
                     }
                 }
             }
@@ -7667,7 +7667,7 @@ namespace Walkabout.Views
                 SqlDecimal value = this.isDebit ? this.context.Debit : this.context.Credit;
                 if (!value.IsNull)
                 {
-                    return value.Value.ToString("N");
+                    return value.Value.ToString("N2");
                 }
             }
             return string.Empty;
