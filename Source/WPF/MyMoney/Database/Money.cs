@@ -9267,13 +9267,20 @@ namespace Walkabout.Data
             return false;
         }
 
+        private static bool IsSameString(string a, string b)
+        {
+            if (string.IsNullOrEmpty(a)) return string.IsNullOrEmpty(b);
+            if (string.IsNullOrEmpty(b)) return false;
+            return a.Trim() == b.Trim();
+        }
+
         private static bool IsPotentialDuplicate(Transaction t, Transaction u, int dayRange)
         {
             return !u.IsFake && !t.IsFake &&
                 u != t && u.amount == t.amount && u.PayeeName == t.PayeeName &&
                 // they must be in the same account (which they may not be if on the multi-account view).
                 u.Account == t.Account &&
-                u.Number == t.Number &&
+                IsSameString(u.Number, t.Number) &&
                 // ignore transfers for now
                 t.Transfer == null && u.Transfer == null &&
                 // if user has already marked both as not duplicates, then skip it.
