@@ -1,7 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using NUnit.Framework;
 using System.Data.SqlTypes;
-using System.Linq;
 using Walkabout.Data;
 
 namespace Walkabout.Tests
@@ -9,32 +7,14 @@ namespace Walkabout.Tests
     /// <summary>
     /// Summary description for DataTests
     /// </summary>
-    [TestClass]
     public class SqlMappingTests
     {
-        public SqlMappingTests()
+        [SetUp]
+        public void Setup()
         {
         }
 
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return this.testContextInstance;
-            }
-            set
-            {
-                this.testContextInstance = value;
-            }
-        }
-
-        [TestMethod]
+        [Test]
         public void TestSqlMapping()
         {
             MyMoney m = new MyMoney();
@@ -79,7 +59,7 @@ namespace Walkabout.Tests
             var metadata = db.LoadTableMetadata(mapping.TableName);
             var d = (from i in metadata.Columns where i.ColumnName == "Foo" select i).FirstOrDefault();
             Assert.IsNotNull(d);
-            Assert.AreEqual(d.MaxLength, 20);
+            Assert.AreEqual(20, d.MaxLength);
 
             // test we can change the max length
             c.MaxLength = 50;
@@ -89,7 +69,7 @@ namespace Walkabout.Tests
             metadata = db.LoadTableMetadata(mapping.TableName);
             d = (from i in metadata.Columns where i.ColumnName == "Foo" select i).FirstOrDefault();
             Assert.IsNotNull(d);
-            Assert.AreEqual(d.MaxLength, 50);
+            Assert.AreEqual(50, d.MaxLength);
 
             // test we can drop the column
             mapping.Columns.Remove(c);

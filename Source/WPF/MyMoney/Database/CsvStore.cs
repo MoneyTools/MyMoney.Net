@@ -3,6 +3,7 @@ using System.Collections;
 using System.Data;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Walkabout.Utilities;
 
 namespace Walkabout.Data
@@ -178,10 +179,11 @@ namespace Walkabout.Data
         /// <param name="count"></param>
         /// <returns></returns>
 
-        public static int ImportCsv(MyMoney myMoney, Account acct, string file)
+        public static async Task<int> ImportCsv(MyMoney myMoney, Account acct, string file)
         {
             var uri = new Uri(file);
-            var csvReader = new CsvReader(uri, Encoding.UTF8, null, 4096);
+            var csvReader = new CsvReader(4096);
+            await csvReader.OpenAsync(uri, Encoding.UTF8, null);
             csvReader.Delimiter = ',';
             int total = 0;
             while (csvReader.Read())

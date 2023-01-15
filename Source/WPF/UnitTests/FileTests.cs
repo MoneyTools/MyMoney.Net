@@ -1,28 +1,27 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Walkabout.Utilities;
 
-namespace UnitTests
+namespace Walkabout.Tests
 {
-    [TestClass]
     public class FileHelperTests
     {
-        [TestMethod]
+        [Test]
         public void TestRelativeUri()
         {
             var rel = FileHelpers.GetRelativePath(@"c:\temp\test\foo.xml", @"c:\temp\test\index.xml");
-            Assert.AreEqual(rel, "foo.xml");
+            Assert.AreEqual("foo.xml", rel);
 
             rel = FileHelpers.GetRelativePath(@"c:\temp\test\foo.xml", @"c:\temp\index.xml");
-            Assert.AreEqual(rel, @"test\foo.xml");
+            Assert.AreEqual(@"test\foo.xml", rel);
 
             rel = FileHelpers.GetRelativePath(@"c:\temp\test\foo.xml", @"c:\index.xml");
-            Assert.AreEqual(rel, @"temp\test\foo.xml");
+            Assert.AreEqual(@"temp\test\foo.xml", rel);
 
             rel = FileHelpers.GetRelativePath(@"c:\temp\foo\foo.xml", @"c:\temp\bar\index.xml");
-            Assert.AreEqual(rel, @"..\foo\foo.xml");
+            Assert.AreEqual(@"..\foo\foo.xml", rel);
 
             rel = FileHelpers.GetRelativePath(@"c:\temp\foo\2\foo.xml", @"c:\temp\bar\1\index.xml");
-            Assert.AreEqual(rel, @"..\..\foo\2\foo.xml");
+            Assert.AreEqual(@"..\..\foo\2\foo.xml", rel);
         }
     }
 }

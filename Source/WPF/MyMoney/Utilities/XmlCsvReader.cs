@@ -12,7 +12,9 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace Walkabout.Utilities
@@ -74,17 +76,21 @@ namespace Walkabout.Utilities
         /// </summary>
         /// <param name="location">The location of the .csv file</param>
         /// <param name="nametable">The nametable to use for atomizing element names</param>
-        public XmlCsvReader(Uri location, Encoding encoding, XmlNameTable nametable)
+        public XmlCsvReader(XmlNameTable nametable)
         {
-            this._baseUri = location;
-            this._encoding = encoding;
             this._nt = nametable;
             if (nametable == null)
             {
                 this._nt = new NameTable();
             }
+        }
 
-            this._csvReader = new CsvReader(location, encoding, null, 4096);
+        public async Task OpenAsync(Uri location, Encoding encoding)
+        {
+            this._baseUri = location;
+            this._encoding = encoding;
+            this._csvReader = new CsvReader(4096);
+            await this._csvReader.OpenAsync(location, encoding, null);
         }
 
         /// <summary>
@@ -266,10 +272,45 @@ namespace Walkabout.Utilities
                     this._names = new string[this._csvReader.FieldCount];
                     for (int i = 0; i < this._csvReader.FieldCount; i++)
                     {
-                        this._names[i] = this._nt.Add(this._csvReader[i]);
+                        this._names[i] = this._nt.Add(GetValidXmlName(this._csvReader[i], i));
                     }
                 }
             }
+        }
+
+        private string GetValidXmlName(string value, int index)
+        {
+            StringBuilder sb = new StringBuilder();
+            bool first = true;
+            foreach (var ch in value)
+            {
+                if (!Char.IsWhiteSpace(ch))
+                {
+                    if (first)
+                    {
+                        if (Char.IsLetter(ch) || ch == '_' || ch == ':')
+                        {
+                            sb.Append(ch);
+                            first = false;
+                            continue;
+                        }
+                        else
+                        {
+                            sb.Append('a');
+                        }
+                        first = false;
+                    }
+                    if (Char.IsLetter(ch) || Char.IsDigit(ch) || ch == '.' || ch == '-' || ch == '_' || ch == ':')
+                    {
+                        sb.Append(ch);
+                    }
+                }
+            }
+            if (sb.Length == 0)
+            {
+                return "a" + index.ToString();
+            }
+            return sb.ToString();
         }
 
         public override XmlNodeType NodeType
@@ -647,12 +688,7 @@ namespace Walkabout.Utilities
                 case State.Initial:
                     if (this._csvReader == null)
                     {
-                        if (this._href == null)
-                        {
-                            throw new Exception("You must provide an input location via the Href property, or provide an input stream via the TextReader property.");
-                        }
-                        this._csvReader = new CsvReader(this._href, this._encoding, this._proxy, 4096);
-                        this._csvReader.Delimiter = this.Delimiter;
+                        throw new Exception("You must call OpenAsync before calling read");
                     }
                     if (this._firstRowHasColumnNames)
                     {
@@ -815,7 +851,7 @@ namespace Walkabout.Utilities
 
     internal class CsvReader
     {
-        private readonly TextReader _r;
+        private TextReader _r;
         private readonly char[] _buffer;
         private int _pos;
         private int _used;
@@ -829,26 +865,42 @@ namespace Walkabout.Utilities
         private readonly ArrayList _values;
         private int _fields;
 
-        public CsvReader(Uri location, Encoding encoding, string proxy, int bufsize)
-        {  // the location of the .csv file
+        public CsvReader(int bufsize)
+        {
+            this._buffer = new char[bufsize];
+            this._values = new ArrayList();
+        }
+
+        public async Task OpenAsync(Uri location, Encoding encoding, string proxy)
+        {
+            // the location of the .csv file
             if (location.IsFile)
             {
                 this._r = new StreamReader(location.LocalPath, encoding, true);
             }
             else
             {
-                WebRequest wr = WebRequest.Create(location);
-                if (proxy != null && proxy != "")
+                HttpClient client;
+                if (!string.IsNullOrEmpty(proxy))
                 {
-                    wr.Proxy = new WebProxy(proxy);
+                    // wr.Proxy = 
+                    HttpClientHandler handler = new HttpClientHandler()
+                    {
+                        UseProxy = true,
+                        Proxy = new WebProxy(proxy)
+                    };
+                    client = new HttpClient(handler);
+                }
+                else
+                {
+                    client = new HttpClient();
                 }
 
-                wr.Credentials = CredentialCache.DefaultCredentials;
-                Stream stm = wr.GetResponse().GetResponseStream();
+                // wr.Credentials = CredentialCache.DefaultCredentials;
+                HttpResponseMessage msg = await client.GetAsync(location);
+                Stream stm = await msg.Content.ReadAsStreamAsync();
                 this._r = new StreamReader(stm, encoding, true);
             }
-            this._buffer = new char[bufsize];
-            this._values = new ArrayList();
         }
 
         public CsvReader(Stream stm, Encoding encoding, int bufsize)
