@@ -660,11 +660,11 @@ namespace Walkabout.Data
                         {
                             if (s.StartsWith("MSSQL") && s.EndsWith("SQLEXPRESS"))
                             {
-                                using (RegistryKey? subKey = Key.OpenSubKey(s, false))
+                                using (RegistryKey subKey = Key.OpenSubKey(s, false))
                                 {
                                     if (subKey != null)
                                     {
-                                        using (RegistryKey? setup = subKey.OpenSubKey("Setup", false))
+                                        using (RegistryKey setup = subKey.OpenSubKey("Setup", false))
                                         {
                                             if (setup != null)
                                             {

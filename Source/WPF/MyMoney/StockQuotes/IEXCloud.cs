@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,11 +18,12 @@ namespace Walkabout.StockQuotes
         // See https://iextrading.com/developer/docs/#batch-requests
         private const string address = "https://cloud.iexapis.com/stable/stock/market/batch?symbols={0}&types=quote&range=1m&last=1&token={1}";
         private readonly char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
+        private const string userAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
         private readonly StockServiceSettings _settings;
         private HashSet<string> _pending;
         private int _completed;
-        private Thread _downloadThread;
-        private HttpWebRequest _current;
+        private Task _downloadTask;
+        private CancellationTokenSource _source;
         private bool _cancelled;
         private bool _suspended;
         private readonly string _logPath;
@@ -46,13 +48,9 @@ namespace Walkabout.StockQuotes
         public void Cancel()
         {
             this._cancelled = true;
-            if (this._current != null)
+            if (this._source != null)
             {
-                try
-                {
-                    this._current.Abort();
-                }
-                catch { }
+                _source.Cancel();
             }
         }
 
@@ -160,14 +158,14 @@ namespace Walkabout.StockQuotes
                 }
             }
             this._cancelled = false;
-            if (this._downloadThread == null)
+            if (this._downloadTask == null)
             {
-                this._downloadThread = new Thread(new ThreadStart(this.DownloadQuotes));
-                this._downloadThread.Start();
+                this._source = new CancellationTokenSource();
+                this._downloadTask = Task.Run(this.DownloadQuotes);
             }
         }
 
-        private void DownloadQuotes()
+        private async Task DownloadQuotes()
         {
             try
             {
@@ -214,6 +212,7 @@ namespace Walkabout.StockQuotes
                         // even it if tails we consider the job completed from a status point of view.
                         this._completed += batch.Count;
                         string symbols = string.Join(",", batch);
+                        Exception ex = null;
                         try
                         {
                             // this service doesn't want too many calls per second.
@@ -232,7 +231,7 @@ namespace Walkabout.StockQuotes
                                 this.OnSuspended(true);
                                 while (!this._cancelled && ms > 0)
                                 {
-                                    Thread.Sleep(1000);
+                                    await Task.Delay(1000);
                                     ms -= 1000;
                                 }
                                 this.OnSuspended(false);
@@ -244,82 +243,98 @@ namespace Walkabout.StockQuotes
                             }
 
                             string uri = string.Format(address, symbols, this._settings.ApiKey);
-                            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
-                            req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
-                            req.Method = "GET";
-                            req.Timeout = 10000;
-                            req.UseDefaultCredentials = false;
-                            this._current = req;
 
-                            WebResponse resp = req.GetResponse();
-                            this._throttle.RecordCall();
-                            using (Stream stm = resp.GetResponseStream())
+                            HttpClient client = new HttpClient();
+                            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+                            client.Timeout = TimeSpan.FromSeconds(30);
+                            var msg = await client.GetAsync(uri, _source.Token);
+                            if (!msg.IsSuccessStatusCode)
                             {
-                                using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
+                                this.OnError("AlphaVantage http error " + msg.StatusCode + ": " + msg.ReasonPhrase);
+                            }
+                            else
+                            {
+                                this._throttle.RecordCall();
+                                using (Stream stm = await msg.Content.ReadAsStreamAsync())
                                 {
-                                    string json = sr.ReadToEnd();
-                                    JObject o = JObject.Parse(json);
-                                    List<StockQuote> result = ParseStockQuotes(o);
-                                    // make sure they are all returned, and report errors for any that are not.
-                                    foreach (string s in batch)
+                                    using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
                                     {
-                                        StockQuote q = (from i in result where string.Compare(i.Symbol, s, StringComparison.OrdinalIgnoreCase) == 0 select i).FirstOrDefault();
-                                        if (q == null)
+                                        string json = sr.ReadToEnd();
+                                        JObject o = JObject.Parse(json);
+                                        List<StockQuote> result = ParseStockQuotes(o);
+                                        // make sure they are all returned, and report errors for any that are not.
+                                        foreach (string s in batch)
                                         {
-                                            this.OnError(string.Format("No quote returned for symbol {0}", s));
-                                            this.OnSymbolNotFound(s);
-                                        }
-                                        else
-                                        {
-                                            this.OnQuoteAvailable(q);
+                                            StockQuote q = (from i in result where string.Compare(i.Symbol, s, StringComparison.OrdinalIgnoreCase) == 0 select i).FirstOrDefault();
+                                            if (q == null)
+                                            {
+                                                this.OnError(string.Format("No quote returned for symbol {0}", s));
+                                                this.OnSymbolNotFound(s);
+                                            }
+                                            else
+                                            {
+                                                this.OnQuoteAvailable(q);
+                                            }
                                         }
                                     }
                                 }
                             }
 
-                            Thread.Sleep(1000); // there is also a minimum sleep between requests that we must enforce.
+                            await Task.Delay(1000); // there is also a minimum sleep between requests that we must enforce.
 
                             symbols = string.Join(", ", batch);
                             this.OnError(string.Format(Walkabout.Properties.Resources.FetchedStockQuotes, symbols));
 
                         }
-                        catch (System.Net.WebException we)
+                        catch (HttpRequestException he)
                         {
-                            if (we.Status != WebExceptionStatus.RequestCanceled)
+                            if (he.InnerException is System.Net.WebException we)
                             {
-                                this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbols) + "\r\n" + we.Message);
+                                if (we.Status != WebExceptionStatus.RequestCanceled)
+                                {
+                                    this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbols) + "\r\n" + we.Message);
+                                }
+                                else
+                                {
+                                    // we cancelled, so bail. 
+                                    this._cancelled = true;
+                                    break;
+                                }
+
+                                HttpWebResponse http = we.Response as HttpWebResponse;
+                                if (http != null)
+                                {
+                                    // certain http error codes are fatal.
+                                    switch (http.StatusCode)
+                                    {
+                                        case HttpStatusCode.ServiceUnavailable:
+                                        case HttpStatusCode.InternalServerError:
+                                        case HttpStatusCode.Unauthorized:
+                                            this.OnError(http.StatusDescription);
+                                            this._cancelled = true;
+                                            break;
+                                    }
+                                }
                             }
                             else
                             {
-                                // we cancelled, so bail. 
-                                this._cancelled = true;
-                                break;
-                            }
-
-                            HttpWebResponse http = we.Response as HttpWebResponse;
-                            if (http != null)
-                            {
-                                // certain http error codes are fatal.
-                                switch (http.StatusCode)
-                                {
-                                    case HttpStatusCode.ServiceUnavailable:
-                                    case HttpStatusCode.InternalServerError:
-                                    case HttpStatusCode.Unauthorized:
-                                        this.OnError(http.StatusDescription);
-                                        this._cancelled = true;
-                                        break;
-                                }
+                                ex = he;
                             }
                         }
                         catch (Exception e)
                         {
-                            // continue
-                            this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbols) + "\r\n" + e.Message);
+                            ex = e;
                         }
+
+                        if (ex != null)
+                        {
+                            // continue
+                            this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbols) + "\r\n" + ex.Message);
+                        }
+
                         batch.Clear();
                     }
 
-                    this._current = null;
                 }
             }
             catch
@@ -333,8 +348,7 @@ namespace Walkabout.StockQuotes
             {
                 this.OnComplete(false, "IEXCloud download cancelled");
             }
-            this._downloadThread = null;
-            this._current = null;
+            this._downloadTask = null;
             this._completed = 0;
         }
 
