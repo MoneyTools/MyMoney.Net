@@ -24,6 +24,9 @@
     <None Remove="Service References\**" />
     <Page Remove="Service References\**" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Ofx\ofx201.dtd" />
+  </ItemGroup>
  <ItemGroup>
     <Compile Include="..\Version\CommonInfo.cs">
       <Link>Properties\CommonInfo.cs</Link>
@@ -33,6 +36,7 @@
     </Compile>
     <Compile Include="Service References\RestfulWebServices\Reference.cs" />
     <EmbeddedResource Include="Database\SampleStockQuotes.zip" />
+    <EmbeddedResource Include="Ofx\ofx201.dtd" />
     <None Include=".editorconfig" />
     <None Include="Service References\RestfulWebServices\configuration.svcinfo" />
     <None Include="Service References\RestfulWebServices\configuration91.svcinfo" />

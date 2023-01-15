@@ -738,7 +738,7 @@ namespace Walkabout.Dialogs
         /// Background thread to connect to bank
         /// </summary>
         /// <param name="state"></param>
-        private void StartSignup()
+        private async Task StartSignup()
         {
             var id = new object();
             this.pendingSignon = id;
@@ -769,7 +769,7 @@ namespace Walkabout.Dialogs
                 }
                 else
                 {
-                    this.Signup();
+                    await this.Signup();
                 }
             }
             catch (OfxException ex)
@@ -833,12 +833,12 @@ namespace Walkabout.Dialogs
 
         private object signupRequest;
 
-        private void Signup()
+        private async Task Signup()
         {
             OfxRequest req = new OfxRequest(this.editing, this.money, AccountHelper.PickAccount);
             this.signupRequest = req;
-            string logpath;
-            OFX ofx = req.Signup(this.editing, out logpath);
+            OFX ofx = await req.Signup(this.editing);
+            string logpath = req.OfxCachePath;
             if (this.signupRequest == req)
             {
                 this.signupRequest = null;
@@ -1434,7 +1434,7 @@ namespace Walkabout.Dialogs
         /// <summary>
         /// Background thread to connect to bank and verify OFX support
         /// </summary>
-        private void StartVerify()
+        private async Task StartVerify()
         {
             if (this.pendingVerify != null)
             {
@@ -1451,7 +1451,8 @@ namespace Walkabout.Dialogs
             {
 
                 // see if we can get the server profile first...
-                ProfileResponseMessageSet profile = req.GetProfile(this.editing, out cachePath);
+                ProfileResponseMessageSet profile = await req.GetProfile(this.editing);
+                cachePath = req.OfxCachePath;
 
                 UiDispatcher.BeginInvoke(new Action(() =>
                 {
