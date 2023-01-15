@@ -110,6 +110,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Xml.SgmlReader" Version="1.8.28" />
     <PackageReference Include="ModernWpfUI" Version="0.9.7-preview.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.117" />

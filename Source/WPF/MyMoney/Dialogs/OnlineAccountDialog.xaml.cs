@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -113,6 +114,8 @@ namespace Walkabout.Dialogs
         private ProfileResponse profile;
         private readonly bool debugging;
         private readonly IServiceProvider serviceProvider;
+        private bool closed;
+        private CancellationTokenSource cancellation;
 
         public OnlineAccountDialog(MyMoney money, Account account, IServiceProvider sp)
         {
@@ -121,6 +124,7 @@ namespace Walkabout.Dialogs
             this.money = money;
             this.account = account;
             this.InitializeComponent();
+            this.cancellation = new CancellationTokenSource();
 
             OnlineAccount oa = this.account.OnlineAccount;
             if (oa != null)
@@ -175,6 +179,8 @@ namespace Walkabout.Dialogs
 
         protected override void OnClosed(EventArgs e)
         {
+            this.closed = true;
+            this.cancellation.Cancel();
             this.pendingVerify = null;
             this.pendingSignon = null;
             if (this.queueProcessor != null)
@@ -261,14 +267,21 @@ namespace Walkabout.Dialogs
 
         private List<OfxInstitutionInfo> providers;
 
-        private void GetBankList()
+        private async void GetBankList()
         {
             // show the cached list first.
             this.providers = OfxInstitutionInfo.GetCachedBankList();
             this.ShowBankList();
 
-            this.providers = OfxInstitutionInfo.GetRemoteBankList();
-            this.ShowBankList();
+            try
+            {
+                this.providers = await OfxInstitutionInfo.GetRemoteBankList(this.cancellation.Token);
+                if (!this.closed)
+                {
+                    this.ShowBankList();
+                }
+            }
+            catch { }
         }
 
         private void ShowBankList()

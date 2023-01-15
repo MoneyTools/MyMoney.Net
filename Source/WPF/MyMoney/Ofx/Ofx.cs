@@ -1,3 +1,4 @@
+using Sgml;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -19,7 +20,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Walkabout.Data;
-using Walkabout.Sgml;
 using Walkabout.Utilities;
 using Dispatcher = System.Windows.Threading.Dispatcher;
 
@@ -1812,7 +1812,7 @@ NEWFILEUID:{1}
             {
                 string name = "Walkabout.Ofx.ofx160.dtd";
                 StreamReader dtdReader = new StreamReader(typeof(OfxRequest).Assembly.GetManifestResourceStream(name));
-                sgml.Dtd = SgmlDtd.Parse(null, "OFX", null, dtdReader, null, null, new NameTable());
+                sgml.Dtd = SgmlDtd.Parse(null, "OFX", dtdReader, null, null);
 
                 sgml.InputStream = new StringReader(sb.ToString());
 
