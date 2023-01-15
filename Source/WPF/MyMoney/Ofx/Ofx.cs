@@ -1166,7 +1166,7 @@ NEWFILEUID:{1}
 
                 this.CheckSignOnStatusError(ofx);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 if (File.Exists(cache))
                 {

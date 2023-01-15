@@ -228,8 +228,7 @@ namespace Walkabout.Sgml
                                 }
                             }
                         }
-                        this._stm = new StreamReader(resp.GetResponseStream(),
-                            e, true);
+                        this._stm = new StreamReader(resp.GetResponseStream(), e, true);
                         this._weOwnTheStream = true;
                         break;
 

@@ -627,7 +627,7 @@ namespace Walkabout.Views
                         case Key.Enter:
                             {
                                 DataGrid grid = splitGrid;
-                                if (grid != null && grid.CurrentCell != null && !this.IsEditing)
+                                if (grid != null && !this.IsEditing)
                                 {
                                     grid.BeginEdit();
                                     e.Handled = true;
@@ -701,7 +701,7 @@ namespace Walkabout.Views
                             else
                             {
                                 DataGrid grid = this.TheActiveGrid;
-                                if (grid != null && grid.CurrentCell != null && !this.IsEditing)
+                                if (grid != null && !this.IsEditing)
                                 {
                                     grid.BeginEdit();
                                     e.Handled = true;
@@ -914,19 +914,16 @@ namespace Walkabout.Views
                 return;
             }
             DataGridCellInfo dgci = this.TheActiveGrid.SelectedCells[columnToEdit];
-            if (dgci != null)
+            DataGridCell dgc = this.TheActiveGrid.GetCell(this.TheActiveGrid.GetRowIndex(dgci), this.TheActiveGrid.GetColIndex(dgci));
+            if (dgc == null)
             {
-                DataGridCell dgc = this.TheActiveGrid.GetCell(this.TheActiveGrid.GetRowIndex(dgci), this.TheActiveGrid.GetColIndex(dgci));
-                if (dgc == null)
-                {
-                    Debug.WriteLine("ERROR - Insert Row and Edit 'dgc' is NULL");
-                }
-                else
-                {
-                    dgc.Focus();
-                    Debug.WriteLineIf(dgc.IsFocused == false, "could not set focus on the new row cell");
-                    this.TheActiveGrid.BeginEdit();
-                }
+                Debug.WriteLine("ERROR - Insert Row and Edit 'dgc' is NULL");
+            }
+            else
+            {
+                dgc.Focus();
+                Debug.WriteLineIf(dgc.IsFocused == false, "could not set focus on the new row cell");
+                this.TheActiveGrid.BeginEdit();
             }
         }
 
