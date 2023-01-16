@@ -383,6 +383,119 @@ namespace Walkabout.WpfConverters
     }
 
 
+    /// <summary>
+    /// WHen this class is bound to the control it ensures a minimum of 2 decimal digits
+    /// are displayed and a maximum number of digits if there is more precision to be shown
+    /// (default 5, which can be overridden in the ConverterParameter).
+    /// </summary>
+    public class PreserveDecimalDigitsValueConverter : IValueConverter
+    {
+        public int GetDecimalDigits(decimal d, string stringFormat)
+        {
+            if (stringFormat == "N2")
+            {
+                return 2;
+            }
+
+            int digits = 0;
+            decimal x = d - (int)d;
+            while (x != 0)
+            {
+                digits++;
+                x *= 10;
+                x -= (int)x;
+            }
+            return Math.Max(Math.Min(digits, 5), 2);
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (targetType != typeof(string))
+            {
+                throw new Exception("Unexpected target type passed to PreserveDecimalDigitsValueConverter.Convert : " + targetType.Name);
+            }
+
+            if (value == null || (value is INullable && value.ToString() == "Null"))
+            {
+                return "";
+            }
+
+            string format = "N5";
+            if (parameter is string s)
+            {
+                format = s;
+            }
+
+            Type valueType = value.GetType();
+            if (valueType == typeof(SqlDecimal))
+            {
+                SqlDecimal d = (SqlDecimal)value;
+                if (d.IsNull)
+                {
+                    return "";
+                }
+                return d.Value.ToString("N" + this.GetDecimalDigits(d.Value, format));
+            }
+            else if (valueType == typeof(decimal))
+            {
+                decimal d = (decimal)value;
+                return d.ToString("N" + this.GetDecimalDigits(d, format));
+            }
+            else if (valueType == typeof(DateTime))
+            {
+                return ((DateTime)value).ToString("d");
+            }
+            else
+            {
+                return value.ToString();
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value != null && value.GetType() != typeof(string))
+            {
+                throw new Exception("Unexpected value type passed to PreserveDecimalDigitsValueConverter.ConvertBack : " + value.GetType().Name);
+            }
+            string s = (string)value;
+
+            if (targetType == typeof(SqlDecimal))
+            {
+                if (string.IsNullOrWhiteSpace(s))
+                {
+                    return new SqlDecimal();
+                }
+                return SqlDecimal.Parse(s);
+            }
+            else if (targetType == typeof(decimal))
+            {
+                if (string.IsNullOrWhiteSpace(s))
+                {
+                    return 0D;
+                }
+
+                return decimal.Parse(s);
+            }
+            else if (targetType == typeof(DateTime))
+            {
+                if (string.IsNullOrWhiteSpace(s))
+                {
+                    return DateTime.Now;
+                }
+
+                return DateTime.Parse(s);
+            }
+            else if (targetType == typeof(string))
+            {
+                return s;
+            }
+            else
+            {
+                throw new Exception("Unexpected target type passed to PreserveDecimalDigitsValueConverter.ConvertBack : " + value.GetType().Name);
+            }
+        }
+    }
+
     public class SqlDecimalToDecimalConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

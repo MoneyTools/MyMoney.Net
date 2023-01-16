@@ -6093,8 +6093,8 @@ namespace Walkabout.Views
             box.SetResourceReference(TextBox.StyleProperty, "GridTextBoxStyle");
             box.SetBinding(TextBox.TextProperty, new Binding("Number")
             {
-                StringFormat = "N2",
-                Converter = new NullableValueConverter(),
+                Converter = new PreserveDecimalDigitsValueConverter(),
+                ConverterParameter = "N5",
                 Mode = BindingMode.TwoWay,
                 ValidatesOnDataErrors = true,
                 ValidatesOnExceptions = true
@@ -6811,102 +6811,6 @@ namespace Walkabout.Views
         }
     }
 
-    public class PreserveDecimalDigitsValueConverter : IValueConverter
-    {
-        public int GetDecimalDigits(decimal d)
-        {
-            int digits = 0;
-            decimal x = d - (int)d;
-            while (x != 0)
-            {
-                digits++;
-                x *= 10;
-                x -= (int)x;
-            }
-            return Math.Max(Math.Min(digits, 5), 2);
-        }
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (targetType != typeof(string))
-            {
-                throw new Exception("Unexpected target type passed to PreserveDecimalDigitsValueConverter.Convert : " + targetType.Name);
-            }
-            if (value == null)
-            {
-                return "";
-            }
-
-            Type valueType = value.GetType();
-            if (valueType == typeof(SqlDecimal))
-            {
-                SqlDecimal d = (SqlDecimal)value;
-                if (d.IsNull)
-                {
-                    return "";
-                }
-                return d.Value.ToString("N" + this.GetDecimalDigits(d.Value));
-            }
-            else if (valueType == typeof(decimal))
-            {
-                decimal d = (decimal)value;
-                return d.ToString("N" + this.GetDecimalDigits(d));
-            }
-            else if (valueType == typeof(DateTime))
-            {
-                return ((DateTime)value).ToString("d");
-            }
-            else
-            {
-                return value.ToString();
-            }
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value != null && value.GetType() != typeof(string))
-            {
-                throw new Exception("Unexpected value type passed to PreserveDecimalDigitsValueConverter.ConvertBack : " + value.GetType().Name);
-            }
-            string s = (string)value;
-
-            if (targetType == typeof(SqlDecimal))
-            {
-                if (string.IsNullOrWhiteSpace(s))
-                {
-                    return new SqlDecimal();
-                }
-                return SqlDecimal.Parse(s);
-            }
-            else if (targetType == typeof(decimal))
-            {
-                if (string.IsNullOrWhiteSpace(s))
-                {
-                    return 0D;
-                }
-
-                return decimal.Parse(s);
-            }
-            else if (targetType == typeof(DateTime))
-            {
-                if (string.IsNullOrWhiteSpace(s))
-                {
-                    return DateTime.Now;
-                }
-
-                return DateTime.Parse(s);
-            }
-            else if (targetType == typeof(string))
-            {
-                return s;
-            }
-            else
-            {
-                throw new Exception("Unexpected target type passed to PreserveDecimalDigitsValueConverter.ConvertBack : " + value.GetType().Name);
-            }
-        }
-    }
-
     public class TransactionNumericColumn : DataGridColumn
     {
         protected override FrameworkElement GenerateEditingElement(DataGridCell cell, object dataItem)
@@ -6934,8 +6838,8 @@ namespace Walkabout.Views
             box.SetResourceReference(TextBox.StyleProperty, "NumericTextBoxStyle");
             box.SetBinding(TextBox.TextProperty, new Binding(this.SortMemberPath)
             {
-                StringFormat = "N5",
                 Converter = new PreserveDecimalDigitsValueConverter(),
+                ConverterParameter = "N5",
                 Mode = BindingMode.TwoWay,
                 ValidatesOnDataErrors = true,
                 ValidatesOnExceptions = true
@@ -6951,7 +6855,7 @@ namespace Walkabout.Views
             {
                 binding = new Binding(this.SortMemberPath)
                 {
-                    StringFormat = "N2"
+                    StringFormat = "N"
                 };
             }
 
@@ -7006,6 +6910,8 @@ namespace Walkabout.Views
 
         private string GetStringValue(decimal d, string format = "N2")
         {
+            // This function is only used for binding to the TextBlock in the TransactionTextField, 
+            // so it is always truncated to 2 decimal places.
             if (d == 0)
             {
                 return "";
@@ -7571,12 +7477,12 @@ namespace Walkabout.Views
         {
             if (this.editbox != null)
             {
-                // Text="{Binding Debit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}, 
+                // Text="{Binding Debit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N5, 
                 // Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
                 var binding = new Binding(this.Type)
                 {
-                    StringFormat = "{0:N}",
-                    Converter = new Walkabout.WpfConverters.SqlDecimalToDecimalConverter(),
+                    ConverterParameter = "N5",
+                    Converter = new Walkabout.WpfConverters.PreserveDecimalDigitsValueConverter(),
                     Mode = BindingMode.TwoWay,
                     ValidatesOnDataErrors = true,
                     ValidatesOnExceptions = true
@@ -7647,6 +7553,8 @@ namespace Walkabout.Views
 
         private string GetCurrentValue()
         {
+            // This is used to update the TextBlock label, which should always be truncated
+            // to 2 decimal places.  We only show full precision in the TextBox.
             if (this.context == null)
             {
                 return string.Empty;
