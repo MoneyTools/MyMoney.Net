@@ -96,6 +96,13 @@ jobs:
       env:
         Configuration: ${{ matrix.configuration }}
         Platform: ${{ matrix.platform }}
+        
+    # Test the application.
+    - name: Run unit tests
+      run: vstest.console.exe Source\WPF\UnitTests\bin\$env:Configuration\net7.0-windows\UnitTests.dll /Platform:x64
+      env:
+        Configuration: ${{ matrix.configuration }}
+        Platform: ${{ matrix.platform }}
 
     # Decode the base 64 encoded pfx and save the Signing_Certificate
     # - name: Decode the pfx
