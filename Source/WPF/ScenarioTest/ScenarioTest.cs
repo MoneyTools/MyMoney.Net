@@ -1,100 +1,107 @@
-﻿using LovettSoftware.DgmlTestModeling;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
+using LovettSoftware.DgmlTestModeling;
+using NUnit.Framework;
+using NUnit.Framework.Internal;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Walkabout.Data;
+using Walkabout.Tests;
 using Walkabout.Tests.Interop;
 using Walkabout.Tests.Wrappers;
+using Brushes = System.Windows.Media.Brushes;
+using Clipboard = System.Windows.Clipboard;
 
-namespace Walkabout.Tests
+namespace ScenarioTest
 {
-    [TestClass]
-    public class ScenarioTests
+    public class Tests
     {
         private static Process testProcess;
         private MainWindowWrapper window;
         private OfxServerWindowWrapper ofxServerWindow;
         private Random random;
         private static Process serverProcess;
-        private TestContext testContextInstance;
         private const int vsDgmlMonitorTimeout = 3000;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return this.testContextInstance;
-            }
-            set
-            {
-                this.testContextInstance = value;
-            }
-        }
-
-        // Use ClassCleanup to run code after all tests in a class have run
-        [ClassCleanup()]
-        public static void MyClassCleanup()
-        {
-            Cleanup();
-        }
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            Console.WriteLine("TestInitialize");
-        }
-
-        [TestCleanup]
-        public void TestCleanup()
-        {
-            Console.WriteLine("TestCleanup");
-        }
-
         private DgmlTestModel model;
+        private const int ScenarioTestSteps = 500; // number of model actions to perform
 
-        [TestMethod]
-        public void RunModel()
+        [SetUp]
+        public void Setup()
+        {
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            if (testProcess != null)
+            {
+                testProcess.Kill();
+                testProcess = null;
+            }
+            if (serverProcess != null)
+            {
+                try
+                {
+                    serverProcess.Kill();
+                }
+                catch
+                {
+                }
+                serverProcess = null;
+            }
+
+            Database = null;
+        }
+
+        void WriteLine(string msg)
+        {
+            Debug.WriteLine(msg);
+        }
+
+        [Test]
+        public void Test1()
+        {
+            // The test must run in an STAThread in order for the Clipboard functions to work.
+            var thread = new Thread(() => TestUI());
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+        }
+
+        private void TestUI()
         {
             // This test executes a model of what and end user might want to do with this application.
             // The model is described in DGML
             try
             {
+                Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
                 int seed = Environment.TickCount;
                 // int seed = 272222602; // Bug with ListCollectionView: 'Sorting' is not allowed during an AddNew or EditItem transaction.
                 // seed = 313591431;  // Another variation of the above, sometimes even CancelEdit throws!
                 this.random = new Random(seed);
-                this.TestContext.WriteLine("Model Seed = " + seed);
+                this.WriteLine("Model Seed = " + seed);
 
-                this.model = new DgmlTestModel(this, new TestLog(this.TestContext), this.random, vsDgmlMonitorTimeout);
+                // new TestLog(this.TestContext)
+                this.model = new DgmlTestModel(this, Console.Out, this.random, vsDgmlMonitorTimeout);
 
                 string fileName = this.FindTestModel("TestModel.dgml");
                 this.model.Load(fileName);
                 Thread.Sleep(2000); // let graph load.
                 int delay = 0; // 1000 is handy for debugging.
-                this.model.Run(new Predicate<DgmlTestModel>((m) => { return m.StatesExecuted > 500; }), delay);
+                this.model.Run(new Predicate<DgmlTestModel>((m) => { return m.StatesExecuted > ScenarioTestSteps; }), delay);
             }
             catch
             {
                 string temp = Path.GetTempPath() + "\\Screen.png";
                 Win32.CaptureScreen(temp, System.Drawing.Imaging.ImageFormat.Png);
-                this.TestContext.WriteLine("ScreenCapture: " + temp);
+                this.WriteLine("ScreenCapture: " + temp);
                 throw;
             }
             finally
             {
-                this.Terminate();
+                this.model.Stop();
             }
         }
 
@@ -115,19 +122,6 @@ namespace Walkabout.Tests
 
             throw new Exception(filename + " not found");
         }
-
-        #region Model State
-        private bool isLoaded;
-        private CreateDatabaseDialogWrapper createNewDatabaseDialog;
-        private static string databasePath;
-        private AccountsWrapper accounts;
-        private TransactionViewWrapper transactions;
-        private QuickFilterWrapper quickFilter;
-        private int creationTime;
-        private TransactionViewItem selectedTransaction;
-        private TransactionDetails editedValues;
-
-        #endregion
 
         #region Start 
 
@@ -158,6 +152,7 @@ namespace Walkabout.Tests
             {
                 this.EnsureCleanState();
                 string exe = typeof(Walkabout.MainWindow).Assembly.Location;
+                exe = Path.Combine(Path.GetDirectoryName(exe), Path.GetFileNameWithoutExtension(exe) + ".exe");
 
                 this.ResignAssembly(exe);
 
@@ -187,22 +182,6 @@ namespace Walkabout.Tests
         {
         }
 
-        private string GetSqlServerName()
-        {
-            bool sqlExpress = Walkabout.Data.SqlServerDatabase.IsSqlExpressInstalled;
-            bool localDb = Walkabout.Data.SqlServerDatabase.IsSqlLocalDbInstalled;
-
-            if (sqlExpress)
-            {
-                return ".\\SQLEXPRESS";
-            }
-            else if (localDb)
-            {
-                return "(LocalDB)\\v11.0";
-            }
-            return null;
-        }
-
         private void EnsureCleanState()
         {
         }
@@ -220,34 +199,6 @@ namespace Walkabout.Tests
             }
         }
 
-        private void Terminate()
-        {
-            Cleanup();
-            this.model.Stop();
-        }
-
-        private static void Cleanup()
-        {
-            if (testProcess != null)
-            {
-                testProcess.Kill();
-                testProcess = null;
-            }
-            if (serverProcess != null)
-            {
-                try
-                {
-                    serverProcess.Kill();
-                }
-                catch
-                {
-                }
-                serverProcess = null;
-            }
-
-            Database = null;
-        }
-
         private bool StartOver
         {
             get
@@ -256,10 +207,21 @@ namespace Walkabout.Tests
             }
         }
 
-
         #endregion
 
         #region Database
+
+        private static IDatabase database;
+        private bool isLoaded;
+        private CreateDatabaseDialogWrapper createNewDatabaseDialog;
+        private static string databasePath;
+        private bool sampleData;
+        private OnlineAccountsDialogWrapper onlineAccounts;
+        private bool hasOnlineAccounts;
+        private const string OnlineBankName = "Last Chance Bank Of Hope";
+        private PasswordDialogWrapper passwordDialog;
+        private PasswordDialogWrapper challengeDialog;
+        private int creationTime;
 
         private void CreateNewDatabase()
         {
@@ -286,8 +248,6 @@ namespace Walkabout.Tests
             this.onlineAccounts = null;
             this.sampleData = false;
         }
-
-        private static IDatabase database;
 
         private static IDatabase Database
         {
@@ -336,22 +296,6 @@ namespace Walkabout.Tests
             return databasePath;
         }
 
-        private bool IsSqlCeInstalled
-        {
-            get
-            {
-                return SqlCeDatabase.IsSqlCEInstalled;
-            }
-        }
-
-        private bool IsSqlExpressInstalled
-        {
-            get
-            {
-                return SqlServerDatabase.IsSqlExpressInstalled || SqlServerDatabase.IsSqlLocalDbInstalled;
-            }
-        }
-
         private void CreateSqliteDatabase()
         {
             string databasePath = this.GetFreeDatabase("TestDatabase{0}.mmdb");
@@ -394,8 +338,6 @@ namespace Walkabout.Tests
                 return !this.sampleData;
             }
         }
-
-        private bool sampleData;
 
         private void AddSampleData()
         {
@@ -499,8 +441,6 @@ namespace Walkabout.Tests
             }
         }
 
-        private OnlineAccountsDialogWrapper onlineAccounts;
-        private bool hasOnlineAccounts;
 
         private void EnterDownloadedAccounts()
         {
@@ -526,9 +466,6 @@ namespace Walkabout.Tests
                 return this.hasOnlineAccounts;
             }
         }
-
-        private const string OnlineBankName = "Last Chance Bank Of Hope";
-        private PasswordDialogWrapper passwordDialog;
 
         internal void ConnectToBank()
         {
@@ -562,8 +499,6 @@ namespace Walkabout.Tests
             }
             throw new Exception("Can't seem to get the connect button to work");
         }
-
-        private PasswordDialogWrapper challengeDialog;
 
         internal void SignOnToBank()
         {
@@ -697,8 +632,7 @@ namespace Walkabout.Tests
             // bugbug: no downloaded account info still?
         }
 
-
-        #endregion 
+        #endregion
 
         #region Charts
 
@@ -740,10 +674,10 @@ namespace Walkabout.Tests
                 charts.SelectHistory();
             }
         }
+
         #endregion
 
         #region Attachments
-
         private AttachmentDialogWrapper attachmentDialog;
 
         private void OpenAttachmentDialog()
@@ -775,7 +709,7 @@ namespace Walkabout.Tests
             border.Arrange(new Rect(0, 0, 300, 100));
             border.UpdateLayout();
 
-            RenderTargetBitmap bitmap = new RenderTargetBitmap(200, 200, 96, 96, PixelFormats.Pbgra32);
+            RenderTargetBitmap bitmap = new RenderTargetBitmap(300, 100, 96, 96, PixelFormats.Pbgra32);
             bitmap.Render(border);
             Clipboard.SetImage(bitmap);
 
@@ -938,6 +872,7 @@ to make sure attachments work.");
         #endregion
 
         #region Accounts 
+        private AccountsWrapper accounts;
 
         private void ViewAccounts()
         {
@@ -997,6 +932,10 @@ to make sure attachments work.");
         #endregion
 
         #region Transaction View
+        private TransactionViewWrapper transactions;
+        private QuickFilterWrapper quickFilter;
+        private TransactionViewItem selectedTransaction;
+        private TransactionDetails editedValues;
 
         private void TransactionView()
         {
@@ -1478,14 +1417,6 @@ to make sure attachments work.");
             return false;
         }
 
-        public static string GetEmbeddedResource(string name)
-        {
-            using (Stream s = typeof(ScenarioTests).Assembly.GetManifestResourceStream(name))
-            {
-                StreamReader reader = new StreamReader(s);
-                return reader.ReadToEnd();
-            }
-        }
         private bool DeleteFileWithRetries(string fileName, int retries)
         {
             if (!File.Exists(fileName))
@@ -1502,33 +1433,13 @@ to make sure attachments work.");
                 }
                 catch (Exception ex)
                 {
-                    this.TestContext.WriteLine("### Error deleting file: " + fileName);
-                    this.TestContext.WriteLine("### " + ex.Message);
+                    this.WriteLine("### Error deleting file: " + fileName);
+                    this.WriteLine("### " + ex.Message);
                 }
             }
             return false;
         }
 
-        private class TestLog : TextWriter
-        {
-            private readonly TestContext context;
-
-            public TestLog(TestContext context)
-            {
-                this.context = context;
-            }
-
-            public override Encoding Encoding
-            {
-                get { return Encoding.Unicode; }
-            }
-
-            public override void WriteLine(string msg)
-            {
-                this.context.WriteLine(msg);
-                Debug.WriteLine(msg);
-            }
-        }
-        #endregion
+        #endregion 
     }
 }

@@ -1,9 +1,9 @@
-using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Input;
+using Point = System.Windows.Point;
 
 namespace Walkabout.Tests.Interop
 {

@@ -1,8 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
+﻿using System.Diagnostics;
 using System.Windows.Automation;
 using System.Windows.Input;
 using Walkabout.Tests.Interop;
@@ -327,7 +323,7 @@ namespace Walkabout.Tests.Wrappers
 
             if (sourceAccount == null)
             {
-                Assert.IsTrue(sourceAccount != null);
+                throw new Exception("Source account not found");
             }
 
             for (int delay = 100; delay < 500; delay += 100)

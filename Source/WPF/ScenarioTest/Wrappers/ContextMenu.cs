@@ -1,10 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Input;
 using Walkabout.Tests.Interop;
+using Point = System.Windows.Point;
 
 namespace Walkabout.Tests.Wrappers
 {

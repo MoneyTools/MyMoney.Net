@@ -6,6 +6,6 @@
     <RootNamespace>OfxTestServer</RootNamespace>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="echo $(TargetPath)&gt; &quot;$(SolutionDir)Tests\ServerConfig.txt&quot;" />
+    <Exec Command="echo $(TargetPath)&gt; &quot;$(SolutionDir)ScenarioTest\ServerConfig.txt&quot;" />
   </Target>
 </Project>
