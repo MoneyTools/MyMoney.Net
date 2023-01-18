@@ -156,7 +156,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 foreach (AutomationElement e in this.control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
                 {
-                    if (e.Current.Name == "Walkabout.Data.Transaction")
+                    if (e.Current.Name == "Walkabout.Data.Transaction" || e.Current.Name == "{NewItemPlaceholder}")
                     {
                         return true;
                     }
@@ -178,7 +178,7 @@ namespace Walkabout.Tests.Wrappers
             List<TransactionViewItem> list = new List<TransactionViewItem>();
             foreach (AutomationElement e in this.control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
             {
-                if (e.Current.Name == "Walkabout.Data.Transaction")
+                if (e.Current.Name == "Walkabout.Data.Transaction" || e.Current.Name == "{NewItemPlaceholder}")
                 {
                     list.Add(new TransactionViewItem(this, e));
                 }
@@ -242,7 +242,7 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
-        internal TransactionViewItem AddNew()
+        internal void AddNew()
         {
             this.ScrollToEnd();
             Thread.Sleep(100);
@@ -267,7 +267,6 @@ namespace Walkabout.Tests.Wrappers
             {
                 throw new Exception("New row did not get added for some unknown reason");
             }
-            return items[items.Count - 1];
         }
 
         internal void ScrollVertical(double verticalPercent)
@@ -298,6 +297,11 @@ namespace Walkabout.Tests.Wrappers
         internal void ScrollToEnd()
         {
             this.ScrollVertical(100);
+        }
+
+        internal void VerifyNewTransactino()
+        {
+            CommitEdit();
         }
 
         internal void CommitEdit()

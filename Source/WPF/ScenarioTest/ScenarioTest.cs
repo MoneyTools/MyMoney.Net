@@ -616,7 +616,6 @@ namespace ScenarioTest
         internal void Synchronize()
         {
             this.window.Synchronize();
-            this.dataChangedSinceExport = true;
         }
 
         internal void SelectDownloadTransactions()
@@ -1021,7 +1020,8 @@ to make sure attachments work.");
                 throw new Exception("Cannot edit a transaction right now");
             }
 
-            this.selectedTransaction = this.transactions.AddNew();
+            this.transactions.AddNew();
+            this.selectedTransaction = this.transactions.Select(this.transactions.Count - 1);
             this.editedValues = new TransactionDetails();
             this.selectedTransaction.Select();
             this.dataChangedSinceExport = true;
@@ -1387,7 +1387,17 @@ to make sure attachments work.");
             this.FocusTransactionView();
         }
 
-        private bool CanExportTransactions => this.dataChangedSinceExport && this.transactions != null;
+        private bool CanExportTransactions
+        {
+            get
+            {
+                if (this.dataChangedSinceExport && this.transactions != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
 
         private void ExportCsv()
         {
