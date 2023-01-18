@@ -26,6 +26,7 @@ namespace ScenarioTest
         private const int vsDgmlMonitorTimeout = 3000;
         private DgmlTestModel model;
         private const int ScenarioTestSteps = 500; // number of model actions to perform
+        private Exception testError;
 
         [SetUp]
         public void Setup()
@@ -68,6 +69,10 @@ namespace ScenarioTest
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             thread.Join();
+            if (testError != null)
+            {
+                throw testError;
+            }
         }
 
         private void TestUI()
@@ -92,16 +97,17 @@ namespace ScenarioTest
                 int delay = 0; // 1000 is handy for debugging.
                 this.model.Run(new Predicate<DgmlTestModel>((m) => { return m.StatesExecuted > ScenarioTestSteps; }), delay);
             }
-            catch
+            catch (Exception ex)
             {
+                testError = ex;
                 string temp = Path.GetTempPath() + "\\Screen.png";
                 Win32.CaptureScreen(temp, System.Drawing.Imaging.ImageFormat.Png);
                 this.WriteLine("ScreenCapture: " + temp);
-                throw;
             }
             finally
             {
                 this.model.Stop();
+                Teardown();
             }
         }
 
@@ -222,6 +228,7 @@ namespace ScenarioTest
         private PasswordDialogWrapper passwordDialog;
         private PasswordDialogWrapper challengeDialog;
         private int creationTime;
+        private bool dataChangedSinceExport;
 
         private void CreateNewDatabase()
         {
@@ -366,6 +373,7 @@ namespace ScenarioTest
             this.window.WaitForInputIdle(5000);
 
             this.sampleData = true;
+            this.dataChangedSinceExport = true;
 
             // give database time to flush...
             Thread.Sleep(2000);
@@ -608,6 +616,7 @@ namespace ScenarioTest
         internal void Synchronize()
         {
             this.window.Synchronize();
+            this.dataChangedSinceExport = true;
         }
 
         internal void SelectDownloadTransactions()
@@ -703,6 +712,7 @@ namespace ScenarioTest
                 Width = 250,
                 Height = 90,
                 Fill = Brushes.ForestGreen,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
                 Margin = new Thickness(10)
             };
 
@@ -794,6 +804,7 @@ to make sure attachments work.");
                 categories.Select(topLevelCategories[i]);
                 this.window.ResetReport();
                 this.window.WaitForInputIdle(500);
+                this.dataChangedSinceExport = true;
             }
         }
 
@@ -837,6 +848,7 @@ to make sure attachments work.");
                 payees.Select(i);
                 this.window.ResetReport();
                 this.window.WaitForInputIdle(500);
+                this.dataChangedSinceExport = true;
             }
         }
 
@@ -866,6 +878,7 @@ to make sure attachments work.");
                 securities.Select(i);
                 this.window.ResetReport();
                 this.window.WaitForInputIdle(500);
+                this.dataChangedSinceExport = true;
             }
         }
 
@@ -928,6 +941,7 @@ to make sure attachments work.");
             this.accounts.SelectAccount(this.random.Next(0, this.accounts.Accounts.Count));
             this.window.ResetReport();
             this.ClearTransactionViewState();
+            this.dataChangedSinceExport = true;
         }
         #endregion
 
@@ -997,6 +1011,7 @@ to make sure attachments work.");
             this.transactions.Delete(this.random.Next(0, this.transactions.Count));
             this.selectedTransaction = null;
             this.editedValues = null;
+            this.dataChangedSinceExport = true;
         }
 
         private void AddNewTransaction()
@@ -1009,6 +1024,7 @@ to make sure attachments work.");
             this.selectedTransaction = this.transactions.AddNew();
             this.editedValues = new TransactionDetails();
             this.selectedTransaction.Select();
+            this.dataChangedSinceExport = true;
         }
 
         private void EditSelectedTransaction()
@@ -1229,6 +1245,7 @@ to make sure attachments work.");
             this.AssertSelectedTransaction();
             this.transactions.NavigateTransfer();
             this.selectedTransaction = this.transactions.Selection;
+            this.dataChangedSinceExport = true;
         }
 
         private void AreEqual(string expected, string actual, string name)
@@ -1370,10 +1387,13 @@ to make sure attachments work.");
             this.FocusTransactionView();
         }
 
+        private bool CanExportTransactions => this.dataChangedSinceExport && this.transactions != null;
+
         private void ExportCsv()
         {
             if (this.transactions != null)
             {
+
                 var name = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "test.csv");
                 this.DeleteFileWithRetries(name, 10);
                 this.transactions.Export(name);
@@ -1393,6 +1413,9 @@ to make sure attachments work.");
                     5,
                     true);
                 excel.Close();
+
+                // don't do this again until data changes.
+                this.dataChangedSinceExport = false;
             }
         }
 
