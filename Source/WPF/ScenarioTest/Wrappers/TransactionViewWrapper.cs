@@ -169,16 +169,28 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return this.GetItems().Count;
+                return this.GetItems(true).Count;
             }
         }
 
-        public List<TransactionViewItem> GetItems()
+        public int CountNoPlaceholder
+        {
+            get
+            {
+                return this.GetItems(false).Count;
+            }
+        }
+
+        public List<TransactionViewItem> GetItems(bool includePlaceHolder = true)
         {
             List<TransactionViewItem> list = new List<TransactionViewItem>();
             foreach (AutomationElement e in this.control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
             {
-                if (e.Current.Name == "Walkabout.Data.Transaction" || e.Current.Name == "{NewItemPlaceholder}")
+                if (e.Current.Name == "Walkabout.Data.Transaction")
+                {
+                    list.Add(new TransactionViewItem(this, e));
+                }
+                else if (e.Current.Name == "{NewItemPlaceholder}" && includePlaceHolder)
                 {
                     list.Add(new TransactionViewItem(this, e));
                 }
@@ -465,7 +477,7 @@ namespace Walkabout.Tests.Wrappers
             }
             catch (Exception ex)
             {
-                throw new Exception("Cannot find the Attachment column: " + ex.Message);
+                throw new Exception("Cannot find the Attachment column");//: " + ex.Message);
             }
 
             AutomationElement dialog = this.view.Window.Element.FindChildWindow("Attachments", 5);
@@ -627,6 +639,14 @@ namespace Walkabout.Tests.Wrappers
         {
             TransactionViewColumn col = this.view.GetColumn("UnitPrice");
             col.SetValue(this.item, price == 0 ? "" : price.ToString());
+        }
+
+        internal bool IsPlaceholder
+        {
+            get
+            {
+                return this.item.Current.Name == "{NewItemPlaceholder}";
+            }
         }
 
         // todo: toggle status button

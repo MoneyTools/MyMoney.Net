@@ -691,7 +691,10 @@ namespace ScenarioTest
         private void OpenAttachmentDialog()
         {
             this.AssertSelectedTransaction();
-            this.attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
+            if (!this.selectedTransaction.IsPlaceholder)
+            {
+                this.attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
+            }
         }
 
         private void PasteImageAttachment()
@@ -712,7 +715,7 @@ namespace ScenarioTest
                 Height = 90,
                 Fill = Brushes.ForestGreen,
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                Margin = new Thickness(10)
+                Margin = new Thickness(5)
             };
 
             border.Arrange(new Rect(0, 0, 300, 100));
@@ -963,9 +966,9 @@ to make sure attachments work.");
             this.window.WaitForInputIdle(200);
 
             var selection = this.transactions.Selection;
-            if (selection == null && this.transactions.Count > 0)
+            if (selection == null && this.transactions.CountNoPlaceholder > 1)
             {
-                this.transactions.Select(this.transactions.Count - 1);
+                this.transactions.Select(this.transactions.CountNoPlaceholder - 1);
                 this.transactions.ScrollToEnd();
                 selection = this.transactions.Selection;
             }
@@ -1329,7 +1332,7 @@ to make sure attachments work.");
             get
             {
                 return this.selectedTransaction != null && this.transactions != null && this.transactions.HasTransactions &&
-                    this.transactions.IsBankAccount;
+                    this.transactions.IsBankAccount && !this.selectedTransaction.IsPlaceholder;
             }
         }
 
