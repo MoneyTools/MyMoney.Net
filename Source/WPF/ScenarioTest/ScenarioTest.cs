@@ -1021,9 +1021,15 @@ to make sure attachments work.");
             }
 
             this.transactions.AddNew();
-            this.selectedTransaction = this.transactions.Select(this.transactions.Count - 1);
+            var index = this.transactions.Count - 1;
+            this.selectedTransaction = this.transactions.Select(index);
+            if (!this.selectedTransaction.IsSelected && index > 0)
+            {
+                // bugbug seem to need to select something else before the new transaction is selectable...
+                this.transactions.Select(index - 1);
+                this.selectedTransaction = this.transactions.Select(index);
+            }
             this.editedValues = new TransactionDetails();
-            this.selectedTransaction.Select();
             this.dataChangedSinceExport = true;
         }
 

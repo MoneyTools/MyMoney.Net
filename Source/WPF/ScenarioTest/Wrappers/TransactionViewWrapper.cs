@@ -244,6 +244,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void AddNew()
         {
+
             this.ScrollToEnd();
             Thread.Sleep(100);
 
@@ -393,6 +394,11 @@ namespace Walkabout.Tests.Wrappers
             ContextMenu menu = new ContextMenu(this.control, true);
             menu.InvokeMenuItem("menuItemExport");
         }
+
+        internal void Focus()
+        {
+            this.control.SetFocus();
+        }
     }
 
     public class TransactionViewItem
@@ -410,9 +416,19 @@ namespace Walkabout.Tests.Wrappers
 
         public void Select()
         {
+            this.view.Focus();
             SelectionItemPattern select = (SelectionItemPattern)this.item.GetCurrentPattern(SelectionItemPattern.Pattern);
             select.Select();
             this.ScrollIntoView();
+        }
+
+        public bool IsSelected
+        {
+            get
+            {
+                SelectionItemPattern select = (SelectionItemPattern)this.item.GetCurrentPattern(SelectionItemPattern.Pattern);
+                return select.Current.IsSelected;
+            }
         }
 
         public void ScrollIntoView()
