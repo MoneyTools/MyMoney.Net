@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Shapes;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
@@ -181,8 +182,7 @@ namespace Walkabout.Taxes
             }
             byYearCombo.SelectionChanged += this.OnYearChanged;
             byYearCombo.Margin = new Thickness(10, 0, 0, 0);
-
-            heading.Inlines.Add(new InlineUIContainer(byYearCombo));
+            this.AddInline(heading, byYearCombo);
 
             bool empty = true;
             foreach (TaxForm form in this.taxCategories.GetForms())

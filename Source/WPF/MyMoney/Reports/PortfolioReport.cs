@@ -208,12 +208,13 @@ namespace Walkabout.Reports
             Paragraph pheading = this.flowwriter.CurrentParagraph;
 
             DatePicker picker = new DatePicker();
+            System.Windows.Automation.AutomationProperties.SetName(picker, "ReportDate");
             // byYearCombo.SelectionChanged += OnYearChanged;
             picker.Margin = new Thickness(10, 0, 0, 0);
             picker.SelectedDate = this.reportDate;
             picker.DisplayDate = this.reportDate;
             picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
-            pheading.Inlines.Add(new InlineUIContainer(picker));
+            this.AddInline(pheading, picker);
 
             if (this.reportDate.Date != DateTime.Today)
             {

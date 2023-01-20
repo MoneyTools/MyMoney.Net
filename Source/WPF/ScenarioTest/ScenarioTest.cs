@@ -254,6 +254,7 @@ namespace ScenarioTest
             this.hasOnlineAccounts = false;
             this.onlineAccounts = null;
             this.sampleData = false;
+            this.report = null;
         }
 
         private static IDatabase Database
@@ -978,6 +979,7 @@ to make sure attachments work.");
             }
             this.selectedTransaction = selection;
             this.editedValues = new TransactionDetails();
+            this.report = null;
         }
 
         private void SelectTransaction()
@@ -1371,22 +1373,35 @@ to make sure attachments work.");
 
         #region Reports
 
+        ReportWrapper report;
+
         private void NetWorthReport()
         {
-            this.window.NetWorthReport();
+            this.report = this.window.NetWorthReport();
             this.ClearTransactionViewState();
         }
 
         private void TaxReport()
         {
-            this.window.TaxReport();
+            this.report = this.window.TaxReport();
             this.ClearTransactionViewState();
         }
 
         private void PortfolioReport()
         {
-            this.window.PortfolioReport();
+            this.report = this.window.PortfolioReport();
             this.ClearTransactionViewState();
+        }
+
+        private void ChangeReportDate()
+        {
+            // can only happen right after one of the above reports is run, so this.report is set.
+            Assert.IsNotNull(this.report);
+            var date = this.report.GetDate();
+            date = date.AddYears(-1);
+            Debug.WriteLine("ChangeReportDate: " + date.ToShortDateString());
+            this.report.SetDate(date);
+            Thread.Sleep(500);
         }
         #endregion
 

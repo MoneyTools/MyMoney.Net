@@ -280,7 +280,6 @@ namespace Walkabout.Tests.Interop
                         try
                         {
                             AutomationElement e = AutomationElement.FromHandle(hwnd);
-                            System.Diagnostics.Debug.WriteLine("Found window: " + e.Current.Name);
                             if (e.Current.Name == name)
                             {
                                 return e;

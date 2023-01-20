@@ -194,7 +194,6 @@ namespace Walkabout.Tests.Wrappers
                 {
                     if (!e.Current.IsOffscreen)
                     {
-                        Debug.WriteLine("### Found visible TransactionGrid named: " + e.Current.AutomationId);
                         return e;
                     }
                 }
@@ -283,7 +282,7 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
-        public AutomationElement NetWorthReport()
+        public ReportWrapper NetWorthReport()
         {
             ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuViewReports");
             subMenu.InvokeMenuItem("MenuReportsNetWorth");
@@ -291,7 +290,7 @@ namespace Walkabout.Tests.Wrappers
             return this.FindReport("ReportNetworth");
         }
 
-        public AutomationElement TaxReport()
+        public ReportWrapper TaxReport()
         {
             ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuViewReports");
             subMenu.InvokeMenuItem("MenuReportsTaxReport");
@@ -299,7 +298,7 @@ namespace Walkabout.Tests.Wrappers
             return this.FindReport("ReportTaxes");
         }
 
-        public AutomationElement PortfolioReport()
+        public ReportWrapper PortfolioReport()
         {
             ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuViewReports");
             subMenu.InvokeMenuItem("MenuReportsInvestment");
@@ -307,7 +306,7 @@ namespace Walkabout.Tests.Wrappers
             return this.FindReport("ReportPortfolio");
         }
 
-        public AutomationElement FindReport(string name)
+        public ReportWrapper FindReport(string name)
         {
             AutomationElement report = this.window.FindFirstWithRetries(TreeScope.Children,
                 new PropertyCondition(AutomationElement.AutomationIdProperty, name));
@@ -315,7 +314,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 throw new Exception(string.Format("Report '{0}' not found", name));
             }
-            return report;
+            return new ReportWrapper(report);
         }
 
     }
