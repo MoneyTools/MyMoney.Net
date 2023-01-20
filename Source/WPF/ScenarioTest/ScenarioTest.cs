@@ -987,7 +987,7 @@ to make sure attachments work.");
                 throw new Exception("Cannot select a transaction right now");
             }
 
-            this.selectedTransaction = this.transactions.Select(this.random.Next(0, this.transactions.Count));
+            this.selectedTransaction = this.transactions.Select(this.random.Next(0, this.transactions.CountNoPlaceholder));
             this.editedValues = new TransactionDetails();
         }
 
@@ -1010,7 +1010,7 @@ to make sure attachments work.");
                 throw new Exception("Cannot delete a transaction right now");
             }
 
-            this.transactions.Delete(this.random.Next(0, this.transactions.Count));
+            this.transactions.Delete(this.random.Next(0, this.transactions.CountNoPlaceholder));
             this.selectedTransaction = null;
             this.editedValues = null;
             this.dataChangedSinceExport = true;
