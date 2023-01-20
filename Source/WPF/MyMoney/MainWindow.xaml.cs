@@ -722,7 +722,7 @@ namespace Walkabout
         private string GetStockQuotePath()
         {
             string path = this.database.DatabasePath;
-            return Path.Combine(Path.GetDirectoryName(path), "StockQuotes");
+            return string.IsNullOrEmpty(path) ? null : Path.Combine(Path.GetDirectoryName(path), "StockQuotes");
         }
 
         private void ClearOfxDownloads()

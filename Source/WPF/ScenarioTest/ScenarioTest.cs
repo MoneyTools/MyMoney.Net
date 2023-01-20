@@ -374,6 +374,7 @@ namespace ScenarioTest
             this.window.WaitForInputIdle(5000);
 
             this.sampleData = true;
+            Debug.WriteLine("dataChangedSinceExport reset because of AddSampleData");
             this.dataChangedSinceExport = true;
 
             // give database time to flush...
@@ -807,6 +808,7 @@ to make sure attachments work.");
                 categories.Select(topLevelCategories[i]);
                 this.window.ResetReport();
                 this.window.WaitForInputIdle(500);
+                Debug.WriteLine("dataChangedSinceExport reset because of SelectCategory " + i);
                 this.dataChangedSinceExport = true;
             }
         }
@@ -851,6 +853,7 @@ to make sure attachments work.");
                 payees.Select(i);
                 this.window.ResetReport();
                 this.window.WaitForInputIdle(500);
+                Debug.WriteLine("dataChangedSinceExport reset because of SelectPayee " + i);
                 this.dataChangedSinceExport = true;
             }
         }
@@ -881,6 +884,7 @@ to make sure attachments work.");
                 securities.Select(i);
                 this.window.ResetReport();
                 this.window.WaitForInputIdle(500);
+                Debug.WriteLine("dataChangedSinceExport reset because of SelectSecurity " + i);
                 this.dataChangedSinceExport = true;
             }
         }
@@ -941,9 +945,11 @@ to make sure attachments work.");
 
         private void SelectAccount()
         {
-            this.accounts.SelectAccount(this.random.Next(0, this.accounts.Accounts.Count));
+            var i = this.random.Next(0, this.accounts.Accounts.Count);
+            this.accounts.SelectAccount(i);
             this.window.ResetReport();
             this.ClearTransactionViewState();
+            Debug.WriteLine("dataChangedSinceExport reset because of SelectAccount " + i);
             this.dataChangedSinceExport = true;
         }
         #endregion
@@ -1015,6 +1021,7 @@ to make sure attachments work.");
             this.transactions.Delete(this.random.Next(0, this.transactions.CountNoPlaceholder));
             this.selectedTransaction = null;
             this.editedValues = null;
+            Debug.WriteLine("dataChangedSinceExport reset because of DeleteSelectedTransaction");
             this.dataChangedSinceExport = true;
         }
 
@@ -1035,6 +1042,7 @@ to make sure attachments work.");
                 this.selectedTransaction = this.transactions.Select(index);
             }
             this.editedValues = new TransactionDetails();
+            Debug.WriteLine("dataChangedSinceExport reset because of AddNewTransaction");
             this.dataChangedSinceExport = true;
         }
 
@@ -1256,6 +1264,7 @@ to make sure attachments work.");
             this.AssertSelectedTransaction();
             this.transactions.NavigateTransfer();
             this.selectedTransaction = this.transactions.Selection;
+            Debug.WriteLine("dataChangedSinceExport reset because of NavigateTransfer");
             this.dataChangedSinceExport = true;
         }
 
@@ -1378,18 +1387,24 @@ to make sure attachments work.");
         private void NetWorthReport()
         {
             this.report = this.window.NetWorthReport();
+            var found = this.report.FindText("Net Worth");
+            Assert.AreEqual("Net Worth Statement", found);
             this.ClearTransactionViewState();
         }
 
         private void TaxReport()
         {
             this.report = this.window.TaxReport();
+            var found = this.report.FindText("Tax");
+            Assert.IsTrue(found.Contains("Tax Report"), "Tax Report heading not found");
             this.ClearTransactionViewState();
         }
 
         private void PortfolioReport()
         {
             this.report = this.window.PortfolioReport();
+            var found = this.report.FindText("Portfolio");
+            Assert.AreEqual("Investment Portfolio Summary", found);
             this.ClearTransactionViewState();
         }
 
@@ -1397,11 +1412,27 @@ to make sure attachments work.");
         {
             // can only happen right after one of the above reports is run, so this.report is set.
             Assert.IsNotNull(this.report);
+
+            var generated = this.report.FindText("Generated");
             var date = this.report.GetDate();
+
             date = date.AddYears(-1);
             Debug.WriteLine("ChangeReportDate: " + date.ToShortDateString());
             this.report.SetDate(date);
-            Thread.Sleep(500);
+
+            bool updated = false;
+            for (int i = 0; i < 10; i++)
+            {
+                var generated2 = this.report.FindText("Generated");
+                if (generated2.Contains(date.Year.ToString()))
+                {
+                    updated = true;
+                    break;
+                }
+                Thread.Sleep(500);
+            }
+
+            Assert.IsTrue(updated, "Report was not updated for new date: " + date.ToShortDateString());
         }
         #endregion
 
@@ -1449,6 +1480,7 @@ to make sure attachments work.");
                 excel.Close();
 
                 // don't do this again until data changes.
+                Debug.WriteLine("dataChangedSinceExport false");
                 this.dataChangedSinceExport = false;
             }
         }

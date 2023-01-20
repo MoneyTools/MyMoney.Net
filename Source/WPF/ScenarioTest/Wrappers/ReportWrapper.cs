@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using System.Windows.Automation;
-using System.Xml.Linq;
-using Walkabout.Tests.Interop;
 
 namespace Walkabout.Tests.Wrappers
 {
@@ -45,13 +39,51 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
+        protected AutomationElement GetDocument()
+        {
+
+            AutomationElement doc = this.e.FindFirstWithRetries(TreeScope.Descendants,
+               new PropertyCondition(AutomationElement.LocalizedControlTypeProperty, "document"));
+            if (doc == null)
+            {
+                throw new Exception("Document object not found");
+            }
+
+            return doc;
+        }
+
+        public string FindText(string text)
+        {
+            for (int retries = 5; retries-- > 0;)
+            {
+                var doc = GetDocument();
+                StringBuilder sb = new StringBuilder();
+                TextPattern tp = (TextPattern)doc.GetCurrentPattern(TextPattern.Pattern);
+                var range = tp.DocumentRange.FindText(text, false, true);
+                if (range != null)
+                {
+                    range.ExpandToEnclosingUnit(System.Windows.Automation.Text.TextUnit.Paragraph);
+                    return range.GetText(1000).Trim();
+                }
+            }
+            throw new Exception("Text not found");
+        }
+
+        public string GetText(int maxLength = 10000)
+        {
+            var doc = GetDocument();
+            StringBuilder sb = new StringBuilder();
+            TextPattern tp = (TextPattern)doc.GetCurrentPattern(TextPattern.Pattern);
+            return tp.DocumentRange.GetText(maxLength);
+        }
+
         AutomationElement GetDateField()
         {
             AutomationElement date = this.e.FindFirstWithRetries(TreeScope.Descendants,
                new PropertyCondition(AutomationElement.NameProperty, "ReportDate"));
             if (date == null)
             {
-                throw new Exception("ReportDate' field not found");
+                throw new Exception("ReportDate field not found");
             }
             return date;
         }

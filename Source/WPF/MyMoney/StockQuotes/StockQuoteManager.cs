@@ -798,47 +798,42 @@ namespace Walkabout.StockQuotes
         public static DownloadLog Load(string logFolder)
         {
             DownloadLog log = new DownloadLog();
-            var filename = System.IO.Path.Combine(logFolder, "DownloadLog.xml");
-            if (System.IO.File.Exists(filename))
+            if (!string.IsNullOrEmpty(logFolder))
             {
-#if PerformanceBlocks
-                using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.LoadStockDownloadLog))
+                var filename = System.IO.Path.Combine(logFolder, "DownloadLog.xml");
+                if (System.IO.File.Exists(filename))
                 {
-#endif
-                try
-                {
-                    XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
-                    using (XmlReader r = XmlReader.Create(filename))
+                    try
                     {
-                        log = (DownloadLog)s.Deserialize(r);
+                        XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
+                        using (XmlReader r = XmlReader.Create(filename))
+                        {
+                            log = (DownloadLog)s.Deserialize(r);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // got corrupted? no problem, just start over.
+                        log = new DownloadLog();
+                    }
+                    log._logFolder = logFolder;
+
+                    // ensure unique list.
+                    foreach (var info in log.Downloaded.ToArray())
+                    {
+                        log._downloaded[info.Symbol] = info;
+                    }
+
+                    if (log._downloaded.Count != log.Downloaded.Count)
+                    {
+                        log.Downloaded.Clear();
+                        foreach (var info in log._downloaded.Values)
+                        {
+                            log.Downloaded.Add(info);
+                        }
+                        log.Downloaded.Sort((a, b) => string.Compare(a.Symbol, b.Symbol));
                     }
                 }
-                catch (Exception)
-                {
-                    // got corrupted? no problem, just start over.
-                    log = new DownloadLog();
-                }
-                log._logFolder = logFolder;
-
-                // ensure unique list.
-                foreach (var info in log.Downloaded.ToArray())
-                {
-                    log._downloaded[info.Symbol] = info;
-                }
-
-                if (log._downloaded.Count != log.Downloaded.Count)
-                {
-                    log.Downloaded.Clear();
-                    foreach (var info in log._downloaded.Values)
-                    {
-                        log.Downloaded.Add(info);
-                    }
-                    log.Downloaded.Sort((a, b) => string.Compare(a.Symbol, b.Symbol));
-                }
-
-#if PerformanceBlocks
-                }
-#endif
             }
             return log;
         }
