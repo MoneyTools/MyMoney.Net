@@ -76,7 +76,7 @@
     <Node Id="@40" Category="CodeSchema_Method" Bounds="1926.50924235026,1164.26799958153,86.8866666666668,25.96" CodeSchemaProperty_IsPrivate="True" FunctionTypeFlags="Method" Icon="CodeSchema_Method" Label="EditPayee" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
     <Node Id="@41" Category="CodeSchema_Method" Bounds="1919.05188557943,1276.18859284325,101.803333333333,25.96" CodeSchemaProperty_IsPrivate="True" FunctionTypeFlags="Method" Icon="CodeSchema_Method" Label="EditPayment" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
     <Node Id="@42" Category="CodeSchema_Method" Bounds="1920.24324707031,1220.22850983544,99.4200000000001,25.96" CodeSchemaProperty_IsPrivate="True" FunctionTypeFlags="Method" Icon="CodeSchema_Method" Label="EditSalesTax" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" />
-    <Node Id="@43" Category="CodeSchema_Method" Bounds="1741.74593354142,1060.27316381706,341.069792480473,453.79644200781" ChildPriority="10" CodeSchemaProperty_IsPrivate="True" FunctionTypeFlags="Method" Group="Expanded" Icon="CodeSchema_Method" Label="EditSelectedTransaction" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" UseManualLocation="True">
+    <Node Id="@43" Category="CodeSchema_Method" Bounds="1741.74578694665,1060.27308823778,341.069860839805,453.79644200781" ChildPriority="10" CodeSchemaProperty_IsPrivate="True" FunctionTypeFlags="Method" Group="Expanded" Icon="CodeSchema_Method" Label="EditSelectedTransaction" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" UseManualLocation="True">
       <Category Ref="Active" />
     </Node>
     <Node Id="@44" Category="CodeSchema_Method" Bounds="1759.28103160703,-182.602299353251,124.994211199999,33.9659747200001" CodeSchemaProperty_IsPrivate="True" FunctionTypeFlags="Method" Icon="pack://application:,,,/Microsoft.VisualStudio.Progression.GraphControl;component/Icons/kpi_green_cat1_large.png" Label="EnterAccounts" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}">
@@ -157,20 +157,20 @@
     <Node Id="ad0c7473-d65d-4be6-8ee7-f26249fd53c51" Category="Comment" Bounds="1915.20269124349,-202.539270031581,237.153333333333,73.8400000000001" Label="Once the machine reaches an end point state like this it bubbles up to the parent, and if that is stuck it bubbles up to the root." />
     <Node Id="aea1706b-ade5-4fb0-9b7b-412760db9bf71" Category="Comment" Bounds="1495.77216157077,585.770629706173,248.893333333333,89.7999999999997" Label="The state represents a place where the user can decide to do something entirely different.  At this point the MainWindow should be interactive with no blocking modal dialogs on top." />
     <Node Id="b3777c7b-fc99-42e3-b97d-6ac094e023831" Category="CodeSchema_Method" Bounds="1913.42898111979,1468.10943024559,149.386666666667,25.96" Label="VerifyNewTransaction" UseManualLocation="True" />
-    <Node Id="e550e8b2-0306-44cf-8f16-6f71acb462661" Category="CodeSchema_Method" Bounds="2401.10022807867,306.218700869617,136.75,22" Label="ChangeReportDate" UseManualLocation="True" />
+    <Node Id="e550e8b2-0306-44cf-8f16-6f71acb462661" Category="CodeSchema_Method" Bounds="2401.10022807867,306.218700869617,136.75,25.96" Label="ChangeReportDate" UseManualLocation="True" />
   </Nodes>
   <Links>
-    <Link Source="4f1bf513-92f1-426b-b5d4-0f853382cb8b1" Target="@39" Bounds="1880.0119269945,1408.62737439947,22.6621216464303,4.87171109856126" />
+    <Link Source="4f1bf513-92f1-426b-b5d4-0f853382cb8b1" Target="@39" Bounds="1880.01186356379,1408.62738324849,22.662184871205,4.87172210890685" />
     <Link Source="@17" Target="@48" Bounds="1636.29625846911,-56.779372292934,113.98977986412,593.71133231777" Priority="1" />
-    <Link Source="@18" Target="@43" Bounds="2089.53280049706,1023.18431518555,118.774870675059,105.919550769644" Priority="1" />
+    <Link Source="@18" Target="@43" Bounds="2089.53272429818,1023.18432892723,118.774936911572,105.919537340945" Priority="1" />
     <Link Source="@19" Target="@33" Bounds="856.342144703156,999.96095363281,0.0139832670287205,21.0001019952019" Priority="1" />
-    <Link Source="@21" Target="@49" Bounds="2165.29287242188,1455.07271240234,5.36735088914656,25.4825016524846" />
-    <Link Source="@22" Target="@19" Bounds="888.399123459363,930.56349269531,72.8540406742517,39.1751164717027" />
+    <Link Source="@21" Target="@49" Bounds="2165.29287242188,1455.07272614403,5.36735088914793,25.4825016524901" />
+    <Link Source="@22" Target="@19" Bounds="888.399123459363,930.56349269531,72.8540406742519,39.1751164717027" />
     <Link Source="@23" Target="@48" Bounds="1773.59141476649,640.471595514733,461.046822962729,59.5228429293076" />
     <Link Source="@24" Target="@64" Bounds="852.791031822366,781.288692890623,1.81392101717597,26.9633925753267" Priority="1" />
     <Link Source="@26" Target="@29" Category="Contains" />
     <Link Source="@26" Target="@46" Category="Contains" />
-    <Link Source="@26" Target="@54" Bounds="896.194341162875,469.652763396901,3.19803985538465,107.803181593324" Label="DatabaseLoaded" LabelBounds="901.793361477466,515.515049198521,88.4199999999992,15.9599999999995" Priority="1" />
+    <Link Source="@26" Target="@54" Bounds="896.194336713044,469.652613396901,3.19804430521594,107.803331593323" Label="DatabaseLoaded" LabelBounds="901.79335925255,515.514974198521,88.4199999999992,15.9599999999995" Priority="1" />
     <Link Source="@31" Target="@48" Bounds="1652.85374534133,-56.7793762327533,232.83832903188,594.170334229399" Priority="1" />
     <Link Source="@33" Target="@35" Bounds="878.165755110572,1055.92105363281,103.229352753548,61.4782072890532" Priority="1" />
     <Link Source="@34" Target="@19" Category="Contains" />
@@ -180,16 +180,15 @@
     <Link Source="@34" Target="@64" Category="Contains" />
     <Link Source="@35" Target="@61" Category="Contains" />
     <Link Source="@35" Target="@67" Category="Contains" />
-    <Link Source="@36" Target="4f1bf513-92f1-426b-b5d4-0f853382cb8b1" Bounds="1875.67360160859,1366.14918945313,50.6231224959654,14.4698111408011" Label="CategoryDialogShowing" LabelBounds="1779.69613129524,1353.42101076292,128.016666666667,15.96" />
-    <Link Source="@36" Target="@39" Bounds="1961.29687169824,1366.14918945313,7.71720628016465,37.1877093679623" Label="NoCategoryDialog" LabelBounds="1969.15636373898,1377.16942668966,98.393333333333,15.96" Priority="1" />
-    <Link Source="@37" Target="@40" Bounds="1969.95284409243,1134.26674249609,0.000256456751003498,21.001243344421" Priority="1" />
-    <Link Source="@38" Target="@36" Bounds="1871.01628169232,1311.09444091797,61.3240790548689,25.6247796711812" Priority="1" />
-    <Link Source="@39" Target="@63" Bounds="1957.42397565785,1218.0940363577,243.853870703926,167.736144306364" />
-    <Link Source="@39" Target="b3777c7b-fc99-42e3-b97d-6ac094e023831" Bounds="1964.04564582012,1438.10915039063,12.4069934143097,22.1483076783682" />
-    <Link Source="@40" Target="@42" Bounds="1969.95273141126,1190.22798583984,0.000251953808401595,21.000510254554" />
-    <Link Source="@41" Target="@36" Bounds="1970.30931033379,1302.14857910156,0.796042676758134,29.0439888839996" Priority="1" />
-    <Link Source="@42" Target="@38" Bounds="1874.00294321822,1246.18849609375,69.9526608158058,34.9256867679114" />
-    <Link Source="@42" Target="@41" Bounds="1969.95331785616,1246.18849609375,0.000114523002594069,21.0000830079466" />
+    <Link Source="@36" Target="4f1bf513-92f1-426b-b5d4-0f853382cb8b1" Bounds="1875.67355197222,1366.14920319481,50.6231504659918,14.469812231795" Label="CategoryDialogShowing" LabelBounds="1779.69609909619,1353.42102505576,128.016666666667,15.96" />
+    <Link Source="@36" Target="@39" Bounds="1961.29687169823,1366.14920319481,7.71720628016601,37.1877093679623" Label="NoCategoryDialog" LabelBounds="1969.15636373898,1377.16944043135,98.393333333333,15.96" Priority="1" />
+    <Link Source="@37" Target="@40" Bounds="1969.95284409244,1134.26675623778,0.000256456752822487,21.001243344421" Priority="1" />
+    <Link Source="@38" Target="@36" Bounds="1871.01628169233,1311.09445465966,61.3240790548618,25.6247796711757" Priority="1" />
+    <Link Source="@39" Target="b3777c7b-fc99-42e3-b97d-6ac094e023831" Bounds="1964.04566243114,1438.10916413231,12.4070241584363,22.1483119628319" />
+    <Link Source="@40" Target="@42" Bounds="1969.95273141126,1190.22799958153,0.000251953807719474,21.0005102545579" />
+    <Link Source="@41" Target="@36" Bounds="1970.30931033379,1302.14859284325,0.79604267675677,29.0439888839971" Priority="1" />
+    <Link Source="@42" Target="@38" Bounds="1874.00294321822,1246.18850983544,69.9526608158051,34.9256867679121" />
+    <Link Source="@42" Target="@41" Bounds="1969.95331785615,1246.18850983544,0.000114523004413059,21.0000830079439" />
     <Link Source="@43" Target="4f1bf513-92f1-426b-b5d4-0f853382cb8b1" Category="Contains" />
     <Link Source="@43" Target="@36" Category="Contains" />
     <Link Source="@43" Target="@37" Category="Contains" />
@@ -198,58 +197,58 @@
     <Link Source="@43" Target="@40" Category="Contains" />
     <Link Source="@43" Target="@41" Category="Contains" />
     <Link Source="@43" Target="@42" Category="Contains" />
-    <Link Source="@43" Target="@48" Bounds="1655.79731062283,703.845478149306,141.20571515682,330.108626620224" Priority="2" />
+    <Link Source="@43" Target="@48" Bounds="1656.65242273428,703.81401949413,156.201054569111,356.45906874365" Priority="2" />
     <Link Source="@43" Target="@63" Bounds="753.095703125,1310.89721679688,0,34.9599609375" Priority="1" />
     <Link Source="@43" Target="b3777c7b-fc99-42e3-b97d-6ac094e023831" Category="Contains" />
-    <Link Source="@44" Target="@17" Bounds="1767.37892442151,-148.636324633251,42.1748557547958,58.5924511525292" Priority="1" />
-    <Link Source="@44" Target="@31" Bounds="1834.00257043305,-148.636324633251,42.1751269826013,58.5924627513386" Label="IsAccountSelected" LabelBounds="1756.89024822454,-118.171692654008,96.5766666666659,15.96" Priority="1" />
-    <Link Source="@44" Target="@59" Bounds="1859.33698956302,-148.636324633251,137.534266963921,62.1888734851847" Label="HasAccounts" LabelBounds="1871.85727725833,-109.889320838318,68.3166666666675,15.96" Priority="1" />
-    <Link Source="@45" Target="@60" Bounds="1983.36452055175,505.376140222219,0.000543990467122057,85.000360669129" Priority="1" />
-    <Link Source="@45" Target="EmptyCategories" Bounds="2008.59683183829,505.376140222219,37.0626661279273,24.9712211432198" Label="HasNoCategories" LabelBounds="2037.51136006907,506.485903086898,92.1533333333332,15.96" />
-    <Link Source="@46" Target="@29" Bounds="893.969995008952,393.692563396901,1.06847469396598E-05,21.0001000000011" />
-    <Link Source="@47" Target="@58" Bounds="2424.66577148438,1126.64331054688,87.362548828125,253.731079101563" Label="HasTransaction" LabelBounds="2467.63106045108,1198.52882511693,79.5700000000006,15.96" />
-    <Link Source="@47" Target="@63" Bounds="2272.18987471542,1126.64331054688,119.344143582411,81.6281936991325" Label="HasTransaction" LabelBounds="2247.43334107521,1152.39749135201,79.5700000000006,15.96" Priority="1" />
-    <Link Source="@47" Target="EditOperation" Bounds="2418.16937498068,1126.64331054688,14.8393531742722,141.677912407494" Label="IsEditable" LabelBounds="2370.84899204553,1189.71060719225,50.7399999999998,15.96" />
-    <Link Source="@48" Target="(@16 @2 @3 Member=Save)" Bounds="1386.13662513239,422.534032134991,145.593853977673,123.236497571182" Label="IsDirty" LabelBounds="1423.98807953761,485.678837882463,33.6533333333327,15.9599999999999" Priority="1" />
+    <Link Source="@44" Target="@17" Bounds="1757.275390625,-148.636245727539,46.9249267578125,57.1152420043945" Priority="1" />
+    <Link Source="@44" Target="@31" Bounds="1840.4912109375,-148.636245727539,48.11865234375,56.962776184082" Label="IsAccountSelected" LabelBounds="1791.20208089193,-113.69923782893,96.5766666666659,15.96" Priority="1" />
+    <Link Source="@44" Target="@59" Bounds="1853.72692871094,-148.636245727539,135.740478515625,62.8330001831055" Label="HasAccounts" LabelBounds="1934.46208089193,-113.69923782893,68.3166666666675,15.96" Priority="1" />
+    <Link Source="@45" Target="@60" Bounds="1983.36452055175,505.376140222219,0.000543990467122057,85.0003606691292" Priority="1" />
+    <Link Source="@45" Target="EmptyCategories" Bounds="2008.59683183829,505.376140222219,37.0626661279273,24.9712211432197" Label="HasNoCategories" LabelBounds="2037.51136006907,506.485903086898,92.1533333333332,15.96" />
+    <Link Source="@46" Target="@29" Bounds="893.970031738281,393.692626953125,0,21" />
+    <Link Source="@47" Target="@58" Bounds="2424.66577148438,1126.64331054688,87.362548828125,253.731201171875" Label="HasTransaction" LabelBounds="2467.63106045108,1198.52883885862,79.5700000000006,15.96" />
+    <Link Source="@47" Target="@63" Bounds="2272.18987471542,1126.64332428856,119.344143582411,81.6281936991336" Label="HasTransaction" LabelBounds="2247.43334107521,1152.3975050937,79.5700000000002,15.96" Priority="1" />
+    <Link Source="@47" Target="EditOperation" Bounds="2418.16937498068,1126.64332428856,14.839353174269,141.677912407497" Label="IsEditable" LabelBounds="2370.84899204553,1189.71062093394,50.7399999999998,15.96" />
+    <Link Source="@48" Target="(@16 @2 @3 Member=Save)" Bounds="1386.13662513239,422.534032134991,145.593972119503,123.236597571182" Label="IsDirty" LabelBounds="1423.98813860853,485.678887882463,33.6533333333327,15.9599999999999" Priority="1" />
     <Link Source="@48" Target="@26" Bounds="1002.52854426148,428.454441257556,473.243617309286,147.266496959127" Label="StartOver" LabelBounds="1310.2574787407,541.758066880782,49.6433333333334,15.9599999999999" Priority="1" />
-    <Link Source="@48" Target="@54" Bounds="1244.10266113281,687.251708984375,231.669555664063,85.0193481445313" Priority="1" />
-    <Link Source="@48" Target="@68" Bounds="1685.78258334853,695.570729706173,223.110409688319,254.881557171051" Label="IsAccountSelected" LabelBounds="1744.8081286528,744.005074198999,96.5766666666696,15.96" Priority="10" />
-    <Link Source="@48" Target="@69" Bounds="1674.9443359375,90.9107818603516,104.267456054688,462.717086791992" Priority="5" />
-    <Link Source="@48" Target="@70" Bounds="1764.66552734375,537.354736328125,123.29931640625,32.9859619140625" Priority="1" />
-    <Link Source="@48" Target="@71" Bounds="1503.8345166844,695.570729706173,80.2409944389217,166.28408755621" Priority="3" />
-    <Link Source="@48" Target="@72" Bounds="1764.66552734375,672.423889160156,129.438720703125,78.4236450195313" Priority="1" />
-    <Link Source="@48" Target="@73" Bounds="1675.68933105469,695.570739746094,24.81298828125,76.647216796875" Priority="1" />
-    <Link Source="@48" Target="Attachments" Bounds="1764.66552734375,632.833190917969,442.6171875,59.6787719726563" Label="HasAttachableTransaction" LabelBounds="1858.50190313417,689.944500956757,136.226666666668,15.96" />
-    <Link Source="@48" Target="Export" Bounds="1589.12072753906,299.497344970703,24.22509765625,246.273162841797" Label="CanExportTransactions" LabelBounds="1598.06574967588,345.841532380722,119.17,15.96" />
-    <Link Source="@48" Target="ViewReports" Bounds="1719.849609375,304.22119140625,479.443115234375,241.54931640625" Priority="2" />
+    <Link Source="@48" Target="@54" Bounds="1243.50622558594,678.933288574219,232.265991210938,116.52490234375" Priority="1" />
+    <Link Source="@48" Target="@68" Bounds="1718.73828125,695.570617675781,131.007690429688,253.063415527344" Label="IsAccountSelected" LabelBounds="1793.80633725429,753.396856629461,96.5766666666696,15.96" Priority="10" />
+    <Link Source="@48" Target="@69" Bounds="1573.25732421875,86.1526107788086,113.061157226563,459.618019104004" Priority="5" />
+    <Link Source="@48" Target="@70" Bounds="1764.66552734375,552.346923828125,123.415283203125,29.1633911132813" Priority="1" />
+    <Link Source="@48" Target="@71" Bounds="1503.83442017367,695.570629706173,80.2411392050183,166.28438755621" Priority="3" />
+    <Link Source="@48" Target="@72" Bounds="1754.30712890625,695.570617675781,139.329467773438,59.9634399414063" Priority="1" />
+    <Link Source="@48" Target="@73" Bounds="1673.27026367188,695.570617675781,32.8134765625,76.99755859375" Priority="1" />
+    <Link Source="@48" Target="Attachments" Bounds="1764.66552734375,639.92138671875,441.500244140625,101.326049804688" Label="HasAttachableTransaction" LabelBounds="1867.84072507021,645.44787349268,136.226666666667,15.96" />
+    <Link Source="@48" Target="Export" Bounds="1623.13952636719,302.974243164063,38.3907470703125,242.79638671875" Label="CanExportTransactions" LabelBounds="1529.74024140266,347.308947850793,119.17,15.96" />
+    <Link Source="@48" Target="ViewReports" Bounds="1719.84948730469,304.22119140625,479.443237304688,241.549438476563" Priority="2" />
     <Link Source="@48" Target="aea1706b-ade5-4fb0-9b7b-412760db9bf71" Category="Contains" />
-    <Link Source="@50" Target="e550e8b2-0306-44cf-8f16-6f71acb462661" Bounds="2364.27465738933,319.307190541771,27.8288476814378,0.751182198239178" />
-    <Link Source="@51" Target="@52" Bounds="2416.42309570313,460.393646240234,54.1474609375,99.3984680175781" />
-    <Link Source="@51" Target="@53" Bounds="2405.7997206887,593.792114257813,37.9425328735874,39.4725402349895" />
-    <Link Source="@51" Target="@56" Bounds="2472.99291992188,521.6279296875,21.5615234375,38.1641845703125" Label="HasAttachmentImage" LabelBounds="2361.07319439774,535.124733502021,114.483333333333,15.96" />
-    <Link Source="@51" Target="@57" Bounds="2490.43603515625,593.792114257813,59.72509765625,40.8472290039063" Label="HasAttachmentImage" LabelBounds="2523.56811763838,597.951754881514,114.483333333334,15.9599999999996" />
-    <Link Source="@52" Target="@23" Bounds="2309.68334960938,456.184814453125,160.278564453125,232.312194824219" />
-    <Link Source="@52" Target="@56" Bounds="2503.08306715473,456.184803466797,4.54747350886464E-13,22.6882543945309" />
-    <Link Source="@52" Target="@57" Bounds="2536.2041015625,456.184814453125,49.7958984375,174.61865234375" />
-    <Link Source="@53" Target="@23" Bounds="2338.32292667359,665.713123779297,32.5512253619968,26.0623076319669" />
+    <Link Source="@50" Target="e550e8b2-0306-44cf-8f16-6f71acb462661" Bounds="2364.27465738933,320.404117624837,27.8266626798159,0.433514686009744" />
+    <Link Source="@51" Target="@52" Bounds="2315.08569335938,456.603668212891,100.609619140625,103.188995361328" />
+    <Link Source="@51" Target="@53" Bounds="2386.93310546875,593.792663574219,41.68701171875,36.96240234375" />
+    <Link Source="@51" Target="@56" Bounds="2460.08569335938,519.61181640625,20.57958984375,40.1808471679688" Label="HasAttachmentImage" LabelBounds="2346.93563926987,529.261110611717,114.483333333333,15.96" />
+    <Link Source="@51" Target="@57" Bounds="2478.16430664063,593.792663574219,60.233642578125,41.7759399414063" Label="HasAttachmentImage" LabelBounds="2502.60241936828,608.79264831543,114.483333333334,15.9599999999996" />
+    <Link Source="@52" Target="@23" Bounds="2283.08569335938,453.592254638672,140.719482421875,236.794769287109" />
+    <Link Source="@52" Target="@56" Bounds="2503.08569335938,456.185150146484,0,22.6875" />
+    <Link Source="@52" Target="@57" Bounds="2568.38256835938,456.185150146484,79.703125,179.759185791016" />
+    <Link Source="@53" Target="@23" Bounds="2338.32299804688,665.712646484375,32.551025390625,26.0624389648438" />
     <Link Source="@54" Target="@20" Category="Contains" />
     <Link Source="@54" Target="@34" Category="Contains" />
     <Link Source="@54" Target="@35" Category="Contains" />
     <Link Source="@54" Target="@48" Bounds="946.424926757813,-15.3708648681641,502.52783203125,204.332641601563" Priority="1" />
     <Link Source="@54" Target="EnterPopulate" Category="Contains" />
-    <Link Source="@55" Target="e550e8b2-0306-44cf-8f16-6f71acb462661" Bounds="2436.68306818068,274.901176452637,18.7554461500376,24.2034697584625" />
-    <Link Source="@56" Target="@51" Bounds="2470.50561523438,513.833068847656,21.61962890625,38.09765625" />
-    <Link Source="@57" Target="@51" Bounds="2487.205078125,598.850769042969,59.80224609375,40.9022827148438" />
+    <Link Source="@55" Target="e550e8b2-0306-44cf-8f16-6f71acb462661" Bounds="2436.25755592847,274.90117019669,18.0848463475691,24.1171034554835" />
+    <Link Source="@56" Target="@51" Bounds="2503.03662109375,513.832641601563,25.834228515625,42.0027465820313" />
+    <Link Source="@57" Target="@51" Bounds="2436.56201171875,600.658325195313,80.380126953125,39.0942993164063" />
     <Link Source="@59" Target="@48" Bounds="1669.70777851454,-56.7793762327533,356.295254514925,594.829023497494" Priority="1" />
     <Link Source="@61" Target="@48" Bounds="1113.33580853753,702.435105532996,437.550415576252,516.006586361534" Priority="1" />
     <Link Source="@62" Target="@48" Bounds="1653.74615851486,703.919114595366,47.1968509623234,117.189955228853" Priority="1" />
-    <Link Source="@63" Target="@65" Bounds="2245.8778321161,1239.31245849609,0.26736675741131,36.9600352800819" Priority="1" />
-    <Link Source="@63" Target="EditOperation" Bounds="2284.26956328855,1239.31245849609,104.02256728074,35.0835624240572" Label="IsEditable" LabelBounds="2330.66183470289,1236.88843511644,50.7400000000002,15.96" Priority="5" />
+    <Link Source="@63" Target="@65" Bounds="2245.8778321161,1239.31247223778,0.267366757408581,36.9600352800846" Priority="1" />
+    <Link Source="@63" Target="EditOperation" Bounds="2284.26956328855,1239.31247223778,104.022567280741,35.0835624240597" Label="IsEditable" LabelBounds="2330.66183470289,1236.88844885813,50.7400000000002,15.96" Priority="5" />
     <Link Source="@64" Target="@19" Bounds="851.729348176582,843.191788593748,3.90049785213489,121.813775305144" Label="NoChallenge" LabelBounds="781.12292991091,896.182683782502,68.5566666666664,15.96" Priority="1" />
-    <Link Source="@64" Target="@22" Bounds="871.232500403249,843.191788593748,86.700506661633,56.4980843819088" Label="IsChallenged" LabelBounds="915.674669227321,853.805205362483,67.9033333333338,15.96" />
+    <Link Source="@64" Target="@22" Bounds="871.232500403249,843.191788593748,86.7005066616333,56.4980843819088" Label="IsChallenged" LabelBounds="915.674669227322,853.805205362483,67.9033333333338,15.96" />
     <Link Source="@66" Target="@26" Bounds="1002.70190699681,268.658888636534,434.118077358743,100.773397689497" Label="CreateDatabasePrompt" LabelBounds="1316.50634420873,298.640907608186,122.933333333335,15.96" Priority="1" />
-    <Link Source="@66" Target="@48" Bounds="1480.43722597157,277.139585045893,105.912989473275,260.294626238754" Label="DatabaseLoaded" LabelBounds="1443.12120550343,408.040680239908,88.4200000000001,15.96" Priority="1" />
-    <Link Source="@67" Target="@61" Bounds="1102.32935136374,1188.44152832031,1.36424205265939E-12,21.0001635742199" Priority="1" />
+    <Link Source="@66" Target="@48" Bounds="1480.43722597157,277.139585045893,105.913030162931,260.294726238754" Label="DatabaseLoaded" LabelBounds="1443.12122584825,408.040730239908,88.4200000000001,15.96" Priority="1" />
+    <Link Source="@67" Target="@61" Bounds="1102.32934570313,1188.44165039063,0,21" Priority="1" />
     <Link Source="@68" Target="@18" Category="Contains" />
     <Link Source="@68" Target="@21" Category="Contains" />
     <Link Source="@68" Target="@32" Category="Contains" />
@@ -268,11 +267,11 @@
     <Link Source="@69" Target="@44" Category="Contains" />
     <Link Source="@69" Target="@48" Bounds="1032.50266964306,152.234909956569,215.794973128811,67.6456100508804" Priority="1" />
     <Link Source="@69" Target="@59" Category="Contains" />
-    <Link Source="@69" Target="@68" Bounds="1956.76036505159,83.0208277070661,157.022735910902,865.348083915514" Label="IsAccountSelected" LabelBounds="1981.0021018605,186.232522917663,96.5766666666707,15.9599999999996" Priority="1" />
+    <Link Source="@69" Target="@68" Bounds="2025.28588867188,83.0207290649414,169.21337890625,865.211326599121" Label="IsAccountSelected" LabelBounds="2087.83214857602,171.037010375313,96.5766666666709,15.9599999999996" Priority="1" />
     <Link Source="@69" Target="ad0c7473-d65d-4be6-8ee7-f26249fd53c51" Category="Contains" />
     <Link Source="@70" Target="@45" Category="Contains" />
     <Link Source="@70" Target="@60" Category="Contains" />
-    <Link Source="@70" Target="@68" Bounds="2047.53328080038,645.336600891164,60.6726100174626,303.062813947339" Label="IsCategorySelected" LabelBounds="2081.87035795923,788.495401987157,101.030000000001,15.96" Priority="1" />
+    <Link Source="@70" Target="@68" Bounds="2047.53328080038,645.336600891164,60.6726100174612,303.062813947339" Label="IsCategorySelected" LabelBounds="2081.87035795923,788.495401987157,101.030000000001,15.96" Priority="1" />
     <Link Source="@70" Target="EmptyCategories" Category="Contains" />
     <Link Source="@71" Target="(@16 @2 @3 Member=ViewExpenses)" Category="Contains" />
     <Link Source="@71" Target="(@16 @2 @3 Member=ViewHistory)" Category="Contains" />
@@ -280,26 +279,26 @@
     <Link Source="@71" Target="(@16 @2 @3 Member=ViewStock)" Category="Contains" />
     <Link Source="@71" Target="(@16 @2 @3 Member=ViewTrends)" Category="Contains" />
     <Link Source="@72" Target="(@16 @2 @3 Member=SelectPayee)" Category="Contains" />
-    <Link Source="@72" Target="@48" Bounds="1771.59606933594,685.119262695313,130.40185546875,76.897216796875" Priority="1" />
-    <Link Source="@72" Target="@68" Bounds="1997.45269384462,842.731165206896,44.841478451948,106.201912023066" Label="IsPayeeSelected" LabelBounds="1934.18093812025,896.610075174623,83.8500000000006,15.9599999999996" Priority="1" />
+    <Link Source="@72" Target="@48" Bounds="1750.43542480469,699.721435546875,151.5625,65.5466918945313" Priority="1" />
+    <Link Source="@72" Target="@68" Bounds="1997.45265162177,842.731065206896,44.8415206748016,106.202012023066" Label="IsPayeeSelected" LabelBounds="1934.18091700882,896.610025174622,83.8500000000006,15.9599999999996" Priority="1" />
     <Link Source="@73" Target="@62" Category="Contains" />
-    <Link Source="@73" Target="@68" Bounds="1759.49748131859,875.109169824219,83.6803865883508,76.0615805854302" Label="IsSecuritySelected" LabelBounds="1704.98244036902,914.619941478118,95.0099999999998,15.96" Priority="1" />
+    <Link Source="@73" Target="@68" Bounds="1759.49737130197,875.109069824219,83.6804966049783,76.0616805854299" Label="IsSecuritySelected" LabelBounds="1704.98238536071,914.619891478118,95.0099999999998,15.96" Priority="1" />
     <Link Source="Attachments" Target="@23" Category="Contains" />
     <Link Source="Attachments" Target="@51" Category="Contains" />
     <Link Source="Attachments" Target="@52" Category="Contains" />
     <Link Source="Attachments" Target="@53" Category="Contains" />
     <Link Source="Attachments" Target="@56" Category="Contains" />
     <Link Source="Attachments" Target="@57" Category="Contains" />
-    <Link Source="EditOperation" Target="@18" Bounds="2238.14894782815,1030.35462803508,187.310285419285,246.917630265702" Label="IsEditable" LabelBounds="2264.83707163396,1135.73174948862,50.7399999999998,15.96" />
-    <Link Source="EditOperation" Target="EditSelection" Bounds="2335.72675669451,1303.23225830078,78.7897920589116,49.1933148994901" Label="HasSelectedTransaction" LabelBounds="2376.18087159179,1329.52539899243,124.356666666667,15.96" />
-    <Link Source="EditSelection" Target="@21" Bounds="2196.74178022579,1383.15205810547,84.438571216846,41.9558602064615" Label="CanTransfer" LabelBounds="2239.85102007653,1405.9210720835,61.9399999999991,15.96" />
-    <Link Source="EditSelection" Target="@32" Bounds="2313.21765557809,1383.15205810547,32.2465546727717,70.770760982944" />
-    <Link Source="EditSelection" Target="@43" Bounds="2091.62340139441,1324.85418422927,171.539943332148,36.0433399441563" />
+    <Link Source="EditOperation" Target="@18" Bounds="2238.14894782816,1030.35464177677,187.310285419278,246.917630265704" Label="IsEditable" LabelBounds="2264.83707163397,1135.73176323031,50.7399999999998,15.96" />
+    <Link Source="EditOperation" Target="EditSelection" Bounds="2335.7267566945,1303.23227204247,78.7897920589139,49.1933148994926" Label="HasSelectedTransaction" LabelBounds="2376.18087159178,1329.52541273412,124.356666666667,15.96" />
+    <Link Source="EditSelection" Target="@21" Bounds="2196.74178022579,1383.15207184716,84.4385712168428,41.9558602064567" Label="CanTransfer" LabelBounds="2239.85102007653,1405.92108582519,61.9399999999991,15.96" />
+    <Link Source="EditSelection" Target="@32" Bounds="2313.21765557809,1383.15207184716,32.2465546727722,70.770760982939" />
+    <Link Source="EditSelection" Target="@43" Bounds="2091.62332286419,1324.85414559827,171.540021862371,36.0433849754149" />
     <Link Source="EmptyCategories" Target="@48" Bounds="1773.55256103581,558.412329351178,235.956953850031,37.7360142625571" />
     <Link Source="EnterPopulate" Target="@20" Bounds="674.919311523438,660.452087402344,145.972534179688,193.373168945313" Label="NoSampleData" LabelBounds="659.207736303355,704.027091947205,79.7533333333326,15.96" Priority="1" />
     <Link Source="EnterPopulate" Target="@34" Bounds="859.9828783303,660.452087402344,8.71649083625664,38.0635927682418" Label="NoAccountsDownloaded" LabelBounds="870.521552716489,680.573341880841,131.963333333333,15.96" Priority="1" />
-    <Link Source="EnterPopulate" Target="@35" Bounds="917.474609375,658.034057617188,181.007080078125,447.416748046875" Label="AccountsDownloaded" LabelBounds="1000.62103415376,659.769899995041,115.956666666665,15.96" Priority="1" />
-    <Link Source="Export" Target="@48" Bounds="1589.12097167969,294.017181396484,33.152587890625,242.819915771484" />
+    <Link Source="EnterPopulate" Target="@35" Bounds="917.474609375,658.034057617188,181.007080078125,447.4169921875" Label="AccountsDownloaded" LabelBounds="1000.62103415376,659.769899995041,115.956666666665,15.96" Priority="1" />
+    <Link Source="Export" Target="@48" Bounds="1629.21643066406,294.01708984375,39.3004150390625,242.753540039063" />
     <Link Source="Export" Target="ExportCsv" Category="Contains" Bounds="1798.19446312662,274.853258399413,3.25672777809473,21.1053730053537" />
     <Link Source="ViewReports" Target="(@16 @2 @3 Member=TaxReport)" Category="Contains" />
     <Link Source="ViewReports" Target="643d6fac-fa74-45b2-8057-28b6b57a0d101" Category="Contains" />
@@ -307,8 +306,8 @@
     <Link Source="ViewReports" Target="@55" Category="Contains" />
     <Link Source="ViewReports" Target="e550e8b2-0306-44cf-8f16-6f71acb462661" Category="Contains" />
     <Link Source="ac29eb58-92fc-4e51-947b-f9c643ad086b1" Target="@66" Bounds="1449.34324716852,119.825315429055,19.7193476450059,114.444965866339" Priority="1" />
-    <Link Source="ad0c7473-d65d-4be6-8ee7-f26249fd53c51" Target="@59" Bounds="2033.77822894478,-128.699270031581,0.000564787497296493,36.9598937998784" Priority="1" />
-    <Link Source="b3777c7b-fc99-42e3-b97d-6ac094e023831" Target="@63" Bounds="1983.02950580989,1219.32127232113,225.005805591049,222.469174456206" />
+    <Link Source="ad0c7473-d65d-4be6-8ee7-f26249fd53c51" Target="@59" Bounds="2033.77880859375,-128.699234008789,0,36.9599990844727" Priority="1" />
+    <Link Source="b3777c7b-fc99-42e3-b97d-6ac094e023831" Target="@63" Bounds="2001.25030855366,1245.64025726488,225.005700342197,222.469172980705" />
   </Links>
   <Categories>
     <Category Id="Active" />

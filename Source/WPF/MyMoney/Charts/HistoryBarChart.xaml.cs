@@ -81,7 +81,6 @@ namespace Walkabout.Charts
     {
         private readonly DelayedActions delayedActions = new DelayedActions();
         private readonly ObservableCollection<HistoryChartColumn> collection = new ObservableCollection<HistoryChartColumn>();
-        private bool invert;
         private int fiscalYearStart;
         private HistoryChartColumn selection;
 
@@ -215,8 +214,6 @@ namespace Walkabout.Charts
                     brush = Brushes.DarkSlateBlue;
                 }
 
-                this.ComputeInversion(rows);
-
                 var lastItem = rows.LastOrDefault();
                 DateTime startDate = DateTime.Now;
                 DateTime endDate = startDate;
@@ -256,10 +253,6 @@ namespace Walkabout.Charts
                         continue;
                     }
                     decimal amount = t.Value;
-                    if (this.invert)
-                    {
-                        amount = -amount;
-                    }
                     DateTime td = t.Date;
                     // This is a while loop because sometimes we don't have the requested
                     // number of years in the history, so this does a quick "catch up" to
@@ -307,6 +300,8 @@ namespace Walkabout.Charts
                 {
                     this.collection.RemoveAt(0);
                 }
+
+                this.ComputeInversion();
 
                 this.ComputeLinearRegression();
 
@@ -385,26 +380,34 @@ namespace Walkabout.Charts
             }
         }
 
-        private void ComputeInversion(IEnumerable<HistoryDataValue> rows)
+        private void ComputeInversion()
         {
             int count = 0;
             int negatives = 0;
-            foreach (HistoryDataValue t in rows)
+            foreach (var t in this.collection)
             {
-                if (t.Value == 0)
+                if (t.Amount == 0)
                 {
                     continue;
                 }
                 count++;
-                if (t.Value < 0)
+                if (t.Amount < 0)
                 {
                     negatives++;
                 }
             }
-            this.invert = false;
+
             if (negatives > count / 2)
             {
-                this.invert = true;
+                this.InvertColumns();
+            }
+        }
+
+        private void InvertColumns()
+        {
+            foreach (var c in this.collection)
+            {
+                c.Amount = -c.Amount;
             }
         }
 

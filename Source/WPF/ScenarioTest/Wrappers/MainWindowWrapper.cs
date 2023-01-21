@@ -12,6 +12,8 @@ namespace Walkabout.Tests.Wrappers
         private CategoriesWrapper categories;
         private PayeesWrapper payees;
         private SecuritiesWrapper securities;
+        private ReportWrapper report;
+
 
         private MainWindowWrapper(AutomationElement e) : base(e)
         {
@@ -83,6 +85,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal AccountsWrapper ViewAccounts()
         {
+            this.CloseReport();
             this.accounts = new AccountsWrapper(this.Element.Expand("AccountsSelector"));
             this.categories = null;
             this.payees = null;
@@ -93,6 +96,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal CategoriesWrapper ViewCategories()
         {
+            this.CloseReport();
             this.categories = new CategoriesWrapper(this.Element.Expand("CategoriesSelector"));
             //accounts = null;
             this.payees = null;
@@ -103,6 +107,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal PayeesWrapper ViewPayees()
         {
+            this.CloseReport();
             this.payees = new PayeesWrapper(this.Element.Expand("PayeesSelector"));
             //accounts = null;
             this.categories = null;
@@ -113,6 +118,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal SecuritiesWrapper ViewSecurities()
         {
+            this.CloseReport();
             this.securities = new SecuritiesWrapper(this.Element.Expand("SecuritiesSelector"));
             //accounts = null;
             this.categories = null;
@@ -206,7 +212,6 @@ namespace Walkabout.Tests.Wrappers
         public TransactionViewWrapper FindTransactionGrid()
         {
             this.CloseReport();
-
             AutomationElement e = FindTransactionGrid(this.window);
             if (e == null)
             {
@@ -241,7 +246,6 @@ namespace Walkabout.Tests.Wrappers
 
         internal ChartsAreaWrapper GetChartsArea()
         {
-            // 
             AutomationElement charts = this.window.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "TabForGraphs"));
             if (charts == null)
             {
@@ -250,60 +254,25 @@ namespace Walkabout.Tests.Wrappers
             return new ChartsAreaWrapper(charts);
         }
 
-        private bool reportOpen;
-
-        public void ResetReport()
-        {
-            if (this.reportOpen)
-            {
-                AutomationElement closeButton = this.window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "CloseReport"));
-                if (closeButton == null || closeButton.Current.IsOffscreen)
-                {
-                    this.reportOpen = false;
-                }
-            }
-        }
-
-        public void CloseReport()
-        {
-            if (this.reportOpen)
-            {
-                AutomationElement closeButton = this.window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "CloseReport"));
-                if (closeButton != null)
-                {
-                    InvokePattern invoke = (InvokePattern)closeButton.GetCurrentPattern(InvokePattern.Pattern);
-                    invoke.Invoke();
-                }
-                else
-                {
-                    Debug.WriteLine("### Close button named 'CloseReport' not found");
-                }
-                this.reportOpen = false;
-            }
-        }
-
         public ReportWrapper NetWorthReport()
         {
             ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuViewReports");
             subMenu.InvokeMenuItem("MenuReportsNetWorth");
-            this.reportOpen = true;
-            return this.FindReport("ReportNetworth");
+            return this.report = this.FindReport("ReportNetworth");
         }
 
         public ReportWrapper TaxReport()
         {
             ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuViewReports");
             subMenu.InvokeMenuItem("MenuReportsTaxReport");
-            this.reportOpen = true;
-            return this.FindReport("ReportTaxes");
+            return this.report = this.FindReport("ReportTaxes");
         }
 
         public ReportWrapper PortfolioReport()
         {
             ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuViewReports");
             subMenu.InvokeMenuItem("MenuReportsInvestment");
-            this.reportOpen = true;
-            return this.FindReport("ReportPortfolio");
+            return this.report = this.FindReport("ReportPortfolio");
         }
 
         public ReportWrapper FindReport(string name)
@@ -315,6 +284,20 @@ namespace Walkabout.Tests.Wrappers
                 throw new Exception(string.Format("Report '{0}' not found", name));
             }
             return new ReportWrapper(report);
+        }
+
+        public ReportWrapper GetReport()
+        {
+            return this.report;
+        }
+
+        public void CloseReport()
+        {
+            if (this.report != null)
+            {
+                this.report.CloseReport();
+                this.report = null;
+            }
         }
 
     }

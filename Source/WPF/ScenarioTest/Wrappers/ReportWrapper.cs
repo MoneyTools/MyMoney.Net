@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using System.Windows.Automation;
 
 namespace Walkabout.Tests.Wrappers
@@ -86,6 +87,23 @@ namespace Walkabout.Tests.Wrappers
                 throw new Exception("ReportDate field not found");
             }
             return date;
+        }
+
+        public void CloseReport()
+        {
+            AutomationElement closeButton = this.e.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "CloseReport"));
+            if (closeButton != null && !closeButton.Current.IsOffscreen)
+            {
+                try
+                {
+                    InvokePattern invoke = (InvokePattern)closeButton.GetCurrentPattern(InvokePattern.Pattern);
+                    invoke.Invoke();
+                } 
+                catch
+                {
+                    // ignore it
+                }
+            }
         }
     }
 }

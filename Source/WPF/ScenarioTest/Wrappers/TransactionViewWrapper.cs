@@ -1,6 +1,10 @@
-﻿using System.Diagnostics;
+﻿using NUnit.Framework.Constraints;
+using System;
+using System.Diagnostics;
+using System.Reflection;
 using System.Windows.Automation;
 using System.Windows.Input;
+using System.Xml.Linq;
 using Walkabout.Tests.Interop;
 
 namespace Walkabout.Tests.Wrappers
@@ -181,32 +185,53 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
-        public List<TransactionViewItem> GetItems(bool includePlaceHolder = true)
+        public List<TransactionViewRow> GetItems(bool includePlaceHolder = true)
         {
-            List<TransactionViewItem> list = new List<TransactionViewItem>();
+            List<TransactionViewRow> list = new List<TransactionViewRow>();
             foreach (AutomationElement e in this.control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
             {
                 if (e.Current.Name == "Walkabout.Data.Transaction")
                 {
-                    list.Add(new TransactionViewItem(this, e));
+                    list.Add(new TransactionViewRow(this, e));
                 }
                 else if (e.Current.Name == "{NewItemPlaceholder}" && includePlaceHolder)
                 {
-                    list.Add(new TransactionViewItem(this, e));
+                    list.Add(new TransactionViewRow(this, e));
                 }
             }
             return list;
         }
 
-        public TransactionViewItem Select(int index)
+        public TransactionViewRow GetNewRow()
         {
-            List<TransactionViewItem> list = this.GetItems();
+            TransactionViewRow lastrow = null;
+            foreach (AutomationElement e in this.control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
+            {
+                if (e.Current.Name == "Walkabout.Data.Transaction")
+                {
+                    lastrow = new TransactionViewRow(this, e);
+                }
+                else if (e.Current.Name == "{NewItemPlaceholder}")
+                {
+                    lastrow = new TransactionViewRow(this, e);
+                    break;
+                }
+            }
+
+            // no place holder means the placeholder is being edited.
+            lastrow.IsNewRow = true;
+            return lastrow;
+        }
+
+        public TransactionViewRow Select(int index)
+        {
+            List<TransactionViewRow> list = this.GetItems();
             if (index >= list.Count)
             {
                 throw new ArgumentOutOfRangeException("Index " + index + " is out of range, list only has " + list.Count + " items");
             }
 
-            TransactionViewItem item = list[index];
+            TransactionViewRow item = list[index];
             item.Select();
             return item;
         }
@@ -219,19 +244,19 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
-        public TransactionViewItem Selection
+        public TransactionViewRow Selection
         {
             get
             {
                 SelectionPattern selection = (SelectionPattern)this.control.GetCurrentPattern(SelectionPattern.Pattern);
                 AutomationElement[] selected = selection.Current.GetSelection();
-                return (selected == null || selected.Length == 0) ? null : new TransactionViewItem(this, selected[0]);
+                return (selected == null || selected.Length == 0) ? null : new TransactionViewRow(this, selected[0]);
             }
         }
 
         internal void Delete(int index)
         {
-            TransactionViewItem item = this.Select(index);
+            TransactionViewRow item = this.Select(index);
             item.Delete();
         }
 
@@ -256,7 +281,6 @@ namespace Walkabout.Tests.Wrappers
 
         internal void AddNew()
         {
-
             this.ScrollToEnd();
             Thread.Sleep(100);
 
@@ -266,20 +290,14 @@ namespace Walkabout.Tests.Wrappers
                 throw new Exception("Expecting {NewItemPlaceholder} at the bottom of the DataGrid");
             }
 
-            // the invoke pattern causes new row to be added
-            InvokePattern p = (InvokePattern)placeholder.GetCurrentPattern(InvokePattern.Pattern);
-            if (p == null)
-            {
-                throw new Exception("Expecting {NewItemPlaceholder} at the bottom of the DataGrid");
-            }
-            p.Invoke();
+            this.Focus();
+            SelectionItemPattern select = (SelectionItemPattern)placeholder.GetCurrentPattern(SelectionItemPattern.Pattern);
+            select.Select();
 
-            // now get the new list of items, the new row is the last one
-            List<TransactionViewItem> items = this.GetItems();
-            if (items.Count == 0)
-            {
-                throw new Exception("New row did not get added for some unknown reason");
-            }
+            // This ensures the a transaction is created for this placeholder.
+            TransactionViewRow row = GetNewRow();
+            row.BeginEdit(); // this can invalidate the row level automation element!            
+            row = GetNewRow();          
         }
 
         internal void ScrollVertical(double verticalPercent)
@@ -312,21 +330,24 @@ namespace Walkabout.Tests.Wrappers
             this.ScrollVertical(100);
         }
 
-        internal void VerifyNewTransactino()
-        {
-            CommitEdit();
-        }
-
         internal void CommitEdit()
         {
             var selection = this.Selection;
             if (selection != null)
             {
                 selection.Focus();
-                Thread.Sleep(30);
-                Input.TapKey(System.Windows.Input.Key.Enter);
-                // key sending is completely async, so we have to give it time to arrive and be processed.
-                Thread.Sleep(30);
+                selection.CommitEdit();
+                selection.Select();
+            }
+        }
+
+        internal void BeginEdit()
+        {
+            var selection = this.Selection;
+            if (selection != null)
+            {
+                selection.Focus();
+                selection.BeginEdit();
             }
         }
 
@@ -413,12 +434,12 @@ namespace Walkabout.Tests.Wrappers
         }
     }
 
-    public class TransactionViewItem
+    public class TransactionViewRow
     {
         private readonly TransactionViewWrapper view;
         private readonly AutomationElement item;
 
-        public TransactionViewItem(TransactionViewWrapper view, AutomationElement item)
+        public TransactionViewRow(TransactionViewWrapper view, AutomationElement item)
         {
             this.view = view;
             this.item = item;
@@ -453,12 +474,7 @@ namespace Walkabout.Tests.Wrappers
         {
             this.Select();
 
-            AutomationElement cell = this.item.FindFirstWithRetries(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, "DataGridCell"));
-            if (cell == null)
-            {
-                throw new Exception("DataGridCell not found");
-            }
-            cell.SetFocus();
+            view.Focus();
 
             Thread.Sleep(30);
             Input.TapKey(Key.Delete);
@@ -472,8 +488,8 @@ namespace Walkabout.Tests.Wrappers
             // AutomationId:	"CommandScanAttachment"
             try
             {
-                TransactionViewColumn col = this.view.GetColumn("Attachment");
-                col.Invoke(this.item);
+                var cell = this.GetCell("Attachment");
+                cell.Invoke();
             }
             catch (Exception ex)
             {
@@ -490,56 +506,56 @@ namespace Walkabout.Tests.Wrappers
 
         internal string GetCheckNumber()
         {
-            TransactionViewColumn col = this.view.GetColumn("Number");
-            return col.GetValue(this.item);
+            TransactionViewCell cell = this.GetCell("Number");
+            return cell.GetValue();
         }
         internal void SetCheckNumber(string num)
         {
-            TransactionViewColumn col = this.view.GetColumn("Number");
-            col.SetValue(this.item, num);
+            TransactionViewCell cell = this.GetCell("Number");
+            cell.SetValue(num);
         }
 
         internal string GetDate()
         {
-            TransactionViewColumn col = this.view.GetColumn("Date");
-            return col.GetValue(this.item);
+            TransactionViewCell cell = this.GetCell("Date");
+            return cell.GetValue();
         }
         internal void SetDate(string dateTime)
         {
-            TransactionViewColumn col = this.view.GetColumn("Date");
-            col.SetValue(this.item, dateTime);
+            TransactionViewCell cell = this.GetCell("Date");
+            cell.SetValue(dateTime);
         }
 
         internal string GetPayee()
         {
-            TransactionViewColumn col = this.view.GetColumn("Payee");
-            return col.GetValue(this.item);
+            TransactionViewCell cell = this.GetCell("Payee");
+            return cell.GetValue();
         }
         internal void SetPayee(string payee)
         {
-            TransactionViewColumn col = this.view.GetColumn("Payee");
-            col.SetValue(this.item, payee);
+            TransactionViewCell cell = this.GetCell("Payee");
+            cell.SetValue(payee);
         }
 
         internal string GetCategory()
         {
-            TransactionViewColumn col = this.view.GetColumn("Category");
-            return col.GetValue(this.item);
+            TransactionViewCell cell = this.GetCell("Category");
+            return cell.GetValue();
         }
         internal void SetCategory(string category)
         {
-            TransactionViewColumn col = this.view.GetColumn("Category");
-            col.SetValue(this.item, category);
+            TransactionViewCell cell = this.GetCell("Category");
+            cell.SetValue(category);
         }
         internal string GetMemo()
         {
-            TransactionViewColumn col = this.view.GetColumn("Memo");
-            return col.GetValue(this.item);
+            TransactionViewCell cell = this.GetCell("Memo");
+            return cell.GetValue();
         }
         internal void SetMemo(string memo)
         {
-            TransactionViewColumn col = this.view.GetColumn("Memo");
-            col.SetValue(this.item, memo);
+            TransactionViewCell cell = this.GetCell("Memo");
+            cell.SetValue(memo);
         }
         internal decimal GetSalesTax()
         {
@@ -548,16 +564,16 @@ namespace Walkabout.Tests.Wrappers
 
         private decimal GetDecimalColumn(string name)
         {
-            TransactionViewColumn col = this.view.GetColumn(name);
-            string s = col.GetValue(this.item);
+            TransactionViewCell cell = this.GetCell(name);
+            string s = cell.GetValue();
             decimal d;
             decimal.TryParse(s, out d);
             return d;
         }
         internal void SetSalesTax(decimal tax)
         {
-            TransactionViewColumn col = this.view.GetColumn("SalesTax");
-            col.SetValue(this.item, tax == 0 ? "" : tax.ToString());
+            TransactionViewCell cell = this.GetCell("SalesTax");
+            cell.SetValue(tax == 0 ? "" : tax.ToString());
         }
         internal decimal GetPayment()
         {
@@ -570,13 +586,13 @@ namespace Walkabout.Tests.Wrappers
         internal decimal GetAmount()
         {
             int sign = 1;
-            TransactionViewColumn col = this.view.GetColumn("Deposit");
-            string s = col.GetValue(this.item);
+            TransactionViewCell cell = this.GetCell("Deposit");
+            string s = cell.GetValue();
             if (string.IsNullOrEmpty(s))
             {
                 sign = -1;
-                col = this.view.GetColumn("Payment");
-                s = col.GetValue(this.item);
+                cell = this.GetCell("Payment");
+                s = cell.GetValue();
             }
             decimal p = 0;
             decimal.TryParse(s, out p);
@@ -586,39 +602,38 @@ namespace Walkabout.Tests.Wrappers
         {
             if (amount < 0)
             {
-                TransactionViewColumn col = this.view.GetColumn("Payment");
-                amount *= -1;
-                col.SetValue(this.item, amount == 0 ? "" : amount.ToString());
+                TransactionViewCell cell = this.GetCell("Payment");
+                cell.SetValue(amount == 0 ? "" : (-amount).ToString());
             }
             else
             {
-                TransactionViewColumn col = this.view.GetColumn("Deposit");
-                col.SetValue(this.item, amount == 0 ? "" : amount.ToString());
+                TransactionViewCell cell = this.GetCell("Deposit");
+                cell.SetValue(amount == 0 ? "" : amount.ToString());
             }
         }
 
         // investment transactions
         internal string GetActivity()
         {
-            TransactionViewColumn col = this.view.GetColumn("Activity");
-            return col.GetValue(this.item);
+            TransactionViewCell cell = this.GetCell("Activity");
+            return cell.GetValue();
         }
 
         internal void SetActivity(string activity)
         {
-            TransactionViewColumn col = this.view.GetColumn("Activity");
-            col.SetValue(this.item, activity);
+            TransactionViewCell cell = this.GetCell("Activity");
+            cell.SetValue(activity);
         }
 
         internal string GetSecurity()
         {
-            TransactionViewColumn col = this.view.GetColumn("Security");
-            return col.GetValue(this.item);
+            TransactionViewCell cell = this.GetCell("Security");
+            return cell.GetValue();
         }
         internal void SetSecurity(string security)
         {
-            TransactionViewColumn col = this.view.GetColumn("Security");
-            col.SetValue(this.item, security);
+            TransactionViewCell cell = this.GetCell("Security");
+            cell.SetValue(security);
         }
 
         internal decimal GetUnits()
@@ -627,8 +642,8 @@ namespace Walkabout.Tests.Wrappers
         }
         internal void SetUnits(decimal units)
         {
-            TransactionViewColumn col = this.view.GetColumn("Units");
-            col.SetValue(this.item, units == 0 ? "" : units.ToString());
+            TransactionViewCell cell = this.GetCell("Units");
+            cell.SetValue(units == 0 ? "" : units.ToString());
         }
 
         internal decimal GetUnitPrice()
@@ -637,8 +652,8 @@ namespace Walkabout.Tests.Wrappers
         }
         internal void SetUnitPrice(decimal price)
         {
-            TransactionViewColumn col = this.view.GetColumn("UnitPrice");
-            col.SetValue(this.item, price == 0 ? "" : price.ToString());
+            TransactionViewCell cell = this.GetCell("UnitPrice");
+            cell.SetValue(price == 0 ? "" : price.ToString());
         }
 
         internal bool IsPlaceholder
@@ -669,6 +684,8 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
+        public bool IsNewRow { get; internal set; }
+
         /// <summary>
         /// Parse the transfer string 
         /// </summary>
@@ -694,8 +711,78 @@ namespace Walkabout.Tests.Wrappers
 
         internal void Focus()
         {
-            TransactionViewColumn col = this.view.GetColumn("Payee");
-            col.Focus(this.item);
+            var cell = this.GetCell("Payee");
+            cell.SetFocus();
+        }
+
+        internal void CommitEdit()
+        {
+            InvokePattern p = (InvokePattern)this.item.GetCurrentPattern(InvokePattern.Pattern);
+            p.Invoke();
+            // Now the DataGrid implementation of Invoke deliberately de-selects the row for some
+            // strange reason, so we have to reselect it here.
+            this.Select();
+        }
+
+        internal void BeginEdit()
+        {
+            var payee = this.GetPayee();
+            this.SetPayee(payee);
+        }
+
+        internal TransactionViewCell GetCell(string columnName)
+        {
+            TransactionViewColumn col = this.view.GetColumn(columnName);
+            ScrollItemPattern scroll = (ScrollItemPattern)this.item.GetCurrentPattern(ScrollItemPattern.Pattern);
+            scroll.ScrollIntoView();
+            string name = col.Name;
+            int index = col.GetEffectiveIndex();
+            AutomationElement cell = null;
+            TransactionViewRow row = this;
+
+            for (int retries = 5; retries > 0; retries--)
+            {
+                int i = 0;
+                foreach (AutomationElement e in row.item.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, "DataGridCell")))
+                {
+                    if (i == index)
+                    {
+                        cell = e;
+                        break;
+                    }
+                    i++;
+                }
+                if (cell != null)
+                {
+                    break;
+                }
+                else
+                {
+                    Thread.Sleep(50);
+                    row = this.Refresh();
+                }
+            }
+
+            if (cell == null)
+            {
+                throw new Exception("Expecting a DataGridCell to appear at index " + index + " in the " + name + ".");
+            }
+
+            return new TransactionViewCell(this, cell, col);
+        }
+
+        internal TransactionViewRow Refresh()
+        {
+            if (this.IsPlaceholder || this.IsNewRow)
+            {
+                return this.view.GetNewRow();
+            }
+            else if (this.IsSelected)
+            {
+                return this.view.Selection;
+            }
+            // shouldn't need refreshing then.
+            return this;
         }
     }
 
@@ -732,268 +819,15 @@ namespace Walkabout.Tests.Wrappers
 
         public string DataType { get { return this.datatype; } }
 
-
-        public AutomationElement GetCell(AutomationElement dataItem)
+        internal int GetEffectiveIndex()
         {
-            ScrollItemPattern scroll = (ScrollItemPattern)dataItem.GetCurrentPattern(ScrollItemPattern.Pattern);
-            scroll.ScrollIntoView();
-
             // find the DataGridCell to activate.
             int index = this.index;
             if (this.Parent != null)
             {
                 index = this.Parent.index;
             }
-
-            int i = 0;
-            AutomationElement cell = null;
-            foreach (AutomationElement e in dataItem.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, "DataGridCell")))
-            {
-                if (i == index)
-                {
-                    cell = e;
-                    break;
-                }
-                i++;
-            }
-
-            if (cell == null)
-            {
-                throw new Exception("Expecting a DataGridCell to appear at index " + index + " in the DataItem" + this.Name + ". We found " + i + " DataGridCells.");
-            }
-
-            return cell;
-        }
-
-        private AutomationElement GetCellContent(AutomationElement dataItem, bool forEditing)
-        {
-            AutomationElement cell = this.GetCell(dataItem);
-
-            string name = cell.Current.ClassName;
-            if (!forEditing)
-            {
-                if (this.Parent == null && !forEditing)
-                {
-                    return cell;
-                }
-
-                AutomationElement found = null;
-                int i = 0;
-                foreach (AutomationElement child in cell.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.IsEnabledProperty, true)))
-                {
-                    found = child;
-                    name = child.Current.ClassName;
-                    // the cell should have children, TextBlocks and so forth from which we can get the value.
-                    if (i == this.index)
-                    {
-                        return child;
-                    }
-                    i++;
-                }
-
-                // Sometimes we have some optional children (like the split buttons on the payment/deposit, so return the previous cell.
-                return found;
-            }
-            else
-            {
-                AutomationElement editor = null;
-                for (int retries = 5; retries > 0 && editor == null; retries--)
-                {
-                    // invoking the dataItem puts the cell into edit mode, revealing the inner controls
-                    InvokePattern p = (InvokePattern)cell.GetCurrentPattern(InvokePattern.Pattern);
-                    p.Invoke();
-
-                    Thread.Sleep(50); // let editing mode kick in.
-
-                    // Now find the editable control within cell 
-                    editor = this.GetEditor(cell);
-                    if (editor == null)
-                    {
-                        Thread.Sleep(500);
-                    }
-                }
-
-                if (editor == null)
-                {
-                    throw new Exception("Editor not found in compound cell at index " + this.Index);
-                }
-
-                return editor;
-            }
-
-        }
-
-        protected virtual AutomationElement GetEditor(AutomationElement cell)
-        {
-            int editorIndex = 0;
-            string name = cell.Current.ClassName;
-
-            if (this.Parent != null)
-            {
-                editorIndex = this.Index;
-            }
-            AutomationElement e = TreeWalker.RawViewWalker.GetFirstChild(cell);
-            if (e == null)
-            {
-                return null;
-            }
-            name = e.Current.ClassName;
-            if (name == "TransactionAmountControl")
-            {
-                e = TreeWalker.RawViewWalker.GetFirstChild(e);
-            }
-            int i = 0;
-            while (i < editorIndex && e != null && e.Current.ClassName != "TextBox")
-            {
-                name = e.Current.ClassName;
-                e = TreeWalker.RawViewWalker.GetNextSibling(e);
-                if (e != null && e.Current.ClassName == "TransactionAmountControl")
-                {
-                    e = TreeWalker.RawViewWalker.GetFirstChild(e);
-                }
-                i++;
-            }
-            name = e.Current.ClassName;
-            if (name == "TextBlock")
-            {
-                return null;
-            }
-            return e;
-        }
-
-        public string GetValue(AutomationElement dataItem)
-        {
-            int retries = 5;
-            for (int i = 0; i < retries; i++)
-            {
-                try
-                {
-                    switch (this.DataType)
-                    {
-                        case "Button":
-                        case "Custom":
-                            return "";
-                        case "TextBox":
-                        case "DatePicker":
-                        case "ComboBox":
-                            return this.GetCellValue(this.GetCellContent(dataItem, false));
-                        default:
-                            throw new Exception("Unrecognized datatype: " + this.DataType);
-                    }
-                }
-                catch
-                {
-                    if (i == retries - 1)
-                    {
-                        throw;
-                    }
-                }
-            }
-            return null;
-        }
-
-        public void SetValue(AutomationElement dataItem, string value)
-        {
-            switch (this.DataType)
-            {
-                case "Button":
-                case "TextBlock":
-                case "Custom":
-                    throw new Exception("Cannot set the value of a " + this.DataType + " column");
-                case "DatePicker":
-                case "ComboBox":
-                case "TextBox":
-                    this.SetCellValue(this.GetCellContent(dataItem, true), value);
-                    break;
-                default:
-                    throw new Exception("Unrecognized datatype: " + this.DataType);
-            }
-        }
-
-        public string GetCellValue(AutomationElement cell)
-        {
-            if (cell == null)
-            {
-                // This can happen on Payment/Deposit fields when one or the other has no value.
-                return "";
-            }
-
-            AutomationElement text = cell.Current.ClassName == "TextBlock" ? cell : null;
-
-            string name = cell.Current.ClassName;
-
-            if (name == "TransactionAmountControl")
-            {
-                text = TreeWalker.RawViewWalker.GetFirstChild(cell);
-                name = text.Current.ClassName;
-
-            }
-            else if (name == "DataGridCell")
-            {
-                text = cell.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, "TextBlock"));
-            }
-
-            object obj;
-            if (text != null)
-            {
-                if (text.TryGetCurrentPattern(ValuePattern.Pattern, out obj))
-                {
-                    ValuePattern vp = (ValuePattern)obj;
-                    return vp.Current.Value;
-                }
-
-                return text.Current.Name;
-            }
-
-            if (cell.TryGetCurrentPattern(ValuePattern.Pattern, out obj))
-            {
-                ValuePattern vp = (ValuePattern)obj;
-                return vp.Current.Value;
-            }
-
-            throw new Exception("DataCell for column " + name + " at index " + this.index + " does not have a ValuePatten");
-        }
-
-        public void SetCellValue(AutomationElement cell, string value)
-        {
-            object obj;
-            if (cell.TryGetCurrentPattern(ValuePattern.Pattern, out obj))
-            {
-                ValuePattern vp = (ValuePattern)obj;
-                vp.SetValue(value);
-                return;
-            }
-            throw new Exception("DataCell for column " + this.name + " at index " + this.index + " does not have a ValuePatten");
-        }
-
-        public void Invoke(AutomationElement dataItem)
-        {
-            if (this.DataType == "Button")
-            {
-                AutomationElement cell = this.GetCellContent(dataItem, true);
-
-                object obj;
-                if (cell.TryGetCurrentPattern(InvokePattern.Pattern, out obj))
-                {
-                    InvokePattern invoke = (InvokePattern)obj;
-                    invoke.Invoke();
-                    return;
-                }
-
-                throw new Exception("DataGridCell " + this.Name + " does not contain an InvokePattern");
-            }
-            else
-            {
-                throw new Exception("Cannot invoke column of this type, expecting a button column");
-            }
-        }
-
-        internal void Focus(AutomationElement dataItem)
-        {
-            AutomationElement cell = this.GetCell(dataItem);
-            string name = cell.Current.Name;
-            string className = cell.Current.ClassName;
-            cell.SetFocus();
+            return index;
         }
     }
 
@@ -1084,7 +918,249 @@ namespace Walkabout.Tests.Wrappers
             }
             return this.columns[index];
         }
-
     }
 
+    public class TransactionViewCell
+    {
+        TransactionViewRow row;
+        AutomationElement cell;
+        TransactionViewColumn column;
+
+        public TransactionViewCell(TransactionViewRow row, AutomationElement cell, TransactionViewColumn column)
+        {
+            this.row = row;
+            this.cell = cell;
+            this.column = column;
+        }
+
+        internal AutomationElement GetContent(bool forEditing)
+        {
+            string className = this.cell.Current.ClassName;
+            if (!forEditing)
+            {
+                this.Refresh();
+                AutomationElement found = null;
+                int i = 0;
+                foreach (AutomationElement child in this.cell.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.IsEnabledProperty, true)))
+                {
+                    found = child;
+                    if (i == this.column.Index)
+                    {
+                        break;
+                    }
+                    i++;
+                }
+
+                // Sometimes we have some optional children (like the split buttons on the payment/deposit, so return the previous cell.
+                return found;
+            }
+            else
+            {
+                AutomationElement editor = null;
+                for (int retries = 5; retries > 0 && editor == null; retries--)
+                {
+                    // invoking the cell puts the cell into edit mode, revealing the inner controls
+                    InvokePattern p = (InvokePattern)cell.GetCurrentPattern(InvokePattern.Pattern);
+                    p.Invoke();
+
+                    // But this also invalidates the cell AutomationElement! So we have to refetch this cell.
+                    Refresh();
+
+                    Thread.Sleep(50); // let editing mode kick in.
+
+                    // Now find the editable control within cell 
+                    editor = this.GetEditor();
+                    if (editor == null)
+                    {
+                        Thread.Sleep(500);
+                    }
+                }
+
+                if (editor == null)
+                {
+                    throw new Exception("Editor not found in compound cell at index " + this.column.Index);
+                }
+
+                return editor;
+            }
+        }
+
+        private void Refresh()
+        {
+            this.row = this.row.Refresh();
+            var newCell = this.row.GetCell(this.column.Name);
+            this.cell = newCell.cell;
+        }
+
+        internal AutomationElement GetEditor()
+        {
+            int editorIndex = 0;
+            if (this.column.Parent != null)
+            {
+                editorIndex = this.column.Index;
+            }
+            AutomationElement e = TreeWalker.RawViewWalker.GetFirstChild(this.cell);
+            if (e == null)
+            {
+                return null;
+            }
+            var name = e.Current.ClassName;
+            if (name == "TransactionAmountControl")
+            {
+                e = TreeWalker.RawViewWalker.GetFirstChild(e);
+            }
+            int i = 0;
+            while (i < editorIndex && e != null && e.Current.ClassName != "TextBox")
+            {
+                name = e.Current.ClassName;
+                e = TreeWalker.RawViewWalker.GetNextSibling(e);
+                if (e != null && e.Current.ClassName == "TransactionAmountControl")
+                {
+                    e = TreeWalker.RawViewWalker.GetFirstChild(e);
+                }
+                i++;
+            }
+            name = e.Current.ClassName;
+            if (name == "TextBlock")
+            {
+                return null;
+            }
+            return e;
+        }
+
+
+        public string GetValue()
+        {
+            int retries = 5;
+            for (int i = 0; i < retries; i++)
+            {
+                try
+                {
+                    switch (this.column.DataType)
+                    {
+                        case "Button":
+                        case "Custom":
+                            return "";
+                        case "TextBox":
+                        case "DatePicker":
+                        case "ComboBox":
+                            return GetCellValue();
+                        default:
+                            throw new Exception("Unrecognized datatype: " + this.column.DataType);
+                    }
+                }
+                catch
+                {
+                    if (i == retries - 1)
+                    {
+                        throw;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public void SetValue(string value)
+        {
+            switch (this.column.DataType)
+            {
+                case "Button":
+                case "TextBlock":
+                case "Custom":
+                    throw new Exception("Cannot set the value of a " + this.column.DataType + " column");
+                case "DatePicker":
+                case "ComboBox":
+                case "TextBox":
+                    this.SetCellValue(value);
+                    break;
+                default:
+                    throw new Exception("Unrecognized datatype: " + this.column.DataType);
+            }
+        }
+
+        public string GetCellValue()
+        {
+            var e = this.GetContent(false);
+            if (e == null)
+            {
+                // This can happen on Payment/Deposit fields when one or the other has no value.
+                return "";
+            }
+
+            AutomationElement text = e.Current.ClassName == "TextBlock" ? e : null;
+
+            string name = this.column.Name;
+
+            if (e.Current.ClassName == "TransactionAmountControl")
+            {
+                text = TreeWalker.RawViewWalker.GetFirstChild(e);
+            }
+            else if (e.Current.ClassName == "DataGridCell")
+            {
+                text = e.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, "TextBlock"));
+            }
+
+            object obj;
+            if (text != null)
+            {
+                if (text.TryGetCurrentPattern(ValuePattern.Pattern, out obj))
+                {
+                    ValuePattern vp = (ValuePattern)obj;
+                    return vp.Current.Value;
+                }
+
+                return text.Current.Name;
+            }
+
+            if (e.TryGetCurrentPattern(ValuePattern.Pattern, out obj))
+            {
+                ValuePattern vp = (ValuePattern)obj;
+                return vp.Current.Value;
+            }
+
+            throw new Exception("DataCell for column " + name + " at index " + this.column.Index + " does not have a ValuePatten");
+        }
+
+        private void SetCellValue(string value)
+        {
+            var e = this.GetContent(true);
+
+            object obj;
+            if (e.TryGetCurrentPattern(ValuePattern.Pattern, out obj))
+            {
+                ValuePattern vp = (ValuePattern)obj;
+                vp.SetValue(value);
+                return;
+            }
+
+            throw new Exception("DataCell for column " + this.column.Name + " at index " + this.column.Index + " does not have a ValuePatten");
+        }
+
+        public void Invoke()
+        {
+            if (this.column.DataType == "Button")
+            {
+                AutomationElement e = this.GetContent(true);
+
+                object obj;
+                if (e.TryGetCurrentPattern(InvokePattern.Pattern, out obj))
+                {
+                    InvokePattern invoke = (InvokePattern)obj;
+                    invoke.Invoke();
+                    return;
+                }
+
+                throw new Exception("DataGridCell " + this.column.Name + " does not contain an InvokePattern");
+            }
+            else
+            {
+                throw new Exception("Cannot invoke column of this type, expecting a button column");
+            }
+        }
+
+        internal void SetFocus()
+        {
+            this.cell.SetFocus();
+        }
+    }
 }

@@ -2874,12 +2874,13 @@ namespace Walkabout
                     else if (this.TransactionView.ActiveAccount != null)
                     {
                         this.TabTrends.Visibility = System.Windows.Visibility.Visible;
-                        this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
-                        if (this.TabLoan.IsSelected || this.TabRental.IsSelected || this.TabHistory.IsSelected)
+                        this.TabHistory.Visibility = System.Windows.Visibility.Visible;
+                        if (this.TabLoan.IsSelected || this.TabRental.IsSelected)
                         {
                             this.HistoryChart.Selection = null;
                             this.TabTrends.IsSelected = true;
                         }
+                        this.UpdateHistoryChart();
                     }
 
                     this.UpdateTransactionGraph(this.TransactionView.Rows, this.TransactionView.ActiveAccount, this.TransactionView.ActiveCategory);
