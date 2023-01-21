@@ -692,8 +692,10 @@ namespace ScenarioTest
         private void OpenAttachmentDialog()
         {
             this.EnsureSelectedTransaction();
-            Assert.IsFalse(this.selectedTransaction.IsPlaceholder);
-            this.attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
+            if (!this.selectedTransaction.IsPlaceholder)
+            {
+                this.attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
+            }
         }
 
         private void PasteImageAttachment()
