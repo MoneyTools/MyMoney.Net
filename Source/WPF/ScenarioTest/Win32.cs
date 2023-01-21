@@ -1,13 +1,7 @@
-
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows;
 using System.Windows.Automation;
-using System.Windows.Forms;
 
 namespace Walkabout.Tests.Interop
 {
@@ -295,21 +289,20 @@ namespace Walkabout.Tests.Interop
             return null;
         }
 
-
-        public static void CaptureScreen(string filename, ImageFormat format)
+        public static void CaptureScreenRect(string filename, ImageFormat format, int x, int y, int width, int height)
         {
             //create a DC of display device
             IntPtr srcDC = SafeNativeMethods.CreateDC("DISPLAY", null, null, IntPtr.Zero);
             //create a memory DC to capture screen to
             IntPtr destDC = SafeNativeMethods.CreateCompatibleDC(srcDC);
             //Create compatible bitmap of the screen
-            IntPtr hBitmap = SafeNativeMethods.CreateCompatibleBitmap(srcDC, Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            IntPtr hBitmap = SafeNativeMethods.CreateCompatibleBitmap(srcDC, width, height);
             IntPtr hOldBitmap = SafeNativeMethods.SelectObject(destDC, hBitmap);
 
             try
             {
                 //Copy screen to hBitmap
-                SafeNativeMethods.BitBlt(destDC, 0, 0, Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height, srcDC, 0, 0, SafeNativeMethods.SRCCOPY);
+                SafeNativeMethods.BitBlt(destDC, 0, 0, width, height, srcDC, x, y, SafeNativeMethods.SRCCOPY);
                 hBitmap = SafeNativeMethods.SelectObject(destDC, hOldBitmap);
                 //Save the screen bitmap to file
                 Bitmap.FromHbitmap(hBitmap).Save(filename, format);
@@ -323,6 +316,11 @@ namespace Walkabout.Tests.Interop
                 SafeNativeMethods.DeleteDC(srcDC);
                 SafeNativeMethods.DeleteDC(destDC);
             }
+        }
+
+        public static void CapturePrimaryScreen(string filename, ImageFormat format)
+        {
+            CaptureScreenRect(filename, format, 0, 0, Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
         }
     }
 

@@ -1,10 +1,6 @@
-﻿using NUnit.Framework.Constraints;
-using System;
-using System.Diagnostics;
-using System.Reflection;
+﻿using System.Diagnostics;
 using System.Windows.Automation;
 using System.Windows.Input;
-using System.Xml.Linq;
 using Walkabout.Tests.Interop;
 
 namespace Walkabout.Tests.Wrappers
@@ -279,7 +275,7 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
-        internal void AddNew()
+        internal TransactionViewRow AddNew()
         {
             this.ScrollToEnd();
             Thread.Sleep(100);
@@ -294,10 +290,10 @@ namespace Walkabout.Tests.Wrappers
             SelectionItemPattern select = (SelectionItemPattern)placeholder.GetCurrentPattern(SelectionItemPattern.Pattern);
             select.Select();
 
-            // This ensures the a transaction is created for this placeholder.
+            // This ensures a transaction is created for this placeholder.
             TransactionViewRow row = GetNewRow();
             row.BeginEdit(); // this can invalidate the row level automation element!            
-            row = GetNewRow();          
+            return GetNewRow();
         }
 
         internal void ScrollVertical(double verticalPercent)
@@ -354,7 +350,6 @@ namespace Walkabout.Tests.Wrappers
         internal void NavigateTransfer()
         {
             var selection = this.Selection;
-
             string tofrom;
             string sourceAccount = selection.ParseTransferPayee(out tofrom);
             decimal amount = selection.GetAmount();
@@ -364,7 +359,7 @@ namespace Walkabout.Tests.Wrappers
                 throw new Exception("Source account not found");
             }
 
-            for (int delay = 100; delay < 500; delay += 100)
+            for (int retries = 5; retries > 0; retries--)
             {
                 try
                 {
@@ -376,45 +371,42 @@ namespace Walkabout.Tests.Wrappers
                     selection = this.Selection;
                 }
 
-                Thread.Sleep(delay);
+                Thread.Sleep(50);
                 Input.TapKey(System.Windows.Input.Key.F12);
                 // key sending is completely async, so we have to give it time to arrive and be processed.
-                Thread.Sleep(delay);
+                Thread.Sleep(50);
 
-                for (int retries = 5; retries > 0; retries--)
+                // update the new "transactions" grid in place.
+                this.control = this.window.FindTransactionGrid().control;
+
+                // now verify we got a new selection
+                var target = this.Selection;
+                if (target == null)
                 {
-                    // update the new "transactions" grid in place.
-                    this.control = this.window.FindTransactionGrid().control;
-
-                    // now verify we got a new selection
-                    var target = this.Selection;
-                    if (target == null)
-                    {
-                        throw new Exception("Navigation lost the selection");
-                    }
-
-                    string fromto;
-                    string targetAccount = target.ParseTransferPayee(out fromto);
-                    decimal targetAmount = target.GetAmount();
-
-                    if (sourceAccount == targetAccount && fromto == tofrom)
-                    {
-                        // hasn't got the F12 yet.
-                    }
-                    else if (Math.Round(targetAmount, 2) != -Math.Round(amount, 2))
-                    {
-                        // we jumped to the wrong place then!
-                        throw new Exception("F12 jumped to the wrong transaction");
-                    }
-
-                    if (sourceAccount != null && targetAccount != null && ((tofrom == "to" && fromto == "from") || (tofrom == "from" && fromto == "to")))
-                    {
-                        return;
-                    }
-
-                    // not there yet...
-                    Thread.Sleep(100);
+                    throw new Exception("Navigation lost the selection");
                 }
+
+                string fromto;
+                string targetAccount = target.ParseTransferPayee(out fromto);
+                decimal targetAmount = target.GetAmount();
+
+                if (sourceAccount == targetAccount && fromto == tofrom)
+                {
+                    // hasn't got the F12 yet.
+                }
+                else if (Math.Round(targetAmount, 2) != -Math.Round(amount, 2))
+                {
+                    // we jumped to the wrong place then!
+                    throw new Exception("F12 jumped to the wrong transaction");
+                }
+
+                if (sourceAccount != null && targetAccount != null && ((tofrom == "to" && fromto == "from") || (tofrom == "from" && fromto == "to")))
+                {
+                    return;
+                }
+
+                // not there yet...so try again...
+                Thread.Sleep(100);
             }
 
             throw new Exception("Timeout waiting for F12 to work");
@@ -686,6 +678,8 @@ namespace Walkabout.Tests.Wrappers
 
         public bool IsNewRow { get; internal set; }
 
+        public System.Windows.Rect Bounds => this.item.Current.BoundingRectangle;
+
         /// <summary>
         /// Parse the transfer string 
         /// </summary>
@@ -711,6 +705,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void Focus()
         {
+            this.view.Focus();
             var cell = this.GetCell("Payee");
             cell.SetFocus();
         }

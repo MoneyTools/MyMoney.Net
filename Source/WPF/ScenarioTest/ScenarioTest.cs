@@ -13,6 +13,7 @@ using Walkabout.Tests.Interop;
 using Walkabout.Tests.Wrappers;
 using Brushes = System.Windows.Media.Brushes;
 using Clipboard = System.Windows.Clipboard;
+using Color = System.Windows.Media.Color;
 
 namespace ScenarioTest
 {
@@ -101,7 +102,7 @@ namespace ScenarioTest
             {
                 testError = ex;
                 string temp = Path.GetTempPath() + "\\Screen.png";
-                Win32.CaptureScreen(temp, System.Drawing.Imaging.ImageFormat.Png);
+                Win32.CapturePrimaryScreen(temp, System.Drawing.Imaging.ImageFormat.Png);
                 this.WriteLine("ScreenCapture: " + temp);
             }
             finally
@@ -692,10 +693,7 @@ namespace ScenarioTest
         private void OpenAttachmentDialog()
         {
             this.EnsureSelectedTransaction();
-            if (!this.selectedTransaction.IsPlaceholder)
-            {
-                this.attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
-            }
+            this.attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
         }
 
         private void PasteImageAttachment()
@@ -738,8 +736,7 @@ namespace ScenarioTest
         {
             get
             {
-                Assert.IsNotNull(this.attachmentDialog);
-                var image = this.attachmentDialog.ScrollViewer.FindImage(0);
+                var image = this.attachmentDialog?.ScrollViewer.FindImage(0);
                 return image != null;
             }
         }
@@ -1022,12 +1019,49 @@ to make sure attachments work.");
                 throw new Exception("Cannot edit a transaction right now");
             }
 
-            this.transactions.AddNew();
-            var index = this.transactions.Count - 1;
-            this.selectedTransaction = this.transactions.Select(index);
-            Assert.IsTrue(this.selectedTransaction.IsSelected);
+            var selection = this.transactions.AddNew();
+            this.VerifySelection(selection);
             Debug.WriteLine("dataChangedSinceExport reset because of AddNewTransaction");
             this.dataChangedSinceExport = true;
+        }
+
+        private void VerifySelection(TransactionViewRow selection)
+        {
+            selection.Select();
+
+            // Sometimes AddNew results in an editable row, but with no selection
+            // So we read the screen to figure out if this is happening here.
+            for (int retries = 5; retries > 0; retries--)
+            {
+                var bounds = selection.Bounds;
+                var color = Tests.GetAverageColor(new Rect(bounds.Left, bounds.Top, 10, 10));
+                var background = Tests.GetAverageColor(new Rect(bounds.Right - 10, bounds.Top, 10, 10));
+
+                // List selection background is based on 60% blend with system accent color.
+                var systemAccent = System.Windows.SystemParameters.WindowGlassColor;
+                var expected = Tests.Blend(systemAccent, background, 0.6);
+
+                var accentDiff = Tests.ColorDistance(expected, color);
+                var backgroundDiff = Tests.ColorDistance(background, color);
+                if (accentDiff > backgroundDiff)
+                {
+                    Debug.WriteLine("Correcting missing row selection...");
+                    Input.MoveToAndLeftClick(new System.Windows.Point(bounds.Left + 2, bounds.Top + 2));
+                    Thread.Sleep(50);
+                    // try again to see if we fixed it...
+                }
+                else
+                {
+                    if (retries != 5)
+                    {
+                        Debug.WriteLine("Corrected missing row selection.");
+                    }
+                    // all good then!
+                    return;
+                }
+            }
+
+            throw new Exception("Cannot seem to select this row");
         }
 
         private void EditSelectedTransaction()
@@ -1049,6 +1083,14 @@ to make sure attachments work.");
             if (this.selectedTransaction == null)
             {
                 throw new Exception("No selected transaction");
+            }
+            if (this.selectedTransaction.Bounds.IsEmpty)
+            {
+                this.selectedTransaction = this.selectedTransaction.Refresh();
+            }
+            if (this.selectedTransaction.Bounds.IsEmpty)
+            {
+                throw new Exception("Selected has no bounds");
             }
         }
 
@@ -1103,6 +1145,8 @@ to make sure attachments work.");
             this.selectedTransaction.SetSalesTax(0);
             this.selectedTransaction.SetAmount(this.GetRandomDecimal(-500, 500));
             this.selectedTransaction.CommitEdit();
+            // bugbug: seems to need some time to settle before NavigateTransfer.
+            Thread.Sleep(50);
         }
 
         private bool RandomBoolean
@@ -1283,6 +1327,7 @@ to make sure attachments work.");
         private void NavigateTransfer()
         {
             this.AssertSelectedTransaction();
+            this.VerifySelection(this.selectedTransaction);
             this.transactions.NavigateTransfer();
             this.selectedTransaction = this.transactions.Selection;
             Debug.WriteLine("dataChangedSinceExport reset because of NavigateTransfer");
@@ -1549,6 +1594,55 @@ to make sure attachments work.");
             return false;
         }
 
+        internal static Color GetAverageColor(Rect box)
+        {
+            var thumbnailWidth = (int)box.Width;
+            var thumbnailHeight = (int)box.Height;
+            string temp = Path.Combine(Path.GetTempPath(), "thumbnail.png");
+            Win32.CaptureScreenRect(temp, System.Drawing.Imaging.ImageFormat.Png, (int)box.Left, (int)box.Top, thumbnailWidth, thumbnailHeight);
+
+            using Stream imageStreamSource = new FileStream(temp, FileMode.Open, FileAccess.Read, FileShare.Read);
+            PngBitmapDecoder decoder = new PngBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+            BitmapSource bitmapSource = decoder.Frames[0];
+            int bitsPerPixel = bitmapSource.Format.BitsPerPixel;
+            int bytesPerPixel = bitsPerPixel / 8;
+            int size = bytesPerPixel * thumbnailWidth * thumbnailHeight;
+            var pixels = new byte[size];
+            int stride = thumbnailWidth * bytesPerPixel;
+
+            bitmapSource.CopyPixels(new Int32Rect(0, 0, thumbnailWidth, thumbnailHeight), pixels, stride, 0);
+
+            if (bitmapSource.Format == PixelFormats.Bgra32)
+            {
+                double r = 0, g = 0, b = 0;
+                var mask = bitmapSource.Format.Masks.FirstOrDefault();
+                for (int i = 0; i < size; i += bytesPerPixel)
+                {
+                    b += pixels[i];
+                    g += pixels[i + 1];
+                    r += pixels[i + 2];
+                }
+                double scale = thumbnailWidth * thumbnailHeight;
+                return System.Windows.Media.Color.FromRgb((byte)(r / scale), (byte)(g / scale), (byte)(b / scale));
+            }
+
+            throw new Exception("Unexpected image format...");
+        }
+
+        internal static Color Blend(Color a, Color b, double opacity)
+        {
+            var bopacity = 1 - opacity;
+            return Color.FromArgb(
+                (byte)((a.A * opacity) + (b.A * bopacity)),
+                (byte)((a.R * opacity) + (b.R * bopacity)),
+                (byte)((a.G * opacity) + (b.G * bopacity)),
+                (byte)((a.B * opacity) + (b.B * bopacity)));
+        }
+
+        internal static double ColorDistance(Color a, Color b)
+        {
+            return Math.Abs(a.R - b.R) + Math.Abs(a.G - b.G) + Math.Abs(a.B - b.B);
+        }
         #endregion 
     }
 }
