@@ -409,7 +409,6 @@ namespace ScenarioTest
             this.window.WaitForInputIdle(5000);
 
             this.sampleData = true;
-            this.WriteLine("dataChangedSinceExport reset because of AddSampleData");
             this.dataChangedSinceExport = true;
 
             // give database time to flush...
@@ -858,7 +857,6 @@ to make sure attachments work.");
                 int i = this.random.Next(0, topLevelCategories.Count);
                 categories.Select(topLevelCategories[i]);
                 this.window.WaitForInputIdle(500);
-                this.WriteLine("dataChangedSinceExport reset because of SelectCategory " + i);
                 this.dataChangedSinceExport = true;
             }
         }
@@ -904,7 +902,6 @@ to make sure attachments work.");
                 int i = this.random.Next(0, payees.Count);
                 payees.Select(i);
                 this.window.WaitForInputIdle(500);
-                this.WriteLine("dataChangedSinceExport reset because of SelectPayee " + i);
                 this.dataChangedSinceExport = true;
             }
         }
@@ -936,7 +933,6 @@ to make sure attachments work.");
                 int i = this.random.Next(0, securities.Count);
                 securities.Select(i);
                 this.window.WaitForInputIdle(500);
-                this.WriteLine("dataChangedSinceExport reset because of SelectSecurity " + i);
                 this.dataChangedSinceExport = true;
             }
         }
@@ -1003,7 +999,6 @@ to make sure attachments work.");
             var i = this.random.Next(0, this.accounts.Accounts.Count);
             this.accounts.SelectAccount(i);
             this.ClearTransactionViewState();
-            this.WriteLine("dataChangedSinceExport reset because of SelectAccount " + i);
             this.dataChangedSinceExport = true;
         }
         #endregion
@@ -1090,7 +1085,6 @@ to make sure attachments work.");
 
             var selection = this.transactions.AddNew();
             this.VerifySelection(selection);
-            this.WriteLine("dataChangedSinceExport reset because of AddNewTransaction");
             this.dataChangedSinceExport = true;
         }
 
@@ -1407,7 +1401,6 @@ to make sure attachments work.");
             this.VerifySelection(this.selectedTransaction);
             this.transactions.NavigateTransfer();
             this.selectedTransaction = this.transactions.Selection;
-            this.WriteLine("dataChangedSinceExport reset because of NavigateTransfer");
             this.dataChangedSinceExport = true;
         }
 
@@ -1588,19 +1581,7 @@ to make sure attachments work.");
             this.FocusTransactionView();
         }
 
-        private bool CanExportTransactions
-        {
-            get
-            {
-                if (this.dataChangedSinceExport && this.transactions != null)
-                {
-                    this.WriteLine("CanExportTransactions is true");
-                    return true;
-                }
-                this.WriteLine("CanExportTransactions is false");
-                return false;
-            }
-        }
+        private bool CanExportTransactions => this.dataChangedSinceExport && this.transactions != null;
 
         private void ExportCsv()
         {
@@ -1629,7 +1610,6 @@ to make sure attachments work.");
                 excel.Close();
 
                 // don't do this again until data changes.
-                this.WriteLine("dataChangedSinceExport false because of export");
                 this.dataChangedSinceExport = false;
             }
         }
