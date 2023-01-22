@@ -181,18 +181,44 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
+        public int GetRowIndex(AutomationElement row)
+        {
+            ScrollItemPattern scroll = (ScrollItemPattern)row.GetCurrentPattern(ScrollItemPattern.Pattern);
+            scroll.ScrollIntoView();
+
+            int index = 0;
+            foreach (AutomationElement e in this.control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
+            {
+                if (e.Current.Name == "Walkabout.Data.Transaction" || e.Current.Name == "{NewItemPlaceholder}")
+                {
+                    if (e == row)
+                    {
+                        return index;
+                    }
+                    index++;
+                }
+            }
+
+            throw new Exception("Cannot find the specified row");
+        }
+
         public List<TransactionViewRow> GetItems(bool includePlaceHolder = true)
         {
             List<TransactionViewRow> list = new List<TransactionViewRow>();
+            int index = 0;
             foreach (AutomationElement e in this.control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
             {
                 if (e.Current.Name == "Walkabout.Data.Transaction")
                 {
-                    list.Add(new TransactionViewRow(this, e));
+                    list.Add(new TransactionViewRow(this, e, index++));
                 }
-                else if (e.Current.Name == "{NewItemPlaceholder}" && includePlaceHolder)
+                else if (e.Current.Name == "{NewItemPlaceholder}")
                 {
-                    list.Add(new TransactionViewRow(this, e));
+                    if (includePlaceHolder)
+                    {
+                        list.Add(new TransactionViewRow(this, e, index));
+                    }
+                    index++;
                 }
             }
             return list;
@@ -201,15 +227,16 @@ namespace Walkabout.Tests.Wrappers
         public TransactionViewRow GetNewRow()
         {
             TransactionViewRow lastrow = null;
+            int index = 0;
             foreach (AutomationElement e in this.control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
             {
                 if (e.Current.Name == "Walkabout.Data.Transaction")
                 {
-                    lastrow = new TransactionViewRow(this, e);
+                    lastrow = new TransactionViewRow(this, e, index++);
                 }
                 else if (e.Current.Name == "{NewItemPlaceholder}")
                 {
-                    lastrow = new TransactionViewRow(this, e);
+                    lastrow = new TransactionViewRow(this, e, index++);
                     break;
                 }
             }
@@ -246,7 +273,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 SelectionPattern selection = (SelectionPattern)this.control.GetCurrentPattern(SelectionPattern.Pattern);
                 AutomationElement[] selected = selection.Current.GetSelection();
-                return (selected == null || selected.Length == 0) ? null : new TransactionViewRow(this, selected[0]);
+                return (selected == null || selected.Length == 0) ? null : new TransactionViewRow(this, selected[0], GetRowIndex(selected[0]));
             }
         }
 
@@ -430,11 +457,13 @@ namespace Walkabout.Tests.Wrappers
     {
         private readonly TransactionViewWrapper view;
         private readonly AutomationElement item;
+        private readonly int index;
 
-        public TransactionViewRow(TransactionViewWrapper view, AutomationElement item)
+        public TransactionViewRow(TransactionViewWrapper view, AutomationElement item, int index)
         {
             this.view = view;
             this.item = item;
+            this.index = index;
         }
 
         public AutomationElement Element { get { return this.item; } }
@@ -775,6 +804,10 @@ namespace Walkabout.Tests.Wrappers
             else if (this.IsSelected)
             {
                 return this.view.Selection;
+            }
+            else if (this.item.Current.BoundingRectangle.IsEmpty)
+            {
+                return this.view.Select(this.index);
             }
             // shouldn't need refreshing then.
             return this;

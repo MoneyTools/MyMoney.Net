@@ -1053,6 +1053,7 @@ to make sure attachments work.");
             Thread.Sleep(30);
             selection.Focus();
             this.selectedTransaction = selection;
+            this.VerifySelection(this.selectedTransaction);
         }
 
 
@@ -1094,15 +1095,20 @@ to make sure attachments work.");
             this.dataChangedSinceExport = true;
         }
 
-        private void VerifySelection(TransactionViewRow selection)
+        private TransactionViewRow VerifySelection(TransactionViewRow selection)
         {
-            selection.Select();
-
             // Sometimes AddNew results in an editable row, but with no selection
             // So we read the screen to figure out if this is happening here.
             for (int retries = 5; retries > 0; retries--)
             {
+                selection.Select();
                 var bounds = selection.Bounds;
+                if (bounds.IsEmpty)
+                {
+                    selection = selection.Refresh();
+                }
+
+                bounds = selection.Bounds;
                 var color = ScreenReader.GetAverageColor(new Rect(bounds.Left, bounds.Top, 10, 10));
                 var background = ScreenReader.GetAverageColor(new Rect(bounds.Right - 10, bounds.Top, 10, 10));
 
@@ -1130,7 +1136,7 @@ to make sure attachments work.");
                         this.WriteLine("Corrected missing row selection.");
                     }
                     // all good then!
-                    return;
+                    return selection;
                 }
             }
 
@@ -1185,7 +1191,6 @@ to make sure attachments work.");
                     throw new Exception("Cannot find any transaction to select!");
                 }
             }
-
         }
 
 
@@ -1225,8 +1230,18 @@ to make sure attachments work.");
             this.selectedTransaction.SetSalesTax(0);
             this.selectedTransaction.SetAmount(this.GetRandomDecimal(-500, 500));
             this.selectedTransaction.CommitEdit();
-            // bugbug: seems to need some time to settle before NavigateTransfer.
+            // commit can re-sort the location of the transaction.
             Thread.Sleep(50);
+
+            var selection = this.VerifySelection(this.selectedTransaction);
+            if (selection == null || selection.Bounds.IsEmpty)
+            {
+                this.WriteLine("Bummer...it moved, so we can't navigate this transfer");
+            }
+            this.selectedTransaction = selection;
+
+            this.AssertSelectedTransaction();
+
         }
 
         private bool RandomBoolean
@@ -1411,12 +1426,13 @@ to make sure attachments work.");
 
         private void NavigateTransfer()
         {
-            this.WriteLine("NavigateTransfer");
-            this.AssertSelectedTransaction();
-            this.VerifySelection(this.selectedTransaction);
-            this.transactions.NavigateTransfer();
-            this.selectedTransaction = this.transactions.Selection;
-            this.dataChangedSinceExport = true;
+            if (this.selectedTransaction != null)
+            {
+                this.WriteLine("NavigateTransfer");
+                this.transactions.NavigateTransfer();
+                this.selectedTransaction = this.transactions.Selection;
+                this.dataChangedSinceExport = true;
+            }
         }
 
         private void AreEqual(string expected, string actual, string name)
