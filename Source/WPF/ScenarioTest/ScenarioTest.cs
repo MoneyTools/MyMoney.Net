@@ -1184,21 +1184,26 @@ to make sure attachments work.");
             get
             {
                 AccountsWrapper accounts = this.window.ViewAccounts();
-                return accounts.Accounts.Count > 1 && this.transactions != null && this.transactions.IsBankAccount;
+                return accounts.Accounts.Count > 1 && accounts.Selection != null &&
+                    this.transactions != null && this.transactions.IsBankAccount;
             }
         }
 
         private void AddTransfer()
         {
             this.WriteLine("AddTransfer");
+
             AccountsWrapper accounts = this.window.ViewAccounts();
-            List<string> names = accounts.Accounts;
             string sel = accounts.SelectedAccount;
-            if (sel != null)
+            if (sel == null)
             {
-                names.Remove(sel);
+                // probably have selected an account type, like "Banking" or "Credit" so this is not a place
+                // we can add a transfer.
+                return;
             }
-            if (names.Count == 0 || sel == null)
+            List<string> names = accounts.Accounts;
+            names.Remove(sel);
+            if (names.Count == 0)
             {
                 throw new Exception("There is a bug in the model, it should not have attempted to add a transfer at this time since there are not enough accounts");
             }
