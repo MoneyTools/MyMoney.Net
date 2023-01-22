@@ -262,6 +262,8 @@ namespace ScenarioTest
                 }
                 this.isLoaded = false; // stop us from exiting until dialog is fulfilled.
             }
+
+            this.createNewDatabaseDialog.WaitForInteractive();
             this.creationTime = this.model.StatesExecuted;
         }
 
@@ -398,6 +400,7 @@ namespace ScenarioTest
             if (child != null)
             {
                 SampleDataDialogWrapper cd = new SampleDataDialogWrapper(child);
+                cd.WaitForInteractive();
                 cd.ClickOk();
             }
 
@@ -491,6 +494,7 @@ namespace ScenarioTest
         {
             this.WriteLine("DownloadAccounts");
             this.onlineAccounts = this.window.DownloadAccounts();
+            this.onlineAccounts.WaitForInteractive();
         }
 
         internal bool NoAccountsDownloaded
@@ -579,6 +583,7 @@ namespace ScenarioTest
                 if (challenge.Current.Name.Contains("Multi"))
                 {
                     this.challengeDialog = new PasswordDialogWrapper(challenge);
+                    this.challengeDialog.WaitForInteractive();
                 }
                 else if (mfa)
                 {
@@ -741,6 +746,7 @@ namespace ScenarioTest
             this.WriteLine("OpenAttachmentDialog");
             this.EnsureSelectedTransaction();
             this.attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
+            this.attachmentDialog.WaitForInteractive();
         }
 
         private void PasteImageAttachment()
@@ -1602,6 +1608,7 @@ to make sure attachments work.");
                 if (child != null)
                 {
                     SaveAsDialogWrapper sd = new SaveAsDialogWrapper(child);
+                    sd.WaitForInteractive();
                     sd.SetFileName(name);
                     sd.ClickSave();
                 }

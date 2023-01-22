@@ -77,6 +77,26 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
+        public void WaitForInteractive()
+        {
+            if (this.window == null)
+            {
+                throw new Exception("No dialog found");
+            }
+
+            WaitForInputIdle(500);
+            for (int retries = 5; retries > 0; retries--)
+            {
+                if (this.IsInteractive)
+                {
+                    return;
+                }
+                Thread.Sleep(50);
+            }
+
+            throw new Exception($"Dialog state '{this.State}' is not changing to Interactive");
+        }
+
         private WindowInteractionState State
         {
             get

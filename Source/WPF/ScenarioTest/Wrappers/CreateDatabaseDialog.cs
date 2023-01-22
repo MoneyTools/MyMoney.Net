@@ -3,13 +3,10 @@ using Walkabout.Tests.Interop;
 
 namespace Walkabout.Tests.Wrappers
 {
-    internal class CreateDatabaseDialogWrapper
+    internal class CreateDatabaseDialogWrapper : DialogWrapper
     {
-        private readonly AutomationElement window;
-
-        private CreateDatabaseDialogWrapper(AutomationElement e)
+        private CreateDatabaseDialogWrapper(AutomationElement e) : base(e)
         {
-            this.window = e;
         }
 
         public static CreateDatabaseDialogWrapper FindCreateDatabaseDialogWindow(int processId, int retries, bool throwIfNotFound)
