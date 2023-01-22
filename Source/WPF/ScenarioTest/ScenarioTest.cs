@@ -1112,6 +1112,10 @@ to make sure attachments work.");
 
                 var accentDiff = ScreenReader.ColorDistance(expected, color);
                 var backgroundDiff = ScreenReader.ColorDistance(background, color);
+
+                this.WriteLine($"Screen color {color}, background {background}, accent {expected}");
+                this.WriteLine($"Accent diff {accentDiff}, background diff {backgroundDiff}");
+
                 if (accentDiff > backgroundDiff)
                 {
                     this.WriteLine("Correcting missing row selection...");
