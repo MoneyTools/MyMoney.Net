@@ -2102,7 +2102,7 @@ namespace Walkabout
                 this.canSave = false;
                 try
                 {
-                    this.LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
+                    this.LoadDatabase(null, frm.Database, null, frm.Password, null);
                 }
                 catch (Exception ex)
                 {
@@ -2175,7 +2175,7 @@ namespace Walkabout
             {
                 try
                 {
-                    this.LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
+                    this.LoadDatabase(null, frm.Database, null, frm.Password, null);
                     this.CreateAttachmentDirectory();
                     this.CreateStatementsDirectory();
                 }
@@ -3985,43 +3985,6 @@ namespace Walkabout
                 path = Path.Combine(backupPath, filename);
             }
             return path;
-        }
-
-        private void OnCommandRestore(object sender, ExecutedRoutedEventArgs e)
-        {
-            CreateDatabaseDialog frm = this.InitializeCreateDatabaseDialog();
-            frm.BackupPath = this.GetBackupPath();
-            frm.Mode = ConnectMode.Restore;
-            frm.Owner = this;
-            if (frm.ShowDialog() == true)
-            {
-                try
-                {
-                    this.Cursor = Cursors.Wait;
-
-                    if (File.Exists(frm.Database))
-                    {
-                        if (MessageBoxEx.Show(string.Format("Are you sure you want to replace the exising data in '{0}' with the backup data in '{1}'", frm.Database, frm.BackupPath), "Delete Existing File", MessageBoxButton.OKCancel, MessageBoxImage.Hand) != MessageBoxResult.OK)
-                        {
-                            return;
-                        }
-                    }
-
-                    SqliteDatabase.Restore(frm.BackupPath, frm.Database, frm.Password);
-
-                    // Now load it into memory and make sure tables are up to date in case anything changed since the backup was created.
-                    this.LoadDatabase(null, frm.Database, null, frm.Password, frm.BackupPath);
-                    this.CreateAttachmentDirectory();
-                }
-                catch (Exception ex)
-                {
-                    MessageBoxEx.Show(ex.Message, "Restore Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                finally
-                {
-                    this.Cursor = Cursors.Arrow;
-                }
-            }
         }
 
         private void OnCommandRevertChanges(object sender, ExecutedRoutedEventArgs e)

@@ -97,24 +97,17 @@ namespace Walkabout.Data
                                                              initVectorBytes);
 
 
-
-            // Define memory stream which will be used to hold encrypted data.
-            FileStream fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None);
-
-            using (FileStream input = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.None))
+            using (FileStream outputStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                // Define cryptographic stream (always use Read mode for encryption).
-                CryptoStream cryptoStream = new CryptoStream(input,
-                                                              decryptor,
-                                                              CryptoStreamMode.Read);
-
-                CopyStream(cryptoStream, fileStream);
-
-                cryptoStream.Close();
+                using (FileStream input = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    // Define cryptographic stream (always use Read mode for encryption).
+                    using (CryptoStream cryptoStream = new CryptoStream(input, decryptor, CryptoStreamMode.Read))
+                    {
+                        CopyStream(cryptoStream, outputStream);
+                    }
+                }
             }
-
-            // Close both streams.
-            fileStream.Close();
         }
 
 

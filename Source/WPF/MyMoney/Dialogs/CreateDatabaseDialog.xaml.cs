@@ -31,9 +31,6 @@ namespace Walkabout.Dialogs
             this.InitializeComponent();
             this.EnableControls();
             this.TextBoxSqliteDatabaseFile.Text = System.IO.Path.Combine(this.DefaultPath, Environment.UserName + Walkabout.Data.SqliteDatabase.OfficialSqliteFileExtension);
-
-            this.HideBackupPrompt();
-
         }
 
         public ConnectMode Mode
@@ -47,34 +44,13 @@ namespace Walkabout.Dialogs
                     case ConnectMode.Create:
                         this.Title = "Create Database";
                         this.ButtonCreate.Content = "_Create";
-                        this.HideBackupPrompt();
                         break;
                     case ConnectMode.Connect:
                         this.Title = "Connect Database";
                         this.ButtonCreate.Content = "_Connect";
-                        this.HideBackupPrompt();
-                        break;
-                    case ConnectMode.Restore:
-                        this.Title = "Restore Database";
-                        this.ButtonCreate.Content = "_Restore";
-                        this.ShowBackupPrompt();
                         break;
                 }
             }
-        }
-
-        private void ShowBackupPrompt()
-        {
-            this.TextBlockSqliteBackupPrompt.Visibility = Visibility.Visible;
-            this.TextBoxSqliteBackup.Visibility = Visibility.Visible;
-            this.ButtonSqliteBrowseBackup.Visibility = Visibility.Visible;
-        }
-
-        private void HideBackupPrompt()
-        {
-            this.TextBlockSqliteBackupPrompt.Visibility = Visibility.Collapsed;
-            this.TextBoxSqliteBackup.Visibility = Visibility.Collapsed;
-            this.ButtonSqliteBrowseBackup.Visibility = Visibility.Collapsed;
         }
 
         public string Database
@@ -151,25 +127,11 @@ namespace Walkabout.Dialogs
                             }
                             File.Delete(this.Database);
                         }
-                        var sql = new SqliteDatabase()
-                        {
-                            DatabasePath = Database,
-                            Password = Password
-                        };
-                        sql.Create();
-                        result = true;
                         break;
                     case ConnectMode.Connect:
                         if (File.Exists(this.Database) == false)
                         {
                             MessageBoxEx.Show("The file doesn't exist.  In order to open a database you must specify a SQL Lite database file that exists", "Restore Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
-                        break;
-                    case ConnectMode.Restore:
-                        if (File.Exists(this.Database) == false)
-                        {
-                            MessageBoxEx.Show("The file doesn't exist.  In order to restore the database you must specify a SQL Lite backup file that exists", "Restore Error", MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
                         }
                         break;
@@ -215,10 +177,6 @@ namespace Walkabout.Dialogs
             if (string.IsNullOrEmpty(this.TextBoxSqliteDatabaseFile.Text) == false)
             {
                 okEnabled = true;
-            }
-            if (this.Mode == ConnectMode.Restore && !File.Exists(this.TextBoxSqliteBackup.Text))
-            {
-                okEnabled = false;
             }
             if (this.Mode == ConnectMode.Create)
             {
@@ -270,36 +228,6 @@ namespace Walkabout.Dialogs
             }
             fd.RestoreDirectory = true;
             return fd;
-        }
-
-        public string BackupPath
-        {
-            get
-            {
-                return this.TextBoxSqliteBackup.Text;
-            }
-            set
-            {
-                this.TextBoxSqliteBackup.Text = value;
-            }
-        }
-
-        private void ButtonSqliteBrowseBackup_Click(object sender, RoutedEventArgs e)
-        {
-            // Restore SQL CE database from a backup.
-            OpenFileDialog fd = this.InitializeOpenFileDialog("Restore Database", Properties.Resources.MoneySQLLiteFileFilter);
-            if (!string.IsNullOrEmpty(this.BackupPath))
-            {
-                fd.InitialDirectory = System.IO.Path.GetDirectoryName(this.BackupPath);
-            }
-            if (fd.ShowDialog(this) != true)
-            {
-                return;
-            }
-            if (this.VerifyFileName(fd.FileName))
-            {
-                this.BackupPath = fd.FileName;
-            }
         }
 
         private void ButtonSqliteBrowse_Click(object sender, RoutedEventArgs e)

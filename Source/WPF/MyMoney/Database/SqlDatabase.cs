@@ -29,8 +29,7 @@ namespace Walkabout.Data
     public enum ConnectMode
     {
         Create,
-        Connect,
-        Restore
+        Connect
     }
 
     public static class DatabaseSecurity

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Windows.Automation;
+﻿using System.Windows.Automation;
 using Walkabout.Tests.Interop;
 
 namespace Walkabout.Tests.Wrappers
@@ -69,15 +67,13 @@ namespace Walkabout.Tests.Wrappers
 
         internal void CreateXmlDatabase(string databasePath)
         {
-            this.SelectTab("UseXmlTab");
-            this.SetTextBox("TextBoxXmlFile", databasePath);
+            this.SetTextBox("TextBoxSqliteDatabaseFile", databasePath);
             this.ClickButton("ButtonCreate");
         }
 
         internal void CreateBinaryXmlDatabase(string databasePath)
         {
-            this.SelectTab("UseBinaryXmlTab");
-            this.SetTextBox("TextBoxBinaryXmlFile", databasePath);
+            this.SetTextBox("TextBoxSqliteDatabaseFile", databasePath);
             this.ClickButton("ButtonCreate");
         }
 
@@ -90,17 +86,6 @@ namespace Walkabout.Tests.Wrappers
             }
             InvokePattern invoke = (InvokePattern)tab.GetCurrentPattern(InvokePattern.Pattern);
             invoke.Invoke();
-        }
-
-        private void SelectTab(string name)
-        {
-            AutomationElement tab = this.window.FindFirstWithRetries(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, name));
-            if (tab == null)
-            {
-                throw new Exception("Tab '" + name + "' not found");
-            }
-            SelectionItemPattern selectionItem = (SelectionItemPattern)tab.GetCurrentPattern(SelectionItemPattern.Pattern);
-            selectionItem.Select();
         }
 
         private bool IsControlEnabled(string name)

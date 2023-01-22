@@ -13,10 +13,25 @@ using Walkabout.Tests.Interop;
 using Walkabout.Tests.Wrappers;
 using Brushes = System.Windows.Media.Brushes;
 using Clipboard = System.Windows.Clipboard;
-using Color = System.Windows.Media.Color;
 
 namespace ScenarioTest
 {
+    [SetUpFixture]
+    public class SetupTrace
+    {
+        [OneTimeSetUp]
+        public void StartTest()
+        {
+            Trace.Listeners.Add(new ConsoleTraceListener());
+        }
+
+        [OneTimeTearDown]
+        public void EndTest()
+        {
+            Trace.Flush();
+        }
+    }
+
     public class Tests
     {
         private static Process testProcess;
@@ -59,7 +74,7 @@ namespace ScenarioTest
 
         void WriteLine(string msg)
         {
-            Debug.WriteLine(msg);
+            Trace.WriteLine(msg);
         }
 
         [Test]
@@ -101,7 +116,7 @@ namespace ScenarioTest
             catch (Exception ex)
             {
                 testError = ex;
-                string temp = Path.GetTempPath() + "\\Screen.png";
+                string temp = Path.Combine(Path.GetTempPath(), "Screen.png");
                 Win32.CapturePrimaryScreen(temp, System.Drawing.Imaging.ImageFormat.Png);
                 this.WriteLine("ScreenCapture: " + temp);
             }
@@ -155,6 +170,7 @@ namespace ScenarioTest
 
         private void Start()
         {
+            this.WriteLine("Start");
             if (testProcess == null)
             {
                 this.EnsureCleanState();
@@ -233,6 +249,7 @@ namespace ScenarioTest
 
         private void CreateNewDatabase()
         {
+            this.WriteLine("CreateNewDatabase");
             this.createNewDatabaseDialog = CreateDatabaseDialogWrapper.FindCreateDatabaseDialogWindow(testProcess.Id, 1, false);
             if (this.createNewDatabaseDialog == null)
             {
@@ -250,6 +267,7 @@ namespace ScenarioTest
 
         private void EnterCreateDatabase()
         {
+            this.WriteLine("EnterCreateDatabase");
             this.ClearTransactionViewState();
             this.window.CloseReport();
             this.hasOnlineAccounts = false;
@@ -264,17 +282,30 @@ namespace ScenarioTest
             {
                 if (database != null)
                 {
-                    try
-                    {
-                        database.Delete();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("### Error deleting database: " + ex.Message);
-                    }
+                    DeleteDatabase(database);
                 }
                 database = value;
             }
+        }
+
+        private static void DeleteDatabase(IDatabase database)
+        {
+            Exception error = null;
+            for (int retries = 5; retries > 0; retries--)
+            {
+                try
+                {
+                    database.Delete();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    error = ex;
+                    Thread.Sleep(100);
+                }
+            }
+
+            Console.WriteLine("### Error deleting database: " + error.Message);
         }
 
         private MyMoney Load()
@@ -306,6 +337,7 @@ namespace ScenarioTest
 
         private void CreateSqliteDatabase()
         {
+            this.WriteLine("CreateSqliteDatabase");
             string databasePath = this.GetFreeDatabase("TestDatabase{0}.mmdb");
             this.createNewDatabaseDialog.CreateSqliteDatabase(databasePath);
             this.isLoaded = true;
@@ -315,6 +347,7 @@ namespace ScenarioTest
 
         private void CreateXmlDatabase()
         {
+            this.WriteLine("CreateXmlDatabase");
             databasePath = this.GetFreeDatabase("TestDatabase{0}.xml");
             this.DeleteFileWithRetries(databasePath, 1);
             this.createNewDatabaseDialog.CreateXmlDatabase(databasePath);
@@ -325,6 +358,7 @@ namespace ScenarioTest
 
         private void CreateBinaryXmlDatabase()
         {
+            this.WriteLine("CreateBinaryXmlDatabase");
             databasePath = this.GetFreeDatabase("TestDatabase.bxml");
             this.DeleteFileWithRetries(databasePath, 1);
             this.createNewDatabaseDialog.CreateBinaryXmlDatabase(databasePath);
@@ -349,6 +383,7 @@ namespace ScenarioTest
 
         private void AddSampleData()
         {
+            this.WriteLine("AddSampleData");
             ContextMenu subMenu = this.window.MainMenu.OpenSubMenu("MenuHelp");
             subMenu.InvokeMenuItem("MenuSampleData");
 
@@ -374,7 +409,7 @@ namespace ScenarioTest
             this.window.WaitForInputIdle(5000);
 
             this.sampleData = true;
-            Debug.WriteLine("dataChangedSinceExport reset because of AddSampleData");
+            this.WriteLine("dataChangedSinceExport reset because of AddSampleData");
             this.dataChangedSinceExport = true;
 
             // give database time to flush...
@@ -432,6 +467,7 @@ namespace ScenarioTest
 
         private void Save()
         {
+            this.WriteLine("Save");
             this.window.Save();
         }
 
@@ -452,12 +488,9 @@ namespace ScenarioTest
         }
 
 
-        private void EnterDownloadedAccounts()
-        {
-        }
-
         private void DownloadAccounts()
         {
+            this.WriteLine("DownloadAccounts");
             this.onlineAccounts = this.window.DownloadAccounts();
         }
 
@@ -479,6 +512,7 @@ namespace ScenarioTest
 
         internal void ConnectToBank()
         {
+            this.WriteLine("ConnectToBank");
             this.onlineAccounts.WaitForGetBankList();
 
             for (int retries = 5; retries > 0; retries--)
@@ -512,6 +546,7 @@ namespace ScenarioTest
 
         internal void SignOnToBank()
         {
+            this.WriteLine("SignOnToBank");
             this.ofxServerWindow.UserName = this.passwordDialog.UserName = "test";
             this.ofxServerWindow.Password = this.passwordDialog.Password = "1234";
 
@@ -559,6 +594,7 @@ namespace ScenarioTest
 
         internal void AnswerChallenge()
         {
+            this.WriteLine("AnswerChallenge");
             this.challengeDialog.SetUserDefinedField("MFA13", "1234");
             this.challengeDialog.SetUserDefinedField("123", "Newcastle");
             this.challengeDialog.SetUserDefinedField("MFA16", "HigginBothum");
@@ -569,6 +605,7 @@ namespace ScenarioTest
 
         internal void AddOnlineAccounts()
         {
+            this.WriteLine("AddOnlineAccounts");
             for (int retries = 5; retries > 0; retries--)
             {
                 foreach (var item in this.onlineAccounts.GetOnlineAccounts())
@@ -603,6 +640,7 @@ namespace ScenarioTest
 
         internal void DismissOnlineAccounts()
         {
+            this.WriteLine("DismissOnlineAccounts");
             this.onlineAccounts.ClickOk();
         }
 
@@ -613,15 +651,18 @@ namespace ScenarioTest
 
         internal void DownloadTransactions()
         {
+            this.WriteLine("DownloadTransactions");
         }
 
         internal void Synchronize()
         {
+            this.WriteLine("Synchronize");
             this.window.Synchronize();
         }
 
         internal void SelectDownloadTransactions()
         {
+            this.WriteLine("SelectDownloadTransactions");
             var charts = this.window.GetChartsArea();
             DownloadDetailsWrapper details = charts.SelectDownload();
 
@@ -648,28 +689,33 @@ namespace ScenarioTest
 
         internal void ViewCharts()
         {
+            this.WriteLine("ViewCharts");
         }
 
         internal void ViewTrends()
         {
+            this.WriteLine("ViewTrends");
             var charts = this.window.GetChartsArea();
             charts.SelectTrends();
         }
 
         internal void ViewIncomes()
         {
+            this.WriteLine("ViewIncomes");
             var charts = this.window.GetChartsArea();
             charts.SelectIncomes();
         }
 
         internal void ViewExpenses()
         {
+            this.WriteLine("ViewExpenses");
             var charts = this.window.GetChartsArea();
             charts.SelectExpenses();
         }
 
         internal void ViewStock()
         {
+            this.WriteLine("ViewStock");
             if (this.IsSecuritySelected)
             {
                 var charts = this.window.GetChartsArea();
@@ -678,6 +724,7 @@ namespace ScenarioTest
         }
         internal void ViewHistory()
         {
+            this.WriteLine("ViewHistory");
             if (this.window.IsCategorySelected || this.window.IsPayeeSelected)
             {
                 var charts = this.window.GetChartsArea();
@@ -692,12 +739,14 @@ namespace ScenarioTest
 
         private void OpenAttachmentDialog()
         {
+            this.WriteLine("OpenAttachmentDialog");
             this.EnsureSelectedTransaction();
             this.attachmentDialog = this.selectedTransaction.ClickAttachmentsButton();
         }
 
         private void PasteImageAttachment()
         {
+            this.WriteLine("PasteImageAttachment");
             Assert.IsNotNull(this.attachmentDialog);
 
             var border = new System.Windows.Controls.Border()
@@ -743,18 +792,21 @@ namespace ScenarioTest
 
         private void RotateAttachmentRight()
         {
+            this.WriteLine("RotateAttachmentRight");
             Assert.IsNotNull(this.attachmentDialog);
             this.attachmentDialog.ClickRotateRight();
         }
 
         private void RotateAttachmentLeft()
         {
+            this.WriteLine("RotateAttachmentLeft");
             Assert.IsNotNull(this.attachmentDialog);
             this.attachmentDialog.ClickRotateLeft();
         }
 
         private void PasteTextAttachment()
         {
+            this.WriteLine("PasteTextAttachment");
             Assert.IsNotNull(this.attachmentDialog);
 
             Clipboard.Clear();
@@ -774,6 +826,7 @@ to make sure attachments work.");
 
         private void CloseAttachmentDialog()
         {
+            this.WriteLine("CloseAttachmentDialog");
             Assert.IsNotNull(this.attachmentDialog);
             this.attachmentDialog.Close();
             this.attachmentDialog = null;
@@ -785,6 +838,7 @@ to make sure attachments work.");
 
         private void ViewCategories()
         {
+            this.WriteLine("ViewCategories");
             this.window.ViewCategories();
         }
 
@@ -795,6 +849,7 @@ to make sure attachments work.");
 
         private void SelectCategory()
         {
+            this.WriteLine("SelectCategory");
             CategoriesWrapper categories = this.window.ViewCategories();
 
             List<AutomationElement> topLevelCategories = categories.Categories;
@@ -803,7 +858,7 @@ to make sure attachments work.");
                 int i = this.random.Next(0, topLevelCategories.Count);
                 categories.Select(topLevelCategories[i]);
                 this.window.WaitForInputIdle(500);
-                Debug.WriteLine("dataChangedSinceExport reset because of SelectCategory " + i);
+                this.WriteLine("dataChangedSinceExport reset because of SelectCategory " + i);
                 this.dataChangedSinceExport = true;
             }
         }
@@ -828,6 +883,7 @@ to make sure attachments work.");
         #region Payees
         private void ViewPayees()
         {
+            this.WriteLine("ViewPayees");
             this.window.ViewPayees();
         }
 
@@ -841,13 +897,14 @@ to make sure attachments work.");
 
         private void SelectPayee()
         {
+            this.WriteLine("SelectPayee");
             PayeesWrapper payees = this.window.ViewPayees();
             if (payees.Count > 0)
             {
                 int i = this.random.Next(0, payees.Count);
                 payees.Select(i);
                 this.window.WaitForInputIdle(500);
-                Debug.WriteLine("dataChangedSinceExport reset because of SelectPayee " + i);
+                this.WriteLine("dataChangedSinceExport reset because of SelectPayee " + i);
                 this.dataChangedSinceExport = true;
             }
         }
@@ -858,6 +915,7 @@ to make sure attachments work.");
 
         private void ViewSecurities()
         {
+            this.WriteLine("ViewSecurities");
             this.window.ViewSecurities();
         }
 
@@ -871,13 +929,14 @@ to make sure attachments work.");
 
         private void SelectSecurity()
         {
+            this.WriteLine("SelectSecurity");
             SecuritiesWrapper securities = this.window.ViewSecurities();
             if (securities.Count > 0)
             {
                 int i = this.random.Next(0, securities.Count);
                 securities.Select(i);
                 this.window.WaitForInputIdle(500);
-                Debug.WriteLine("dataChangedSinceExport reset because of SelectSecurity " + i);
+                this.WriteLine("dataChangedSinceExport reset because of SelectSecurity " + i);
                 this.dataChangedSinceExport = true;
             }
         }
@@ -889,7 +948,7 @@ to make sure attachments work.");
 
         private void ViewAccounts()
         {
-            this.accounts = this.window.ViewAccounts();
+            this.WriteLine("ViewAccounts");
         }
 
         private void EnterAccounts()
@@ -917,6 +976,7 @@ to make sure attachments work.");
 
         private void AddAccount()
         {
+            this.WriteLine("AddAccount");
             string type = AccountTypes[this.random.Next(0, AccountTypes.Length)];
             string name = (type == "Checking") ? "My Bank" : ((type == "Credit") ? "My Credit Card" : "My Investments");
             this.accounts.AddAccount(name, type);
@@ -925,6 +985,7 @@ to make sure attachments work.");
 
         private void DeleteAccount()
         {
+            this.WriteLine("DeleteAccount");
             int index = this.random.Next(0, this.accounts.Accounts.Count);
             this.accounts.Select(index);
             string name = this.accounts.SelectedAccount;
@@ -938,10 +999,11 @@ to make sure attachments work.");
 
         private void SelectAccount()
         {
+            this.WriteLine("SelectAccount");
             var i = this.random.Next(0, this.accounts.Accounts.Count);
             this.accounts.SelectAccount(i);
             this.ClearTransactionViewState();
-            Debug.WriteLine("dataChangedSinceExport reset because of SelectAccount " + i);
+            this.WriteLine("dataChangedSinceExport reset because of SelectAccount " + i);
             this.dataChangedSinceExport = true;
         }
         #endregion
@@ -959,6 +1021,7 @@ to make sure attachments work.");
 
         private void FocusTransactionView()
         {
+            this.WriteLine("FocusTransactionView");
             this.transactions = this.window.FindTransactionGrid();
             this.quickFilter = null;
             this.window.WaitForInputIdle(200);
@@ -974,6 +1037,7 @@ to make sure attachments work.");
 
         private void SelectTransaction()
         {
+            this.WriteLine("SelectTransaction");
             if (this.transactions == null || !this.transactions.HasTransactions)
             {
                 throw new Exception("Cannot select a transaction right now");
@@ -985,12 +1049,15 @@ to make sure attachments work.");
                 throw new Exception("Cannot select a transaction right now");
             }
             selection.ScrollIntoView();
+            Thread.Sleep(30);
             selection.Focus();
             this.selectedTransaction = selection;
         }
 
+
         private void SortByColumn()
         {
+            this.WriteLine("SortByColumn");
             // sort by a random column.
             if (this.transactions != null)
             {
@@ -1003,6 +1070,7 @@ to make sure attachments work.");
 
         private void DeleteSelectedTransaction()
         {
+            this.WriteLine("DeleteSelectedTransaction");
             if (this.transactions == null || !this.transactions.HasTransactions)
             {
                 throw new Exception("Cannot delete a transaction right now");
@@ -1014,6 +1082,7 @@ to make sure attachments work.");
 
         private void AddNewTransaction()
         {
+            this.WriteLine("AddNewTransaction");
             if (this.transactions == null)
             {
                 throw new Exception("Cannot edit a transaction right now");
@@ -1021,7 +1090,7 @@ to make sure attachments work.");
 
             var selection = this.transactions.AddNew();
             this.VerifySelection(selection);
-            Debug.WriteLine("dataChangedSinceExport reset because of AddNewTransaction");
+            this.WriteLine("dataChangedSinceExport reset because of AddNewTransaction");
             this.dataChangedSinceExport = true;
         }
 
@@ -1034,18 +1103,18 @@ to make sure attachments work.");
             for (int retries = 5; retries > 0; retries--)
             {
                 var bounds = selection.Bounds;
-                var color = Tests.GetAverageColor(new Rect(bounds.Left, bounds.Top, 10, 10));
-                var background = Tests.GetAverageColor(new Rect(bounds.Right - 10, bounds.Top, 10, 10));
+                var color = ScreenReader.GetAverageColor(new Rect(bounds.Left, bounds.Top, 10, 10));
+                var background = ScreenReader.GetAverageColor(new Rect(bounds.Right - 10, bounds.Top, 10, 10));
 
                 // List selection background is based on 60% blend with system accent color.
                 var systemAccent = System.Windows.SystemParameters.WindowGlassColor;
-                var expected = Tests.Blend(systemAccent, background, 0.6);
+                var expected = ScreenReader.Blend(systemAccent, background, 0.6);
 
-                var accentDiff = Tests.ColorDistance(expected, color);
-                var backgroundDiff = Tests.ColorDistance(background, color);
+                var accentDiff = ScreenReader.ColorDistance(expected, color);
+                var backgroundDiff = ScreenReader.ColorDistance(background, color);
                 if (accentDiff > backgroundDiff)
                 {
-                    Debug.WriteLine("Correcting missing row selection...");
+                    this.WriteLine("Correcting missing row selection...");
                     Input.MoveToAndLeftClick(new System.Windows.Point(bounds.Left + 2, bounds.Top + 2));
                     Thread.Sleep(50);
                     // try again to see if we fixed it...
@@ -1054,7 +1123,7 @@ to make sure attachments work.");
                 {
                     if (retries != 5)
                     {
-                        Debug.WriteLine("Corrected missing row selection.");
+                        this.WriteLine("Corrected missing row selection.");
                     }
                     // all good then!
                     return;
@@ -1066,6 +1135,7 @@ to make sure attachments work.");
 
         private void EditSelectedTransaction()
         {
+            this.WriteLine("EditSelectedTransaction");
             this.AssertSelectedTransaction();
             this.editedValues = new TransactionDetails();
             this.selectedTransaction.Focus();
@@ -1126,6 +1196,7 @@ to make sure attachments work.");
 
         private void AddTransfer()
         {
+            this.WriteLine("AddTransfer");
             AccountsWrapper accounts = this.window.ViewAccounts();
             List<string> names = accounts.Accounts;
             string sel = accounts.SelectedAccount;
@@ -1157,12 +1228,9 @@ to make sure attachments work.");
             }
         }
 
-        private void EnterNewTransaction()
-        {
-        }
-
         private void EditDate()
         {
+            this.WriteLine("EditDate");
             this.AssertSelectedTransaction();
             Assert.IsNotNull(this.editedValues);
             this.editedValues.Date = DateTime.Now.ToShortDateString();
@@ -1171,6 +1239,7 @@ to make sure attachments work.");
 
         private void EditPayee()
         {
+            this.WriteLine("EditPayee");
             this.AssertSelectedTransaction();
             Assert.IsNotNull(this.editedValues);
             this.editedValues.Payee = this.GetRandomPayee();
@@ -1189,6 +1258,7 @@ to make sure attachments work.");
 
         private void EditCategory()
         {
+            this.WriteLine("EditCategory");
             this.AssertSelectedTransaction();
             Assert.IsNotNull(this.editedValues);
             string cat = this.GetRandomCategory();
@@ -1219,6 +1289,7 @@ to make sure attachments work.");
 
         private void CategoryDetails()
         {
+            this.WriteLine("CategoryDetails");
             AutomationElement child = this.window.Element.FindChildWindow("Category", 4);
             if (child != null)
             {
@@ -1240,6 +1311,7 @@ to make sure attachments work.");
 
         private void EditMemo()
         {
+            this.WriteLine("EditMemo");
             this.AssertSelectedTransaction();
             Assert.IsNotNull(this.editedValues);
             this.editedValues.Memo = DateTime.Now.ToLongTimeString();
@@ -1248,6 +1320,7 @@ to make sure attachments work.");
 
         private void EditDeposit()
         {
+            this.WriteLine("EditDeposit");
             this.AssertSelectedTransaction();
             Assert.IsNotNull(this.editedValues);
             decimal amount = this.GetRandomDecimal(0, 10000);
@@ -1257,6 +1330,7 @@ to make sure attachments work.");
 
         private void EditPayment()
         {
+            this.WriteLine("EditPayment");
             this.AssertSelectedTransaction();
             Assert.IsNotNull(this.editedValues);
             decimal amount = -this.GetRandomDecimal(0, 10000);
@@ -1266,6 +1340,7 @@ to make sure attachments work.");
 
         private void EditSalesTax()
         {
+            this.WriteLine("EditSalesTax");
             this.AssertSelectedTransaction();
             Assert.IsNotNull(this.editedValues);
             decimal salesTax = this.GetRandomDecimal(0, 20);
@@ -1281,6 +1356,7 @@ to make sure attachments work.");
 
         private void VerifyNewTransaction()
         {
+            this.WriteLine("VerifyNewTransaction");
             this.AssertSelectedTransaction();
 
             var selection = this.selectedTransaction;
@@ -1326,11 +1402,12 @@ to make sure attachments work.");
 
         private void NavigateTransfer()
         {
+            this.WriteLine("NavigateTransfer");
             this.AssertSelectedTransaction();
             this.VerifySelection(this.selectedTransaction);
             this.transactions.NavigateTransfer();
             this.selectedTransaction = this.transactions.Selection;
-            Debug.WriteLine("dataChangedSinceExport reset because of NavigateTransfer");
+            this.WriteLine("dataChangedSinceExport reset because of NavigateTransfer");
             this.dataChangedSinceExport = true;
         }
 
@@ -1423,6 +1500,7 @@ to make sure attachments work.");
 
         private void SearchTransactionView()
         {
+            this.WriteLine("SearchTransactionView");
             if (this.transactions != null && this.quickFilter == null)
             {
                 this.quickFilter = this.window.Element.FindQuickFilter();
@@ -1450,6 +1528,7 @@ to make sure attachments work.");
 
         private void NetWorthReport()
         {
+            this.WriteLine("NetWorthReport");
             var report = this.window.NetWorthReport();
             var found = report.FindText("Net Worth");
             Assert.AreEqual("Net Worth Statement", found);
@@ -1458,6 +1537,7 @@ to make sure attachments work.");
 
         private void TaxReport()
         {
+            this.WriteLine("TaxReport");
             var report = this.window.TaxReport();
             var found = report.FindText("Tax");
             Assert.IsTrue(found.Contains("Tax Report"), "Tax Report heading not found");
@@ -1466,6 +1546,7 @@ to make sure attachments work.");
 
         private void PortfolioReport()
         {
+            this.WriteLine("PortfolioReport");
             var report = this.window.PortfolioReport();
             var found = report.FindText("Portfolio");
             Assert.AreEqual("Investment Portfolio Summary", found);
@@ -1474,6 +1555,7 @@ to make sure attachments work.");
 
         private void ChangeReportDate()
         {
+            this.WriteLine("ChangeReportDate");
             // can only happen right after one of the above reports is run, so this.report is set.
             var report = this.window.GetReport();
             Assert.IsNotNull(report);
@@ -1482,7 +1564,6 @@ to make sure attachments work.");
             var date = report.GetDate();
 
             date = date.AddYears(-1);
-            Debug.WriteLine("ChangeReportDate: " + date.ToShortDateString());
             report.SetDate(date);
 
             bool updated = false;
@@ -1513,14 +1594,17 @@ to make sure attachments work.");
             {
                 if (this.dataChangedSinceExport && this.transactions != null)
                 {
+                    this.WriteLine("CanExportTransactions is true");
                     return true;
                 }
+                this.WriteLine("CanExportTransactions is false");
                 return false;
             }
         }
 
         private void ExportCsv()
         {
+            this.WriteLine("ExportCsv");
             if (this.transactions != null)
             {
 
@@ -1545,7 +1629,7 @@ to make sure attachments work.");
                 excel.Close();
 
                 // don't do this again until data changes.
-                Debug.WriteLine("dataChangedSinceExport false");
+                this.WriteLine("dataChangedSinceExport false because of export");
                 this.dataChangedSinceExport = false;
             }
         }
@@ -1594,55 +1678,6 @@ to make sure attachments work.");
             return false;
         }
 
-        internal static Color GetAverageColor(Rect box)
-        {
-            var thumbnailWidth = (int)box.Width;
-            var thumbnailHeight = (int)box.Height;
-            string temp = Path.Combine(Path.GetTempPath(), "thumbnail.png");
-            Win32.CaptureScreenRect(temp, System.Drawing.Imaging.ImageFormat.Png, (int)box.Left, (int)box.Top, thumbnailWidth, thumbnailHeight);
-
-            using Stream imageStreamSource = new FileStream(temp, FileMode.Open, FileAccess.Read, FileShare.Read);
-            PngBitmapDecoder decoder = new PngBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-            BitmapSource bitmapSource = decoder.Frames[0];
-            int bitsPerPixel = bitmapSource.Format.BitsPerPixel;
-            int bytesPerPixel = bitsPerPixel / 8;
-            int size = bytesPerPixel * thumbnailWidth * thumbnailHeight;
-            var pixels = new byte[size];
-            int stride = thumbnailWidth * bytesPerPixel;
-
-            bitmapSource.CopyPixels(new Int32Rect(0, 0, thumbnailWidth, thumbnailHeight), pixels, stride, 0);
-
-            if (bitmapSource.Format == PixelFormats.Bgra32)
-            {
-                double r = 0, g = 0, b = 0;
-                var mask = bitmapSource.Format.Masks.FirstOrDefault();
-                for (int i = 0; i < size; i += bytesPerPixel)
-                {
-                    b += pixels[i];
-                    g += pixels[i + 1];
-                    r += pixels[i + 2];
-                }
-                double scale = thumbnailWidth * thumbnailHeight;
-                return System.Windows.Media.Color.FromRgb((byte)(r / scale), (byte)(g / scale), (byte)(b / scale));
-            }
-
-            throw new Exception("Unexpected image format...");
-        }
-
-        internal static Color Blend(Color a, Color b, double opacity)
-        {
-            var bopacity = 1 - opacity;
-            return Color.FromArgb(
-                (byte)((a.A * opacity) + (b.A * bopacity)),
-                (byte)((a.R * opacity) + (b.R * bopacity)),
-                (byte)((a.G * opacity) + (b.G * bopacity)),
-                (byte)((a.B * opacity) + (b.B * bopacity)));
-        }
-
-        internal static double ColorDistance(Color a, Color b)
-        {
-            return Math.Abs(a.R - b.R) + Math.Abs(a.G - b.G) + Math.Abs(a.B - b.B);
-        }
         #endregion 
     }
 }

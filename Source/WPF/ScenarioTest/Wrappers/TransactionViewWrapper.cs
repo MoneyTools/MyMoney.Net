@@ -1155,7 +1155,11 @@ namespace Walkabout.Tests.Wrappers
 
         internal void SetFocus()
         {
-            this.cell.SetFocus();
+            try
+            {
+                this.cell.SetFocus();
+            }
+            catch { }
         }
     }
 }

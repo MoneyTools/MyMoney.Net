@@ -215,7 +215,7 @@ namespace Walkabout.Data
                     path = tempPath;
                 }
 
-                using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
+                using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     using (GZipStream zip = new GZipStream(stream, CompressionMode.Decompress))
                     {

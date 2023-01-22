@@ -43,7 +43,6 @@
         <CommandBinding Command="p:AppCommands.CommandFileExtensionAssociation" Executed="OnCommandFileExtensionAssociation" />
         <CommandBinding Command="p:AppCommands.CommandFileAddUser" Executed="OnCommandFileAddUser" CanExecute="OnCommandCanExecuteAddUser" />
         <CommandBinding Command="p:AppCommands.CommandFileBackup" Executed="OnCommandBackup" />
-        <CommandBinding Command="p:AppCommands.CommandFileRestore" Executed="OnCommandRestore" />
         <CommandBinding Command="p:AppCommands.CommandRevertChanges" Executed="OnCommandRevertChanges" CanExecute="OnCommandCanRevert" />
         <CommandBinding Command="p:AppCommands.CommandOpenContainingFolder" Executed="OnCommandOpenContainingFolder" CanExecute="OnCommandCanOpenContainingFolder"/>
 
@@ -151,8 +150,6 @@
 
                         <Separator/>
                         <MenuItem x:Name="MenuFileAddUser" Header="Add _User..." Command="p:AppCommands.CommandFileAddUser"/>
-                        <MenuItem x:Name="MenuFileBackup" Header="_Backup..." Command="p:AppCommands.CommandFileBackup"/>
-                        <MenuItem x:Name="MenuFileRestore" Header="_Restore..." Command="p:AppCommands.CommandFileRestore"/>
                         <Separator/>
                         <MenuItem x:Name="MenuFileExit" Header="Exit" Command="Close"/>
                     </MenuItem>

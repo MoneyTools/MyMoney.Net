@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Windows.Automation;
+﻿using System.Windows.Automation;
 using Walkabout.Tests.Interop;
 
 namespace Walkabout.Tests.Wrappers
@@ -37,7 +35,7 @@ namespace Walkabout.Tests.Wrappers
 
             if (throwIfNotFound)
             {
-                throw new Exception("Excel window not found for name " + names);
+                throw new Exception("Excel window not found for names: " + string.Join(',', names));
             }
 
             return null;
