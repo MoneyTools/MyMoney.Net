@@ -163,7 +163,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock x:Name="SignupResultPrompt" Text="The following accounts were found online.  Click the icons to setup each account." Grid.Row="1" TextWrapping="Wrap"/>
+            <TextBlock x:Name="SignupResultPrompt" Text="The following accounts were found online.  Use the toggle buttons to select which accounts you want to connect, skip or disconnect." Grid.Row="1" TextWrapping="Wrap"/>
 
             <Grid Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="ScrollerGrid" MinWidth="400" >
                 <ListView x:Name="OnlineResultList"  HorizontalAlignment="Stretch" >

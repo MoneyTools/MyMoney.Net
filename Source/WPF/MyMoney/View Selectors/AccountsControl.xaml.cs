@@ -126,7 +126,7 @@ namespace Walkabout.Views.Controls
                 {
                     this.Selected = item;
                 }
-                else if (!this.DisplayClosedAccounts)
+                else if (!this.DisplayClosedAccounts && !value.IsDeleted)
                 {
                     this.DisplayClosedAccounts = true;
                     this.SelectedAccount = value;
