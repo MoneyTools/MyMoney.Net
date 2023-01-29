@@ -400,7 +400,7 @@ namespace Walkabout.Tests.Wrappers
                 }
 
                 Thread.Sleep(50);
-                Input.TapKey(System.Windows.Input.Key.F12);
+                Input.TapKey(Key.F12);
                 // key sending is completely async, so we have to give it time to arrive and be processed.
                 Thread.Sleep(50);
 

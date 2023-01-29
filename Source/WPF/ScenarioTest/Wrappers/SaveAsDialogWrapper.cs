@@ -16,36 +16,17 @@ namespace Walkabout.Tests.Wrappers
 
         public void ClickSave()
         {
-            this.window.ClickButton("1");
-            try
+            this.WaitForInputIdle(100);
+            this.WaitForInteractive();
+
+            var saveButton = this.window.FindFirst(TreeScope.Children,
+                new PropertyCondition(AutomationElement.NameProperty, "Save"));
+            if (saveButton != null && saveButton.TryGetCurrentPattern(InvokePattern.Pattern, out object o) &&
+                o is InvokePattern ip)
             {
-                if (!this.window.Current.IsOffscreen)
-                {
-                    this.WaitForInputIdle(100);
-                    for (int retries = 5; retries > 0 &&
-                        !this.window.Current.IsOffscreen; retries--)
-                    {
-                        if (this.IsBlocked)
-                        {
-                            var c = this.window.FindChildWindow("Save As", 5);
-                            if (c != null)
-                            {
-                                c.ClickButtonByName("Yes");
-                            }
-                        }
-                        else
-                        {
-                            // then folder moved, so we have to click save again!
-                            this.window.ClickButton("1");
-                        }
-                        this.WaitForInputIdle(100);
-                    }
-                }
+                ip.Invoke();
             }
-            catch (System.Windows.Automation.ElementNotAvailableException)
-            {
-                // window is gone then.
-            }
+
         }
 
         public void ClickCancel()

@@ -112,6 +112,7 @@ namespace ScenarioTest
                 Thread.Sleep(2000); // let graph load.
                 int delay = 0; // 1000 is handy for debugging.
                 this.model.Run(new Predicate<DgmlTestModel>((m) => { return m.StatesExecuted > ScenarioTestSteps; }), delay);
+                this.WriteLine($"Successfully completed {ScenarioTestSteps} operations.");
             }
             catch (Exception ex)
             {
