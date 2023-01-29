@@ -410,10 +410,10 @@
         <StatusBar Grid.Row="2">
             <StatusBarItem x:Name="StatusMessage" HorizontalAlignment="Left"/>
             <StatusBarItem HorizontalAlignment="Right">
-                <Grid >
+                <StackPanel Orientation="Vertical" >
+                    <TextBlock x:Name="ProgressPrompt" Text="hello"/>
                     <ProgressBar Width="200" x:Name="ProgressBar" Visibility="Hidden"/>
-                    <TextBlock x:Name="ProgressPrompt" Text="" Margin="8,0" Foreground="DarkGreen" />
-                </Grid>
+                </StackPanel>
             </StatusBarItem>
         </StatusBar>
 
