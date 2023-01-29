@@ -18,87 +18,6 @@ using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs
 {
-
-    /// <summary>
-    /// This is the View Model wrapping the Account Model in an MVVM architecture
-    /// and OnlineAccountDialog is the View.
-    /// </summary>
-    public class AccountListItem : INotifyPropertyChanged
-    {
-        private string accountId;
-
-        public string AccountId
-        {
-            get { return this.accountId; }
-            set { this.accountId = value; this.OnPropertyChanged("AccountId"); }
-        }
-
-        private string name;
-
-        public string Name
-        {
-            get { return this.name; }
-            set { this.name = value; this.OnPropertyChanged("Name"); }
-        }
-
-        private bool isNew;
-
-        public bool IsNew
-        {
-            get { return this.isNew; }
-            set { this.isNew = value; this.OnPropertyChanged("IsNew"); }
-        }
-
-        private bool userAdded;
-
-        public bool UserAdded
-        {
-            get { return this.userAdded; }
-            set { this.userAdded = value; this.OnPropertyChanged("UserAdded"); }
-        }
-
-        private bool isDisconnected;
-
-        public bool IsDisconnected
-        {
-            get { return this.isDisconnected; }
-            set { this.isDisconnected = value; this.OnPropertyChanged("IsDisconnected"); }
-        }
-
-        private bool warning;
-
-        public bool HasWarning
-        {
-            get { return this.warning; }
-            set { this.warning = value; this.OnPropertyChanged("HasWarning"); }
-        }
-
-        private string tooltip;
-
-        public string ToolTipMessage
-        {
-            get { return this.tooltip; }
-            set { this.tooltip = value; this.OnPropertyChanged("WarningMessage"); }
-        }
-
-        public AccountType CorrectType { get; set; }
-
-        public Account Account { get; set; }
-
-        public Account PlaceHolder { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
-
-        }
-    }
-
     /// <summary>
     /// Interaction logic for AccountDialog.xaml
     /// </summary>
@@ -1769,6 +1688,86 @@ namespace Walkabout.Dialogs
                 this.HideRightHandPanels();
 
                 Task.Run(this.StartSignup);
+            }
+        }
+
+        /// <summary>
+        /// This is the View Model wrapping the Account Model in an MVVM architecture
+        /// and OnlineAccountDialog is the View.
+        /// </summary>
+        public class AccountListItem : INotifyPropertyChanged
+        {
+            private string accountId;
+
+            public string AccountId
+            {
+                get { return this.accountId; }
+                set { this.accountId = value; this.OnPropertyChanged("AccountId"); }
+            }
+
+            private string name;
+
+            public string Name
+            {
+                get { return this.name; }
+                set { this.name = value; this.OnPropertyChanged("Name"); }
+            }
+
+            private bool isNew;
+
+            public bool IsNew
+            {
+                get { return this.isNew; }
+                set { this.isNew = value; this.OnPropertyChanged("IsNew"); }
+            }
+
+            private bool userAdded;
+
+            public bool UserAdded
+            {
+                get { return this.userAdded; }
+                set { this.userAdded = value; this.OnPropertyChanged("UserAdded"); }
+            }
+
+            private bool isDisconnected;
+
+            public bool IsDisconnected
+            {
+                get { return this.isDisconnected; }
+                set { this.isDisconnected = value; this.OnPropertyChanged("IsDisconnected"); }
+            }
+
+            private bool warning;
+
+            public bool HasWarning
+            {
+                get { return this.warning; }
+                set { this.warning = value; this.OnPropertyChanged("HasWarning"); }
+            }
+
+            private string tooltip;
+
+            public string ToolTipMessage
+            {
+                get { return this.tooltip; }
+                set { this.tooltip = value; this.OnPropertyChanged("WarningMessage"); }
+            }
+
+            public AccountType CorrectType { get; set; }
+
+            public Account Account { get; set; }
+
+            public Account PlaceHolder { get; set; }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private void OnPropertyChanged(string name)
+            {
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs(name));
+                }
+
             }
         }
 
