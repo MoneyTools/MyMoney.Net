@@ -548,58 +548,33 @@
   </LinearGradientBrush>
 
   <!-- Define a Drawing as a resource that can be used as content for a Tiled DrawingBrush to get the Blend backdop effect. -->
-  <DrawingGroup x:Key="CheckerBoxBackground">
-    <GeometryDrawing Brush="#5B5B5B">
-      <!-- Brush="#2B3C59">-->
-      <GeometryDrawing.Geometry>
-        <RectangleGeometry Rect="0,0,1,1"/>
-      </GeometryDrawing.Geometry>
-    </GeometryDrawing>
-    <GeometryDrawing Brush="#565656">
-      <!-- Dark-->
-      <GeometryDrawing.Geometry>
-        <RectangleGeometry Rect="1,0,1,1" />
-      </GeometryDrawing.Geometry>
-    </GeometryDrawing>
-    <GeometryDrawing Brush="#5B5B5B">
-      <GeometryDrawing.Geometry>
-        <RectangleGeometry Rect="1,1,1,1" />
-      </GeometryDrawing.Geometry>
-    </GeometryDrawing>
-    <GeometryDrawing Brush="#565656">
-      <!-- Dark-->
-      <GeometryDrawing.Geometry>
-        <RectangleGeometry Rect="0,1,1,1" />
-      </GeometryDrawing.Geometry>
-    </GeometryDrawing>
-  </DrawingGroup>
-
-  <DrawingImage x:Key="SplitIcon" >
-    <DrawingImage.Drawing>
-      <DrawingGroup >
-        <GeometryDrawing Brush="Transparent" >
-          <GeometryDrawing.Pen>
-            <Pen Brush="{DynamicResource ToolbarIconBrush}" Thickness="1" EndLineCap="Round" StartLineCap="Round" LineJoin="Round" />
-          </GeometryDrawing.Pen>
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathGeometry.Figures>
-                <PathFigure StartPoint="0,0" IsClosed="True" IsFilled="True" >
-                  <LineSegment Point="10,0"/>
-                  <LineSegment Point="10,5"/>
-                  <LineSegment Point="5,8"/>
-                  <LineSegment Point="0,5"/>
-                </PathFigure>
-              </PathGeometry.Figures>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-
+    <DrawingGroup x:Key="CheckerBoxBackground">
+        <GeometryDrawing Brush="#5B5B5B">
+            <!-- Brush="#2B3C59">-->
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="0,0,1,1"/>
+            </GeometryDrawing.Geometry>
         </GeometryDrawing>
-      </DrawingGroup>
-    </DrawingImage.Drawing>
-  </DrawingImage>
+        <GeometryDrawing Brush="#565656">
+            <!-- Dark-->
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="1,0,1,1" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="#5B5B5B">
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="1,1,1,1" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="#565656">
+            <!-- Dark-->
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="0,1,1,1" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
 
-  <DrawingImage x:Key="CollapseAllIcon" >
+    <DrawingImage x:Key="CollapseAllIcon" >
     <DrawingImage.Drawing>
       <DrawingGroup  >
         <GeometryDrawing  >

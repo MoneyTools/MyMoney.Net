@@ -996,7 +996,6 @@ namespace Walkabout.Views.Controls
                     break;
                 case "LastBalance":
                     this.OnPropertyChanged("TooltipRow2");
-                    this.OnPropertyChanged("WarningIcon");
                     this.OnPropertyChanged("IconTooltip");
                     this.OnPropertyChanged("WarningIconVisibility");
                     this.OnPropertyChanged("WarningIconTooltip");
@@ -1108,18 +1107,6 @@ namespace Walkabout.Views.Controls
                     }
                 }
                 return "";
-            }
-        }
-
-        public object WarningIcon
-        {
-            get
-            {
-                if (this.WarningIconVisibility == Visibility.Visible)
-                {
-                    return new Uri("pack://application:,,,/MyMoney;component/Dialogs/Icons/Warning.png");
-                }
-                return DependencyProperty.UnsetValue;
             }
         }
 

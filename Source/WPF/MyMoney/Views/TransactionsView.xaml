@@ -115,7 +115,7 @@
                         Path=(Validation.Errors),
                         Converter={StaticResource ValidationErrorGetErrorMessageConverter}}" 
                    Background="{DynamicResource SystemControlErrorTextForegroundBrush}" Margin="-1,-1,-1,-1">
-                <Image Width="16" Height="16" Source="/MyMoney;component/Icons/Error.png"/>
+                <ui:SymbolIcon Symbol="Important" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </ControlTemplate>
 

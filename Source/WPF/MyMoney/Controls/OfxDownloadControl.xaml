@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:ofx="clr-namespace:Walkabout.Ofx"
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
              mc:Ignorable="d" 
              d:DesignHeight="212" d:DesignWidth="570">
@@ -18,9 +19,9 @@
                 <Grid MinWidth="16" MinHeight="16" Margin="0,0,5,0" >
                     <Button Click="ButtonRemoveOnlineAccount_Clicked" VerticalAlignment="Top" Visibility="{Binding IsError, Converter={StaticResource BoolToVisibilityConverter}}"
                             ToolTip="Click here if you want to remove this online account settings">
-                        <Image Width="16" Height="16"  Source="/MyMoney;component/Icons/Error.png" />
+                        <ui:SymbolIcon Symbol="Important" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Button>
-                    <Image Width="16" Height="16" Source="/MyMoney;component/Dialogs/Icons/CheckMark.png" Visibility="{Binding Success, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <ui:SymbolIcon Symbol="Cut" Visibility="{Binding Success, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <TextBlock Text="&#57623;" FontFamily="Segoe UI Symbol" FontSize="15"  Foreground="{DynamicResource SyncronizingIconBrush}"
                                VerticalAlignment="Center" Width="20" Height="20" 
                                Visibility="{Binding IsDownloading, Converter={StaticResource BoolToVisibilityConverter}}">
