@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Walkabout.Views.Controls"
-             xmlns:help="clr-namespace:Walkabout.Help" xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:help="clr-namespace:Walkabout.Help"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              help:HelpService.HelpKeyword="Bank Accounts"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
