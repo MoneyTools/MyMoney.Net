@@ -390,12 +390,13 @@ namespace Walkabout.Tests.Wrappers
             {
                 try
                 {
+                    this.Focus();
                     selection.Focus();
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(ex.Message);
-                    selection = this.Selection;
+                    Trace.WriteLine("### Error setting focus on selection: " + ex.Message);
+                    selection = this.Selection.Refresh();
                 }
 
                 Thread.Sleep(50);
@@ -424,7 +425,7 @@ namespace Walkabout.Tests.Wrappers
                 else if (Math.Round(targetAmount, 2) != -Math.Round(amount, 2))
                 {
                     // we jumped to the wrong place then!
-                    throw new Exception("F12 jumped to the wrong transaction");
+                    throw new Exception($"F12 jumped to the wrong transaction, expecting account {targetAccount} with amount {-targetAmount}");
                 }
 
                 if (sourceAccount != null && targetAccount != null && ((tofrom == "to" && fromto == "from") || (tofrom == "from" && fromto == "to")))
