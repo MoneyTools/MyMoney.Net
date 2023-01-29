@@ -4282,42 +4282,26 @@ namespace Walkabout.Views
             int days = settings.TransferSearchDays; // starting point, but can grow from there (hence the loop).
             while (true)
             {
-                List<QueryRow> queryRows = new List<QueryRow>();
-
                 // Set the acceptable Date range to consider the other transaction a possible match
                 var dateMin = t.Date.AddDays(-days);
                 var dateMax = t.Date.AddDays(days);
 
-                queryRows.Add(new QueryRow(Conjunction.And, Field.Date, Operation.GreaterThanEquals, dateMin.ToString()));
-                queryRows.Add(new QueryRow(Conjunction.And, Field.Date, Operation.LessThanEquals, dateMax.ToString()));
+                var match = new List<Transaction>(from u in this.myMoney.Transactions.GetAllTransactionsByDate()
+                                                  where u.Account != t.Account &&
+                                                    u.Transfer == null &&
+                                                    u.Date >= dateMin &&
+                                                    u.Date <= dateMax &&
+                                                    Math.Abs(t.Amount) == Math.Abs(u.Amount) &&
+                                                    Math.Sign(t.Amount) != Math.Sign(u.Amount)
+                                                  select u
+                                                  );
 
-                // If this was a payment we are looking for a deposit
-                // if this was a deposit we are looking for a payment
-
-                Field DepositOrPayment = t.amount > 0 ? Field.Payment : Field.Deposit;
-                queryRows.Add(new QueryRow(Conjunction.And, DepositOrPayment, Operation.Equals, Math.Abs(t.amount).ToString()));
-
-                // Execute the search, this a blocking call
-                IList<Transaction> list = this.myMoney.Transactions.ExecuteQuery(queryRows.ToArray());
-                IList<Transaction> free = new List<Transaction>(from u in list where u.Transfer == null select u);
-                if (free.Count > 0)
-                {
-                    // only look at transactions that don't already have a Transfer.
-                    list = free;
-                }
-
-                switch (list.Count)
+                switch (match.Count)
                 {
                     // Best case scenario we found only one match, offer to the user to convert this to a transfer 
                     case 1:
                         {
-                            var found = list[0];
-                            if (found.Transfer != null)
-                            {
-                                MessageBoxEx.Show("The matching transfer is already a linked Transfer, please check if you have a duplicate on this side that needs to be merged.",
-                                    "Transfer exists already", MessageBoxButton.OK, MessageBoxImage.Information);
-                                return;
-                            }
+                            var found = match[0];
                             string message = "Account:  " + found.AccountName + '\n';
                             message += "Date:  " + found.Date + '\n';
                             message += "Amount:  " + found.amount + '\n';
@@ -4358,12 +4342,12 @@ namespace Walkabout.Views
                     default:
                         {
                             string foundThese = "";
-                            foreach (var found in list)
+                            foreach (var found in match)
                             {
                                 foundThese += found.AccountName + ' ' + found.Date + ' ' + found.amount;
                             }
 
-                            MessageBoxEx.Show(foundThese, "Found " + list.Count + " matching transfers", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBoxEx.Show(foundThese, "Found " + match.Count + " matching transfers", MessageBoxButton.OK, MessageBoxImage.Warning);
                             return;
                         }
                 }

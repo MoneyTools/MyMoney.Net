@@ -3547,8 +3547,8 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 if (int.TryParse(zone, out tz))
                 {
                     // convert to local time
-                    TimeSpan offset = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now) - TimeSpan.FromHours(tz);
-                    dt = dt.Add(offset);
+                    var offset = new DateTimeOffset(year, month, day, hour, minute, second, TimeSpan.FromHours(tz));
+                    dt = offset.LocalDateTime;
                 }
             }
             return dt;

@@ -85,6 +85,8 @@ namespace Walkabout.Dialogs
 
         public Account Account { get; set; }
 
+        public Account PlaceHolder { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string name)
@@ -1298,6 +1300,7 @@ namespace Walkabout.Dialogs
                 }
             }
 
+            Account placeholder = null;
             if (found == null)
             {
                 isNew = true;
@@ -1309,6 +1312,7 @@ namespace Walkabout.Dialogs
                 found.AccountId = id;
                 found.Type = type;
                 found.WebSite = this.account != null ? this.account.WebSite : null;
+                placeholder = found;
                 if (string.IsNullOrEmpty(found.WebSite) && this.profile != null)
                 {
                     found.WebSite = this.profile.CompanyUrl;
@@ -1317,6 +1321,7 @@ namespace Walkabout.Dialogs
             return new AccountListItem()
             {
                 Account = found,
+                PlaceHolder = placeholder, // remember the placeholder acount.
                 Name = found.Name,
                 AccountId = found.AccountId,
                 IsNew = isNew,
@@ -1364,7 +1369,7 @@ namespace Walkabout.Dialogs
                 }
                 else if (item.UserAdded)
                 {
-                    item.Account = null;
+                    item.Account = item.PlaceHolder; // fall back on the placeholder if we have one.
                     item.UserAdded = false;
                     item.IsNew = true;
                     item.IsDisconnected = true;
