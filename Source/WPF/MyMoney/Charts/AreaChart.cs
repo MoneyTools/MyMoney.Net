@@ -1,8 +1,8 @@
 #define TRACE
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -10,8 +10,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using Walkabout.Utilities;
 using Walkabout.Charts;
+using Walkabout.Utilities;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -58,13 +58,13 @@ namespace LovettSoftware.Charts
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AreaChartInitialize))
             {
 #endif
-                base.OnInitialized(e);
+            base.OnInitialized(e);
 
-                this.nfi = new NumberFormatInfo();
-                this.nfi.CurrencyDecimalDigits = 0;
-                this.nfi.CurrencySymbol = string.Empty;
-                this.nfi.CurrencyNegativePattern = 0;
-                this.Background = Brushes.Transparent; // so mouseclicks work.
+            this.nfi = new NumberFormatInfo();
+            this.nfi.CurrencyDecimalDigits = 0;
+            this.nfi.CurrencySymbol = string.Empty;
+            this.nfi.CurrencyNegativePattern = 0;
+            this.Background = Brushes.Transparent; // so mouseclicks work.
 
 #if PerformanceBlocks
             }

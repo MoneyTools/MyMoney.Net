@@ -166,7 +166,7 @@ namespace Walkabout.Views.Controls
 
         private bool EditProperties(RentBuilding a)
         {
-            Walkabout.Dialogs.BuildingDialog dialog = new Dialogs.BuildingDialog(this.myMoney);
+            Walkabout.Dialogs.RentalDialog dialog = new Dialogs.RentalDialog(this.myMoney);
             dialog.TheBuilding = a;
             dialog.Owner = Application.Current.MainWindow;
             if (dialog.ShowDialog() == true)

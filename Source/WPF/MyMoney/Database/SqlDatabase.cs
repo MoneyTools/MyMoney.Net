@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Windows;
 using Walkabout.Utilities;
@@ -28,8 +29,7 @@ namespace Walkabout.Data
     public enum ConnectMode
     {
         Create,
-        Connect,
-        Restore
+        Connect
     }
 
     public static class DatabaseSecurity
@@ -252,8 +252,9 @@ namespace Walkabout.Data
         /// </summary>
         public void AclDatabasePath(string path)
         {
-            var networkService = "NT AUTHORITY\\NETWORK SERVICE";
-            this.SecurityService.AddWritePermission(networkService, path);
+            Debug.Assert(OperatingSystem.IsWindows());
+            var accountId = new SecurityIdentifier(WellKnownSidType.NetworkServiceSid, null).Translate(typeof(NTAccount));
+            this.SecurityService.AddWritePermission(accountId, path);
         }
 
         public virtual void Create()
@@ -635,6 +636,7 @@ namespace Walkabout.Data
             {
                 try
                 {
+                    Debug.Assert(OperatingSystem.IsWindows());
                     // got this code from this article:
                     // http://msdn.microsoft.com/en-us/library/bb264562(SQL.90).aspx
                     using (RegistryKey Key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Microsoft SQL Server\\", false))
@@ -659,15 +661,18 @@ namespace Walkabout.Data
                             {
                                 using (RegistryKey subKey = Key.OpenSubKey(s, false))
                                 {
-                                    using (RegistryKey setup = subKey.OpenSubKey("Setup", false))
+                                    if (subKey != null)
                                     {
-                                        if (setup != null)
+                                        using (RegistryKey setup = subKey.OpenSubKey("Setup", false))
                                         {
-                                            string edition = (string)setup.GetValue("Edition");
-                                            if (edition == "Express Edition")
+                                            if (setup != null)
                                             {
-                                                //If there is at least one instance of SQL Server Express installed, return true
-                                                return true;
+                                                string edition = (string)setup.GetValue("Edition");
+                                                if (edition == "Express Edition")
+                                                {
+                                                    //If there is at least one instance of SQL Server Express installed, return true
+                                                    return true;
+                                                }
                                             }
                                         }
                                     }
@@ -691,6 +696,7 @@ namespace Walkabout.Data
             {
                 try
                 {
+                    Debug.Assert(OperatingSystem.IsWindows());
                     // got this code from this article:
                     // http://msdn.microsoft.com/en-us/library/bb264562(SQL.90).aspx
                     using (RegistryKey Key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Microsoft SQL Server\\", false))
@@ -917,6 +923,7 @@ namespace Walkabout.Data
             this.ExecuteScalar("sp_addsrvrolemember '" + userName + "','sysadmin'");
 
 
+            Debug.Assert(OperatingSystem.IsWindows());
             // Have to turn on mixed mode.
             // http://www.eggheadcafe.com/articles/20040703.asp
 

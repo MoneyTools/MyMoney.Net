@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,85 +18,6 @@ using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs
 {
-
-    /// <summary>
-    /// This is the View Model wrapping the Account Model in an MVVM architecture
-    /// and OnlineAccountDialog is the View.
-    /// </summary>
-    public class AccountListItem : INotifyPropertyChanged
-    {
-        private string accountId;
-
-        public string AccountId
-        {
-            get { return this.accountId; }
-            set { this.accountId = value; this.OnPropertyChanged("AccountId"); }
-        }
-
-        private string name;
-
-        public string Name
-        {
-            get { return this.name; }
-            set { this.name = value; this.OnPropertyChanged("Name"); }
-        }
-
-        private bool isNew;
-
-        public bool IsNew
-        {
-            get { return this.isNew; }
-            set { this.isNew = value; this.OnPropertyChanged("IsNew"); }
-        }
-
-        private bool userAdded;
-
-        public bool UserAdded
-        {
-            get { return this.userAdded; }
-            set { this.userAdded = value; this.OnPropertyChanged("UserAdded"); }
-        }
-
-        private bool isDisconnected;
-
-        public bool IsDisconnected
-        {
-            get { return this.isDisconnected; }
-            set { this.isDisconnected = value; this.OnPropertyChanged("IsDisconnected"); }
-        }
-
-        private bool warning;
-
-        public bool HasWarning
-        {
-            get { return this.warning; }
-            set { this.warning = value; this.OnPropertyChanged("HasWarning"); }
-        }
-
-        private string tooltip;
-
-        public string ToolTipMessage
-        {
-            get { return this.tooltip; }
-            set { this.tooltip = value; this.OnPropertyChanged("WarningMessage"); }
-        }
-
-        public AccountType CorrectType { get; set; }
-
-        public Account Account { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
-
-        }
-    }
-
     /// <summary>
     /// Interaction logic for AccountDialog.xaml
     /// </summary>
@@ -113,6 +35,8 @@ namespace Walkabout.Dialogs
         private ProfileResponse profile;
         private readonly bool debugging;
         private readonly IServiceProvider serviceProvider;
+        private bool closed;
+        private CancellationTokenSource cancellation;
 
         public OnlineAccountDialog(MyMoney money, Account account, IServiceProvider sp)
         {
@@ -121,6 +45,7 @@ namespace Walkabout.Dialogs
             this.money = money;
             this.account = account;
             this.InitializeComponent();
+            this.cancellation = new CancellationTokenSource();
 
             OnlineAccount oa = this.account.OnlineAccount;
             if (oa != null)
@@ -175,6 +100,8 @@ namespace Walkabout.Dialogs
 
         protected override void OnClosed(EventArgs e)
         {
+            this.closed = true;
+            this.cancellation.Cancel();
             this.pendingVerify = null;
             this.pendingSignon = null;
             if (this.queueProcessor != null)
@@ -261,14 +188,21 @@ namespace Walkabout.Dialogs
 
         private List<OfxInstitutionInfo> providers;
 
-        private void GetBankList()
+        private async void GetBankList()
         {
             // show the cached list first.
             this.providers = OfxInstitutionInfo.GetCachedBankList();
             this.ShowBankList();
 
-            this.providers = OfxInstitutionInfo.GetRemoteBankList();
-            this.ShowBankList();
+            try
+            {
+                this.providers = await OfxInstitutionInfo.GetRemoteBankList(this.cancellation.Token);
+                if (!this.closed)
+                {
+                    this.ShowBankList();
+                }
+            }
+            catch { }
         }
 
         private void ShowBankList()
@@ -396,7 +330,7 @@ namespace Walkabout.Dialogs
                 return;
             }
 
-            Task.Run(() => this.GetUpdatedBankInfo(info));
+            _ = this.GetUpdatedBankInfo(info);
         }
 
         private readonly ConcurrentQueue<OfxInstitutionInfo> fetchQueue = new ConcurrentQueue<OfxInstitutionInfo>();
@@ -523,9 +457,9 @@ namespace Walkabout.Dialogs
                     !string.IsNullOrWhiteSpace(this.TextBoxOfxAddress.Text);
         }
 
-        private void GetUpdatedBankInfo(OfxInstitutionInfo provider)
+        private async Task GetUpdatedBankInfo(OfxInstitutionInfo provider)
         {
-            OfxInstitutionInfo ps = OfxInstitutionInfo.GetProviderInformation(provider);
+            OfxInstitutionInfo ps = await OfxInstitutionInfo.GetProviderInformation(provider, this.cancellation.Token);
 
             if (this.selected != provider)
             {
@@ -725,7 +659,7 @@ namespace Walkabout.Dialogs
         /// Background thread to connect to bank
         /// </summary>
         /// <param name="state"></param>
-        private void StartSignup()
+        private async Task StartSignup()
         {
             var id = new object();
             this.pendingSignon = id;
@@ -756,7 +690,7 @@ namespace Walkabout.Dialogs
                 }
                 else
                 {
-                    this.Signup();
+                    await this.Signup();
                 }
             }
             catch (OfxException ex)
@@ -820,12 +754,12 @@ namespace Walkabout.Dialogs
 
         private object signupRequest;
 
-        private void Signup()
+        private async Task Signup()
         {
             OfxRequest req = new OfxRequest(this.editing, this.money, AccountHelper.PickAccount);
             this.signupRequest = req;
-            string logpath;
-            OFX ofx = req.Signup(this.editing, out logpath);
+            OFX ofx = await req.Signup(this.editing);
+            string logpath = req.OfxCachePath;
             if (this.signupRequest == req)
             {
                 this.signupRequest = null;
@@ -1285,6 +1219,7 @@ namespace Walkabout.Dialogs
                 }
             }
 
+            Account placeholder = null;
             if (found == null)
             {
                 isNew = true;
@@ -1296,6 +1231,7 @@ namespace Walkabout.Dialogs
                 found.AccountId = id;
                 found.Type = type;
                 found.WebSite = this.account != null ? this.account.WebSite : null;
+                placeholder = found;
                 if (string.IsNullOrEmpty(found.WebSite) && this.profile != null)
                 {
                     found.WebSite = this.profile.CompanyUrl;
@@ -1304,6 +1240,7 @@ namespace Walkabout.Dialogs
             return new AccountListItem()
             {
                 Account = found,
+                PlaceHolder = placeholder, // remember the placeholder acount.
                 Name = found.Name,
                 AccountId = found.AccountId,
                 IsNew = isNew,
@@ -1351,7 +1288,7 @@ namespace Walkabout.Dialogs
                 }
                 else if (item.UserAdded)
                 {
-                    item.Account = null;
+                    item.Account = item.PlaceHolder; // fall back on the placeholder if we have one.
                     item.UserAdded = false;
                     item.IsNew = true;
                     item.IsDisconnected = true;
@@ -1421,7 +1358,7 @@ namespace Walkabout.Dialogs
         /// <summary>
         /// Background thread to connect to bank and verify OFX support
         /// </summary>
-        private void StartVerify()
+        private async Task StartVerify()
         {
             if (this.pendingVerify != null)
             {
@@ -1438,7 +1375,8 @@ namespace Walkabout.Dialogs
             {
 
                 // see if we can get the server profile first...
-                ProfileResponseMessageSet profile = req.GetProfile(this.editing, out cachePath);
+                ProfileResponseMessageSet profile = await req.GetProfile(this.editing);
+                cachePath = req.OfxCachePath;
 
                 UiDispatcher.BeginInvoke(new Action(() =>
                 {
@@ -1750,6 +1688,86 @@ namespace Walkabout.Dialogs
                 this.HideRightHandPanels();
 
                 Task.Run(this.StartSignup);
+            }
+        }
+
+        /// <summary>
+        /// This is the View Model wrapping the Account Model in an MVVM architecture
+        /// and OnlineAccountDialog is the View.
+        /// </summary>
+        public class AccountListItem : INotifyPropertyChanged
+        {
+            private string accountId;
+
+            public string AccountId
+            {
+                get { return this.accountId; }
+                set { this.accountId = value; this.OnPropertyChanged("AccountId"); }
+            }
+
+            private string name;
+
+            public string Name
+            {
+                get { return this.name; }
+                set { this.name = value; this.OnPropertyChanged("Name"); }
+            }
+
+            private bool isNew;
+
+            public bool IsNew
+            {
+                get { return this.isNew; }
+                set { this.isNew = value; this.OnPropertyChanged("IsNew"); }
+            }
+
+            private bool userAdded;
+
+            public bool UserAdded
+            {
+                get { return this.userAdded; }
+                set { this.userAdded = value; this.OnPropertyChanged("UserAdded"); }
+            }
+
+            private bool isDisconnected;
+
+            public bool IsDisconnected
+            {
+                get { return this.isDisconnected; }
+                set { this.isDisconnected = value; this.OnPropertyChanged("IsDisconnected"); }
+            }
+
+            private bool warning;
+
+            public bool HasWarning
+            {
+                get { return this.warning; }
+                set { this.warning = value; this.OnPropertyChanged("HasWarning"); }
+            }
+
+            private string tooltip;
+
+            public string ToolTipMessage
+            {
+                get { return this.tooltip; }
+                set { this.tooltip = value; this.OnPropertyChanged("WarningMessage"); }
+            }
+
+            public AccountType CorrectType { get; set; }
+
+            public Account Account { get; set; }
+
+            public Account PlaceHolder { get; set; }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private void OnPropertyChanged(string name)
+            {
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs(name));
+                }
+
             }
         }
 

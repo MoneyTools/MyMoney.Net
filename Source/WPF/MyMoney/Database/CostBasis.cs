@@ -618,15 +618,16 @@ namespace Walkabout.Data
                     }
                     else if ((i.Type == InvestmentType.Remove || i.Type == InvestmentType.Sell) && i.Units > 0)
                     {
-                        if (i.Transaction.Transfer == null)
+                        if (i.Type == InvestmentType.Sell)
                         {
                             foreach (SecuritySale sale in holdings.Sell(i.Security, i.Date, i.Units, i.OriginalCostBasis))
                             {
                                 this.sales.Add(sale);
                             }
                         }
-                        else
+                        else if (i.Type == InvestmentType.Remove && i.Transaction.Transfer != null)
                         {
+                            // track cost basis of securities transfered across accounts.
                             // bugbug; could this ever be a split? Don't think so...
                             Investment add = i.Transaction.Transfer.Transaction.Investment;
                             Debug.Assert(add != null, "Other side of the Transfer needs to be an Investment transaction");

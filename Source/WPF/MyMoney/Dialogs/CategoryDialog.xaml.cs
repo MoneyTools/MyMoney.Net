@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Windows;
@@ -218,6 +219,7 @@ namespace Walkabout.Dialogs
         {
             get
             {
+                Debug.Assert(OperatingSystem.IsWindowsVersionAtLeast(7));
                 var flyout = this.ColorDropDown.Flyout; // for some reason the Flyout class with the Content property is not public!
                 var pi = flyout.GetType().GetProperty("Content", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
                 return (ColorPickerPanel)pi.GetValue(flyout, null);

@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -799,13 +798,11 @@ namespace Walkabout.StockQuotes
         public static DownloadLog Load(string logFolder)
         {
             DownloadLog log = new DownloadLog();
-            var filename = System.IO.Path.Combine(logFolder, "DownloadLog.xml");
-            if (System.IO.File.Exists(filename))
+            if (!string.IsNullOrEmpty(logFolder))
             {
-#if PerformanceBlocks
-                using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.LoadStockDownloadLog))
+                var filename = System.IO.Path.Combine(logFolder, "DownloadLog.xml");
+                if (System.IO.File.Exists(filename))
                 {
-#endif
                     try
                     {
                         XmlSerializer s = new XmlSerializer(typeof(DownloadLog));
@@ -836,10 +833,7 @@ namespace Walkabout.StockQuotes
                         }
                         log.Downloaded.Sort((a, b) => string.Compare(a.Symbol, b.Symbol));
                     }
-
-#if PerformanceBlocks
                 }
-#endif
             }
             return log;
         }
@@ -969,32 +963,32 @@ namespace Walkabout.StockQuotes
                     using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.DownloadStockQuoteHistory))
                     {
 #endif
-                        StockQuoteHistory history = null;
-                        var info = this._downloadLog.GetInfo(symbol);
-                        history = await this._downloadLog.GetHistory(symbol);
-                        if (history == null)
+                    StockQuoteHistory history = null;
+                    var info = this._downloadLog.GetInfo(symbol);
+                    history = await this._downloadLog.GetHistory(symbol);
+                    if (history == null)
+                    {
+                        history = new StockQuoteHistory() { Symbol = symbol };
+                    }
+                    if (info != null && info.Downloaded.Date == DateTime.Today && history != null && history.Complete)
+                    {
+                        // already up to date
+                    }
+                    else
+                    {
+                        try
                         {
-                            history = new StockQuoteHistory() { Symbol = symbol };
+                            await this._service.UpdateHistory(history);
                         }
-                        if (info != null && info.Downloaded.Date == DateTime.Today && history != null && history.Complete)
+                        catch (Exception ex)
                         {
-                            // already up to date
+                            this.OnError("Download history error: " + ex.Message);
                         }
-                        else
-                        {
-                            try
-                            {
-                                await this._service.UpdateHistory(history);
-                            }
-                            catch (Exception ex)
-                            {
-                                this.OnError("Download history error: " + ex.Message);
-                            }
-                        }
-                        if (history != null && history.History != null && history.History.Count != 0)
-                        {
-                            this.OnHistoryAvailable(history);
-                        }
+                    }
+                    if (history != null && history.History != null && history.History.Count != 0)
+                    {
+                        this.OnHistoryAvailable(history);
+                    }
 #if PerformanceBlocks
                     }
 #endif

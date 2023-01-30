@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Windows;
 using Walkabout.Controls;
 using Walkabout.Data;
@@ -153,8 +152,7 @@ namespace Walkabout.Dialogs
                 try
                 {
                     Uri webSite = new Uri(url, UriKind.Absolute);
-
-                    Process.Start(webSite.ToString());
+                    InternetExplorer.OpenUrl(IntPtr.Zero, webSite);
                 }
                 catch (Exception ex)
                 {

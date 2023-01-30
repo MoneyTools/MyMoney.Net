@@ -7,9 +7,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -267,7 +267,7 @@ namespace Walkabout.Ofx
             }, TimeSpan.FromMilliseconds(10));
         }
 
-        private void LoadImports()
+        private async Task LoadImports()
         {
             Thread.CurrentThread.Name = "Synchronize";
             var downloadArgs = new OfxDownloadEventArgs();
@@ -284,7 +284,7 @@ namespace Walkabout.Ofx
             }
 
             this.UpdateStatusOnUIThread(0, count + 1, 0, downloadArgs);
-            Thread.Sleep(250); // give time for synchronizing icons to appear.
+            await Task.Delay(250); // give time for synchronizing icons to appear.
 
             int i = 0;
             foreach (string fname in snapshot)
@@ -292,7 +292,7 @@ namespace Walkabout.Ofx
                 OfxDownloadData se = entries[i];
                 i++;
                 this.UpdateStatusOnUIThread(0, count + 1, i, downloadArgs);
-                Thread.Sleep(100); // give time for progress animation to happen.
+                await Task.Delay(100); // give time for progress animation to happen.
                 try
                 {
                     using (FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -388,7 +388,7 @@ namespace Walkabout.Ofx
 
         private readonly List<OfxRequest> pending = new List<OfxRequest>();
 
-        private void SyncAccount()
+        private async Task SyncAccount()
         {
             Thread.CurrentThread.Name = "Synchronize";
 
@@ -431,7 +431,7 @@ namespace Walkabout.Ofx
                 }
                 else
                 {
-                    request.Sync(accounts, f, this.dispatcher);
+                    await request.SyncAccountsAsync(accounts, f, this.dispatcher);
                     f.Success = true;
                 }
             }
@@ -484,6 +484,7 @@ namespace Walkabout.Ofx
         private Dictionary<string, SecurityInfo> securityInfo; // uniqueId -> SecurityInfo.
         private readonly PickAccountDelegate callerPickAccount;
         private readonly HashSet<string> skippedAccounts = new HashSet<string>();
+        private CancellationTokenSource cancellation = new CancellationTokenSource();
 
         public OfxRequest(OnlineAccount oa, MyMoney m, PickAccountDelegate resolveMissingAccountId)
         {
@@ -890,13 +891,13 @@ namespace Walkabout.Ofx
             }
             else
             {
-                encoding = Encoding.GetEncoding(1252);
+                encoding = Encoding.GetEncoding("ISO-8859-1");
                 header = string.Format(@"OFXHEADER:100
 DATA:OFXSGML
 VERSION:102
 SECURITY:NONE
 ENCODING:USASCII
-CHARSET:1252
+CHARSET:ISO-8859-1
 COMPRESSION:NONE
 OLDFILEUID:{0}
 NEWFILEUID:{1}
@@ -944,13 +945,11 @@ NEWFILEUID:{1}
             }
         }
 
-        private HttpWebRequest pending;
-
         public void Cancel()
         {
-            if (this.pending != null)
+            if (this.cancellation != null)
             {
-                this.pending.Abort();
+                this.cancellation.Cancel();
             }
         }
 
@@ -966,7 +965,7 @@ NEWFILEUID:{1}
             }
         }
 
-        private XDocument SendOfxRequest(XDocument doc, string oldFileUid, string newFileUid)
+        private async Task<XDocument> SendOfxRequest(XDocument doc, string oldFileUid, string newFileUid)
         {
             Encoding encoding = null;
             string msg = this.FormatRequest(doc, oldFileUid, newFileUid, out encoding);
@@ -977,73 +976,53 @@ NEWFILEUID:{1}
                 url = "https://" + url;
             }
 
-            //SecurityProtocolType.Tls
-
             Uri uri = new Uri(url);
-            this.pending = (HttpWebRequest)WebRequest.Create(uri);
+            var client = new HttpClient();
+            var mediaType = new MediaTypeWithQualityHeaderValue("application/x-ofx");
+            client.DefaultRequestHeaders.Accept.Add(mediaType);
+            client.DefaultRequestHeaders.Add("User-Agent", GetUserAgent(this.onlineAccount));
 
-            ServicePointManager.ServerCertificateValidationCallback -= new RemoteCertificateValidationCallback(this.AllwaysGoodCertificate);
-            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(this.AllwaysGoodCertificate);
-
-            this.pending.Method = "POST";
-            this.pending.ContentType = "application/x-ofx";
-            this.pending.Accept = "application/x-ofx";
-            this.pending.Expect = string.Empty;
-            this.pending.ServicePoint.Expect100Continue = false;
-            this.pending.AllowAutoRedirect = true;
-            this.pending.UserAgent = GetUserAgent(this.onlineAccount);
-
-            // Discover doesn't like these headers
-            if (this.onlineAccount.FID == "7101")
-            {
-                this.pending.UserAgent = null;
-                this.pending.Accept = null;
-                this.pending.KeepAlive = false;
-            }
-
-            byte[] data = encoding.GetBytes(msg);
-            this.pending.ContentLength = data.Length;
-            Stream stm = this.pending.GetRequestStream();
-            stm.Write(data, 0, data.Length);
-            stm.Close();
-
-
-            HttpWebResponse resp = null;
             try
             {
-                resp = (HttpWebResponse)this.pending.GetResponse();
-                if (resp.StatusCode != HttpStatusCode.OK)
+                using (var response = await client.PostAsync(uri, new StringContent(msg, mediaType), cancellation.Token))
                 {
-                    string error = resp.StatusDescription;
-                    string headers = GetHttpHeaders(resp);
-                    throw new OfxException(resp.StatusDescription, resp.StatusCode.ToString(), GetResponseBody(resp), headers);
-                }
-                return this.ParseOfxResponse(resp.GetResponseStream(), true);
-            }
-            catch (WebException e)
-            {
-                if (e.Response != null)
-                {
-                    resp = (HttpWebResponse)e.Response;
-                    string headers = GetHttpHeaders(resp);
-                    throw new OfxException(e.Message, resp.StatusDescription, GetResponseBody(resp), headers);
-                }
-                throw e;
-            }
-            finally
-            {
-                if (resp != null)
-                {
-                    resp.Close();
-                }
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var errormsg = "Ofx request failed";
+                        try
+                        {
+                            errormsg = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                        }
+                        throw new OfxException(errormsg, response.StatusCode.ToString(), response.ReasonPhrase, response.Headers.ToString());
+                    }
 
-                this.pending = null;
+                    try
+                    {
+                        using (var stream = await response.Content.ReadAsStreamAsync())
+                        {
+                            return this.ParseOfxResponse(stream, true);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        //if (e.Response != null)
+                        //{
+                        //    resp = (HttpWebResponse)e.Response;
+                        //    string headers = GetHttpHeaders(resp);
+                        //    throw new OfxException(e.Message, resp.StatusDescription, GetResponseBody(resp), headers);
+                        //}
+                        Debug.WriteLine("Caught exception " + e.GetType().FullName);
+                        throw;
+                    }
+                }
             }
-        }
-
-        private bool AllwaysGoodCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        {
-            return true;
+            catch (Exception ex)
+            {
+                throw new OfxException(ex.Message);
+            }
         }
 
         private string RemoveIndents(string msg)
@@ -1091,7 +1070,7 @@ NEWFILEUID:{1}
             }
         }
 
-        internal XDocument SendOfxRequest(XDocument doc)
+        internal async Task<XDocument> SendOfxRequest(XDocument doc)
         {
             XDocument result = null;
             string fileuid = Guid.NewGuid().ToString();
@@ -1099,7 +1078,7 @@ NEWFILEUID:{1}
             // try both version 1 and 2 just in case the online account information we have is wrong.
             try
             {
-                result = this.SendOfxRequest(doc, "NONE", fileuid);
+                result = await this.SendOfxRequest(doc, "NONE", fileuid);
             }
             catch (HtmlResponseException)
             {
@@ -1110,7 +1089,7 @@ NEWFILEUID:{1}
                 // try a different version of OFX
                 string version = "" + this.onlineAccount.OfxVersion;
                 this.onlineAccount.OfxVersion = version.StartsWith("2") ? "1" : "2";
-                result = this.SendOfxRequest(doc, "NONE", fileuid);
+                result = await this.SendOfxRequest(doc, "NONE", fileuid);
             }
 
             return result;
@@ -1134,12 +1113,14 @@ NEWFILEUID:{1}
             return null;
         }
 
+        public string OfxCachePath { get; set; }
+
         /// <summary>
         /// Find out what the OFX server supports.
         /// </summary>
         /// <param name="oa">Online account to query</param>
         /// <returns></returns>
-        public ProfileResponseMessageSet GetProfile(OnlineAccount oa, out string cachePath)
+        public async Task<ProfileResponseMessageSet> GetProfile(OnlineAccount oa)
         {
             this.onlineAccount = oa;
 
@@ -1149,10 +1130,10 @@ NEWFILEUID:{1}
             {
                 lastGetProfileDate = File.GetLastWriteTime(cache);
             }
-            cachePath = cache;
+            this.OfxCachePath = cache;
 
             // get profile must not have a CLIENTUID.
-            this.onlineAccount.ClientUid = null;
+            // this.onlineAccount.ClientUid = null;
 
             XDocument doc = this.GetProfileRequest(lastGetProfileDate);
             SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "PROF_RQ.xml");
@@ -1160,13 +1141,13 @@ NEWFILEUID:{1}
             OFX ofx = null;
             try
             {
-                doc = this.SendOfxRequest(doc);
+                doc = await this.SendOfxRequest(doc);
                 // deserialize response into our OfxProfile structure.
                 ofx = DeserializeOfxResponse(doc);
 
                 this.CheckSignOnStatusError(ofx);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 if (File.Exists(cache))
                 {
@@ -1176,7 +1157,7 @@ NEWFILEUID:{1}
                 }
                 else
                 {
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -1212,7 +1193,7 @@ NEWFILEUID:{1}
                 {
                     foreach (OfxSignOnInfo info in profile.OfxSignOnInfoList.OfxSignOnInfo)
                     {
-                        if (info.ClientUidRequired.ConvertYesNoToBoolean())
+                        if (info.ClientUidRequired.ConvertYesNoToBoolean() && string.IsNullOrEmpty(this.onlineAccount.ClientUid))
                         {
                             this.onlineAccount.ClientUid = Guid.NewGuid().ToString();
                         }
@@ -1250,7 +1231,7 @@ NEWFILEUID:{1}
         }
 
 
-        internal void ChangePassword(OnlineAccount onlineAccount, string newPassword, out string outputLogFile)
+        internal async Task ChangePassword(OnlineAccount onlineAccount, string newPassword)
         {
             this.onlineAccount = onlineAccount;
 
@@ -1258,9 +1239,9 @@ NEWFILEUID:{1}
 
             SaveLog(doc, Path.Combine(OfxLogPath, this.GetLogfileName(this.onlineAccount) + "_PINCHRQ.xml"));
 
-            doc = this.SendOfxRequest(doc);
+            doc = await this.SendOfxRequest(doc);
 
-            outputLogFile = SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "_PINCHRS.xml");
+            this.OfxCachePath = SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "_PINCHRS.xml");
 
             // deserialize response into our OfxProfile structure.
             OFX ofx = OFX.Deserialize(doc);
@@ -1331,7 +1312,7 @@ NEWFILEUID:{1}
             {
                 OFX ofx;
                 XmlSerializer s = new XmlSerializer(typeof(OFX));
-                using (XmlReader r = new StringTrimmingXmlReader(XmlReader.Create(new StringReader(doc.ToString()))))
+                using (XmlReader r = XmlReader.Create(new StringReader(doc.ToString())))
                 {
                     ofx = (OFX)s.Deserialize(r);
                 }
@@ -1359,14 +1340,14 @@ NEWFILEUID:{1}
             return doc;
         }
 
-        public OFX Signup(OnlineAccount oa, out string rslog)
+        public async Task<OFX> Signup(OnlineAccount oa)
         {
-            rslog = null;
+            // out string rslog is in OfxCachePath.
             OFX result = null;
             Exception e = null;
             try
             {
-                result = this.InternalSignup(oa, out rslog);
+                result = await this.InternalSignup(oa);
             }
             catch (OfxException oe)
             {
@@ -1389,7 +1370,7 @@ NEWFILEUID:{1}
                 oa.OfxVersion = version.StartsWith("2") ? "1" : "2";
                 try
                 {
-                    result = this.InternalSignup(oa, out rslog);
+                    result = await this.InternalSignup(oa);
                 }
                 catch (Exception)
                 {
@@ -1428,17 +1409,17 @@ NEWFILEUID:{1}
             return null;
         }
 
-        private OFX InternalSignup(OnlineAccount oa, out string rslog)
+        private async Task<OFX> InternalSignup(OnlineAccount oa)
         {
             this.onlineAccount = oa;
 
             XDocument doc = this.GetSignupRequest();
-            SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "SIGNUP_RQ.xml");
+            this.OfxCachePath = SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "SIGNUP_RQ.xml");
 
             string fileuid = Guid.NewGuid().ToString();
-            doc = this.SendOfxRequest(doc, "NONE", fileuid);
+            doc = await this.SendOfxRequest(doc, "NONE", fileuid);
 
-            rslog = SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "SIGNUP_RS.xml");
+            this.OfxCachePath = SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "SIGNUP_RS.xml");
 
             OFX ofx = DeserializeOfxResponse(doc);
 
@@ -1520,7 +1501,7 @@ NEWFILEUID:{1}
             }
         }
 
-        public void Sync(IList accounts, OfxDownloadData results, Dispatcher dispatcher)
+        public async Task SyncAccountsAsync(IList accounts, OfxDownloadData results, Dispatcher dispatcher)
         {
             if (accounts.Count == 0)
             {
@@ -1570,11 +1551,12 @@ NEWFILEUID:{1}
 
             Guid guid = Guid.NewGuid();
             string fileuid = guid.ToString();
-            doc = this.SendOfxRequest(doc, this.account.SyncGuid.IsNull ? null : this.account.SyncGuid.ToString(), fileuid);
+            var requid = this.account.SyncGuid.IsNull ? null : this.account.SyncGuid.ToString();
+            doc = await this.SendOfxRequest(doc, requid, fileuid);
 
-            SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "RS.xml");
+            this.OfxCachePath = SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "RS.xml");
 
-            dispatcher.BeginInvoke(new Action(() =>
+            _ = dispatcher.BeginInvoke(new Action(() =>
             {
                 // do this on the UI thread so we don't have to worry about parallel access to the Money object.
                 try
@@ -1659,6 +1641,8 @@ NEWFILEUID:{1}
             string line = null;
             bool justWhitespace = true;
             int headerLines = 0;
+            bool usascii = false;
+            int version = 0;
 
             // First just look for a CHARSET header so we can re-decode the content properly.
             while ((line = sr.ReadLine()) != null)
@@ -1698,7 +1682,6 @@ NEWFILEUID:{1}
                     headerLines++;
 
                     justWhitespace = false;
-                    bool usascii = false;
 
                     // process 1.0 header 
                     string[] hp = line.Split(':');
@@ -1722,9 +1705,8 @@ NEWFILEUID:{1}
                                 }
                                 break;
                             case "VERSION":
-                                int version = 0;
                                 int.TryParse(value, out version);
-                                if (version < 100 || version > 200)
+                                if (version < 100 || version >= 300)
                                 {
                                     throw new OfxException("Unsupported OFX Version : " + value + " found in Ofx response");
                                 }
@@ -1758,9 +1740,15 @@ NEWFILEUID:{1}
                                 {
                                     if (string.Compare("NONE", value, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
+                                        if (value == "1252")
+                                        {
+                                            // dotnet core no longer supports windows-1252...
+                                            value = "ISO-8859-1";
+                                        }
+
                                         try
                                         {
-                                            enc = Encoding.GetEncoding(int.Parse(value));
+                                            enc = Encoding.GetEncoding(value);
                                         }
                                         catch (Exception)
                                         {
@@ -1810,7 +1798,7 @@ NEWFILEUID:{1}
 
             using (SgmlReader sgml = new SgmlReader())
             {
-                string name = "Walkabout.Ofx.ofx160.dtd";
+                string name = (version < 200) ? "Walkabout.Ofx.ofx160.dtd" : "Walkabout.Ofx.ofx201.dtd";
                 StreamReader dtdReader = new StreamReader(typeof(OfxRequest).Assembly.GetManifestResourceStream(name));
                 sgml.Dtd = SgmlDtd.Parse(null, "OFX", null, dtdReader, null, null, new NameTable());
 
@@ -3559,8 +3547,8 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 if (int.TryParse(zone, out tz))
                 {
                     // convert to local time
-                    TimeSpan offset = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now) - TimeSpan.FromHours(tz);
-                    dt = dt.Add(offset);
+                    var offset = new DateTimeOffset(year, month, day, hour, minute, second, TimeSpan.FromHours(tz));
+                    dt = offset.LocalDateTime;
                 }
             }
             return dt;
@@ -3685,11 +3673,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         }
 
 
-        private void BackgroundThread()
+        private async Task BackgroundThread()
         {
             try
             {
-                OFX ofx = this.RequestChallenge();
+                OFX ofx = await this.RequestChallenge();
                 UiDispatcher.Invoke(new Action(() =>
                 {
                     this.HandleChallenge(ofx);
@@ -3719,14 +3707,14 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             this.OnCompleted();
         }
 
-        private OFX RequestChallenge()
+        private async Task<OFX> RequestChallenge()
         {
             OfxRequest req = new OfxRequest(this.onlineAccount, this.money, null);
             XDocument doc = this.GetMFAChallengeRequest(req);
 
             OfxRequest.SaveLog(doc, OfxRequest.GetLogfileName(this.money, this.onlineAccount) + "_MFAChallenge_RQ.xml");
 
-            doc = req.SendOfxRequest(doc);
+            doc = await req.SendOfxRequest(doc);
 
             this.challengeLog = OfxRequest.SaveLog(doc, OfxRequest.GetLogfileName(this.money, this.onlineAccount) + "_MFAChallenge_RS.xml");
 

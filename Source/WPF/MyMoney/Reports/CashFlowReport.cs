@@ -245,14 +245,15 @@ namespace Walkabout.Reports
             previousButton.FontFamily = new FontFamily("Segoe UI Symbol");
             previousButton.Click += this.OnPreviousClick;
             previousButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            heading.Inlines.Add(new InlineUIContainer(previousButton));
+            this.AddInline(heading, previousButton);
 
             DatePicker fromPicker = new DatePicker();
+            System.Windows.Automation.AutomationProperties.SetName(fromPicker, "ReportDate");
             fromPicker.DisplayDateStart = firstTransactionDate;
             fromPicker.SelectedDate = this.startDate;
             fromPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
             fromPicker.SelectedDateChanged += this.OnSelectedFromDateChanged;
-            heading.Inlines.Add(new InlineUIContainer(fromPicker));
+            this.AddInline(heading, fromPicker);
 
             heading.Inlines.Add(" to ");
 
@@ -261,7 +262,7 @@ namespace Walkabout.Reports
             toPicker.SelectedDate = this.endDate;
             toPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
             toPicker.SelectedDateChanged += this.OnSelectedToDateChanged; ;
-            heading.Inlines.Add(new InlineUIContainer(toPicker));
+            this.AddInline(heading, toPicker);
 
             var nextButton = new Button();
             nextButton.Content = "\uE101";
@@ -269,7 +270,7 @@ namespace Walkabout.Reports
             nextButton.FontFamily = new FontFamily("Segoe UI Symbol");
             nextButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
             nextButton.Click += this.OnNextClick;
-            heading.Inlines.Add(new InlineUIContainer(nextButton));
+            this.AddInline(heading, nextButton);
 
 
             ComboBox byYearMonthCombo = new ComboBox();
@@ -279,9 +280,9 @@ namespace Walkabout.Reports
             byYearMonthCombo.SelectedIndex = this.byYear ? 0 : 1;
             byYearMonthCombo.SelectionChanged += this.OnByYearMonthChanged;
 
-            heading.Inlines.Add(new InlineUIContainer(byYearMonthCombo));
+            this.AddInline(heading, byYearMonthCombo);
 
-            heading.Inlines.Add(new InlineUIContainer(this.CreateExportReportButton()));
+            this.AddInline(heading, this.CreateExportReportButton());
 
             writer.StartTable();
             writer.StartColumnDefinitions();

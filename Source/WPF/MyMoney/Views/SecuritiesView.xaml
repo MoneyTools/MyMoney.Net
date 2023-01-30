@@ -251,9 +251,8 @@
                         Path=(Validation.Errors),
                         Converter={StaticResource ValidationErrorGetErrorMessageConverter}}" 
                    Background="Yellow" Margin="-1,-1,-1,-1">
-                <Image Width="16" Height="16" Source="/MyMoney;component/Icons/Error.png" 
-                       
-                      />
+
+                <ui:SymbolIcon Symbol="Important" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </ControlTemplate>
 
@@ -503,7 +502,7 @@
         <Grid.RowDefinitions>
 
             <!-- Top Search area -->
-            <RowDefinition x:Name="SearchAreaRow" Height="30"/>
+            <RowDefinition x:Name="SearchAreaRow" Height="Auto"/>
 
             <RowDefinition Height="*"/>
 
@@ -521,14 +520,13 @@
 
                 <!-- Toggle view for OneLine -->
                 <ToggleButton x:Name="ToggleShowAllSecurities" Margin="10,0,0,0"  VerticalAlignment="Center" ToolTip="Toggle show all securities versus show currently held securities only" Checked="OnShowAllSecurities_Checked" Unchecked="OnShowAllSecurities_Unchecked" >
-                    <Image Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" Source="/MyMoney;component/Icons/Filter.png" />
+                    <ui:SymbolIcon Symbol="Filter" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </ToggleButton>
 
                 <!-- Toggle view for Show splits -->
                 <ToggleButton x:Name="ToggleShowSplits" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show All Splits (Alt-T)"     Grid.Column="1"                          
                               Checked="OnToggleShowSplits_Checked" Unchecked="OnToggleShowSplits_Unchecked" >
-                    <Image x:Name="ToggleShowSplitsImage" Width="10" Height="8" Source="{DynamicResource SplitIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" 
-                                   Margin="3,4,3,4"/>
+                    <ui:SymbolIcon x:Name="ToggleShowSplitsImage" Symbol="ShowResults" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </ToggleButton>
 
                 

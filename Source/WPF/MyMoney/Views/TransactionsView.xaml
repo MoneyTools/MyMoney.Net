@@ -108,13 +108,14 @@
         <c:MoneyColorConverter x:Key="MoneyColorConverter"/>
 
         <views:ValidationErrorGetErrorMessageConverter x:Key="ValidationErrorGetErrorMessageConverter" />
+        <c:PreserveDecimalDigitsValueConverter x:Key="PreserveDecimalDigitsValueConverter"/>
 
         <ControlTemplate x:Key="RowValidationErrorTemplate">
             <Grid ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}},
                         Path=(Validation.Errors),
                         Converter={StaticResource ValidationErrorGetErrorMessageConverter}}" 
                    Background="{DynamicResource SystemControlErrorTextForegroundBrush}" Margin="-1,-1,-1,-1">
-                <Image Width="16" Height="16" Source="/MyMoney;component/Icons/Error.png"/>
+                <ui:SymbolIcon Symbol="Important" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </ControlTemplate>
 
@@ -208,22 +209,22 @@
         <!-- PAYMENT USED IN DETAILED SPLIT VIEW -->
         <DataTemplate x:Key="myTemplateSplitPayment">
             <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0" 
-                            Grid.Column="1" Text="{Binding Debit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}"                            
+                            Grid.Column="1" Text="{Binding Debit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2}"                            
                             TextAlignment="Right" VerticalAlignment="Top" Foreground="{DynamicResource ListItemForegroundBrush}"/>
         </DataTemplate>
         <DataTemplate x:Key="myTemplatePaymentEditInTheSplitDetailedView">
-            <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Debit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right"/>
+            <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Debit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N5, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right"/>
         </DataTemplate>
 
         <!-- DEPOSIT USED IN DETAILED SPLIT VIEW -->
         <DataTemplate x:Key="myTemplateSplitDeposit">
             <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0" 
-                            Grid.Column="1" Text="{Binding Credit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}}"                            
+                            Grid.Column="1" Text="{Binding Credit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2}"                            
                             TextAlignment="Right" VerticalAlignment="Top" Foreground="{DynamicResource ListItemForegroundBrush}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateDepositEditInTheSplitDetailedView" >
-            <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Credit, StringFormat={}{0:N}, Converter={StaticResource SqlDecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right" />
+            <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Credit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N5, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right" />
         </DataTemplate>
 
         <!-- Memo USED IN DETAILED SPLIT VIEW -->
@@ -352,7 +353,7 @@
         </DataTemplate>
 
         <!-- 
-        DETAIL MINI VIEW 
+        Detail mini view for showing splits always
         -->
         <DataTemplate x:Key="myDataGridDetailMiniView">
             <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent"
@@ -389,7 +390,7 @@
                                 <GridViewColumn Width="Auto" x:Name="Amount" >
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Amount, StringFormat={}{0:N}}"  
+                                              <TextBlock Text="{Binding Amount, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2}"  
                                                        Width="100" 
                                                        Foreground="{DynamicResource ListItemForegroundBrush}"
                                                        HorizontalAlignment="Right"
@@ -404,14 +405,14 @@
                                 Visibility="{Binding Splits.HasUnassigned, Converter={StaticResource TrueToVisible}}"
                                 TextBlock.Foreground="{DynamicResource NegativeCurrencyForegroundBrush}">
                         <TextBlock Text="Unassigned amount: " />
-                        <TextBlock Text="{Binding Path=NonNullSplits.TotalSplitAmount, StringFormat={}{0:N}}" />
+                        <TextBlock Text="{Binding Path=NonNullSplits.TotalSplitAmount, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2}" />
                     </StackPanel>
                 </StackPanel>
             </Border>
         </DataTemplate>
 
         <!-- 
-             DETAIL VIEW and EDIT
+             DETAIL VIEW and EDIT for showing splits in expandable view
         -->
         <DataTemplate x:Key="myDataGridDetailView">
 

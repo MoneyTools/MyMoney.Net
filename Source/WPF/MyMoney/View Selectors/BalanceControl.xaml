@@ -8,6 +8,7 @@
              xmlns:clr="clr-namespace:System;assembly=mscorlib"
              Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
              xmlns:help="clr-namespace:Walkabout.Help"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              help:HelpService.HelpKeyword="Balancing Accounts"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="350">
@@ -103,7 +104,7 @@ reconciliation dropdown above.</clr:String>
                 </Grid.ColumnDefinitions>
 
                 <Button x:Name="ValueSign" Visibility="Collapsed" Grid.Column="0" Click="OnBalanceValueSign_Clicked">
-                  <Image Source="/MyMoney;component/Dialogs/Icons/Warning.png" />
+                    <ui:SymbolIcon Symbol="Important"/>
                 </Button>
 
                 <TextBox x:Name="TextBoxStatementBalance" Grid.Column="1" Text="24.96"  HorizontalContentAlignment="Right" 

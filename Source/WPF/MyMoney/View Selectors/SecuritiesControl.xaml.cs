@@ -78,16 +78,16 @@ namespace Walkabout.Views.Controls
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.SecuritiesControlInitialize))
             {
 #endif
-                this.InitializeComponent();
-                MouseUp += new MouseButtonEventHandler(this.OnMouseUp);
-                this.listbox1.SelectionChanged += new SelectionChangedEventHandler(this.OnSelectionChanged);
-                this.dragDropSupport = new DragAndDrop(this.listbox1, this.dragDropformatNameForSecurity, this.OnDragSource, this.OnDropTarget, this.OnDropSourceOnTarget, false);
-                IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
-                Unloaded += (s, e) =>
-                {
-                    this.dragDropSupport.Disconnect();
-                    this.MyMoney = null;
-                };
+            this.InitializeComponent();
+            MouseUp += new MouseButtonEventHandler(this.OnMouseUp);
+            this.listbox1.SelectionChanged += new SelectionChangedEventHandler(this.OnSelectionChanged);
+            this.dragDropSupport = new DragAndDrop(this.listbox1, this.dragDropformatNameForSecurity, this.OnDragSource, this.OnDropTarget, this.OnDropSourceOnTarget, false);
+            IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
+            Unloaded += (s, e) =>
+            {
+                this.dragDropSupport.Disconnect();
+                this.MyMoney = null;
+            };
 #if PerformanceBlocks
             }
 #endif

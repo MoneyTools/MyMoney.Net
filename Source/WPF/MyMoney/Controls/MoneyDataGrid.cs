@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Media;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.ComponentModel;
 using System.Windows.Data;
-using System.Windows;
-using Walkabout.Utilities;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
-using System.Collections;
+using Walkabout.Utilities;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -414,17 +414,14 @@ namespace Walkabout.Controls
                     return false;
                 }
                 DataGridCellInfo dgci = this.SelectedCells[columnToFocus];
-                if (dgci != null)
+                int rowIndex = row.GetIndex();
+                int colIndex = this.GetColIndex(dgci);
+                row.ApplyTemplate();
+                DataGridCell dgc = this.GetCell(rowIndex, colIndex);
+                if (dgc != null)
                 {
-                    int rowIndex = row.GetIndex();
-                    int colIndex = this.GetColIndex(dgci);
-                    row.ApplyTemplate();
-                    DataGridCell dgc = this.GetCell(rowIndex, colIndex);
-                    if (dgc != null)
-                    {
-                        dgc.Focus();
-                        return true;
-                    }
+                    dgc.Focus();
+                    return true;
                 }
             }
             return false;
@@ -565,7 +562,7 @@ namespace Walkabout.Controls
         {
             base.OnCurrentCellChanged(e);
 
-            if (this.CurrentCell != null && this.CurrentCell.Column != null && this.CurrentCell.Column.Header != null)
+            if (this.CurrentCell.Column != null && this.CurrentCell.Column.Header != null)
             {
                 this.previousCurrentCell = this.CurrentCell.Column;
             }
@@ -576,7 +573,7 @@ namespace Walkabout.Controls
                 object selected = this.SelectedItem;
                 this.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    if (this.SelectedItem == selected && this.CurrentCell != null)
+                    if (this.SelectedItem == selected)
                     {
                         this.BeginEdit();
                     }

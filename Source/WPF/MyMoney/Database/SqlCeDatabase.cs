@@ -238,6 +238,7 @@ Please install it from http://www.microsoft.com/download/en/details.aspx?id=1787
         {
             get
             {
+                Debug.Assert(OperatingSystem.IsWindows());
                 using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Microsoft SQL Server Compact Edition"))
                 {
                     Version supported = new Version(4, 0, 0); // minimum supported version.

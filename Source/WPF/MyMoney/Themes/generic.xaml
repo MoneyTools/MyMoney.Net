@@ -548,58 +548,33 @@
   </LinearGradientBrush>
 
   <!-- Define a Drawing as a resource that can be used as content for a Tiled DrawingBrush to get the Blend backdop effect. -->
-  <DrawingGroup x:Key="CheckerBoxBackground">
-    <GeometryDrawing Brush="#5B5B5B">
-      <!-- Brush="#2B3C59">-->
-      <GeometryDrawing.Geometry>
-        <RectangleGeometry Rect="0,0,1,1"/>
-      </GeometryDrawing.Geometry>
-    </GeometryDrawing>
-    <GeometryDrawing Brush="#565656">
-      <!-- Dark-->
-      <GeometryDrawing.Geometry>
-        <RectangleGeometry Rect="1,0,1,1" />
-      </GeometryDrawing.Geometry>
-    </GeometryDrawing>
-    <GeometryDrawing Brush="#5B5B5B">
-      <GeometryDrawing.Geometry>
-        <RectangleGeometry Rect="1,1,1,1" />
-      </GeometryDrawing.Geometry>
-    </GeometryDrawing>
-    <GeometryDrawing Brush="#565656">
-      <!-- Dark-->
-      <GeometryDrawing.Geometry>
-        <RectangleGeometry Rect="0,1,1,1" />
-      </GeometryDrawing.Geometry>
-    </GeometryDrawing>
-  </DrawingGroup>
-
-  <DrawingImage x:Key="SplitIcon" >
-    <DrawingImage.Drawing>
-      <DrawingGroup >
-        <GeometryDrawing Brush="Transparent" >
-          <GeometryDrawing.Pen>
-            <Pen Brush="{DynamicResource ToolbarIconBrush}" Thickness="1" EndLineCap="Round" StartLineCap="Round" LineJoin="Round" />
-          </GeometryDrawing.Pen>
-          <GeometryDrawing.Geometry>
-            <PathGeometry>
-              <PathGeometry.Figures>
-                <PathFigure StartPoint="0,0" IsClosed="True" IsFilled="True" >
-                  <LineSegment Point="10,0"/>
-                  <LineSegment Point="10,5"/>
-                  <LineSegment Point="5,8"/>
-                  <LineSegment Point="0,5"/>
-                </PathFigure>
-              </PathGeometry.Figures>
-            </PathGeometry>
-          </GeometryDrawing.Geometry>
-
+    <DrawingGroup x:Key="CheckerBoxBackground">
+        <GeometryDrawing Brush="#5B5B5B">
+            <!-- Brush="#2B3C59">-->
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="0,0,1,1"/>
+            </GeometryDrawing.Geometry>
         </GeometryDrawing>
-      </DrawingGroup>
-    </DrawingImage.Drawing>
-  </DrawingImage>
+        <GeometryDrawing Brush="#565656">
+            <!-- Dark-->
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="1,0,1,1" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="#5B5B5B">
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="1,1,1,1" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="#565656">
+            <!-- Dark-->
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="0,1,1,1" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
 
-  <DrawingImage x:Key="CollapseAllIcon" >
+    <DrawingImage x:Key="CollapseAllIcon" >
     <DrawingImage.Drawing>
       <DrawingGroup  >
         <GeometryDrawing  >
@@ -744,80 +719,11 @@
     <GradientStop Color="#CED4DF" Offset="1" />
   </LinearGradientBrush>
 
-  <Style x:Key="MainAppClientArea" TargetType="Border">
-    <Setter Property="Padding" Value="3,3,3,0"/>
-  </Style>
-
-  <Style TargetType="{x:Type ProgressBar}">
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type ProgressBar}">
-          <ControlTemplate.Resources>
-            <Storyboard x:Key="IndeterminateOn">
-              <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateGradientFill"
-                                                   Storyboard.TargetProperty="(Shape.Fill).(LinearGradientBrush.Transform).(TransformGroup.Children)[0].X" RepeatBehavior="Forever">
-                <SplineDoubleKeyFrame KeyTime="0"
-                                            Value="0"/>
-                <SplineDoubleKeyFrame KeyTime="00:00:.5"
-                                            Value="20"/>
-              </DoubleAnimationUsingKeyFrames>
-            </Storyboard>
-          </ControlTemplate.Resources>
-          <Grid>
-
-            <Border x:Name="PART_Track" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" CornerRadius="3"/>
-
-            <Border HorizontalAlignment="Left" x:Name="PART_Indicator" BorderBrush="{x:Null}" BorderThickness="1" CornerRadius="7,7,7,7">
-              <Border.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                  <GradientStop Color="#FFBAE4FF" Offset="0"/>
-                  <GradientStop Color="#FF57D160" Offset="1"/>
-                </LinearGradientBrush>
-              </Border.Background>
-            </Border>
-            <Grid x:Name="IndeterminateRoot" Visibility="Collapsed">
-              <Rectangle Margin="1,1,1,1"	x:Name="IndeterminateGradientFill" Opacity="0.7" RadiusX="5" RadiusY="5" StrokeThickness="0">
-                <Rectangle.Fill>
-                  <LinearGradientBrush EndPoint="0,1" StartPoint="20,1" MappingMode="Absolute" SpreadMethod="Repeat">
-                    <LinearGradientBrush.Transform>
-                      <TransformGroup>
-                        <TranslateTransform X="0"/>
-                        <SkewTransform AngleX="-30"/>
-                      </TransformGroup>
-                    </LinearGradientBrush.Transform>
-                    <GradientStop Color="#FFFFFFFF" Offset="0"/>
-                    <GradientStop Color="#00FFFFFF" Offset=".25"/>
-                    <GradientStop Color="#FFFFFFFF" Offset="0.85"/>
-                  </LinearGradientBrush>
-                </Rectangle.Fill>
-                <Rectangle.OpacityMask>
-                  <LinearGradientBrush EndPoint="0.004,0.465" StartPoint="0.997,0.422">
-                    <GradientStop Color="#00FFFFFF"/>
-                    <GradientStop Color="#00FFFFFF" Offset="1"/>
-                    <GradientStop Color="#FFFFFFFF" Offset="0.486"/>
-                  </LinearGradientBrush>
-                </Rectangle.OpacityMask>
-              </Rectangle>
-            </Grid>
-            <Border x:Name="DisabledBorder" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Opacity="0"/>
-          </Grid>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Opacity" TargetName="DisabledBorder" Value="0.8"/>
-            </Trigger>
-            <Trigger Property="IsIndeterminate" Value="True">
-              <Trigger.EnterActions>
-                <BeginStoryboard Storyboard="{StaticResource IndeterminateOn}"/>
-              </Trigger.EnterActions>
-              <Setter Property="Visibility" TargetName="IndeterminateRoot" Value="Visible"/>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
-
-  <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" TargetType="{x:Type ScrollViewer}">
+    <Style x:Key="MainAppClientArea" TargetType="Border">
+        <Setter Property="Padding" Value="3,3,3,0"/>
+    </Style>
+    
+    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" TargetType="{x:Type ScrollViewer}">
     <Setter Property="Focusable" Value="false" />
     <Setter Property="Template">
       <Setter.Value>

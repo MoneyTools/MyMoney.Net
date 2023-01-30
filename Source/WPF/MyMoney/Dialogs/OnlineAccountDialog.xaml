@@ -1,60 +1,42 @@
 ﻿<local:BaseDialog x:Class="Walkabout.Dialogs.OnlineAccountDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ofx="clr-namespace:Walkabout.Ofx"
-        xmlns:data="clr-namespace:Walkabout.Data"
+        mc:Ignorable="d" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:local="clr-namespace:Walkabout.Dialogs"
+        xmlns:ofx="clr-namespace:Walkabout.Ofx"
+        xmlns:data="clr-namespace:Walkabout.Data"
         xmlns:help="clr-namespace:Walkabout.Help"
-        mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         help:HelpService.HelpKeyword="Online Banking"
-        xmlns:c="clr-namespace:Walkabout.WpfConverters"
+        xmlns:c="clr-namespace:Walkabout.WpfConverters" 
+        xmlns:ui="http://schemas.modernwpf.com/2019"
         Title="Online Account"  
         WindowStartupLocation="CenterOwner" 
         WindowStyle="ToolWindow"
         SizeToContent="WidthAndHeight" 
-        d:DesignHeight="520" d:DesignWidth="859">
+        MinWidth="700"
+        d:DesignHeight="600" d:DesignWidth="900">
 
     <Window.Resources>
-        <SolidColorBrush x:Key="TextBrush" Color="Black"/>
-
-        <SolidColorBrush x:Key="GridViewHeaderBrush" Color="#C9BDAF"/>
-
-        <Style TargetType="{x:Type ListView}">
-            <Setter Property="Background" Value="{DynamicResource ShadeBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}" />
-            <Setter Property="Foreground" Value="#FF042271" />
-        </Style>
-
-        <Style TargetType="{x:Type ListViewItem}">
-            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-        </Style>
-
-        <Style x:Key="SimpleHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
-            <Setter Property="Background" Value="{StaticResource GridViewHeaderBrush}"/>
-        </Style>
 
         <DataTemplate DataType="{x:Type ofx:OfxInstitutionInfo}">
             <TextBlock Text="{Binding Path=Name}"/>
         </DataTemplate>
 
-        <Style TargetType="{x:Type TextBox}">
-            <Setter Property="MinWidth" Value="250"/>
-        </Style>
-
         <DataTemplate x:Key="IconTemplate">
             <Button x:Name="IconButton" Click="OnIconButtonClick" ToolTip="{Binding ToolTipMessage}">
-                <Image x:Name="Icon" Width="16" Height="16" Source="/MyMoney;component/Dialogs/Icons/CheckMark.png" />
+                <ui:SymbolIcon x:Name="Icon" Symbol="Accept" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Button>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Path=IsDisconnected}" Value="true">
-                    <Setter Property="Source" TargetName="Icon" Value="/MyMoney;component/Dialogs/Icons/delete.png"/>
+                    <Setter Property="Symbol" TargetName="Icon" Value="DisconnectDrive"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Path=IsNew}" Value="true">
-                    <Setter Property="Source" TargetName="Icon" Value="/MyMoney;component/Dialogs/Icons/QuestionMark.png"/>
+                    <Setter Property="Symbol" TargetName="Icon" Value="Help"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Path=HasWarning}" Value="true">
-                    <Setter Property="Source" TargetName="Icon" Value="/MyMoney;component/Dialogs/Icons/Warning.png"/>
+                    <Setter Property="Symbol" TargetName="Icon" Value="Import"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
@@ -141,7 +123,7 @@
             <ProgressBar x:Name="GetBankListProgress" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsIndeterminate="True"/>
 
             <TextBlock Text="Institution name:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" />
-            <TextBox x:Name="TextBoxInstitution" Text="{Binding Path=Institution}" Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"   Height="22" TextChanged="OnTextChanged"/>
+            <TextBox x:Name="TextBoxInstitution" Text="{Binding Path=Institution}" Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" TextChanged="OnTextChanged"/>
 
             <TextBlock Text="Institution ID (FID):" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" />
             <TextBox x:Name="TextBoxFid" Text="{Binding Path=FID}" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" TextChanged="OnTextChanged" />
@@ -181,15 +163,15 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock x:Name="SignupResultPrompt" Text="The following accounts were found online.  Click the icons to setup each account." Grid.Row="1" TextWrapping="Wrap"/>
+            <TextBlock x:Name="SignupResultPrompt" Text="The following accounts were found online.  Use the toggle buttons to select which accounts you want to connect, skip or disconnect." Grid.Row="1" TextWrapping="Wrap"/>
 
             <Grid Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="ScrollerGrid" MinWidth="400" >
                 <ListView x:Name="OnlineResultList"  HorizontalAlignment="Stretch" >
                     <ListView.View>
                         <GridView >
-                            <GridViewColumn x:Name="ColumnIcon" Width="Auto" CellTemplate="{StaticResource IconTemplate}"  HeaderContainerStyle="{StaticResource SimpleHeaderStyle}"/>
-                            <GridViewColumn x:Name="ColumnId" DisplayMemberBinding="{Binding Path=AccountId}" Width="Auto" Header="Id" HeaderContainerStyle="{StaticResource SimpleHeaderStyle}"/>
-                            <GridViewColumn x:Name="ColumnName" DisplayMemberBinding="{Binding Path=Name}" Width="Auto" Header="Name" HeaderContainerStyle="{StaticResource SimpleHeaderStyle}"/>
+                            <GridViewColumn x:Name="ColumnIcon" Width="Auto" CellTemplate="{StaticResource IconTemplate}"/>
+                            <GridViewColumn x:Name="ColumnId" DisplayMemberBinding="{Binding Path=AccountId}" Width="Auto" Header="Id" />
+                            <GridViewColumn x:Name="ColumnName" DisplayMemberBinding="{Binding Path=Name}" Width="Auto" Header="Name" />
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -214,7 +196,7 @@
 
             <Button x:Name="ButtonVerify" Grid.Column="0" HorizontalAlignment="Right" IsDefault="True" MinWidth="72" MinHeight="23" Click="OnButtonVerify" ToolTip="Click here to verify this financial institution supports OFX downloading">_Connect...</Button>
 
-            <ProgressBar x:Name="Progress" IsIndeterminate="True"  Grid.Column="1" Height="20" HorizontalAlignment="Stretch" Margin="10,2,10,0" VerticalAlignment="Top" />
+            <ProgressBar x:Name="Progress" IsIndeterminate="True"  Grid.Column="1" HorizontalAlignment="Stretch"/>
 
             <Button x:Name="ButtonOk" Grid.Column="2" IsDefault="True" MinWidth="72" Margin="0,0,0,0" Click="OnButtonOk">OK</Button>
             <Button x:Name="ButtonCancel" Grid.Column="3" IsCancel="True" MinWidth="72" Margin="12,0,0,0" Click="OnButtonCancel">Cancel</Button>

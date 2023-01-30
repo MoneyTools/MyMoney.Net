@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Diagnostics;
 using System.IO;
-using Walkabout.Utilities;
-using Walkabout.Configuration;
+using System.Windows;
 using System.Xml.Linq;
+using Walkabout.Configuration;
 using Walkabout.Help;
+using Walkabout.Utilities;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -18,7 +18,6 @@ namespace Walkabout
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-
     public partial class App : Application
     {
         private void MyApplicationStartup(object sender, StartupEventArgs e)
@@ -29,38 +28,38 @@ namespace Walkabout
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AppInitialize))
             {
 #endif
-                HelpService.Initialize();
+            HelpService.Initialize();
 
-                Process currentRunningInstanceOfMyMoney = null;
+            Process currentRunningInstanceOfMyMoney = null;
 
-                if (SaveImportArgs())
+            if (SaveImportArgs())
+            {
+                // Application is running Process command line args
+                currentRunningInstanceOfMyMoney = BringToFrontApplicationIfAlreadyRunning();
+            }
+
+            bool noSettings = false;
+
+            foreach (string arg in e.Args)
+            {
+                if (string.Compare(arg, "/nosettings", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    // Application is running Process command line args
-                    currentRunningInstanceOfMyMoney = BringToFrontApplicationIfAlreadyRunning();
+                    noSettings = true;
                 }
+            }
 
-                bool noSettings = false;
+            if (currentRunningInstanceOfMyMoney != null)
+            {
 
-                foreach (string arg in e.Args)
-                {
-                    if (string.Compare(arg, "/nosettings", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        noSettings = true;
-                    }
-                }
-
-                if (currentRunningInstanceOfMyMoney != null)
-                {
-
-                    // Let the currently running application handle the IMPORT file
-                    // we can close this instance 
-                    this.Shutdown();
-                    return;
-                }
+                // Let the currently running application handle the IMPORT file
+                // we can close this instance 
+                this.Shutdown();
+                return;
+            }
 
 
-                // Load the application settings
-                settings = LoadSettings(noSettings);
+            // Load the application settings
+            settings = LoadSettings(noSettings);
 
 #if PerformanceBlocks
             }

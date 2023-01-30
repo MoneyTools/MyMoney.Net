@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -46,46 +45,46 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphGenerate))
             {
 #endif
-                if (this.data != null)
+            if (this.data != null)
+            {
+                decimal balance = this.account != null ? this.account.OpeningBalance : 0;
+
+                foreach (object row in this.data)
                 {
-                    decimal balance = this.account != null ? this.account.OpeningBalance : 0;
-
-                    foreach (object row in this.data)
+                    Transaction t = row as Transaction;
+                    if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
                     {
-                        Transaction t = row as Transaction;
-                        if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
+                        switch (this.viewName)
                         {
-                            switch (this.viewName)
-                            {
-                                case TransactionViewName.BySecurity:
-                                    // When we build the trend graph for a specific security in the security view,
-                                    // we should show the overall value of the securities instead, which is precalculated and stored within each transaction
-                                    balance = t.RunningBalance;
-                                    break;
+                            case TransactionViewName.BySecurity:
+                                // When we build the trend graph for a specific security in the security view,
+                                // we should show the overall value of the securities instead, which is precalculated and stored within each transaction
+                                balance = t.RunningBalance;
+                                break;
 
-                                case TransactionViewName.ByCategory:
-                                case TransactionViewName.ByCategoryCustom:
-                                    balance += t.CurrencyNormalizedAmount(t.AmountMinusTax);
-                                    break;
+                            case TransactionViewName.ByCategory:
+                            case TransactionViewName.ByCategoryCustom:
+                                balance += t.CurrencyNormalizedAmount(t.AmountMinusTax);
+                                break;
 
-                                case TransactionViewName.ByPayee:
-                                    balance += t.CurrencyNormalizedAmount(t.Amount);
-                                    break;
+                            case TransactionViewName.ByPayee:
+                                balance += t.CurrencyNormalizedAmount(t.Amount);
+                                break;
 
-                                default:
-                                    balance += t.Amount;
-                                    break;
-                            }
-
-                            yield return new TrendValue()
-                            {
-                                Date = t.Date,
-                                Value = balance,
-                                UserData = t
-                            };
+                            default:
+                                balance += t.Amount;
+                                break;
                         }
+
+                        yield return new TrendValue()
+                        {
+                            Date = t.Date,
+                            Value = balance,
+                            UserData = t
+                        };
                     }
                 }
+            }
 #if PerformanceBlocks
             }
 #endif
@@ -129,40 +128,40 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphPrepare))
             {
 #endif
-                // the lock locks out any change to the cache from background downloading of stock quotes
-                // while we are generating this graph.
-                using (var cacheLock = this.cache.BeginLock())
+            // the lock locks out any change to the cache from background downloading of stock quotes
+            // while we are generating this graph.
+            using (var cacheLock = this.cache.BeginLock())
+            {
+                Dictionary<string, Security> toLoad = new Dictionary<string, Security>();
+                foreach (var transaction in this.myMoney.Transactions.GetTransactionsFrom(this.account))
                 {
-                    Dictionary<string, Security> toLoad = new Dictionary<string, Security>();
-                    foreach (var transaction in this.myMoney.Transactions.GetTransactionsFrom(this.account))
+                    var symbol = transaction.InvestmentSecuritySymbol;
+                    if (!string.IsNullOrEmpty(symbol) && !toLoad.ContainsKey(symbol))
                     {
-                        var symbol = transaction.InvestmentSecuritySymbol;
-                        if (!string.IsNullOrEmpty(symbol) && !toLoad.ContainsKey(symbol))
-                        {
-                            var s = transaction.InvestmentSecurity;
-                            toLoad[symbol] = s;
-                        }
-                    }
-
-                    var keys = toLoad.Keys.ToArray();
-                    for (int i = 0; i < keys.Length; i++)
-                    {
-                        status.ShowProgress(0, keys.Length, 1);
-                        var symbol = keys[i];
-                        var s = toLoad[symbol];
-                        await this.cache.LoadHistory(s);
-
-                        // setup pending stock splits.
-                        List<StockSplit> splits = new List<StockSplit>(this.myMoney.StockSplits.GetStockSplitsForSecurity(s));
-                        splits.Sort(new Comparison<StockSplit>((a, b) =>
-                        {
-                            return DateTime.Compare(a.Date, b.Date); // ascending
-                        }));
-                        this.pendingSplits[symbol] = splits;
+                        var s = transaction.InvestmentSecurity;
+                        toLoad[symbol] = s;
                     }
                 }
 
-                status.ShowProgress(0, 0, 0);
+                var keys = toLoad.Keys.ToArray();
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    status.ShowProgress(0, keys.Length, 1);
+                    var symbol = keys[i];
+                    var s = toLoad[symbol];
+                    await this.cache.LoadHistory(s);
+
+                    // setup pending stock splits.
+                    List<StockSplit> splits = new List<StockSplit>(this.myMoney.StockSplits.GetStockSplitsForSecurity(s));
+                    splits.Sort(new Comparison<StockSplit>((a, b) =>
+                    {
+                        return DateTime.Compare(a.Date, b.Date); // ascending
+                    }));
+                    this.pendingSplits[symbol] = splits;
+                }
+            }
+
+            status.ShowProgress(0, 0, 0);
 
 #if PerformanceBlocks
             }
@@ -173,129 +172,129 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphGenerate))
             {
 #endif
-                // the lock locks out any change to the cache from background downloading of stock quotes.
-                using (var cacheLock = this.cache.BeginLock())
+            // the lock locks out any change to the cache from background downloading of stock quotes.
+            using (var cacheLock = this.cache.BeginLock())
+            {
+                // This code is similar to the CostBasisCalculator with one big difference.  The CostBasisCalculator
+                // computes the market value on a given date.  This one computes the market value for every day starting
+                // with the date of the first transaction.  The trick to making this efficient enough is to have 
+                // and optimized version of ComputeMarketValue.
+
+                var holdings = new AccountHoldings();
+                var date = DateTime.MinValue;
+                var first = true;
+                decimal cashBalance = this.account.OpeningBalance;
+                foreach (var t in this.myMoney.Transactions.GetTransactionsFrom(this.account))
                 {
-                    // This code is similar to the CostBasisCalculator with one big difference.  The CostBasisCalculator
-                    // computes the market value on a given date.  This one computes the market value for every day starting
-                    // with the date of the first transaction.  The trick to making this efficient enough is to have 
-                    // and optimized version of ComputeMarketValue.
-
-                    var holdings = new AccountHoldings();
-                    var date = DateTime.MinValue;
-                    var first = true;
-                    decimal cashBalance = this.account.OpeningBalance;
-                    foreach (var t in this.myMoney.Transactions.GetTransactionsFrom(this.account))
+                    if (first)
                     {
-                        if (first)
+                        first = false;
+                        date = t.Date;
+                    }
+
+                    // This is where we are smoothing the graph by filling in historical market value for every day
+                    // starting with the first transaction all the way to the last.
+                    while (date.Date < t.Date.Date)
+                    {
+                        // Stock splits are in a "pending" list and when the Date rolls by it can trigger a specific
+                        // stock split.  When that happens all the remaining units and cost bases in the AccountHoldings
+                        // are adjusted accordingly.
+                        this.ApplyPendingSplits(date, holdings);
+                        decimal marketValue = this.ComputeMarketValue(date, holdings);
+                        this.graph.Add(new TrendValue() { Date = date, UserData = t, Value = marketValue + cashBalance });
+                        date = date.AddDays(1);
+                    }
+
+                    if (t.IsDeleted || t.Status == TransactionStatus.Void)
+                    {
+                        continue;
+                    }
+
+                    // all transactions can have a cash amount that contributes to the market value.
+                    cashBalance += t.Amount;
+
+                    // and if it is a security transaction (buy, sell, etc) then we have to record these actions
+                    // in the AccountHoldings object so we know how many of each security is remaining at any
+                    // given date.
+                    if (t.InvestmentSecurity != null)
+                    {
+                        var i = t.Investment;
+                        var s = i.Security;
+
+                        switch (t.InvestmentType)
                         {
-                            first = false;
-                            date = t.Date;
-                        }
-
-                        // This is where we are smoothing the graph by filling in historical market value for every day
-                        // starting with the first transaction all the way to the last.
-                        while (date.Date < t.Date.Date)
-                        {
-                            // Stock splits are in a "pending" list and when the Date rolls by it can trigger a specific
-                            // stock split.  When that happens all the remaining units and cost bases in the AccountHoldings
-                            // are adjusted accordingly.
-                            this.ApplyPendingSplits(date, holdings);
-                            decimal marketValue = this.ComputeMarketValue(date, holdings);
-                            this.graph.Add(new TrendValue() { Date = date, UserData = t, Value = marketValue + cashBalance });
-                            date = date.AddDays(1);
-                        }
-
-                        if (t.IsDeleted || t.Status == TransactionStatus.Void)
-                        {
-                            continue;
-                        }
-
-                        // all transactions can have a cash amount that contributes to the market value.
-                        cashBalance += t.Amount;
-
-                        // and if it is a security transaction (buy, sell, etc) then we have to record these actions
-                        // in the AccountHoldings object so we know how many of each security is remaining at any
-                        // given date.
-                        if (t.InvestmentSecurity != null)
-                        {
-                            var i = t.Investment;
-                            var s = i.Security;
-
-                            switch (t.InvestmentType)
-                            {
-                                case InvestmentType.Buy:
-                                case InvestmentType.Add:
-                                    if (i.Units > 0)
+                            case InvestmentType.Buy:
+                            case InvestmentType.Add:
+                                if (i.Units > 0)
+                                {
+                                    if (i.UnitPrice != 0)
                                     {
-                                        if (i.UnitPrice != 0)
-                                        {
-                                            // In case we don't have any online stock quote histories this at least
-                                            // tells our StockQuotesByDate what the unit price was on the date of this
-                                            // transaction.
-                                            this.RecordPrice(i.Date, s, i.UnitPrice);
-                                        }
-                                        holdings.Buy(i.Security, i.Date, i.Units, i.OriginalCostBasis);
-                                        foreach (var sale in holdings.ProcessPendingSales(i.Security))
+                                        // In case we don't have any online stock quote histories this at least
+                                        // tells our StockQuotesByDate what the unit price was on the date of this
+                                        // transaction.
+                                        this.RecordPrice(i.Date, s, i.UnitPrice);
+                                    }
+                                    holdings.Buy(i.Security, i.Date, i.Units, i.OriginalCostBasis);
+                                    foreach (var sale in holdings.ProcessPendingSales(i.Security))
+                                    {
+                                        // have to pull the yield iterator.
+                                    }
+                                }
+                                break;
+                            case InvestmentType.Remove:
+                            case InvestmentType.Sell:
+                                if (i.Units > 0)
+                                {
+                                    if (i.UnitPrice != 0)
+                                    {
+                                        this.RecordPrice(i.Date, s, i.UnitPrice);
+                                    }
+                                    if (i.Transaction.Transfer == null)
+                                    {
+                                        foreach (var sale in holdings.Sell(s, i.Date, i.Units, i.OriginalCostBasis))
                                         {
                                             // have to pull the yield iterator.
                                         }
                                     }
-                                    break;
-                                case InvestmentType.Remove:
-                                case InvestmentType.Sell:
-                                    if (i.Units > 0)
+                                    else
                                     {
-                                        if (i.UnitPrice != 0)
+                                        // bugbug; could this ever be a split? Don't think so...
+                                        Investment add = i.Transaction.Transfer.Transaction.Investment;
+                                        Debug.Assert(add != null, "Other side of the Transfer needs to be an Investment transaction");
+                                        if (add != null)
                                         {
-                                            this.RecordPrice(i.Date, s, i.UnitPrice);
-                                        }
-                                        if (i.Transaction.Transfer == null)
-                                        {
-                                            foreach (var sale in holdings.Sell(s, i.Date, i.Units, i.OriginalCostBasis))
-                                            {
-                                                // have to pull the yield iterator.
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // bugbug; could this ever be a split? Don't think so...
-                                            Investment add = i.Transaction.Transfer.Transaction.Investment;
-                                            Debug.Assert(add != null, "Other side of the Transfer needs to be an Investment transaction");
-                                            if (add != null)
-                                            {
-                                                Debug.Assert(add.Type == InvestmentType.Add, "Other side of transfer should be an Add transaction");
+                                            Debug.Assert(add.Type == InvestmentType.Add, "Other side of transfer should be an Add transaction");
 
-                                                // now instead of doing a simple Add on the other side, we need to remember the cost basis of each purchase
-                                                // used to cover the remove
+                                            // now instead of doing a simple Add on the other side, we need to remember the cost basis of each purchase
+                                            // used to cover the remove
 
-                                                foreach (SecuritySale sale in holdings.Sell(s, i.Date, i.Units, 0))
+                                            foreach (SecuritySale sale in holdings.Sell(s, i.Date, i.Units, 0))
+                                            {
+                                                if (sale.DateAcquired.HasValue)
                                                 {
-                                                    if (sale.DateAcquired.HasValue)
+                                                    // now transfer the cost basis over to the target account.
+                                                    holdings.Buy(s, sale.DateAcquired.Value, sale.UnitsSold, sale.CostBasisPerUnit * sale.UnitsSold);
+                                                    foreach (var pendingSale in holdings.ProcessPendingSales(s))
                                                     {
-                                                        // now transfer the cost basis over to the target account.
-                                                        holdings.Buy(s, sale.DateAcquired.Value, sale.UnitsSold, sale.CostBasisPerUnit * sale.UnitsSold);
-                                                        foreach (var pendingSale in holdings.ProcessPendingSales(s))
-                                                        {
-                                                            // have to pull the yield iterator.
-                                                        }
+                                                        // have to pull the yield iterator.
                                                     }
-                                                    else
-                                                    {
-                                                        // this is the error case, but the error will be re-generated on the target account when needed.
-                                                    }
+                                                }
+                                                else
+                                                {
+                                                    // this is the error case, but the error will be re-generated on the target account when needed.
                                                 }
                                             }
                                         }
                                     }
+                                }
 
-                                    break;
-                                default:
-                                    break;
-                            }
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
+            }
 #if PerformanceBlocks
             }
 #endif
@@ -426,18 +425,18 @@ namespace Walkabout.Views
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.GraphGenerate))
             {
 #endif
-                string symbol = this.history.Symbol;
-                foreach (var item in this.history.History)
-                {
-                    decimal adjustedClose = this.ApplySplits(item.Close, item.Date);
+            string symbol = this.history.Symbol;
+            foreach (var item in this.history.History)
+            {
+                decimal adjustedClose = this.ApplySplits(item.Close, item.Date);
 
-                    yield return new TrendValue()
-                    {
-                        Date = item.Date,
-                        Value = adjustedClose,
-                        UserData = symbol
-                    };
-                }
+                yield return new TrendValue()
+                {
+                    Date = item.Date,
+                    Value = adjustedClose,
+                    UserData = symbol
+                };
+            }
 #if PerformanceBlocks
             }
 #endif

@@ -75,6 +75,10 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
       
+      # Add vstest.console.exe
+    - name: Setup VSTest Path
+      uses: darenm/Setup-VSTest@v1.2
+
     # - name: Install Windows SDK 10.0.18362
     #   uses: fbactions/setup-winsdk@v1
     #   with:
@@ -93,6 +97,13 @@ jobs:
     # Build te application.
     - name: Build the application
       run: msbuild $env:Solution_Name /p:Configuration=$env:Configuration "/p:Platform=$env:Platform"
+      env:
+        Configuration: ${{ matrix.configuration }}
+        Platform: ${{ matrix.platform }}
+        
+    # Test the application.
+    - name: Run unit tests
+      run: vstest.console /Platform:x64 Source\WPF\UnitTests\bin\$env:Configuration\net7.0-windows\UnitTests.dll
       env:
         Configuration: ${{ matrix.configuration }}
         Platform: ${{ matrix.platform }}

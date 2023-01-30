@@ -7,10 +7,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Walkabout.Utilities;
 #if PerformanceBlocks
@@ -6340,7 +6340,8 @@ namespace Walkabout.Data
                 this.observableCollection.Clear();
                 this.AggregateBuildingInformation((MyMoney)this.Parent);
 
-                foreach (RentBuilding r in this.rentBuildings.Values)
+                // sorted by Rental Names
+                foreach (RentBuilding r in this.rentBuildings.Values.OrderBy(item => { return item.Name; }))
                 {
                     if (!r.IsDeleted)
                     {
@@ -9266,13 +9267,20 @@ namespace Walkabout.Data
             return false;
         }
 
+        private static bool IsSameString(string a, string b)
+        {
+            if (string.IsNullOrEmpty(a)) return string.IsNullOrEmpty(b);
+            if (string.IsNullOrEmpty(b)) return false;
+            return a.Trim() == b.Trim();
+        }
+
         private static bool IsPotentialDuplicate(Transaction t, Transaction u, int dayRange)
         {
             return !u.IsFake && !t.IsFake &&
                 u != t && u.amount == t.amount && u.PayeeName == t.PayeeName &&
                 // they must be in the same account (which they may not be if on the multi-account view).
                 u.Account == t.Account &&
-                u.Number == t.Number &&
+                IsSameString(u.Number, t.Number) &&
                 // ignore transfers for now
                 t.Transfer == null && u.Transfer == null &&
                 // if user has already marked both as not duplicates, then skip it.
@@ -12086,7 +12094,7 @@ namespace Walkabout.Data
                 rc = true;
             }
 
-            if (this.date == null && t.date != null && this.date != t.date)
+            if (this.date != t.date)
             {
                 this.date = t.date;
                 rc = true;
@@ -12736,33 +12744,33 @@ namespace Walkabout.Data
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.Model, MeasurementId.Indexing))
             {
 #endif
-                // now we can build the payee index, only need to do non-closed accounts
-                // since we don't care about old stale data in this index.
-                foreach (var t in this.money.Transactions)
+            // now we can build the payee index, only need to do non-closed accounts
+            // since we don't care about old stale data in this index.
+            foreach (var t in this.money.Transactions)
+            {
+                var account = t.Account;
+                if (account != null && !account.IsClosed)
                 {
-                    var account = t.Account;
-                    if (account != null && !account.IsClosed)
+                    if (t.IsSplit)
                     {
-                        if (t.IsSplit)
+                        foreach (var s in t.Splits)
                         {
-                            foreach (var s in t.Splits)
+                            string cap = s.PayeeOrTransferCaption;
+                            if (!string.IsNullOrEmpty(cap))
                             {
-                                string cap = s.PayeeOrTransferCaption;
-                                if (!string.IsNullOrEmpty(cap))
-                                {
-                                    this.GetOrCreate(cap, account);
-                                    continue;
-                                }
+                                this.GetOrCreate(cap, account);
+                                continue;
                             }
                         }
+                    }
 
-                        var caption = t.PayeeOrTransferCaption;
-                        if (!string.IsNullOrEmpty(caption))
-                        {
-                            this.GetOrCreate(caption, account);
-                        }
+                    var caption = t.PayeeOrTransferCaption;
+                    if (!string.IsNullOrEmpty(caption))
+                    {
+                        this.GetOrCreate(caption, account);
                     }
                 }
+            }
 #if PerformanceBlocks
             }
 #endif

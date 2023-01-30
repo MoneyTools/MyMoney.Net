@@ -41,23 +41,23 @@
         <ContextMenu>
             <MenuItem Header="Cu_t" InputGestureText="Ctrl+X" Command="Cut">
                 <MenuItem.Icon>
-                    <Image Source="/MyMoney;component/Dialogs/Icons/CutHS.png" />
+                    <ui:SymbolIcon Symbol="Cut"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Header="_Copy" InputGestureText="Ctrl+C" Command="Copy">
                 <MenuItem.Icon>
-                    <Image Source="/MyMoney;component/Dialogs/Icons/CopyHS.png" />
+                    <ui:SymbolIcon Symbol="Copy"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Header="Paste" InputGestureText="Ctrl+V" Command="Paste">
                 <MenuItem.Icon>
-                    <Image Source="/MyMoney;component/Dialogs/Icons/PasteHS.png" />
+                    <ui:SymbolIcon Symbol="Paste"/>
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
             <MenuItem Header="Delete" InputGestureText="Del" Command="Delete">
                 <MenuItem.Icon>
-                    <Image Source="/MyMoney;component/Dialogs/Icons/delete_16x.png" />
+                    <ui:SymbolIcon Symbol="Delete"/>
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
@@ -65,8 +65,7 @@
 
     <DockPanel>
         <ui:CommandBar DockPanel.Dock="top" HorizontalAlignment="Left" >
-            <ui:AppBarButton x:Name="ScanButton" Click="Scan" Icon="Scan" ToolTip="Click here to scan a document"
-                             />
+            <!--<ui:AppBarButton x:Name="ScanButton" Click="Scan" Icon="Scan" ToolTip="Click here to scan a document" />-->
             <!--<Separator Width="30" Background="Transparent"/>-->
             <ui:AppBarButton x:Name="ZoomInButton" Click="ZoomIn" Icon="ZoomIn" ToolTip="Zoom in"/>
             <ui:AppBarButton x:Name="ZoomOutButton" Click="ZoomOut"  Icon="ZoomOut" ToolTip="Zoom out"/>

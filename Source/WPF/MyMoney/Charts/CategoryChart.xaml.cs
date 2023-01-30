@@ -32,18 +32,18 @@ namespace Walkabout.Charts
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.CategoryChartInitialize))
             {
 #endif
-                this.InitializeComponent();
-                IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
+            this.InitializeComponent();
+            IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
 
-                this.unassigned = new Category() { Name = "Unknown", Type = Data.CategoryType.None };
-                this.transferredIn = new Category() { Name = "Transferred In", Type = Data.CategoryType.Transfer };
-                this.transferredOut = new Category() { Name = "Transferred Out", Type = Data.CategoryType.Transfer };
+            this.unassigned = new Category() { Name = "Unknown", Type = Data.CategoryType.None };
+            this.transferredIn = new Category() { Name = "Transferred In", Type = Data.CategoryType.Transfer };
+            this.transferredOut = new Category() { Name = "Transferred Out", Type = Data.CategoryType.Transfer };
 
-                this.PieChart.PieSliceClicked += this.OnPieSliceClicked;
-                this.PieChart.PieSliceHover += this.OnPieSliceHovered;
-                this.PieChart.ToolTipGenerator = this.OnGenerateTip;
+            this.PieChart.PieSliceClicked += this.OnPieSliceClicked;
+            this.PieChart.PieSliceHover += this.OnPieSliceHovered;
+            this.PieChart.ToolTipGenerator = this.OnGenerateTip;
 
-                this.Legend.Toggled += this.OnLegendToggled;
+            this.Legend.Toggled += this.OnLegendToggled;
 #if PerformanceBlocks
             }
 #endif

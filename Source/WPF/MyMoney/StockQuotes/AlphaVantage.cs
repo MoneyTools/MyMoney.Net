@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,15 +20,17 @@ namespace Walkabout.StockQuotes
     {
         private static readonly string FriendlyName = "https://www.alphavantage.co/";
         private const string address = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={0}&apikey={1}";
+        private const string userAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
         private readonly char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
         private readonly StockServiceSettings _settings;
         private HashSet<string> _pending;
         private readonly HashSet<string> _retry = new HashSet<string>();
         private int _completed;
-        private HttpWebRequest _current;
+        private CancellationTokenSource _source;
         private bool _cancelled;
         private bool _suspended;
-        private Thread _downloadThread;
+        private bool _disabled; // service is returning errors.
+        private Task _downloadTask;
         private readonly string _logPath;
         private readonly StockQuoteThrottle _throttle;
 
@@ -67,13 +70,9 @@ namespace Walkabout.StockQuotes
         public void Cancel()
         {
             this._cancelled = true;
-            if (this._current != null)
+            if (this._source != null)
             {
-                try
-                {
-                    this._current.Abort();
-                }
-                catch { }
+                this._source.Cancel();
             }
         }
 
@@ -132,6 +131,11 @@ namespace Walkabout.StockQuotes
 
         public void BeginFetchQuote(string symbol)
         {
+            if (_disabled)
+            {
+                return;
+            }
+
             if (string.IsNullOrEmpty(this._settings.ApiKey))
             {
                 this.OnComplete(true, Walkabout.Properties.Resources.ConfigureStockQuoteService);
@@ -140,8 +144,7 @@ namespace Walkabout.StockQuotes
 
             if (this._pending == null)
             {
-                this._pending = new HashSet<string>();
-                this._pending.Add(symbol);
+                this._pending = new HashSet<string>(new string[] { symbol });
             }
             else
             {
@@ -151,11 +154,11 @@ namespace Walkabout.StockQuotes
                     this._pending.Add(symbol);
                 }
             }
-            this._cancelled = false;
-            if (this._downloadThread == null)
+            if (this._downloadTask == null)
             {
-                this._downloadThread = new Thread(new ThreadStart(this.DownloadQuotes));
-                this._downloadThread.Start();
+                this._cancelled = false;
+                this._source = new CancellationTokenSource();
+                this._downloadTask = Task.Run(this.DownloadQuotes);
             }
         }
 
@@ -166,7 +169,7 @@ namespace Walkabout.StockQuotes
             throw new Exception("Batch downloading of quotes is not supported by the AlphaVantage service");
         }
 
-        private void DownloadQuotes()
+        private async Task DownloadQuotes()
         {
             try
             {
@@ -216,6 +219,8 @@ namespace Walkabout.StockQuotes
                     }
                     else
                     {
+                        Exception ex = null;
+
                         try
                         {
                             // this service doesn't want too many calls per second.
@@ -234,7 +239,7 @@ namespace Walkabout.StockQuotes
                                 this.OnSuspended(true);
                                 while (!this._cancelled && ms > 0)
                                 {
-                                    Thread.Sleep(1000);
+                                    await Task.Delay(1000);
                                     ms -= 1000;
                                 }
                                 this.OnSuspended(false);
@@ -246,76 +251,95 @@ namespace Walkabout.StockQuotes
                             }
 
                             string uri = string.Format(address, symbol, this._settings.ApiKey);
-                            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
-                            req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
-                            req.Method = "GET";
-                            req.Timeout = 10000;
-                            req.UseDefaultCredentials = false;
-                            this._current = req;
 
                             Debug.WriteLine("AlphaVantage fetching quote " + symbol);
-
-                            WebResponse resp = req.GetResponse();
-                            this._throttle.RecordCall();
-                            using (Stream stm = resp.GetResponseStream())
+                            HttpClient client = new HttpClient();
+                            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+                            client.Timeout = TimeSpan.FromSeconds(30);
+                            var msg = await client.GetAsync(uri, _source.Token);
+                            if (!msg.IsSuccessStatusCode)
                             {
-                                using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
-                                {
-                                    string json = sr.ReadToEnd();
-                                    JObject o = JObject.Parse(json);
-                                    StockQuote quote = ParseStockQuote(o);
-                                    if (quote == null || quote.Symbol == null)
-                                    {
-                                        this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol));
-                                        this.OnSymbolNotFound(symbol);
-                                    }
-                                    else if (string.Compare(quote.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
-                                    {
-                                        // todo: show appropriate error...
-                                    }
-                                    else
-                                    {
-                                        this.OnQuoteAvailable(quote);
-                                    }
-                                }
-                            }
-
-                            this.OnError(string.Format(Walkabout.Properties.Resources.FetchedStockQuotes, symbol));
-                        }
-                        catch (System.Net.WebException we)
-                        {
-                            if (we.Status != WebExceptionStatus.RequestCanceled)
-                            {
-                                this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + we.Message);
+                                this.OnError("AlphaVantage http error " + msg.StatusCode + ": " + msg.ReasonPhrase);
                             }
                             else
                             {
-                                // we cancelled, so bail. 
-                                this._cancelled = true;
-                                break;
-                            }
-
-                            HttpWebResponse http = we.Response as HttpWebResponse;
-                            if (http != null)
-                            {
-                                // certain http error codes are fatal.
-                                switch (http.StatusCode)
+                                this._throttle.RecordCall();
+                                using (Stream stm = await msg.Content.ReadAsStreamAsync())
                                 {
-                                    case HttpStatusCode.ServiceUnavailable:
-                                    case HttpStatusCode.InternalServerError:
-                                    case HttpStatusCode.Unauthorized:
-                                        this.OnError(http.StatusDescription);
-                                        this._cancelled = true;
-                                        break;
+                                    using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
+                                    {
+                                        string json = sr.ReadToEnd();
+                                        JObject o = JObject.Parse(json);
+                                        StockQuote quote = ParseStockQuote(o);
+                                        if (quote == null || quote.Symbol == null)
+                                        {
+                                            this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol));
+                                            this.OnSymbolNotFound(symbol);
+                                        }
+                                        else if (string.Compare(quote.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
+                                        {
+                                            // todo: show appropriate error...
+                                        }
+                                        else
+                                        {
+                                            this.OnQuoteAvailable(quote);
+                                        }
+                                    }
                                 }
+
+                                this.OnError(string.Format(Walkabout.Properties.Resources.FetchedStockQuotes, symbol));
+                            }
+                        }
+                        catch (HttpRequestException he)
+                        {
+                            if (he.InnerException is System.Net.WebException we)
+                            {
+                                if (we.Status != WebExceptionStatus.RequestCanceled)
+                                {
+                                    this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + we.Message);
+                                }
+                                else
+                                {
+                                    // we cancelled, so bail. 
+                                    this._cancelled = true;
+                                    break;
+                                }
+
+                                HttpWebResponse http = we.Response as HttpWebResponse;
+                                if (http != null)
+                                {
+                                    // certain http error codes are fatal.
+                                    switch (http.StatusCode)
+                                    {
+                                        case HttpStatusCode.ServiceUnavailable:
+                                        case HttpStatusCode.InternalServerError:
+                                        case HttpStatusCode.Unauthorized:
+                                            this.OnError(http.StatusDescription);
+                                            this._cancelled = true;
+                                            break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                ex = he;
                             }
                         }
                         catch (Exception e)
                         {
-                            // continue
-                            string message = string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + e.Message;
+                            ex = e;
+                        }
 
-                            if (message.Contains("Please visit https://www.alphavantage.co/premium/"))
+                        if (ex != null)
+                        {
+                            // continue
+                            string message = string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + ex.Message;
+
+                            if (message.Contains("premium"))
+                            {
+                                this._disabled = true;
+                            }
+                            else
                             {
                                 lock (this._retry)
                                 {
@@ -326,7 +350,7 @@ namespace Walkabout.StockQuotes
                             this.OnComplete(this.PendingCount == 0, message);
                         }
 
-                        Thread.Sleep(1000); // this is so we don't starve out the download service.
+                        await Task.Delay(1000); // this is so we don't starve out the download service.
                     }
                 }
             }
@@ -342,8 +366,7 @@ namespace Walkabout.StockQuotes
             {
                 this.OnComplete(false, "AlphaVantage download cancelled");
             }
-            this._downloadThread = null;
-            this._current = null;
+            this._downloadTask = null;
         }
 
         private static StockQuote ParseStockQuote(JObject o)
@@ -410,6 +433,15 @@ namespace Walkabout.StockQuotes
 
         public async Task<bool> UpdateHistory(StockQuoteHistory history)
         {
+            if (_disabled)
+            {
+                return false;
+            }
+            this._cancelled = false;
+            if (this._source == null)
+            {
+                this._source = new CancellationTokenSource();
+            }
             string outputsize;
             if (!history.Complete)
             {
@@ -423,50 +455,51 @@ namespace Walkabout.StockQuotes
             const string timeSeriesAddress = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}&outputsize={1}&apikey={2}";
             string symbol = history.Symbol;
             string uri = string.Format(timeSeriesAddress, symbol, outputsize, this._settings.ApiKey);
-            await Task.Run(new Action(() =>
+
+            try
             {
-                try
+                // first check if history needs updating!
+                bool historyComplete = history.IsComplete();
+                if (historyComplete)
                 {
-                    // first check if history needs updating!
-                    bool historyComplete = history.IsComplete();
-                    if (historyComplete)
+                    this.OnError(string.Format("History for symbol {0} is already up to date", symbol));
+                }
+                else
+                {
+                    // this service doesn't want too many calls per second.
+                    int ms = this._throttle.GetSleep();
+                    while (ms > 0)
                     {
-                        this.OnError(string.Format("History for symbol {0} is already up to date", symbol));
-                    }
-                    else
-                    {
-                        // this service doesn't want too many calls per second.
-                        int ms = this._throttle.GetSleep();
-                        while (ms > 0)
-                        {
-                            string message = null;
-                            string suffix = (ms > 1000) ? "seconds" : "ms";
-                            int amount = (ms > 1000) ? ms / 1000 : ms;
-                            message = string.Format("AlphaVantage history service needs to sleep for {0} {1}", suffix, amount);
+                        string message = null;
+                        string suffix = (ms > 1000) ? "seconds" : "ms";
+                        int amount = (ms > 1000) ? ms / 1000 : ms;
+                        message = string.Format("AlphaVantage history service needs to sleep for {0} {1}", suffix, amount);
 
-                            this.OnComplete(this.PendingCount == 0, message);
-                            while (!this._cancelled && ms > 0)
-                            {
-                                Thread.Sleep(1000);
-                                ms -= 1000;
-                            }
-                            ms = this._throttle.GetSleep();
+                        this.OnComplete(this.PendingCount == 0, message);
+                        while (!this._cancelled && ms > 0)
+                        {
+                            await Task.Delay(1000);
+                            ms -= 1000;
                         }
-                        if (!this._cancelled)
+                        ms = this._throttle.GetSleep();
+                    }
+                    if (!this._cancelled)
+                    {
+                        HttpClient client = new HttpClient();
+                        client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+                        client.Timeout = TimeSpan.FromSeconds(30);
+                        var msg = await client.GetAsync(uri, _source.Token);
+                        if (!msg.IsSuccessStatusCode)
                         {
-                            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
-                            req.UserAgent = "USER_AGENT=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
-                            req.Method = "GET";
-                            req.Timeout = 10000;
-                            req.UseDefaultCredentials = false;
-                            this._current = req;
-
+                            this.OnError("AlphaVantage http error " + msg.StatusCode + ": " + msg.ReasonPhrase);
+                        }
+                        else
+                        {
                             this.OnError("AlphaVantage fetching history for " + symbol);
 
-                            WebResponse resp = req.GetResponse();
                             this._throttle.RecordCall();
 
-                            using (Stream stm = resp.GetResponseStream())
+                            using (Stream stm = await msg.Content.ReadAsStreamAsync())
                             {
                                 using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
                                 {
@@ -490,18 +523,18 @@ namespace Walkabout.StockQuotes
                         }
                     }
                 }
-                catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message;
+                this.OnError(message);
+                if (message.Contains("premium"))
                 {
-                    string message = ex.Message;
-                    this.OnError(message);
-                    if (message.Contains("Please visit https://www.alphavantage.co/premium/"))
-                    {
-                        this._throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
-                    }
+                    this._disabled = true;
                 }
-                this.OnComplete(this.PendingCount == 0, null);
+            }
+            this.OnComplete(this.PendingCount == 0, null);
 
-            }));
             return updated;
         }
 

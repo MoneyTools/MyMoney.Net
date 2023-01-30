@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Walkabout.Data;
 
@@ -519,7 +521,7 @@ namespace Walkabout.Ofx
             return list;
         }
 
-        public static List<OfxInstitutionInfo> GetRemoteBankList()
+        public static async Task<List<OfxInstitutionInfo>> GetRemoteBankList(CancellationToken token)
         {
             if (providerListCache != null)
             {
@@ -532,14 +534,20 @@ namespace Walkabout.Ofx
             try
             {
                 string url = OfxHomeProviderList;
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                request.Method = "GET";
-                HttpWebResponse r = request.GetResponse() as HttpWebResponse;
-                using (Stream s = r.GetResponseStream())
+                HttpClient client = new HttpClient();
+                var msg = await client.GetAsync(url, token);
+                if (msg.IsSuccessStatusCode)
                 {
-                    XDocument all = XDocument.Load(s);
-                    all.Save(Path.Combine(OfxRequest.OfxLogPath, "OfxHomeList.xml"));
-                    MergeProviderList(list, all);
+                    using (Stream s = await msg.Content.ReadAsStreamAsync(token))
+                    {
+                        XDocument all = XDocument.Load(s);
+                        all.Save(Path.Combine(OfxRequest.OfxLogPath, "OfxHomeList.xml"));
+                        MergeProviderList(list, all);
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("GetRemoteBankList failed " + msg.StatusCode + ": " + msg.ReasonPhrase);
                 }
             }
             catch (Exception e)
@@ -671,7 +679,7 @@ namespace Walkabout.Ofx
 
         private static readonly string OfxHomeProviderInfo = "http://www.ofxhome.com/api.php?lookup={0}";
 
-        public static OfxInstitutionInfo GetProviderInformation(OfxInstitutionInfo provider)
+        public static async Task<OfxInstitutionInfo> GetProviderInformation(OfxInstitutionInfo provider, CancellationToken token)
         {
             if (provider == null || string.IsNullOrEmpty(provider.OfxHomeId))
             {
@@ -682,15 +690,17 @@ namespace Walkabout.Ofx
             string url = string.Format(OfxHomeProviderInfo, provider.OfxHomeId);
             try
             {
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                request.Method = "GET";
-                HttpWebResponse r = request.GetResponse() as HttpWebResponse;
-                using (Stream s = r.GetResponseStream())
+                HttpClient client = new HttpClient();
+                var msg = await client.GetAsync(url, token);
+                if (msg.IsSuccessStatusCode)
                 {
-                    XDocument doc = XDocument.Load(s);
-                    if (provider.AddInfoFromOfxHome(doc.Root))
+                    using (Stream s = await msg.Content.ReadAsStreamAsync(token))
                     {
-                        UpdateCachedProfile(provider);
+                        XDocument doc = XDocument.Load(s);
+                        if (provider.AddInfoFromOfxHome(doc.Root))
+                        {
+                            UpdateCachedProfile(provider);
+                        }
                     }
                 }
             }

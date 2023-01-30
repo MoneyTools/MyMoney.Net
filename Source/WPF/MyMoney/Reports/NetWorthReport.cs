@@ -57,11 +57,12 @@ namespace Walkabout.Reports
 
                     DatePicker picker = new DatePicker();
                     // byYearCombo.SelectionChanged += OnYearChanged;
+                    System.Windows.Automation.AutomationProperties.SetName(picker, "ReportDate");
                     picker.Margin = new Thickness(10, 0, 0, 0);
                     picker.SelectedDate = this.reportDate;
                     picker.DisplayDate = this.reportDate;
                     picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
-                    heading.Inlines.Add(new InlineUIContainer(picker));
+                    this.AddInline(heading, picker);
 
                     var series = new ChartDataSeries() { Name = "Net Worth" };
                     IList<ChartDataValue> data = series.Values;

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Net;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Walkabout.Configuration;
@@ -32,7 +32,8 @@ namespace Walkabout.Setup
 
         public void BeginGetChangeList(Uri setupHost)
         {
-            Task.Run(() => this.GetChangeList(setupHost));
+            CancellationTokenSource src = new CancellationTokenSource();
+            Task.Run(() => this.GetChangeList(setupHost, src.Token));
         }
 
         public event EventHandler<SetupRequestEventArgs> Completed
@@ -66,11 +67,11 @@ namespace Walkabout.Setup
 
         private static readonly XNamespace asmNamespace = XNamespace.Get("urn:schemas-microsoft-com:asm.v1");
 
-        private void GetChangeList(Uri host)
+        private async Task GetChangeList(Uri host, CancellationToken token)
         {
             try
             {
-                XDocument changelist = this.GetDocument(new Uri(host, "changes.xml"));
+                XDocument changelist = await this.GetDocument(new Uri(host, "changes.xml"), token);
                 if (changelist == null || changelist.Root == null)
                 {
                     this.OnCompleted(null);
@@ -94,15 +95,15 @@ namespace Walkabout.Setup
             }
         }
 
-        private XDocument GetDocument(Uri url)
+        private async Task<XDocument> GetDocument(Uri url, CancellationToken token)
         {
             try
             {
-                WebRequest request = WebRequest.Create(url);
-                WebResponse response = request.GetResponse();
-                using (Stream s = response.GetResponseStream())
+                HttpClient client = new HttpClient();
+                var msg = await client.GetAsync(url);
+                using (var stm = await msg.Content.ReadAsStreamAsync())
                 {
-                    XDocument doc = XDocument.Load(s);
+                    XDocument doc = await XDocument.LoadAsync(stm, LoadOptions.None, token);
                     return doc;
                 }
             }

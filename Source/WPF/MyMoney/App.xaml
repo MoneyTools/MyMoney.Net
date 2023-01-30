@@ -10,6 +10,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources />
                 <ui:XamlControlsResources />
+                <ui:IntellisenseResources/>
                 <ResourceDictionary Source="Themes/generic.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

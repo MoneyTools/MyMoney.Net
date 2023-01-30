@@ -141,7 +141,7 @@ namespace Walkabout.Views
 
                 case Key.Enter:
                     {
-                        if (grid != null && grid.CurrentCell != null && !this.IsEditing)
+                        if (grid != null && !this.IsEditing)
                         {
                             grid.BeginEdit();
                             e.Handled = true;

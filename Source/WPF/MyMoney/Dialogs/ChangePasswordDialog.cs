@@ -91,12 +91,13 @@ namespace Walkabout.Dialogs
         private string logFile;
 
         // background thread
-        private void ChangePassword()
+        private async Task ChangePassword()
         {
             OfxRequest req = new OfxRequest(this.account, this.money, null);
             try
             {
-                req.ChangePassword(this.account, this.newPassword, out this.logFile);
+                await req.ChangePassword(this.account, this.newPassword);
+                this.logFile = req.OfxCachePath;
             }
             catch (Exception e)
             {

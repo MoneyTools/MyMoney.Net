@@ -414,7 +414,7 @@ namespace OfxTestServer
             }
 
 
-            if (challenge && code == 0)
+            if (challenge && code == 0 && !hasAccessKey)
             {
 
                 XElement challengeTran = e.Element("MFACHALLENGETRNRQ");

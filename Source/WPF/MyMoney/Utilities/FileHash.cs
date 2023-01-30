@@ -10,7 +10,7 @@ namespace Walkabout.Utilities
         private readonly long fileLength;
         private int hashCode;
         private readonly string path;
-        private static readonly HashAlgorithm hasher = HashAlgorithm.Create("SHA256");
+        private static readonly HashAlgorithm hasher = SHA256.Create();
 
         public HashedFile(string path)
         {

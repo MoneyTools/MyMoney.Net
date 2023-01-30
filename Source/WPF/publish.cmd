@@ -16,7 +16,7 @@ echo ### Publishing version %VERSION%...
 set WINGET=1
 set GITRELEASE=1
 set UPLOAD=1
-set ClickOnceBits=MyMoney\publish
+set ClickOnceBits=%ROOT%\MyMoney\bin\publish
 set DOBUILD=1
 :parse
 if "%1"=="/nowinget" set WINGET=0
@@ -36,12 +36,29 @@ if "%DevEnvDir%"=="" goto :novsdev
 if "%DOBUILD%"=="0" goto :dorelease
 
 if EXIST %ClickOnceBits% rd /s /q %ClickOnceBits%
-msbuild /target:publish MyMoney.sln /p:Configuration=Release "/p:Platform=Any CPU" /p:PublishDir=publish
-if not EXIST %ClickOnceBits%\MyMoney.application goto :nopub
 
-if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
-msbuild /target:publish MyMoneyPackage.sln /p:Configuration=Release "/p:Platform=Any CPU"
-if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :noappx
+UpdateVersion %VERSION% .\MyMoney\Properties\PublishProfiles\ClickOnceProfile.pubxml
+
+msbuild /target:restore MyMoney.sln /p:Configuration=Release "/p:Platform=Any CPU"
+if ERRORLEVEL 1 goto :err_restore
+
+msbuild /target:rebuild MyMoney.sln /p:Configuration=Release "/p:Platform=Any CPU"
+if ERRORLEVEL 1 goto :err_build
+
+pushd MyMoney
+msbuild /target:publish /p:PublishProfile=.\Properties\PublishProfiles\ClickOnceProfile.pubxml MyMoney.csproj /p:Configuration=Release "/p:Platform=Any CPU" /p:PublishDir=%ClickOnceBits%
+if ERRORLEVEL 1 goto :err_publish
+popd
+if not EXIST %ClickOnceBits%\MyMoney.application goto :nopub
+CleanupPublishFolder %VERSION% %ClickOnceBits%
+
+echo Please check the click once bits at %ClickOnceBits%
+pause
+
+echo ### BUGBUG: TODO fix msix package build of .NET 7.0 apps, it is currently not supported, skipping winget package creation...
+REM if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
+REM msbuild /target:publish MyMoneyPackage.sln /p:Configuration=Release "/p:Platform=Any CPU"
+REM if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :noappx
 
 :dorelease
 if "%GITRELEASE%" == "0" goto :upload
@@ -51,6 +68,7 @@ git push origin --tags
 
 echo Creating new release for version %VERSION%
 xsl -e -s MyMoney\Setup\LatestVersion.xslt MyMoney\Setup\changes.xml > notes.txt
+REM gh release create %VERSION% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
 gh release create %VERSION% %ROOT%MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle --notes-file notes.txt --title "MyMoney.Net %VERSION%"
 del notes.txt
 
@@ -58,12 +76,13 @@ del notes.txt
 if "%UPLOAD%" == "0" goto :dowinget
 echo Uploading ClickOnce installer
 copy /y MyMoney\Setup\changes.xml %ClickOnceBits%
-call AzurePublishClickOnce %ROOT%%ClickOnceBits% downloads/MyMoney "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
-call AzurePublishClickOnce %ROOT%MoneyPackage\AppPackages downloads/MyMoney.Net "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
+call AzurePublishClickOnce %ClickOnceBits% downloads/MyMoney "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
+REM call AzurePublishClickOnce %ROOT%MoneyPackage\AppPackages downloads/MyMoney.Net "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
 
 echo ============ Done publishing ClickOnce installer ==============
 :dowinget
-if "%WINGET%"=="0" goto :skipwinget
+goto :skipwinget
+rem if "%WINGET%"=="0" goto :skipwinget
 if not exist %WINGET_SRC% goto :nowinget
 
 :syncwinget
@@ -135,4 +154,18 @@ exit /b /1
 
 :nopub
 echo Could not find %ClickOnceBits%\MyMoney.application
+exit /b /1
+
+:err_restore
+echo Error: msbuild /target:restore failed.
+exit /b /1
+
+
+:err_build
+echo Error: msbuild /target:rebuild failed.
+exit /b /1
+
+:err_publish
+echo Error: msbuild /target:publish failed.
+popd
 exit /b /1

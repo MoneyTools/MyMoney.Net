@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 using Walkabout.Data;
 using Walkabout.Dialogs;
 using Walkabout.Utilities;
-using System.Windows.Media;
-using System.Windows.Threading;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -56,27 +56,27 @@ namespace Walkabout.Views.Controls
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.CategoriesControlInitialize))
             {
 #endif
-                this.InitializeComponent();
+            this.InitializeComponent();
 
-                this.treeView.SelectedItemChanged += new RoutedPropertyChangedEventHandler<object>(this.OnSelectedItemChanged);
-                this.treeView.Loaded += new RoutedEventHandler(this.OnTreeViewLoaded);
+            this.treeView.SelectedItemChanged += new RoutedPropertyChangedEventHandler<object>(this.OnSelectedItemChanged);
+            this.treeView.Loaded += new RoutedEventHandler(this.OnTreeViewLoaded);
 
-                IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
+            IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
 
-                this.dragDropSupport = new DragAndDrop(
-                    this.treeView,
-                    this.dragDropformatNameForCategory,
-                    this.OnDragDropObjectSource,
-                    this.OnDragDropObjectTarget,
-                    this.OnDragDropSourceOnTarget,
-                    true
-                    );
+            this.dragDropSupport = new DragAndDrop(
+                this.treeView,
+                this.dragDropformatNameForCategory,
+                this.OnDragDropObjectSource,
+                this.OnDragDropObjectTarget,
+                this.OnDragDropSourceOnTarget,
+                true
+                );
 
-                Unloaded += (s, e) =>
-                {
-                    this.dragDropSupport.Disconnect();
-                    this.MyMoney = null;
-                };
+            Unloaded += (s, e) =>
+            {
+                this.dragDropSupport.Disconnect();
+                this.MyMoney = null;
+            };
 
 #if PerformanceBlocks
             }

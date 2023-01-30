@@ -92,8 +92,7 @@ namespace Walkabout.Reports
             }
             byYearCombo.SelectionChanged += this.OnYearChanged;
             byYearCombo.Margin = new Thickness(10, 0, 0, 0);
-
-            heading.Inlines.Add(new InlineUIContainer(byYearCombo));
+            this.AddInline(heading, byYearCombo);
 
             /*
             <StackPanel Margin="10,5,10,5"  Grid.Row="2" Orientation="Horizontal">
@@ -114,8 +113,8 @@ namespace Walkabout.Reports
 
             writer.WriteParagraph("Consolidate securities by: ");
             Paragraph prompt = fwriter.CurrentParagraph;
-            prompt.Margin = new Thickness(0, 0, 0, 4);
-            prompt.Inlines.Add(new InlineUIContainer(consolidateCombo));
+            prompt.Margin = new Thickness(0, 0, 0, 4); 
+            this.AddInline(prompt, consolidateCombo);
 
             CheckBox checkBox = new CheckBox();
             checkBox.Content = "Capital Gains Only";

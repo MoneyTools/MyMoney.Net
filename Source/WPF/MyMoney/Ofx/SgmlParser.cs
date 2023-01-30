@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -1370,10 +1371,32 @@ namespace Walkabout.Sgml
         {
             char ch = this._current.SkipWhitespace();
             string[] names = this.ParseNameGroup(ch, true);
-            bool sto = char.ToLower(this._current.SkipWhitespace()) == 'o'; // start tag optional?   
-            this._current.ReadChar();
-            bool eto = char.ToLower(this._current.SkipWhitespace()) == 'o'; // end tag optional? 
-            this._current.ReadChar();
+            if (names[0] == "TICKER")
+            {
+                Debug.WriteLine("debug me");
+            }
+            ch = this._current.SkipWhitespace();
+            bool sto = char.ToLower(ch) == 'o'; // start tag optional?   
+            if (ch == '-' || ch == 'o' || ch == 'O')
+            {
+                // this is an SGML dtd.
+                this._current.ReadChar();
+            }
+            else
+            {
+                // this might be an XML dtd.
+            }
+            ch = this._current.SkipWhitespace();
+            bool eto = char.ToLower(ch) == 'o'; // end tag optional? 
+            if (ch == '-' || ch == 'o' || ch == 'O')
+            {
+                // this is an SGML dtd.
+                this._current.ReadChar();
+            }
+            else
+            {
+                // this might be an XML dtd.
+            }
             ch = this._current.SkipWhitespace();
             ContentModel cm = this.ParseContentModel(ch);
             ch = this._current.SkipWhitespace();

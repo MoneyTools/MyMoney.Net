@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
@@ -19,6 +20,13 @@ namespace Walkabout.Reports
         public virtual void Export(string filename)
         {
             throw new NotImplementedException();
+        }
+
+        protected void AddInline(Paragraph p, UIElement childUIElement)
+        {
+            var inline = new InlineUIContainer(childUIElement);
+            inline.BaselineAlignment = BaselineAlignment.Bottom;
+            p.Inlines.Add(inline);
         }
 
         protected void ExportReportAsCsv()

@@ -1,9 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
+﻿using NUnit.Framework;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Linq;
@@ -14,32 +10,11 @@ namespace Walkabout.Tests
     /// <summary>
     /// Summary description for DataTests
     /// </summary>
-    [TestClass]
     public class DataTests
     {
-        public DataTests()
+        [SetUp]
+        public void Setup()
         {
-            //
-            // TODO: Add constructor logic here
-            //
-        }
-
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return this.testContextInstance;
-            }
-            set
-            {
-                this.testContextInstance = value;
-            }
         }
 
         #region Additional test attributes
@@ -64,7 +39,7 @@ namespace Walkabout.Tests
         //
         #endregion
 
-        [TestMethod]
+        [Test]
         public void TestBinaryXml()
         {
             string filename = Path.GetTempFileName();
@@ -186,7 +161,7 @@ namespace Walkabout.Tests
                 Assert.Fail("One list is missing");
             }
 
-            Assert.AreEqual<int>(a.Count(), b.Count(), "Lists are not the same length, " + a.Count() + " != " + b.Count());
+            Assert.AreEqual(a.Count(), b.Count(), "Lists are not the same length, " + a.Count() + " != " + b.Count());
 
             IEnumerator<Q> e1 = a.GetEnumerator();
             IEnumerator<Q> e2 = a.GetEnumerator();
@@ -257,8 +232,8 @@ namespace Walkabout.Tests
 
         public void AssertSame(TestPoint data)
         {
-            Assert.AreEqual<double>(this.X, data.X, "TestPoint X is not the same, " + this.X + " != " + data.X);
-            Assert.AreEqual<double>(this.Y, data.Y, "TestPoint Y is not the same, " + this.Y + " != " + data.Y);
+            Assert.AreEqual(this.X, data.X, "TestPoint X is not the same, " + this.X + " != " + data.X);
+            Assert.AreEqual(this.Y, data.Y, "TestPoint Y is not the same, " + this.Y + " != " + data.Y);
         }
     }
 
