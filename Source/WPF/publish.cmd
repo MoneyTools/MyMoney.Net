@@ -56,9 +56,9 @@ echo Please check the click once bits at %ClickOnceBits%
 pause
 
 echo ### BUGBUG: TODO fix msix package build of .NET 7.0 apps, it is currently not supported, skipping winget package creation...
-REM if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
-REM msbuild /target:publish MyMoneyPackage.sln /p:Configuration=Release "/p:Platform=Any CPU"
-REM if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :noappx
+rem if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
+rem msbuild /target:publish MyMoneyPackage.sln /p:Configuration=Release "/p:Platform=Any CPU"
+rem if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :noappx
 
 :dorelease
 if "%GITRELEASE%" == "0" goto :upload
@@ -68,8 +68,8 @@ git push origin --tags
 
 echo Creating new release for version %VERSION%
 xsl -e -s MyMoney\Setup\LatestVersion.xslt MyMoney\Setup\changes.xml > notes.txt
-REM gh release create %VERSION% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
-gh release create %VERSION% %ROOT%MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle --notes-file notes.txt --title "MyMoney.Net %VERSION%"
+gh release create %VERSION% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
+REM gh release create %VERSION% %ROOT%MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle --notes-file notes.txt --title "MyMoney.Net %VERSION%"
 del notes.txt
 
 :upload
@@ -84,6 +84,7 @@ echo ============ Done publishing ClickOnce installer ==============
 goto :skipwinget
 rem if "%WINGET%"=="0" goto :skipwinget
 if not exist %WINGET_SRC% goto :nowinget
+if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :eof
 
 :syncwinget
 echo Syncing winget master branch

@@ -2,7 +2,7 @@
   "profiles": {
     "UpdateVersion": {
       "commandName": "Project",
-      "commandLineArgs": "D:\\git\\MoneyTools\\MyMoney.Net\\Source\\WPF\\Version\\VersionMaster.txt"
+      "commandLineArgs": "D:\\git\\MoneyTools\\MyMoney.Net\\Source\\WPF\\Version\\VersionMaster.txt  "
     }
   }
 }

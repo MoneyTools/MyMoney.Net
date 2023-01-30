@@ -33,6 +33,8 @@ namespace UpdateVersion
 
         string UpdatesFile { get; set; }
 
+        string PublishProfile { get; set; }
+
         public bool Execute()
         {
             string version = File.ReadAllText(this.MasterVersionFile).Trim();
@@ -54,27 +56,29 @@ namespace UpdateVersion
             this.AppManifestFile = Path.Combine(solutionDir, "MoneyPackage", "Package.appxmanifest");
             this.ApplicationProjectFile = Path.Combine(solutionDir, "MyMoney", "MyMoney.csproj");
             this.UpdatesFile = Path.Combine(solutionDir, "MyMoney", "Setup", "changes.xml");
+            this.PublishProfile = Path.Combine(solutionDir, "MyMoney", "Properties", "PublishProfiles", "ClickOnceProfile.pubxml");
 
-            bool result = this.UpdateVersionProps(v);
+            bool result = this.UpdateVersionProps(v, this.VersionPropsFile);
             result &= this.UpdateCSharpVersion(v);
             result &= this.UpdatePackageManifest(v);
             result &= this.UpdateApplicationProjectFile(v);
             result &= this.CheckUpdatesFile(v);
+            result &= this.UpdateVersionProps(v, this.PublishProfile);
             return result;
         }
 
-        private bool UpdateVersionProps(Version v)
+        private bool UpdateVersionProps(Version v, string projectFile)
         {
-            if (!File.Exists(this.VersionPropsFile))
+            if (!File.Exists(projectFile))
             {
-                this.Log.LogError("Cannot find Version.props file: " + this.VersionPropsFile);
+                this.Log.LogError("Cannot find file: " + projectFile);
                 return false;
             }
 
             try
             {
                 bool changed = false;
-                var doc = XDocument.Load(this.VersionPropsFile);
+                var doc = XDocument.Load(projectFile);
                 var ns = doc.Root.Name.Namespace;
                 var g = doc.Root.Element(ns + "PropertyGroup");
                 var r = g.Element(ns + "ApplicationRevision");
@@ -85,7 +89,7 @@ namespace UpdateVersion
                     e.Value = s;
                     changed = true;
                 }
-                var rev = s.Split('.').Last(); ;
+                var rev = v.MinorRevision.ToString();
                 if (r.Value != rev)
                 {
                     r.Value = rev;
@@ -93,13 +97,13 @@ namespace UpdateVersion
                 }
                 if (changed)
                 {
-                    this.Log.LogMessage("SyncVersions updating " + this.VersionPropsFile);
-                    doc.Save(this.VersionPropsFile);
+                    this.Log.LogMessage("SyncVersions updating " + projectFile);
+                    doc.Save(projectFile);
                 }
             }
             catch (Exception ex)
             {
-                this.Log.LogError("file '" + this.VersionPropsFile + "' edit failed: " + ex.Message);
+                this.Log.LogError("file '" + projectFile + "' edit failed: " + ex.Message);
                 return false;
             }
             return true;

@@ -10,10 +10,10 @@
     <RootNamespace>Walkabout</RootNamespace>
     <SignAssembly>False</SignAssembly>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Any CPU'">
     <NoWarn>1701;1702;1416</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Any CPU'">
     <NoWarn>1701;1702;1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>

@@ -14,14 +14,5 @@ When installed using ClickOnce the app will [auto-update](Updates.md).
 <br/>
 </div>
 
-You can also use `winget` to install MyMoney.Net:
-
-<a href="https://winget.run/pkg/LovettSoftware/MyMoney.Net" class="btn btn-primary mt-20 mr-30" target="_blank"  style="color:#EEEEFF" >winget installer</a>
-
-Or use this command line if you have the [winget cli](https://github.com/microsoft/winget-cli) installed:
-
-```
-winget install LovettSoftware.MyMoney.Net
-```
 
 Once installed see [Setup](Setup.md) for next steps.
