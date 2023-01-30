@@ -221,7 +221,6 @@ namespace Walkabout.Views
             {
                 this.ToggleExpandAll.ToolTip = "Hide Details";
                 this.portfolioReport.ExpandAll();
-                this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "CollapseAllIcon");
             }
         }
 
@@ -231,7 +230,6 @@ namespace Walkabout.Views
             {
                 this.ToggleExpandAll.ToolTip = "Show Details";
                 this.portfolioReport.CollapseAll();
-                this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
             }
         }
 

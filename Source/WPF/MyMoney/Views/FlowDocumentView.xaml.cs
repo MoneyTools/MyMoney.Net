@@ -270,8 +270,6 @@ namespace Walkabout.Views
             {
                 this.writer.ExpandAll();
             }
-
-            this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "CollapseAllIcon");
         }
 
         private void OnToggleExpandAll_Unchecked(object sender, RoutedEventArgs e)
@@ -286,8 +284,6 @@ namespace Walkabout.Views
             {
                 this.writer.CollapseAll();
             }
-
-            this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
         }
 
         private void ResetExpandAllToggleButton()
@@ -296,11 +292,8 @@ namespace Walkabout.Views
             this.ToggleExpandAll.IsEnabled = (this.writer != null) ? this.writer.CanExpandCollapse : false;
             this.ToggleExpandAll.ToolTip = "Show Details";
             this.ToggleExpandAll.IsChecked = false;
-            this.ToggleExpandAllImage.SetResourceReference(Image.SourceProperty, "ExpandAllIcon");
             this.resetting = false;
         }
-
-
     }
 
     /// <summary>
