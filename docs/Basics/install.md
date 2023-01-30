@@ -9,7 +9,7 @@ You must first ensure you have [.NET 7.0 Desktop Runtime installed](https://dotn
 When installed using ClickOnce the app will [auto-update](Updates.md).
 
 <div>
-<a href="https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/MyMoney.application" class="btn btn-primary mt-20 mr-30" target="_blank"  style="color:#EEEEFF" >ClickOnce® installer</a>
+<a href="https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/setup.exe" class="btn btn-primary mt-20 mr-30" target="_blank"  style="color:#EEEEFF" >ClickOnce® installer</a>
 <br/>
 <br/>
 </div>
