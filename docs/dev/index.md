@@ -4,7 +4,7 @@ Software contributions to `MyMoney.Net` are welcome in the form
 of github pull requests.  Simply fork the repo, create your own
 branch and submit a pull request.
 
-**MyMoney** is written entirely in C# for .NET Framework 4.8 and is easy for programmers who want access to their data and who want to quickly and easily add their own features. Your data will not be locked up in some proprietary format, it is yours to do with as you like.
+**MyMoney** is written entirely in C# for .NET Framework 7.0 and is easy for programmers who want access to their data and who want to quickly and easily add their own features. Your data will not be locked up in some proprietary format, it is yours to do with as you like.
 
 Start by cloning the repo (or make your own fork if you plan to do pull requests):
 
@@ -39,12 +39,3 @@ This installs a new tool window, you can open View/Other Windows/DGML Test Monit
 The overall project dependencies looks like this where the main app MyMoney depends on `ModernWPF`, `Newtonsoft` and `System.Data.SQLite`.  Everything else shown here is test related.
 
 ![components](../Images/components.png)
-
-## PerformanceGraph
-
-The PerformanceGraph project provides a simple UI for visualizing the performance of the app while
-doing important operations like loading, switching views, and scrolling.  The PerformanceGraph
-can visualize measurements defined by the `MeasurementId` in the PerformanceGraphProvider.
-The following is an example of the events recorded during the load of a money database:
-
-![performance](../Images/performance.png)
