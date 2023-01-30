@@ -1,5 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.0" date="1/29/2022">
+    - Move the app to .NET 7.0 Desktop Runtime.
+    - Remove winget installer for now since it is not supported yet for .NET 7.0 apps.
+    - Remove password support from SQL Lite file, since this now requires a $2000 license.
+    - Fix Modern UI for online account setup dialog.
+    - Fix bug in OFX 2.0 handling and add a unit test for it
+    - Fix bug when you delete an account it was auto setting DisplayClosedAccounts
+    - Make History Chart available on Bank accounts.
+    - Show new errors from AlphaVantage (seems daily stock quote info now requires premium account).
+    - Fix binary xml load/save.
+  </change>
   <change version="2.0.1.9" date="12/18/2022">
     - Add option 'accept reconciled transactions' which if checked will cause the reconciliation of a transaction to also automatically mark that
     transaction as accepted.

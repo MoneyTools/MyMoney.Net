@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,7 +31,7 @@ namespace Walkabout.Dialogs
         {
             this.InitializeComponent();
             this.EnableControls();
-            this.TextBoxSqliteDatabaseFile.Text = System.IO.Path.Combine(this.DefaultPath, Environment.UserName + Walkabout.Data.SqliteDatabase.OfficialSqliteFileExtension);
+            this.TextBoxFile.Text = System.IO.Path.Combine(this.DefaultPath, Environment.UserName + Walkabout.Data.SqliteDatabase.OfficialSqliteFileExtension);
         }
 
         public ConnectMode Mode
@@ -58,7 +59,7 @@ namespace Walkabout.Dialogs
             get
             {
                 string fileName = null;
-                fileName = this.TextBoxSqliteDatabaseFile.Text;
+                fileName = this.TextBoxFile.Text;
                 fileName = fileName.Trim('"', '\''); // Remove any surrounding double quotes or single quotes
                 return fileName;
 
@@ -69,7 +70,7 @@ namespace Walkabout.Dialogs
         {
             get
             {
-                return this.TextBoxSqlitePassword.Password;
+                return this.TextBoxPassword.Password;
             }
         }
 
@@ -170,17 +171,33 @@ namespace Walkabout.Dialogs
         private void EnableControls()
         {
             bool okEnabled = false;
-            if (this.TextBoxSqliteDatabaseFile == null)
+            if (this.TextBoxFile == null)
             {
                 return; // InitializeComponent isn't finished yet.
             }
-            if (string.IsNullOrEmpty(this.TextBoxSqliteDatabaseFile.Text) == false)
+            this.ShowStatus("");
+            bool passwordEnabled = false;
+            if (string.IsNullOrEmpty(this.TextBoxFile.Text) == false)
             {
                 okEnabled = true;
+                string ext = System.IO.Path.GetExtension(this.TextBoxFile.Text);
+                switch (ext.ToLowerInvariant())
+                {
+                    case ".bxml":
+                        passwordEnabled = true;
+                        break;
+                    case ".mmdb":
+                        this.ShowStatus("Password is no longer available on .mmdb SQL lite databases.  If you had a password you need to use an older version of MyMoney to remove that password before opening the database in this version of the app");
+                        break;
+                }
             }
+
+            var visibility = passwordEnabled ? Visibility.Visible : Visibility.Hidden;
+            this.PromptPassword.Visibility = this.TextBoxPassword.Visibility = visibility;
+
             if (this.Mode == ConnectMode.Create)
             {
-                this.ShowConnectButton(File.Exists(this.TextBoxSqliteDatabaseFile.Text));
+                this.ShowConnectButton(File.Exists(this.TextBoxFile.Text));
             }
             this.ButtonCreate.IsEnabled = okEnabled;
         }
@@ -197,13 +214,12 @@ namespace Walkabout.Dialogs
                 }
             }
 
-            if (!(path.EndsWith(".mymoney.db", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".mmdb", StringComparison.OrdinalIgnoreCase)))
-            {
-                MessageBoxEx.Show("The SQL Lite file must end with the extension '.mmdb'", "File Name Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-
             return true;
+        }
+
+        private void ShowStatus(string message)
+        {
+            this.Status.Text = message;
         }
 
         #region SQL Lite
@@ -230,28 +246,34 @@ namespace Walkabout.Dialogs
             return fd;
         }
 
-        private void ButtonSqliteBrowse_Click(object sender, RoutedEventArgs e)
+        private void ButtonFileNameBrowse_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog fdlg = this.InitializeOpenFileDialog("MyMoney SQL Lite *.mmdb file",
-                StringHelpers.CreateFileFilter(Properties.Resources.MoneySQLLiteFileFilter, Properties.Resources.AllFileFilter));
-            fdlg.FilterIndex = 1;
+            List<string> fileTypes = new List<string>();
+            var filter = StringHelpers.CreateFileFilter(Properties.Resources.MoneySQLLiteFileFilter,
+                Properties.Resources.XmlFileFilter, Properties.Resources.BinaryXmlFileFilter,
+                Properties.Resources.AllFileFilter);
+
+            OpenFileDialog fdlg = this.InitializeOpenFileDialog("MyMoney database file", filter);
+            fdlg.FilterIndex = 0;
+            fdlg.CheckFileExists = true;
             if (fdlg.ShowDialog(this) == true)
             {
                 string path = fdlg.FileName;
                 if (this.VerifyFileName(path))
                 {
-                    this.TextBoxSqliteDatabaseFile.Text = fdlg.FileName;
+                    this.TextBoxFile.Text = fdlg.FileName;
+                    this.EnableControls();
                 }
             }
         }
 
-        private void TextBoxSqliteDatabaseFile_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextBoxFile_TextChanged(object sender, TextChangedEventArgs e)
         {
             this.EnableControls();
 
             try
             {
-                this.TextBoxSqlitePassword.Password = "" + DatabaseSecurity.LoadDatabasePassword(this.TextBoxSqliteDatabaseFile.Text);
+                this.TextBoxPassword.Password = "" + DatabaseSecurity.LoadDatabasePassword(this.TextBoxFile.Text);
             }
             catch { }
         }

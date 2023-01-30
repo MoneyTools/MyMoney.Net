@@ -22,6 +22,7 @@
     <Color x:Key="ToolbarIconColor">#1e1e1e</Color>
     <Color x:Key="ToolbarIconMouseOverColor">white</Color>
     <Color x:Key="ToolbarIconPressedColor">#CC000000</Color>
+    <SolidColorBrush x:Key="ErrorMessageBrush" Color="Red"/>
 
 
     <!-- MessageBox border -->

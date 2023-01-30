@@ -22,6 +22,7 @@
     <Color x:Key="ToolbarIconColor">#FFFFFF</Color>
     <Color x:Key="ToolbarIconMouseOverColor">black</Color>
     <Color x:Key="ToolbarIconPressedColor">#80FFFFFF</Color>
+    <SolidColorBrush x:Key="ErrorMessageBrush" Color="Firebrick"/>
 
     <!-- MessageBox border -->
     <SolidColorBrush x:Key="MessageBoxBorder" Color="{m:DynamicColor SystemAccentColor}"/>

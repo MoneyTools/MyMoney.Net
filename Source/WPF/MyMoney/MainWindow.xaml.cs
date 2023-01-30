@@ -1996,6 +1996,7 @@ namespace Walkabout
                     this.UpdateDatabaseSettings(DatabaseSettings.LoadFrom(database));
                     string label = Path.GetFileName(database.DatabasePath);
                     var msg = "Loaded from " + label + " in " + (int)watch.Elapsed.TotalMilliseconds + " milliseconds";
+#if SQL_ENCRYPTION_SUPPORTED
                     if (string.IsNullOrEmpty(password))
                     {
                         this.delayedActions.StartDelayedAction("NoPassword", () =>
@@ -2004,7 +2005,7 @@ namespace Walkabout
                             this.AnimateStatus(msg, end);
                         }, TimeSpan.FromSeconds(10));
                     }
-
+#endif 
                     this.InternalShowMessage(msg);
                     this.skipMessagesUntil = DateTime.Now.AddSeconds(5);
 
@@ -3644,10 +3645,6 @@ namespace Walkabout
 
             List<string> fileTypes = new List<string>();
             fileTypes.Add(Properties.Resources.MoneySQLLiteFileFilter);
-            if (SqlCeDatabase.IsSqlCEInstalled)
-            {
-                fileTypes.Add(Properties.Resources.MoneySQLCEFileFilter);
-            }
             fileTypes.Add(Properties.Resources.XmlFileFilter);
             fileTypes.Add(Properties.Resources.BinaryXmlFileFilter);
             fileTypes.Add(Properties.Resources.CsvFileFilter);
