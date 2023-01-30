@@ -1,6 +1,6 @@
 # Home
 
-**MyMoney**  is a rich client [.NET 7.0 ClickOnce application](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) for managing your personal finances.  See [Demo Video](https://youtu.be/u6BVF2x9FBA).
+**MyMoney**  is a rich client [.NET 7.0 ClickOnce application](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) for managing your personal finances.  See [Demo Video](https://youtu.be/u6BVF2x9FBA).
 
 <div>
 <a href="Basics/install" class="btn btn-primary mt-20 mr-30" style="color:#EEEEFF" >Install</a>

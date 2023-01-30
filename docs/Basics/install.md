@@ -4,7 +4,7 @@ There are two ways to install the app.
 
 This most convenient is to install it directly from the web browser.  If the browser downloads this
 file, click "Open file" to install it.
-You must first ensure you have [.NET 7.0 installed](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48).
+You must first ensure you have [.NET 7.0 Desktop Runtime installed](https://dotnet.microsoft.com/en-us/download/dotnet/7.0).
 
 When installed using ClickOnce the app will [auto-update](Updates.md).
 

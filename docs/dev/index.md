@@ -13,7 +13,7 @@ git clone https://github.com/clovett/MyMoney.Net
 ```
 
 To build the WPF app load the following solution into
-Visual Studio 2022.  You will need to first install [.NET 5.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/5.0).
+Visual Studio 2022.  You will need to first install [.NET 7.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0).
 
 ```
 devenv Source\WPF\MyMoney.sln
