@@ -19,7 +19,7 @@
         Width="900"
         help:HelpService.HelpKeyword="Home"
         ResizeMode="CanResizeWithGrip" 
-        Icon="/MyMoney;component/Icons/App.ico"
+        Icon="/Icons/App.ico"
         >
     <Window.Resources>
     </Window.Resources>
@@ -115,7 +115,8 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <!-- Menu -->
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="81.296" />
+                <ColumnDefinition Width="314.707"/>
                 <!-- spacer -->
                 <ColumnDefinition Width="*" />
                 <!--Toolbar buttons on the right side-->
@@ -124,15 +125,15 @@
 
             <!-- BACK and FORWARD button -->
 
-            <Button x:Name="BackButton" Grid.Column="0" Command="p:AppCommands.CommandBack" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}"/>
-            <Button x:Name="ForwardButton" Grid.Column="1" Command="p:AppCommands.CommandForward" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}">
+            <Button x:Name="BackButton" Command="p:AppCommands.CommandBack" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}" HorizontalAlignment="Center"/>
+            <Button x:Name="ForwardButton" Grid.Column="1" Command="p:AppCommands.CommandForward" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}" HorizontalAlignment="Center">
                 <Button.LayoutTransform>
                     <RotateTransform CenterX="0.5" CenterY="0.5" Angle="180"/>
                 </Button.LayoutTransform>
             </Button>
 
             <!-- REGULAR MENU -->
-            <Border Grid.Column="2" VerticalAlignment="Center">
+            <Border Grid.Column="2" VerticalAlignment="Center" Grid.ColumnSpan="2">
 
                 <Menu x:Name="MainMenu" IsMainMenu="True" Grid.Column="1" VerticalAlignment="Center" >
                     <MenuItem x:Name="MenuFile" Header="_File">
@@ -229,7 +230,7 @@
             </Border>
 
             <!-- TOOLBAR BUTTONS -->
-            <StackPanel Orientation="Horizontal" Grid.Column="4" Margin="10,0,10,0">
+            <StackPanel Orientation="Horizontal" Grid.Column="5" Margin="10,0,10,0">
 
                 <Button x:Name="ButtonSynchronize" Command="p:AppCommands.CommandOnlineSyncAccount" >
                     <StackPanel Orientation="Horizontal">

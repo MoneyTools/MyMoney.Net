@@ -9,6 +9,7 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <RootNamespace>Walkabout</RootNamespace>
     <SignAssembly>False</SignAssembly>
+    <ApplicationIcon>Icons/App.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Any CPU'">
     <NoWarn>1701;1702;1416</NoWarn>
@@ -23,9 +24,6 @@
     <Compile Remove="Service References\**" />
     <None Remove="Service References\**" />
     <Page Remove="Service References\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Ofx\ofx201.dtd" />
   </ItemGroup>
  <ItemGroup>
     <Compile Include="..\Version\CommonInfo.cs">
