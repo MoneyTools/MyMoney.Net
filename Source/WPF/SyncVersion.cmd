@@ -1,0 +1,1 @@
+.\tools\updateversion %~dp0Version\VersionMaster.txt

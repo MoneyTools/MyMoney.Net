@@ -317,8 +317,8 @@ namespace UpdateVersion
 
         void PrintUsage()
         {
-            Console.WriteLine("Usage: UpdateVersion <root>");
-            Console.WriteLine("Synchronizes the build version info from the given 'version.txt' file to all the");
+            Console.WriteLine("Usage: UpdateVersion <master version file>");
+            Console.WriteLine("Synchronizes the build version info from the given 'VersionMaster.txt' file to all the");
             Console.WriteLine("other places that need to use this version string.");
         }
 

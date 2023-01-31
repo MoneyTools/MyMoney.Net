@@ -46,11 +46,12 @@ namespace Walkabout.Dialogs
                         this.Title = "Create Database";
                         this.ButtonCreate.Content = "_Create";
                         break;
-                    case ConnectMode.Connect:
+                    case ConnectMode.Open:
                         this.Title = "Connect Database";
-                        this.ButtonCreate.Content = "_Connect";
+                        this.ButtonCreate.Content = "_Open";
                         break;
                 }
+                this.EnableControls();
             }
         }
 
@@ -82,10 +83,10 @@ namespace Walkabout.Dialogs
 
         private void ButtonOpen_Click(object sender, RoutedEventArgs e)
         {
-            this.CreateOrConnect(ConnectMode.Connect);
+            this.CreateOrConnect(ConnectMode.Open);
             if (this.DialogResult == true)
             {
-                this.Mode = ConnectMode.Connect;
+                this.Mode = ConnectMode.Open;
             }
         }
 
@@ -129,7 +130,7 @@ namespace Walkabout.Dialogs
                             File.Delete(this.Database);
                         }
                         break;
-                    case ConnectMode.Connect:
+                    case ConnectMode.Open:
                         if (File.Exists(this.Database) == false)
                         {
                             MessageBoxEx.Show("The file doesn't exist.  In order to open a database you must specify a SQL Lite database file that exists", "Restore Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -195,10 +196,7 @@ namespace Walkabout.Dialogs
             var visibility = passwordEnabled ? Visibility.Visible : Visibility.Hidden;
             this.PromptPassword.Visibility = this.TextBoxPassword.Visibility = visibility;
 
-            if (this.Mode == ConnectMode.Create)
-            {
-                this.ShowConnectButton(File.Exists(this.TextBoxFile.Text));
-            }
+            this.ShowConnectButton(this.Mode == ConnectMode.Create && File.Exists(this.TextBoxFile.Text));
             this.ButtonCreate.IsEnabled = okEnabled;
         }
 

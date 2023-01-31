@@ -26,6 +26,7 @@ namespace Walkabout.Views
             this.InitializeComponent();
             IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.AliasesView_IsVisibleChanged);
             this.AliasDataGrid.RowEditEnding += this.AliasDataGrid_RowEditEnding;
+            this.AliasDataGrid.PreviewKeyDown += new KeyEventHandler(this.OnDataGridPreviewKeyDown);
             Unloaded += (s, e) =>
             {
                 if (this.money != null)
@@ -42,7 +43,23 @@ namespace Walkabout.Views
             this.rowEdit = e.Row.DataContext as Alias;
             this.delayedActions.StartDelayedAction("FindConflicts", this.FindConflicts, TimeSpan.FromMilliseconds(30));
         }
+        private void OnDataGridPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            MoneyDataGrid grid = (MoneyDataGrid)sender;
 
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    {
+                        if (grid != null && !this.AliasDataGrid.IsEditing)
+                        {
+                            grid.BeginEdit();
+                            e.Handled = true;
+                        }
+                        break;
+                    }
+            }
+        }
         private void FindConflicts()
         {
             if (this.rowEdit != null)

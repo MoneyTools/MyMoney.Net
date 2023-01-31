@@ -14,6 +14,8 @@ namespace Walkabout.Controls
     {
         private Settings settings;
         private DatabaseSettings databaseSettings;
+        private IDatabase database;
+
         private readonly IDictionary<string, string> themes = new SortedDictionary<string, string>() {
             { "Light", "Light" },
             { "Dark", "Dark" }
@@ -50,6 +52,7 @@ namespace Walkabout.Controls
         {
             this.settings = (Settings)site.GetService(typeof(Settings));
             this.databaseSettings = (DatabaseSettings)site.GetService(typeof(DatabaseSettings));
+            this.database = (IDatabase)site.GetService(typeof(IDatabase));
         }
 
         public event EventHandler Closed;
@@ -64,6 +67,15 @@ namespace Walkabout.Controls
                     this.checkBoxPlaySounds.IsChecked = this.settings.PlaySounds;
                     this.checkBoxAcceptReconciled.IsChecked = this.settings.AcceptReconciled;
                     this.comboBoxFiscalYear.SelectedIndex = this.databaseSettings.FiscalYearStart;
+
+                    Visibility passwordVisibility = Visibility.Visible;
+                    if (this.database != null && this.database.DbFlavor == DbFlavor.Sqlite)
+                    {
+                        passwordVisibility = Visibility.Collapsed;
+                    }
+
+                    passwordPrompt.Visibility = passwordVisibility;
+                    editPasswordBox.Visibility = passwordVisibility;
 
                     foreach (string theme in this.comboBoxTheme.Items)
                     {

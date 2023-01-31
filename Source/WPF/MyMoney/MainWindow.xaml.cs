@@ -2171,7 +2171,7 @@ namespace Walkabout
 
             CreateDatabaseDialog frm = this.InitializeCreateDatabaseDialog();
             frm.Owner = this;
-            frm.Mode = ConnectMode.Connect;
+            frm.Mode = ConnectMode.Open;
             if (frm.ShowDialog() == true)
             {
                 try

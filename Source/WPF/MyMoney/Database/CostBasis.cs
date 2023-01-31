@@ -618,14 +618,14 @@ namespace Walkabout.Data
                     }
                     else if ((i.Type == InvestmentType.Remove || i.Type == InvestmentType.Sell) && i.Units > 0)
                     {
-                        if (i.Type == InvestmentType.Sell)
+                        if (i.Transaction.Transfer == null)
                         {
                             foreach (SecuritySale sale in holdings.Sell(i.Security, i.Date, i.Units, i.OriginalCostBasis))
                             {
                                 this.sales.Add(sale);
                             }
                         }
-                        else if (i.Type == InvestmentType.Remove && i.Transaction.Transfer != null)
+                        else
                         {
                             // track cost basis of securities transfered across accounts.
                             // bugbug; could this ever be a split? Don't think so...
