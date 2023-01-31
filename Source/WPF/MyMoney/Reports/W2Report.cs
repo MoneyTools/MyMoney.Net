@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Shapes;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;

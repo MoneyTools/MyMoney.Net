@@ -10,7 +10,6 @@ namespace Walkabout.Utilities
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2211:NonConstantFieldsShouldNotBeVisible")]
         public static bool PlaySounds = true;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2234:PassSystemUriObjectsInsteadOfStrings")]
         public static void PlaySound(string name)
         {
             if (PlaySounds)

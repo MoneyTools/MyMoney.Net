@@ -11,7 +11,6 @@ namespace Walkabout.Utilities
 
     internal static class InternetExplorer
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "rc")]
         public static void OpenUrl(IntPtr owner, Uri url)
         {
             Uri baseUri = new Uri(ProcessHelper.StartupPath);
@@ -26,13 +25,11 @@ namespace Walkabout.Utilities
             OpenUrl(owner, new Uri(url, UriKind.RelativeOrAbsolute));
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "rc")]
         public static void EditUrl(IntPtr owner, string url)
         {
             int rc = NativeMethods.ShellExecute(owner, "edit", url, null, ProcessHelper.StartupPath, NativeMethods.SW_SHOWNORMAL);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "rc")]
         public static void EditTransform(IntPtr owner, string url)
         {
             string path = Transform(url);

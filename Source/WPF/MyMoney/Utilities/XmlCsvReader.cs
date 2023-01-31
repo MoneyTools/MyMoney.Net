@@ -272,7 +272,7 @@ namespace Walkabout.Utilities
                     this._names = new string[this._csvReader.FieldCount];
                     for (int i = 0; i < this._csvReader.FieldCount; i++)
                     {
-                        this._names[i] = this._nt.Add(GetValidXmlName(this._csvReader[i], i));
+                        this._names[i] = this._nt.Add(this.GetValidXmlName(this._csvReader[i], i));
                     }
                 }
             }

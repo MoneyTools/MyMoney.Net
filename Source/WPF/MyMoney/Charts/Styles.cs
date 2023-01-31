@@ -13,7 +13,6 @@ namespace Walkabout.Charts
         /// <summary>
         /// Construct static resource dictionary.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static StyleResources()
         {
             try
@@ -34,7 +33,6 @@ namespace Walkabout.Charts
         /// </summary>
         /// <param name="name">Name of resource to fetch</param>
         /// <returns>The requested object or null if it was not found</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal static object GetResource(string name)
         {
             return _resources[name];

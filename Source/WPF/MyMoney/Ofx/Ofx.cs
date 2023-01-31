@@ -984,7 +984,7 @@ NEWFILEUID:{1}
 
             try
             {
-                using (var response = await client.PostAsync(uri, new StringContent(msg, mediaType), cancellation.Token))
+                using (var response = await client.PostAsync(uri, new StringContent(msg, mediaType), this.cancellation.Token))
                 {
                     if (!response.IsSuccessStatusCode)
                     {

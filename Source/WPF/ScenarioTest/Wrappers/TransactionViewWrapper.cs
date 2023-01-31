@@ -273,7 +273,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 SelectionPattern selection = (SelectionPattern)this.control.GetCurrentPattern(SelectionPattern.Pattern);
                 AutomationElement[] selected = selection.Current.GetSelection();
-                return (selected == null || selected.Length == 0) ? null : new TransactionViewRow(this, selected[0], GetRowIndex(selected[0]));
+                return (selected == null || selected.Length == 0) ? null : new TransactionViewRow(this, selected[0], this.GetRowIndex(selected[0]));
             }
         }
 
@@ -318,9 +318,9 @@ namespace Walkabout.Tests.Wrappers
             select.Select();
 
             // This ensures a transaction is created for this placeholder.
-            TransactionViewRow row = GetNewRow();
+            TransactionViewRow row = this.GetNewRow();
             row.BeginEdit(); // this can invalidate the row level automation element!            
-            return GetNewRow();
+            return this.GetNewRow();
         }
 
         internal void ScrollVertical(double verticalPercent)
@@ -496,7 +496,7 @@ namespace Walkabout.Tests.Wrappers
         {
             this.Select();
 
-            view.Focus();
+            this.view.Focus();
 
             Thread.Sleep(30);
             Input.TapKey(Key.Delete);
@@ -951,9 +951,9 @@ namespace Walkabout.Tests.Wrappers
 
     public class TransactionViewCell
     {
-        TransactionViewRow row;
-        AutomationElement cell;
-        TransactionViewColumn column;
+        private TransactionViewRow row;
+        private AutomationElement cell;
+        private TransactionViewColumn column;
 
         public TransactionViewCell(TransactionViewRow row, AutomationElement cell, TransactionViewColumn column)
         {
@@ -989,13 +989,13 @@ namespace Walkabout.Tests.Wrappers
                 for (int retries = 5; retries > 0 && editor == null; retries--)
                 {
                     // invoking the cell puts the cell into edit mode, revealing the inner controls
-                    InvokePattern p = (InvokePattern)cell.GetCurrentPattern(InvokePattern.Pattern);
+                    InvokePattern p = (InvokePattern)this.cell.GetCurrentPattern(InvokePattern.Pattern);
                     p.Invoke();
 
                     // But this also invalidates the cell AutomationElement! So we have to refetch this cell.
-                    Refresh();
+                    this.Refresh();
 
-                    Thread.Sleep(50); // let editing mode kick in.
+                    Thread.Sleep(100); // let editing mode kick in.
 
                     // Now find the editable control within cell 
                     editor = this.GetEditor();
@@ -1073,7 +1073,7 @@ namespace Walkabout.Tests.Wrappers
                         case "TextBox":
                         case "DatePicker":
                         case "ComboBox":
-                            return GetCellValue();
+                            return this.GetCellValue();
                         default:
                             throw new Exception("Unrecognized datatype: " + this.column.DataType);
                     }

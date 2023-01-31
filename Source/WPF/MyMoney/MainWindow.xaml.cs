@@ -4361,11 +4361,11 @@ namespace Walkabout
             this.InternalShowMessage(text);
         }
 
-        DateTime skipMessagesUntil = DateTime.MinValue;
+        private DateTime skipMessagesUntil = DateTime.MinValue;
 
         public void InternalShowMessage(string text)
         {
-            if (DateTime.Now < skipMessagesUntil)
+            if (DateTime.Now < this.skipMessagesUntil)
             {
                 return;
             }

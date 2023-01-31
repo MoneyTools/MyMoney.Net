@@ -77,7 +77,6 @@ namespace Walkabout.Data
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         private void RunQuery()
         {
             SqlConnection con = null;

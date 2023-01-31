@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Windows.Automation;
+﻿using System.Windows.Automation;
 using Walkabout.Tests.Wrappers;
 
 namespace Walkabout.Tests

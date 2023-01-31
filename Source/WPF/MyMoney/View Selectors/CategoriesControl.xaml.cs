@@ -1123,7 +1123,6 @@ namespace Walkabout.Views.Controls
         public static readonly DependencyProperty NameProperty =
             DependencyProperty.Register("Name", typeof(string), typeof(CategoryGroup));
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ObservableCollection<Category> Subcategories { get; set; }
 
 

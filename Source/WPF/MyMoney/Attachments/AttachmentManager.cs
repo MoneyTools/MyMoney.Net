@@ -317,7 +317,6 @@ namespace Walkabout.Attachments
             return this.watcher.GetAttachments(this.AttachmentDirectory, t);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "AttachmentDirectory")]
         public string GetUniqueFileName(Transaction t, string extension)
         {
             string path = this.AttachmentDirectory;

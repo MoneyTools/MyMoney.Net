@@ -84,7 +84,7 @@ namespace Walkabout.Tests.Wrappers
                 throw new Exception("No dialog found");
             }
 
-            WaitForInputIdle(500);
+            this.WaitForInputIdle(500);
             for (int retries = 5; retries > 0; retries--)
             {
                 if (this.IsInteractive)

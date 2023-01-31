@@ -730,7 +730,7 @@ namespace Walkabout.Data
             this.WatchChanges();
         }
 
-        void LazyInitialize()
+        private void LazyInitialize()
         {
             // In the XmlSerialization case the MyMoney default constructor is never called!
             // So, we may have to lazily initialize these fields in that case.
@@ -792,7 +792,7 @@ namespace Walkabout.Data
             }
         }
 
-        void WatchChanges()
+        private void WatchChanges()
         {
             if (!this.watching)
             {
@@ -9269,8 +9269,16 @@ namespace Walkabout.Data
 
         private static bool IsSameString(string a, string b)
         {
-            if (string.IsNullOrEmpty(a)) return string.IsNullOrEmpty(b);
-            if (string.IsNullOrEmpty(b)) return false;
+            if (string.IsNullOrEmpty(a))
+            {
+                return string.IsNullOrEmpty(b);
+            }
+
+            if (string.IsNullOrEmpty(b))
+            {
+                return false;
+            }
+
             return a.Trim() == b.Trim();
         }
 

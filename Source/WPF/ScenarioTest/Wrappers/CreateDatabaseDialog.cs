@@ -32,7 +32,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void CreateSqliteDatabase(string databasePath)
         {
-            this.SetTextBox("TextBoxSqliteDatabaseFile", databasePath);
+            this.SetTextBox("TextBoxFile", databasePath);
             this.ClickButton("ButtonCreate");
         }
 
@@ -64,13 +64,13 @@ namespace Walkabout.Tests.Wrappers
 
         internal void CreateXmlDatabase(string databasePath)
         {
-            this.SetTextBox("TextBoxSqliteDatabaseFile", databasePath);
+            this.SetTextBox("TextBoxFile", databasePath);
             this.ClickButton("ButtonCreate");
         }
 
         internal void CreateBinaryXmlDatabase(string databasePath)
         {
-            this.SetTextBox("TextBoxSqliteDatabaseFile", databasePath);
+            this.SetTextBox("TextBoxFile", databasePath);
             this.ClickButton("ButtonCreate");
         }
 

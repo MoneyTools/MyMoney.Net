@@ -615,7 +615,7 @@
 
                         <!-- Toggle view for expand all in portfolio view -->
                         <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Width="26" Height="26" Margin="5,2,0,2" ToolTip="Show Details" Checked="OnToggleShowSecurities_Checked" Unchecked="OnToggleShowSecurities_Unchecked" >
-                            <Image x:Name="ToggleExpandAllImage" Source="{DynamicResource ExpandAllIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            <ui:SymbolIcon Symbol="ShowBcc"/>
                         </ToggleButton>
                     </StackPanel>
 
@@ -914,7 +914,7 @@
         </Grid>
 
         <Canvas x:Name="GridOverlayCanvas" Grid.Row="2"
-                 u:WpfAnnotations.CodeRef="ButtonStyleSplitAmount, myTemplatePayeeCategoryMemoEdit, myDataGridDetailMiniView, ListItemSelectedForegroundDisabledBrush, ListItemSelectedForegroundNegativeBrush, ListItemForegroundUnacceptedBrush, ListItemSelectedForegroundLowBrush, ListItemReconcilingBackgroundBrush, PositiveCurrencyForegroundBrush, HyperlinkForeground, DragDropFeedbackBrush, TransactionConnectorBrush, TransactionConnectorForegroundBrush, TransactionConnectorButtonBackground, TransactionConnectorButtonPressedBackground, TransactionConnectorButtonMouseOverBackground, CollapseAllIcon, DragDropWindowStyle"
+                 u:WpfAnnotations.CodeRef="ButtonStyleSplitAmount, myTemplatePayeeCategoryMemoEdit, myDataGridDetailMiniView, ListItemSelectedForegroundDisabledBrush, ListItemSelectedForegroundNegativeBrush, ListItemForegroundUnacceptedBrush, ListItemSelectedForegroundLowBrush, ListItemReconcilingBackgroundBrush, PositiveCurrencyForegroundBrush, HyperlinkForeground, DragDropFeedbackBrush, TransactionConnectorBrush, TransactionConnectorForegroundBrush, TransactionConnectorButtonBackground, TransactionConnectorButtonPressedBackground, TransactionConnectorButtonMouseOverBackground, DragDropWindowStyle"
                 ></Canvas>
     </Grid>
 

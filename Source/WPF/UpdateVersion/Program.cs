@@ -23,17 +23,17 @@ namespace UpdateVersion
 
         public string MasterVersionFile { get; set; }
 
-        string VersionPropsFile { get; set; }
+        private string VersionPropsFile { get; set; }
 
-        string CSharpVersionFile { get; set; }
+        private string CSharpVersionFile { get; set; }
 
-        string ApplicationProjectFile { get; set; }
+        private string ApplicationProjectFile { get; set; }
 
-        string AppManifestFile { get; set; }
+        private string AppManifestFile { get; set; }
 
-        string UpdatesFile { get; set; }
+        private string UpdatesFile { get; set; }
 
-        string PublishProfile { get; set; }
+        private string PublishProfile { get; set; }
 
         public bool Execute()
         {
@@ -275,7 +275,7 @@ namespace UpdateVersion
 
     internal class Program
     {
-        SyncVersions sv = new SyncVersions();
+        private SyncVersions sv = new SyncVersions();
 
         public bool ParseCommandLine(string[] args)
         {
@@ -288,41 +288,41 @@ namespace UpdateVersion
                         case "help":
                             return false;
                         default:
-                            sv.Log.LogError("### unexpected argument: " + arg);
+                            this.sv.Log.LogError("### unexpected argument: " + arg);
                             return false;
                     }
                 }
-                else if (string.IsNullOrEmpty(sv.MasterVersionFile))
+                else if (string.IsNullOrEmpty(this.sv.MasterVersionFile))
                 {
-                    sv.MasterVersionFile = arg;
-                    if (!File.Exists(sv.MasterVersionFile))
+                    this.sv.MasterVersionFile = arg;
+                    if (!File.Exists(this.sv.MasterVersionFile))
                     {
-                        sv.Log.LogError(string.Format("### version file '{0}' not found!", arg));
+                        this.sv.Log.LogError(string.Format("### version file '{0}' not found!", arg));
                         return false;
                     }
                 }
                 else
                 {
-                    sv.Log.LogError("### too many arguments");
+                    this.sv.Log.LogError("### too many arguments");
                     return false;
                 }
             }
-            if (string.IsNullOrEmpty(sv.MasterVersionFile))
+            if (string.IsNullOrEmpty(this.sv.MasterVersionFile))
             {
-                sv.Log.LogError("### missing argument");
+                this.sv.Log.LogError("### missing argument");
                 return false;
             }
             return true;
         }
 
-        void PrintUsage()
+        private void PrintUsage()
         {
             Console.WriteLine("Usage: UpdateVersion <master version file>");
             Console.WriteLine("Synchronizes the build version info from the given 'VersionMaster.txt' file to all the");
             Console.WriteLine("other places that need to use this version string.");
         }
 
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
             Program p = new Program();
             if (!p.ParseCommandLine(args))

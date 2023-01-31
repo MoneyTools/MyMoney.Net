@@ -25,7 +25,6 @@ namespace Walkabout.Charts
 
         public Category Category { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         public List<Transaction> Transactions { get { return this.transactions; } }
 
         public string Name

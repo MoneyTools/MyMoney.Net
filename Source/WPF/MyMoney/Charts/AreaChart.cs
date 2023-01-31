@@ -456,8 +456,6 @@ namespace LovettSoftware.Charts
 
         }
 
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private void AddSeries(Grid grid, ChartDataSeries s, double availableHeight)
         {
             int index = 0;
@@ -538,7 +536,6 @@ namespace LovettSoftware.Charts
             this.SetValue(ColumnValueProperty, cv.Value);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
         public ChartDataValue Value
         {
             get { return this.value; }

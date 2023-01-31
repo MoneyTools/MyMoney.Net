@@ -182,8 +182,6 @@ namespace Walkabout.Utilities
             }
         }
 
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "e")]
         private void StartDrag(MouseEventArgs e, DragDropSource objectBeenDragged)
         {
             this.DestroyDragDropWindow();

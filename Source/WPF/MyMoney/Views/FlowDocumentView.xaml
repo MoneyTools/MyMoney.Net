@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:Walkabout.Views"
              xmlns:c="clr-namespace:Walkabout.Controls"             
              xmlns:u="clr-namespace:Walkabout.Utilities"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d" 
              u:WpfAnnotations.CodeRef="NuclearTreeViewItemToggleButton"
              d:DesignHeight="400" d:DesignWidth="600">
@@ -39,8 +40,7 @@
                         <!-- Toggle view for expand all in portfolio view -->
                         <ToggleButton x:Name="ToggleExpandAll" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show Details" Checked="OnToggleExpandAll_Checked" Unchecked="OnToggleExpandAll_Unchecked" 
                                       Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
-                            <Image x:Name="ToggleExpandAllImage" Width="16" Height="16" Source="{DynamicResource ExpandAllIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True" 
-                                   />
+                            <ui:SymbolIcon Symbol="ShowBcc"/>
                         </ToggleButton>
 
                     </StackPanel>
