@@ -16,7 +16,7 @@ echo ### Publishing version %VERSION%...
 set WINGET=1
 set GITRELEASE=1
 set UPLOAD=1
-set ClickOnceBits=%ROOT%\MyMoney\bin\publish
+set ClickOnceBits=%ROOT%MyMoney\bin\publish
 set DOBUILD=1
 :parse
 if "%1"=="/nowinget" set WINGET=0
@@ -37,7 +37,8 @@ if "%DOBUILD%"=="0" goto :dorelease
 
 if EXIST %ClickOnceBits% rd /s /q %ClickOnceBits%
 
-UpdateVersion %VERSION% .\MyMoney\Properties\PublishProfiles\ClickOnceProfile.pubxml
+UpdateVersion .\Version\VersionMaster.txt
+if ERRORLEVEL 1 goto :err_version
 
 msbuild /target:restore MyMoney.sln /p:Configuration=Release "/p:Platform=Any CPU"
 if ERRORLEVEL 1 goto :err_restore
@@ -169,4 +170,8 @@ exit /b /1
 :err_publish
 echo Error: msbuild /target:publish failed.
 popd
+exit /b /1
+
+:err_version
+echo Error: update version failed.
 exit /b /1
