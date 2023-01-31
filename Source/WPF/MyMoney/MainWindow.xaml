@@ -413,7 +413,7 @@
             <StatusBarItem HorizontalAlignment="Right">
                 <StackPanel Orientation="Vertical" >
                     <TextBlock x:Name="ProgressPrompt" Text=""/>
-                    <ProgressBar Width="200" x:Name="ProgressBar" Visibility="Hidden"/>
+                    <ProgressBar Width="200" x:Name="ProgressBar" Margin="0,0,10,0" />
                 </StackPanel>
             </StatusBarItem>
         </StatusBar>

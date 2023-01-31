@@ -278,9 +278,9 @@ namespace Walkabout.StockQuotes
 
             bool foundService = false;
             IStockQuoteService service = this.GetHistoryService();
-            HistoryDownloader downloader = this.GetDownloader(service);
             if (service != null)
             {
+                HistoryDownloader downloader = this.GetDownloader(service);
                 downloader.BeginFetchHistory(batch);
                 foundService = true;
             }
@@ -864,6 +864,7 @@ namespace Walkabout.StockQuotes
 
         public HistoryDownloader(IStockQuoteService service, DownloadLog log)
         {
+            Debug.Assert(service != null);
             this._service = service;
             this._downloadLog = log;
         }
@@ -885,6 +886,10 @@ namespace Walkabout.StockQuotes
 
         public async void BeginFetchHistory(List<string> batch)
         {
+            if (this._service == null)
+            {
+                return;
+            }
             string singleton = null;
             bool busy = false;
             lock (this._downloadSync)

@@ -1545,7 +1545,7 @@ namespace Walkabout
 
             s.GraphState = this.GetGraphState();
             ProcessHelper.CreateSettingsDirectory();
-            if (!string.IsNullOrEmpty(s.ConfigFile) && s.Persist)
+            if (!string.IsNullOrEmpty(s.ConfigFile))
             {
                 try
                 {

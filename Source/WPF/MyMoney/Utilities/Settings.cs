@@ -514,6 +514,10 @@ namespace Walkabout.Configuration
 
         public void Save()
         {
+            if (!this.Persist)
+            {
+                return;
+            }
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.Encoding = Encoding.UTF8;
@@ -525,15 +529,6 @@ namespace Walkabout.Configuration
         }
 
         public bool Persist { get { return this.persist; } }
-
-        public void Write(string path)
-        {
-            using (XmlTextWriter w = new XmlTextWriter(path, Encoding.UTF8))
-            {
-                w.Formatting = Formatting.Indented;
-                this.WriteXml(w);
-            }
-        }
 
         public void ReadXml(XmlReader r)
         {
