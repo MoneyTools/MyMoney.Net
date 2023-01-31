@@ -137,10 +137,11 @@ namespace LovettSoftware.Charts
 
         private void UpdateChart()
         {
-            if (double.IsNaN(this.ActualWidth))
+            if (double.IsNaN(this.ActualWidth) || this.Series == null)
             {
                 return;
             }
+            
             double w = this.ActualWidth - (this.Margin.Left + this.Margin.Right);
             double h = this.ActualHeight - (this.Margin.Top + this.Margin.Bottom);
             if (w < 0 || h < 0 || this.Visibility != Visibility.Visible)
