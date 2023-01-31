@@ -102,7 +102,7 @@ namespace LovettSoftware.Charts
         private void OnSeriesChanged(object newValue)
         {
             this.HideToolTip();
-            if (newValue == null || this.Series.Values.Count == 0)
+            if (newValue == null)
             {
                 this.ResetVisuals();
             }
@@ -137,11 +137,12 @@ namespace LovettSoftware.Charts
 
         private void UpdateChart()
         {
-            if (double.IsNaN(this.ActualWidth) || this.Series == null)
+            if (this.Series == null || this.Series.Values.Count == 0 || double.IsNaN(this.ActualWidth))
             {
+                this.ResetVisuals();
                 return;
             }
-            
+
             double w = this.ActualWidth - (this.Margin.Left + this.Margin.Right);
             double h = this.ActualHeight - (this.Margin.Top + this.Margin.Bottom);
             if (w < 0 || h < 0 || this.Visibility != Visibility.Visible)
