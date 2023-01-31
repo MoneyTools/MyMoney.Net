@@ -21,7 +21,8 @@
                             ToolTip="Click here if you want to remove this online account settings">
                         <ui:SymbolIcon Symbol="Important" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Button>
-                    <ui:SymbolIcon Symbol="Accept" Visibility="{Binding Success, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <ui:SymbolIcon Symbol="Accept" Visibility="{Binding Success, Converter={StaticResource BoolToVisibilityConverter}}"
+                                   Foreground="{DynamicResource SyncronizingIconBrush}"/>
                     <TextBlock Text="&#57623;" FontFamily="Segoe UI Symbol" FontSize="15"  Foreground="{DynamicResource SyncronizingIconBrush}"
                                VerticalAlignment="Center" Width="20" Height="20" 
                                Visibility="{Binding IsDownloading, Converter={StaticResource BoolToVisibilityConverter}}">
