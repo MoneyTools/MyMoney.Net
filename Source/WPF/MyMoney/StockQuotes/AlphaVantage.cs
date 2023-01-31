@@ -131,7 +131,7 @@ namespace Walkabout.StockQuotes
 
         public void BeginFetchQuote(string symbol)
         {
-            if (_disabled)
+            if (this._disabled)
             {
                 return;
             }
@@ -256,7 +256,7 @@ namespace Walkabout.StockQuotes
                             HttpClient client = new HttpClient();
                             client.DefaultRequestHeaders.Add("User-Agent", userAgent);
                             client.Timeout = TimeSpan.FromSeconds(30);
-                            var msg = await client.GetAsync(uri, _source.Token);
+                            var msg = await client.GetAsync(uri, this._source.Token);
                             if (!msg.IsSuccessStatusCode)
                             {
                                 this.OnError("AlphaVantage http error " + msg.StatusCode + ": " + msg.ReasonPhrase);
@@ -433,7 +433,7 @@ namespace Walkabout.StockQuotes
 
         public async Task<bool> UpdateHistory(StockQuoteHistory history)
         {
-            if (_disabled)
+            if (this._disabled)
             {
                 return false;
             }
@@ -488,7 +488,7 @@ namespace Walkabout.StockQuotes
                         HttpClient client = new HttpClient();
                         client.DefaultRequestHeaders.Add("User-Agent", userAgent);
                         client.Timeout = TimeSpan.FromSeconds(30);
-                        var msg = await client.GetAsync(uri, _source.Token);
+                        var msg = await client.GetAsync(uri, this._source.Token);
                         if (!msg.IsSuccessStatusCode)
                         {
                             this.OnError("AlphaVantage http error " + msg.StatusCode + ": " + msg.ReasonPhrase);

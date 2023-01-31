@@ -362,7 +362,6 @@ namespace Walkabout.Attachments
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "AttachmentDirectory")]
         private string GetUniqueStatementName(string path, string fileName)
         {
             string fullPath = Path.Combine(path, fileName);

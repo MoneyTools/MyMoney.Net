@@ -655,7 +655,6 @@ namespace Walkabout.Dialogs
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2234:PassSystemUriObjectsInsteadOfStrings")]
         public static void ScanAttachments(Transaction t, AttachmentManager attachmentManager, Settings settings)
         {
             if (dialog == null)

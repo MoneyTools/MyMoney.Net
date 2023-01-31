@@ -50,7 +50,7 @@ namespace Walkabout.StockQuotes
             this._cancelled = true;
             if (this._source != null)
             {
-                _source.Cancel();
+                this._source.Cancel();
             }
         }
 
@@ -247,7 +247,7 @@ namespace Walkabout.StockQuotes
                             HttpClient client = new HttpClient();
                             client.DefaultRequestHeaders.Add("User-Agent", userAgent);
                             client.Timeout = TimeSpan.FromSeconds(30);
-                            var msg = await client.GetAsync(uri, _source.Token);
+                            var msg = await client.GetAsync(uri, this._source.Token);
                             if (!msg.IsSuccessStatusCode)
                             {
                                 this.OnError("AlphaVantage http error " + msg.StatusCode + ": " + msg.ReasonPhrase);

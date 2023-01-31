@@ -72,7 +72,7 @@ namespace ScenarioTest
             Database = null;
         }
 
-        void WriteLine(string msg)
+        private void WriteLine(string msg)
         {
             Trace.WriteLine(msg);
         }
@@ -81,13 +81,13 @@ namespace ScenarioTest
         public void Test1()
         {
             // The test must run in an STAThread in order for the Clipboard functions to work.
-            var thread = new Thread(() => TestUI());
+            var thread = new Thread(() => this.TestUI());
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             thread.Join();
-            if (testError != null)
+            if (this.testError != null)
             {
-                throw testError;
+                throw this.testError;
             }
         }
 
@@ -116,7 +116,7 @@ namespace ScenarioTest
             }
             catch (Exception ex)
             {
-                testError = ex;
+                this.testError = ex;
                 string temp = Path.Combine(Path.GetTempPath(), "Screen.png");
                 Win32.CapturePrimaryScreen(temp, System.Drawing.Imaging.ImageFormat.Png);
                 this.WriteLine("ScreenCapture: " + temp);
@@ -124,7 +124,7 @@ namespace ScenarioTest
             finally
             {
                 this.model.Stop();
-                Teardown();
+                this.Teardown();
             }
         }
 

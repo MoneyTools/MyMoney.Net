@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using System.Windows.Automation;
 
 namespace Walkabout.Tests.Wrappers
@@ -15,7 +14,7 @@ namespace Walkabout.Tests.Wrappers
 
         public DateTime GetDate()
         {
-            var e = GetDateField();
+            var e = this.GetDateField();
             ValuePattern vp = (ValuePattern)e.GetCurrentPattern(ValuePattern.Pattern);
             string s = vp.Current.Value;
             if (DateTime.TryParse(s, out DateTime d))
@@ -27,7 +26,7 @@ namespace Walkabout.Tests.Wrappers
 
         public void SetDate(DateTime date)
         {
-            var e = GetDateField();
+            var e = this.GetDateField();
             ValuePattern vp = (ValuePattern)e.GetCurrentPattern(ValuePattern.Pattern);
             vp.SetValue(date.ToShortDateString());
         }
@@ -57,7 +56,7 @@ namespace Walkabout.Tests.Wrappers
         {
             for (int retries = 5; retries-- > 0;)
             {
-                var doc = GetDocument();
+                var doc = this.GetDocument();
                 StringBuilder sb = new StringBuilder();
                 TextPattern tp = (TextPattern)doc.GetCurrentPattern(TextPattern.Pattern);
                 var range = tp.DocumentRange.FindText(text, false, true);
@@ -72,13 +71,13 @@ namespace Walkabout.Tests.Wrappers
 
         public string GetText(int maxLength = 10000)
         {
-            var doc = GetDocument();
+            var doc = this.GetDocument();
             StringBuilder sb = new StringBuilder();
             TextPattern tp = (TextPattern)doc.GetCurrentPattern(TextPattern.Pattern);
             return tp.DocumentRange.GetText(maxLength);
         }
 
-        AutomationElement GetDateField()
+        private AutomationElement GetDateField()
         {
             AutomationElement date = this.e.FindFirstWithRetries(TreeScope.Descendants,
                new PropertyCondition(AutomationElement.NameProperty, "ReportDate"));

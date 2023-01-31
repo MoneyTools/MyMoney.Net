@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows.Automation;
+﻿using System.Windows.Automation;
 
 namespace Walkabout.Tests.Wrappers
 {

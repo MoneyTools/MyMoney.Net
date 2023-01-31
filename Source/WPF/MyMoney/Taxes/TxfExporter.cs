@@ -134,7 +134,6 @@ namespace Walkabout.Migrate
             writer.WriteLine("^"); // end of record
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "year+1")]
         public void ExportCapitalGains(Account a, TextWriter writer, DateTime startDate, DateTime endDate, bool consolidateSecuritiesOnDateSold)
         {
             CapitalGainsTaxCalculator calculator = new CapitalGainsTaxCalculator(this.money, endDate, consolidateSecuritiesOnDateSold, true);
