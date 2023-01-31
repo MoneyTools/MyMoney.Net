@@ -411,7 +411,7 @@
             <StatusBarItem x:Name="StatusMessage" HorizontalAlignment="Left"/>
             <StatusBarItem HorizontalAlignment="Right">
                 <StackPanel Orientation="Vertical" >
-                    <TextBlock x:Name="ProgressPrompt" Text="hello"/>
+                    <TextBlock x:Name="ProgressPrompt" Text=""/>
                     <ProgressBar Width="200" x:Name="ProgressBar" Visibility="Hidden"/>
                 </StackPanel>
             </StatusBarItem>
