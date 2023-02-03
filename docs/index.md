@@ -27,7 +27,7 @@ Save a lot of typing using [Online Banking](Accounts/OnlineBanking.md) to downlo
 
 ![](Images/Home4.png)
 
-Secure storage of your data in a password protected SQL Lite database.  See [Setup](Basics/Setup.md) for details.
+Secure storage of your data in a local SQL Lite database.  See [Setup](Basics/Setup.md) for details.
 
 ![](Images/Home5.png)
 

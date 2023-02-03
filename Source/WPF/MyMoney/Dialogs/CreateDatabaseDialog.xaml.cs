@@ -271,7 +271,14 @@ namespace Walkabout.Dialogs
 
             try
             {
-                this.TextBoxPassword.Password = "" + DatabaseSecurity.LoadDatabasePassword(this.TextBoxFile.Text);
+                if (this.TextBoxPassword.Visibility == Visibility.Visible)
+                {
+                    this.TextBoxPassword.Password = "" + DatabaseSecurity.LoadDatabasePassword(this.TextBoxFile.Text);
+                }
+                else
+                {
+                    this.TextBoxPassword.Password = "";
+                }
             }
             catch { }
         }
