@@ -3,7 +3,7 @@
 If you have trouble getting Online Banking working with your bank you may be able to correct the problem by simply opening the Online Account properties and re-connecting.
 
 You can also sometimes find updated OFX connection information here:
-[https://wiki.gnucash.org/wiki/OFX_Direct_Connect_Bank_Setting](https://wiki.gnucash.org/wiki/OFX_Direct_Connect_Bank_Setting)
+[https://wiki.gnucash.org/wiki/OFX_Direct_Connect_Bank_Settings](https://wiki.gnucash.org/wiki/OFX_Direct_Connect_Bank_Settings)
 
 The following known errors are being returned from 74 OFX addresses.  The first 22 are because MyMoney does not yet have an implementation of the OFX TYPE1 security protocol.  Once this work is completed, we should be able to talk to these banks. 
 

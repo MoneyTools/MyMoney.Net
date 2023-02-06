@@ -14,8 +14,8 @@
         Title="Online Account"  
         WindowStartupLocation="CenterOwner" 
         WindowStyle="ToolWindow"
-        SizeToContent="WidthAndHeight" 
-        MinWidth="700"
+        SizeToContent="Height" 
+        MinWidth="700" Width="850"
         d:DesignHeight="600" d:DesignWidth="900">
 
     <Window.Resources>

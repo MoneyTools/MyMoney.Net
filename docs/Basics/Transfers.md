@@ -8,8 +8,8 @@ Pick the account you are transferring money to and enter the amount.  A matchin
 
 You can use F12 to navigate back and forth between the two sides of the transfer.
 
-You can also use F12 to create a transfer, if you are located on a transaction that is not yet a transfer, but should be and there is a matching transfer in another account it will prompt you to create
-the transfer for the matching transaction.
+You can also use F12 to create a transfer, if you are located on a transaction that is not yet a transfer, but should be.  If there is a matching transaction in another account it will prompt you to create the transfer for the matching transaction. This can be useful when need to fix transfers that
+are downloaded from a connected [online bank account](../Accounts/OnlineBanking.md).
 
 You can also do transfers from a Split, in fact, this is usually the only time you would use the Payee column in a Split:
 
@@ -17,7 +17,7 @@ You can also do transfers from a Split, in fact, this is usually the only time y
 
 This is handy if you deposit a bunch of checks as one deposit.
 
-What you cannot do is have a split transfer go to a split on the other side of that transfer.  But I have never found the need for that sort of thing.
+What you cannot do is have a split transfer go to a split on the other side of that transfer.
 
 
 
