@@ -2708,7 +2708,7 @@ namespace Walkabout.Views
             {
                 Exporters e = new Exporters();
 
-                string xml = e.ExportString(new object[] { selected });
+                string xml = e.ExportString(new object[] { this.activeAccount, selected });
 
                 if (!string.IsNullOrEmpty(xml))
                 {

@@ -1,6 +1,10 @@
-﻿using System.Diagnostics;
+﻿using NUnit.Framework;
+using System.Diagnostics;
+using System.Runtime.Serialization;
 using System.Windows.Automation;
 using System.Windows.Input;
+using System.Xml.Linq;
+using Walkabout.Data;
 using Walkabout.Tests.Interop;
 
 namespace Walkabout.Tests.Wrappers
@@ -339,6 +343,25 @@ namespace Walkabout.Tests.Wrappers
                 new PropertyCondition(AutomationElement.NameProperty, column.Header)));
             if (header != null)
             {
+                AutomationElement e = TreeWalker.RawViewWalker.GetFirstChild(header);
+                if (e != null)
+                {
+                    var name = e.Current.Name;
+                    var thumb = TreeWalker.RawViewWalker.GetNextSibling(e);
+                    if (thumb != null && !thumb.Current.IsOffscreen)
+                    {
+                        var arrow = thumb.Current.Name;
+                        if (!string.IsNullOrEmpty(arrow))
+                        {
+                            // 59211 is the up arrow.
+                            if (arrow[0] == 59210)
+                            {
+                                // then we are already sorting by this collumn.
+                                return;
+                            }
+                        }
+                    }
+                }
                 InvokePattern p = (InvokePattern)header.GetCurrentPattern(InvokePattern.Pattern);
                 p.Invoke();
             }
@@ -346,6 +369,11 @@ namespace Walkabout.Tests.Wrappers
             {
                 Debug.WriteLine("Could not find header for column: " + column.Name);
             }
+        }
+
+        internal void EnsureSortByDate()
+        {
+            this.SortBy(this.Columns.GetColumn("Date"));
         }
 
         internal void ScrollToEnd()
@@ -358,9 +386,7 @@ namespace Walkabout.Tests.Wrappers
             var selection = this.Selection;
             if (selection != null)
             {
-                selection.Focus();
                 selection.CommitEdit();
-                selection.Select();
             }
         }
 
@@ -374,9 +400,84 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
+        /// <summary>
+        /// Returns a disconnected single Transaction object deserialized from the data
+        /// in the clipboard.
+        /// </summary>
+        internal Walkabout.Data.Transaction GetSelectedTransactionProxy()
+        {
+            var xml = this.GetSelectedTransactionXml();
+            var doc = XDocument.Parse(xml);
+
+            XNamespace ns = XNamespace.Get("http://schemas.vteam.com/Money/2010");
+            XElement transactionElement = doc.Document.Root.Element(ns + "Transaction");
+            Assert.IsNotNull(transactionElement, "XML is missing the Transaction info, is it a placeholder?");
+
+            var s = new DataContractSerializer(typeof(Transaction), MyMoney.GetKnownTypes());
+            Transaction t = (Transaction)s.ReadObject(transactionElement.CreateReader());
+
+            return t;
+        }
+
+        internal string GetSelectedTransactionXml()
+        {
+            var selection = this.Selection;
+            for (int retries = 5; retries > 0; retries--)
+            {
+                try
+                {
+                    this.Focus();
+                    selection.Focus();
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine("### Error setting focus on selection: " + ex.Message);
+                    selection = this.Selection.Refresh();
+                }
+
+                Thread.Sleep(50);
+                Input.TapKey(Key.C, ModifierKeys.Control); // send Ctrl+C to copy row as XML
+                Thread.Sleep(50);
+
+                // key sending is completely async, so we have to give it time to arrive and be processed.
+                for (int innerRetries = 5; innerRetries > 0; innerRetries--)
+                {
+                    try
+                    {
+                        if (Clipboard.ContainsText())
+                        {
+                            try
+                            {
+                                var xml = Clipboard.GetText();
+                                if (xml.Contains("<Transaction"))
+                                {
+                                    return xml;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignore non xml data on the clipboard.
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    Thread.Sleep(50);
+                }
+            }
+
+            throw new Exception("Cannot seem to get XML from selected row");
+        }
+
         internal void NavigateTransfer()
         {
             var selection = this.Selection;
+            if (selection == null)
+            {
+                return;
+            }
+
             string tofrom;
             string sourceAccount = selection.ParseTransferPayee(out tofrom);
             decimal amount = selection.GetAmount();
@@ -468,6 +569,8 @@ namespace Walkabout.Tests.Wrappers
         }
 
         public AutomationElement Element { get { return this.item; } }
+
+        public int Index => this.index;
 
         public void Select()
         {
@@ -742,11 +845,30 @@ namespace Walkabout.Tests.Wrappers
 
         internal void CommitEdit()
         {
-            InvokePattern p = (InvokePattern)this.item.GetCurrentPattern(InvokePattern.Pattern);
-            p.Invoke();
-            // Now the DataGrid implementation of Invoke deliberately de-selects the row for some
-            // strange reason, so we have to reselect it here.
-            this.Select();
+            // BUGBUG: the datagrid imnplementation of the Invoke pattern only does a Cell level commit
+            // not a row level commit which is what we need here.  
+            // InvokePattern p = (InvokePattern)this.item.GetCurrentPattern(InvokePattern.Pattern);
+            // p.Invoke();
+
+            // Seems the only way to get a row level commit is to send the ENTER key.
+            var newRow = this.IsNewRow;
+            this.view.Focus();
+            Thread.Sleep(500);
+            this.view.Focus();
+            Input.TapKey(Key.Enter);
+            Thread.Sleep(50);
+
+            // The enter key of course moves the selection to the next row, so this moves it back.
+            if (newRow)
+            {
+                this.Refresh(); // refreshes this row as the placeholder
+                // but we don't want to select the placeholder, we want to select the edited row.
+                this.view.Select(this.index);
+            }
+            else
+            {
+                this.Select();
+            }
         }
 
         internal void BeginEdit()

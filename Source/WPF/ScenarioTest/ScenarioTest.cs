@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Walkabout.Data;
@@ -346,6 +347,7 @@ namespace ScenarioTest
             this.isLoaded = true;
             this.createNewDatabaseDialog = null;
             Database = new SqliteDatabase() { DatabasePath = databasePath };
+            this.window.ClearReport();
         }
 
         private void CreateXmlDatabase()
@@ -357,6 +359,7 @@ namespace ScenarioTest
             this.isLoaded = true;
             this.createNewDatabaseDialog = null;
             Database = new XmlStore(databasePath, null);
+            this.window.ClearReport();
         }
 
         private void CreateBinaryXmlDatabase()
@@ -369,6 +372,7 @@ namespace ScenarioTest
             this.createNewDatabaseDialog = null;
             Database = new BinaryXmlStore(databasePath, null);
             this.ClearTransactionViewState();
+            this.window.ClearReport();
         }
 
         private void PopulateData()
@@ -669,6 +673,7 @@ namespace ScenarioTest
         internal void SelectDownloadTransactions()
         {
             this.WriteLine("  - SelectDownloadTransactions");
+            this.window.CloseReport();
             var charts = this.window.GetChartsArea();
             DownloadDetailsWrapper details = charts.SelectDownload();
 
@@ -756,11 +761,45 @@ namespace ScenarioTest
             this.attachmentDialog.WaitForInteractive();
         }
 
-        private void PasteImageAttachment()
+        private void PasteImage()
         {
-            this.WriteLine("- PasteImageAttachment");
-            Assert.IsNotNull(this.attachmentDialog);
+            this.WriteLine("- PasteImage");
 
+            Assert.IsNotNull(this.selectedTransaction);
+
+            this.FocusTransactionView();
+            this.EditOperation();
+            var transaction = this.window.FindTransactionGrid().GetSelectedTransactionProxy();
+            var name = transaction.AccountName;
+            var id = transaction.Id;
+
+            Clipboard.SetImage(CreateBitmap());
+            Thread.Sleep(50);
+            Input.TapKey(Key.V, ModifierKeys.Control); // send Ctrl+V to paste the image
+            Thread.Sleep(50);
+
+            var database = Database;
+            if (database != null && !string.IsNullOrEmpty(database.DatabasePath))
+            {
+                var databaseDir = Path.GetDirectoryName(database.DatabasePath);
+                var attachmentsDir = Path.Combine(databaseDir, Environment.UserName + ".Attachments");
+                if (Directory.Exists(attachmentsDir))
+                {
+                    var imagePath = Path.Combine(attachmentsDir, name, id + ".png");
+                    for (int retries = 5; retries > 0; retries--)
+                    {
+                        if (File.Exists(imagePath))
+                        {
+                            return;
+                        }
+                    }
+                    throw new Exception($"Cannot find the expected image file: {imagePath}");
+                }
+            }
+        }
+
+        private static BitmapSource CreateBitmap()
+        {
             var border = new System.Windows.Controls.Border()
             {
                 Width = 300,
@@ -783,7 +822,15 @@ namespace ScenarioTest
 
             RenderTargetBitmap bitmap = new RenderTargetBitmap(300, 100, 96, 96, PixelFormats.Pbgra32);
             bitmap.Render(border);
-            Clipboard.SetImage(bitmap);
+            return bitmap;
+        }
+
+        private void PasteImageAttachment()
+        {
+            this.WriteLine("- PasteImageAttachment");
+            Assert.IsNotNull(this.attachmentDialog);
+
+            Clipboard.SetImage(CreateBitmap());
 
             this.attachmentDialog.ClickPaste();
 
@@ -862,6 +909,7 @@ to make sure attachments work.");
         private void SelectCategory()
         {
             this.WriteLine("- SelectCategory");
+            this.window.CloseReport();
             CategoriesWrapper categories = this.window.ViewCategories();
 
             List<AutomationElement> topLevelCategories = categories.Categories;
@@ -909,6 +957,7 @@ to make sure attachments work.");
         private void SelectPayee()
         {
             this.WriteLine("- SelectPayee");
+            this.window.CloseReport();
             PayeesWrapper payees = this.window.ViewPayees();
             if (payees.Count > 0)
             {
@@ -940,6 +989,7 @@ to make sure attachments work.");
         private void SelectSecurity()
         {
             this.WriteLine("- SelectSecurity");
+            this.window.CloseReport();
             SecuritiesWrapper securities = this.window.ViewSecurities();
             if (securities.Count > 0)
             {
@@ -996,6 +1046,7 @@ to make sure attachments work.");
         private void DeleteAccount()
         {
             this.WriteLine("- DeleteAccount");
+            this.window.CloseReport();
             int index = this.random.Next(0, this.accounts.Accounts.Count);
             this.accounts.Select(index);
             string name = this.accounts.SelectedAccount;
@@ -1010,6 +1061,7 @@ to make sure attachments work.");
         private void SelectAccount()
         {
             this.WriteLine("- SelectAccount");
+            this.window.CloseReport();
             var i = this.random.Next(0, this.accounts.Accounts.Count);
             this.accounts.SelectAccount(i);
             this.ClearTransactionViewState();
@@ -1019,7 +1071,6 @@ to make sure attachments work.");
 
         #region Transaction View
         private TransactionViewWrapper transactions;
-        private QuickFilterWrapper quickFilter;
         private TransactionViewRow selectedTransaction;
         private TransactionDetails editedValues;
 
@@ -1033,7 +1084,6 @@ to make sure attachments work.");
         {
             this.WriteLine("- FocusTransactionView");
             this.transactions = this.window.FindTransactionGrid();
-            this.quickFilter = null;
             this.window.WaitForInputIdle(200);
 
             if (this.transactions == null || !this.transactions.HasTransactions)
@@ -1048,6 +1098,7 @@ to make sure attachments work.");
         private void SelectTransaction()
         {
             this.WriteLine("- SelectTransaction");
+            this.window.CloseReport();
             if (this.transactions == null || !this.transactions.HasTransactions)
             {
                 throw new Exception("Cannot select a transaction right now");
@@ -1091,6 +1142,11 @@ to make sure attachments work.");
             this.selectedTransaction = null;
         }
 
+        private void EditOperation()
+        {
+            this.transactions.EnsureSortByDate();
+        }
+
         private void AddNewTransaction()
         {
             this.WriteLine("- AddNewTransaction");
@@ -1098,7 +1154,6 @@ to make sure attachments work.");
             {
                 throw new Exception("Cannot edit a transaction right now");
             }
-
             var selection = this.transactions.AddNew();
             this.VerifySelection(selection);
             this.dataChangedSinceExport = true;
@@ -1234,6 +1289,7 @@ to make sure attachments work.");
             string transferTo = names[this.random.Next(0, names.Count)];
 
             this.EnsureSelectedTransaction();
+            this.transactions.EnsureSortByDate();
             this.selectedTransaction.SetPayee("Transfer to: " + transferTo);
             this.selectedTransaction.SetCategory("");
             this.selectedTransaction.SetSalesTax(0);
@@ -1393,6 +1449,7 @@ to make sure attachments work.");
             this.AssertSelectedTransaction();
 
             var selection = this.selectedTransaction;
+            // commit the edits.
             this.transactions.CommitEdit();
             if (this.transactions.Selection == null)
             {
@@ -1402,8 +1459,18 @@ to make sure attachments work.");
                 this.selectedTransaction = lastRow;
             }
 
-            // commit changes the automation object.
+            var transaction = this.window.FindTransactionGrid().GetSelectedTransactionProxy();
+            string dateEditedAsNormalizedString = DateTime.Parse(this.editedValues.Date).ToShortDateString();
+
             Assert.IsNotNull(this.editedValues);
+            this.AreEqual(this.editedValues.SalesTax, transaction.SalesTax, "Sales tax");
+            this.AreEqual(this.editedValues.Amount, transaction.Amount, "Amount");
+            this.AreEqual(this.editedValues.Payee, transaction.PayeeName, "Payee");
+            this.AreEqual(this.editedValues.Category, transaction.CategoryName, "Category");
+            this.AreEqual(this.editedValues.Memo, transaction.Memo, "Memo");
+            this.AreEqual(dateEditedAsNormalizedString, transaction.Date.ToShortDateString(), "Memo");
+
+            // Verify the onscreen values are also correct.
             this.AreEqual(this.editedValues.SalesTax, this.selectedTransaction.GetSalesTax(), "Sales tax");
             this.AreEqual(this.editedValues.Amount, this.selectedTransaction.GetAmount(), "Amount");
             this.AreEqual(this.editedValues.Payee, this.selectedTransaction.GetPayee(), "Payee");
@@ -1412,12 +1479,8 @@ to make sure attachments work.");
             // Ensure that the date is in the same format as we expect it 
             string dateInTransactionAsString = this.selectedTransaction.GetDate();
             string dateTransactionAsNormalizedString = DateTime.Parse(dateInTransactionAsString).ToShortDateString();
-            string dateEditedAsNormalizedString = DateTime.Parse(this.editedValues.Date).ToShortDateString();
             this.AreEqual(dateEditedAsNormalizedString, dateTransactionAsNormalizedString, "Category");
-
-            // When we use the InvokePattern trick to commit the edit this Memo field being the last thing
-            // edited is not yet committed, so the value does not show up yet until we switch to a new transaction.
-            // this.AreEqual(this.editedValues.Memo, this.selectedTransaction.GetMemo(), "Memo");
+            this.AreEqual(this.editedValues.Memo, this.selectedTransaction.GetMemo(), "Memo");
             this.editedValues = null;
         }
 
@@ -1475,7 +1538,6 @@ to make sure attachments work.");
             get
             {
                 this.transactions = this.window.FindTransactionGrid();
-                this.quickFilter = null;
                 return this.transactions != null && this.transactions.IsEditable;
             }
         }
@@ -1485,7 +1547,6 @@ to make sure attachments work.");
             get
             {
                 this.transactions = this.window.FindTransactionGrid();
-                this.quickFilter = null;
                 return this.transactions != null && this.transactions.HasTransactions;
             }
         }
@@ -1518,8 +1579,9 @@ to make sure attachments work.");
         {
             get
             {
-                return this.selectedTransaction != null && this.transactions != null && this.transactions.HasTransactions &&
+                bool rc = this.selectedTransaction != null && this.transactions != null && this.transactions.HasTransactions &&
                     this.transactions.IsBankAccount && !this.selectedTransaction.IsPlaceholder;
+                return rc;
             }
         }
 
@@ -1533,19 +1595,43 @@ to make sure attachments work.");
 
         private void SearchTransactionView()
         {
-            this.WriteLine("- SearchTransactionView");
-            if (this.transactions != null && this.quickFilter == null)
+            if (this.transactions != null && this.transactions.CountNoPlaceholder > 5 &&
+                this.transactions.Selection != null && this.transactions.Selection.Index > 0)
             {
-                this.quickFilter = this.window.Element.FindQuickFilter();
-                Assert.IsNotNull(this.quickFilter, "Cannot find quick filter control");
-            }
-            if (!string.IsNullOrEmpty(this.quickFilter.GetFilter()))
-            {
-                this.quickFilter.ClearSearch();
-            }
-            else
-            {
-                this.quickFilter.SetFilter("the");
+                this.WriteLine("- SearchTransactionView");
+                if (this.transactions.Selection == null)
+                {
+                    this.SelectTransaction();
+                }
+                var t = this.transactions.GetSelectedTransactionProxy();
+                var search = "\"" + t.Date.ToShortDateString() + "\" and " + t.Amount;
+
+                var quickFilter = this.window.Element.FindQuickFilter();
+                Assert.IsNotNull(quickFilter, "Cannot find quick filter control");
+                quickFilter.SetFilter(search);
+                Thread.Sleep(500);
+
+                // Make sure selection is preserved on the matching transaction
+                var row2 = this.transactions.Selection;
+                Assert.IsNotNull(row2, "Selection not restored after setting search filter");
+
+                var t2 = this.transactions.GetSelectedTransactionProxy();
+
+                Assert.AreEqual(t.Date, t2.Date, "Dates don't match");
+                Assert.AreEqual(t.Amount, t2.Amount, "Amounts don't match");
+
+                // don't leave Money with active search filter as it makes the rest of the
+                // editing logic very complicated.
+                quickFilter.ClearSearch();
+                Thread.Sleep(500);
+
+                // Make sure selection is preserved after search is cleared.
+                var row3 = this.transactions.Selection;
+                Assert.IsNotNull(row3, "Selection not restored after clearing search filter");
+
+                var t3 = this.transactions.GetSelectedTransactionProxy();
+                Assert.AreEqual(t.Date, t3.Date, "Dates don't match");
+                Assert.AreEqual(t.Amount, t3.Amount, "Amounts don't match");
             }
         }
 

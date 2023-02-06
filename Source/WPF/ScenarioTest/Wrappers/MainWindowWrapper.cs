@@ -82,7 +82,6 @@ namespace Walkabout.Tests.Wrappers
 
         internal AccountsWrapper ViewAccounts()
         {
-            this.CloseReport();
             this.accounts = new AccountsWrapper(this.Element.Expand("AccountsSelector"));
             this.categories = null;
             this.payees = null;
@@ -93,7 +92,6 @@ namespace Walkabout.Tests.Wrappers
 
         internal CategoriesWrapper ViewCategories()
         {
-            this.CloseReport();
             this.categories = new CategoriesWrapper(this.Element.Expand("CategoriesSelector"));
             //accounts = null;
             this.payees = null;
@@ -104,7 +102,6 @@ namespace Walkabout.Tests.Wrappers
 
         internal PayeesWrapper ViewPayees()
         {
-            this.CloseReport();
             this.payees = new PayeesWrapper(this.Element.Expand("PayeesSelector"));
             //accounts = null;
             this.categories = null;
@@ -293,8 +290,13 @@ namespace Walkabout.Tests.Wrappers
             if (this.report != null)
             {
                 this.report.CloseReport();
-                this.report = null;
+                this.ClearReport();
             }
+        }
+
+        public void ClearReport()
+        {
+            this.report = null;
         }
 
     }
