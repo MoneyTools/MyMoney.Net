@@ -2,7 +2,8 @@
 <changes>
   <change version="2.1.0.3" date="2/5/2022">
     - Fix OFX parsing issue so that Citibank VISA cards Connect dialog works properly.
-    - Fix online banking documentation &amp; screenshots
+    - Fix online banking documentation &amp; screenshots.
+    - Add backslash escaping support to escape a double quote in the quickfilter search box.
   </change>
   <change version="2.1.0.2" date="1/30/2022">
     - Fix problem with open file dialog, where it was incorrectly inserting password from windows credential store on Sqllite databases.
