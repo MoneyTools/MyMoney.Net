@@ -181,20 +181,31 @@ namespace Walkabout.Utilities
                 }
                 else if (ch == '"')
                 {
-                    int j = quickFilter.IndexOf('"', i + 1);
-                    if (j > i + 1)
+                    int j = i + 1;
+                    for (; j < n; j++)
                     {
-                        sb.Append(quickFilter.Substring(i + 1, j - i - 1));
-                        i = j;
-                        token = QuickFilterToken.Literal;
-                        literal = sb.ToString();
-                        sb.Length = 0;
-                        previousCouldBeKeyword = true;
+                        char sh = quickFilter[j];
+                        if (sh == '\\' && j + 1 < n && quickFilter[j + 1] == '"')
+                        {
+                            // escaped double quote!
+                            j++;
+                            sb.Append('"');
+                        }
+                        else if (sh == '"')
+                        {
+                            j++;
+                            break;
+                        }
+                        else
+                        {
+                            sb.Append(sh);
+                        }
                     }
-                    else
-                    {
-                        sb.Append(ch);
-                    }
+                    token = QuickFilterToken.Literal;
+                    literal = sb.ToString();
+                    sb.Length = 0;
+                    previousCouldBeKeyword = true;
+                    i = j;
                 }
                 else if (ch == '|') // we do not recognize "," as "or" because "," exists as a thousands separator in $amounts, so that would be ambiguous.
                 {

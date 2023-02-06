@@ -93,61 +93,74 @@ namespace Walkabout.Migrate
         private void ExportToXml(XmlWriter writer, IEnumerable<object> data)
         {
             // write out the referenced accounts first.
-            writer.WriteStartElement("Accounts");
+            var ns = "http://schemas.vteam.com/Money/2010";
+            writer.WriteStartElement("Accounts", ns);
 
+            HashSet<Account> accounts = new HashSet<Account>();
+            // Find the unique accounts associated with the data
             foreach (object row in data)
             {
-                Transaction t = row as Transaction;
-                Investment i = row as Investment;
-                Split s = row as Split;
-
-                if (i != null)
+                Transaction t = null;
+                if (row is Account a)
+                {
+                    accounts.Add(a);
+                }
+                else if (row is Transaction t2)
+                {
+                    t = t2;
+                }
+                else if (row is Investment i)
                 {
                     t = i.Transaction;
                 }
-                if (t != null)
+                else if (row is Split s)
                 {
-                    this.ExportAccount(writer, t.Account);
-                    if (t.Transfer != null)
+                    t = s.Transaction;
+                }
+                if (t != null && t.Account != null)
+                {
+                    accounts.Add(t.Account);
+                    if (t.Transfer != null && t.Transfer.Transaction != null && t.Transfer.Transaction.Account != null)
                     {
-                        this.ExportAccount(writer, t.Transfer.Transaction.Account);
+                        accounts.Add(t.Transfer.Transaction.Account);
                     }
                 }
-                else if (s != null)
-                {
-                    this.ExportAccount(writer, s.Transaction.Account);
-                    if (s.Transfer != null)
-                    {
-                        this.ExportAccount(writer, s.Transfer.Transaction.Account);
-                    }
-                }
+            }
+
+            foreach (var a in accounts)
+            {
+                this.ExportAccount(writer, a);
             }
 
             writer.WriteEndElement();
 
             foreach (object row in data)
             {
-                Transaction t = row as Transaction;
-                Investment i = row as Investment;
-                Split s = row as Split;
-                if (t != null)
+                if (row is Account a)
+                {
+                    // ignore it, already handled.
+                }
+                if (row is Transaction t)
                 {
                     TransactionSerializer.WriteObject(writer, t);
-                    i = t.Investment;
+                    if (t.Investment != null)
+                    {
+                        InvestmentSerializer.WriteObject(writer, t.Investment);
+                    }
                 }
-
-                if (i != null)
+                else if (row is Investment i)
                 {
                     InvestmentSerializer.WriteObject(writer, i);
                 }
-
-                if (s != null)
+                else if (row is Split s)
                 {
                     SplitSerializer.WriteObject(writer, s);
                 }
-                else if (t == null && i == null)
+                else
                 {
-                    throw new Exception("Row type " + row.GetType().FullName + " not supported");
+                    // Then it must be the placeholder element!
+                    writer.WriteStartElement("Placeholder", ns);
+                    writer.WriteEndElement();
                 }
             }
         }

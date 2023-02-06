@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
@@ -348,7 +347,7 @@ namespace Walkabout.Ofx
             settings.ProhibitDtd = false;
 #pragma warning restore 618
             settings.ValidationType = ValidationType.None;
-            using (XmlReader reader = new StringTrimmingXmlReader(XmlReader.Create(fs, settings)))
+            using (XmlReader reader = XmlReader.Create(fs, settings))
             {
                 return XDocument.Load(reader);
             }
@@ -1025,43 +1024,6 @@ NEWFILEUID:{1}
             }
         }
 
-        private string RemoveIndents(string msg)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (string line in msg.Split('\n'))
-            {
-                sb.Append(line.Trim());
-                sb.Append("\n");
-            }
-            return sb.ToString();
-        }
-
-        private static string GetHttpHeaders(HttpWebResponse response)
-        {
-            string headers = string.Empty;
-            WebHeaderCollection col = response.Headers;
-            foreach (string key in col.AllKeys)
-            {
-                headers += key + "=" + col[key] + "<br/>";
-            }
-            return headers;
-        }
-
-        private static string GetResponseBody(HttpWebResponse resp)
-        {
-            try
-            {
-                using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
-                {
-                    return sr.ReadToEnd();
-                }
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
         private static void EnsurePathExists(string path)
         {
             if (!Directory.Exists(path))
@@ -1310,6 +1272,7 @@ NEWFILEUID:{1}
         {
             try
             {
+                StripWhitespace(doc);
                 OFX ofx;
                 XmlSerializer s = new XmlSerializer(typeof(OFX));
                 using (XmlReader r = XmlReader.Create(new StringReader(doc.ToString())))
@@ -1838,8 +1801,22 @@ NEWFILEUID:{1}
             return null;
         }
 
+        private static void StripWhitespace(XDocument doc)
+        {
+            foreach (var node in doc.DescendantNodes())
+            {
+                if (node is XText t)
+                {
+                    t.Value = t.Value.Trim();
+                }
+            }
+        }
+
         public void ProcessResponse(XDocument doc, OfxDownloadData results)
         {
+            // So we don't have to do a .Trim() on every single selected value when parsing the response.
+            StripWhitespace(doc);
+
             XElement root = doc.Root;
             if (root == null || root.Name.LocalName != "OFX")
             {
@@ -1869,7 +1846,7 @@ NEWFILEUID:{1}
                 e = doc.SelectElement("OFX/SIGNONMSGSRSV1/SONRS/STATUS/MESSAGE");
                 if (e != null)
                 {
-                    message += e.Value.Trim();
+                    message += e.Value;
                     results.AddError(this.OnlineAccount, this.Account, message);
                 }
                 return;
@@ -1920,7 +1897,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     e = child.SelectElement("*/STATUS/MESSAGE");
                     if (e != null)
                     {
-                        message += e.Value.Trim();
+                        message += e.Value;
                         results.AddError(this.OnlineAccount, this.Account, message);
                     }
                 }
@@ -3472,14 +3449,14 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             if (statusElement != null)
             {
                 XElement sc = statusElement.Element("CODE");
-                if (sc != null && sc.Value.Trim() != "0")
+                if (sc != null && sc.Value != "0")
                 {
                     string msg = (a == null) ? string.Empty : a.Name + ": ";
                     XElement severity = statusElement.Element("SEVERITY");
                     string reason = null;
                     if (severity != null)
                     {
-                        reason = severity.Value?.Trim();
+                        reason = severity.Value;
                     }
                     XElement message = statusElement.Element("MESSAGE");
                     if (message != null)
@@ -3489,7 +3466,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                             reason += ", ";
                         }
 
-                        reason += message.Value?.Trim();
+                        reason += message.Value;
                     }
                     return msg + reason;
                 }
@@ -3829,107 +3806,5 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 HelpLink = challengeLog
             });
         }
-
-
     }
-
-    internal class StringTrimmingXmlReader : XmlReader
-    {
-        private readonly XmlReader inner;
-        public StringTrimmingXmlReader(XmlReader inner)
-        {
-            this.inner = inner;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            this.inner.Dispose();
-            base.Dispose(disposing);
-        }
-
-        public override XmlNodeType NodeType => this.inner.NodeType;
-
-        public override string LocalName => this.inner.LocalName;
-
-        public override string NamespaceURI => this.inner.NamespaceURI;
-
-        public override string Prefix => this.inner.Prefix;
-
-        public override string Value => this.inner.Value?.Trim();
-
-        public override int Depth => this.inner.Depth;
-
-        public override string BaseURI => this.inner.BaseURI;
-
-        public override bool IsEmptyElement => this.inner.IsEmptyElement;
-
-        public override int AttributeCount => this.inner.AttributeCount;
-
-        public override bool EOF => this.inner.EOF;
-
-        public override ReadState ReadState => this.inner.ReadState;
-
-        public override XmlNameTable NameTable => this.inner.NameTable;
-
-        public override string GetAttribute(string name)
-        {
-            return this.inner.GetAttribute(name);
-        }
-
-        public override string GetAttribute(string name, string namespaceURI)
-        {
-            return this.inner.GetAttribute(name, namespaceURI);
-        }
-
-        public override string GetAttribute(int i)
-        {
-            return this.inner.GetAttribute(i);
-        }
-
-        public override string LookupNamespace(string prefix)
-        {
-            return this.inner.LookupNamespace(prefix);
-        }
-
-        public override bool MoveToAttribute(string name)
-        {
-            return this.inner.MoveToAttribute(name);
-        }
-
-        public override bool MoveToAttribute(string name, string ns)
-        {
-            return this.inner.MoveToAttribute(name, ns);
-        }
-
-        public override bool MoveToElement()
-        {
-            return this.inner.MoveToElement();
-        }
-
-        public override bool MoveToFirstAttribute()
-        {
-            return this.inner.MoveToFirstAttribute();
-        }
-
-        public override bool MoveToNextAttribute()
-        {
-            return this.inner.MoveToNextAttribute();
-        }
-
-        public override bool Read()
-        {
-            return this.inner.Read();
-        }
-
-        public override bool ReadAttributeValue()
-        {
-            return this.inner.ReadAttributeValue();
-        }
-
-        public override void ResolveEntity()
-        {
-            this.inner.ResolveEntity();
-        }
-    }
-
 }

@@ -47,6 +47,14 @@ namespace Walkabout.Controls
             Loaded += this.OnLoaded;
         }
 
+        protected override void OnExecutedCommitEdit(ExecutedRoutedEventArgs e)
+        {
+            // This is the code path that is executed when the unit test uses the InvokePattern to
+            // commit the edit on the current edited row, but the default implementation in DataGrid
+            // doesn't do anything useful, so we intercept it here so the row is actually committed.
+            base.OnExecutedCommitEdit(e);
+        }
+
         public ContextMenu ParentMenu { get; set; }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -742,6 +750,11 @@ namespace Walkabout.Controls
 
         private void OnStartEdit(DataGridColumn column, DataGridRow row, RoutedEventArgs args)
         {
+            IEditableCollectionView iecv = this.Items as IEditableCollectionView;
+            if (iecv != null)
+            {
+
+            }
             Control editor = this.GetCellEditor(column, row, args);
             if (editor != null)
             {

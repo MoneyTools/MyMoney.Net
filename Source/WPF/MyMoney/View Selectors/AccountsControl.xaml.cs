@@ -603,6 +603,7 @@ namespace Walkabout.Views.Controls
             {
                 Exporters e = new Exporters();
                 List<object> data = new List<object>();
+                data.Add(a);
                 foreach (object row in this.MyMoney.Transactions.GetTransactionsFrom(a))
                 {
                     data.Add(row);

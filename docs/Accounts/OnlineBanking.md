@@ -38,11 +38,15 @@ If you enter the right authentication information then you should see your onlin
 
 ![](../Images/Online%20Banking5.png)
 
-![](../Images/Online%20Banking6.png) ![](../Images/Online%20Banking7.png)
 
-The blue question mark means the account numbers didn't match any of your existing accounts.
-Click this question mark button to add this account to your list of accounts. 
+The question mark icon means the account number didn't match any of your existing accounts. Click
+this question mark button to find the matching account or add this account to your list of accounts.
+
+![](../Images/Online%20Banking6.png)
+
 If the account was found in your local database you will see a green check mark instead:
+
+![](../Images/Online%20Banking7.png)
 
 If you were expecting a green check mark, but instead see a blue question mark for a given account, then it means your account numbers don't match what was downloaded from your bank. You can go back to your Account Properties to fix your account number, then try again.  Sometimes a financial institution might add or remove a dash in the account number.   See [Setup Accounts](SetupAccounts.md)
 
@@ -56,27 +60,21 @@ To set this up, edit the "Name" field of the OnlineAccount dialog so it is uniqu
 When you click Connect you will then be prompted for new credentials, type in the different credentials. 
 
 **Deselecting Accounts**
-Sometimes (for example, when the accounts are linked at the financial institution) the online bank will return both accounts again when you login with the new credentials and so you will see two green checkmarks like this:
+
+You can remove the online banking connection for a given account by clicking the checkmark
+icon to toggle the state to "disconnected" and this still stop that account from receiving
+future updates when you synchronize online accounts:
 
 ![](../Images/Online%20Banking9.png)
 
-But you may not want to do this.  If you used your work credentials, you may want to de-select your personal AMEX card by clicking the green checkmark.  You will then see this :
-
-![](../Images/Online%20Banking10.png)
-
-This will ensure that it doesn’t get confused and try and download your personal AMEX info using your work AMEX credentials.
-
 ### Downloading Statements
 
-Now when you click the download button the following tab appears at the bottom section of the app:
+Now when you click the download button the following tab appears at the bottom section of the app
+and when complete it tells you how many transactions were downloaded:
 
 ![](../Images/Online%20Banking11.png)
 
-And when complete it tells you how many transactions were downloaded:
-
-![](../Images/Online%20Banking12.png)
-
-You can click the row titled "Downloaded 1 new transactions" to see just those transactions that were downloaded.  From there you can add missing [Category](../Basics/Categories.md) information.  They will stay **bold**  as a reminder that you need to review them .  A good practice is to only accept the ones you have receipts for.  For example, I recently found a transaction for several thousand dollars for the purchase of a painting in Denmark on my credit card.  I had no recollection of this transaction, nor any receipt, and was able to quickly inform my credit card company and start the fraud investigation the same day the charge appeared in my downloaded transactions.  The bold highlighting helps make these new 'unverified' transactions more visible.
+You can click the row titled "Downloaded 10 new transactions" to see the transactions that were downloaded.  From there you can add missing [Category](../Basics/Categories.md) information.  They will stay **bold**  as a reminder that you need to review them.  A good practice is to only accept the ones you have receipts for.  For example, I recently found a transaction for several thousand dollars for the purchase of a painting in Denmark on my credit card.  I had no recollection of this transaction, nor any receipt, and was able to quickly inform my credit card company and start the fraud investigation the same day the charge appeared in my downloaded transactions.  The bold highlighting helps make these new 'unverified' transactions more visible.
 
 The first download will get as much data as is available from the online service.  If you need more history you may be able to manually download OFX, QFX or QIF files from your bank's website and then use File/Import… to import those in the money program.    You can also import OFX, QFX or QIF files from other financial software packages if you have the history there.  The **OFX or QFX format**  is preferred, QIF is harder to merge because it doesn't contain account information. 
 
@@ -84,7 +82,7 @@ Sometimes the OFX service might be down for maintenance, and you will get an err
 
 ![](../Images/Online%20Banking13.png)
 
-When this happens you can click the "Details" link to find out more about what happened, sometimes this contains a message from the bank as to why the service is unavailable.   If this keeps happening, you can use the X button to remove the online account and stop trying.  You can manually remove the online connection by clearing the Online Account field in your Account Properties dialog.
+When this happens you can click the "Details" link to find out more about what happened, sometimes this contains a message from the bank as to why the service is unavailable.   If this keeps happening, you can deselect the account as shown above.  You can also manually remove the online connection by clearing the Online Account field in your Account Properties dialog.
 
 ### Download Range
 By default for new accounts the program requests the last 30 days.  After the first download it requests new transactions from the last time you clicked "Download".  But if you need to you can reset the "**Last Download** " date using the Account Properties dialog.  See [Setup Accounts](SetupAccounts.md).

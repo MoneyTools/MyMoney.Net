@@ -705,7 +705,7 @@ namespace Walkabout.Data
         internal PayeeIndex payeeAccountIndex;
         private bool watching;
 
-        internal static Type[] GetKnownTypes()
+        public static Type[] GetKnownTypes()
         {
             return new Type[]
             {
