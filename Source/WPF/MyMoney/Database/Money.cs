@@ -10270,6 +10270,7 @@ namespace Walkabout.Data
                    filter.MatchSubstring(t.CategoryFullName) ||
                    filter.MatchSubstring(t.Memo) ||
                    filter.MatchDate(t.Date) ||
+                   filter.MatchString(t.Number) ||
                    filter.MatchDecimal(t.amount);
         }
 

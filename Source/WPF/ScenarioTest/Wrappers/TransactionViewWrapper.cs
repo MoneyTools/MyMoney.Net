@@ -281,6 +281,20 @@ namespace Walkabout.Tests.Wrappers
             }
         }
 
+        public TransactionViewRow WaitForSelection(int retries = 10, int delay = 100)
+        {
+            for (int i = 0; i < retries; i++)
+            {
+                var s = this.Selection;
+                if (s != null)
+                {
+                    return s;
+                }
+                Thread.Sleep(delay);
+            }
+            return null;
+        }
+
         internal void Delete(int index)
         {
             TransactionViewRow item = this.Select(index);
@@ -569,6 +583,8 @@ namespace Walkabout.Tests.Wrappers
         }
 
         public AutomationElement Element { get { return this.item; } }
+
+        public string Id => this.item.Current.AutomationId;
 
         public int Index => this.index;
 

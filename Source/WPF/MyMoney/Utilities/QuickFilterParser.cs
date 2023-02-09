@@ -500,10 +500,10 @@ namespace Walkabout.Utilities
 
         public bool MatchDecimal(decimal other)
         {
-            return this.InternalMatchDecimal(other) || this.InternalMatchDecimal(-other);
+            return this.InternalMatchDecimalMagnitude(other);
         }
 
-        private bool InternalMatchDecimal(decimal other)
+        private bool InternalMatchDecimalMagnitude(decimal other)
         {
             if (this.notDecimal)
             {
@@ -519,7 +519,15 @@ namespace Walkabout.Utilities
                 }
                 this._decimal = d;
             }
-            return other == this._decimal.Value;
+            // Ignore the sign on the value so user can search for Payment or Deposit without 
+            // having to remember the sign.
+            return other == this._decimal.Value || -other == this._decimal.Value;
+        }
+
+        internal bool MatchString(string s)
+        {
+            bool rc = s != null && String.Compare(s, this._keyword, StringComparison.OrdinalIgnoreCase) == 0;
+            return rc;
         }
 
         internal bool MatchSubstring(string s)
@@ -544,8 +552,7 @@ namespace Walkabout.Utilities
                 }
                 this._date = d;
             }
-            return this._date.Value == dateTime;
-
+            return this._date.Value.Date == dateTime.Date;
         }
     }
 }

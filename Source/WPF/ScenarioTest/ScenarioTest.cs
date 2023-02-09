@@ -1603,6 +1603,7 @@ to make sure attachments work.");
                 {
                     this.SelectTransaction();
                 }
+                var row1 = this.transactions.WaitForSelection();
                 var t = this.transactions.GetSelectedTransactionProxy();
                 var search = "\"" + t.Date.ToShortDateString() + "\" and " + t.Amount;
 
@@ -1612,11 +1613,11 @@ to make sure attachments work.");
                 Thread.Sleep(500);
 
                 // Make sure selection is preserved on the matching transaction
-                var row2 = this.transactions.Selection;
-                Assert.IsNotNull(row2, "Selection not restored after setting search filter");
+                var row2 = this.transactions.WaitForSelection();
+                Assert.IsNotNull(row2, "Selection not found after setting search filter");
+                Assert.AreEqual(row1.Id, row2.Id, $"Expected election automation id {row1.Id} doesn't match {row2.Id}");
 
                 var t2 = this.transactions.GetSelectedTransactionProxy();
-
                 Assert.AreEqual(t.Date, t2.Date, "Dates don't match");
                 Assert.AreEqual(t.Amount, t2.Amount, "Amounts don't match");
 
@@ -1626,9 +1627,9 @@ to make sure attachments work.");
                 Thread.Sleep(500);
 
                 // Make sure selection is preserved after search is cleared.
-                var row3 = this.transactions.Selection;
+                var row3 = this.transactions.WaitForSelection();
                 Assert.IsNotNull(row3, "Selection not restored after clearing search filter");
-
+                Assert.AreEqual(row1.Id, row3.Id, $"Expected election automation id {row1.Id} doesn't match {row3.Id}");
                 var t3 = this.transactions.GetSelectedTransactionProxy();
                 Assert.AreEqual(t.Date, t3.Date, "Dates don't match");
                 Assert.AreEqual(t.Amount, t3.Amount, "Amounts don't match");

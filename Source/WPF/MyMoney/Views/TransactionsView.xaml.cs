@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -541,6 +542,7 @@ namespace Walkabout.Views
 
         private void SetupGrid(MoneyDataGrid grid, bool supportDragDrop)
         {
+            this.TearDownGrid(grid);
             grid.BeginningEdit += this.OnBeginEdit;
             grid.RowEditEnding += this.OnDataGridCommit;
             grid.PreviewKeyDown += new KeyEventHandler(this.OnDataGridPreviewKeyDown);
@@ -558,6 +560,7 @@ namespace Walkabout.Views
             grid.PreviewKeyDown -= new KeyEventHandler(this.OnDataGridPreviewKeyDown);
             grid.KeyDown -= new KeyEventHandler(this.OnDataGrid_KeyDown);
             grid.SelectionChanged -= new SelectionChangedEventHandler(this.TheGrid_SelectionChanged);
+            grid.CellEditEnding -= new EventHandler<DataGridCellEditEndingEventArgs>(this.OnDataGridCellEditEnding);
         }
 
 
@@ -3638,10 +3641,9 @@ namespace Walkabout.Views
             {
                 object selected = e.AddedItems[0];
 
-
                 this.lastSelectedItem = selected;
 
-                if (selected is Transaction)
+                if (selected is Transaction t)
                 {
                     //-------------------------------------------------------------
                     // The user just changed the selection of the current Transaction
@@ -3665,7 +3667,16 @@ namespace Walkabout.Views
                         }
                     }
                     this.selectedSplit = null;
-                    AttachmentDialog.OnSelectionChanged((Transaction)selected);
+                    AttachmentDialog.OnSelectionChanged(t);
+
+                    if (this.TheActiveGrid.SelectedItem == selected)
+                    {
+                        DataGridRow row = this.TheActiveGrid.GetRow(this.TheActiveGrid.SelectedIndex);
+                        if (row != null)
+                        {
+                            AutomationProperties.SetAutomationId(row, t.Id.ToString());
+                        }
+                    }
                 }
                 else if (selected is Split)
                 {
