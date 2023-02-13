@@ -45,34 +45,6 @@
             </Setter>
         </Style>
 
-
-
-        <!-- GROUPING LOGIC for the LISTVIEW -->
-        <CollectionViewSource x:Key="ByYear" >
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="Year"/>
-            </CollectionViewSource.GroupDescriptions>
-        </CollectionViewSource>
-
-
-        <Style x:Key="GroupHeaderStyle" TargetType="{x:Type GroupItem}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type GroupItem}">
-
-                        <StackPanel>
-                            <TextBlock Text="{Binding Items[0].Year}" TextAlignment="Left" FontSize="20" Margin="8,8,0,3"/>
-                            <Separator Opacity="0.5"/>
-                            <ItemsPresenter />
-                        </StackPanel>
-
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-
-
         <!-- DATE -->
         <DataTemplate x:Key="myTemplateDate">
             <Border Margin="10,0,0,0" BorderThickness="0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
@@ -106,7 +78,7 @@
         <DataTemplate x:Key="myTemplatePayment" >
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding Payment, StringFormat={}{0:N}}" TextAlignment="Right" VerticalAlignment="Center" Opacity=".80" />
+                <TextBlock Text="{Binding Payment, StringFormat={}{0:C}}" TextAlignment="Right" VerticalAlignment="Center" Opacity=".80" />
             </Border>
         </DataTemplate>
 
@@ -185,7 +157,7 @@
 
         <!-- BALANCE -->
         <DataTemplate x:Key="myTemplateBalance">
-            <TextBlock  Grid.Column="1" Text="{Binding Balance, StringFormat={}{0:N}}"                            
+            <TextBlock  Grid.Column="1" Text="{Binding Balance, StringFormat={}{0:C}}"                            
 						Opacity=".6"
 						TextAlignment="Right" VerticalAlignment="Center" HorizontalAlignment="Right"/>
         </DataTemplate>
@@ -210,11 +182,8 @@
         <KeyBinding Command="views:LoansView.CommandGotoRelatedTransaction" Key="F12" />
     </UserControl.InputBindings>
 
-
-
     <DataGrid x:Name="TheDataGrid" 
-            Padding="5"
-            ItemsSource="{Binding Source={StaticResource ByYear}}"
+            Padding="5"     
             RowHeaderWidth="0"
             VerticalGridLinesBrush="Transparent"
             Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
@@ -229,16 +198,6 @@
             RowEditEnding="TheDataGrid_RowEditEnding" 
             CommandManager.PreviewExecuted="TheDataGrid_PreviewExecuted"
             KeyDown="TheDataGrid_KeyDown" >
-
-        <DataGrid.GroupStyle>
-            <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
-                <GroupStyle.Panel>
-                    <ItemsPanelTemplate>
-                        <DataGridRowsPresenter/>
-                    </ItemsPanelTemplate>
-                </GroupStyle.Panel>
-            </GroupStyle>
-        </DataGrid.GroupStyle>
 
         <DataGrid.Columns>
 
@@ -284,6 +243,5 @@
         </DataGrid.Columns>
 
     </DataGrid>
-
 
 </UserControl>

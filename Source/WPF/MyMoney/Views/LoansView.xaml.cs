@@ -50,8 +50,7 @@ namespace Walkabout.Views
                     this.accountSelected = value;
                     this.loanAccount = this.Money.GetOrCreateLoanAccount(this.accountSelected);
                     this.loanAccount.Rebalance();
-                    var dataProvider = (CollectionViewSource)this.FindResource("ByYear");
-                    dataProvider.Source = this.loanAccount.Payments;
+                    this.TheDataGrid.ItemsSource = this.loanAccount.Payments;
 
                     this.FireAfterViewStateChanged();
                 }
