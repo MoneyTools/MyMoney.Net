@@ -147,11 +147,11 @@ namespace Walkabout.Controls
             if (this.comboBoxCurrency.SelectedValue != null)
             {
                 this.databaseSettings.DisplayCurrency = this.comboBoxCurrency.SelectedValue.ToString();
-                this.updateCultureCode();
+                this.UpdateCultureCode();
             }
         }
 
-        private void updateCultureCode()
+        private void UpdateCultureCode()
         {
             if (this.currencies != null)
             {
