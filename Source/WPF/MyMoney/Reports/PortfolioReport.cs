@@ -273,7 +273,7 @@ namespace Walkabout.Reports
                 this.WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == this.account; }), false, true);
             }
 
-            this.WriteHeaderRow(writer, "Total", this.totalMarketValue.ToString("C"), this.accountGroup != null ? "" : this.totalGainLoss.ToString("C"));
+            this.WriteHeaderRow(writer, "Total", this.myMoney.GetFormatedNormalizedAmount(this.totalMarketValue), this.accountGroup != null ? "" : this.myMoney.GetFormatedNormalizedAmount(this.totalGainLoss));
             writer.EndTable();
 
             writer.EndCell();
@@ -619,7 +619,7 @@ namespace Walkabout.Reports
                             UserData = account
                         });
 
-                        this.WriteSummaryRow(writer, color, caption, balance.ToString("C"), null);
+                        this.WriteSummaryRow(writer, color, caption, this.myMoney.GetFormatedNormalizedAmount(balance), null);
                         total += balance;
                     }
                 }
@@ -711,7 +711,7 @@ namespace Walkabout.Reports
                     {
                         caption = "    " + Security.GetSecurityTypeCaption(st);
                     }
-                    this.WriteSummaryRow(writer, color, caption, marketValue.ToString("C"), gainLoss.ToString("C"));
+                    this.WriteSummaryRow(writer, color, caption, this.myMoney.GetFormatedNormalizedAmount(marketValue), this.myMoney.GetFormatedNormalizedAmount(gainLoss));
                     rowCount++;
                 }
 
@@ -730,7 +730,7 @@ namespace Walkabout.Reports
                     Color = color
                 });
 
-                this.WriteSummaryRow(writer, color, "Cash", cashBalance.ToString("C"), "");
+                this.WriteSummaryRow(writer, color, "Cash", this.myMoney.GetFormatedNormalizedAmount(cashBalance), "");
 
                 rowCount++;
                 totalSectionMarketValue += cashBalance;
@@ -738,7 +738,7 @@ namespace Walkabout.Reports
 
             if (wroteSectionHeader && subtotal && rowCount > 1)
             {
-                this.WriteSummaryRow(writer, Colors.Transparent, "    SubTotal", totalSectionMarketValue.ToString("C"), totalSectionGainValue.ToString("C"));
+                this.WriteSummaryRow(writer, Colors.Transparent, "    SubTotal", this.myMoney.GetFormatedNormalizedAmount(totalSectionMarketValue), this.myMoney.GetFormatedNormalizedAmount(totalSectionGainValue));
             }
 
             this.totalMarketValue += totalSectionMarketValue;
@@ -869,7 +869,7 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        private static void WriteRow(IReportWriter writer, string name, decimal balance)
+        private void WriteRow(IReportWriter writer, string name, decimal balance)
         {
             writer.StartRow();
             writer.StartCell();
@@ -877,7 +877,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(balance.ToString("C"));
+            writer.WriteNumber(this.myMoney.GetFormatedNormalizedAmount(balance));
             writer.EndCell();
 
             writer.EndRow();

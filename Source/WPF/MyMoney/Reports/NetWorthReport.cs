@@ -199,7 +199,7 @@ namespace Walkabout.Reports
                     writer.EndCell();
 
                     writer.StartCell();
-                    writer.WriteNumber(totalBalance.ToString("C"));
+                    writer.WriteNumber(this.myMoney.GetFormatedNormalizedAmount(totalBalance));
                     writer.EndCell();
 
                     writer.EndRow();
@@ -472,7 +472,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(balance.ToString("C"));
+            writer.WriteNumber(this.myMoney.GetFormatedNormalizedAmount(balance));
             writer.EndCell();
 
             writer.EndRow();
