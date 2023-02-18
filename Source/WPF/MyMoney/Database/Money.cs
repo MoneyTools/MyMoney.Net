@@ -948,7 +948,7 @@ namespace Walkabout.Data
             return string.Format(this.CultureInfo, "{0:C" + dicimalPlace.ToString() + "}", amount);
         }
 
-        public string GetFormatedNormalizedAmount(decimal amount, int dicimalPlace = 2)
+        public string GetFormattedNormalizedAmount(decimal amount, int dicimalPlace = 2)
         {
             amount /= this.rate;
             return this.GetFormatedAmount(amount, dicimalPlace);

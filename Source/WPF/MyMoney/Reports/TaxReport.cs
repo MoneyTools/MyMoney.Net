@@ -298,11 +298,11 @@ namespace Walkabout.Reports
                     writer.EndCell();
 
                     writer.StartCell();
-                    writer.WriteNumber(this.money.GetFormatedNormalizedAmount(data.SalePricePerUnit));
+                    writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.SalePricePerUnit));
                     writer.EndCell();
 
                     writer.StartCell();
-                    writer.WriteNumber(this.money.GetFormatedNormalizedAmount(data.SaleProceeds));
+                    writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.SaleProceeds));
                     writer.EndCell();
                 }
 
@@ -377,7 +377,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormatedNormalizedAmount(GiveUpTheFractionalPennies(total)));
+            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(GiveUpTheFractionalPennies(total)));
             writer.EndCell();
 
             writer.EndRow();
@@ -406,11 +406,11 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormatedNormalizedAmount(data.CostBasisPerUnit));
+            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.CostBasisPerUnit));
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormatedNormalizedAmount(data.TotalCostBasis));
+            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.TotalCostBasis));
             writer.EndCell();
 
             writer.StartCell();
@@ -418,15 +418,15 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormatedNormalizedAmount(data.SalePricePerUnit));
+            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.SalePricePerUnit));
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormatedNormalizedAmount(data.SaleProceeds));
+            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.SaleProceeds));
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormatedNormalizedAmount(GiveUpTheFractionalPennies(data.TotalGain)));
+            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(GiveUpTheFractionalPennies(data.TotalGain)));
             writer.EndCell();
 
             writer.EndRow();
@@ -472,7 +472,7 @@ namespace Walkabout.Reports
             writer.WriteParagraph("Sales Tax");
             writer.EndCell();
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormatedNormalizedAmount(tax), FontStyles.Normal, FontWeights.Bold, null);
+            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(tax), FontStyles.Normal, FontWeights.Bold, null);
             writer.EndCell();
             writer.EndRow();
 
@@ -516,13 +516,13 @@ namespace Walkabout.Reports
                     }
 
                     writer.StartCell();
-                    writer.WriteNumber(this.money.GetFormatedNormalizedAmount(value));
+                    writer.WriteNumber(this.money.GetFormattedNormalizedAmount(value));
                     writer.EndCell();
 
                     writer.StartCell();
                     if (taxExempt > 0)
                     {
-                        writer.WriteNumber(this.money.GetFormatedNormalizedAmount(taxExempt));
+                        writer.WriteNumber(this.money.GetFormattedNormalizedAmount(taxExempt));
                     }
                     writer.EndCell();
                     writer.EndRow();
@@ -533,7 +533,7 @@ namespace Walkabout.Reports
                 writer.StartCell();
                 writer.EndCell();
                 writer.StartCell();
-                writer.WriteNumber(this.money.GetFormatedNormalizedAmount(sum), FontStyles.Normal, FontWeights.Bold, null);
+                writer.WriteNumber(this.money.GetFormattedNormalizedAmount(sum), FontStyles.Normal, FontWeights.Bold, null);
                 writer.EndCell();
                 writer.EndRow();
 

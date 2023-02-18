@@ -276,7 +276,7 @@ namespace Walkabout.Reports
                 this.WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == this.account; }), false, true);
             }
 
-            this.WriteHeaderRow(writer, "Total", this.myMoney.GetFormatedNormalizedAmount(this.totalMarketValue), this.accountGroup != null ? "" : this.myMoney.GetFormatedNormalizedAmount(this.totalGainLoss));
+            this.WriteHeaderRow(writer, "Total", this.myMoney.GetFormattedNormalizedAmount(this.totalMarketValue), this.accountGroup != null ? "" : this.myMoney.GetFormattedNormalizedAmount(this.totalGainLoss));
             writer.EndTable();
 
             writer.EndCell();
@@ -622,7 +622,7 @@ namespace Walkabout.Reports
                             UserData = account
                         });
 
-                        this.WriteSummaryRow(writer, color, caption, this.myMoney.GetFormatedNormalizedAmount(balance), null);
+                        this.WriteSummaryRow(writer, color, caption, this.myMoney.GetFormattedNormalizedAmount(balance), null);
                         total += balance;
                     }
                 }
@@ -714,7 +714,7 @@ namespace Walkabout.Reports
                     {
                         caption = "    " + Security.GetSecurityTypeCaption(st);
                     }
-                    this.WriteSummaryRow(writer, color, caption, this.myMoney.GetFormatedNormalizedAmount(marketValue), this.myMoney.GetFormatedNormalizedAmount(gainLoss));
+                    this.WriteSummaryRow(writer, color, caption, this.myMoney.GetFormattedNormalizedAmount(marketValue), this.myMoney.GetFormattedNormalizedAmount(gainLoss));
                     rowCount++;
                 }
 
@@ -733,7 +733,7 @@ namespace Walkabout.Reports
                     Color = color
                 });
 
-                this.WriteSummaryRow(writer, color, "Cash", this.myMoney.GetFormatedNormalizedAmount(cashBalance), "");
+                this.WriteSummaryRow(writer, color, "Cash", this.myMoney.GetFormattedNormalizedAmount(cashBalance), "");
 
                 rowCount++;
                 totalSectionMarketValue += cashBalance;
@@ -741,7 +741,7 @@ namespace Walkabout.Reports
 
             if (wroteSectionHeader && subtotal && rowCount > 1)
             {
-                this.WriteSummaryRow(writer, Colors.Transparent, "    SubTotal", this.myMoney.GetFormatedNormalizedAmount(totalSectionMarketValue), this.myMoney.GetFormatedNormalizedAmount(totalSectionGainValue));
+                this.WriteSummaryRow(writer, Colors.Transparent, "    SubTotal", this.myMoney.GetFormattedNormalizedAmount(totalSectionMarketValue), this.myMoney.GetFormattedNormalizedAmount(totalSectionGainValue));
             }
 
             this.totalMarketValue += totalSectionMarketValue;
@@ -880,7 +880,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.myMoney.GetFormatedNormalizedAmount(balance));
+            writer.WriteNumber(this.myMoney.GetFormattedNormalizedAmount(balance));
             writer.EndCell();
 
             writer.EndRow();
