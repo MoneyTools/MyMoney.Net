@@ -943,15 +943,15 @@ namespace Walkabout.Data
             set { this.cultureInfo = value; }
         }
 
-        public string GetFormatedAmount(decimal amount)
+        public string GetFormatedAmount(decimal amount, int dicimalPlace = 2)
         {
-            return string.Format(this.CultureInfo, "{0:C}", amount);
+            return string.Format(this.CultureInfo, "{0:C" + dicimalPlace.ToString() + "}", amount);
         }
 
-        public string GetFormatedNormalizedAmount(decimal amount)
+        public string GetFormatedNormalizedAmount(decimal amount, int dicimalPlace = 2)
         {
             amount /= this.rate;
-            return this.GetFormatedAmount(amount);
+            return this.GetFormatedAmount(amount, dicimalPlace);
         }
 
         internal void OnChanged(object sender, ChangeEventArgs e)
@@ -4272,7 +4272,7 @@ namespace Walkabout.Data
         }
 
         [DataMember]
-        [ColumnMapping(ColumnName = "CultureCode", MaxLength = 80, AllowNulls=true)]
+        [ColumnMapping(ColumnName = "CultureCode", MaxLength = 80, AllowNulls = true)]
         public string CultureCode
         {
             get { return this.cultureCode; }
@@ -4280,7 +4280,7 @@ namespace Walkabout.Data
             {
                 if (this.cultureCode != value)
                 {
-                    
+
                     this.cultureCode = Truncate(value, 80);
                     if (this.cultureCode == "")
                     {

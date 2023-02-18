@@ -319,7 +319,7 @@ namespace Walkabout.Reports
 
             writer.EndTable();
 
-            writer.WriteParagraph("Net cash flow for this period is " + balance.ToString("C0"));
+            writer.WriteParagraph("Net cash flow for this period is " + this.myMoney.GetFormatedNormalizedAmount(balance, 0));
 
             writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
 
