@@ -22,7 +22,7 @@ namespace Walkabout.Reports
             throw new NotImplementedException();
         }
 
-        protected void AddInline(Paragraph p, UIElement childUIElement)
+        public void AddInline(Paragraph p, UIElement childUIElement)
         {
             var inline = new InlineUIContainer(childUIElement);
             inline.BaselineAlignment = BaselineAlignment.Bottom;

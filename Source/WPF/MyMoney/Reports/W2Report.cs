@@ -183,6 +183,8 @@ namespace Walkabout.Taxes
             byYearCombo.Margin = new Thickness(10, 0, 0, 0);
             this.AddInline(heading, byYearCombo);
 
+            fwriter.WriteCurrency(this.myMoney.GetFormatedAmount(this.myMoney.Rate), this.myMoney.CultureInfo);
+
             bool empty = true;
             foreach (TaxForm form in this.taxCategories.GetForms())
             {

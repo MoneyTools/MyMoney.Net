@@ -55,6 +55,9 @@ namespace Walkabout.Reports
                     writer.WriteHeading("Net Worth Statement");
                     Paragraph heading = fwriter.CurrentParagraph;
 
+                    fwriter.WriteCurrency(this.myMoney.GetFormatedAmount(this.myMoney.Rate), this.myMoney.CultureInfo);
+
+
                     DatePicker picker = new DatePicker();
                     // byYearCombo.SelectionChanged += OnYearChanged;
                     System.Windows.Automation.AutomationProperties.SetName(picker, "ReportDate");

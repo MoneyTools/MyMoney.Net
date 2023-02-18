@@ -56,14 +56,12 @@ namespace Walkabout.Reports
         {
             FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
 
-            writer.WriteHeading("Currency");
-            writer.WriteParagraph("$1 USD = " + this.money.GetFormatedAmount(this.money.Rate) + " in " +this.money.CultureInfo.DisplayName);
 
             writer.WriteHeading("Tax Report For ");
 
             var (firstYear, lastYear) = this.money.Transactions.GetTaxYearRange(this.fiscalYearStart);
 
-            Paragraph heading = fwriter.CurrentParagraph;
+            Paragraph heading = heading = fwriter.CurrentParagraph;
 
             ComboBox byYearCombo = new ComboBox();
             byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
@@ -97,6 +95,8 @@ namespace Walkabout.Reports
             byYearCombo.SelectionChanged += this.OnYearChanged;
             byYearCombo.Margin = new Thickness(10, 0, 0, 0);
             this.AddInline(heading, byYearCombo);
+
+            fwriter.WriteCurrency(this.money.GetFormatedAmount(this.money.Rate), this.money.CultureInfo);
 
             /*
             <StackPanel Margin="10,5,10,5"  Grid.Row="2" Orientation="Horizontal">

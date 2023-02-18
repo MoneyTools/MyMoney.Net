@@ -205,6 +205,7 @@ namespace Walkabout.Reports
 
             writer.WriteHeading(heading);
 
+
             Paragraph pheading = this.flowwriter.CurrentParagraph;
 
             DatePicker picker = new DatePicker();
@@ -216,6 +217,8 @@ namespace Walkabout.Reports
             picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
             this.AddInline(pheading, picker);
 
+            this.flowwriter.WriteCurrency(this.myMoney.GetFormatedAmount(this.myMoney.Rate), this.myMoney.CultureInfo);
+           
             if (this.reportDate.Date != DateTime.Today)
             {
                 writer.WriteSubHeading("As of " + this.reportDate.Date.AddDays(-1).ToLongDateString());

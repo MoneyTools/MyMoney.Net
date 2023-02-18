@@ -284,6 +284,8 @@ namespace Walkabout.Reports
 
             this.AddInline(heading, this.CreateExportReportButton());
 
+            fwriter.WriteCurrency(this.myMoney.GetFormatedAmount(this.myMoney.Rate), this.myMoney.CultureInfo);
+
             writer.StartTable();
             writer.StartColumnDefinitions();
 

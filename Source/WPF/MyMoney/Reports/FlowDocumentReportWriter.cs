@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -170,6 +172,25 @@ namespace Walkabout.Reports
             {
                 this.section.Blocks.Add(this.current.paragraph);
             }
+        }
+
+        public void WriteCurrency(string rateAsString, CultureInfo culture)
+        {
+            if (culture.Name != "en-US") {
+                this.WriteHeading("Currency");
+                Label labelCurrency = new Label();
+                labelCurrency.Content = "$1 USD = " + rateAsString + " in " + culture.DisplayName;
+                labelCurrency.Margin = new Thickness(10, 0, 0, 0);
+                labelCurrency.VerticalAlignment = VerticalAlignment.Center;
+                this.AddInline(this.CurrentParagraph, labelCurrency);
+            }
+         }
+
+        public void AddInline(Paragraph p, UIElement childUIElement)
+        {
+            var inline = new InlineUIContainer(childUIElement);
+            inline.BaselineAlignment = BaselineAlignment.Bottom;
+            p.Inlines.Add(inline);
         }
 
         public void StartTable()
