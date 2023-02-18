@@ -2144,7 +2144,7 @@ namespace Walkabout.Data
         public void ReadCurrencies(Currencies currencies, MyMoney money)
         {
             currencies.Clear();
-            IDataReader reader = this.ExecuteReader("SELECT Id,Symbol,Name,Ratio,LastRatio FROM Currencies");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Symbol,Name,Ratio,LastRatio,CultureCode FROM Currencies");
             currencies.BeginUpdate(false);
 
             while (reader.Read())
@@ -2162,6 +2162,15 @@ namespace Walkabout.Data
                 if (!reader.IsDBNull(4))
                 {
                     s.LastRatio = reader.GetDecimal(4);
+                }
+
+                if (reader.IsDBNull(5))
+                {
+                    s.CultureCode = "en-US";
+                }
+                else
+                {
+                    s.CultureCode = ReadDbString(reader, 5);
                 }
 
                 s.OnUpdated();
@@ -2190,6 +2199,7 @@ namespace Walkabout.Data
                     sb.Append(string.Format(",Name='{0}'", DBString(s.Name)));
                     sb.Append(string.Format(",Ratio={0}", s.Ratio));
                     sb.Append(string.Format(",LastRatio={0}", s.LastRatio));
+                    sb.Append(string.Format(",CultureCode='{0}'", DBString(s.CultureCode)));
                     sb.AppendLine(string.Format(" WHERE Id={0};", s.Id));
                 }
                 else if (s.IsInserted)
@@ -2201,6 +2211,7 @@ namespace Walkabout.Data
                     sb.Append(string.Format(",'{0}'", DBString(s.Symbol)));
                     sb.Append(string.Format(",{0}", s.Ratio));
                     sb.Append(string.Format(",{0}", s.LastRatio));
+                    sb.Append(string.Format(",{0}", DBString(s.CultureCode)));
                     sb.AppendLine(");");
                 }
                 else if (s.IsDeleted)

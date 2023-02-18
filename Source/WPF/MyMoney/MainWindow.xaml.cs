@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -277,28 +276,19 @@ namespace Walkabout
 
         private void ApplyDefaultCurrency()
         {
-            var countryCurrencyCode = "USD";
+            // Start with the default USA currency
+            var countryCurrencyCode = "en-USD";
             decimal convertionRate = 1;
 
+            // Lookup the users App default display currency
             Currency c = this.myMoney.Currencies.FindCurrency(this.databaseSettings.DisplayCurrency);
             if (c != null)
             {
-                countryCurrencyCode = c.Symbol;
+                countryCurrencyCode = c.CultureCode;
                 convertionRate = c.Ratio;
             }
-
-            Dictionary<string, CultureInfo> allCultureNames = CultureInfo.GetCultures(CultureTypes.SpecificCultures).Select(c => new { c, new RegionInfo(c.Name).ISOCurrencySymbol }).GroupBy(x => x.ISOCurrencySymbol).ToDictionary(g => g.Key, g => g.First().c, StringComparer.OrdinalIgnoreCase);
-
-            CultureInfo cultureInfo;
-
-            if (!allCultureNames.TryGetValue(this.databaseSettings.DisplayCurrency, out cultureInfo))
-            {
-                // faled to match, default back to English US
-                cultureInfo = new CultureInfo("en-US");
-            }
-
             this.myMoney.Rate = convertionRate;
-            this.myMoney.CultureInfo = cultureInfo;
+            this.myMoney.CultureInfo = StringHelpers.TryToGetCulureDefaultBackToUS(countryCurrencyCode);
         }
 
         private void DatabaseSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

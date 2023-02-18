@@ -79,6 +79,20 @@
             </Border>
         </DataTemplate>
 
+        <!-- Locale -->
+        <DataTemplate x:Key="myTemplateCultureCode">
+            <!-- the border makes the whole column hittable -->
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
+                <TextBlock Text="{Binding CultureCode, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top" />
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="myTemplateCultureCodeEdit" >
+            <!-- the border makes the whole column hittable -->
+            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+                <TextBox Style="{StaticResource GridTextBoxStyle}" Text="{Binding Path=CultureCode, Converter={StaticResource NullableValueConverter}}" />
+            </Border>
+        </DataTemplate>
 
         <!-- Ratio -->
         <DataTemplate x:Key="myTemplateRatio">
@@ -103,13 +117,13 @@
             </Border>
         </DataTemplate>
 
+
         <DataTemplate x:Key="myTemplateLastRatioEdit" >
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
                 <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding LastRatio, StringFormat={}{0:0.0000}, Mode=TwoWay}" TextAlignment="Right" />
             </Border>
         </DataTemplate>
-
 
 
         <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
@@ -154,6 +168,10 @@
             <!-- Name -->
             <DataGridTemplateColumn Header="Full Name" CellTemplate="{StaticResource myTemplateName}" CellEditingTemplate="{StaticResource myTemplateNameEdit}"
                                     SortMemberPath="Name"/>
+                    
+            <!-- Locale -->
+            <DataGridTemplateColumn Header="CultureCode"  CellTemplate="{StaticResource myTemplateCultureCode}" CellEditingTemplate="{StaticResource myTemplateCultureCodeEdit}"
+                                    SortMemberPath="CultureCode" MinWidth="80"/>
 
             <!-- Ratio -->
             <DataGridTemplateColumn Header="Current Value"  CellTemplate="{StaticResource myTemplateRatio}" CellEditingTemplate="{StaticResource myTemplateRatioEdit}"
@@ -161,7 +179,7 @@
 
             <!-- LastRatio -->
             <DataGridTemplateColumn Header="Last Value"  CellTemplate="{StaticResource myTemplateLastRatio}" CellEditingTemplate="{StaticResource myTemplateLastRatioEdit}"
-                                    SortMemberPath="LastRatio" MinWidth="80"/>
+                                    SortMemberPath="LastRatio" MinWidth="80"/>  
 
         </DataGrid.Columns>
     </local:MoneyDataGrid>

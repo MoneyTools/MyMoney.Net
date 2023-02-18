@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Walkabout.Configuration;
 using Walkabout.Data;
+using Walkabout.Utilities;
 
 namespace Walkabout.Controls
 {
@@ -42,7 +44,7 @@ namespace Walkabout.Controls
                 this.comboBoxFiscalYear.Items.Add(label);
             }
 
-           
+
 
 
             // Themes
@@ -145,6 +147,25 @@ namespace Walkabout.Controls
             if (this.comboBoxCurrency.SelectedValue != null)
             {
                 this.databaseSettings.DisplayCurrency = this.comboBoxCurrency.SelectedValue.ToString();
+                this.updateCultureCode();
+            }
+        }
+
+        private void updateCultureCode()
+        {
+            if (this.currencies != null)
+            {
+                this.cultureCodeInfo.Content = "";
+
+                this.currencies.GetCurrencies().ToList().ForEach(currency =>
+                {
+                    if (currency.Symbol == this.databaseSettings.DisplayCurrency)
+                    {
+                        CultureInfo culture = StringHelpers.TryToGetCulureDefaultBackToUS(currency.CultureCode);
+                        var amountInTargetCulture = string.Format(culture, "{0:C}", currency.Ratio);
+                        this.cultureCodeInfo.Content = currency.Name + " $1 USD=" + amountInTargetCulture + " in " + currency.CultureCode + " " + culture.DisplayName;
+                    }
+                });
             }
         }
 

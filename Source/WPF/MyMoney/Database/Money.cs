@@ -4226,6 +4226,7 @@ namespace Walkabout.Data
         private int id = -1;
         private string name;
         private string symbol;
+        private string cultureCode;
         private decimal ratio;
         private decimal lastRatio;
 
@@ -4271,6 +4272,48 @@ namespace Walkabout.Data
         }
 
         [DataMember]
+        [ColumnMapping(ColumnName = "CultureCode", MaxLength = 80, AllowNulls=true)]
+        public string CultureCode
+        {
+            get { return this.cultureCode; }
+            set
+            {
+                if (this.cultureCode != value)
+                {
+                    
+                    this.cultureCode = Truncate(value, 80);
+                    if (this.cultureCode == "")
+                    {
+                        // Attempt to find a match using the Currency Symbol
+                        // this is not accuate since a currenty can be found in many countries, thus we pick the first match
+                        if (this.Symbol == "USD")
+                        {
+                            // Since we know the expected Culture for USD, lets use it instead of guessing. Since the first hit on the possible use of USD is "chr-US" == "Cherokee (United States)"
+                            this.cultureCode = "en-US";
+                        }
+                        else
+                        {
+                            // For all other code, we pick the first match
+                            var allCultureNames = CultureInfo.GetCultures(CultureTypes.SpecificCultures).Select(c => new { c, new RegionInfo(c.Name).ISOCurrencySymbol }).GroupBy(x => x.ISOCurrencySymbol).ToDictionary(g => g.Key, g => g.First().c, StringComparer.OrdinalIgnoreCase);
+                            CultureInfo cultureInfo;
+
+                            if (!allCultureNames.TryGetValue(this.Symbol, out cultureInfo))
+                            {
+                                // If we still have no good match default back to USD
+                                this.cultureCode = "en-US";
+                            }
+                            else
+                            {
+                                this.cultureCode = cultureInfo.Name;
+                            }
+                        }
+                    }
+                    this.OnChanged("CultureCode");
+                }
+            }
+        }
+
+        [DataMember]
         [ColumnMapping(ColumnName = "Name", MaxLength = 80)]
         public string Name
         {
@@ -4311,7 +4354,6 @@ namespace Walkabout.Data
             get { return this.lastRatio; }
             set { if (this.lastRatio != value) { this.lastRatio = value; this.OnChanged("LastRatio"); } }
         }
-
     }
 
     internal class CurrencyComparer : IComparer<Currency>

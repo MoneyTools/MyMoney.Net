@@ -22,7 +22,6 @@ namespace Walkabout.Views
     //    public Security Security { get { return this.security; } }
     //}
 
-
     /// <summary>
     /// Interaction logic for CurrenciesView.xaml
     /// </summary>
@@ -246,6 +245,7 @@ namespace Walkabout.Views
                 {
                     return filterToken.MatchSubstring(item.Name) ||
                         filterToken.MatchSubstring(item.Symbol) ||
+                        filterToken.MatchSubstring(item.CultureCode) ||
                         filterToken.MatchDecimal(item.Ratio) ||
                         filterToken.MatchDecimal(item.LastRatio);
                 }

@@ -57,7 +57,7 @@ namespace Walkabout.Reports
             FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
 
             writer.WriteHeading("Currency");
-            writer.WriteParagraph(this.money.CultureInfo.EnglishName + " " + this.money.Rate);
+            writer.WriteParagraph("$1 USD = " + this.money.GetFormatedAmount(this.money.Rate) + " in " +this.money.CultureInfo.DisplayName);
 
             writer.WriteHeading("Tax Report For ");
 
