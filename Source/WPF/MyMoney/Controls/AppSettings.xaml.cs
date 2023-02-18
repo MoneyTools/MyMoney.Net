@@ -161,7 +161,7 @@ namespace Walkabout.Controls
                 {
                     if (currency.Symbol == this.databaseSettings.DisplayCurrency)
                     {
-                        CultureInfo culture = StringHelpers.TryToGetCulureDefaultBackToUS(currency.CultureCode);
+                        CultureInfo culture = StringHelpers.GetDefaultCultureInfo(currency.CultureCode);
                         var amountInTargetCulture = string.Format(culture, "{0:C}", currency.Ratio);
                         this.cultureCodeInfo.Content = currency.Name + " $1 USD=" + amountInTargetCulture + " in " + currency.CultureCode + " " + culture.DisplayName;
                     }

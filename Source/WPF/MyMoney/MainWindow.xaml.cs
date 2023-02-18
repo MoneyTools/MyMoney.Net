@@ -288,7 +288,7 @@ namespace Walkabout
                 convertionRate = c.Ratio;
             }
             this.myMoney.Rate = convertionRate;
-            this.myMoney.CultureInfo = StringHelpers.TryToGetCulureDefaultBackToUS(countryCurrencyCode);
+            this.myMoney.CultureInfo = StringHelpers.GetDefaultCultureInfo(countryCurrencyCode);
         }
 
         private void DatabaseSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

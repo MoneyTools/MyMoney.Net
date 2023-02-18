@@ -143,7 +143,7 @@ namespace Walkabout.Utilities
             return sb.ToString();
         }
 
-        public static CultureInfo TryToGetCulureDefaultBackToUS(string cultureName)
+        public static CultureInfo GetDefaultCultureInfo(string cultureName, string fallback = "en-US")
         {
             CultureInfo culture;
             try
@@ -153,7 +153,7 @@ namespace Walkabout.Utilities
             catch
             {
                 // If all fails default back to USD
-                culture = CultureInfo.GetCultureInfo("en-US");
+                culture = CultureInfo.GetCultureInfo(fallback);
             }
             return culture;
         }
