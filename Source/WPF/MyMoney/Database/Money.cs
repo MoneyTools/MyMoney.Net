@@ -4493,7 +4493,7 @@ namespace Walkabout.Data
                         // First build a cache to speed up any other request
                         foreach (Currency c in this.currencies.Values)
                         {
-                            if (!c.IsDeleted)
+                            if (!c.IsDeleted && !string.IsNullOrEmpty(c.Symbol))
                             {
                                 this.quickLookup[c.Symbol] = c;
                             }
