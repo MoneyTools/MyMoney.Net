@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -257,7 +258,7 @@ namespace Walkabout
 
             this.TransactionGraph.ServiceProvider = this;
             this.AppSettingsPanel.Closed += this.OnAppSettingsPanelClosed;
-
+      
 #if PerformanceBlocks
             }
 #endif
@@ -274,6 +275,32 @@ namespace Walkabout
             }
         }
 
+        private void ApplyDefaultCurrency()
+        {
+            var countryCurrencyCode = "USD";
+            decimal convertionRate = 1;
+
+            Currency c = this.myMoney.Currencies.FindCurrency(this.databaseSettings.DisplayCurrency);
+            if (c != null)
+            {
+                countryCurrencyCode = c.Symbol;
+                convertionRate = c.Ratio;
+            }
+
+            Dictionary<string, CultureInfo> allCultureNames = CultureInfo.GetCultures(CultureTypes.SpecificCultures).Select(c => new { c, new RegionInfo(c.Name).ISOCurrencySymbol }).GroupBy(x => x.ISOCurrencySymbol).ToDictionary(g => g.Key, g => g.First().c, StringComparer.OrdinalIgnoreCase);
+
+            CultureInfo cultureInfo;
+
+            if (!allCultureNames.TryGetValue(this.databaseSettings.DisplayCurrency, out cultureInfo))
+            {
+                // faled to match, default back to English US
+                cultureInfo = new CultureInfo("en-US");
+            }
+
+            this.myMoney.Rate = convertionRate;
+            this.myMoney.CultureInfo = cultureInfo;
+        }
+
         private void DatabaseSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             DatabaseSettings settings = (DatabaseSettings)sender;
@@ -285,6 +312,9 @@ namespace Walkabout
                     break;
                 case "FiscalYearStart":
                     this.HistoryChart.FiscalYearStart = settings.FiscalYearStart;
+                    break;
+                case "DisplayCurrency":
+                    this.ApplyDefaultCurrency();
                     break;
             }
 
@@ -463,6 +493,7 @@ namespace Walkabout
                 // Open Database dialog unless we do this delay here.
                 this.delayedActions.StartDelayedAction("loaddata", this.BeginLoadDatabase, TimeSpan.FromMilliseconds(1));
             }
+
 #if PerformanceBlocks
             }
 #endif
@@ -2033,6 +2064,7 @@ namespace Walkabout
                 }
             }
             this.databaseSettings.RaiseAllEvents();
+            this.ApplyDefaultCurrency();
         }
 
         private void AnimateStatus(string start, string end)
@@ -3293,6 +3325,10 @@ namespace Walkabout
             else if (service == typeof(Settings))
             {
                 return this.settings;
+            }
+            else if (service == typeof(Currencies))
+            {
+                return this.myMoney.Currencies;
             }
             else if (service == typeof(DatabaseSettings))
             {

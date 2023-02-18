@@ -8,66 +8,70 @@
              mc:Ignorable="d" 
              Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
              d:DesignHeight="600" d:DesignWidth="300">
-  <UserControl.Resources>
-    <Style TargetType="Label" BasedOn="{StaticResource DefaultLabelStyle}">
-      <Setter Property="Margin" Value="20,10"/>
-    </Style>
-    <Style TargetType="CheckBox"  BasedOn="{StaticResource DefaultCheckBoxStyle}">
-      <Setter Property="Margin" Value="20,10"/>
-    </Style>
-    <Style TargetType="ComboBox"  BasedOn="{StaticResource DefaultComboBoxStyle}">
-      <Setter Property="Margin" Value="5"/>
-      <Setter Property="HorizontalAlignment" Value="Stretch"/>
-    </Style>
-  </UserControl.Resources>
+    <UserControl.Resources>
+        <Style TargetType="Label" BasedOn="{StaticResource DefaultLabelStyle}">
+            <Setter Property="Margin" Value="20,10"/>
+        </Style>
+        <Style TargetType="CheckBox"  BasedOn="{StaticResource DefaultCheckBoxStyle}">
+            <Setter Property="Margin" Value="20,10"/>
+        </Style>
+        <Style TargetType="ComboBox"  BasedOn="{StaticResource DefaultComboBoxStyle}">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+    </UserControl.Resources>
 
-  <Border BorderThickness="1" BorderBrush="{DynamicResource MessageBoxBorder}">
-    <Grid>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-      </Grid.RowDefinitions>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
+    <Border BorderThickness="1" BorderBrush="{DynamicResource MessageBoxBorder}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-      <!-- back button header -->
-      <Grid Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto"/>
-          <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+            <!-- back button header -->
+            <Grid Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-        <Button x:Name="BackButton" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}"  Click="OnCloseClicked"   VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="4,4,0,0"></Button>
-        <TextBlock FontSize="18" Grid.Column="1" VerticalAlignment="Center" FontWeight="DemiBold" >Settings</TextBlock>
-      </Grid>
+                <Button x:Name="BackButton" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}"  Click="OnCloseClicked"   VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="4,4,0,0"></Button>
+                <TextBlock FontSize="18" Grid.Column="1" VerticalAlignment="Center" FontWeight="DemiBold" >Settings</TextBlock>
+            </Grid>
 
-      <Label x:Name="passwordPrompt" Grid.Row="1" Grid.Column="0">Database Password:</Label>
-      <c:PasswordControl Grid.Row="1" Grid.Column="1" x:Name="editPasswordBox" PasswordChanged="OnPasswordChanged" Margin="5"/>
+            <Label x:Name="passwordPrompt" Grid.Row="1" Grid.Column="0">Database Password:</Label>
+            <c:PasswordControl Grid.Row="1" Grid.Column="1" x:Name="editPasswordBox" PasswordChanged="OnPasswordChanged" Margin="5"/>
 
-      <Label Grid.Row="2" Grid.Column="0"  VerticalAlignment="Center">Theme (Ctrl-L)</Label>
-      <ComboBox Grid.Row="2" Grid.Column="1"  x:Name="comboBoxTheme"  SelectionChanged="OnThemeChanged" Margin="5" />
+            <Label Grid.Row="2" Grid.Column="0"  VerticalAlignment="Center">Theme (Ctrl-L)</Label>
+            <ComboBox Grid.Row="2" Grid.Column="1"  x:Name="comboBoxTheme"  SelectionChanged="OnThemeChanged" Margin="5" />
 
-      <Label Grid.Row="3" Grid.Column="0"  VerticalAlignment="Center">Fiscal Year Start:</Label>
-      <ComboBox Grid.Row="3" Grid.Column="1" x:Name="comboBoxFiscalYear"  SelectionChanged="OnFiscalYearChanged"/>
+            <Label Grid.Row="3" Grid.Column="0"  VerticalAlignment="Center">Fiscal Year Start:</Label>
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="comboBoxFiscalYear"  SelectionChanged="OnFiscalYearChanged"/>
 
-      <Label Grid.Row="4" Grid.Column="0"  VerticalAlignment="Center">Transfer search (days):</Label>
-      <TextBox Grid.Row="4" Grid.Column="1" x:Name="textBoxTransferSearchDays"  SelectionChanged="OnTransferDaysChanged" Margin="5"
+            <Label Grid.Row="4" Grid.Column="0"  VerticalAlignment="Center">Display Currency As:</Label>
+            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="comboBoxCurrency"  SelectionChanged="OnCurrencyChanged"/>
+
+            <Label Grid.Row="5" Grid.Column="0"  VerticalAlignment="Center">Transfer search (days):</Label>
+            <TextBox Grid.Row="5" Grid.Column="1" x:Name="textBoxTransferSearchDays"  SelectionChanged="OnTransferDaysChanged" Margin="5"
                 ToolTip="Default days to use when searching for matching transfers with F12"/>
 
-      <CheckBox Grid.Row="5" Grid.ColumnSpan="3" x:Name="checkBoxRentalSupport" Checked="OnRentalSupportChanged" Unchecked="OnRentalSupportChanged">Rental management</CheckBox>
+            <CheckBox Grid.Row="6" Grid.ColumnSpan="3" x:Name="checkBoxRentalSupport" Checked="OnRentalSupportChanged" Unchecked="OnRentalSupportChanged">Rental management</CheckBox>
 
-      <CheckBox Grid.Row="6" Grid.ColumnSpan="3" x:Name="checkBoxPlaySounds"  Checked="OnPlaySoundsChanged" Unchecked="OnPlaySoundsChanged">Play sounds</CheckBox>
+            <CheckBox Grid.Row="7" Grid.ColumnSpan="3" x:Name="checkBoxPlaySounds"  Checked="OnPlaySoundsChanged" Unchecked="OnPlaySoundsChanged">Play sounds</CheckBox>
 
-      <CheckBox Grid.Row="7" Grid.ColumnSpan="3" x:Name="checkBoxAcceptReconciled"  Checked="OnAcceptReconciledChanged" Unchecked="OnAcceptReconciledChanged">Accept reconciled transactions</CheckBox>
+            <CheckBox Grid.Row="8" Grid.ColumnSpan="3" x:Name="checkBoxAcceptReconciled"  Checked="OnAcceptReconciledChanged" Unchecked="OnAcceptReconciledChanged">Accept reconciled transactions</CheckBox>
 
-    </Grid>
-  </Border>
+        </Grid>
+    </Border>
 </UserControl>

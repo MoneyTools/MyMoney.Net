@@ -702,6 +702,8 @@ namespace Walkabout.Data
         private StockSplits stockSplits;
         private RentBuildings buildings;
         private TransactionExtras extras;
+        private CultureInfo cultureInfo = new CultureInfo("en-US");
+        private decimal rate = 1;
         internal PayeeIndex payeeAccountIndex;
         private bool watching;
 
@@ -929,6 +931,28 @@ namespace Walkabout.Data
             }
         }
 
+        public decimal Rate
+        {
+            get { return this.rate; }
+            set { this.rate = value; }
+        }
+
+        public CultureInfo CultureInfo
+        {
+            get { return this.cultureInfo; }
+            set { this.cultureInfo = value; }
+        }
+
+        public string GetFormatedAmount(decimal amount)
+        {
+            return string.Format(this.CultureInfo, "{0:C}", amount);
+        }
+
+        public string GetFormatedNormalizedAmount(decimal amount)
+        {
+            amount /= this.rate;
+            return this.GetFormatedAmount(amount);
+        }
 
         internal void OnChanged(object sender, ChangeEventArgs e)
         {
