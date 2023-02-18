@@ -2211,7 +2211,7 @@ namespace Walkabout.Data
                     sb.Append(string.Format(",'{0}'", DBString(s.Symbol)));
                     sb.Append(string.Format(",{0}", s.Ratio));
                     sb.Append(string.Format(",{0}", s.LastRatio));
-                    sb.Append(string.Format(",{0}", DBString(s.CultureCode)));
+                    sb.Append(string.Format(",'{0}'", DBString(s.CultureCode)));
                     sb.AppendLine(");");
                 }
                 else if (s.IsDeleted)
