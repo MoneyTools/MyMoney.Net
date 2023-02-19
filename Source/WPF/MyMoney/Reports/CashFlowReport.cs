@@ -102,7 +102,7 @@ namespace Walkabout.Reports
         private List<string> columns;
         private readonly IServiceProvider serviceProvider;
 
-        public CashFlowReport(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart)
+        public CashFlowReport(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart) : base(money.Currencies.DefaultCurrency)
         {
             this.myMoney = money;
             this.fiscalYearStart = fiscalYearStart;
@@ -284,7 +284,7 @@ namespace Walkabout.Reports
 
             this.AddInline(heading, this.CreateExportReportButton());
 
-            fwriter.WriteCurrency(this.myMoney.GetFormatedAmount(this.myMoney.Rate), this.myMoney.CultureInfo);
+            fwriter.WriteCurrencyHeading(this.DefaultCurrency);
 
             writer.StartTable();
             writer.StartColumnDefinitions();
@@ -319,9 +319,9 @@ namespace Walkabout.Reports
 
             writer.EndTable();
 
-            writer.WriteParagraph("Net cash flow for this period is " + this.myMoney.GetFormattedNormalizedAmount(balance, 0));
+            writer.WriteParagraph("Net cash flow for this period is " + this.GetFormattedNormalizedAmount(balance, 0));
 
-            writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
+            this.WriteTrailer(writer, DateTime.Today);
 
             return Task.CompletedTask;
         }

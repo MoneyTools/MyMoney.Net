@@ -28,7 +28,7 @@ namespace Walkabout.Reports
         private readonly int fiscalYearStart;
         private const string FiscalPrefix = "FY ";
 
-        public TaxReport(FlowDocumentView view, MyMoney money, int fiscalYearStart)
+        public TaxReport(FlowDocumentView view, MyMoney money, int fiscalYearStart) : base(money.Currencies.DefaultCurrency)
         {
             this.fiscalYearStart = fiscalYearStart;
             this.view = view;
@@ -96,7 +96,7 @@ namespace Walkabout.Reports
             byYearCombo.Margin = new Thickness(10, 0, 0, 0);
             this.AddInline(heading, byYearCombo);
 
-            fwriter.WriteCurrency(this.money.GetFormatedAmount(this.money.Rate), this.money.CultureInfo);
+            fwriter.WriteCurrencyHeading(this.DefaultCurrency);
 
             /*
             <StackPanel Margin="10,5,10,5"  Grid.Row="2" Orientation="Horizontal">
@@ -298,11 +298,11 @@ namespace Walkabout.Reports
                     writer.EndCell();
 
                     writer.StartCell();
-                    writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.SalePricePerUnit));
+                    writer.WriteNumber(this.GetFormattedNormalizedAmount(data.SalePricePerUnit));
                     writer.EndCell();
 
                     writer.StartCell();
-                    writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.SaleProceeds));
+                    writer.WriteNumber(this.GetFormattedNormalizedAmount(data.SaleProceeds));
                     writer.EndCell();
                 }
 
@@ -377,7 +377,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(GiveUpTheFractionalPennies(total)));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(GiveUpTheFractionalPennies(total)));
             writer.EndCell();
 
             writer.EndRow();
@@ -406,11 +406,11 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.CostBasisPerUnit));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(data.CostBasisPerUnit));
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.TotalCostBasis));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(data.TotalCostBasis));
             writer.EndCell();
 
             writer.StartCell();
@@ -418,15 +418,15 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.SalePricePerUnit));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(data.SalePricePerUnit));
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(data.SaleProceeds));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(data.SaleProceeds));
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(GiveUpTheFractionalPennies(data.TotalGain)));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(GiveUpTheFractionalPennies(data.TotalGain)));
             writer.EndCell();
 
             writer.EndRow();
@@ -472,7 +472,7 @@ namespace Walkabout.Reports
             writer.WriteParagraph("Sales Tax");
             writer.EndCell();
             writer.StartCell();
-            writer.WriteNumber(this.money.GetFormattedNormalizedAmount(tax), FontStyles.Normal, FontWeights.Bold, null);
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(tax), FontStyles.Normal, FontWeights.Bold, null);
             writer.EndCell();
             writer.EndRow();
 
@@ -516,13 +516,13 @@ namespace Walkabout.Reports
                     }
 
                     writer.StartCell();
-                    writer.WriteNumber(this.money.GetFormattedNormalizedAmount(value));
+                    writer.WriteNumber(this.GetFormattedNormalizedAmount(value));
                     writer.EndCell();
 
                     writer.StartCell();
                     if (taxExempt > 0)
                     {
-                        writer.WriteNumber(this.money.GetFormattedNormalizedAmount(taxExempt));
+                        writer.WriteNumber(this.GetFormattedNormalizedAmount(taxExempt));
                     }
                     writer.EndCell();
                     writer.EndRow();
@@ -533,7 +533,7 @@ namespace Walkabout.Reports
                 writer.StartCell();
                 writer.EndCell();
                 writer.StartCell();
-                writer.WriteNumber(this.money.GetFormattedNormalizedAmount(sum), FontStyles.Normal, FontWeights.Bold, null);
+                writer.WriteNumber(this.GetFormattedNormalizedAmount(sum), FontStyles.Normal, FontWeights.Bold, null);
                 writer.EndCell();
                 writer.EndRow();
 

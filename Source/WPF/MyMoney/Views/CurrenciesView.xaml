@@ -45,6 +45,15 @@
         <c:NullableValueConverter x:Key="NullableValueConverter" />
 
 
+        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
+            <Setter Property="IsEditable" Value="True"/>
+            <Setter Property="StaysOpenOnEdit" Value="True"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
+        </Style>
+
 
         <!-- Symbol -->
         <DataTemplate x:Key="myTemplateSymbol">
@@ -56,10 +65,16 @@
 
 
         <DataTemplate x:Key="myTemplateSymbolEdit">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBox Style="{StaticResource GridTextBoxStyle}" Text="{Binding Path=Symbol, Converter={StaticResource NullableValueConverter}}" />
-            </Border>
+            <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
+                      SelectedItem="{Binding Symbol, Mode=TwoWay, Converter={StaticResource NullableValueConverter}}"
+                      ItemsSource="{Binding Path=CurrencySymbols}"
+                     >
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </local:FilteringComboBox>
         </DataTemplate>
 
 
@@ -73,10 +88,17 @@
 
 
         <DataTemplate x:Key="myTemplateNameEdit">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBox Style="{StaticResource GridTextBoxStyle}" Text="{Binding Path=Name, Converter={StaticResource NullableValueConverter}}" />
-            </Border>
+            <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
+                      SelectedItem="{Binding Name, Mode=TwoWay, Converter={StaticResource NullableValueConverter}}"
+                      ItemsSource="{Binding Path=CurrencyNames}"
+                      GotFocus="ComboBoxForName_GotFocus"
+                     >
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </local:FilteringComboBox>
         </DataTemplate>
 
         <!-- Locale -->
@@ -88,24 +110,33 @@
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateCultureCodeEdit" >
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBox Style="{StaticResource GridTextBoxStyle}" Text="{Binding Path=CultureCode, Converter={StaticResource NullableValueConverter}}" />
-            </Border>
+            <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
+                      SelectedItem="{Binding CultureCode, Mode=TwoWay, Converter={StaticResource NullableValueConverter}}"
+                      ItemsSource="{Binding Path=CurrencyCultureNames}" 
+                      GotFocus="ComboBoxForCultureCode_GotFocus"
+                     >
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+            </local:FilteringComboBox>
         </DataTemplate>
 
         <!-- Ratio -->
         <DataTemplate x:Key="myTemplateRatio">
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Ratio, StringFormat={}{0:0.0000}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
+                <TextBlock Text="{Binding Ratio, StringFormat={}{0:0.0000}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"
+                           ToolTip="What is 1 unit of this currency in US dollars."/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateRatioEdit" >
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBox Style="{StaticResource GridTextBoxStyle}"  Text="{Binding Ratio, StringFormat={}{0:0.0000}, Mode=TwoWay}" TextAlignment="Right" />
+                <TextBox Style="{StaticResource GridTextBoxStyle}"  Text="{Binding Ratio, StringFormat={}{0:0.0000}, Mode=TwoWay}" TextAlignment="Right" 
+                         ToolTip="What is 1 unit of this currency in US dollars."/>
             </Border>
         </DataTemplate>
 
@@ -170,7 +201,7 @@
                                     SortMemberPath="Name"/>
                     
             <!-- Locale -->
-            <DataGridTemplateColumn Header="CultureCode"  CellTemplate="{StaticResource myTemplateCultureCode}" CellEditingTemplate="{StaticResource myTemplateCultureCodeEdit}"
+            <DataGridTemplateColumn Header="Culture Code"  CellTemplate="{StaticResource myTemplateCultureCode}" CellEditingTemplate="{StaticResource myTemplateCultureCodeEdit}"
                                     SortMemberPath="CultureCode" MinWidth="80"/>
 
             <!-- Ratio -->

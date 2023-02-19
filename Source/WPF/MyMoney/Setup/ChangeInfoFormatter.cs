@@ -29,7 +29,7 @@ namespace Walkabout.Setup
             }
         }
 
-        public ChangeInfoFormatter(FlowDocumentView view, bool addInstallButton, string previousVersion, XDocument doc)
+        public ChangeInfoFormatter(FlowDocumentView view, bool addInstallButton, string previousVersion, XDocument doc) : base(null)
         {
             this.previousVersion = previousVersion;
             this.doc = doc;

@@ -257,7 +257,7 @@ namespace Walkabout
 
             this.TransactionGraph.ServiceProvider = this;
             this.AppSettingsPanel.Closed += this.OnAppSettingsPanelClosed;
-      
+
 #if PerformanceBlocks
             }
 #endif
@@ -274,21 +274,16 @@ namespace Walkabout
             }
         }
 
-        private void ApplyDefaultCurrency()
+        private void ApplyDisplayCurrency()
         {
-            // Start with the default USA currency
-            var countryCurrencyCode = "en-USD";
-            decimal convertionRate = 1;
-
             // Lookup the users App default display currency
             Currency c = this.myMoney.Currencies.FindCurrency(this.databaseSettings.DisplayCurrency);
-            if (c != null)
+            if (c == null)
             {
-                countryCurrencyCode = c.CultureCode;
-                convertionRate = c.Ratio;
+                c = new Currency() { CultureCode = "en-US", Symbol = "USD", Name = "US Dollar", Ratio = 1 };
             }
-            this.myMoney.Rate = convertionRate;
-            this.myMoney.CultureInfo = StringHelpers.GetDefaultCultureInfo(countryCurrencyCode);
+
+            this.myMoney.Currencies.DefaultCurrency = c;
         }
 
         private void DatabaseSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -304,7 +299,8 @@ namespace Walkabout
                     this.HistoryChart.FiscalYearStart = settings.FiscalYearStart;
                     break;
                 case "DisplayCurrency":
-                    this.ApplyDefaultCurrency();
+                    this.ApplyDisplayCurrency();
+                    this.GenerateReport(this.currentReport);
                     break;
             }
 
@@ -2054,7 +2050,6 @@ namespace Walkabout
                 }
             }
             this.databaseSettings.RaiseAllEvents();
-            this.ApplyDefaultCurrency();
         }
 
         private void AnimateStatus(string start, string end)
@@ -3532,7 +3527,19 @@ namespace Walkabout
             NetWorthReport report = new NetWorthReport(view, this.myMoney, this.cache);
             report.SecurityDrillDown += this.OnReportDrillDown;
             report.CashBalanceDrillDown += this.OnReportCashDrillDown;
-            _ = view.Generate(report);
+            this.GenerateReport(report);
+        }
+
+        Report currentReport;
+
+        void GenerateReport(Report report)
+        {
+            this.currentReport = report;
+            if (this.CurrentView is FlowDocumentView view && view.Visibility == Visibility.Visible && report != null)
+            {
+                report.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
+                _ = view.Generate(report);
+            }
         }
 
         private void OnCommandReportInvestment(object sender, ExecutedRoutedEventArgs e)
@@ -3550,7 +3557,7 @@ namespace Walkabout
             HelpService.SetHelpKeyword(view, "Investment Portfolio");
             PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now);
             report.DrillDown += this.OnReportDrillDown;
-            _ = view.Generate(report);
+            this.GenerateReport(report);
         }
 
         private void OnReportDrillDown(object sender, SecurityGroup e)
@@ -3563,7 +3570,7 @@ namespace Walkabout
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio - " + e.Type);
             PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
-            _ = view.Generate(report);
+            this.GenerateReport(report);
         }
 
         private void OnReportCashDrillDown(object sender, AccountGroup e)
@@ -3576,7 +3583,7 @@ namespace Walkabout
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, e.Title);
             PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
-            _ = view.Generate(report);
+            this.GenerateReport(report);
         }
 
         private void OnTaxReport(object sender, ExecutedRoutedEventArgs e)
@@ -3588,7 +3595,7 @@ namespace Walkabout
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Tax Report");
             TaxReport report = new TaxReport(view, this.myMoney, this.databaseSettings.FiscalYearStart);
-            _ = view.Generate(report);
+            this.GenerateReport(report);
         }
 
         private void OnCommandW2Report(object sender, ExecutedRoutedEventArgs e)
@@ -3600,7 +3607,7 @@ namespace Walkabout
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "W2 Report");
             W2Report report = new W2Report(view, this.myMoney, this, this.databaseSettings.FiscalYearStart);
-            _ = view.Generate(report);
+            this.GenerateReport(report);
         }
 
         private void HasActiveAccount(object sender, CanExecuteRoutedEventArgs e)
@@ -3617,7 +3624,7 @@ namespace Walkabout
             view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             CashFlowReport report = new CashFlowReport(view, this.myMoney, this, this.databaseSettings.FiscalYearStart);
-            report.Regenerate();
+            this.GenerateReport(report);
         }
 
         private void OnCommandReportUnaccepted(object sender, ExecutedRoutedEventArgs e)
@@ -3630,7 +3637,7 @@ namespace Walkabout
             var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             FlowDocumentReportWriter writer = new FlowDocumentReportWriter(view.DocumentViewer.Document, pixelsPerDip);
             UnacceptedReport report = new UnacceptedReport(this.myMoney);
-            report.Generate(writer);
+            this.GenerateReport(report);
         }
 
         #endregion

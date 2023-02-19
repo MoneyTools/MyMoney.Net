@@ -57,7 +57,6 @@ namespace Walkabout
                 return;
             }
 
-
             // Load the application settings
             settings = LoadSettings(noSettings);
 

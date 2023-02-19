@@ -3,11 +3,14 @@
 
 using Microsoft.Win32;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
 
@@ -15,6 +18,14 @@ namespace Walkabout.Reports
 {
     public abstract class Report : IReport
     {
+        Currency currency;
+        CultureInfo currencyCulture;
+
+        public Report(Currency defaultCurrency)
+        {
+            this.DefaultCurrency = defaultCurrency;
+        }
+
         public abstract Task Generate(IReportWriter writer);
 
         public virtual void Export(string filename)
@@ -82,6 +93,46 @@ namespace Walkabout.Reports
             button.Content = panel;
             return button;
         }
+
+        public Currency DefaultCurrency
+        {
+            get => this.currency;
+            set
+            {
+                this.currency = value;
+                if (value != null)
+                {
+                    this.currencyCulture = Currency.GetCultureForCurrency(value.Symbol);
+                }
+            }
+        }
+
+        public CultureInfo CurrencyCulture => this.currencyCulture;
+
+        public string GetFormattedAmount(decimal amount, int decimalPlace = 2)
+        {
+            return string.Format(this.currencyCulture, "{0:C" + decimalPlace.ToString() + "}", amount);
+        }
+
+        public string GetFormattedNormalizedAmount(decimal amount, int decimalPlace = 2)
+        {
+            amount /= this.currency.Ratio;
+            return this.GetFormattedAmount(amount, decimalPlace);
+        }
+
+        protected void WriteTrailer(IReportWriter writer, DateTime reportDate)
+        {
+            if (this.DefaultCurrency.Ratio != 1)
+            {
+                var amount = string.Format(this.CurrencyCulture, "{0:C}", 1 / this.DefaultCurrency.Ratio);
+                var ri = new RegionInfo(this.CurrencyCulture.Name);
+                writer.WriteParagraph("Conversion $1 USD is " + amount + " in " + ri.CurrencyEnglishName,
+                    FontStyles.Italic, FontWeights.Normal, Brushes.Gray);
+            }
+            writer.WriteParagraph("Generated for " + reportDate.ToLongDateString(),
+                FontStyles.Italic, FontWeights.Normal, Brushes.Gray);
+        }
+
     }
 
 }

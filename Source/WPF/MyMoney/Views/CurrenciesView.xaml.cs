@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -216,7 +217,44 @@ namespace Walkabout.Views
             return result;
         }
 
+        private void ComboBoxForName_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ComboBox box = (ComboBox)sender;
+            // auto populate if possible.
+            if (this.CurrenciesDataGrid.SelectedItem is Currency c && string.IsNullOrEmpty(c.Name))
+            {
+                DataGridRow row = this.CurrenciesDataGrid.GetRowFromItem(this.CurrenciesDataGrid.SelectedItem);
+                if (row != null)
+                {
+                    var symbol = this.CurrenciesDataGrid.GetUncommittedColumnText(row, "Symbol");
+                    if (!string.IsNullOrEmpty(symbol))
+                    {
+                        var ci = Currency.GetCultureForCurrency(symbol);
+                        var ri = new RegionInfo(ci.Name);
+                        box.Text = ri.CurrencyEnglishName;
+                    }
+                }
+            }
+        }
 
+        private void ComboBoxForCultureCode_GotFocus(object sender, RoutedEventArgs e)
+        {
+            // auto populate if possible.
+            ComboBox box = (ComboBox)sender;
+            if (this.CurrenciesDataGrid.SelectedItem is Currency c && string.IsNullOrEmpty(c.Name))
+            {
+                DataGridRow row = this.CurrenciesDataGrid.GetRowFromItem(this.CurrenciesDataGrid.SelectedItem);
+                if (row != null)
+                {
+                    var symbol = this.CurrenciesDataGrid.GetUncommittedColumnText(row, "Symbol");
+                    if (!string.IsNullOrEmpty(symbol))
+                    {
+                        var ci = Currency.GetCultureForCurrency(symbol);
+                        box.Text = ci.Name;
+                    }
+                }
+            }
+        }
 
 
         /// <summary>

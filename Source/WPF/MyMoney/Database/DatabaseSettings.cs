@@ -16,7 +16,7 @@ namespace Walkabout.Data
     {
         private string fileName;
         private int? fiscalYearStart;
-        private string displayCurrency="USD";
+        private string displayCurrency = "USD";
         private bool? rentalManagement;
 
         // Needed by XmlSerializer
@@ -63,6 +63,7 @@ namespace Walkabout.Data
         {
             this.OnPropertyChanged(nameof(this.FiscalYearStart));
             this.OnPropertyChanged(nameof(this.RentalManagement));
+            this.OnPropertyChanged(nameof(this.DisplayCurrency));
         }
 
         public int FiscalYearStart

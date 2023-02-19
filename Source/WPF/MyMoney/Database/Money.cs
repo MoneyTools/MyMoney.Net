@@ -703,7 +703,6 @@ namespace Walkabout.Data
         private RentBuildings buildings;
         private TransactionExtras extras;
         private CultureInfo cultureInfo = new CultureInfo("en-US");
-        private decimal rate = 1;
         internal PayeeIndex payeeAccountIndex;
         private bool watching;
 
@@ -929,29 +928,6 @@ namespace Walkabout.Data
                     this.balanceHandlers.RemoveHandler(value);
                 }
             }
-        }
-
-        public decimal Rate
-        {
-            get { return this.rate; }
-            set { this.rate = value; }
-        }
-
-        public CultureInfo CultureInfo
-        {
-            get { return this.cultureInfo; }
-            set { this.cultureInfo = value; }
-        }
-
-        public string GetFormatedAmount(decimal amount, int dicimalPlace = 2)
-        {
-            return string.Format(this.CultureInfo, "{0:C" + dicimalPlace.ToString() + "}", amount);
-        }
-
-        public string GetFormattedNormalizedAmount(decimal amount, int dicimalPlace = 2)
-        {
-            amount /= this.rate;
-            return this.GetFormatedAmount(amount, dicimalPlace);
         }
 
         internal void OnChanged(object sender, ChangeEventArgs e)
@@ -4275,49 +4251,54 @@ namespace Walkabout.Data
         [ColumnMapping(ColumnName = "CultureCode", MaxLength = 80, AllowNulls = true)]
         public string CultureCode
         {
-            get { return this.cultureCode; }
+            get
+            {
+                if (string.IsNullOrEmpty(this.cultureCode) && !string.IsNullOrEmpty(this.symbol))
+                {
+                    CultureInfo ci = GetCultureForCurrency(this.symbol);
+                    return ci.Name;
+                }
+                return this.cultureCode;
+            }
             set
             {
                 if (this.cultureCode != value)
                 {
-
                     this.cultureCode = Truncate(value, 80);
-                    if (this.cultureCode == "")
-                    {
-                        // Attempt to find a match using the Currency Symbol
-                        // this is not accuate since a currenty can be found in many countries, thus we pick the first match
-                        if (this.Symbol == "USD")
-                        {
-                            // Since we know the expected Culture for USD, lets use it instead of guessing. Since the first hit on the possible use of USD is "chr-US" == "Cherokee (United States)"
-                            this.cultureCode = "en-US";
-                        }
-                        else
-                        {
-                            // For all other code, we pick the first match
-                            var allCultureNames = CultureInfo.GetCultures(CultureTypes.SpecificCultures).Select(c => new { c, new RegionInfo(c.Name).ISOCurrencySymbol }).GroupBy(x => x.ISOCurrencySymbol).ToDictionary(g => g.Key, g => g.First().c, StringComparer.OrdinalIgnoreCase);
-                            CultureInfo cultureInfo;
 
-                            if (!allCultureNames.TryGetValue(this.Symbol, out cultureInfo))
-                            {
-                                // If we still have no good match default back to USD
-                                this.cultureCode = "en-US";
-                            }
-                            else
-                            {
-                                this.cultureCode = cultureInfo.Name;
-                            }
-                        }
-                    }
                     this.OnChanged("CultureCode");
                 }
             }
+        }
+
+        public static CultureInfo GetCultureForCurrency(string symbol)
+        {
+            foreach (var ci in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
+            {
+                var ri = new RegionInfo(ci.Name);
+                if (ri.ISOCurrencySymbol == symbol)
+                {
+                    return ci;
+                }
+            }
+
+            return CultureInfo.CurrentCulture;
         }
 
         [DataMember]
         [ColumnMapping(ColumnName = "Name", MaxLength = 80)]
         public string Name
         {
-            get { return this.name; }
+            get
+            {
+                if (string.IsNullOrEmpty(this.name) && !string.IsNullOrEmpty(this.symbol))
+                {
+                    CultureInfo ci = GetCultureForCurrency(this.symbol);
+                    var ri = new RegionInfo(ci.Name);
+                    return ri.CurrencyEnglishName;
+                }
+                return this.name;
+            }
             set
             {
                 if (this.name != value)
@@ -4354,6 +4335,76 @@ namespace Walkabout.Data
             get { return this.lastRatio; }
             set { if (this.lastRatio != value) { this.lastRatio = value; this.OnChanged("LastRatio"); } }
         }
+
+        /// <summary>
+        /// This is a databinding hack so the currency symbol combo can show a prepopulated list.
+        /// </summary>
+        public static string[] CurrencySymbols
+        {
+            get
+            {
+                if (currencySymbolCache == null)
+                {
+                    HashSet<string> unique = new HashSet<string>();
+                    foreach (var ci in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
+                    {
+                        var ri = new RegionInfo(ci.Name);
+                        unique.Add(ri.ISOCurrencySymbol);
+                    }
+
+                    List<string> sorted = new List<string>(unique);
+                    sorted.Sort();
+                    return currencySymbolCache = sorted.ToArray();
+                }
+                return currencySymbolCache;
+            }
+        }
+
+        public static string[] CurrencyNames
+        {
+            get
+            {
+                if (currencyNameCache == null)
+                {
+                    HashSet<string> unique = new HashSet<string>();
+                    foreach (var ci in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
+                    {
+                        var ri = new RegionInfo(ci.Name);
+                        unique.Add(ri.CurrencyEnglishName);
+                    }
+
+                    List<string> sorted = new List<string>(unique);
+                    sorted.Sort();
+                    return currencyNameCache = sorted.ToArray();
+                }
+                return currencyNameCache;
+            }
+        }
+
+        public static string[] CurrencyCultureNames
+        {
+            get
+            {
+                if (currencyCultureNameCache == null)
+                {
+                    HashSet<string> unique = new HashSet<string>();
+                    foreach (var ci in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
+                    {
+                        unique.Add(ci.Name);
+                    }
+
+                    List<string> sorted = new List<string>(unique);
+                    sorted.Sort();
+                    return currencyCultureNameCache = sorted.ToArray();
+                }
+                return currencyCultureNameCache;
+            }
+        }
+
+
+        static string[] currencySymbolCache;
+        static string[] currencyNameCache;
+        static string[] currencyCultureNameCache;
     }
 
     internal class CurrencyComparer : IComparer<Currency>
@@ -4643,6 +4694,9 @@ namespace Walkabout.Data
             get { return false; }
         }
 
+        [XmlIgnore]
+        public Currency DefaultCurrency { get; set; }
+
         public bool Remove(Currency item)
         {
             this.RemoveCurrency(item);
@@ -4662,6 +4716,7 @@ namespace Walkabout.Data
         {
             return this.GetEnumerator();
         }
+
     }
 
 

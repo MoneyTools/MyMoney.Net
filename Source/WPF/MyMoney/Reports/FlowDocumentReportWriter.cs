@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
 
@@ -174,17 +173,10 @@ namespace Walkabout.Reports
             }
         }
 
-        public void WriteCurrency(string rateAsString, CultureInfo culture)
+        public void WriteCurrencyHeading(Currency currency)
         {
-            if (culture.Name != "en-US") {
-                this.WriteHeading("Currency");
-                Label labelCurrency = new Label();
-                labelCurrency.Content = "$1 USD = " + rateAsString + " in " + culture.DisplayName;
-                labelCurrency.Margin = new Thickness(10, 0, 0, 0);
-                labelCurrency.VerticalAlignment = VerticalAlignment.Center;
-                this.AddInline(this.CurrentParagraph, labelCurrency);
-            }
-         }
+            this.WriteHeading("Currency " + currency.Symbol);
+        }
 
         public void AddInline(Paragraph p, UIElement childUIElement)
         {
