@@ -468,6 +468,25 @@ namespace Walkabout.Views
 
         #endregion
 
+        private void ComboBoxCultureInfo_FilterChanged(object sender, RoutedEventArgs e)
+        {
+
+            FilteringComboBox combo = sender as FilteringComboBox;
+            combo.Items.Filter = new Predicate<object>((o) =>
+            {
+                CulturePicker cp = (CulturePicker)o;
+                return this.IsMatch(cp.CurrencySymbol, combo.Filter) || this.IsMatch(cp.CultureInfoName, combo.Filter) || this.IsMatch(cp.DisplayName, combo.Filter);
+            });
+        }
+
+        private Boolean IsMatch(string value, string textToMatch)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+            return value.Contains(textToMatch, StringComparison.OrdinalIgnoreCase);
+        }
     }
 
     public class CurrenciesViewState : ViewState
@@ -555,12 +574,11 @@ namespace Walkabout.Views
                 return string.Empty;
             }
 
-           
+
             return value;
         }
 
-        // Given this as Value >>>> "ANG :  Dutch (Sint Maarten) = nl-SX"
-        // Return this "nl-SX"
+        // Given this object "CulturePicker" return the text representing the country's Locale code "en-US"
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var cp = (CulturePicker)value;

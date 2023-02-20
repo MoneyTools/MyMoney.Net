@@ -119,6 +119,8 @@
                                     Converter={StaticResource CulturePickerConverter}}"
                       ItemsSource="{Binding Path=CurrencyCultures}" 
                       DisplayMemberPath="CultureInfoName" 
+                      FilterChanged="ComboBoxCultureInfo_FilterChanged" 
+                      IsTextSearchCaseSensitive="False"
                       GotFocus="ComboBoxForCultureCode_GotFocus"
                      >
 
