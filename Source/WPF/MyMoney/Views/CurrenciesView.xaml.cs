@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
@@ -543,4 +545,31 @@ namespace Walkabout.Views
         }
 
     }
+
+    public class CulturePickerConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || (value is INullable && value.ToString() == "Null"))
+            {
+                return string.Empty;
+            }
+
+           
+            return value;
+        }
+
+        // Given this as Value >>>> "ANG :  Dutch (Sint Maarten) = nl-SX"
+        // Return this "nl-SX"
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var cp = (CulturePicker)value;
+            if (cp != null)
+            {
+                return cp.CultureInfoName;
+            }
+            return value;
+        }
+    }
 }
+

@@ -5,10 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Walkabout.Controls"
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
+             xmlns:c2="clr-namespace:Walkabout.Views"
              xmlns:views="clr-namespace:Walkabout.Views"
              xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+
+
     <UserControl.Resources>
 
         <Style x:Key="MyCurrenciesDataGridStyle" TargetType="DataGrid">
@@ -43,6 +46,7 @@
         </Style>
 
         <c:NullableValueConverter x:Key="NullableValueConverter" />
+        <c2:CulturePickerConverter x:Key="CulturePickerConverter" />
 
 
         <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
@@ -111,15 +115,37 @@
 
         <DataTemplate x:Key="myTemplateCultureCodeEdit" >
             <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
-                      SelectedItem="{Binding CultureCode, Mode=TwoWay, Converter={StaticResource NullableValueConverter}}"
-                      ItemsSource="{Binding Path=CurrencyCultureNames}" 
+                      SelectedItem="{Binding CultureCode, Mode=TwoWay, 
+                                    Converter={StaticResource CulturePickerConverter}}"
+                      ItemsSource="{Binding Path=CurrencyCultures}" 
+                      DisplayMemberPath="CultureInfoName" 
                       GotFocus="ComboBoxForCultureCode_GotFocus"
                      >
+
                 <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VirtualizingStackPanel />
                     </ItemsPanelTemplate>
                 </ComboBox.ItemsPanel>
+
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch" MinWidth="500">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition MinWidth="300" Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition MinWidth="40"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Column="0" Content="{Binding CurrencySymbol}" HorizontalAlignment="Left" />
+                            <Label Grid.Column="1" Content="{Binding DisplayName}" HorizontalAlignment="Left" MinWidth="400" Margin="10,0"/>
+                            <Image Grid.Column="2" Source="{Binding CountryFlag}" HorizontalAlignment="Center" Width="20"/>
+                            <Label Grid.Column="3" Content="{Binding CultureInfoName}" HorizontalAlignment="Right"  FontWeight="ExtraBold" Margin="10,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+
             </local:FilteringComboBox>
         </DataTemplate>
 
@@ -199,7 +225,7 @@
             <!-- Name -->
             <DataGridTemplateColumn Header="Full Name" CellTemplate="{StaticResource myTemplateName}" CellEditingTemplate="{StaticResource myTemplateNameEdit}"
                                     SortMemberPath="Name"/>
-                    
+
             <!-- Locale -->
             <DataGridTemplateColumn Header="Culture Code"  CellTemplate="{StaticResource myTemplateCultureCode}" CellEditingTemplate="{StaticResource myTemplateCultureCodeEdit}"
                                     SortMemberPath="CultureCode" MinWidth="80"/>
@@ -210,7 +236,7 @@
 
             <!-- LastRatio -->
             <DataGridTemplateColumn Header="Last Value"  CellTemplate="{StaticResource myTemplateLastRatio}" CellEditingTemplate="{StaticResource myTemplateLastRatioEdit}"
-                                    SortMemberPath="LastRatio" MinWidth="80"/>  
+                                    SortMemberPath="LastRatio" MinWidth="80"/>
 
         </DataGrid.Columns>
     </local:MoneyDataGrid>

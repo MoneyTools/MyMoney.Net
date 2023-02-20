@@ -3530,9 +3530,9 @@ namespace Walkabout
             this.GenerateReport(report);
         }
 
-        Report currentReport;
+        private Report currentReport;
 
-        void GenerateReport(Report report)
+        private void GenerateReport(Report report)
         {
             this.currentReport = report;
             if (this.CurrentView is FlowDocumentView view && view.Visibility == Visibility.Visible && report != null)

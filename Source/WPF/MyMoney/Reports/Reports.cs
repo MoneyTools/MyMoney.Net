@@ -18,8 +18,8 @@ namespace Walkabout.Reports
 {
     public abstract class Report : IReport
     {
-        Currency currency;
-        CultureInfo currencyCulture;
+        private Currency currency;
+        private CultureInfo currencyCulture;
 
         public Report(Currency defaultCurrency)
         {

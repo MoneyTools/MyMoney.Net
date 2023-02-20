@@ -4390,7 +4390,11 @@ namespace Walkabout.Data
                     HashSet<string> unique = new HashSet<string>();
                     foreach (var ci in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
                     {
-                        unique.Add(ci.Name);
+                        var ri = new RegionInfo(ci.Name);
+                        if (!string.IsNullOrEmpty(ri.ISOCurrencySymbol) && ri.ISOCurrencySymbol.Length == 3)
+                        {
+                            unique.Add(ci.Name);
+                        }
                     }
 
                     List<string> sorted = new List<string>(unique);
@@ -4401,10 +4405,60 @@ namespace Walkabout.Data
             }
         }
 
+        public static List<CulturePicker> CurrencyCultures
+        {
+            get
+            {
+                if (currencyCultureLongNameCache.Count() == 0)
+                {
+                    foreach (var ci in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
+                    {
+                        var ri = new RegionInfo(ci.Name);
+                        if (!string.IsNullOrEmpty(ri.ISOCurrencySymbol) && ri.ISOCurrencySymbol.Length == 3)
+                        {
+                            var cp = new CulturePicker()
+                            {
+                                CultureInfoName = ci.Name,
+                                DisplayName = ci.DisplayName,
+                                CurrencySymbol = ri.ISOCurrencySymbol,
+                                TwoLetterISORegionName = ri.TwoLetterISORegionName,
+                            };
+                            currencyCultureLongNameCache.Add(cp);
+                        }
+                    }
 
-        static string[] currencySymbolCache;
-        static string[] currencyNameCache;
-        static string[] currencyCultureNameCache;
+                    currencyCultureLongNameCache.Sort((a, b) => (a.CurrencySymbol + a.DisplayName).CompareTo(b.CurrencySymbol + b.DisplayName));
+                    return currencyCultureLongNameCache;
+                }
+                return currencyCultureLongNameCache;
+            }
+        }
+
+        private static string[] currencySymbolCache;
+        private static string[] currencyNameCache;
+        private static string[] currencyCultureNameCache;
+        private static List<CulturePicker> currencyCultureLongNameCache = new List<CulturePicker>();
+    }
+
+    [DebuggerDisplay("{DisplayName}")]
+    public class CulturePicker
+    {
+        private string cultureInfoName;
+        private string displayName;
+        public string TwoLetterISORegionName;
+        private string currencySymbol;
+
+        public string CultureInfoName { get => this.cultureInfoName; set => this.cultureInfoName = value; }
+        public string DisplayName { get => this.displayName; set => this.displayName = value; }
+        public string CurrencySymbol { get => this.currencySymbol; set => this.currencySymbol = value; }
+
+        public string CountryFlag
+        {
+            get
+            {
+                return "/Icons/Flags/" + this.TwoLetterISORegionName.ToLower() + ".png";
+            }
+        }
     }
 
     internal class CurrencyComparer : IComparer<Currency>
