@@ -2205,10 +2205,10 @@ namespace Walkabout.Data
                 else if (s.IsInserted)
                 {
                     sb.AppendLine("-- updating Currencies : " + s.Name);
-                    sb.Append("INSERT INTO Currencies VALUES (");
+                    sb.Append("INSERT INTO Currencies (Id,Symbol,Name,Ratio,LastRatio,CultureCode) VALUES (");
                     sb.Append(string.Format("{0}", s.Id.ToString()));
-                    sb.Append(string.Format(",'{0}'", DBString(s.Name)));
                     sb.Append(string.Format(",'{0}'", DBString(s.Symbol)));
+                    sb.Append(string.Format(",'{0}'", DBString(s.Name)));
                     sb.Append(string.Format(",{0}", s.Ratio));
                     sb.Append(string.Format(",{0}", s.LastRatio));
                     sb.Append(string.Format(",'{0}'", DBString(s.CultureCode)));
@@ -2312,7 +2312,7 @@ namespace Walkabout.Data
                 else if (s.IsInserted)
                 {
                     sb.AppendLine("-- inserting Securities : " + s.Name);
-                    sb.Append("INSERT INTO Securities VALUES (");
+                    sb.Append("INSERT INTO Securities (Id,Name,Symbol,Price,LastPrice,CuspId,SecurityType,Taxable,PriceDate) VALUES (");
                     sb.Append(string.Format("{0}", s.Id.ToString()));
                     sb.Append(string.Format(",'{0}'", DBString(s.Name)));
                     sb.Append(string.Format(",'{0}'", DBString(s.Symbol)));
@@ -2405,7 +2405,7 @@ namespace Walkabout.Data
                     if (s.Security != null)
                     {
                         sb.AppendLine("-- inserting StockSplits for : " + s.Security.Name);
-                        sb.Append("INSERT INTO StockSplits VALUES (");
+                        sb.Append("INSERT INTO StockSplits (Id,Date,Security,Numerator,Denominator) VALUES (");
                         sb.Append(string.Format("{0}", s.Id.ToString()));
                         sb.Append(string.Format(",{0}", DBDateTime(s.Date)));
                         sb.Append(string.Format(",{0}", s.Security.Id));
