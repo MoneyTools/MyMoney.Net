@@ -635,8 +635,9 @@ namespace Walkabout
             MyMoney money = (MyMoney)e.NewValue;
             if (money != this.myMoney)
             {
-                this.myMoney = money;
                 this.StopTracking();
+
+                this.myMoney = money;
 
                 if (this.quotes != null)
                 {
@@ -676,9 +677,7 @@ namespace Walkabout
 
                 this.Cursor = Cursors.Arrow;
 
-                this.SetCurrentView<TransactionsView>();
-                this.TransactionView.Money = this.myMoney;
-                IView view = this.TransactionView;
+                var view = this.SetCurrentView<TransactionsView>();
 
                 // try again to restore the selected account/payee, whatever, since we now have loaded data to play with
                 ViewState state = this.settings.GetViewState(view.GetType());
@@ -687,7 +686,7 @@ namespace Walkabout
                     view.ViewState = state;
                 }
 
-                if (this.TransactionView.ActiveAccount != null)
+                if (view.ActiveAccount != null)
                 {
                     this.accountsControl.SelectedAccount = this.TransactionView.ActiveAccount;
                 }
@@ -1203,6 +1202,7 @@ namespace Walkabout
         private T SetCurrentView<T>() where T : IView
         {
             IView newView = this.GetOrCreateView<T>();
+            newView.Money = this.myMoney;
             this.CurrentView = newView;
             this.CurrentView.ActivateView();
             return (T)this.CurrentView;

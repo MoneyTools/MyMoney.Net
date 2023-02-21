@@ -478,7 +478,6 @@ namespace Walkabout.Views
         public void ActivateView()
         {
             this.Focus();
-            this.Money = this.money;
         }
 
         public event EventHandler BeforeViewStateChanged;

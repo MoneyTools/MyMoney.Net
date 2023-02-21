@@ -103,9 +103,7 @@ namespace Walkabout.Views
                     }
                 }
 
-
                 this.lastSelectedItem = selected;
-
             }
         }
 
@@ -122,7 +120,6 @@ namespace Walkabout.Views
         private void OnDataGridPreviewKeyDown(object sender, KeyEventArgs e)
         {
             MoneyDataGrid grid = (MoneyDataGrid)sender;
-
 
             switch (e.Key)
             {
@@ -170,7 +167,7 @@ namespace Walkabout.Views
         {
             get
             {
-                Security s = this.CurrenciesDataGrid.SelectedItem as Security;
+                Currency s = this.CurrenciesDataGrid.SelectedItem as Currency;
                 if (s != null)
                 {
                     return s.Id;
@@ -447,14 +444,11 @@ namespace Walkabout.Views
                     this.ShowCurrencies();
                 }
             }
-
         }
-
 
         public void ActivateView()
         {
             this.Focus();
-            this.Money = this.money;
         }
 
         public event EventHandler BeforeViewStateChanged;

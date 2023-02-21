@@ -1305,7 +1305,6 @@ namespace Walkabout.Views
 
         public void ActivateView()
         {
-
             this.Focus();
         }
 
