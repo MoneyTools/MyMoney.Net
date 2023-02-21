@@ -9,8 +9,8 @@ the `View/Currencies` view.
 The Culture Code specified in column 3 is used to format the numbers with the right currency symbol.
 
 These exchange rates then allow MyMoney to normalize all the dollar amounts on the
-[Reports]()../Reports/index.md) to the default currency.  The default currency is 'USD'
-by default, but you can specify a different default using the `View/Options` panel:
+[Reports](../Reports/index.md) to the default currency.  The default currency is 'USD', but you can
+specify a different default using the `View/Options` panel:
 
 ![default_currency](../Images/DefaultCurrency.png)
 
