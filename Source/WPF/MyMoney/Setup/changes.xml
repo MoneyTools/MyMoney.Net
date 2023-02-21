@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.5" date="2/20/2022">
+    - Add Default currency to the Options dialog which is used by Reports.
+  </change>
   <change version="2.1.0.4" date="2/9/2022">
     - Fix bug in matching of Dates in the Quick Search box.
   </change>
