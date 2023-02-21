@@ -60,7 +60,7 @@ Every numeric field in the application pops up a [calculator](Basics/Calculator.
 
 ![](Images/Home12.png)
 
-Multiple currencies. When you setup an account you can specify the currency used by that account. This is handy if you have overseas accounts. It is then able to handle the fact that transfers between accounts with different currencies will not necessarily have the same amount on either side of those transfers.
+[Multiple currencies](Basics/Currencies.md). When you setup an account you can specify the currency used by that account. This is handy if you have overseas accounts. It is then able to handle the fact that transfers between accounts with different currencies will not necessarily have the same amount on either side of those transfers.
 
 ![](Images/Home13.png)
 

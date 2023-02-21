@@ -10,8 +10,8 @@ Like any good web browser you can also use ALT-LEFT for Back and and ALT-RIGHT f
 You can pivot to new transaction sets using the following commands on the transaction view context menu:
 
 ### Goto related transaction (F12)
-navigate between each end of a Transfer.  This can also prompt to create a transfer if it finds a matching
-transaction in another account.
+navigate between each end of a Transfer.  This can also prompt to create a transfer if it finds a
+matching transaction in another account.
 
 ### View Transactions by Account (F8)
 show all transactions in the same Account as the selected transaction

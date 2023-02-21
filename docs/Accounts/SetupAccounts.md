@@ -48,7 +48,7 @@ The **Opening Balance**  is the amount that you need to enter in order to start 
 
 The **Online Account**  field is how you connect your account to [Online Banking](OnlineBanking.md). 
 
-The **Currency**  is optional and is only needed if you plan to have multiple accounts with different currencies.
+The **Currency**  is optional and is only needed if you plan to have multiple accounts with different currencies. See [Currencies](../Basics/Currencies.md).
 
 The **Web Site**  is a URL link to the website for your bank or credit card and the ">>" button will bring this up in your web browser.
 
