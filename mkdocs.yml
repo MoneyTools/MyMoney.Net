@@ -43,6 +43,7 @@ nav:
     - Install: Basics/install.md
     - Setup: Basics/Setup.md
     - Categories: Basics/Categories.md
+    - Currencies: Basics/Currencies.md
     - Payees: Basics/Payees.md
     - Securities: Basics/Securities.md
     - Splits: Basics/Splits.md
