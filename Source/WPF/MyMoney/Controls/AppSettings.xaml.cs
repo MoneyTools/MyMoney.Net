@@ -44,9 +44,6 @@ namespace Walkabout.Controls
                 this.comboBoxFiscalYear.Items.Add(label);
             }
 
-
-
-
             // Themes
             foreach (var theme in this.themes.Keys)
             {
@@ -86,6 +83,12 @@ namespace Walkabout.Controls
                     {
                         this.comboBoxCurrency.Items.Add(currency.Symbol);
                     });
+
+                    // Ensure that USD is always an option
+                    if(!this.comboBoxCurrency.Items.Contains("USD")){
+                        this.comboBoxCurrency.Items.Insert(0,"USD");
+                    }
+                    
                     this.comboBoxCurrency.SelectedIndex = this.comboBoxCurrency.Items.IndexOf(this.databaseSettings.DisplayCurrency);
 
                     Visibility passwordVisibility = Visibility.Visible;
