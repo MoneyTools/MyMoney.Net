@@ -183,6 +183,8 @@ namespace Walkabout.Taxes
             byYearCombo.Margin = new Thickness(10, 0, 0, 0);
             this.AddInline(heading, byYearCombo);
 
+            fwriter.WriteCurrencyHeading(this.DefaultCurrency);
+
             bool empty = true;
             foreach (TaxForm form in this.taxCategories.GetForms())
             {
@@ -197,7 +199,8 @@ namespace Walkabout.Taxes
                 writer.WriteParagraph("You have not associated any of your categories with Tax Categories.  See the Category Properties dialog for more information.");
             }
 
-            writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
+            this.WriteTrailer(writer, DateTime.Today);
+
             return Task.CompletedTask;
         }
 

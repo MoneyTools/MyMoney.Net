@@ -6,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
 
@@ -170,6 +171,21 @@ namespace Walkabout.Reports
             {
                 this.section.Blocks.Add(this.current.paragraph);
             }
+        }
+
+        public void WriteCurrencyHeading(Currency currency)
+        {
+            if (currency != null)
+            {
+                this.WriteHeading("Currency " + currency.Symbol);
+            }
+        }
+
+        public void AddInline(Paragraph p, UIElement childUIElement)
+        {
+            var inline = new InlineUIContainer(childUIElement);
+            inline.BaselineAlignment = BaselineAlignment.Bottom;
+            p.Inlines.Add(inline);
         }
 
         public void StartTable()

@@ -702,6 +702,7 @@ namespace Walkabout.Data
         private StockSplits stockSplits;
         private RentBuildings buildings;
         private TransactionExtras extras;
+        private CultureInfo cultureInfo = new CultureInfo("en-US");
         internal PayeeIndex payeeAccountIndex;
         private bool watching;
 
@@ -928,7 +929,6 @@ namespace Walkabout.Data
                 }
             }
         }
-
 
         internal void OnChanged(object sender, ChangeEventArgs e)
         {
@@ -4202,6 +4202,7 @@ namespace Walkabout.Data
         private int id = -1;
         private string name;
         private string symbol;
+        private string cultureCode;
         private decimal ratio;
         private decimal lastRatio;
 
@@ -4247,10 +4248,57 @@ namespace Walkabout.Data
         }
 
         [DataMember]
+        [ColumnMapping(ColumnName = "CultureCode", MaxLength = 80, AllowNulls = true)]
+        public string CultureCode
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.cultureCode) && !string.IsNullOrEmpty(this.symbol))
+                {
+                    CultureInfo ci = GetCultureForCurrency(this.symbol);
+                    return ci.Name;
+                }
+                return this.cultureCode;
+            }
+            set
+            {
+                if (this.cultureCode != value)
+                {
+                    this.cultureCode = Truncate(value, 80);
+
+                    this.OnChanged("CultureCode");
+                }
+            }
+        }
+
+        public static CultureInfo GetCultureForCurrency(string symbol)
+        {
+            foreach (var ci in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
+            {
+                var ri = new RegionInfo(ci.Name);
+                if (ri.ISOCurrencySymbol == symbol)
+                {
+                    return ci;
+                }
+            }
+
+            return CultureInfo.CurrentCulture;
+        }
+
+        [DataMember]
         [ColumnMapping(ColumnName = "Name", MaxLength = 80)]
         public string Name
         {
-            get { return this.name; }
+            get
+            {
+                if (string.IsNullOrEmpty(this.name) && !string.IsNullOrEmpty(this.symbol))
+                {
+                    CultureInfo ci = GetCultureForCurrency(this.symbol);
+                    var ri = new RegionInfo(ci.Name);
+                    return ri.CurrencyEnglishName;
+                }
+                return this.name;
+            }
             set
             {
                 if (this.name != value)
@@ -4287,7 +4335,6 @@ namespace Walkabout.Data
             get { return this.lastRatio; }
             set { if (this.lastRatio != value) { this.lastRatio = value; this.OnChanged("LastRatio"); } }
         }
-
     }
 
     internal class CurrencyComparer : IComparer<Currency>
@@ -4577,6 +4624,9 @@ namespace Walkabout.Data
             get { return false; }
         }
 
+        [XmlIgnore]
+        public Currency DefaultCurrency { get; set; }
+
         public bool Remove(Currency item)
         {
             this.RemoveCurrency(item);
@@ -4596,6 +4646,7 @@ namespace Walkabout.Data
         {
             return this.GetEnumerator();
         }
+
     }
 
 

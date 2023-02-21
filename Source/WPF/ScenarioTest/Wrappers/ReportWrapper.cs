@@ -97,7 +97,7 @@ namespace Walkabout.Tests.Wrappers
                 {
                     InvokePattern invoke = (InvokePattern)closeButton.GetCurrentPattern(InvokePattern.Pattern);
                     invoke.Invoke();
-                } 
+                }
                 catch
                 {
                     // ignore it

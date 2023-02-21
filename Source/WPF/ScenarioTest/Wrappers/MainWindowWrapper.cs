@@ -248,6 +248,30 @@ namespace Walkabout.Tests.Wrappers
             return new ChartsAreaWrapper(charts);
         }
 
+
+        internal CurrencyViewWrapper ViewCurrencies()
+        {
+            ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuView");
+            subMenu.InvokeMenuItem("MenuViewCurrencies");
+
+            Thread.Sleep(300);
+
+            for (int retries = 5; retries > 0; retries--)
+            {
+                foreach (AutomationElement e in window.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataGrid)))
+                {
+                    if (!e.Current.IsOffscreen && e.Current.AutomationId == "CurrenciesDataGrid")
+                    {
+                        return new CurrencyViewWrapper(this, e);
+                    }
+                }
+
+                Thread.Sleep(250);
+            }
+            return null;
+
+        }
+
         public ReportWrapper NetWorthReport()
         {
             ContextMenu subMenu = this.MainMenu.OpenSubMenu("MenuViewReports");

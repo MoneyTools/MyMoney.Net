@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -691,4 +693,85 @@ namespace Walkabout.WpfConverters
         #endregion
     }
 
+
+    [DebuggerDisplay("{DisplayName}")]
+    public class CulturePicker
+    {
+        public string CultureCode { get; set; }
+        public string DisplayName { get; set; }
+        public string CurrencySymbol { get; set; }
+        public string TwoLetterISORegionName { get; set; }
+
+        public string CountryFlag
+        {
+            get
+            {
+                return "/Icons/Flags/" + this.TwoLetterISORegionName.ToLower() + ".png";
+            }
+        }
+    }
+
+    public class CulturePickerConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+
+        // Given this object "CulturePicker" return the text representing the country's Locale code "en-US"
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var cp = (CulturePicker)value;
+            if (cp != null)
+            {
+                switch (parameter)
+                {
+                    case "CurrencySymbol":
+                        return cp.CurrencySymbol;
+                    case "CultureCode":
+                        return cp.CultureCode;
+                    case "DisplayName":
+                        return cp.DisplayName;
+                }
+                return cp.CultureCode;
+            }
+            return value;
+        }
+    }
+
+    public class CultureHelpers
+    {
+        public static List<CulturePicker> CurrencyCultures
+        {
+            get
+            {
+                if (currencyCultureInfoCache.Count == 0)
+                {
+                    foreach (var ci in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
+                    {
+                        var ri = new RegionInfo(ci.Name);
+
+                        if (!string.IsNullOrEmpty(ri.ISOCurrencySymbol) &&
+                            ri.ISOCurrencySymbol.Length == 3) // rules out "World" regions that have no single currency.
+                        {
+                            var cp = new CulturePicker()
+                            {
+                                CultureCode = ci.Name,
+                                DisplayName = ri.CurrencyEnglishName,
+                                CurrencySymbol = ri.ISOCurrencySymbol,
+                                TwoLetterISORegionName = ri.TwoLetterISORegionName
+                            };
+                            currencyCultureInfoCache.Add(cp);
+                        }
+                    }
+
+                    currencyCultureInfoCache.Sort((a, b) => (a.CurrencySymbol + a.DisplayName).CompareTo(b.CurrencySymbol + b.DisplayName));
+                    return currencyCultureInfoCache;
+                }
+                return currencyCultureInfoCache;
+            }
+        }
+
+        private static List<CulturePicker> currencyCultureInfoCache = new List<CulturePicker>();
+    }
 }

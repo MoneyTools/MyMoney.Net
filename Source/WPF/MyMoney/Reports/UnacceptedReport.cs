@@ -69,7 +69,8 @@ namespace Walkabout.Reports
 
             writer.EndTable();
 
-            writer.WriteParagraph("Generated on " + DateTime.Today.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
+            this.WriteTrailer(writer, DateTime.Today);
+
             return Task.CompletedTask;
         }
 

@@ -274,6 +274,18 @@ namespace Walkabout
             }
         }
 
+        private void ApplyDisplayCurrency()
+        {
+            // Lookup the users App default display currency
+            Currency c = this.myMoney.Currencies.FindCurrency(this.databaseSettings.DisplayCurrency);
+            if (c == null)
+            {
+                c = new Currency() { CultureCode = "en-US", Symbol = "USD", Name = "US Dollar", Ratio = 1 };
+            }
+
+            this.myMoney.Currencies.DefaultCurrency = c;
+        }
+
         private void DatabaseSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             DatabaseSettings settings = (DatabaseSettings)sender;
@@ -285,6 +297,10 @@ namespace Walkabout
                     break;
                 case "FiscalYearStart":
                     this.HistoryChart.FiscalYearStart = settings.FiscalYearStart;
+                    break;
+                case "DisplayCurrency":
+                    this.ApplyDisplayCurrency();
+                    this.GenerateReport(this.currentReport);
                     break;
             }
 
@@ -463,6 +479,7 @@ namespace Walkabout
                 // Open Database dialog unless we do this delay here.
                 this.delayedActions.StartDelayedAction("loaddata", this.BeginLoadDatabase, TimeSpan.FromMilliseconds(1));
             }
+
 #if PerformanceBlocks
             }
 #endif
@@ -618,8 +635,9 @@ namespace Walkabout
             MyMoney money = (MyMoney)e.NewValue;
             if (money != this.myMoney)
             {
-                this.myMoney = money;
                 this.StopTracking();
+
+                this.myMoney = money;
 
                 if (this.quotes != null)
                 {
@@ -659,9 +677,7 @@ namespace Walkabout
 
                 this.Cursor = Cursors.Arrow;
 
-                this.SetCurrentView<TransactionsView>();
-                this.TransactionView.Money = this.myMoney;
-                IView view = this.TransactionView;
+                var view = this.SetCurrentView<TransactionsView>();
 
                 // try again to restore the selected account/payee, whatever, since we now have loaded data to play with
                 ViewState state = this.settings.GetViewState(view.GetType());
@@ -670,7 +686,7 @@ namespace Walkabout
                     view.ViewState = state;
                 }
 
-                if (this.TransactionView.ActiveAccount != null)
+                if (view.ActiveAccount != null)
                 {
                     this.accountsControl.SelectedAccount = this.TransactionView.ActiveAccount;
                 }
@@ -1186,6 +1202,7 @@ namespace Walkabout
         private T SetCurrentView<T>() where T : IView
         {
             IView newView = this.GetOrCreateView<T>();
+            newView.Money = this.myMoney;
             this.CurrentView = newView;
             this.CurrentView.ActivateView();
             return (T)this.CurrentView;
@@ -3294,6 +3311,10 @@ namespace Walkabout
             {
                 return this.settings;
             }
+            else if (service == typeof(Currencies))
+            {
+                return this.myMoney.Currencies;
+            }
             else if (service == typeof(DatabaseSettings))
             {
                 return this.databaseSettings;
@@ -3506,7 +3527,19 @@ namespace Walkabout
             NetWorthReport report = new NetWorthReport(view, this.myMoney, this.cache);
             report.SecurityDrillDown += this.OnReportDrillDown;
             report.CashBalanceDrillDown += this.OnReportCashDrillDown;
-            _ = view.Generate(report);
+            this.GenerateReport(report);
+        }
+
+        private Report currentReport;
+
+        private void GenerateReport(Report report)
+        {
+            this.currentReport = report;
+            if (this.CurrentView is FlowDocumentView view && view.Visibility == Visibility.Visible && report != null)
+            {
+                report.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
+                _ = view.Generate(report);
+            }
         }
 
         private void OnCommandReportInvestment(object sender, ExecutedRoutedEventArgs e)
@@ -3524,7 +3557,7 @@ namespace Walkabout
             HelpService.SetHelpKeyword(view, "Investment Portfolio");
             PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now);
             report.DrillDown += this.OnReportDrillDown;
-            _ = view.Generate(report);
+            this.GenerateReport(report);
         }
 
         private void OnReportDrillDown(object sender, SecurityGroup e)
@@ -3537,7 +3570,7 @@ namespace Walkabout
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Investment Portfolio - " + e.Type);
             PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
-            _ = view.Generate(report);
+            this.GenerateReport(report);
         }
 
         private void OnReportCashDrillDown(object sender, AccountGroup e)
@@ -3550,7 +3583,7 @@ namespace Walkabout
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, e.Title);
             PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
-            _ = view.Generate(report);
+            this.GenerateReport(report);
         }
 
         private void OnTaxReport(object sender, ExecutedRoutedEventArgs e)
@@ -3562,7 +3595,7 @@ namespace Walkabout
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Tax Report");
             TaxReport report = new TaxReport(view, this.myMoney, this.databaseSettings.FiscalYearStart);
-            _ = view.Generate(report);
+            this.GenerateReport(report);
         }
 
         private void OnCommandW2Report(object sender, ExecutedRoutedEventArgs e)
@@ -3574,7 +3607,7 @@ namespace Walkabout
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "W2 Report");
             W2Report report = new W2Report(view, this.myMoney, this, this.databaseSettings.FiscalYearStart);
-            _ = view.Generate(report);
+            this.GenerateReport(report);
         }
 
         private void HasActiveAccount(object sender, CanExecuteRoutedEventArgs e)
@@ -3591,7 +3624,7 @@ namespace Walkabout
             view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             CashFlowReport report = new CashFlowReport(view, this.myMoney, this, this.databaseSettings.FiscalYearStart);
-            report.Regenerate();
+            this.GenerateReport(report);
         }
 
         private void OnCommandReportUnaccepted(object sender, ExecutedRoutedEventArgs e)
@@ -3604,7 +3637,7 @@ namespace Walkabout
             var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             FlowDocumentReportWriter writer = new FlowDocumentReportWriter(view.DocumentViewer.Document, pixelsPerDip);
             UnacceptedReport report = new UnacceptedReport(this.myMoney);
-            report.Generate(writer);
+            this.GenerateReport(report);
         }
 
         #endregion

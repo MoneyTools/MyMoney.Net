@@ -55,6 +55,8 @@ namespace Walkabout.Reports
                     writer.WriteHeading("Net Worth Statement");
                     Paragraph heading = fwriter.CurrentParagraph;
 
+                    fwriter.WriteCurrencyHeading(this.DefaultCurrency);
+
                     DatePicker picker = new DatePicker();
                     // byYearCombo.SelectionChanged += OnYearChanged;
                     System.Windows.Automation.AutomationProperties.SetName(picker, "ReportDate");
@@ -199,7 +201,7 @@ namespace Walkabout.Reports
                     writer.EndCell();
 
                     writer.StartCell();
-                    writer.WriteNumber(totalBalance.ToString("C"));
+                    writer.WriteNumber(this.GetFormattedNormalizedAmount(totalBalance));
                     writer.EndCell();
 
                     writer.EndRow();
@@ -234,7 +236,7 @@ namespace Walkabout.Reports
                             System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Maroon);
                     }
 
-                    writer.WriteParagraph("Generated for " + this.reportDate.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
+                    this.WriteTrailer(writer, this.reportDate);
                 }
                 finally
                 {
@@ -472,7 +474,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(balance.ToString("C"));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(balance));
             writer.EndCell();
 
             writer.EndRow();

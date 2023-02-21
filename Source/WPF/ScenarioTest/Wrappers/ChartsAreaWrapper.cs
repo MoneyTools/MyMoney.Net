@@ -29,7 +29,7 @@ namespace Walkabout.Tests.Wrappers
                 }
                 Thread.Sleep(1000);
             }
-            
+
             throw new Exception("Tab named '" + id + "' not found");
         }
 

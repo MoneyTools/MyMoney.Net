@@ -55,11 +55,13 @@ namespace Walkabout.Reports
         public override Task Generate(IReportWriter writer)
         {
             FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
+
+
             writer.WriteHeading("Tax Report For ");
 
             var (firstYear, lastYear) = this.money.Transactions.GetTaxYearRange(this.fiscalYearStart);
 
-            Paragraph heading = fwriter.CurrentParagraph;
+            Paragraph heading = heading = fwriter.CurrentParagraph;
 
             ComboBox byYearCombo = new ComboBox();
             byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
@@ -94,6 +96,8 @@ namespace Walkabout.Reports
             byYearCombo.Margin = new Thickness(10, 0, 0, 0);
             this.AddInline(heading, byYearCombo);
 
+            fwriter.WriteCurrencyHeading(this.DefaultCurrency);
+
             /*
             <StackPanel Margin="10,5,10,5"  Grid.Row="2" Orientation="Horizontal">
                 <TextBlock Text="Consolidate securities by: " Background="Transparent"/>
@@ -113,7 +117,7 @@ namespace Walkabout.Reports
 
             writer.WriteParagraph("Consolidate securities by: ");
             Paragraph prompt = fwriter.CurrentParagraph;
-            prompt.Margin = new Thickness(0, 0, 0, 4); 
+            prompt.Margin = new Thickness(0, 0, 0, 4);
             this.AddInline(prompt, consolidateCombo);
 
             CheckBox checkBox = new CheckBox();
@@ -294,11 +298,11 @@ namespace Walkabout.Reports
                     writer.EndCell();
 
                     writer.StartCell();
-                    writer.WriteNumber(data.SalePricePerUnit.ToString("C"));
+                    writer.WriteNumber(this.GetFormattedNormalizedAmount(data.SalePricePerUnit));
                     writer.EndCell();
 
                     writer.StartCell();
-                    writer.WriteNumber(data.SaleProceeds.ToString("C"));
+                    writer.WriteNumber(this.GetFormattedNormalizedAmount(data.SaleProceeds));
                     writer.EndCell();
                 }
 
@@ -373,7 +377,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(GiveUpTheFractionalPennies(total).ToString("C"));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(GiveUpTheFractionalPennies(total)));
             writer.EndCell();
 
             writer.EndRow();
@@ -402,11 +406,11 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(data.CostBasisPerUnit.ToString("C"));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(data.CostBasisPerUnit));
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(data.TotalCostBasis.ToString("C"));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(data.TotalCostBasis));
             writer.EndCell();
 
             writer.StartCell();
@@ -414,15 +418,15 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(data.SalePricePerUnit.ToString("C"));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(data.SalePricePerUnit));
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(data.SaleProceeds.ToString("C"));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(data.SaleProceeds));
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(GiveUpTheFractionalPennies(data.TotalGain).ToString("C"));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(GiveUpTheFractionalPennies(data.TotalGain)));
             writer.EndCell();
 
             writer.EndRow();
@@ -468,7 +472,7 @@ namespace Walkabout.Reports
             writer.WriteParagraph("Sales Tax");
             writer.EndCell();
             writer.StartCell();
-            writer.WriteNumber(tax.ToString("C"), FontStyles.Normal, FontWeights.Bold, null);
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(tax), FontStyles.Normal, FontWeights.Bold, null);
             writer.EndCell();
             writer.EndRow();
 
@@ -512,13 +516,13 @@ namespace Walkabout.Reports
                     }
 
                     writer.StartCell();
-                    writer.WriteNumber(value.ToString("C"));
+                    writer.WriteNumber(this.GetFormattedNormalizedAmount(value));
                     writer.EndCell();
 
                     writer.StartCell();
                     if (taxExempt > 0)
                     {
-                        writer.WriteNumber(taxExempt.ToString("C"));
+                        writer.WriteNumber(this.GetFormattedNormalizedAmount(taxExempt));
                     }
                     writer.EndCell();
                     writer.EndRow();
@@ -529,7 +533,7 @@ namespace Walkabout.Reports
                 writer.StartCell();
                 writer.EndCell();
                 writer.StartCell();
-                writer.WriteNumber(sum.ToString("C"), FontStyles.Normal, FontWeights.Bold, null);
+                writer.WriteNumber(this.GetFormattedNormalizedAmount(sum), FontStyles.Normal, FontWeights.Bold, null);
                 writer.EndCell();
                 writer.EndRow();
 
@@ -607,7 +611,5 @@ namespace Walkabout.Reports
                 }
             }
         }
-
     }
-
 }

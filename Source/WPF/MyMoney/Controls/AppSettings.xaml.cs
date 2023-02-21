@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Walkabout.Configuration;
 using Walkabout.Data;
+using Walkabout.Utilities;
 
 namespace Walkabout.Controls
 {
@@ -15,6 +18,7 @@ namespace Walkabout.Controls
         private Settings settings;
         private DatabaseSettings databaseSettings;
         private IDatabase database;
+        private Currencies currencies;
 
         private readonly IDictionary<string, string> themes = new SortedDictionary<string, string>() {
             { "Light", "Light" },
@@ -31,6 +35,7 @@ namespace Walkabout.Controls
             this.settings = Settings.TheSettings;
             IsVisibleChanged += this.OnIsVisibleChanged;
 
+            // Fiscal Years
             int year = DateTime.Now.Year;
             for (int i = 0; i < 12; i++)
             {
@@ -39,12 +44,14 @@ namespace Walkabout.Controls
                 this.comboBoxFiscalYear.Items.Add(label);
             }
 
+            // Themes
             foreach (var theme in this.themes.Keys)
             {
                 this.comboBoxTheme.Items.Add(theme);
             }
             this.comboBoxTheme.SelectedItem = this.settings.Theme;
 
+            // Match transactions
             this.textBoxTransferSearchDays.Text = this.settings.TransferSearchDays.ToString();
         }
 
@@ -53,6 +60,9 @@ namespace Walkabout.Controls
             this.settings = (Settings)site.GetService(typeof(Settings));
             this.databaseSettings = (DatabaseSettings)site.GetService(typeof(DatabaseSettings));
             this.database = (IDatabase)site.GetService(typeof(IDatabase));
+
+            // Display Currency As
+            this.currencies = (Currencies)site.GetService(typeof(Currencies));
         }
 
         public event EventHandler Closed;
@@ -68,14 +78,29 @@ namespace Walkabout.Controls
                     this.checkBoxAcceptReconciled.IsChecked = this.settings.AcceptReconciled;
                     this.comboBoxFiscalYear.SelectedIndex = this.databaseSettings.FiscalYearStart;
 
+                    this.comboBoxCurrency.Items.Clear();
+                    this.currencies?.GetCurrencies().ToList().ForEach(currency =>
+                    {
+                        this.comboBoxCurrency.Items.Add(currency.Symbol);
+                    });
+
+                    // Ensure that USD is always an option
+                    if (!this.comboBoxCurrency.Items.Contains("USD"))
+                    {
+                        this.comboBoxCurrency.Items.Insert(0, "USD");
+                    }
+
+                    this.comboBoxCurrency.SelectedIndex = this.comboBoxCurrency.Items.IndexOf(this.databaseSettings.DisplayCurrency);
+
                     Visibility passwordVisibility = Visibility.Visible;
                     if (this.database != null && this.database.DbFlavor == DbFlavor.Sqlite)
                     {
                         passwordVisibility = Visibility.Collapsed;
                     }
 
-                    passwordPrompt.Visibility = passwordVisibility;
-                    editPasswordBox.Visibility = passwordVisibility;
+
+                    this.passwordPrompt.Visibility = passwordVisibility;
+                    this.editPasswordBox.Visibility = passwordVisibility;
 
                     foreach (string theme in this.comboBoxTheme.Items)
                     {
@@ -119,6 +144,33 @@ namespace Walkabout.Controls
         private void OnFiscalYearChanged(object sender, SelectionChangedEventArgs e)
         {
             this.databaseSettings.FiscalYearStart = this.comboBoxFiscalYear.SelectedIndex;
+        }
+
+        private void OnCurrencyChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.comboBoxCurrency.SelectedValue != null)
+            {
+                this.databaseSettings.DisplayCurrency = this.comboBoxCurrency.SelectedValue.ToString();
+                this.UpdateCultureCode();
+            }
+        }
+
+        private void UpdateCultureCode()
+        {
+            if (this.currencies != null)
+            {
+                this.cultureCodeInfo.Content = "";
+
+                this.currencies.GetCurrencies().ToList().ForEach(currency =>
+                {
+                    if (currency.Symbol == this.databaseSettings.DisplayCurrency)
+                    {
+                        CultureInfo culture = StringHelpers.GetDefaultCultureInfo(currency.CultureCode);
+                        var amountInTargetCulture = string.Format(culture, "{0:C}", currency.Ratio);
+                        this.cultureCodeInfo.Content = currency.Name + " $1 USD=" + amountInTargetCulture + " in " + currency.CultureCode + " " + culture.DisplayName;
+                    }
+                });
+            }
         }
 
         private void OnRentalSupportChanged(object sender, RoutedEventArgs e)

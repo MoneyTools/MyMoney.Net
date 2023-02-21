@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,6 +10,7 @@ using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Interfaces.Views;
 using Walkabout.Utilities;
+using Walkabout.WpfConverters;
 
 namespace Walkabout.Views
 {
@@ -21,7 +23,6 @@ namespace Walkabout.Views
     //    }
     //    public Security Security { get { return this.security; } }
     //}
-
 
     /// <summary>
     /// Interaction logic for CurrenciesView.xaml
@@ -102,9 +103,7 @@ namespace Walkabout.Views
                     }
                 }
 
-
                 this.lastSelectedItem = selected;
-
             }
         }
 
@@ -121,7 +120,6 @@ namespace Walkabout.Views
         private void OnDataGridPreviewKeyDown(object sender, KeyEventArgs e)
         {
             MoneyDataGrid grid = (MoneyDataGrid)sender;
-
 
             switch (e.Key)
             {
@@ -169,7 +167,7 @@ namespace Walkabout.Views
         {
             get
             {
-                Security s = this.CurrenciesDataGrid.SelectedItem as Security;
+                Currency s = this.CurrenciesDataGrid.SelectedItem as Currency;
                 if (s != null)
                 {
                     return s.Id;
@@ -217,8 +215,157 @@ namespace Walkabout.Views
             return result;
         }
 
+        private void ComboBoxForSymbol_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ComboBox box = (ComboBox)sender;
+            if (this.CurrenciesDataGrid.SelectedItem is Currency c && !string.IsNullOrEmpty(c.Symbol))
+            {
+                foreach (CulturePicker ci in box.ItemsSource)
+                {
+                    if (ci.CurrencySymbol == c.Symbol)
+                    {
+                        box.SelectedItem = ci;
+                        break;
+                    }
+                }
+            }
+        }
 
+        private void ComboBoxForName_GotFocus(object sender, RoutedEventArgs e)
+        {
+            FilteringComboBox box = (FilteringComboBox)sender;
+            // auto populate if possible.
+            if (this.CurrenciesDataGrid.SelectedItem is Currency c)
+            {
+                DataGridRow row = this.CurrenciesDataGrid.GetRowFromItem(this.CurrenciesDataGrid.SelectedItem);
+                if (row == null)
+                {
+                    return;
+                }
 
+                // see if there is an uncommitted symbol.
+                var symbol = this.CurrenciesDataGrid.GetUncommittedColumnText(row, "Symbol");
+                if (string.IsNullOrEmpty(symbol))
+                {
+                    // fall back on committed value.
+                    symbol = c.Symbol;
+                }
+
+                // make the combo filter context sensitive.
+                if (!string.IsNullOrEmpty(symbol))
+                {
+                    box.Items.Filter = new Predicate<object>((o) =>
+                    {
+                        CulturePicker cp = (CulturePicker)o;
+                        return this.IsMatch(cp.CurrencySymbol, symbol);
+                    });
+                }
+
+                var name = this.CurrenciesDataGrid.GetUncommittedColumnText(row, "Name");
+                if (string.IsNullOrEmpty(name) && string.IsNullOrEmpty(c.CultureCode))
+                {
+                    if (!string.IsNullOrEmpty(symbol))
+                    {
+                        // provide a default lookup based on symbol.
+                        var ci = Currency.GetCultureForCurrency(symbol);
+                        if (ci != null)
+                        {
+                            var ri = new RegionInfo(ci.Name);
+                            box.Text = ri.CurrencyEnglishName;
+                        }
+                    }
+                }
+                else
+                {
+                    // auto select the matching item (DisplayMemberPath doesn't seem to be working)
+                    foreach (CulturePicker ci in box.ItemsSource)
+                    {
+                        if (ci.DisplayName == c.Name && (box.Items.Filter == null || box.Items.Filter(ci)))
+                        {
+                            box.SelectedItem = ci;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ComboBoxForCultureCode_GotFocus(object sender, RoutedEventArgs e)
+        {
+            // auto populate if possible.
+            FilteringComboBox box = (FilteringComboBox)sender;
+            if (this.CurrenciesDataGrid.SelectedItem is Currency c)
+            {
+                DataGridRow row = this.CurrenciesDataGrid.GetRowFromItem(this.CurrenciesDataGrid.SelectedItem);
+                if (row == null)
+                {
+                    return;
+                }
+
+                // see if there is an uncommitted symbol.
+                var symbol = this.CurrenciesDataGrid.GetUncommittedColumnText(row, "Symbol");
+                if (string.IsNullOrEmpty(symbol))
+                {
+                    // fall back on committed value.
+                    symbol = c.Symbol;
+                }
+
+                // make the combo filter context sensitive.
+                if (!string.IsNullOrEmpty(symbol))
+                {
+                    box.Items.Filter = new Predicate<object>((o) =>
+                    {
+                        CulturePicker cp = (CulturePicker)o;
+                        return this.IsMatch(cp.CurrencySymbol, symbol);
+                    });
+                }
+
+                var name = this.CurrenciesDataGrid.GetUncommittedColumnText(row, "CultureCode");
+                if (string.IsNullOrEmpty(name) && string.IsNullOrEmpty(c.CultureCode))
+                {
+                    if (!string.IsNullOrEmpty(symbol))
+                    {
+                        // provide a default lookup based on symbol.
+                        var ci = Currency.GetCultureForCurrency(symbol);
+                        if (ci != null)
+                        {
+                            box.Text = ci.Name;
+                        }
+                    }
+                }
+                else
+                {
+                    // auto select the matching item (DisplayMemberPath doesn't seem to be working)
+                    foreach (CulturePicker ci in box.ItemsSource)
+                    {
+                        if (ci.CultureCode == c.CultureCode && (box.Items.Filter == null || box.Items.Filter(ci)))
+                        {
+                            box.SelectedItem = ci;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ComboBoxCultureInfo_FilterChanged(object sender, RoutedEventArgs e)
+        {
+            FilteringComboBox combo = sender as FilteringComboBox;
+            combo.Items.Filter = new Predicate<object>((o) =>
+            {
+                CulturePicker cp = (CulturePicker)o;
+                return this.IsMatch(cp.CurrencySymbol, combo.Filter) || this.IsMatch(cp.CultureCode, combo.Filter) || this.IsMatch(cp.DisplayName, combo.Filter);
+            });
+        }
+
+        private Boolean IsMatch(string value, string textToMatch)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+            return value.Contains(textToMatch, StringComparison.OrdinalIgnoreCase);
+        }
 
         /// <summary>
         /// Manages the collection of securities displayed in the grid.
@@ -246,6 +393,7 @@ namespace Walkabout.Views
                 {
                     return filterToken.MatchSubstring(item.Name) ||
                         filterToken.MatchSubstring(item.Symbol) ||
+                        filterToken.MatchSubstring(item.CultureCode) ||
                         filterToken.MatchDecimal(item.Ratio) ||
                         filterToken.MatchDecimal(item.LastRatio);
                 }
@@ -274,8 +422,6 @@ namespace Walkabout.Views
             }
         }
 
-
-
         #region IView
 
         private MyMoney money;
@@ -298,14 +444,11 @@ namespace Walkabout.Views
                     this.ShowCurrencies();
                 }
             }
-
         }
-
 
         public void ActivateView()
         {
             this.Focus();
-            this.Money = this.money;
         }
 
         public event EventHandler BeforeViewStateChanged;
@@ -505,4 +648,6 @@ namespace Walkabout.Views
         }
 
     }
+
 }
+

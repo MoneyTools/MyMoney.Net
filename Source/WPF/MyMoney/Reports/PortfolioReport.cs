@@ -205,6 +205,7 @@ namespace Walkabout.Reports
 
             writer.WriteHeading(heading);
 
+
             Paragraph pheading = this.flowwriter.CurrentParagraph;
 
             DatePicker picker = new DatePicker();
@@ -215,6 +216,8 @@ namespace Walkabout.Reports
             picker.DisplayDate = this.reportDate;
             picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
             this.AddInline(pheading, picker);
+
+            this.flowwriter.WriteCurrencyHeading(this.DefaultCurrency);
 
             if (this.reportDate.Date != DateTime.Today)
             {
@@ -273,7 +276,7 @@ namespace Walkabout.Reports
                 this.WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == this.account; }), false, true);
             }
 
-            this.WriteHeaderRow(writer, "Total", this.totalMarketValue.ToString("C"), this.accountGroup != null ? "" : this.totalGainLoss.ToString("C"));
+            this.WriteHeaderRow(writer, "Total", this.GetFormattedNormalizedAmount(this.totalMarketValue), this.accountGroup != null ? "" : this.GetFormattedNormalizedAmount(this.totalGainLoss));
             writer.EndTable();
 
             writer.EndCell();
@@ -331,7 +334,7 @@ namespace Walkabout.Reports
                 }
             }
 
-            writer.WriteParagraph("Generated for " + this.reportDate.ToLongDateString(), System.Windows.FontStyles.Italic, System.Windows.FontWeights.Normal, System.Windows.Media.Brushes.Gray);
+            this.WriteTrailer(writer, this.reportDate);
         }
 
         private void Picker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
@@ -619,7 +622,7 @@ namespace Walkabout.Reports
                             UserData = account
                         });
 
-                        this.WriteSummaryRow(writer, color, caption, balance.ToString("C"), null);
+                        this.WriteSummaryRow(writer, color, caption, this.GetFormattedNormalizedAmount(balance), null);
                         total += balance;
                     }
                 }
@@ -711,7 +714,7 @@ namespace Walkabout.Reports
                     {
                         caption = "    " + Security.GetSecurityTypeCaption(st);
                     }
-                    this.WriteSummaryRow(writer, color, caption, marketValue.ToString("C"), gainLoss.ToString("C"));
+                    this.WriteSummaryRow(writer, color, caption, this.GetFormattedNormalizedAmount(marketValue), this.GetFormattedNormalizedAmount(gainLoss));
                     rowCount++;
                 }
 
@@ -730,7 +733,7 @@ namespace Walkabout.Reports
                     Color = color
                 });
 
-                this.WriteSummaryRow(writer, color, "Cash", cashBalance.ToString("C"), "");
+                this.WriteSummaryRow(writer, color, "Cash", this.GetFormattedNormalizedAmount(cashBalance), "");
 
                 rowCount++;
                 totalSectionMarketValue += cashBalance;
@@ -738,7 +741,7 @@ namespace Walkabout.Reports
 
             if (wroteSectionHeader && subtotal && rowCount > 1)
             {
-                this.WriteSummaryRow(writer, Colors.Transparent, "    SubTotal", totalSectionMarketValue.ToString("C"), totalSectionGainValue.ToString("C"));
+                this.WriteSummaryRow(writer, Colors.Transparent, "    SubTotal", this.GetFormattedNormalizedAmount(totalSectionMarketValue), this.GetFormattedNormalizedAmount(totalSectionGainValue));
             }
 
             this.totalMarketValue += totalSectionMarketValue;
@@ -869,7 +872,7 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
-        private static void WriteRow(IReportWriter writer, string name, decimal balance)
+        private void WriteRow(IReportWriter writer, string name, decimal balance)
         {
             writer.StartRow();
             writer.StartCell();
@@ -877,7 +880,7 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteNumber(balance.ToString("C"));
+            writer.WriteNumber(this.GetFormattedNormalizedAmount(balance));
             writer.EndCell();
 
             writer.EndRow();

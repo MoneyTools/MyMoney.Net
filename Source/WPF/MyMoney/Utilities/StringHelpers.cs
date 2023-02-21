@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Text;
 
 namespace Walkabout.Utilities
@@ -140,6 +141,21 @@ namespace Walkabout.Utilities
                 }
             }
             return sb.ToString();
+        }
+
+        public static CultureInfo GetDefaultCultureInfo(string cultureName, string fallback = "en-US")
+        {
+            CultureInfo culture;
+            try
+            {
+                culture = CultureInfo.GetCultureInfo(cultureName);
+            }
+            catch
+            {
+                // If all fails default back to USD
+                culture = CultureInfo.GetCultureInfo(fallback);
+            }
+            return culture;
         }
     }
 

@@ -2144,7 +2144,7 @@ namespace Walkabout.Data
         public void ReadCurrencies(Currencies currencies, MyMoney money)
         {
             currencies.Clear();
-            IDataReader reader = this.ExecuteReader("SELECT Id,Symbol,Name,Ratio,LastRatio FROM Currencies");
+            IDataReader reader = this.ExecuteReader("SELECT Id,Symbol,Name,Ratio,LastRatio,CultureCode FROM Currencies");
             currencies.BeginUpdate(false);
 
             while (reader.Read())
@@ -2162,6 +2162,15 @@ namespace Walkabout.Data
                 if (!reader.IsDBNull(4))
                 {
                     s.LastRatio = reader.GetDecimal(4);
+                }
+
+                if (reader.IsDBNull(5))
+                {
+                    s.CultureCode = "en-US";
+                }
+                else
+                {
+                    s.CultureCode = ReadDbString(reader, 5);
                 }
 
                 s.OnUpdated();
@@ -2190,17 +2199,19 @@ namespace Walkabout.Data
                     sb.Append(string.Format(",Name='{0}'", DBString(s.Name)));
                     sb.Append(string.Format(",Ratio={0}", s.Ratio));
                     sb.Append(string.Format(",LastRatio={0}", s.LastRatio));
+                    sb.Append(string.Format(",CultureCode='{0}'", DBString(s.CultureCode)));
                     sb.AppendLine(string.Format(" WHERE Id={0};", s.Id));
                 }
                 else if (s.IsInserted)
                 {
                     sb.AppendLine("-- updating Currencies : " + s.Name);
-                    sb.Append("INSERT INTO Currencies VALUES (");
+                    sb.Append("INSERT INTO Currencies (Id,Symbol,Name,Ratio,LastRatio,CultureCode) VALUES (");
                     sb.Append(string.Format("{0}", s.Id.ToString()));
-                    sb.Append(string.Format(",'{0}'", DBString(s.Name)));
                     sb.Append(string.Format(",'{0}'", DBString(s.Symbol)));
+                    sb.Append(string.Format(",'{0}'", DBString(s.Name)));
                     sb.Append(string.Format(",{0}", s.Ratio));
                     sb.Append(string.Format(",{0}", s.LastRatio));
+                    sb.Append(string.Format(",'{0}'", DBString(s.CultureCode)));
                     sb.AppendLine(");");
                 }
                 else if (s.IsDeleted)
@@ -2301,7 +2312,7 @@ namespace Walkabout.Data
                 else if (s.IsInserted)
                 {
                     sb.AppendLine("-- inserting Securities : " + s.Name);
-                    sb.Append("INSERT INTO Securities VALUES (");
+                    sb.Append("INSERT INTO Securities (Id,Name,Symbol,Price,LastPrice,CuspId,SecurityType,Taxable,PriceDate) VALUES (");
                     sb.Append(string.Format("{0}", s.Id.ToString()));
                     sb.Append(string.Format(",'{0}'", DBString(s.Name)));
                     sb.Append(string.Format(",'{0}'", DBString(s.Symbol)));
@@ -2394,7 +2405,7 @@ namespace Walkabout.Data
                     if (s.Security != null)
                     {
                         sb.AppendLine("-- inserting StockSplits for : " + s.Security.Name);
-                        sb.Append("INSERT INTO StockSplits VALUES (");
+                        sb.Append("INSERT INTO StockSplits (Id,Date,Security,Numerator,Denominator) VALUES (");
                         sb.Append(string.Format("{0}", s.Id.ToString()));
                         sb.Append(string.Format(",{0}", DBDateTime(s.Date)));
                         sb.Append(string.Format(",{0}", s.Security.Id));
