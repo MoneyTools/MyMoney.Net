@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -369,12 +370,38 @@ namespace Walkabout.Dialogs
             {
                 this.theAccount.OnlineAccount = null;
             }
-            this.theAccount.Currency = this.editingAccount.Currency;
+            var currency = this.editingAccount.Currency;
+            this.theAccount.Currency = currency;
             this.theAccount.WebSite = this.editingAccount.WebSite;
             this.theAccount.Flags = this.editingAccount.Flags;
             this.theAccount.ReconcileWarning = this.editingAccount.ReconcileWarning;
             this.theAccount.LastSync = this.editingAccount.LastSync;
 
+            if (!string.IsNullOrEmpty(currency))
+            {
+                var c = this.money.Currencies.FindCurrency(currency);
+                if (c == null)
+                {
+                    c = new Data.Currency() { Symbol = currency };
+                    c.Ratio = 1;
+                    var found = (from ci in Walkabout.WpfConverters.CultureHelpers.CurrencyCultures
+                                 where ci.CurrencySymbol == currency
+                                 select ci).FirstOrDefault();
+                    if (found != null)
+                    {
+                        c.Name = found.DisplayName;
+                        if (currency == "USD")
+                        {
+                            c.CultureCode = "en-US";
+                        }
+                        else
+                        {
+                            c.CultureCode = found.CultureCode;
+                        }
+                    }
+                    this.money.Currencies.AddCurrency(c);
+                }
+            }
             this.DialogResult = true;
         }
 

@@ -715,7 +715,6 @@ namespace Walkabout.WpfConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // value should be a CulturePicker instance, and the 
             return value;
         }
 

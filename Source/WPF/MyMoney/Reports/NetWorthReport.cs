@@ -32,7 +32,7 @@ namespace Walkabout.Reports
         public event EventHandler<SecurityGroup> SecurityDrillDown;
         public event EventHandler<AccountGroup> CashBalanceDrillDown;
 
-        public NetWorthReport(FlowDocumentView view, MyMoney money, StockQuoteCache cache) : base(money.Currencies.DefaultCurrency)
+        public NetWorthReport(FlowDocumentView view, MyMoney money, StockQuoteCache cache)
         {
             this.view = view;
             this.myMoney = money;
@@ -56,7 +56,6 @@ namespace Walkabout.Reports
                     Paragraph heading = fwriter.CurrentParagraph;
 
                     fwriter.WriteCurrencyHeading(this.DefaultCurrency);
-
 
                     DatePicker picker = new DatePicker();
                     // byYearCombo.SelectionChanged += OnYearChanged;

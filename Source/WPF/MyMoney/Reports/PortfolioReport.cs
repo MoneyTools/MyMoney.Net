@@ -46,7 +46,7 @@ namespace Walkabout.Reports
         /// <param name="account">Optional account for single account portfolio</param>
         /// <param name="serviceProvider">Required to access additional services</param>
         /// <param name="asOfDate">The date to compute the portfolio balances to</param>
-        public PortfolioReport(FlowDocumentView view, MyMoney money, Account account, IServiceProvider serviceProvider, DateTime asOfDate) : base(money.Currencies.DefaultCurrency)
+        public PortfolioReport(FlowDocumentView view, MyMoney money, Account account, IServiceProvider serviceProvider, DateTime asOfDate)
         {
             this.myMoney = money;
             this.account = account;

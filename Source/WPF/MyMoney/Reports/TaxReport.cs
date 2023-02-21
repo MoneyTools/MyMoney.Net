@@ -28,7 +28,7 @@ namespace Walkabout.Reports
         private readonly int fiscalYearStart;
         private const string FiscalPrefix = "FY ";
 
-        public TaxReport(FlowDocumentView view, MyMoney money, int fiscalYearStart) : base(money.Currencies.DefaultCurrency)
+        public TaxReport(FlowDocumentView view, MyMoney money, int fiscalYearStart)
         {
             this.fiscalYearStart = fiscalYearStart;
             this.view = view;

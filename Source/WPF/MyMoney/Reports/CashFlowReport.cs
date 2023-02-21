@@ -102,7 +102,7 @@ namespace Walkabout.Reports
         private List<string> columns;
         private readonly IServiceProvider serviceProvider;
 
-        public CashFlowReport(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart) : base(money.Currencies.DefaultCurrency)
+        public CashFlowReport(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart)
         {
             this.myMoney = money;
             this.fiscalYearStart = fiscalYearStart;

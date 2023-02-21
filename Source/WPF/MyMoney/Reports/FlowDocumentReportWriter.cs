@@ -175,7 +175,10 @@ namespace Walkabout.Reports
 
         public void WriteCurrencyHeading(Currency currency)
         {
-            this.WriteHeading("Currency " + currency.Symbol);
+            if (currency != null)
+            {
+                this.WriteHeading("Currency " + currency.Symbol);
+            }
         }
 
         public void AddInline(Paragraph p, UIElement childUIElement)

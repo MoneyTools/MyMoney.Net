@@ -29,7 +29,7 @@ namespace Walkabout.Taxes
         private Dictionary<Category, List<Transaction>> transactionsByCategory;
         private const string FiscalPrefix = "FY ";
 
-        public W2Report(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart) : base(money.Currencies.DefaultCurrency)
+        public W2Report(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart)
         {
             this.myMoney = money;
             this.fiscalYearStart = fiscalYearStart;

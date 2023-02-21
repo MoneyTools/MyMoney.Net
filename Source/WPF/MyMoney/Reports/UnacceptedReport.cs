@@ -12,7 +12,7 @@ namespace Walkabout.Reports
     {
         private readonly MyMoney myMoney;
 
-        public UnacceptedReport(MyMoney money) : base(money.Currencies.DefaultCurrency)
+        public UnacceptedReport(MyMoney money)
         {
             this.myMoney = money;
         }

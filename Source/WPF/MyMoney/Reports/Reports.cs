@@ -21,11 +21,6 @@ namespace Walkabout.Reports
         private Currency currency;
         private CultureInfo currencyCulture;
 
-        public Report(Currency defaultCurrency)
-        {
-            this.DefaultCurrency = defaultCurrency;
-        }
-
         public abstract Task Generate(IReportWriter writer);
 
         public virtual void Export(string filename)
@@ -116,7 +111,9 @@ namespace Walkabout.Reports
 
         public string GetFormattedNormalizedAmount(decimal amount, int decimalPlace = 2)
         {
-            amount /= this.currency.Ratio;
+            var ratio = this.currency.Ratio;
+            if (ratio == 0) { ratio = 1; }
+            amount /= ratio;
             return this.GetFormattedAmount(amount, decimalPlace);
         }
 
