@@ -5,9 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Walkabout.Controls"
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
-             xmlns:c2="clr-namespace:Walkabout.Views"
-             xmlns:views="clr-namespace:Walkabout.Views"
              xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:views="Walkabout.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -46,8 +45,8 @@
         </Style>
 
         <c:NullableValueConverter x:Key="NullableValueConverter" />
-        <c2:CulturePickerConverter x:Key="CulturePickerConverter" />
-
+        <c:CulturePickerConverter x:Key="CulturePickerConverter" />
+        <c:CultureHelpers x:Key="CultureHelpers"/>
 
         <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
             <Setter Property="IsEditable" Value="True"/>
@@ -58,27 +57,56 @@
             <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
         </Style>
 
+        <Style x:Key="CulturePickerComboStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource GridComboStyle}">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch" MinWidth="500">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition MinWidth="300" Width="*"/>
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition MinWidth="40"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Column="0" Content="{Binding CurrencySymbol}" HorizontalAlignment="Left" />
+                            <Label Grid.Column="1" Content="{Binding DisplayName}" HorizontalAlignment="Left" MinWidth="400" Margin="10,0"/>
+                            <Image Grid.Column="2" Source="{Binding CountryFlag}" HorizontalAlignment="Center"/>
+                            <Label Grid.Column="3" Content="{Binding CultureCode}" HorizontalAlignment="Right" Margin="10,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <!-- Symbol -->
         <DataTemplate x:Key="myTemplateSymbol">
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Path=Symbol, Converter={StaticResource NullableValueConverter}}" />
+                <TextBlock Text="{Binding Path=Symbol, Converter={StaticResource NullableValueConverter}}"
+                      ToolTip="Standard 3 letter currency code" />
             </Border>
         </DataTemplate>
 
 
         <DataTemplate x:Key="myTemplateSymbolEdit">
-            <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
-                      SelectedItem="{Binding Symbol, Mode=TwoWay, Converter={StaticResource NullableValueConverter}}"
-                      ItemsSource="{Binding Path=CurrencySymbols}"
-                     >
-                <ComboBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <VirtualizingStackPanel />
-                    </ItemsPanelTemplate>
-                </ComboBox.ItemsPanel>
-            </local:FilteringComboBox>
+            <local:FilteringComboBox Style="{StaticResource CulturePickerComboStyle}"
+                      ToolTip="Standard 3 letter currency code"
+                      SelectedItem="{Binding Symbol, Mode=TwoWay, Converter={StaticResource CulturePickerConverter}, ConverterParameter=CurrencySymbol}"
+                      ItemsSource="{Binding Path=CurrencyCultures, Source={StaticResource CultureHelpers }}" 
+                      GotFocus="ComboBoxForSymbol_GotFocus"
+                      DisplayMemberPath="CurrencySymbol" 
+                      FilterChanged="ComboBoxCultureInfo_FilterChanged" 
+                      IsTextSearchCaseSensitive="False"
+                     />
+
         </DataTemplate>
 
 
@@ -86,16 +114,21 @@
         <DataTemplate x:Key="myTemplateName">
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Path=Name, Converter={StaticResource NullableValueConverter}}" />
+                <TextBlock Text="{Binding Path=Name, Converter={StaticResource NullableValueConverter}}" 
+                      ToolTip="Full name of the currency"/>
             </Border>
         </DataTemplate>
 
 
         <DataTemplate x:Key="myTemplateNameEdit">
-            <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
-                      SelectedItem="{Binding Name, Mode=TwoWay, Converter={StaticResource NullableValueConverter}}"
-                      ItemsSource="{Binding Path=CurrencyNames}"
+            <local:FilteringComboBox Style="{StaticResource CulturePickerComboStyle}"
+                      ToolTip="Full name of the currency"
+                      SelectedItem="{Binding Name, Mode=TwoWay, Converter={StaticResource CulturePickerConverter}, ConverterParameter=DisplayName}"
+                      ItemsSource="{Binding Path=CurrencyCultures, Source={StaticResource CultureHelpers }}" 
                       GotFocus="ComboBoxForName_GotFocus"
+                      DisplayMemberPath="DisplayName" 
+                      FilterChanged="ComboBoxCultureInfo_FilterChanged" 
+                      IsTextSearchCaseSensitive="False"
                      >
                 <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -109,46 +142,21 @@
         <DataTemplate x:Key="myTemplateCultureCode">
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding CultureCode, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top" />
+                <TextBlock Text="{Binding CultureCode, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top" 
+                           ToolTip="Standard language code"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateCultureCodeEdit" >
-            <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
-                      SelectedItem="{Binding CultureCode, Mode=TwoWay, 
-                                    Converter={StaticResource CulturePickerConverter}}"
-                      ItemsSource="{Binding Path=CurrencyCultures}" 
-                      DisplayMemberPath="CultureInfoName" 
+            <local:FilteringComboBox Style="{StaticResource CulturePickerComboStyle}"
+                      ToolTip="Standard language code"
+                      SelectedItem="{Binding CultureCode, Mode=TwoWay, Converter={StaticResource CulturePickerConverter}, ConverterParameter=CultureCode}"
+                      ItemsSource="{Binding Path=CurrencyCultures, Source={StaticResource CultureHelpers}}" 
+                      DisplayMemberPath="CultureCode" 
                       FilterChanged="ComboBoxCultureInfo_FilterChanged" 
                       IsTextSearchCaseSensitive="False"
                       GotFocus="ComboBoxForCultureCode_GotFocus"
-                     >
-
-                <ComboBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <VirtualizingStackPanel />
-                    </ItemsPanelTemplate>
-                </ComboBox.ItemsPanel>
-
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch" MinWidth="500">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="30"/>
-                                <ColumnDefinition MinWidth="300" Width="*"/>
-                                <ColumnDefinition Width="30" />
-                                <ColumnDefinition MinWidth="40"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Label Grid.Column="0" Content="{Binding CurrencySymbol}" HorizontalAlignment="Left" />
-                            <Label Grid.Column="1" Content="{Binding DisplayName}" HorizontalAlignment="Left" MinWidth="400" Margin="10,0"/>
-                            <Image Grid.Column="2" Source="{Binding CountryFlag}" HorizontalAlignment="Center"/>
-                            <Label Grid.Column="3" Content="{Binding CultureInfoName}" HorizontalAlignment="Right"  FontWeight="Bold" Margin="10,0"/>
-                        </Grid>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-
-            </local:FilteringComboBox>
+                                     />
         </DataTemplate>
 
         <!-- Ratio -->
