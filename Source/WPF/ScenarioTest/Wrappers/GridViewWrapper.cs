@@ -41,10 +41,7 @@ namespace Walkabout.Tests.Wrappers
         internal void CommitEdit()
         {
             var selection = this.Selection;
-            if (selection != null)
-            {
-                selection.CommitEdit();
-            }
+            selection?.CommitEdit();
         }
 
         internal void BeginEdit()
@@ -114,7 +111,7 @@ namespace Walkabout.Tests.Wrappers
 
         public List<GridViewRowWrapper> GetItems(bool includePlaceHolder = true)
         {
-            List<GridViewRowWrapper> list = new List<GridViewRowWrapper>();
+            List<GridViewRowWrapper> list = new();
             int index = 0;
             foreach (AutomationElement e in this.Control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
             {
@@ -207,7 +204,6 @@ namespace Walkabout.Tests.Wrappers
                 AutomationElement e = TreeWalker.RawViewWalker.GetFirstChild(header);
                 if (e != null)
                 {
-                    var name = e.Current.Name;
                     var thumb = TreeWalker.RawViewWalker.GetNextSibling(e);
                     if (thumb != null && !thumb.Current.IsOffscreen)
                     {
@@ -318,9 +314,11 @@ namespace Walkabout.Tests.Wrappers
         {
             var cell = this.GetCell(name);
             string s = cell.GetValue();
-            decimal d;
-            decimal.TryParse(s, out d);
-            return d;
+            if (decimal.TryParse(s, out decimal d))
+            {
+                return d;
+            }
+            return 0;
         }
 
         protected void SetDecimalColumn(string name, decimal value)
@@ -449,7 +447,7 @@ namespace Walkabout.Tests.Wrappers
     {
         private GridViewRowWrapper row;
         private AutomationElement cell;
-        private GridViewColumnWrapper column;
+        private readonly GridViewColumnWrapper column;
 
         public GridViewCellWrapper(GridViewRowWrapper row, AutomationElement cell, GridViewColumnWrapper column)
         {
@@ -460,7 +458,6 @@ namespace Walkabout.Tests.Wrappers
 
         internal AutomationElement GetContent(bool forEditing)
         {
-            string className = this.cell.Current.ClassName;
             if (!forEditing)
             {
                 this.Refresh();
@@ -539,7 +536,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 name = e.Current.ClassName;
                 e = TreeWalker.RawViewWalker.GetNextSibling(e);
-                if (e != null && e.Current.ClassName == "TransactionAmountControl")
+                if (e != null && name == "TransactionAmountControl")
                 {
                     e = TreeWalker.RawViewWalker.GetFirstChild(e);
                 }
@@ -561,18 +558,12 @@ namespace Walkabout.Tests.Wrappers
             {
                 try
                 {
-                    switch (this.column.DataType)
+                    return this.column.DataType switch
                     {
-                        case "Button":
-                        case "Custom":
-                            return "";
-                        case "TextBox":
-                        case "DatePicker":
-                        case "ComboBox":
-                            return this.GetCellValue();
-                        default:
-                            throw new Exception("Unrecognized datatype: " + this.column.DataType);
-                    }
+                        "Button" or "Custom" => "",
+                        "TextBox" or "DatePicker" or "ComboBox" => this.GetCellValue(),
+                        _ => throw new Exception("Unrecognized datatype: " + this.column.DataType),
+                    };
                 }
                 catch
                 {
@@ -650,8 +641,7 @@ namespace Walkabout.Tests.Wrappers
         {
             var e = this.GetContent(true);
 
-            object obj;
-            if (e.TryGetCurrentPattern(ValuePattern.Pattern, out obj))
+            if (e.TryGetCurrentPattern(ValuePattern.Pattern, out object obj))
             {
                 ValuePattern vp = (ValuePattern)obj;
                 vp.SetValue(value);
@@ -667,8 +657,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 AutomationElement e = this.GetContent(true);
 
-                object obj;
-                if (e.TryGetCurrentPattern(InvokePattern.Pattern, out obj))
+                if (e.TryGetCurrentPattern(InvokePattern.Pattern, out object obj))
                 {
                     InvokePattern invoke = (InvokePattern)obj;
                     invoke.Invoke();
@@ -740,7 +729,7 @@ namespace Walkabout.Tests.Wrappers
 
     public class CompoundGridViewColumnWrapper : GridViewColumnWrapper
     {
-        private readonly List<GridViewColumnWrapper> columns = new List<GridViewColumnWrapper>();
+        private readonly List<GridViewColumnWrapper> columns = new();
 
         public CompoundGridViewColumnWrapper(string header, params GridViewColumnWrapper[] cols)
             : base(header)
@@ -773,7 +762,7 @@ namespace Walkabout.Tests.Wrappers
 
     public class GridViewColumnWrappers
     {
-        private readonly List<GridViewColumnWrapper> columns = new List<GridViewColumnWrapper>();
+        private readonly List<GridViewColumnWrapper> columns = new();
 
         public GridViewColumnWrappers(params GridViewColumnWrapper[] cols)
         {
@@ -799,8 +788,7 @@ namespace Walkabout.Tests.Wrappers
         {
             foreach (GridViewColumnWrapper tc in this.columns)
             {
-                CompoundGridViewColumnWrapper cc = tc as CompoundGridViewColumnWrapper;
-                if (cc != null)
+                if (tc is CompoundGridViewColumnWrapper cc)
                 {
                     GridViewColumnWrapper inner = cc.GetColumn(name);
                     if (inner != null)
@@ -820,7 +808,7 @@ namespace Walkabout.Tests.Wrappers
         {
             if (index < 0 || index >= this.columns.Count)
             {
-                throw new ArgumentOutOfRangeException("index");
+                throw new ArgumentOutOfRangeException(nameof(index));
             }
             return this.columns[index];
         }

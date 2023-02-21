@@ -85,10 +85,11 @@ namespace Walkabout.Controls
                     });
 
                     // Ensure that USD is always an option
-                    if(!this.comboBoxCurrency.Items.Contains("USD")){
-                        this.comboBoxCurrency.Items.Insert(0,"USD");
+                    if (!this.comboBoxCurrency.Items.Contains("USD"))
+                    {
+                        this.comboBoxCurrency.Items.Insert(0, "USD");
                     }
-                    
+
                     this.comboBoxCurrency.SelectedIndex = this.comboBoxCurrency.Items.IndexOf(this.databaseSettings.DisplayCurrency);
 
                     Visibility passwordVisibility = Visibility.Visible;
