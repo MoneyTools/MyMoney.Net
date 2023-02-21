@@ -12,6 +12,7 @@ using Walkabout.Data;
 using Walkabout.Tests;
 using Walkabout.Tests.Interop;
 using Walkabout.Tests.Wrappers;
+using Walkabout.WpfConverters;
 using Brushes = System.Windows.Media.Brushes;
 using Clipboard = System.Windows.Clipboard;
 
@@ -1104,7 +1105,7 @@ to make sure attachments work.");
                 throw new Exception("Cannot select a transaction right now");
             }
 
-            var selection = this.transactions.Select(this.random.Next(0, this.transactions.CountNoPlaceholder));
+            var selection = (TransactionViewRow)this.transactions.Select(this.random.Next(0, this.transactions.CountNoPlaceholder));
             if (selection == null)
             {
                 throw new Exception("Cannot select a transaction right now");
@@ -1124,7 +1125,7 @@ to make sure attachments work.");
             if (this.transactions != null)
             {
                 int i = this.random.Next(0, this.transactions.Columns.Count);
-                TransactionViewColumn column = this.transactions.Columns.GetColumn(i);
+                GridViewColumnWrapper column = this.transactions.Columns.GetColumn(i);
 
                 this.transactions.SortBy(column);
             }
@@ -1154,12 +1155,12 @@ to make sure attachments work.");
             {
                 throw new Exception("Cannot edit a transaction right now");
             }
-            var selection = this.transactions.AddNew();
+            var selection = (TransactionViewRow)this.transactions.AddNew();
             this.VerifySelection(selection);
             this.dataChangedSinceExport = true;
         }
 
-        private TransactionViewRow VerifySelection(TransactionViewRow selection)
+        private T VerifySelection<T>(T selection) where T : GridViewRowWrapper
         {
             // Sometimes AddNew results in an editable row, but with no selection
             // So we read the screen to figure out if this is happening here.
@@ -1169,7 +1170,7 @@ to make sure attachments work.");
                 var bounds = selection.Bounds;
                 if (bounds.IsEmpty)
                 {
-                    selection = selection.Refresh();
+                    selection = (T)selection.Refresh();
                 }
 
                 bounds = selection.Bounds;
@@ -1223,14 +1224,14 @@ to make sure attachments work.");
             }
 
             // caller is about to operate on this selection, so make sure it's up to date!            
-            this.selectedTransaction = this.transactions.Selection;
+            this.selectedTransaction = (TransactionViewRow)this.transactions.Selection;
             if (this.selectedTransaction == null)
             {
                 throw new Exception("No selected transaction");
             }
             if (this.selectedTransaction.Bounds.IsEmpty)
             {
-                this.selectedTransaction = this.selectedTransaction.Refresh();
+                this.selectedTransaction = (TransactionViewRow)this.selectedTransaction.Refresh();
             }
             if (this.selectedTransaction.Bounds.IsEmpty)
             {
@@ -1246,7 +1247,7 @@ to make sure attachments work.");
             }
 
             // caller is about to operate on this selection, so make sure it's up to date!            
-            this.selectedTransaction = this.transactions.Selection;
+            this.selectedTransaction = (TransactionViewRow)this.transactions.Selection;
             if (this.selectedTransaction == null)
             {
                 this.SelectTransaction();
@@ -1456,7 +1457,7 @@ to make sure attachments work.");
                 // Hmmm, sometimes commit clears the selection, so try and bring it back.
                 var lastRow = this.transactions.GetNewRow();
                 lastRow.Select();
-                this.selectedTransaction = lastRow;
+                this.selectedTransaction = (TransactionViewRow)lastRow;
             }
 
             var transaction = this.window.FindTransactionGrid().GetSelectedTransactionProxy();
@@ -1502,7 +1503,7 @@ to make sure attachments work.");
             {
                 this.WriteLine("- NavigateTransfer");
                 this.transactions.NavigateTransfer();
-                this.selectedTransaction = this.transactions.Selection;
+                this.selectedTransaction = (TransactionViewRow)this.transactions.Selection;
                 this.dataChangedSinceExport = true;
             }
         }
@@ -1517,6 +1518,16 @@ to make sure attachments work.");
 
         private void AreEqual(decimal expected, decimal actual, string name)
         {
+            if (expected != actual)
+            {
+                throw new Exception(string.Format("{0} does not match, expected {1}, but found '{2}'", name, expected, actual));
+            }
+        }
+
+        private void AreClose(decimal expected, decimal actual, string name, int decimalPlaces)
+        {
+            expected = Math.Round(expected, decimalPlaces);
+            actual = Math.Round(actual, decimalPlaces);
             if (expected != actual)
             {
                 throw new Exception(string.Format("{0} does not match, expected {1}, but found '{2}'", name, expected, actual));
@@ -1643,6 +1654,188 @@ to make sure attachments work.");
         }
 
         #endregion
+
+        #region Currencies View
+        CurrencyViewWrapper currencies;
+        CurrencyViewRowWrapper selectedCurrency;
+        Currency editedCurrency;
+
+        private void CurrenciesView()
+        {
+            // group
+            this.WriteLine("CurrenciesView");
+        }
+
+        private void ViewCurrencies()
+        {
+            this.WriteLine("- ViewCurrencies");
+            this.currencies = this.window.ViewCurrencies();
+            this.window.WaitForInputIdle(200);
+
+            if (this.currencies == null || !this.currencies.HasCurrencies)
+            {
+                // then this might be an empty read-only view which we cannot edit anyway, so do nothing.
+                return;
+            }
+
+            this.EnsureSelectedCurrency();
+        }
+
+        private void EnsureSelectedCurrency()
+        {
+            if (this.currencies == null)
+            {
+                return;
+            }
+
+            // caller is about to operate on this selection, so make sure it's up to date!            
+            this.selectedCurrency = (CurrencyViewRowWrapper)this.currencies.Selection;
+            if (this.selectedCurrency == null)
+            {
+                this.SelectCurrency();
+                if (this.selectedCurrency == null)
+                {
+                    throw new Exception("Cannot find any currency to select!");
+                }
+            }
+        }
+
+        private void SelectCurrency()
+        {
+            this.WriteLine("- SelectCurrency");
+            this.window.CloseReport();
+            if (this.currencies == null || !this.currencies.HasCurrencies)
+            {
+                throw new Exception("Cannot select a currency right now");
+            }
+
+            var selection = (CurrencyViewRowWrapper)this.currencies.Select(this.random.Next(0, this.transactions.CountNoPlaceholder));
+            if (selection == null)
+            {
+                throw new Exception("Cannot select a currency right now");
+            }
+            selection.ScrollIntoView();
+            Thread.Sleep(30);
+            selection.Focus();
+            this.selectedCurrency = selection;
+        }
+
+        private void AddNewCurrency()
+        {
+            this.WriteLine("- AddNewCurrency");
+            if (this.currencies == null)
+            {
+                throw new Exception("Cannot edit a currency right now");
+            }
+            var selection = (CurrencyViewRowWrapper)this.currencies.AddNew();
+            this.selectedCurrency = selection;
+        }
+
+        private void EditSelectedCurrency()
+        {
+            this.WriteLine("- EditSelectedCurrency");
+            this.editedCurrency = this.GetNextCurrency();
+        }
+
+        private void EditCurrencySymbol()
+        {
+            this.WriteLine("  - EditCurrencySymbol");
+            this.AssertSelectedCurrency();
+            this.selectedCurrency.SetSymbol(this.editedCurrency.Symbol);
+        }
+
+        private void EditCurrencyName()
+        {
+            this.WriteLine("  - EditCurrencyName");
+            this.AssertSelectedCurrency();
+            this.selectedCurrency.SetName(this.editedCurrency.Name);
+        }
+        private void EditCurrencyCultureCode()
+        {
+            this.WriteLine("  - EditCurrencyCultureCode");
+            this.AssertSelectedCurrency();
+            this.selectedCurrency.SetCultureCode(this.editedCurrency.CultureCode);
+        }
+        private void EditCurrencyRatio()
+        {
+            this.WriteLine("  - EditCurrencyRatio");
+            this.AssertSelectedCurrency();
+            this.selectedCurrency.SetRatio(this.editedCurrency.Ratio);
+        }
+
+        private void VerifyNewCurrency()
+        {
+            this.WriteLine("  - VerifyNewCurrency");
+            this.AssertSelectedCurrency();
+
+            var selection = this.selectedCurrency;
+            // commit the edits.
+            this.currencies.CommitEdit();
+            if (this.currencies.Selection == null)
+            {
+                // Hmmm, sometimes commit clears the selection, so try and bring it back.
+                var lastRow = this.currencies.GetNewRow();
+                lastRow.Select();
+                this.selectedCurrency = (CurrencyViewRowWrapper)lastRow;
+            }
+            else
+            {
+                this.selectedCurrency = (CurrencyViewRowWrapper)this.currencies.Selection;
+            }
+
+            Assert.IsNotNull(this.editedCurrency);
+
+            // Verify the onscreen values are correct.
+            this.AreEqual(this.editedCurrency.Symbol, this.selectedCurrency.GetSymbol(), "Symbol");
+            this.AreEqual(this.editedCurrency.Name, this.selectedCurrency.GetName(), "Name");
+            this.AreEqual(this.editedCurrency.CultureCode, this.selectedCurrency.GetCultureCode(), "CultureCode");
+            this.AreClose(this.editedCurrency.Ratio, this.selectedCurrency.GetRatio(), "Ratio", 4);
+
+            this.editedCurrency = null;
+        }
+
+        static List<Currency> CurrencyList = new List<Currency>(new[]
+        {
+            new Currency() { Symbol = "USD", Name = "US Dollar", CultureCode = "chr-US", Ratio=1.0M },
+            new Currency() { Symbol = "AUD", Name = "Australian Dollar", CultureCode = "en-AU", Ratio=0.69M },
+            new Currency() { Symbol = "CAD", Name = "Canadian Dollar", CultureCode = "en-CA", Ratio=0.74M },
+            new Currency() { Symbol = "EUR", Name = "Euro", CultureCode = "en-DE", Ratio=1.07M }
+        });
+
+        Random randomCurrency;
+
+        private Currency GetNextCurrency()
+        {
+            int i = this.currencies.CountNoPlaceholder;
+            if (this.selectedCurrency != null)
+            {
+                i = this.selectedCurrency.Index;
+            }
+            if (i == CurrencyList.Count)
+            {
+                if (randomCurrency == null) randomCurrency = new Random(Environment.TickCount);
+                var bigger = CultureHelpers.CurrencyCultures;
+                while (true)
+                {
+                    var k = randomCurrency.Next(0, bigger.Count);
+                    var n = bigger[k];
+                    if (!CurrencyList.Any(it => it.Symbol == n.CurrencySymbol))
+                    {
+                        var c = new Currency() { Symbol = n.CurrencySymbol, CultureCode = n.CultureCode, Name = n.DisplayName, Ratio = (decimal)randomCurrency.NextDouble() * 2 };
+                        CurrencyList.Add(c);
+                        break;
+                    }
+                }
+            }
+            return CurrencyList[i];
+        }
+
+        private void AssertSelectedCurrency()
+        {
+            Assert.IsNotNull(this.selectedCurrency, "Test bug, should selecet a currency row first");
+        }
+
+        #endregion 
 
         #region Reports
         private void ViewReports()
