@@ -111,15 +111,21 @@ namespace Walkabout.Reports
 
         public string GetFormattedNormalizedAmount(decimal amount, int decimalPlace = 2)
         {
-            var ratio = this.currency.Ratio;
-            if (ratio == 0) { ratio = 1; }
-            amount /= ratio;
+            if (this.currency != null)
+            {
+                var ratio = this.currency.Ratio;
+                if (ratio == 0)
+                {
+                    ratio = 1; 
+                }
+                amount /= ratio;
+            }
             return this.GetFormattedAmount(amount, decimalPlace);
         }
 
         protected void WriteTrailer(IReportWriter writer, DateTime reportDate)
         {
-            if (this.DefaultCurrency.Ratio != 1)
+            if (this.DefaultCurrency != null && this.DefaultCurrency.Ratio != 1)
             {
                 var amount = string.Format(this.CurrencyCulture, "{0:C}", 1 / this.DefaultCurrency.Ratio);
                 var ri = new RegionInfo(this.CurrencyCulture.Name);
