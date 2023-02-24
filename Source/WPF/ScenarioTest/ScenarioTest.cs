@@ -1656,9 +1656,9 @@ to make sure attachments work.");
         #endregion
 
         #region Currencies View
-        CurrencyViewWrapper currencies;
-        CurrencyViewRowWrapper selectedCurrency;
-        Currency editedCurrency;
+        private CurrencyViewWrapper currencies;
+        private CurrencyViewRowWrapper selectedCurrency;
+        private Currency editedCurrency;
 
         private void CurrenciesView()
         {
@@ -1794,15 +1794,14 @@ to make sure attachments work.");
             this.editedCurrency = null;
         }
 
-        static List<Currency> CurrencyList = new List<Currency>(new[]
+        private static List<Currency> CurrencyList = new List<Currency>(new[]
         {
             new Currency() { Symbol = "USD", Name = "US Dollar", CultureCode = "chr-US", Ratio=1.0M },
             new Currency() { Symbol = "AUD", Name = "Australian Dollar", CultureCode = "en-AU", Ratio=0.69M },
             new Currency() { Symbol = "CAD", Name = "Canadian Dollar", CultureCode = "en-CA", Ratio=0.74M },
             new Currency() { Symbol = "EUR", Name = "Euro", CultureCode = "en-DE", Ratio=1.07M }
         });
-
-        Random randomCurrency;
+        private Random randomCurrency;
 
         private Currency GetNextCurrency()
         {
@@ -1813,15 +1812,19 @@ to make sure attachments work.");
             }
             if (i == CurrencyList.Count)
             {
-                if (randomCurrency == null) randomCurrency = new Random(Environment.TickCount);
+                if (this.randomCurrency == null)
+                {
+                    this.randomCurrency = new Random(Environment.TickCount);
+                }
+
                 var bigger = CultureHelpers.CurrencyCultures;
                 while (true)
                 {
-                    var k = randomCurrency.Next(0, bigger.Count);
+                    var k = this.randomCurrency.Next(0, bigger.Count);
                     var n = bigger[k];
                     if (!CurrencyList.Any(it => it.Symbol == n.CurrencySymbol))
                     {
-                        var c = new Currency() { Symbol = n.CurrencySymbol, CultureCode = n.CultureCode, Name = n.DisplayName, Ratio = (decimal)randomCurrency.NextDouble() * 2 };
+                        var c = new Currency() { Symbol = n.CurrencySymbol, CultureCode = n.CultureCode, Name = n.DisplayName, Ratio = (decimal)this.randomCurrency.NextDouble() * 2 };
                         CurrencyList.Add(c);
                         break;
                     }

@@ -258,7 +258,7 @@ namespace Walkabout.Tests.Wrappers
 
             for (int retries = 5; retries > 0; retries--)
             {
-                foreach (AutomationElement e in window.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataGrid)))
+                foreach (AutomationElement e in this.window.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataGrid)))
                 {
                     if (!e.Current.IsOffscreen && e.Current.AutomationId == "CurrenciesDataGrid")
                     {

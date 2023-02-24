@@ -21,7 +21,7 @@ namespace Walkabout.Tests.Wrappers
 
         public AutomationElement Control { get => this.control; set => this.control = value; }
 
-        public virtual GridViewColumnWrappers Columns { get => columns; set => columns = value; }
+        public virtual GridViewColumnWrappers Columns { get => this.columns; set => this.columns = value; }
 
         internal GridViewColumnWrapper GetColumn(string name)
         {
