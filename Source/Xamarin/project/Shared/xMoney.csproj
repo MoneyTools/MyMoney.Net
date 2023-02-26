@@ -19,7 +19,7 @@
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.3" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.7.4" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.5" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Accounts\" />
