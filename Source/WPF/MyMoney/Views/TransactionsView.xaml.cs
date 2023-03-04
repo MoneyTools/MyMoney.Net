@@ -7293,34 +7293,24 @@ namespace Walkabout.Views
         protected override FrameworkElement GenerateEditingElement(DataGridCell cell, object dataItem)
         {
             TransactionAmountControl ctrl = cell.Content as TransactionAmountControl;
-            if (ctrl != null)
-            {
-                ctrl.IsEditing = true;
-                ctrl.Type = this.SortMemberPath;
-            }
-            else
+            if (ctrl == null)
             {
                 ctrl = new TransactionAmountControl();
-                ctrl.IsEditing = true;
-                ctrl.Type = this.SortMemberPath;
             }
-
+            ctrl.IsEditing = true;
+            ctrl.Type = this.SortMemberPath;
             return ctrl;
         }
 
         protected override FrameworkElement GenerateElement(DataGridCell cell, object dataItem)
         {
             TransactionAmountControl ctrl = cell.Content as TransactionAmountControl;
-            if (ctrl != null)
-            {
-                ctrl.IsEditing = false;
-                ctrl.Type = this.SortMemberPath;
-            }
-            else
+            if (ctrl == null)
             {
                 ctrl = new TransactionAmountControl();
-                ctrl.Type = this.SortMemberPath;
             }
+            ctrl.IsEditing = false;
+            ctrl.Type = this.SortMemberPath;
             return ctrl;
         }
 
@@ -7403,12 +7393,12 @@ namespace Walkabout.Views
 
             this.Content = grid;
 
-            DataContextChanged += new DependencyPropertyChangedEventHandler(this.OnDataContextChanged);
-            Unloaded += (s, e) =>
+            this.DataContextChanged += new DependencyPropertyChangedEventHandler(this.OnDataContextChanged);
+            this.Unloaded += (s, e) =>
             {
                 this.OnUnloaded();
             };
-            Loaded += (s, e) =>
+            this.Loaded += (s, e) =>
             {
                 this.OnLoaded();
             };
@@ -7478,7 +7468,7 @@ namespace Walkabout.Views
                 var binding = new Binding(this.Type)
                 {
                     ConverterParameter = "N5",
-                    Converter = new Walkabout.WpfConverters.PreserveDecimalDigitsValueConverter(),
+                    Converter = new PreserveDecimalDigitsValueConverter(),
                     Mode = BindingMode.TwoWay,
                     ValidatesOnDataErrors = true,
                     ValidatesOnExceptions = true
@@ -7773,7 +7763,7 @@ namespace Walkabout.Views
             {
                 if (this.button != null)
                 {
-                    // The button's OnDataCOntextChanged is very expensive, so it is cheaper to just remove
+                    // The button's OnDataContextChanged is very expensive, so it is cheaper to just remove
                     // the button than to try and recycle it since there are usually a lot more rows without
                     // splits than there are with splits.
                     Grid grid = (Grid)this.Content;
