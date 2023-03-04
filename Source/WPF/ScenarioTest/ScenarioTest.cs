@@ -1791,6 +1791,12 @@ to make sure attachments work.");
             this.AreEqual(this.editedCurrency.CultureCode, this.selectedCurrency.GetCultureCode(), "CultureCode");
             this.AreClose(this.editedCurrency.Ratio, this.selectedCurrency.GetRatio(), "Ratio", 4);
 
+            // go back to transactions view.
+            if (this.accounts != null)
+            {
+                this.SelectAccount();
+            }
+
             this.editedCurrency = null;
         }
 
