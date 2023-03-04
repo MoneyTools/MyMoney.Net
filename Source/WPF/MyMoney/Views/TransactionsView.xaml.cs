@@ -1285,6 +1285,10 @@ namespace Walkabout.Views
             get { return this.myMoney; }
             set
             {
+                if (this.myMoney == value)
+                {
+                    return;
+                }
                 if (this.myMoney != null)
                 {
                     this.myMoney.Changed -= new EventHandler<ChangeEventArgs>(this.OnMoneyChanged);

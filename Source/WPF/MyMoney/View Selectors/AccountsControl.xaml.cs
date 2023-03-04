@@ -451,12 +451,15 @@ namespace Walkabout.Views.Controls
 
         // our idea of what is selected.  We only raise SelectionChanged event if this doesn't match.
         private AccountViewModel selected;
+        private AccountViewModel selectingItem;
 
         private void Select(AccountViewModel item)
         {
+            this.selectingItem = item;
             this.listBox1.SelectedItem = item;
             this.listBox1.ScrollIntoView(item);
             this.SetSelected(item);
+            this.selectingItem = null;
         }
 
         private void SetSelected(AccountViewModel item)
@@ -471,7 +474,7 @@ namespace Walkabout.Views.Controls
                 if (this.selected != null)
                 {
                     this.selected.IsSelected = true;
-                    SetHelpKeywordForSelectedItem(item);
+                    this.SetHelpKeywordForSelectedItem(item);
                 }
             }
         }
@@ -510,6 +513,11 @@ namespace Walkabout.Views.Controls
 
         private void OnListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (e.AddedItems.Count > 0 && e.AddedItems[0] == this.selectingItem)
+            {
+                // then this even is in response to a programatic change, not a user click.
+                return;
+            }
             this.delayedActions.CancelDelayedAction("SingleClick");
             object selected = (e.AddedItems.Count > 0) ? e.AddedItems[0] : null;
             this.RaiseSelectionEvent(selected as AccountViewModel, false);
@@ -742,7 +750,7 @@ namespace Walkabout.Views.Controls
         {
             Account a = new Account();
             a.Type = AccountType.Loan;
-            Walkabout.Dialogs.LoanDialog dialog = new Dialogs.LoanDialog(this.MyMoney, a);
+            LoanDialog dialog = new LoanDialog(this.MyMoney, a);
             dialog.Owner = App.Current.MainWindow;
 
             if (dialog.ShowDialog() == true)
