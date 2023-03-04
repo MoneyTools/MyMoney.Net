@@ -51,6 +51,10 @@ namespace Walkabout.Setup
                 if (this.handlers != null)
                 {
                     this.handlers.RemoveHandler(value);
+                    if (!this.handlers.HasListeners)
+                    {
+                        this.handlers = null;
+                    }
                 }
             }
         }

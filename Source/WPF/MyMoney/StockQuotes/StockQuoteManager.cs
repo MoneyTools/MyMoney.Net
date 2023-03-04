@@ -451,6 +451,10 @@ namespace Walkabout.StockQuotes
                 if (this.handlers != null)
                 {
                     this.handlers.RemoveHandler(value);
+                    if (!this.handlers.HasListeners)
+                    {
+                        this.handlers = null;
+                    }
                 }
             }
         }
