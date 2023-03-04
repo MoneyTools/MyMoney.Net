@@ -6,7 +6,7 @@
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
              xmlns:localData="clr-namespace:Walkabout.Data"
              xmlns:help="clr-namespace:Walkabout.Help" d:DataContext="{d:DesignInstance Type=localData:Payees}"
-             help:HelpService.HelpKeyword="Payees"
+             help:HelpService.HelpKeyword="Basics/Payees/"
              mc:Ignorable="d"              
              d:DesignHeight="300" d:DesignWidth="300">
 

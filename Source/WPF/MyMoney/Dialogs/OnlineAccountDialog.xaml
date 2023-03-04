@@ -8,7 +8,7 @@
         xmlns:ofx="clr-namespace:Walkabout.Ofx"
         xmlns:data="clr-namespace:Walkabout.Data"
         xmlns:help="clr-namespace:Walkabout.Help"
-        help:HelpService.HelpKeyword="Online Banking"
+        help:HelpService.HelpKeyword="Accounts/OnlineBanking/"
         xmlns:c="clr-namespace:Walkabout.WpfConverters" 
         xmlns:ui="http://schemas.modernwpf.com/2019"
         Title="Online Account"  

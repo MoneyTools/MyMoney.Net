@@ -2266,7 +2266,7 @@ namespace Walkabout.Views
             this.layout = "InvestmentPortfolioView";
 
             FlowDocumentView view = this.InvestmentPortfolioView;
-            HelpService.SetHelpKeyword(view, "Investment Portfolio");
+            HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
             this.SetActiveAccount(account, null, null, null, null);
             // if we are reconciling then show the positions held at statement date so the stock balances can be reconciled also.
             DateTime reportDate = this.IsReconciling ? this.GetReconiledExclusiveEndDate() : DateTime.Now;
@@ -2285,7 +2285,7 @@ namespace Walkabout.Views
             this.layout = "InvestmentPortfolioView";
 
             FlowDocumentView view = this.InvestmentPortfolioView;
-            HelpService.SetHelpKeyword(view, "Investment Portfolio");
+            HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
             DateTime reportDate = this.IsReconciling ? this.GetReconiledExclusiveEndDate() : DateTime.Now;
             PortfolioReport report = new PortfolioReport(view, this.myMoney, this.ServiceProvider, reportDate, e);
             _ = view.Generate(report);
@@ -3086,19 +3086,19 @@ namespace Walkabout.Views
                 case "TheGrid_BankTransactionDetails":
                     if (this.ActiveAccount != null && this.ActiveAccount.Type == AccountType.Credit)
                     {
-                        HelpService.SetHelpKeyword(this, "Credit Card Accounts");
+                        HelpService.SetHelpKeyword(this, "Accounts/CreditCardAccounts/");
                     }
                     else
                     {
-                        HelpService.SetHelpKeyword(this, "Bank Accounts");
+                        HelpService.SetHelpKeyword(this, "Accounts/BankAccounts/");
                     }
                     break;
                 case "InvestmentPortfolioView":
-                    HelpService.SetHelpKeyword(this.InvestmentPortfolioView, "Investment Portfolio");
+                    HelpService.SetHelpKeyword(this.InvestmentPortfolioView, "Reports/InvestmentPortfolio/");
                     break;
                 case "TheGrid_InvestmentActivity":
                 case "TheGrid_BySecurity":
-                    HelpService.SetHelpKeyword(this, "Investment Accounts");
+                    HelpService.SetHelpKeyword(this, "Accounts/InvestmentAccounts/");
                     break;
                 default:
                     this.ClearValue(HelpService.HelpKeywordProperty);

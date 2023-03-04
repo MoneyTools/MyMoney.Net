@@ -9,7 +9,7 @@
         ui:ThemeManager.IsThemeAware="True"
         Title="Attachments" Height="425" Width="800" 
         xmlns:help="clr-namespace:Walkabout.Help"
-        help:HelpService.HelpKeyword="Attachments">
+        help:HelpService.HelpKeyword="Basics/Attachments/">
     
     <Window.Resources>
         <SolidColorBrush x:Key="ResizerThumbBrush" Color="#E07070A0" u:WpfAnnotations.CodeRef="ResizerThumbBrush" />

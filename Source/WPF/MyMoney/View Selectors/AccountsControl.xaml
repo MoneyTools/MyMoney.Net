@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Walkabout.Views.Controls"
              xmlns:help="clr-namespace:Walkabout.Help"
              xmlns:ui="http://schemas.modernwpf.com/2019"
-             help:HelpService.HelpKeyword="Bank Accounts"
+             help:HelpService.HelpKeyword="Accounts/BankAccounts/"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 

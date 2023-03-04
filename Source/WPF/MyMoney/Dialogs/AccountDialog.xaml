@@ -8,7 +8,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:help="clr-namespace:Walkabout.Help"
         xmlns:c="clr-namespace:Walkabout.Controls"
-        help:HelpService.HelpKeyword="Setup Accounts"
+        help:HelpService.HelpKeyword="Accounts/SetupAccounts/"
         Title="Account" 
         MinHeight="320"
         MinWidth="400"  

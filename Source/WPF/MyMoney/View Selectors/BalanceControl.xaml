@@ -9,7 +9,7 @@
              Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
              xmlns:help="clr-namespace:Walkabout.Help"
              xmlns:ui="http://schemas.modernwpf.com/2019"
-             help:HelpService.HelpKeyword="Balancing Accounts"
+             help:HelpService.HelpKeyword="Accounts/BalancingAccounts/"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="350">
 

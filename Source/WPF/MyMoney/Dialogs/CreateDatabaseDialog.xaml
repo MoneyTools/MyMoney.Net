@@ -6,7 +6,7 @@
         AutomationProperties.AutomationId="CreateDatabaseDialog"
         xmlns:local="clr-namespace:Walkabout.Dialogs"
         xmlns:help="clr-namespace:Walkabout.Help"
-        help:HelpService.HelpKeyword="Setup">
+        help:HelpService.HelpKeyword="Basics/Setup/">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

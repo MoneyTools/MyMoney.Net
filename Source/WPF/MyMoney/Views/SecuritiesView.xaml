@@ -9,7 +9,7 @@
              xmlns:help="clr-namespace:Walkabout.Help"
              xmlns:ui="http://schemas.modernwpf.com/2019"        
              xmlns:u="clr-namespace:Walkabout.Utilities"
-             help:HelpService.HelpKeyword="Securities"
+             help:HelpService.HelpKeyword="Basics/Securities/"
              mc:Ignorable="d" 
              d:DesignHeight="333" d:DesignWidth="685">
     <UserControl.Resources>

@@ -3523,7 +3523,7 @@ namespace Walkabout
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportNetworth");
             view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
-            HelpService.SetHelpKeyword(view, "Networth Report");
+            HelpService.SetHelpKeyword(view, "Reports/NetworthReport/");
             NetWorthReport report = new NetWorthReport(view, this.myMoney, this.cache);
             report.SecurityDrillDown += this.OnReportDrillDown;
             report.CashBalanceDrillDown += this.OnReportCashDrillDown;
@@ -3554,7 +3554,7 @@ namespace Walkabout
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
-            HelpService.SetHelpKeyword(view, "Investment Portfolio");
+            HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
             PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now);
             report.DrillDown += this.OnReportDrillDown;
             this.GenerateReport(report);
@@ -3568,7 +3568,7 @@ namespace Walkabout
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
-            HelpService.SetHelpKeyword(view, "Investment Portfolio - " + e.Type);
+            HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
             PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
             this.GenerateReport(report);
         }
@@ -3581,7 +3581,7 @@ namespace Walkabout
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
-            HelpService.SetHelpKeyword(view, e.Title);
+            HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
             PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
             this.GenerateReport(report);
         }
@@ -3593,7 +3593,7 @@ namespace Walkabout
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportTaxes");
             view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
-            HelpService.SetHelpKeyword(view, "Tax Report");
+            HelpService.SetHelpKeyword(view, "Reports/TaxReport/");
             TaxReport report = new TaxReport(view, this.myMoney, this.databaseSettings.FiscalYearStart);
             this.GenerateReport(report);
         }
@@ -3605,7 +3605,7 @@ namespace Walkabout
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportW2");
             view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
-            HelpService.SetHelpKeyword(view, "W2 Report");
+            HelpService.SetHelpKeyword(view, "Reports/W2Report/");
             W2Report report = new W2Report(view, this.myMoney, this, this.databaseSettings.FiscalYearStart);
             this.GenerateReport(report);
         }
@@ -4325,6 +4325,10 @@ namespace Walkabout
             this.myMoney.Categories.ComputeCategoryBalance();
         }
 
+        private void MenuGCCollect_Click(object sender, RoutedEventArgs e)
+        {
+            GC.Collect();
+        }
 
         #endregion
 
@@ -4513,7 +4517,7 @@ namespace Walkabout
                 view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportUpdates");
                 view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
                 view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
-                HelpService.SetHelpKeyword(view, "Updates");
+                HelpService.SetHelpKeyword(view, "Basics/Updates/");
                 ChangeInfoFormatter report = new ChangeInfoFormatter(view, installButton, previousVersion, changeList);
                 report.InstallButtonClick += this.OnInstallButtonClick;
                 _ = view.Generate(report);

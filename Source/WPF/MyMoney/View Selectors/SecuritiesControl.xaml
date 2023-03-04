@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Walkabout.Views.Controls"
              xmlns:localData="clr-namespace:Walkabout.Data"   
              xmlns:help="clr-namespace:Walkabout.Help"
-             help:HelpService.HelpKeyword="Securities"
+             help:HelpService.HelpKeyword="Basics/Securities/"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 

@@ -10,7 +10,7 @@
     xmlns:views="clr-namespace:Walkabout.Views"
     xmlns:help="clr-namespace:Walkabout.Help"   
     xmlns:u="clr-namespace:Walkabout.Utilities"   
-    help:HelpService.HelpKeyword="Loans"
+    help:HelpService.HelpKeyword="Accounts/Loans/"
     mc:Ignorable="d" 
     d:DesignHeight="300" d:DesignWidth="700">
 

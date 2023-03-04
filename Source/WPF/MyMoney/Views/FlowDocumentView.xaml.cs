@@ -84,6 +84,7 @@ namespace Walkabout.Views
             this.writer = writer;
             this.ResetExpandAllToggleButton();
             this.OnAfterViewStateChanged();
+            this.Viewer.Document.Focus(); // helps make the F1 help work properly.
         }
 
         public FlowDocumentScrollViewer DocumentViewer

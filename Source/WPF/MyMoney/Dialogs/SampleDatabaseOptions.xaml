@@ -9,7 +9,7 @@
     ShowInTaskbar="False" 
     WindowStyle="ToolWindow" 
     Loaded="Window_Loaded"
-    help:HelpService.HelpKeyword="Sample Data" 
+    help:HelpService.HelpKeyword="Basics/SampleData/" 
     >
     <Window.Resources>
         <Style x:Key="TextPromptStyle" TargetType="{x:Type TextBlock}">

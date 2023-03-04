@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:Walkabout.Controls"
              xmlns:help="clr-namespace:Walkabout.Help"
-             help:HelpService.HelpKeyword="Quick Search"
+             help:HelpService.HelpKeyword="Basics/QuickSearch/"
              xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d" 
              d:DesignHeight="24" d:DesignWidth="128">

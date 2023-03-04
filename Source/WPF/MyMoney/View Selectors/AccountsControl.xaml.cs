@@ -13,6 +13,7 @@ using Walkabout.Commands;
 using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Dialogs;
+using Walkabout.Help;
 using Walkabout.Migrate;
 using Walkabout.Utilities;
 #if PerformanceBlocks
@@ -470,6 +471,39 @@ namespace Walkabout.Views.Controls
                 if (this.selected != null)
                 {
                     this.selected.IsSelected = true;
+                    SetHelpKeywordForSelectedItem(item);
+                }
+            }
+        }
+
+        private void SetHelpKeywordForSelectedItem(AccountViewModel item)
+        {
+            if (item is AccountItemViewModel accountItem)
+            {
+                switch (accountItem.Account.Type)
+                {
+                    case AccountType.Savings:
+                    case AccountType.Checking:
+                    case AccountType.MoneyMarket:
+                    case AccountType.Cash:
+                        HelpService.SetHelpKeyword(this, "Accounts/BankAccounts/");
+                        break;
+                    case AccountType.Credit:
+                    case AccountType.CreditLine:
+                        HelpService.SetHelpKeyword(this, "Accounts/CreditCardAccounts/");
+                        break;
+                    case AccountType.Brokerage:
+                    case AccountType.Retirement:
+                        HelpService.SetHelpKeyword(this, "Accounts/InvestmentAccounts/");
+                        break;
+                    case AccountType.Asset:
+                        HelpService.SetHelpKeyword(this, "Accounts/Assets/");
+                        break;
+                    case AccountType.Loan:
+                        HelpService.SetHelpKeyword(this, "Accounts/Loan/");
+                        break;
+                    default:
+                        break;
                 }
             }
         }

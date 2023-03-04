@@ -436,7 +436,7 @@
                                   RowHeaderWidth="0"
                                   CellStyle="{DynamicResource MyDataGridCellStyle}"
                                   Style="{DynamicResource MyDataGridStyle2}" 
-                                  help:HelpService.HelpKeyword="Splits"
+                                  help:HelpService.HelpKeyword="Basics/Splits/"
                                   CanUserAddRows="True"
                                   AutoGenerateColumns="False"
                                   ContextMenu="{StaticResource SplitViewContextMenu}">

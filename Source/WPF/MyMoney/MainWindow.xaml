@@ -17,7 +17,7 @@
         Title="MyMoney" 
         Height="600" 
         Width="900"
-        help:HelpService.HelpKeyword="Home"
+        help:HelpService.HelpKeyword="#_top"
         ResizeMode="CanResizeWithGrip" 
         Icon="/Icons/App.ico"
         >
@@ -172,6 +172,7 @@
                             <MenuItem x:Name="MenuFixSplits" Header="Fix _Splits" Click="MenuFixSplits_Click"/>
                             <MenuItem x:Name="MenuFixSecurities" Header="Remove _Duplicate Securities" Click="MenuRemoveDuplicateSecurities_Click"/>
                             <MenuItem x:Name="MenuFixPayees" Header="Remove _Duplicate Payees" Click="MenuRemoveDuplicatePayees_Click"/>
+                            <MenuItem x:Name="MenuGCCollect" Header="GC.Collect" Click="MenuGCCollect_Click"/>
                         </MenuItem>
                     </MenuItem>
 

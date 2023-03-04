@@ -8,7 +8,7 @@ namespace Walkabout.Help
 {
     internal class HelpService : DependencyObject
     {
-        private static readonly string WebPath = @"https://github.com/clovett/MyMoney.Net/wiki/";
+        private static readonly string WebPath = @"https://moneytools.github.io/MyMoney.Net/#";
         private static readonly List<WeakReference> dependencyObjects = new List<WeakReference>();
 
         internal static void Initialize()
@@ -91,6 +91,7 @@ namespace Walkabout.Help
         {
             public HelpKeyEventRouter(DependencyObject listener)
             {
+                Keyboard.RemoveKeyDownHandler(listener, this.OnKeyDown);
                 Keyboard.AddKeyDownHandler(listener, this.OnKeyDown);
             }
 
@@ -102,7 +103,7 @@ namespace Walkabout.Help
                     string keyword = GetHelpKeyword(w);
                     if (string.IsNullOrEmpty(keyword))
                     {
-                        keyword = "Home";
+                        keyword = "#_top";
                     }
                     OpenHelpPage(keyword);
                     e.Handled = true;
