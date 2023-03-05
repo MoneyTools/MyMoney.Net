@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.7" date="3/4/2022">
+    - Fix memory leak when scrolling through the transaction view.
+    - Add years field to "Add Sample Data" options.
+  </change>
+  <change version="2.1.0.6" date="3/3/2022">
+    - Fix #94: F12 does not work
+    - Fix #92: F8 does not work
+    - Fix issue #91: F1 help links
+  </change>
   <change version="2.1.0.5" date="2/20/2022">
     - Add Default currency to the Options dialog which is used by Reports.
   </change>

@@ -1063,8 +1063,11 @@ to make sure attachments work.");
         {
             this.WriteLine("- SelectAccount");
             this.window.CloseReport();
-            var i = this.random.Next(0, this.accounts.Accounts.Count);
-            this.accounts.SelectAccount(i);
+            if (this.accounts.Accounts.Count > 0)
+            {
+                var i = this.random.Next(0, this.accounts.Accounts.Count);
+                this.accounts.SelectAccount(i);
+            }
             this.ClearTransactionViewState();
             this.dataChangedSinceExport = true;
         }
@@ -1792,6 +1795,7 @@ to make sure attachments work.");
             this.AreClose(this.editedCurrency.Ratio, this.selectedCurrency.GetRatio(), "Ratio", 4);
 
             // go back to transactions view.
+            this.accounts = this.window.ViewAccounts();
             if (this.accounts != null)
             {
                 this.SelectAccount();
@@ -1915,7 +1919,14 @@ to make sure attachments work.");
             this.FocusTransactionView();
         }
 
-        private bool CanExportTransactions => this.dataChangedSinceExport && this.transactions != null;
+        private bool CanExportTransactions
+        {
+            get
+            {
+                return this.dataChangedSinceExport && this.transactions != null &&
+                    (this.transactions.IsBankAccount || this.transactions.IsInvestmentAccount);
+            }
+        }
 
         private void ExportCsv()
         {
