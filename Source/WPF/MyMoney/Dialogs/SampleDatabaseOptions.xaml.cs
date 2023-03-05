@@ -18,8 +18,6 @@ namespace Walkabout.Dialogs
 
         private void EnableButtons()
         {
-            decimal pay;
-            double inflation;
             if (this.ButtonOk != null)
             {
                 this.Message.Text = "";
@@ -34,8 +32,21 @@ namespace Walkabout.Dialogs
                     }
                 }
 
-                this.ButtonOk.IsEnabled = templateExists && !string.IsNullOrEmpty(this.Employer) && decimal.TryParse(this.TextBoxPaycheck.Text, out pay) &&
-                    double.TryParse(this.TextBoxInflation.Text.Replace("%", string.Empty), out inflation);
+                if (!int.TryParse(this.TextBoxYears.Text, out int years))
+                {
+                    this.Message.Text = "Years must be a valid integer";
+                }
+                else if (!decimal.TryParse(this.TextBoxPaycheck.Text, out decimal pay))
+                {
+                    this.Message.Text = "Paycheck must be a valid decimal";
+                }
+                else if (!double.TryParse(this.TextBoxInflation.Text.Replace("%", string.Empty), out double inflation))
+                {
+                    this.Message.Text = "Inflation must be a valid decimal";
+                }
+
+                this.ButtonOk.IsEnabled = templateExists && !string.IsNullOrEmpty(this.Employer) &&
+                    string.IsNullOrEmpty(this.Message.Text);
             }
         }
 
@@ -64,12 +75,27 @@ namespace Walkabout.Dialogs
             }
         }
 
+        public int Years
+        {
+            get
+            {
+                int years = 0;
+                int.TryParse(this.TextBoxYears.Text, out years);
+                return years;
+            }
+        }
+
         private void TextBoxEmployer_TextChanged(object sender, TextChangedEventArgs e)
         {
             this.EnableButtons();
         }
 
         private void TextBoxPaycheck_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            this.EnableButtons();
+        }
+
+        private void TextBoxYears_TextChanged(object sender, TextChangedEventArgs e)
         {
             this.EnableButtons();
         }
@@ -111,6 +137,5 @@ namespace Walkabout.Dialogs
                 this.SampleData = fd.FileName;
             }
         }
-
     }
 }

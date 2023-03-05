@@ -5,7 +5,8 @@
     xmlns:help="clr-namespace:Walkabout.Help"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Sample Database Options"
-    Height="305" Width="422" 
+    Width="422" 
+    SizeToContent="Height"
     ShowInTaskbar="False" 
     WindowStyle="ToolWindow" 
     Loaded="Window_Loaded"
@@ -29,14 +30,18 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="8"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Text="Please enter the following sample data to help create a complete sample database:" TextWrapping="Wrap" Grid.ColumnSpan="3" Margin="0,0,0,10"/>
+        <TextBlock Text="Please enter the following sample data to help create a complete sample database:" TextWrapping="Wrap" 
+                   Grid.ColumnSpan="3" Margin="0,0,0,10"/>
 
         <TextBlock Text="Histogram:" Grid.Row="2" Style="{StaticResource TextPromptStyle}"/>
         <Grid Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch">
@@ -62,13 +67,20 @@
         <TextBox x:Name="TextBoxInflation" Grid.Row="8" Grid.Column="1" TextChanged="TextBoxInflation_TextChanged" Text="2%" TabIndex="2" 
                  ToolTip="Enter annual infration rate"/>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="10" Grid.Column="1" HorizontalAlignment="Right">
+        <TextBlock Text="Years:" Grid.Row="10" Style="{StaticResource TextPromptStyle}"/>
+        <TextBox x:Name="TextBoxYears" Grid.Row="10" Grid.Column="1" TextChanged="TextBoxYears_TextChanged" Text="10" TabIndex="2" 
+                 ToolTip="Enter number of years to simulate"/>
+
+
+        <TextBlock x:Name="Message" Grid.Row="12" Grid.Column="0" Text="The quick brown fox jumps over the lazy dog." VerticalAlignment="Center"
+                   Grid.ColumnSpan="2" TextWrapping="Wrap" Margin="0,5"
+                   Foreground="Red"/>
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="13" Grid.Column="1" HorizontalAlignment="Right">
             <Button IsDefault="True" x:Name="ButtonOk" MinWidth="70" MinHeight="24" Margin="3" Click="ButtonOk_Click" TabIndex="3">_OK</Button>
             <Button IsCancel="true" x:Name="ButtonCancel" MinWidth="70" MinHeight="24" Margin="3" TabIndex="4">_Cancel</Button>
         </StackPanel>
 
-        <TextBlock x:Name="Message" Grid.Row="10" Grid.Column="0" Text="Message" VerticalAlignment="Center"
-                   Foreground="Red"/>
     </Grid>
 </local:BaseDialog>
 

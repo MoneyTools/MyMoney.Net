@@ -18,7 +18,6 @@ namespace Walkabout.Assitance
     public class SampleDatabase
     {
         private readonly MyMoney money;
-        private const int Years = 10;
         private Account checking;
         private readonly string stockQuotePath;
         private readonly StockQuoteManager manager;
@@ -69,6 +68,7 @@ namespace Walkabout.Assitance
             path = options.SampleData;
 
             double inflation = options.Inflation;
+            int years = options.Years;
 
             SampleData data = null;
             XmlSerializer s = new XmlSerializer(typeof(SampleData));
@@ -180,12 +180,12 @@ namespace Walkabout.Assitance
             }
             this.money.EndUpdate();
 
-            this.CreateRandomTransactions(list, inflation);
+            this.CreateRandomTransactions(list, inflation, years);
 
-            this.AddPaychecks(options.Employer, options.PayCheck, inflation);
+            this.AddPaychecks(options.Employer, options.PayCheck, inflation, years);
 
             // now with any spare cash we can buy stocks.
-            this.CreateInvestmentSamples(data, brokerageAccounts);
+            this.CreateInvestmentSamples(data, brokerageAccounts, years);
 
             // only have to do this because we hid all update events earlier by doing BeginUpdate/EndUpdate on money object.
             // trigger payee update 
@@ -209,9 +209,9 @@ namespace Walkabout.Assitance
             return hundreds * 100;
         }
 
-        private decimal GetClosingPrice(string symbol, DateTime date)
+        private decimal GetClosingPrice(Security security, DateTime date)
         {
-            if (this.quotes.TryGetValue(symbol, out StockQuoteHistory history))
+            if (this.quotes.TryGetValue(security.Symbol, out StockQuoteHistory history))
             {
                 foreach (var quote in history.History)
                 {
@@ -221,7 +221,11 @@ namespace Walkabout.Assitance
                     }
                 }
             }
-            return this.rand.Next(100);
+            if (security.Price != 0)
+            {
+                return security.Price;
+            }
+            return this.rand.Next(99) + 1;
         }
 
         private class Ownership
@@ -252,55 +256,50 @@ namespace Walkabout.Assitance
             }
         }
 
-        private void CreateInvestmentSamples(SampleData data, List<Account> brokerageAccounts)
+        private void CreateInvestmentSamples(SampleData data, List<Account> brokerageAccounts, int years)
         {
             if (brokerageAccounts.Count == 0)
             {
                 return;
             }
 
-            // now balance the accounts.
-            foreach (Account a in this.money.Accounts.GetAccounts())
-            {
-                this.money.Rebalance(a);
-            }
-
             // first figure out how much we can spend each year.
-            int year = DateTime.Now.Year - 10;
-            DateTime start = new DateTime(year, 1, 1); // start in January
-            DateTime end = start.AddYears(1);
-            Dictionary<int, decimal> cash = new Dictionary<int, decimal>();
+            int startYear = DateTime.Now.Year - (years - 1);
+            DateTime start = new DateTime(startYear, 1, 1); // start in January
             Ownership ownership = new Ownership();
-            decimal removed = 0;
-
-            foreach (var t in this.money.Transactions.GetTransactionsFrom(this.checking))
-            {
-                if (t.Date > end)
-                {
-                    cash[year] = this.GetStockMoney(t.Balance);
-                    end = end.AddYears(1);
-                    year++;
-                }
-            }
 
             this.money.BeginUpdate(this);
 
-            Dictionary<Account, decimal> cashBalance = new Dictionary<Account, decimal>();
-            foreach (var a in brokerageAccounts)
-            {
-                cashBalance[a] = 0;
-            }
-
             Transactions transactions = this.money.Transactions;
-            for (year = DateTime.Now.Year - 10; year <= DateTime.Now.Year; year++)
+            for (int year = startYear; year <= DateTime.Now.Year; year++)
             {
-                cash.TryGetValue(year, out decimal balance);
-                balance -= removed;
+                Dictionary<Account, decimal> cashBalance = new Dictionary<Account, decimal>();
+                foreach (var a in brokerageAccounts)
+                {
+                    cashBalance[a] = 0;
+                }
+
+                // now balance the accounts.
+                foreach (Account a in this.money.Accounts.GetAccounts())
+                {
+                    this.money.Rebalance(a);
+                }
+
+                DateTime end = start.AddYears(1);
+                decimal balance = 0;
+                foreach (var t in this.money.Transactions.GetTransactionsFrom(this.checking))
+                {
+                    balance = this.GetStockMoney(t.Balance);
+                    if (t.Date > end)
+                    {
+                        break;
+                    }
+                }
+
                 if (balance < 100)
                 {
                     continue; // not enough.
                 }
-                decimal startBalance = balance;
 
                 int numberOfTransactionForThatYear = this.rand.Next(5, 100); // up to 100 transactions max per year.
 
@@ -329,7 +328,7 @@ namespace Walkabout.Assitance
                     var date = new DateTime(year, 1, 1).AddDays(day);
 
                     // How many unit bought or sold
-                    var quote = this.GetClosingPrice(ss.Symbol, date);
+                    var quote = this.GetClosingPrice(stock, date);
 
                     Transaction t = null;
                     decimal owned = ownership.GetUnits(a, ss.Symbol);
@@ -355,7 +354,7 @@ namespace Walkabout.Assitance
                     }
                     else
                     {
-                        int max = (int)(canSpend / quote);
+                        int max = (int)(canSpend / quote) / numberOfTransactionForThatYear;
                         if (max > 0)
                         {
                             // Create a new Transaction
@@ -399,7 +398,6 @@ namespace Walkabout.Assitance
                         payment.Amount = this.RoundCents(amount);
                         transactions.AddTransaction(payment);
                         this.money.Transfer(payment, acct);
-                        removed += -amount;
                         cashBalance[acct] += -amount;
                     }
                 }
@@ -439,11 +437,11 @@ namespace Walkabout.Assitance
             return selectedDays.Values;
         }
 
-        private void AddPaychecks(string employer, decimal paycheck, double inflation)
+        private void AddPaychecks(string employer, decimal paycheck, double inflation, int years)
         {
             Debug.Assert(this.checking != null); // the .xml file must have a checking account.
             DateTime today = DateTime.Today;
-            DateTime first = today.AddYears(-Years);
+            DateTime first = today.AddYears(-years);
             double biMonthlyInfation = inflation / 24;
 
             DateTime date = new DateTime(first.Year, 1, 1);
@@ -452,7 +450,7 @@ namespace Walkabout.Assitance
             Category category = this.money.Categories.GetOrCreateCategory("Wages & Salary:Gross Pay", CategoryType.Income);
             category.Type = CategoryType.Income;
             Transactions transactions = this.money.Transactions;
-            for (int paydays = Years * 12 * 2; paydays > 0; paydays--)
+            for (int paydays = years * 12 * 2; paydays > 0; paydays--)
             {
                 Transaction t = transactions.NewTransaction(this.checking);
                 t.Payee = payee;
@@ -476,12 +474,12 @@ namespace Walkabout.Assitance
             this.money.EndUpdate();
         }
 
-        private void CreateRandomTransactions(List<SampleTransaction> list, double inflation)
+        private void CreateRandomTransactions(List<SampleTransaction> list, double inflation, int years)
         {
             // Now pick randomly from the list to mix things up nicely and spread across 10 year range.
             Random rand = new Random();
             DateTime today = DateTime.Today;
-            DateTime first = today.AddYears(-Years);
+            DateTime first = today.AddYears(-years);
             DateTime start = new DateTime(first.Year, 1, 1); // start in January
             TimeSpan span = today - first;
             int totalDays = (int)span.TotalDays;
