@@ -116,7 +116,7 @@ namespace Walkabout.Reports
                 var ratio = this.currency.Ratio;
                 if (ratio == 0)
                 {
-                    ratio = 1; 
+                    ratio = 1;
                 }
                 amount /= ratio;
             }

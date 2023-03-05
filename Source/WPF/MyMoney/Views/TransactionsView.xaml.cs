@@ -6120,19 +6120,19 @@ namespace Walkabout.Views
 
     /*
      <StackPanel MinWidth="300" VerticalAlignment="Top" Focusable="false" Margin="2,0,0,0">
-                <Border BorderThickness="0,0,0,1" BorderBrush="Transparent" Focusable="false">
-                    <TextBlock Text="{Binding PayeeOrTransferCaption, Converter={StaticResource NullableValueConverter}}" 
-                               VerticalAlignment="Top" />
-                </Border>
-                <Border BorderThickness="0,0,0,1" BorderBrush="Transparent" Focusable="false">
-                    <TextBlock Text="{Binding Category.Name, Converter={StaticResource NullableValueConverter}}" 
-                           Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=OneLineView, Converter={StaticResource FalseToVisible}}"/>
-                </Border>
-                <Border BorderThickness="0,0,0,1" BorderBrush="Transparent" Focusable="false">
-                    <TextBlock Text="{Binding Memo, Converter={StaticResource NullableValueConverter}}"  FontStyle="Italic" Opacity=".7"                            
-                           Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=OneLineView, Converter={StaticResource FalseToVisible}}"/>
-                </Border>
-            </StackPanel>
+        <Border BorderThickness="0,0,0,1" BorderBrush="Transparent" Focusable="false">
+            <TextBlock Text="{Binding PayeeOrTransferCaption, Converter={StaticResource NullableValueConverter}}" 
+                        VerticalAlignment="Top" />
+        </Border>
+        <Border BorderThickness="0,0,0,1" BorderBrush="Transparent" Focusable="false">
+            <TextBlock Text="{Binding Category.Name, Converter={StaticResource NullableValueConverter}}" 
+                    Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=OneLineView, Converter={StaticResource FalseToVisible}}"/>
+        </Border>
+        <Border BorderThickness="0,0,0,1" BorderBrush="Transparent" Focusable="false">
+            <TextBlock Text="{Binding Memo, Converter={StaticResource NullableValueConverter}}"  FontStyle="Italic" Opacity=".7"                            
+                    Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, Path=OneLineView, Converter={StaticResource FalseToVisible}}"/>
+        </Border>
+    </StackPanel>
      */
     public class TransactionPayeeCategoryMemoColumn : DataGridColumn
     {
@@ -6151,9 +6151,15 @@ namespace Walkabout.Views
             Binding payee = null;
             Binding category = null;
             Binding memo = null;
+
+            var view = WpfHelper.FindAncestor<TransactionsView>(cell);
             if (this.view == null)
             {
-                this.view = WpfHelper.FindAncestor<TransactionsView>(cell);
+                this.view = view;
+            }
+            else if (this.view != view)
+            {
+                Debug.WriteLine("???");
             }
 
             if (stack != null)
@@ -6181,6 +6187,7 @@ namespace Walkabout.Views
             // Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, 
             //          Path=OneLineView, Converter={StaticResource FalseToVisible}}"
             this.view = view;
+            Debug.Assert(view != null, "Internal Error: null TransactionsView");
             this.context = dataItem;
             this.categoryBinding = category;
             this.memoBinding = memo;
@@ -6216,11 +6223,12 @@ namespace Walkabout.Views
                 if (!this.view.OneLineView || this.categoryBinding != null || this.memoBinding != null)
                 {
                     this.CreateCategoryMemo(this.categoryBinding, this.memoBinding, this.context);
-                    if (this.view.OneLineView)
-                    {
-                        // hide the text blocks that contain these edited values for now.
-                        this.OnOneLineViewChanged(this, EventArgs.Empty);
-                    }
+                }
+                // in case the category and memo fields were recycled from previous field.
+                if (this.view.OneLineView)
+                {
+                    // hide the text blocks that contain these edited values for now.
+                    this.OnOneLineViewChanged(this, EventArgs.Empty);
                 }
             }
         }
