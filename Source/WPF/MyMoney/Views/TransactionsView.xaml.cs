@@ -6136,6 +6136,8 @@ namespace Walkabout.Views
      */
     public class TransactionPayeeCategoryMemoColumn : DataGridColumn
     {
+        private TransactionsView view;
+
         protected override FrameworkElement GenerateEditingElement(DataGridCell cell, object dataItem)
         {
             DataTemplate template = (DataTemplate)cell.FindResource("myTemplatePayeeCategoryMemoEdit");
@@ -6149,19 +6151,24 @@ namespace Walkabout.Views
             Binding payee = null;
             Binding category = null;
             Binding memo = null;
+            if (this.view == null)
+            {
+                this.view = WpfHelper.FindAncestor<TransactionsView>(cell);
+            }
+
             if (stack != null)
             {
                 payee = new Binding("PayeeOrTransferCaption");
                 category = new Binding("CategoryName");
                 memo = new Binding("Memo");
             }
-            return new TransactionPayeeCategoryMemoField(payee, category, memo, dataItem);
+            return new TransactionPayeeCategoryMemoField(this.view, payee, category, memo, dataItem);
         }
     }
 
     public class TransactionPayeeCategoryMemoField : StackPanel
     {
-        private TransactionsView view;
+        private readonly TransactionsView view;
         private TransactionTextField payeeField;
         private TransactionTextField categoryField;
         private TransactionTextField memoField;
@@ -6169,10 +6176,11 @@ namespace Walkabout.Views
         private Binding memoBinding;
         private object context;
 
-        public TransactionPayeeCategoryMemoField(Binding payee, Binding category, Binding memo, object dataItem)
+        public TransactionPayeeCategoryMemoField(TransactionsView view, Binding payee, Binding category, Binding memo, object dataItem)
         {
             // Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, 
             //          Path=OneLineView, Converter={StaticResource FalseToVisible}}"
+            this.view = view;
             this.context = dataItem;
             this.categoryBinding = category;
             this.memoBinding = memo;
@@ -6198,19 +6206,17 @@ namespace Walkabout.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            TransactionsView view = WpfHelper.FindAncestor<TransactionsView>(this);
-            if (view != null)
+            if (this.view != null)
             {
-                this.view = view;
-                view.OneLineViewChanged -= new EventHandler(this.OnOneLineViewChanged);
-                view.OneLineViewChanged += new EventHandler(this.OnOneLineViewChanged);
+                this.view.OneLineViewChanged -= new EventHandler(this.OnOneLineViewChanged);
+                this.view.OneLineViewChanged += new EventHandler(this.OnOneLineViewChanged);
 
                 // Show the second and third fields if we are not in one line view or the 
                 // transaction is being edited (we know if we are given TextBox bindings).
-                if (!view.OneLineView || this.categoryBinding != null || this.memoBinding != null)
+                if (!this.view.OneLineView || this.categoryBinding != null || this.memoBinding != null)
                 {
                     this.CreateCategoryMemo(this.categoryBinding, this.memoBinding, this.context);
-                    if (view.OneLineView)
+                    if (this.view.OneLineView)
                     {
                         // hide the text blocks that contain these edited values for now.
                         this.OnOneLineViewChanged(this, EventArgs.Empty);
@@ -6224,7 +6230,6 @@ namespace Walkabout.Views
             if (this.view != null)
             {
                 this.view.OneLineViewChanged -= new EventHandler(this.OnOneLineViewChanged);
-                this.view = null;
             }
         }
 
