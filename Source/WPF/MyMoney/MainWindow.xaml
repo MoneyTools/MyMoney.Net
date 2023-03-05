@@ -166,13 +166,13 @@
                         <MenuItem x:Name="MenuEditPaste" Header="_Paste" Command="Paste"/>
                         <MenuItem x:Name="MenuEditDelete" Header="_Delete" Command="Delete"/>
                         <Separator/>
-                        <MenuItem Header="Cleanup">
+                        <MenuItem Header="C_leanup">
                             <MenuItem x:Name="MnuRemoveUnusedSecurities" Header="_Remove unused securities" Click="OnRemovedUnusedSecurities"/>
                             <MenuItem x:Name="MenuTroubleshootCheckTransfer" Header="_Check Transfers" Command="p:AppCommands.CommandTroubleshootCheckTransfer"/>
                             <MenuItem x:Name="MenuFixSplits" Header="Fix _Splits" Click="MenuFixSplits_Click"/>
                             <MenuItem x:Name="MenuFixSecurities" Header="Remove _Duplicate Securities" Click="MenuRemoveDuplicateSecurities_Click"/>
-                            <MenuItem x:Name="MenuFixPayees" Header="Remove _Duplicate Payees" Click="MenuRemoveDuplicatePayees_Click"/>
-                            <MenuItem x:Name="MenuGCCollect" Header="GC.Collect" Click="MenuGCCollect_Click"/>
+                            <MenuItem x:Name="MenuFixPayees" Header="Remove Duplicate _Payees" Click="MenuRemoveDuplicatePayees_Click"/>
+                            <MenuItem x:Name="MenuGCCollect" Header="_GC.Collect" Click="MenuGCCollect_Click"/>
                         </MenuItem>
                     </MenuItem>
 

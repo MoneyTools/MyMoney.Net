@@ -6155,31 +6155,27 @@ namespace Walkabout.Views
                 category = new Binding("CategoryName");
                 memo = new Binding("Memo");
             }
-            TransactionsView view = WpfHelper.FindAncestor<TransactionsView>(cell);
-            if (view == null)
-            {
-                // has this item been deleted?
-                return null;
-            }
-            return new TransactionPayeeCategoryMemoField(view, payee, category, memo, dataItem);
+            return new TransactionPayeeCategoryMemoField(payee, category, memo, dataItem);
         }
     }
 
     public class TransactionPayeeCategoryMemoField : StackPanel
     {
-        private readonly TransactionsView view;
+        private TransactionsView view;
         private TransactionTextField payeeField;
         private TransactionTextField categoryField;
         private TransactionTextField memoField;
+        private Binding categoryBinding;
+        private Binding memoBinding;
+        private object context;
 
-
-        public TransactionPayeeCategoryMemoField(TransactionsView view, Binding payee, Binding category, Binding memo, object dataItem)
+        public TransactionPayeeCategoryMemoField(Binding payee, Binding category, Binding memo, object dataItem)
         {
             // Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, 
             //          Path=OneLineView, Converter={StaticResource FalseToVisible}}"
-            this.view = view;
-            view.OneLineViewChanged -= new EventHandler(this.OnOneLineViewChanged);
-            view.OneLineViewChanged += new EventHandler(this.OnOneLineViewChanged);
+            this.context = dataItem;
+            this.categoryBinding = category;
+            this.memoBinding = memo;
 
             this.MinWidth = 300;
             this.VerticalAlignment = VerticalAlignment.Top;
@@ -6196,16 +6192,40 @@ namespace Walkabout.Views
                 Child = payeeField
             });
 
-            if (!view.OneLineView || category != null || memo != null)
+            this.Loaded += this.OnLoaded;
+            this.Unloaded += this.OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            TransactionsView view = WpfHelper.FindAncestor<TransactionsView>(this);
+            if (view != null)
             {
-                this.CreateCategoryMemo(category, memo, dataItem);
-                if (view.OneLineView)
+                this.view = view;
+                view.OneLineViewChanged -= new EventHandler(this.OnOneLineViewChanged);
+                view.OneLineViewChanged += new EventHandler(this.OnOneLineViewChanged);
+
+                // Show the second and third fields if we are not in one line view or the 
+                // transaction is being edited (we know if we are given TextBox bindings).
+                if (!view.OneLineView || this.categoryBinding != null || this.memoBinding != null)
                 {
-                    // hide the text blocks that contain these edited values for now.
-                    this.OnOneLineViewChanged(this, EventArgs.Empty);
+                    this.CreateCategoryMemo(this.categoryBinding, this.memoBinding, this.context);
+                    if (view.OneLineView)
+                    {
+                        // hide the text blocks that contain these edited values for now.
+                        this.OnOneLineViewChanged(this, EventArgs.Empty);
+                    }
                 }
             }
+        }
 
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (this.view != null)
+            {
+                this.view.OneLineViewChanged -= new EventHandler(this.OnOneLineViewChanged);
+                this.view = null;
+            }
         }
 
         public TransactionTextField PayeeField
