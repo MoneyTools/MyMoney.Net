@@ -66,17 +66,51 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                SelectionPattern selection = (SelectionPattern)this.Control.GetCurrentPattern(SelectionPattern.Pattern);
-                AutomationElement[] selected = selection.Current.GetSelection();
-                return (selected == null || selected.Length == 0) ? null : this.WrapRow(selected[0], this.GetRowIndex(selected[0]));
+                for (int retries = 5; retries > 0; retries--)
+                {
+                    try
+                    {
+                        SelectionPattern selection = (SelectionPattern)this.Control.GetCurrentPattern(SelectionPattern.Pattern);
+                        AutomationElement[] selected = selection.Current.GetSelection();
+                        this.window.WaitForInputIdle(500);
+                        // get the selection again since scroll may have moved the view.
+                        selected = selection.Current.GetSelection();
+
+                        if (selected == null || selected.Length == 0)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            var row = selected[0];
+                            ScrollItemPattern scroll = (ScrollItemPattern)row.GetCurrentPattern(ScrollItemPattern.Pattern);
+                            scroll.ScrollIntoView();
+                            this.window.WaitForInputIdle(500);
+                            // get the selection again since scroll may have moved the view.
+                            selected = selection.Current.GetSelection();
+                            if (selected == null || selected.Length == 0)
+                            {
+                                return null;
+                            }
+                            else
+                            {
+                                row = selected[0];
+                                return this.WrapRow(row, this.GetRowIndex(row));
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // retry.
+                        Debug.WriteLine("Could not find selection, trying again...");
+                    }
+                }
+                return null;
             }
         }
 
         public int GetRowIndex(AutomationElement row)
         {
-            ScrollItemPattern scroll = (ScrollItemPattern)row.GetCurrentPattern(ScrollItemPattern.Pattern);
-            scroll.ScrollIntoView();
-
             int index = 0;
             foreach (AutomationElement e in this.Control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
             {
@@ -365,8 +399,9 @@ namespace Walkabout.Tests.Wrappers
             if (newRow)
             {
                 this.Refresh(); // refreshes this row as the placeholder
-                // but we don't want to select the placeholder, we want to select the edited row.
-                this.view.Select(this.index);
+                                // but we don't want to select the placeholder, we want to select the edited row.
+                Input.TapKey(Key.Up);
+                Thread.Sleep(50);
             }
             else
             {
