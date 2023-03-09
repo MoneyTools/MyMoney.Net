@@ -1301,15 +1301,25 @@ to make sure attachments work.");
             this.selectedTransaction.CommitEdit();
             // commit can re-sort the location of the transaction.
             Thread.Sleep(50);
-
+            this.selectedTransaction = (TransactionViewRow)this.transactions.Selection;
+            Thread.Sleep(50);
             var selection = this.VerifySelection(this.selectedTransaction);
             if (selection == null || selection.Bounds.IsEmpty)
             {
                 this.WriteLine("Bummer...it moved, so we can't navigate this transfer");
+                this.selectedTransaction = null;
             }
-            this.selectedTransaction = selection;
+            else
+            {
+                this.selectedTransaction = selection;
+                this.AssertSelectedTransaction();
+            }
 
-            this.AssertSelectedTransaction();
+
+            if (selection.Element.Current.AutomationId == "{NewItemPlaceholder}")
+            {
+                Debug.WriteLine("We are on the wrong transaction!");
+            }
 
         }
 
@@ -1499,6 +1509,19 @@ to make sure attachments work.");
                 child = TreeWalker.RawViewWalker.GetNextSibling(child);
             }
         }
+
+        private bool CanNavigateTransfer
+        {
+            get
+            {
+                AccountsWrapper accounts = this.window.ViewAccounts();
+                return accounts.Accounts.Count > 1 && accounts.Selection != null &&
+                    this.transactions != null && this.transactions.IsBankAccount &&
+                    this.selectedTransaction != null &&
+                    ("" + this.selectedTransaction.GetPayee()).StartsWith("Transfer");
+            }
+        }
+
 
         private void NavigateTransfer()
         {
