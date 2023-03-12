@@ -1641,18 +1641,21 @@ to make sure attachments work.");
                 var search = "\"" + t.Date.ToShortDateString() + "\" and " + t.Amount;
 
                 var quickFilter = this.window.Element.FindQuickFilter();
-                Assert.IsNotNull(quickFilter, "Cannot find quick filter control");
+                Assert.That(quickFilter, Is.Not.Null, "Cannot find quick filter control");
                 quickFilter.SetFilter(search);
                 Thread.Sleep(500);
 
                 // Make sure selection is preserved on the matching transaction
                 var row2 = this.transactions.WaitForSelection();
-                Assert.IsNotNull(row2, "Selection not found after setting search filter");
-                Assert.AreEqual(row1.Id, row2.Id, $"Expected election automation id {row1.Id} doesn't match {row2.Id}");
+                Assert.That(row2, Is.Not.Null, "Selection not found after setting search filter");
+                Assert.That(row2.Id, Is.EqualTo(row1.Id), $"Expected election automation id {row1.Id} doesn't match {row2.Id}");
 
                 var t2 = this.transactions.GetSelectedTransactionProxy();
-                Assert.AreEqual(t.Date, t2.Date, "Dates don't match");
-                Assert.AreEqual(t.Amount, t2.Amount, "Amounts don't match");
+                Assert.Multiple(() =>
+                {
+                    Assert.That(t2.Date, Is.EqualTo(t.Date), "Dates don't match");
+                    Assert.That(t2.Amount, Is.EqualTo(t.Amount), "Amounts don't match");
+                });
 
                 // don't leave Money with active search filter as it makes the rest of the
                 // editing logic very complicated.
@@ -1661,11 +1664,18 @@ to make sure attachments work.");
 
                 // Make sure selection is preserved after search is cleared.
                 var row3 = this.transactions.WaitForSelection();
-                Assert.IsNotNull(row3, "Selection not restored after clearing search filter");
-                Assert.AreEqual(row1.Id, row3.Id, $"Expected election automation id {row1.Id} doesn't match {row3.Id}");
+                Assert.Multiple(() =>
+                {
+                    Assert.That(row3, Is.Not.Null, "Selection not restored after clearing search filter");
+                    Assert.That(row3.Id, Is.EqualTo(row1.Id), $"Expected election automation id {row1.Id} doesn't match {row3.Id}");
+                });
+
                 var t3 = this.transactions.GetSelectedTransactionProxy();
-                Assert.AreEqual(t.Date, t3.Date, "Dates don't match");
-                Assert.AreEqual(t.Amount, t3.Amount, "Amounts don't match");
+                Assert.Multiple(() =>
+                {
+                    Assert.That(t3.Date, Is.EqualTo(t.Date), "Dates don't match");
+                    Assert.That(t3.Amount, Is.EqualTo(t.Amount), "Amounts don't match");
+                });
             }
         }
 
