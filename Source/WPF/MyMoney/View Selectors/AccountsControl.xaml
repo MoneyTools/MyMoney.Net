@@ -104,16 +104,15 @@
         <MenuItem AutomationProperties.AutomationId="Properties" Header="_Properties..." Command="local:AccountsControl.CommandFileImport"  />
         <MenuItem AutomationProperties.AutomationId="SynchronizeAccount" Name="MenuSync" Header="_Synchronize Account" Command="local:AccountsControl.CommandSynchronize" />
         <MenuItem AutomationProperties.AutomationId="BalanceAccount" Header="_Balance account" Command="local:AccountsControl.CommandBalance" InputGestureText="Ctrl+B"/>
+        <MenuItem AutomationProperties.AutomationId="ViewTransfersToThisAccount" Header="View _Transfers To This Account" Command="local:AccountsControl.CommandViewTransfers" />
+        <MenuItem AutomationProperties.AutomationId="Export" Header="E_xport Account..." Command="local:AccountsControl.CommandExportAccount"/>
+        <MenuItem AutomationProperties.AutomationId="ImportCsv" Header="_Import Csv..." Command="local:AccountsControl.CommandImportCsv"/>
         <Separator />
         <MenuItem AutomationProperties.AutomationId="NewAccount" Header="_New Account..." Command="local:AccountsControl.CommandNewAccount" />
         <MenuItem AutomationProperties.AutomationId="DownloadAccounts" Header="_Download Accounts..." Command="local:AccountsControl.CommandDownloadAccounts" />
         <MenuItem AutomationProperties.AutomationId="NewLoan" Header="New _Loan..." Command="local:AccountsControl.CommandAddNewLoanAccount" />
         <MenuItem AutomationProperties.AutomationId="DeleteAccount" Header="Delete _Account" Command="local:AccountsControl.CommandDeleteAccount" />
-        <Separator />
-        <MenuItem AutomationProperties.AutomationId="ViewTransfersToThisAccount" Header="View _Transfers To This Account" Command="local:AccountsControl.CommandViewTransfers" />
-        <MenuItem AutomationProperties.AutomationId="Export" Header="E_xport Account..." Command="local:AccountsControl.CommandExportAccount"/>
         <MenuItem AutomationProperties.AutomationId="Export" Header="Ex_port List..." Command="local:AccountsControl.CommandExportList"/>
-        <MenuItem AutomationProperties.AutomationId="ImportCsv" Header="_Import Csv..." Command="local:AccountsControl.CommandImportCsv"/>
         <Separator />
         <MenuItem AutomationProperties.AutomationId="DisplayClosedAccounts" Name="MenuDisplayClosedAccounts" Header="Display _Closed Accounts" Command="local:AccountsControl.CommandToggleClosedAccounts"/>
       </ContextMenu>
