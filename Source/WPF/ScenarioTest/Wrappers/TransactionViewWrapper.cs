@@ -213,7 +213,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal string GetSelectedTransactionXml()
         {
-            var selection = this.Selection;
+            var selection = this.ScrollSelectionIntoView();
             for (int retries = 5; retries > 0; retries--)
             {
                 try
@@ -224,7 +224,7 @@ namespace Walkabout.Tests.Wrappers
                 catch (Exception ex)
                 {
                     Trace.WriteLine("### Error setting focus on selection: " + ex.Message);
-                    selection = this.Selection.Refresh();
+                    selection = selection.Refresh();
                 }
 
                 Thread.Sleep(50);
@@ -264,7 +264,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void NavigateTransfer()
         {
-            var selection = (TransactionViewRow)this.Selection;
+            var selection = (TransactionViewRow)this.ScrollSelectionIntoView();
             if (selection == null)
             {
                 return;
@@ -289,7 +289,7 @@ namespace Walkabout.Tests.Wrappers
                 catch (Exception ex)
                 {
                     Trace.WriteLine("### Error setting focus on selection: " + ex.Message);
-                    selection = (TransactionViewRow)this.Selection.Refresh();
+                    selection = (TransactionViewRow)this.ScrollSelectionIntoView().Refresh();
                 }
 
                 Thread.Sleep(50);
@@ -301,7 +301,7 @@ namespace Walkabout.Tests.Wrappers
                 this.Control = this.Window.FindTransactionGrid().Control;
 
                 // now verify we got a new selection
-                var target = (TransactionViewRow)this.Selection;
+                var target = (TransactionViewRow)this.ScrollSelectionIntoView();
                 if (target == null)
                 {
                     throw new Exception("Navigation lost the selection");

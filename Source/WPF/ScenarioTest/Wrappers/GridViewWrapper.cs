@@ -40,13 +40,13 @@ namespace Walkabout.Tests.Wrappers
 
         internal void CommitEdit()
         {
-            var selection = this.Selection;
+            var selection = this.ScrollSelectionIntoView();
             selection?.CommitEdit();
         }
 
         internal void BeginEdit()
         {
-            var selection = this.Selection;
+            var selection = this.ScrollSelectionIntoView();
             if (selection != null)
             {
                 selection.Focus();
@@ -58,55 +58,54 @@ namespace Walkabout.Tests.Wrappers
         {
             get
             {
-                return this.Selection != null;
+                SelectionPattern selection = (SelectionPattern)this.Control.GetCurrentPattern(SelectionPattern.Pattern);
+                AutomationElement[] selected = selection.Current.GetSelection();
+                return (selected == null || selected.Length > 0);
             }
         }
 
-        public GridViewRowWrapper Selection
+        public GridViewRowWrapper ScrollSelectionIntoView()
         {
-            get
+            for (int retries = 5; retries > 0; retries--)
             {
-                for (int retries = 5; retries > 0; retries--)
+                try
                 {
-                    try
+                    SelectionPattern selection = (SelectionPattern)this.Control.GetCurrentPattern(SelectionPattern.Pattern);
+                    AutomationElement[] selected = selection.Current.GetSelection();
+                    this.window.WaitForInputIdle(500);
+                    // get the selection again since scroll may have moved the view.
+                    selected = selection.Current.GetSelection();
+
+                    if (selected == null || selected.Length == 0)
                     {
-                        SelectionPattern selection = (SelectionPattern)this.Control.GetCurrentPattern(SelectionPattern.Pattern);
-                        AutomationElement[] selected = selection.Current.GetSelection();
+                        return null;
+                    }
+                    else
+                    {
+                        var row = selected[0];
+                        ScrollItemPattern scroll = (ScrollItemPattern)row.GetCurrentPattern(ScrollItemPattern.Pattern);
+                        scroll.ScrollIntoView();
                         this.window.WaitForInputIdle(500);
                         // get the selection again since scroll may have moved the view.
                         selected = selection.Current.GetSelection();
-
                         if (selected == null || selected.Length == 0)
                         {
                             return null;
                         }
                         else
                         {
-                            var row = selected[0];
-                            ScrollItemPattern scroll = (ScrollItemPattern)row.GetCurrentPattern(ScrollItemPattern.Pattern);
-                            scroll.ScrollIntoView();
-                            this.window.WaitForInputIdle(500);
-                            // get the selection again since scroll may have moved the view.
-                            selected = selection.Current.GetSelection();
-                            if (selected == null || selected.Length == 0)
-                            {
-                                return null;
-                            }
-                            else
-                            {
-                                row = selected[0];
-                                return this.WrapRow(row, this.GetRowIndex(row));
-                            }
+                            row = selected[0];
+                            return this.WrapRow(row, this.GetRowIndex(row));
                         }
                     }
-                    catch
-                    {
-                        // retry.
-                        Debug.WriteLine("Could not find selection, trying again...");
-                    }
                 }
-                return null;
+                catch
+                {
+                    // retry.
+                    Debug.WriteLine("Could not find selection, trying again...");
+                }
             }
+            return null;
         }
 
         public int GetRowIndex(AutomationElement row)
@@ -182,10 +181,10 @@ namespace Walkabout.Tests.Wrappers
         {
             for (int i = 0; i < retries; i++)
             {
-                var s = this.Selection;
-                if (s != null)
+                var selection = this.ScrollSelectionIntoView();
+                if (selection != null)
                 {
-                    return s;
+                    return selection;
                 }
                 Thread.Sleep(delay);
             }
@@ -464,7 +463,7 @@ namespace Walkabout.Tests.Wrappers
             }
             else if (this.IsSelected)
             {
-                return this.view.Selection;
+                return this.view.ScrollSelectionIntoView();
             }
             else if (this.item.Current.BoundingRectangle.IsEmpty)
             {

@@ -1227,7 +1227,7 @@ to make sure attachments work.");
             }
 
             // caller is about to operate on this selection, so make sure it's up to date!            
-            this.selectedTransaction = (TransactionViewRow)this.transactions.Selection;
+            this.selectedTransaction = (TransactionViewRow)this.transactions.ScrollSelectionIntoView();
             if (this.selectedTransaction == null)
             {
                 throw new Exception("No selected transaction");
@@ -1250,7 +1250,7 @@ to make sure attachments work.");
             }
 
             // caller is about to operate on this selection, so make sure it's up to date!            
-            this.selectedTransaction = (TransactionViewRow)this.transactions.Selection;
+            this.selectedTransaction = (TransactionViewRow)this.transactions.ScrollSelectionIntoView();
             if (this.selectedTransaction == null)
             {
                 this.SelectTransaction();
@@ -1301,7 +1301,7 @@ to make sure attachments work.");
             this.selectedTransaction.CommitEdit();
             // commit can re-sort the location of the transaction.
             Thread.Sleep(50);
-            this.selectedTransaction = (TransactionViewRow)this.transactions.Selection;
+            this.selectedTransaction = (TransactionViewRow)this.transactions.ScrollSelectionIntoView();
             Thread.Sleep(50);
             var selection = this.VerifySelection(this.selectedTransaction);
             if (selection == null || selection.Bounds.IsEmpty)
@@ -1465,7 +1465,7 @@ to make sure attachments work.");
             var selection = this.selectedTransaction;
             // commit the edits.
             this.transactions.CommitEdit();
-            if (this.transactions.Selection == null)
+            if (this.transactions.ScrollSelectionIntoView() == null)
             {
                 // Hmmm, sometimes commit clears the selection, so try and bring it back.
                 var lastRow = this.transactions.GetNewRow();
@@ -1529,7 +1529,7 @@ to make sure attachments work.");
             {
                 this.WriteLine("- NavigateTransfer");
                 this.transactions.NavigateTransfer();
-                this.selectedTransaction = (TransactionViewRow)this.transactions.Selection;
+                this.selectedTransaction = (TransactionViewRow)this.transactions.ScrollSelectionIntoView();
                 this.dataChangedSinceExport = true;
             }
         }
@@ -1633,13 +1633,9 @@ to make sure attachments work.");
         private void SearchTransactionView()
         {
             if (this.transactions != null && this.transactions.CountNoPlaceholder > 5 &&
-                this.transactions.Selection != null && this.transactions.Selection.Index > 0)
+                this.transactions.HasSelection && this.transactions.ScrollSelectionIntoView().Index > 0)
             {
                 this.WriteLine("- SearchTransactionView");
-                if (this.transactions.Selection == null)
-                {
-                    this.SelectTransaction();
-                }
                 var row1 = this.transactions.WaitForSelection();
                 var t = this.transactions.GetSelectedTransactionProxy();
                 var search = "\"" + t.Date.ToShortDateString() + "\" and " + t.Amount;
@@ -1715,7 +1711,7 @@ to make sure attachments work.");
             }
 
             // caller is about to operate on this selection, so make sure it's up to date!            
-            this.selectedCurrency = (CurrencyViewRowWrapper)this.currencies.Selection;
+            this.selectedCurrency = (CurrencyViewRowWrapper)this.currencies.ScrollSelectionIntoView();
             if (this.selectedCurrency == null)
             {
                 this.SelectCurrency();
@@ -1797,7 +1793,7 @@ to make sure attachments work.");
             var selection = this.selectedCurrency;
             // commit the edits.
             this.currencies.CommitEdit();
-            if (this.currencies.Selection == null)
+            if (this.currencies.ScrollSelectionIntoView() == null)
             {
                 // Hmmm, sometimes commit clears the selection, so try and bring it back.
                 var lastRow = this.currencies.GetNewRow();
@@ -1806,7 +1802,7 @@ to make sure attachments work.");
             }
             else
             {
-                this.selectedCurrency = (CurrencyViewRowWrapper)this.currencies.Selection;
+                this.selectedCurrency = (CurrencyViewRowWrapper)this.currencies.ScrollSelectionIntoView();
             }
 
             Assert.IsNotNull(this.editedCurrency);
