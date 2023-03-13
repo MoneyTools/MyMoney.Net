@@ -257,6 +257,7 @@ namespace Walkabout
 
             this.TransactionGraph.ServiceProvider = this;
             this.AppSettingsPanel.Closed += this.OnAppSettingsPanelClosed;
+            this.ApplyDisplayCurrency();
 
 #if PerformanceBlocks
             }
@@ -274,16 +275,10 @@ namespace Walkabout
             }
         }
 
+        // Lookup the users App default display currency, or else fall back to currency of "USD"
         private void ApplyDisplayCurrency()
         {
-            // Lookup the users App default display currency
-            Currency c = this.myMoney.Currencies.FindCurrency(this.databaseSettings.DisplayCurrency);
-            if (c == null)
-            {
-                c = new Currency() { CultureCode = "en-US", Symbol = "USD", Name = "US Dollar", Ratio = 1 };
-            }
-
-            this.myMoney.Currencies.DefaultCurrency = c;
+            this.myMoney.Currencies.DefaultCurrency = this.myMoney.Currencies.FindCurrencyOrDefault(this.databaseSettings.DisplayCurrency);
         }
 
         private void DatabaseSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -1813,7 +1808,7 @@ namespace Walkabout
                     {
                         // hmmm, no password saved, so we need to prompt for one.
                         PasswordWindow pw = new PasswordWindow();
-                        pw.UserName = Environment.GetEnvironmentVariable("USERNAME");
+                        pw.UserName = Environment.GetEnvironmentVariable("USERNAME");                                           
                         pw.Owner = Application.Current.MainWindow;
                         pw.Optional = true;
                         if (pw.ShowDialog() == true)

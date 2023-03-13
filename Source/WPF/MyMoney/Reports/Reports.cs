@@ -104,11 +104,6 @@ namespace Walkabout.Reports
 
         public CultureInfo CurrencyCulture => this.currencyCulture;
 
-        public string GetFormattedAmount(decimal amount, int decimalPlace = 2)
-        {
-            return string.Format(this.currencyCulture, "{0:C" + decimalPlace.ToString() + "}", amount);
-        }
-
         public string GetFormattedNormalizedAmount(decimal amount, int decimalPlace = 2)
         {
             if (this.currency != null)
@@ -120,7 +115,7 @@ namespace Walkabout.Reports
                 }
                 amount /= ratio;
             }
-            return this.GetFormattedAmount(amount, decimalPlace);
+            return StringHelpers.GetFormattedAmount(amount, this.currencyCulture, decimalPlace);
         }
 
         protected void WriteTrailer(IReportWriter writer, DateTime reportDate)

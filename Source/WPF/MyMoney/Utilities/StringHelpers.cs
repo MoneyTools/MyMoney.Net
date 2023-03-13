@@ -157,6 +157,15 @@ namespace Walkabout.Utilities
             }
             return culture;
         }
+
+        public static string GetFormattedAmount(decimal amount, CultureInfo currencyCulture = null, int decimalPlace = 2)
+        {
+            if (currencyCulture == null)
+            {
+                currencyCulture = new CultureInfo("en-US");
+            }
+            return string.Format(currencyCulture, "{0:C" + decimalPlace.ToString() + "}", amount);
+        }
     }
 
 
@@ -180,4 +189,5 @@ namespace Walkabout.Utilities
             return this.ListValue.ToString();
         }
     }
+
 }
