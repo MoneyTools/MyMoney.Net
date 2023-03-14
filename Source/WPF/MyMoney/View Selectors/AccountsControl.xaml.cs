@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -16,6 +17,7 @@ using Walkabout.Dialogs;
 using Walkabout.Help;
 using Walkabout.Migrate;
 using Walkabout.Utilities;
+
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
 #endif
@@ -63,13 +65,46 @@ namespace Walkabout.Views.Controls
 
         private readonly DelayedActions delayedActions = new DelayedActions();
 
-        public IServiceProvider Site { get; set; }
-
         private MyMoney myMoney;
 
         private readonly ObservableCollection<AccountViewModel> items = new ObservableCollection<AccountViewModel>();
 
-        public DatabaseSettings DatabaseSettings { get; set; }
+        private DatabaseSettings databaseSettings;
+
+        public IServiceProvider Site { get; set; }
+
+        public DatabaseSettings DatabaseSettings
+        {
+            get => databaseSettings;
+            set
+            {
+                if (this.databaseSettings != null)
+                {
+                    this.databaseSettings.PropertyChanged -= this.OnDatabaseSettingsChanged;
+                }
+                this.databaseSettings = value;
+                this.databaseSettings.PropertyChanged += this.OnDatabaseSettingsChanged;
+                this.DelayedRebind();
+            }
+        }
+
+        private void OnDatabaseSettingsChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "ShowCurrency")
+            {
+                this.UpdateShowCurrency();
+            }
+        }
+
+        private void UpdateShowCurrency()
+        {
+            bool newValue = databaseSettings.ShowCurrency;
+            // propagate to the view model.
+            foreach (var item in items)
+            {
+                item.ShowCurrency = newValue;
+            }
+        }
 
         public MyMoney MyMoney
         {
@@ -100,6 +135,11 @@ namespace Walkabout.Views.Controls
 
         private void OnBalanceChanged(object sender, ChangeEventArgs args)
         {
+            this.DelayedRebind();
+        }
+
+        private void DelayedRebind()
+        {
             this.delayedActions.StartDelayedAction("rebind", this.Rebind, TimeSpan.FromMilliseconds(30));
         }
 
@@ -108,13 +148,18 @@ namespace Walkabout.Views.Controls
         {
             while (args != null)
             {
-                if (args.Item is Account)
+                if (args.Item is Account || args.Item is Currencies)
                 {
-                    this.delayedActions.StartDelayedAction("rebind", this.Rebind, TimeSpan.FromMilliseconds(30));
+                    this.DelayedRebind();
                     return;
                 }
                 args = args.Next;
             }
+        }
+
+        private AccountViewModel GetViewModel(Account account)
+        {
+            return (from i in this.items where i is AccountItemViewModel m && m.Account == account select i).FirstOrDefault();
         }
 
         public Account SelectedAccount
@@ -122,15 +167,15 @@ namespace Walkabout.Views.Controls
             get { return (this.listBox1.SelectedItem is AccountItemViewModel m) ? m.Account : null; }
             set
             {
-                var item = (from i in this.items where i is AccountItemViewModel m && m.Account == value select i).FirstOrDefault();
+                var item = this.GetViewModel(value);
                 if (item != null)
                 {
                     this.Selected = item;
                 }
                 else if (!this.DisplayClosedAccounts && !value.IsDeleted)
                 {
-                    this.DisplayClosedAccounts = true;
-                    this.SelectedAccount = value;
+                    this.DisplayClosedAccounts = true; // this depends on rebind happening synchronously!
+                    this.Selected = this.GetViewModel(value);
                 }
             }
         }
@@ -230,7 +275,7 @@ namespace Walkabout.Views.Controls
             this.statusArea = statusControl;
             if (this.statusArea != null)
             {
-                this.statusArea.FontSize = 11;
+                this.statusArea.FontSize = 14;
             }
         }
 
@@ -336,7 +381,7 @@ namespace Walkabout.Views.Controls
             }
             else
             {
-                this.Rebind();
+                this.DelayedRebind();
             }
         }
 
@@ -371,33 +416,39 @@ namespace Walkabout.Views.Controls
 
                 var accountOfTypeBanking = from a in inputList where a.Type == AccountType.Checking || a.Type == AccountType.Savings || a.Type == AccountType.Cash select a;
                 AccountSectionHeader sh = BundleAccount("Banking", this.items, accountOfTypeBanking);
+                sh.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
                 netWorth += sh.BalanceInNormalizedCurrencyValue;
 
                 var accountOfTypeCredit = from a in inputList where a.Type == AccountType.Credit || a.Type == AccountType.CreditLine select a;
                 sh = BundleAccount("Credit", this.items, accountOfTypeCredit);
+                sh.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
                 netWorth += sh.BalanceInNormalizedCurrencyValue;
 
                 var accountOfTypeBrokerage = from a in inputList where a.Type == AccountType.Brokerage || a.Type == AccountType.MoneyMarket select a;
                 sh = BundleAccount("Brokerage", this.items, accountOfTypeBrokerage);
+                sh.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
                 sh.Clicked += (s, e) => { AppCommands.CommandReportInvestment.Execute(null, this); };
                 netWorth += sh.BalanceInNormalizedCurrencyValue;
 
                 var accountOfTypeRetirement = from a in inputList where a.Type == AccountType.Retirement select a;
                 sh = BundleAccount("Retirement", this.items, accountOfTypeRetirement);
+                sh.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
                 sh.Clicked += (s, e) => { AppCommands.CommandReportInvestment.Execute(null, this); };
                 netWorth += sh.BalanceInNormalizedCurrencyValue;
 
                 var accountOfTypeAsset = from a in inputList where a.Type == AccountType.Asset select a;
                 sh = BundleAccount("Assets", this.items, accountOfTypeAsset);
+                sh.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
                 netWorth += sh.BalanceInNormalizedCurrencyValue;
 
                 var accountOfTypeLoan = from a in inputList where a.Type == AccountType.Loan select a;
                 sh = BundleAccount("Loans", this.items, accountOfTypeLoan);
+                sh.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
                 netWorth += sh.BalanceInNormalizedCurrencyValue;
 
                 if (this.statusArea != null)
                 {
-                    this.statusArea.Text = netWorth.ToString("C");
+                    this.statusArea.Text = StringHelpers.GetFormattedAmount(netWorth) + (this.databaseSettings.ShowCurrency ? " " + this.myMoney.Currencies.DefaultCurrency?.Symbol : "");
                 }
 
                 if (selected != null)
@@ -405,6 +456,7 @@ namespace Walkabout.Views.Controls
                     this.SelectedAccount = selected;
                 }
 
+                this.UpdateShowCurrency();
             }
             else
             {
@@ -428,9 +480,8 @@ namespace Walkabout.Views.Controls
         {
             AccountSectionHeader sectionHeader = new AccountSectionHeader();
 
-            if (accountOfTypeBanking.Count() > 0)
+            if (accountOfTypeBanking.Any())
             {
-
                 sectionHeader.Title = caption;
 
                 List<Account> bundle = new List<Account>();
@@ -623,7 +674,7 @@ namespace Walkabout.Views.Controls
             if (filename.ToLowerInvariant().EndsWith(".txf"))
             {
                 TaxReportDialog options = new TaxReportDialog();
-                options.Month = this.DatabaseSettings.FiscalYearStart;
+                options.Month = this.databaseSettings.FiscalYearStart;
                 options.Owner = App.Current.MainWindow;
                 if (options.ShowDialog() == true)
                 {
@@ -939,9 +990,9 @@ namespace Walkabout.Views.Controls
 
         private CsvMap LoadMap(Account a)
         {
-            if (this.DatabaseSettings != null)
+            if (this.databaseSettings != null)
             {
-                var dir = Path.Combine(Path.GetDirectoryName(this.DatabaseSettings.SettingsFileName), "CsvMaps");
+                var dir = Path.Combine(Path.GetDirectoryName(this.databaseSettings.SettingsFileName), "CsvMaps");
                 if (!Directory.Exists(dir))
                 {
                     Directory.CreateDirectory(dir);
@@ -955,6 +1006,7 @@ namespace Walkabout.Views.Controls
 
     public class AccountViewModel : INotifyPropertyChanged
     {
+        private bool showCurrency;
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool selected;
@@ -974,6 +1026,18 @@ namespace Walkabout.Views.Controls
 
         protected virtual void OnSelectedChanged() { }
 
+        public bool ShowCurrency
+        {
+            get
+            {
+                return this.showCurrency;
+            }
+            set
+            {
+                this.showCurrency = value;
+                this.OnPropertyChanged("ShowCurrency");
+            }
+        }
 
         protected void OnPropertyChanged(string name)
         {
@@ -1058,6 +1122,52 @@ namespace Walkabout.Views.Controls
             get => this.account.BalanceNormalized;
         }
 
+        public string BalanceAsString
+        {
+            get
+            {
+                return StringHelpers.GetFormattedAmount(this.Balance, this.Account.NormalizedCultureInfo);
+            }
+        }
+
+        public string Currency
+        {
+            get
+            {
+                return this.account.Currency;
+            }
+        }
+
+        public string CurrencyNormalized
+        {
+            get
+            {
+                return this.account.NormalizedCurrency;
+            }
+        }
+
+        public string CountryFlag
+        {
+            get
+            {
+
+                Currency c = this.account.GetCurrency();
+
+                if (c != null)
+                {
+                    var found = (from ci in Walkabout.WpfConverters.CultureHelpers.CurrencyCultures
+                                 where ci.CultureCode == c.CultureCode
+                                 select ci).FirstOrDefault();
+
+                    if (found != null)
+                    {
+                        return "/Icons/Flags/" + found.TwoLetterISORegionName.ToLower() + ".png";
+                    }
+                }
+
+                return null;
+            }
+        }
 
         public FontWeight FontWeight
         {
@@ -1192,10 +1302,12 @@ namespace Walkabout.Views.Controls
         }
     }
 
-
     public class AccountSectionHeader : AccountViewModel
     {
         private decimal balanceNormalized;
+        private CultureInfo cultureInfo;
+        private Currency defaultCurrency;
+
 
         public string Name
         {
@@ -1232,6 +1344,34 @@ namespace Walkabout.Views.Controls
             }
         }
 
+        public string BalanceAsString
+        {
+            get
+            {
+                var ci = Currency.GetCultureForCurrency(this.DefaultCurrency.Symbol);
+                return StringHelpers.GetFormattedAmount(this.BalanceInNormalizedCurrencyValue, ci) + (this.ShowCurrency ? " " + this.DefaultCurrency?.Symbol : "");
+            }
+        }
+
+        public CultureInfo CultureInfo { get => this.cultureInfo; set => this.cultureInfo = value; }
+
+        public Currency DefaultCurrency
+        {
+            get
+            {
+                if (this.defaultCurrency == null)
+                {
+                    this.defaultCurrency = Currencies.GetDefaultCurrency();
+                }
+                return this.defaultCurrency;
+            }
+
+            set
+            {
+                this.defaultCurrency = value;
+            }
+        }
+
         protected override void OnSelectedChanged()
         {
             this.OnPropertyChanged("BalanceForeground");
@@ -1255,6 +1395,7 @@ namespace Walkabout.Views.Controls
         }
 
         public List<Account> Accounts { get; set; }
+
 
         public event EventHandler Clicked;
 

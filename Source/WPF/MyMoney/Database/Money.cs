@@ -702,7 +702,6 @@ namespace Walkabout.Data
         private StockSplits stockSplits;
         private RentBuildings buildings;
         private TransactionExtras extras;
-        private CultureInfo cultureInfo = new CultureInfo("en-US");
         internal PayeeIndex payeeAccountIndex;
         private bool watching;
 
@@ -2731,19 +2730,38 @@ namespace Walkabout.Data
 
         public decimal GetNormalizedAmount(decimal amount)
         {
+            if (this.NonNullCurrency == this.NormalizedCurrency)
+            {
+                // No need to convert
+                return amount;
+            }
+
+            Currency c = this.GetCurrency();
+            if (c != null)
+            {
+                // First, convert to USD
+                // for example USA 2,000 * CAN .95 = 1,900 (in USA currency)
+                amount *= c.Ratio;
+            }
+
+            if (this.NormalizedCurrencyObject != null & this.NormalizedCurrencyObject.Symbol != "USD")
+            {
+                // convert USD value to the Currency value selected by the user
+                // 100 USD convert to CAD = 1/0.75 = 1.333 * 100 = 133.33 CAD
+                // 100 USD convert to EUR = 1/1.15 = 0.867 * 100 = 86.70 EUR
+                amount *= 1 / this.NormalizedCurrencyObject.Ratio;
+            }
+            return amount;
+        }
+
+        public Currency GetCurrency()
+        {
             MyMoney money = this.Parent.Parent as MyMoney;
             if (money != null)
             {
-                Currency c = money.Currencies.FindCurrency(this.currency);
-                if (c != null)
-                {
-                    //-----------------------------------------------------
-                    // Apply ratio of conversion
-                    // for example USA 2,000 * CAN .95 = 1,900 (in USA currency)
-                    return amount * c.Ratio;
-                }
+                return money.Currencies.FindCurrencyOrDefault(this.currency);
             }
-            return amount;
+            return null;
         }
 
 
@@ -2756,6 +2774,51 @@ namespace Walkabout.Data
             get
             {
                 return this.GetNormalizedAmount(this.Balance);
+            }
+        }
+
+        [XmlIgnore]
+        public Currency NormalizedCurrencyObject
+        {
+            get
+            {
+                MyMoney money = this.Parent.Parent as MyMoney;
+                if (money != null)
+                {
+                    return money.Currencies.DefaultCurrency;
+                }
+
+                return null;
+            }
+        }
+
+        [XmlIgnore]
+        public CultureInfo NormalizedCultureInfo
+        {
+            get
+            {
+                var c = this.NormalizedCurrencyObject;
+                if (c != null)
+                {
+                    return Walkabout.Data.Currency.GetCultureForCurrency(c.Symbol);
+                }
+
+                return null;
+            }
+        }
+
+        [XmlIgnore]
+        public string NormalizedCurrency
+        {
+            get
+            {
+                var currencyObject = this.NormalizedCurrencyObject;
+                if (currencyObject != null)
+                {
+                    return currencyObject.Symbol;
+                }
+
+                return this.NonNullCurrency;
             }
         }
 
@@ -3000,7 +3063,7 @@ namespace Walkabout.Data
         [DataMember]
         public string CategoryForPrincipalName
         {
-            get { return this.categoryForPrincipal == null ? null : this.categoryForPrincipal.Name; }
+            get { return this.categoryForPrincipal?.Name; }
             set { this.categoryForPrincipalName = value; }
         }
 
@@ -3012,7 +3075,7 @@ namespace Walkabout.Data
         [DataMember]
         public string CategoryForInterestName
         {
-            get { return this.categoryForInterest == null ? null : this.categoryForInterest.Name; }
+            get { return this.categoryForInterest?.Name; }
             set { this.categoryForInterestName = value; }
         }
 
@@ -4387,6 +4450,7 @@ namespace Walkabout.Data
         private int nextCurrency;
         private Hashtable<int, Currency> currencies = new Hashtable<int, Currency>();
         private readonly Hashtable<string, Currency> quickLookup = new Hashtable<string, Currency>();
+        private Currency defaultCurrency;
 
         public Currencies()
         {
@@ -4556,6 +4620,25 @@ namespace Walkabout.Data
             return null;
         }
 
+        public Currency FindCurrencyOrDefault(string currencySymbol)
+        {
+            if (String.IsNullOrEmpty(currencySymbol))
+            {
+                return this.FindCurrency("USD");
+            }
+            var c = this.FindCurrency(currencySymbol);
+            if (c == null)
+            {
+                c = GetDefaultCurrency();
+            }
+            return c;
+
+        }
+        public static Currency GetDefaultCurrency()
+        {
+            return new Currency() { CultureCode = "en-US", Symbol = "USD", Name = "US Dollar", Ratio = 1 };
+        }
+
 
         public bool RemoveCurrency(Currency item, bool forceRemoveAfterSave = false)
         {
@@ -4625,7 +4708,23 @@ namespace Walkabout.Data
         }
 
         [XmlIgnore]
-        public Currency DefaultCurrency { get; set; }
+        public Currency DefaultCurrency
+        {
+            get
+            {
+                if (this.defaultCurrency == null)
+                {
+                    return this.FindCurrency("USD");
+                }
+                return this.defaultCurrency;
+            }
+
+            set
+            {
+                this.defaultCurrency = value;
+                this.FireChangeEvent(this, this, "DefaultCurrency", ChangeType.Changed);
+            }
+        }
 
         public bool Remove(Currency item)
         {

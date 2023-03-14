@@ -47,6 +47,22 @@ namespace Walkabout.WpfConverters
         }
     }
 
+    public class BoolToCollapseConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            bool param = parameter == null ? true : bool.Parse(parameter as string);
+            bool val = (bool)value;
+            return val == param ?
+            Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class BoolToBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

@@ -257,6 +257,7 @@ namespace Walkabout
 
             this.TransactionGraph.ServiceProvider = this;
             this.AppSettingsPanel.Closed += this.OnAppSettingsPanelClosed;
+            this.ApplyDisplayCurrency();
 
 #if PerformanceBlocks
             }
@@ -274,16 +275,10 @@ namespace Walkabout
             }
         }
 
+        // Lookup the users App default display currency, or else fall back to currency of "USD"
         private void ApplyDisplayCurrency()
         {
-            // Lookup the users App default display currency
-            Currency c = this.myMoney.Currencies.FindCurrency(this.databaseSettings.DisplayCurrency);
-            if (c == null)
-            {
-                c = new Currency() { CultureCode = "en-US", Symbol = "USD", Name = "US Dollar", Ratio = 1 };
-            }
-
-            this.myMoney.Currencies.DefaultCurrency = c;
+            this.myMoney.Currencies.DefaultCurrency = this.myMoney.Currencies.FindCurrencyOrDefault(this.databaseSettings.DisplayCurrency);
         }
 
         private void DatabaseSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -301,6 +296,9 @@ namespace Walkabout
                 case "DisplayCurrency":
                     this.ApplyDisplayCurrency();
                     this.GenerateReport(this.currentReport);
+                    break;
+                case "ShowCurrency":
+                    this.ApplyDisplayCurrency();
                     break;
             }
 
@@ -365,7 +363,7 @@ namespace Walkabout
             Security s = this.myMoney.Securities.FindSymbol(history.Symbol, false);
             if (s != null && history.History.Count > 0)
             {
-                StockQuote quote = history.History[history.History.Count - 1];
+                StockQuote quote = history.History[^1];
                 if (quote.Date > s.PriceDate)
                 {
                     this.myMoney.BeginUpdate(this);
