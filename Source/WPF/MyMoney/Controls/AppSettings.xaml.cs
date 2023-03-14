@@ -74,7 +74,7 @@ namespace Walkabout.Controls
                 if (b)
                 {
                     this.checkBoxRentalSupport.IsChecked = this.databaseSettings.RentalManagement;
-                    this.checkBoxShowCurrency.IsChecked = this.settings.ShowCurrency;
+                    this.checkBoxShowCurrency.IsChecked = this.databaseSettings.ShowCurrency;
                     this.checkBoxPlaySounds.IsChecked = this.settings.PlaySounds;
                     this.checkBoxAcceptReconciled.IsChecked = this.settings.AcceptReconciled;
                     this.comboBoxFiscalYear.SelectedIndex = this.databaseSettings.FiscalYearStart;
@@ -176,7 +176,7 @@ namespace Walkabout.Controls
 
         private void OnShowCurrencyChanged(object sender, RoutedEventArgs e)
         {
-            this.settings.ShowCurrency = this.checkBoxShowCurrency.IsChecked == true;
+            this.databaseSettings.ShowCurrency = this.checkBoxShowCurrency.IsChecked == true;
         }
 
         private void OnRentalSupportChanged(object sender, RoutedEventArgs e)

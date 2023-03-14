@@ -552,7 +552,7 @@ namespace Walkabout.Tests.Wrappers
 
             if (payee.StartsWith("Transfer"))
             {
-                payee = payee.Substring(8).Trim();
+                payee = payee[0..8].Trim();
                 int i = payee.IndexOf(':');
                 if (i > 0)
                 {

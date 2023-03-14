@@ -702,7 +702,6 @@ namespace Walkabout.Data
         private StockSplits stockSplits;
         private RentBuildings buildings;
         private TransactionExtras extras;
-        private CultureInfo cultureInfo = new CultureInfo("en-US");
         internal PayeeIndex payeeAccountIndex;
         private bool watching;
 
@@ -2742,7 +2741,7 @@ namespace Walkabout.Data
             {
                 // First, convert to USD
                 // for example USA 2,000 * CAN .95 = 1,900 (in USA currency)
-                amount *=  c.Ratio;
+                amount *= c.Ratio;
             }
 
             if (this.NormalizedCurrencyObject != null & this.NormalizedCurrencyObject.Symbol != "USD")
@@ -2750,9 +2749,9 @@ namespace Walkabout.Data
                 // convert USD value to the Currency value selected by the user
                 // 100 USD convert to CAD = 1/0.75 = 1.333 * 100 = 133.33 CAD
                 // 100 USD convert to EUR = 1/1.15 = 0.867 * 100 = 86.70 EUR
-                amount *= 1/ this.NormalizedCurrencyObject.Ratio;
+                amount *= 1 / this.NormalizedCurrencyObject.Ratio;
             }
-            return amount ;
+            return amount;
         }
 
         public Currency GetCurrency()
@@ -3064,7 +3063,7 @@ namespace Walkabout.Data
         [DataMember]
         public string CategoryForPrincipalName
         {
-            get { return this.categoryForPrincipal == null ? null : this.categoryForPrincipal.Name; }
+            get { return this.categoryForPrincipal?.Name; }
             set { this.categoryForPrincipalName = value; }
         }
 
@@ -3076,7 +3075,7 @@ namespace Walkabout.Data
         [DataMember]
         public string CategoryForInterestName
         {
-            get { return this.categoryForInterest == null ? null : this.categoryForInterest.Name; }
+            get { return this.categoryForInterest?.Name; }
             set { this.categoryForInterestName = value; }
         }
 
@@ -4723,6 +4722,7 @@ namespace Walkabout.Data
             set
             {
                 this.defaultCurrency = value;
+                this.FireChangeEvent(this, this, "DefaultCurrency", ChangeType.Changed);
             }
         }
 

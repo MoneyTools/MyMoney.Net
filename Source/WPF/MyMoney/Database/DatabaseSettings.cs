@@ -18,6 +18,7 @@ namespace Walkabout.Data
         private int? fiscalYearStart;
         private string displayCurrency = "USD";
         private bool? rentalManagement;
+        private bool showCurrency = true;
 
         // Needed by XmlSerializer
         public DatabaseSettings() { }
@@ -64,6 +65,7 @@ namespace Walkabout.Data
             this.OnPropertyChanged(nameof(this.FiscalYearStart));
             this.OnPropertyChanged(nameof(this.RentalManagement));
             this.OnPropertyChanged(nameof(this.DisplayCurrency));
+            this.OnPropertyChanged(nameof(this.ShowCurrency));
         }
 
         public int FiscalYearStart
@@ -92,6 +94,18 @@ namespace Walkabout.Data
             }
         }
 
+        public bool ShowCurrency
+        {
+            get => this.showCurrency;
+            set
+            {
+                if (this.showCurrency != value)
+                {
+                    this.showCurrency = value;
+                    this.OnPropertyChanged(nameof(this.ShowCurrency));
+                }
+            }
+        }
         public bool RentalManagement
         {
             get => this.rentalManagement.HasValue ? this.rentalManagement.Value : false;

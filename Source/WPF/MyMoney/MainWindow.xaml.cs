@@ -297,6 +297,9 @@ namespace Walkabout
                     this.ApplyDisplayCurrency();
                     this.GenerateReport(this.currentReport);
                     break;
+                case "ShowCurrency":
+                    this.ApplyDisplayCurrency();
+                    break;
             }
 
             // save right away, but decoulpled from UI thread.
@@ -360,7 +363,7 @@ namespace Walkabout
             Security s = this.myMoney.Securities.FindSymbol(history.Symbol, false);
             if (s != null && history.History.Count > 0)
             {
-                StockQuote quote = history.History[history.History.Count - 1];
+                StockQuote quote = history.History[^1];
                 if (quote.Date > s.PriceDate)
                 {
                     this.myMoney.BeginUpdate(this);
@@ -1808,7 +1811,7 @@ namespace Walkabout
                     {
                         // hmmm, no password saved, so we need to prompt for one.
                         PasswordWindow pw = new PasswordWindow();
-                        pw.UserName = Environment.GetEnvironmentVariable("USERNAME");                                           
+                        pw.UserName = Environment.GetEnvironmentVariable("USERNAME");
                         pw.Owner = Application.Current.MainWindow;
                         pw.Optional = true;
                         if (pw.ShowDialog() == true)

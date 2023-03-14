@@ -320,20 +320,6 @@ namespace Walkabout.Configuration
                 this.map["PlaySounds"] = value;
                 this.OnPropertyChanged("PlaySounds");
             }
-        }       
-        
-        public bool ShowCurrency
-        {
-            get
-            {
-                object value = this.map["ShowCurrency"];
-                return value is bool ? (bool)value : true;
-            }
-            set
-            {
-                this.map["ShowCurrency"] = value;
-                this.OnPropertyChanged("ShowCurrency");
-            }
         }
 
         public int TransferSearchDays
