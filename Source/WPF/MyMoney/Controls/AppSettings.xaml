@@ -62,17 +62,18 @@
 
             <Label Grid.Row="4" Grid.Column="0"  VerticalAlignment="Center">Display Currency As:</Label>
             <ComboBox Grid.Row="4" Grid.Column="1" x:Name="comboBoxCurrency"  SelectionChanged="OnCurrencyChanged"/>
-            <Label Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" x:Name="cultureCodeInfo" FontStyle="Italic" FontSize="9" HorizontalAlignment="Right" VerticalAlignment="Center">Country Ratio aa-BB</Label>
+            <Label Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" x:Name="cultureCodeInfo" FontStyle="Italic" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Center">Country Ratio aa-BB</Label>
+            <CheckBox Grid.Row="6" Grid.ColumnSpan="3" x:Name="checkBoxShowCurrency" Checked="OnShowCurrencyChanged" Unchecked="OnShowCurrencyChanged">Show currency</CheckBox>
 
-            <Label Grid.Row="6" Grid.Column="0"  VerticalAlignment="Center">Transfer search (days):</Label>
-            <TextBox Grid.Row="6" Grid.Column="1" x:Name="textBoxTransferSearchDays"  SelectionChanged="OnTransferDaysChanged" Margin="5"
+            <Label Grid.Row="7" Grid.Column="0"  VerticalAlignment="Center">Transfer search (days):</Label>
+            <TextBox Grid.Row="7" Grid.Column="1" x:Name="textBoxTransferSearchDays"  SelectionChanged="OnTransferDaysChanged" Margin="5"
                 ToolTip="Default days to use when searching for matching transfers with F12"/>
 
-            <CheckBox Grid.Row="7" Grid.ColumnSpan="3" x:Name="checkBoxRentalSupport" Checked="OnRentalSupportChanged" Unchecked="OnRentalSupportChanged">Rental management</CheckBox>
+            <CheckBox Grid.Row="8" Grid.ColumnSpan="3" x:Name="checkBoxRentalSupport" Checked="OnRentalSupportChanged" Unchecked="OnRentalSupportChanged">Rental management</CheckBox>
 
-            <CheckBox Grid.Row="8" Grid.ColumnSpan="3" x:Name="checkBoxPlaySounds"  Checked="OnPlaySoundsChanged" Unchecked="OnPlaySoundsChanged">Play sounds</CheckBox>
+            <CheckBox Grid.Row="9" Grid.ColumnSpan="3" x:Name="checkBoxPlaySounds"  Checked="OnPlaySoundsChanged" Unchecked="OnPlaySoundsChanged">Play sounds</CheckBox>
 
-            <CheckBox Grid.Row="9" Grid.ColumnSpan="3" x:Name="checkBoxAcceptReconciled"  Checked="OnAcceptReconciledChanged" Unchecked="OnAcceptReconciledChanged">Accept reconciled transactions</CheckBox>
+            <CheckBox Grid.Row="10" Grid.ColumnSpan="3" x:Name="checkBoxAcceptReconciled"  Checked="OnAcceptReconciledChanged" Unchecked="OnAcceptReconciledChanged">Accept reconciled transactions</CheckBox>
 
         </Grid>
     </Border>

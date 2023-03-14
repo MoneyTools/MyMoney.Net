@@ -4630,10 +4630,14 @@ namespace Walkabout.Data
             var c = this.FindCurrency(currencySymbol);
             if (c == null)
             {
-                c = new Currency() { CultureCode = "en-US", Symbol = "USD", Name = "US Dollar", Ratio = 1 };
+                c = GetDefaultCurrency();
             }
             return c;
 
+        }
+        public static Currency GetDefaultCurrency()
+        {
+            return new Currency() { CultureCode = "en-US", Symbol = "USD", Name = "US Dollar", Ratio = 1 };
         }
 
 

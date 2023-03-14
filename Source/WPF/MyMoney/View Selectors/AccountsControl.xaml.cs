@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Walkabout.Commands;
+using Walkabout.Configuration;
 using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Dialogs;
@@ -405,7 +406,7 @@ namespace Walkabout.Views.Controls
 
                 if (this.statusArea != null)
                 {
-                    this.statusArea.Text = StringHelpers.GetFormattedAmount(netWorth) + " " + this.myMoney.Currencies.DefaultCurrency?.Symbol;
+                    this.statusArea.Text = StringHelpers.GetFormattedAmount(netWorth) + (Settings.TheSettings.ShowCurrency ? " " + this.myMoney.Currencies.DefaultCurrency?.Symbol : "");
                 }
 
                 if (selected != null)
@@ -1073,14 +1074,22 @@ namespace Walkabout.Views.Controls
             }
         }
 
+        public bool ShowCurrency
+        {
+            get
+            {
+                return Settings.TheSettings.ShowCurrency;
+            }
+        }
+
         public string Currency
         {
             get
             {
                 return this.account.Currency;
             }
-        }   
-        
+        }
+
         public string CurrencyNormalized
         {
             get
@@ -1093,6 +1102,7 @@ namespace Walkabout.Views.Controls
         {
             get
             {
+
                 Currency c = this.account.GetCurrency();
 
                 if (c != null)
@@ -1106,6 +1116,7 @@ namespace Walkabout.Views.Controls
                         return "/Icons/Flags/" + found.TwoLetterISORegionName.ToLower() + ".png";
                     }
                 }
+
                 return null;
             }
         }
@@ -1291,12 +1302,28 @@ namespace Walkabout.Views.Controls
             get
             {
                 var ci = Currency.GetCultureForCurrency(this.DefaultCurrency.Symbol);
-                return StringHelpers.GetFormattedAmount(this.BalanceInNormalizedCurrencyValue, ci) + " " + this.DefaultCurrency.Symbol;
+                return StringHelpers.GetFormattedAmount(this.BalanceInNormalizedCurrencyValue, ci) + (Settings.TheSettings.ShowCurrency ? " " + this.DefaultCurrency?.Symbol : "");
             }
         }
 
         public CultureInfo CultureInfo { get => this.cultureInfo; set => this.cultureInfo = value; }
-        public Currency DefaultCurrency { get => this.defaultCurrency; set => this.defaultCurrency = value; }
+
+        public Currency DefaultCurrency
+        {
+            get
+            {
+                if (this.defaultCurrency == null)
+                {
+                    this.defaultCurrency = Currencies.GetDefaultCurrency();
+                }
+                return this.defaultCurrency;
+            }
+
+            set
+            {
+                this.defaultCurrency = value;
+            }
+        }
 
         protected override void OnSelectedChanged()
         {

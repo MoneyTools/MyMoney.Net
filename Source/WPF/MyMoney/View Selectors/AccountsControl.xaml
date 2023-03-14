@@ -6,12 +6,15 @@
              xmlns:local="clr-namespace:Walkabout.Views.Controls"
              xmlns:help="clr-namespace:Walkabout.Help"
              xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:c="clr-namespace:Walkabout.WpfConverters"
              help:HelpService.HelpKeyword="Accounts/BankAccounts/"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
 
+        <c:BoolToCollapseConverter x:Key="BoolToCollapseConverter"/>
+        
         <DataTemplate DataType="{x:Type local:AccountSectionHeader}">
             <Border BorderThickness="0 0 0 1" BorderBrush="{DynamicResource SectionHeaderBorder}" Margin="0 10 0 0">
                 <Grid>
@@ -52,7 +55,8 @@
                        Margin="0,0,5,0" 
                        ToolTip="{Binding Path=WarningIconTooltip}"/>
 
-                <Image Grid.Column="1" Source="{Binding CountryFlag}" HorizontalAlignment="Center" Width="16" Margin="0,0,8,0"/>
+                <Image Grid.Column="1" Source="{Binding CountryFlag}" HorizontalAlignment="Center" Width="16" Margin="0,0,8,0" Visibility="{Binding ShowCurrency, Converter={StaticResource BoolToCollapseConverter}}"/>
+                
                 <TextBlock x:Name="AccountName" Grid.Column="2" Text="{Binding Name}" TextTrimming="CharacterEllipsis" ClipToBounds="True"
                            Foreground="{Binding NameForeground}"
                            FontWeight="{Binding FontWeight}"/>
@@ -61,10 +65,11 @@
                            HorizontalAlignment="Right"
                            Foreground="{Binding BalanceForeground}"/>
 
-                <TextBlock  Grid.Column="4"  Text="{Binding CurrencyNormalized}"  Margin="8,0,0,0" FontSize="10" VerticalAlignment="Center" Opacity="0.5"/>
+                <TextBlock  Grid.Column="4" Text="{Binding CurrencyNormalized}"  Margin="8,0,0,0" FontSize="10" VerticalAlignment="Center" Opacity="0.5" Visibility="{Binding ShowCurrency, Converter={StaticResource BoolToCollapseConverter}}"/>
 
             </Grid>
         </DataTemplate>
+        
     </UserControl.Resources>
 
     <UserControl.CommandBindings>
