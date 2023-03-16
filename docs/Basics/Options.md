@@ -10,6 +10,7 @@ You can use this to:
 * Select a new UI Theme (Light or Dark).
 * Change when the fiscal year starts for reports and charts.
 * [Default currency](Currencies.md) for reports
+* Whether to show currency info in the Accounts View.
 * Range of dates to search for matching automatic [F12 transfers](Transfers.md).
 * Enable/Disable the Rental Management feature
 * Enable/Disable playing of any sounds.
