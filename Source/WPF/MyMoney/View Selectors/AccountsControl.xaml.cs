@@ -168,6 +168,13 @@ namespace Walkabout.Views.Controls
             set
             {
                 var item = this.GetViewModel(value);
+                if (item == null)
+                {
+                    // we need the view model now, can't wait for delayed rebind.
+                    this.delayedActions.CancelDelayedAction("rebind");
+                    this.Rebind();
+                    item = this.GetViewModel(value);
+                }
                 if (item != null)
                 {
                     this.Selected = item;
