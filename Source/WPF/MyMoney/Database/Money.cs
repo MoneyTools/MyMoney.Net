@@ -12718,6 +12718,27 @@ namespace Walkabout.Data
             }
         }
 
+
+        [XmlIgnore]
+        public string SortableInvestmentSecurity
+        {
+            get
+            {
+                if (this.Investment != null && this.Investment.Security != null)
+                {
+                    if (String.IsNullOrEmpty(this.Investment.Security.Name))
+                    {
+                        return this.Investment.Security.Symbol;
+                    }
+                    else
+                    {
+                        return this.Investment.Security.Name;
+                    }
+                }
+                return null;
+            }
+        }
+
         [XmlIgnore]
         public decimal InvestmentUnits
         {
