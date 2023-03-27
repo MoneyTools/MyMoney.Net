@@ -12841,6 +12841,11 @@ namespace Walkabout.Data
             }
         }
 
+        public override string ToString()
+        {
+            return $"Transaction: {this.PayeeName} on {this.date.ToShortDateString()} for {this.amount}";
+        }
+
         #region DataBinding Hack to work around some new weird WPF behavior for Category editing
         [XmlIgnore]
         [IgnoreDataMember]

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -164,7 +165,7 @@ namespace Walkabout.Controls
         {
             // this is handy for debugging and finding out why the selected row is not being scrolled into view
             // when we expect it to.
-            return;
+            Debug.WriteLine($"RequestBringIntoView: {e.TargetRect}");
         }
 
         public void ClearItemsSource()
@@ -254,7 +255,11 @@ namespace Walkabout.Controls
             {
                 this.SortByColumn(this.sorted.SortMemberPath, this.sorted.SortDirection.HasValue ? this.sorted.SortDirection.Value : ListSortDirection.Ascending);
             }
-            this.AsyncScrollSelectedRowIntoView();
+            if (!this.sorting)
+            {
+                Debug.WriteLine($"OnItemsChanged: {e.Action}");
+                this.AsyncScrollSelectedRowIntoView();
+            }
         }
 
 
@@ -266,10 +271,12 @@ namespace Walkabout.Controls
                 bool hadFocus = this.IsKeyboardFocusWithin;
                 if (selected != null)
                 {
+                    Debug.WriteLine($"Delayed ScrollIntoView {selected}");
                     this.delayedActions.StartDelayedAction("ScrollIntoView", () =>
                     {
                         if (selected == this.SelectedItem)
                         {
+                            Debug.WriteLine($"ScrollIntoView {selected}");
                             this.ScrollIntoView(selected);
                             if (hadFocus)
                             {
@@ -279,9 +286,48 @@ namespace Walkabout.Controls
                                     this.SetFocusOnSelectedRow(selected, name);
                                 }
                             }
+                            this.delayedActions.StartDelayedAction("CheckScrollIntoView", () =>
+                            {
+                                this.CheckVisibility(selected);
+                            }, TimeSpan.FromMilliseconds(30));
                         }
-                    }, TimeSpan.FromMilliseconds(10));
+                        else
+                        {
+                            Debug.WriteLine("Skipping ScrollIntoView");
+                        }
+                    }, TimeSpan.FromMilliseconds(30));
                 }
+            }
+        }
+
+        private void CheckVisibility(object selected)
+        {
+            if (selected == this.SelectedItem && this.SelectedItem != null)
+            {
+                var index = this.SelectedIndex;
+                DataGridRow row = (DataGridRow)this.ItemContainerGenerator.ContainerFromIndex(index);
+                if (row == null)
+                {
+                    Debug.WriteLine("Dangorang, the container is not available yet, try again...");
+                    this.ScrollIntoView(selected);
+                }
+                else
+                {
+                    Point position = row.TransformToAncestor(this).Transform(new Point(0, 0));
+                    if (position.Y < 0 || position.Y > this.ActualHeight)
+                    {
+                        Debug.WriteLine("Dangorang, the silly thing is still offscreen!  So try again....");
+                        this.ScrollIntoView(selected);
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Row is visible as position {position.Y}");
+                    }
+                }
+            }
+            else
+            {
+                Debug.WriteLine("CheckVisibility skipped since selected item has changed");
             }
         }
 
