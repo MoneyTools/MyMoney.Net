@@ -308,6 +308,20 @@ namespace Walkabout.Configuration
             }
         }
 
+        public bool ImportOFXAsUTF8
+        {
+            get
+            {
+                object value = this.map["ImportOFXAsUTF8"];
+                return value is bool ? (bool)value : false;
+            }
+            set
+            {
+                this.map["ImportOFXAsUTF8"] = value;
+                this.OnPropertyChanged("ImportOFXAsUTF8");
+            }
+        }
+
         public bool PlaySounds
         {
             get
@@ -1140,6 +1154,12 @@ namespace Walkabout.Configuration
             string fullPathToApplication)
         {
             Debug.Assert(OperatingSystem.IsWindows());
+
+            if (System.IO.Path.GetExtension(fullPathToApplication).ToLowerInvariant() == ".dll")
+            {
+                // Fix path to .exe on .NET core runtime.
+                fullPathToApplication = fullPathToApplication[0..^4] + ".exe";
+            }
 
             string applicationFileName = Path.GetFileName(fullPathToApplication);
 
