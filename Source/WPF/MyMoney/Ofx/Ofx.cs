@@ -1557,7 +1557,7 @@ NEWFILEUID:{1}
             }
 
             XDocument doc = null;
-            Encoding enc = Encoding.ASCII;
+            Encoding enc = Encoding.UTF8;
             StreamReader sr = new StreamReader(stm, enc);
             string content = sr.ReadToEnd();
             if (content.StartsWith("<?xml"))
@@ -1706,7 +1706,7 @@ NEWFILEUID:{1}
                                         if (value == "1252")
                                         {
                                             // dotnet core no longer supports windows-1252...
-                                            value = "ISO-8859-1";
+                                            value = "utf-8";
                                         }
 
                                         try
