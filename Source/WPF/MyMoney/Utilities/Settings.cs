@@ -1141,6 +1141,12 @@ namespace Walkabout.Configuration
         {
             Debug.Assert(OperatingSystem.IsWindows());
 
+            if (System.IO.Path.GetExtension(fullPathToApplication).ToLowerInvariant() == ".dll")
+            {
+                // Fix path to .exe on .NET core runtime.
+                fullPathToApplication = fullPathToApplication[0..^4] + ".exe";
+            }
+
             string applicationFileName = Path.GetFileName(fullPathToApplication);
 
 
