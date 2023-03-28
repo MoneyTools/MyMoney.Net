@@ -35,6 +35,7 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
@@ -76,6 +77,8 @@
       <CheckBox Grid.Row="9" Grid.ColumnSpan="3" x:Name="checkBoxPlaySounds"  Checked="OnPlaySoundsChanged" Unchecked="OnPlaySoundsChanged">Play sounds</CheckBox>
 
       <CheckBox Grid.Row="10" Grid.ColumnSpan="3" x:Name="checkBoxAcceptReconciled"  Checked="OnAcceptReconciledChanged" Unchecked="OnAcceptReconciledChanged">Accept reconciled transactions</CheckBox>
+
+      <CheckBox Grid.Row="11" Grid.ColumnSpan="3" x:Name="checkBoxOfxUtf8Override"  Checked="OnOfxOverrideChanged" Unchecked="OnOfxOverrideChanged">Import .ofx and .qfx files as UTF-8</CheckBox>
 
     </Grid>
   </Border>

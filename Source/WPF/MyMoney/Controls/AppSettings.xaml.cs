@@ -213,5 +213,10 @@ namespace Walkabout.Controls
         {
             this.settings.AcceptReconciled = this.checkBoxAcceptReconciled.IsChecked == true;
         }
+
+        private void OnOfxOverrideChanged(object sender, RoutedEventArgs e)
+        {
+            this.settings.ImportOFXAsUTF8 = this.checkBoxOfxUtf8Override.IsChecked == true;
+        }
     }
 }
