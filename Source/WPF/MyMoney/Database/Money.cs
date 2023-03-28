@@ -12724,17 +12724,9 @@ namespace Walkabout.Data
         {
             get
             {
-
                 if (this.Investment != null && this.Investment.Security != null)
                 {
-                    if (String.IsNullOrEmpty(this.Investment.Security.Symbol))
-                    {
-                        return this.Investment.Security.Name;
-                    }
-                    else
-                    {
-                        return this.Investment.Security.Symbol;
-                    }
+                    return this.Investment.Security.ToString();
                 }
                 return null;
             }
