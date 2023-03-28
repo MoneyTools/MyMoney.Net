@@ -62,6 +62,7 @@ namespace Walkabout
 
         internal MyMoney myMoney = new MyMoney();
         private ChangeTracker tracker;
+        private FileSystemWatcher importWatcher;
 
         //---------------------------------------------------------------------
         // The Toolbox controls
@@ -188,11 +189,11 @@ namespace Walkabout
             //-----------------------------------------------------------------
             // Setup the "file import" module
             //
-            FileSystemWatcher fsw = new FileSystemWatcher();
-            fsw.Path = ProcessHelper.ImportFileListFolder;
-            fsw.NotifyFilter = NotifyFilters.LastWrite;
-            fsw.Changed += new FileSystemEventHandler(this.OnImportFolderContentHasChanged);
-            fsw.EnableRaisingEvents = true;
+            this.importWatcher = new FileSystemWatcher();
+            this.importWatcher.Path = ProcessHelper.ImportFileListFolder;
+            this.importWatcher.NotifyFilter = NotifyFilters.LastWrite;
+            this.importWatcher.Changed += new FileSystemEventHandler(this.OnImportFolderContentHasChanged);
+            this.importWatcher.EnableRaisingEvents = true;
 
             //-----------------------------------------------------------------
             // Setup the ToolBox (aka Accordion)
@@ -4630,6 +4631,10 @@ namespace Walkabout
             }
 
             TempFilesManager.Shutdown();
+
+            this.importWatcher.Changed -= new FileSystemEventHandler(this.OnImportFolderContentHasChanged);
+            this.importWatcher.EnableRaisingEvents = false;
+            this.importWatcher = null;
         }
 
         private void CleanupStockQuoteManager()

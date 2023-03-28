@@ -1747,6 +1747,17 @@ NEWFILEUID:{1}
 
             // re-encode in the right encoding and read up to the starting <OFX> tag.
             stm.Seek(0, SeekOrigin.Begin);
+
+#if DEBUG_OFX_STREAM
+            var buffer = new byte[100000];
+            int len = stm.Read(buffer, 0, 100000);
+            using (var fs = new System.IO.FileStream("c:\\temp\\dump.ofx", FileMode.Create, FileAccess.Write))
+            {
+                fs.Write(buffer, 0, len);
+            }
+            stm.Seek(0, SeekOrigin.Begin);
+#endif
+
             sr = new StreamReader(stm, enc);
             StringBuilder sb = new StringBuilder();
 
