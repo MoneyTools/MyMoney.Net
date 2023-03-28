@@ -308,6 +308,20 @@ namespace Walkabout.Configuration
             }
         }
 
+        public bool ImportOFXAsUTF8
+        {
+            get
+            {
+                object value = this.map["ImportOFXAsUTF8"];
+                return value is bool ? (bool)value : false;
+            }
+            set
+            {
+                this.map["ImportOFXAsUTF8"] = value;
+                this.OnPropertyChanged("ImportOFXAsUTF8");
+            }
+        }
+
         public bool PlaySounds
         {
             get

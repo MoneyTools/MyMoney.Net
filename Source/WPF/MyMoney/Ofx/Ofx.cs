@@ -17,6 +17,7 @@ using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Walkabout.Configuration;
 using Walkabout.Data;
 using Walkabout.Sgml;
 using Walkabout.Utilities;
@@ -306,7 +307,12 @@ namespace Walkabout.Ofx
                             }
                             else
                             {
-                                doc = ofx.ParseOfxResponse(fs, false);
+                                Encoding enc = null;
+                                if (Settings.TheSettings.ImportOFXAsUTF8)
+                                {
+                                    enc = Encoding.UTF8;
+                                }
+                                doc = ofx.ParseOfxResponse(fs, false, enc);
                                 fs.Close();
                                 string file = OfxRequest.SaveLog(doc, Path.GetFileNameWithoutExtension(fname) + ".xml");
                                 doc.AddAnnotation(new LogFileInfo() { Path = file });
@@ -1549,7 +1555,7 @@ NEWFILEUID:{1}
             }));
         }
 
-        public XDocument ParseOfxResponse(Stream stm, bool implementSecurity)
+        public XDocument ParseOfxResponse(Stream stm, bool implementSecurity, Encoding encodingOverride = null)
         {
             if (!stm.CanSeek)
             {
@@ -1557,7 +1563,7 @@ NEWFILEUID:{1}
             }
 
             XDocument doc = null;
-            Encoding enc = Encoding.ASCII; // default as per OFX spec.
+            Encoding enc = encodingOverride ?? Encoding.ASCII; // default as per OFX spec.
             StreamReader sr = new StreamReader(stm, enc);
             string content = sr.ReadToEnd();
             if (content.StartsWith("<?xml"))
@@ -1682,24 +1688,27 @@ NEWFILEUID:{1}
                                 break;
                             case "ENCODING":
                                 // BUGBUG: how do we handle UNICODE in SGML files?  Do we need to re-decode the stream as UNICODE?
-                                if (string.Compare("USASCII", value, StringComparison.OrdinalIgnoreCase) == 0)
+                                if (encodingOverride == null)
                                 {
-                                    usascii = true;
-                                }
-                                else
-                                {
-                                    try
+                                    if (string.Compare("USASCII", value, StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        enc = Encoding.GetEncoding(value);
+                                        usascii = true;
                                     }
-                                    catch
+                                    else
                                     {
-                                        throw new OfxException("Unsupported encoding: " + value + " found in Ofx response");
+                                        try
+                                        {
+                                            enc = Encoding.GetEncoding(value);
+                                        }
+                                        catch
+                                        {
+                                            throw new OfxException("Unsupported encoding: " + value + " found in Ofx response");
+                                        }
                                     }
                                 }
                                 break;
                             case "CHARSET":
-                                if (usascii)
+                                if (usascii && encodingOverride == null)
                                 {
                                     if (string.Compare("NONE", value, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
@@ -1735,7 +1744,6 @@ NEWFILEUID:{1}
                     }
                 }
             }
-
 
             // re-encode in the right encoding and read up to the starting <OFX> tag.
             stm.Seek(0, SeekOrigin.Begin);
