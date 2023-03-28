@@ -1156,16 +1156,28 @@ namespace Walkabout.Configuration
                 key.SetValue(string.Empty, applicationFileName);
             }
 
-            string fullRegPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\" + extension;
+            string fullRegPathToFileExts = "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\";
 
             try
             {
-                Registry.CurrentUser.DeleteSubKeyTree(fullRegPath, false);
+                // remove current file extension association
+
+                RegistryKey FileExts = Registry.CurrentUser.CreateSubKey(fullRegPathToFileExts);
+
+                RegistryKey hdr = FileExts.OpenSubKey(extension, true);
+                foreach (String key in hdr.GetSubKeyNames())
+                {
+                    hdr.DeleteSubKey(key);
+                }
+
+                hdr.Close();
+                FileExts.DeleteSubKeyTree(extension);
             }
             catch { }
 
             try
             {
+                string fullRegPath = fullRegPathToFileExts + extension;
                 // As a last resort attempt to educate the "Application picker" that we support the .QIF files
                 Registry.CurrentUser.CreateSubKey(fullRegPath + "\\OpenWithList").SetValue("a", applicationFileName);
                 Registry.CurrentUser.CreateSubKey(fullRegPath + "\\OpenWithList").SetValue("MRUList", "a");
