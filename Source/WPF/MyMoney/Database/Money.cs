@@ -12718,6 +12718,20 @@ namespace Walkabout.Data
             }
         }
 
+
+        [XmlIgnore]
+        public string SortableInvestmentSecurity
+        {
+            get
+            {
+                if (this.Investment != null && this.Investment.Security != null)
+                {
+                    return this.Investment.Security.ToString();
+                }
+                return null;
+            }
+        }
+
         [XmlIgnore]
         public decimal InvestmentUnits
         {

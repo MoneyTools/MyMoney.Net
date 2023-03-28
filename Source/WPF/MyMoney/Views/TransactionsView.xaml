@@ -799,7 +799,7 @@
 
                     <!-- SECURITY -->
                     <DataGridTemplateColumn Header="Security"  CellTemplate="{StaticResource myTemplateSymbol}" CellEditingTemplate="{StaticResource myTemplateSymbolEdit}"
-                                        SortMemberPath="InvestmentSecuritySymbol"/>
+                                        SortMemberPath="SortableInvestmentSecurity"/>
 
 
                     <views:TransactionNumericColumn Header="Units" SortMemberPath="InvestmentUnits" />
@@ -853,7 +853,7 @@
 
                     <!-- SECURITY -->
                     <DataGridTemplateColumn Header="Security"  CellTemplate="{StaticResource myTemplateSymbol}" CellEditingTemplate="{StaticResource myTemplateSymbolEdit}"
-                                        SortMemberPath="InvestmentSecuritySymbol"/>
+                                        SortMemberPath="SortableInvestmentSecurity"/>
 
                     <!-- ACTIVITY -->
                     <DataGridTemplateColumn Header="Activity"  CellTemplate="{StaticResource myTemplateActivity}" CellEditingTemplate="{StaticResource myTemplateActivityEdit}"
