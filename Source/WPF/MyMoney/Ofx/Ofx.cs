@@ -1557,7 +1557,7 @@ NEWFILEUID:{1}
             }
 
             XDocument doc = null;
-            Encoding enc = Encoding.UTF8;
+            Encoding enc = Encoding.ASCII; // default as per OFX spec.
             StreamReader sr = new StreamReader(stm, enc);
             string content = sr.ReadToEnd();
             if (content.StartsWith("<?xml"))
@@ -1705,8 +1705,8 @@ NEWFILEUID:{1}
                                     {
                                         if (value == "1252")
                                         {
-                                            // dotnet core no longer supports windows-1252...
-                                            value = "utf-8";
+                                            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                                            value = "windows-1252";
                                         }
 
                                         try
