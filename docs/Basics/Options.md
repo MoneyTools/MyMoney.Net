@@ -15,6 +15,7 @@ You can use this to:
 * Enable/Disable the Rental Management feature
 * Enable/Disable playing of any sounds.
 * Configure how Ctrl+Space works during [account balancing](../Accounts/BalancingAccounts.md).
+* Enable loading of .ofx files using UTF-8 encoding.
 
 
 See also [Keyboard](Keyboard.md)

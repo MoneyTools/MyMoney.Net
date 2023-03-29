@@ -154,7 +154,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 foreach (AutomationElement e in this.Control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
                 {
-                    if (e.Current.Name == "Walkabout.Data.Transaction" || e.Current.Name == "{NewItemPlaceholder}")
+                    if (e.Current.Name == "Walkabout.Data.Transaction" || e.Current.Name.StartsWith("Transaction:") || e.Current.Name == "{NewItemPlaceholder}")
                     {
                         return true;
                     }

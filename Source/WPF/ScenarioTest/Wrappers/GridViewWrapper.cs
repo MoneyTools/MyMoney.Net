@@ -78,13 +78,14 @@ namespace Walkabout.Tests.Wrappers
 
                     if (selected == null || selected.Length == 0)
                     {
-                        return null;
+                        Thread.Sleep(100); // ScrollIntoView is async.
                     }
                     else
                     {
                         var row = selected[0];
                         ScrollItemPattern scroll = (ScrollItemPattern)row.GetCurrentPattern(ScrollItemPattern.Pattern);
                         scroll.ScrollIntoView();
+                        Thread.Sleep(100); // ScrollIntoView is async.
                         this.window.WaitForInputIdle(500);
                         // get the selection again since scroll may have moved the view.
                         selected = selection.Current.GetSelection();
@@ -103,6 +104,7 @@ namespace Walkabout.Tests.Wrappers
                 {
                     // retry.
                     Debug.WriteLine("Could not find selection, trying again...");
+                    Thread.Sleep(100); // ScrollIntoView is async.
                 }
             }
             return null;
@@ -113,7 +115,7 @@ namespace Walkabout.Tests.Wrappers
             int index = 0;
             foreach (AutomationElement e in this.Control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
             {
-                if (e.Current.Name.StartsWith("Walkabout.Data") || e.Current.Name == "{NewItemPlaceholder}")
+                if (e.Current.Name.StartsWith("Transaction:") || e.Current.Name.StartsWith("Walkabout.Data.") || e.Current.Name == "{NewItemPlaceholder}")
                 {
                     if (e == row)
                     {
@@ -156,7 +158,7 @@ namespace Walkabout.Tests.Wrappers
                     }
                     index++;
                 }
-                else if (e.Current.Name.StartsWith("Walkabout.Data"))
+                else if (e.Current.Name.StartsWith("Transaction:") || e.Current.Name.StartsWith("Walkabout.Data."))
                 {
                     list.Add(this.WrapRow(e, index++));
                 }

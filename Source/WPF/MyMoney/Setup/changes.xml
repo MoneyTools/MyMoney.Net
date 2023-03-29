@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.8" date="3/29/2022">
+    - Add option to load .ofx files using UTF-8 encoding.
+    - Fix file associate and double click of .ofx files.
+    - Fix sorting brokerage accounts by security symbol column
+  </change>
   <change version="2.1.0.7" date="3/4/2022">
     - Fix memory leak when scrolling through the transaction view.
     - Add years field to "Add Sample Data" options.
