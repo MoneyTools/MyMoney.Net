@@ -3176,6 +3176,9 @@ namespace Walkabout.Views
 
         private void HandleChanges()
         {
+            HashSet<string> fieldsAffectingBalance = new HashSet<string>(new string[] {
+                "Amount", "Units", "UnitPrice", "InvestmentType", "Security"
+            });
             bool rebalance = false;
             List<ChangeEventArgs> list;
             lock (this.pendingUpdates)
@@ -3193,7 +3196,13 @@ namespace Walkabout.Views
                     var args = item;
                     while (args != null)
                     {
-                        if (args.Item is Transaction t)
+                        Transaction t = args.Item as Transaction;
+                        Investment i = args.Item as Investment;
+                        if (i != null)
+                        {
+                            t = i.Transaction;
+                        }
+                        if (t != null)
                         {
                             if (t != null && tc != null)
                             {
@@ -3215,7 +3224,7 @@ namespace Walkabout.Views
                                             rebalance = true;
                                         }
                                     }
-                                    else if (args.ChangeType == ChangeType.Changed && args.Name == "Amount")
+                                    else if (args.ChangeType == ChangeType.Changed && fieldsAffectingBalance.Contains(args.Name))
                                     {
                                         rebalance = true;
                                     }
