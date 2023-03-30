@@ -542,6 +542,10 @@ namespace Walkabout.Attachments
 
         private StatementIndex LoadIndexFile(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
             string path = this.StatementsDirectory;
             if (string.IsNullOrEmpty(path))
             {

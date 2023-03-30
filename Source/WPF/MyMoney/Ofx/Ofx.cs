@@ -2641,11 +2641,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         case "IN":
                             // todo: find matching "OUT" in another account and setup actual "Transfer" object
                             t.Investment.Type = InvestmentType.Add;
-                            Debug.Assert(t.Investment.Units >= 0);
+                            t.Investment.Units = Math.Abs(t.Investment.Units);
                             break;
                         case "OUT":
                             t.Investment.Type = InvestmentType.Remove;
-                            Debug.Assert(t.Investment.Units >= 0);
+                            t.Investment.Units = Math.Abs(t.Investment.Units);
                             break;
                     }
                 }
