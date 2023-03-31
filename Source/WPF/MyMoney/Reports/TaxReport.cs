@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -422,6 +423,10 @@ namespace Walkabout.Reports
             writer.EndCell();
 
             writer.StartCell();
+            if (data.SaleProceeds == 0)
+            {
+                Debug.WriteLine("???");
+            }
             writer.WriteNumber(this.GetFormattedNormalizedAmount(data.SaleProceeds));
             writer.EndCell();
 

@@ -1194,6 +1194,17 @@ namespace Walkabout.Views
             this.OnDataGridRowDragEnter(sender, e);
         }
 
+        private bool InvestmentsCanMerge(Investment i, Investment j)
+        {
+            if (i == null) return j == null;
+            if (j == null) return i == null;
+            if (i.Type == j.Type && i.SecurityName == j.SecurityName)
+            {
+                return Math.Round(i.Units, 2, MidpointRounding.AwayFromZero) == Math.Round(j.Units, 2, MidpointRounding.AwayFromZero);
+            }
+            return false;
+        }
+
         private void OnDataGridRowDragEnter(object sender, DragEventArgs e)
         {
             e.Effects = DragDropEffects.None;
@@ -1207,8 +1218,10 @@ namespace Walkabout.Views
                     Transaction t = e.Data.GetData(typeof(Transaction)) as Transaction;
                     if (t != null)
                     {
+                        Investment i = t.Investment;
                         Transaction target = row.Item as Transaction;
-                        if (target != null && t != target && t.Amount == target.Amount)
+                        Investment j = target.Investment;
+                        if (target != null && t != target && t.Amount == target.Amount && this.InvestmentsCanMerge(i, j))
                         {
                             this.SetDragDropStyles(row, DropType.Transaction);
                             e.Effects = DragDropEffects.Move;

@@ -4,6 +4,7 @@
     - Fix bug in event tracking in brokerage accounts so the account balance updates properly when you edit security, units, or unit price.
     - Fix OFX import of transfers in brokerage accounts so if the brokerage sends a negative number of units in a transfer out, it will be converted to a positive number of shares "removed".
     - Fix a null reference exception in copy/paste on newly created unsaved accounts.
+    - Fix drag/drop merge in brokerage accounts so it also matches on Units, Type and Security Name.
   </change>
   <change version="2.1.0.8" date="3/29/2022">
     - Add option to load .ofx files using UTF-8 encoding.
