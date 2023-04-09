@@ -4714,7 +4714,11 @@ namespace Walkabout.Data
             {
                 if (this.defaultCurrency == null)
                 {
-                    return this.FindCurrency("USD");
+                    this.defaultCurrency = this.FindCurrency("USD");
+                    if (this.defaultCurrency == null)
+                    {
+                        this.defaultCurrency = new Currency() { Symbol = "USD", Name = "US Dollar", Ratio = 1.0M, CultureCode = "en-US" };
+                    }
                 }
                 return this.defaultCurrency;
             }

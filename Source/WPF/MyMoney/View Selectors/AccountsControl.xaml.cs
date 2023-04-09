@@ -1159,6 +1159,11 @@ namespace Walkabout.Views.Controls
             {
 
                 Currency c = this.account.GetCurrency();
+                if (c == null)
+                {
+                    var money = (MyMoney)this.account.Parent.Parent;
+                    c = money.Currencies.DefaultCurrency;
+                }
 
                 if (c != null)
                 {
