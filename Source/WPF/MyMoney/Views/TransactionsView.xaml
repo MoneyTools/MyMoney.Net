@@ -114,7 +114,7 @@
             <Grid ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}},
                         Path=(Validation.Errors),
                         Converter={StaticResource ValidationErrorGetErrorMessageConverter}}" 
-                   Background="{DynamicResource SystemControlErrorTextForegroundBrush}" Margin="-1,-1,-1,-1">
+                   Background="{StaticResource ErrorMessageBrush}" Margin="-1,-2,1,2">
                 <ui:SymbolIcon Symbol="Important" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </ControlTemplate>
@@ -433,7 +433,6 @@
                                   ItemsSource="{Binding Path=NonNullSplits.ObservableCollection}"
                                   RowValidationErrorTemplate="{StaticResource RowValidationErrorTemplate}"
                                   RowEditEnding="TheGridForAmountSplit_RowEditEnding"
-                                  RowHeaderWidth="0"
                                   CellStyle="{DynamicResource MyDataGridCellStyle}"
                                   Style="{DynamicResource MyDataGridStyle2}" 
                                   help:HelpService.HelpKeyword="Basics/Splits/"
@@ -484,7 +483,6 @@
             <Setter Property="ContentMargin" Value="0,0,0,30"/>
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
-            <Setter Property="RowHeaderWidth" Value="0"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
         </Style>
 
@@ -502,11 +500,15 @@
             <Setter Property="ClipboardCopyMode" Value="None"/>
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
-            <Setter Property="RowHeaderWidth" Value="0"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
         </Style>
+      
+      <Style TargetType="{x:Type DataGridRowHeader}" >
+        <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}" />
+        <Setter Property="Foreground" Value="White" />
+      </Style>
 
-        <Style x:Key="MyDataGridRowStyle" TargetType="DataGridRow">
+      <Style x:Key="MyDataGridRowStyle" TargetType="DataGridRow">
             <EventSetter Event="DragOver" Handler="OnDataGridRowDragOver"/>
             <EventSetter Event="DragEnter" Handler="OnDataGridRowDragEnter"/>
             <EventSetter Event="DragLeave" Handler="OnDataGridRowDragLeave"/>
