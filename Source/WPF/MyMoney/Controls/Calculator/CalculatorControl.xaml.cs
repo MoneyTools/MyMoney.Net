@@ -248,9 +248,7 @@ namespace Walkabout.Controls
                 {
                     Parser p = new Parser();
                     result = p.Parse(test);
-                    // Must keep up to 6 places here in case the user didn't do any calculation.
-                    // If the user doesn't want that much they can truncate the number themselves.
-                    this.text.Text = result.ToString("G6");
+                    this.text.Text = result.ToString();
                     this.text.SelectionStart = this.text.Text.Length;
                 }
             }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.11" date="4/12/2022">
+    - Fix issue #103, rounding errors
+  </change>
   <change version="2.1.0.10" date="3/29/2022">
     - Fix issue #103, no flag shows up on accounts that have no explicit currency defined.
     - Fix issue #93, row header is needed to show validation errors (like trying to edit amount on reconciled transaction).

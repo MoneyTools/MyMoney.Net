@@ -170,7 +170,7 @@
         <DataTemplate x:Key="myTemplatePrice">
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Price, StringFormat={}{0:N}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
+                <TextBlock Text="{Binding Price, StringFormat={}{0:N2}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
             </Border>
         </DataTemplate>
 
@@ -185,7 +185,7 @@
         <DataTemplate x:Key="myTemplateLastPrice">
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding LastPrice, StringFormat={}{0:N}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top" />
+                <TextBlock Text="{Binding LastPrice, StringFormat={}{0:N2}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top" />
             </Border>
         </DataTemplate>
 
@@ -200,7 +200,7 @@
         <DataTemplate x:Key="myTemplatePercentChange">
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding PercentChange, StringFormat={}{0:N}, Mode=OneWay}" TextAlignment="Right" VerticalAlignment="Top"/>
+                <TextBlock Text="{Binding PercentChange, StringFormat={}{0:N2}, Mode=OneWay}" TextAlignment="Right" VerticalAlignment="Top"/>
             </Border>
         </DataTemplate>
 
