@@ -60,6 +60,7 @@ echo ### BUGBUG: TODO fix msix package build of .NET 7.0 apps, it is currently n
 rem if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
 rem msbuild /target:publish MyMoneyPackage.sln /p:Configuration=Release "/p:Platform=Any CPU"
 rem if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :noappx
+rem https://developercommunity.visualstudio.com/t/PublishReadyToRun-doesnt-seem-to-work-o/10272475
 
 :dorelease
 if "%GITRELEASE%" == "0" goto :upload
