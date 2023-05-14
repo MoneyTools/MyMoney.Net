@@ -402,29 +402,34 @@ namespace Walkabout.WpfConverters
 
 
     /// <summary>
-    /// WHen this class is bound to the control it ensures a minimum of 2 decimal digits
+    /// When this class is bound to the control it ensures a minimum of 2 decimal digits
     /// are displayed and a maximum number of digits if there is more precision to be shown
     /// (default 5, which can be overridden in the ConverterParameter).
     /// </summary>
     public class PreserveDecimalDigitsValueConverter : IValueConverter
     {
-        public int GetDecimalDigits(decimal d, string stringFormat)
+        private string TrimTrailingZeros(string formatted)
         {
-            if (stringFormat == "N2")
+            int dot = formatted.LastIndexOf('.');
+            if (dot > 0)
             {
-                return 2;
+                int i = formatted.Length - 1;
+                while (i > dot + 2)
+                {
+                    if (formatted[i] != '0')
+                    {
+                        break;
+                    }
+                    --i;
+                }
+                if (i < formatted.Length - 1)
+                {
+                    return formatted.Substring(0, i + 1);
+                }
             }
-
-            int digits = 0;
-            decimal x = d - (int)d;
-            while (x != 0)
-            {
-                digits++;
-                x *= 10;
-                x -= (int)x;
-            }
-            return Math.Max(Math.Min(digits, 5), 2);
+            return formatted;
         }
+
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -452,12 +457,12 @@ namespace Walkabout.WpfConverters
                 {
                     return "";
                 }
-                return d.Value.ToString("N" + this.GetDecimalDigits(d.Value, format));
+                return this.TrimTrailingZeros(d.Value.ToString(format));
             }
             else if (valueType == typeof(decimal))
             {
                 decimal d = (decimal)value;
-                return d.ToString("N" + this.GetDecimalDigits(d, format));
+                return this.TrimTrailingZeros(d.ToString(format));
             }
             else if (valueType == typeof(DateTime))
             {

@@ -405,7 +405,7 @@
                                 Visibility="{Binding Splits.HasUnassigned, Converter={StaticResource TrueToVisible}}"
                                 TextBlock.Foreground="{DynamicResource NegativeCurrencyForegroundBrush}">
                         <TextBlock Text="Unassigned amount: " />
-                        <TextBlock Text="{Binding Path=NonNullSplits.TotalSplitAmount, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2}" />
+                        <TextBlock Text="{Binding Path=NonNullSplits.Unassigned, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2}" />
                     </StackPanel>
                 </StackPanel>
             </Border>

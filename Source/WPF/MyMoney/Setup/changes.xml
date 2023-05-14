@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.12" date="4/12/2022">
+    - Fix issue #107, math problem editing splits
+    - Fix issue #85, back/forward navigation now remembers reports.
+  </change>
   <change version="2.1.0.11" date="4/12/2022">
     - Fix issue #103, rounding errors
   </change>

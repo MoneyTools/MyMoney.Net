@@ -121,11 +121,14 @@ namespace Walkabout.Reports
             this.startDate = this.startDate.AddYears(-4); // show 5 years by default.
             this.view = view;
             this.serviceProvider = sp;
-            view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
-            view.PreviewMouseLeftButtonUp += this.OnPreviewMouseLeftButtonUp;
             view.Unloaded += (s, e) =>
             {
                 this.view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
+            };
+            view.Loaded += (s, e) =>
+            {
+                view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
+                view.PreviewMouseLeftButtonUp += this.OnPreviewMouseLeftButtonUp;
             };
         }
 

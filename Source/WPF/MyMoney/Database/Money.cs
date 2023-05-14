@@ -13091,7 +13091,7 @@ namespace Walkabout.Data
 
                     if (this.unassigned != 0)
                     {
-                        this.SplitsBalanceMessage = "Unassigned amount " + this.unassigned.ToString();
+                        this.SplitsBalanceMessage = "Unassigned amount " + this.unassigned.ToString("N2");
                     }
                     else
                     {

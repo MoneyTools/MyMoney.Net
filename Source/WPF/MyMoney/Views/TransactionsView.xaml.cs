@@ -943,31 +943,28 @@ namespace Walkabout.Views
                     break;
 
                 case Key.F6:
-                    if (this.SelectedTransaction.NonNullSplits.Unassigned != 0)
+                    System.Windows.Controls.DataGrid dataGrid = sender as System.Windows.Controls.DataGrid;
+                    if (dataGrid != null)
                     {
-                        System.Windows.Controls.DataGrid dataGrid = sender as System.Windows.Controls.DataGrid;
-                        if (dataGrid != null)
+                        Split s = dataGrid.CurrentCell.Item as Split;
+                        if (s != null)
                         {
-
-                            Split s = dataGrid.CurrentCell.Item as Split;
-                            if (s != null)
+                            FrameworkElement fe = dataGrid.CurrentCell.Column.GetCellContent(s);
+                            List<Control> editors = new List<Control>();
+                            WpfHelper.FindEditableControls(fe, editors);
+                            if (editors.Count > 0)
                             {
-                                FrameworkElement fe = dataGrid.CurrentCell.Column.GetCellContent(s);
-                                List<Control> editors = new List<Control>();
-                                WpfHelper.FindEditableControls(fe, editors);
-                                if (editors.Count > 0)
+                                TextBox tb = editors[0] as TextBox;
+                                if (tb != null)
                                 {
-                                    TextBox tb = editors[0] as TextBox;
-                                    if (tb != null)
-                                    {
-                                        decimal newValue = s.Amount + this.SelectedTransaction.NonNullSplits.Unassigned;
-                                        tb.Text = Math.Abs(newValue).ToString();
-                                    }
+                                    decimal newValue = s.Amount + this.SelectedTransaction.NonNullSplits.Unassigned;
+                                    PreserveDecimalDigitsValueConverter cc = new PreserveDecimalDigitsValueConverter();
+                                    tb.Text = (string)cc.Convert(Math.Abs(newValue), typeof(string), "N5", CultureInfo.CurrentCulture);
+                                    tb.SelectAll();
                                 }
-                                dataGrid.InvalidateVisual();
-
-                                e.Handled = true;
                             }
+                            dataGrid.InvalidateVisual();
+                            e.Handled = true;
                         }
                     }
                     break;

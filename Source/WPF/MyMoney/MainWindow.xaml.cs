@@ -1099,6 +1099,7 @@ namespace Walkabout
             }
             else if (currentlySelected is RentalBuildingSingleYearSingleDepartment)
             {
+                this.SaveViewStateOfCurrentView();
                 TransactionsView view = this.SetCurrentView<TransactionsView>();
                 view.ViewTransactionRentalBuildingSingleYearDepartment(currentlySelected as RentalBuildingSingleYearSingleDepartment);
             }
@@ -1360,12 +1361,12 @@ namespace Walkabout
 
             if (this.navigator.Current == null)
             {
-
-
-                //Debug.WriteLine("****** Main window Back Navigator.Current is NULL");
-
-                this.SaveViewStateOfCurrentView();   // save current state so we can come back here if user press FORWARD button
-                this.navigator.Undo();          // undo the state we just pushed on the stack
+                // Current == null just means we are at the front of the back/forward history (there is nothing to go forwards to).
+                if (this.SaveViewStateOfCurrentView())
+                {
+                    // save current state so we can come back here if user press FORWARD button
+                    this.navigator.Undo();               // undo the state we just pushed on the stack
+                }
             }
 
             var cmd = this.navigator.Undo();
@@ -1420,7 +1421,6 @@ namespace Walkabout
                         {
                             transactionView.ViewTransactionsForSingleAccount(transaction.Account, TransactionSelection.Specific, transaction.Id);
                             this.SetCurrentView<TransactionsView>();
-
                         }
                     }));
         }
@@ -1430,13 +1430,16 @@ namespace Walkabout
             UiDispatcher.BeginInvoke(
                 new Action(() =>
                 {
+                    if (!(this.CurrentView is TransactionsView))
+                    {
+                        // this might be a report that we want to get back to.
+                        if (this.SaveViewStateOfCurrentView())
+                        {
+                            this.ignoreViewChangeCount++;
+                        }
+                    }
                     TransactionsView view = this.SetCurrentView<TransactionsView>();
                     view.ViewTransactions(list);
-
-                    // now we only want one view.
-                    this.navigator.Pop();
-
-                    //PendingChangeDropDown.IsChecked = false;
                 }));
         }
 
@@ -1467,10 +1470,7 @@ namespace Walkabout
 
             this.TransactionView.QueryPanel.IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnQueryPanelIsVisibleChanged);
 
-
             TempFilesManager.Initialize();
-
-
         }
 
         public bool HasDatabase { get { return this.database != null || this.isLoading; } }
@@ -1587,7 +1587,7 @@ namespace Walkabout
             tgraph.SetGraphState(state);
         }
 
-        private void SaveViewStateOfCurrentView()
+        private bool SaveViewStateOfCurrentView()
         {
             IView view = this.CurrentView;
             if (view != null)
@@ -1596,8 +1596,10 @@ namespace Walkabout
                 if (state != null)
                 {
                     this.navigator.Push(new ViewCommand(this, view, state));
+                    return true;
                 }
             }
+            return false;
         }
 
         private class ViewCommand : Command
@@ -2632,9 +2634,18 @@ namespace Walkabout
 
         #region MANAGE VIEW
 
+        int ignoreViewChangeCount;
+
         private void OnBeforeViewStateChanged(object sender, EventArgs e)
         {
-            this.SaveViewStateOfCurrentView();
+            if (this.ignoreViewChangeCount > 0)
+            {
+                this.ignoreViewChangeCount--;
+            }
+            else
+            {
+                this.SaveViewStateOfCurrentView();
+            }
         }
 
         private AfterViewStateChangedEventArgs viewStateChanging;
