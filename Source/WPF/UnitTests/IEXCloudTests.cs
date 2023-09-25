@@ -78,7 +78,7 @@ namespace Walkabout.Tests
             if (first.Type == JTokenType.Object)
             {
                 var q = IEXCloud.ParseStockQuote((JObject)first);
-                Assert.AreEqual(q.Symbol, "MSFT");
+                Assert.AreEqual("MSFT", q.Symbol);
             }
         }
     }

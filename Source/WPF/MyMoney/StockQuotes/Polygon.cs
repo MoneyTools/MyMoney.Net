@@ -28,8 +28,6 @@ namespace Walkabout.StockQuotes
 
         // query ticker list
         private const string getSupportedTickers = "https://api.polygon.io/v3/reference/tickers?active=true";
-        private PolygonTickerInfo tickerInfo;
-        private Dictionary<string, PolygonTicker> tickerMap = new Dictionary<string, PolygonTicker>();
 
         public PolygonStocks(StockServiceSettings settings, string logPath) : base(settings, logPath)
         {
@@ -63,11 +61,7 @@ namespace Walkabout.StockQuotes
 
         protected override async Task<StockQuote> DownloadThrottledQuoteAsync(string symbol)
         {
-            await this.DownloadTickersAsync();
-            if (!this.tickerMap.ContainsKey(symbol))
-            {
-                return null; // not supported by Polygon
-            }
+            await this.DownloadTickersAsync();            
             string uri = string.Format(stockQuoteUri, symbol);
             string bearer = string.Format(authorizationHeader, this.Settings.ApiKey);
             HttpClient client = new HttpClient();
@@ -115,10 +109,6 @@ namespace Walkabout.StockQuotes
             if (child.TryGetValue("ticker", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
             {
                 quote.Symbol = (string)value;
-                if (this.tickerMap.TryGetValue(quote.Symbol, out PolygonTicker ticker))
-                {
-                    quote.Name = ticker.name;
-                }
             }
             if (child.TryGetValue("results", StringComparison.Ordinal, out value) && value.Type == JTokenType.Array)
             {
@@ -175,11 +165,7 @@ namespace Walkabout.StockQuotes
 
         private async Task DownloadTickersAsync()
         {
-            if (tickerInfo == null)
-            {
-                tickerInfo = PolygonTickerInfo.Load(this.LogFolder);
-            }
-
+            var tickerInfo = PolygonTickerInfo.Load(this.LogFolder);
             if (tickerInfo.Tickers.Count == 0 || !tickerInfo.Complete || (DateTime.Today - tickerInfo.LastUpdated).Days > 30)
             {
                 tickerInfo = new PolygonTickerInfo() { LastUpdated = DateTime.Now, Tickers = new List<PolygonTicker>() };
@@ -197,8 +183,20 @@ namespace Walkabout.StockQuotes
                     var msg = await client.GetAsync(url, this.TokenSource.Token);
                     if (!msg.IsSuccessStatusCode)
                     {
-                        // hmmm, service is down right now?
-                        Debug.WriteLine(this.FriendlyName + " http error " + msg.StatusCode + ": " + msg.ReasonPhrase);
+                        if (msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                        {
+                            // ensure it sleeps again.
+                            Debug.WriteLine($"{this.FriendlyName} http error {msg.StatusCode} : {msg.ReasonPhrase}");
+                            for (int i = 0; i < this.Settings.ApiRequestsPerMinuteLimit; i++)
+                            {
+                                this.CountCall();
+                            }
+                        }
+                        else
+                        {
+                            // hmmm, service is down right now?
+                            throw new Exception($"{this.FriendlyName} http error {msg.StatusCode} : {msg.ReasonPhrase}");
+                        }
                     }
                     else
                     {
@@ -227,12 +225,6 @@ namespace Walkabout.StockQuotes
                         }
                     }
                 } while (url != null);
-
-                tickerMap = new Dictionary<string, PolygonTicker>();
-                foreach (var ticker in tickerInfo.Tickers)
-                {
-                    tickerMap[ticker.ticker] = ticker;
-                }
             }
 
         }

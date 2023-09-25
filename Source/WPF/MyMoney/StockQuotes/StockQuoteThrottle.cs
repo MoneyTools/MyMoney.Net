@@ -111,7 +111,7 @@ namespace Walkabout.StockQuotes
             }
             else if (this.Settings.ApiRequestsPerMinuteLimit != 0 && this._callsThisMinute >= this.Settings.ApiRequestsPerMinuteLimit)
             {
-                result = 60000; // sleep to next minute.
+                result = 61000; // sleep to next minute.
             }
             return result;
         }
