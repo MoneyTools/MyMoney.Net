@@ -198,7 +198,7 @@ namespace Walkabout.StockQuotes
                     if (!msg.IsSuccessStatusCode)
                     {
                         // hmmm, service is down right now?
-                        throw new Exception(this.FriendlyName + " http error " + msg.StatusCode + ": " + msg.ReasonPhrase);
+                        Debug.WriteLine(this.FriendlyName + " http error " + msg.StatusCode + ": " + msg.ReasonPhrase);
                     }
                     else
                     {
@@ -210,11 +210,11 @@ namespace Walkabout.StockQuotes
                                 string json = sr.ReadToEnd();
                                 JObject o = JObject.Parse(json);
                                 this.ParseTickers(o, tickerInfo);
-                                tickerInfo.Save(this.LogFolder);
                                 JToken value;
                                 if (o.TryGetValue("next_url", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
                                 {
                                     url = (string)value;
+                                    tickerInfo.Save(this.LogFolder);
                                 }
                                 else
                                 {
