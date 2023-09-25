@@ -115,6 +115,15 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stock quote request for symbol {0} returned a different symbol {1}.
+        /// </summary>
+        internal static string DifferentSymbolReturned {
+            get {
+                return ResourceManager.GetString("DifferentSymbolReturned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Account with name &apos;{0}&apos; already exists, would you like to use the existing account instead?.
         /// </summary>
         internal static string DuplicateAccount {

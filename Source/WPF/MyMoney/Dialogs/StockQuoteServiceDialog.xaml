@@ -10,52 +10,64 @@
         ShowInTaskbar="False"  
         WindowStartupLocation="CenterOwner" 
         WindowStyle="ToolWindow" >
-    <Grid>
-        <Grid Margin="20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <TextBlock Text="Name" Grid.Row="0" Grid.Column="0" Margin="5"/>
-            <ComboBox x:Name="ComboServiceName" Grid.Row="0" Grid.Column="1" MinWidth="200"/>
+  <Grid>
+    <Grid Margin="20">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="20"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="20"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="20"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="20"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="20"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <TextBlock Text="Name" Grid.Row="0" Grid.Column="0" Margin="5"/>
+      <ComboBox x:Name="ComboServiceName" Grid.Row="0" Grid.Column="1" MinWidth="200" SelectionChanged="OnServiceSelected"/>
 
-            <TextBlock Text="API Key:" Grid.Row="2" Grid.Column="0" Margin="5"/>
-            <TextBox x:Name="TextBoxApiKey" Grid.Row="2" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiKey, Mode=TwoWay}"/>
+      <TextBlock Text="API Key:" Grid.Row="2" Grid.Column="0" Margin="5" ToolTip="Clear the API key to disable using this service."/>
+      <TextBox x:Name="TextBoxApiKey" Grid.Row="2" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiKey, Mode=TwoWay}"/>
 
-            <TextBlock Text="Limit on Requests Per Minute:" Grid.Row="4" Grid.Column="0" Margin="5"/>
-            <TextBox x:Name="TextBoxRequestsPerMinuteLimit" Grid.Row="4" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerMinuteLimit, Mode=TwoWay}"/>
+      <TextBlock Text="Limit on Requests Per Minute:" Grid.Row="4" Grid.Column="0" Margin="5"/>
+      <TextBox x:Name="TextBoxRequestsPerMinuteLimit" Grid.Row="4" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerMinuteLimit, Mode=TwoWay}"/>
 
-            <TextBlock Text="Limit on Requests Per Day:" Grid.Row="6" Grid.Column="0" Margin="5"/>
-            <TextBox x:Name="TextBoxRequestsPerDayLimit" Grid.Row="6" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerDayLimit, Mode=TwoWay}"/>
+      <TextBlock Text="Limit on Requests Per Day:" Grid.Row="6" Grid.Column="0" Margin="5"/>
+      <TextBox x:Name="TextBoxRequestsPerDayLimit" Grid.Row="6" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerDayLimit, Mode=TwoWay}"/>
 
-            <TextBlock Text="Limit on Requests Per Month:" Grid.Row="8" Grid.Column="0" Margin="5"/>
-            <TextBox x:Name="TextBoxRequestsPerMonthLimit" Grid.Row="8" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerMonthLimit, Mode=TwoWay}"/>
+      <TextBlock Text="Limit on Requests Per Month:" Grid.Row="8" Grid.Column="0" Margin="5"/>
+      <TextBox x:Name="TextBoxRequestsPerMonthLimit" Grid.Row="8" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerMonthLimit, Mode=TwoWay}"/>
 
-            <Grid Grid.Row="10" Grid.Column="0" Margin="0,20,0,0" Grid.ColumnSpan="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Button x:Name="ButtonBrowse" Grid.Column="0" MinWidth="73" MinHeight="24" Margin="5" IsDefault="True" Click="OnBrowse">Browse</Button>
-                <Button x:Name="ButtonOk" Grid.Column="2" MinWidth="73" MinHeight="24" Margin="5" IsDefault="True" Click="OnOk">OK</Button>
-                <Button x:Name="ButtonCancel" Grid.Column="3" MinWidth="73" MinHeight="24" Margin="5" IsCancel="True" Click="OnCancel">Cancel</Button>
-            </Grid>
-        </Grid>
+      <TextBlock Text="History API is enabled:" Grid.Row="10" Grid.Column="0" Margin="5"/>
+      <CheckBox x:Name="CheckBoxHistoryEnabled" Grid.Row="10" Grid.Column="1" Margin="5,0" IsChecked="{Binding Path=HistoryEnabled, Mode=TwoWay}" 
+                ToolTip="Indicates your API key supports the history API's from the selected service."/>
 
+      <TextBlock x:Name="ErrorMessage" Foreground="{DynamicResource ErrorMessageBrush}" Margin="5" Grid.Row="12" Grid.ColumnSpan="2"
+               Text="" TextWrapping="Wrap"/>
+
+      <Grid Grid.Row="13" Grid.Column="0" Margin="0,20,0,0" Grid.ColumnSpan="2">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="ButtonBrowse" Grid.Column="0" MinWidth="73" MinHeight="24" Margin="5" IsDefault="True" Click="OnBrowse">Browse</Button>
+        <Button x:Name="ButtonDisable" Grid.Column="1" MinWidth="73" MinHeight="24" Margin="5" IsDefault="True" Click="OnDisable">Disable</Button>
+        <Button x:Name="ButtonOk" Grid.Column="3" MinWidth="73" MinHeight="24" Margin="5" IsDefault="True" Click="OnOk">OK</Button>
+        <Button x:Name="ButtonCancel" Grid.Column="4" MinWidth="73" MinHeight="24" Margin="5" IsCancel="True" Click="OnCancel">Cancel</Button>
+      </Grid>
     </Grid>
+
+  </Grid>
 </local:BaseDialog>

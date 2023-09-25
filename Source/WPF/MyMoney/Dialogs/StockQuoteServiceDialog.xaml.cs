@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Walkabout.Dialogs
 {
@@ -16,10 +17,12 @@ namespace Walkabout.Dialogs
         private StockQuoteManager _stockQuotes;
         private List<StockServiceSettings> _list;
         private StockServiceSettings _selection;
+        private bool _initialized = false;
 
         public StockQuoteServiceDialog()
         {
             this.InitializeComponent();
+            this._initialized = true;
         }
 
         public StockQuoteManager StockQuoteManager
@@ -31,10 +34,37 @@ namespace Walkabout.Dialogs
                 this.UpdateDialog();
             }
         }
+        private void OnServiceSelected(object sender, SelectionChangedEventArgs e)
+        {
+            if (!_initialized)
+            {
+                return;
+            }
+            int i = this.ComboServiceName.SelectedIndex;
+            if (i >= 0 && i < this._list.Count)
+            {
+                var service = this._list[i];
+                this.DataContext = service;
+                this.ButtonDisable.IsEnabled = !string.IsNullOrEmpty(service.ApiKey);
+                this.ButtonOk.IsEnabled = true;
+                this._selection = service;
+            }
+            else
+            {
+                this.DataContext = null;
+                this.ButtonDisable.IsEnabled = false;
+                this.ButtonOk.IsEnabled = false;
+                this._selection = null;
+            }
+        }
 
         private void UpdateDialog()
         {
-            this.ComboServiceName.SelectionChanged -= this.ComboServiceName_SelectionChanged;
+            foreach (StockServiceSettings item in this.ComboServiceName.Items) 
+            {
+                item.PropertyChanged -= this.OnSettingsChanged;
+            }
+            this.ComboServiceName.Items.Clear();
             var list = this._stockQuotes.GetDefaultSettingsList();
             var current = new List<StockServiceSettings>();
             // find the settings that match the current list of stock quote services.
@@ -56,16 +86,41 @@ namespace Walkabout.Dialogs
                 {
                     current.Add(item);
                 }
+
             }
 
             foreach (var item in current)
             {
                 this.ComboServiceName.Items.Add(item.Name);
+                item.PropertyChanged += this.OnSettingsChanged;
             }
+
             this._list = current;
             this.ComboServiceName.SelectedIndex = 0;
-            this.ComboServiceName.SelectionChanged += this.ComboServiceName_SelectionChanged;
-            this.DataContext = current[0];
+        }
+
+        private async void OnSettingsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            StockServiceSettings settings = (StockServiceSettings)sender;
+            if (e.PropertyName == "ApiKey" && !string.IsNullOrEmpty(settings.ApiKey))
+            {
+                this.ShowErrorMessage("Checking API key...");
+                string error = await this._stockQuotes.TestApiKeyAsync(settings);
+                // check this is still the current item.
+                if (this._selection != null && this._selection.Name == settings.Name)
+                {
+                    this.ShowErrorMessage(error);
+                }
+            }
+            else
+            {
+                this.ShowErrorMessage("");
+            }
+        }
+
+        private void ShowErrorMessage(string msg)
+        {
+            this.ErrorMessage.Text = msg;
         }
 
         public List<StockServiceSettings> Settings
@@ -73,16 +128,9 @@ namespace Walkabout.Dialogs
             get { return this._list; }
         }
 
-        private void ComboServiceName_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            int i = this.ComboServiceName.SelectedIndex;
-            this.DataContext = this._list[i];
-        }
-
         private void Apply()
         {
-            int i = this.ComboServiceName.SelectedIndex;
-            this._selection = this._list[i];
+            // TODO: apply has nothing to do since we don't yet have a proper cancel that restores the edited settings on cancel.
         }
 
         public StockServiceSettings SelectedSettings
@@ -104,10 +152,19 @@ namespace Walkabout.Dialogs
 
         private void OnBrowse(object sender, RoutedEventArgs e)
         {
-            if (this.ComboServiceName.SelectedItem is string s && Uri.TryCreate(s, UriKind.Absolute, out Uri uri))
+            if (this._selection != null && Uri.TryCreate(this._selection.Address, UriKind.Absolute, out Uri uri))
             {
                 InternetExplorer.OpenUrl(IntPtr.Zero, uri);
             }
         }
+
+        private void OnDisable(object sender, RoutedEventArgs e)
+        {
+            if (this._selection != null)
+            {
+                this._selection.ApiKey = null;
+            }
+        }
+
     }
 }

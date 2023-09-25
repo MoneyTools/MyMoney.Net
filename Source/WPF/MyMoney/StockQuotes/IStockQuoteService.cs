@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using Walkabout.Utilities;
 
@@ -27,25 +28,14 @@ namespace Walkabout.StockQuotes
     public interface IStockQuoteService
     {
         /// <summary>
+        /// Returns the name of the service.
+        /// </summary>
+        string FriendlyName { get; }
+
+        /// <summary>
         /// Whether this service is configured with an Api Key
         /// </summary>
         bool IsEnabled { get; }
-
-        /// <summary>
-        /// Fetch updated security information for the given security.
-        /// This can be called multiple times so the service needs to keep a queue of pending
-        /// downloads.
-        /// </summary>
-        /// <param name="securities">List of securities to fetch </param>
-        void BeginFetchQuote(string symbol);
-
-        /// <summary>
-        /// Return true if your service supports batch download of quotes, meaning one http
-        /// request retrieves multiple different quotes at once.  This is usually faster 
-        /// than using BeginFetchQuote and is preferred, but if your service doesn't support
-        /// this then BeginFetchQuotes will not be called.
-        /// </summary>
-        bool SupportsBatchQuotes { get; }
 
         /// <summary>
         /// Fetch updated security information for the given securities (most recent closing price).
@@ -54,6 +44,13 @@ namespace Walkabout.StockQuotes
         /// </summary>
         /// <param name="securities">List of securities to fetch </param>
         void BeginFetchQuotes(List<string> symbols);
+
+        /// <summary>
+        /// Test that the given api key works.
+        /// </summary>
+        /// <param name="apiKey"></param>
+        /// <returns>Error if something goes wrong, or empty string</returns>
+        Task<string> TestApiKeyAsync(string apiKey);
 
         /// <summary>
         /// Return true if your service supports the UpdateHistory function.
@@ -72,7 +69,6 @@ namespace Walkabout.StockQuotes
         /// Return a count of pending downloads.
         /// </summary>
         int PendingCount { get; }
-
 
         /// <summary>
         /// For the current session until all downloads are complete this returns the number of
@@ -369,10 +365,12 @@ namespace Walkabout.StockQuotes
     public class StockServiceSettings : INotifyPropertyChanged
     {
         private string _name;
+        private string _address;
         private string _apiKey;
         private int _requestsPerMinute;
         private int _requestsPerDay;
         private int _requestsPerMonth;
+        private bool _historyEnabled;
 
         public string Name
         {
@@ -383,6 +381,19 @@ namespace Walkabout.StockQuotes
                 {
                     this._name = value;
                     this.OnPropertyChanged("Name");
+                }
+            }
+        }
+
+        public string Address
+        {
+            get { return this._address; }
+            set
+            {
+                if (this._address != value)
+                {
+                    this._address = value;
+                    this.OnPropertyChanged("Address");
                 }
             }
         }
@@ -439,6 +450,19 @@ namespace Walkabout.StockQuotes
             }
         }
 
+        public bool HistoryEnabled
+        {
+            get { return this._historyEnabled; }
+            set
+            {
+                if (this._historyEnabled != value)
+                {
+                    this._historyEnabled = value;
+                    this.OnPropertyChanged("HistoryEnabled");
+                }
+            }
+        }
+
         public string OldName { get; internal set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -458,6 +482,7 @@ namespace Walkabout.StockQuotes
             w.WriteElementString("ApiRequestsPerMinuteLimit", this.ApiRequestsPerMinuteLimit.ToString());
             w.WriteElementString("ApiRequestsPerDayLimit", this.ApiRequestsPerDayLimit.ToString());
             w.WriteElementString("ApiRequestsPerMonthLimit", this.ApiRequestsPerMonthLimit.ToString());
+            w.WriteElementString("HistoryEnabled", XmlConvert.ToString(this.HistoryEnabled));
         }
 
         public void Deserialize(XmlReader r)
@@ -490,6 +515,10 @@ namespace Walkabout.StockQuotes
                     else if (r.Name == "ApiRequestsPerMonthLimit")
                     {
                         this.ApiRequestsPerMonthLimit = r.ReadElementContentAsInt();
+                    }
+                    else if (r.Name == "HistoryEnabled")
+                    {
+                        this.HistoryEnabled = r.ReadElementContentAsBoolean();
                     }
                 }
             }

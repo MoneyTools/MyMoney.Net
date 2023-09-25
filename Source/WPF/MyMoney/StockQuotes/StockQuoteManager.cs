@@ -102,22 +102,47 @@ namespace Walkabout.StockQuotes
             }
         }
 
+        private IStockQuoteService GetServiceForSettings(StockServiceSettings settings)
+        {
+            foreach (var existing in this._services)
+            {
+                if (existing.FriendlyName == settings.Name)
+                {
+                    return existing;
+                }
+            }
+            IStockQuoteService service = null;
+            if (AlphaVantage.IsMySettings(settings))
+            {
+                service = new AlphaVantage(settings, this.LogPath);
+            }
+            else if (IEXCloud.IsMySettings(settings))
+            {
+                service = new IEXCloud(settings, this.LogPath);
+            }
+            else if (PolygonStocks.IsMySettings(settings))
+            {
+                service = new PolygonStocks(settings, this.LogPath);
+            }
+            return service;
+        }
+
         private void UpdateServices()
         {
+            foreach (var service in this._services)
+            {
+                service.DownloadError -= this.OnServiceDownloadError;
+                service.QuoteAvailable -= this.OnServiceQuoteAvailable;
+                service.Complete -= this.OnServiceQuotesComplete;
+                service.Suspended -= this.OnServiceSuspended;
+                service.SymbolNotFound -= this.OnSymbolNotFound;
+            }
+
             this._services = new List<IStockQuoteService>();
 
             foreach (var item in this._settings)
             {
-                IStockQuoteService service = null;
-                if (AlphaVantage.IsMySettings(item))
-                {
-                    service = new AlphaVantage(item, this.LogPath);
-                }
-                else if (IEXCloud.IsMySettings(item))
-                {
-                    service = new IEXCloud(item, this.LogPath);
-                }
-
+                IStockQuoteService service = this.GetServiceForSettings(item);
                 if (service != null)
                 {
                     service.DownloadError += this.OnServiceDownloadError;
@@ -180,6 +205,7 @@ namespace Walkabout.StockQuotes
             List<StockServiceSettings> result = new List<StockServiceSettings>();
             result.Add(IEXCloud.GetDefaultSettings());
             result.Add(AlphaVantage.GetDefaultSettings());
+            result.Add(PolygonStocks.GetDefaultSettings());
             return result;
         }
 
@@ -289,17 +315,7 @@ namespace Walkabout.StockQuotes
             if (service != null)
             {
                 foundService = true;
-                if (service.SupportsBatchQuotes)
-                {
-                    service.BeginFetchQuotes(batch);
-                }
-                else
-                {
-                    foreach (var item in batch)
-                    {
-                        service.BeginFetchQuote(item);
-                    }
-                }
+                service.BeginFetchQuotes(batch);
             }
 
             if (!foundService)
@@ -316,14 +332,7 @@ namespace Walkabout.StockQuotes
             {
                 if (service.IsEnabled)
                 {
-                    if (service.SupportsBatchQuotes)
-                    {
-                        return service;
-                    }
-                    if (result == null)
-                    {
-                        result = service;
-                    }
+                    return service;
                 }
             }
             return result;
@@ -653,6 +662,16 @@ namespace Walkabout.StockQuotes
                 return await this.GetDownloader(service).GetCachedHistory(symbol);
             }
             return null;
+        }
+
+        internal async Task<string> TestApiKeyAsync(StockServiceSettings settings)
+        {
+            var service = this.GetServiceForSettings(settings);
+            if (service != null)
+            {
+                return await service.TestApiKeyAsync(settings.ApiKey);
+            }
+            return string.Empty;   
         }
     }
 

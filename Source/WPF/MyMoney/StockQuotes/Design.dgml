@@ -2,49 +2,54 @@
 <DirectedGraph xmlns="http://schemas.microsoft.com/vs/2009/dgml">
   <Nodes>
     <Node Id="1c5dbdfd-dd68-4c03-83df-5fa235ff5b341" Category="Comment" Bounds="336.081979166667,-125.737684428443,199.826666666667,41.92" Label="Online Menu, StockQuoteAccount&#xD;&#xA;menu item brings up this dialog. " UseManualLocation="True" />
-    <Node Id="21aa22ce-adea-46e2-8204-8c494d26feba1" Category="Comment" Bounds="-541.131666191949,3.50000000000001,201.336666666667,89.8" Label="Lives in the &quot;StockQuotes&quot; folder&#xD;&#xA;next to your money database and &#xD;&#xA;encapsulates the downloaded &#xD;&#xA;histories, and keeps track of when&#xD;&#xA;they were last updated." UseManualLocation="True" />
+    <Node Id="21aa22ce-adea-46e2-8204-8c494d26feba1" Category="Comment" Bounds="-545.577113872165,3.50000000000001,201.336666666667,89.8" Label="Lives in the &quot;StockQuotes&quot; folder&#xD;&#xA;next to your money database and &#xD;&#xA;encapsulates the downloaded &#xD;&#xA;histories, and keeps track of when&#xD;&#xA;they were last updated." UseManualLocation="True" />
     <Node Id="58c908df-774f-4b4d-ba78-9914216ee2801" Category="Comment" Bounds="261.081979166667,54.2623155715572,215.5,57.88" Label="Persistent settings about stock quote service including API key and usage quotes." UseManualLocation="True" />
     <Node Id="868d96d8-c9fb-4fe0-b072-449a7c6d88b91" Category="Comment" Bounds="260.353128306071,271.659761307615,241.35,57.88" Label="Ensures we don't exceed the service API quotas stored in StockServiceSettings.  It stores the current call counts in a .xml file." UseManualLocation="True" />
-    <Node Id="AlphaVantage" Bounds="-77.9625,281.8648698355,93.5833333333333,25.96" UseManualLocation="True" />
-    <Node Id="DownloadLog" Bounds="-309.794999525282,13.4999995422363,93.7633333333333,25.96" UseManualLocation="True" />
+    <Node Id="AlphaVantage" Bounds="-73.517052319339,272.973974474178,93.5833333333333,25.96" UseManualLocation="True" />
+    <Node Id="DownloadLog" Bounds="-314.240447205943,-1.6145225720111,93.7633333333333,25.96" UseManualLocation="True" />
     <Node Id="HistoryDownloader" Bounds="-302.500004679362,119.14495289917,122.063333333333,25.96" UseManualLocation="True" />
     <Node Id="IEXTrading" Bounds="65.4029166666665,217.43243491775,75.8866666666667,25.96" UseManualLocation="True" />
-    <Node Id="IStockQuoteService" Bounds="-130.9625,199.8648698355,122.29,25.96" UseManualLocation="True" />
+    <Node Id="IStockQuoteService" Bounds="-146.96611165038,193.641243082575,122.29,25.96" UseManualLocation="True" />
     <Node Id="MainWindow" Bounds="-33,-128,90.2566666666667,25.96" UseManualLocation="True" />
     <Node Id="ManagesTheDownloadingOf" Category="Comment" Bounds="-502.420833943685,175.10505289917,198.496666666667,57.88" Label="Manages the downloading of&#xD;&#xA;histories from IStockQuoteService&#xD;&#xA;and updating the log" UseManualLocation="True" />
+    <Node Id="PolygonService" Bounds="-212.319433583802,292.702622634645,96.59,25.96" Label="PolygonStocks" UseManualLocation="True" />
     <Node Id="Settings" Bounds="33.8921327718099,-38.7376851844788,62.64,25.96" UseManualLocation="True" />
     <Node Id="StockQuote" Bounds="126.53213277181,-71.340237121582,153.526666666667,25.96" Label="StockQuoteServiceDialog" UseManualLocation="True" />
-    <Node Id="StockQuoteManager" Bounds="-148.031666191949,-48.5,129.096666666667,25.96" UseManualLocation="True" />
-    <Node Id="StockQuoteThrottle" Bounds="94.9564616394043,293.659755249023,123.396666666667,25.96" UseManualLocation="True" />
+    <Node Id="StockQuoteManager" Bounds="-150.698934800346,-23.6054929882984,129.096666666667,25.96" UseManualLocation="True" />
+    <Node Id="StockQuoteThrottle" Bounds="94.9564616394043,304.328829682609,123.396666666667,25.96" UseManualLocation="True" />
     <Node Id="StockServiceSettings" Bounds="68.8839583333332,78.6597613076148,128.526666666667,25.96" UseManualLocation="True" />
     <Node Id="bb577711-d497-497b-a7a6-d9d951b36aaa1" Category="Comment" Bounds="-76.9180208333335,369.009853687692,233.983333333333,57.88" Label="Implements IStockQuoteService API and performs downloading on a background thread." UseManualLocation="True" />
   </Nodes>
   <Links>
     <Link Source="1c5dbdfd-dd68-4c03-83df-5fa235ff5b341" Target="StockQuote" Bounds="277.192892652025,-84.8928410875021,59.1157662404908,11.7920273991781" />
-    <Link Source="21aa22ce-adea-46e2-8204-8c494d26feba1" Target="DownloadLog" Bounds="-339.794999525282,33.3706763483222,21.0678144143401,2.6009940952206" />
-    <Link Source="58c908df-774f-4b4d-ba78-9914216ee2801" Target="StockServiceSettings" Bounds="206.404863248023,87.0597353628205,54.6771159186443,1.9574254206383" />
-    <Link Source="868d96d8-c9fb-4fe0-b072-449a7c6d88b91" Target="StockQuoteThrottle" Bounds="227.349869135551,303.848259059336,33.0032591705198,0.888427704287494" />
-    <Link Source="AlphaVantage" Target="StockQuoteThrottle" Bounds="15.6208333333333,297.783245985861,70.3533215764022,4.41797732257379" />
-    <Link Source="AlphaVantage" Target="StockServiceSettings" Bounds="-20.6747917822553,111.618016764247,137.667029566729,170.246853071253" />
-    <Link Source="HistoryDownloader" Target="DownloadLog" Bounds="-258.488101352849,48.2801155776686,14.3849376882403,70.8648373215014" />
-    <Link Source="HistoryDownloader" Target="IStockQuoteService" Bounds="-213.866378521555,145.10495289917,108.302509997455,50.9299559046954" Label="UpdateHistory" LabelBounds="-158.864021071353,152.800062177527,76.41,15.96" />
-    <Link Source="IEXTrading" Target="StockQuoteThrottle" Bounds="112.423637355859,243.39243491775,29.9958941058457,42.8919346757365" />
+    <Link Source="21aa22ce-adea-46e2-8204-8c494d26feba1" Target="DownloadLog" Bounds="-344.240447205498,22.982082863883,21.1896217336222,4.41986778027697" />
+    <Link Source="58c908df-774f-4b4d-ba78-9914216ee2801" Target="StockServiceSettings" Bounds="206.404863248023,87.0597353628205,54.6771159186443,1.95742542063829" />
+    <Link Source="868d96d8-c9fb-4fe0-b072-449a7c6d88b91" Target="StockQuoteThrottle" Bounds="227.328275655823,309.58642115795,33.0248526502478,2.45935875181436" />
+    <Link Source="AlphaVantage" Target="StockQuoteThrottle" Bounds="20.0662810139943,293.954544264713,66.0717147560197,11.2971262351385" />
+    <Link Source="AlphaVantage" Target="StockServiceSettings" Bounds="-16.0460466697528,111.569779330994,132.795848474527,161.404195143184" />
+    <Link Source="HistoryDownloader" Target="DownloadLog" Bounds="-262.689214105586,33.1454988637506,18.438005906648,85.9994540354194" />
+    <Link Source="HistoryDownloader" Target="IStockQuoteService" Bounds="-214.348853361728,145.10495289917,93.2901926169156,44.6508005499424" Label="UpdateHistory" LabelBounds="-166.840314912501,149.666338853371,76.41,15.96" />
+    <Link Source="IEXTrading" Target="StockQuoteThrottle" Bounds="111.309122517537,243.39243491775,32.6765674275667,53.2649297443494" />
     <Link Source="IEXTrading" Target="StockServiceSettings" Bounds="106.133668522468,113.419150229246,22.3365605796227,104.013284688504" />
-    <Link Source="IStockQuoteService" Target="AlphaVantage" Bounds="-63.7000154471545,225.8248698355,22.57477547027,47.8988680842368" />
-    <Link Source="IStockQuoteService" Target="IEXTrading" Bounds="-8.6725,219.048066329883,65.1213771948735,6.60660231784476" />
+    <Link Source="IStockQuoteService" Target="AlphaVantage" Bounds="-76.1521829497676,219.601243082575,34.3814105370085,46.1551349263859" />
+    <Link Source="IStockQuoteService" Target="IEXTrading" Bounds="-24.67611165038,214.311324564233,81.1493739857921,10.205990647417" />
+    <Link Source="IStockQuoteService" Target="PolygonService" Bounds="-148.200796754541,219.601243082575,52.1327137487672,66.037329566929" />
     <Link Source="MainWindow" Target="Settings" Bounds="19.8474667451818,-102.04,33.0452836604886,55.5668310194976" />
     <Link Source="MainWindow" Target="StockQuote" Bounds="55.295708967874,-102.225681059954,95.5769371492845,28.3279166089082" />
-    <Link Source="MainWindow" Target="StockQuoteManager" Bounds="-60.9525078595967,-102.04,57.4702823605842,47.7858783309351" />
+    <Link Source="MainWindow" Target="StockQuoteManager" Bounds="-67.7618637678905,-102.04,67.6705831557746,71.8814991441746" Label="UpdateQuotes" LabelBounds="-112.499462827231,-83.4301668176178,77.1166666666667,15.96" />
     <Link Source="ManagesTheDownloadingOf" Target="HistoryDownloader" Bounds="-338.104203074945,148.762389492181,59.2284817014864,26.342663406989" />
+    <Link Source="PolygonService" Target="StockQuoteThrottle" Bounds="-115.729433583802,307.433555091071,201.691804292498,7.31232480237986" />
+    <Link Source="PolygonService" Target="StockServiceSettings" Bounds="-142.630523681641,112.056312561035,261.860420227051,180.646324157715" />
     <Link Source="Settings" Target="StockServiceSettings" Bounds="72.7233554500189,-12.7776851844788,48.4049667378324,83.6476956115056" />
     <Link Source="StockQuote" Target="StockServiceSettings" Bounds="143.030028204873,-45.380237121582,54.1952824752939,115.887438999481" />
-    <Link Source="StockQuoteManager" Target="DownloadLog" Bounds="-216.842302840229,-22.54,95.7944309945859,33.100678135279" />
-    <Link Source="StockQuoteManager" Target="HistoryDownloader" Bounds="-223.063808534743,-22.54,127.348402288667,135.135083754604" Label="BeginFetchHistory" LabelBounds="-175.842449985683,65.4025699392915,96.0533333333333,15.96" />
-    <Link Source="StockQuoteManager" Target="IStockQuoteService" Bounds="-82.7691315683029,-22.54,11.7429693089206,213.418462970125" Label="BeginFetchQuotes" LabelBounds="-72.8976423446376,76.0793512697135,96.76,15.96" />
-    <Link Source="StockQuoteManager" Target="StockServiceSettings" Bounds="-61.3704767363401,-22.54,164.643279771329,96.643769561684" />
-    <Link Source="StockQuoteThrottle" Target="StockServiceSettings" Bounds="135.544694262584,113.566443052002,19.6909034938229,180.093312197021" />
-    <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="AlphaVantage" Bounds="-17.0854966741817,315.229163829665,37.1619013456415,53.7806898580266" />
+    <Link Source="StockQuoteManager" Target="DownloadLog" Bounds="-211.54266507932,-2.7920690445154,60.843730278974,7.38384260264487" />
+    <Link Source="StockQuoteManager" Target="HistoryDownloader" Bounds="-220.719226336908,2.3545070117016,120.445907369229,110.70021598738" Label="BeginFetchHistory" LabelBounds="-257.902990407869,40.272082966476,96.0533333333333,15.96" />
+    <Link Source="StockQuoteManager" Target="IStockQuoteService" Bounds="-86.1309151973946,2.3545070117016,0.276467337274696,182.286746422038" Label="BeginFetchQuotes" LabelBounds="-81.9926815287546,85.5148469026937,96.76,15.96" />
+    <Link Source="StockQuoteManager" Target="StockServiceSettings" Bounds="-58.3162536968637,2.3545070117016,155.472498277564,72.5015381825127" />
+    <Link Source="StockQuoteThrottle" Target="StockServiceSettings" Bounds="135.431859626207,113.571325725847,19.8708342583752,190.757503956762" />
+    <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="AlphaVantage" Bounds="-14.3733468909723,306.66351786757,37.1859650438178,62.3463358201217" />
     <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="IEXTrading" Bounds="51.0031992311788,251.812004528904,44.2612353315014,117.197849158788" />
+    <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="PolygonService" Bounds="-127.111337132744,322.370036885968,103.16877319236,46.6398168017238" />
   </Links>
   <Categories>
     <Category Id="Comment" Label="Comment" Description="Represents a user defined comment on the diagram" CanBeDataDriven="True" IsProviderRoot="False" NavigationActionLabel="Comments" />
