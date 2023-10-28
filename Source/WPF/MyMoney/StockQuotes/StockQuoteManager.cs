@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Controls;
@@ -62,7 +63,12 @@ namespace Walkabout.StockQuotes
                     }
                 }
             }
-            this._downloadLog = DownloadLog.Load(logPath);
+            bool isNew = false;
+            (this._downloadLog, isNew) = DownloadLog.Load(logPath);
+            if (isNew)
+            {
+                this._downloadLog.DelayedSave();
+            }
         }
 
         public DownloadLog DownloadLog
@@ -780,7 +786,7 @@ namespace Walkabout.StockQuotes
             return history;
         }
 
-        private void DelayedSave()
+        internal void DelayedSave()
         {
             if (!string.IsNullOrEmpty(this._logFolder))
             {
@@ -818,9 +824,10 @@ namespace Walkabout.StockQuotes
             this.DelayedSave();
         }
 
-        public static DownloadLog Load(string logFolder)
+        public static (DownloadLog, bool) Load(string logFolder)
         {
             DownloadLog log = new DownloadLog();
+            bool isNew = false;
             if (!string.IsNullOrEmpty(logFolder))
             {
                 var filename = System.IO.Path.Combine(logFolder, "DownloadLog.xml");
@@ -838,6 +845,7 @@ namespace Walkabout.StockQuotes
                     {
                         // got corrupted? no problem, just start over.
                         log = new DownloadLog();
+                        isNew = true;
                     }
                     log._logFolder = logFolder;
 
@@ -858,7 +866,7 @@ namespace Walkabout.StockQuotes
                     }
                 }
             }
-            return log;
+            return (log, isNew);
         }
 
         public void Save(string logFolder)

@@ -61,7 +61,9 @@ namespace Walkabout.StockQuotes
 
         protected override async Task<StockQuote> DownloadThrottledQuoteAsync(string symbol)
         {
-            await this.DownloadTickersAsync();            
+            // This takes a long time when throttled to 5 api calls per minute!
+            // await this.DownloadTickersAsync();            
+            Debug.WriteLine($"Polygon: DownloadThrottledQuoteAsync {symbol}");
             string uri = string.Format(stockQuoteUri, symbol);
             string bearer = string.Format(authorizationHeader, this.Settings.ApiKey);
             HttpClient client = new HttpClient();

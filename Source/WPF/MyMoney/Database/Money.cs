@@ -3867,7 +3867,7 @@ namespace Walkabout.Data
 
         public Alias FindMatchingAlias(string payee)
         {
-            if (payee == null)
+            if (string.IsNullOrEmpty(payee))
             {
                 return null;
             }
@@ -9553,7 +9553,6 @@ namespace Walkabout.Data
                 Transaction u = this.FindMatching(t, excluded);
                 if (u != null)
                 {
-
                     // Merge new details with matching transaction.
                     u.FITID = t.FITID;
                     if (string.IsNullOrEmpty(u.Number) && t.Number != null)
@@ -9564,6 +9563,11 @@ namespace Walkabout.Data
                     if (string.IsNullOrEmpty(u.Memo) && t.Memo != null)
                     {
                         u.Memo = t.Memo;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(u.PayeeName) && t.Payee != null)
+                    {
+                        u.Payee = t.Payee;
                     }
 
                     if (u.Status == TransactionStatus.None)
@@ -12426,6 +12430,16 @@ namespace Walkabout.Data
             return false;
         }
 
+        public Currency GetAccountCurrency()
+        {
+            MyMoney money = this.Account.Parent.Parent as MyMoney; 
+            if (money == null)
+            {
+                return Currencies.GetDefaultCurrency();
+            }
+            return money.Currencies.FindCurrencyOrDefault(this.account.NonNullCurrency);
+        }
+
 
         public decimal CurrencyNormalizedAmount(decimal Amount)
         {
@@ -12438,25 +12452,21 @@ namespace Walkabout.Data
                 return Amount * this.Account.AccountCurrencyRatio;
             }
 
-            MyMoney money = this.Account.Parent.Parent as MyMoney;
-            if (money != null)
+            Currency c = this.GetAccountCurrency();
+            if (c != null)
             {
-                Currency c = money.Currencies.FindCurrency(this.account.NonNullCurrency);
-                if (c != null)
-                {
-                    //-----------------------------------------------------
-                    // Apply ratio of conversion
-                    // for example USD 2,000 * CAN .95 = 1,900 (in USD currency)
-                    Amount *= c.Ratio;
+                //-----------------------------------------------------
+                // Apply ratio of conversion
+                // for example USD 2,000 * CAN .95 = 1,900 (in USD currency)
+                Amount *= c.Ratio;
 
-                    this.Account.AccountCurrencyRatio = c.Ratio;
-                }
-                else
-                {
-                    // We must be using the default currency, so the ratio is 1
+                this.Account.AccountCurrencyRatio = c.Ratio;
+            }
+            else
+            {
+                // We must be using the default currency, so the ratio is 1
 
-                    this.Account.AccountCurrencyRatio = 1;
-                }
+                this.Account.AccountCurrencyRatio = 1;
             }
             return Amount;
         }

@@ -272,16 +272,17 @@ namespace Walkabout.StockQuotes
                                 ex = he;
                             }
                         }
-                        catch (StockQuoteNotFoundException ne)
+                        catch (StockQuoteNotFoundException)
                         {
                             this.OnSymbolNotFound(symbol);
-                            ex = ne;
                         }
                         catch (Exception e)
                         {
                             // service is failing, so no point trying again right now.
                             this._disabled = true;
                             ex = e;
+                            // assume this might be api limit related, and mark the fact we've used up our quota.
+                            this._throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
                         }
 
                         if (ex != null)
@@ -291,8 +292,6 @@ namespace Walkabout.StockQuotes
                             {
                                 this._retry.Add(symbol);
                             }
-                            // assume this might be api limit related, and mark the fact we've used up our quota.
-                            this._throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
                             this.OnComplete(this.PendingCount == 0, message);
                         }
 

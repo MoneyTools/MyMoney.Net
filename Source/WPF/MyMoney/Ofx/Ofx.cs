@@ -9,6 +9,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
+using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -490,6 +492,8 @@ namespace Walkabout.Ofx
         private readonly PickAccountDelegate callerPickAccount;
         private readonly HashSet<string> skippedAccounts = new HashSet<string>();
         private CancellationTokenSource cancellation = new CancellationTokenSource();
+        private HashSet<string> currencyErrors = new HashSet<string>();
+
 
         public OfxRequest(OnlineAccount oa, MyMoney m, PickAccountDelegate resolveMissingAccountId)
         {
@@ -2297,6 +2301,8 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         break;
                 }
 
+                this.ProcessCurrency(e, a, results);
+
                 if (t != null)
                 {
                     if (t.Investment != null && t.Investment.UnitPrice == 0 && t.Investment.Security != null)
@@ -2318,30 +2324,32 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         continue;
                     }
 
+                    string name = t.Memo;
                     Security s = t.Investment.Security;
                     if (s != null)
                     {
                         // set the Payee field to the name of the security
-                        string name = s.Name;
-                        if (!string.IsNullOrEmpty(name))
+                        name = s.Name;
+                    }
+
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        // Since we tied the Payee to the security we can also reuse the Alias table
+                        // to allow re-naming of a Security using Payee Alias table.
+                        Alias alias = this.myMoney.Aliases.FindMatchingAlias(name);
+                        if (alias != null && alias.Payee.Name != name)
                         {
-                            // Since we tied the Payee to the security we can also reuse the Alias table
-                            // to allow re-nameing of a Security using Payee Alias table.
-                            Alias alias = this.myMoney.Aliases.FindMatchingAlias(name);
-                            if (alias != null && alias.Payee.Name != name)
+                            if (string.IsNullOrEmpty(t.Memo))
                             {
-                                if (string.IsNullOrEmpty(t.Memo))
-                                {
-                                    t.Memo = name;
-                                }
-                                // then rename the security also.
-                                s.Name = alias.Payee.Name;
-                                t.Payee = alias.Payee;
+                                t.Memo = name;
                             }
-                            else
-                            {
-                                t.Payee = this.myMoney.Payees.FindPayee(name, true);
-                            }
+                            // then rename the security also.
+                            s.Name = alias.Payee.Name;
+                            t.Payee = alias.Payee;
+                        }
+                        else
+                        {
+                            t.Payee = this.myMoney.Payees.FindPayee(name, true);
                         }
                     }
                 }
@@ -2349,6 +2357,10 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 Transaction u = this.myMoney.Transactions.Merge(this.myMoney.Aliases, t, newTransactions);
                 if (u != null)
                 {
+                    if (u.IsDeleted)
+                    {
+                        u.Undelete();
+                    }
                     t = u;
                     merged++;
                 }
@@ -2753,10 +2765,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         t.Investment.Type = InvestmentType.Dividend;
                     }
                 }
-
             }
-
-            ProcessCurrency(income.SelectElement("CURRENCY"), t);
             return t;
         }
 
@@ -2815,7 +2824,27 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 t.FITID = s.SelectElementValue("FITID").GetNormalizedValue();
                 t.Date = ParseOfxDate(s.SelectElementValue("DTPOSTED"));
                 t.Amount = s.SelectElementValueAsDecimal("TRNAMT");
-                t.Memo = s.SelectElementValue("MEMO").GetNormalizedValue();
+                var memo = s.SelectElementValue("MEMO").GetNormalizedValue();
+                var payee = s.SelectElementValue("NAME").GetNormalizedValue();
+                if (!string.IsNullOrEmpty(payee))
+                {
+                    Alias alias = this.myMoney.Aliases.FindMatchingAlias(payee);
+                    if (alias != null)
+                    {
+                        if (memo == null || memo == string.Empty)
+                        {
+                            memo = payee;
+                        }
+
+                        t.Payee = alias.Payee;
+                    }
+                    else
+                    {
+                        t.Payee = this.myMoney.Payees.FindPayee(payee, true);
+                    }
+                }
+                t.Memo = memo;
+
 
                 switch (s.SelectElementValue("TRNTYPE"))
                 {
@@ -2875,8 +2904,9 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         }
 
 
-        private static void ProcessCurrency(XElement currency, Transaction t)
+        private void ProcessCurrency(XElement e, Account account, OfxDownloadData results)
         {
+            var currency = e.SelectElement("CURRENCY");
             if (currency == null)
             {
                 return;
@@ -2884,9 +2914,15 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
             string symbol = currency.SelectElementValue("CURSYM").GetNormalizedValue();
 
-            if (symbol != "USD")
+            Currency c = this.myMoney.Currencies.FindCurrencyOrDefault(account.NonNullCurrency);
+            if (string.Compare(c.Name, symbol, StringComparison.OrdinalIgnoreCase) != 0)
             {
-                MessageBoxEx.Show("TODO: need to debug what to do here, do we need to convert?", "Currency", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                if (currencyErrors.Contains(symbol))
+                {
+                    OfxDownloadData data = results.AddError(this.onlineAccount, account, $"Transaction with currency {symbol} doesn't match account currency {c.Name}");
+                    data.LinkCaption = e.ToString();
+                    currencyErrors.Add(symbol);
+                }
             }
         }
 
