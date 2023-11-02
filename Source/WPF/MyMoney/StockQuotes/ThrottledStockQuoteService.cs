@@ -55,7 +55,9 @@ namespace Walkabout.StockQuotes
         {
             settings.Name = this.FriendlyName;
             this._settings = settings;
-            this._throttle = StockQuoteThrottle.Load(string.Format("{0}Throttle.xml", this.FriendlyName));
+
+            string filename = string.Format("{0}Throttle.xml", this.FriendlyName);            
+            this._throttle = StockQuoteThrottle.Load(filename);            
             this._throttle.Settings = settings;
             this._logPath = logPath;
         }

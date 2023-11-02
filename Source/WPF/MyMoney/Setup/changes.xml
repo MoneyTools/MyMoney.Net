@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.1132" date="11/2/2022">
+    - Fix multithreading bug that can result in StockQuoteThrottle.xml file corruptions.
+  </change>
   <change version="2.1.0.12" date="4/12/2022">
     - Fix issue #107, math problem editing splits
     - Fix issue #85, back/forward navigation now remembers reports.

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Utilities;
@@ -13,6 +14,7 @@ namespace Walkabout.StockQuotes
         private int _callsThisMonth;
         private string _filename;
         private readonly object _sync = new object();
+        private readonly object _saveLock = new object();
         private readonly DelayedActions saveActions = new DelayedActions();
 
         public StockQuoteThrottle()
@@ -56,7 +58,6 @@ namespace Walkabout.StockQuotes
         {
             lock (this._sync)
             {
-                bool changed = false;
                 var now = DateTime.Now;
                 if (!(now.Year == this._lastCall.Year && now.Month == this._lastCall.Month))
                 {
@@ -72,10 +73,6 @@ namespace Walkabout.StockQuotes
                 else if (now.Hour != this._lastCall.Hour || now.Minute != this._lastCall.Minute)
                 {
                     this._callsThisMinute = 0;
-                }
-                if (changed)
-                {
-                    this.saveActions.StartDelayedAction("save", this.Save, TimeSpan.FromSeconds(1));
                 }
             }
         }
@@ -118,28 +115,38 @@ namespace Walkabout.StockQuotes
 
         public void Save()
         {
-            var fullPath = System.IO.Path.Combine(ProcessHelper.AppDataPath, this._filename);
-            XmlSerializer s = new XmlSerializer(typeof(StockQuoteThrottle));
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            using (XmlWriter w = XmlWriter.Create(fullPath, settings))
+            lock (this._saveLock)
             {
-                s.Serialize(w, this);
+                var fullPath = System.IO.Path.Combine(ProcessHelper.AppDataPath, this._filename);
+                XmlSerializer s = new XmlSerializer(typeof(StockQuoteThrottle));
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Indent = true;
+                using (XmlWriter w = XmlWriter.Create(fullPath, settings))
+                {
+                    s.Serialize(w, this);
+                }
             }
         }
 
         public static StockQuoteThrottle Load(string filename)
         {
-            var fullPath = System.IO.Path.Combine(ProcessHelper.AppDataPath, filename);
-            if (System.IO.File.Exists(fullPath))
-            {
-                XmlSerializer s = new XmlSerializer(typeof(StockQuoteThrottle));
-                using (XmlReader r = XmlReader.Create(fullPath))
+            try
+            {             
+                var fullPath = System.IO.Path.Combine(ProcessHelper.AppDataPath, filename);
+                if (System.IO.File.Exists(fullPath))
                 {
-                    var throttle = (StockQuoteThrottle)s.Deserialize(r);
-                    throttle.FileName = filename;
-                    return throttle;
+                    XmlSerializer s = new XmlSerializer(typeof(StockQuoteThrottle));
+                    using (XmlReader r = XmlReader.Create(fullPath))
+                    {
+                        var throttle = (StockQuoteThrottle)s.Deserialize(r);
+                        throttle.FileName = filename;
+                        return throttle;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in {filename}: {ex}");
             }
             return new StockQuoteThrottle() { FileName = filename };
         }
