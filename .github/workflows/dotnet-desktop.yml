@@ -71,6 +71,11 @@ jobs:
     - name: Setup NuGet.exe
       uses: NuGet/setup-nuget@v1
 
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'      
+
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
@@ -78,15 +83,6 @@ jobs:
       # Add vstest.console.exe
     - name: Setup VSTest Path
       uses: darenm/Setup-VSTest@v1.2
-
-    # - name: Install Windows SDK 10.0.18362
-    #   uses: fbactions/setup-winsdk@v1
-    #   with:
-    #     winsdk-build-version: 18362
-
-    # Execute all unit tests in the solution
-    # - name: Execute unit tests
-    #  run: dotnet test
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
@@ -103,7 +99,7 @@ jobs:
         
     # Test the application.
     - name: Run unit tests
-      run: vstest.console /Platform:x64 Source\WPF\UnitTests\bin\$env:Configuration\net7.0-windows\UnitTests.dll
+      run: vstest.console /Platform:x64 Source\WPF\UnitTests\bin\$env:Configuration\net8.0-windows7.0\UnitTests.dll
       env:
         Configuration: ${{ matrix.configuration }}
         Platform: ${{ matrix.platform }}
