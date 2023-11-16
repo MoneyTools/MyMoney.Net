@@ -84,15 +84,6 @@ jobs:
     - name: Setup VSTest Path
       uses: darenm/Setup-VSTest@v1.2
 
-    # - name: Install Windows SDK 10.0.18362
-    #   uses: fbactions/setup-winsdk@v1
-    #   with:
-    #     winsdk-build-version: 18362
-
-    # Execute all unit tests in the solution
-    # - name: Execute unit tests
-    #  run: dotnet test
-
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
       run: nuget restore $env:Solution_Name
@@ -108,7 +99,7 @@ jobs:
         
     # Test the application.
     - name: Run unit tests
-      run: vstest.console /Platform:x64 Source\WPF\UnitTests\bin\$env:Configuration\net7.0-windows\UnitTests.dll
+      run: vstest.console /Platform:x64 Source\WPF\UnitTests\bin\$env:Configuration\net8.0-windows\UnitTests.dll
       env:
         Configuration: ${{ matrix.configuration }}
         Platform: ${{ matrix.platform }}
