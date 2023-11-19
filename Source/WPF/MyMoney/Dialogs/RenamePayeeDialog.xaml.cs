@@ -177,7 +177,7 @@ namespace Walkabout.Dialogs
             if (this.Alias)
             {
                 AliasType atype = this.checkBoxUseRegex.IsChecked == true ? AliasType.Regex : AliasType.None;
-                Alias a = new Alias() { Pattern = Pattern, AliasType = atype };
+                Alias a = new Alias() { Pattern = this.Pattern, AliasType = atype };
                 IEnumerable<Alias> conflicts = this.money.FindSubsumedAliases(a);
                 if (conflicts.Count() > 0)
                 {

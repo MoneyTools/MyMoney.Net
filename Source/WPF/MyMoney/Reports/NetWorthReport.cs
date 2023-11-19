@@ -108,7 +108,7 @@ namespace Walkabout.Reports
 
                     Predicate<Account> bankAccountFilter = (a) => { return this.IsBankAccount(a); };
                     decimal balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, bankAccountFilter);
-                    var cashGroup = new AccountGroup() { Filter = bankAccountFilter, Date = reportDate, Title = "Bank Account" };
+                    var cashGroup = new AccountGroup() { Filter = bankAccountFilter, Date = this.reportDate, Title = "Bank Account" };
 
                     // Non-investment Cash
                     var color = this.GetRandomColor();
@@ -121,7 +121,7 @@ namespace Walkabout.Reports
                     balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, investmentAccountFilter);
                     if (balance != 0)
                     {
-                        var investmentCashGroup = new AccountGroup { Filter = investmentAccountFilter, Date = reportDate, Title = "Investment Account" };
+                        var investmentCashGroup = new AccountGroup { Filter = investmentAccountFilter, Date = this.reportDate, Title = "Investment Account" };
                         color = this.GetRandomColor();
                         data.Add(new ChartDataValue() { Label = "Investment Cash", Value = (double)balance.RoundToNearestCent(), Color = color, UserData = investmentCashGroup });
                         this.WriteRow(writer, color, "Investment Cash", balance, () => this.OnSelectCashGroup(investmentCashGroup));
@@ -133,7 +133,7 @@ namespace Walkabout.Reports
                     balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, taxDeferredAccountFilter);
                     if (balance != 0)
                     {
-                        var taxDeferredCashGroup = new AccountGroup { Filter = taxDeferredAccountFilter, Date = reportDate, Title = "Tax-Deferred Account" };
+                        var taxDeferredCashGroup = new AccountGroup { Filter = taxDeferredAccountFilter, Date = this.reportDate, Title = "Tax-Deferred Account" };
                         color = this.GetRandomColor();
                         data.Add(new ChartDataValue() { Label = "Tax-Deferred Cash", Value = (double)balance.RoundToNearestCent(), Color = color, UserData = taxDeferredCashGroup });
                         this.WriteRow(writer, color, "Tax-Deferred Cash", balance, () => this.OnSelectCashGroup(taxDeferredCashGroup));
@@ -145,7 +145,7 @@ namespace Walkabout.Reports
                     balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, taxFreeAccountFilter);
                     if (balance != 0)
                     {
-                        var taxFreeCashGroup = new AccountGroup { Filter = taxFreeAccountFilter, Date = reportDate, Title = "Tax-Free Account" };
+                        var taxFreeCashGroup = new AccountGroup { Filter = taxFreeAccountFilter, Date = this.reportDate, Title = "Tax-Free Account" };
                         color = this.GetRandomColor();
                         data.Add(new ChartDataValue() { Label = "Tax-Free Cash", Value = (double)balance.RoundToNearestCent(), Color = color, UserData = taxFreeCashGroup });
                         this.WriteRow(writer, color, "Tax-Free Cash", balance, () => this.OnSelectCashGroup(taxFreeCashGroup));
@@ -189,7 +189,7 @@ namespace Walkabout.Reports
                     Predicate<Account> creditAccountFilter = (a) => a.Type == AccountType.Credit;
                     balance = this.myMoney.GetCashBalanceNormalized(this.reportDate, creditAccountFilter);
                     totalBalance += balance;
-                    var creditGroup = new AccountGroup() { Filter = creditAccountFilter, Date = reportDate, Title = "Credit Accounts" };
+                    var creditGroup = new AccountGroup() { Filter = creditAccountFilter, Date = this.reportDate, Title = "Credit Accounts" };
                     color = this.GetRandomColor();
                     this.WriteRow(writer, color, "Credit", balance, () => this.OnSelectCashGroup(creditGroup));
                     totalBalance += this.WriteLoanAccountRows(writer, data, color, true);

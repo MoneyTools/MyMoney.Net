@@ -2634,7 +2634,7 @@ namespace Walkabout
 
         #region MANAGE VIEW
 
-        int ignoreViewChangeCount;
+        private int ignoreViewChangeCount;
 
         private void OnBeforeViewStateChanged(object sender, EventArgs e)
         {

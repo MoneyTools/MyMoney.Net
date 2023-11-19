@@ -75,7 +75,7 @@ namespace Walkabout.Views.Controls
 
         public DatabaseSettings DatabaseSettings
         {
-            get => databaseSettings;
+            get => this.databaseSettings;
             set
             {
                 if (this.databaseSettings != null)
@@ -98,9 +98,9 @@ namespace Walkabout.Views.Controls
 
         private void UpdateShowCurrency()
         {
-            bool newValue = databaseSettings.ShowCurrency;
+            bool newValue = this.databaseSettings.ShowCurrency;
             // propagate to the view model.
-            foreach (var item in items)
+            foreach (var item in this.items)
             {
                 item.ShowCurrency = newValue;
             }

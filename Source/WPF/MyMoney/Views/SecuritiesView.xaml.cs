@@ -536,8 +536,8 @@ namespace Walkabout.Views
                 SecuritiesViewState state = new SecuritiesViewState()
                 {
                     SelectedSecurity = name,
-                    ViewAllSplits = ViewAllSplits,
-                    ViewAllSecurities = ViewAllSecurities
+                    ViewAllSplits = this.ViewAllSplits,
+                    ViewAllSecurities = this.ViewAllSecurities
                 };
 
                 int column = 0;

@@ -131,7 +131,7 @@ namespace Walkabout.StockQuotes
         public static StockQuoteThrottle Load(string filename)
         {
             try
-            {             
+            {
                 var fullPath = System.IO.Path.Combine(ProcessHelper.AppDataPath, filename);
                 if (System.IO.File.Exists(fullPath))
                 {

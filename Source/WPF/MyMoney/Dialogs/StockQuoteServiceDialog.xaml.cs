@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Controls;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Walkabout.Dialogs
 {
@@ -36,7 +35,7 @@ namespace Walkabout.Dialogs
         }
         private void OnServiceSelected(object sender, SelectionChangedEventArgs e)
         {
-            if (!_initialized)
+            if (!this._initialized)
             {
                 return;
             }
@@ -60,7 +59,7 @@ namespace Walkabout.Dialogs
 
         private void UpdateDialog()
         {
-            foreach (StockServiceSettings item in this.ComboServiceName.Items) 
+            foreach (StockServiceSettings item in this.ComboServiceName.Items)
             {
                 item.PropertyChanged -= this.OnSettingsChanged;
             }

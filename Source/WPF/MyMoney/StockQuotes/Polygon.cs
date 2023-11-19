@@ -1,16 +1,12 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace Walkabout.StockQuotes
@@ -83,7 +79,7 @@ namespace Walkabout.StockQuotes
                     using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
                     {
                         string json = sr.ReadToEnd();
-                        JObject o = JObject.Parse(json);                        
+                        JObject o = JObject.Parse(json);
                         StockQuote quote = this.ParseStockQuote(o);
                         if (quote == null || quote.Symbol == null)
                         {
@@ -102,7 +98,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        private StockQuote ParseStockQuote(JObject child)        
+        private StockQuote ParseStockQuote(JObject child)
         {
             // See https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev
 
@@ -319,7 +315,7 @@ namespace Walkabout.StockQuotes
                     {
                         return (PolygonTickerInfo)s.Deserialize(r);
                     }
-                } 
+                }
                 catch (Exception)
                 {
                 }

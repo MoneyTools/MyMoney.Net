@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Controls;
@@ -677,7 +676,7 @@ namespace Walkabout.StockQuotes
             {
                 return await service.TestApiKeyAsync(settings.ApiKey);
             }
-            return string.Empty;   
+            return string.Empty;
         }
     }
 

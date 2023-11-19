@@ -179,7 +179,7 @@ namespace Walkabout.Dialogs
                     {
                         this.list.Add(new AccountImportState()
                         {
-                            Dispatcher = dispatcher,
+                            Dispatcher = this.dispatcher,
                             Account = acct,
                             Name = acct.Name,
                         });

@@ -188,16 +188,16 @@ namespace Walkabout.Controls
                     this._properties = new TextProperties()
                     {
                         CultureInfo = CultureInfo.CurrentCulture,
-                        FontFamily = FontFamily,
-                        FontSize = FontSize,
-                        FontStyle = FontStyle,
-                        FontWeight = FontWeight,
-                        FontStretch = FontStretch,
-                        ForegroundBrush = Foreground,
+                        FontFamily = this.FontFamily,
+                        FontSize = this.FontSize,
+                        FontStyle = this.FontStyle,
+                        FontWeight = this.FontWeight,
+                        FontStretch = this.FontStretch,
+                        ForegroundBrush = this.Foreground,
                         PixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip,
-                        FlowDirection = FlowDirection,
-                        TextAlignment = TextAlignment,
-                        VerticalAlignment = VerticalAlignment
+                        FlowDirection = this.FlowDirection,
+                        TextAlignment = this.TextAlignment,
+                        VerticalAlignment = this.VerticalAlignment
                     };
                     this._properties.Typeface = new Typeface(this._properties.FontFamily, this._properties.FontStyle, this._properties.FontWeight, this._properties.FontStretch);
                     this._formatted = null;

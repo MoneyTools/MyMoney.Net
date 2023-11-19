@@ -1,14 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Walkabout.StockQuotes
@@ -53,7 +47,7 @@ namespace Walkabout.StockQuotes
         }
 
         protected override async Task<StockQuote> DownloadThrottledQuoteAsync(string symbol)
-        {            
+        {
             string uri = string.Format(stockQuoteAddress, symbol, this.Settings.ApiKey);
 
             HttpClient client = new HttpClient();
@@ -98,7 +92,7 @@ namespace Walkabout.StockQuotes
         public static StockQuote ParseStockQuote(JObject child)
         {
             // See https://iexcloud.io/docs/core/QUOTE
-            
+
             var quote = new StockQuote() { Downloaded = DateTime.Now };
             JToken value;
             if (child.TryGetValue("symbol", StringComparison.Ordinal, out value) && value.Type != JTokenType.Null)
