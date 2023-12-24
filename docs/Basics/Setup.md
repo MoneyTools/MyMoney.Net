@@ -22,7 +22,7 @@ The database file is portable so you can move it using USB storage device, or st
 
 ## Security
 
-MyMoney.NET on .NET 7.0 does not support adding a password to your **SQL Lite** databases, but you
+MyMoney.NET on .NET 8.0 does not support adding a password to your **SQL Lite** databases, but you
 can set a password on the **Binary XML** files. This password is also saved in your local Windows
 Credential Store so you don't have to keep typing it in.  But this convenience could also help you
 forget the password.  If you open your Windows Credential Manager you will see an entry with a name
@@ -51,7 +51,7 @@ of MyMoney.Net you might see an error message like this, which is the result of 
 
 ![](../Images/Setup1.png)
 
-The new .NET 7.0 version of MyMoney.Net does not support passwords.  This means if you are upgrading
+The new .NET 8.0 version of MyMoney.Net does not support passwords.  This means if you are upgrading
 to this new version you have to first remove the password from your database, then do the upgrade.
 If you forgot to do that then you can install this
 [old version using winget](https://winget.run/pkg/LovettSoftware/MyMoney.Net) that does work with a password, remove the password, then re-install the new version.

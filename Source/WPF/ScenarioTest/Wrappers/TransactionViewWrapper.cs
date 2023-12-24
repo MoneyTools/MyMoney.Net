@@ -264,6 +264,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void NavigateTransfer()
         {
+            this.Focus();
             var selection = (TransactionViewRow)this.ScrollSelectionIntoView();
             if (selection == null)
             {
@@ -552,11 +553,11 @@ namespace Walkabout.Tests.Wrappers
 
             if (payee.StartsWith("Transfer"))
             {
-                payee = payee[0..8].Trim();
+                payee = payee.Trim();
                 int i = payee.IndexOf(':');
-                if (i > 0)
+                if (i > 8)
                 {
-                    tofrom = payee.Substring(0, i);
+                    tofrom = payee.Substring(8, i - 8).Trim();
                     return payee.Substring(i + 1).Trim();
                 }
             }
