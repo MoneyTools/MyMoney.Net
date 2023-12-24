@@ -56,7 +56,7 @@ CleanupPublishFolder %VERSION% %ClickOnceBits%
 echo Please check the click once bits at %ClickOnceBits%
 pause
 
-echo ### BUGBUG: TODO fix msix package build of .NET 7.0 apps, it is currently not supported, skipping winget package creation...
+echo ### BUGBUG: TODO fix msix package build of .NET 8.0 apps, it is currently not supported, skipping winget package creation...
 rem if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
 rem msbuild /target:publish MyMoneyPackage.sln /p:Configuration=Release "/p:Platform=Any CPU"
 rem if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :noappx

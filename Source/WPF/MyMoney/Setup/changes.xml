@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="2.1.0.1132" date="11/2/2022">
+  <change version="2.1.0.13" date="11/2/2022">
+    - Move to .NET 8.0.
     - Fix multithreading bug that can result in StockQuoteThrottle.xml file corruptions.
+    - Fix unit test bug
   </change>
   <change version="2.1.0.12" date="4/12/2022">
     - Fix issue #107, math problem editing splits

@@ -616,9 +616,6 @@
     <Resource Include="Icons\TurboTax.png" />
     <EmbeddedResource Include="Icons\Ding.wav" />
     <Resource Include="Icons\Excel.png" />
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Controls\Calculator\states.dgml" />
     <None Include="Ofx\OFX 2.1.1.pdf" />
     <None Include="Ofx\ofx16.pdf" />
