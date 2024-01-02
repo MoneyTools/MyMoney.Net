@@ -2506,7 +2506,7 @@ namespace Walkabout
                     if (this.TabStock.IsSelected && this.StockGraph.Generator is SecurityGraphGenerator sgen && sgen.security == s)
                     {
                         chartsDirty = true;
-                    }                    
+                    }
                 }
                 else
                 {
