@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.14" date="1/1/2024">
+    - Add Yahoo stock quote service (which is free).
+  </change>
   <change version="2.1.0.13" date="11/2/2022">
     - Move to .NET 8.0.
     - Fix multithreading bug that can result in StockQuoteThrottle.xml file corruptions.
