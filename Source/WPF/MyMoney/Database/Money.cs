@@ -3398,21 +3398,21 @@ namespace Walkabout.Data
             // do NOT want to copy Parent or Id fields because this generates confusing change events.
             return new OnlineAccount()
             {
-                name = name,
-                institution = institution,
-                ofx = ofx,
-                fid = fid,
-                userid = userid,
-                password = password,
-                bankId = bankId,
-                brokerId = brokerId,
-                branchId = branchId,
-                ofxVersion = ofxVersion,
-                logoUrl = logoUrl,
-                appId = appId,
-                appVersion = appVersion,
-                sessionCookie = sessionCookie,
-                clientUid = clientUid
+                name = this.name,
+                institution = this.institution,
+                ofx = this.ofx,
+                fid = this.fid,
+                userid = this.userid,
+                password = this.password,
+                bankId = this.bankId,
+                brokerId = this.brokerId,
+                branchId = this.branchId,
+                ofxVersion = this.ofxVersion,
+                logoUrl = this.logoUrl,
+                appId = this.appId,
+                appVersion = this.appVersion,
+                sessionCookie = this.sessionCookie,
+                clientUid = this.clientUid
             };
         }
 
@@ -12432,7 +12432,7 @@ namespace Walkabout.Data
 
         public Currency GetAccountCurrency()
         {
-            MyMoney money = this.Account.Parent.Parent as MyMoney; 
+            MyMoney money = this.Account.Parent.Parent as MyMoney;
             if (money == null)
             {
                 return Currencies.GetDefaultCurrency();

@@ -83,10 +83,10 @@ namespace Walkabout.Data
             return new SecuritySale()
             {
                 DateSold = date,
-                Security = Security,
-                CostBasisPerUnit = CostBasisPerUnit,
+                Security = this.Security,
+                CostBasisPerUnit = this.CostBasisPerUnit,
                 UnitsSold = canSell,
-                DateAcquired = DatePurchased,
+                DateAcquired = this.DatePurchased,
                 SalePricePerUnit = unitSalePrice
             };
         }
@@ -227,7 +227,7 @@ namespace Walkabout.Data
         {
             SecurityPurchase sp = new SecurityPurchase()
             {
-                Security = Security,
+                Security = this.Security,
                 DatePurchased = datePurchased,
                 CostBasisPerUnit = costBasis / units,
                 UnitsRemaining = units
@@ -283,8 +283,8 @@ namespace Walkabout.Data
                 // Generate an error item so we can report this problem later.
                 this.pending.Add(new SecuritySale()
                 {
-                    Security = Security,
-                    Account = Account,
+                    Security = this.Security,
+                    Account = this.Account,
                     DateSold = dateSold,
                     UnitsSold = units,
                     SalePricePerUnit = salePricePerUnit
@@ -391,7 +391,7 @@ namespace Walkabout.Data
                 queue = new SecurityFifoQueue()
                 {
                     Security = s,
-                    Account = Account
+                    Account = this.Account
                 };
                 this.queues[s] = queue;
             }
@@ -417,7 +417,7 @@ namespace Walkabout.Data
                 queue = new SecurityFifoQueue()
                 {
                     Security = s,
-                    Account = Account
+                    Account = this.Account
                 };
                 this.queues[s] = queue;
             }
@@ -532,7 +532,7 @@ namespace Walkabout.Data
                         SecurityGroup group = null;
                         if (!result.TryGetValue(type, out group))
                         {
-                            group = new SecurityGroup() { Date = toDate, Security = sp.Security, Type = type, Purchases = new List<SecurityPurchase>() };
+                            group = new SecurityGroup() { Date = this.toDate, Security = sp.Security, Type = type, Purchases = new List<SecurityPurchase>() };
                             result[type] = group;
                         }
                         else if (group.Security != sp.Security)
@@ -563,7 +563,7 @@ namespace Walkabout.Data
                 SecurityGroup group = null;
                 if (!holdingsBySecurity.TryGetValue(s, out group))
                 {
-                    group = new SecurityGroup() { Date = toDate, Security = s, Type = s.SecurityType, Purchases = new List<SecurityPurchase>() };
+                    group = new SecurityGroup() { Date = this.toDate, Security = s, Type = s.SecurityType, Purchases = new List<SecurityPurchase>() };
                     holdingsBySecurity[s] = group;
                 }
                 group.Purchases.Add(sp);

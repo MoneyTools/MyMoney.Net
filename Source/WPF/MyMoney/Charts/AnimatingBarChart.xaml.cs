@@ -428,7 +428,7 @@ namespace LovettSoftware.Charts
                         var block = info.Label;
                         if (block == null)
                         {
-                            block = new TextBlock() { Foreground = Foreground };
+                            block = new TextBlock() { Foreground = this.Foreground };
                             info.Label = block;
                         }
                         block.Text = item.Label;
@@ -494,9 +494,9 @@ namespace LovettSoftware.Charts
                 }
                 else
                 {
-                    label = new TextBlock() { Foreground = Foreground };
+                    label = new TextBlock() { Foreground = this.Foreground };
                     this.axisLabels.Add(label);
-                    line = new Polygon() { Stroke = LineBrush, StrokeThickness = LineThickness, Points = new PointCollection() };
+                    line = new Polygon() { Stroke = this.LineBrush, StrokeThickness = this.LineThickness, Points = new PointCollection() };
                     this.axisLines.Add(line);
                 }
                 this.ChartCanvas.Children.Add(line);

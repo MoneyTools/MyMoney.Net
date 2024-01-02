@@ -9,8 +9,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
-using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -2917,11 +2915,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             Currency c = this.myMoney.Currencies.FindCurrencyOrDefault(account.NonNullCurrency);
             if (string.Compare(c.Name, symbol, StringComparison.OrdinalIgnoreCase) != 0)
             {
-                if (currencyErrors.Contains(symbol))
+                if (this.currencyErrors.Contains(symbol))
                 {
                     OfxDownloadData data = results.AddError(this.onlineAccount, account, $"Transaction with currency {symbol} doesn't match account currency {c.Name}");
                     data.LinkCaption = e.ToString();
-                    currencyErrors.Add(symbol);
+                    this.currencyErrors.Add(symbol);
                 }
             }
         }
@@ -3858,7 +3856,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             this.OnError(new OfxException("Server returned unexpected response from MFA Challenge Request")
             {
                 Root = ofx,
-                HelpLink = challengeLog
+                HelpLink = this.challengeLog
             });
         }
     }

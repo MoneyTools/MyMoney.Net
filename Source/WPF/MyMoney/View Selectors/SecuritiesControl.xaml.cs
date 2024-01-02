@@ -176,7 +176,7 @@ namespace Walkabout.Views.Controls
             Border visual = new Border();
             visual.SetResourceReference(Window.BackgroundProperty, "SystemControlHighlightAccent3RevealBackgroundBrush");
             visual.SetResourceReference(Window.ForegroundProperty, "SystemControlPageTextBaseHighBrush");
-            var label = new TextBlock() { Text = s.Name, Margin = new Thickness(5), FontSize = FontSize, FontFamily = FontFamily };
+            var label = new TextBlock() { Text = s.Name, Margin = new Thickness(5), FontSize = this.FontSize, FontFamily = this.FontFamily };
             visual.Child = label;
             return visual;
         }

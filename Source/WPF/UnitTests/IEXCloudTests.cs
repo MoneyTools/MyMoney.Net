@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using System.Xml;
-using Walkabout.Ofx;
-using Walkabout.Sgml;
 using Walkabout.StockQuotes;
 
 namespace Walkabout.Tests

@@ -1,12 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Net;
-using System.Text;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +14,7 @@ namespace Walkabout.StockQuotes
     /// </summary>
     internal class StockQuoteThrottledException : Exception
     {
-        public StockQuoteThrottledException(string msg): base(msg) { }
+        public StockQuoteThrottledException(string msg) : base(msg) { }
     }
 
     /// <summary>
@@ -56,15 +52,15 @@ namespace Walkabout.StockQuotes
             settings.Name = this.FriendlyName;
             this._settings = settings;
 
-            string filename = string.Format("{0}Throttle.xml", this.FriendlyName);            
-            this._throttle = StockQuoteThrottle.Load(filename);            
+            string filename = string.Format("{0}Throttle.xml", this.FriendlyName);
+            this._throttle = StockQuoteThrottle.Load(filename);
             this._throttle.Settings = settings;
             this._logPath = logPath;
         }
 
-        protected StockServiceSettings Settings => _settings;
+        protected StockServiceSettings Settings => this._settings;
 
-        protected CancellationTokenSource TokenSource => _source;
+        protected CancellationTokenSource TokenSource => this._source;
 
         public abstract string FriendlyName { get; }
 
@@ -289,7 +285,7 @@ namespace Walkabout.StockQuotes
 
                         if (ex != null)
                         {
-                            string message = string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + ex.Message;                            
+                            string message = string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + ex.Message;
                             lock (this._retry)
                             {
                                 this._retry.Add(symbol);

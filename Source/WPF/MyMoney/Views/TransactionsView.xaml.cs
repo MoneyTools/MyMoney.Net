@@ -1193,8 +1193,16 @@ namespace Walkabout.Views
 
         private bool InvestmentsCanMerge(Investment i, Investment j)
         {
-            if (i == null) return j == null;
-            if (j == null) return i == null;
+            if (i == null)
+            {
+                return j == null;
+            }
+
+            if (j == null)
+            {
+                return i == null;
+            }
+
             if (i.Type == j.Type && i.SecurityName == j.SecurityName)
             {
                 return Math.Round(i.Units, 2, MidpointRounding.AwayFromZero) == Math.Round(j.Units, 2, MidpointRounding.AwayFromZero);
@@ -6223,7 +6231,7 @@ namespace Walkabout.Views
                 BorderThickness = new Thickness(0, 0, 0, 1),
                 BorderBrush = Brushes.Transparent,
                 Focusable = false,
-                Child = payeeField
+                Child = this.payeeField
             });
 
             this.Loaded += this.OnLoaded;
@@ -6290,14 +6298,14 @@ namespace Walkabout.Views
                     BorderThickness = new Thickness(0, 0, 0, 1),
                     BorderBrush = Brushes.Transparent,
                     Focusable = false,
-                    Child = categoryField
+                    Child = this.categoryField
                 });
                 this.Children.Add(new Border()
                 {
                     BorderThickness = new Thickness(0, 0, 0, 1),
                     BorderBrush = Brushes.Transparent,
                     Focusable = false,
-                    Child = memoField
+                    Child = this.memoField
                 });
             }
         }
@@ -6874,7 +6882,7 @@ namespace Walkabout.Views
                 VerticalAlignment = VerticalAlignment.Top,
                 TextAlignment = TextAlignment.Right,
                 Style = (Style)cell.FindResource("DefaultTextBoxStyle"),
-                Name = SortMemberPath
+                Name = this.SortMemberPath
             };
             ModernWpf.Controls.Primitives.TextBoxHelper.SetIsEnabled(box, false);
 
@@ -6942,7 +6950,7 @@ namespace Walkabout.Views
             {
                 TextAlignment = TextAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Top,
-                Style = TextBlockStyle
+                Style = this.TextBlockStyle
             };
 
         }

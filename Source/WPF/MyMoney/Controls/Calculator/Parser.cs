@@ -59,7 +59,7 @@ namespace Walkabout.Controls
                         switch (token)
                         {
                             case Token.Number:
-                                this.Shift(new Operation() { Token = Token.Number, Number = number });
+                                this.Shift(new Operation() { Token = Token.Number, Number = this.number });
                                 this.state = 1;
                                 break;
                             case Token.Plus:
@@ -141,12 +141,12 @@ namespace Walkabout.Controls
                         switch (token)
                         {
                             case Token.Number:
-                                this.Shift(new Operation() { Token = Token.Number, Number = number });
+                                this.Shift(new Operation() { Token = Token.Number, Number = this.number });
                                 this.ReduceUnaryOperator();
                                 this.state = 1;
                                 break;
                             case Token.LeftParen:
-                                this.Shift(new Operation() { Token = Token.LeftParen, Number = number });
+                                this.Shift(new Operation() { Token = Token.LeftParen, Number = this.number });
                                 this.state = 0;
                                 break;
                             case Token.Dollar:
@@ -161,7 +161,7 @@ namespace Walkabout.Controls
                         switch (token)
                         {
                             case Token.Number:
-                                this.Shift(new Operation() { Token = Token.Number, Number = number });
+                                this.Shift(new Operation() { Token = Token.Number, Number = this.number });
                                 this.ReduceUnaryOperator();
                                 this.state = 1;
                                 break;

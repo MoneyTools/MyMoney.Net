@@ -693,7 +693,7 @@ namespace Walkabout.Views.Controls
                 IList<Transaction> data = this.MyMoney.Transactions.GetTransactionsByCategory(c, null);
                 if (data.Count > 0)
                 {
-                    var dialog = new MergeCategoryDialog() { Money = MyMoney, SourceCategory = c };
+                    var dialog = new MergeCategoryDialog() { Money = this.MyMoney, SourceCategory = c };
                     dialog.FontSize = this.FontSize;
                     dialog.Owner = App.Current.MainWindow;
                     dialog.Title = "Delete Category";
@@ -816,7 +816,7 @@ namespace Walkabout.Views.Controls
             visual.SetResourceReference(Window.ForegroundProperty, "SystemControlPageTextBaseHighBrush");
             visual.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             visual.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
-            var label = new TextBlock() { Text = c.Name, Margin = new Thickness(5), FontSize = FontSize, FontFamily = FontFamily };
+            var label = new TextBlock() { Text = c.Name, Margin = new Thickness(5), FontSize = this.FontSize, FontFamily = this.FontFamily };
             var swatch = new Border() { Margin = new Thickness(5), Width = 8, Height = 8, Background = new SolidColorBrush() { Color = ColorAndBrushGenerator.GenerateNamedColor(c.InheritedColor) } };
             visual.Children.Add(label);
             visual.Children.Add(swatch);
@@ -1081,7 +1081,7 @@ namespace Walkabout.Views.Controls
             Category c = this.Selected;
             if (c != null)
             {
-                var d = new MergeCategoryDialog() { Money = money, SourceCategory = c };
+                var d = new MergeCategoryDialog() { Money = this.money, SourceCategory = c };
                 d.Owner = App.Current.MainWindow;
                 d.FontSize = this.FontSize;
                 if (d.ShowDialog() == true && d.SelectedCategory != null)

@@ -60,7 +60,7 @@ namespace Walkabout.Tests.Wrappers
             {
                 SelectionPattern selection = (SelectionPattern)this.Control.GetCurrentPattern(SelectionPattern.Pattern);
                 AutomationElement[] selected = selection.Current.GetSelection();
-                return (selected == null || selected.Length > 0);
+                return selected == null || selected.Length > 0;
             }
         }
 
