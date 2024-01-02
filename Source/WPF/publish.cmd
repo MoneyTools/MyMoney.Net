@@ -53,8 +53,6 @@ popd
 if not EXIST %ClickOnceBits%\MyMoney.application goto :nopub
 CleanupPublishFolder %VERSION% %ClickOnceBits%
 
-echo Please check the click once bits at %ClickOnceBits%
-pause
 
 echo ### BUGBUG: TODO fix msix package build of .NET 8.0 apps, it is currently not supported, skipping winget package creation...
 rem if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
