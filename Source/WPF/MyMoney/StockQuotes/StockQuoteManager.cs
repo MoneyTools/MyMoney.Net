@@ -130,6 +130,10 @@ namespace Walkabout.StockQuotes
             {
                 service = new PolygonStocks(settings, this.LogPath);
             }
+            else if (YahooFinance.IsMySettings(settings))
+            {
+                service = new YahooFinance(settings, this.LogPath);
+            }
             return service;
         }
 
@@ -212,6 +216,7 @@ namespace Walkabout.StockQuotes
             result.Add(IEXCloud.GetDefaultSettings());
             result.Add(AlphaVantage.GetDefaultSettings());
             result.Add(PolygonStocks.GetDefaultSettings());
+            result.Add(YahooFinance.GetDefaultSettings());
             return result;
         }
 
@@ -313,7 +318,11 @@ namespace Walkabout.StockQuotes
             if (service != null)
             {
                 HistoryDownloader downloader = this.GetDownloader(service);
-                downloader.BeginFetchHistory(batch);
+                // make sure this is async!
+                Task.Run(() =>
+                {
+                    downloader.BeginFetchHistory(batch);
+                });
                 foundService = true;
             }
 
@@ -662,6 +671,10 @@ namespace Walkabout.StockQuotes
 
         internal async Task<StockQuoteHistory> GetCachedHistory(string symbol)
         {
+            if (string.IsNullOrEmpty(symbol))
+            {
+                return null;
+            }
             var service = this.GetHistoryService();
             if (service != null)
             {
@@ -827,7 +840,7 @@ namespace Walkabout.StockQuotes
         public static (DownloadLog, bool) Load(string logFolder)
         {
             DownloadLog log = new DownloadLog();
-            bool isNew = false;
+            bool isNew = true;
             if (!string.IsNullOrEmpty(logFolder))
             {
                 var filename = System.IO.Path.Combine(logFolder, "DownloadLog.xml");
@@ -839,6 +852,7 @@ namespace Walkabout.StockQuotes
                         using (XmlReader r = XmlReader.Create(filename))
                         {
                             log = (DownloadLog)s.Deserialize(r);
+                            isNew = false;
                         }
                     }
                     catch (Exception)
@@ -847,7 +861,6 @@ namespace Walkabout.StockQuotes
                         log = new DownloadLog();
                         isNew = true;
                     }
-                    log._logFolder = logFolder;
 
                     // ensure unique list.
                     foreach (var info in log.Downloaded.ToArray())
@@ -866,6 +879,7 @@ namespace Walkabout.StockQuotes
                     }
                 }
             }
+            log._logFolder = logFolder;
             return (log, isNew);
         }
 
@@ -1010,18 +1024,22 @@ namespace Walkabout.StockQuotes
                     {
                         // already up to date
                     }
-                    else
+                    else if (!history.NotFound)
                     {
                         try
                         {
                             await this._service.UpdateHistory(history);
+                        }
+                        catch (StockQuoteNotFoundException)
+                        {
+                            history.NotFound = true;
                         }
                         catch (Exception ex)
                         {
                             this.OnError("Download history error: " + ex.Message);
                         }
                     }
-                    if (history != null && history.History != null && history.History.Count != 0)
+                    if (history != null)
                     {
                         this.OnHistoryAvailable(history);
                     }

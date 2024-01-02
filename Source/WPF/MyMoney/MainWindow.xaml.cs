@@ -2500,6 +2500,14 @@ namespace Walkabout
                         chartsDirty = true;
                     }
                 }
+                else if (e.Item is Security)
+                {
+                    Security s = (Security)e.Item;
+                    if (this.TabStock.IsSelected && this.StockGraph.Generator is SecurityGraphGenerator sgen && sgen.security == s)
+                    {
+                        chartsDirty = true;
+                    }                    
+                }
                 else
                 {
                     // might need to update payee & category charts

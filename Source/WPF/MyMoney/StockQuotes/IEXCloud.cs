@@ -32,7 +32,6 @@ namespace Walkabout.StockQuotes
 
         public override bool SupportsHistory => false;
 
-
         public static StockServiceSettings GetDefaultSettings()
         {
             return new StockServiceSettings()

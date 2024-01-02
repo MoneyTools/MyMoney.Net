@@ -407,7 +407,7 @@ namespace Walkabout.Views
     {
         private readonly NumberFormatInfo nfi = new NumberFormatInfo();
         private readonly StockQuoteHistory history;
-        private readonly Security security;
+        public readonly Security security;
 
         public SecurityGraphGenerator(StockQuoteHistory history, Security security)
         {

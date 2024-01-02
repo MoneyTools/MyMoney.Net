@@ -152,6 +152,7 @@ namespace Walkabout.StockQuotes
 
         public string Symbol { get; set; }
         public string Name { get; set; }
+        public bool NotFound { get; set; }
 
         /// <summary>
         /// Whether this is a partial or complete history.

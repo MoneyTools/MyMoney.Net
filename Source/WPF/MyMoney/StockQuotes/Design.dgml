@@ -12,7 +12,7 @@
     <Node Id="IStockQuoteService" Bounds="-146.96611165038,193.641243082575,122.29,25.96" UseManualLocation="True" />
     <Node Id="MainWindow" Bounds="-33,-128,90.2566666666667,25.96" UseManualLocation="True" />
     <Node Id="ManagesTheDownloadingOf" Category="Comment" Bounds="-502.420833943685,175.10505289917,198.496666666667,57.88" Label="Manages the downloading of&#xD;&#xA;histories from IStockQuoteService&#xD;&#xA;and updating the log" UseManualLocation="True" />
-    <Node Id="PolygonService" Bounds="-212.319433583802,292.702622634645,96.59,25.96" Label="PolygonStocks" UseManualLocation="True" />
+    <Node Id="PolygonService" Bounds="-212.319433583802,292.702622634645,52.5333333333333,25.96" Label="Yahoo" UseManualLocation="True" />
     <Node Id="Settings" Bounds="33.8921327718099,-38.7376851844788,62.64,25.96" UseManualLocation="True" />
     <Node Id="StockQuote" Bounds="126.53213277181,-71.340237121582,153.526666666667,25.96" Label="StockQuoteServiceDialog" UseManualLocation="True" />
     <Node Id="StockQuoteManager" Bounds="-150.698934800346,-23.6054929882984,129.096666666667,25.96" UseManualLocation="True" />
@@ -33,13 +33,13 @@
     <Link Source="IEXTrading" Target="StockServiceSettings" Bounds="106.133668522468,113.419150229246,22.3365605796227,104.013284688504" />
     <Link Source="IStockQuoteService" Target="AlphaVantage" Bounds="-76.1521829497676,219.601243082575,34.3814105370085,46.1551349263859" />
     <Link Source="IStockQuoteService" Target="IEXTrading" Bounds="-24.67611165038,214.311324564233,81.1493739857921,10.205990647417" />
-    <Link Source="IStockQuoteService" Target="PolygonService" Bounds="-148.200796754541,219.601243082575,52.1327137487672,66.037329566929" />
+    <Link Source="IStockQuoteService" Target="PolygonService" Bounds="-166.518205128581,219.601243082575,67.5637523997175,66.7748976370582" />
     <Link Source="MainWindow" Target="Settings" Bounds="19.8474667451818,-102.04,33.0452836604886,55.5668310194976" />
     <Link Source="MainWindow" Target="StockQuote" Bounds="55.295708967874,-102.225681059954,95.5769371492845,28.3279166089082" />
     <Link Source="MainWindow" Target="StockQuoteManager" Bounds="-67.7618637678905,-102.04,67.6705831557746,71.8814991441746" Label="UpdateQuotes" LabelBounds="-112.499462827231,-83.4301668176178,77.1166666666667,15.96" />
     <Link Source="ManagesTheDownloadingOf" Target="HistoryDownloader" Bounds="-338.104203074945,148.762389492181,59.2284817014864,26.342663406989" />
-    <Link Source="PolygonService" Target="StockQuoteThrottle" Bounds="-115.729433583802,307.433555091071,201.691804292498,7.31232480237986" />
-    <Link Source="PolygonService" Target="StockServiceSettings" Bounds="-142.630523681641,112.056312561035,261.860420227051,180.646324157715" />
+    <Link Source="PolygonService" Target="StockQuoteThrottle" Bounds="-159.786100250469,306.573708035394,245.74773636827,8.33688655374374" />
+    <Link Source="PolygonService" Target="StockServiceSettings" Bounds="-159.88786315918,110.358268737793,270.41960144043,184.569618225098" />
     <Link Source="Settings" Target="StockServiceSettings" Bounds="72.7233554500189,-12.7776851844788,48.4049667378324,83.6476956115056" />
     <Link Source="StockQuote" Target="StockServiceSettings" Bounds="143.030028204873,-45.380237121582,54.1952824752939,115.887438999481" />
     <Link Source="StockQuoteManager" Target="DownloadLog" Bounds="-211.54266507932,-2.7920690445154,60.843730278974,7.38384260264487" />
@@ -49,7 +49,7 @@
     <Link Source="StockQuoteThrottle" Target="StockServiceSettings" Bounds="135.431859626207,113.571325725847,19.8708342583752,190.757503956762" />
     <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="AlphaVantage" Bounds="-14.3733468909723,306.66351786757,37.1859650438178,62.3463358201217" />
     <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="IEXTrading" Bounds="51.0031992311788,251.812004528904,44.2612353315014,117.197849158788" />
-    <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="PolygonService" Bounds="-127.111337132744,322.370036885968,103.16877319236,46.6398168017238" />
+    <Link Source="bb577711-d497-497b-a7a6-d9d951b36aaa1" Target="PolygonService" Bounds="-151.536758240405,319.76632258313,120.684916115438,49.2435311045619" />
   </Links>
   <Categories>
     <Category Id="Comment" Label="Comment" Description="Represents a user defined comment on the diagram" CanBeDataDriven="True" IsProviderRoot="False" NavigationActionLabel="Comments" />

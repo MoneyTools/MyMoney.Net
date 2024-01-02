@@ -309,6 +309,7 @@ namespace Walkabout.Views.Controls
 
         public IGraphGenerator Generator
         {
+            get => this.generator;
             set
             {
                 this.generator = value;
