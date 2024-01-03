@@ -9100,7 +9100,7 @@ namespace Walkabout.Data
         }
     }
     //================================================================================
-    public class TransactionComparerByDateDescending: IComparer<Transaction>
+    public class TransactionComparerByDateDescending : IComparer<Transaction>
     {
         public int Compare(Transaction x, Transaction y)
         {

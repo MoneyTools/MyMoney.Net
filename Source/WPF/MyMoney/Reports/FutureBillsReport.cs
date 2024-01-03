@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Security.Permissions;
+using System.Linq;
 using System.Threading.Tasks;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
@@ -16,13 +16,129 @@ namespace Walkabout.Reports
     {
         private readonly MyMoney myMoney;
 
-        class Payment
+        internal struct PaymentKey
         {
-            public Payee Payee { get; set; }
+            private Payee payee;
+            private Category category;
+            private int hashCode;
+
+            public Payee Payee
+            {
+                get => payee;
+                set
+                {
+                    payee = value;
+                    hashCode = 0;
+                }
+            }
+            public Category Category
+            {
+                get => category;
+                set
+                {
+                    category = value;
+                    hashCode = 0;
+                }
+            }
+
+            public override bool Equals(object obj)
+            {
+                // return equals if payment and category pair are the same
+                if (obj == null) return false;
+                if (obj is PaymentKey p)
+                {
+                    return p.Payee == this.Payee && p.Category == this.Category;
+                }
+                return false;
+            }
+
+            public override int GetHashCode()
+            {
+                // return equals if payment and category pair are the same
+                if (this.hashCode == 0)
+                {
+                    this.hashCode = this.Payee.Name.GetHashCode() ^ this.Category.GetFullName().GetHashCode();
+                }
+                return this.hashCode;
+            }
+        }
+
+        internal class Payments
+        {
+            internal const double AmountSensitivity = 0.3; // % stderr
+            internal const double TimeSensitivity = 0.2; // % stderr on date
+
+            public List<Transaction> Transactions { get; set; }
             public double Amount { get; set; }
             public TimeSpan Interval { get; set; }
             public DateTime NextDate { get; set; }
             public double MeanDays { get; internal set; }
+
+            public bool IsRecurring
+            {
+                get
+                {
+                    if (this.Transactions.Count < 3) return false;
+
+                    List<double> daysBetween = new List<double>();
+                    List<double> amounts = new List<double>();
+                    Transaction previous = null;
+                    foreach (var t in this.Transactions)
+                    {
+                        if (previous != null)
+                        {
+                            var span = previous.Date - t.Date;
+                            daysBetween.Add(span.TotalDays);
+                            amounts.Add((double)previous.Amount);
+                        }
+                        previous = t;
+                    }
+
+                    var meanDays = MathHelpers.Mean(daysBetween);
+                    var stdDevDays = MathHelpers.StandardDeviation(daysBetween);
+
+                    var meanAmount = MathHelpers.Mean(amounts);
+                    var stdDevAmount = MathHelpers.StandardDeviation(amounts);
+
+                    var nextDate = this.Transactions.First().Date + TimeSpan.FromDays(meanDays);
+
+                    var stdErrDays = Math.Abs(stdDevDays / meanDays);
+                    var stdErrAmount = Math.Abs(stdDevAmount / meanAmount);
+
+                    if (this.Payee.Name == "State Farm Insurance")
+                    {
+                        Debug.WriteLine("==========================================================");
+                        Debug.WriteLine("{0} {1}", this.Payee.Name, this.Category.Name);
+                        foreach (var t in this.Transactions)
+                        {
+                            Debug.WriteLine("{0},{1}", t.Date.Date.ToShortDateString(), t.Amount);
+                        }
+
+                        Debug.WriteLine("Mean amount {0} stddev {1} stdDevAmount / meanAmount {2}", meanAmount, stdDevAmount, stdErrAmount);
+                        Debug.WriteLine("Mean days {0} stddev {1}, stdDevDays / meanDays {2}", meanDays, stdDevDays, stdErrDays);
+                    }
+
+                    DateTime today = DateTime.Now;
+                    if (nextDate > today && meanAmount < 0 &&
+                        stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity)
+                    {
+                        this.Amount = amounts[0];
+                        this.Interval = TimeSpan.FromDays(meanDays);
+                        this.NextDate = nextDate;
+                        this.MeanDays = meanDays;
+                        return true;
+                    }
+                    return false;
+                }
+            }
+
+            public Payee Payee { get; internal set; }
+            public Category Category { get; internal set; }
+
+            public Payments()
+            {
+                this.Transactions = new List<Transaction>();
+            }
         }
 
         public FutureBillsReport(MyMoney money)
@@ -41,7 +157,7 @@ namespace Walkabout.Reports
             List<Transaction> view = new List<Transaction>();
             foreach (Transaction t in this.myMoney.Transactions.GetAllTransactions())
             {
-                if (t.IsDeleted || t.Status == TransactionStatus.Void || t.Date < start || t.Payee == null)
+                if (t.IsDeleted || t.Status == TransactionStatus.Void || t.Date < start || t.Date > today || t.Payee == null || t.Category == null)
                 {
                     continue;
                 }
@@ -51,85 +167,40 @@ namespace Walkabout.Reports
 
             view.Sort(new TransactionComparerByDateDescending());
 
-            Dictionary<Payee, List<Transaction>> groupedByPayee = new Dictionary<Payee, List<Transaction>>();
+            Dictionary<PaymentKey, Payments> groupedByPayeeCategory = new Dictionary<PaymentKey, Payments>();
 
+            PaymentKey temp = new PaymentKey();
             foreach (Transaction t in view)
             {
-                var payee = t.Payee;
-                if (!groupedByPayee.TryGetValue(payee, out List<Transaction> list)) {
-                    list = new List<Transaction>();
-                    groupedByPayee[payee] = list;
+                temp.Payee = t.Payee;
+                temp.Category = t.Category;
+                if (!groupedByPayeeCategory.TryGetValue(temp, out Payments payments))
+                {
+                    payments = new Payments()
+                    {
+                        Payee = t.Payee,
+                        Category = t.Category
+                    };
+                    groupedByPayeeCategory[temp] = payments;
                 }
-                list.Add(t);
+                payments.Transactions.Add(t);
             }
 
             DateTime startDate = DateTime.MaxValue;
-            SortedDictionary<string, Payment> recurring = new SortedDictionary<string, Payment>();
+
+            SortedDictionary<string, Payments> recurring = new SortedDictionary<string, Payments>();
             // ok, now figure out if the list has a recurring smell to it...
-            foreach (Payee p in groupedByPayee.Keys)
-            {                
-                var list = groupedByPayee[p];
-                if (list.Count < 3)
+            foreach (var pair in groupedByPayeeCategory)
+            {
+                var key = pair.Key;
+                var payments = pair.Value;
+                if (payments.IsRecurring)
                 {
-                    continue;
-                }
-
-                List<double> daysBetween = new List<double>();
-                List<double> amounts = new List<double>();
-                Transaction previous = null;
-                foreach (var t in list)
-                {
-                    if (previous != null)
-                    {
-                        var span = previous.Date - t.Date;
-                        daysBetween.Add(span.TotalDays);
-                        amounts.Add((double)previous.Amount);
-                    }
-                    previous = t;
-                }
-
-                var meanDays = MathHelpers.Mean(daysBetween);
-                var stdDevDays = MathHelpers.StandardDeviation(daysBetween);
-
-                var meanAmount = MathHelpers.Mean(amounts);
-                var stdDevAmount = MathHelpers.StandardDeviation(amounts);
-
-                var nextDate = list[0].Date + TimeSpan.FromDays(meanDays);
-
-                var stdErrDays = Math.Abs(stdDevDays / meanDays);
-                var stdErrAmount = Math.Abs(stdDevAmount / meanAmount);
-
-                if (nextDate > today && meanAmount < 0)
-                {
-                    if (stdErrDays < 0.2 && stdErrAmount < 0.3)
-                    {
-                        //Debug.WriteLine("==========================================================");
-                        //Debug.WriteLine(p.Name);
-                        //foreach (var t in list)
-                        //{
-                        //    Debug.WriteLine("{0},{1}", t.Date, t.Amount);
-                        //}
-
-                        //Debug.WriteLine("Mean amount {0} stddev {1} stdDevAmount / meanAmount {2}", meanAmount, stdDevAmount, stdErrAmount);
-                        //Debug.WriteLine("Mean days {0} stddev {1}, stdDevDays / meanDays {2}", meanDays, stdDevDays, stdErrDays);
-
-                        if (nextDate < startDate)
-                        {
-                            startDate = nextDate;
-                        }
-
-                        var payment = new Payment()
-                        {
-                            Amount = amounts[0],
-                            Payee = p,
-                            Interval = TimeSpan.FromDays(meanDays),
-                            NextDate = nextDate,
-                            MeanDays = meanDays
-                        };
-                        recurring[p.Name] = payment;
-                    }
+                    string sortName = key.Payee.Name + ":" + key.Category.GetFullName();
+                    recurring[sortName] = payments;
                 }
             }
+
 
             if (recurring.Count == 0)
             {
@@ -139,7 +210,7 @@ namespace Walkabout.Reports
             {
                 decimal total = 0;
 
-                startDate = new DateTime(startDate.Year, startDate.Month, 1);
+                startDate = new DateTime(today.Year, today.Month, 1);
                 DateTime endDate = startDate.AddYears(1);
 
                 while (startDate < endDate)
@@ -149,14 +220,14 @@ namespace Walkabout.Reports
                     writer.StartTable();
 
                     writer.StartColumnDefinitions();
-                    foreach (double minWidth in new double[] { 100, 300, 120 })
+                    foreach (double minWidth in new double[] { 100, 300, 250, 120 })
                     {
                         writer.WriteColumnDefinition(minWidth.ToString(), minWidth, double.MaxValue);
                     }
                     writer.EndColumnDefinitions();
 
                     writer.StartHeaderRow();
-                    foreach (string header in new string[] { "Date", "Payee", "Amount", })
+                    foreach (string header in new string[] { "Date", "Payee", "Category", "Amount", })
                     {
                         writer.StartCell();
                         writer.WriteParagraph(header);
@@ -169,7 +240,10 @@ namespace Walkabout.Reports
                         var payment = recurring[key];
                         if (payment.NextDate.Year == startDate.Year && payment.NextDate.Month == startDate.Month)
                         {
-                            WriteRow(writer, payment.NextDate.ToShortDateString(), payment.Payee.Name, payment.Amount.ToString("C"));
+                            WriteRow(writer, payment.NextDate.ToShortDateString(),
+                                payment.Payee.Name,
+                                payment.Category.Name,
+                                payment.Amount.ToString("C"));
                             total += (decimal)payment.Amount;
                             payment.NextDate += payment.Interval;
                         }
@@ -186,7 +260,7 @@ namespace Walkabout.Reports
             return Task.CompletedTask;
         }
 
-        private static void WriteRow(IReportWriter writer, string col1, string col2, string col3)
+        private static void WriteRow(IReportWriter writer, string col1, string col2, string col3, string col4)
         {
             writer.StartRow();
             writer.StartCell();
@@ -199,6 +273,10 @@ namespace Walkabout.Reports
 
             writer.StartCell();
             writer.WriteParagraph(col3);
+            writer.EndCell();
+
+            writer.StartCell();
+            writer.WriteParagraph(col4);
             writer.EndCell();
 
             writer.EndRow();

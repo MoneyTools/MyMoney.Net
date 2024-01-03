@@ -139,6 +139,27 @@ namespace Walkabout.StockQuotes
             }
         }
 
+        private List<decimal> GetNumbers(JArray array)
+        {
+            List<decimal> result = new List<decimal>();
+            foreach (JToken number in array)
+            {
+                if (number.Type == JTokenType.Float || number.Type == JTokenType.Integer)
+                {
+                    result.Add((decimal)number);
+                }
+            }
+            return result;
+        }
+
+        private static void MergeHandler<T, U>(List<T> a, List<U> b, Action<T, U> mergeAction)
+        {
+            for (int i = 0; i < a.Count && i < b.Count; i++)
+            {
+                mergeAction(a[i], b[i]);
+            }
+        }
+
         private List<StockQuote> ParseStockQuotes(JObject child)
         {
             // See https://query2.finance.yahoo.com/v8/finance/chart/MSFT?interval=1d&range=5d
@@ -190,80 +211,27 @@ namespace Walkabout.StockQuotes
                                     if (quote.TryGetValue("open", StringComparison.Ordinal, out value) && value.Type == JTokenType.Array)
                                     {
                                         // this is where we find multiple values if the range > 1d.
-                                        int index = 0;
-                                        foreach (JToken number in (JArray)value)
-                                        {
-                                            if (number.Type == JTokenType.Float || number.Type == JTokenType.Integer)
-                                            {
-                                                list[index].Open = (decimal)number;
-                                            }
-                                            index++;
-                                        }
+                                        MergeHandler(list, this.GetNumbers((JArray)value), (o, n) => o.Open = n);
                                     }
-
                                     if (quote.TryGetValue("low", StringComparison.Ordinal, out value) && value.Type == JTokenType.Array)
                                     {
                                         // this is where we find multiple values if the range > 1d.
-                                        if (value.First.Type == JTokenType.Float)
-                                        {
-                                            int index = 0;
-                                            foreach (JToken number in (JArray)value)
-                                            {
-                                                if (number.Type == JTokenType.Float || number.Type == JTokenType.Integer)
-                                                {
-                                                    list[index].Low = (decimal)number;
-                                                }
-                                                index++;
-                                            }
-                                        }
+                                        MergeHandler(list, this.GetNumbers((JArray)value), (o, n) => o.Low = n);
                                     }
                                     if (quote.TryGetValue("volume", StringComparison.Ordinal, out value) && value.Type == JTokenType.Array)
                                     {
                                         // this is where we find multiple values if the range > 1d.
-                                        if (value.First.Type == JTokenType.Float)
-                                        {
-                                            int index = 0;
-                                            foreach (JToken number in (JArray)value)
-                                            {
-                                                if (number.Type == JTokenType.Float || number.Type == JTokenType.Integer)
-                                                {
-                                                    list[index].Volume = (decimal)number;
-                                                }
-                                                index++;
-                                            }
-                                        }
+                                        MergeHandler(list, this.GetNumbers((JArray)value), (o, n) => o.Volume = n);
                                     }
                                     if (quote.TryGetValue("close", StringComparison.Ordinal, out value) && value.Type == JTokenType.Array)
                                     {
                                         // this is where we find multiple values if the range > 1d.
-                                        if (value.First.Type == JTokenType.Float)
-                                        {
-                                            int index = 0;
-                                            foreach (JToken number in (JArray)value)
-                                            {
-                                                if (number.Type == JTokenType.Float || number.Type == JTokenType.Integer)
-                                                {
-                                                    list[index].Close = (decimal)number;
-                                                }
-                                                index++;
-                                            }
-                                        }
+                                        MergeHandler(list, this.GetNumbers((JArray)value), (o, n) => o.Close = n);
                                     }
                                     if (quote.TryGetValue("high", StringComparison.Ordinal, out value) && value.Type == JTokenType.Array)
                                     {
                                         // this is where we find multiple values if the range > 1d.
-                                        if (value.First.Type == JTokenType.Float)
-                                        {
-                                            int index = 0;
-                                            foreach (JToken number in (JArray)value)
-                                            {
-                                                if (number.Type == JTokenType.Float || number.Type == JTokenType.Integer)
-                                                {
-                                                    list[index].High = (decimal)number;
-                                                }
-                                                index++;
-                                            }
-                                        }
+                                        MergeHandler(list, this.GetNumbers((JArray)value), (o, n) => o.High = n);
                                     }
                                 }
                             }
@@ -315,7 +283,7 @@ namespace Walkabout.StockQuotes
                 }
 
                 history.Complete = true;
-            } 
+            }
             catch (StockQuoteNotFoundException)
             {
                 history.NotFound = true;
