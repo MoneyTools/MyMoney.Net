@@ -95,6 +95,7 @@ nav:
     - Tax Report: Reports/TaxReport.md
     - W2 Report: Reports/W2Report.md
     - Unaccepted Report: Reports/UnacceptedReport.md
+    - Future Bills Report: Reports/FutureBillsReport.md
 
   - Development:
     - Overview: dev/index.md
