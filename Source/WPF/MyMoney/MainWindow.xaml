@@ -21,317 +21,320 @@
         ResizeMode="CanResizeWithGrip" 
         Icon="/Icons/App.ico"
         >
-    <Window.Resources>
-    </Window.Resources>
+  <Window.Resources>
+  </Window.Resources>
 
-    <Window.InputBindings>
-        <KeyBinding Command="p:AppCommands.CommandBack" Key="Left" Modifiers="Alt" />
-        <KeyBinding Command="p:AppCommands.CommandForward" Key="Right" Modifiers="Alt"/>
-        <KeyBinding Command="Find" Key="F" Modifiers="Control"/>
-        <KeyBinding Command="p:AppCommands.CommandToggleTheme" Key="L" Modifiers="Control"/>
-    </Window.InputBindings>
+  <Window.InputBindings>
+    <KeyBinding Command="p:AppCommands.CommandBack" Key="Left" Modifiers="Alt" />
+    <KeyBinding Command="p:AppCommands.CommandForward" Key="Right" Modifiers="Alt"/>
+    <KeyBinding Command="Find" Key="F" Modifiers="Control"/>
+    <KeyBinding Command="p:AppCommands.CommandToggleTheme" Key="L" Modifiers="Control"/>
+  </Window.InputBindings>
 
-    <Window.CommandBindings>
+  <Window.CommandBindings>
 
-        <!-- FILE -->
-        <CommandBinding Command="New" Executed="OnCommandFileNew"/>
-        <CommandBinding Command="Open" Executed="OnCommandFileOpen" />
-        <CommandBinding Command="Save" Executed="OnCommandFileSave" CanExecute="OnCommandCanSave" />
-        <CommandBinding Command="SaveAs" Executed="OnCommandFileSaveAs" />
-        <CommandBinding Command="p:AppCommands.CommandFileImport" Executed="OnCommandFileImport" />
-        <CommandBinding Command="p:AppCommands.CommandFileExportGraph" Executed="OnCommandFileExportAccountMap" />
-        <CommandBinding Command="p:AppCommands.CommandFileExtensionAssociation" Executed="OnCommandFileExtensionAssociation" />
-        <CommandBinding Command="p:AppCommands.CommandFileAddUser" Executed="OnCommandFileAddUser" CanExecute="OnCommandCanExecuteAddUser" />
-        <CommandBinding Command="p:AppCommands.CommandFileBackup" Executed="OnCommandBackup" />
-        <CommandBinding Command="p:AppCommands.CommandRevertChanges" Executed="OnCommandRevertChanges" CanExecute="OnCommandCanRevert" />
-        <CommandBinding Command="p:AppCommands.CommandOpenContainingFolder" Executed="OnCommandOpenContainingFolder" CanExecute="OnCommandCanOpenContainingFolder"/>
+    <!-- FILE -->
+    <CommandBinding Command="New" Executed="OnCommandFileNew"/>
+    <CommandBinding Command="Open" Executed="OnCommandFileOpen" />
+    <CommandBinding Command="Save" Executed="OnCommandFileSave" CanExecute="OnCommandCanSave" />
+    <CommandBinding Command="SaveAs" Executed="OnCommandFileSaveAs" />
+    <CommandBinding Command="p:AppCommands.CommandFileImport" Executed="OnCommandFileImport" />
+    <CommandBinding Command="p:AppCommands.CommandFileExportGraph" Executed="OnCommandFileExportAccountMap" />
+    <CommandBinding Command="p:AppCommands.CommandFileExtensionAssociation" Executed="OnCommandFileExtensionAssociation" />
+    <CommandBinding Command="p:AppCommands.CommandFileAddUser" Executed="OnCommandFileAddUser" CanExecute="OnCommandCanExecuteAddUser" />
+    <CommandBinding Command="p:AppCommands.CommandFileBackup" Executed="OnCommandBackup" />
+    <CommandBinding Command="p:AppCommands.CommandRevertChanges" Executed="OnCommandRevertChanges" CanExecute="OnCommandCanRevert" />
+    <CommandBinding Command="p:AppCommands.CommandOpenContainingFolder" Executed="OnCommandOpenContainingFolder" CanExecute="OnCommandCanOpenContainingFolder"/>
 
-        <CommandBinding Command="Close" Executed="OnCommandFileExit" />
+    <CommandBinding Command="Close" Executed="OnCommandFileExit" />
 
-        <!-- EDIT -->
-        <CommandBinding Command="Find" Executed="OnFind"/>
-        <CommandBinding Command="Undo" Executed="OnCommandUndo" CanExecute="OnCommandCanUndo" />
-        <CommandBinding Command="Redo" Executed="OnCommandRedo" CanExecute="OnCommandCanRedo"  />
-        <CommandBinding Command="Cut" Executed="OnCommandCut"  CanExecute="OnCommandCanCut" />
-        <CommandBinding Command="Copy" Executed="OnCommandCopy"  CanExecute="OnCommandCanCopy" PreviewCanExecute="OnCommandCanCopy" PreviewExecuted="OnCommandCopy" />
-        <CommandBinding Command="Paste" Executed="OnCommandPaste"  CanExecute="OnCommandCanPaste" />
-        <CommandBinding Command="Delete" Executed="OnCommandDelete"  CanExecute="OnCommandCanDelete" />
+    <!-- EDIT -->
+    <CommandBinding Command="Find" Executed="OnFind"/>
+    <CommandBinding Command="Undo" Executed="OnCommandUndo" CanExecute="OnCommandCanUndo" />
+    <CommandBinding Command="Redo" Executed="OnCommandRedo" CanExecute="OnCommandCanRedo"  />
+    <CommandBinding Command="Cut" Executed="OnCommandCut"  CanExecute="OnCommandCanCut" />
+    <CommandBinding Command="Copy" Executed="OnCommandCopy"  CanExecute="OnCommandCanCopy" PreviewCanExecute="OnCommandCanCopy" PreviewExecuted="OnCommandCopy" />
+    <CommandBinding Command="Paste" Executed="OnCommandPaste"  CanExecute="OnCommandCanPaste" />
+    <CommandBinding Command="Delete" Executed="OnCommandDelete"  CanExecute="OnCommandCanDelete" />
 
-        <!-- VIEW -->
-        <CommandBinding Command="p:AppCommands.CommandViewSecurities" Executed="OnCommandViewSecurities"/>
-        <CommandBinding Command="p:AppCommands.CommandViewCurrencies" Executed="OnCommandViewCurrencies"/>
-        <CommandBinding Command="p:AppCommands.CommandViewAliases"  Executed="OnCommandViewViewAliases"/>
-        <CommandBinding Command="p:AppCommands.CommandViewOptions" Executed="OnCommandViewOptions" />
-        <CommandBinding Command="p:AppCommands.CommandToggleTheme" Executed="OnCommandToggleTheme" />
+    <!-- VIEW -->
+    <CommandBinding Command="p:AppCommands.CommandViewSecurities" Executed="OnCommandViewSecurities"/>
+    <CommandBinding Command="p:AppCommands.CommandViewCurrencies" Executed="OnCommandViewCurrencies"/>
+    <CommandBinding Command="p:AppCommands.CommandViewAliases"  Executed="OnCommandViewViewAliases"/>
+    <CommandBinding Command="p:AppCommands.CommandViewOptions" Executed="OnCommandViewOptions" />
+    <CommandBinding Command="p:AppCommands.CommandToggleTheme" Executed="OnCommandToggleTheme" />
 
-        <!-- REPORTS  -->
-        <CommandBinding Command="p:AppCommands.CommandReportNetWorth" Executed="OnCommandNetWorth"/>
-        <CommandBinding Command="p:AppCommands.CommandReportInvestment" Executed="OnCommandReportInvestment"/>
-        <CommandBinding Command="p:AppCommands.CommandTaxReport" Executed="OnTaxReport"/>
-        <CommandBinding Command="p:AppCommands.CommandW2Report" Executed="OnCommandW2Report"/>
-        <CommandBinding Command="p:AppCommands.CommandReportCashFlow" Executed="OnCommandReportCashFlow"/>
-        <CommandBinding Command="p:AppCommands.CommandReportUnaccepted" Executed="OnCommandReportUnaccepted"/>
+    <!-- REPORTS  -->
+    <CommandBinding Command="p:AppCommands.CommandReportNetWorth" Executed="OnCommandNetWorth"/>
+    <CommandBinding Command="p:AppCommands.CommandReportInvestment" Executed="OnCommandReportInvestment"/>
+    <CommandBinding Command="p:AppCommands.CommandTaxReport" Executed="OnTaxReport"/>
+    <CommandBinding Command="p:AppCommands.CommandW2Report" Executed="OnCommandW2Report"/>
+    <CommandBinding Command="p:AppCommands.CommandReportCashFlow" Executed="OnCommandReportCashFlow"/>
+    <CommandBinding Command="p:AppCommands.CommandReportUnaccepted" Executed="OnCommandReportUnaccepted"/>
+    <CommandBinding Command="p:AppCommands.CommandFutureBills" Executed="OnCommandFutureBills"/>
 
-        <!-- QUERY -->
-        <CommandBinding Command="p:AppCommands.CommandQueryShowForm" Executed="OnCommandShowQuery" />
-        <CommandBinding Command="p:AppCommands.CommandQueryRun" Executed="OnCommandQueryRun"/>
-        <CommandBinding Command="p:AppCommands.CommandQueryClear" Executed="OnCommandQueryClear"/>
-        <CommandBinding Command="p:AppCommands.CommandQueryAdhoc" Executed="OnCommandAdhocQuery"/>
-        <CommandBinding Command="p:AppCommands.CommandQueryShowLastUpdate" Executed="OnCommandShowLastUpdate"/>
+    <!-- QUERY -->
+    <CommandBinding Command="p:AppCommands.CommandQueryShowForm" Executed="OnCommandShowQuery" />
+    <CommandBinding Command="p:AppCommands.CommandQueryRun" Executed="OnCommandQueryRun"/>
+    <CommandBinding Command="p:AppCommands.CommandQueryClear" Executed="OnCommandQueryClear"/>
+    <CommandBinding Command="p:AppCommands.CommandQueryAdhoc" Executed="OnCommandAdhocQuery"/>
+    <CommandBinding Command="p:AppCommands.CommandQueryShowLastUpdate" Executed="OnCommandShowLastUpdate"/>
 
-        <!-- ONLINE -->
-        <CommandBinding Command="p:AppCommands.CommandOnlineSyncAccount" Executed="OnSynchronizeOnlineAccounts" CanExecute="CanSynchronizeOnlineAccounts"/>
-        <CommandBinding Command="p:AppCommands.CommandOnlineUpdateSecurities" Executed="OnCommandUpdateSecurities" CanExecute="CanUpdateSecurities"/>
-        <CommandBinding Command="p:AppCommands.CommandDownloadAccounts" Executed="OnCommandDownloadAccounts" />
-        <CommandBinding Command="p:AppCommands.CommandStockQuoteServiceOptions" Executed="OnStockQuoteServiceOptions" />
+    <!-- ONLINE -->
+    <CommandBinding Command="p:AppCommands.CommandOnlineSyncAccount" Executed="OnSynchronizeOnlineAccounts" CanExecute="CanSynchronizeOnlineAccounts"/>
+    <CommandBinding Command="p:AppCommands.CommandOnlineUpdateSecurities" Executed="OnCommandUpdateSecurities" CanExecute="CanUpdateSecurities"/>
+    <CommandBinding Command="p:AppCommands.CommandDownloadAccounts" Executed="OnCommandDownloadAccounts" />
+    <CommandBinding Command="p:AppCommands.CommandStockQuoteServiceOptions" Executed="OnStockQuoteServiceOptions" />
 
-        <!-- Navigation -->
-        <CommandBinding Command="p:AppCommands.CommandBack" Executed="OnCommandBackExecute" CanExecute="OnCommandBackCanExecute"/>
-        <CommandBinding Command="p:AppCommands.CommandForward" Executed="CommandBinding_Executed" CanExecute="CommandBinding_CanExecute"/>
+    <!-- Navigation -->
+    <CommandBinding Command="p:AppCommands.CommandBack" Executed="OnCommandBackExecute" CanExecute="OnCommandBackCanExecute"/>
+    <CommandBinding Command="p:AppCommands.CommandForward" Executed="CommandBinding_Executed" CanExecute="CommandBinding_CanExecute"/>
 
-        <!-- Help -->
-        <CommandBinding Command="p:AppCommands.CommandHelpAbout" Executed="OnCommandHelpAbout"/>
-        <CommandBinding Command="p:AppCommands.CommandViewHelp" Executed="OnCommandViewHelp"/>
-        <CommandBinding Command="p:AppCommands.CommandAddSampleData" Executed="OnCommandAddSampleData"/>
-        <CommandBinding Command="p:AppCommands.CommandTroubleshootCheckTransfer" Executed="OnCommandTroubleshootCheckTransfer"/>
-        <CommandBinding Command="p:AppCommands.CommandViewChanges" Executed="OnCommandViewChanges"/>
+    <!-- Help -->
+    <CommandBinding Command="p:AppCommands.CommandHelpAbout" Executed="OnCommandHelpAbout"/>
+    <CommandBinding Command="p:AppCommands.CommandViewHelp" Executed="OnCommandViewHelp"/>
+    <CommandBinding Command="p:AppCommands.CommandAddSampleData" Executed="OnCommandAddSampleData"/>
+    <CommandBinding Command="p:AppCommands.CommandTroubleshootCheckTransfer" Executed="OnCommandTroubleshootCheckTransfer"/>
+    <CommandBinding Command="p:AppCommands.CommandViewChanges" Executed="OnCommandViewChanges"/>
 
-    </Window.CommandBindings>
-
-
-    <Grid x:Name="MainAppSurface">
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+  </Window.CommandBindings>
 
 
-        <!-- TOP MENU -->
-        <Grid Grid.Row="0">
+  <Grid x:Name="MainAppSurface">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <!-- Menu -->
-                <ColumnDefinition Width="81.296" />
-                <ColumnDefinition Width="314.707"/>
-                <!-- spacer -->
-                <ColumnDefinition Width="*" />
-                <!--Toolbar buttons on the right side-->
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
 
-            <!-- BACK and FORWARD button -->
 
-            <Button x:Name="BackButton" Command="p:AppCommands.CommandBack" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}" HorizontalAlignment="Center"/>
-            <Button x:Name="ForwardButton" Grid.Column="1" Command="p:AppCommands.CommandForward" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}" HorizontalAlignment="Center">
-                <Button.LayoutTransform>
-                    <RotateTransform CenterX="0.5" CenterY="0.5" Angle="180"/>
-                </Button.LayoutTransform>
-            </Button>
+    <!-- TOP MENU -->
+    <Grid Grid.Row="0">
 
-            <!-- REGULAR MENU -->
-            <Border Grid.Column="2" VerticalAlignment="Center" Grid.ColumnSpan="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <!-- Menu -->
+        <ColumnDefinition Width="81.296" />
+        <ColumnDefinition Width="314.707"/>
+        <!-- spacer -->
+        <ColumnDefinition Width="*" />
+        <!--Toolbar buttons on the right side-->
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
 
-                <Menu x:Name="MainMenu" IsMainMenu="True" Grid.Column="1" VerticalAlignment="Center" >
-                    <MenuItem x:Name="MenuFile" Header="_File">
-                        <MenuItem x:Name="MenuFileNew" Header="_New" Command="New"/>
-                        <MenuItem x:Name="MenuFileOpen" Header="_Open..." Command="Open"/>
-                        <MenuItem x:Name="MenuFileSave" Header="_Save" Command="Save"/>
-                        <MenuItem x:Name="MenuFileSaveAs" Header="Save _as..." Command="SaveAs"/>
-                        <MenuItem x:Name="MenuFileOpenContainingFolder" Header="Open _Containing Folder..." Command="p:AppCommands.CommandOpenContainingFolder"/>
-                        <MenuItem x:Name="MenuRecentFiles" Header="Recent _Files" />
-                        <Separator/>
-                        <MenuItem x:Name="MenuFileImport" Header="_Import..." Command="p:AppCommands.CommandFileImport"/>
-                        <MenuItem x:Name="MenuFileExportGraph" Header="Export Accounts _Dependencies (DGML)..." Command="p:AppCommands.CommandFileExportGraph"/>
+      <!-- BACK and FORWARD button -->
 
-                        <MenuItem x:Name="MenuFileFileExtensions" Header="_Associate QIF, QFX, OFX and MMDB" Command="p:AppCommands.CommandFileExtensionAssociation"/>
+      <Button x:Name="BackButton" Command="p:AppCommands.CommandBack" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}" HorizontalAlignment="Center"/>
+      <Button x:Name="ForwardButton" Grid.Column="1" Command="p:AppCommands.CommandForward" IsEnabled="True" Style="{DynamicResource NavigationBackButtonNormalStyle}" HorizontalAlignment="Center">
+        <Button.LayoutTransform>
+          <RotateTransform CenterX="0.5" CenterY="0.5" Angle="180"/>
+        </Button.LayoutTransform>
+      </Button>
 
-                        <Separator/>
-                        <MenuItem x:Name="MenuFileAddUser" Header="Add _User..." Command="p:AppCommands.CommandFileAddUser"/>
-                        <Separator/>
-                        <MenuItem x:Name="MenuFileExit" Header="Exit" Command="Close"/>
-                    </MenuItem>
+      <!-- REGULAR MENU -->
+      <Border Grid.Column="2" VerticalAlignment="Center" Grid.ColumnSpan="2">
 
-                    <MenuItem x:Name="MenuEdit" Header="_Edit">
-                        <MenuItem x:Name="MenuEditFind" Header="_Find" Command="Find" InputGestureText="Ctrl+F"/>
-                        <Separator/>
-                        <MenuItem x:Name="MenuEditUndo" Header="_Undo" Command="Undo"/>
-                        <MenuItem x:Name="MenuEditRedo" Header="_Redo" Command="Redo"/>
-                        <Separator/>
-                        <MenuItem x:Name="MenuEditCut" Header="Cu_t" Command="Cut"/>
-                        <MenuItem x:Name="MenuEditCopy" Header="_Copy" Command="Copy"/>
-                        <MenuItem x:Name="MenuEditPaste" Header="_Paste" Command="Paste"/>
-                        <MenuItem x:Name="MenuEditDelete" Header="_Delete" Command="Delete"/>
-                        <Separator/>
-                        <MenuItem Header="C_leanup">
-                            <MenuItem x:Name="MnuRemoveUnusedSecurities" Header="_Remove unused securities" Click="OnRemovedUnusedSecurities"/>
-                            <MenuItem x:Name="MenuTroubleshootCheckTransfer" Header="_Check Transfers" Command="p:AppCommands.CommandTroubleshootCheckTransfer"/>
-                            <MenuItem x:Name="MenuFixSplits" Header="Fix _Splits" Click="MenuFixSplits_Click"/>
-                            <MenuItem x:Name="MenuFixSecurities" Header="Remove _Duplicate Securities" Click="MenuRemoveDuplicateSecurities_Click"/>
-                            <MenuItem x:Name="MenuFixPayees" Header="Remove Duplicate _Payees" Click="MenuRemoveDuplicatePayees_Click"/>
-                            <MenuItem x:Name="MenuGCCollect" Header="_GC.Collect" Click="MenuGCCollect_Click"/>
-                        </MenuItem>
-                    </MenuItem>
+        <Menu x:Name="MainMenu" IsMainMenu="True" Grid.Column="1" VerticalAlignment="Center" >
+          <MenuItem x:Name="MenuFile" Header="_File">
+            <MenuItem x:Name="MenuFileNew" Header="_New" Command="New"/>
+            <MenuItem x:Name="MenuFileOpen" Header="_Open..." Command="Open"/>
+            <MenuItem x:Name="MenuFileSave" Header="_Save" Command="Save"/>
+            <MenuItem x:Name="MenuFileSaveAs" Header="Save _as..." Command="SaveAs"/>
+            <MenuItem x:Name="MenuFileOpenContainingFolder" Header="Open _Containing Folder..." Command="p:AppCommands.CommandOpenContainingFolder"/>
+            <MenuItem x:Name="MenuRecentFiles" Header="Recent _Files" />
+            <Separator/>
+            <MenuItem x:Name="MenuFileImport" Header="_Import..." Command="p:AppCommands.CommandFileImport"/>
+            <MenuItem x:Name="MenuFileExportGraph" Header="Export Accounts _Dependencies (DGML)..." Command="p:AppCommands.CommandFileExportGraph"/>
 
-                    <MenuItem x:Name="MenuView" Header="_View">
-                        <MenuItem x:Name="MenuViewBack" Header="_Back" Command="p:AppCommands.CommandBack"/>
-                        <MenuItem x:Name="MenuViewForward" Header="_Forward" Command="p:AppCommands.CommandForward"/>
-                        <Separator/>
-                        <MenuItem x:Name="MenuViewSecurities" Header="_Securities" Command="p:AppCommands.CommandViewSecurities"/>
-                        <MenuItem x:Name="MenuViewCurrencies" Header="_Currencies" Command="p:AppCommands.CommandViewCurrencies"/>
-                        <MenuItem x:Name="MenuViewOnlineAliases" Header="_Aliases" Command="p:AppCommands.CommandViewAliases"/>
-                        <Separator/>
-                        <MenuItem x:Name="MenuViewOnlineOptions" Header="_Options..." Command="p:AppCommands.CommandViewOptions"/>
+            <MenuItem x:Name="MenuFileFileExtensions" Header="_Associate QIF, QFX, OFX and MMDB" Command="p:AppCommands.CommandFileExtensionAssociation"/>
 
-                    </MenuItem>
+            <Separator/>
+            <MenuItem x:Name="MenuFileAddUser" Header="Add _User..." Command="p:AppCommands.CommandFileAddUser"/>
+            <Separator/>
+            <MenuItem x:Name="MenuFileExit" Header="Exit" Command="Close"/>
+          </MenuItem>
 
-                    <MenuItem x:Name="MenuViewReports" Header="_Reports">
-                        <MenuItem x:Name="MenuReportsNetWorth" Header="_Net Worth" Command="p:AppCommands.CommandReportNetWorth"/>
-                        <Separator/>
-                        <MenuItem x:Name="MenuReportsInvestment" Header="_Investment Portfolio" Command="p:AppCommands.CommandReportInvestment"/>
-                        <MenuItem x:Name="MenuReportsTaxReport" Header="Income _Tax Report" Command="p:AppCommands.CommandTaxReport"/>
-                        <MenuItem x:Name="MenuReportsW2Report" Header="W2 and_ Other Tax Forms" Command="p:AppCommands.CommandW2Report"/>
-                        <Separator/>
-                        <MenuItem x:Name="MenuReportsCashFlow" Header="Cash _Flow" Command="p:AppCommands.CommandReportCashFlow"/>
-                        <MenuItem x:Name="MenuReportsUnaccepted" Header="_Unaccepted" Command="p:AppCommands.CommandReportUnaccepted"/>
+          <MenuItem x:Name="MenuEdit" Header="_Edit">
+            <MenuItem x:Name="MenuEditFind" Header="_Find" Command="Find" InputGestureText="Ctrl+F"/>
+            <Separator/>
+            <MenuItem x:Name="MenuEditUndo" Header="_Undo" Command="Undo"/>
+            <MenuItem x:Name="MenuEditRedo" Header="_Redo" Command="Redo"/>
+            <Separator/>
+            <MenuItem x:Name="MenuEditCut" Header="Cu_t" Command="Cut"/>
+            <MenuItem x:Name="MenuEditCopy" Header="_Copy" Command="Copy"/>
+            <MenuItem x:Name="MenuEditPaste" Header="_Paste" Command="Paste"/>
+            <MenuItem x:Name="MenuEditDelete" Header="_Delete" Command="Delete"/>
+            <Separator/>
+            <MenuItem Header="C_leanup">
+              <MenuItem x:Name="MnuRemoveUnusedSecurities" Header="_Remove unused securities" Click="OnRemovedUnusedSecurities"/>
+              <MenuItem x:Name="MenuTroubleshootCheckTransfer" Header="_Check Transfers" Command="p:AppCommands.CommandTroubleshootCheckTransfer"/>
+              <MenuItem x:Name="MenuFixSplits" Header="Fix _Splits" Click="MenuFixSplits_Click"/>
+              <MenuItem x:Name="MenuFixSecurities" Header="Remove _Duplicate Securities" Click="MenuRemoveDuplicateSecurities_Click"/>
+              <MenuItem x:Name="MenuFixPayees" Header="Remove Duplicate _Payees" Click="MenuRemoveDuplicatePayees_Click"/>
+              <MenuItem x:Name="MenuGCCollect" Header="_GC.Collect" Click="MenuGCCollect_Click"/>
+            </MenuItem>
+          </MenuItem>
 
-                    </MenuItem>
+          <MenuItem x:Name="MenuView" Header="_View">
+            <MenuItem x:Name="MenuViewBack" Header="_Back" Command="p:AppCommands.CommandBack"/>
+            <MenuItem x:Name="MenuViewForward" Header="_Forward" Command="p:AppCommands.CommandForward"/>
+            <Separator/>
+            <MenuItem x:Name="MenuViewSecurities" Header="_Securities" Command="p:AppCommands.CommandViewSecurities"/>
+            <MenuItem x:Name="MenuViewCurrencies" Header="_Currencies" Command="p:AppCommands.CommandViewCurrencies"/>
+            <MenuItem x:Name="MenuViewOnlineAliases" Header="_Aliases" Command="p:AppCommands.CommandViewAliases"/>
+            <Separator/>
+            <MenuItem x:Name="MenuViewOnlineOptions" Header="_Options..." Command="p:AppCommands.CommandViewOptions"/>
 
-                    <MenuItem x:Name="MenuQuery" Header="_Query">
-                        <MenuItem x:Name="MenuQueryShowForm" Header="_Show Query Form" Command="p:AppCommands.CommandQueryShowForm"/>
-                        <MenuItem x:Name="MenuQueryRun" Header="_Run" Command="p:AppCommands.CommandQueryRun"/>
-                        <MenuItem x:Name="MenuQueryClear" Header="_Clear" Command="p:AppCommands.CommandQueryClear"/>
-                        <Separator/>
+          </MenuItem>
 
-                        <MenuItem x:Name="MenuQueryAdhoc" Header="_Adhoc SQL Query..." Command="p:AppCommands.CommandQueryAdhoc"/>
-                        <MenuItem x:Name="MenuQueryShowLastUpdate" Header="_Show Last Update..." Command="p:AppCommands.CommandQueryShowLastUpdate"/>
+          <MenuItem x:Name="MenuViewReports" Header="_Reports">
+            <MenuItem x:Name="MenuReportsNetWorth" Header="_Net Worth" Command="p:AppCommands.CommandReportNetWorth"/>
+            <Separator/>
+            <MenuItem x:Name="MenuReportsInvestment" Header="_Investment Portfolio" Command="p:AppCommands.CommandReportInvestment"/>
+            <MenuItem x:Name="MenuReportsTaxReport" Header="Income _Tax Report" Command="p:AppCommands.CommandTaxReport"/>
+            <MenuItem x:Name="MenuReportsW2Report" Header="W2 and_ Other Tax Forms" Command="p:AppCommands.CommandW2Report"/>
+            <Separator/>
+            <MenuItem x:Name="MenuReportsCashFlow" Header="Cash _Flow" Command="p:AppCommands.CommandReportCashFlow"/>
+            <MenuItem x:Name="MenuReportsUnaccepted" Header="_Unaccepted" Command="p:AppCommands.CommandReportUnaccepted"/>
+            <MenuItem x:Name="MenuFutureBills" Header="_Future Bills" Command="p:AppCommands.CommandFutureBills"/>
 
-                    </MenuItem>
 
-                    <MenuItem x:Name="MenuOnline" Header="_Online">
-                        <MenuItem x:Name="MenuOnlineSyncAccount" Header="_Synchronize Account" Command="p:AppCommands.CommandOnlineSyncAccount"/>
-                        <MenuItem x:Name="MenuOnlineUpdateSecurities" Header="_Update Securities" Command="p:AppCommands.CommandOnlineUpdateSecurities"/>
-                        <MenuItem x:Name="MenuOnlineDownloadAccounts" Header="_Download Accounts..." Command="p:AppCommands.CommandDownloadAccounts"/>
-                        <MenuItem x:Name="MenuStockQuoteServiceOptions" Header="Stock Quote Accounts..." Command="p:AppCommands.CommandStockQuoteServiceOptions"/>
-                    </MenuItem>
+          </MenuItem>
 
-                    <MenuItem x:Name="MenuHelp" Header="_Help">
-                        <MenuItem x:Name="MenuHelpAbout" Header="_About" Command="p:AppCommands.CommandHelpAbout"/>
-                        <MenuItem x:Name="MenuViewHelp" Header="_View Help" Command="p:AppCommands.CommandViewHelp"/>
-                        <MenuItem x:Name="MenuViewChanges" Header="_View Changes" Command="p:AppCommands.CommandViewChanges"/>
-                        <Separator/>
-                        <MenuItem x:Name="MenuSampleData" Header="_Add Sample Data..." Command="p:AppCommands.CommandAddSampleData" ToolTip="This command populates an empty database with data generated from a sample histogram"/>
-                        <MenuItem x:Name="MenuExportSampleData" Header="Export Sample Data..." Click="MenuExportSampleData_Click" ToolTip="This command creates a sample histogram from your real data for use in creating sample databases"/>
-                    </MenuItem>
+          <MenuItem x:Name="MenuQuery" Header="_Query">
+            <MenuItem x:Name="MenuQueryShowForm" Header="_Show Query Form" Command="p:AppCommands.CommandQueryShowForm"/>
+            <MenuItem x:Name="MenuQueryRun" Header="_Run" Command="p:AppCommands.CommandQueryRun"/>
+            <MenuItem x:Name="MenuQueryClear" Header="_Clear" Command="p:AppCommands.CommandQueryClear"/>
+            <Separator/>
 
-                </Menu>
-            </Border>
+            <MenuItem x:Name="MenuQueryAdhoc" Header="_Adhoc SQL Query..." Command="p:AppCommands.CommandQueryAdhoc"/>
+            <MenuItem x:Name="MenuQueryShowLastUpdate" Header="_Show Last Update..." Command="p:AppCommands.CommandQueryShowLastUpdate"/>
 
-            <!-- TOOLBAR BUTTONS -->
-            <StackPanel Orientation="Horizontal" Grid.Column="5" Margin="10,0,10,0">
+          </MenuItem>
 
-                <Button x:Name="ButtonSynchronize" Command="p:AppCommands.CommandOnlineSyncAccount" >
-                    <StackPanel Orientation="Horizontal">
-                        <ui:SymbolIcon Symbol="Download" Margin="0,0,4,0"/>
-                        <TextBlock Text="Download"/>
-                    </StackPanel>
-                </Button>
+          <MenuItem x:Name="MenuOnline" Header="_Online">
+            <MenuItem x:Name="MenuOnlineSyncAccount" Header="_Synchronize Account" Command="p:AppCommands.CommandOnlineSyncAccount"/>
+            <MenuItem x:Name="MenuOnlineUpdateSecurities" Header="_Update Securities" Command="p:AppCommands.CommandOnlineUpdateSecurities"/>
+            <MenuItem x:Name="MenuOnlineDownloadAccounts" Header="_Download Accounts..." Command="p:AppCommands.CommandDownloadAccounts"/>
+            <MenuItem x:Name="MenuStockQuoteServiceOptions" Header="Stock Quote Accounts..." Command="p:AppCommands.CommandStockQuoteServiceOptions"/>
+          </MenuItem>
 
-                <Separator Visibility="Hidden" Width="10"/>
+          <MenuItem x:Name="MenuHelp" Header="_Help">
+            <MenuItem x:Name="MenuHelpAbout" Header="_About" Command="p:AppCommands.CommandHelpAbout"/>
+            <MenuItem x:Name="MenuViewHelp" Header="_View Help" Command="p:AppCommands.CommandViewHelp"/>
+            <MenuItem x:Name="MenuViewChanges" Header="_View Changes" Command="p:AppCommands.CommandViewChanges"/>
+            <Separator/>
+            <MenuItem x:Name="MenuSampleData" Header="_Add Sample Data..." Command="p:AppCommands.CommandAddSampleData" ToolTip="This command populates an empty database with data generated from a sample histogram"/>
+            <MenuItem x:Name="MenuExportSampleData" Header="Export Sample Data..." Click="MenuExportSampleData_Click" ToolTip="This command creates a sample histogram from your real data for use in creating sample databases"/>
+          </MenuItem>
 
-                <ui:SplitButton x:Name="PendingChangeDropDown" VerticalAlignment="Center" Click="PendingChangeClicked">
+        </Menu>
+      </Border>
 
-                    <StackPanel Orientation="Horizontal">
-                        <ui:SymbolIcon Symbol="Save" Margin="0,0,4,0"/>
-                        <TextBlock Text="Save"/>
-                    </StackPanel>
+      <!-- TOOLBAR BUTTONS -->
+      <StackPanel Orientation="Horizontal" Grid.Column="5" Margin="10,0,10,0">
 
-                    <ui:SplitButton.Flyout>
-                        <ui:Flyout x:Name="pendingChangeFlyout" Opening="OnOpeningPendingChangeFlyout">
-                            <Border>
-                                <Grid >
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <StackPanel x:Name="pendingStack" Grid.Row="0"></StackPanel>
-                                    <Button Grid.Row="1" Command="p:AppCommands.CommandRevertChanges" HorizontalAlignment="Right" Margin="3">Revert Changes</Button>
-                                </Grid>
-                            </Border>
-                        </ui:Flyout>
-                    </ui:SplitButton.Flyout>
-                </ui:SplitButton>
+        <Button x:Name="ButtonSynchronize" Command="p:AppCommands.CommandOnlineSyncAccount" >
+          <StackPanel Orientation="Horizontal">
+            <ui:SymbolIcon Symbol="Download" Margin="0,0,4,0"/>
+            <TextBlock Text="Download"/>
+          </StackPanel>
+        </Button>
 
-                <Separator Visibility="Hidden" Width="10"/>
+        <Separator Visibility="Hidden" Width="10"/>
 
-                <Button x:Name="ButtonShowUpdateInfo" Click="OnButtonShowUpdateInfoClick">
-                    <StackPanel Orientation="Horizontal">
-                        <ui:SymbolIcon Symbol="AllApps" Margin="0,0,4,0"/>
-                        <TextBlock x:Name="ButtonShowUpdateInfoCaption" Text="View Changes"/>
-                    </StackPanel>
-                </Button>
+        <ui:SplitButton x:Name="PendingChangeDropDown" VerticalAlignment="Center" Click="PendingChangeClicked">
 
-            </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <ui:SymbolIcon Symbol="Save" Margin="0,0,4,0"/>
+            <TextBlock Text="Save"/>
+          </StackPanel>
+
+          <ui:SplitButton.Flyout>
+            <ui:Flyout x:Name="pendingChangeFlyout" Opening="OnOpeningPendingChangeFlyout">
+              <Border>
+                <Grid >
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                  </Grid.RowDefinitions>
+                  <StackPanel x:Name="pendingStack" Grid.Row="0"></StackPanel>
+                  <Button Grid.Row="1" Command="p:AppCommands.CommandRevertChanges" HorizontalAlignment="Right" Margin="3">Revert Changes</Button>
+                </Grid>
+              </Border>
+            </ui:Flyout>
+          </ui:SplitButton.Flyout>
+        </ui:SplitButton>
+
+        <Separator Visibility="Hidden" Width="10"/>
+
+        <Button x:Name="ButtonShowUpdateInfo" Click="OnButtonShowUpdateInfoClick">
+          <StackPanel Orientation="Horizontal">
+            <ui:SymbolIcon Symbol="AllApps" Margin="0,0,4,0"/>
+            <TextBlock x:Name="ButtonShowUpdateInfoCaption" Text="View Changes"/>
+          </StackPanel>
+        </Button>
+
+      </StackPanel>
+    </Grid>
+
+
+    <!-- MAIN AREA -->
+    <Border Grid.Row="1" Style="{DynamicResource MainAppClientArea}" >
+
+      <Grid x:Name="GridColumns" >
+
+        <Grid.ColumnDefinitions>
+          <!-- Left Panel -->
+          <ColumnDefinition Width="20*" MinWidth="60"/>
+
+          <!-- Splitter -->
+          <ColumnDefinition Width="{DynamicResource WalkAboutSplitterSize}" MinWidth="1"/>
+
+          <!-- Query, Transaction & Graph area -->
+          <ColumnDefinition Width="60*"/>
+
+        </Grid.ColumnDefinitions>
+
+        <!-- Left Panel -->
+        <Grid SizeChanged="Grid_SizeChanged">
+          <c:Accordion x:Name="toolBox" Grid.Column="0"/>
         </Grid>
 
+        <!-- VERTICAL SPLITTER -->
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"  ShowsPreview="False" />
 
-        <!-- MAIN AREA -->
-        <Border Grid.Row="1" Style="{DynamicResource MainAppClientArea}" >
+        <!-- TRANSACTION ZONE (Transaction, Graph)  -->
+        <Grid Grid.Column="2">
+          <Grid.RowDefinitions>
 
-            <Grid x:Name="GridColumns" >
+            <!-- Row for Editing Area [Transactions and Rent panel]-->
+            <RowDefinition Height="60*"/>
 
-                <Grid.ColumnDefinitions>
-                    <!-- Left Panel -->
-                    <ColumnDefinition Width="20*" MinWidth="60"/>
+            <!-- Row for Splitter between Transaction + Graph -->
+            <RowDefinition Height="{DynamicResource WalkAboutSplitterSize}" MinHeight="1"/>
 
-                    <!-- Splitter -->
-                    <ColumnDefinition Width="{DynamicResource WalkAboutSplitterSize}" MinWidth="1"/>
-
-                    <!-- Query, Transaction & Graph area -->
-                    <ColumnDefinition Width="60*"/>
-
-                </Grid.ColumnDefinitions>
-
-                <!-- Left Panel -->
-                <Grid SizeChanged="Grid_SizeChanged">
-                    <c:Accordion x:Name="toolBox" Grid.Column="0"/>
-                </Grid>
-
-                <!-- VERTICAL SPLITTER -->
-                <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"  ShowsPreview="False" />
-
-                <!-- TRANSACTION ZONE (Transaction, Graph)  -->
-                <Grid Grid.Column="2">
-                    <Grid.RowDefinitions>
-
-                        <!-- Row for Editing Area [Transactions and Rent panel]-->
-                        <RowDefinition Height="60*"/>
-
-                        <!-- Row for Splitter between Transaction + Graph -->
-                        <RowDefinition Height="{DynamicResource WalkAboutSplitterSize}" MinHeight="1"/>
-
-                        <!-- Row for Graphics -->
-                        <RowDefinition Height="30*"/>
-                    </Grid.RowDefinitions>
+            <!-- Row for Graphics -->
+            <RowDefinition Height="30*"/>
+          </Grid.RowDefinitions>
 
 
-                    <!-- Main area where most of the editing is done -->
-                    <Grid Background="Transparent" Grid.Row="0">
-                        <ContentControl x:Name="EditingZone" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
-                    </Grid>
+          <!-- Main area where most of the editing is done -->
+          <Grid Background="Transparent" Grid.Row="0">
+            <ContentControl x:Name="EditingZone" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
+          </Grid>
 
 
-                    <!-- Splitter  -->
-                    <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" ShowsPreview="False"/>
+          <!-- Splitter  -->
+          <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" ShowsPreview="False"/>
 
-                    <!-- THE MAIN GRAPH AREA -->
-                    <TabControl Name="TabForGraphs" Grid.Row="2" TabIndex="3">
+          <!-- THE MAIN GRAPH AREA -->
+          <TabControl Name="TabForGraphs" Grid.Row="2" TabIndex="3">
 
-                        <TabItem x:Name="TabTrends" Header="Trends" Visibility="Collapsed">
-                            <vc:TrendGraph x:Name="TransactionGraph" 
+            <TabItem x:Name="TabTrends" Header="Trends" Visibility="Collapsed">
+              <vc:TrendGraph x:Name="TransactionGraph" 
                                 ShowBalance="False"
                                  Series1Color="{DynamicResource AreaChartColor1}"
                                  Series2Color="{DynamicResource AreaChartColor2}"
@@ -342,28 +345,28 @@
                                  Series7Color="{DynamicResource AreaChartColor7}"
                                  Series8Color="{DynamicResource AreaChartColor8}"
                             />
-                        </TabItem>
+            </TabItem>
 
-                        <TabItem x:Name="TabHistory" Header="History"  Visibility="Collapsed">
-                            <cc:HistoryBarChart x:Name="HistoryChart"  />
-                        </TabItem>
+            <TabItem x:Name="TabHistory" Header="History"  Visibility="Collapsed">
+              <cc:HistoryBarChart x:Name="HistoryChart"  />
+            </TabItem>
 
-                        <TabItem x:Name="TabIncomes"  Visibility="Collapsed">
-                            <TabItem.Header>
-                                <TextBlock x:Name="TabIncomesHeaderText" Text="Incomes"/>
-                            </TabItem.Header>
-                            <cc:CategoryChart x:Name="PieChartIncomes" CategoryType="Income"/>
-                        </TabItem>
+            <TabItem x:Name="TabIncomes"  Visibility="Collapsed">
+              <TabItem.Header>
+                <TextBlock x:Name="TabIncomesHeaderText" Text="Incomes"/>
+              </TabItem.Header>
+              <cc:CategoryChart x:Name="PieChartIncomes" CategoryType="Income"/>
+            </TabItem>
 
-                        <TabItem x:Name="TabExpenses"  Visibility="Collapsed">
-                            <TabItem.Header>
-                                <TextBlock x:Name="TabExpensesHeaderText" Text="Expenses"/>
-                            </TabItem.Header>
-                            <cc:CategoryChart x:Name="PieChartExpenses" CategoryType="Expense"/>
-                        </TabItem>
+            <TabItem x:Name="TabExpenses"  Visibility="Collapsed">
+              <TabItem.Header>
+                <TextBlock x:Name="TabExpensesHeaderText" Text="Expenses"/>
+              </TabItem.Header>
+              <cc:CategoryChart x:Name="PieChartExpenses" CategoryType="Expense"/>
+            </TabItem>
 
-                        <TabItem x:Name="TabStock" Header="Stock" Visibility="Collapsed">
-                            <vc:TrendGraph x:Name="StockGraph"  ShowBalance="False"
+            <TabItem x:Name="TabStock" Header="Stock" Visibility="Collapsed">
+              <vc:TrendGraph x:Name="StockGraph"  ShowBalance="False"
                                  Series1Color="{DynamicResource AreaChartColor1}"
                                  Series2Color="{DynamicResource AreaChartColor2}"
                                  Series3Color="{DynamicResource AreaChartColor3}"
@@ -373,52 +376,52 @@
                                  Series7Color="{DynamicResource AreaChartColor7}"
                                  Series8Color="{DynamicResource AreaChartColor8}"
                             />
-                        </TabItem>
+            </TabItem>
 
-                        <TabItem x:Name="TabLoan" Header="Payments" Visibility="Collapsed">
-                            <cc:LoanChart x:Name="LoanChart" />
-                        </TabItem>
+            <TabItem x:Name="TabLoan" Header="Payments" Visibility="Collapsed">
+              <cc:LoanChart x:Name="LoanChart" />
+            </TabItem>
 
-                        <TabItem x:Name="TabRental" Header="Profits and Loss" Visibility="Collapsed">
-                            <cc:RentalChart x:Name="RentalChart" />
-                        </TabItem>
+            <TabItem x:Name="TabRental" Header="Profits and Loss" Visibility="Collapsed">
+              <cc:RentalChart x:Name="RentalChart" />
+            </TabItem>
 
-                        <TabItem x:Name="TabOutput" AutomationProperties.AutomationId="TabOutput" Visibility="Collapsed">
-                            <TabItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Output" Margin="0,0,5,0"/>
-                                    <c:CloseBox Click="OnCloseOutputWindow" x:Name="ButtonCloseOutputWindow"/>
-                                </StackPanel>
-                            </TabItem.Header>
-                            <c:OutputPane x:Name="OutputView"/>
-                        </TabItem>
-
-                        <TabItem x:Name="TabDownload" AutomationProperties.AutomationId="TabDownload" Visibility="Collapsed">
-                            <TabItem.Header>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Download" Margin="0,0,5,0"/>
-                                    <c:CloseBox Click="OnDownloadTabClose" x:Name="ButtonCloseDownloads"/>
-                                </StackPanel>
-                            </TabItem.Header>
-                            <vc:OfxDownloadControl x:Name="OfxDownloadControl"/>
-                        </TabItem>
-                    </TabControl>
-                </Grid>
-            </Grid>
-        </Border>
-
-        <c:AppSettings x:Name="AppSettingsPanel" Grid.Row="1" Width="300" HorizontalAlignment="Right" Visibility="Collapsed"/>
-
-        <StatusBar Grid.Row="2">
-            <StatusBarItem x:Name="StatusMessage" HorizontalAlignment="Left"/>
-            <StatusBarItem HorizontalAlignment="Right">
-                <StackPanel Orientation="Vertical" >
-                    <TextBlock x:Name="ProgressPrompt" Text=""/>
-                    <ProgressBar Width="200" x:Name="ProgressBar" Margin="0,0,10,0" />
+            <TabItem x:Name="TabOutput" AutomationProperties.AutomationId="TabOutput" Visibility="Collapsed">
+              <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock Text="Output" Margin="0,0,5,0"/>
+                  <c:CloseBox Click="OnCloseOutputWindow" x:Name="ButtonCloseOutputWindow"/>
                 </StackPanel>
-            </StatusBarItem>
-        </StatusBar>
+              </TabItem.Header>
+              <c:OutputPane x:Name="OutputView"/>
+            </TabItem>
 
-        <Grid x:Name="Shield" Background="#33000000" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.RowSpan="3"/>
-    </Grid>
+            <TabItem x:Name="TabDownload" AutomationProperties.AutomationId="TabDownload" Visibility="Collapsed">
+              <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock Text="Download" Margin="0,0,5,0"/>
+                  <c:CloseBox Click="OnDownloadTabClose" x:Name="ButtonCloseDownloads"/>
+                </StackPanel>
+              </TabItem.Header>
+              <vc:OfxDownloadControl x:Name="OfxDownloadControl"/>
+            </TabItem>
+          </TabControl>
+        </Grid>
+      </Grid>
+    </Border>
+
+    <c:AppSettings x:Name="AppSettingsPanel" Grid.Row="1" Width="300" HorizontalAlignment="Right" Visibility="Collapsed"/>
+
+    <StatusBar Grid.Row="2">
+      <StatusBarItem x:Name="StatusMessage" HorizontalAlignment="Left"/>
+      <StatusBarItem HorizontalAlignment="Right">
+        <StackPanel Orientation="Vertical" >
+          <TextBlock x:Name="ProgressPrompt" Text=""/>
+          <ProgressBar Width="200" x:Name="ProgressBar" Margin="0,0,10,0" />
+        </StackPanel>
+      </StatusBarItem>
+    </StatusBar>
+
+    <Grid x:Name="Shield" Background="#33000000" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.RowSpan="3"/>
+  </Grid>
 </Window>

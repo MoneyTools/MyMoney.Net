@@ -78,6 +78,11 @@ namespace Walkabout.StockQuotes
 
         protected override async Task<StockQuote> DownloadThrottledQuoteAsync(string symbol)
         {
+            if (this.symbolsNotFound.Contains(symbol))
+            {
+                throw new StockQuoteNotFoundException(symbol);
+            }
+
             var list = await this.DownloadChart(symbol, "1d");
             if (list.Count > 0)
             {
@@ -273,6 +278,11 @@ namespace Walkabout.StockQuotes
         protected override async Task<bool> DownloadThrottledQuoteHistoryAsync(StockQuoteHistory history)
         {
             string range = "max";
+            if (history.NotFound)
+            {
+                // don't keep trying to download quotes that don't exist.
+                return false;
+            }
             var entry = history.History.LastOrDefault();
             if (entry != null)
             {
@@ -286,23 +296,30 @@ namespace Walkabout.StockQuotes
                 }
             }
 
-            var list = await this.DownloadChart(history.Symbol, range);
-            foreach (var quote in list)
+            try
             {
-                history.AddQuote(quote);
-            }
-
-            if (range == "max")
-            {
-                // this was a summary, now try and get the last year complete daily values.
-                list = await this.DownloadChart(history.Symbol, "1y");
+                var list = await this.DownloadChart(history.Symbol, range);
                 foreach (var quote in list)
                 {
                     history.AddQuote(quote);
                 }
-            }
 
-            history.Complete = true;
+                if (range == "max")
+                {
+                    // this was a summary, now try and get the last year complete daily values.
+                    list = await this.DownloadChart(history.Symbol, "1y");
+                    foreach (var quote in list)
+                    {
+                        history.AddQuote(quote);
+                    }
+                }
+
+                history.Complete = true;
+            } 
+            catch (StockQuoteNotFoundException)
+            {
+                history.NotFound = true;
+            }
             return true;
         }
     }

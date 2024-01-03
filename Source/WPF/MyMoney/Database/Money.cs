@@ -9098,7 +9098,23 @@ namespace Walkabout.Data
 
             return x.CompareByDate(y);
         }
+    }
+    //================================================================================
+    public class TransactionComparerByDateDescending: IComparer<Transaction>
+    {
+        public int Compare(Transaction x, Transaction y)
+        {
+            if (x == null)
+            {
+                return 1;
+            }
+            else if (y == null)
+            {
+                return -1;
+            }
 
+            return x.CompareByDate(y) * -1;
+        }
     }
 
     //================================================================================

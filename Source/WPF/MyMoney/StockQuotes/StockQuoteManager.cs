@@ -754,7 +754,7 @@ namespace Walkabout.StockQuotes
                     try
                     {
                         history = StockQuoteHistory.Load(this._logFolder, symbol);
-                        if (history.RemoveDuplicates())
+                        if (history != null && history.RemoveDuplicates())
                         {
                             changedHistory = true;
                         }

@@ -3548,6 +3548,18 @@ namespace Walkabout
             this.GenerateReport(report);
         }
 
+        private void OnCommandFutureBills(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.SaveViewStateOfCurrentView();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
+            view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "FutureBillsReport");
+            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
+            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
+            HelpService.SetHelpKeyword(view, "Reports/FutureBillsReport/");
+            FutureBillsReport report = new FutureBillsReport(this.myMoney);
+            this.GenerateReport(report);
+        }
+
         private Report currentReport;
 
         private void GenerateReport(Report report)
