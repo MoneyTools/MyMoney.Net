@@ -65,7 +65,7 @@ namespace Walkabout.Reports
         internal class Payments
         {
             internal const double AmountSensitivity = 0.3; // % stderr
-            internal const double TimeSensitivity = 0.2; // % stderr on date
+            internal const double TimeSensitivity = 0.5; // % stderr on date
 
             public List<Transaction> Transactions { get; set; }
             public double Amount { get; set; }
@@ -111,21 +111,6 @@ namespace Walkabout.Reports
                     MathHelpers.LinearRegression(amounts, out double a, out double b);
                     var distance = MathHelpers.DistanceToLine(amounts, a, b);
 
-                    var nextDate = this.Transactions.First().Date + TimeSpan.FromDays(meanDays);
-                    // skip ahead so bill is in the future (allow for some missed payments).
-                    var today = DateTime.Today;
-                    int skipped = 0;
-                    while (nextDate < today)
-                    {
-                        nextDate = nextDate + TimeSpan.FromDays(meanDays);
-                        skipped++;
-                    }
-                    if (skipped > 5)
-                    {
-                        // this is no longer a bill.
-                        return false;
-                    }
-
                     var stdErrDays = Math.Abs(stdDevDays / meanDays);
                     var stdErrAmount = Math.Abs(distance / sumAmount);
 
@@ -144,6 +129,18 @@ namespace Walkabout.Reports
 
                     if (stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity)
                     {
+                        var today = DateTime.Today;
+                        var nextDate = this.Transactions.First().Date + TimeSpan.FromDays(meanDays);
+                        var steps = (today - nextDate).TotalDays / meanDays;
+                        if (steps > 3)
+                        {
+                            return false; // too far back in time to be a current bill.
+                        }
+                        // skip ahead so bill is in the future (allow for some missed payments).
+                        while (nextDate < today)
+                        {
+                            nextDate = nextDate + TimeSpan.FromDays(meanDays);
+                        }
                         this.Amount = amounts[0];
                         this.Interval = TimeSpan.FromDays(meanDays);
                         this.NextDate = nextDate;
