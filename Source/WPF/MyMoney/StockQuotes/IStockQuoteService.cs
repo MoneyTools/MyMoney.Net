@@ -185,7 +185,7 @@ namespace Walkabout.StockQuotes
             return new List<StockQuote>(result.Values);
         }
 
-        public bool AddQuote(StockQuote quote, bool replace = true)
+        public bool MergeQuote(StockQuote quote, bool replace = true)
         {
             if (this.History == null)
             {
@@ -261,7 +261,7 @@ namespace Walkabout.StockQuotes
         {
             foreach (var item in newHistory.History)
             {
-                this.AddQuote(item);
+                this.MergeQuote(item);
             }
             // promote any stock quote names to the root (to save space)
             foreach (var item in this.History)

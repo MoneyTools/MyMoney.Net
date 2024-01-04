@@ -296,7 +296,7 @@
     <value>Please configure your Stock Quote Acount from the Online menu</value>
   </data>
   <data name="FoundUnknownStockQuotes" xml:space="preserve">
-    <value>Found some unknown stock symbols.  If this is for a company that is no longer trading, you can stop this error from happening by clearing the Symbol field on View/Securities.</value>
+    <value>Found some unknown stock symbols: {0}.</value>
   </data>
   <data name="DifferentSymbolReturned" xml:space="preserve">
     <value>Stock quote request for symbol {0} returned a different symbol {1}</value>

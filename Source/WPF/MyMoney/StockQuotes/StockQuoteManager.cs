@@ -166,7 +166,9 @@ namespace Walkabout.StockQuotes
 
         private void OnSymbolNotFound(object sender, string symbol)
         {
-            // todo: what kind of cleanup should we do with symbols that are no longer trading?
+            // Remember this quote was not found so we don't keep asking for it.
+            this._downloadLog.OnQuoteNotFound(symbol);
+
             lock (this._unknown)
             {
                 this._unknown.Add(symbol);
@@ -309,7 +311,12 @@ namespace Walkabout.StockQuotes
                 {
                     continue; // skip it.
                 }
-                batch.Add(s.Symbol);
+
+                var info = this._downloadLog.GetInfo(s.Symbol);
+                if (info != null && !info.NotFound)
+                {
+                    batch.Add(s.Symbol);
+                }
             }
 
             bool foundService = false;
@@ -433,7 +440,8 @@ namespace Walkabout.StockQuotes
             {
                 if (this._unknown.Count > 0)
                 {
-                    this.AddError(Walkabout.Properties.Resources.FoundUnknownStockQuotes);
+                    this.AddError(string.Format(Walkabout.Properties.Resources.FoundUnknownStockQuotes,
+                        string.Join(',', this._unknown.ToArray())));
                 }
                 this._unknown.Clear();
             }
@@ -700,6 +708,8 @@ namespace Walkabout.StockQuotes
         public string Symbol { get; set; }
         [XmlAttribute]
         public DateTime Downloaded { get; set; }
+        [XmlAttribute]
+        public bool NotFound { get; set; }
     }
 
     /// <summary>
@@ -732,6 +742,15 @@ namespace Walkabout.StockQuotes
             StockQuote existing = null;
             this._downloadedQuotes.TryGetValue(quote.Symbol, out existing);
             return this._downloadedQuotes.TryUpdate(quote.Symbol, quote, existing);
+        }
+
+        public void OnQuoteNotFound(string symbol)
+        {
+            // record quote for symbol was not found (bad symbol).
+            DownloadInfo info = this.GetOrCreateDownloadInfo(symbol);
+            info.Downloaded = DateTime.Today;
+            info.NotFound = true;
+            this.DelayedSave();
         }
 
         public async Task<StockQuoteHistory> GetHistory(string symbol)
@@ -781,7 +800,7 @@ namespace Walkabout.StockQuotes
 
                 if (this._downloadedQuotes.TryGetValue(info.Symbol, out StockQuote quote))
                 {
-                    if (history.AddQuote(quote))
+                    if (history.MergeQuote(quote))
                     {
                         changedHistory = true;
                     }
@@ -815,24 +834,27 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        public void AddHistory(StockQuoteHistory history)
+        private DownloadInfo GetOrCreateDownloadInfo(string symbol)
         {
-            this.database[history.Symbol] = history;
-            DownloadInfo info = this.GetInfo(history.Symbol);
+            DownloadInfo info = this.GetInfo(symbol);
             if (info == null)
             {
-                info = new DownloadInfo() { Downloaded = DateTime.Today, Symbol = history.Symbol };
+                info = new DownloadInfo() { Downloaded = DateTime.Today, Symbol = symbol };
                 lock (this.Downloaded)
                 {
                     this.Downloaded.Add(info);
                 }
 
-                this._downloaded.TryUpdate(info.Symbol, info, null);
+                this._downloaded.TryUpdate(symbol, info, null);
             }
-            else
-            {
-                info.Downloaded = DateTime.Today;
-            }
+            return info;
+        }
+
+        public void AddHistory(StockQuoteHistory history)
+        {
+            this.database[history.Symbol] = history;
+            DownloadInfo info = this.GetOrCreateDownloadInfo(history.Symbol);
+            info.Downloaded = DateTime.Today;
             this.DelayedSave();
         }
 

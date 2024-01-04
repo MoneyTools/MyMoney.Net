@@ -22,7 +22,7 @@ namespace Walkabout.StockQuotes
         private HashSet<string> symbolsNotFound = new HashSet<string>();
 
         private string[] validRanges = {
-                        "1d",
+                        "5d", // in case market is closed today
                         "5d",
                         "1mo",
                         "3mo",
@@ -83,10 +83,13 @@ namespace Walkabout.StockQuotes
                 throw new StockQuoteNotFoundException(symbol);
             }
 
-            var list = await this.DownloadChart(symbol, "1d");
+            // Ask for 2 days because while the market is open there is no data for today and this
+            // returns an empty list, by asking for 5 days we get the close value from some previous
+            // day when the market was open..
+            var list = await this.DownloadChart(symbol, "5d");
             if (list.Count > 0)
             {
-                var quote = list[0];
+                var quote = list.Last();
                 if (string.Compare(quote.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     throw new StockQuoteNotFoundException(string.Format(Walkabout.Properties.Resources.DifferentSymbolReturned, symbol, quote.Symbol));
@@ -97,6 +100,7 @@ namespace Walkabout.StockQuotes
                 }
             }
 
+            // Hmmm, perhaps the fund is closed?
             throw new StockQuoteNotFoundException(symbol);
         }
 
@@ -107,8 +111,7 @@ namespace Walkabout.StockQuotes
                 throw new StockQuoteNotFoundException(symbol);
             }
 
-            Debug.WriteLine($"Yahoo: DownloadThrottledQuoteAsync {symbol}");
-            await Task.Delay(1000);
+            Debug.WriteLine($"Yahoo: DownloadThrottledQuoteAsync {symbol} for range {range}");
 
             string uri = string.Format(stockQuoteUri, symbol, "1d", range);
             HttpClient client = new HttpClient();
@@ -238,6 +241,16 @@ namespace Walkabout.StockQuotes
                         }
                     }
                 }
+
+                for(int i = list.Count - 1; i >= 0; i--)
+                {
+                    var quote = list[i];
+                    if (quote.Open == 0 && quote.Close == 0 && quote.High == 0 && quote.Low == 0)
+                    {
+                        // then this is the current day and market is still open so no data yet.
+                        list.RemoveAt(i);
+                    }
+                }
             }
 
             return list;
@@ -254,12 +267,13 @@ namespace Walkabout.StockQuotes
             var entry = history.History.LastOrDefault();
             if (entry != null)
             {
-                var span = entry.Date - DateTime.UtcNow;
+                var span = DateTime.Now - entry.Date;
                 for (int i = 0, n = validRangeSpans.Count(); i < n; i++)
                 {
                     if (span > validRangeSpans[i])
                     {
                         range = validRanges[i];
+                        break;
                     }
                 }
             }
@@ -269,7 +283,7 @@ namespace Walkabout.StockQuotes
                 var list = await this.DownloadChart(history.Symbol, range);
                 foreach (var quote in list)
                 {
-                    history.AddQuote(quote);
+                    history.MergeQuote(quote);
                 }
 
                 if (range == "max")
@@ -278,7 +292,7 @@ namespace Walkabout.StockQuotes
                     list = await this.DownloadChart(history.Symbol, "1y");
                     foreach (var quote in list)
                     {
-                        history.AddQuote(quote);
+                        history.MergeQuote(quote);
                     }
                 }
 

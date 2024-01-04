@@ -160,7 +160,7 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Found some unknown stock symbols.  If this is for a company that is no longer trading, you can stop this error from happening by clearing the Symbol field on View/Securities..
+        ///   Looks up a localized string similar to Found some unknown stock symbols: {0}..
         /// </summary>
         internal static string FoundUnknownStockQuotes {
             get {

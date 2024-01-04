@@ -270,6 +270,10 @@ namespace Walkabout.StockQuotes
                                 ex = he;
                             }
                         }
+                        catch (System.Threading.Tasks.TaskCanceledException)
+                        {
+                            return;
+                        }
                         catch (StockQuoteNotFoundException)
                         {
                             this.OnSymbolNotFound(symbol);
