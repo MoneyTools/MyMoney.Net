@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Walkabout.Data;
@@ -94,33 +93,56 @@ namespace Walkabout.Reports
                         previous = t;
                     }
 
+
                     var meanDays = MathHelpers.Mean(daysBetween);
+                    if (meanDays < 2)
+                    {
+                        return false;
+                    }
                     var stdDevDays = MathHelpers.StandardDeviation(daysBetween);
 
-                    var meanAmount = MathHelpers.Mean(amounts);
-                    var stdDevAmount = MathHelpers.StandardDeviation(amounts);
+                    // Use a linear regression instead of Mean to allow for inflation.
+                    var sumAmount = amounts.Sum();
+                    if (sumAmount > 0)
+                    {
+                        // not a bill if the amount is positive!
+                        return false;
+                    }
+                    MathHelpers.LinearRegression(amounts, out double a, out double b);
+                    var distance = MathHelpers.DistanceToLine(amounts, a, b);
 
                     var nextDate = this.Transactions.First().Date + TimeSpan.FromDays(meanDays);
-
-                    var stdErrDays = Math.Abs(stdDevDays / meanDays);
-                    var stdErrAmount = Math.Abs(stdDevAmount / meanAmount);
-
-                    if (this.Payee.Name == "State Farm Insurance")
+                    // skip ahead so bill is in the future (allow for some missed payments).
+                    var today = DateTime.Today;
+                    int skipped = 0;
+                    while (nextDate < today)
                     {
-                        Debug.WriteLine("==========================================================");
-                        Debug.WriteLine("{0} {1}", this.Payee.Name, this.Category.Name);
-                        foreach (var t in this.Transactions)
-                        {
-                            Debug.WriteLine("{0},{1}", t.Date.Date.ToShortDateString(), t.Amount);
-                        }
-
-                        Debug.WriteLine("Mean amount {0} stddev {1} stdDevAmount / meanAmount {2}", meanAmount, stdDevAmount, stdErrAmount);
-                        Debug.WriteLine("Mean days {0} stddev {1}, stdDevDays / meanDays {2}", meanDays, stdDevDays, stdErrDays);
+                        nextDate = nextDate + TimeSpan.FromDays(meanDays);
+                        skipped++;
+                    }
+                    if (skipped > 5)
+                    {
+                        // this is no longer a bill.
+                        return false;
                     }
 
-                    DateTime today = DateTime.Now;
-                    if (nextDate > today && meanAmount < 0 &&
-                        stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity)
+                    var stdErrDays = Math.Abs(stdDevDays / meanDays);
+                    var stdErrAmount = Math.Abs(distance / sumAmount);
+
+                    //if (this.Payee.Name == "State Farm Insurance")
+                    //{
+                    //    Debug.WriteLine("==========================================================");
+                    //    Debug.WriteLine("{0} {1}", this.Payee.Name, this.Category.Name);
+                    //    foreach (var t in this.Transactions)
+                    //    {
+                    //        Debug.WriteLine("{0},{1}", t.Date.Date.ToShortDateString(), t.Amount);
+                    //    }
+
+                    //    Debug.WriteLine("Sum amount {0} distance {1} distance / sumAmount {2}", sumAmount, distance, stdErrAmount);
+                    //    Debug.WriteLine("Mean days {0} stddev {1}, stdDevDays / meanDays {2}", meanDays, stdDevDays, stdErrDays);
+                    //}
+
+                    if (stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity)
                     {
                         this.Amount = amounts[0];
                         this.Interval = TimeSpan.FromDays(meanDays);

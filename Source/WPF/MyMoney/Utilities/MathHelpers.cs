@@ -90,6 +90,36 @@ namespace Walkabout.Utilities
             return covariance;
         }
 
+        public static double DistanceToLine(IEnumerable<double> pts, double a, double b)
+        {
+            double x = 1;
+            double sum = 0;
+            foreach (double y in pts)
+            {
+                var y2 = a + (b * x++);
+                sum += Math.Abs(y - y2);
+            }
+            return sum;
+        }
+
+        /// <summary>
+        /// Compute the trend line through the given points, and return the line in the form:
+        ///     y = a + b.x
+        /// </summary>
+        /// <param name="pts">The data to analyze, asuming x=1...N</param>
+        /// <param name="a">The y-coordinate of the line at x = 0</param>
+        /// <param name="b">The slope of the line</param>
+        public static void LinearRegression(IEnumerable<double> pts, out double a, out double b)
+        {
+            List<Point> pts2 = new List<Point>(pts.Count());
+            double x = 1;
+            foreach (double y in pts)
+            {
+                pts2.Add(new Point(x++, y));
+            }
+            LinearRegression(pts2, out a, out b);
+        }
+
         /// <summary>
         /// Compute the trend line through the given points, and return the line in the form:
         ///     y = a + b.x
