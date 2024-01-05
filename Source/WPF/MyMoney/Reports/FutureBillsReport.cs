@@ -4,9 +4,13 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Media.Media3D;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Walkabout.Reports
 {
@@ -281,6 +285,14 @@ namespace Walkabout.Reports
         {
             writer.WriteHeading("Future Bills Report");
 
+            Paragraph summary = null;
+
+            if (writer is FlowDocumentReportWriter flow)
+            {
+                writer.WriteParagraph("");
+                summary = flow.CurrentParagraph;
+            }
+
             Transactions transactions = this.myMoney.Transactions;
 
             DateTime today = DateTime.Now;
@@ -336,7 +348,8 @@ namespace Walkabout.Reports
 
             if (recurring.Count == 0)
             {
-                writer.WriteParagraph("No recuring payments found");
+                Run run = (Run)summary.Inlines.FirstInline;
+                run.Text = "No recuring payments found";
             }
             else
             {
@@ -385,7 +398,9 @@ namespace Walkabout.Reports
                     writer.EndTable();
                 }
 
-                writer.WriteParagraph(string.Format("Total over next 12 months is {0:C}", -total));
+                // Add summary.
+                Run run = (Run)summary.Inlines.FirstInline;
+                run.Text = string.Format("Total over next 12 months is {0:C}", -total);
 
                 this.WriteTrailer(writer, DateTime.Today);
             }
