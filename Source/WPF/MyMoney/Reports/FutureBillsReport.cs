@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Walkabout.Data;
@@ -62,16 +64,92 @@ namespace Walkabout.Reports
             }
         }
 
+        private class PaymentTable<T>
+        {
+            List<List<T>> data = new List<List<T>>();
+            int maxColumns = 0;
+
+            public PaymentTable() { }
+
+            public void AddRow(IEnumerable<T> values)
+            {
+                List<T> snapshot = new List<T>(values);
+                if (snapshot.Count > maxColumns)
+                {
+                    maxColumns = snapshot.Count; 
+                }
+                data.Add(snapshot);
+            }
+
+            public int Columns => maxColumns;
+
+            public IEnumerable<T> GetColumn(int index)
+            {
+                foreach (var row in data)
+                {
+                    if (row.Count > index)
+                    {
+                        yield return row[index];
+                    }
+                }
+            }
+        }
+
         internal class Payments
         {
-            internal const double AmountSensitivity = 0.3; // % stderr
+            internal const double AmountSensitivity = 0.1; // % stderr
             internal const double TimeSensitivity = 0.5; // % stderr on date
+
+            private List<Transaction> transactions;
+
+            public Payee Payee { get; internal set; }
+            public Category Category { get; internal set; }
 
             public List<Transaction> Transactions { get; set; }
             public double Amount { get; set; }
             public TimeSpan Interval { get; set; }
             public DateTime NextDate { get; set; }
             public double MeanDays { get; internal set; }
+            private List<double> Predictions { get; set; }
+            private int NextIndex { get; set; }
+
+            private List<int> years;
+
+            private List<int> GetOrCreateYears()
+            {
+                if (this.years == null)
+                {
+                    this.years = new List<int>();
+                    foreach (var t in this.Transactions)
+                    {
+                        int year = t.Date.Year;
+                        if (!this.years.Contains(year))
+                        {
+                            this.years.Add(year);
+                        }
+                    }
+                }
+                return this.years;
+            }
+
+            public double GetNextPrediction()
+            {
+                // Return the next prediction and advance the NextDate according to the 
+                // calculated payment Interval.
+                this.NextDate += this.Interval;
+                int index = this.NextIndex;
+                if (this.Predictions != null && this.Predictions.Count > index)
+                {
+                    this.NextIndex++;
+                    if (this.NextIndex >= this.Predictions.Count)
+                    {
+                        this.NextIndex = 0; // wrap around.
+                    }
+                    return this.Predictions[index];
+                }
+            
+                return this.Amount;
+            }
 
             public bool IsRecurring
             {
@@ -114,24 +192,56 @@ namespace Walkabout.Reports
                     var stdErrDays = Math.Abs(stdDevDays / meanDays);
                     var stdErrAmount = Math.Abs(distance / sumAmount);
 
-                    //if (this.Payee.Name == "State Farm Insurance")
-                    //{
-                    //    Debug.WriteLine("==========================================================");
-                    //    Debug.WriteLine("{0} {1}", this.Payee.Name, this.Category.Name);
-                    //    foreach (var t in this.Transactions)
-                    //    {
-                    //        Debug.WriteLine("{0},{1}", t.Date.Date.ToShortDateString(), t.Amount);
-                    //    }
+                    if (this.Payee.Name == "D")
+                    {
+                        Debug.WriteLine("???");
+                    }
 
-                    //    Debug.WriteLine("Sum amount {0} distance {1} distance / sumAmount {2}", sumAmount, distance, stdErrAmount);
-                    //    Debug.WriteLine("Mean days {0} stddev {1}, stdDevDays / meanDays {2}", meanDays, stdDevDays, stdErrDays);
-                    //}
+                    if (stdErrDays < TimeSensitivity && meanDays < 180 && stdErrAmount > AmountSensitivity)
+                    {
+                        var predictions = new List<double>();
+                        // see if the amount depends on seasonal fluxuations (like energy or water bill).
+                        var table = new PaymentTable<double>();
 
-                    if (stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity)
+                        // So create a table organized by rows and columns where each row is a different year
+                        // and each column is a payment within that yearly cycle.                        
+                        foreach (var year in this.GetOrCreateYears())
+                        {
+                            var cyclicAmounts = from t in this.Transactions where t.Date.Year == year select (double)t.Amount;
+                            table.AddRow(cyclicAmounts);
+                        }
+
+                        if (table.Columns > 2)
+                        {
+                            double stdErrCyclicalAmount = 0;
+                            for (int i = 0; i <= table.Columns; i++)
+                            {
+                                var cyclicAmounts = table.GetColumn(i);
+                                if (cyclicAmounts.Count() > 2)
+                                {
+                                    sumAmount = cyclicAmounts.Sum();
+                                    MathHelpers.LinearRegression(cyclicAmounts, out double ma, out double mb);
+                                    var monthlyDistance = MathHelpers.DistanceToLine(cyclicAmounts, ma, mb);
+                                    var stderr = Math.Abs(monthlyDistance / sumAmount);
+                                    stdErrCyclicalAmount += stderr;
+                                    predictions.Add(MathHelpers.Mean(cyclicAmounts));
+                                }
+                            }
+                            stdErrCyclicalAmount /= table.Columns;
+                            if (stdErrCyclicalAmount < stdErrAmount && predictions.Count > 0)
+                            {
+                                stdErrAmount = stdErrCyclicalAmount;
+                                this.Predictions = predictions;
+                            }
+                        }
+                    }
+
+                    if (this.Category.Type == CategoryType.RecurringExpense ||  // user provided input that this is a recurring bill payment!
+                        (stdErrDays < TimeSensitivity && stdErrAmount < AmountSensitivity))
                     {
                         var today = DateTime.Today;
                         var nextDate = this.Transactions.First().Date + TimeSpan.FromDays(meanDays);
-                        var steps = (today - nextDate).TotalDays / meanDays;
+                        var steps = (today - this.Transactions.First().Date).TotalDays / meanDays;
                         if (steps > 3)
                         {
                             return false; // too far back in time to be a current bill.
@@ -141,6 +251,11 @@ namespace Walkabout.Reports
                         {
                             nextDate = nextDate + TimeSpan.FromDays(meanDays);
                         }
+                        if ((nextDate - today).TotalDays > 365)
+                        {
+                            return false;
+                        }
+                        Debug.WriteLine($"Found recurring payment to {this.Payee.Name} : {this.Category.Name} with stdErrDays {stdErrDays} and stdErrAmount {stdErrAmount}");
                         this.Amount = amounts[0];
                         this.Interval = TimeSpan.FromDays(meanDays);
                         this.NextDate = nextDate;
@@ -150,9 +265,6 @@ namespace Walkabout.Reports
                     return false;
                 }
             }
-
-            public Payee Payee { get; internal set; }
-            public Category Category { get; internal set; }
 
             public Payments()
             {
@@ -176,7 +288,8 @@ namespace Walkabout.Reports
             List<Transaction> view = new List<Transaction>();
             foreach (Transaction t in this.myMoney.Transactions.GetAllTransactions())
             {
-                if (t.IsDeleted || t.Status == TransactionStatus.Void || t.Date < start || t.Date > today || t.Payee == null || t.Category == null)
+                if (t.IsDeleted || t.Status == TransactionStatus.Void || t.Date < start || t.Date > today || t.Payee == null || t.Category == null
+                    || (t.Category.Type != CategoryType.Expense && t.Category.Type != CategoryType.RecurringExpense) )
                 {
                     continue;
                 }
@@ -259,12 +372,12 @@ namespace Walkabout.Reports
                         var payment = recurring[key];
                         if (payment.NextDate.Year == startDate.Year && payment.NextDate.Month == startDate.Month)
                         {
+                            var amount = payment.GetNextPrediction();
                             WriteRow(writer, payment.NextDate.ToShortDateString(),
                                 payment.Payee.Name,
                                 payment.Category.Name,
-                                payment.Amount.ToString("C"));
-                            total += (decimal)payment.Amount;
-                            payment.NextDate += payment.Interval;
+                                amount.ToString("C"));
+                            total += (decimal)amount;                            
                         }
                     }
 

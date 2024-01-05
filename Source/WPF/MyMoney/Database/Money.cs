@@ -7540,7 +7540,8 @@ namespace Walkabout.Data
         Savings,
         Reserved, // this is not used (but hard to delete because of database).
         Transfer, // special category only used by pie charts
-        Investments // so you can separate out investment income and expenditures.
+        Investments, // so you can separate out investment income and expenditures.
+        RecurringExpense, // so you can clearly mark bills that are repeatable.
     }
 
     public enum CalendarRange

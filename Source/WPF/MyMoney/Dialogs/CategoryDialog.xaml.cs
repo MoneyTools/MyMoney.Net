@@ -104,6 +104,7 @@ namespace Walkabout.Dialogs
             this.comboBoxType.Items.Add(CategoryType.None);
             this.comboBoxType.Items.Add(CategoryType.Income);
             this.comboBoxType.Items.Add(CategoryType.Expense);
+            this.comboBoxType.Items.Add(CategoryType.RecurringExpense);
             this.comboBoxType.Items.Add(CategoryType.Savings);
             this.comboBoxType.Items.Add(CategoryType.Investments);
 

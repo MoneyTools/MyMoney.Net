@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.15" date="1/4/2024">
+    - Add a future bills report.
+  </change>
   <change version="2.1.0.14" date="1/1/2024">
     - Add Yahoo stock quote service (which is free).
   </change>
