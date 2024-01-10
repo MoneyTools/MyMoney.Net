@@ -21,6 +21,7 @@ namespace Walkabout.Reports
     public class FutureBillsReport : Report
     {
         private readonly MyMoney myMoney;
+        private const int ALLOWED_MISSED_PAYMENTS = 2;
 
         internal struct PaymentKey
         {
@@ -261,7 +262,7 @@ namespace Walkabout.Reports
                         var today = DateTime.Today;
                         var nextDate = this.Transactions.First().Date + TimeSpan.FromDays(meanDays);
                         var steps = (today - this.Transactions.First().Date).TotalDays / meanDays;
-                        if (steps > 3)
+                        if (steps >= ALLOWED_MISSED_PAYMENTS)
                         {
                             return false; // too far back in time to be a current bill.
                         }
@@ -270,11 +271,7 @@ namespace Walkabout.Reports
                         {
                             nextDate = nextDate + TimeSpan.FromDays(meanDays);
                         }
-                        if ((nextDate - today).TotalDays > 365)
-                        {
-                            return false;
-                        }
-                        Debug.WriteLine($"Found recurring payment to {this.Payee.Name} : {this.Category.Name} with stdErrDays {stdErrDays} and stdErrAmount {stdErrAmount}");
+
                         this.NextIndex = 0;
                         this.Amount = amounts[0];
                         this.Interval = TimeSpan.FromDays(meanDays);
