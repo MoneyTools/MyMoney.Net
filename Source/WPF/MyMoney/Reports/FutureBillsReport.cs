@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
@@ -116,6 +117,7 @@ namespace Walkabout.Reports
             public double MeanDays { get; internal set; }
             private List<double> Predictions { get; set; }
             private int NextIndex { get; set; }
+            private bool Monthly { get; set; }
 
             private List<int> years;
 
@@ -136,11 +138,8 @@ namespace Walkabout.Reports
                 return this.years;
             }
 
-            public double GetNextPrediction()
+            private double GetPredictedAmount()
             {
-                // Return the next prediction and advance the NextDate according to the 
-                // calculated payment Interval.
-                this.NextDate += this.Interval;
                 int index = this.NextIndex;
                 if (this.Predictions != null && this.Predictions.Count > index)
                 {
@@ -151,8 +150,23 @@ namespace Walkabout.Reports
                     }
                     return this.Predictions[index];
                 }
-            
+
                 return this.Amount;
+            }
+
+            public double GetNextPrediction()
+            {
+                // Return the next prediction and advance the NextDate according to the 
+                // calculated payment Interval.
+                if (this.Monthly)
+                {
+                    this.NextDate = this.NextDate.AddMonths(1);
+                }
+                else
+                {
+                    this.NextDate += this.Interval;
+                }
+                return this.GetPredictedAmount();
             }
 
             public bool IsRecurring
@@ -176,8 +190,8 @@ namespace Walkabout.Reports
                     }
 
 
-                    var meanDays = MathHelpers.Mean(daysBetween);
-                    if (meanDays < 2)
+                    var meanDays = Math.Floor(MathHelpers.Mean(daysBetween));
+                    if (meanDays < 3)
                     {
                         return false;
                     }
@@ -196,10 +210,7 @@ namespace Walkabout.Reports
                     var stdErrDays = Math.Abs(stdDevDays / meanDays);
                     var stdErrAmount = Math.Abs(distance / sumAmount);
 
-                    if (this.Payee.Name == "D")
-                    {
-                        Debug.WriteLine("???");
-                    }
+                    this.Monthly = meanDays > 25 && meanDays < 35;
 
                     if (stdErrDays < TimeSensitivity && meanDays < 180 && stdErrAmount > AmountSensitivity)
                     {
@@ -236,6 +247,10 @@ namespace Walkabout.Reports
                             {
                                 stdErrAmount = stdErrCyclicalAmount;
                                 this.Predictions = predictions;
+                                if (predictions.Count == 12)
+                                {
+                                    this.Monthly = true;
+                                }
                             }
                         }
                     }
@@ -260,6 +275,7 @@ namespace Walkabout.Reports
                             return false;
                         }
                         Debug.WriteLine($"Found recurring payment to {this.Payee.Name} : {this.Category.Name} with stdErrDays {stdErrDays} and stdErrAmount {stdErrAmount}");
+                        this.NextIndex = 0;
                         this.Amount = amounts[0];
                         this.Interval = TimeSpan.FromDays(meanDays);
                         this.NextDate = nextDate;
@@ -345,7 +361,6 @@ namespace Walkabout.Reports
                 }
             }
 
-
             if (recurring.Count == 0)
             {
                 Run run = (Run)summary.Inlines.FirstInline;
@@ -383,14 +398,18 @@ namespace Walkabout.Reports
                     foreach (var key in recurring.Keys)
                     {
                         var payment = recurring[key];
-                        if (payment.NextDate.Year == startDate.Year && payment.NextDate.Month == startDate.Month)
+                        var date = payment.NextDate;
+                        
+                        while (date.Year < startDate.Year ||
+                            (date.Year == startDate.Year && date.Month <= startDate.Month))
                         {
                             var amount = payment.GetNextPrediction();
-                            WriteRow(writer, payment.NextDate.ToShortDateString(),
+                            WriteRow(writer, date.ToShortDateString(),
                                 payment.Payee.Name,
                                 payment.Category.Name,
                                 amount.ToString("C"));
-                            total += (decimal)amount;                            
+                            total += (decimal)amount;
+                            date = payment.NextDate;
                         }
                     }
 
