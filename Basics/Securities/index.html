@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Basics/Securities/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Securities - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Securities", url: "#_top", children: [
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../Splits/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../Splits/" class="btn btn-xs btn-link">
+        Splits
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Payees/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Payees/" class="btn btn-xs btn-link">
+        Payees
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="securities">Securities<a class="headerlink" href="#securities" title="Permanent link">#</a></h1>
+<p>You can view a list of your stocks, mutual funds and so on using the "Securities" View menu item.  The following view appears, and is where you can specify the <strong>Type</strong>  of the security.    The current price for Securities is automatically retrieved if you configure your <a href="../../Accounts/StockQuoteServices/">Stock Quote Service</a>.  The "LastPrice" is the previous day's closing price and %Change is the daily change since the last download.</p>
+<p><img alt="" src="../../Images/Securities.png" /></p>
+<p>The Type column can have these values:</p>
+<p><img alt="" src="../../Images/Securities1.png" /></p>
+<p>The <strong>Private</strong>  type allows you to track other kinds of non-publicly traded investments.  If the <a href="../../Accounts/StockQuoteServices/">Stock Quote Service</a> doesn't know what it is then you can enter the price details manually. </p>
+<p>The little triangle arrow on the left side expands to show the stock split information.  You can edit this grid to add any missing stock splits.  Click the triangle again to hide the stock splits.</p>
+<p><img alt="" src="../../Images/Securities2.png" /></p>
+<p>You only need to go back as far as your first Buy transaction for each security.  The following web site can be a good source of stock split history information: <a href="https://www.stocksplithistory.com">https://www.stocksplithistory.com</a></p>
+<p>You can use the filter button at the top of the view to list only securities that are currently held rather than all the securities you have owned in the past.</p>
+<p><img alt="" src="../../Images/Securities3.png" /></p>
+<p>Lastly the CUSIP column may be important for automatically finding the right security when you download your statements.  For this to work you need to look up the CUSIP number for your security (you can sometimes find it the memo field or the Payee field - for a new security we haven't seen before).  You can then add the new security with that CUSPID and correct Name and Symbol, then future downloads will match that correctly.  If you are using <a href="../../Accounts/OnlineBanking/">OFX downloading</a> from a brokerage account this should happen automatically, where the download
+will automatically add new Securities with their correct CUSIP number if it did not find them.</p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../Splits/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../Splits/" class="btn btn-xs btn-link">
+        Splits
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../Payees/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Payees/" class="btn btn-xs btn-link">
+        Payees
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
