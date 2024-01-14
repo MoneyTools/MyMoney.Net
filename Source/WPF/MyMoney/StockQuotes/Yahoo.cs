@@ -242,7 +242,7 @@ namespace Walkabout.StockQuotes
                     }
                 }
 
-                for(int i = list.Count - 1; i >= 0; i--)
+                for (int i = list.Count - 1; i >= 0; i--)
                 {
                     var quote = list[i];
                     if (quote.Open == 0 && quote.Close == 0 && quote.High == 0 && quote.Low == 0)

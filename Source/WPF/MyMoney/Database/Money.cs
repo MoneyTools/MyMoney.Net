@@ -2744,7 +2744,7 @@ namespace Walkabout.Data
                 amount *= c.Ratio;
             }
 
-            if (this.NormalizedCurrencyObject != null & this.NormalizedCurrencyObject.Symbol != "USD")
+            if (this.NormalizedCurrencyObject != null & !this.NormalizedCurrencyObject.IsUSD)
             {
                 // convert USD value to the Currency value selected by the user
                 // 100 USD convert to CAD = 1/0.75 = 1.333 * 100 = 133.33 CAD
@@ -4268,12 +4268,15 @@ namespace Walkabout.Data
         private string cultureCode;
         private decimal ratio;
         private decimal lastRatio;
+        private bool isUSD;
 
         public Currency()
         { // for serialization
         }
 
         public Currency(Currencies container) : base(container) { }
+
+        public bool IsUSD => this.isUSD;
 
         [XmlAttribute]
         [DataMember]
@@ -4300,6 +4303,7 @@ namespace Walkabout.Data
                 if (this.symbol != value)
                 {
                     this.symbol = Truncate(value, 20);
+                    this.isUSD = value == "USD";
                     Currencies currencies = this.Parent as Currencies;
                     if (currencies != null)
                     {

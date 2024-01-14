@@ -154,7 +154,7 @@ namespace Walkabout.Dialogs
             }
 
             Currency c = this.money.Currencies.FindCurrency(current);
-            if (c != null && c.Symbol != "USD" && c.Ratio != 0)
+            if (c != null && !c.IsUSD && c.Ratio != 0)
             {
                 this.TextRate.Text = string.Format("$US {0:N2}", c.Ratio);
             }

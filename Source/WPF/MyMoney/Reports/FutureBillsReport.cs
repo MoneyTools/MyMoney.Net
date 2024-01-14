@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Documents;
-using System.Windows.Media.Media3D;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Walkabout.Reports
 {
@@ -82,7 +77,7 @@ namespace Walkabout.Reports
                 List<T> snapshot = new List<T>(values);
                 if (snapshot.Count > maxColumns)
                 {
-                    maxColumns = snapshot.Count; 
+                    maxColumns = snapshot.Count;
                 }
                 data.Add(snapshot);
             }
@@ -185,7 +180,7 @@ namespace Walkabout.Reports
                         {
                             var span = previous.Date - t.Date;
                             daysBetween.Add(span.TotalDays);
-                            amounts.Add((double)previous.Amount);
+                            amounts.Add((double)previous.Account.GetNormalizedAmount(previous.Amount));
                         }
                         previous = t;
                     }
@@ -223,7 +218,7 @@ namespace Walkabout.Reports
                         // and each column is a payment within that yearly cycle.                        
                         foreach (var year in this.GetOrCreateYears())
                         {
-                            var cyclicAmounts = from t in this.Transactions where t.Date.Year == year select (double)t.Amount;
+                            var cyclicAmounts = from t in this.Transactions where t.Date.Year == year select (double)t.Account.GetNormalizedAmount(t.Amount);
                             table.AddRow(cyclicAmounts);
                         }
 
@@ -313,8 +308,9 @@ namespace Walkabout.Reports
             List<Transaction> view = new List<Transaction>();
             foreach (Transaction t in this.myMoney.Transactions.GetAllTransactions())
             {
-                if (t.IsDeleted || t.Status == TransactionStatus.Void || t.Date < start || t.Date > today || t.Payee == null || t.Category == null
-                    || (t.Category.Type != CategoryType.Expense && t.Category.Type != CategoryType.RecurringExpense) )
+                if (t.IsDeleted || t.Status == TransactionStatus.Void || t.Account == null ||
+                    t.Date < start || t.Date > today || t.Payee == null || t.Category == null
+                    || (t.Category.Type != CategoryType.Expense && t.Category.Type != CategoryType.RecurringExpense))
                 {
                     continue;
                 }
@@ -396,7 +392,7 @@ namespace Walkabout.Reports
                     {
                         var payment = recurring[key];
                         var date = payment.NextDate;
-                        
+
                         while (date.Year < startDate.Year ||
                             (date.Year == startDate.Year && date.Month <= startDate.Month))
                         {
