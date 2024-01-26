@@ -443,8 +443,14 @@ namespace Walkabout.Migrate
                     while (pos < len && ch != this._fieldDelimiter)
                     {
                         sb.Append(ch);
-                        ch = line[pos++]; // peek next char
+
+                        pos++;
+                        if (pos < len)
+                        {
+                            ch = line[pos]; // peek next char
+                        }
                     }
+
                     if (ch != this._fieldDelimiter)
                     {
                         sb.Append(ch);
@@ -453,7 +459,11 @@ namespace Walkabout.Migrate
                 }
                 if (ch == this._fieldDelimiter)
                 {
-                    ch = line[pos++];
+                    pos++;
+                    if (pos < len)
+                    {
+                        ch = line[pos];
+                    }
                 }
             }
             return true;
