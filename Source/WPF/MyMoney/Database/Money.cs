@@ -11267,11 +11267,11 @@ namespace Walkabout.Data
             }
             else if (value.StartsWith(Walkabout.Properties.Resources.TransferToClosedAccountPrefix))
             {
-                accountName = value.Substring(Walkabout.Properties.Resources.TransferToPrefix.Length);
+                accountName = value.Substring(Walkabout.Properties.Resources.TransferToClosedAccountPrefix.Length);
             }
             else if (value.StartsWith(Walkabout.Properties.Resources.TransferFromClosedAccountPrefix))
             {
-                accountName = value.Substring(Walkabout.Properties.Resources.TransferToPrefix.Length);
+                accountName = value.Substring(Walkabout.Properties.Resources.TransferFromClosedAccountPrefix.Length);
             }
             return accountName;
         }
