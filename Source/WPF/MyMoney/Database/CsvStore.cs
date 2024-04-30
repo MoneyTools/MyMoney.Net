@@ -107,7 +107,7 @@ namespace Walkabout.Data
 
         public static void WriteTransactionHeader(StreamWriter writer)
         {
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\"", "Account", "Date", "Payee", "Category", "Amount");
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"", "Account", "Date", "Payee", "Amount", "Category", "Memo");
         }
 
         public static void WriteTransaction(StreamWriter writer, Transaction t)
@@ -117,12 +117,14 @@ namespace Walkabout.Data
             {
                 category = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
             }
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\"", t.AccountName, t.Date.ToShortDateString(), t.PayeeName, category, t.Amount.ToString("C2"));
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"", 
+                t.AccountName, t.Date.ToShortDateString(), t.PayeeName, t.Amount.ToString("C2"), category, GetMemoCsv(t));
         }
 
         public static void WriteInvestmentHeader(StreamWriter writer)
         {
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\"", "Date", "Payee", "Category", "Activity", "Symbol", "Units", "UnitPrice", "Amount");
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"", 
+                "Date", "Payee", "Category", "Activity", "Symbol", "Units", "UnitPrice", "Amount", "Memo");
         }
 
         public static void WriteInvestment(StreamWriter writer, Transaction t)
@@ -138,9 +140,14 @@ namespace Walkabout.Data
                 tradeType = t.InvestmentType.ToString();
             }
 
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\"",
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"",
                 t.Date.ToShortDateString(), t.PayeeName, category,
-                tradeType, t.InvestmentSecuritySymbol, t.InvestmentUnits, t.InvestmentUnitPrice, t.Amount.ToString("C2"));
+                tradeType, t.InvestmentSecuritySymbol, t.InvestmentUnits, t.InvestmentUnitPrice, t.Amount.ToString("C2"), GetMemoCsv(t));
+        }
+
+        private static string GetMemoCsv(Transaction t)
+        {
+            return (t.Memo + "").Replace(",", " ");
         }
 
         public static void WriteInvestmentTransaction(StreamWriter writer, Transaction t)
