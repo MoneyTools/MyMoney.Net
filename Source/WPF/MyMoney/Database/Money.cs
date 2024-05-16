@@ -11143,6 +11143,13 @@ namespace Walkabout.Data
                 this.investment.Id = this.Id; // link them by Id.
                 this.investment.Transaction = this;
                 this.OnChanged("Id");
+                this.OnChanged("Investment");
+                this.OnChanged("InvestmentType");
+                this.OnChanged("InvestmentUnits");
+                this.OnChanged("InvestmentCommission");
+                this.OnChanged("InvestmentSecurity");
+                this.OnChanged("SortableInvestmentSecurity");
+                this.OnChanged("InvestmentUnitPrice");
             }
             return this.investment;
         }
@@ -12356,6 +12363,10 @@ namespace Walkabout.Data
 
             Investment i = t.Investment;
             Investment j = this.Investment;
+            if (i != null && j == null)
+            {
+                j = this.GetOrCreateInvestment();
+            }
             if (i != null && j != null)
             {
                 if (j.Security == null && i.Security != null)
@@ -12413,7 +12424,7 @@ namespace Walkabout.Data
                     j.Withholding = i.Withholding;
                     rc = true;
                 }
-            }
+            } 
             return rc;
         }
 
@@ -12696,7 +12707,11 @@ namespace Walkabout.Data
             }
             set
             {
-                this.GetOrCreateInvestment().Type = value;
+                if (this.InvestmentType != value)
+                {
+                    this.GetOrCreateInvestment().Type = value;
+                    this.OnChanged("InvestmentType");
+                }
             }
         }
 
@@ -12725,6 +12740,7 @@ namespace Walkabout.Data
                     this.GetOrCreateInvestment().Security = value;
                 }
                 this.OnChanged("InvestmentSecurity");
+                this.OnChanged("SortableInvestmentSecurity");
             }
         }
 
@@ -12750,6 +12766,7 @@ namespace Walkabout.Data
                 {
                     // todo: is the user trying to change the symbol for this security, or are they trying to add a new security?
                 }
+                this.OnChanged("InvestmentSecuritySymbol");
             }
         }
 
@@ -12780,7 +12797,11 @@ namespace Walkabout.Data
             }
             set
             {
-                this.GetOrCreateInvestment().Units = value;
+                if (this.InvestmentUnits != value)
+                {
+                    this.GetOrCreateInvestment().Units = value;
+                    this.OnChanged("InvestmentUnits");
+                }
             }
         }
 
@@ -12797,7 +12818,11 @@ namespace Walkabout.Data
             }
             set
             {
-                this.GetOrCreateInvestment().UnitPrice = value;
+                if (this.InvestmentUnitPrice != value)
+                {
+                    this.GetOrCreateInvestment().UnitPrice = value;
+                    this.OnChanged("InvestmentUnitPrice");
+                }
             }
         }
 
@@ -12814,7 +12839,11 @@ namespace Walkabout.Data
             }
             set
             {
-                this.GetOrCreateInvestment().Commission = value;
+                if (this.InvestmentCommission != value)
+                {
+                    this.GetOrCreateInvestment().Commission = value;
+                    this.OnChanged("InvestmentCommission");
+                }
             }
         }
         #endregion

@@ -1121,6 +1121,16 @@ namespace Walkabout.Views
                 // we need to keep the transfer one.
                 swap = false;
             }
+            else if (t.Investment == null && u.Investment != null)
+            {
+                // keep the one with an Investment
+                swap = true;
+            }
+            else if (t.Investment != null && u.Investment == null)
+            {
+                // keep the one with an Investment
+                swap = false;
+            }
             else if (t.Unaccepted && !u.Unaccepted && t.Transfer == null)
             {
                 // switch them around then.
@@ -1193,14 +1203,9 @@ namespace Walkabout.Views
 
         private bool InvestmentsCanMerge(Investment i, Investment j)
         {
-            if (i == null)
+            if (i == null || j == null)
             {
-                return j == null;
-            }
-
-            if (j == null)
-            {
-                return i == null;
+                return true;
             }
 
             if (i.Type == j.Type && i.SecurityName == j.SecurityName)
