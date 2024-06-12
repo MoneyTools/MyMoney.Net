@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.19" date="6/11/2024">
+    - Add "unassigned" row to the pie charts to group transactions with no category.
+    - Make it possible to click on legend title to drill into those transactions.
+    - Fix bug in pie chart drill down where it was showing all matching transactions from all accounts instead of just the ones in the pie chart.
+    - Fix drag/drop merge of investment transactions.
+    - Add Memo to the CSV export.
+    - Normalize currencies in future bills report.
+  </change>
   <change version="2.1.0.16" date="1/4/2024">
     - Add a future bills report.
     - Add "Recurring Expense" category type.
