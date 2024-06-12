@@ -4,9 +4,7 @@ cd %~dp0
 SET ROOT=%~dp0
 set WINGET_SRC=D:\git\clovett\winget-pkgs
 set PATH=%PATH%;%ROOT%\tools;%LOCALAPPDATA%\Microsoft\WindowsApps\
-for /f "usebackq" %%i in (`xsl -e -s Version\version.xsl Version\version.props`) do (
-    set VERSION=%%i
-)
+set /p VERSION=<Version\VersionMaster.txt
 
 call SetupWinget
 if '!WINGETVERSION!' == '' goto :eof
