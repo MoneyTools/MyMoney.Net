@@ -35,7 +35,7 @@ namespace Walkabout.Charts
             this.InitializeComponent();
             IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.OnIsVisibleChanged);
 
-            this.unassigned = new Category() { Name = "Unknown", Type = Data.CategoryType.None };
+            this.unassigned = new Category() { Name = "Unassigned", Type = Data.CategoryType.None };
             this.transferredIn = new Category() { Name = "Transferred In", Type = Data.CategoryType.Transfer };
             this.transferredOut = new Category() { Name = "Transferred Out", Type = Data.CategoryType.Transfer };
 
@@ -43,7 +43,8 @@ namespace Walkabout.Charts
             this.PieChart.PieSliceHover += this.OnPieSliceHovered;
             this.PieChart.ToolTipGenerator = this.OnGenerateTip;
 
-            this.Legend.Toggled += this.OnLegendToggled;
+            this.Legend.Toggled += this.OnLegendToggled; 
+            this.Legend.Selected += this.OnLegendSelected;
 #if PerformanceBlocks
             }
 #endif
@@ -53,6 +54,15 @@ namespace Walkabout.Charts
         {
             // filtering out a category.
             this.FilterChartData();
+        }
+
+        private void OnLegendSelected(object sender, ChartDataValue e)
+        {
+            // Drill into this category
+            if (e.UserData is CategoryData cd)
+            {
+                this.Selection = cd;
+            }
         }
 
         private UIElement OnGenerateTip(ChartDataValue value)
@@ -282,7 +292,7 @@ namespace Walkabout.Charts
 
                 ChartDataSeries series = new ChartDataSeries() { Name = this.CategoryType.ToString() };
 
-                foreach (CategoryData item in from c in this.map.Values orderby c.Total descending select c)
+                foreach (CategoryData item in from c in this.map.Values orderby Math.Abs(c.Total) descending select c)
                 {
                     series.Values.Add(new ChartDataValue() { Label = item.Name, Value = item.Total, Color = item.Color, UserData = item });
                 }
@@ -316,9 +326,9 @@ namespace Walkabout.Charts
 
             if (c == null)
             {
-                c = this.unassigned;
+                return true;
             }
-
+            
             switch (this.CategoryType)
             {
                 case CategoryType.None:
@@ -372,30 +382,33 @@ namespace Walkabout.Charts
             {
                 c = this.unassigned;
             }
-
-            switch (this.CategoryType)
+            else
             {
-                case CategoryType.None:
-                    if (c.Type != Data.CategoryType.None && c.Type != Data.CategoryType.Transfer)
-                    {
+
+                switch (this.CategoryType)
+                {
+                    case CategoryType.None:
+                        if (c.Type != Data.CategoryType.None && c.Type != Data.CategoryType.Transfer)
+                        {
+                            return false;
+                        }
+                        break;
+                    case CategoryType.Income:
+                        if (c.Type != Data.CategoryType.Income && c.Type != Data.CategoryType.Savings)
+                        {
+                            return false;
+                        }
+                        break;
+                    case CategoryType.Expense:
+                        if (c.Type != Data.CategoryType.Expense)
+                        {
+                            return false;
+                        }
+                        break;
+                    default:
+                        System.Diagnostics.Debug.Assert(false, "Unexpected category type here, need to change this code if you want a chart of these");
                         return false;
-                    }
-                    break;
-                case CategoryType.Income:
-                    if (c.Type != Data.CategoryType.Income && c.Type != Data.CategoryType.Savings)
-                    {
-                        return false;
-                    }
-                    break;
-                case CategoryType.Expense:
-                    if (c.Type != Data.CategoryType.Expense)
-                    {
-                        return false;
-                    }
-                    break;
-                default:
-                    System.Diagnostics.Debug.Assert(false, "Unexpected category type here, need to change this code if you want a chart of these");
-                    return false;
+                }
             }
 
             if (this.filter == null)

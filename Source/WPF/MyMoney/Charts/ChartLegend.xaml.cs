@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -33,6 +34,7 @@ namespace Walkabout.Charts
         }
 
         public event EventHandler<ChartDataValue> Toggled;
+        public event EventHandler<ChartDataValue> Selected;
 
         private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -181,11 +183,13 @@ namespace Walkabout.Charts
             }
 
             ui.label.Text = dv.Label;
+            ui.label.DataContext = dv;
             Grid.SetRow(ui.label, index);
             Grid.SetColumn(ui.label, 1);
             this.LegendGrid.Children.Add(ui.label);
 
             ui.value.Text = dv.Value.ToString("C0");
+            ui.value.DataContext = dv;
             Grid.SetRow(ui.value, index);
             Grid.SetColumn(ui.value, 2);
             this.LegendGrid.Children.Add(ui.value);
@@ -198,6 +202,21 @@ namespace Walkabout.Charts
                 var dv = (ChartDataValue)button.DataContext;
                 dv.Hidden = button.IsChecked == true;
                 Toggled(this, dv);
+            }
+        }
+
+        private void OnLegendGridMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.Source is FrameworkElement f)
+            {
+                if (f.DataContext is ChartDataValue cv) 
+                {
+                    var handler = this.Selected;
+                    if (handler != null)
+                    {
+                        handler(this, cv);
+                    }
+                }
             }
         }
     }

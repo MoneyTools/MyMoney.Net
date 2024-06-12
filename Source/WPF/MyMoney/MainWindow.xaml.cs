@@ -906,6 +906,14 @@ namespace Walkabout
         /// <param name="e"></param>
         private void OnToolBoxItemsExpanded(object sender, RoutedEventArgs e)
         {
+            if (this.viewStateChanging != null)
+            {
+                // then this is a result of OnAfterViewStateChanged, and is not appropriate
+                // to kick off another selection change since we typically already just
+                // called TransactionView.View*() method.
+                return;
+            }
+
             if (sender is AccountsControl)
             {
                 this.OnSelectionChangeFor_Account(sender, e);
@@ -938,6 +946,10 @@ namespace Walkabout
 
         private void OnSelectionChangeFor_Account(object sender, EventArgs e)
         {
+            if (this.viewStateChanging != null)
+            {
+                return;
+            }
 #if DEBUG
             var count = this.myMoney.TotalChangeListenerCount;
             if (count != this.lastHandlerCount)
@@ -986,6 +998,10 @@ namespace Walkabout
 
         private void OnSelectionChangeFor_Categories(object sender, EventArgs e)
         {
+            if (this.viewStateChanging != null)
+            {
+                return;
+            }
             Category c = this.categoriesControl.Selected;
             if (c != null)
             {
@@ -995,6 +1011,10 @@ namespace Walkabout
 
         private void OnSelectionChangeFor_CategoryGroup(object sender, EventArgs e)
         {
+            if (this.viewStateChanging != null)
+            {
+                return;
+            }
             CategoryGroup g = this.categoriesControl.SelectedGroup;
             if (g != null)
             {
