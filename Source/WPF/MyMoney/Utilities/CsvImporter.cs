@@ -443,7 +443,6 @@ namespace Walkabout.Migrate
                     while (pos < len && ch != this._fieldDelimiter)
                     {
                         sb.Append(ch);
-
                         pos++;
                         if (pos < len)
                         {
