@@ -451,7 +451,7 @@ namespace Walkabout.Migrate
                         ch = '\0';
                     }
                 }
-                if (ch == this._fieldDelimiter)
+                if (ch == this._fieldDelimiter && pos < len)
                 {
                     ch = line[pos++];
                 }
