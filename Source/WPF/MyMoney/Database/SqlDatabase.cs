@@ -1078,9 +1078,16 @@ namespace Walkabout.Data
                     a.LastBalance = reader.SafeGetDateTime(8);
                 }
 
-                if (!reader.IsDBNull(9))
+                if (!reader.IsDBNull(9) && reader.GetString(9).Trim().Length > 0)
                 {
-                    a.SyncGuid = new SqlGuid(reader.GetGuid(9));
+                    try
+                    {
+                        a.SyncGuid = new SqlGuid(reader.GetGuid(9));
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("### invalid GUID Error: {0}", ex.Message);
+                    }
                 }
 
                 if (!reader.IsDBNull(10))
