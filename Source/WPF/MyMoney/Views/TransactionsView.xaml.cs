@@ -22,6 +22,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml;
 using Walkabout.Attachments;
+using Walkabout.Commands;
 using Walkabout.Configuration;
 using Walkabout.Controls;
 using Walkabout.Data;
@@ -3871,6 +3872,7 @@ namespace Walkabout.Views
         public static readonly RoutedUICommand CommandCopySplits = new RoutedUICommand("CopySplits", "CommandCopySplits", typeof(TransactionsView));
         public static readonly RoutedUICommand CommandPasteSplits = new RoutedUICommand("PasteSplits", "CommandPasteSplits", typeof(TransactionsView));
         public static readonly RoutedUICommand CommandAccept = new RoutedUICommand("Accept", "CommandAccept", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandAcceptAll = new RoutedUICommand("Accept All", "CommandAcceptAll", typeof(AppCommands));
         public static readonly RoutedUICommand CommandVoid = new RoutedUICommand("Void", "CommandVoid", typeof(TransactionsView));
         public static readonly RoutedUICommand CommandSplits = new RoutedUICommand("Splits", "CommandSplits", typeof(TransactionsView));
         public static readonly RoutedUICommand CommandRenamePayee = new RoutedUICommand("RenamePayee", "CommandRenamePayee", typeof(TransactionsView));
@@ -3932,6 +3934,36 @@ namespace Walkabout.Views
             e.Handled = true;
         }
 
+        private void CanExecute_AcceptAll(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (this.TheActiveGrid.ItemsSource is TransactionCollection tc && tc.Count > 0)
+            {
+                e.CanExecute = true;
+            }
+            e.Handled = true;
+        }
+
+        private void OnCommandAcceptAll(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (this.TheActiveGrid.ItemsSource is TransactionCollection tc)
+            {
+                this.myMoney.BeginUpdate(this);
+                try
+                {
+                    foreach (var t in tc)
+                    {
+                        if (t.Unaccepted)
+                        {
+                            t.Unaccepted = false;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                }
+                this.myMoney.EndUpdate();
+            }            
+        }
         private void CanExecute_Void(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = this.HasNonReadonlySelectedTransaction;
@@ -5776,6 +5808,7 @@ namespace Walkabout.Views
                     break;
                 case "Unaccepted":
                     this.UpdateFontWeight();
+                    this.UpdateForeground();
                     break;
                 case "IsDown":
                     this.UpdateForeground();

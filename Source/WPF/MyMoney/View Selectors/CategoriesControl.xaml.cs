@@ -202,7 +202,14 @@ namespace Walkabout.Views.Controls
                             continue;
                         }
 
-                        if (c.Type == t || (c.Type == CategoryType.Savings && t == CategoryType.Income))
+                        var type = c.Type;
+                        if (type == CategoryType.RecurringExpense)
+                        {
+                            // bundle these together with Expense.
+                            type = CategoryType.Expense;
+                        }
+
+                        if (type == t || (c.Type == CategoryType.Savings && t == CategoryType.Income))
                         {
                             balance += c.Balance;
                             list.Add(c);
@@ -314,7 +321,13 @@ namespace Walkabout.Views.Controls
                             continue;
                         }
 
-                        if (c.Type == t || (c.Type == CategoryType.Savings && t == CategoryType.Income))
+                        var type = c.Type;
+                        if (type == CategoryType.RecurringExpense)
+                        {
+                            type = CategoryType.Expense;
+                        }
+
+                        if (type == t || (type == CategoryType.Savings && t == CategoryType.Income))
                         {
                             balance += c.Balance;
                         }

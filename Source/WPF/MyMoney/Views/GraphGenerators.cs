@@ -35,7 +35,7 @@ namespace Walkabout.Views
             get
             {
                 return (this.account != null && this.account.Type == AccountType.Credit) ||
-                        (this.category != null && this.category.Type == CategoryType.Expense);
+                        (this.category != null && (this.category.Type == CategoryType.Expense || this.category.Type == CategoryType.RecurringExpense));
             }
         }
 

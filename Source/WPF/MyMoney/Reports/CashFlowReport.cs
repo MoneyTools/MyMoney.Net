@@ -173,7 +173,7 @@ namespace Walkabout.Reports
             {
                 return this.IsExpense(c.ParentCategory);
             }
-            return c.Type == CategoryType.Expense;
+            return c.Type == CategoryType.Expense || c.Type == CategoryType.RecurringExpense;
         }
 
         private bool IsIncome(Category c)
