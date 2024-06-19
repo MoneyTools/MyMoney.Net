@@ -19,6 +19,7 @@
         <ContextMenu>
 
             <MenuItem Name="menuItemToggleAccept" Header="Toggle _Accept" Command="views:TransactionsView.CommandAccept" InputGestureText="Ctrl-Space"/>
+            <MenuItem Name="menuItemAcceptAll" Header="Accept All" Command="views:TransactionsView.CommandAcceptAll"/>
             <MenuItem Name="menuItemToggleVoid" Header="Toggle _Void" Command="views:TransactionsView.CommandVoid"/>
             <MenuItem Name="menuItemSplit" Header="_Splits..." Command="views:TransactionsView.CommandSplits"/>
             <MenuItem Name="menuItemRenamePayee" Header="_Rename Payee" Command="views:TransactionsView.CommandRenamePayee"/>
@@ -50,6 +51,7 @@
 
     <UserControl.CommandBindings>
         <CommandBinding Command="views:TransactionsView.CommandAccept" Executed="OnCommandAccept" CanExecute="CanExecute_Accept"/>
+        <CommandBinding Command="views:TransactionsView.CommandAcceptAll" Executed="OnCommandAcceptAll" CanExecute="CanExecute_AcceptAll"/>
         <CommandBinding Command="views:TransactionsView.CommandCopySplits" Executed="OnCopySplits" CanExecute="CanCopySplits"/>
         <CommandBinding Command="views:TransactionsView.CommandPasteSplits" Executed="OnPasteSplits" CanExecute="CanPasteSplits"/>
         <CommandBinding Command="views:TransactionsView.CommandVoid" Executed="OnCommandVoid" CanExecute="CanExecute_Void" />

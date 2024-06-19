@@ -280,6 +280,7 @@ namespace Walkabout
         private void ApplyDisplayCurrency()
         {
             this.myMoney.Currencies.DefaultCurrency = this.myMoney.Currencies.FindCurrencyOrDefault(this.databaseSettings.DisplayCurrency);
+            this.myMoney.Accounts.OnDefaultCurrencyChanged();
         }
 
         private void DatabaseSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -2464,6 +2464,14 @@ namespace Walkabout.Data
         {
             return this.GetEnumerator();
         }
+
+        internal void OnDefaultCurrencyChanged()
+        {
+            foreach (Account a in this.accounts.Values)
+            {
+                a.AccountCurrencyRatio = 0; // clear cache.
+            }
+        }
         #endregion
 
     }
@@ -2730,9 +2738,16 @@ namespace Walkabout.Data
 
         public decimal GetNormalizedAmount(decimal amount)
         {
+            // Use cached value for performance
+            if (this.AccountCurrencyRatio != 0)
+            {
+                return amount * this.AccountCurrencyRatio;
+            }
+
             if (this.NonNullCurrency == this.NormalizedCurrency)
             {
                 // No need to convert
+                this.AccountCurrencyRatio = 1;
                 return amount;
             }
 
@@ -2742,6 +2757,7 @@ namespace Walkabout.Data
                 // First, convert to USD
                 // for example USA 2,000 * CAN .95 = 1,900 (in USA currency)
                 amount *= c.Ratio;
+                this.AccountCurrencyRatio = c.Ratio;
             }
 
             if (this.NormalizedCurrencyObject != null & !this.NormalizedCurrencyObject.IsUSD)
@@ -2750,7 +2766,9 @@ namespace Walkabout.Data
                 // 100 USD convert to CAD = 1/0.75 = 1.333 * 100 = 133.33 CAD
                 // 100 USD convert to EUR = 1/1.15 = 0.867 * 100 = 86.70 EUR
                 amount *= 1 / this.NormalizedCurrencyObject.Ratio;
+                this.AccountCurrencyRatio = 1 / this.NormalizedCurrencyObject.Ratio;
             }
+
             return amount;
         }
 
@@ -2831,7 +2849,9 @@ namespace Walkabout.Data
             {
                 if (this.currency != value)
                 {
-                    this.currency = value; this.OnChanged("Currency");
+                    this.currency = value;
+                    this.AccountCurrencyRatio = 0; // clear cache.
+                    this.OnChanged("Currency");
                 }
             }
         }
@@ -12473,37 +12493,10 @@ namespace Walkabout.Data
         }
 
 
-        public decimal CurrencyNormalizedAmount(decimal Amount)
+        public decimal CurrencyNormalizedAmount(decimal amount)
         {
-            // Convert the value to USD 
-            // ToDo: Convert to default currency.
-
-            // Use cached value for performance
-            if (this.Account.AccountCurrencyRatio != 0)
-            {
-                return Amount * this.Account.AccountCurrencyRatio;
-            }
-
-            Currency c = this.GetAccountCurrency();
-            if (c != null)
-            {
-                //-----------------------------------------------------
-                // Apply ratio of conversion
-                // for example USD 2,000 * CAN .95 = 1,900 (in USD currency)
-                Amount *= c.Ratio;
-
-                this.Account.AccountCurrencyRatio = c.Ratio;
-            }
-            else
-            {
-                // We must be using the default currency, so the ratio is 1
-
-                this.Account.AccountCurrencyRatio = 1;
-            }
-            return Amount;
+            return this.Account.GetNormalizedAmount(amount);
         }
-
-
 
         private void UpdateBudget(bool budgeting, List<TransactionException> errors)
         {
