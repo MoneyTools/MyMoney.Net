@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.21" date="6/22/2024">
+    - Fix issue #112: add hyperlinks on future bills report.
+  </change>
   <change version="2.1.0.20" date="6/18/2024">
     - Fix issue #119: Add "Accept All" Transaction view context menu.
     - Fix Issue #108:" cash flow report and currency change

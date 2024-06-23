@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Documents;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
@@ -397,10 +398,10 @@ namespace Walkabout.Reports
                             (date.Year == startDate.Year && date.Month <= startDate.Month))
                         {
                             var amount = payment.GetNextPrediction();
-                            WriteRow(writer, date.ToShortDateString(),
-                                payment.Payee.Name,
-                                payment.Category.Name,
-                                amount.ToString("C"));
+                            this.WriteRow(writer, date,
+                                payment.Payee,
+                                payment.Category,
+                                amount);
                             total += (decimal)amount;
                             date = payment.NextDate;
                         }
@@ -419,28 +420,47 @@ namespace Walkabout.Reports
             return Task.CompletedTask;
         }
 
-        private static void WriteRow(IReportWriter writer, string col1, string col2, string col3, string col4)
+        private void WriteRow(IReportWriter writer, DateTime date, Payee payee, Category category, double amount)
         {
             writer.StartRow();
             writer.StartCell();
-            writer.WriteParagraph(col1);
+            writer.WriteParagraph(date.ToShortDateString());
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteParagraph(col2);
+            writer.WriteHyperlink(payee.Name, FontStyles.Normal, FontWeights.Normal, (s, e) => this.OnSelectPayee(payee));
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteParagraph(col3);
+            writer.WriteHyperlink(category.Name, FontStyles.Normal, FontWeights.Normal, (s, e) => this.OnSelectCategory(category));
             writer.EndCell();
 
             writer.StartCell();
-            writer.WriteParagraph(col4);
+            writer.WriteParagraph(amount.ToString("C"));
             writer.EndCell();
 
             writer.EndRow();
         }
 
+        public event EventHandler<Category> CategorySelected;
+
+        private void OnSelectCategory(Category category)
+        {
+            if (CategorySelected != null)
+            {
+                CategorySelected(this, category);
+            }
+        }
+
+        public event EventHandler<Payee> PayeeSelected;
+
+        private void OnSelectPayee(Payee payee)
+        {
+            if (PayeeSelected != null)
+            {
+                PayeeSelected(this, payee);
+            }
+        }
 
         public override void Export(string filename)
         {

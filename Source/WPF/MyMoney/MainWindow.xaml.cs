@@ -803,13 +803,8 @@ namespace Walkabout
 
         private void CategoriesControl_SelectedTransactionChanged(object sender, EventArgs e)
         {
-            bool isTransactionViewAlready = this.CurrentView is TransactionViewState;
             // This happens when there is an error budgeting a transaction, so we want to display the transaction so it can be fixed.
             this.TransactionView.ViewTransactions(this.categoriesControl.SelectedTransactions);
-            if (!isTransactionViewAlready)
-            {
-                this.navigator.Pop();
-            }
         }
 
         private void OnToolBoxFilterUpdated(object sender, string filter)
@@ -970,25 +965,14 @@ namespace Walkabout
                 if (a.Type == AccountType.Loan)
                 {
                     this.SaveViewStateOfCurrentView();
-                    bool isLoanViewAlready = this.CurrentView is LoansView;
                     LoansView view = this.SetCurrentView<LoansView>();
                     view.AccountSelected = a;
-                    if (!isLoanViewAlready)
-                    {
-                        this.navigator.Pop();
-                    }
                     this.TrackSelectionChanges();
                 }
                 else
                 {
-                    bool isTransactionViewAlready = this.CurrentView is TransactionsView;
-                    TransactionsView view = this.SetCurrentView<TransactionsView>();
+                    TransactionsView view = this.TransactionView;
                     view.ViewTransactionsForSingleAccount(a, TransactionSelection.Current, 0);
-
-                    if (!isTransactionViewAlready)
-                    {
-                        this.navigator.Pop();
-                    }
                     this.TrackSelectionChanges();
                 }
 
@@ -1023,23 +1007,16 @@ namespace Walkabout
             }
         }
 
-        private void ViewTransactionsByCategory(Category c)
+        private void ViewTransactionsByCategory(Category c, long selectedId = -1)
         {
-            bool isTransactionViewAlready = this.CurrentView is TransactionsView;
-            TransactionsView view = this.SetCurrentView<TransactionsView>();
-            long selectedId = -1;
+            TransactionsView view = this.TransactionView;
             view.ViewTransactionsForCategory(c, selectedId);
-            if (!isTransactionViewAlready)
-            {
-                this.navigator.Pop();
-            }
             this.TrackSelectionChanges();
         }
 
         private void ViewTransactionsByCategoryGroup(CategoryGroup g)
         {
-            bool isTransactionViewAlready = this.CurrentView is TransactionsView;
-            TransactionsView view = this.SetCurrentView<TransactionsView>();
+            TransactionsView view = this.TransactionView;
             List<Transaction> total = new List<Data.Transaction>();
             foreach (Category c in g.Subcategories)
             {
@@ -1050,27 +1027,23 @@ namespace Walkabout
 
             total.Sort(Transactions.SortByDate);
             view.ViewTransactionsForCategory(new Data.Category() { Name = g.Name }, total);
-            if (!isTransactionViewAlready)
-            {
-                this.navigator.Pop();
-            }
             this.TrackSelectionChanges();
         }
 
+        private void ViewTransactionsByPayee(Payee p, long selectedRowId = -1)
+        {
+            TransactionsView view = this.TransactionView;
+            view.ViewTransactionsForPayee(p, view.SelectedRowId);
+            this.TrackSelectionChanges();
+        }
 
         private void OnSelectionChangeFor_Payees(object sender, EventArgs e)
         {
             Payee p = this.payeesControl.Selected;
             if (p != null)
             {
-                bool isTransactionViewAlready = this.CurrentView is TransactionsView;
-                TransactionsView view = this.SetCurrentView<TransactionsView>();
-                view.ViewTransactionsForPayee(this.payeesControl.Selected, view.SelectedRowId);
-                if (!isTransactionViewAlready)
-                {
-                    this.navigator.Pop();
-                }
-                this.TrackSelectionChanges();
+                TransactionsView view = this.TransactionView;
+                this.ViewTransactionsByPayee(this.payeesControl.Selected, view.SelectedRowId);
             }
         }
 
@@ -1087,13 +1060,8 @@ namespace Walkabout
         {
             if (security != null)
             {
-                bool isTransactionViewAlready = this.CurrentView is TransactionsView;
-                TransactionsView view = this.SetCurrentView<TransactionsView>();
+                TransactionsView view = this.TransactionView;
                 view.ViewTransactionsForSecurity(security, view.SelectedRowId);
-                if (!isTransactionViewAlready)
-                {
-                    this.navigator.Pop();
-                }
                 this.TrackSelectionChanges();
             }
         }
@@ -1121,7 +1089,7 @@ namespace Walkabout
             else if (currentlySelected is RentalBuildingSingleYearSingleDepartment)
             {
                 this.SaveViewStateOfCurrentView();
-                TransactionsView view = this.SetCurrentView<TransactionsView>();
+                TransactionsView view = this.TransactionView;
                 view.ViewTransactionRentalBuildingSingleYearDepartment(currentlySelected as RentalBuildingSingleYearSingleDepartment);
             }
 
@@ -1440,8 +1408,7 @@ namespace Walkabout
                         TransactionsView transactionView = this.TransactionView;
                         if (transactionView != null)
                         {
-                            transactionView.ViewTransactionsForSingleAccount(transaction.Account, TransactionSelection.Specific, transaction.Id);
-                            this.SetCurrentView<TransactionsView>();
+                            transactionView.ViewTransactionsForSingleAccount(transaction.Account, TransactionSelection.Specific, transaction.Id);                            
                         }
                     }));
         }
@@ -1459,7 +1426,7 @@ namespace Walkabout
                             this.ignoreViewChangeCount++;
                         }
                     }
-                    TransactionsView view = this.SetCurrentView<TransactionsView>();
+                    TransactionsView view = this.TransactionView;
                     view.ViewTransactions(list);
                 }));
         }
@@ -1757,7 +1724,7 @@ namespace Walkabout
 
                 this.ShowProgress(0, len, -1, string.Format("Loaded {0} transactions", total));
 
-                var view = this.SetCurrentView<TransactionsView>();
+                var view = this.TransactionView;
                 if (view.CheckTransfers() && acct != null)
                 {
                     view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
@@ -2463,7 +2430,7 @@ namespace Walkabout
             int total = importer.Import(file);
             Account acct = importer.LastAccount;
 
-            var view = this.SetCurrentView<TransactionsView>();
+            var view = this.TransactionView;
             if (view.CheckTransfers() && acct != null)
             {
                 view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
@@ -2688,9 +2655,10 @@ namespace Walkabout
 
             this.viewStateChanging = e;
 
-            ITransactionView view = this.CurrentView as ITransactionView;
-            if (view != null)
+            if (sender is ITransactionView view)
             {
+                this.SetCurrentView<TransactionsView>();
+
                 // Search back in this.navigator for previously saved view state information so we can jump back to the same row we were on before.
                 this.RestorePreviouslySavedSelection(view, e.SelectedRowId);
 
@@ -2864,7 +2832,7 @@ namespace Walkabout
             {
                 List<Transaction> list = new List<Transaction>(from v in selection.Values select (Transaction)v.UserData);
                 this.TransactionView.QuickFilter = ""; // need to clear this as they might conflict.
-                var view = this.SetCurrentView<TransactionsView>();
+                var view = this.TransactionView;
                 if (this.TransactionView.ActiveCategory != null)
                 {
                     view.ViewTransactionsForCategory(this.TransactionView.ActiveCategory, list);
@@ -3232,7 +3200,7 @@ namespace Walkabout
             CategoryData data = chart.Selection;
             if (data != null)
             {
-                TransactionsView view = this.SetCurrentView<TransactionsView>();
+                TransactionsView view = this.TransactionView;
                 view.ViewTransactionsForCategory(data.Category, data.Transactions);
             }
         }
@@ -3310,14 +3278,8 @@ namespace Walkabout
             if (this.TransactionView.QueryPanel != null)
             {
                 this.settings.Query = this.TransactionView.QueryPanel.GetQuery();
-                bool isTransactionViewAlready = this.CurrentView is TransactionsView;
-                TransactionsView view = this.SetCurrentView<TransactionsView>();
+                TransactionsView view = this.TransactionView;
                 view.ViewTransactionsForAdvancedQuery(this.settings.Query);
-                if (!isTransactionViewAlready)
-                {
-                    // then we have one too many view state changes saved on the Back history stack.
-                    this.navigator.Pop();
-                }
             }
         }
 
@@ -3578,7 +3540,19 @@ namespace Walkabout
             view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Reports/FutureBillsReport/");
             FutureBillsReport report = new FutureBillsReport(this.myMoney);
+            report.PayeeSelected += this.OnReportPayeeSelected;
+            report.CategorySelected += this.OnReportCategorySelected;
             this.GenerateReport(report);
+        }
+
+        private void OnReportCategorySelected(object sender, Category c)
+        {
+            this.ViewTransactionsByCategory(c);
+        }
+
+        private void OnReportPayeeSelected(object sender, Payee p)
+        {
+            this.ViewTransactionsByPayee(p);
         }
 
         private Report currentReport;
@@ -3902,7 +3876,7 @@ namespace Walkabout
 
                         this.myMoney.Rebalance(acct);
 
-                        var view = this.SetCurrentView<TransactionsView>();
+                        var view = this.TransactionView;
                         if (view.CheckTransfers() && acct != null)
                         {
                             view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
@@ -4155,13 +4129,8 @@ namespace Walkabout
 
         private void OnSecurityNavigated(object sender, SecuritySelectionEventArgs e)
         {
-            bool isTransactionViewAlready = this.CurrentView is TransactionViewState;
-            TransactionsView view = this.SetCurrentView<TransactionsView>();
+            TransactionsView view = this.TransactionView;
             view.ViewTransactionsForSecurity(e.Security, view.SelectedRowId);
-            if (!isTransactionViewAlready)
-            {
-                this.navigator.Pop();
-            }
         }
 
         private void OnCommandViewViewAliases(object sender, ExecutedRoutedEventArgs e)
@@ -4343,13 +4312,8 @@ namespace Walkabout
             if (list.Count > 0)
             {
                 MessageBoxEx.Show("Fixed " + list.Count + " transactions that still have splits", "Check Splits", MessageBoxButton.OK, MessageBoxImage.Error);
-                bool isTransactionViewAlready = this.CurrentView is TransactionViewState;
-                TransactionsView view = this.SetCurrentView<TransactionsView>();
+                TransactionsView view = this.TransactionView;
                 view.ViewTransactions(list);
-                if (!isTransactionViewAlready)
-                {
-                    this.navigator.Pop();
-                }
             }
             else
             {
