@@ -6,7 +6,7 @@ proprietary format, it is yours to do with as you like.
 
 ## Install
 
-Once you have [.NET 7.0 Desktop Runtime installed](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+Once you have [.NET 8.0 Desktop Runtime installed](https://dotnet.microsoft.com/en-us/download/dotnet/)
 you can simply click the [ClickOnce
 Installer](https://moneytools.github.io/MyMoney.Net/#Basics/install) to install the app.
 
@@ -15,7 +15,7 @@ You can see information on the latest release from [github releases](https://git
 
 ## Help
 
-Learn  how to use the app by reading our [Helpful Wiki](https://github.com/clovett/MyMoney.Net/wiki).
+Learn  how to use the app by reading the [MyMoney.Net Documentation](https://moneytools.github.io/MyMoney.Net/).
 
 ![](https://github.com/clovett/MyMoney.Net/wiki/Images/Home1.png)
 
