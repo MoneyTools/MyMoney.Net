@@ -1632,9 +1632,10 @@ to make sure attachments work.");
 
         private void SearchTransactionView()
         {
-            if (this.transactions != null && this.transactions.CountNoPlaceholder > 5 &&
-                this.transactions.HasSelection && this.transactions.ScrollSelectionIntoView().Index > 0)
+            if (this.transactions != null && this.transactions.CountNoPlaceholder > 5)
             {
+                this.EnsureSelectedTransaction();
+
                 this.WriteLine("- SearchTransactionView");
                 var row1 = this.transactions.WaitForSelection();
                 var t = this.transactions.GetSelectedTransactionProxy();

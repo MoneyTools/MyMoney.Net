@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -263,7 +264,7 @@ namespace Walkabout.Tests.Interop
             return null;
         }
 
-        internal static AutomationElement FindDesktopWindow(string name, int retries = 10)
+        internal static AutomationElement FindDesktopWindow(string[] possibleNames, int retries = 10)
         {
             for (int i = 0; i < retries; i++)
             {
@@ -273,9 +274,10 @@ namespace Walkabout.Tests.Interop
                     {
                         try
                         {
-                            AutomationElement e = AutomationElement.FromHandle(hwnd);
-                            if (e.Current.Name == name)
+                            var title = SafeNativeMethods.GetWindowText(hwnd);
+                            if (!string.IsNullOrEmpty(title) && possibleNames.Contains(title))
                             {
+                                AutomationElement e = AutomationElement.FromHandle(hwnd);
                                 return e;
                             }
                         }

@@ -18,19 +18,16 @@ namespace Walkabout.Tests.Wrappers
         {
             for (int i = 0; i < retries; i++)
             {
-                for (var n = 0; n < names.Length; n++)
+               
+                AutomationElement e = Win32.FindDesktopWindow(names);
+                if (e != null)
                 {
-
-                    AutomationElement e = Win32.FindDesktopWindow(names[n]);
-                    if (e != null)
-                    {
-                        var result = new ExcelWindowWrapper(e);
-                        result.WaitForInputIdle(500);
-                        return result;
-                    }
-
-                    Thread.Sleep(500);
+                    var result = new ExcelWindowWrapper(e);
+                    result.WaitForInputIdle(500);
+                    return result;
                 }
+
+                Thread.Sleep(500);
             }
 
             if (throwIfNotFound)
