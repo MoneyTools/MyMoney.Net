@@ -1,5 +1,5 @@
 
-MyMoney.Net is a rich client .NET 7.0 application for managing your personal finances. It is
+MyMoney.Net is a rich client .NET 8.0 application for managing your personal finances. It is
 written entirely in C# and is designed for programmers who want easy access to their data and who
 want to quickly and easily add their own features. Your data will not be locked up in some
 proprietary format, it is yours to do with as you like.
