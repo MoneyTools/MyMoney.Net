@@ -14,7 +14,6 @@ echo ### Publishing version %VERSION%...
 set WINGET=1
 set GITRELEASE=1
 set UPLOAD=1
-set ClickOnceBits=%ROOT%MyMoney\bin\publish
 set DOBUILD=1
 :parse
 if "%1"=="/nowinget" set WINGET=0
@@ -38,19 +37,11 @@ if EXIST %ClickOnceBits% rd /s /q %ClickOnceBits%
 UpdateVersion .\Version\VersionMaster.txt
 if ERRORLEVEL 1 goto :err_version
 
-msbuild /target:restore MyMoney.sln /p:Configuration=Release "/p:Platform=Any CPU"
+call build.cmd Release
 if ERRORLEVEL 1 goto :err_restore
 
-msbuild /target:rebuild MyMoney.sln /p:Configuration=Release "/p:Platform=Any CPU"
-if ERRORLEVEL 1 goto :err_build
-
-pushd MyMoney
-msbuild /target:publish /p:PublishProfile=.\Properties\PublishProfiles\ClickOnceProfile.pubxml MyMoney.csproj /p:Configuration=Release "/p:Platform=Any CPU" /p:PublishDir=%ClickOnceBits%
-if ERRORLEVEL 1 goto :err_publish
-popd
 if not EXIST %ClickOnceBits%\MyMoney.application goto :nopub
 CleanupPublishFolder %VERSION% %ClickOnceBits%
-
 
 echo ### BUGBUG: TODO fix msix package build of .NET 8.0 apps, it is currently not supported, skipping winget package creation...
 rem if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
@@ -155,19 +146,10 @@ exit /b /1
 echo Could not find %ClickOnceBits%\MyMoney.application
 exit /b /1
 
-:err_restore
-echo Error: msbuild /target:restore failed.
-exit /b /1
-
-
 :err_build
-echo Error: msbuild /target:rebuild failed.
+echo Error: build.cmd failed.
 exit /b /1
 
-:err_publish
-echo Error: msbuild /target:publish failed.
-popd
-exit /b /1
 
 :err_version
 echo Error: update version failed.

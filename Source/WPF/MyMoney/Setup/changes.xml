@@ -8,7 +8,7 @@
     - Fix Issue #108:" cash flow report and currency change
     - Fix csv importer.
     - Add resilience to SQLite reading of the field Account.SyncGuid field
-    - Fix TransferToClosedAccountPrefix & TransferFromClosedAccountPrefix
+    - Fix TransferToClosedAccountPrefix and TransferFromClosedAccountPrefix
   </change>
   <change version="2.1.0.19" date="6/11/2024">
     - Add "unassigned" row to the pie charts to group transactions with no category.

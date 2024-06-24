@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows;
 
 // General Information about an assembly is controlled through the following 
@@ -45,3 +46,4 @@ using System.Windows;
 // [assembly: AssemblyVersion("1.0.*")]
 
 // See ../Version/*.cs
+[assembly: SupportedOSPlatform("windows6.1")]

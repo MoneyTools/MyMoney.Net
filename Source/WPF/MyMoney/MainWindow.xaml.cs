@@ -4743,7 +4743,6 @@ namespace Walkabout
         {
             WeakReference<MainWindow> windowRef;
             IReport report;
-            private bool disposedValue;
 
             internal ReportEventHandler(MainWindow window, IReport e)
             {
