@@ -3,6 +3,7 @@ setlocal ENABLEDELAYEDEXPANSION
 cd %~dp0
 SET ROOT=%~dp0
 set WINGET_SRC=D:\git\clovett\winget-pkgs
+set ClickOnceBits=%ROOT%MyMoney\bin\publish
 set PATH=%PATH%;%ROOT%\tools;%LOCALAPPDATA%\Microsoft\WindowsApps\
 set /p VERSION=<Version\VersionMaster.txt
 

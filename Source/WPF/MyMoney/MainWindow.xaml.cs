@@ -4534,7 +4534,7 @@ namespace Walkabout
                 string previous = this.settings.ExeVersion;
                 this.settings.ExeVersion = NativeMethods.GetFileVersion(exe);
                 this.settings.LastExeTimestamp = lastWrite;
-                this.ShowChangeInfo(previous, changes, false);
+                this.ShowChangeInfo(previous, changes, e.NewVersionAvailable);
             }
         }
 
