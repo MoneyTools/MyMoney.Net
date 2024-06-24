@@ -4,7 +4,7 @@ Software contributions to `MyMoney.Net` are welcome in the form
 of github pull requests.  Simply fork the repo, create your own
 branch and submit a pull request.
 
-**MyMoney** is written entirely in C# for .NET Framework 7.0 and is easy for programmers who want access to their data and who want to quickly and easily add their own features. Your data will not be locked up in some proprietary format, it is yours to do with as you like.
+**MyMoney** is written entirely in C# for .NET Framework 8.0 and is easy for programmers who want access to their data and who want to quickly and easily add their own features. Your data will not be locked up in some proprietary format, it is yours to do with as you like.
 
 Start by cloning the repo (or make your own fork if you plan to do pull requests):
 
@@ -13,7 +13,7 @@ git clone https://github.com/clovett/MyMoney.Net
 ```
 
 To build the WPF app load the following solution into
-Visual Studio 2022.  You will need to first install [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0).
+Visual Studio 2022.  You will need to first install [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/).
 
 ```
 devenv Source\WPF\MyMoney.sln
