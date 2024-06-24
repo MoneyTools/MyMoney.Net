@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Walkabout.Data;
@@ -20,8 +21,28 @@ namespace Walkabout.Reports
     {
         private Currency currency;
         private CultureInfo currencyCulture;
+        private IServiceProvider serviceProvider;
+
+        public IServiceProvider ServiceProvider 
+        {
+            get => serviceProvider;
+            set {
+                serviceProvider = value;
+                this.OnSiteChanged();
+            }
+        }
+
+        public virtual void OnSiteChanged() { }
+
+        public abstract IReportState GetState();
+
+        public abstract void ApplyState(IReportState state);
 
         public abstract Task Generate(IReportWriter writer);
+
+        public virtual void OnMouseLeftButtonClick(object sender, MouseButtonEventArgs e)
+        {
+        }
 
         public virtual void Export(string filename)
         {

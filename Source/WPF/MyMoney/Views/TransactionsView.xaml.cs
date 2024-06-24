@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Windows;
 using System.Windows.Automation;
@@ -2298,7 +2299,12 @@ namespace Walkabout.Views
             this.SetActiveAccount(account, null, null, null, null);
             // if we are reconciling then show the positions held at statement date so the stock balances can be reconciled also.
             DateTime reportDate = this.IsReconciling ? this.GetReconiledExclusiveEndDate() : DateTime.Now;
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, account, this.ServiceProvider, reportDate);
+            PortfolioReport report = new PortfolioReport()
+            {
+                ServiceProvider = this.ServiceProvider,
+                ReportDate = reportDate,
+                Account = account
+            };
             report.DrillDown += this.OnReportDrillDown;
             _ = view.Generate(report);
             this.portfolioReport = report;
@@ -2315,7 +2321,12 @@ namespace Walkabout.Views
             FlowDocumentView view = this.InvestmentPortfolioView;
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
             DateTime reportDate = this.IsReconciling ? this.GetReconiledExclusiveEndDate() : DateTime.Now;
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, this.ServiceProvider, reportDate, e);
+            PortfolioReport report = new PortfolioReport()
+            {
+                ServiceProvider = this.ServiceProvider,
+                ReportDate = reportDate,
+                SelectedGroup = e
+            };
             _ = view.Generate(report);
             this.FireAfterViewStateChanged(this.SelectedRowId);
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,7 +17,7 @@ namespace Walkabout.Reports
     /// </summary>
     public class FutureBillsReport : Report
     {
-        private readonly MyMoney myMoney;
+        private MyMoney myMoney;
         private const int ALLOWED_MISSED_PAYMENTS = 2;
 
         internal struct PaymentKey
@@ -101,8 +102,6 @@ namespace Walkabout.Reports
         {
             internal const double AmountSensitivity = 0.1; // % stderr
             internal const double TimeSensitivity = 0.5; // % stderr on date
-
-            private List<Transaction> transactions;
 
             public Payee Payee { get; internal set; }
             public Category Category { get; internal set; }
@@ -285,9 +284,27 @@ namespace Walkabout.Reports
             }
         }
 
-        public FutureBillsReport(MyMoney money)
+        public FutureBillsReport()
         {
-            this.myMoney = money;
+        }
+
+        ~FutureBillsReport()
+        {
+            Debug.WriteLine("FutureBillsReport disposed!");
+        }
+
+        public override void OnSiteChanged()
+        {
+            this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+        }
+
+        public override IReportState GetState()
+        {
+            return new SimpleReportState(typeof(FutureBillsReport));
+        }
+
+        public override void ApplyState(IReportState state)
+        {
         }
 
         public override Task Generate(IReportWriter writer)
@@ -466,6 +483,7 @@ namespace Walkabout.Reports
         {
             throw new NotImplementedException();
         }
+
     }
 
 

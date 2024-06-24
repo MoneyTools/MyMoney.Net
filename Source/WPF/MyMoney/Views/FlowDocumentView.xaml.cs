@@ -154,15 +154,25 @@ namespace Walkabout.Views
 
         public ViewState ViewState
         {
-            get { return new ReportViewState(this.report); }
+            get { return new ReportViewState(this.report.GetState()); }
             set
             {
-                if (value is ReportViewState r)
+                if (value is ReportViewState s)
                 {
-                    _ = this.Generate(r.report);
+                    var type = s.ReportState.GetReportType();
+                    var report = (IReport)Activator.CreateInstance(type);
+                    report.ServiceProvider = this.serviceProvider;
+                    report.ApplyState(s.ReportState);
+                    if (ReportCreated != null)
+                    {
+                        ReportCreated(this, report);
+                    }
+                    _ = this.Generate(report);
                 }
             }
         }
+
+        public event EventHandler<IReport> ReportCreated;
 
         public ViewState DeserializeViewState(System.Xml.XmlReader reader)
         {
@@ -302,11 +312,11 @@ namespace Walkabout.Views
     /// </summary>
     internal class ReportViewState : ViewState
     {
-        public IReport report;
+        public IReportState ReportState { get; private set; }
 
-        public ReportViewState(IReport report)
+        public ReportViewState(IReportState reportState)
         {
-            this.report = report;
+            this.ReportState = reportState;
         }
     }
 

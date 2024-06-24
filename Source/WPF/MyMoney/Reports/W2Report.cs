@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,33 +18,73 @@ namespace Walkabout.Taxes
     // This class prepares an estimated W2 from the splits found in paycheck deposits.
     public class W2Report : Report
     {
-        private readonly FlowDocumentView view;
-        private readonly MyMoney myMoney;
+        private MyMoney myMoney;
         private DateTime startDate;
         private DateTime endDate;
-        private readonly IServiceProvider serviceProvider;
         private Point downPos;
-        private readonly int fiscalYearStart;
+        private int fiscalYearStart;
         private Category selectedCategory;
-        private readonly TaxCategoryCollection taxCategories;
+        private TaxCategoryCollection taxCategories;
         private Dictionary<Category, List<Transaction>> transactionsByCategory;
         private const string FiscalPrefix = "FY ";
 
-        public W2Report(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart)
+        public W2Report()
         {
-            this.myMoney = money;
-            this.fiscalYearStart = fiscalYearStart;
-            this.view = view;
-            this.serviceProvider = sp;
-            view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
-            view.PreviewMouseLeftButtonUp += this.OnPreviewMouseLeftButtonUp;
-            view.Unloaded += (s, e) =>
-            {
-                view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
-            };
-            this.taxCategories = new TaxCategoryCollection();
         }
 
+        ~W2Report()
+        {
+            Debug.WriteLine("W2Report disposed!");
+        }
+
+        public int FiscalYearStart
+        {
+            get => this.fiscalYearStart;
+            set {
+                this.fiscalYearStart = value;
+
+            }
+        }
+
+        public override void OnSiteChanged()
+        {
+            this.taxCategories = new TaxCategoryCollection();
+            this.transactionsByCategory = null;
+            this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+        }
+
+        class W2ReportState : IReportState
+        {
+            public int FiscalYearStart { get; set; }
+            public DateTime StartDate { get; set; }
+
+            public W2ReportState()
+            {
+            }
+
+            public Type GetReportType()
+            {
+                return typeof(W2Report);
+            }
+        }
+
+        public override IReportState GetState()
+        {
+            return new W2ReportState()
+            {
+                FiscalYearStart = this.fiscalYearStart,
+                StartDate = this.startDate,
+            };
+        }
+
+        public override void ApplyState(IReportState state)
+        {
+            if (state is W2ReportState taxReportState)
+            {
+                this.FiscalYearStart = taxReportState.FiscalYearStart;                
+                this.SetStartDate(taxReportState.StartDate);
+            }
+        }
 
         private void SetStartDate(DateTime date)
         {
@@ -65,14 +106,15 @@ namespace Walkabout.Taxes
             this.endDate = this.startDate.AddYears(1);
         }
 
-        private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        public override void OnMouseLeftButtonClick(object sender, MouseButtonEventArgs e)
         {
-            Point pos = e.GetPosition(this.view);
+            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
+            Point pos = e.GetPosition(view);
 
             if (Math.Abs(this.downPos.X - pos.X) < 5 && Math.Abs(this.downPos.Y - pos.Y) < 5)
             {
                 // navigate to show the cell.Data rows.
-                IViewNavigator nav = this.serviceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
+                IViewNavigator nav = this.ServiceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
                 List<Transaction> transactions = null;
                 if (this.selectedCategory != null && this.transactionsByCategory.TryGetValue(this.selectedCategory, out transactions))
                 {
@@ -83,7 +125,8 @@ namespace Walkabout.Taxes
 
         public void Regenerate()
         {
-            _ = this.view.Generate(this);
+            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
+            _ = view.Generate(this);
         }
 
         private bool Summarize(Dictionary<Category, decimal> byCategory, Transaction t)
@@ -374,9 +417,10 @@ namespace Walkabout.Taxes
 
         private void OnReportCellMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
             Paragraph p = (Paragraph)sender;
             this.selectedCategory = p.Tag as Category;
-            this.downPos = e.GetPosition(this.view);
+            this.downPos = e.GetPosition(view);
         }
 
 

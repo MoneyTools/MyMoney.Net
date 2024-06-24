@@ -20,21 +20,74 @@ namespace Walkabout.Reports
     //=========================================================================================
     public class TaxReport : Report
     {
-        private readonly FlowDocumentView view;
-        private readonly MyMoney money;
+        private MyMoney money;
         private DateTime startDate;
         private DateTime endDate;
         private bool consolidateOnDateSold;
         private bool capitalGainsOnly;
-        private readonly int fiscalYearStart;
+        private int fiscalYearStart;
         private const string FiscalPrefix = "FY ";
 
-        public TaxReport(FlowDocumentView view, MyMoney money, int fiscalYearStart)
+        public TaxReport()
         {
-            this.fiscalYearStart = fiscalYearStart;
-            this.view = view;
             this.SetStartDate(DateTime.Now.Year);
-            this.money = money;
+        }
+
+        ~TaxReport()
+        {
+            Debug.WriteLine("TaxReport disposed!");
+        }
+
+        public int FiscalYearStart
+        {
+            get => this.fiscalYearStart;
+            set {
+                this.fiscalYearStart = value;
+            }
+        }
+
+        public override void OnSiteChanged()
+        {
+            this.money = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+        }
+
+        class TaxReportState : IReportState
+        {
+            public int FiscalYearStart { get; set; }
+            public bool CapitalGainsOnly { get; set; }
+            public bool ConsolidateOnDateSold { get; set; }
+            public int TaxYear { get; set; }
+
+            public TaxReportState()
+            {
+            }
+
+            public Type GetReportType()
+            {
+                return typeof(TaxReport);
+            }
+        }
+
+        public override IReportState GetState()
+        {
+            return new TaxReportState()
+            {
+                FiscalYearStart = this.fiscalYearStart,
+                CapitalGainsOnly = this.capitalGainsOnly,
+                ConsolidateOnDateSold = this.consolidateOnDateSold,
+                TaxYear = this.startDate.Year
+            };             
+        }
+
+        public override void ApplyState(IReportState state)
+        {
+            if (state is TaxReportState taxReportState)
+            {
+                this.FiscalYearStart = taxReportState.FiscalYearStart;
+                this.capitalGainsOnly = taxReportState.CapitalGainsOnly;
+                this.consolidateOnDateSold = taxReportState.ConsolidateOnDateSold;
+                this.SetStartDate(taxReportState.TaxYear);
+            }
         }
 
         private void SetStartDate(int year)
@@ -56,7 +109,6 @@ namespace Walkabout.Reports
         public override Task Generate(IReportWriter writer)
         {
             FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
-
 
             writer.WriteHeading("Tax Report For ");
 
@@ -137,7 +189,8 @@ namespace Walkabout.Reports
             }
             this.GenerateCapitalGains(writer);
 
-            FlowDocument document = this.view.DocumentViewer.Document;
+            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
+            FlowDocument document = view.DocumentViewer.Document;
             document.Blocks.InsertAfter(document.Blocks.FirstBlock, new BlockUIContainer(this.CreateExportTxfButton()));
             return Task.CompletedTask;
         }
@@ -183,11 +236,18 @@ namespace Walkabout.Reports
             writer.EndRow();
         }
 
+
+        private void Renerate()
+        {
+            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
+            _ = view.Generate(this);
+        }
+
         private void OnCapitalGainsOnlyChanged(object sender, RoutedEventArgs e)
         {
             CheckBox checkBox = (CheckBox)sender;
             this.capitalGainsOnly = checkBox.IsChecked == true;
-            _ = this.view.Generate(this);
+            this.Renerate();
         }
 
         private void OnConsolidateComboSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -195,7 +255,7 @@ namespace Walkabout.Reports
             ComboBox box = (ComboBox)sender;
             int index = box.SelectedIndex;
             this.consolidateOnDateSold = index == 1;
-            _ = this.view.Generate(this);
+            this.Renerate();
         }
 
         private void OnYearChanged(object sender, SelectionChangedEventArgs e)
@@ -209,7 +269,7 @@ namespace Walkabout.Reports
             if (int.TryParse(label, out int year))
             {
                 this.SetStartDate(year);
-                _ = this.view.Generate(this);
+                this.Renerate();
             }
         }
 

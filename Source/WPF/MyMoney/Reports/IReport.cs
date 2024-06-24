@@ -1,15 +1,45 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Walkabout.Views;
 
 namespace Walkabout.Interfaces.Reports
 {
     public interface IReport
     {
+        IServiceProvider ServiceProvider { get; set; }
+
         Task Generate(IReportWriter writer);
 
         void Export(string filename);
+
+        IReportState GetState();
+
+        void ApplyState(IReportState state);
+
+        void OnMouseLeftButtonClick(object sender, MouseButtonEventArgs e);
+    }
+
+    public interface IReportState
+    {
+        Type GetReportType();
+    }
+
+    public class SimpleReportState : IReportState
+    {
+        Type type;
+
+        public SimpleReportState(Type reportType)
+        {
+            this.type = reportType;
+        }
+
+        public virtual Type GetReportType()
+        {
+            return this.type;
+        }
     }
 
     public enum ReportInterval

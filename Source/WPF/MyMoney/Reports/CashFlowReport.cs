@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,130 +17,96 @@ using Walkabout.Views;
 
 namespace Walkabout.Reports
 {
-    internal class CashFlowCell
-    {
-        internal List<Transaction> Data; // or splits
-        internal decimal Value;
-    }
-
-    internal class CashFlowColumns
-    {
-        private readonly Dictionary<string, CashFlowCell> columns = new Dictionary<string, CashFlowCell>();
-
-        public void AddValue(string key, Transaction data, decimal amount)
-        {
-            CashFlowCell cell;
-            this.columns.TryGetValue(key, out cell);
-            if (cell == null)
-            {
-                cell = new CashFlowCell();
-                cell.Data = new List<Transaction>();
-                this.columns[key] = cell;
-            }
-            cell.Value += amount;
-            if (data != null)
-            {
-                cell.Data.Add(data);
-            }
-        }
-
-        public CashFlowCell GetCell(string key)
-        {
-            CashFlowCell cell = null;
-            if (!this.columns.TryGetValue(key, out cell))
-            {
-                cell = new CashFlowCell();
-            }
-            return cell;
-        }
-
-        public decimal GetValue(string key)
-        {
-            CashFlowCell cell;
-            this.columns.TryGetValue(key, out cell);
-            if (cell != null)
-            {
-                return cell.Value;
-            }
-            return 0;
-        }
-
-        public List<Transaction> GetData(string key)
-        {
-            CashFlowCell cell;
-            this.columns.TryGetValue(key, out cell);
-            if (cell != null)
-            {
-                return cell.Data;
-            }
-            return new List<Transaction>();
-        }
-
-        public List<decimal> GetOrderedValues(IEnumerable<string> columnKeys)
-        {
-            List<decimal> result = new List<decimal>();
-            foreach (string name in columnKeys)
-            {
-                result.Add(this.GetValue(name));
-            }
-            return result;
-        }
-
-        public int Count { get { return this.columns.Count; } }
-    }
-
     //=========================================================================================
     public class CashFlowReport : Report
     {
-        private readonly FlowDocumentView view;
-        private readonly MyMoney myMoney;
+        private MyMoney myMoney;
         private bool byYear;
-        private readonly int fiscalYearStart;
+        private int fiscalYearStart;
         private DateTime startDate;
         private DateTime endDate;
         private Dictionary<Category, CashFlowColumns> byCategory;
         private Dictionary<string, int> monthMap;
         private List<string> columns;
-        private readonly IServiceProvider serviceProvider;
 
-        public CashFlowReport(FlowDocumentView view, MyMoney money, IServiceProvider sp, int fiscalYearStart)
+        public CashFlowReport()
         {
-            this.myMoney = money;
-            this.fiscalYearStart = fiscalYearStart;
             this.startDate = new DateTime(DateTime.Now.Year, 1, 1);
             this.byYear = true;
-            if (this.fiscalYearStart > 0)
+            this.endDate = this.startDate.AddYears(1);
+            this.startDate = this.startDate.AddYears(-4); // show 5 years by default.
+        }
+
+        ~CashFlowReport()
+        {
+            Debug.WriteLine("CashFlowReport disposed!");
+        }
+
+        public int FiscalYearStart
+        {
+            get => this.fiscalYearStart;
+            set
             {
+                this.fiscalYearStart = value;
                 this.startDate = new DateTime(DateTime.Now.Year, this.fiscalYearStart + 1, 1);
                 if (this.startDate > DateTime.Today)
                 {
                     this.startDate = this.startDate.AddYears(-1);
                 }
             }
+        }
 
-            this.endDate = this.startDate.AddYears(1);
-            this.startDate = this.startDate.AddYears(-4); // show 5 years by default.
-            this.view = view;
-            this.serviceProvider = sp;
-            view.Unloaded += (s, e) =>
+        public override void OnSiteChanged()
+        {
+            this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+        }
+
+        class CashFlowReportState : IReportState
+        {
+            public int FiscalYearStart { get; set; }
+            public DateTime StartDate { get; set; }
+            public DateTime EndDate { get; set; }
+
+            public CashFlowReportState()
             {
-                this.view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
-            };
-            view.Loaded += (s, e) =>
+            }
+
+            public Type GetReportType()
             {
-                view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
-                view.PreviewMouseLeftButtonUp += this.OnPreviewMouseLeftButtonUp;
+                return typeof(CashFlowReport);
+            }
+        }
+
+        public override IReportState GetState()
+        {
+            return new CashFlowReportState()
+            {
+                FiscalYearStart = this.fiscalYearStart,
+                StartDate = this.startDate,
+                EndDate = this.endDate
             };
         }
 
-        private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        public override void ApplyState(IReportState state)
         {
-            Point pos = e.GetPosition(this.view);
+            if (state is CashFlowReportState cashFlowReportState)
+            {
+                this.FiscalYearStart = cashFlowReportState.FiscalYearStart;
+                this.startDate = cashFlowReportState.StartDate;
+                this.endDate = cashFlowReportState.EndDate;
+            }
+        }
+
+
+        public override void OnMouseLeftButtonClick(object sender, MouseButtonEventArgs e)
+        {
+            var view = (FlowDocumentView)sender;
+            Point pos = e.GetPosition(view);
 
             if (this.mouseDownCell != null && Math.Abs(this.downPos.X - pos.X) < 5 && Math.Abs(this.downPos.Y - pos.Y) < 5)
             {
                 // navigate to show the cell.Data rows.
-                IViewNavigator nav = this.serviceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
+                IViewNavigator nav = this.ServiceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
                 nav.ViewTransactions(this.mouseDownCell.Data);
             }
         }
@@ -198,11 +165,6 @@ namespace Walkabout.Reports
                 return this.IsInvestment(c.ParentCategory);
             }
             return c.Type == CategoryType.Investments;
-        }
-
-        public void Regenerate()
-        {
-            _ = this.view.Generate(this);
         }
 
         public override Task Generate(IReportWriter writer)
@@ -376,6 +338,12 @@ namespace Walkabout.Reports
             }
 
             this.Regenerate();
+        }
+
+        public void Regenerate()
+        {
+            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
+            _ = view.Generate(this);
         }
 
         private Button CreateExportReportButton()
@@ -591,9 +559,10 @@ namespace Walkabout.Reports
 
         private void OnReportCellMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
             Paragraph p = (Paragraph)sender;
             this.mouseDownCell = (CashFlowCell)p.Tag;
-            this.downPos = e.GetPosition(this.view);
+            this.downPos = e.GetPosition(view);
         }
 
 
@@ -652,6 +621,79 @@ namespace Walkabout.Reports
             }
             writer.WriteLine();
         }
+
+        internal class CashFlowCell
+        {
+            internal List<Transaction> Data; // or splits
+            internal decimal Value;
+        }
+
+        internal class CashFlowColumns
+        {
+            private readonly Dictionary<string, CashFlowCell> columns = new Dictionary<string, CashFlowCell>();
+
+            public void AddValue(string key, Transaction data, decimal amount)
+            {
+                CashFlowCell cell;
+                this.columns.TryGetValue(key, out cell);
+                if (cell == null)
+                {
+                    cell = new CashFlowCell();
+                    cell.Data = new List<Transaction>();
+                    this.columns[key] = cell;
+                }
+                cell.Value += amount;
+                if (data != null)
+                {
+                    cell.Data.Add(data);
+                }
+            }
+
+            public CashFlowCell GetCell(string key)
+            {
+                CashFlowCell cell = null;
+                if (!this.columns.TryGetValue(key, out cell))
+                {
+                    cell = new CashFlowCell();
+                }
+                return cell;
+            }
+
+            public decimal GetValue(string key)
+            {
+                CashFlowCell cell;
+                this.columns.TryGetValue(key, out cell);
+                if (cell != null)
+                {
+                    return cell.Value;
+                }
+                return 0;
+            }
+
+            public List<Transaction> GetData(string key)
+            {
+                CashFlowCell cell;
+                this.columns.TryGetValue(key, out cell);
+                if (cell != null)
+                {
+                    return cell.Data;
+                }
+                return new List<Transaction>();
+            }
+
+            public List<decimal> GetOrderedValues(IEnumerable<string> columnKeys)
+            {
+                List<decimal> result = new List<decimal>();
+                foreach (string name in columnKeys)
+                {
+                    result.Add(this.GetValue(name));
+                }
+                return result;
+            }
+
+            public int Count { get { return this.columns.Count; } }
+        }
+
     }
 
 }

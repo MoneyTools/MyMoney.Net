@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
+using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Reports;
 using Walkabout.Utilities;
@@ -12,12 +14,13 @@ using Walkabout.Views;
 
 namespace Walkabout.Setup
 {
-    internal class ChangeInfoFormatter : Report
+    internal class ChangeInfoReport
+        : Report
     {
-        private readonly string previousVersion;
-        private readonly XDocument doc;
-        private readonly FlowDocumentView view;
-        private readonly bool installButton;
+        private string previousVersion;
+        private XDocument doc;
+        private FlowDocumentView view;
+        private bool installButton;
 
         public event EventHandler InstallButtonClick;
 
@@ -29,12 +32,68 @@ namespace Walkabout.Setup
             }
         }
 
-        public ChangeInfoFormatter(FlowDocumentView view, bool addInstallButton, string previousVersion, XDocument doc)
+        public ChangeInfoReport()
         {
-            this.previousVersion = previousVersion;
-            this.doc = doc;
-            this.view = view;
-            this.installButton = addInstallButton;
+        }
+
+        ~ChangeInfoReport()
+        {
+            Debug.WriteLine("ChangeInfoReport disposed!");
+        }
+
+
+        public string PreviousVersion
+        {
+            get => previousVersion; 
+            set => previousVersion = value;
+        }
+
+        public bool InstallButton
+        {
+            get => installButton;
+            set => installButton = value;
+        }
+        public XDocument Document
+        {
+            get => doc;
+            set => doc = value;
+        }
+
+        public override void OnSiteChanged()
+        {
+            this.view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
+        }
+
+        public class ChangeInfoReportState : IReportState
+        {
+            public string PreviousVersion { get; set; }
+            public bool InstallButton { get; set; }
+            public XDocument Document { get; set; }
+            public ChangeInfoReportState() { }
+
+            public Type GetReportType() {  
+                return typeof(ChangeInfoReport); 
+            }
+        }
+
+        public override IReportState GetState()
+        {
+            return new ChangeInfoReportState()
+            {
+                PreviousVersion = this.previousVersion,
+                InstallButton = this.installButton,
+                Document = this.doc
+            };
+        }
+
+        public override void ApplyState(IReportState state)
+        {
+            if (state is ChangeInfoReportState cs)
+            {
+                this.previousVersion = cs.PreviousVersion;
+                this.installButton = cs.InstallButton;
+                this.doc = cs.Document;
+            }
         }
 
         /// <summary>

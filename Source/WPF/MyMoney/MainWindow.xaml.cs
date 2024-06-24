@@ -22,6 +22,7 @@ using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Dialogs;
 using Walkabout.Help;
+using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
 using Walkabout.Migrate;
 using Walkabout.Ofx;
@@ -1174,13 +1175,20 @@ namespace Walkabout
                 {
                     MessageBoxEx.Show("Internal error");
                 }
+
+                if (iView is FlowDocumentView flow)
+                {
+                    flow.ReportCreated -= this.OnReportCreated;
+                    flow.ReportCreated += this.OnReportCreated;
+                    flow.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
+                    flow.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
+                }
             }
 
             IView o = this.cacheViews[typeof(T)];
 
             return (T)o;
         }
-
 
         /// <summary>
         /// Gets or Creates a single view and makes it the current active view
@@ -3388,6 +3396,10 @@ namespace Walkabout
             {
                 return this.TransactionView.ViewModel;
             }
+            else if (service == typeof(FlowDocumentView))
+            {
+                return this.GetOrCreateView<FlowDocumentView>();
+            }
             return null;
         }
 
@@ -3517,17 +3529,27 @@ namespace Walkabout
             this.SetCurrentView<TransactionsView>();
         }
 
+        private ReportEventHandler reportHandler;
+
+
+        private void OnReportCreated(object sender, IReport e)
+        {
+            using (this.reportHandler)
+            {
+                // dispose previous report handler.
+            }
+
+            this.reportHandler = new ReportEventHandler(this, e);            
+        }
+
         private void OnCommandNetWorth(object sender, ExecutedRoutedEventArgs e)
         {
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportNetworth");
-            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Reports/NetworthReport/");
-            NetWorthReport report = new NetWorthReport(view, this.myMoney, this.cache);
-            report.SecurityDrillDown += this.OnReportDrillDown;
-            report.CashBalanceDrillDown += this.OnReportCashDrillDown;
+            NetWorthReport report = new NetWorthReport() { ServiceProvider = this };
+            this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
 
@@ -3536,12 +3558,9 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "FutureBillsReport");
-            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Reports/FutureBillsReport/");
-            FutureBillsReport report = new FutureBillsReport(this.myMoney);
-            report.PayeeSelected += this.OnReportPayeeSelected;
-            report.CategorySelected += this.OnReportCategorySelected;
+            FutureBillsReport report = new FutureBillsReport() { ServiceProvider = this };
+            this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
 
@@ -3577,11 +3596,13 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
-            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, null, this, DateTime.Now);
-            report.DrillDown += this.OnReportDrillDown;
+            PortfolioReport report = new PortfolioReport()
+            {
+                ServiceProvider = this,
+                ReportDate = DateTime.Now
+            };
+            this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
 
@@ -3591,10 +3612,14 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
-            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
+            PortfolioReport report = new PortfolioReport()
+            {
+                ServiceProvider = this,
+                ReportDate = e.Date,
+                SelectedGroup = e
+            };
+            this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
 
@@ -3604,10 +3629,14 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
-            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            PortfolioReport report = new PortfolioReport(view, this.myMoney, this, e.Date, e);
+            PortfolioReport report = new PortfolioReport()
+            {
+                ServiceProvider = this,
+                ReportDate = e.Date,
+                AccountGroup = e
+            };
+            this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
 
@@ -3616,10 +3645,9 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportTaxes");
-            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Reports/TaxReport/");
-            TaxReport report = new TaxReport(view, this.myMoney, this.databaseSettings.FiscalYearStart);
+            TaxReport report = new TaxReport() { FiscalYearStart = this.databaseSettings.FiscalYearStart, ServiceProvider = this };
+            this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
 
@@ -3628,10 +3656,9 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportW2");
-            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             HelpService.SetHelpKeyword(view, "Reports/W2Report/");
-            W2Report report = new W2Report(view, this.myMoney, this, this.databaseSettings.FiscalYearStart);
+            W2Report report = new W2Report() { ServiceProvider = this, FiscalYearStart = this.databaseSettings.FiscalYearStart };
+            this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
 
@@ -3646,9 +3673,8 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportCashFlow");
-            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
-            CashFlowReport report = new CashFlowReport(view, this.myMoney, this, this.databaseSettings.FiscalYearStart);
+            CashFlowReport report = new CashFlowReport() { ServiceProvider = this, FiscalYearStart = this.databaseSettings.FiscalYearStart };
+            this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
 
@@ -3657,11 +3683,10 @@ namespace Walkabout
             this.SaveViewStateOfCurrentView();
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportUnaccepted");
-            view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
-            view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
             var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             FlowDocumentReportWriter writer = new FlowDocumentReportWriter(view.DocumentViewer.Document, pixelsPerDip);
-            UnacceptedReport report = new UnacceptedReport(this.myMoney);
+            UnacceptedReport report = new UnacceptedReport() { ServiceProvider = this };
+            this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }
 
@@ -4530,11 +4555,15 @@ namespace Walkabout
                 this.SaveViewStateOfCurrentView();
                 FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
                 view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportUpdates");
-                view.Closed -= new EventHandler(this.OnFlowDocumentViewClosed);
-                view.Closed += new EventHandler(this.OnFlowDocumentViewClosed);
                 HelpService.SetHelpKeyword(view, "Basics/Updates/");
-                ChangeInfoFormatter report = new ChangeInfoFormatter(view, installButton, previousVersion, changeList);
-                report.InstallButtonClick += this.OnInstallButtonClick;
+                ChangeInfoReport report = new ChangeInfoReport()
+                {
+                    InstallButton = installButton,
+                    PreviousVersion = previousVersion,
+                    Document = changeList,
+                    ServiceProvider = this
+                };
+                this.OnReportCreated(this, report);
                 _ = view.Generate(report);
             }
         }
@@ -4704,5 +4733,157 @@ namespace Walkabout
 
         #endregion
 
+        #region Report Events
+
+        /// <summary>
+        /// This class breaks the circular dependency between reports and this MainWindow by inserting
+        /// the window as a weak reference.  This way reports will be garbage collected properly.
+        /// </summary>
+        class ReportEventHandler : IDisposable
+        {
+            WeakReference<MainWindow> windowRef;
+            IReport report;
+            private bool disposedValue;
+
+            internal ReportEventHandler(MainWindow window, IReport e)
+            {
+                this.windowRef = new WeakReference<MainWindow>(window);
+                this.report = e;
+
+                var view = window.GetOrCreateView<FlowDocumentView>();
+                view.PreviewMouseLeftButtonUp -= this.OnFlowViewPreviewMouseLeftButtonUp;
+                view.PreviewMouseLeftButtonUp += this.OnFlowViewPreviewMouseLeftButtonUp;
+                view.Unloaded += (s, e) =>
+                {
+                    view.PreviewMouseLeftButtonUp -= this.OnFlowViewPreviewMouseLeftButtonUp;
+                };
+
+                if (e is NetWorthReport report)
+                {
+                    report.SecurityDrillDown -= this.OnReportDrillDown;
+                    report.CashBalanceDrillDown -= this.OnReportCashDrillDown;
+                    report.SecurityDrillDown += this.OnReportDrillDown;
+                    report.CashBalanceDrillDown += this.OnReportCashDrillDown;
+                }
+                else if (e is FutureBillsReport bills)
+                {
+                    bills.PayeeSelected -= this.OnReportPayeeSelected;
+                    bills.CategorySelected -= this.OnReportCategorySelected;
+                    bills.PayeeSelected += this.OnReportPayeeSelected;
+                    bills.CategorySelected += this.OnReportCategorySelected;
+                }
+                else if (e is PortfolioReport portfolio)
+                {
+                    portfolio.DrillDown -= this.OnReportDrillDown;
+                    portfolio.DrillDown += this.OnReportDrillDown;
+                }
+                else if (e is ChangeInfoReport changes)
+                {
+                    changes.InstallButtonClick -= this.OnInstallButtonClick;
+                    changes.InstallButtonClick += this.OnInstallButtonClick;
+                }
+            }
+
+
+            private void OnFlowViewPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+            {
+                if (windowRef.TryGetTarget(out MainWindow target))
+                {
+                    this.report.OnMouseLeftButtonClick(sender, e);
+                }
+            }
+
+            private void OnReportDrillDown(object sender, SecurityGroup e)
+            {
+                if (windowRef.TryGetTarget(out MainWindow target))
+                {
+                    target.OnReportDrillDown(sender, e);
+                }
+            }
+
+            private void OnReportCashDrillDown(object sender, AccountGroup e)
+            {
+                if (windowRef.TryGetTarget(out MainWindow target))
+                {
+                    target.OnReportCashDrillDown(sender, e);
+                }
+            }
+
+            private void OnReportCategorySelected(object sender, Category c)
+            {
+                if (windowRef.TryGetTarget(out MainWindow target))
+                {
+                    target.OnReportCategorySelected(sender, c);
+                }
+            }
+
+            private void OnReportPayeeSelected(object sender, Payee p)
+            {
+                if (windowRef.TryGetTarget(out MainWindow target))
+                {
+                    target.OnReportPayeeSelected(sender, p);
+                }
+            }
+
+            private void OnInstallButtonClick(object sender, EventArgs e)
+            {
+                if (windowRef.TryGetTarget(out MainWindow target))
+                {
+                    target.OnInstallButtonClick(sender, e);
+                }
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (this.windowRef != null && windowRef.TryGetTarget(out MainWindow window))
+                {
+                    var view = window.GetOrCreateView<FlowDocumentView>();
+                    view.PreviewMouseLeftButtonUp -= this.OnFlowViewPreviewMouseLeftButtonUp;
+                }
+
+                if (this.report != null)
+                {
+                    var report = this.report;
+
+                    if (report is NetWorthReport networth)
+                    {
+                        networth.SecurityDrillDown -= this.OnReportDrillDown;
+                        networth.CashBalanceDrillDown -= this.OnReportCashDrillDown;
+                    }
+                    else if (report is FutureBillsReport bills)
+                    {
+                        bills.PayeeSelected -= this.OnReportPayeeSelected;
+                        bills.CategorySelected -= this.OnReportCategorySelected;
+                    }
+                    else if (report is PortfolioReport portfolio)
+                    {
+                        portfolio.DrillDown -= this.OnReportDrillDown;
+                    }
+                    else if (report is ChangeInfoReport changes)
+                    {
+                        changes.InstallButtonClick -= this.OnInstallButtonClick;
+                    }
+                }
+
+                this.report = null;
+                this.windowRef = null;
+            }
+
+            // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+            ~ReportEventHandler()
+            {
+                // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+                this.Dispose(disposing: false);
+            }
+
+            public void Dispose()
+            {
+                // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+                this.Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
+        }
+
+        #endregion 
     }
 }

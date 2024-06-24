@@ -1,6 +1,7 @@
 ﻿using LovettSoftware.Charts;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,26 +21,61 @@ namespace Walkabout.Reports
     //=========================================================================================
     public class NetWorthReport : Report
     {
-        private readonly FlowDocumentView view;
-        private readonly MyMoney myMoney;
+        private MyMoney myMoney;
         private readonly Random rand = new Random(Environment.TickCount);
         private readonly byte minRandColor, maxRandColor;
         private DateTime reportDate;
-        private readonly StockQuoteCache cache;
+        private StockQuoteCache cache;
         private bool generating;
         private bool filterOutClosedAccounts = false;
 
         public event EventHandler<SecurityGroup> SecurityDrillDown;
         public event EventHandler<AccountGroup> CashBalanceDrillDown;
 
-        public NetWorthReport(FlowDocumentView view, MyMoney money, StockQuoteCache cache)
+        public NetWorthReport()
         {
-            this.view = view;
-            this.myMoney = money;
-            this.cache = cache;
             this.reportDate = DateTime.Now;
             this.minRandColor = 20;
             this.maxRandColor = ("" + AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128 : (byte)200;
+        }
+
+        ~NetWorthReport()
+        {
+            Debug.WriteLine("NetWorthReport disposed!");
+        }
+
+        public override void OnSiteChanged()
+        {
+            this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+            this.cache = (StockQuoteCache)this.ServiceProvider.GetService(typeof(StockQuoteCache));
+        }
+
+        class NetworthReportState : IReportState
+        {
+            public DateTime ReportDate { get; set; }
+
+            public NetworthReportState(DateTime reportDate)
+            {
+                this.ReportDate = reportDate;
+            }
+
+            public Type GetReportType()
+            {
+                return typeof(NetWorthReport);
+            }
+        }
+
+        public override IReportState GetState()
+        {
+            return new NetworthReportState(reportDate);
+        }
+
+        public override void ApplyState(IReportState state)
+        {
+            if (state is NetworthReportState networthReportState)
+            {
+                this.reportDate = networthReportState.ReportDate;
+            }
         }
 
         public override async Task Generate(IReportWriter writer)
@@ -298,9 +334,15 @@ namespace Walkabout.Reports
                 {
                     this.reportDate = picker.SelectedDate.Value;
                     this.filterOutClosedAccounts = this.reportDate >= DateTime.Today;
-                    _ = this.view.Generate(this);
+                    this.Regenerate();
                 }
             }
+        }
+
+        private void Regenerate()
+        {
+            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
+            _ = view.Generate(this);
         }
 
         private void OnPieSliceClicked(object sender, ChartDataValue e)

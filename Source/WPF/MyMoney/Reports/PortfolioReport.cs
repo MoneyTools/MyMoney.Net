@@ -1,6 +1,7 @@
 ﻿using LovettSoftware.Charts;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
+using Walkabout.Taxes;
 using Walkabout.Utilities;
 using Walkabout.Views;
 
@@ -21,18 +23,16 @@ namespace Walkabout.Reports
     //=========================================================================================
     public class PortfolioReport : Report
     {
-        private readonly MyMoney myMoney;
-        private readonly Account account;
+        private MyMoney myMoney;
+        private Account account;
         private FlowDocumentReportWriter flowwriter;
         private CostBasisCalculator calc;
-        private readonly IServiceProvider serviceProvider;
-        private readonly FlowDocumentView view;
         private Paragraph mouseDownPara;
         private Point downPos;
         private DateTime reportDate;
-        private readonly StockQuoteCache cache;
+        private StockQuoteCache cache;
         private SecurityGroup selectedGroup;
-        private readonly AccountGroup accountGroup;
+        private AccountGroup accountGroup;
         private readonly Random rand = new Random(Environment.TickCount);
         private bool generating;
 
@@ -41,62 +41,104 @@ namespace Walkabout.Reports
         /// <summary>
         /// Create new PortfolioReport
         /// </summary>
-        /// <param name="view">The FlowDocumentView we are generating the report in</param>
-        /// <param name="money">The money database</param>
-        /// <param name="account">Optional account for single account portfolio</param>
-        /// <param name="serviceProvider">Required to access additional services</param>
-        /// <param name="asOfDate">The date to compute the portfolio balances to</param>
-        public PortfolioReport(FlowDocumentView view, MyMoney money, Account account, IServiceProvider serviceProvider, DateTime asOfDate)
+        public PortfolioReport()
         {
-            this.myMoney = money;
-            this.account = account;
-            this.serviceProvider = serviceProvider;
-            this.view = view;
-            this.reportDate = asOfDate;
-            this.cache = (StockQuoteCache)serviceProvider.GetService(typeof(StockQuoteCache));
-            view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
-            view.PreviewMouseLeftButtonUp += this.OnPreviewMouseLeftButtonUp;
-            view.Unloaded += (s, e) =>
+        }
+
+        ~PortfolioReport()
+        {
+            Debug.WriteLine("PortfolioReport disposed!");
+        }
+
+
+        public Account Account
+        {
+            get => this.account;
+            set => this.account = value;
+        }
+
+        public AccountGroup AccountGroup
+        {
+            get => this.accountGroup;
+            set => this.accountGroup = value;
+        }
+
+        public SecurityGroup SelectedGroup
+        {
+            get => this.selectedGroup;
+            set => this.selectedGroup = value;
+        }
+
+        public DateTime ReportDate
+        {
+            get => reportDate;
+            set => reportDate = value;
+        }
+
+        public override void OnSiteChanged()
+        {
+            this.cache = (StockQuoteCache)this.ServiceProvider.GetService(typeof(StockQuoteCache));
+            this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));            
+        }
+
+        class PortfolioReportState : IReportState
+        {
+            public DateTime ReportDate { get; set; }
+            public Account Account { get; set; }
+            public AccountGroup AccountGroup { get; set; }
+            public SecurityGroup SelectedGroup { get; set; }
+
+            public PortfolioReportState()
             {
-                this.view.PreviewMouseLeftButtonUp -= this.OnPreviewMouseLeftButtonUp;
+            }
+
+            public Type GetReportType()
+            {
+                return typeof(PortfolioReport);
+            }
+        }
+
+        public override IReportState GetState()
+        {
+            return new PortfolioReportState()
+            {
+                ReportDate = this.reportDate,
+                Account = this.account,
+                AccountGroup = this.accountGroup,
+                SelectedGroup = this.selectedGroup,
             };
         }
 
-        /// <summary>
-        /// Create new PortfolioReport for a given SecurityGroup we are drilling into from the Networth Report, like "Taxable Mutual Funds".
-        /// </summary>
-        public PortfolioReport(FlowDocumentView view, MyMoney money, IServiceProvider serviceProvider, DateTime asOfDate, SecurityGroup a) :
-            this(view, money, null, serviceProvider, asOfDate)
+        public override void ApplyState(IReportState state)
         {
-            this.selectedGroup = a;
+            if (state is PortfolioReportState taxReportState)
+            {
+                this.reportDate = taxReportState.ReportDate;
+                this.account = taxReportState.Account;
+                this.accountGroup = taxReportState.AccountGroup;
+                this.selectedGroup = taxReportState.SelectedGroup;
+            }
         }
 
-        /// <summary>
-        /// Create new PortfolioReport for a given AccountGroup, this will show just the cash balances of these accounts.
-        /// </summary>
-        public PortfolioReport(FlowDocumentView view, MyMoney money, IServiceProvider serviceProvider, DateTime asOfDate, AccountGroup a) :
-            this(view, money, null, serviceProvider, asOfDate)
+        public override void OnMouseLeftButtonClick(object sender, MouseButtonEventArgs e)
         {
-            this.accountGroup = a;
-        }
-
-        private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            Point pos = e.GetPosition(this.view);
+            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
+            Point pos = e.GetPosition(view);
 
             if (this.mouseDownPara != null && Math.Abs(this.downPos.X - pos.X) < 5 && Math.Abs(this.downPos.Y - pos.Y) < 5)
             {
                 string name = (string)this.mouseDownPara.Tag;
                 // navigate to show the cell.Data rows.
-                IViewNavigator nav = this.serviceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
+                IViewNavigator nav = this.ServiceProvider.GetService(typeof(IViewNavigator)) as IViewNavigator;
                 nav.ViewTransactionsBySecurity(this.myMoney.Securities.FindSecurity(name, false));
             }
         }
 
         private void OnReportCellMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
             this.mouseDownPara = (Paragraph)sender;
-            this.downPos = e.GetPosition(this.view);
+            this.downPos = e.GetPosition(view);
         }
 
         private decimal totalMarketValue;
@@ -356,10 +398,16 @@ namespace Walkabout.Reports
                         {
                             this.accountGroup.Date = newDate;
                         }
-                        _ = this.view.Generate(this);
+                        this.Regenerate();
                     }
                 }
             }
+        }
+
+        void Regenerate()
+        {
+            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
+            _ = view.Generate(this);
         }
 
         private string GetSecurityTypeCaption(SecurityType st)

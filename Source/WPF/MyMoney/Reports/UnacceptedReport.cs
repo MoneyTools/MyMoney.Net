@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
@@ -10,11 +11,29 @@ namespace Walkabout.Reports
     /// </summary>
     public class UnacceptedReport : Report
     {
-        private readonly MyMoney myMoney;
+        private MyMoney myMoney;
 
-        public UnacceptedReport(MyMoney money)
+        public UnacceptedReport()
         {
-            this.myMoney = money;
+        }
+
+        ~UnacceptedReport()
+        {
+            Debug.WriteLine("UnacceptedReport disposed!");
+        }
+
+        public override void OnSiteChanged()
+        {
+            this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
+        }
+
+        public override IReportState GetState()
+        {
+            return new SimpleReportState(typeof(UnacceptedReport));
+        }
+
+        public override void ApplyState(IReportState state)
+        {
         }
 
         public override Task Generate(IReportWriter writer)
