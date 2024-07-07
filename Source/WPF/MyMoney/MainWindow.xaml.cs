@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -4387,6 +4388,18 @@ namespace Walkabout
             GC.Collect();
         }
 
+        private void MenuEnvironment_Click(object sender, RoutedEventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            var variables = Environment.GetEnvironmentVariables();
+            foreach (var key in variables.Keys)
+            {
+                var value = variables[key];
+                sb.AppendLine($"{key}={value}");
+            }
+            MessageBoxEx.Show("Click Details to see process environment variables...", "Environment", sb.ToString(), MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
         #endregion
 
         #region ONLINE
@@ -4903,6 +4916,7 @@ namespace Walkabout
             }
         }
 
-        #endregion 
+        #endregion
+
     }
 }

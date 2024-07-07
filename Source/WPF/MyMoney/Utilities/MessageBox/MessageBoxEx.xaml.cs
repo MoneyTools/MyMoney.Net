@@ -182,6 +182,7 @@ namespace Walkabout.Utilities
                 MessageBoxEx mb = new MessageBoxEx();
                 mb.Owner = Application.Current.MainWindow;
                 mb.MaxWidth = SystemParameters.PrimaryScreenWidth * 2 / 3;
+                mb.MaxHeight = SystemParameters.PrimaryScreenHeight * 2 / 3;
                 mb.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 mb.SizeToContent = SizeToContent.WidthAndHeight;
                 mb.Title = title;
