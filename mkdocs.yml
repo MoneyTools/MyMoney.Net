@@ -68,6 +68,7 @@ nav:
     - Bank Accounts: Accounts/BankAccounts.md
     - Credit Card Accounts: Accounts/CreditCardAccounts.md
     - Investment Accounts: Accounts/InvestmentAccounts.md
+    - Context Menu: Accounts/TransactionsMenu.md
     - Loans: Accounts/Loans.md
     - Online Banking: Accounts/OnlineBanking.md
     - Online Security: Accounts/OnlineSecurity.md
