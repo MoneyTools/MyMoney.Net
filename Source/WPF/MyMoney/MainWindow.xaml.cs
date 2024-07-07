@@ -50,7 +50,7 @@ namespace Walkabout
         #region PROPERTIES PRIVATE
 
         internal static Uri DownloadSite = new Uri("https://lovettsoftwarestorage.blob.core.windows.net/downloads/MyMoney/");
-        internal static string InstallUrl = "https://github.com/clovett/myMoney.Net";
+        internal static string DefaultInstallUrl = "https://moneytools.github.io/MyMoney.Net/#Basics/install";
 
         private readonly DelayedActions delayedActions = new DelayedActions();
         private readonly Settings settings;
@@ -4295,7 +4295,7 @@ namespace Walkabout
 
         private void OnCommandViewHelp(object sender, ExecutedRoutedEventArgs e)
         {
-            InternetExplorer.OpenUrl(IntPtr.Zero, "https://github.com/clovett/MyMoney.Net/wiki");
+            InternetExplorer.OpenUrl(IntPtr.Zero, "https://moneytools.github.io/MyMoney.Net/");
         }
 
         private void OnCommandAddSampleData(object sender, ExecutedRoutedEventArgs e)
@@ -4559,7 +4559,9 @@ namespace Walkabout
             // and see if we just installed a new version.
             string exe = ProcessHelper.MainExecutable;
             DateTime lastWrite = File.GetLastWriteTime(exe);
-            if (lastWrite > this.settings.LastExeTimestamp)
+            bool firstRun = false;
+            bool.TryParse(Environment.GetEnvironmentVariable("ClickOnce_IsFirstRun"), out firstRun);
+            if (firstRun || lastWrite > this.settings.LastExeTimestamp)
             {
                 string previous = this.settings.ExeVersion;
                 this.settings.ExeVersion = NativeMethods.GetFileVersion(exe);
@@ -4605,7 +4607,13 @@ namespace Walkabout
                 return;
             }
 
-            InternetExplorer.OpenUrl(IntPtr.Zero, new Uri(InstallUrl));
+            var url = Environment.GetEnvironmentVariable("ClickOnce_UpdateLocation");
+            if (string.IsNullOrEmpty(url))
+            {
+                url = DefaultInstallUrl;
+            }
+
+            InternetExplorer.OpenUrl(IntPtr.Zero, new Uri(url));
             this.Close();
         }
 
