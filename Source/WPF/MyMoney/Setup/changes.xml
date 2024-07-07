@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="2.1.0.23" date="7/6/2024">
+  <change version="2.1.0.24" date="7/6/2024">
     - Add "move" transaction command so you can move a transaction and all it's attachments to a different account.
     - Add "move" operation for attachments for transaction cut/paste.
   </change>

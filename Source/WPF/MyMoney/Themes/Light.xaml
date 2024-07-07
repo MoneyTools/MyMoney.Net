@@ -47,6 +47,7 @@
     <SolidColorBrush x:Key="ListItemSelectedBorderBrush" Color="Transparent"/>
     <SolidColorBrush x:Key="ListItemSelectedHoverBrush" Color="#F0F0F0"/>
     <SolidColorBrush x:Key="ListItemReconcilingBackgroundBrush" Color="#A0419441"/>
+    <SolidColorBrush x:Key="ListItemCuttingBackgroundBrush" Color="Red"/>
 
     <SolidColorBrush x:Key="GridNormalBackgroundBrush" Color="{StaticResource GridNormalBackgroundColor}"/>
     <SolidColorBrush x:Key="GridAlternateBackgroundBrush" Color="{StaticResource GridAlternateBackgroundColor}"/>
