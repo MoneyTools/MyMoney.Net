@@ -64,6 +64,7 @@ namespace Walkabout
         internal MyMoney myMoney = new MyMoney();
         private ChangeTracker tracker;
         private FileSystemWatcher importWatcher;
+        private ClipboardMonitor clipboardMonitor;
 
         //---------------------------------------------------------------------
         // The Toolbox controls
@@ -465,6 +466,11 @@ namespace Walkabout
 
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
         {
+            if (clipboardMonitor == null)
+            {
+                clipboardMonitor = new ClipboardMonitor(this, true);
+                clipboardMonitor.ClipboardUpdate += this.OnClipboardChanged;
+            }
 #if PerformanceBlocks
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.Loaded))
             {
@@ -484,6 +490,11 @@ namespace Walkabout
 #if PerformanceBlocks
             }
 #endif
+        }
+
+        private void OnClipboardChanged(object sender, EventArgs e)
+        {
+            this.TransactionView.OnClipboardChanged();
         }
 
         private void TransactionView_QuickFilterChanged(object sender, EventArgs e)
@@ -2279,7 +2290,7 @@ namespace Walkabout
             }
             else
             {
-                if (MessageBox.Show("Are you sure you want to save the data without password protection?", "No Password", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                if (MessageBoxEx.Show("Are you sure you want to save the data without password protection?", "No Password", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 {
                     return false;
                 }
@@ -2333,7 +2344,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error Saving", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxEx.Show(ex.Message, "Error Saving", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -2367,7 +2378,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error Saving", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxEx.Show(ex.Message, "Error Saving", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -2391,7 +2402,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error Saving", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxEx.Show(ex.Message, "Error Saving", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -2434,7 +2445,7 @@ namespace Walkabout
 
         private int ImportXml(string file)
         {
-            var importer = new XmlImporter(this.myMoney);
+            var importer = new XmlImporter(this.myMoney, this);
             int total = importer.Import(file);
             Account acct = importer.LastAccount;
 
@@ -3742,7 +3753,7 @@ namespace Walkabout
                 string fname = saveFileDialog1.FileName;
                 if (File.Exists(fname))
                 {
-                    MessageBox.Show("Sorry that file already exists, please try a new name.", "Save As Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBoxEx.Show("Sorry that file already exists, please try a new name.", "Save As Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 string ext = Path.GetExtension(fname);
@@ -3765,7 +3776,7 @@ namespace Walkabout
                         this.ExportCsv(fname);
                         break;
                     default:
-                        MessageBox.Show(string.Format("Don't know how to write file of type '{0}'", ext), "Save As Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBoxEx.Show(string.Format("Don't know how to write file of type '{0}'", ext), "Save As Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         break;
                 }
             }
@@ -3834,7 +3845,7 @@ namespace Walkabout
                                     moneyFiles.Add(file);
                                     break;
                                 default:
-                                    MessageBox.Show("Unrecognized file extension " + ext + ", expecting .qif, .ofx, .csv or .xml");
+                                    MessageBoxEx.Show("Unrecognized file extension " + ext + ", expecting .qif, .ofx, .csv or .xml");
                                     break;
                             }
                         }

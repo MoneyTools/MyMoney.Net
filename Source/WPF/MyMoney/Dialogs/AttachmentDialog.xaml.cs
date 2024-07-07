@@ -343,7 +343,7 @@ namespace Walkabout.Dialogs
         //    {
         //        device = null;
         //        string message = this.GetWiaErrorMessage(ex);
-        //        MessageBox.Show(this, message, "Scan Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        MessageBoxEx.Show(this, message, "Scan Error", MessageBoxButton.OK, MessageBoxImage.Error);
         //    }
         //}
 
@@ -562,7 +562,7 @@ namespace Walkabout.Dialogs
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, "Unexpected error saving new image: " + ex.Message, "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxEx.Show("Unexpected error saving new image: " + ex.Message, "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -616,7 +616,7 @@ namespace Walkabout.Dialogs
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, "Error deleting file: " + ex.Message, "Delete Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxEx.Show("Error deleting file: " + ex.Message, "Delete Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

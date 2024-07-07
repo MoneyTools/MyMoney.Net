@@ -938,7 +938,7 @@ namespace Walkabout.Data
                         reg.SetValue("LoginMode", 2);
 
                         // TODO - we need to remove any UI from the DataBase model lower layer
-                        MessageBox.Show("Please restart your SQL Service in order for mixed mode logins to work", "Mixed Mode Enabled", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBoxEx.Show("Please restart your SQL Service in order for mixed mode logins to work", "Mixed Mode Enabled", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
             }

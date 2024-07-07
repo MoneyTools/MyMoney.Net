@@ -5,6 +5,7 @@ using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Windows;
+using Walkabout.Utilities;
 
 namespace Walkabout.Setup
 {
@@ -65,7 +66,7 @@ namespace Walkabout.Setup
             if (!userHasControl)
             {
                 // then we need to elevate to admin...
-                if (MessageBox.Show("SQL Server (\"NT AUTHORITY\\NETWORK SERVICE\" account) does not have permission to write to this directory, " +
+                if (MessageBoxEx.Show("SQL Server (\"NT AUTHORITY\\NETWORK SERVICE\" account) does not have permission to write to this directory, " +
                     "so please give this account full permission to this folder using Windows Explorer Security tab and then click Ok.",
                     "Missing Account Permission", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
                 {

@@ -920,7 +920,7 @@
         </Grid>
 
         <Canvas x:Name="GridOverlayCanvas" Grid.Row="2"
-                 u:WpfAnnotations.CodeRef="ButtonStyleSplitAmount, myTemplatePayeeCategoryMemoEdit, myDataGridDetailMiniView, ListItemSelectedForegroundDisabledBrush, ListItemSelectedForegroundNegativeBrush, ListItemForegroundUnacceptedBrush, ListItemSelectedForegroundLowBrush, ListItemReconcilingBackgroundBrush, PositiveCurrencyForegroundBrush, HyperlinkForeground, DragDropFeedbackBrush, TransactionConnectorBrush, TransactionConnectorForegroundBrush, TransactionConnectorButtonBackground, TransactionConnectorButtonPressedBackground, TransactionConnectorButtonMouseOverBackground, DragDropWindowStyle"
+                 u:WpfAnnotations.CodeRef="ButtonStyleSplitAmount, myTemplatePayeeCategoryMemoEdit, myDataGridDetailMiniView, ListItemSelectedForegroundDisabledBrush, ListItemSelectedForegroundNegativeBrush, ListItemForegroundUnacceptedBrush, ListItemSelectedForegroundLowBrush, ListItemReconcilingBackgroundBrush, PositiveCurrencyForegroundBrush, HyperlinkForeground, DragDropFeedbackBrush, TransactionConnectorBrush, TransactionConnectorForegroundBrush, TransactionConnectorButtonBackground, TransactionConnectorButtonPressedBackground, TransactionConnectorButtonMouseOverBackground, DragDropWindowStyle, ListItemCuttingBackgroundBrush"
                 ></Canvas>
     </Grid>
 

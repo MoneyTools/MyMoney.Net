@@ -398,7 +398,7 @@ namespace Walkabout.Attachments
                         string.Compare(path, existing, StringComparison.OrdinalIgnoreCase) != 0 &&
                         !Directory.Exists(path))
                     {
-                        if (MessageBox.Show(Application.Current.MainWindow, "Would you like to move the existing attachments directory to this new path?", "Rename Directory", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
+                        if (MessageBoxEx.Show("Would you like to move the existing attachments directory to this new path?", "Rename Directory", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
                         {
                             Directory.Move(existing, path);
                         }
@@ -411,7 +411,7 @@ namespace Walkabout.Attachments
                     exists = Directory.Exists(path);
                     if (!exists)
                     {
-                        if (MessageBox.Show(Application.Current.MainWindow, "The storage location does not exist, would you like to create it?", "Create Directory", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
+                        if (MessageBoxEx.Show("The storage location does not exist, would you like to create it?", "Create Directory", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK)
                         {
                             Directory.CreateDirectory(path);
                         }
@@ -425,7 +425,7 @@ namespace Walkabout.Attachments
                 catch (Exception ex)
                 {
                     exists = false;
-                    MessageBox.Show(Application.Current.MainWindow, "Unexpected error: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBoxEx.Show("Unexpected error: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }
             }

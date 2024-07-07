@@ -164,7 +164,7 @@ namespace Walkabout.Data
 
         public virtual void Backup(string path)
         {
-            System.Windows.MessageBox.Show("XML Backup is not implemented");
+            MessageBoxEx.Show("XML Backup is not implemented");
         }
 
 

@@ -69,7 +69,7 @@ namespace Walkabout.Migrate
             }
         }
 
-        internal string ExportString(IEnumerable<object> data)
+        internal string ExportString(string action, IEnumerable<object> data)
         {
             using (StringWriter sw = new StringWriter())
             {
@@ -78,6 +78,7 @@ namespace Walkabout.Migrate
                 using (XmlWriter writer = XmlWriter.Create(sw, settings))
                 {
                     writer.WriteStartElement("root");
+                    writer.WriteAttributeString("action", action);
                     this.ExportToXml(writer, data);
                     writer.WriteEndElement();
                 }
@@ -140,7 +141,7 @@ namespace Walkabout.Migrate
                 {
                     // ignore it, already handled.
                 }
-                if (row is Transaction t)
+                else if (row is Transaction t)
                 {
                     TransactionSerializer.WriteObject(writer, t);
                     if (t.Investment != null)

@@ -277,7 +277,7 @@ namespace Walkabout.Views.Controls
 
         private Security Rename(Security fromSecurity, Security renameToThisSecurity)
         {
-            if (MessageBox.Show(string.Format(Properties.Resources.RenameSecurity, fromSecurity.Name, renameToThisSecurity.Name),
+            if (MessageBoxEx.Show(string.Format(Properties.Resources.RenameSecurity, fromSecurity.Name, renameToThisSecurity.Name),
                 Properties.Resources.MergeSecurityCaption, MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 try
@@ -290,7 +290,7 @@ namespace Walkabout.Views.Controls
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, Properties.Resources.MergeSecurityCaption, MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                    MessageBoxEx.Show(ex.Message, Properties.Resources.MergeSecurityCaption, MessageBoxButton.OKCancel, MessageBoxImage.Error);
                 }
             }
             return null;

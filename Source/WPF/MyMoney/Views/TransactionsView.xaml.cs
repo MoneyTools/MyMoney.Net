@@ -2505,6 +2505,8 @@ namespace Walkabout.Views
             }
         }
 
+        Transaction cutting;
+
         public void Cut()
         {
             if (this.InvestmentPortfolioView.Visibility == System.Windows.Visibility.Visible)
@@ -2513,12 +2515,14 @@ namespace Walkabout.Views
             }
 
             this.Commit();
-            object selected = this.CopySelection();
+            object selected = this.CopySelection("cut");
             Transaction t = selected as Transaction;
             Split s = selected as Split;
             if (t != null)
             {
-                this.DeleteTransaction(this.TheActiveGrid.SelectedIndex);
+                // Change state but don't do it until import where we can do a proper "move transaction".
+                t.IsCutting = true;
+                this.cutting = t;
             }
             else if (s != null)
             {
@@ -2587,6 +2591,8 @@ namespace Walkabout.Views
                 this.Commit();
                 this.PasteSelection();
             }
+
+            this.ClearCutState();            
         }
 
         private void PasteAttachment()
@@ -2720,7 +2726,9 @@ namespace Walkabout.Views
             }
         }
 
-        private object CopySelection()
+        string currentClipboardXml;
+
+        private object CopySelection(string action = "copy")
         {
             object selected = this.selectedSplit;
             if (selected == null)
@@ -2732,10 +2740,11 @@ namespace Walkabout.Views
             {
                 Exporters e = new Exporters();
 
-                string xml = e.ExportString(new object[] { this.activeAccount, selected });
+                string xml = e.ExportString(action, new object[] { this.activeAccount, selected });
 
                 if (!string.IsNullOrEmpty(xml))
                 {
+                    this.currentClipboardXml = xml;
                     Clipboard.SetDataObject(xml, true);
                 }
             }
@@ -2769,7 +2778,7 @@ namespace Walkabout.Views
 
                     Transaction selected = this.SelectedTransaction;
                     StringReader sr = new StringReader(xml);
-                    XmlImporter importer = new XmlImporter(this.myMoney);
+                    XmlImporter importer = new XmlImporter(this.myMoney, this.site);
                     using (XmlReader r = XmlReader.Create(sr))
                     {
                         Transaction first = null;
@@ -2806,7 +2815,7 @@ namespace Walkabout.Views
                 catch (Exception ex)
                 {
                     // clipboard must have contained something else then.
-                    MessageBox.Show(ex.Message, "Paste Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBoxEx.Show(ex.Message, "Paste Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -5151,6 +5160,32 @@ namespace Walkabout.Views
                 }
             }
         }
+
+        internal void OnClipboardChanged()
+        {
+            IDataObject data = Clipboard.GetDataObject();
+            if (data.GetDataPresent(typeof(string)))
+            {
+                string value = (string)data.GetData(typeof(string));
+                if (value != this.currentClipboardXml)
+                {
+                    this.ClearCutState();
+                }
+            }
+            else
+            {
+                this.ClearCutState();
+            }
+        }
+
+        internal void ClearCutState()
+        { 
+            if (this.cutting != null)
+            {
+                this.cutting.IsCutting = false;
+            }
+            this.cutting = null;
+        }
         #endregion
 
     }
@@ -5854,6 +5889,9 @@ namespace Walkabout.Views
                 case "IsReconciling":
                     this.UpdateBackground();
                     break;
+                case "IsCutting":
+                    this.UpdateBackground();
+                    break;
                 case "Unaccepted":
                     this.UpdateFontWeight();
                     this.UpdateForeground();
@@ -5882,13 +5920,19 @@ namespace Walkabout.Views
                 </Trigger>
              */
             bool isReconciling = false;
+            bool isCutting = false;
             bool isSelected = this.IsSelected;
             if (this.context != null)
             {
                 isReconciling = this.context.IsReconciling;
+                isCutting = this.context.IsCutting;
             }
             Brush backgroundBrush = null;
-            if (isSelected)
+            if (isCutting)
+            {
+                backgroundBrush = AppTheme.Instance.GetThemedBrush("ListItemCuttingBackgroundBrush");
+            }
+            else if (isSelected)
             {
                 if (this.mouseOver)
                 {

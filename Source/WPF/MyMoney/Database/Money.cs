@@ -511,6 +511,7 @@ namespace Walkabout.Data
             this.change = ChangeType.Changed;
         }
 
+        private bool removing;
         private BatchSync batched;
         private bool changePending;
         private ChangeEventArgs head;
@@ -526,6 +527,7 @@ namespace Walkabout.Data
             return this.batched;
         }
 
+        [XmlIgnore]
         public bool IsUpdating
         {
             get { return this.GetBatched().Read() > 0; }
@@ -10724,7 +10726,8 @@ namespace Walkabout.Data
             None,
             TransactionDropTarget = 1,
             AttachmentDropTarget = 2,
-            Reconciling = 4
+            Reconciling = 4,
+            CutTarget = 8
         }
 
         public Transaction()
@@ -11120,6 +11123,24 @@ namespace Walkabout.Data
                 {
                     this.SetViewState(TransactionViewFlags.Reconciling, value);
                     this.FireChangeEvent(this, new ChangeEventArgs(this, "IsReconciling", ChangeType.None));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get or set a transient boolean value indicating that this transaction is being cut.
+        /// </summary>
+        [XmlIgnore]
+        [IgnoreDataMember]
+        public bool IsCutting
+        {
+            get { return (this.viewState & TransactionViewFlags.CutTarget) != 0; }
+            set
+            {
+                if (this.IsCutting != value)
+                {
+                    this.SetViewState(TransactionViewFlags.CutTarget, value);
+                    this.FireChangeEvent(this, new ChangeEventArgs(this, "IsCutting", ChangeType.None));
                 }
             }
         }
@@ -13741,7 +13762,7 @@ namespace Walkabout.Data
     public enum SplitFlags
     {
         None,
-        Budgeted = 1,
+        Budgeted = 1
     }
 
     //================================================================================

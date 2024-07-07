@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
+using System.Security.Principal;
 using System.Xml;
+using Walkabout.Attachments;
 using Walkabout.Data;
 
 namespace Walkabout.Migrate
@@ -11,9 +14,11 @@ namespace Walkabout.Migrate
     {
         private readonly Dictionary<long, long> remappedIds = new Dictionary<long, long>();
         private Account last;
+        private IServiceProvider site;
 
-        public XmlImporter(MyMoney money) : base(money)
+        public XmlImporter(MyMoney money, IServiceProvider site) : base(money)
         {
+            this.site = site;
         }
 
         public Account LastAccount => this.last;
@@ -72,6 +77,7 @@ namespace Walkabout.Migrate
         /// </summary>
         public IEnumerable<object> ImportObjects(XmlReader reader, Account selected, Transaction selectedTransaction)
         {
+            var action = "copy";
             List<object> result = new List<object>();
             this.Money.BeginUpdate(this);
             try
@@ -96,7 +102,43 @@ namespace Walkabout.Migrate
                                     // this code path is used when importing entire account from a file.
                                     ta = this.Money.Accounts.FindAccount(t.AccountName);
                                 }
-                                this.AddTransaction(ta, t);
+                                if (action == "cut")
+                                {
+                                    // Ok, then we find the transaction and move it to the new location
+                                    if (t.AccountName == selected.Name)
+                                    {
+                                        // nothing to do!
+                                    }
+                                    else
+                                    {
+                                        // find the original transaction by id
+                                        Transaction original = this.Money.Transactions.FindTransactionById(t.Id);
+                                        if (original != null)
+                                        {
+                                            if (original.Status == TransactionStatus.Reconciled)
+                                            {
+                                                throw new Exception("Cannot move a reconciled transaction");
+                                            }
+                                            else
+                                            {
+                                                if (t.HasAttachment)
+                                                {
+                                                    AttachmentManager mgr = this.site.GetService(typeof(AttachmentManager)) as AttachmentManager;
+                                                    mgr.MoveAttachments(original, selected);
+                                                }
+                                                original.Account = selected;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            // ???
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    this.AddTransaction(ta, t);
+                                }
                                 result.Add(t);
                                 break;
                             case "Split":
@@ -111,11 +153,22 @@ namespace Walkabout.Migrate
                                 break;
                             case "Investment":
                                 Investment i = (Investment)InvestmentSerializer.ReadObject(reader, false);
-                                if (i.SecurityName != null)
+                                if (action == "cut")
                                 {
-                                    result.Add(i);
-                                    this.AddInvestment(selected, i);
+                                    // do nothing, since the investment remains on the original transaction.
                                 }
+                                else
+                                {
+                                    if (i.SecurityName != null)
+                                    {
+                                        result.Add(i);
+                                        this.AddInvestment(selected, i);
+                                    }
+                                }
+                                break;
+                            case "root":
+                                action = reader.GetAttribute("action");
+                                reader.Read();
                                 break;
                             default:
                                 reader.Read();

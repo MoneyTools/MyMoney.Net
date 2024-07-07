@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using Walkabout.Controls;
 using Walkabout.Migrate;
+using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs
 {
@@ -63,7 +64,7 @@ namespace Walkabout.Dialogs
                 {
                     if (unique.Contains(f.Field))
                     {
-                        MessageBox.Show("You have mapped the field '" + f.Field + "' twice?", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBoxEx.Show("You have mapped the field '" + f.Field + "' twice?", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return false;
                     }
                     unique.Add(f.Field);
@@ -73,7 +74,7 @@ namespace Walkabout.Dialogs
 
             if (count < this.fields.Length)
             {
-                var rc = MessageBox.Show("You have not mapped all the fields, are you sure you want to continue?", "Confirm Incomplete Mapping",
+                var rc = MessageBoxEx.Show("You have not mapped all the fields, are you sure you want to continue?", "Confirm Incomplete Mapping",
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (rc == MessageBoxResult.No)
                 {

@@ -265,7 +265,7 @@ namespace Walkabout.Views.Controls
             if (data.GetDataPresent(typeof(string)))
             {
                 string xml = (string)data.GetData(typeof(string));
-                XmlImporter importer = new XmlImporter(this.myMoney);
+                XmlImporter importer = new XmlImporter(this.myMoney, this.Site);
                 importer.ImportAccount(xml);
                 if (importer.LastAccount == null)
                 {
