@@ -5163,19 +5163,26 @@ namespace Walkabout.Views
 
         internal void OnClipboardChanged()
         {
-            IDataObject data = Clipboard.GetDataObject();
-            if (data.GetDataPresent(typeof(string)))
+            try
             {
-                string value = (string)data.GetData(typeof(string));
-                if (value != this.currentClipboardXml)
+                IDataObject data = Clipboard.GetDataObject();
+                if (data.GetDataPresent(typeof(string)))
+                {
+                    string value = (string)data.GetData(typeof(string));
+                    if (value != this.currentClipboardXml)
+                    {
+                        this.ClearCutState();
+                    }
+                }
+                else
                 {
                     this.ClearCutState();
                 }
             }
-            else
+            catch (Exception ex)
             {
-                this.ClearCutState();
-            }
+                // don't care if clipboard is weird state.
+            }               
         }
 
         internal void ClearCutState()

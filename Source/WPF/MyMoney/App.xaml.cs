@@ -17,6 +17,9 @@ namespace Walkabout
 {
     /// <summary>
     /// Interaction logic for App.xaml
+    /// 
+    /// TODO: .NET 8.0 doesn't support all the ClickOnce features of .NET 4.8
+    /// See https://learn.microsoft.com/en-us/visualstudio/deployment/access-clickonce-deployment-properties-dotnet?view=vs-2022
     /// </summary>
     public partial class App : Application
     {

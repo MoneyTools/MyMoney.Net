@@ -494,7 +494,13 @@ namespace Walkabout
 
         private void OnClipboardChanged(object sender, EventArgs e)
         {
-            this.TransactionView.OnClipboardChanged();
+            this.delayedActions.StartDelayedAction("UpdateClipboard", () =>
+            {
+                if (!this.closed)
+                {
+                    this.TransactionView.OnClipboardChanged();
+                }
+            }, TimeSpan.FromSeconds(0.1));
         }
 
         private void TransactionView_QuickFilterChanged(object sender, EventArgs e)
@@ -4646,6 +4652,8 @@ namespace Walkabout
             this.toolBox.Width = e.NewSize.Width;
         }
 
+        bool closed;
+
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
@@ -4659,6 +4667,7 @@ namespace Walkabout
 
         protected override void OnClosed(EventArgs e)
         {
+            this.closed = true;
             base.OnClosed(e);
             this.CleanupStockQuoteManager();
 
