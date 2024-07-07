@@ -3247,6 +3247,17 @@ namespace Walkabout.Views
                                         rebalance = true;
                                     }
                                 }
+                                else if (this.ActiveAccount != null && t.Account != this.ActiveAccount)
+                                {
+                                    // account has changed, so remove it from this view but don't let the TransactionCollection
+                                    // think this is a delete operation!
+                                    if (tc.Contains(t))
+                                    {
+                                        tc.QuietDelete = true;
+                                        tc.Remove(t);
+                                        tc.QuietDelete = false;
+                                    }
+                                }
                             }
                         }
                         else if (args.Item is Security s)
@@ -3873,6 +3884,7 @@ namespace Walkabout.Views
         public static readonly RoutedUICommand CommandLookupPayee = new RoutedUICommand("LookupPayee", "CommandLookupPayee", typeof(TransactionsView));
         public static readonly RoutedUICommand CommandRecategorize = new RoutedUICommand("Recategorize", "CommandRecategorize", typeof(TransactionsView));
         public static readonly RoutedUICommand CommandSetTaxDate = new RoutedUICommand("SetTaxDate", "CommandSetTaxDate", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandMove = new RoutedUICommand("Move", "CommandMove", typeof(TransactionsView));
         public static readonly RoutedUICommand CommandGotoRelatedTransaction = new RoutedUICommand("GotoRelatedTransaction", "CommandGotoRelatedTransaction", typeof(TransactionsView));
         public static readonly RoutedUICommand CommandGotoStatement = new RoutedUICommand("GotoStatement", "CommandGotoStatement", typeof(TransactionsView));
         public static readonly RoutedUICommand CommandViewTransactionsByAccount = new RoutedUICommand("ViewTransactionsByAccount", "CommandViewTransactionsByAccount", typeof(TransactionsView));
@@ -5103,6 +5115,42 @@ namespace Walkabout.Views
             base.OnLostKeyboardFocus(e);
         }
 
+        private void CanExecute_Move(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = this.SelectedTransaction != null && this.myMoney.Accounts.Count > 1;
+        }
+
+        private void OnMoveTransaction(object sender, ExecutedRoutedEventArgs e)
+        {
+            var t = this.SelectedTransaction;
+            if (t != null)
+            {
+                if (t.Status == TransactionStatus.Reconciled)
+                {
+                    MessageBoxEx.Show("Cannot move a reconciled transaction", "Move Not Allowed", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    var account = AccountHelper.PickAccount(this.myMoney, null, "Select the account you would like to move this transaction to");
+                    if (account != null)
+                    {
+                        try
+                        {
+                            if (t.HasAttachment)
+                            {
+                                AttachmentManager mgr = this.ServiceProvider.GetService(typeof(AttachmentManager)) as AttachmentManager;
+                                mgr.MoveAttachments(t, account);
+                            }
+                            t.Account = account;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBoxEx.Show(ex.Message, "Move failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+        }
         #endregion
 
     }
@@ -5574,6 +5622,8 @@ namespace Walkabout.Views
             return MessageBoxEx.Show("Do you want to delete this transaction?", string.Empty, MessageBoxButton.YesNo) == MessageBoxResult.Yes;
         }
 
+        public bool QuietDelete { get; set; }
+
         protected override void RemoveItem(int index)
         {
             Transaction t = this[index];
@@ -5583,8 +5633,12 @@ namespace Walkabout.Views
                 {
                     MessageBoxEx.Show("You cannot remove Reconciled transactions", string.Empty, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                else
+                else if (this.QuietDelete)
                 {
+                    base.RemoveItem(index);
+                } 
+                else 
+                { 
                     if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || !this.Prompt || this.ConfirmDelete())
                     {
                         this.money.BeginUpdate(this);

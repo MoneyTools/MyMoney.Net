@@ -1146,7 +1146,6 @@ namespace Walkabout.Dialogs
 
     internal class AttachmentDialogFileItem : AttachmentDialogItem
     {
-        private ImageSource imageSource;
         private Image image;
 
         public AttachmentDialogFileItem(string fileName)
@@ -1185,7 +1184,7 @@ namespace Walkabout.Dialogs
 
         public override FrameworkElement CloneContent()
         {
-            return new Image() { Source = imageSource }; 
+            return new Image() { Source = image.Source }; 
         }
 
         public override void Copy()

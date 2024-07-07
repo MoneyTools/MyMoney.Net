@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="2.1.0.21" date="6/22/2024">
+  <change version="2.1.0.23" date="7/6/2024">
+    - Add "move" transaction command so you can move a transaction and all it's attachmnts to a different account.
+  </change>
+  <change version="2.1.0.22" date="7/6/2024">
     - Fix issue #112: add hyperlinks on future bills report.
     - Fix issue #115: Attach pdf files to register entries.
   </change>

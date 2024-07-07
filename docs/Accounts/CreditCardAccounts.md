@@ -10,5 +10,5 @@ This is to help remind our kids that red is bad, credit cards are dangerous.  U
 
 You must remember this when [Balancing](BalancingAccounts.md) a credit card account, the "New Balance" is usually negative, rather than positive.
 
-See [Investment Accounts](InvestmentAccounts.md).
+See [Investment Accounts](InvestmentAccounts.md) | [Transactions Menu](TransactionsMenu.md).
 

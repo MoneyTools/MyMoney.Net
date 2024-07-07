@@ -29,6 +29,7 @@
 
             <Separator/>
             <MenuItem Name="menuItemDelete" Header="_Delete" Command="Delete"/>
+            <MenuItem Name="menuItemMove" Header="Move..." Command="views:TransactionsView.CommandMove"/>
             <Separator/>
 
             <MenuItem x:Name="MenuViewToggleOneLineView" Header="_One Line View" Command="views:TransactionsView.CommandViewToggleOneLineView" InputGestureText="Ctrl-T" IsChecked="{Binding OneLineView}"/>
@@ -60,6 +61,7 @@
         <CommandBinding Command="views:TransactionsView.CommandLookupPayee" Executed="OnCommandLookupPayee" CanExecute="CanExecute_LookupPayee"/>
         <CommandBinding Command="views:TransactionsView.CommandRecategorize" Executed="OnRecategorizeAll" CanExecute="CanExecute_Recategorize" />
         <CommandBinding Command="views:TransactionsView.CommandSetTaxDate" Executed="OnSetTaxDate" CanExecute="CanExecute_SetTaxDate" />
+        <CommandBinding Command="views:TransactionsView.CommandMove" Executed="OnMoveTransaction" CanExecute="CanExecute_Move" />
 
         <CommandBinding Command="views:TransactionsView.CommandGotoRelatedTransaction" Executed="OnCommandGotoRelatedTransaction"  CanExecute="CanExecute_GotoRelatedTransaction"/>
         <CommandBinding Command="views:TransactionsView.CommandGotoStatement" Executed="OnCommandGotoStatement" CanExecute="CanExecute_GotoStatement" />

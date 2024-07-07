@@ -20,8 +20,8 @@ If the attachment is a non-image format like .pdf you will instead see a file ic
 
 ![](../Images/Attachments7.png)
 
-You can double click the icon to open the attachment.  You can also delete it, or drag drop more files 
-or past more images.  One transaction can have as many attachments as you like.
+You can double click the icon to open the attachment.  You can also delete the selected attachment, or drag drop more files 
+or paste more images.  One transaction can have as many attachments as you like.
 
 If you are keeping receipts for sales tax deduction, check with your accountant to see if you also need to keep the paper copy someplace.
 
@@ -37,7 +37,7 @@ Click scan and it should recognize the boundary of the image.  If the boundary 
 
 ![](../Images/Attachments4.png)
 
-If you don't like the scan, just press **delete**  and try again.  Some receipts have ten feet of crap at the bottom that has nothing to do with your purchase.  You might want to cut that off before scanning in order to save on disk space.   One year worth of receipts, about 750 of them, takes about 60 megabytes.   So not a big problem, you can easily store every receipt for a life time in a few gigabytes.   Most scanners have a limit to the length they can scan, if you reach that limit, just scan the second half into a new attachment.  You can have as many attachments as you want associated with a single transaction.
+If you don't like the scan, just press **delete** and try again.  Some receipts have ten feet of crap at the bottom that has nothing to do with your purchase.  You might want to cut that off before scanning in order to save on disk space.   One year worth of receipts, about 750 of them, takes about 60 megabytes.   So not a big problem, you can easily store every receipt for a life time in a few gigabytes.   Most scanners have a limit to the length they can scan, if you reach that limit, just scan the second half into a new attachment.  You can have as many attachments as you want associated with a single transaction.
 
 When you paste rich text content, it can also contain images.
 

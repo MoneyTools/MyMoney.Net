@@ -39,7 +39,6 @@ The amount of the transaction.  Use the Payment field if you paid money, otherw
 ### Balance
 A read only field showing you the current balance of your account.  This field only makes sense if you sort the transactions by date (which is the default).
 
-See also [Credit Card Accounts](CreditCardAccounts.md) | [Investment Accounts](InvestmentAccounts.md).
-
+See also [Credit Card Accounts](CreditCardAccounts.md) | [Investment Accounts](InvestmentAccounts.md) | [Transactions Menu](TransactionsMenu.md)
 
 

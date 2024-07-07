@@ -294,9 +294,27 @@ namespace Walkabout.Attachments
                     // delete it later.
                     TempFilesManager.AddTempFile(fileName);
                 }
-                TempFilesManager.RemoveTempFile(newFileName);
             }
             fromTransaction.HasAttachment = false;
+        }
+
+        public void MoveAttachments(Transaction transaction, Account newAccount)
+        {
+            foreach (string fileName in this.GetAttachments(transaction))
+            {
+                string newFileName = this.GetUniqueFileName(transaction, newAccount, Path.GetExtension(fileName));
+                try
+                {
+                    File.Move(fileName, newFileName);
+                }
+                catch
+                {
+                    // perhaps the old file is locked?
+                    File.Copy(fileName, newFileName);
+                    // delete it later.
+                    TempFilesManager.AddTempFile(fileName);
+                }
+            }
         }
 
         private void DeleteAttachments(Transaction t)
@@ -319,6 +337,11 @@ namespace Walkabout.Attachments
 
         public string GetUniqueFileName(Transaction t, string extension)
         {
+            return this.GetUniqueFileName(t, t.Account, extension);
+        }
+
+        public string GetUniqueFileName(Transaction t, Account newAccount, string extension)
+        {
             string path = this.AttachmentDirectory;
             if (string.IsNullOrEmpty(path))
             {
@@ -328,7 +351,7 @@ namespace Walkabout.Attachments
             {
                 Directory.CreateDirectory(path);
             }
-            string dir = Path.Combine(path, NativeMethods.GetValidFileName(t.Account.Name));
+            string dir = Path.Combine(path, NativeMethods.GetValidFileName(newAccount.Name));
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -666,7 +689,6 @@ namespace Walkabout.Attachments
                     Directory.Move(oldAccountDirectory, newAccountDirectory);
                 }
             }
-
         }
 
     }
