@@ -50,6 +50,16 @@ namespace Walkabout.Utilities
         public const int QS_ALLINPUT = QS_INPUT | QS_POSTMESSAGE | QS_TIMER |
             QS_PAINT | QS_HOTKEY;
 
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
         [DllImport("user32.dll", EntryPoint = "SetParent",
              SetLastError = true, ExactSpelling = true,
              CallingConvention = CallingConvention.StdCall)]

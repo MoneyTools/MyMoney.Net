@@ -1,6 +1,10 @@
 # Attachments
 
-The first column of a transaction view is labeled "A" and stands for "Attachments"
+The first column of a transaction view is labeled "A" and stands for "Attachments".
+An attachment is a file of any type that you want to associate with your transaction.
+
+You can drag/drop any file from your desktop onto a transaction and make an Attachment that way.
+You can also paste an image onto the selected transaction and it will add the image to the attachments.
 
 ![](../Images/Attachments.png)
 
@@ -12,9 +16,16 @@ If you already have an attachment then the dialog loads it up so you can see it:
 
 ![](../Images/Attachments1.png)
 
+If the attachment is a non-image format like .pdf you will instead see a file icon:
+
+![](../Images/Attachments7.png)
+
+You can double click the icon to open the attachment.  You can also delete it, or drag drop more files 
+or past more images.  One transaction can have as many attachments as you like.
+
 If you are keeping receipts for sales tax deduction, check with your accountant to see if you also need to keep the paper copy someplace.
 
-If you want to add a new attachment you can paste an image or any rich text (which is handy if the receipt was in an email) or you can click the **Scan**  button :
+You can paste an image or any rich text (which is handy if the receipt was in an email) or any file on disk (like a .pdf file) or you can click the **Scan**  button :
 
 ![](../Images/Attachments2.png)
 
@@ -33,12 +44,9 @@ When you paste rich text content, it can also contain images.
 ![](../Images/Attachments5.png)
 
 
-**Drag/Drop**
-You can also drag/drop a .png, .jpg or .gif from your desktop onto a transaction and make an Attachment that way.
-You can also paste an image onto the selected transaction and it will add the image to the attachments.
-
 **Printing**
-Sometimes you need to return an item and you need a print out of the receipt, just select the image and click the print button:
+Sometimes you need to return an item and you need a print out of the receipt, just select the image and click the print button, this only works for selected images or rich text.  For other file types you will need to use the 
+appropriate file viewer to print them.
 
 ![](../Images/Attachments6.png)
 

@@ -9,6 +9,7 @@
         ui:ThemeManager.IsThemeAware="True"
         Title="Attachments" Height="425" Width="800" 
         xmlns:help="clr-namespace:Walkabout.Help"
+        AllowDrop="True"
         help:HelpService.HelpKeyword="Basics/Attachments/">
     
     <Window.Resources>
@@ -17,7 +18,22 @@
             <Setter Property="IsCompact" Value="True"/>
             <Setter Property="LabelPosition" Value="Collapsed"/>
         </Style>
-    </Window.Resources>
+
+        <!-- Drawing: Assembly symbol -->
+        <DrawingGroup x:Key="FileDrawing" PresentationOptions:Freeze="true">
+          <DrawingGroup.Children>
+            <!-- Layer 1/<Path> -->
+            <GeometryDrawing Brush="White" Geometry="F1 M 15.000,0.000 L 4.000,0.000 L 4.000,2.000 L 2.000,2.000 L 2.000,4.000 L 0.000,4.000 L 0.000,15.000 L 11.000,15.000 L 11.000,12.000 L 13.000,12.000 L 13.000,10.000 L 15.000,10.000 L 15.000,0.000 Z"/>
+            <!-- Layer 1/<Compound Path> -->
+            <GeometryDrawing Brush="#ff414141" Geometry="F1 M 8.000,7.000 L 3.000,7.000 L 3.000,12.000 L 8.000,12.000 L 8.000,7.000 Z M 10.000,14.000 L 1.000,14.000 L 1.000,5.000 L 10.000,5.000 L 10.000,14.000 Z M 3.000,3.000 L 3.000,4.000 L 11.000,4.000 L 11.000,11.000 L 12.000,11.000 L 12.000,3.000 L 3.000,3.000 Z M 14.000,1.000 L 14.000,9.000 L 13.000,9.000 L 13.000,2.000 L 5.000,2.000 L 5.000,1.000 L 14.000,1.000 Z"/>
+            <!-- Layer 1/<Path> -->
+            <GeometryDrawing Brush="White" Geometry="F1 M 3.000,12.000 L 8.000,12.000 L 8.000,7.000 L 3.000,7.000 L 3.000,12.000 Z"/>
+          </DrawingGroup.Children>
+        </DrawingGroup>
+        <!-- Image: Assembly symbol -->
+        <DrawingImage x:Key="DefaultFileImage" Drawing="{StaticResource FileDrawing}" PresentationOptions:Freeze="true" />
+
+      </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="Cut" Executed="Cut" CanExecute="HasSelectedItem"/>
         <CommandBinding Command="Copy" Executed="Copy" CanExecute="HasSelectedItem"/>

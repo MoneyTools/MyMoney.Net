@@ -1058,7 +1058,7 @@ namespace Walkabout.Views
             {
                 var transaction = row.Item as Transaction;
                 AttachmentManager mgr = this.ServiceProvider.GetService(typeof(AttachmentManager)) as AttachmentManager;
-                if (transaction != null && transaction.HasAttachment == false && mgr != null)
+                if (transaction != null && mgr != null)
                 {
                     StringBuilder sb = new StringBuilder();
                     var files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -1243,29 +1243,12 @@ namespace Walkabout.Views
                 else if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
                     var transaction = row.Item as Transaction;
-                    if (transaction != null && transaction.HasAttachment == false)
+                    if (transaction != null)
                     {
-                        var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-                        if (files.Length == 1 && this.IsValidAttachmentExtension(files[0]))
-                        {
-                            this.SetDragDropStyles(row, DropType.File);
-                            e.Effects = DragDropEffects.Copy;
-                        }
+                        e.Effects = DragDropEffects.Copy;
                     }
                 }
             }
-        }
-
-        private bool IsValidAttachmentExtension(string filePath)
-        {
-            var extension = Path.GetExtension(filePath).ToLower();
-            if (extension == ".jpg" || extension == ".png" || extension == ".gif" || extension == ".bmp")
-            {
-                return true;
-            }
-
-            return false;
         }
 
         private void OnDataGridRowDragLeave(object sender, DragEventArgs e)

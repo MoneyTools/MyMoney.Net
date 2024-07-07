@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ModernWpf.Controls;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -6,8 +8,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using Walkabout.Attachments;
 using Walkabout.Configuration;
 using Walkabout.Controls;
@@ -55,6 +59,59 @@ namespace Walkabout.Dialogs
             this.resizerBrush = (Brush)this.Resources["ResizerThumbBrush"];
         }
 
+        protected override void OnDragEnter(DragEventArgs e)
+        {
+            if (this.transaction == null)
+            {
+                return;
+            }
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Copy;
+                e.Handled = true;
+            }
+        }
+
+        protected override void OnDrop(DragEventArgs e)
+        {
+            if (this.transaction == null)
+            {
+                return;
+            }
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                foreach (var file in files)
+                {
+                    var extension = Path.GetExtension(file);
+                    StringBuilder sb = new StringBuilder();
+                    try
+                    {
+                        string attachmentFullPath = this.Manager.GetUniqueFileName(transaction, extension);
+                        File.Copy(files[0], attachmentFullPath, true);
+                        transaction.HasAttachment = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        sb.AppendLine(ex.Message);
+                    }
+                    if (sb.Length > 0)
+                    {
+                        MessageBoxEx.Show(sb.ToString(), "Add Attachments Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                this.LoadAttachments();
+            }
+        }
+
+        private void OnDoubleClickItem(AttachmentDialogItem item)
+        {
+            if (!string.IsNullOrEmpty(item.FileName))
+            {
+                InternetExplorer.OpenUrl(0, item.FileName);
+            }
+        }
+
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
@@ -69,13 +126,17 @@ namespace Walkabout.Dialogs
             Point pos = e.GetPosition(this.CanvasGrid);
             HitTestResult result = VisualTreeHelper.HitTest(this.CanvasGrid, pos);
 
-            DependencyObject hit = result.VisualHit;
+            DependencyObject hit = result.VisualHit;            
             if (hit != null)
             {
                 AttachmentDialogItem item = WpfHelper.FindAncestor<AttachmentDialogItem>(hit);
                 if (item != null)
                 {
                     this.SelectItem(item);
+                    if (e.ClickCount > 1)
+                    {
+                        this.OnDoubleClickItem(item);
+                    }
                     return;
                 }
                 if (hit == this.resizer)
@@ -139,6 +200,10 @@ namespace Walkabout.Dialogs
                         {
                             // load an xamlpackage document.
                             this.AddItem(new AttachmentDialogDocumentItem(filePath));
+                        }
+                        else
+                        {
+                            this.AddItem(new AttachmentDialogFileItem(filePath));
                         }
                     }
                     catch
@@ -369,6 +434,7 @@ namespace Walkabout.Dialogs
             {
                 this.resizer.LimitBounds = this.GetScaledBounds(item.ResizeLimit);
                 this.resizer.Bounds = this.GetScaledBounds(resizerBounds);
+                this.resizer.IsEnabled = item.LiveResizable;
                 this.resizer.InvalidateArrange();
             }
         }
@@ -1076,6 +1142,92 @@ namespace Walkabout.Dialogs
             this.image.Source = copy;
         }
 
+    }
+
+    internal class AttachmentDialogFileItem : AttachmentDialogItem
+    {
+        private ImageSource imageSource;
+        private Image image;
+
+        public AttachmentDialogFileItem(string fileName)
+        {
+            this.image = new Image();
+            this.FileName = fileName;
+            image.Source = FileIcons.Extract(fileName); ;
+            this.AddVisualChild(this.image);
+            this.Loaded += this.OnItemLoaded;
+        }
+
+        private void OnItemLoaded(object sender, RoutedEventArgs e)
+        {
+            if (image.Source == null)
+            {
+                var drawing = (DrawingImage)this.FindResource("DefaultFileImage");
+                image.Source = drawing;
+            }
+            if (image.Source != null)
+            {
+                image.Width = this.image.Source.Width;
+                image.Height = this.image.Source.Height;
+            }
+        }
+
+        public override FrameworkElement Content => this.image;
+
+        public override string FileExtension => System.IO.Path.GetExtension(this.FileName);
+
+        public override bool LiveResizable => false;
+
+        public override Rect ResizeLimit
+        {
+            get { return new Rect(0, 0, this.image.Source.Width, this.image.Source.Height); }
+        }
+
+        public override FrameworkElement CloneContent()
+        {
+            return new Image() { Source = imageSource }; 
+        }
+
+        public override void Copy()
+        {
+        }
+
+        public override void Resize(Rect newBounds)
+        {
+        }
+
+        public override void Save(string filePath)
+        {
+        }
+
+        protected override Visual GetVisualChild(int index)
+        {
+            if (index == 0)
+            {
+                return this.image;
+            }
+            return null;
+        }
+
+        protected override int VisualChildrenCount
+        {
+            get
+            {
+                return 1;
+            }
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            this.image.Measure(availableSize);
+            return new Size(this.image.Source.Width, this.image.Source.Height);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            this.image.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+            return finalSize;
+        }
     }
 
     /// <summary>
