@@ -9,7 +9,7 @@ branch and submit a pull request.
 Start by cloning the repo (or make your own fork if you plan to do pull requests):
 
 ```
-git clone https://github.com/clovett/MyMoney.Net
+git clone https://github.com/MoneyTools/MyMoney.Net
 ```
 
 To build the WPF app load the following solution into

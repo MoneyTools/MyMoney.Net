@@ -64,5 +64,9 @@ Every numeric field in the application pops up a [calculator](Basics/Calculator.
 
 ![](Images/Home13.png)
 
-Lastly, for additional eye candy, the application supports
+For additional eye candy, the application supports
 beautiful [Modern WPF](https://github.com/Kinnara/ModernWpf) light and a dark themes. See [Options](Basics/Options.md).
+
+![](Images//github.svg)
+
+Lastly, this is [open source on Github](https://github.com/MoneyTools/MyMoney.Net).
