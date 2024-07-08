@@ -146,6 +146,7 @@ namespace Walkabout.Reports
 
         private void WriteSummaryRow(IReportWriter writer, Color c, string col1, string col2, string col3)
         {
+            writer.StartRow();
             writer.StartCell();
             writer.WriteElement(new Rectangle() { Width = 20, Height = 16, Fill = new SolidColorBrush(c) });
             writer.EndCell();
@@ -173,13 +174,13 @@ namespace Walkabout.Reports
             writer.StartCell();
             writer.WriteNumber(col2);
             writer.EndCell();
-            writer.StartCell();
             if (col3 != null)
             {
+                writer.StartCell();
                 writer.WriteNumber(col3);
                 writer.EndCell();
             }
-            writer.EndRow();
+            writer.EndHeaderRow();
         }
 
         public override Task Generate(IReportWriter writer)
@@ -247,19 +248,21 @@ namespace Walkabout.Reports
 
             writer.WriteHeading(heading);
 
+            if (this.flowwriter != null)
+            {
+                Paragraph pheading = this.flowwriter.CurrentParagraph;
 
-            Paragraph pheading = this.flowwriter.CurrentParagraph;
+                DatePicker picker = new DatePicker();
+                System.Windows.Automation.AutomationProperties.SetName(picker, "ReportDate");
+                // byYearCombo.SelectionChanged += OnYearChanged;
+                picker.Margin = new Thickness(10, 0, 0, 0);
+                picker.SelectedDate = this.reportDate;
+                picker.DisplayDate = this.reportDate;
+                picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
+                this.AddInline(pheading, picker);
+            }
 
-            DatePicker picker = new DatePicker();
-            System.Windows.Automation.AutomationProperties.SetName(picker, "ReportDate");
-            // byYearCombo.SelectionChanged += OnYearChanged;
-            picker.Margin = new Thickness(10, 0, 0, 0);
-            picker.SelectedDate = this.reportDate;
-            picker.DisplayDate = this.reportDate;
-            picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
-            this.AddInline(pheading, picker);
-
-            this.flowwriter.WriteCurrencyHeading(this.DefaultCurrency);
+            this.WriteCurrencyHeading(writer, this.DefaultCurrency);
 
             if (this.reportDate.Date != DateTime.Today)
             {
@@ -322,6 +325,7 @@ namespace Walkabout.Reports
             writer.EndTable();
 
             writer.EndCell();
+
             // pie chart
             AnimatingPieChart chart = new AnimatingPieChart();
             chart.Width = 400;
@@ -645,6 +649,7 @@ namespace Walkabout.Reports
 
             writer.StartFooterRow();
             this.WriteRow(writer, true, true, FontWeights.Bold, null, "Total", null, null, null, marketValue, null, costBasis, gainLoss);
+            writer.EndFooterRow();
             // only close the table 
             writer.EndTable();
         }
@@ -838,7 +843,7 @@ namespace Walkabout.Reports
             writer.StartCell();
             writer.WriteNumber("%");
             writer.EndCell();
-            writer.EndRow();
+            writer.EndHeaderRow();
         }
 
         private void WriteRow(IReportWriter writer, bool expandable, bool header, FontWeight weight, DateTime? aquired, string description, string descriptionUrl, decimal? quantity, decimal? price, decimal marketValue, decimal? unitCost, decimal costBasis, decimal gainLoss)
@@ -907,7 +912,14 @@ namespace Walkabout.Reports
             writer.WriteNumber(percent.ToString("N0"));
             writer.EndCell();
 
-            writer.EndRow();
+            if (header)
+            {
+                writer.EndHeaderRow();
+            }
+            else
+            {
+                writer.EndRow();
+            }
 
         }
 
@@ -917,7 +929,7 @@ namespace Walkabout.Reports
             writer.StartCell(1, 2);
             writer.WriteParagraph(caption);
             writer.EndCell();
-            writer.EndRow();
+            writer.EndHeaderRow();
         }
 
         private void WriteRow(IReportWriter writer, string name, decimal balance)

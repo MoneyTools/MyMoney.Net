@@ -68,6 +68,7 @@ namespace Walkabout.Commands
         public static readonly RoutedUICommand CommandRemoveSeries;
         public static readonly RoutedUICommand CommandShowBudget;
         public static readonly RoutedUICommand CommandExportData;
+        public static readonly RoutedUICommand CommandExportHtml;
 
 
         static AppCommands()
@@ -136,6 +137,7 @@ namespace Walkabout.Commands
             CommandRemoveSeries = new RoutedUICommand("Remove series", "CommandRemoveSeries", typeof(AppCommands));
             CommandShowBudget = new RoutedUICommand("Show budget", "CommandShowBudget", typeof(AppCommands));
             CommandExportData = new RoutedUICommand("Export...", "CommandExportData", typeof(AppCommands));
+            CommandExportHtml = new RoutedUICommand("Export HTML...", "CommandExportHtml", typeof(AppCommands));
         }
     }
 }

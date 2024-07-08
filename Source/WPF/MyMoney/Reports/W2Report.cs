@@ -179,7 +179,6 @@ namespace Walkabout.Taxes
         public override Task Generate(IReportWriter writer)
         {
             this.transactionsByCategory = new Dictionary<Category, List<Transaction>>();
-            FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
             writer.WriteHeading("Select year for report: ");
 
             ICollection<Transaction> transactions = this.myMoney.Transactions.GetAllTransactionsByDate();
@@ -191,42 +190,45 @@ namespace Walkabout.Taxes
                 this.SetStartDate(new DateTime(lastYear, 1, 1));
             }
 
-            Paragraph heading = fwriter.CurrentParagraph;
-
-            ComboBox byYearCombo = new ComboBox();
-            byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            int selected = -1;
-            int index = 0;
-            for (int i = lastYear; i >= firstYear; i--)
+            if (writer is FlowDocumentReportWriter fwriter)
             {
-                if (this.fiscalYearStart > 0 && i == this.endDate.Year)
+                Paragraph heading = fwriter.CurrentParagraph;
+
+                ComboBox byYearCombo = new ComboBox();
+                byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+                int selected = -1;
+                int index = 0;
+                for (int i = lastYear; i >= firstYear; i--)
                 {
-                    selected = index;
+                    if (this.fiscalYearStart > 0 && i == this.endDate.Year)
+                    {
+                        selected = index;
+                    }
+                    else if (this.fiscalYearStart == 0 && i == this.startDate.Year)
+                    {
+                        selected = index;
+                    }
+                    if (this.fiscalYearStart > 0)
+                    {
+                        byYearCombo.Items.Add("FY " + i);
+                    }
+                    else
+                    {
+                        byYearCombo.Items.Add(i.ToString());
+                    }
+                    index++;
                 }
-                else if (this.fiscalYearStart == 0 && i == this.startDate.Year)
+
+                if (selected != -1)
                 {
-                    selected = index;
+                    byYearCombo.SelectedIndex = selected;
                 }
-                if (this.fiscalYearStart > 0)
-                {
-                    byYearCombo.Items.Add("FY " + i);
-                }
-                else
-                {
-                    byYearCombo.Items.Add(i.ToString());
-                }
-                index++;
+                byYearCombo.SelectionChanged += this.OnYearChanged;
+                byYearCombo.Margin = new Thickness(10, 0, 0, 0);
+                this.AddInline(heading, byYearCombo);
             }
 
-            if (selected != -1)
-            {
-                byYearCombo.SelectedIndex = selected;
-            }
-            byYearCombo.SelectionChanged += this.OnYearChanged;
-            byYearCombo.Margin = new Thickness(10, 0, 0, 0);
-            this.AddInline(heading, byYearCombo);
-
-            fwriter.WriteCurrencyHeading(this.DefaultCurrency);
+            this.WriteCurrencyHeading(writer, this.DefaultCurrency);
 
             bool empty = true;
             foreach (TaxForm form in this.taxCategories.GetForms())
@@ -382,12 +384,18 @@ namespace Walkabout.Taxes
 
         private void AddHyperlink(Category c, IReportWriter writer)
         {
-            FlowDocumentReportWriter fw = (FlowDocumentReportWriter)writer;
-            Paragraph p = fw.CurrentParagraph;
-            p.Tag = c;
-            p.PreviewMouseLeftButtonDown += this.OnReportCellMouseDown;
-            p.Cursor = Cursors.Arrow;
-            p.SetResourceReference(Paragraph.ForegroundProperty, "HyperlinkForeground");
+            if (writer is FlowDocumentReportWriter fw)
+            {
+                Paragraph p = fw.CurrentParagraph;
+                p.Tag = c;
+                p.PreviewMouseLeftButtonDown += this.OnReportCellMouseDown;
+                p.Cursor = Cursors.Arrow;
+                p.SetResourceReference(Paragraph.ForegroundProperty, "HyperlinkForeground");
+            }
+            else
+            {
+                writer.WriteParagraph(c.Name);
+            }
         }
 
         private void OnYearChanged(object sender, SelectionChangedEventArgs e)

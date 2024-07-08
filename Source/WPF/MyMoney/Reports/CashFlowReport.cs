@@ -171,7 +171,6 @@ namespace Walkabout.Reports
         {
             this.byCategory = new Dictionary<Category, CashFlowColumns>();
 
-            FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
             writer.WriteHeading("Cash Flow Report ");
 
             ICollection<Transaction> transactions = this.myMoney.Transactions.GetAllTransactionsByTaxDate();
@@ -199,57 +198,60 @@ namespace Walkabout.Reports
                 start = end;
             }
 
-            Paragraph heading = fwriter.CurrentParagraph;
+            if (writer is FlowDocumentReportWriter fwriter)
+            {
+                Paragraph heading = fwriter.CurrentParagraph;
 
-            this.monthMap = new Dictionary<string, int>();
-            heading.Inlines.Add(" - from ");
+                this.monthMap = new Dictionary<string, int>();
+                heading.Inlines.Add(" - from ");
 
-            var previousButton = new Button();
-            previousButton.Content = "\uE100";
-            previousButton.ToolTip = "Previous year";
-            previousButton.FontFamily = new FontFamily("Segoe UI Symbol");
-            previousButton.Click += this.OnPreviousClick;
-            previousButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            this.AddInline(heading, previousButton);
+                var previousButton = new Button();
+                previousButton.Content = "\uE100";
+                previousButton.ToolTip = "Previous year";
+                previousButton.FontFamily = new FontFamily("Segoe UI Symbol");
+                previousButton.Click += this.OnPreviousClick;
+                previousButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+                this.AddInline(heading, previousButton);
 
-            DatePicker fromPicker = new DatePicker();
-            System.Windows.Automation.AutomationProperties.SetName(fromPicker, "ReportDate");
-            fromPicker.DisplayDateStart = firstTransactionDate;
-            fromPicker.SelectedDate = this.startDate;
-            fromPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            fromPicker.SelectedDateChanged += this.OnSelectedFromDateChanged;
-            this.AddInline(heading, fromPicker);
+                DatePicker fromPicker = new DatePicker();
+                System.Windows.Automation.AutomationProperties.SetName(fromPicker, "ReportDate");
+                fromPicker.DisplayDateStart = firstTransactionDate;
+                fromPicker.SelectedDate = this.startDate;
+                fromPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+                fromPicker.SelectedDateChanged += this.OnSelectedFromDateChanged;
+                this.AddInline(heading, fromPicker);
 
-            heading.Inlines.Add(" to ");
+                heading.Inlines.Add(" to ");
 
-            DatePicker toPicker = new DatePicker();
-            toPicker.DisplayDateStart = firstTransactionDate;
-            toPicker.SelectedDate = this.endDate;
-            toPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            toPicker.SelectedDateChanged += this.OnSelectedToDateChanged; ;
-            this.AddInline(heading, toPicker);
+                DatePicker toPicker = new DatePicker();
+                toPicker.DisplayDateStart = firstTransactionDate;
+                toPicker.SelectedDate = this.endDate;
+                toPicker.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+                toPicker.SelectedDateChanged += this.OnSelectedToDateChanged; ;
+                this.AddInline(heading, toPicker);
 
-            var nextButton = new Button();
-            nextButton.Content = "\uE101";
-            nextButton.ToolTip = "Next year";
-            nextButton.FontFamily = new FontFamily("Segoe UI Symbol");
-            nextButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            nextButton.Click += this.OnNextClick;
-            this.AddInline(heading, nextButton);
+                var nextButton = new Button();
+                nextButton.Content = "\uE101";
+                nextButton.ToolTip = "Next year";
+                nextButton.FontFamily = new FontFamily("Segoe UI Symbol");
+                nextButton.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+                nextButton.Click += this.OnNextClick;
+                this.AddInline(heading, nextButton);
 
 
-            ComboBox byYearMonthCombo = new ComboBox();
-            byYearMonthCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            byYearMonthCombo.Items.Add("by years");
-            byYearMonthCombo.Items.Add("by month");
-            byYearMonthCombo.SelectedIndex = this.byYear ? 0 : 1;
-            byYearMonthCombo.SelectionChanged += this.OnByYearMonthChanged;
+                ComboBox byYearMonthCombo = new ComboBox();
+                byYearMonthCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+                byYearMonthCombo.Items.Add("by years");
+                byYearMonthCombo.Items.Add("by month");
+                byYearMonthCombo.SelectedIndex = this.byYear ? 0 : 1;
+                byYearMonthCombo.SelectionChanged += this.OnByYearMonthChanged;
 
-            this.AddInline(heading, byYearMonthCombo);
+                this.AddInline(heading, byYearMonthCombo);
 
-            this.AddInline(heading, this.CreateExportReportButton());
+                this.AddInline(heading, this.CreateExportReportButton());
+            }
 
-            fwriter.WriteCurrencyHeading(this.DefaultCurrency);
+            this.WriteCurrencyHeading(writer, this.DefaultCurrency);
 
             writer.StartTable();
             writer.StartColumnDefinitions();
@@ -505,7 +507,14 @@ namespace Walkabout.Reports
                 writer.EndCell();
             }
 
-            writer.EndRow();
+            if (header)
+            {
+                writer.EndHeaderRow();
+            }
+            else
+            {
+                writer.EndRow();
+            }
         }
 
         private void WriteRow(IReportWriter writer, bool header, bool addExpanderCell, string name, IEnumerable<CashFlowCell> cells)
@@ -536,22 +545,35 @@ namespace Walkabout.Reports
                 if (cell.Data?.Count > 0)
                 {
                     writer.WriteNumber(cell.Value.ToString("N0"));
-
-                    FlowDocumentReportWriter fw = (FlowDocumentReportWriter)writer;
-                    Paragraph p = fw.CurrentParagraph;
-                    p.Tag = cell;
-                    p.PreviewMouseLeftButtonDown -= this.OnReportCellMouseDown;
-                    p.PreviewMouseLeftButtonDown += this.OnReportCellMouseDown;
-                    p.Cursor = Cursors.Arrow;
-                    //p.TextDecorations.Add(TextDecorations.Underline);
-                    //p.Foreground = Brushes.DarkSlateBlue;
-                    p.SetResourceReference(Paragraph.ForegroundProperty, "HyperlinkForeground");
+                    this.MakeCurrentParagraphHyperlink(writer, cell);
                 }
 
                 writer.EndCell();
             }
 
-            writer.EndRow();
+            if (header)
+            {
+                writer.EndHeaderRow();
+            }
+            else
+            {
+                writer.EndRow();
+            }
+        }
+
+        private void MakeCurrentParagraphHyperlink(IReportWriter writer, object userData)
+        {
+            if (writer is FlowDocumentReportWriter fw)
+            {
+                Paragraph p = fw.CurrentParagraph;
+                p.Tag = userData;
+                p.PreviewMouseLeftButtonDown -= this.OnReportCellMouseDown;
+                p.PreviewMouseLeftButtonDown += this.OnReportCellMouseDown;
+                p.Cursor = Cursors.Arrow;
+                //p.TextDecorations.Add(TextDecorations.Underline);
+                //p.Foreground = Brushes.DarkSlateBlue;
+                p.SetResourceReference(Paragraph.ForegroundProperty, "HyperlinkForeground");
+            }
         }
 
         private CashFlowCell mouseDownCell;

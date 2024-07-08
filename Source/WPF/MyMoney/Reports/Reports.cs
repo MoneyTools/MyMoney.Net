@@ -152,6 +152,14 @@ namespace Walkabout.Reports
                 FontStyles.Italic, FontWeights.Normal, Brushes.Gray);
         }
 
+        public void WriteCurrencyHeading(IReportWriter writer, Currency currency)
+        {
+            if (currency != null)
+            {
+                writer.WriteHeading("Currency " + currency.Symbol);
+            }
+        }
+
     }
 
 }

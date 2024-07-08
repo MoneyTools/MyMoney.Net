@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
@@ -311,14 +312,6 @@ namespace Walkabout.Reports
         {
             writer.WriteHeading("Future Bills Report");
 
-            Paragraph summary = null;
-
-            if (writer is FlowDocumentReportWriter flow)
-            {
-                writer.WriteParagraph("");
-                summary = flow.CurrentParagraph;
-            }
-
             Transactions transactions = this.myMoney.Transactions;
 
             DateTime today = DateTime.Now;
@@ -337,6 +330,31 @@ namespace Walkabout.Reports
             }
 
             view.Sort(new TransactionComparerByDateDescending());
+
+
+            // Run with no writer to get the total for the summary
+            decimal total = this.WriteContents(new NullReportWriter(), today, view);
+
+            if (total == 0)
+            {
+                writer.WriteParagraph("No recuring payments found");
+            }
+            else
+            {
+                // Ok, now we can write our summary!
+                writer.WriteParagraph(string.Format("Total over next 12 months is {0:C}", -total));
+                this.WriteContents(writer, today, view);
+            }
+
+            this.WriteTrailer(writer, DateTime.Today);
+            return Task.CompletedTask;
+        }
+
+        private decimal WriteContents(IReportWriter writer, DateTime today, List<Transaction> view)
+        {
+            decimal total = 0;
+            DateTime startDate = new DateTime(today.Year, today.Month, 1);
+            DateTime endDate = startDate.AddYears(1);
 
             Dictionary<PaymentKey, Payments> groupedByPayeeCategory = new Dictionary<PaymentKey, Payments>();
 
@@ -357,8 +375,6 @@ namespace Walkabout.Reports
                 payments.Transactions.Add(t);
             }
 
-            DateTime startDate = DateTime.MaxValue;
-
             SortedDictionary<string, Payments> recurring = new SortedDictionary<string, Payments>();
             // ok, now figure out if the list has a recurring smell to it...
             foreach (var pair in groupedByPayeeCategory)
@@ -372,69 +388,50 @@ namespace Walkabout.Reports
                 }
             }
 
-            if (recurring.Count == 0)
+            while (startDate < endDate)
             {
-                Run run = (Run)summary.Inlines.FirstInline;
-                run.Text = "No recuring payments found";
-            }
-            else
-            {
-                decimal total = 0;
+                writer.WriteHeading(startDate.ToString("Y"));
 
-                startDate = new DateTime(today.Year, today.Month, 1);
-                DateTime endDate = startDate.AddYears(1);
+                writer.StartTable();
 
-                while (startDate < endDate)
+                writer.StartColumnDefinitions();
+                foreach (double minWidth in new double[] { 100, 300, 250, 120 })
                 {
-                    writer.WriteHeading(startDate.ToString("Y"));
+                    writer.WriteColumnDefinition(minWidth.ToString(), minWidth, double.MaxValue);
+                }
+                writer.EndColumnDefinitions();
 
-                    writer.StartTable();
+                writer.StartHeaderRow();
+                foreach (string header in new string[] { "Date", "Payee", "Category", "Amount", })
+                {
+                    writer.StartCell();
+                    writer.WriteParagraph(header);
+                    writer.EndCell();
+                }
+                writer.EndHeaderRow();
 
-                    writer.StartColumnDefinitions();
-                    foreach (double minWidth in new double[] { 100, 300, 250, 120 })
+                foreach (var key in recurring.Keys)
+                {
+                    var payment = recurring[key];
+                    var date = payment.NextDate;
+
+                    while (date.Year < startDate.Year ||
+                        (date.Year == startDate.Year && date.Month <= startDate.Month))
                     {
-                        writer.WriteColumnDefinition(minWidth.ToString(), minWidth, double.MaxValue);
+                        var amount = payment.GetNextPrediction();
+                        this.WriteRow(writer, date,
+                            payment.Payee,
+                            payment.Category,
+                            amount);
+                        total += (decimal)amount;
+                        date = payment.NextDate;
                     }
-                    writer.EndColumnDefinitions();
-
-                    writer.StartHeaderRow();
-                    foreach (string header in new string[] { "Date", "Payee", "Category", "Amount", })
-                    {
-                        writer.StartCell();
-                        writer.WriteParagraph(header);
-                        writer.EndCell();
-                    }
-                    writer.EndRow();
-
-                    foreach (var key in recurring.Keys)
-                    {
-                        var payment = recurring[key];
-                        var date = payment.NextDate;
-
-                        while (date.Year < startDate.Year ||
-                            (date.Year == startDate.Year && date.Month <= startDate.Month))
-                        {
-                            var amount = payment.GetNextPrediction();
-                            this.WriteRow(writer, date,
-                                payment.Payee,
-                                payment.Category,
-                                amount);
-                            total += (decimal)amount;
-                            date = payment.NextDate;
-                        }
-                    }
-
-                    startDate = startDate.AddMonths(1);
-                    writer.EndTable();
                 }
 
-                // Add summary.
-                Run run = (Run)summary.Inlines.FirstInline;
-                run.Text = string.Format("Total over next 12 months is {0:C}", -total);
-
-                this.WriteTrailer(writer, DateTime.Today);
+                startDate = startDate.AddMonths(1);
+                writer.EndTable();
             }
-            return Task.CompletedTask;
+            return total;
         }
 
         private void WriteRow(IReportWriter writer, DateTime date, Payee payee, Category category, double amount)

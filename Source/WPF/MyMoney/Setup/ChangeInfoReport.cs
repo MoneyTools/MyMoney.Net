@@ -150,8 +150,6 @@ namespace Walkabout.Setup
                 return Task.CompletedTask;
             }
 
-            var document = this.view.DocumentViewer.Document;
-
             bool found = false;
             bool first = true;
 
@@ -185,20 +183,27 @@ namespace Walkabout.Setup
                 {
                     string trimmed = line.Trim();
                     if (!string.IsNullOrEmpty(trimmed))
-                    {
-                        string brush = found ? "ListItemForegroundBrush" : "ListItemSelectedForegroundBrush";
-                        FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
-                        Paragraph p = fwriter.WriteParagraph(trimmed, FontStyles.Normal, FontWeights.Normal,
-                            AppTheme.Instance.GetThemedBrush(brush), null);
-                        p.TextIndent = 20;
-                        p.Margin = new Thickness(0);
-                        p.Padding = new Thickness(0);
+                    { 
+                        if (writer is FlowDocumentReportWriter fwriter)
+                        {
+                            string brush = found ? "ListItemForegroundBrush" : "ListItemSelectedForegroundBrush";
+                            Paragraph p = fwriter.WriteParagraph(trimmed, FontStyles.Normal, FontWeights.Normal,
+                                AppTheme.Instance.GetThemedBrush(brush), null);
+                            p.TextIndent = 20;
+                            p.Margin = new Thickness(0);
+                            p.Padding = new Thickness(0);
+                        }
+                        else
+                        {
+                            writer.WriteParagraph(trimmed);
+                        }
                     }
                 }
             }
 
-            if (this.installButton && !this.HasLatestVersion())
+            if (this.installButton && !this.HasLatestVersion() && writer is FlowDocumentReportWriter)
             {
+                var document = this.view.DocumentViewer.Document;
                 document.Blocks.InsertAfter(document.Blocks.FirstBlock, new BlockUIContainer(this.CreateInstallButton()));
             }
             return Task.CompletedTask;

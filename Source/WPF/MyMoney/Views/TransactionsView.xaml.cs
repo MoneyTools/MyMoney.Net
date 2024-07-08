@@ -5179,7 +5179,7 @@ namespace Walkabout.Views
                     this.ClearCutState();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // don't care if clipboard is weird state.
             }               

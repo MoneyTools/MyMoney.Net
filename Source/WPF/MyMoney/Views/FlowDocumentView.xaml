@@ -7,9 +7,13 @@
              xmlns:c="clr-namespace:Walkabout.Controls"             
              xmlns:u="clr-namespace:Walkabout.Utilities"
              xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:cmd="clr-namespace:Walkabout.Commands" 
              mc:Ignorable="d" 
              u:WpfAnnotations.CodeRef="NuclearTreeViewItemToggleButton"
              d:DesignHeight="400" d:DesignWidth="600">
+    <UserControl.CommandBindings>
+        <CommandBinding Command="cmd:AppCommands.CommandExportHtml" Executed="OnExportHtml" CanExecute="CanExecute_ExportHtml" />
+    </UserControl.CommandBindings>
     <Grid x:Name="Grid">
 
         <Grid.RowDefinitions>
@@ -68,6 +72,8 @@
                     <MenuItem Header="Copy" Command="Copy"/>
                     <MenuItem Header="Select All" Command="SelectAll"/>
                     <MenuItem Header="Find Next" Command="Find" InputGestureText="F3"/>
+                    <Separator/>
+                    <MenuItem Header="Export HTML..." Command="cmd:AppCommands.CommandExportHtml" />
                 </ContextMenu>
             </FlowDocumentScrollViewer.ContextMenu>
             <FlowDocument

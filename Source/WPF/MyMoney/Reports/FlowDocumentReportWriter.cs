@@ -173,14 +173,6 @@ namespace Walkabout.Reports
             }
         }
 
-        public void WriteCurrencyHeading(Currency currency)
-        {
-            if (currency != null)
-            {
-                this.WriteHeading("Currency " + currency.Symbol);
-            }
-        }
-
         public void AddInline(Paragraph p, UIElement childUIElement)
         {
             var inline = new InlineUIContainer(childUIElement);
@@ -289,10 +281,20 @@ namespace Walkabout.Reports
             this.current.row.Style = this.doc.Resources["RowHeaderStyle"] as Style;
         }
 
+        public void EndHeaderRow()
+        {
+            this.EndRow();
+        }       
+
         public void StartFooterRow()
         {
             this.StartRow();
             this.current.row.Style = this.doc.Resources["RowFooterStyle"] as Style;
+        }
+
+        public void EndFooterRow()
+        {
+            this.EndRow();
         }
 
         private ToggleButton expander; // current one

@@ -108,48 +108,46 @@ namespace Walkabout.Reports
 
         public override Task Generate(IReportWriter writer)
         {
-            FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
-
             writer.WriteHeading("Tax Report For ");
 
             var (firstYear, lastYear) = this.money.Transactions.GetTaxYearRange(this.fiscalYearStart);
 
-            Paragraph heading = heading = fwriter.CurrentParagraph;
-
-            ComboBox byYearCombo = new ComboBox();
-            byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
-            int selected = -1;
-            int index = 0;
-            for (int i = lastYear; i >= firstYear; i--)
+            if (writer is FlowDocumentReportWriter fwriter)
             {
-                if (this.fiscalYearStart > 0 && i == this.endDate.Year)
-                {
-                    selected = index;
-                }
-                else if (this.fiscalYearStart == 0 && i == this.startDate.Year)
-                {
-                    selected = index;
-                }
-                if (this.fiscalYearStart > 0)
-                {
-                    byYearCombo.Items.Add("FY " + i);
-                }
-                else
-                {
-                    byYearCombo.Items.Add(i.ToString());
-                }
-                index++;
-            }
+                Paragraph heading = heading = fwriter.CurrentParagraph;
 
-            if (selected != -1)
-            {
-                byYearCombo.SelectedIndex = selected;
-            }
-            byYearCombo.SelectionChanged += this.OnYearChanged;
-            byYearCombo.Margin = new Thickness(10, 0, 0, 0);
-            this.AddInline(heading, byYearCombo);
+                ComboBox byYearCombo = new ComboBox();
+                byYearCombo.Margin = new System.Windows.Thickness(5, 0, 0, 0);
+                int selected = -1;
+                int index = 0;
+                for (int i = lastYear; i >= firstYear; i--)
+                {
+                    if (this.fiscalYearStart > 0 && i == this.endDate.Year)
+                    {
+                        selected = index;
+                    }
+                    else if (this.fiscalYearStart == 0 && i == this.startDate.Year)
+                    {
+                        selected = index;
+                    }
+                    if (this.fiscalYearStart > 0)
+                    {
+                        byYearCombo.Items.Add("FY " + i);
+                    }
+                    else
+                    {
+                        byYearCombo.Items.Add(i.ToString());
+                    }
+                    index++;
+                }
 
-            fwriter.WriteCurrencyHeading(this.DefaultCurrency);
+                if (selected != -1)
+                {
+                    byYearCombo.SelectedIndex = selected;
+                }
+                byYearCombo.SelectionChanged += this.OnYearChanged;
+                byYearCombo.Margin = new Thickness(10, 0, 0, 0);
+                this.AddInline(heading, byYearCombo);
 
             /*
             <StackPanel Margin="10,5,10,5"  Grid.Row="2" Orientation="Horizontal">
@@ -162,25 +160,28 @@ namespace Walkabout.Reports
             <CheckBox Margin="10,5,10,5" x:Name="CapitalGainsOnlyCheckBox" Grid.Row="3">Capital Gains Only</CheckBox>
             */
 
-            ComboBox consolidateCombo = new ComboBox();
-            consolidateCombo.Items.Add("Date Acquired");
-            consolidateCombo.Items.Add("Date Sold");
-            consolidateCombo.SelectedIndex = this.consolidateOnDateSold ? 1 : 0;
-            consolidateCombo.SelectionChanged += this.OnConsolidateComboSelectionChanged;
+                ComboBox consolidateCombo = new ComboBox();
+                consolidateCombo.Items.Add("Date Acquired");
+                consolidateCombo.Items.Add("Date Sold");
+                consolidateCombo.SelectedIndex = this.consolidateOnDateSold ? 1 : 0;
+                consolidateCombo.SelectionChanged += this.OnConsolidateComboSelectionChanged;
 
-            writer.WriteParagraph("Consolidate securities by: ");
-            Paragraph prompt = fwriter.CurrentParagraph;
-            prompt.Margin = new Thickness(0, 0, 0, 4);
-            this.AddInline(prompt, consolidateCombo);
+                writer.WriteParagraph("Consolidate securities by: ");
+                Paragraph prompt = fwriter.CurrentParagraph;
+                prompt.Margin = new Thickness(0, 0, 0, 4);
+                this.AddInline(prompt, consolidateCombo);
 
-            CheckBox checkBox = new CheckBox();
-            checkBox.Content = "Capital Gains Only";
-            checkBox.IsChecked = this.capitalGainsOnly;
-            checkBox.Checked += this.OnCapitalGainsOnlyChanged;
-            checkBox.Unchecked += this.OnCapitalGainsOnlyChanged;
-            writer.WriteParagraph("");
-            Paragraph checkBoxParagraph = fwriter.CurrentParagraph;
-            checkBoxParagraph.Inlines.Add(new InlineUIContainer(checkBox));
+                CheckBox checkBox = new CheckBox();
+                checkBox.Content = "Capital Gains Only";
+                checkBox.IsChecked = this.capitalGainsOnly;
+                checkBox.Checked += this.OnCapitalGainsOnlyChanged;
+                checkBox.Unchecked += this.OnCapitalGainsOnlyChanged;
+                writer.WriteParagraph("");
+                Paragraph checkBoxParagraph = fwriter.CurrentParagraph;
+                checkBoxParagraph.Inlines.Add(new InlineUIContainer(checkBox));
+            }
+
+            this.WriteCurrencyHeading(writer, this.DefaultCurrency);
 
             if (!this.capitalGainsOnly)
             {
@@ -189,9 +190,13 @@ namespace Walkabout.Reports
             }
             this.GenerateCapitalGains(writer);
 
-            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
-            FlowDocument document = view.DocumentViewer.Document;
-            document.Blocks.InsertAfter(document.Blocks.FirstBlock, new BlockUIContainer(this.CreateExportTxfButton()));
+            if (writer is FlowDocumentReportWriter)
+            {
+                var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
+                FlowDocument document = view.DocumentViewer.Document;
+                document.Blocks.InsertAfter(document.Blocks.FirstBlock, new BlockUIContainer(this.CreateExportTxfButton()));
+            }
+
             return Task.CompletedTask;
         }
 
@@ -233,7 +238,7 @@ namespace Walkabout.Reports
             writer.StartCell();
             writer.WriteNumber("Gain or Loss");
             writer.EndCell();
-            writer.EndRow();
+            writer.EndHeaderRow();
         }
 
 
@@ -336,7 +341,7 @@ namespace Walkabout.Reports
                 writer.StartCell();
                 writer.WriteNumber("Proceeds");
                 writer.EndCell();
-                writer.EndRow();
+                writer.EndHeaderRow();
 
                 foreach (var data in calculator.Unknown)
                 {
@@ -365,6 +370,7 @@ namespace Walkabout.Reports
                     writer.StartCell();
                     writer.WriteNumber(this.GetFormattedNormalizedAmount(data.SaleProceeds));
                     writer.EndCell();
+                    writer.EndRow();
                 }
 
                 writer.EndTable();
@@ -441,7 +447,7 @@ namespace Walkabout.Reports
             writer.WriteNumber(this.GetFormattedNormalizedAmount(GiveUpTheFractionalPennies(total)));
             writer.EndCell();
 
-            writer.EndRow();
+            writer.EndHeaderRow();
         }
 
         private void WriteCapitalGains(IReportWriter writer, SecuritySale data)
@@ -528,7 +534,7 @@ namespace Walkabout.Reports
             writer.StartCell();
             writer.WriteNumber("Tax Excempt");
             writer.EndCell();
-            writer.EndRow();
+            writer.EndHeaderRow();
 
             decimal tax = this.GetSalesTax();
 
@@ -549,7 +555,7 @@ namespace Walkabout.Reports
                 writer.EndCell();
                 writer.StartCell();
                 writer.EndCell();
-                writer.EndRow();
+                writer.EndHeaderRow();
 
                 decimal sum = 0;
                 IDictionary<string, List<Transaction>> groups = tc.Groups;

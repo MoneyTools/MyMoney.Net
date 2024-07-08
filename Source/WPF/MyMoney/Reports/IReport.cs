@@ -56,7 +56,9 @@ namespace Walkabout.Interfaces.Reports
         void WriteColumnDefinition(string width, double minWidth, double maxWidth);
         void EndColumnDefinitions();
         void StartHeaderRow();
+        void EndHeaderRow();
         void StartFooterRow();
+        void EndFooterRow();
         void StartRow();
         void EndRow();
         void StartCell();
@@ -82,5 +84,114 @@ namespace Walkabout.Interfaces.Reports
         bool CanExpandCollapse { get; }
         void ExpandAll();
         void CollapseAll();
+    }
+
+    public class NullReportWriter : IReportWriter
+    {
+        public bool CanExpandCollapse => false;
+
+        public void CollapseAll()
+        {
+        }
+
+        public void EndCell()
+        {
+        }
+
+        public void EndColumnDefinitions()
+        {
+        }
+
+        public void EndExpandableRowGroup()
+        {
+        }
+
+        public void EndFooterRow()
+        {
+        }
+
+        public void EndHeaderRow()
+        {
+        }
+
+        public void EndRow()
+        {
+        }
+
+        public void EndTable()
+        {
+        }
+
+        public void ExpandAll()
+        {
+        }
+
+        public void StartCell()
+        {
+        }
+
+        public void StartCell(int rowSpan, int colSpan)
+        {
+        }
+
+        public void StartColumnDefinitions()
+        {
+        }
+
+        public void StartExpandableRowGroup()
+        {
+        }
+
+        public void StartFooterRow()
+        { 
+        }
+
+        public void StartHeaderRow()
+        {
+        }
+
+        public void StartRow()
+        {
+        }
+
+        public void StartTable()
+        {
+        }
+
+        public void WriteColumnDefinition(string width, double minWidth, double maxWidth)
+        {
+        }
+
+        public void WriteElement(UIElement e)
+        {
+        }
+
+        public void WriteHeading(string heading)
+        {
+        }
+
+        public void WriteHyperlink(string text, FontStyle style, FontWeight weight, MouseButtonEventHandler clickHandler)
+        { 
+        }
+
+        public void WriteNumber(string number)
+        {
+        }
+
+        public void WriteNumber(string number, FontStyle style, FontWeight weight, Brush foreground)
+        {
+        }
+
+        public void WriteParagraph(string text)
+        {           
+        }
+
+        public void WriteParagraph(string text, FontStyle style, FontWeight weight, Brush foreground)
+        {
+        }
+
+        public void WriteSubHeading(string subHeading)
+        {
+        }
     }
 }

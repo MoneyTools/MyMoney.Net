@@ -12,9 +12,10 @@ MyMoney.Net provides various kinds of reports as you can see in the Reports menu
 - [Unaccepted Report](UnacceptedReport.md)
 - [Future Bills Report](FutureBillsReport.md)
 
+All reports can be exported to HTML using context menu.
 
-You can also use the [Advanced Queries](../Basics/Queries.md) form if you just want to find a specific set of transactions matching your
-own custom criteria.
+
+You can also use the [Advanced Queries](../Basics/Queries.md) form if you just want to find a specific set of transactions matching your own custom criteria.
 
 
 

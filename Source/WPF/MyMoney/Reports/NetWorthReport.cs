@@ -87,21 +87,23 @@ namespace Walkabout.Reports
             {
                 try
                 {
-                    FlowDocumentReportWriter fwriter = (FlowDocumentReportWriter)writer;
                     writer.WriteHeading("Net Worth Statement");
-                    Paragraph heading = fwriter.CurrentParagraph;
 
-                    fwriter.WriteCurrencyHeading(this.DefaultCurrency);
+                    if (writer is FlowDocumentReportWriter fwriter)
+                    {
+                        Paragraph heading = fwriter.CurrentParagraph;
+                        DatePicker picker = new DatePicker();
+                        // byYearCombo.SelectionChanged += OnYearChanged;
+                        System.Windows.Automation.AutomationProperties.SetName(picker, "ReportDate");
+                        picker.Margin = new Thickness(10, 0, 0, 0);
+                        picker.SelectedDate = this.reportDate;
+                        picker.DisplayDate = this.reportDate;
+                        picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
+                        this.AddInline(heading, picker);
+                    }
 
-                    DatePicker picker = new DatePicker();
-                    // byYearCombo.SelectionChanged += OnYearChanged;
-                    System.Windows.Automation.AutomationProperties.SetName(picker, "ReportDate");
-                    picker.Margin = new Thickness(10, 0, 0, 0);
-                    picker.SelectedDate = this.reportDate;
-                    picker.DisplayDate = this.reportDate;
-                    picker.SelectedDateChanged += this.Picker_SelectedDateChanged;
-                    this.AddInline(heading, picker);
 
+                    this.WriteCurrencyHeading(writer, this.DefaultCurrency);
                     var series = new ChartDataSeries() { Name = "Net Worth" };
                     IList<ChartDataValue> data = series.Values;
 
@@ -230,6 +232,7 @@ namespace Walkabout.Reports
                     this.WriteRow(writer, color, "Credit", balance, () => this.OnSelectCashGroup(creditGroup));
                     totalBalance += this.WriteLoanAccountRows(writer, data, color, true);
 
+                    
                     writer.StartFooterRow();
 
                     writer.StartCell(1, 2);
@@ -240,7 +243,7 @@ namespace Walkabout.Reports
                     writer.WriteNumber(this.GetFormattedNormalizedAmount(totalBalance));
                     writer.EndCell();
 
-                    writer.EndRow();
+                    writer.EndFooterRow();
                     writer.EndTable();
 
                     writer.EndCell();
@@ -494,7 +497,7 @@ namespace Walkabout.Reports
             writer.StartCell(1, 3);
             writer.WriteParagraph(caption);
             writer.EndCell();
-            writer.EndRow();
+            writer.EndHeaderRow();
         }
 
         private void WriteRow(IReportWriter writer, Color color, string name, decimal balance, Action hyperlink)

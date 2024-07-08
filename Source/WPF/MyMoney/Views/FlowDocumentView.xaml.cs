@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Xml;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
@@ -304,6 +306,43 @@ namespace Walkabout.Views
             this.ToggleExpandAll.ToolTip = "Show Details";
             this.ToggleExpandAll.IsChecked = false;
             this.resetting = false;
+        }
+
+        private void OnExportHtml(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        {
+            if (this.report != null) {
+                Microsoft.Win32.SaveFileDialog sd = new Microsoft.Win32.SaveFileDialog();
+                sd.Filter = "HTML files (*.htm)|*.htm";                
+                if (sd.ShowDialog() == true)
+                {
+                    var fileName = sd.FileName;
+                    try
+                    {
+                        this.GenerateHtmlReport(fileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBoxEx.Show(ex.Message, "Export HTML Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
+
+        private void GenerateHtmlReport(string fileName)
+        {
+            XmlWriterSettings s = new XmlWriterSettings();
+            s.Indent = true;
+            using (var writer = XmlWriter.Create(fileName, s))
+            {
+                HtmlDocumentReportWriter htmlDocumentReportWriter = new HtmlDocumentReportWriter(writer);
+                this.report.Generate(htmlDocumentReportWriter);
+                htmlDocumentReportWriter.Close();
+            }
+        }
+
+        private void CanExecute_ExportHtml(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = this.report != null;
         }
     }
 

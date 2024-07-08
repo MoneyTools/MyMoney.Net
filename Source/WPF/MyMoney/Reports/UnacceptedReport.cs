@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 
@@ -40,6 +43,7 @@ namespace Walkabout.Reports
         {
             writer.WriteHeading("Unaccepted Transactions");
 
+            int count = 0;
             Transactions transactions = this.myMoney.Transactions;
             foreach (Account a in this.myMoney.Accounts.GetAccounts(true))
             {
@@ -54,9 +58,9 @@ namespace Walkabout.Reports
                 {
                     if (t.Unaccepted)
                     {
+                        count++;
                         if (first)
                         {
-                            writer.EndTable();
                             writer.WriteHeading(a.Name);
                             writer.StartTable();
 
@@ -74,19 +78,27 @@ namespace Walkabout.Reports
                                 writer.WriteParagraph(header);
                                 writer.EndCell();
                             }
-                            writer.EndRow();
+                            writer.EndHeaderRow();
 
                             first = false;
                         }
                         WriteRow(writer, t.Date.ToShortDateString(), t.PayeeName ?? string.Empty, t.Amount.ToString("C"));
-                        WriteRow(writer, string.Empty, t.CategoryName ?? string.Empty, string.Empty);
-                        WriteRow(writer, string.Empty, t.Memo ?? string.Empty, string.Empty);
+                        // WriteRow(writer, string.Empty, t.CategoryName ?? string.Empty, string.Empty);
+                        if (!string.IsNullOrEmpty(t.Memo))
+                        {
+                            WriteRow(writer, string.Empty, t.Memo ?? string.Empty, string.Empty);
+                        }
                     }
                 }
 
+                if (!first)
+                {
+                    writer.EndTable();
+                }
             }
 
-            writer.EndTable();
+
+            writer.WriteParagraph($"Found {count} unaccepted transactions", FontStyles.Italic, FontWeights.Normal, Brushes.Gray);
 
             this.WriteTrailer(writer, DateTime.Today);
 
