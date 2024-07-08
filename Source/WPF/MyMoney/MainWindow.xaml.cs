@@ -4551,10 +4551,6 @@ namespace Walkabout
                 this.ButtonShowUpdateInfoCaption.Text = "View Updates";
                 this.ButtonShowUpdateInfo.Visibility = System.Windows.Visibility.Visible;
             }
-            if (changes != null)
-            {
-                Task.Run(() => this.SaveCachedChangeList(changes));
-            }
 
             // and see if we just installed a new version.
             string exe = ProcessHelper.MainExecutable;
@@ -4568,6 +4564,21 @@ namespace Walkabout
                 this.settings.LastExeTimestamp = lastWrite;
                 this.ShowChangeInfo(previous, changes, e.NewVersionAvailable);
             }
+
+            if (changes != null)
+            {
+                Task.Run(() => this.SaveCachedChangeList(changes));
+            }
+
+        }
+
+        private string GetMinimumVersion(string version1, string version2)
+        {
+            if (Version.TryParse(version1, out Version v1) && Version.TryParse(version2, out Version v2) && v1 > v2)
+            {
+                return version2;
+            }
+            return version1;
         }
 
         private void OnButtonShowUpdateInfoClick(object sender, RoutedEventArgs e)
@@ -4578,6 +4589,8 @@ namespace Walkabout
 
         private void ShowChangeInfo(string previousVersion, XDocument changeList, bool installButton)
         {
+            previousVersion = this.GetMinimumVersion(previousVersion, this.settings.ExeVersion);
+
             if (changeList == null)
             {
                 changeList = this.GetCachedChangeList();
