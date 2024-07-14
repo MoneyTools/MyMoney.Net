@@ -2070,12 +2070,12 @@ namespace Walkabout.Views
                 TransactionCollection tc = this.TheActiveGrid.ItemsSource as TransactionCollection;
                 if (tc != null)
                 {
-                    this.FillinMissingUnitPrices(this.ActiveSecurity, tc.GetOriginalTransactions());
+                    this.FillInMissingUnitPrices(this.ActiveSecurity, tc.GetOriginalTransactions());
                 }
             }
         }
 
-        private async void FillinMissingUnitPrices(Security security, IEnumerable<Transaction> transactions)
+        private async void FillInMissingUnitPrices(Security security, IEnumerable<Transaction> transactions)
         {
 #if PerformanceBlocks
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.UpdateStockQuoteHistory))
@@ -2086,6 +2086,12 @@ namespace Walkabout.Views
             if (history != null)
             {
                 List<StockQuote> sorted = history.GetSorted();
+
+                if (sorted.Count == 0)
+                {
+                    // there's nothing in the history list 
+                    return;
+                }
 
                 // Ok, so the list of transactions should all be investments related to this security and 
                 // we have a stock quote history which can be used to fill in any missing details on the
