@@ -1155,9 +1155,9 @@ namespace Walkabout.Data
             }
         }
 
-        public List<Transaction> CheckTransfers()
+        public HashSet<Transaction> CheckTransfers()
         {
-            List<Transaction> dangling = new List<Transaction>();
+            HashSet<Transaction> dangling = new HashSet<Transaction>();
             List<Account> deletedaccounts = new List<Account>();
             this.Transactions.CheckTransfers(this, dangling, deletedaccounts);
             foreach (Account a in deletedaccounts)
@@ -10496,7 +10496,7 @@ namespace Walkabout.Data
 
         #endregion
 
-        public void CheckTransfers(MyMoney money, List<Transaction> dangling, List<Account> deletedaccounts)
+        public void CheckTransfers(MyMoney money, HashSet<Transaction> dangling, List<Account> deletedaccounts)
         {
             foreach (Transaction t in this.transactions.Values)
             {
@@ -12175,9 +12175,8 @@ namespace Walkabout.Data
             }
         }
 
-        public void CheckTransfers(MyMoney money, List<Transaction> dangling, List<Account> deletedaccounts)
+        public void CheckTransfers(MyMoney money, HashSet<Transaction> dangling, List<Account> deletedaccounts)
         {
-            bool added = false;
             if (this.to != null && this.Transfer == null)
             {
                 if (IsDeletedAccount(this.to, money, deletedaccounts))
@@ -12188,7 +12187,6 @@ namespace Walkabout.Data
                 }
                 else
                 {
-                    added = true;
                     dangling.Add(this);
                 }
             }
@@ -12226,21 +12224,19 @@ namespace Walkabout.Data
                         }
                         else if (!this.AutoFixDandlingTransfer(splitXfer))
                         {
-                            added = true;
                             dangling.Add(this);
                         }
                     }
                 }
                 else if ((other.Transfer == null || other.Transfer.Transaction != this) && !this.AutoFixDandlingTransfer(null))
                 {
-                    added = true;
                     dangling.Add(this);
                 }
             }
 
             if (this.splits != null)
             {
-                if (this.splits.CheckTransfers(money, dangling, deletedaccounts) && !added)
+                if (this.splits.CheckTransfers(money, dangling, deletedaccounts))
                 {
                     dangling.Add(this); // only add transaction once.
                 }
@@ -13531,7 +13527,7 @@ namespace Walkabout.Data
             return list;
         }
 
-        public bool CheckTransfers(MyMoney money, List<Transaction> dangling, List<Account> deletedaccounts)
+        public bool CheckTransfers(MyMoney money, HashSet<Transaction> dangling, List<Account> deletedaccounts)
         {
             bool add = false;
             if (this.splits != null)
