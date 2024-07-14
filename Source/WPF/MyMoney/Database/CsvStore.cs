@@ -29,7 +29,7 @@ namespace Walkabout.Data
 
         public virtual string BackupPath { get { return null; } } // todo
 
-        public virtual DbFlavor DbFlavor { get { return Data.DbFlavor.Xml; } } // bugbug:
+        public virtual DbFlavor DbFlavor { get { return Data.DbFlavor.Xml; } } // BugBug:
 
         public virtual string UserId { get; set; }
 
@@ -117,13 +117,13 @@ namespace Walkabout.Data
             {
                 category = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
             }
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"", 
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"",
                 t.AccountName, t.Date.ToShortDateString(), t.PayeeName, t.Amount.ToString("C2"), category, GetMemoCsv(t));
         }
 
         public static void WriteInvestmentHeader(StreamWriter writer)
         {
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"", 
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"",
                 "Date", "Payee", "Category", "Activity", "Symbol", "Units", "UnitPrice", "Amount", "Memo");
         }
 

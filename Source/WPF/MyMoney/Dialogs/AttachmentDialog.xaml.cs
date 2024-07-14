@@ -1,6 +1,4 @@
-﻿using ModernWpf.Controls;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -8,10 +6,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using Walkabout.Attachments;
 using Walkabout.Configuration;
 using Walkabout.Controls;
@@ -126,7 +122,7 @@ namespace Walkabout.Dialogs
             Point pos = e.GetPosition(this.CanvasGrid);
             HitTestResult result = VisualTreeHelper.HitTest(this.CanvasGrid, pos);
 
-            DependencyObject hit = result.VisualHit;            
+            DependencyObject hit = result.VisualHit;
             if (hit != null)
             {
                 AttachmentDialogItem item = WpfHelper.FindAncestor<AttachmentDialogItem>(hit);
@@ -821,7 +817,7 @@ namespace Walkabout.Dialogs
             visual.Arrange(new Rect(0, 0, w + (2 * PrintMargin), h + (2 * PrintMargin)));
 
             PrintDialog pd = new PrintDialog();
-            // pd.Owner = this; // bugbug, print dialog is missing this?
+            // pd.Owner = this; // BugBug, print dialog is missing this?
             if (pd.ShowDialog() == true)
             {
                 pd.PrintVisual(visual, "Attachment");
@@ -1184,7 +1180,7 @@ namespace Walkabout.Dialogs
 
         public override FrameworkElement CloneContent()
         {
-            return new Image() { Source = image.Source }; 
+            return new Image() { Source = image.Source };
         }
 
         public override void Copy()

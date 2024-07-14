@@ -692,7 +692,7 @@ namespace ScenarioTest
                 Thread.Sleep(1000);
             }
 
-            // bugbug: no downloaded account info still?
+            // BugBug: no downloaded account info still?
         }
 
         #endregion

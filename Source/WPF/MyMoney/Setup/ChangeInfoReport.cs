@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
-using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Reports;
 using Walkabout.Utilities;
@@ -44,7 +43,7 @@ namespace Walkabout.Setup
 
         public string PreviousVersion
         {
-            get => previousVersion; 
+            get => previousVersion;
             set => previousVersion = value;
         }
 
@@ -71,8 +70,9 @@ namespace Walkabout.Setup
             public XDocument Document { get; set; }
             public ChangeInfoReportState() { }
 
-            public Type GetReportType() {  
-                return typeof(ChangeInfoReport); 
+            public Type GetReportType()
+            {
+                return typeof(ChangeInfoReport);
             }
         }
 
@@ -183,7 +183,7 @@ namespace Walkabout.Setup
                 {
                     string trimmed = line.Trim();
                     if (!string.IsNullOrEmpty(trimmed))
-                    { 
+                    {
                         if (writer is FlowDocumentReportWriter fwriter)
                         {
                             string brush = found ? "ListItemForegroundBrush" : "ListItemSelectedForegroundBrush";

@@ -1689,7 +1689,7 @@ NEWFILEUID:{1}
                                 }
                                 break;
                             case "ENCODING":
-                                // BUGBUG: how do we handle UNICODE in SGML files?  Do we need to re-decode the stream as UNICODE?
+                                // BugBug: how do we handle UNICODE in SGML files?  Do we need to re-decode the stream as UNICODE?
                                 if (encodingOverride == null)
                                 {
                                     if (string.Compare("USASCII", value, StringComparison.OrdinalIgnoreCase) == 0)

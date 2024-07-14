@@ -383,7 +383,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void CommitEdit()
         {
-            // BUGBUG: the datagrid imnplementation of the Invoke pattern only does a Cell level commit
+            // BugBug: the datagrid imnplementation of the Invoke pattern only does a Cell level commit
             // not a row level commit which is what we need here.  
             // InvokePattern p = (InvokePattern)this.item.GetCurrentPattern(InvokePattern.Pattern);
             // p.Invoke();
