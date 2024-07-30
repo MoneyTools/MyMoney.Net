@@ -30,7 +30,7 @@ namespace Walkabout.Data
             if (loan == null)
             {
                 a.BatchMode = true;
-                // BUGBUG: this is too expensive as GetLoanPaymentsAggregation walks all Transactions.GetAllTransactions
+                // BugBug: this is too expensive as GetLoanPaymentsAggregation walks all Transactions.GetAllTransactions
                 // We need a more efficient way to associate loan payments with this loan account, doing it by category
                 // alone seems wrong since what if you have multiple loans using the same categories?
                 loan = new Loan(this, a);

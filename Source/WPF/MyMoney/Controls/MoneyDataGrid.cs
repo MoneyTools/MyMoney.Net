@@ -296,7 +296,7 @@ namespace Walkabout.Controls
 
         private void CheckVisibility(object selected)
         {
-            // bugbug: see https://github.com/dotnet/wpf/issues/7672
+            // BugBug: see https://github.com/dotnet/wpf/issues/7672
             bool tryAgain = false;
             if (selected == this.SelectedItem && this.SelectedItem != null)
             {

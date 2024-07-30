@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.Principal;
 using System.Text;
 using System.Windows;
 using System.Windows.Automation;
@@ -1370,7 +1369,7 @@ namespace Walkabout.Views
             if (this.IsEditing)
             {
                 this.TheActiveGrid.CommitEdit();
-                // bugbug: change in behavior in Windows 8, you have to call commit twice to really commit!!!!!!!!!
+                // BugBug: change in behavior in Windows 8, you have to call commit twice to really commit!!!!!!!!!
                 this.TheActiveGrid.CommitEdit();
             }
         }
@@ -2071,12 +2070,12 @@ namespace Walkabout.Views
                 TransactionCollection tc = this.TheActiveGrid.ItemsSource as TransactionCollection;
                 if (tc != null)
                 {
-                    this.FillinMissingUnitPrices(this.ActiveSecurity, tc.GetOriginalTransactions());
+                    this.FillInMissingUnitPrices(this.ActiveSecurity, tc.GetOriginalTransactions());
                 }
             }
         }
 
-        private async void FillinMissingUnitPrices(Security security, IEnumerable<Transaction> transactions)
+        private async void FillInMissingUnitPrices(Security security, IEnumerable<Transaction> transactions)
         {
 #if PerformanceBlocks
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.UpdateStockQuoteHistory))
@@ -2087,6 +2086,12 @@ namespace Walkabout.Views
             if (history != null)
             {
                 List<StockQuote> sorted = history.GetSorted();
+
+                if (sorted.Count == 0)
+                {
+                    // there's nothing in the history list 
+                    return;
+                }
 
                 // Ok, so the list of transactions should all be investments related to this security and 
                 // we have a stock quote history which can be used to fill in any missing details on the
@@ -2592,7 +2597,7 @@ namespace Walkabout.Views
                 this.PasteSelection();
             }
 
-            this.ClearCutState();            
+            this.ClearCutState();
         }
 
         private void PasteAttachment()
@@ -3977,7 +3982,7 @@ namespace Walkabout.Views
                 {
                 }
                 this.myMoney.EndUpdate();
-            }            
+            }
         }
         private void CanExecute_Void(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -4852,7 +4857,7 @@ namespace Walkabout.Views
                     else if (!attemptingTransfer)
                     {
                         // Clear out any residual transfer information in this split.
-                        // BUGBUG: this shouldn't be here, it is a nasty hack to modify the Transaction before editing is committed.
+                        // BugBug: this shouldn't be here, it is a nasty hack to modify the Transaction before editing is committed.
                         s.Transfer = null;
                         s.Payee = this.myMoney.Payees.FindPayee(text, true);
                     }
@@ -4864,7 +4869,7 @@ namespace Walkabout.Views
                     {
                         if (!attemptingTransfer)
                         {
-                            // BUGBUG: this shouldn't be here, it is a nasty hack to modify the Transaction before editing is committed.
+                            // BugBug: this shouldn't be here, it is a nasty hack to modify the Transaction before editing is committed.
                             t.Payee = this.myMoney.Payees.FindPayee(text, true);
 
                             // Clear out any residual transfer information
@@ -5182,11 +5187,11 @@ namespace Walkabout.Views
             catch (Exception)
             {
                 // don't care if clipboard is weird state.
-            }               
+            }
         }
 
         internal void ClearCutState()
-        { 
+        {
             if (this.cutting != null)
             {
                 this.cutting.IsCutting = false;
@@ -5678,9 +5683,9 @@ namespace Walkabout.Views
                 else if (this.QuietDelete)
                 {
                     base.RemoveItem(index);
-                } 
-                else 
-                { 
+                }
+                else
+                {
                     if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || !this.Prompt || this.ConfirmDelete())
                     {
                         this.money.BeginUpdate(this);

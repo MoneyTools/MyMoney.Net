@@ -109,7 +109,7 @@ namespace Walkabout.Reports
         {
             this.DecrementDepth();
             this.writer.WriteEndElement();
-            this.writer.WriteEndElement(); 
+            this.writer.WriteEndElement();
         }
 
         int thead = 0;
@@ -206,7 +206,8 @@ namespace Walkabout.Reports
         {
             string css = "";
             var cssColor = this.GetCssColor(foreground);
-            if (!string.IsNullOrEmpty(cssColor)) {
+            if (!string.IsNullOrEmpty(cssColor))
+            {
                 css += $"color: {cssColor};";
             }
             var cssStyle = this.GetCssFontStyle(style);
@@ -214,7 +215,7 @@ namespace Walkabout.Reports
             {
                 css += $"font-style: {cssStyle};";
             }
-            var cssWeight= this.GetCssFontWeight(weight);
+            var cssWeight = this.GetCssFontWeight(weight);
             if (!string.IsNullOrEmpty(cssWeight))
             {
                 css += $"font-weight: {cssWeight};";

@@ -232,7 +232,7 @@ namespace Walkabout.Reports
                     this.WriteRow(writer, color, "Credit", balance, () => this.OnSelectCashGroup(creditGroup));
                     totalBalance += this.WriteLoanAccountRows(writer, data, color, true);
 
-                    
+
                     writer.StartFooterRow();
 
                     writer.StartCell(1, 2);
