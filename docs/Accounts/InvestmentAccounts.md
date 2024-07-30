@@ -32,8 +32,8 @@ Everything else, from interested, to long and short term capital gains distribut
 
 **Note** : this app does not yet support more complex types of investment activity with options.
 
-### ViewBySecurity
-You can view all the transactions associated with a single security by right clicking on a row and selecting "View Transactions By Security" or pressing F5.  This will produce a different view showing all activity with a single security, and a balance equal to the market value of your holdings, using unit price information, and taking stock splits into account.
+### View By Security
+You can view all the transactions associated with a single security by right clicking on a row and selecting [View Transactions By Security](ContextMenu.md) or pressing F5.  This will produce a different view showing all activity with a single security, and a balance equal to the market value of your holdings, using unit price information, and taking stock splits into account.
 
 This view has some additional columns:
 
@@ -72,4 +72,4 @@ You can change the date in the date picker in the heading to see historical valu
 ![](../Images/Investment%20Accounts3.png)
 
 
-See also [Credit Card Accounts](CreditCardAccounts.md) | [Bank Accounts](BankAccounts.md) | [Transactions Menu](TransactionsMenu.md)
+See also [Credit Card Accounts](CreditCardAccounts.md) | [Bank Accounts](BankAccounts.md) | [Context Menu](ContextMenu.md)

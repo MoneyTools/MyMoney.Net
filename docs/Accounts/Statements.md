@@ -7,7 +7,7 @@ transaction by selecting the `Goto Statement` context menu item.
 You can provide a statement (usually a pdf file) while you are balancing an account by clicking
 browse next to the Statement file field.  MyMoney will copy the statement to a special Statements
 folder next to your MyMoney database file and it will build and index of these statements so that
-later when you select `Goto Statement` on a reconciled transaction it will be able to find and open
+later when you select [Goto Statement](ContextMenu.md) on a reconciled transaction it will be able to find and open
 that statement.
 
 Sometimes your bank might consolidate multiple accounts in one statement.  For example, it is common

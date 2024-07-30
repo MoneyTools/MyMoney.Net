@@ -33,7 +33,7 @@ namespace Walkabout.Data
         private SQLiteConnection sqliteConnection;
 
 
-        // bugbug: there's some sort of horrible exponential performance bug in the System.Data.Sqlite wrappers.
+        // BugBug: there's some sort of horrible exponential performance bug in the System.Data.Sqlite wrappers.
         // so for now we have to return false, even though that too is slow.  
         public override bool SupportsBatchUpdate { get { return false; } }
 
