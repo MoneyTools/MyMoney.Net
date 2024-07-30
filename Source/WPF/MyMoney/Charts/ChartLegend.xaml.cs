@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -209,7 +208,7 @@ namespace Walkabout.Charts
         {
             if (e.Source is FrameworkElement f)
             {
-                if (f.DataContext is ChartDataValue cv) 
+                if (f.DataContext is ChartDataValue cv)
                 {
                     var handler = this.Selected;
                     if (handler != null)

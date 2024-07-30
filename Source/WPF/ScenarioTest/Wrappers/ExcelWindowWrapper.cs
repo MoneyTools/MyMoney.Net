@@ -18,7 +18,7 @@ namespace Walkabout.Tests.Wrappers
         {
             for (int i = 0; i < retries; i++)
             {
-               
+
                 AutomationElement e = Win32.FindDesktopWindow(names);
                 if (e != null)
                 {

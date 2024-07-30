@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -310,9 +309,10 @@ namespace Walkabout.Views
 
         private void OnExportHtml(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            if (this.report != null) {
+            if (this.report != null)
+            {
                 Microsoft.Win32.SaveFileDialog sd = new Microsoft.Win32.SaveFileDialog();
-                sd.Filter = "HTML files (*.htm)|*.htm";                
+                sd.Filter = "HTML files (*.htm)|*.htm";
                 if (sd.ShowDialog() == true)
                 {
                     var fileName = sd.FileName;

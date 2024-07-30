@@ -14,7 +14,6 @@ using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
 using Walkabout.StockQuotes;
-using Walkabout.Taxes;
 using Walkabout.Utilities;
 using Walkabout.Views;
 
@@ -78,7 +77,7 @@ namespace Walkabout.Reports
         public override void OnSiteChanged()
         {
             this.cache = (StockQuoteCache)this.ServiceProvider.GetService(typeof(StockQuoteCache));
-            this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));            
+            this.myMoney = (MyMoney)this.ServiceProvider.GetService(typeof(MyMoney));
         }
 
         class PortfolioReportState : IReportState

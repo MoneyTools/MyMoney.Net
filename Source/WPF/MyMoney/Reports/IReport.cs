@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Walkabout.Views;
 
 namespace Walkabout.Interfaces.Reports
 {
@@ -143,7 +142,7 @@ namespace Walkabout.Interfaces.Reports
         }
 
         public void StartFooterRow()
-        { 
+        {
         }
 
         public void StartHeaderRow()
@@ -171,7 +170,7 @@ namespace Walkabout.Interfaces.Reports
         }
 
         public void WriteHyperlink(string text, FontStyle style, FontWeight weight, MouseButtonEventHandler clickHandler)
-        { 
+        {
         }
 
         public void WriteNumber(string number)
@@ -183,7 +182,7 @@ namespace Walkabout.Interfaces.Reports
         }
 
         public void WriteParagraph(string text)
-        {           
+        {
         }
 
         public void WriteParagraph(string text, FontStyle style, FontWeight weight, Brush foreground)

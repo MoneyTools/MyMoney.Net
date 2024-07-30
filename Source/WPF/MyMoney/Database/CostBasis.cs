@@ -627,7 +627,7 @@ namespace Walkabout.Data
                         }
                         else
                         {
-                            // track cost basis of securities transfered across accounts.
+                            // track cost basis of securities transferred across accounts.
                             // BugBug; could this ever be a split? Don't think so...
                             Investment add = i.Transaction.Transfer.Transaction.Investment;
                             Debug.Assert(add != null, "Other side of the Transfer needs to be an Investment transaction");

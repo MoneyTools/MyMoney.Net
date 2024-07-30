@@ -248,7 +248,7 @@ namespace Walkabout.Tests.Wrappers
                             // 59211 is the up arrow.
                             if (arrow[0] == 59210)
                             {
-                                // then we are already sorting by this collumn.
+                                // then we are already sorting by this column.
                                 return;
                             }
                         }
@@ -265,24 +265,24 @@ namespace Walkabout.Tests.Wrappers
 
         public GridViewRowWrapper GetNewRow()
         {
-            GridViewRowWrapper lastrow = null;
+            GridViewRowWrapper lastRow = null;
             int index = 0;
             foreach (AutomationElement e in this.Control.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataItem)))
             {
                 if (e.Current.Name == "{NewItemPlaceholder}")
                 {
-                    lastrow = this.WrapRow(e, index++);
+                    lastRow = this.WrapRow(e, index++);
                     break;
                 }
                 else
                 {
-                    lastrow = this.WrapRow(e, index++);
+                    lastRow = this.WrapRow(e, index++);
                 }
             }
 
             // no place holder means the placeholder is being edited.
-            lastrow.IsNewRow = true;
-            return lastrow;
+            lastRow.IsNewRow = true;
+            return lastRow;
         }
 
         public virtual GridViewRowWrapper WrapRow(AutomationElement e, int index)
@@ -383,7 +383,7 @@ namespace Walkabout.Tests.Wrappers
 
         internal void CommitEdit()
         {
-            // BugBug: the datagrid imnplementation of the Invoke pattern only does a Cell level commit
+            // BugBug: the dataGrid implementation of the Invoke pattern only does a Cell level commit
             // not a row level commit which is what we need here.  
             // InvokePattern p = (InvokePattern)this.item.GetCurrentPattern(InvokePattern.Pattern);
             // p.Invoke();
