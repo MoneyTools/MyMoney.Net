@@ -13,7 +13,7 @@ You can `Copy` the selected transaction, go to another account, click on the tra
 You can `Cut` the selected transaction, go to another account, click on the transaction view to make it the focus and
 Past that transaction to `move` the transaction and all it's attachments to the new account. This is handy when you
 created a transaction in the wrong account and want to fix it later. This is the same as using the 
-[Move... command](../Accounts/TransactionsMenu.md).
+[Move... command](../Accounts/ContextMenu.md).
 
 You cannot cut a [reconciled transaction](../Accounts/BalancingAccounts.md).
 

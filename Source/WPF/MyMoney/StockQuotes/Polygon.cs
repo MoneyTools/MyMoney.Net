@@ -153,7 +153,7 @@ namespace Walkabout.StockQuotes
             if (this.Settings.HistoryEnabled)
             {
                 // TBD: this requires the priced service, and user to enable history in the settings.
-                // BUGBUG: Make sure this download is only happening once and make both wait on the same task if it is running...
+                // BugBug: Make sure this download is only happening once and make both wait on the same task if it is running...
                 // await this.DownloadTickersAsync();
                 // this.CountCall();
             }

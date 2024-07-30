@@ -1434,7 +1434,7 @@ namespace Walkabout
                         TransactionsView transactionView = this.TransactionView;
                         if (transactionView != null)
                         {
-                            transactionView.ViewTransactionsForSingleAccount(transaction.Account, TransactionSelection.Specific, transaction.Id);                            
+                            transactionView.ViewTransactionsForSingleAccount(transaction.Account, TransactionSelection.Specific, transaction.Id);
                         }
                     }));
         }
@@ -3557,7 +3557,7 @@ namespace Walkabout
                 // dispose previous report handler.
             }
 
-            this.reportHandler = new ReportEventHandler(this, e);            
+            this.reportHandler = new ReportEventHandler(this, e);
         }
 
         private void OnCommandNetWorth(object sender, ExecutedRoutedEventArgs e)

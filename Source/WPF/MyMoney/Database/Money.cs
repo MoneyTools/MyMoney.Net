@@ -1375,7 +1375,7 @@ namespace Walkabout.Data
             }
         }
 
-        // for re-entrancy guard.
+        // for reentrancy guard.
         private HashSet<Transfer> removing = new HashSet<Transfer>();
 
         public bool RemoveTransfer(Transfer t)
@@ -1384,7 +1384,7 @@ namespace Walkabout.Data
             {
                 if (this.removing == null)
                 {
-                    // bugbug: is this a C# bug???
+                    // BugBug: is this a C# bug???
                     this.removing = new HashSet<Transfer>();
                 }
                 if (!this.removing.Contains(t))
@@ -1946,7 +1946,7 @@ namespace Walkabout.Data
 
 
         /// <summary>
-        /// Add all the parent pointers we need for eventing to work properly.
+        /// Add all the parent pointers we need for events to work properly.
         /// </summary>
         internal void PostDeserializeFixup()
         {
@@ -2652,11 +2652,11 @@ namespace Walkabout.Data
                         this.flags &= ~(AccountFlags.TaxDeferred | AccountFlags.TaxFree);
                         break;
                     case TaxStatus.TaxDeferred:
-                        // remove mututally exclusive TaxFree flag and add TaxDeferred
+                        // remove mutually exclusive TaxFree flag and add TaxDeferred
                         this.flags = (this.flags & ~AccountFlags.TaxFree) | AccountFlags.TaxDeferred;
                         break;
                     case TaxStatus.TaxFree:
-                        // remove mututally exclusive TaxDeferred flag and add TaxFree
+                        // remove mutually exclusive TaxDeferred flag and add TaxFree
                         this.flags = (this.flags & ~AccountFlags.TaxDeferred) | AccountFlags.TaxFree;
                         break;
                     default:
@@ -3169,7 +3169,7 @@ namespace Walkabout.Data
     {
         private int NextOnlineAccount;
         private Hashtable<int, OnlineAccount> onlineAccounts = new Hashtable<int, OnlineAccount>();
-        private Hashtable<string, OnlineAccount> instIndex = new Hashtable<string, OnlineAccount>();
+        private Hashtable<string, OnlineAccount> instanceIndex = new Hashtable<string, OnlineAccount>();
 
         public OnlineAccounts()
         { // for serialization
@@ -3220,23 +3220,23 @@ namespace Walkabout.Data
 
         public void Clear()
         {
-            if (this.NextOnlineAccount != 0 || this.onlineAccounts.Count != 0 || this.instIndex.Count != 0)
+            if (this.NextOnlineAccount != 0 || this.onlineAccounts.Count != 0 || this.instanceIndex.Count != 0)
             {
                 this.NextOnlineAccount = 0;
                 this.onlineAccounts = new Hashtable<int, OnlineAccount>();
-                this.instIndex = new Hashtable<string, OnlineAccount>();
+                this.instanceIndex = new Hashtable<string, OnlineAccount>();
                 this.FireChangeEvent(this, this, null, ChangeType.Reloaded);
             }
         }
 
         public override void OnNameChanged(object o, string oldName, string newName)
         {
-            if (oldName != null && this.instIndex.ContainsKey(oldName))
+            if (oldName != null && this.instanceIndex.ContainsKey(oldName))
             {
-                this.instIndex.Remove(oldName);
+                this.instanceIndex.Remove(oldName);
             }
 
-            this.instIndex[newName] = (OnlineAccount)o;
+            this.instanceIndex[newName] = (OnlineAccount)o;
         }
 
         // onlineAccounts
@@ -3272,7 +3272,7 @@ namespace Walkabout.Data
             this.onlineAccounts[oa.Id] = oa;
             if (!string.IsNullOrEmpty(oa.Name))
             {
-                this.instIndex[oa.Name] = oa;
+                this.instanceIndex[oa.Name] = oa;
             }
             this.FireChangeEvent(this, oa, null, ChangeType.Inserted);
         }
@@ -3281,7 +3281,7 @@ namespace Walkabout.Data
         {
             OnlineAccount result = this.AddOnlineAccount(this.NextOnlineAccount++);
             result.Name = name;
-            this.instIndex[name] = result;
+            this.instanceIndex[name] = result;
             this.FireChangeEvent(this, result, null, ChangeType.Inserted);
             return result;
         }
@@ -3292,8 +3292,8 @@ namespace Walkabout.Data
             {
                 return null;
             }
-            // find or add account of givien name
-            OnlineAccount result = this.instIndex[name];
+            // find or add account of given name
+            OnlineAccount result = this.instanceIndex[name];
             return result;
         }
 
@@ -3311,9 +3311,9 @@ namespace Walkabout.Data
                     this.onlineAccounts.Remove(i.Id);
                 }
 
-                if (this.instIndex.ContainsKey(i.Name))
+                if (this.instanceIndex.ContainsKey(i.Name))
                 {
-                    this.instIndex.Remove(i.Name);
+                    this.instanceIndex.Remove(i.Name);
                 }
             }
             i.OnDelete();
@@ -3388,7 +3388,7 @@ namespace Walkabout.Data
         private string institution;
         private string ofx;
         private string fid;
-        private string userid;
+        private string userId;
         private string password;
         private string userCred1;
         private string userCred2;
@@ -3424,7 +3424,7 @@ namespace Walkabout.Data
                 institution = this.institution,
                 ofx = this.ofx,
                 fid = this.fid,
-                userid = this.userid,
+                userId = this.userId,
                 password = this.password,
                 bankId = this.bankId,
                 brokerId = this.brokerId,
@@ -3543,13 +3543,13 @@ namespace Walkabout.Data
         [ColumnMapping(ColumnName = "UserId", MaxLength = 20, AllowNulls = true)]
         public string UserId
         {
-            get { return this.userid; }
+            get { return this.userId; }
             set
             {
-                if (this.userid != value)
+                if (this.userId != value)
                 {
-                    string old = this.userid;
-                    this.userid = Truncate(value, 20);
+                    string old = this.userId;
+                    this.userId = Truncate(value, 20);
                     this.OnChanged("UserId");
                 }
             }
@@ -4133,9 +4133,9 @@ namespace Walkabout.Data
             return null;
         }
 
-        public AccountAlias FindMatchingAlias(string accoundId)
+        public AccountAlias FindMatchingAlias(string accountId)
         {
-            if (string.IsNullOrEmpty(accoundId))
+            if (string.IsNullOrEmpty(accountId))
             {
                 return null;
             }
@@ -4144,7 +4144,7 @@ namespace Walkabout.Data
             {
                 foreach (var a in this.aliases.Values)
                 {
-                    if (a.AccountId == accoundId)
+                    if (a.AccountId == accountId)
                     {
                         return a;
                     }
@@ -4561,7 +4561,7 @@ namespace Walkabout.Data
         /// </summary>
         /// <param name="amount">The amount to be converted</param>
         /// <param name="source">The currency of the account containing the amount</param>
-        /// <param name="target">The currency of the target account we are transfering to</param>
+        /// <param name="target">The currency of the target account we are transferring to</param>
         /// <returns>The converted amount</returns>
         public decimal GetTransferAmount(decimal amount, string sourceCurrency, string targetCurrency)
         {
@@ -4874,7 +4874,7 @@ namespace Walkabout.Data
             {
                 return null;
             }
-            // find or add account of givien name
+            // find or add account of given name
             Payee result = this.payeeIndex[name];
             if (result == null && add)
             {
@@ -5378,7 +5378,7 @@ namespace Walkabout.Data
     }
 
     //================================================================================
-    // Additional information we want to associatge with transactions on very rare occasions
+    // Additional information we want to associate with transactions on very rare occasions
     // that doesn't need to be in the Transaction table.
     [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     [TableMapping(TableName = "TransactionExtras")]
@@ -5858,7 +5858,7 @@ namespace Walkabout.Data
 
 
 
-        public void RecalcYears()
+        public void ReCalculateYears()
         {
             this.yearStart = int.MaxValue;
             this.yearEnd = int.MinValue;
@@ -6300,7 +6300,7 @@ namespace Walkabout.Data
         {
             get
             {
-                this.RecalcYears();
+                this.ReCalculateYears();
 
                 return GetYearRangeString(this.yearStart, this.yearEnd);
             }
@@ -6323,9 +6323,8 @@ namespace Walkabout.Data
             return string.Format("{0}", yearStart);
         }
 
-        private void RecalcYears()
+        private void ReCalculateYears()
         {
-
             this.yearStart = int.MaxValue;
             this.yearEnd = int.MinValue;
 
@@ -6582,7 +6581,7 @@ namespace Walkabout.Data
                     TotalForCategory(transactionsForYear, g.TransactionsForThatYear, "Management", money.Categories.FindCategoryById(building.CategoryForManagement));
                     TotalForCategory(transactionsForYear, g.TransactionsForThatYear, "Interest", money.Categories.FindCategoryById(building.CategoryForInterest));
 
-                    transactionsForYear.RecalcYears();
+                    transactionsForYear.ReCalculateYears();
 
                     building.Years[year] = transactionsForYear;
                 }
@@ -7339,10 +7338,10 @@ namespace Walkabout.Data
             }
 
             string name = category.Name;
-            string oldname = oldParent.Name;
-            Debug.Assert(name.Length > oldname.Length);
+            string oldName = oldParent.Name;
+            Debug.Assert(name.Length > oldName.Length);
 
-            string tail = name.Substring(oldname.Length);
+            string tail = name.Substring(oldName.Length);
             string newname = newParent.Name + tail;
 
             Category c = this.FindCategory(newname);
@@ -7393,16 +7392,16 @@ namespace Walkabout.Data
             bool foundParent = false;
             while (i > 0 && !foundParent)
             {
-                string pname = name.Substring(0, i);
-                Category parent = this.FindCategory(pname);
+                string pName = name.Substring(0, i);
+                Category parent = this.FindCategory(pName);
                 foundParent = parent != null;
                 if (!foundParent)
                 {
-                    parent = this.GetOrCreateCategory(pname, c.Type);
+                    parent = this.GetOrCreateCategory(pName, c.Type);
                 }
                 parent.AddSubcategory(c);
                 c = parent;
-                name = pname;
+                name = pName;
                 i = name.LastIndexOf(":");
             }
         }
@@ -7600,7 +7599,7 @@ namespace Walkabout.Data
         private bool isEditing;
         private string colorString;
         private int taxRefNum;
-        private int parentid = -1;
+        private int parentId = -1;
         private Category parent; // parent category
         private ThreadSafeObservableCollection<Category> subcategories;
 
@@ -7647,8 +7646,8 @@ namespace Walkabout.Data
         [ColumnMapping(ColumnName = "ParentId", AllowNulls = true)]
         public int ParentId
         {
-            get { return (this.parent != null) ? this.parent.Id : this.parentid; }
-            set { this.parentid = value; }
+            get { return (this.parent != null) ? this.parent.Id : this.parentId; }
+            set { this.parentId = value; }
         }
 
         [XmlIgnore]
@@ -8810,7 +8809,7 @@ namespace Walkabout.Data
 
         public override string ToString()
         {
-            // bugbug: this is only so that we can show a short symbol in the investment grid, if we need to
+            // BugBug: this is only so that we can show a short symbol in the investment grid, if we need to
             // change this to the Name then we could use a ValueConverter instead.
             if (!string.IsNullOrEmpty(this.Symbol))
             {
@@ -8857,7 +8856,7 @@ namespace Walkabout.Data
         {
             get
             {
-                // return a non-synchronizing snapshot of stocksplits related
+                // return a non-synchronizing snapshot of StockSplits related
                 // to this security.
                 List<StockSplit> result = new List<StockSplit>();
                 Securities parent = this.Parent as Securities;
@@ -9490,7 +9489,7 @@ namespace Walkabout.Data
                 t.Transfer == null && u.Transfer == null &&
                 // if user has already marked both as not duplicates, then skip it.
                 (!t.NotDuplicate || !u.NotDuplicate) &&
-                // and if they are investment transactions the stock type and unit quanities have to be the same
+                // and if they are investment transactions the stock type and unit quantities have to be the same
                 IsPotentialDuplicate(t.Investment, u.Investment) &&
                 // if they both have unique FITID fields, then the bank is telling us these are not duplicates.
                 // they can't be both reconciled, because then we can't merge them!
@@ -10500,7 +10499,7 @@ namespace Walkabout.Data
         {
             foreach (Transaction t in this.transactions.Values)
             {
-                t.CheckTransfers(money, dangling, deletedaccounts);
+                t.CheckTransfers(money, dangling, deletedAccounts);
             }
         }
 
@@ -12101,9 +12100,9 @@ namespace Walkabout.Data
         }
 
 
-        public static bool IsDeletedAccount(Account to, MyMoney money, List<Account> deletedaccounts)
+        public static bool IsDeletedAccount(Account to, MyMoney money, List<Account> deletedAccounts)
         {
-            foreach (Account a in deletedaccounts)
+            foreach (Account a in deletedAccounts)
             {
                 if (a == to)
                 {
@@ -12112,7 +12111,7 @@ namespace Walkabout.Data
             }
             if (money.Transactions.GetTransactionsFrom(to).Count == 0)
             {
-                deletedaccounts.Add(to);
+                deletedAccounts.Add(to);
                 return true;
             }
             return false;
@@ -12179,7 +12178,7 @@ namespace Walkabout.Data
         {
             if (this.to != null && this.Transfer == null)
             {
-                if (IsDeletedAccount(this.to, money, deletedaccounts))
+                if (IsDeletedAccount(this.to, money, deletedAccounts))
                 {
                     this.Category = this.Amount < 0 ? money.Categories.TransferToDeletedAccount :
                                         money.Categories.TransferFromDeletedAccount;
@@ -12236,7 +12235,7 @@ namespace Walkabout.Data
 
             if (this.splits != null)
             {
-                if (this.splits.CheckTransfers(money, dangling, deletedaccounts))
+                if (this.splits.CheckTransfers(money, dangling, deletedAccounts))
                 {
                     dangling.Add(this); // only add transaction once.
                 }
@@ -12461,7 +12460,7 @@ namespace Walkabout.Data
                     j.Withholding = i.Withholding;
                     rc = true;
                 }
-            } 
+            }
             return rc;
         }
 
@@ -13537,7 +13536,7 @@ namespace Walkabout.Data
                 {
                     if (s.to != null && s.Transfer == null)
                     {
-                        if (Transaction.IsDeletedAccount(s.to, money, deletedaccounts))
+                        if (Transaction.IsDeletedAccount(s.to, money, deletedAccounts))
                         {
                             s.Category = s.Amount < 0 ? money.Categories.TransferToDeletedAccount :
                                 money.Categories.TransferFromDeletedAccount;

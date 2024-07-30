@@ -142,13 +142,13 @@ namespace Walkabout.Sgml
             {
                 if (baseUri != null)
                 {
-                    // bugbug: new Uri(baseUri, this.Uri) when baseUri is
+                    // BugBug: new Uri(baseUri, this.Uri) when baseUri is
                     // file://currentdirectory and this.Uri is "\temp\test.htm"
                     // resolves to a UNC with LocalPath starting with \\ which
                     // is wrong!
                     if (baseUri.Scheme == "file")
                     {
-                        // bugbug: Path.Combine looses the base path's drive name!
+                        // BugBug: Path.Combine looses the base path's drive name!
                         string path = baseUri.LocalPath;
                         int i = path.IndexOf(":");
                         string drive = string.Empty;
@@ -1115,7 +1115,7 @@ namespace Walkabout.Sgml
                         }
                         catch (Exception ex)
                         {
-                            // bugbug - need an error log.
+                            // BugBug - need an error log.
                             Console.WriteLine(ex.Message + this._current.Context());
                         }
                         ch = this._current.Lastchar;
@@ -1242,7 +1242,7 @@ namespace Walkabout.Sgml
             {
                 Entity e = this.ParseParameterEntity(term);
                 ch = this._current.Lastchar;
-                // bugbug - need to support external and nested parameter entities
+                // BugBug - need to support external and nested parameter entities
                 if (!e.Internal)
                 {
                     throw new NotSupportedException("External parameter entity resolution");
@@ -1551,7 +1551,7 @@ namespace Walkabout.Sgml
                 Entity e = this.ParseParameterEntity(_dcterm);
                 this.PushEntity(this._current.ResolvedUri, e);
                 cm = this.ParseContentModel(this._current.Lastchar);
-                this.PopEntity(); // bugbug should be at EOF.
+                this.PopEntity(); // BugBug should be at EOF.
             }
             else
             {
@@ -1725,7 +1725,7 @@ namespace Walkabout.Sgml
                 Entity e = this.ParseParameterEntity(_ws);
                 this.PushEntity(this._current.ResolvedUri, e);
                 this.ParseAttType(this._current.Lastchar, attdef);
-                this.PopEntity(); // bugbug - are we at the end of the entity?
+                this.PopEntity(); // BugBug - are we at the end of the entity?
                 ch = this._current.Lastchar;
                 return;
             }
@@ -1762,7 +1762,7 @@ namespace Walkabout.Sgml
                 Entity e = this.ParseParameterEntity(_ws);
                 this.PushEntity(this._current.ResolvedUri, e);
                 this.ParseAttDefault(this._current.Lastchar, attdef);
-                this.PopEntity(); // bugbug - are we at the end of the entity?
+                this.PopEntity(); // BugBug - are we at the end of the entity?
                 ch = this._current.Lastchar;
                 return;
             }
@@ -1787,7 +1787,7 @@ namespace Walkabout.Sgml
                 {
                     string name = this._current.ScanToken(this._sb, _ws, false);
                     name = this._nt.Add(name);
-                    attdef.Default = name; // bugbug - must be one of the enumerated names.
+                    attdef.Default = name; // BugBug - must be one of the enumerated names.
                     ch = this._current.SkipWhitespace();
                 }
             }
