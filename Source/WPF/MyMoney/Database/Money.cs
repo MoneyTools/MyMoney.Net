@@ -13527,7 +13527,7 @@ namespace Walkabout.Data
             return list;
         }
 
-        public bool CheckTransfers(MyMoney money, HashSet<Transaction> dangling, List<Account> deletedaccounts)
+        public bool CheckTransfers(MyMoney money, HashSet<Transaction> dangling, List<Account> deletedAccounts)
         {
             bool add = false;
             if (this.splits != null)
@@ -13537,7 +13537,7 @@ namespace Walkabout.Data
                 {
                     if (s.to != null && s.Transfer == null)
                     {
-                        if (Transaction.IsDeletedAccount(s.to, money, deletedaccounts))
+                        if (Transaction.IsDeletedAccount(s.to, money, deletedAccounts))
                         {
                             s.Category = s.Amount < 0 ? money.Categories.TransferToDeletedAccount :
                                 money.Categories.TransferFromDeletedAccount;
