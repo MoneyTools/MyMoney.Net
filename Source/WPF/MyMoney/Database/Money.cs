@@ -10495,7 +10495,7 @@ namespace Walkabout.Data
 
         #endregion
 
-        public void CheckTransfers(MyMoney money, HashSet<Transaction> dangling, List<Account> deletedaccounts)
+        public void CheckTransfers(MyMoney money, HashSet<Transaction> dangling, List<Account> deletedAccounts)
         {
             foreach (Transaction t in this.transactions.Values)
             {
@@ -12174,7 +12174,7 @@ namespace Walkabout.Data
             }
         }
 
-        public void CheckTransfers(MyMoney money, HashSet<Transaction> dangling, List<Account> deletedaccounts)
+        public void CheckTransfers(MyMoney money, HashSet<Transaction> dangling, List<Account> deletedAccounts)
         {
             if (this.to != null && this.Transfer == null)
             {
