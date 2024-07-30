@@ -1378,7 +1378,7 @@ namespace Walkabout.Views
         public bool CheckTransfers()
         {
             this.Commit();
-            HashSet<Transaction> dangling = this.myMoney.CheckTransfers();
+            var dangling = this.myMoney.CheckTransfers();
             if (dangling.Count > 0)
             {
                 if (MessageBoxEx.Show(
@@ -1400,7 +1400,11 @@ namespace Walkabout.Views
             this.SwitchLayout("TheGrid_TransactionFromDetails");
             this.SetActiveAccount(null, null, null, null, null);
             Account danglingAccount = new Account() { Type = AccountType.Cash };
-            IList data = new TransactionCollection(this.myMoney, danglingAccount, dangling.ToList<Transaction>(), true, false, null);
+
+            var sortedDanglingList = dangling.ToList<Transaction>();
+            sortedDanglingList.Sort(comparison: (a,b)=>a.Date.CompareTo(b.Date));
+            
+            IList data = new TransactionCollection(this.myMoney, danglingAccount, sortedDanglingList, true, false, null);
             this.Display(data, TransactionViewName.DanglingTransfers, "Dangling transfers", this.SelectedRowId);
             this.FireAfterViewStateChanged(this.SelectedRowId);
         }
@@ -1557,7 +1561,7 @@ namespace Walkabout.Views
                     this.ViewTransfers(this.activeAccount);
                     break;
                 case TransactionViewName.DanglingTransfers:
-                    HashSet<Transaction> dangling = this.myMoney.CheckTransfers();
+                    var dangling = this.myMoney.CheckTransfers();
                     this.ShowDanglingTransfers(dangling);
                     break;
                 default:
