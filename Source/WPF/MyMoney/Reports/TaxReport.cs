@@ -41,7 +41,8 @@ namespace Walkabout.Reports
         public int FiscalYearStart
         {
             get => this.fiscalYearStart;
-            set {
+            set
+            {
                 this.fiscalYearStart = value;
             }
         }
@@ -76,7 +77,7 @@ namespace Walkabout.Reports
                 CapitalGainsOnly = this.capitalGainsOnly,
                 ConsolidateOnDateSold = this.consolidateOnDateSold,
                 TaxYear = this.startDate.Year
-            };             
+            };
         }
 
         public override void ApplyState(IReportState state)
@@ -149,16 +150,16 @@ namespace Walkabout.Reports
                 byYearCombo.Margin = new Thickness(10, 0, 0, 0);
                 this.AddInline(heading, byYearCombo);
 
-            /*
-            <StackPanel Margin="10,5,10,5"  Grid.Row="2" Orientation="Horizontal">
-                <TextBlock Text="Consolidate securities by: " Background="Transparent"/>
-                <ComboBox x:Name="ConsolidateSecuritiesCombo" SelectedIndex="0">
-                    <ComboBoxItem>Date Acquired</ComboBoxItem>
-                    <ComboBoxItem>Date Sold</ComboBoxItem>
-                </ComboBox>
-            </StackPanel>
-            <CheckBox Margin="10,5,10,5" x:Name="CapitalGainsOnlyCheckBox" Grid.Row="3">Capital Gains Only</CheckBox>
-            */
+                /*
+                <StackPanel Margin="10,5,10,5"  Grid.Row="2" Orientation="Horizontal">
+                    <TextBlock Text="Consolidate securities by: " Background="Transparent"/>
+                    <ComboBox x:Name="ConsolidateSecuritiesCombo" SelectedIndex="0">
+                        <ComboBoxItem>Date Acquired</ComboBoxItem>
+                        <ComboBoxItem>Date Sold</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+                <CheckBox Margin="10,5,10,5" x:Name="CapitalGainsOnlyCheckBox" Grid.Row="3">Capital Gains Only</CheckBox>
+                */
 
                 ComboBox consolidateCombo = new ComboBox();
                 consolidateCombo.Items.Add("Date Acquired");

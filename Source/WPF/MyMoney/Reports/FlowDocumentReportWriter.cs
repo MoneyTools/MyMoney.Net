@@ -6,7 +6,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Utilities;
 
@@ -284,7 +283,7 @@ namespace Walkabout.Reports
         public void EndHeaderRow()
         {
             this.EndRow();
-        }       
+        }
 
         public void StartFooterRow()
         {

@@ -271,8 +271,8 @@ namespace Walkabout.Tests.Wrappers
                 return;
             }
 
-            string tofrom;
-            string sourceAccount = selection.ParseTransferPayee(out tofrom);
+            string toFrom;
+            string sourceAccount = selection.ParseTransferPayee(out toFrom);
             decimal amount = selection.GetAmount();
 
             if (sourceAccount == null)
@@ -308,11 +308,11 @@ namespace Walkabout.Tests.Wrappers
                     throw new Exception("Navigation lost the selection");
                 }
 
-                string fromto;
-                string targetAccount = target.ParseTransferPayee(out fromto);
+                string fromTo;
+                string targetAccount = target.ParseTransferPayee(out fromTo);
                 decimal targetAmount = target.GetAmount();
 
-                if (sourceAccount == targetAccount && fromto == tofrom)
+                if (sourceAccount == targetAccount && fromTo == toFrom)
                 {
                     // hasn't got the F12 yet.
                 }
@@ -322,7 +322,7 @@ namespace Walkabout.Tests.Wrappers
                     throw new Exception($"F12 jumped to the wrong transaction, expecting account {targetAccount} with amount {-targetAmount}");
                 }
 
-                if (sourceAccount != null && targetAccount != null && ((tofrom == "to" && fromto == "from") || (tofrom == "from" && fromto == "to")))
+                if (sourceAccount != null && targetAccount != null && ((toFrom == "to" && fromTo == "from") || (toFrom == "from" && fromTo == "to")))
                 {
                     return;
                 }
@@ -545,9 +545,9 @@ namespace Walkabout.Tests.Wrappers
         /// <summary>
         /// Parse the transfer string 
         /// </summary>
-        /// <param name="tofrom">The string 'to' or 'from' dependending on direction of transfer</param>
-        /// <returns>The account that we are transfering to or from</returns>
-        public string ParseTransferPayee(out string tofrom)
+        /// <param name="toFrom">The string 'to' or 'from' depending on direction of transfer</param>
+        /// <returns>The account that we are transferring to or from</returns>
+        public string ParseTransferPayee(out string toFrom)
         {
             string payee = this.GetPayee();
 
@@ -557,7 +557,7 @@ namespace Walkabout.Tests.Wrappers
                 int i = payee.IndexOf(':');
                 if (i > 8)
                 {
-                    tofrom = payee.Substring(8, i - 8).Trim();
+                    toFrom = payee.Substring(8, i - 8).Trim();
                     return payee.Substring(i + 1).Trim();
                 }
             }

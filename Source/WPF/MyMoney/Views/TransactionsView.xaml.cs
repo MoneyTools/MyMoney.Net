@@ -285,14 +285,14 @@ namespace Walkabout.Views
             set { this.SetValue(TransactionFilterProperty, value); }
         }
 
-        private bool programaticFilterChange;
+        private bool programmaticFilterChange;
 
         private void SetTransactionFilterNoUpdate(TransactionFilter filter)
         {
-            var previous = this.programaticFilterChange;
-            this.programaticFilterChange = true;
+            var previous = this.programmaticFilterChange;
+            this.programmaticFilterChange = true;
             this.TransactionFilter = filter;
-            this.programaticFilterChange = previous;
+            this.programmaticFilterChange = previous;
         }
 
 
@@ -371,7 +371,7 @@ namespace Walkabout.Views
                     break;
             }
 
-            if (!this.programaticFilterChange)
+            if (!this.programmaticFilterChange)
             {
                 if (this.currentDisplayName == TransactionViewName.Custom && this.activeAccount != null)
                 {
@@ -478,7 +478,7 @@ namespace Walkabout.Views
                 if (!string.IsNullOrEmpty(name))
                 {
                     e.Handled = true;
-                    // lazy disptach to allow the actual editors to be created.
+                    // lazy dispatch to allow the actual editors to be created.
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         this.OnStartEdit(column, row, name);
@@ -532,9 +532,9 @@ namespace Walkabout.Views
             this.delayedUpdates.CancelAll();
         }
 
-        private void SetupContextMenuBinding(ContextMenu menu, string itemname, DependencyProperty property, Binding binding)
+        private void SetupContextMenuBinding(ContextMenu menu, string itemName, DependencyProperty property, Binding binding)
         {
-            MenuItem item = (MenuItem)menu.FindName(itemname);
+            MenuItem item = (MenuItem)menu.FindName(itemName);
             if (item != null)
             {
                 item.SetBinding(property, binding);
@@ -1032,7 +1032,7 @@ namespace Walkabout.Views
             this.rebalancing = false;
         }
 
-        private void RefreshVisibleColumns(string colummName)
+        private void RefreshVisibleColumns(string columnName)
         {
             var rows = this.TheActiveGrid.GetVisibleRows();
             if (rows != null)
@@ -1043,7 +1043,7 @@ namespace Walkabout.Views
                     for (int row = rows.Item1; row < rows.Item2 && row < c.Count; row++)
                     {
                         Transaction t = c[row];
-                        t.RaisePropertyChanged(colummName);
+                        t.RaisePropertyChanged(columnName);
                     }
                 }
             }
@@ -1597,7 +1597,7 @@ namespace Walkabout.Views
                 this.SetHasStatement(hasStatement);
             }
             this.reconcilingTransactions = null;
-            this.StatmentReconcileDateEnd = null;
+            this.StatementReconcileDateEnd = null;
         }
 
         private void SetHasStatement(bool hasStatement)
@@ -1678,8 +1678,8 @@ namespace Walkabout.Views
             }
         }
 
-        private DateTime? StatmentReconcileDateBegin;
-        private DateTime? StatmentReconcileDateEnd;
+        private DateTime? StatementReconcileDateBegin;
+        private DateTime? StatementReconcileDateEnd;
         private bool IsLatestStatement;
 
         public void SetReconcileDateRange(DateTime begin, DateTime end, bool isLatest)
@@ -1689,8 +1689,8 @@ namespace Walkabout.Views
                 return;
             }
             this.IsLatestStatement = isLatest;
-            this.StatmentReconcileDateBegin = begin;
-            this.StatmentReconcileDateEnd = end;
+            this.StatementReconcileDateBegin = begin;
+            this.StatementReconcileDateEnd = end;
 
             if (this.ActiveAccount != null)
             {
@@ -1797,7 +1797,7 @@ namespace Walkabout.Views
         {
             var data = this.myMoney.Transactions.GetTransactionsFrom(a, this.GetTransactionIncludePredicate());
             bool found = (from t in data where t.Id == selectedRowId select t).Any();
-            if (!found && accountChanged && this.TransactionFilter != TransactionFilter.All && !this.programaticFilterChange)
+            if (!found && accountChanged && this.TransactionFilter != TransactionFilter.All && !this.programmaticFilterChange)
             {
                 // remove transaction filter, we are probably jumping across accounts, and the filter on the target account makes the 
                 // desired transaction unreachable.
@@ -1952,7 +1952,7 @@ namespace Walkabout.Views
                 //???
             }
 
-            if (!skipped && this.fixedList == toView && this.programaticFilterChange)
+            if (!skipped && this.fixedList == toView && this.programmaticFilterChange)
             {
                 // then user is filtering a previously set fixed list.
                 var includeFilter = this.GetTransactionIncludePredicate();
@@ -2264,11 +2264,11 @@ namespace Walkabout.Views
 
         private PortfolioReport portfolioReport;
 
-        internal DateTime GetReconiledExclusiveEndDate()
+        internal DateTime GetReconciledExclusiveEndDate()
         {
-            if (this.StatmentReconcileDateEnd.HasValue)
+            if (this.StatementReconcileDateEnd.HasValue)
             {
-                DateTime date = this.StatmentReconcileDateEnd.Value;
+                DateTime date = this.StatementReconcileDateEnd.Value;
                 return date.AddDays(1);
             }
             return DateTime.Now;
@@ -2290,7 +2290,7 @@ namespace Walkabout.Views
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
             this.SetActiveAccount(account, null, null, null, null);
             // if we are reconciling then show the positions held at statement date so the stock balances can be reconciled also.
-            DateTime reportDate = this.IsReconciling ? this.GetReconiledExclusiveEndDate() : DateTime.Now;
+            DateTime reportDate = this.IsReconciling ? this.GetReconciledExclusiveEndDate() : DateTime.Now;
             PortfolioReport report = new PortfolioReport()
             {
                 ServiceProvider = this.ServiceProvider,
@@ -2312,7 +2312,7 @@ namespace Walkabout.Views
 
             FlowDocumentView view = this.InvestmentPortfolioView;
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            DateTime reportDate = this.IsReconciling ? this.GetReconiledExclusiveEndDate() : DateTime.Now;
+            DateTime reportDate = this.IsReconciling ? this.GetReconciledExclusiveEndDate() : DateTime.Now;
             PortfolioReport report = new PortfolioReport()
             {
                 ServiceProvider = this.ServiceProvider,
@@ -2457,9 +2457,9 @@ namespace Walkabout.Views
 
         private bool IsIncludedInCurrentStatement(Transaction t)
         {
-            if (this.StatmentReconcileDateBegin.HasValue)
+            if (this.StatementReconcileDateBegin.HasValue)
             {
-                return t.Date >= this.StatmentReconcileDateBegin.Value;
+                return t.Date >= this.StatementReconcileDateBegin.Value;
             }
 
             return true;
@@ -2926,7 +2926,7 @@ namespace Walkabout.Views
                         //-----------------------------------------------------
                         // Quick Search  across Multiple Account
 
-                        // Strip away the asterix.
+                        // Strip away the asterisk.
                         this.QuickFilterNoRefresh = trimmed.Remove(0, 1);
 
                         // Get all the transaction matching the quick search "text"
@@ -3091,7 +3091,7 @@ namespace Walkabout.Views
             }
             else if (selected == this.FilterByCustom)
             {
-                // do nothing - this one is usually selected programatically.
+                // do nothing - this one is usually selected programmatically.
             }
         }
 
@@ -3286,7 +3286,7 @@ namespace Walkabout.Views
                                 this.SelectedTransaction != null && this.SelectedTransaction.Investment != null &&
                                 this.SelectedTransaction.Investment.Security == s)
                             {
-                                string payee = this.GetUncomittedPayee();
+                                string payee = this.GetUncommittedPayee();
                                 if (string.IsNullOrEmpty(payee) && this.SelectedTransaction != null)
                                 {
                                     this.SelectedTransaction.Payee = this.myMoney.Payees.FindPayee(s.Name, true);
@@ -3533,29 +3533,29 @@ namespace Walkabout.Views
             if (this.Rows != null)
             {
                 int count = 0;
-                decimal salestax = 0;
+                decimal salesTax = 0;
                 decimal investmentValue = 0;
                 decimal balance;
                 switch (this.ActiveViewName)
                 {
                     case TransactionViewName.ByCategory:
                     case TransactionViewName.ByCategoryCustom:
-                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, true, true, out count, out salestax, out investmentValue);
+                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, true, true, out count, out salesTax, out investmentValue);
                         break;
 
                     case TransactionViewName.ByPayee:
-                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, true, false, out count, out salestax, out investmentValue);
+                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, true, false, out count, out salesTax, out investmentValue);
                         break;
 
                     default:
-                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, false, false, out count, out salestax, out investmentValue);
+                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, false, false, out count, out salesTax, out investmentValue);
                         break;
                 }
 
                 string msg = count + " rows, " + balance.ToString("C");
-                if (salestax != 0)
+                if (salesTax != 0)
                 {
-                    msg += ", taxes " + salestax.ToString("C");
+                    msg += ", taxes " + salesTax.ToString("C");
                 }
                 if (investmentValue != 0)
                 {
@@ -3589,7 +3589,7 @@ namespace Walkabout.Views
         /// Get the un-committed date from the current row.
         /// </summary>
         /// <returns></returns>
-        private DateTime? GetUncomittedDate()
+        private DateTime? GetUncommittedDate()
         {
             DataGridRow row = this.TheActiveGrid.GetRowFromItem(this.TheActiveGrid.SelectedItem);
             string date = this.TheActiveGrid.GetUncommittedColumnText(row, "Date");
@@ -3607,7 +3607,7 @@ namespace Walkabout.Views
         /// <summary>
         /// Get the un-committed payee name for the current row.
         /// </summary>
-        private string GetUncomittedPayee()
+        private string GetUncommittedPayee()
         {
             DataGridRow row = this.TheActiveGrid.GetRowFromItem(this.TheActiveGrid.SelectedItem);
             if (row != null)
@@ -3626,7 +3626,7 @@ namespace Walkabout.Views
         /// <summary>
         /// Get the un-committed category name for the current row.
         /// </summary>
-        private string GetUncomittedCategory()
+        private string GetUncommittedCategory()
         {
             DataGridRow row = this.TheActiveGrid.GetRowFromItem(this.TheActiveGrid.SelectedItem);
             if (row != null)
@@ -4360,7 +4360,7 @@ namespace Walkabout.Views
             }
             else
             {
-                this.AttempToMatchAndConvertPossibleTransfer(t);
+                this.AttemptToMatchAndConvertPossibleTransfer(t);
             }
         }
 
@@ -4373,7 +4373,7 @@ namespace Walkabout.Views
             n.NavigateToTransaction(t);
         }
 
-        private void AttempToMatchAndConvertPossibleTransfer(Transaction t)
+        private void AttemptToMatchAndConvertPossibleTransfer(Transaction t)
         {
             //
             // We are searching for the potential transfer transaction in another account.
@@ -4413,13 +4413,13 @@ namespace Walkabout.Views
                             {
                                 if (t.amount > 0)
                                 {
-                                    // Money was transfered from the external account to this account
-                                    this.TransformTwoTrasactionIntoTransfer(found, t);
+                                    // Money was transferred from the external account to this account
+                                    this.TransformTwoTransactionIntoTransfer(found, t);
                                 }
                                 else
                                 {
-                                    // Money was transfered from to external account
-                                    this.TransformTwoTrasactionIntoTransfer(t, found);
+                                    // Money was transferred from to external account
+                                    this.TransformTwoTransactionIntoTransfer(t, found);
                                 }
                             }
                             return;
@@ -4454,7 +4454,7 @@ namespace Walkabout.Views
             }
         }
 
-        private void TransformTwoTrasactionIntoTransfer(Transaction transferFrom, Transaction transferTo)
+        private void TransformTwoTransactionIntoTransfer(Transaction transferFrom, Transaction transferTo)
         {
             // keep the payees to store them in the transfer memo fields
             // Its use a clue of the two original disconnected transactions
@@ -4685,7 +4685,7 @@ namespace Walkabout.Views
             if (t == null || t.Parent == null)
             {
                 // if the parent is null then this is one of those gray fake transactions representing
-                // a split line pulled out for a "bycategory" view.
+                // a split line pulled out for a "byCategory" view.
                 return;
             }
 
@@ -4743,7 +4743,7 @@ namespace Walkabout.Views
                 this.reconcilingTransactions[t] = t.Status;
                 t.Status = TransactionStatus.Reconciled;
                 t.IsReconciling = true;
-                t.ReconciledDate = this.StatmentReconcileDateEnd;
+                t.ReconciledDate = this.StatementReconcileDateEnd;
             }
             if (t.Unaccepted)
             {
@@ -5003,7 +5003,7 @@ namespace Walkabout.Views
 
         private void AutoPopulateCategory(Transaction t)
         {
-            string payeeOrTransfer = this.GetUncomittedPayee();
+            string payeeOrTransfer = this.GetUncommittedPayee();
 
             if (string.IsNullOrEmpty(payeeOrTransfer))
             {
@@ -5011,7 +5011,7 @@ namespace Walkabout.Views
             }
 
             // don't blow away any pending category that the user has entered already.
-            string hasCategoryPending = this.GetUncomittedCategory();
+            string hasCategoryPending = this.GetUncommittedCategory();
 
             if (t != null && t.Category == null && string.IsNullOrEmpty(hasCategoryPending) && !string.IsNullOrEmpty(payeeOrTransfer))
             {
@@ -5020,7 +5020,7 @@ namespace Walkabout.Views
                 {
                     try
                     {
-                        DateTime? date = this.GetUncomittedDate();
+                        DateTime? date = this.GetUncommittedDate();
                         if (date.HasValue)
                         {
                             t.Date = date.Value;
@@ -6184,7 +6184,7 @@ namespace Walkabout.Views
                     Foreground = AppTheme.Instance.GetThemedBrush("ListItemForegroundBrush")
                 };
 
-                SymbolIconHackery.SetFontSize(icon, 16.0); // reduce fontsize from default 20.0.
+                SymbolIconHackery.SetFontSize(icon, 16.0); // reduce fontSize from default 20.0.
                 this.Child = icon;
             }
         }
@@ -6217,7 +6217,7 @@ namespace Walkabout.Views
                 Symbol = Symbol.Attach,
                 Foreground = AppTheme.Instance.GetThemedBrush("ListItemForegroundBrush")
             };
-            SymbolIconHackery.SetFontSize(icon, 16.0); // reduce fontsize from default 20.0.
+            SymbolIconHackery.SetFontSize(icon, 16.0); // reduce fontSize from default 20.0.
             return new Button()
             {
                 Command = TransactionsView.CommandScanAttachment,
@@ -7169,7 +7169,7 @@ namespace Walkabout.Views
             if (binding != null)
             {
                 this.hasBinding = true;
-                // inherit the binding from the editor control so we display the same uncomitted value.
+                // inherit the binding from the editor control so we display the same Uncommitted value.
                 this.SetBinding(TextBlock.TextProperty, binding);
             }
 
@@ -7578,7 +7578,7 @@ namespace Walkabout.Views
         private Button button;
         private TextBlock label;
         private Transaction context;
-        private TextBox editbox;
+        private TextBox editBox;
         private string editedValue;
         private bool? editFieldEmpty;
         private bool isDebit;
@@ -7667,7 +7667,7 @@ namespace Walkabout.Views
 
         protected void SetBindings()
         {
-            if (this.editbox != null)
+            if (this.editBox != null)
             {
                 // Text="{Binding Debit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N5, 
                 // Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
@@ -7679,7 +7679,7 @@ namespace Walkabout.Views
                     ValidatesOnDataErrors = true,
                     ValidatesOnExceptions = true
                 };
-                this.editbox.SetBinding(TextBox.TextProperty, binding);
+                this.editBox.SetBinding(TextBox.TextProperty, binding);
             }
             if (this.label != null)
             {
@@ -7691,7 +7691,7 @@ namespace Walkabout.Views
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
             base.OnVisualParentChanged(oldParent);
-            if (this.label == null && this.editbox == null)
+            if (this.label == null && this.editBox == null)
             {
                 this.FinishConstruction();
             }
@@ -7778,17 +7778,17 @@ namespace Walkabout.Views
             Grid grid = (Grid)this.Content;
             if (this.IsEditing)
             {
-                if (this.editbox == null)
+                if (this.editBox == null)
                 {
-                    this.editbox = new TextBox()
+                    this.editBox = new TextBox()
                     {
                         TextAlignment = TextAlignment.Right,
                         VerticalAlignment = System.Windows.VerticalAlignment.Top,
                     };
-                    this.editbox.TextChanged += new TextChangedEventHandler(this.OnEditTextChanged);
-                    Grid.SetColumn(this.editbox, 1);
-                    grid.Children.Add(this.editbox);
-                    this.editbox.SetResourceReference(TextBlock.StyleProperty, "NumericTextBoxStyle");
+                    this.editBox.TextChanged += new TextChangedEventHandler(this.OnEditTextChanged);
+                    Grid.SetColumn(this.editBox, 1);
+                    grid.Children.Add(this.editBox);
+                    this.editBox.SetResourceReference(TextBlock.StyleProperty, "NumericTextBoxStyle");
                 }
 
                 if (this.label != null)
@@ -7815,20 +7815,20 @@ namespace Walkabout.Views
                     grid.Children.Add(this.label);
                 }
 
-                if (this.editbox != null)
+                if (this.editBox != null)
                 {
                     // cleanup from previous recycling.
-                    this.editedValue = this.editbox.Text;
-                    this.editbox.TextChanged -= new TextChangedEventHandler(this.OnEditTextChanged);
-                    grid.Children.Remove(this.editbox);
-                    this.editbox = null;
+                    this.editedValue = this.editBox.Text;
+                    this.editBox.TextChanged -= new TextChangedEventHandler(this.OnEditTextChanged);
+                    grid.Children.Remove(this.editBox);
+                    this.editBox = null;
                 }
             }
         }
 
         private void OnEditTextChanged(object sender, TextChangedEventArgs e)
         {
-            string value = this.editbox.Text;
+            string value = this.editBox.Text;
             this.SetEditFieldEmpty(string.IsNullOrEmpty(value));
         }
 
@@ -7840,9 +7840,9 @@ namespace Walkabout.Views
 
         public void OnValidationError(Exception ex)
         {
-            if (this.editbox != null)
+            if (this.editBox != null)
             {
-                var binding = this.editbox.BindingGroup.BindingExpressions.FirstOrDefault();
+                var binding = this.editBox.BindingGroup.BindingExpressions.FirstOrDefault();
                 Validation.MarkInvalid(binding, new ValidationError(new ExceptionValidationRule(), binding, ex.Message, ex));
             }
         }

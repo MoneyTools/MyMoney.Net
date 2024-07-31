@@ -371,7 +371,7 @@ namespace Walkabout.Controls
                     DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
                     if (cell == null)
                     {
-                        // now try to bring into view and retreive the cell
+                        // now try to bring into view and retrieve the cell
                         this.ScrollIntoView(rowContainer, this.Columns[column]);
                         cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
                     }
@@ -414,13 +414,13 @@ namespace Walkabout.Controls
 
         public int GetRowIndex(DataGridCellInfo dgci)
         {
-            DataGridRow dgrow = this.GetRowFromItem(dgci.Item);
-            if (dgrow == null)
+            DataGridRow row = this.GetRowFromItem(dgci.Item);
+            if (row == null)
             {
                 // MessageBoxEx.Show("Please debug me", "Internal Error");
                 return 0;
             }
-            return dgrow.GetIndex();
+            return row.GetIndex();
         }
 
         public int GetColIndex(DataGridCellInfo dgci)
@@ -1058,7 +1058,7 @@ namespace Walkabout.Controls
                 }
                 else
                 {
-                    // stop autoscrolling.
+                    // stop autoScrolling.
                     this.StopAutoScrolling();
                 }
             }

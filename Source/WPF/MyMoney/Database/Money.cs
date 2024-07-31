@@ -6629,7 +6629,7 @@ namespace Walkabout.Data
                     decimal totalMatchingInThisSplit = 0;
                     foreach (Split s in t.Splits)
                     {
-                        if (s.Category != null && s.Category.IsDescedantOrMatching(c))
+                        if (s.Category != null && s.Category.IsDescendantOrMatching(c))
                         {
                             totalMatchingInThisSplit += s.Amount;
                         }
@@ -6638,7 +6638,7 @@ namespace Walkabout.Data
                 }
                 else
                 {
-                    if (t.Category.IsDescedantOrMatching(c))
+                    if (t.Category.IsDescendantOrMatching(c))
                     {
                         return t.Amount;
                     }
@@ -6686,7 +6686,7 @@ namespace Walkabout.Data
             toMatch.Add(b.CategoryForMaintenance);
             toMatch.Add(b.CategoryForRepairs);
 
-            return c != null && c.IsDescedantOrMatching(toMatch);
+            return c != null && c.IsDescendantOrMatching(toMatch);
         }
         #region ICollection
 
@@ -8026,7 +8026,7 @@ namespace Walkabout.Data
 
         public void PrivateAddSubcategory(Category c)
         {
-            if (c == this || this.IsDescedantOrMatching(c.Id))
+            if (c == this || this.IsDescendantOrMatching(c.Id))
             {
                 return;
             }
@@ -8086,21 +8086,21 @@ namespace Walkabout.Data
         [IgnoreDataMemberAttribute]
         public bool HasSubcategories { get { return this.subcategories != null; } }
 
-        public bool IsDescedantOrMatching(int categoryId)
+        public bool IsDescendantOrMatching(int categoryId)
         {
             if (this.id == categoryId)
             {
                 return true;
             }
 
-            if (this.parent != null && this.parent.IsDescedantOrMatching(categoryId))
+            if (this.parent != null && this.parent.IsDescendantOrMatching(categoryId))
             {
                 return true;
             }
             return false;
         }
 
-        public bool IsDescedantOrMatching(List<int> categoriesIdToMatch)
+        public bool IsDescendantOrMatching(List<int> categoriesIdToMatch)
         {
 
             if (categoriesIdToMatch.Contains(this.id))
@@ -8108,7 +8108,7 @@ namespace Walkabout.Data
                 return true;
             }
 
-            if (this.parent != null && this.parent.IsDescedantOrMatching(categoriesIdToMatch))
+            if (this.parent != null && this.parent.IsDescendantOrMatching(categoriesIdToMatch))
             {
                 return true;
             }
@@ -9984,10 +9984,10 @@ namespace Walkabout.Data
             return changed;
         }
 
-        public static decimal GetBalance(MyMoney money, System.Collections.IEnumerable data, Account account, bool normalize, bool withoutTax, out int count, out decimal salestax, out decimal investmentValue)
+        public static decimal GetBalance(MyMoney money, System.Collections.IEnumerable data, Account account, bool normalize, bool withoutTax, out int count, out decimal salesTax, out decimal investmentValue)
         {
             count = 0;
-            salestax = 0;
+            salesTax = 0;
             investmentValue = 0;
 
             decimal balance = account != null ? account.OpeningBalance : 0;
@@ -10011,7 +10011,7 @@ namespace Walkabout.Data
 
                     if (normalize)
                     {
-                        salestax += t.CurrencyNormalizedAmount(t.NetSalesTax) + t.CurrencyNormalizedAmount(iTax);
+                        salesTax += t.CurrencyNormalizedAmount(t.NetSalesTax) + t.CurrencyNormalizedAmount(iTax);
 
                         if (withoutTax)
                         {
@@ -10028,7 +10028,7 @@ namespace Walkabout.Data
                         Debug.Assert(withoutTax == false);
 
                         balance += t.Amount;
-                        salestax += t.NetSalesTax + iTax;
+                        salesTax += t.NetSalesTax + iTax;
                     }
                 }
             }
@@ -11298,7 +11298,7 @@ namespace Walkabout.Data
         /// <summary>
         /// Parses something like "Transfer to: Discover Card" and returns "Discover Card".
         /// </summary>
-        /// <param name="value">The string to disect</param>
+        /// <param name="value">The string to dissect</param>
         /// <returns>The account name</returns>
         public static string ExtractTransferAccountName(string value)
         {
@@ -11630,7 +11630,7 @@ namespace Walkabout.Data
             {
                 if (this.relatedSplit != null)
                 {
-                    // fake transaction is an unrolled split for by Cateogry view, so budgeting this
+                    // fake transaction is an unrolled split for by Category view, so budgeting this
                     // is adding the split to the given category.
                     this.relatedSplit.SetBudgeted(value, errors);
                 }
@@ -12311,11 +12311,11 @@ namespace Walkabout.Data
                 if (this.Transfer.Transaction.Account.AccountId == t.Transfer.Transaction.account.AccountId &&
                     this.transfer.Transaction.account.Name == t.transfer.Transaction.account.Name)
                 {
-                    // they are both transfering to the same account, so we're good.
+                    // they are both transferring to the same account, so we're good.
                 }
                 else
                 {
-                    throw new ApplicationException("Cannot merge when both transactions are transfered to a different place");
+                    throw new ApplicationException("Cannot merge when both transactions are transferred to a different place");
                 }
             }
 
@@ -12387,7 +12387,7 @@ namespace Walkabout.Data
                 Account a = money.Accounts.FindAccount(t.transfer.Transaction.Account.Name);
                 if (a == null)
                 {
-                    throw new Exception("Cannot merge transction from account that doesn't exist in the target");
+                    throw new Exception("Cannot merge transaction from account that doesn't exist in the target");
                 }
                 money.Transfer(this, a);
                 rc = true;
@@ -12640,8 +12640,8 @@ namespace Walkabout.Data
                 this.PayeeName = null;
             }
 
-            // do not copy budgetting information outside of balancing the budget.
-            // (Note: setting IsBudgetted to false will screw up the budget balance).
+            // do not copy budgeting information outside of balancing the budget.
+            // (Note: setting IsBudgeted to false will screw up the budget balance).
             this.flags &= ~TransactionFlags.Budgeted;
 
             if (duplicateTransfers)
@@ -13486,7 +13486,7 @@ namespace Walkabout.Data
             s.Transfer = null; // remove the transfer.
             if (s.IsInserted || forceRemoveAfterSave)
             {
-                // then we can remove it immedately.
+                // then we can remove it immediately.
                 if (this.splits.ContainsKey(s.Id))
                 {
                     this.splits.Remove(s.Id);
@@ -13698,7 +13698,7 @@ namespace Walkabout.Data
                     }
                     else
                     {
-                        throw new Exception("Cannot merge split that are transfered to different places");
+                        throw new Exception("Cannot merge split that are transferred to different places");
                     }
                 }
                 else
@@ -14116,8 +14116,8 @@ namespace Walkabout.Data
             this.Parent = parent;
 
 
-            // do not copy budgetting information outside of balancing the budget.
-            // (Note: setting IsBudgetted to false will screw up the budget balance).
+            // do not copy budgeting information outside of balancing the budget.
+            // (Note: setting IsBudgeted to false will screw up the budget balance).
             this.flags &= ~SplitFlags.Budgeted;
 
             if (this.payeeName != null)
@@ -14210,7 +14210,7 @@ namespace Walkabout.Data
                             Account a = money.Accounts.FindAccount(accountName);
                             if (a != null)
                             {
-                                // the 'to' or 'from' ness of this transfer is simply controlled by the 'sign' of the amount being transfered.
+                                // the 'to' or 'from' ness of this transfer is simply controlled by the 'sign' of the amount being transferred.
                                 money.Transfer(this, a);
                             }
                         }
@@ -14235,10 +14235,10 @@ namespace Walkabout.Data
                 Splits parent = this.Parent as Splits;
                 if (parent != null)
                 {
-                    Transactions tran = this.Transaction.Parent as Transactions;
-                    if (tran != null)
+                    Transactions transaction = this.Transaction.Parent as Transactions;
+                    if (transaction != null)
                     {
-                        return tran.Parent as MyMoney;
+                        return transaction.Parent as MyMoney;
                     }
                 }
                 return null;
@@ -14322,14 +14322,14 @@ namespace Walkabout.Data
     {
         private long id;
         private Security security;
-        private decimal unitprice;
+        private decimal unitPrice;
         private decimal units;
         private decimal commission;
         private InvestmentType type = InvestmentType.None;
         private InvestmentTradeType tradeType = InvestmentTradeType.None;
         private bool taxExempt;
         private decimal withholding;
-        private decimal markupdown;
+        private decimal markupDown;
         private decimal taxes;
         private decimal fees;
         private decimal load;
@@ -14369,7 +14369,7 @@ namespace Walkabout.Data
 
         // for summary portfolio transactions.
         [IgnoreDataMember]
-        public DateTime DateAquired { get; set; }
+        public DateTime DateAcquired { get; set; }
 
         [IgnoreDataMember]
         [ColumnObjectMapping(ColumnName = "Security", KeyProperty = "Id")]
@@ -14416,8 +14416,8 @@ namespace Walkabout.Data
         [ColumnMapping(ColumnName = "UnitPrice", SqlType = typeof(SqlMoney), OldColumnName = "Cost")]
         public decimal UnitPrice
         {
-            get { return this.unitprice; }
-            set { if (this.unitprice != value) { this.unitprice = value; this.OnChanged("UnitPrice"); } }
+            get { return this.unitPrice; }
+            set { if (this.unitPrice != value) { this.unitPrice = value; this.OnChanged("UnitPrice"); } }
         }
 
         /// <summary>
@@ -14443,8 +14443,8 @@ namespace Walkabout.Data
         [ColumnMapping(ColumnName = "MarkUpDown", SqlType = typeof(SqlMoney), AllowNulls = true)]
         public decimal MarkUpDown
         {
-            get { return this.markupdown; }
-            set { if (this.markupdown != value) { this.markupdown = value; this.OnChanged("MarkUpDown"); } }
+            get { return this.markupDown; }
+            set { if (this.markupDown != value) { this.markupDown = value; this.OnChanged("MarkUpDown"); } }
         }
 
         [DataMember]
@@ -14507,7 +14507,7 @@ namespace Walkabout.Data
         [XmlIgnore]
         public decimal TotalCost
         {
-            get { return this.unitprice * this.units; }
+            get { return this.unitPrice * this.units; }
         }
 
         [XmlIgnore]
@@ -14627,10 +14627,10 @@ namespace Walkabout.Data
         {
             this.security = i.security;
             this.Price = i.Price;
-            this.unitprice = i.unitprice;
+            this.unitPrice = i.unitPrice;
             this.units = i.units;
             this.commission = i.commission;
-            this.markupdown = i.markupdown;
+            this.markupDown = i.markupDown;
             this.taxes = i.taxes;
             this.fees = i.fees;
             this.load = i.load;

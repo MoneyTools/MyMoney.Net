@@ -104,10 +104,10 @@ namespace Walkabout.Migrate
 
         /// <summary>
         ///  Try and find a transfer matching this split from another account that has not been hooked up as a real Transfer yet.
-        ///  This is only used during QIF importing when we find QIF Category starting with 'S[' which means we are importing a transfered split.
+        ///  This is only used during QIF importing when we find QIF Category starting with 'S[' which means we are importing a transferred split.
         /// </summary>
         /// <param name="s">The split to match</param>
-        /// <param name="to">The account the split is transfered to</param>
+        /// <param name="to">The account the split is transferred to</param>
         /// <returns></returns>
         public Transfer FindMatchingSplitTransfer(Split s, Account to)
         {

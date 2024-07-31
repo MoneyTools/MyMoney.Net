@@ -23,10 +23,11 @@ namespace Walkabout.Reports
         private CultureInfo currencyCulture;
         private IServiceProvider serviceProvider;
 
-        public IServiceProvider ServiceProvider 
+        public IServiceProvider ServiceProvider
         {
             get => serviceProvider;
-            set {
+            set
+            {
                 serviceProvider = value;
                 this.OnSiteChanged();
             }

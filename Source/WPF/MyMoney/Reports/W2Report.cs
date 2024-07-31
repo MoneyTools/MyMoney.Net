@@ -40,7 +40,8 @@ namespace Walkabout.Taxes
         public int FiscalYearStart
         {
             get => this.fiscalYearStart;
-            set {
+            set
+            {
                 this.fiscalYearStart = value;
 
             }
@@ -81,7 +82,7 @@ namespace Walkabout.Taxes
         {
             if (state is W2ReportState taxReportState)
             {
-                this.FiscalYearStart = taxReportState.FiscalYearStart;                
+                this.FiscalYearStart = taxReportState.FiscalYearStart;
                 this.SetStartDate(taxReportState.StartDate);
             }
         }
