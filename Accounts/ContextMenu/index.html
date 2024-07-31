@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Accounts/ContextMenu/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Context Menu - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Transactions Menu", url: "#_top", children: [
+              {title: "Toggle Accept", url: "#toggle-accept" },
+              {title: "Accept All", url: "#accept-all" },
+              {title: "Toggle Void", url: "#toggle-void" },
+              {title: "Splits...", url: "#splits" },
+              {title: "Rename Payee", url: "#rename-payee" },
+              {title: "Lookup Payee", url: "#lookup-payee" },
+              {title: "Recategorize all...", url: "#recategorize-all" },
+              {title: "Set Tax Date...", url: "#set-tax-date" },
+              {title: "Delete", url: "#delete" },
+              {title: "Move...", url: "#move" },
+              {title: "One Line View", url: "#one-line-view" },
+              {title: "Show All Splits", url: "#show-all-splits" },
+              {title: "Go to related transaction", url: "#go-to-related-transaction" },
+              {title: "Go to statement", url: "#go-to-statement" },
+              {title: "View Transaction by Acount", url: "#view-transaction-by-acount" },
+              {title: "View Transaction by Category", url: "#view-transaction-by-category" },
+              {title: "View Transaction by Payee", url: "#view-transaction-by-payee" },
+              {title: "View Transaction by Security", url: "#view-transaction-by-security" },
+              {title: "View Security", url: "#view-security" },
+              {title: "Category Properties", url: "#category-properties" },
+              {title: "Export...", url: "#export" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../Loans/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../Loans/" class="btn btn-xs btn-link">
+        Loans
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../InvestmentAccounts/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../InvestmentAccounts/" class="btn btn-xs btn-link">
+        Investment Accounts
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="transactions-menu">Transactions Menu<a class="headerlink" href="#transactions-menu" title="Permanent link">#</a></h1>
+<p><a href="../BankAccounts/">Bank Accounts</a>, <a href="../CreditCardAccounts/">Credit Card Accounts</a> and
+<a href="../InvestmentAccounts/">Investment Accounts</a> have the following context menu for
+handy commands regarding the management of your transactions.</p>
+<p><img alt="menu" src="../../Images/ContextMenu.png" /></p>
+<h3 id="toggle-accept">Toggle Accept<a class="headerlink" href="#toggle-accept" title="Permanent link">#</a></h3>
+<p>This command is a way to verify that the selected transaction you've imported from your bank
+is something you recognize and accept.  See <a href="../../Reports/UnacceptedReport/">Unaccepted Report</a>.</p>
+<h3 id="accept-all">Accept All<a class="headerlink" href="#accept-all" title="Permanent link">#</a></h3>
+<p>Mark all transactions in the current view as "accepted".</p>
+<h2 id="toggle-void">Toggle Void<a class="headerlink" href="#toggle-void" title="Permanent link">#</a></h2>
+<p>Mark the selected transaction as <code>void</code> this means it no longer participates in the account balance
+or reconciliation.  This is handy when tracking a bad check.</p>
+<h2 id="splits">Splits...<a class="headerlink" href="#splits" title="Permanent link">#</a></h2>
+<p>Add splits to the selected transaction.
+See <a href="../../Basics/Splits/">Splits</a>.</p>
+<h2 id="rename-payee">Rename Payee<a class="headerlink" href="#rename-payee" title="Permanent link">#</a></h2>
+<p>Rename the payee and optionally setup an automatic rename using <a href="../../Basics/Aliases/">Aliasing</a>.</p>
+<h2 id="lookup-payee">Lookup Payee<a class="headerlink" href="#lookup-payee" title="Permanent link">#</a></h2>
+<p>Open your web browser to search for information about this payee.</p>
+<h2 id="recategorize-all">Recategorize all...<a class="headerlink" href="#recategorize-all" title="Permanent link">#</a></h2>
+<p>This is a convenience tool for recategorizing all transactions in the current view.
+Please use with caution!</p>
+<h2 id="set-tax-date">Set Tax Date...<a class="headerlink" href="#set-tax-date" title="Permanent link">#</a></h2>
+<p>Sometimes a transaction in one year is actually related to the previous year's tax report.
+This impacts what transactions are included in the [../Reports/TaxReport.md].</p>
+<h2 id="delete">Delete<a class="headerlink" href="#delete" title="Permanent link">#</a></h2>
+<p>Delete the selected transaction.</p>
+<h2 id="move">Move...<a class="headerlink" href="#move" title="Permanent link">#</a></h2>
+<p>Move the selected transaction to a different account, including any <a href="../../Basics/Attachments/">Attachments</a>.</p>
+<h2 id="one-line-view">One Line View<a class="headerlink" href="#one-line-view" title="Permanent link">#</a></h2>
+<p>Toggle the view between one and three lines per transaction.</p>
+<h2 id="show-all-splits">Show All Splits<a class="headerlink" href="#show-all-splits" title="Permanent link">#</a></h2>
+<p>Toggle the view from hiding all to showing all splits.  When hiding splits they are only visible when you press the splits
+downarrow or select the <code>Splits...</code> command.</p>
+<h2 id="go-to-related-transaction">Go to related transaction<a class="headerlink" href="#go-to-related-transaction" title="Permanent link">#</a></h2>
+<p>Some transactions like [../Basics/Transfers.md] have a related transaction in another account.
+This command navigates to the related transaction for the selected transaction if there is one.</p>
+<h2 id="go-to-statement">Go to statement<a class="headerlink" href="#go-to-statement" title="Permanent link">#</a></h2>
+<p>During the [Account Balancing](BalancingAccounts.md] process you can associate a bank statement (usually a pdf) with 
+the transactions included in that statement.  This command finds that statement if there is one and opens it.</p>
+<h2 id="view-transaction-by-acount">View Transaction by Acount<a class="headerlink" href="#view-transaction-by-acount" title="Permanent link">#</a></h2>
+<p>Shows all transactions in the account for the selected transaction.</p>
+<h2 id="view-transaction-by-category">View Transaction by Category<a class="headerlink" href="#view-transaction-by-category" title="Permanent link">#</a></h2>
+<p>Shows all transactions that have the same category as the selected transaction.</p>
+<h2 id="view-transaction-by-payee">View Transaction by Payee<a class="headerlink" href="#view-transaction-by-payee" title="Permanent link">#</a></h2>
+<p>Shows all transactions that have the same payee as the selected transaction.</p>
+<h2 id="view-transaction-by-security">View Transaction by Security<a class="headerlink" href="#view-transaction-by-security" title="Permanent link">#</a></h2>
+<p>Shows all transactions that have the same security as the selected <a href="../InvestmentAccounts/">investment transaction</a>.</p>
+<h2 id="view-security">View Security<a class="headerlink" href="#view-security" title="Permanent link">#</a></h2>
+<p>Navigates to the security view for and finds the security matching the selected <a href="../InvestmentAccounts/">investment transaction</a>.</p>
+<h2 id="category-properties">Category Properties<a class="headerlink" href="#category-properties" title="Permanent link">#</a></h2>
+<p>This is a short cut to the category property dialog for the category defined on the selected transaction.</p>
+<h2 id="export">Export...<a class="headerlink" href="#export" title="Permanent link">#</a></h2>
+<p>Exports all the transactions in the current view to a .csv or .xml file.  You will get the following columns:</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>Columns</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>investments</td>
+<td>Date</td>
+<td>Payee</td>
+<td>Category</td>
+<td>Activity</td>
+<td>Symbol</td>
+<td>Units</td>
+<td>UnitPrice</td>
+<td>Amount</td>
+<td>Memo</td>
+</tr>
+<tr>
+<td>other</td>
+<td>Account</td>
+<td>Date</td>
+<td>Payee</td>
+<td>Amount</td>
+<td>Category</td>
+<td>Memo</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../Loans/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../Loans/" class="btn btn-xs btn-link">
+        Loans
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../InvestmentAccounts/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../InvestmentAccounts/" class="btn btn-xs btn-link">
+        Investment Accounts
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
