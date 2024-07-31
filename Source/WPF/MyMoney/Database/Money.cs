@@ -1158,9 +1158,9 @@ namespace Walkabout.Data
         public HashSet<Transaction> CheckTransfers()
         {
             HashSet<Transaction> dangling = new HashSet<Transaction>();
-            List<Account> deletedaccounts = new List<Account>();
-            this.Transactions.CheckTransfers(this, dangling, deletedaccounts);
-            foreach (Account a in deletedaccounts)
+            List<Account> deletedAccounts = new List<Account>();
+            this.Transactions.CheckTransfers(this, dangling, deletedAccounts);
+            foreach (Account a in deletedAccounts)
             {
                 this.Accounts.RemoveAccount(a);
             }
