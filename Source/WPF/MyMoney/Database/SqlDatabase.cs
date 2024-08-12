@@ -1078,7 +1078,7 @@ namespace Walkabout.Data
                     a.LastBalance = reader.SafeGetDateTime(8);
                 }
 
-                if (!reader.IsDBNull(9) && reader.GetString(9).Trim().Length > 0)
+                if (!reader.IsDBNull(9))
                 {
                     try
                     {
