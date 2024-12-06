@@ -133,6 +133,10 @@ namespace Walkabout.StockQuotes
             {
                 service = new YahooFinance(settings, this.LogPath);
             }
+            else if (TwelveData.IsMySettings(settings))
+            {
+                service = new TwelveData(settings, this.LogPath);
+            }
             return service;
         }
 
@@ -218,6 +222,7 @@ namespace Walkabout.StockQuotes
             result.Add(AlphaVantage.GetDefaultSettings());
             result.Add(PolygonStocks.GetDefaultSettings());
             result.Add(YahooFinance.GetDefaultSettings());
+            result.Add(TwelveData.GetDefaultSettings());
             return result;
         }
 
