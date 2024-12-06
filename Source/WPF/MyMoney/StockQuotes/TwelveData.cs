@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Interop;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Configuration;
@@ -20,6 +21,7 @@ namespace Walkabout.StockQuotes
     /// </summary>
     internal class TwelveData : ThrottledStockQuoteService
     {
+        private static int MaxHistory = 5000;
         private static readonly string name = "TwelveData";
         private static readonly string baseAddress = "https://api.twelvedata.com/";
         // {0}=Symbol, {1}=number of days back from today, {2}=apikey
@@ -113,6 +115,24 @@ namespace Walkabout.StockQuotes
             string symbol = "";
 
             JToken value;
+            if (child.TryGetValue("code", out value) && value.Type == JTokenType.Integer)
+            {
+                int code = (int)value;
+                if (code != 200)
+                {
+                    var status = "error";
+                    if (child.TryGetValue("status", out value) && value.Type == JTokenType.String)
+                    {
+                        status = (string)value;
+                    }
+                    var message = "";
+                    if (child.TryGetValue("message", out value) && value.Type == JTokenType.String)
+                    {
+                        message = (string)value;
+                    }
+                    throw new Exception($"{this.FriendlyName} returned {status} code {code}: {message} ");
+                }
+            }
             if (child.TryGetValue("meta", StringComparison.Ordinal, out value) && value.Type == JTokenType.Object)
             {
                 JObject meta = (JObject)value;
@@ -196,6 +216,10 @@ namespace Walkabout.StockQuotes
                 if (days == 0)
                 {
                     days = 1;
+                }
+                if (days > MaxHistory)
+                {
+                    days = MaxHistory;
                 }
             }
             try
