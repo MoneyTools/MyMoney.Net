@@ -6,15 +6,14 @@ When this information is downloaded you will see full stock quote information av
 
 ![](../Images/Stock%20Quote%20Services.png)
 
-MyMoney can download from **iexcloud.io**  and/or from **alphavantage.co** .  Both of these services require a registered account and will provide an API Key which you enter here.  Depending on your plan you will also have limits on the number of requests per minute or per day or per month.  Enter those numbers here and MyMoney will ensure those limits are not exceeded.  Just leave the value at 0 if there is no limit.  MyMoney supports using both services at once since iexcloud.io is best at downloading a bunch of stock quotes and alphavantage.co is best at downloading history.
+MyMoney can download from **twelvedata.com**, **iexcloud.io**  and/or from **alphavantage.co** .  These services require a registered account and will provide an API Key which you enter here.  Depending on your plan you will also have limits on the number of requests per minute or per day or per month.  Enter those numbers here and MyMoney will ensure those limits are not exceeded.  Just leave the value at 0 if there is no limit.  MyMoney recommends
+using **twelvedata.com**.
 
 During the download you will see some progress information in the status bar on the bottom right.  If the download is blocked on the quota limits this progress bar may pause for a moment.  If you reach daily or monthly limits the download will print an error message explaining why the stock quotes are not updating right now.
 
-[Yahoo](https://yahoo.com)
-Provides free data, just enter any fake API key to enable this service.  Yahoo provides up to 10 years of stock history.
-
-[Polygon.io](https://polygon.io) provides a free API key but only provides U.S.
-stocks (no mutual funds).  They are working on adding mutual funds.
+[https://twelvedata.com/](https://twelvedata.com/)
+TwelveData provides stock, forex, cryptocurrency, ETF info with up to 20 years of historical data.  The free account can do 8 requests/minute,
+and 800 per day. To setup a free account on their website, click their Get Started button, create a new account and copy the "api key" to the API Key field in the MyMoney Stock Quote Service Dialog.
 
 [https://iexcloud.io/](https://iexcloud.io/)
 To setup a free account on iexcloud.io, click their Get Started button, create a new account and select the "Start" account which is free up to 500,000 messages per month, which should be plenty.  MyMoney will only make one call for each 100 stocks you own each time you launch it.  You will get a verification email and when it arrives click the link which will take you back to iexcloud.io.  Click the "[API Tokens](https://iexcloud.io/console/tokens)" tab and you will see two tokens, a Secret and a Publishable one.  Save these in a safe place, and copy the "publishable" token to the API Key field in the MyMoney Stock Quote Service Dialog.
@@ -31,7 +30,10 @@ next to your *.mmdb money database file.  There is also a special
 `DownloadLog.xml` index file in this folder which keeps tabs on how
 recently the stock quotes were updated and so on.  These cached files
 are used to efficiently compute the historical market value for your
-[investment accounts](InvestmentAccounts.md).
+[investment accounts](InvestmentAccounts.md) which you can view by selecting
+different dates in the [Portfolio Report](../reports/InvestmentPortfolio.md)
+and in the [Networth Report](../reports/NetworthReport.md).
+
 
 
 
