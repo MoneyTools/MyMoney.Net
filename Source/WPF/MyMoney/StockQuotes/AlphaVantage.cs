@@ -153,7 +153,7 @@ namespace Walkabout.StockQuotes
 
         protected override async Task<bool> DownloadThrottledQuoteHistoryAsync(StockQuoteHistory history)
         {
-            string outputsize = !history.Complete ? "full" : "compact";
+            string outputsize = "full";
             string symbol = history.Symbol;
             string uri = string.Format(timeSeriesAddress, symbol, outputsize, this.Settings.ApiKey);
 
@@ -187,7 +187,6 @@ namespace Walkabout.StockQuotes
                         {
                             updated = true;
                             history.Merge(newHistory);
-                            history.Complete = true;
                         }
                     }
                 }
@@ -199,7 +198,6 @@ namespace Walkabout.StockQuotes
         {
             StockQuoteHistory history = new StockQuoteHistory();
             history.History = new List<StockQuote>();
-            history.Complete = true; // this is a complete history.
 
             Newtonsoft.Json.Linq.JToken value;
 

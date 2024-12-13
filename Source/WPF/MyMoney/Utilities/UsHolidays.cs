@@ -11,7 +11,23 @@ namespace Walkabout.Utilities
         public UsHolidays() { }
 
         /// <summary>
-        /// Enumerate work days, skipping weekends and holidays.
+        /// Return the most recent work day.
+        /// </summary>
+        public DateTime MostRecentWorkDay
+        {
+            get
+            {
+                var workDay = DateTime.Today;
+                if (!this.IsWorkDay(workDay))
+                {
+                    workDay = this.GetPreviousWorkDay(workDay);
+                }
+                return workDay;
+            }
+        }
+
+        /// <summary>
+        /// Enumerate back to nearest work day, skipping weekends and holidays.
         /// </summary>
         /// <param name="date">Date to work back from</param>
         public DateTime GetPreviousWorkDay(DateTime date)
@@ -21,24 +37,51 @@ namespace Walkabout.Utilities
             do
             {
                 moved = false;
-                if (date.Year != this.year)
-                {
-                    this.year = date.Year;
-                    this.holidays = GetHolidays(this.year);
-                }
-                if (this.holidays.Contains(date))
+                if (!this.IsWorkDay(date))
                 {
                     date = date.AddDays(-1); // skip holidays
                     moved = true;
                 }
-                if (date.DayOfWeek == DayOfWeek.Sunday)
+            } while (moved);
+            return date;
+        }
+
+        public bool IsWorkDay(DateTime date)
+        {
+            if (date.Year != this.year)
+            {
+                this.year = date.Year;
+                this.holidays = GetHolidays(this.year);
+            }
+            if (this.holidays.Contains(date))
+            {
+                return false;
+            }
+            if (date.DayOfWeek == DayOfWeek.Sunday)
+            {
+                return false;
+            }
+            if (date.DayOfWeek == DayOfWeek.Saturday)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Enumerate forwards to nearest work day, skipping weekends and holidays.
+        /// </summary>
+        /// <param name="date">Date to work back from</param>
+        public DateTime GetNextWorkDay(DateTime date)
+        {
+            bool moved = true;
+            date = date.AddDays(1);
+            do
+            {
+                moved = false;
+                if (!this.IsWorkDay(date))
                 {
-                    date = date.AddDays(-1);
-                    moved = true;
-                }
-                if (date.DayOfWeek == DayOfWeek.Saturday)
-                {
-                    date = date.AddDays(-1);
+                    date = date.AddDays(1); // skip holidays
                     moved = true;
                 }
             } while (moved);
@@ -50,9 +93,10 @@ namespace Walkabout.Utilities
             return new HashSet<DateTime>(new DateTime[] {
                 GetNewYearsHoliday(year),
                 GetMartinLutherKingJrHoliday(year),
-                GetWashingtonsBirthdayHoliday(year),
+                GetWashingtonsBirthdayHoliday(year), // president's day
                 GetGoodFridayHoliday(year),
                 GetMemorialDayHoliday(year),
+                GetJuneteenthDay(year),
                 GetIndependenceDayHoliday(year),
                 GetLaborDayHoliday(year),
                 GetThanksgivingHoliday(year),
@@ -83,6 +127,11 @@ namespace Walkabout.Utilities
         {
             // memorial day (The holiday is observed on the last Monday of May)
             return GetLastMonday(year, 5);
+        }
+
+        public static DateTime GetJuneteenthDay(int year)
+        {
+            return MoveClosestWorkday(new DateTime(year, 6, 19));
         }
 
         public static DateTime GetIndependenceDayHoliday(int year)

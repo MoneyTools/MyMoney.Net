@@ -140,7 +140,7 @@ namespace Walkabout.StockQuotes
 
         public void BeginFetchQuotes(List<string> symbols)
         {
-            if (this._disabled)
+            if (this._disabled || symbols.Count == 0)
             {
                 return;
             }
@@ -373,8 +373,7 @@ namespace Walkabout.StockQuotes
             try
             {
                 // first check if history needs updating!
-                bool historyComplete = history.IsComplete();
-                if (historyComplete)
+                if (!history.NeedsUpdating)
                 {
                     this.OnError(string.Format("History for symbol {0} is already up to date", symbol));
                 }
@@ -382,6 +381,8 @@ namespace Walkabout.StockQuotes
                 {
                     // this service doesn't want too many calls per second.
                     await this.ThrottleSleep();
+                    this._cancelled = false;
+                    this._source = new CancellationTokenSource();
                     updated = await this.DownloadThrottledQuoteHistoryAsync(history);
                     if (updated)
                     {

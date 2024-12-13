@@ -4761,7 +4761,7 @@ namespace Walkabout
             {
                 version = this.GetType().Assembly.GetName().Version.ToString();
             }
-            var msg = string.Format("MyMoney, Version {0}\r\n\r\nData provided by https://iexcloud.io/ and https://www.alphavantage.co/.", version);
+            var msg = string.Format("MyMoney, Version {0}\r\n\r\nData provided by https://iexcloud.io/ and https://www.alphavantage.co/ and https://twelvedata.com/.", version);
             MessageBoxEx.Show(msg, "About", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 

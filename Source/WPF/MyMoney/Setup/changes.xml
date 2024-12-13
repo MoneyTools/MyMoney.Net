@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.27" date="12/12/2024">
+    - Add support for https://twelvedata.com/ API to access world financial markets including stocks, forex, ETFs, indices, and cryptocurrencies. Free API key available on their website.
+  </change>
   <change version="2.1.0.26" date="7/7/2024">
     - Add "Export HTML..." to all reports.
     - Fix install button.

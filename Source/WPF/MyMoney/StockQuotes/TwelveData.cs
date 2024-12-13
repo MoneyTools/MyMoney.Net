@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using System.Windows.Interop;
 using System.Xml;
 using System.Xml.Serialization;
@@ -25,7 +26,8 @@ namespace Walkabout.StockQuotes
         private static readonly string name = "TwelveData";
         private static readonly string baseAddress = "https://api.twelvedata.com/";
         // {0}=Symbol, {1}=number of days back from today, {2}=apikey
-        private const string stockQuoteUri = "https://api.twelvedata.com/time_series?apikey={2}&interval=1day&format=JSON&symbol={0}&outputsize={1}";        
+        private const string stockQuoteUri = "https://api.twelvedata.com/time_series?interval=1day&format=JSON&symbol={0}&start_date={1}&end_date={2}&apikey={3}";
+        private const string earliestTimeUri = "https://api.twelvedata.com/earliest_timestamp?format=JSON&&interval=1day&symbol={0}&apikey={1}";
 
         public TwelveData(StockServiceSettings settings, string logPath) : base(settings, logPath)
         {
@@ -45,7 +47,7 @@ namespace Walkabout.StockQuotes
                 Name = name,
                 Address = baseAddress,
                 ApiKey = "",
-                ApiRequestsPerMinuteLimit = 12,
+                ApiRequestsPerMinuteLimit = 8,
                 ApiRequestsPerDayLimit = 800,
                 ApiRequestsPerMonthLimit = 0,
                 HistoryEnabled = true,
@@ -57,9 +59,43 @@ namespace Walkabout.StockQuotes
             return settings.Name == name;
         }
 
+        private async Task<DateTime?> GetEarliestTime(string symbol)
+        {
+            string uri = string.Format(earliestTimeUri, symbol, this.Settings.ApiKey);
+            HttpClient client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(30);
+            var msg = await client.GetAsync(uri, this.TokenSource.Token);
+            if (!msg.IsSuccessStatusCode)
+            {
+                throw new Exception(this.FriendlyName + " http error " + msg.StatusCode + ": " + msg.ReasonPhrase);
+            }
+            else
+            {
+                this.CountCall();
+                using (Stream stm = await msg.Content.ReadAsStreamAsync())
+                {
+                    using (StreamReader sr = new StreamReader(stm, Encoding.UTF8))
+                    {
+                        string json = sr.ReadToEnd();
+                        JObject o = JObject.Parse(json);
+                        this.AssertSuccess(o);
+                        JToken value;
+                        if (o.TryGetValue("datetime", out value) && value.Type == JTokenType.String)
+                        {
+                            if (DateTime.TryParse((string)value, out DateTime result))
+                            {
+                                return result;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         protected override async Task<StockQuote> DownloadThrottledQuoteAsync(string symbol)
         {
-            var quotes = await this.DownloadTimeSeriesAsync(symbol, 1);
+            var quotes = await this.DownloadTimeSeriesAsync(symbol, new DateRange(DateTime.Today, DateTime.Today));
             if (quotes.Count > 0)
             {
                 var quote = quotes[0];
@@ -79,13 +115,25 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        private async Task<List<StockQuote>> DownloadTimeSeriesAsync(string symbol, int daysFromToday)
-        {     
-            Debug.WriteLine($"TwelveData: DownloadThrottledQuoteAsync {symbol}");
-            string uri = string.Format(stockQuoteUri, symbol, daysFromToday, this.Settings.ApiKey);
+        private async Task<List<StockQuote>> DownloadTimeSeriesAsync(string symbol, DateRange range)
+        {
+            // Fetch at most MaxHistory items to avoid exception.  We don't fetch it all here because
+            // that can be a huge amount of ancient history we don't care about.  We want to get the 
+            // most up to date history for everything first.  The next time the user views this stock
+            // we'll fetch another older chunk and eventually get everything that way.
+            DateTime end = range.End;
+            DateTime start = end.AddDays(-MaxHistory);
+            if (start < range.Start)
+            {
+                start = range.Start;
+            }
+
+            var startString = start.ToString("yyyy-MM-dd");
+            var endString = end.AddDays(1).ToString("yyyy-MM-dd");
+            Debug.WriteLine($"TwelveData: DownloadThrottledQuoteAsync {symbol} from {start} to {end}");
+            string uri = string.Format(stockQuoteUri, symbol, startString, endString, this.Settings.ApiKey);
             HttpClient client = new HttpClient();
-            //client.DefaultRequestHeaders.Add("User-Agent", userAgent);
-            client.Timeout = TimeSpan.FromSeconds(30);
+            client.Timeout = TimeSpan.FromSeconds(60);
             var msg = await client.GetAsync(uri, this.TokenSource.Token);
             if (!msg.IsSuccessStatusCode)
             {
@@ -100,20 +148,16 @@ namespace Walkabout.StockQuotes
                     {
                         string json = sr.ReadToEnd();
                         JObject o = JObject.Parse(json);
-                        List<StockQuote> quotes = this.ParseStockQuotes(o);
+                        this.AssertSuccess(o);
+                        var quotes = this.ParseStockQuotes(o);
                         return quotes;
                     }
                 }
             }
         }
 
-        private List<StockQuote> ParseStockQuotes(JObject child)
+        private void AssertSuccess(JObject child)
         {
-            // See https://twelvedata.com/account/api-playground
-
-            var result = new List<StockQuote>();
-            string symbol = "";
-
             JToken value;
             if (child.TryGetValue("code", out value) && value.Type == JTokenType.Integer)
             {
@@ -130,9 +174,22 @@ namespace Walkabout.StockQuotes
                     {
                         message = (string)value;
                     }
-                    throw new Exception($"{this.FriendlyName} returned {status} code {code}: {message} ");
+                    var msg = $"{this.FriendlyName} returned {status} code {code}: {message}";
+                    if (code == 404)
+                    {
+                        throw new StockQuoteNotFoundException(msg);
+                    }
+                    throw new Exception(msg);
                 }
             }
+        }
+
+        private List<StockQuote> ParseStockQuotes(JObject child)
+        {
+            // See https://twelvedata.com/account/api-playground
+            var result = new List<StockQuote>();
+            string symbol = "";
+            JToken value;
             if (child.TryGetValue("meta", StringComparison.Ordinal, out value) && value.Type == JTokenType.Object)
             {
                 JObject meta = (JObject)value;
@@ -207,35 +264,51 @@ namespace Walkabout.StockQuotes
                 // don't keep trying to download quotes that don't exist.
                 return false;
             }
+
+            if (history.EarliestTime == null)
+            {
+                history.EarliestTime = await this.GetEarliestTime(history.Symbol);
+            }
+            var earliest = history.EarliestTime != null ? history.EarliestTime.Value : DateTime.Today.AddYears(-10);
+            int years = (DateTime.Today.Year - earliest.Year) + 1;
+
             var entry = history.History.LastOrDefault();
-            var days = 1;
             if (entry != null)
             {
-                var span = DateTime.Now - entry.Date;
-                days = (int)span.TotalDays;
-                if (days == 0)
+                foreach (var range in history.GetMissingDataRanges(years))
                 {
-                    days = 1;
+                    try
+                    {
+                        if (range.Start < earliest)
+                        {
+                            range.Start = earliest;
+                        }
+                        if (range.End < earliest)
+                        {
+                            range.End = earliest;
+                        }
+                        if (range.Start < range.End)
+                        {
+                            var quotes = await this.DownloadTimeSeriesAsync(history.Symbol, range);
+                            foreach (var quote in quotes)
+                            {
+                                history.MergeQuote(quote);
+                            }
+                        }
+                    }
+                    catch (StockQuoteNotFoundException)
+                    {
+                        history.NotFound = true;
+                    }
                 }
-                if (days > MaxHistory)
-                {
-                    days = MaxHistory;
-                }
-            }
-            try
+            } 
+            else
             {
-
-                var quotes = await this.DownloadTimeSeriesAsync(history.Symbol, days);
+                var quotes = await this.DownloadTimeSeriesAsync(history.Symbol, new DateRange(earliest, DateTime.Today));
                 foreach (var quote in quotes)
                 {
                     history.MergeQuote(quote);
                 }
-
-                history.Complete = true;
-            }
-            catch (StockQuoteNotFoundException)
-            {
-                history.NotFound = true;
             }
             return true;
         }

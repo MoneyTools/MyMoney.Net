@@ -295,8 +295,6 @@ namespace Walkabout.StockQuotes
                         history.MergeQuote(quote);
                     }
                 }
-
-                history.Complete = true;
             }
             catch (StockQuoteNotFoundException)
             {

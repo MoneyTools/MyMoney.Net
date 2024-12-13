@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Utilities;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Walkabout.StockQuotes
 {
@@ -115,6 +117,19 @@ namespace Walkabout.StockQuotes
         void Cancel();
     }
 
+    public class DateRange: EventArgs
+    {
+        public DateRange(DateTime start, DateTime end)
+        {
+            this.Start = start;
+            this.End = end;
+        }
+
+        public DateTime Start { get; set;  }
+
+        public DateTime End { get; set;  }
+    }
+
     /// <summary>
     /// This class encapsulates a new stock quote from IStockQuoteService, and is also
     /// designed for XML serialization
@@ -147,16 +162,16 @@ namespace Walkabout.StockQuotes
     /// </summary>
     public class StockQuoteHistory
     {
+        private UsHolidays holidays = new UsHolidays();
+
         public StockQuoteHistory() { this.History = new List<StockQuote>(); }
 
         public string Symbol { get; set; }
         public string Name { get; set; }
         public bool NotFound { get; set; }
-
-        /// <summary>
-        /// Whether this is a partial or complete history.
-        /// </summary>
-        public bool Complete { get; set; }
+        public DateTime LastUpdate { get; set; }
+        public DateTime? EarliestTime { get; set; }
+        public HashSet<DateTime> AdditionalClosures { get; set; }
 
         public List<StockQuote> History { get; set; }
 
@@ -169,6 +184,20 @@ namespace Walkabout.StockQuotes
                     return this.History.Last().Downloaded;
                 }
                 return DateTime.MinValue;
+            }
+        }
+
+        public bool NeedsUpdating
+        {
+            get
+            {
+                if (this.LastUpdate == DateTime.MinValue)
+                {
+                    return true;
+                }
+                var workDay = this.holidays.MostRecentWorkDay;
+                var daysBehind = (workDay - this.LastUpdate).TotalDays;
+                return daysBehind > 0;
             }
         }
 
@@ -187,6 +216,7 @@ namespace Walkabout.StockQuotes
 
         public bool MergeQuote(StockQuote quote, bool replace = true)
         {
+            this.LastUpdate = DateTime.Today;
             if (this.History == null)
             {
                 this.History = new List<StockQuote>();
@@ -263,6 +293,7 @@ namespace Walkabout.StockQuotes
             {
                 this.MergeQuote(item);
             }
+
             // promote any stock quote names to the root (to save space)
             foreach (var item in this.History)
             {
@@ -274,7 +305,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        private static readonly DateTime[] knownClosures = new DateTime[]
+        private static readonly HashSet<DateTime> knownClosures = new HashSet<DateTime>(new DateTime[]
         {
             new DateTime(2018, 12, 5), // honor of President George Bush
             new DateTime(2012, 10, 30), // Hurrican Sandy
@@ -285,48 +316,112 @@ namespace Walkabout.StockQuotes
             new DateTime(2001, 9, 13), // 9/11
             new DateTime(2001, 9, 12), // 9/11
             new DateTime(2001, 9, 11), // 9/11
-        };
+            new DateTime(1994, 4, 27), // Honor of President Richard Nixon
+            new DateTime(1985, 9, 27), // Hurrican Gloria
+        });
 
-        internal bool IsComplete()
+        /// <summary>
+        /// Return the days that seem to be missing in our data.
+        /// </summary>
+        /// <param name="yearsToCheck">How far to go back in time to find missing data.</param>
+        /// <returns></returns>
+        internal IEnumerable<DateRange> GetMissingDataRanges(int yearsToCheck)
         {
-            if (!this.Complete || this.History.Count == 0)
-            {
-                return false;
-            }
-
-            int missing = 0; // in the last 3 months
             var holidays = new UsHolidays();
-            DateTime workDay = holidays.GetPreviousWorkDay(DateTime.Today.AddDays(1));
-            DateTime stopDate = workDay.AddMonths(-3);
-            int count = 0; // work days
-            for (int i = this.History.Count - 1; i >= 0; i--)
+            var workDay = this.holidays.MostRecentWorkDay;
+            DateTime stopDate = workDay.AddYears(-yearsToCheck);
+            if (!holidays.IsWorkDay(stopDate))
             {
-                count++;
-                StockQuote quote = this.History[i];
-                DateTime date = quote.Date.Date;
-                if (date > workDay)
-                {
-                    continue; // might have duplicates?
-                }
-                if (workDay < stopDate)
-                {
-                    break;
-                }
-                if (date < workDay)
-                {
-                    if (!knownClosures.Contains(workDay))
-                    {
-                        missing++;
-                    }
-                    i++;
-                }
-                workDay = holidays.GetPreviousWorkDay(workDay);
+                stopDate = holidays.GetNextWorkDay(stopDate);
             }
-            // There are some random stock market closures which we can't keep track of easily, so
-            // make sure we are not missing more than 1% of the history.
-            return missing < count * 0.01;
-        }
 
+            if (this.History.Count == 0)
+            {
+                yield return new DateRange(stopDate, workDay);
+            }
+            else
+            {
+                DateRange missing = null;
+
+                for (int i = this.History.Count - 1; i >= 0; i--)
+                {
+                    StockQuote quote = this.History[i];
+                    DateTime date = quote.Date.Date;
+                    if (date > workDay)
+                    {
+                        continue; // might have duplicates?
+                    }
+                    if (workDay < stopDate)
+                    {
+                        break;
+                    }
+                    if (date < workDay)
+                    {
+                        bool skip = knownClosures.Contains(workDay) || (this.AdditionalClosures?.Contains(workDay) == true);
+                        if (!skip)
+                        {
+                            // found a missing date range.
+                            if (missing != null)
+                            {
+                                // can we consolidate ranges?
+                                var gap = missing.Start - date;
+                                if (gap.TotalDays < 5)
+                                {
+                                    // consolidate!
+                                    missing.Start = date;
+                                }
+                                else
+                                {
+                                    yield return missing;
+                                    missing = null;
+                                }
+                            }
+                            if (missing == null)
+                            {
+                                missing = new DateRange(date, workDay);
+                            }
+                            workDay = date;
+                        }
+                    }
+                    workDay = holidays.GetPreviousWorkDay(workDay);
+                }
+
+                if (workDay > stopDate)
+                {
+                    // then our data doesn't go back far enough!
+                    // can we consolidate ranges?
+                    if (missing != null)
+                    {
+                        var gap = missing.Start - stopDate;
+                        if (gap.TotalDays < 5)
+                        {
+                            // consolidate!
+                            missing.Start = stopDate;
+                        }
+                        else
+                        {
+                            yield return missing;
+                            workDay = missing.Start;
+                            missing = null;
+                        }
+                    }
+
+                    if (missing == null)
+                    {
+                        missing = new DateRange(stopDate, workDay);
+                    }
+                    else
+                    {
+                        missing.Start = stopDate;
+                    }
+                }
+
+                if (missing != null)
+                {
+                    yield return missing;
+                }
+            }
+        }
 
         internal bool RemoveDuplicates()
         {

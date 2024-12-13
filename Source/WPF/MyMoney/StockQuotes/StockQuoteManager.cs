@@ -38,6 +38,7 @@ namespace Walkabout.StockQuotes
         private HistoryDownloader _downloader;
         private readonly string _logPath;
         private bool _firstError = true;
+        private UsHolidays holidays = new UsHolidays();
 
         public StockQuoteManager(IServiceProvider provider, List<StockServiceSettings> settings, string logPath)
         {
@@ -309,6 +310,8 @@ namespace Walkabout.StockQuotes
                 output.AppendHeading(Walkabout.Properties.Resources.StockQuoteCaption);
             }));
 
+            DateTime workDay = holidays.MostRecentWorkDay;
+
             List<string> batch = new List<string>();
             foreach (Security s in toFetch)
             {
@@ -318,7 +321,7 @@ namespace Walkabout.StockQuotes
                 }
 
                 var info = this._downloadLog.GetInfo(s.Symbol);
-                if (info != null && !info.NotFound)
+                if (info != null && !info.NotFound && info.Downloaded.Date != workDay.Date)
                 {
                     batch.Add(s.Symbol);
                 }
@@ -1046,7 +1049,7 @@ namespace Walkabout.StockQuotes
                     {
                         history = new StockQuoteHistory() { Symbol = symbol };
                     }
-                    if (info != null && info.Downloaded.Date == DateTime.Today && history != null && history.Complete)
+                    if (info != null && info.Downloaded.Date == DateTime.Today && history != null && !history.NeedsUpdating)
                     {
                         // already up to date
                     }
