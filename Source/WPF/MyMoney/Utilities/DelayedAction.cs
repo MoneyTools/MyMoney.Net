@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 
 namespace Walkabout.Utilities
 {
@@ -18,10 +19,17 @@ namespace Walkabout.Utilities
             DelayedAction da;
             if (!this.pending.TryGetValue(name, out da))
             {
-                da = new DelayedAction();
+                da = new DelayedAction(name);
+                da.Complete += this.OnActionComplete;
                 this.pending[name] = da;
             }
             da.StartDelayTimer(action, delay);
+        }
+
+        private void OnActionComplete(object sender, EventArgs e)
+        {
+            DelayedAction da = (DelayedAction)sender;
+            this.pending.Remove(da.Name);
         }
 
         public void CancelDelayedAction(string name)
@@ -44,11 +52,26 @@ namespace Walkabout.Utilities
             }
         }
 
+        internal bool HasDelayedAction(string name)
+        {
+            return this.pending.ContainsKey(name);
+        }
+
         private class DelayedAction
         {
             private System.Threading.Timer delayTimer;
             private Action delayedAction;
             private uint startTime;
+            private string name;
+
+            public DelayedAction(string name)
+            {
+                this.name = name;
+            }
+
+            public string Name => name;
+
+            public event EventHandler Complete;
 
             /// <summary>
             /// Start a count down with the given delay, and fire the given action when it reaches zero.
@@ -100,6 +123,10 @@ namespace Walkabout.Utilities
                         catch (Exception ex)
                         {
                             Debug.WriteLine("OnDelayTimerTick caught unhandled exception: " + ex.ToString());
+                        }
+                        if (this.Complete != null)
+                        {
+                            this.Complete(this, EventArgs.Empty);
                         }
                     }));
                 }

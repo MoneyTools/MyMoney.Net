@@ -389,6 +389,14 @@ namespace Walkabout
             {
                 this.StockGraph.Generator = new SecurityGraphGenerator(history, this.TransactionView.ActiveSecurity);
             }
+            if (this.CurrentView is SecuritiesView view && view.SelectedRow is Security t && s == t )
+            {
+                this.StockGraph.Generator = new SecurityGraphGenerator(history, this.TransactionView.ActiveSecurity);
+            }
+            if (this.TabStock.IsSelected && this.StockGraph.Generator is SecurityGraphGenerator sgen && sgen.security == s)
+            {
+                this.StockGraph.Generator = new SecurityGraphGenerator(history, this.TransactionView.ActiveSecurity);
+            }
         }
 
         private void UpdateBalance()
@@ -439,8 +447,11 @@ namespace Walkabout
 
         private void ShowOutputWindow()
         {
-            this.TabOutput.Visibility = System.Windows.Visibility.Visible;
-            this.TabForGraphs.SelectedItem = this.TabOutput;
+            if (this.TabOutput.Visibility != System.Windows.Visibility.Visible)
+            {
+                this.TabOutput.Visibility = System.Windows.Visibility.Visible;
+                this.TabForGraphs.SelectedItem = this.TabOutput;
+            }
         }
 
         private void OnHideOutputWindow(object sender, RoutedEventArgs e)
@@ -4166,6 +4177,10 @@ namespace Walkabout
                 if (history != null)
                 {
                     this.StockGraph.Generator = new SecurityGraphGenerator(history, e.Security);
+                }
+                else
+                {
+                    this.StockGraph.Generator = null;
                 }
             }
         }

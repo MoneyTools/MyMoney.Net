@@ -23,19 +23,19 @@
     <UserControl.InputBindings>
         <KeyBinding Command="cmd:AppCommands.CommandNext" Key="F2" Modifiers="Control"/>
         <KeyBinding Command="cmd:AppCommands.CommandPrevious" Key="F1" Modifiers="Control"/>
-        <KeyBinding Command="cmd:AppCommands.CommandZoomIn" Key="F3" Modifiers="Control"/>
-        <KeyBinding Command="cmd:AppCommands.CommandZoomOut" Key="F4" Modifiers="Control"/>
+        <KeyBinding Command="cmd:AppCommands.CommandZoomIn" Key="Add" Modifiers="Control"/>
+        <KeyBinding Command="cmd:AppCommands.CommandZoomOut" Key="Subtract" Modifiers="Control"/>
     </UserControl.InputBindings>
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem Name="menuItemYearToDate" Header="Year to date" Command="cmd:AppCommands.CommandYearToDate"/>
             <MenuItem Name="menuItemShowAll" Header="Show all" Command="cmd:AppCommands.CommandShowAll"/>
-            <MenuItem Name="menuItemNext" Header="Next" Command="cmd:AppCommands.CommandNext"/>
-            <MenuItem Name="menuItemPrevious" Header="Previous" Command="cmd:AppCommands.CommandPrevious"/>
+            <MenuItem Name="menuItemNext" Header="Next" Command="cmd:AppCommands.CommandNext" InputGestureText="Ctrl+F2"/>
+            <MenuItem Name="menuItemPrevious" Header="Previous" Command="cmd:AppCommands.CommandPrevious" InputGestureText="Ctrl+F1"/>
             <Separator/>
             <MenuItem Name="menuItemSetRange" Header="Custom range ..." Command="cmd:AppCommands.CommandSetRange"/>
-            <MenuItem Name="menuItemZoomIn" Header="Zoom in" Command="cmd:AppCommands.CommandZoomIn"/>
-            <MenuItem Name="menuItemZoomOut" Header="Zoom out" Command="cmd:AppCommands.CommandZoomOut"/>
+            <MenuItem Name="menuItemZoomIn" Header="Zoom in" Command="cmd:AppCommands.CommandZoomIn" InputGestureText="Ctrl+"/>
+            <MenuItem Name="menuItemZoomOut" Header="Zoom out" Command="cmd:AppCommands.CommandZoomOut" InputGestureText="Ctrl-"/>
             <Separator/>
             <MenuItem Name="menuItemAddSeries" Header="Add series" Command="cmd:AppCommands.CommandAddSeries"/>
             <MenuItem Name="menuItemRemoveSeries" Header="Remove series" Command="cmd:AppCommands.CommandRemoveSeries"/>

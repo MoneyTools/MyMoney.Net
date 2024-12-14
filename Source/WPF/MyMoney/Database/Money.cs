@@ -8669,7 +8669,7 @@ namespace Walkabout.Data
 
         static Security()
         {
-            None = new Security() { Name = "<None>" };
+            None = new Security() { Name = "" };
         }
 
         public Security()

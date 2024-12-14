@@ -340,7 +340,6 @@ namespace Walkabout.Controls
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         {
             base.OnSelectionChanged(e);
-            this.AsyncScrollSelectedRowIntoView();
         }
 
 
@@ -654,6 +653,10 @@ namespace Walkabout.Controls
 
             // First check if the current column has more than one editable control.
             FrameworkElement contentPresenter = this.CurrentColumn.GetCellContent(this.SelectedItem);
+            if (contentPresenter == null)
+            {
+                return false;
+            }
             List<Control> editors = new List<Control>();
             WpfHelper.FindEditableControls(contentPresenter, editors);
 

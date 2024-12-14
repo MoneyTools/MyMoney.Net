@@ -315,7 +315,7 @@ namespace Walkabout.Views.Controls
                 this.generator = value;
                 if (this.Visibility == Visibility.Visible)
                 {
-                    this.GenerateGraph();
+                    delayedActions.StartDelayedAction("GenerateGraph", this.GenerateGraph, TimeSpan.FromMilliseconds(30));
                 }
             }
         }

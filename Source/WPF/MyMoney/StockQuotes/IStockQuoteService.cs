@@ -341,6 +341,7 @@ namespace Walkabout.StockQuotes
             }
             else
             {
+                List<DateRange> ranges = new List<DateRange>();
                 DateRange missing = null;
 
                 for (int i = this.History.Count - 1; i >= 0; i--)
@@ -372,7 +373,7 @@ namespace Walkabout.StockQuotes
                                 }
                                 else
                                 {
-                                    yield return missing;
+                                    ranges.Add(missing);
                                     missing = null;
                                 }
                             }
@@ -400,7 +401,7 @@ namespace Walkabout.StockQuotes
                         }
                         else
                         {
-                            yield return missing;
+                            ranges.Add(missing);
                             workDay = missing.Start;
                             missing = null;
                         }
@@ -418,7 +419,35 @@ namespace Walkabout.StockQuotes
 
                 if (missing != null)
                 {
-                    yield return missing;
+                    ranges.Add(missing);
+                }
+
+                // Some data seems to be missing about 1 week around the knownClosures.
+                int closureFudge = 7; // days
+                foreach (var range in ranges.ToArray())
+                {
+                    foreach (var closure in knownClosures)
+                    {
+                        var size = (range.End - range.Start).TotalDays;
+                        var daysBefore = Math.Abs((range.Start - closure).TotalDays);
+                        var daysAfter = Math.Abs((range.End - closure).TotalDays);
+                        if (size < closureFudge && (daysBefore < closureFudge || daysAfter < closureFudge))
+                        {
+                            ranges.Remove(range);
+                            break;
+                        }
+                    }
+                }
+
+                if (ranges.Count > 5)
+                {
+                    // then it's probably more efficient to just do one big call for the whole history.
+                    workDay = this.holidays.MostRecentWorkDay;
+                    yield return new DateRange(stopDate, workDay);
+                }
+                foreach (var result in ranges) 
+                {
+                    yield return result;
                 }
             }
         }

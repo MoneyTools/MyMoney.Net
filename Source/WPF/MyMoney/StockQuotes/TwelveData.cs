@@ -14,6 +14,7 @@ using System.Windows.Interop;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Configuration;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Walkabout.StockQuotes
 {
@@ -26,8 +27,9 @@ namespace Walkabout.StockQuotes
         private static readonly string name = "TwelveData";
         private static readonly string baseAddress = "https://api.twelvedata.com/";
         // {0}=Symbol, {1}=number of days back from today, {2}=apikey
-        private const string stockQuoteUri = "https://api.twelvedata.com/time_series?interval=1day&format=JSON&symbol={0}&start_date={1}&end_date={2}&apikey={3}";
-        private const string earliestTimeUri = "https://api.twelvedata.com/earliest_timestamp?format=JSON&&interval=1day&symbol={0}&apikey={1}";
+        private const string stockQuoteUri = "https://api.twelvedata.com/time_series?interval=1day&format=JSON&symbol={0}&start_date={1}&end_date={2}";
+        private const string earliestTimeUri = "https://api.twelvedata.com/earliest_timestamp?format=JSON&&interval=1day&symbol={0}";
+        private const string authorizationHeader = "apikey {0}";
 
         public TwelveData(StockServiceSettings settings, string logPath) : base(settings, logPath)
         {
@@ -61,8 +63,10 @@ namespace Walkabout.StockQuotes
 
         private async Task<DateTime?> GetEarliestTime(string symbol)
         {
-            string uri = string.Format(earliestTimeUri, symbol, this.Settings.ApiKey);
+            string uri = string.Format(earliestTimeUri, symbol);
+            string authorization = string.Format(authorizationHeader, this.Settings.ApiKey);
             HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Authorization", authorization);
             client.Timeout = TimeSpan.FromSeconds(30);
             var msg = await client.GetAsync(uri, this.TokenSource.Token);
             if (!msg.IsSuccessStatusCode)
@@ -95,24 +99,11 @@ namespace Walkabout.StockQuotes
 
         protected override async Task<StockQuote> DownloadThrottledQuoteAsync(string symbol)
         {
-            var quotes = await this.DownloadTimeSeriesAsync(symbol, new DateRange(DateTime.Today, DateTime.Today));
-            if (quotes.Count > 0)
-            {
-                var quote = quotes[0];
-                if (quote == null || quote.Symbol == null)
-                {
-                    throw new StockQuoteNotFoundException("");
-                }
-                else if (string.Compare(quote.Symbol, symbol, StringComparison.OrdinalIgnoreCase) != 0)
-                {
-                    throw new StockQuoteNotFoundException(string.Format(Walkabout.Properties.Resources.DifferentSymbolReturned, symbol, quote.Symbol));
-                }
-                return quote;
-            }
-            else
-            {
-                throw new StockQuoteNotFoundException("");
-            }
+            // Do nothing, it is more efficient to wait for the history download since our history
+            // download can do mimimal work to "fill holes" in the history including getting most
+            // recent data if we need it.
+            await Task.CompletedTask;
+            return null;
         }
 
         private async Task<List<StockQuote>> DownloadTimeSeriesAsync(string symbol, DateRange range)
@@ -131,8 +122,10 @@ namespace Walkabout.StockQuotes
             var startString = start.ToString("yyyy-MM-dd");
             var endString = end.AddDays(1).ToString("yyyy-MM-dd");
             Debug.WriteLine($"TwelveData: DownloadThrottledQuoteAsync {symbol} from {start} to {end}");
-            string uri = string.Format(stockQuoteUri, symbol, startString, endString, this.Settings.ApiKey);
+            string uri = string.Format(stockQuoteUri, symbol, startString, endString);
+            string authorization = string.Format(authorizationHeader, this.Settings.ApiKey);
             HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Authorization", authorization);
             client.Timeout = TimeSpan.FromSeconds(60);
             var msg = await client.GetAsync(uri, this.TokenSource.Token);
             if (!msg.IsSuccessStatusCode)
@@ -175,9 +168,28 @@ namespace Walkabout.StockQuotes
                         message = (string)value;
                     }
                     var msg = $"{this.FriendlyName} returned {status} code {code}: {message}";
-                    if (code == 404)
+                    if (code == 404 ||  // not found
+                        code == 403) // not in plan.
                     {
                         throw new StockQuoteNotFoundException(msg);
+                    }
+                    else if (code == 429)
+                    {
+                        // throttle limit reached.
+                        var ex = new StockQuoteThrottledException(msg);
+                        if (msg.Contains("minute"))
+                        {
+                            ex.MinuteLimitReached = true;
+                        }
+                        else if (msg.Contains("day"))
+                        {
+                            ex.DailyLimitReached = true;
+                        }
+                        else if (msg.Contains("month"))
+                        {
+                            ex.MonthlyLimitReached = true;
+                        }
+                        throw ex;
                     }
                     throw new Exception(msg);
                 }

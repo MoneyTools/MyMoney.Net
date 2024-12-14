@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -13,6 +14,7 @@ using System.Xml;
 using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Interfaces.Views;
+using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 
 namespace Walkabout.Views
@@ -24,6 +26,9 @@ namespace Walkabout.Views
     {
         public static readonly RoutedUICommand CommandToggleAllSplits = new RoutedUICommand("View Toggle View All Splits", "CommandToggleAllSplits", typeof(SecuritiesView));
         public static readonly RoutedUICommand CommandShowRelatedTransactions = new RoutedUICommand("Show Related Transactions", "CommandShowRelatedTransactions", typeof(TransactionsView));
+        public static readonly RoutedUICommand CommandUpdateHistory = new RoutedUICommand("Update History", "CommandUpdateHistory", typeof(TransactionsView));
+        private ListCollectionView _allSymbols;
+        private DelayedActions actions = new DelayedActions();
 
         public SecuritiesView()
         {
@@ -43,9 +48,12 @@ namespace Walkabout.Views
         }
         internal void OnSecuritySelected(Security s)
         {
-            if (SecuritySelected != null)
+            if (s != null)
             {
-                SecuritySelected(this, new SecuritySelectionEventArgs(s));
+                if (SecuritySelected != null)
+                {
+                    SecuritySelected(this, new SecuritySelectionEventArgs(s));
+                }
             }
         }
 
@@ -159,7 +167,6 @@ namespace Walkabout.Views
                         s.IsExpanded = (this.SecuritiesDataGrid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Visible) ? true : false;
                     }
                 }
-
 
                 this.lastSelectedItem = selected;
                 this.OnSelectionChanged(selected as Security);
@@ -392,6 +399,8 @@ namespace Walkabout.Views
         {
             try
             {
+                this.UpdateAllSymbols();
+
                 // dumb thing doesn't let us update the list while sorting.
                 DataGridColumn sort = this.RemoveSort(this.SecuritiesDataGrid);
 
@@ -428,14 +437,7 @@ namespace Walkabout.Views
             combo.FilterPredicate = new Predicate<object>((o) => { return o.ToString().IndexOf(combo.Filter, StringComparison.OrdinalIgnoreCase) >= 0; });
         }
 
-
-        public ListCollectionView AllSymbols
-        {
-            get
-            {
-                return new ListCollectionView(((List<string>)this.money.Securities.AllSymbols).ToArray());
-            }
-        }
+        public ListCollectionView AllSymbols => this._allSymbols;
 
         private void ComboBoxForSymbol_PreviewLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
@@ -469,10 +471,35 @@ namespace Walkabout.Views
 
             set
             {
+                if (this.money != null)
+                {
+                    this.money.Securities.Changed -= this.OnSecuritiesChanged;
+                }
                 this.money = value;
+                if (this.money != null)
+                {
+                    this.money.Securities.Changed += this.OnSecuritiesChanged;
+                }
                 this.ShowSecurities();
             }
 
+        }
+
+        private void OnSecuritiesChanged(object sender, ChangeEventArgs e)
+        {
+            bool symbolChanged = false;
+            for (var a = e; a != null; a = a.Next)
+            {
+                if (a.Item is Security && a.Name == "Symbol")
+                {
+                    symbolChanged = true;
+                    break;
+                }
+            }
+            if (symbolChanged)
+            {
+                actions.StartDelayedAction("UpdateAllSymbols", this.UpdateAllSymbols, TimeSpan.FromMilliseconds(100));
+            }
         }
 
         public void ActivateView()
@@ -732,6 +759,36 @@ namespace Walkabout.Views
         private void OnToggleShowSplits_Unchecked(object sender, RoutedEventArgs e)
         {
             this.ViewAllSplits = false;
+        }
+
+        private void OnUpdateHistory(object sender, ExecutedRoutedEventArgs e)
+        {
+            Security t = this.lastSelectedItem as Security;
+            if (t != null && !string.IsNullOrEmpty(t.Symbol))
+            {
+                StockQuoteManager service = this.ServiceProvider.GetService(typeof(StockQuoteManager)) as StockQuoteManager;
+                if (service != null)
+                {
+                    service.BeginDownloadHistory(t.Symbol, true);
+                }
+            }
+        }
+
+        private void CanExecute_UpdateHistory(object sender, CanExecuteRoutedEventArgs e)
+        {
+            Security t = this.lastSelectedItem as Security;
+            if (t != null)
+            {
+                e.CanExecute = !string.IsNullOrEmpty(t.Symbol);
+            }
+            e.Handled = true;
+        }
+
+        void UpdateAllSymbols()
+        {
+            var copy = new List<string>(this.money.Securities.AllSymbols);
+            copy.Insert(0, ""); // // so user can remove the symbol.
+            _allSymbols = new ListCollectionView(copy);
         }
 
     }

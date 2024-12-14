@@ -747,4 +747,37 @@
     </Setter>
   </Style>
 
+
+  <Style x:Key="ViewButtonStyle" TargetType="{x:Type Button}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Padding" Value="0,0,0,1" />
+    <Setter Property="Template" >
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="BackgroundBorder" Padding="{TemplateBinding Padding}">
+            <ui:SymbolIcon Symbol="View" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver">
+              <Setter Property="Background" TargetName="BackgroundBorder"
+                      Value="{DynamicResource ButtonBackgroundPointerOver}">
+              </Setter>
+              <Trigger.Value>
+                <s:Boolean>True</s:Boolean>
+              </Trigger.Value>
+            </Trigger>
+            <Trigger Property="IsPressed">
+              <Setter Property="Background" TargetName="BackgroundBorder"
+                      Value="{DynamicResource ButtonBackgroundPressed}">
+              </Setter>
+              <Trigger.Value>
+                <s:Boolean>True</s:Boolean>
+              </Trigger.Value>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
 </ResourceDictionary>

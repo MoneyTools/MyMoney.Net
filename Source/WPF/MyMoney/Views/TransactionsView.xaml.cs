@@ -1231,6 +1231,11 @@ namespace Walkabout.Views
                     {
                         Investment i = t.Investment;
                         Transaction target = row.Item as Transaction;
+                        if (target == null)
+                        {
+                            // placeholder!
+                            return;
+                        }
                         Investment j = target.Investment;
                         if (target != null && t != target && t.Amount == target.Amount && this.InvestmentsCanMerge(i, j))
                         {
@@ -3495,6 +3500,8 @@ namespace Walkabout.Views
             {
                 this.TheActiveGrid.SelectedIndex = data.Count - 1;
             }
+
+            this.TheActiveGrid.AsyncScrollSelectedRowIntoView();
 
             if (data != null)
             {

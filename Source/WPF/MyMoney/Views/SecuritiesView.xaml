@@ -12,268 +12,268 @@
              help:HelpService.HelpKeyword="Basics/Securities/"
              mc:Ignorable="d" 
              d:DesignHeight="333" d:DesignWidth="685">
-    <UserControl.Resources>
+  <UserControl.Resources>
 
 
-        <Style x:Key="MySecuritiesDataGridStyle" TargetType="{x:Type local:MoneyDataGrid}">
-            <Setter Property="ItemsSource" Value="{Binding}"/>
-            <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
-            <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
-            <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
-            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
-            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
-            <Setter Property="GridLinesVisibility" Value="Vertical"/>
-            <Setter Property="CanUserResizeRows" Value="False"/>
-            <Setter Property="SelectionMode" Value="Single"/>
-            <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
-            <Setter Property="ClipboardCopyMode" Value="None"/>
-            <Setter Property="ContentMargin" Value="0,0,0,30"/>
-            <Setter Property="RowDetailsTemplate" Value="{DynamicResource StockSplitDetailView}"/>
-            <Setter Property="RowHeaderWidth" Value="0"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-        </Style>
+    <Style x:Key="MySecuritiesDataGridStyle" TargetType="{x:Type local:MoneyDataGrid}">
+      <Setter Property="ItemsSource" Value="{Binding}"/>
+      <Setter Property="AutoGenerateColumns" Value="False"/>
+      <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
+      <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+      <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
+      <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
+      <Setter Property="GridLinesVisibility" Value="Vertical"/>
+      <Setter Property="CanUserResizeRows" Value="False"/>
+      <Setter Property="SelectionMode" Value="Single"/>
+      <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
+      <Setter Property="ClipboardCopyMode" Value="None"/>
+      <Setter Property="ContentMargin" Value="0,0,0,30"/>
+      <Setter Property="RowDetailsTemplate" Value="{DynamicResource StockSplitDetailView}"/>
+      <Setter Property="RowHeaderWidth" Value="0"/>
+      <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
 
-        <Style x:Key="MyStockSplitDataGridStyle" TargetType="DataGrid">
-            <Setter Property="ItemsSource" Value="{Binding}"/>
-            <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
-            <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
-            <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
-            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
-            <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
-            <Setter Property="GridLinesVisibility" Value="Vertical"/>
-            <Setter Property="CanUserResizeRows" Value="False"/>
-            <Setter Property="SelectionMode" Value="Single"/>
-            <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
-            <Setter Property="ClipboardCopyMode" Value="None"/>
-            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
-            <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
-            <Setter Property="RowHeaderWidth" Value="0"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-        </Style>
+    <Style x:Key="MyStockSplitDataGridStyle" TargetType="DataGrid">
+      <Setter Property="ItemsSource" Value="{Binding}"/>
+      <Setter Property="AutoGenerateColumns" Value="False"/>
+      <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"/>
+      <Setter Property="RowBackground" Value="{DynamicResource GridNormalBackgroundBrush}"/>
+      <Setter Property="AlternatingRowBackground" Value="{DynamicResource GridAlternateBackgroundBrush}"/>
+      <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLineBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}"/>
+      <Setter Property="GridLinesVisibility" Value="Vertical"/>
+      <Setter Property="CanUserResizeRows" Value="False"/>
+      <Setter Property="SelectionMode" Value="Single"/>
+      <Setter Property="RowDetailsVisibilityMode" Value="Collapsed"/>
+      <Setter Property="ClipboardCopyMode" Value="None"/>
+      <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+      <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
+      <Setter Property="RowHeaderWidth" Value="0"/>
+      <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
 
-        <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}"  BasedOn="{StaticResource DefaultComboBoxStyle}">
-            <Setter Property="IsEditable" Value="True"/>
-            <Setter Property="StaysOpenOnEdit" Value="True"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
-        </Style>
+    <Style x:Key="GridComboStyle" TargetType="{x:Type ComboBox}"  BasedOn="{StaticResource DefaultComboBoxStyle}">
+      <Setter Property="IsEditable" Value="True"/>
+      <Setter Property="StaysOpenOnEdit" Value="True"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="IsTextSearchCaseSensitive" Value="true"/>
+    </Style>
 
-        <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}"  BasedOn="{StaticResource DefaultTextBoxStyle}">
-            <Setter Property="Padding" Value="2, 0"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
-        </Style>
+    <Style x:Key="GridTextBoxStyle" TargetType="{x:Type TextBox}"  BasedOn="{StaticResource DefaultTextBoxStyle}">
+      <Setter Property="Padding" Value="2, 0"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
+    </Style>
 
-        <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
-            <Setter Property="Padding" Value="2, 0"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="local:CalculatorPopup.CalculatorEnabled" Value="True" />
-            <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
-        </Style>
+    <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
+      <Setter Property="Padding" Value="2, 0"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="local:CalculatorPopup.CalculatorEnabled" Value="True" />
+      <Setter Property="ui:TextBoxHelper.IsEnabled" Value="False"/>
+    </Style>
 
-        <c:NullableValueConverter x:Key="NullableValueConverter" />
+    <c:NullableValueConverter x:Key="NullableValueConverter" />
 
-        <!-- Pattern -->
-        <DataTemplate x:Key="myTemplateName">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Path=Name, Converter={StaticResource NullableValueConverter}}" />
-            </Border>
-        </DataTemplate>
-
-
-        <DataTemplate x:Key="myTemplateNameEdit">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBox Style="{StaticResource GridTextBoxStyle}" Text="{Binding Path=Name, Converter={StaticResource NullableValueConverter}}" />
-            </Border>
-        </DataTemplate>
-
-        <!-- Symbol -->
-        <DataTemplate x:Key="myTemplateSymbol">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Path=Symbol, Converter={StaticResource NullableValueConverter}}" />
-            </Border>
-        </DataTemplate>
+    <!-- Pattern -->
+    <DataTemplate x:Key="myTemplateName">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
+        <TextBlock Text="{Binding Path=Name, Converter={StaticResource NullableValueConverter}}" />
+      </Border>
+    </DataTemplate>
 
 
-        <DataTemplate x:Key="myTemplateSymbolEdit">
-            <local:FilteringComboBox Style="{StaticResource GridComboStyle}"
-                      SelectedItem="{Binding Path=Symbol, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" 
+    <DataTemplate x:Key="myTemplateNameEdit">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+        <TextBox Style="{StaticResource GridTextBoxStyle}" Text="{Binding Path=Name, Converter={StaticResource NullableValueConverter}}" />
+      </Border>
+    </DataTemplate>
+
+    <!-- Symbol -->
+    <DataTemplate x:Key="myTemplateSymbol">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
+        <TextBlock Text="{Binding Path=Symbol, Converter={StaticResource NullableValueConverter}}" />
+      </Border>
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="myTemplateSymbolEdit">
+      <local:FilteringComboBox Style="{StaticResource GridComboStyle}" HorizontalAlignment="Stretch" x:Name="EditorForSymbol"
+                      SelectedItem="{Binding Path=Symbol}" 
                       ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:SecuritiesView}}, Path=AllSymbols}" 
                       FilterChanged="ComboBoxForSymbol_FilterChanged"
                       PreviewLostKeyboardFocus="ComboBoxForSymbol_PreviewLostKeyboardFocus" 
                      >
-                <ComboBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <VirtualizingStackPanel />
-                    </ItemsPanelTemplate>
-                </ComboBox.ItemsPanel>
-            </local:FilteringComboBox>
-        </DataTemplate>
+        <ComboBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <VirtualizingStackPanel />
+          </ItemsPanelTemplate>
+        </ComboBox.ItemsPanel>
+      </local:FilteringComboBox>
+    </DataTemplate>
 
-        <!-- Cusip -->
-        <DataTemplate x:Key="myTemplateCusip">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Path=CuspId, Converter={StaticResource NullableValueConverter}}" />
-            </Border>
-        </DataTemplate>
-
-
-        <DataTemplate x:Key="myTemplateCusipEdit">
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBox Style="{StaticResource GridTextBoxStyle}" Text="{Binding Path=CuspId, Converter={StaticResource NullableValueConverter}}" />
-            </Border>
-        </DataTemplate>
+    <!-- Cusip -->
+    <DataTemplate x:Key="myTemplateCusip">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
+        <TextBlock Text="{Binding Path=CuspId, Converter={StaticResource NullableValueConverter}}" />
+      </Border>
+    </DataTemplate>
 
 
-        <!-- SecurityType -->
-        <DataTemplate x:Key="myTemplateSecurityType" >
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding SecurityType, Converter={StaticResource NullableValueConverter}}" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
-            </Border>
-        </DataTemplate>
+    <DataTemplate x:Key="myTemplateCusipEdit">
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+        <TextBox Style="{StaticResource GridTextBoxStyle}" Text="{Binding Path=CuspId, Converter={StaticResource NullableValueConverter}}" />
+      </Border>
+    </DataTemplate>
 
-        <DataTemplate x:Key="myTemplateSecurityTypeEdit">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <ComboBox Style="{StaticResource GridComboStyle}"
+
+    <!-- SecurityType -->
+    <DataTemplate x:Key="myTemplateSecurityType" >
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
+        <TextBlock Text="{Binding SecurityType, Converter={StaticResource NullableValueConverter}}" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
+      </Border>
+    </DataTemplate>
+
+    <DataTemplate x:Key="myTemplateSecurityTypeEdit">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+        <ComboBox Style="{StaticResource GridComboStyle}"
                 SelectedItem="{Binding Path=SecurityType, Mode=TwoWay}"
                 ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:SecuritiesView}}, Path=SecurityTypes}" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
-            </Border>
-        </DataTemplate>
+      </Border>
+    </DataTemplate>
 
-        <!-- Taxable -->
-        <DataTemplate x:Key="myTemplateTaxable" >
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Taxable}" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
-            </Border>
-        </DataTemplate>
+    <!-- Taxable -->
+    <DataTemplate x:Key="myTemplateTaxable" >
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
+        <TextBlock Text="{Binding Taxable}" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
+      </Border>
+    </DataTemplate>
 
-        <DataTemplate x:Key="myTemplateTaxableEdit">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <ComboBox Style="{StaticResource GridComboStyle}"
+    <DataTemplate x:Key="myTemplateTaxableEdit">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+        <ComboBox Style="{StaticResource GridComboStyle}"
                 SelectedItem="{Binding Path=Taxable, Mode=TwoWay}"
                 ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:SecuritiesView}}, Path=TaxableTypes}" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
-            </Border>
-        </DataTemplate>
+      </Border>
+    </DataTemplate>
 
-        <!-- Price -->
-        <DataTemplate x:Key="myTemplatePrice">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding Price, StringFormat={}{0:N2}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
-            </Border>
-        </DataTemplate>
+    <!-- Price -->
+    <DataTemplate x:Key="myTemplatePrice">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
+        <TextBlock Text="{Binding Price, StringFormat={}{0:N2}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
+      </Border>
+    </DataTemplate>
 
-        <DataTemplate x:Key="myTemplatePriceEdit" >
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Price, StringFormat={}{0:N}, Mode=TwoWay}" TextAlignment="Right" />
-            </Border>
-        </DataTemplate>
+    <DataTemplate x:Key="myTemplatePriceEdit" >
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+        <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Price, StringFormat={}{0:N}, Mode=TwoWay}" TextAlignment="Right" />
+      </Border>
+    </DataTemplate>
 
-        <!-- LastPrice -->
-        <DataTemplate x:Key="myTemplateLastPrice">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBlock Text="{Binding LastPrice, StringFormat={}{0:N2}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top" />
-            </Border>
-        </DataTemplate>
+    <!-- LastPrice -->
+    <DataTemplate x:Key="myTemplateLastPrice">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
+        <TextBlock Text="{Binding LastPrice, StringFormat={}{0:N2}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top" />
+      </Border>
+    </DataTemplate>
 
-        <DataTemplate x:Key="myTemplateLastPriceEdit" >
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-                <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding LastPrice, StringFormat={}{0:N}, Mode=TwoWay}" TextAlignment="Right" />
-            </Border>
-        </DataTemplate>
+    <DataTemplate x:Key="myTemplateLastPriceEdit" >
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
+        <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding LastPrice, StringFormat={}{0:N}, Mode=TwoWay}" TextAlignment="Right" />
+      </Border>
+    </DataTemplate>
 
-        <!-- %Change -->
-        <DataTemplate x:Key="myTemplatePercentChange">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding PercentChange, StringFormat={}{0:N2}, Mode=OneWay}" TextAlignment="Right" VerticalAlignment="Top"/>
-            </Border>
-        </DataTemplate>
+    <!-- %Change -->
+    <DataTemplate x:Key="myTemplatePercentChange">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+        <TextBlock Text="{Binding PercentChange, StringFormat={}{0:N2}, Mode=OneWay}" TextAlignment="Right" VerticalAlignment="Top"/>
+      </Border>
+    </DataTemplate>
 
-      <!-- PriceDate -->
-      <DataTemplate x:Key="myTemplatePriceDate">
-        <!-- the border makes the whole column hittable -->
-        <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
-          <TextBlock Text="{Binding PriceDate, StringFormat={}{0:d}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
-        </Border>
-      </DataTemplate>
-        
-      <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type DataGridCell}">
-                        <Border x:Name="CellBorder"
+    <!-- PriceDate -->
+    <DataTemplate x:Key="myTemplatePriceDate">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="5,0">
+        <TextBlock Text="{Binding PriceDate, StringFormat={}{0:d}, Mode=TwoWay}" TextAlignment="Right" VerticalAlignment="Top"/>
+      </Border>
+    </DataTemplate>
+
+    <Style x:Key="MyDataGridCellStyle" TargetType="{x:Type DataGridCell}">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type DataGridCell}">
+            <Border x:Name="CellBorder"
                   				BorderThickness="0" 
                   				SnapsToDevicePixels="True">
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
-                                <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundMouseOverBrush}" TargetName="CellBorder"/>
-                            </Trigger>
-                            <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
-                                <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
-                            </DataTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+              <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsSelected" Value="true">
+                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundBrush}" TargetName="CellBorder"/>
+                <Setter Property="Foreground" Value="{DynamicResource ListItemSelectedForegroundBrush}"/>
+              </Trigger>
+              <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Background" Value="{DynamicResource ListItemSelectedBackgroundMouseOverBrush}" TargetName="CellBorder"/>
+              </Trigger>
+              <DataTrigger Binding="{Binding Path=IsDown}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource NegativeCurrencyForegroundBrush}"/>
+              </DataTrigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
 
 
-        <views:ValidationErrorGetErrorMessageConverter x:Key="ValidationErrorGetErrorMessageConverter" />
+    <views:ValidationErrorGetErrorMessageConverter x:Key="ValidationErrorGetErrorMessageConverter" />
 
-        <c:TrueToVisible x:Key="TrueToVisible" />
+    <c:TrueToVisible x:Key="TrueToVisible" />
 
-        <ControlTemplate x:Key="RowValidationErrorTemplate">
-            <Grid ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}},
+    <ControlTemplate x:Key="RowValidationErrorTemplate">
+      <Grid ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}},
                         Path=(Validation.Errors),
                         Converter={StaticResource ValidationErrorGetErrorMessageConverter}}" 
                    Background="Yellow" Margin="-1,-1,-1,-1">
 
-                <ui:SymbolIcon Symbol="Important" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            </Grid>
-        </ControlTemplate>
+        <ui:SymbolIcon Symbol="Important" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+      </Grid>
+    </ControlTemplate>
 
-        <!--  DETAIL MINI VIEW Show Stock Split information -->
-        <DataTemplate x:Key="StockSplitMiniView">
+    <!--  DETAIL MINI VIEW Show Stock Split information -->
+    <DataTemplate x:Key="StockSplitMiniView">
 
-            <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent"
+      <Border Visibility="{Binding IsSplit, Converter={StaticResource TrueToVisible}}" Background="Transparent"
                     u:WpfAnnotations.CodeRef="StockSplitMiniView">
 
-                <Border.Resources>
-                    <Style x:Key="StockSplitAlternationItemStyle" TargetType="{x:Type ListViewItem}">
-                        <Setter Property="Background" 
+        <Border.Resources>
+          <Style x:Key="StockSplitAlternationItemStyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="Background" 
                             Value="{Binding RelativeSource={RelativeSource Self},
                                             Path=(ItemsControl.AlternationIndex), 
                                             Converter={StaticResource GridBackgroundAlternationConverter}}"/>
-                    </Style>
-                    
-                </Border.Resources>
+          </Style>
 
-                <StackPanel Orientation="Horizontal">
-                    <ListView x:Name="TheGridForStockSplit" 
+        </Border.Resources>
+
+        <StackPanel Orientation="Horizontal">
+          <ListView x:Name="TheGridForStockSplit" 
                              Background="Transparent" AlternationCount="2"
                              FontStyle="Italic"
                              BorderThickness="0"
@@ -282,175 +282,175 @@
                              Margin="0"                                                           
                              ItemContainerStyle="{StaticResource StockSplitAlternationItemStyle}"
                              ItemsSource="{Binding Path=StockSplits}">
-                        <ListView.Resources>
-                            <Style TargetType="{x:Type TextBlock}">
-                                <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}" />
-                            </Style>
-                            <DataTemplate x:Key="StaticForTextTemplate">
-                                <TextBlock Text="for"/>
-                            </DataTemplate>
-                            <DataTemplate x:Key="StaticSpaceTemplate">
-                                
-                            </DataTemplate>
-                            <Style TargetType="{x:Type GridViewColumnHeader}">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </Style>
-                        </ListView.Resources>
+            <ListView.Resources>
+              <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{DynamicResource ListItemForegroundBrush}" />
+              </Style>
+              <DataTemplate x:Key="StaticForTextTemplate">
+                <TextBlock Text="for"/>
+              </DataTemplate>
+              <DataTemplate x:Key="StaticSpaceTemplate">
 
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Width="30" CellTemplate="{StaticResource StaticSpaceTemplate}"/>
-                                <GridViewColumn Width="Auto" x:Name="Date" DisplayMemberBinding="{Binding Path=Date,StringFormat={}{0:d}}"/>
-                                <GridViewColumn Width="Auto" x:Name="Numerator" DisplayMemberBinding="{Binding Path=Numerator}"/>
-                                <GridViewColumn Width="Auto" x:Name="For" CellTemplate="{StaticResource StaticForTextTemplate}"/>
-                                <GridViewColumn Width="Auto" x:Name="Denominator" DisplayMemberBinding="{Binding Path=Denominator}"/>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
-                </StackPanel>
+              </DataTemplate>
+              <Style TargetType="{x:Type GridViewColumnHeader}">
+                <Setter Property="Visibility" Value="Collapsed" />
+              </Style>
+            </ListView.Resources>
 
-            </Border>
-        </DataTemplate>
+            <ListView.View>
+              <GridView>
+                <GridViewColumn Width="30" CellTemplate="{StaticResource StaticSpaceTemplate}"/>
+                <GridViewColumn Width="Auto" x:Name="Date" DisplayMemberBinding="{Binding Path=Date,StringFormat={}{0:d}}"/>
+                <GridViewColumn Width="Auto" x:Name="Numerator" DisplayMemberBinding="{Binding Path=Numerator}"/>
+                <GridViewColumn Width="Auto" x:Name="For" CellTemplate="{StaticResource StaticForTextTemplate}"/>
+                <GridViewColumn Width="Auto" x:Name="Denominator" DisplayMemberBinding="{Binding Path=Denominator}"/>
+              </GridView>
+            </ListView.View>
+          </ListView>
+        </StackPanel>
+
+      </Border>
+    </DataTemplate>
 
 
-        <Style x:Key="StockSplitButtonStyle" TargetType="{x:Type ToggleButton}">
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="SnapsToDevicePixels" Value="true"/>
-            <Setter Property="Margin" Value="0,0,0,0"/>
-            <Setter Property="ToolTip" Value="Show or edit the stock splits for this security"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ToggleButton}">
-                        <Grid SnapsToDevicePixels="True">
+    <Style x:Key="StockSplitButtonStyle" TargetType="{x:Type ToggleButton}">
+      <Setter Property="VerticalAlignment" Value="Top"/>
+      <Setter Property="HorizontalAlignment" Value="Left"/>
+      <Setter Property="SnapsToDevicePixels" Value="true"/>
+      <Setter Property="Margin" Value="0,0,0,0"/>
+      <Setter Property="ToolTip" Value="Show or edit the stock splits for this security"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type ToggleButton}">
+            <Grid SnapsToDevicePixels="True">
 
-                            <Path   Name="ThePath" Stroke="#A6A6A6" Fill="Transparent"
+              <Path   Name="ThePath" Stroke="#A6A6A6" Fill="Transparent"
                       Data="M0,0 L4,4 0,8z" StrokeThickness="1"
                       StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeDashCap="Round">
-                                <Path.RenderTransform>
-                                    <RotateTransform x:Name="ThePathRotation" CenterX="0" CenterY="8" Angle="0"/>
-                                </Path.RenderTransform>
-                            </Path>
+                <Path.RenderTransform>
+                  <RotateTransform x:Name="ThePathRotation" CenterX="0" CenterY="8" Angle="0"/>
+                </Path.RenderTransform>
+              </Path>
 
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Top"  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" RecognizesAccessKey="True"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsFocused" Value="True"/>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Fill" Value="#82DFFB" TargetName="ThePath"/>
-                                <Setter Property="Stroke" Value="#1CC4F7" TargetName="ThePath"/>
-                                <Setter Property="Effect" TargetName="ThePath" >
-                                    <Setter.Value>
-                                        <DropShadowEffect ShadowDepth="1" />
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Fill" Value="#595959" TargetName="ThePath"/>
-                                <Setter Property="Stroke" Value="#262626" TargetName="ThePath"/>
-                            </Trigger>
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Top"  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" RecognizesAccessKey="True"/>
+            </Grid>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsFocused" Value="True"/>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Fill" Value="#82DFFB" TargetName="ThePath"/>
+                <Setter Property="Stroke" Value="#1CC4F7" TargetName="ThePath"/>
+                <Setter Property="Effect" TargetName="ThePath" >
+                  <Setter.Value>
+                    <DropShadowEffect ShadowDepth="1" />
+                  </Setter.Value>
+                </Setter>
+              </Trigger>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Fill" Value="#595959" TargetName="ThePath"/>
+                <Setter Property="Stroke" Value="#262626" TargetName="ThePath"/>
+              </Trigger>
 
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Fill" Value="#82DFFB" TargetName="ThePath"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False"/>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Fill" Value="#82DFFB" TargetName="ThePath"/>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False"/>
 
-                            <EventTrigger RoutedEvent="Checked">
-                                <BeginStoryboard>
-                                    <Storyboard >
-                                        <DoubleAnimation Duration="0:0:0.2" To="45" Storyboard.TargetProperty="Angle" Storyboard.TargetName="ThePathRotation" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
+              <EventTrigger RoutedEvent="Checked">
+                <BeginStoryboard>
+                  <Storyboard >
+                    <DoubleAnimation Duration="0:0:0.2" To="45" Storyboard.TargetProperty="Angle" Storyboard.TargetName="ThePathRotation" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </EventTrigger>
 
-                            <EventTrigger RoutedEvent="Unchecked">
-                                <BeginStoryboard>
-                                    <Storyboard >
-                                        <DoubleAnimation Duration="0:0:0.2" To="0" Storyboard.TargetProperty="Angle" Storyboard.TargetName="ThePathRotation" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+              <EventTrigger RoutedEvent="Unchecked">
+                <BeginStoryboard>
+                  <Storyboard >
+                    <DoubleAnimation Duration="0:0:0.2" To="0" Storyboard.TargetProperty="Angle" Storyboard.TargetName="ThePathRotation" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </EventTrigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
 
-        <!-- Split Button -->
+    <!-- Split Button -->
 
-        <DataTemplate x:Key="myTemplateSplitButton">
+    <DataTemplate x:Key="myTemplateSplitButton">
 
-            <ToggleButton Width="12" Height="10" Style="{StaticResource StockSplitButtonStyle}" Tag="{Binding .}"
+      <ToggleButton Width="12" Height="10" Style="{StaticResource StockSplitButtonStyle}" Tag="{Binding .}"
               PreviewMouseLeftButtonDown="OnButtonSplitClicked" VerticalAlignment="Top" Margin="2"
                     IsChecked="{Binding Path=IsExpanded, Mode=TwoWay}"/>
 
-        </DataTemplate>
+    </DataTemplate>
 
-        <!-- DATE -->
-        <DataTemplate x:Key="myTemplateDate">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="4,0">
-                <TextBlock Text="{Binding Date,StringFormat={}{0:d}}" MinWidth="100" VerticalAlignment="Top" />
-            </Border>
-        </DataTemplate>
+    <!-- DATE -->
+    <DataTemplate x:Key="myTemplateDate">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch" Padding="4,0">
+        <TextBlock Text="{Binding Date,StringFormat={}{0:d}}" MinWidth="100" VerticalAlignment="Top" />
+      </Border>
+    </DataTemplate>
 
-        <DataTemplate x:Key="myTemplateDateEdit">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <local:MoneyDatePicker SelectedDate="{Binding Date}" SelectedDateFormat="Short" MinWidth="100" VerticalAlignment="Top"/>
-            </Border>
-        </DataTemplate>
+    <DataTemplate x:Key="myTemplateDateEdit">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+        <local:MoneyDatePicker SelectedDate="{Binding Date}" SelectedDateFormat="Short" MinWidth="100" VerticalAlignment="Top"/>
+      </Border>
+    </DataTemplate>
 
 
-        <!-- Numerator -->
-        <DataTemplate x:Key="myTemplateNumerator">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch"  Padding="4,0">
-                <TextBlock Text="{Binding Numerator,StringFormat={}{0:N3}}" TextAlignment="Right" VerticalAlignment="Top"/>
-            </Border>
-        </DataTemplate>
+    <!-- Numerator -->
+    <DataTemplate x:Key="myTemplateNumerator">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch"  Padding="4,0">
+        <TextBlock Text="{Binding Numerator,StringFormat={}{0:N3}}" TextAlignment="Right" VerticalAlignment="Top"/>
+      </Border>
+    </DataTemplate>
 
-        <DataTemplate x:Key="myTemplateNumeratorEdit">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch"  Padding="4,0">
-                <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Numerator, Converter={StaticResource DecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" VerticalAlignment="Top"/>
-            </Border>
-        </DataTemplate>
+    <DataTemplate x:Key="myTemplateNumeratorEdit">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch"  Padding="4,0">
+        <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Numerator, Converter={StaticResource DecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" VerticalAlignment="Top"/>
+      </Border>
+    </DataTemplate>
 
-        <!-- Denominator -->
-        <DataTemplate x:Key="myTemplateDenominator">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding Denominator,StringFormat={}{0:N3}}" TextAlignment="Right" VerticalAlignment="Top"/>
-            </Border>
-        </DataTemplate>
+    <!-- Denominator -->
+    <DataTemplate x:Key="myTemplateDenominator">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+        <TextBlock Text="{Binding Denominator,StringFormat={}{0:N3}}" TextAlignment="Right" VerticalAlignment="Top"/>
+      </Border>
+    </DataTemplate>
 
-        <DataTemplate x:Key="myTemplateDenominatorEdit">
-            <!-- the border makes the whole column hittable -->
-            <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Denominator, Converter={StaticResource DecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" VerticalAlignment="Top"/>
-            </Border>
-        </DataTemplate>
+    <DataTemplate x:Key="myTemplateDenominatorEdit">
+      <!-- the border makes the whole column hittable -->
+      <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
+        <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Denominator, Converter={StaticResource DecimalToDecimalConverter}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" VerticalAlignment="Top"/>
+      </Border>
+    </DataTemplate>
 
-        <!-- 
+    <!-- 
              DETAIL VIEW and EDIT Stock Split Information
         -->
-        <DataTemplate x:Key="StockSplitDetailView">
+    <DataTemplate x:Key="StockSplitDetailView">
 
-            <Border Background="{DynamicResource ListItemSelectedBackgroundBrush}" >
+      <Border Background="{DynamicResource ListItemSelectedBackgroundBrush}" >
 
-                <Border  x:Name="MainBorderForSplitterView" Margin="8,0,13,13" BorderThickness="2" CornerRadius="4"  BorderBrush="Gray"  Background="White">
+        <Border  x:Name="MainBorderForSplitterView" Margin="8,0,13,13" BorderThickness="2" CornerRadius="4"  BorderBrush="Gray"  Background="White">
 
-                    <Border.Effect>
-                        <DropShadowEffect Opacity="0.5" ShadowDepth="10" BlurRadius="13"/>
-                    </Border.Effect>
+          <Border.Effect>
+            <DropShadowEffect Opacity="0.5" ShadowDepth="10" BlurRadius="13"/>
+          </Border.Effect>
 
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <local:MoneyDataGrid x:Name="TheGridForStockSplit"
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <local:MoneyDataGrid x:Name="TheGridForStockSplit"
                                   Loaded="TheGridForStockSplit_Loaded"
                                   Unloaded="TheGridForStockSplit_Unloaded"
                                   ItemsSource="{Binding Path=StockSplits}"
@@ -459,129 +459,131 @@
                                   Style="{DynamicResource MyStockSplitDataGridStyle}" 
                                   CanUserAddRows="True" SecondarySortOrder="Date"
                                   AutoGenerateColumns="False">
-                            <DataGrid.Columns>
+              <DataGrid.Columns>
 
-                                <!-- PAYEE -->
-                                <DataGridTemplateColumn Header="Date" CellTemplate="{StaticResource myTemplateDate}" CellEditingTemplate="{StaticResource myTemplateDateEdit}" MinWidth="100"
+                <!-- PAYEE -->
+                <DataGridTemplateColumn Header="Date" CellTemplate="{StaticResource myTemplateDate}" CellEditingTemplate="{StaticResource myTemplateDateEdit}" MinWidth="100"
                                                         SortDirection="Ascending"/>
 
-                                <!-- CATEGORY -->
-                                <DataGridTemplateColumn Header="Numerator" CellTemplate="{StaticResource myTemplateNumerator}" CellEditingTemplate="{StaticResource myTemplateNumeratorEdit}" MinWidth="50"/>
+                <!-- CATEGORY -->
+                <DataGridTemplateColumn Header="Numerator" CellTemplate="{StaticResource myTemplateNumerator}" CellEditingTemplate="{StaticResource myTemplateNumeratorEdit}" MinWidth="50"/>
 
-                                <!-- PAYEMENT-->
-                                <DataGridTemplateColumn Header="Denominator"  CellTemplate="{StaticResource myTemplateDenominator}" CellEditingTemplate="{StaticResource myTemplateDenominatorEdit}" MinWidth="50"/>
+                <!-- PAYEMENT-->
+                <DataGridTemplateColumn Header="Denominator"  CellTemplate="{StaticResource myTemplateDenominator}" CellEditingTemplate="{StaticResource myTemplateDenominatorEdit}" MinWidth="50"/>
 
-                            </DataGrid.Columns>
-                        </local:MoneyDataGrid>
+              </DataGrid.Columns>
+            </local:MoneyDataGrid>
 
-                    </Grid>
-                </Border>
-            </Border>
-        </DataTemplate>
-    </UserControl.Resources>
-
-    <UserControl.CommandBindings>
-        <CommandBinding Command="views:SecuritiesView.CommandToggleAllSplits" Executed="OnCommandToggleAllSplits" CanExecute="CanExecute_ToggleAllSplits"/>
-        <CommandBinding Command="views:SecuritiesView.CommandShowRelatedTransactions" Executed="OnShowRelatedTransactions" CanExecute="CanExecute_ShowRelatedTransactions" />
-    </UserControl.CommandBindings>
-    <UserControl.InputBindings>
-        <KeyBinding Command="views:SecuritiesView.CommandToggleAllSplits" Key="T" Modifiers="Alt"/>
-        <KeyBinding Command="views:SecuritiesView.CommandShowRelatedTransactions" Key="F12" />
-    </UserControl.InputBindings>
-
-    <UserControl.ContextMenu>
-        <ContextMenu>
-
-            <MenuItem x:Name="MenuItemToggleSplitViews" Header="_Show All Splits" Command="views:SecuritiesView.CommandToggleAllSplits" InputGestureText="Alt-T"  IsChecked="{Binding ViewAllSplits}"/>
-            <MenuItem x:Name="MenuItemGotoRelated" Header="_Show Related Transactions" Command="views:SecuritiesView.CommandShowRelatedTransactions" InputGestureText="F12"/>
-
-        </ContextMenu>
-    </UserControl.ContextMenu>
-
-    <Grid>
-        <Grid.RowDefinitions>
-
-            <!-- Top Search area -->
-            <RowDefinition x:Name="SearchAreaRow" Height="Auto"/>
-
-            <RowDefinition Height="*"/>
-
-        </Grid.RowDefinitions>
-
-        <!-- QUICK SEARCH BUTTON AREA -->
-        <Border>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-
-                <!-- Toggle view for OneLine -->
-                <ToggleButton x:Name="ToggleShowAllSecurities" Margin="10,0,0,0"  VerticalAlignment="Center" ToolTip="Toggle show all securities versus show currently held securities only" Checked="OnShowAllSecurities_Checked" Unchecked="OnShowAllSecurities_Unchecked" >
-                    <ui:SymbolIcon Symbol="Filter" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                </ToggleButton>
-
-                <!-- Toggle view for Show splits -->
-                <ToggleButton x:Name="ToggleShowSplits" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show All Splits (Alt-T)"     Grid.Column="1"                          
-                              Checked="OnToggleShowSplits_Checked" Unchecked="OnToggleShowSplits_Unchecked" >
-                    <ui:SymbolIcon x:Name="ToggleShowSplitsImage" Symbol="ShowResults" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                </ToggleButton>
-
-                
-                <StackPanel x:Name="SearchWidgetArea"  Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,2,2,2" VerticalAlignment="Center" >
-
-                    <!-- QUICK FILTER -->
-                    <local:QuickFilterControl x:Name="QuickFilterUX"  Width="200" FilterValueChanged="OnQuickFilterValueChanged" HorizontalAlignment="Left"/>
-
-                </StackPanel>
-            </Grid>
+          </Grid>
         </Border>
+      </Border>
+    </DataTemplate>
+  </UserControl.Resources>
 
-        <!-- STOCK BY SECURITY -->
-        <local:MoneyDataGrid x:Name="SecuritiesDataGrid" Grid.Row="1" Style="{StaticResource MySecuritiesDataGridStyle}"  CellStyle="{StaticResource MyDataGridCellStyle}">
-            <DataGrid.Columns>
+  <UserControl.CommandBindings>
+    <CommandBinding Command="views:SecuritiesView.CommandToggleAllSplits" Executed="OnCommandToggleAllSplits" CanExecute="CanExecute_ToggleAllSplits"/>
+    <CommandBinding Command="views:SecuritiesView.CommandShowRelatedTransactions" Executed="OnShowRelatedTransactions" CanExecute="CanExecute_ShowRelatedTransactions" />
+    <CommandBinding Command="views:SecuritiesView.CommandUpdateHistory" Executed="OnUpdateHistory" CanExecute="CanExecute_UpdateHistory" />
+  </UserControl.CommandBindings>
+  <UserControl.InputBindings>
+    <KeyBinding Command="views:SecuritiesView.CommandToggleAllSplits" Key="T" Modifiers="Alt"/>
+    <KeyBinding Command="views:SecuritiesView.CommandShowRelatedTransactions" Key="F12" />
+    <KeyBinding Command="views:SecuritiesView.CommandUpdateHistory" Key="F5" />
+  </UserControl.InputBindings>
 
-                <!-- Split button -->
-                <DataGridTemplateColumn Header="" CellTemplate="{StaticResource myTemplateSplitButton}"  MinWidth="16"/>
+  <UserControl.ContextMenu>
+    <ContextMenu>
 
-                <!-- Name -->
-                <DataGridTemplateColumn  Header="Name" CellTemplate="{StaticResource myTemplateName}" CellEditingTemplate="{StaticResource myTemplateNameEdit}"
+      <MenuItem x:Name="MenuItemToggleSplitViews" Header="_Show All Splits" Command="views:SecuritiesView.CommandToggleAllSplits" InputGestureText="Alt-T"  IsChecked="{Binding ViewAllSplits}"/>
+      <MenuItem x:Name="MenuItemGotoRelated" Header="Show _Related Transactions" Command="views:SecuritiesView.CommandShowRelatedTransactions" InputGestureText="F12"/>
+      <MenuItem x:Name="MenuitemUpdateHistory" Header="_Update History" Command="views:SecuritiesView.CommandUpdateHistory" InputGestureText="F5"/>
+    </ContextMenu>
+  </UserControl.ContextMenu>
+
+  <Grid>
+    <Grid.RowDefinitions>
+
+      <!-- Top Search area -->
+      <RowDefinition x:Name="SearchAreaRow" Height="Auto"/>
+
+      <RowDefinition Height="*"/>
+
+    </Grid.RowDefinitions>
+
+    <!-- QUICK SEARCH BUTTON AREA -->
+    <Border>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+
+        <!-- Toggle view for OneLine -->
+        <ToggleButton x:Name="ToggleShowAllSecurities" Margin="10,0,0,0"  VerticalAlignment="Center" ToolTip="Toggle show all securities versus show currently held securities only" Checked="OnShowAllSecurities_Checked" Unchecked="OnShowAllSecurities_Unchecked" >
+          <ui:SymbolIcon Symbol="Filter" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </ToggleButton>
+
+        <!-- Toggle view for Show splits -->
+        <ToggleButton x:Name="ToggleShowSplits" VerticalAlignment="Center" Margin="5,0,0,0" ToolTip="Show All Splits (Alt-T)"     Grid.Column="1"                          
+                              Checked="OnToggleShowSplits_Checked" Unchecked="OnToggleShowSplits_Unchecked" >
+          <ui:SymbolIcon x:Name="ToggleShowSplitsImage" Symbol="ShowResults" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </ToggleButton>
+
+
+        <StackPanel x:Name="SearchWidgetArea"  Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,2,2,2" VerticalAlignment="Center" >
+
+          <!-- QUICK FILTER -->
+          <local:QuickFilterControl x:Name="QuickFilterUX"  Width="200" FilterValueChanged="OnQuickFilterValueChanged" HorizontalAlignment="Left"/>
+
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- STOCK BY SECURITY -->
+    <local:MoneyDataGrid x:Name="SecuritiesDataGrid" Grid.Row="1" Style="{StaticResource MySecuritiesDataGridStyle}"  CellStyle="{StaticResource MyDataGridCellStyle}">
+      <DataGrid.Columns>
+
+        <!-- Split button -->
+        <DataGridTemplateColumn Header="" CellTemplate="{StaticResource myTemplateSplitButton}"  MinWidth="16"/>
+
+        <!-- Name -->
+        <DataGridTemplateColumn  Header="Name" CellTemplate="{StaticResource myTemplateName}" CellEditingTemplate="{StaticResource myTemplateNameEdit}"
                                      SortMemberPath="Name" SortDirection="Ascending"/>
 
-                <!-- Symbol -->
-                <DataGridTemplateColumn Header="Symbol"  CellTemplate="{StaticResource myTemplateSymbol}" CellEditingTemplate="{StaticResource myTemplateSymbolEdit}"
+        <!-- Symbol -->
+        <DataGridTemplateColumn Header="Symbol"  CellTemplate="{StaticResource myTemplateSymbol}" CellEditingTemplate="{StaticResource myTemplateSymbolEdit}"
                                         SortMemberPath="Symbol" />
 
-                <!-- Cusip -->
-                <DataGridTemplateColumn Header="CUSIP"  CellTemplate="{StaticResource myTemplateCusip}" CellEditingTemplate="{StaticResource myTemplateCusipEdit}"
+        <!-- Cusip -->
+        <DataGridTemplateColumn Header="CUSIP"  CellTemplate="{StaticResource myTemplateCusip}" CellEditingTemplate="{StaticResource myTemplateCusipEdit}"
                                         SortMemberPath="CuspId"/>
 
-                <!-- SecurityType -->
-                <DataGridTemplateColumn Header="Type"  CellTemplate="{StaticResource myTemplateSecurityType}" CellEditingTemplate="{StaticResource myTemplateSecurityTypeEdit}"
+        <!-- SecurityType -->
+        <DataGridTemplateColumn Header="Type"  CellTemplate="{StaticResource myTemplateSecurityType}" CellEditingTemplate="{StaticResource myTemplateSecurityTypeEdit}"
                                         SortMemberPath="SecurityType"/>
 
-                <!-- Taxable -->
-                <DataGridTemplateColumn Header="Taxable"  CellTemplate="{StaticResource myTemplateTaxable}" CellEditingTemplate="{StaticResource myTemplateTaxableEdit}"
+        <!-- Taxable -->
+        <DataGridTemplateColumn Header="Taxable"  CellTemplate="{StaticResource myTemplateTaxable}" CellEditingTemplate="{StaticResource myTemplateTaxableEdit}"
                                         SortMemberPath="Taxable"/>
 
-                <!-- Price -->
-                <DataGridTemplateColumn Header="Price"  CellTemplate="{StaticResource myTemplatePrice}" CellEditingTemplate="{StaticResource myTemplatePriceEdit}"
+        <!-- Price -->
+        <DataGridTemplateColumn Header="Price"  CellTemplate="{StaticResource myTemplatePrice}" CellEditingTemplate="{StaticResource myTemplatePriceEdit}"
                                         SortMemberPath="Price" MinWidth="80"/>
 
-                <!-- LastPrice -->
-                <DataGridTemplateColumn Header="LastPrice"  CellTemplate="{StaticResource myTemplateLastPrice}" CellEditingTemplate="{StaticResource myTemplateLastPriceEdit}"
+        <!-- LastPrice -->
+        <DataGridTemplateColumn Header="LastPrice"  CellTemplate="{StaticResource myTemplateLastPrice}" CellEditingTemplate="{StaticResource myTemplateLastPriceEdit}"
                                         SortMemberPath="LastPrice" MinWidth="80"/>
 
-                <!-- PercentChange -->
-                <DataGridTemplateColumn Header="%Change"  CellTemplate="{StaticResource myTemplatePercentChange}" SortMemberPath="PercentChange" MinWidth="80" />
+        <!-- PercentChange -->
+        <DataGridTemplateColumn Header="%Change"  CellTemplate="{StaticResource myTemplatePercentChange}" SortMemberPath="PercentChange" MinWidth="80" />
 
-               <!-- PriceDate -->
-               <DataGridTemplateColumn Header="PriceDate"  CellTemplate="{StaticResource myTemplatePriceDate}" CellEditingTemplate="{StaticResource myTemplatePriceEdit}"
+        <!-- PriceDate -->
+        <DataGridTemplateColumn Header="PriceDate"  CellTemplate="{StaticResource myTemplatePriceDate}" CellEditingTemplate="{StaticResource myTemplatePriceEdit}"
                                        SortMemberPath="PriceDate" MinWidth="80"/>
 
-            </DataGrid.Columns>
-        </local:MoneyDataGrid>
-    </Grid>
+      </DataGrid.Columns>
+    </local:MoneyDataGrid>
+  </Grid>
 </UserControl>

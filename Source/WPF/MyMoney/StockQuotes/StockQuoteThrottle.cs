@@ -98,11 +98,11 @@ namespace Walkabout.StockQuotes
         {
             this.CheckResetCounters();
             int result = 0;
-            if (this.Settings.ApiRequestsPerMonthLimit != 0 && this._callsThisMonth > this.Settings.ApiRequestsPerMonthLimit)
+            if (this.Settings.ApiRequestsPerMonthLimit != 0 && this._callsThisMonth >= this.Settings.ApiRequestsPerMonthLimit)
             {
                 throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
             }
-            else if (this.Settings.ApiRequestsPerDayLimit != 0 && this._callsToday > this.Settings.ApiRequestsPerDayLimit)
+            else if (this.Settings.ApiRequestsPerDayLimit != 0 && this._callsToday >= this.Settings.ApiRequestsPerDayLimit)
             {
                 throw new Exception(Walkabout.Properties.Resources.StockServiceQuotaExceeded);
             }

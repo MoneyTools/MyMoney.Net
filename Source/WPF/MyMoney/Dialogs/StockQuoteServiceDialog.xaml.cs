@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
+using Walkabout.Configuration;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 
@@ -17,6 +19,9 @@ namespace Walkabout.Dialogs
         private List<StockServiceSettings> _list;
         private StockServiceSettings _selection;
         private bool _initialized = false;
+        private string _password = string.Empty;
+        private bool _selectingService;
+        private DelayedActions _actions = new DelayedActions();
 
         public StockQuoteServiceDialog()
         {
@@ -44,6 +49,9 @@ namespace Walkabout.Dialogs
             {
                 var service = this._list[i];
                 this.DataContext = service;
+                this._selectingService = true;
+                this.PasswordBoxApiKey.Password = service.ApiKey;
+                this._selectingService = false;
                 this.ButtonDisable.IsEnabled = !string.IsNullOrEmpty(service.ApiKey);
                 this.ButtonOk.IsEnabled = true;
                 this._selection = service;
@@ -54,6 +62,7 @@ namespace Walkabout.Dialogs
                 this.ButtonDisable.IsEnabled = false;
                 this.ButtonOk.IsEnabled = false;
                 this._selection = null;
+                this.PasswordBoxApiKey.Password = null;
             }
         }
 
@@ -96,25 +105,12 @@ namespace Walkabout.Dialogs
 
             this._list = current;
             this.ComboServiceName.SelectedIndex = 0;
+            this.CheckMultiple();
         }
 
-        private async void OnSettingsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnSettingsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            StockServiceSettings settings = (StockServiceSettings)sender;
-            if (e.PropertyName == "ApiKey" && !string.IsNullOrEmpty(settings.ApiKey))
-            {
-                this.ShowErrorMessage("Checking API key...");
-                string error = await this._stockQuotes.TestApiKeyAsync(settings);
-                // check this is still the current item.
-                if (this._selection != null && this._selection.Name == settings.Name)
-                {
-                    this.ShowErrorMessage(error);
-                }
-            }
-            else
-            {
-                this.ShowErrorMessage("");
-            }
+            this.ShowErrorMessage("");
         }
 
         private void ShowErrorMessage(string msg)
@@ -162,8 +158,84 @@ namespace Walkabout.Dialogs
             if (this._selection != null)
             {
                 this._selection.ApiKey = null;
+                this.PasswordBoxApiKey.Password = "";
             }
         }
 
+        private void OnPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (!this._selectingService && !_busy)
+            {
+                _actions.StartDelayedAction("CheckApiKey", this.CheckApiKey, TimeSpan.FromSeconds(1));
+            }
+        }
+
+        bool _busy = false;
+
+        async void CheckApiKey()
+        {
+            var box = this.PasswordBoxApiKey;
+            StockServiceSettings settings = (StockServiceSettings)box.DataContext;
+            settings.ApiKey = box.Password;
+            if (string.IsNullOrEmpty(settings.ApiKey))
+            {
+                this.ShowErrorMessage("Account disabled.");
+            }
+            else
+            {
+                this.ShowErrorMessage("Checking API key...");
+                this._busy = true;
+                string error = null;
+                try
+                {
+                    error = await this._stockQuotes.TestApiKeyAsync(settings);
+                }
+                catch (Exception ex)
+                {
+                    error = ex.Message;
+                }
+                this._busy = false;
+                if (this._selection != null && this._selection.Name == settings.Name)
+                {
+                    // user is still on the same service
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        if (this._selection != null && this._selection.Name == settings.Name)
+                        {
+                            this.ShowErrorMessage(error);
+                            this._busy = false;
+                            return;
+                        }
+                    }
+                }
+
+                this.ShowErrorMessage("Service is working");
+
+                // Check if multiple
+                this.CheckMultiple();
+            }
+        }
+
+        void CheckMultiple()
+        {
+            // Check if multiple
+            List<string> enabled = new List<string>(from s in this._list
+                                                    where !string.IsNullOrEmpty(s.ApiKey)
+                                                    select s.Name);
+            if (enabled.Count > 1)
+            {
+                var msg = string.Join(",", enabled);
+                this.ShowErrorMessage($"Multiple services are enabled: {msg}, this is not recommended");
+            }
+        }
+
+        private void OnPasswordLostFocus(object sender, RoutedEventArgs e)
+        {
+            if (!_busy && _actions.HasDelayedAction("CheckApiKey"))
+            {
+                // do it right away!
+                _actions.StartDelayedAction("CheckApiKey", this.CheckApiKey, TimeSpan.FromMilliseconds(0));
+            }
+        }
     }
 }

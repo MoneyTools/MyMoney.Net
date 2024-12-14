@@ -3,6 +3,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:c="clr-namespace:Walkabout.Controls"         
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Walkabout.Dialogs"
         mc:Ignorable="d" SizeToContent="WidthAndHeight"
@@ -36,7 +37,8 @@
       <ComboBox x:Name="ComboServiceName" Grid.Row="0" Grid.Column="1" MinWidth="200" SelectionChanged="OnServiceSelected"/>
 
       <TextBlock Text="API Key:" Grid.Row="2" Grid.Column="0" Margin="5" ToolTip="Clear the API key to disable using this service."/>
-      <TextBox x:Name="TextBoxApiKey" Grid.Row="2" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiKey, Mode=TwoWay}"/>
+      <c:PasswordControl Grid.Row="2" Grid.Column="1" MinWidth="200" x:Name="PasswordBoxApiKey" PasswordChanged="OnPasswordChanged" Margin="5"
+                         LostFocus="OnPasswordLostFocus"/>
 
       <TextBlock Text="Limit on Requests Per Minute:" Grid.Row="4" Grid.Column="0" Margin="5"/>
       <TextBox x:Name="TextBoxRequestsPerMinuteLimit" Grid.Row="4" Grid.Column="1" MinWidth="200" Text="{Binding Path=ApiRequestsPerMinuteLimit, Mode=TwoWay}"/>

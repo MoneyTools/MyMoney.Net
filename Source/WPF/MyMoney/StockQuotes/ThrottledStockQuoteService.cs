@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModernWpf.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -15,6 +16,9 @@ namespace Walkabout.StockQuotes
     internal class StockQuoteThrottledException : Exception
     {
         public StockQuoteThrottledException(string msg) : base(msg) { }
+        public bool MonthlyLimitReached { get; set; }
+        public bool DailyLimitReached { get; set; }
+        public bool MinuteLimitReached { get; set; }
     }
 
     /// <summary>
@@ -223,81 +227,15 @@ namespace Walkabout.StockQuotes
                     }
                     else
                     {
-                        Exception ex = null;
-
-                        try
+                        await this.ServiceCallErrorHandling(symbol, async () =>
                         {
                             // this service doesn't want too many calls per second.
-                            await this.ThrottleSleep();
                             var quote = await this.DownloadThrottledQuoteAsync(symbol);
                             if (quote != null)
                             {
                                 this.OnQuoteAvailable(quote);
                             }
-                        }
-                        catch (HttpRequestException he)
-                        {
-                            if (he.InnerException is System.Net.WebException we)
-                            {
-                                if (we.Status != WebExceptionStatus.RequestCanceled)
-                                {
-                                    this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + we.Message);
-                                }
-                                else
-                                {
-                                    // we cancelled, so bail. 
-                                    this._cancelled = true;
-                                    break;
-                                }
-
-                                HttpWebResponse http = we.Response as HttpWebResponse;
-                                if (http != null)
-                                {
-                                    // certain http error codes are fatal.
-                                    switch (http.StatusCode)
-                                    {
-                                        case HttpStatusCode.ServiceUnavailable:
-                                        case HttpStatusCode.InternalServerError:
-                                        case HttpStatusCode.Unauthorized:
-                                            this.OnError(http.StatusDescription);
-                                            this._cancelled = true;
-                                            break;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                ex = he;
-                            }
-                        }
-                        catch (System.Threading.Tasks.TaskCanceledException)
-                        {
-                            return;
-                        }
-                        catch (StockQuoteNotFoundException)
-                        {
-                            this.OnSymbolNotFound(symbol);
-                        }
-                        catch (Exception e)
-                        {
-                            // service is failing, so no point trying again right now.
-                            this._disabled = true;
-                            ex = e;
-                            // assume this might be api limit related, and mark the fact we've used up our quota.
-                            this._throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
-                        }
-
-                        if (ex != null)
-                        {
-                            string message = string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + ex.Message;
-                            lock (this._retry)
-                            {
-                                this._retry.Add(symbol);
-                            }
-                            this.OnComplete(this.PendingCount == 0, message);
-                        }
-
-                        await Task.Delay(1000); // this is so we don't starve out the download service.
+                        });
                     }
                 }
             }
@@ -363,43 +301,21 @@ namespace Walkabout.StockQuotes
             {
                 return false;
             }
-            this._cancelled = false;
-            if (this._source == null)
-            {
-                this._source = new CancellationTokenSource();
-            }
-            string symbol = history.Symbol;
             bool updated = false;
-            try
+            this._cancelled = false;
+            this._source = new CancellationTokenSource();
+            string symbol = history.Symbol;
+            
+            // this service doesn't want too many calls per second.
+            await this.ServiceCallErrorHandling(symbol, async () =>
             {
-                // first check if history needs updating!
-                if (!history.NeedsUpdating)
-                {
-                    this.OnError(string.Format("History for symbol {0} is already up to date", symbol));
-                }
-                else
-                {
-                    // this service doesn't want too many calls per second.
-                    await this.ThrottleSleep();
-                    this._cancelled = false;
-                    this._source = new CancellationTokenSource();
-                    updated = await this.DownloadThrottledQuoteHistoryAsync(history);
-                    if (updated)
-                    {
-                        history.Save(this._logPath);
-                    }
-                }
-            }
-            catch (Exception ex)
+                updated = await this.DownloadThrottledQuoteHistoryAsync(history);
+            });
+            if (updated)
             {
-                string message = ex.Message;
-                this.OnError(message);
-                if (message.Contains("premium"))
-                {
-                    this._settings.HistoryEnabled = false;
-                    this._disabled = true;
-                }
+                history.Save(this._logPath);
             }
+
             this.OnComplete(this.PendingCount == 0, null);
 
             return updated;
@@ -408,6 +324,94 @@ namespace Walkabout.StockQuotes
         protected void CountCall()
         {
             this._throttle.RecordCall();
+        }
+
+        private async Task<bool> ServiceCallErrorHandling(string symbol, Func<Task> action)
+        {
+            Exception ex = null;
+            try
+            {
+                await this.ThrottleSleep();
+                await action();
+            }
+            catch (HttpRequestException he)
+            {
+                if (he.InnerException is System.Net.WebException we)
+                {
+                    if (we.Status != WebExceptionStatus.RequestCanceled)
+                    {
+                        this.OnError(string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + we.Message);
+                    }
+                    else
+                    {
+                        // we cancelled, so bail. 
+                        this._cancelled = true;
+
+                        return false;
+                    }
+
+                    HttpWebResponse http = we.Response as HttpWebResponse;
+                    if (http != null)
+                    {
+                        // certain http error codes are fatal.
+                        switch (http.StatusCode)
+                        {
+                            case HttpStatusCode.ServiceUnavailable:
+                            case HttpStatusCode.InternalServerError:
+                            case HttpStatusCode.Unauthorized:
+                                this.OnError(http.StatusDescription);
+                                this._cancelled = true;
+                                return false;
+                        }
+                    }
+                }
+                else
+                {
+                    ex = he;
+                }
+            }
+            catch (System.Threading.Tasks.TaskCanceledException)
+            {
+                return false;
+            }
+            catch (StockQuoteThrottledException te)
+            {
+                if (te.MonthlyLimitReached)
+                {
+                    this._throttle.CallsThisMonth = this.Settings.ApiRequestsPerMonthLimit;
+                }
+                else if (te.DailyLimitReached)
+                {
+                    this._throttle.CallsToday = this.Settings.ApiRequestsPerDayLimit;
+                }
+                else
+                {
+                    this._throttle.CallsThisMinute = this.Settings.ApiRequestsPerMinuteLimit;
+                }
+            }
+            catch (StockQuoteNotFoundException)
+            {
+                this.OnSymbolNotFound(symbol);
+            }
+            catch (Exception e)
+            {
+                // service is failing, so no point trying again right now.
+                this._disabled = true;
+                ex = e;
+                // assume this might be api limit related, and mark the fact we've used up our quota.
+                this._throttle.CallsThisMinute += this._settings.ApiRequestsPerMinuteLimit;
+            }
+
+            if (ex != null)
+            {
+                string message = string.Format(Walkabout.Properties.Resources.ErrorFetchingSymbols, symbol) + "\r\n" + ex.Message;
+                lock (this._retry)
+                {
+                    this._retry.Add(symbol);
+                }
+                this.OnComplete(this.PendingCount == 0, message);
+            }
+            return true;
         }
     }
 }
