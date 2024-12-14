@@ -385,6 +385,10 @@ namespace Walkabout.StockQuotes
                         }
                     }
                     workDay = holidays.GetPreviousWorkDay(workDay);
+                    if (ranges.Count > 10)
+                    {
+                        break;
+                    }
                 }
 
                 if (workDay > stopDate)
@@ -442,12 +446,15 @@ namespace Walkabout.StockQuotes
                 if (ranges.Count > 5)
                 {
                     // then it's probably more efficient to just do one big call for the whole history.
-                    workDay = this.holidays.MostRecentWorkDay;
+                    workDay = ranges[0].End;
                     yield return new DateRange(stopDate, workDay);
                 }
-                foreach (var result in ranges) 
+                else
                 {
-                    yield return result;
+                    foreach (var result in ranges)
+                    {
+                        yield return result;
+                    }
                 }
             }
         }

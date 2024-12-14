@@ -114,9 +114,9 @@ namespace Walkabout.StockQuotes
             // we'll fetch another older chunk and eventually get everything that way.
             DateTime end = range.End;
             DateTime start = end.AddDays(-MaxHistory);
-            if (start < range.Start)
+            if (range.Start < start)
             {
-                start = range.Start;
+                range.Start = start;
             }
 
             var startString = start.ToString("yyyy-MM-dd");
