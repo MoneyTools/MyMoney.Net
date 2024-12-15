@@ -35,8 +35,6 @@ if "%DOBUILD%"=="0" goto :dorelease
 
 if EXIST %ClickOnceBits% rd /s /q %ClickOnceBits%
 
-UpdateVersion .\Version\VersionMaster.txt
-if ERRORLEVEL 1 goto :err_version
 
 call build.cmd Release
 if ERRORLEVEL 1 goto :err_restore
@@ -149,9 +147,4 @@ exit /b /1
 
 :err_build
 echo Error: build.cmd failed.
-exit /b /1
-
-
-:err_version
-echo Error: update version failed.
 exit /b /1

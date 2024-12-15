@@ -301,17 +301,20 @@ namespace Walkabout.Controls
             if (selected == this.SelectedItem && this.SelectedItem != null)
             {
                 var index = this.SelectedIndex;
-                DataGridRow row = (DataGridRow)this.ItemContainerGenerator.ContainerFromIndex(index);
-                if (row == null)
-                {
-                    tryAgain = true;
-                }
-                else
-                {
-                    Point position = row.TransformToAncestor(this).Transform(new Point(0, 0));
-                    if (position.Y < 0 || position.Y > this.ActualHeight)
+                if (index >= 0 && index < this.Items.Count)
+                { 
+                    DataGridRow row = (DataGridRow)this.ItemContainerGenerator.ContainerFromIndex(index);
+                    if (row == null)
                     {
-                        this.ScrollIntoView(selected);
+                        tryAgain = true;
+                    }
+                    else
+                    {
+                        Point position = row.TransformToAncestor(this).Transform(new Point(0, 0));
+                        if (position.Y < 0 || position.Y > this.ActualHeight)
+                        {
+                            this.ScrollIntoView(selected);
+                        }
                     }
                 }
             }

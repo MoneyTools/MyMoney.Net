@@ -3,9 +3,13 @@ setlocal ENABLEDELAYEDEXPANSION
 cd %~dp0
 SET ROOT=%~dp0
 set ClickOnceBits=%ROOT%MyMoney\bin\publish
+set PATH=%PATH%;%ROOT%\tools;
 
 set BuildType=%1
 if "!BuildType!" == "" set BuildType=Release
+
+UpdateVersion .\Version\VersionMaster.txt
+if ERRORLEVEL 1 goto :err_version
 
 msbuild /target:restore MyMoney.sln /p:Configuration=!BuildType! "/p:Platform=Any CPU"
 if ERRORLEVEL 1 goto :err_restore
@@ -34,4 +38,8 @@ exit /b /1
 :err_publish
 echo Error: msbuild /target:publish failed.
 popd
+exit /b /1
+
+:err_version
+echo Error: update version failed.
 exit /b /1

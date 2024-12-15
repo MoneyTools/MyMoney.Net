@@ -3059,6 +3059,15 @@ namespace Walkabout
                     }
 
                 }
+                else if (this.CurrentView is SecuritiesView)
+                {
+                    this.TabTrends.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
+                    this.TabStock.Visibility = System.Windows.Visibility.Visible;
+                    this.TabStock.IsSelected = true;
+                }
             }
             finally
             {
@@ -4158,29 +4167,22 @@ namespace Walkabout
                 view.SecurityNavigated += this.OnSecurityNavigated;
                 view.SecuritySelected += this.OnSecuritySelected;
             }
+            this.SetChartsDirty();
 
             return view;
         }
 
         private async void OnSecuritySelected(object sender, SecuritySelectionEventArgs e)
         {
+            this.SetChartsDirty();
+
+            this.StockGraph.Generator = null;
             if (e.Security != null)
             {
-                this.TabTrends.Visibility = System.Windows.Visibility.Collapsed;
-                this.TabHistory.Visibility = System.Windows.Visibility.Collapsed;
-                this.TabExpenses.Visibility = System.Windows.Visibility.Collapsed;
-                this.TabIncomes.Visibility = System.Windows.Visibility.Collapsed;
-                this.TabStock.Visibility = System.Windows.Visibility.Visible;
-                this.TabStock.IsSelected = true;
-
                 var history = await this.quotes.GetCachedHistory(e.Security.Symbol);
                 if (history != null)
                 {
                     this.StockGraph.Generator = new SecurityGraphGenerator(history, e.Security);
-                }
-                else
-                {
-                    this.StockGraph.Generator = null;
                 }
             }
         }

@@ -1773,7 +1773,11 @@ namespace Walkabout.Data
             // Sort all add, remove, buy, sell transactions by date and by security.
             foreach (Transaction t in this.Transactions.GetAllTransactionsByDate())
             {
-                if (t.Date < toDate && (filter == null || filter(t.Account)) &&
+                if (t.Date > toDate)
+                {
+                    break;
+                }
+                if ((filter == null || filter(t.Account)) &&
                     t.Investment != null && t.Investment.Type != InvestmentType.None)
                 {
                     Investment i = t.Investment;

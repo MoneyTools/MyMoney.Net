@@ -33,8 +33,8 @@ namespace Walkabout.Views
         public SecuritiesView()
         {
             this.InitializeComponent();
-            this.SetupGrid(this.SecuritiesDataGrid);
-        }
+            this.SetupGrid(this.SecuritiesDataGrid);            
+        }        
 
         public event EventHandler<SecuritySelectionEventArgs> SecurityNavigated;
         public event EventHandler<SecuritySelectionEventArgs> SecuritySelected;
@@ -282,14 +282,14 @@ namespace Walkabout.Views
                 throw new Exception("Symbol '" + newSymbol + "' should not contain any spaces.");
             }
 
-            foreach (Security s in this.money.Securities.AllSecurities)
-            {
-                if (!s.IsDeleted && s != edited && !string.IsNullOrEmpty(s.Symbol) &&
-                    string.Compare(s.Symbol, newSymbol, StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    throw new Exception("Symbol '" + newSymbol + "' is already being used elsewhere");
-                }
-            }
+            //foreach (Security s in this.money.Securities.AllSecurities)
+            //{
+            //    if (!s.IsDeleted && s != edited && !string.IsNullOrEmpty(s.Symbol) &&
+            //        string.Compare(s.Symbol, newSymbol, StringComparison.OrdinalIgnoreCase) == 0)
+            //    {
+            //        throw new Exception("Symbol '" + newSymbol + "' is already being used elsewhere");
+            //    }
+            //}
         }
 
         public static readonly DependencyProperty ViewAllSplitsProperty = DependencyProperty.Register("ViewAllSplits", typeof(bool), typeof(SecuritiesView), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnViewAllSplitsChanged)));
@@ -392,7 +392,7 @@ namespace Walkabout.Views
             }
 
             this.SecuritiesDataGrid.SelectedItem = security;
-            this.SecuritiesDataGrid.ScrollIntoView(security);
+            this.SecuritiesDataGrid.AsyncScrollSelectedRowIntoView();
         }
 
         private void ShowSecurities()
