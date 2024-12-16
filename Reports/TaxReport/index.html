@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://clovett.github.io/MyMoney.Net/Reports/TaxReport/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Tax Report - MyMoney.Net</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Tax Report", url: "#_top", children: [
+              {title: "Income Tax Report", url: "#income-tax-report" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="https://consentdeliveryfd.azurefd.net/mscc/lib/v2/wcp-consent.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../W2Report/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../W2Report/" class="btn btn-xs btn-link">
+        W2 Report
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../CashFlowReport/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../CashFlowReport/" class="btn btn-xs btn-link">
+        Cash Flow Report
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="tax-report">Tax Report<a class="headerlink" href="#tax-report" title="Permanent link">#</a></h1>
+<p>You can associate your categories with "Tax Categories" using the field shown in the Category Properties dialog below:</p>
+<p><img alt="" src="../../Images/Tax%20Report.png" /></p>
+<p>The "Reports" menu contains an "Income Tax Report" and a "W3 and Other Tax Forms" report.</p>
+<h3 id="income-tax-report">Income Tax Report<a class="headerlink" href="#income-tax-report" title="Permanent link">#</a></h3>
+<p>The income tax report provides the following options to select the year, and specify how you want the details to be reported and whether to show capital gains only.</p>
+<p><img alt="" src="../../Images/Tax%20Report1.png" /></p>
+<p>The <strong>Export</strong>  button that will export a *.txf file which can be imported into Turbo Tax.</p>
+<p>If you have set your Tax Categories correctly the report shows a summary for each Tax Category with a total for that each category. </p>
+<p>It also shows long term and short term capital gains (See <a href="../../Accounts/CostBasis/">Cost Basis</a>) for any security sales you have in your investment accounts for the selected year.</p>
+<p>To import into Turbo Tax, use the Import menu to import “<strong>From Accounting Software</strong> ” then pick “Other Financial Software (TXF file), then click “<strong>Browse to Find File</strong> �� and click Import and wha-la.  The following shows long term capital gains information imported from a txf file (which saves a lot of typing):</p>
+<p><img alt="" src="../../Images/Tax%20Report2.jpeg" /></p>
+<p><strong>Known bugs:</strong>
+* 1099-DIV  “total      dividend income” doesn’t import into TurboTax properly yet – that requires      more work to fill out the total income versus qualified and non-qualified      and so on which needs more information.  The work around is to just      copy that information to turbo tax manually which is pretty easy to      do.  It might work if you split each transaction to provide all the      1099-DIV categories, but that is probably more work than is worth the      effort.
+* Window resizing is really      slow when the Tax Report is visible for some reason, some sort of WPF flow      document bug I suspect. </p>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="../W2Report/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="../W2Report/" class="btn btn-xs btn-link">
+        W2 Report
+      </a>
+    </div>
+    
+    <div class="wm-article-nav">
+      <a href="../CashFlowReport/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../CashFlowReport/" class="btn btn-xs btn-link">
+        Cash Flow Report
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
