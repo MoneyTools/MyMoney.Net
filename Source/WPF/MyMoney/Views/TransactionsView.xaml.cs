@@ -2378,19 +2378,19 @@ namespace Walkabout.Views
             {
                 case TransactionFilter.All:
                 case TransactionFilter.Custom:
-                    filter = new Predicate<Transaction>((t) => { return !t.Account.IsCategoryFund; });
+                    filter = new Predicate<Transaction>((t) => { return true; });
                     break;
                 case TransactionFilter.Accepted:
-                    filter = new Predicate<Transaction>((t) => { return !t.Unaccepted && !t.Account.IsCategoryFund; });
+                    filter = new Predicate<Transaction>((t) => { return !t.Unaccepted; });
                     break;
                 case TransactionFilter.Unaccepted:
-                    filter = new Predicate<Transaction>((t) => { return t.Unaccepted && !t.Account.IsCategoryFund; });
+                    filter = new Predicate<Transaction>((t) => { return t.Unaccepted; });
                     break;
                 case TransactionFilter.Reconciled:
                     if (!this.IsReconciling)
                     {
                         // We are not in BALANCING mode so use the normal un-reconcile filter (show all transactions that are not reconciled)
-                        filter = new Predicate<Transaction>((t) => { return t.Status == TransactionStatus.Reconciled && !t.Account.IsCategoryFund; });
+                        filter = new Predicate<Transaction>((t) => { return t.Status == TransactionStatus.Reconciled; });
                     }
                     else
                     {
@@ -2398,7 +2398,7 @@ namespace Walkabout.Views
                         // before or after that are not reconciled.
                         filter = new Predicate<Transaction>((t) =>
                         {
-                            return (t.Status == TransactionStatus.Reconciled && !t.Account.IsCategoryFund) ||
+                            return (t.Status == TransactionStatus.Reconciled) ||
                                     t.IsReconciling || this.IsIncludedInCurrentStatement(t);
                         });
                     }
@@ -2407,7 +2407,7 @@ namespace Walkabout.Views
                     if (!this.IsReconciling)
                     {
                         // We are not in BALANCING mode so use the normal un-reconcile filter (show all transactions that are not reconciled)
-                        filter = new Predicate<Transaction>((t) => { return t.Status != TransactionStatus.Reconciled && t.Status != TransactionStatus.Void && !t.Account.IsCategoryFund; });
+                        filter = new Predicate<Transaction>((t) => { return t.Status != TransactionStatus.Reconciled && t.Status != TransactionStatus.Void; });
                     }
                     else
                     {
@@ -2415,7 +2415,7 @@ namespace Walkabout.Views
                         // before or after that are not reconciled.
                         filter = new Predicate<Transaction>((t) =>
                         {
-                            return (t.Status != TransactionStatus.Reconciled && t.Status != TransactionStatus.Void && !t.Account.IsCategoryFund) ||
+                            return (t.Status != TransactionStatus.Reconciled && t.Status != TransactionStatus.Void) ||
                                     t.IsReconciling || this.IsIncludedInCurrentStatement(t);
                         });
                     }
@@ -2427,9 +2427,9 @@ namespace Walkabout.Views
                         {
                             return false; // no point seeing these
                         }
-                        if (t.IsFakeSplit || t.Account.IsCategoryFund)
+                        if (t.IsFakeSplit)
                         {
-                            return false; // this represents a category by definition.
+                            return false;
                         }
                         if (t.IsSplit)
                         {
@@ -2445,7 +2445,7 @@ namespace Walkabout.Views
                         {
                             return false; // no point seeing these
                         }
-                        if (t.IsFakeSplit || t.Account.IsCategoryFund)
+                        if (t.IsFakeSplit)
                         {
                             return false; // this represents a category by definition.
                         }

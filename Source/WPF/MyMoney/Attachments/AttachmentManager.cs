@@ -319,10 +319,6 @@ namespace Walkabout.Attachments
 
         private void DeleteAttachments(Transaction t)
         {
-            if (t.Account == null || t.Account.IsCategoryFund)
-            {
-                return;
-            }
             foreach (string fileName in this.GetAttachments(t))
             {
                 TempFilesManager.DeleteFile(fileName);
@@ -576,7 +572,7 @@ namespace Walkabout.Attachments
 
         private void FindAttachments(string path, Account a)
         {
-            if (a.IsCategoryFund || string.IsNullOrEmpty(a.Name))
+            if (string.IsNullOrEmpty(a.Name))
             {
                 return;
             }

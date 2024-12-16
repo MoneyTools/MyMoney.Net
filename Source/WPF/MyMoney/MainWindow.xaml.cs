@@ -805,8 +805,6 @@ namespace Walkabout
 
                 this.myMoney.CheckSecurities();
 
-                this.myMoney.CheckCategoryFunds();
-
                 this.myMoney.TransactionExtras.MigrateTaxYears(this.myMoney, this.databaseSettings.FiscalYearStart);
             }
             finally
@@ -4392,12 +4390,6 @@ namespace Walkabout
         {
             int removed = this.myMoney.RemoveDuplicatePayees();
             MessageBoxEx.Show("Removed " + removed + " duplicate payees", "Removed Duplicate Payees", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-
-        private void MenuRecomputeBudgetBalance_Click(object sender, RoutedEventArgs e)
-        {
-            this.myMoney.Categories.ComputeCategoryBalance();
         }
 
         private void MenuGCCollect_Click(object sender, RoutedEventArgs e)

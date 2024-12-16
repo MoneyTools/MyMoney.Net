@@ -175,7 +175,7 @@ namespace Walkabout.Dialogs
                 // gather accounts to be merged (skipping closed accounts).
                 foreach (var acct in newMoney.Accounts)
                 {
-                    if (!acct.IsClosed && !acct.IsCategoryFund)
+                    if (!acct.IsClosed)
                     {
                         this.list.Add(new AccountImportState()
                         {

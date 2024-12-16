@@ -993,15 +993,6 @@ namespace Walkabout.Data
             }
         }
 
-        public void CheckCategoryFunds()
-        {
-            foreach (Account a in this.Accounts.GetCategoryFunds())
-            {
-                // ensure category is initialized.
-                a.GetFundCategory();
-            }
-        }
-
         public void Save(IDatabase database)
         {
             this.BeginUpdate(this);
@@ -2268,72 +2259,6 @@ namespace Walkabout.Data
             return null;
         }
 
-        private const string CategoryAccountPrefix = "Category: ";
-
-        public Account FindCategoryFund(Category c)
-        {
-            Debug.Assert(c != null);
-            Account a = this.FindAccount(CategoryAccountPrefix + c.Name);
-            if (a != null && a.IsCategoryFund)
-            {
-                return a;
-            }
-            return null;
-        }
-
-        public Account AddCategoryFund(Category c)
-        {
-            Debug.Assert(c != null);
-            string name = CategoryAccountPrefix + c.Name;
-            Account a = this.FindAccount(name);
-            if (a != null)
-            {
-                if (a.Type != AccountType.CategoryFund)
-                {
-                    throw new MoneyException("Cannot create category account because account with conflicting name already exists");
-                }
-                return a;
-            }
-
-            a = this.AddAccount(this.NextAccount);
-            a.Type = AccountType.CategoryFund;
-            a.Flags = AccountFlags.Budgeted;
-            a.Name = name;
-            this.accountIndex[name] = a;
-            this.FireChangeEvent(this, a, null, ChangeType.Inserted);
-            return a;
-        }
-
-        public IList<Account> GetCategoryFunds()
-        {
-            List<Account> list = new List<Account>(this.accounts.Count);
-            foreach (Account a in this.accounts.Values)
-            {
-                if (!a.IsDeleted && a.IsCategoryFund) // category fund accounts are special.
-                {
-                    list.Add(a);
-                }
-            }
-            list.Sort(new AccountComparer());
-            return list;
-        }
-
-        public Category GetFundCategory(Account a)
-        {
-            if (a.IsCategoryFund)
-            {
-                MyMoney m = this.Parent as MyMoney;
-                if (a.Name.StartsWith(CategoryAccountPrefix))
-                {
-                    string name = a.Name.Substring(CategoryAccountPrefix.Length);
-                    return m.Categories.FindCategory(name);
-                }
-
-                return null;
-            }
-            return null;
-        }
-
         public override void Add(object child)
         {
             this.Add((Category)child);
@@ -2407,8 +2332,7 @@ namespace Walkabout.Data
             List<Account> list = new List<Account>(this.accounts.Count);
             foreach (Account a in this.accounts.Values)
             {
-                if (!a.IsDeleted && (!filterOutClosed || !a.IsClosed) &&
-                    a.Type != AccountType.CategoryFund) // category fund accounts are special.
+                if (!a.IsDeleted && (!filterOutClosed || !a.IsClosed))
                 {
                     list.Add(a);
                 }
@@ -2494,7 +2418,7 @@ namespace Walkabout.Data
         // There is a hole here from deleted type which we can fill when we invent new types, but the types 8-10 have to keep those numbers        
         // or else we mess up the existing databases.
         Asset = 8,              // Used for tracking Assets like "House, Car, Boat, Jewelry, this helps to make NetWorth more accurate
-        CategoryFund = 9,       // a pseudo account for managing category budgets
+        // CategoryFund = 9 must leave a hole here for data compatibility.        
         Loan = 10,
         CreditLine = 11
     }
@@ -2601,28 +2525,6 @@ namespace Walkabout.Data
                     }
 
                     this.OnChanged("IsClosed");
-                }
-            }
-        }
-
-        [XmlIgnore]
-        public bool IsBudgeted
-        {
-            get { return (this.flags & AccountFlags.Budgeted) != 0; }
-            set
-            {
-                if (this.IsBudgeted != value)
-                {
-                    if (value)
-                    {
-                        this.flags |= AccountFlags.Budgeted;
-                    }
-                    else
-                    {
-                        this.flags &= ~AccountFlags.Budgeted;
-                    }
-
-                    this.OnChanged("IsBudgeted");
                 }
             }
         }
@@ -3032,19 +2934,6 @@ namespace Walkabout.Data
         public Account ShallowCopy()
         {
             return (Account)this.MemberwiseClone();
-        }
-
-        [XmlIgnore]
-        public bool IsCategoryFund { get { return this.Type == AccountType.CategoryFund; } }
-
-        public Category GetFundCategory()
-        {
-            if (this.category == null)
-            {
-                Accounts parent = this.Parent as Accounts;
-                this.category = parent.GetFundCategory(this);
-            }
-            return this.category;
         }
 
         [IgnoreDataMember]
@@ -7495,53 +7384,7 @@ namespace Walkabout.Data
         {
             return this.GetEnumerator();
         }
-
-        internal void ComputeCategoryBalance()
-        {
-            MyMoney money = (MyMoney)this.Parent;
-            money.BeginUpdate(this);
-
-            foreach (Category c in this.GetRootCategories())
-            {
-                c.ClearBalance();
-            }
-
-            foreach (Transaction t in money.Transactions.GetAllTransactionsByDate())
-            {
-                if (t.Status == TransactionStatus.Void || t.Account == null || !t.BudgetBalanceDate.HasValue || !t.Account.IsBudgeted)
-                {
-                    continue;
-                }
-
-                if (t.Account != null && t.Account.IsCategoryFund)
-                {
-                    Category c = t.Account.GetFundCategory();
-                    c.Root.Balance += t.Amount;
-                }
-                else if (t.IsSplit)
-                {
-                    foreach (Split s in t.Splits)
-                    {
-                        Category c = s.Category;
-                        if (c != null)
-                        {
-                            c.Root.Balance += t.Amount;
-                        }
-                    }
-                }
-                else
-                {
-                    Category c = t.Category;
-                    if (c != null)
-                    {
-                        c.Root.Balance += t.Amount;
-                    }
-                }
-            }
-
-            money.EndUpdate();
-        }
-
+         
         // import a category from another Money database.
         internal Category ImportCategory(Category category)
         {
@@ -10346,7 +10189,7 @@ namespace Walkabout.Data
                         }
                     }
                 }
-                else if (matches(t.Category) || (t.Account != null && t.Account.IsCategoryFund && t.Account.GetFundCategory() == c) ||
+                else if (matches(t.Category) ||
                     (money != null && c == money.Categories.Unknown && t.Category == null && t.Transfer == null))
                 {
                     view.Add(t);
@@ -10392,7 +10235,7 @@ namespace Walkabout.Data
                             }
                         }
                     }
-                    else if (c.Contains(t.Category) || (t.Account != null && t.Account.IsCategoryFund && t.Account.GetFundCategory() == c) ||
+                    else if (c.Contains(t.Category) || 
                         (money != null && c == money.Categories.Unknown && t.Category == null && t.Transfer == null))
                     {
                         if (ignoreAmountZero && t.Amount == 0)
@@ -10987,17 +10830,6 @@ namespace Walkabout.Data
                         else if (old != null && value == null)
                         {
                             this.payee.UncategorizedTransactions++;
-                        }
-                    }
-                    if (this.IsBudgeted)
-                    {
-                        if (old != null)
-                        {
-                            old.Balance -= this.amount;
-                        }
-                        if (value != null)
-                        {
-                            value.Balance += this.amount;
                         }
                     }
                     this.category = value;
@@ -11607,62 +11439,6 @@ namespace Walkabout.Data
             set { this.flags = (TransactionFlags)value; }
         }
 
-        [IgnoreDataMember]
-        public bool IsBudgeted
-        {
-            get
-            {
-                if (this.IsFake)
-                {
-                    if (this.relatedSplit != null)
-                    {
-                        return this.relatedSplit.IsBudgeted;
-                    }
-                    else if (this.related != null)
-                    {
-                        return this.related.IsBudgeted;
-                    }
-                }
-                return (this.flags & TransactionFlags.Budgeted) != 0;
-            }
-            set { this.SetBudgeted(value, null); }
-        }
-
-        public void SetBudgeted(bool value, List<TransactionException> errors)
-        {
-            if (this.IsFake)
-            {
-                if (this.relatedSplit != null)
-                {
-                    // fake transaction is an unrolled split for by Category view, so budgeting this
-                    // is adding the split to the given category.
-                    this.relatedSplit.SetBudgeted(value, errors);
-                }
-                else if (this.related != null)
-                {
-                    this.related.IsBudgeted = value;
-                }
-                return;
-            }
-
-            if (this.IsBudgeted != value)
-            {
-                if (value)
-                {
-                    this.UpdateBudget(true, errors);
-                    this.SetFlag(TransactionFlags.Budgeted);
-                }
-                else
-                {
-                    this.UpdateBudget(false, errors);
-                    this.ClearFlag(TransactionFlags.Budgeted);
-                    this.BudgetBalanceDate = null;
-                }
-                this.OnChanged("IsBudgeted");
-            }
-        }
-
-
         [XmlIgnore]
         [IgnoreDataMember]
         public string StatusString
@@ -11781,19 +11557,6 @@ namespace Walkabout.Data
 
         private void OnAmountChanged(decimal oldValue, decimal newValue)
         {
-            decimal diff = newValue - oldValue;
-            if (this.IsBudgeted && !this.IsFake)
-            {
-                if (this.account != null && this.account.IsCategoryFund && this.Transfer != null)
-                {
-                    Category c = this.account.GetFundCategory();
-                    c.Balance += diff;
-                }
-                else if (this.category != null)
-                {
-                    this.category.Balance += diff;
-                }
-            }
         }
 
         [XmlIgnore]
@@ -12477,7 +12240,7 @@ namespace Walkabout.Data
                 case Field.Accepted:
                     return q.Matches(!this.Unaccepted);
                 case Field.Budgeted:
-                    return q.Matches(!this.IsBudgeted && this.Account.IsBudgeted);
+                    return false;
                 case Field.Account:
                     return q.Matches(this.Account.Name);
                 case Field.Payment:
@@ -12518,93 +12281,8 @@ namespace Walkabout.Data
             return this.Account.GetNormalizedAmount(amount);
         }
 
-        private void UpdateBudget(bool budgeting, List<TransactionException> errors)
-        {
-            Category c = this.Category;
-
-            if (this.Account.IsCategoryFund)
-            {
-                c = this.Account.GetFundCategory();
-            }
-
-            if (this.salesTax != 0)
-            {
-                Category salesTax = this.MyMoney.Categories.SalesTax;
-                // reverse the sign on the salesTax because it is an expense.
-                salesTax.Balance += budgeting ? -this.salesTax : this.salesTax;
-            }
-
-            TransactionException ex = null;
-            if (this.IsSplit)
-            {
-
-                if (this.Splits.Unassigned != 0 && budgeting)
-                {
-                    ex = new TransactionException(this, "This transaction has an unassigned split amount");
-                }
-                foreach (Split s in this.Splits.GetSplits())
-                {
-                    if (s.Category == null)
-                    {
-                        if (budgeting)
-                        {
-                            if (s.Transfer != null && !s.Transfer.Transaction.Account.IsBudgeted)
-                            {
-                                ex = new TransactionException(this, "This transaction has an uncategorized split transfer to a non-budgeted account");
-                            }
-                            else if (s.Transfer == null)
-                            {
-                                ex = new TransactionException(this, "This transaction has an uncategorized split");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        s.IsBudgeted = budgeting;
-                    }
-                }
-            }
-            else
-            {
-                if (c == null)
-                {
-                    if (budgeting)
-                    {
-                        if (this.Transfer != null && !this.Transfer.Transaction.Account.IsBudgeted)
-                        {
-                            ex = new TransactionException(this, "This transaction has an uncategorized transfer to a non-budgeted account");
-                        }
-                        else if (this.Transfer == null)
-                        {
-                            ex = new TransactionException(this, "This transaction has an no category");
-                        }
-                    }
-                }
-                else
-                {
-                    c.Balance += budgeting ? this.AmountMinusTax : -this.AmountMinusTax;
-                }
-            }
-            if (ex != null)
-            {
-                if (errors != null)
-                {
-                    errors.Add(ex);
-                }
-                else
-                {
-                    throw ex;
-                }
-            }
-        }
-
         public override void OnDelete()
-        {
-            if (this.IsBudgeted && this.account != null && this.account.IsCategoryFund)
-            {
-                Category c = this.account.GetFundCategory();
-                c.Balance -= this.amount;
-            }
+        {            
             if (this.Extra != null && this.Extra.Parent is TransactionExtras container)
             {
                 container.OnRemoveTransaction(this);
@@ -13818,18 +13496,6 @@ namespace Walkabout.Data
             {
                 if (this.category != value)
                 {
-                    if (!this.BatchMode && this.transaction.IsBudgeted)
-                    {
-                        Category old = this.category;
-                        if (old != null)
-                        {
-                            old.Balance -= this.amount;
-                        }
-                        if (value != null)
-                        {
-                            value.Balance += this.amount;
-                        }
-                    }
                     this.category = value;
                     this.OnChanged("Category");
                 }
@@ -14251,20 +13917,6 @@ namespace Walkabout.Data
 
         private void OnAmountChanged(decimal oldValue, decimal newValue)
         {
-            if (!this.BatchMode && this.transaction != null && this.transaction.IsBudgeted && !this.transaction.IsFake)
-            {
-                decimal diff = newValue - oldValue;
-                Account account = this.transaction.Account;
-                if (account != null && account.IsCategoryFund && this.Transfer != null)
-                {
-                    Category c = account.GetFundCategory();
-                    c.Balance += diff;
-                }
-                else if (this.category != null)
-                {
-                    this.category.Balance += diff;
-                }
-            }
         }
 
         #region DataBinding Hack to work around some new weird WPF behavior for Category editing

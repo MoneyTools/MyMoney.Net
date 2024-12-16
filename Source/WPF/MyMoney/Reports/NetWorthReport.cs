@@ -478,7 +478,6 @@ namespace Walkabout.Reports
                 a.Type == AccountType.Asset ||
                 a.Type == AccountType.Brokerage ||
                 a.Type == AccountType.Retirement ||
-                a.Type == AccountType.CategoryFund ||
                 a.Type == AccountType.Loan)
             {
                 return false;

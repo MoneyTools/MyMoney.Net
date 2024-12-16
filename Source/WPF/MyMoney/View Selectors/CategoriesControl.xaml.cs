@@ -782,20 +782,8 @@ namespace Walkabout.Views.Controls
         {
             this.MyMoney.BeginUpdate(this);
             decimal amount = -t.Amount;
-            t.IsBudgeted = false;
-            t.Transfer.Transaction.IsBudgeted = false;
             this.MyMoney.RemoveTransaction(t);
             this.MyMoney.EndUpdate();
-        }
-
-        private Account GetCategoryFund(Category c)
-        {
-            Account fund = this.MyMoney.Accounts.FindCategoryFund(c);
-            if (fund == null)
-            {
-                fund = this.MyMoney.Accounts.AddCategoryFund(c);
-            }
-            return fund;
         }
 
         #endregion
