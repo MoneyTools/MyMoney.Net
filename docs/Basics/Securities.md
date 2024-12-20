@@ -4,6 +4,13 @@ You can view a list of your stocks, mutual funds and so on using the "Securities
 
 ![](../Images/Securities.png)
 
+You can right click a stock to get a context menu:
+
+![](../Images/SecuritiesContextMenu.png)
+
+Where the Update History option here forces an update regardless of
+cached timestamps.  This has the shortcut F5.
+
 The Type column can have these values:
 
 ![](../Images/Securities1.png)
