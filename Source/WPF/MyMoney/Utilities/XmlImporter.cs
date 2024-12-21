@@ -238,6 +238,9 @@ namespace Walkabout.Migrate
             // do not copy & paste any status.
             t.Status = TransactionStatus.None;
 
+            // Do not copy ReconciledDate
+            t.ReconciledDate = null;
+
             // remove the nont-duplicate flag.
             t.Flags &= ~TransactionFlags.NotDuplicate;
 

@@ -4762,15 +4762,15 @@ namespace Walkabout
         {
             string version;
             GC.Collect();
-            //if (ApplicationDeployment.IsNetworkDeployed)
-            //{
-            //    version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
-            //}
-            //else
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+            }
+            else
             {
                 version = this.GetType().Assembly.GetName().Version.ToString();
             }
-            var msg = string.Format("MyMoney, Version {0}\r\n\r\nData provided by https://iexcloud.io/ and https://www.alphavantage.co/ and https://twelvedata.com/.", version);
+            var msg = string.Format("MyMoney, Version {0}\r\n\r\nData provided by https://twelvedata.com/ and https://yahoo.com/", version);
             MessageBoxEx.Show(msg, "About", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 

@@ -571,14 +571,21 @@ namespace Walkabout.Views.Controls
 
         private void OnListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count > 0 && e.AddedItems[0] == this.selectingItem)
+            this.delayedActions.CancelDelayedAction("SingleClick");
+            if (e.AddedItems.Count == 0)
+            {
+                // no special cleanup when account deleted, we should have already selected
+                // a new account by now.
+                this.RaiseSelectionEvent(this.selectingItem, false);
+                return;
+            }
+            AccountViewModel added = (AccountViewModel)e.AddedItems[0];
+            if (added == this.selectingItem)
             {
                 // then this even is in response to a programatic change, not a user click.
                 return;
             }
-            this.delayedActions.CancelDelayedAction("SingleClick");
-            object selected = (e.AddedItems.Count > 0) ? e.AddedItems[0] : null;
-            this.RaiseSelectionEvent(selected as AccountViewModel, false);
+            this.RaiseSelectionEvent(added, false);
         }
 
         private void RaiseSelectionEvent(AccountViewModel selected, bool force)
@@ -649,7 +656,10 @@ namespace Walkabout.Views.Controls
             myMoney.Accounts.RemoveAccount(account);
 
             // Rebind should have already happened, so we can now select the neighboring account.
+            
             this.Selected = (next != null) ? next : prev;
+
+            this.RaiseSelectionEvent(this.Selected, force: true);
 
             return account;
         }

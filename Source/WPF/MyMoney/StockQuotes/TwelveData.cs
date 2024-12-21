@@ -33,7 +33,8 @@ namespace Walkabout.StockQuotes
 
         public TwelveData(StockServiceSettings settings, string logPath) : base(settings, logPath)
         {
-            settings.Name = name;
+            settings.SplitHistoryEnabled = true;
+            settings.Name = name;            
         }
 
         public override string FriendlyName => name;
@@ -53,6 +54,7 @@ namespace Walkabout.StockQuotes
                 ApiRequestsPerDayLimit = 800,
                 ApiRequestsPerMonthLimit = 0,
                 HistoryEnabled = true,
+                SplitHistoryEnabled = true
             };
         }
 

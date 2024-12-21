@@ -86,7 +86,7 @@ namespace Walkabout.Views.Controls
             this.account = a;
             this.statements = statementManager;
 
-            DateTime oldestUnreconciledDate = DateTime.MaxValue;
+            DateTime oldestUnreconciledDate = DateTime.Today;
 
             HashSet<DateTime> previous = new HashSet<DateTime>();
             foreach (Transaction t in this.myMoney.Transactions.GetTransactionsFrom(a))

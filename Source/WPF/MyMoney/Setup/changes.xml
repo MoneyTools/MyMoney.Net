@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.31" date="12/21/2024">
+    Fix issue #133: unhandled exception trying to balance an account
+  </change>
   <change version="2.1.0.28" date="12/13/2024">
     - Add support for https://twelvedata.com/ API to access world financial markets including stocks, forex, ETFs, indices, and cryptocurrencies. Free API key available on their website.
   </change>

@@ -502,6 +502,7 @@ namespace Walkabout.StockQuotes
         private int _requestsPerDay;
         private int _requestsPerMonth;
         private bool _historyEnabled;
+        private bool _splitHistoryEnabled;
 
         public string Name
         {
@@ -594,6 +595,22 @@ namespace Walkabout.StockQuotes
             }
         }
 
+        /// <summary>
+        ///  Can fetch stock splits.
+        /// </summary>
+        public bool SplitHistoryEnabled
+        {
+            get { return this._splitHistoryEnabled; }
+            set
+            {
+                if (this._splitHistoryEnabled != value)
+                {
+                    this._splitHistoryEnabled = value;
+                    this.OnPropertyChanged("SplitHistoryEnabled");
+                }
+            }
+        }
+
         public string OldName { get; internal set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -614,6 +631,7 @@ namespace Walkabout.StockQuotes
             w.WriteElementString("ApiRequestsPerDayLimit", this.ApiRequestsPerDayLimit.ToString());
             w.WriteElementString("ApiRequestsPerMonthLimit", this.ApiRequestsPerMonthLimit.ToString());
             w.WriteElementString("HistoryEnabled", XmlConvert.ToString(this.HistoryEnabled));
+            w.WriteElementString("SplitHistoryEnabled", XmlConvert.ToString(this.SplitHistoryEnabled));
         }
 
         public void Deserialize(XmlReader r)
@@ -650,6 +668,10 @@ namespace Walkabout.StockQuotes
                     else if (r.Name == "HistoryEnabled")
                     {
                         this.HistoryEnabled = r.ReadElementContentAsBoolean();
+                    }
+                    else if (r.Name == "SplitHistoryEnabled")
+                    {
+                        this.SplitHistoryEnabled = r.ReadElementContentAsBoolean();
                     }
                 }
             }

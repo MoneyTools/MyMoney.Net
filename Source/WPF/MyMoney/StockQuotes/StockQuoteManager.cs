@@ -222,10 +222,10 @@ namespace Walkabout.StockQuotes
         {
             List<StockServiceSettings> result = new List<StockServiceSettings>();
             result.Add(TwelveData.GetDefaultSettings());
-            result.Add(PolygonStocks.GetDefaultSettings());
+            //result.Add(PolygonStocks.GetDefaultSettings());
             result.Add(YahooFinance.GetDefaultSettings());
-            result.Add(IEXCloud.GetDefaultSettings());
-            result.Add(AlphaVantage.GetDefaultSettings());
+            //result.Add(IEXCloud.GetDefaultSettings());
+            //result.Add(AlphaVantage.GetDefaultSettings());
             return result;
         }
 
@@ -1167,7 +1167,8 @@ namespace Walkabout.StockQuotes
 
         public async Task<StockQuoteHistory> GetCachedHistory(string symbol)
         {
-            return await this._downloadLog.GetHistory(symbol);
+            var history = await this._downloadLog.GetHistory(symbol);
+            return history;
         }
     }
 
