@@ -7,7 +7,8 @@ You can associate your categories with "Tax Categories" using the field shown in
 The "Reports" menu contains an "Income Tax Report" and a "W3 and Other Tax Forms" report.
 
 ### Income Tax Report
-The income tax report provides the following options to select the year, and specify how you want the details to be reported and whether to show capital gains only.
+The income tax report provides the following options to select the year, and specify how you want the details to be reported and whether to show data for investment accounts only.  It will skip tax free
+or tax deferred investment accounts (like your 401k).
 
 ![](../Images/Tax%20Report1.png)
 
@@ -17,7 +18,7 @@ If you have set your Tax Categories correctly the report shows a summary for eac
 
 It also shows long term and short term capital gains (See [Cost Basis](../Accounts/CostBasis.md)) for any security sales you have in your investment accounts for the selected year.
 
-To import into Turbo Tax, use the Import menu to import “**From Accounting Software** ” then pick “Other Financial Software (TXF file), then click “**Browse to Find File** �� and click Import and wha-la.  The following shows long term capital gains information imported from a txf file (which saves a lot of typing):
+To import into Turbo Tax, use the Import menu to import “**From Accounting Software** ” then pick “Other Financial Software (TXF file), then click “**Browse to Find File** and click Import and wha-la.  The following shows long term capital gains information imported from a txf file (which saves a lot of typing):
 
 ![](../Images/Tax%20Report2.jpeg)
 

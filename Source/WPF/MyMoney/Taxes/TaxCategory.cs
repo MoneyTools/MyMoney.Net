@@ -304,7 +304,7 @@ namespace Walkabout.Taxes
         /// <summary>
         /// Populate the "Groups" property on the tax categories that are in use in the given date range.
         /// </summary>
-        public List<TaxCategory> GenerateGroups(MyMoney money, DateTime startDate, DateTime endDate)
+        public List<TaxCategory> GenerateGroups(MyMoney money, bool investmentsOnly, DateTime startDate, DateTime endDate)
         {
             List<TaxCategory> result = new List<TaxCategory>();
             TaxCategoryCollection taxCategories = new TaxCategoryCollection();
@@ -346,11 +346,15 @@ namespace Walkabout.Taxes
                     var rows = money.Transactions.GetTransactionsByCategory(c, null, (cat) => { return c == cat; });
                     foreach (Transaction t in rows)
                     {
+                        if (investmentsOnly && t.Investment == null)
+                        {
+                            continue;
+                        }
                         if (t.TaxDate < startDate || t.TaxDate >= endDate)
                         {
                             continue;
                         }
-                        if (t.Account.IsTaxDeferred)
+                        if (t.Account.IsTaxDeferred || t.Account.IsTaxFree)
                         {
                             continue;
                         }

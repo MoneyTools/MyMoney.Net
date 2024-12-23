@@ -21,25 +21,21 @@ namespace Walkabout.Migrate
             this.money = money;
         }
 
-        public void Export(string txfFile, DateTime startDate, DateTime endDate, bool cpitalGainsOnly, bool consolidateOnDateSold)
+        public void Export(string txfFile, DateTime startDate, DateTime endDate, bool investmentsOnly, bool consolidateOnDateSold)
         {
             using (StreamWriter sw = new StreamWriter(txfFile))
             {
                 WriteHeader(sw);
-                if (!cpitalGainsOnly)
-                {
-                    this.ExportCategories(sw, startDate, endDate);
-                }
-
+                this.ExportCategories(sw, investmentsOnly, startDate, endDate);                
                 CapitalGainsTaxCalculator calculator = new CapitalGainsTaxCalculator(this.money, endDate, consolidateOnDateSold, true);
                 this.ExportCapitalGains(calculator, null, startDate, endDate, sw);
             }
         }
 
-        private void ExportCategories(TextWriter writer, DateTime startDate, DateTime endDate)
+        private void ExportCategories(TextWriter writer, bool investmentsOnly, DateTime startDate, DateTime endDate)
         {
             TaxCategoryCollection taxCategories = new TaxCategoryCollection();
-            List<TaxCategory> list = taxCategories.GenerateGroups(this.money, startDate, endDate);
+            List<TaxCategory> list = taxCategories.GenerateGroups(this.money, investmentsOnly, startDate, endDate);
             if (list != null)
             {
                 foreach (TaxCategory tc in list)
@@ -146,7 +142,7 @@ namespace Walkabout.Migrate
             {
                 if (data.DateSold >= startDate && data.DateSold < endDate)
                 {
-                    if (a == null || data.Account == a)
+                    if ((a == null || data.Account == a) && !data.Account.IsTaxFree && !data.Account.IsTaxDeferred)
                     {
                         // cannot compute the cost basis.
                         WriteRecordFormat4(writer, data, 673);
@@ -158,7 +154,7 @@ namespace Walkabout.Migrate
             {
                 if (data.DateSold >= startDate && data.DateSold < endDate)
                 {
-                    if (a == null || data.Account == a)
+                    if ((a == null || data.Account == a) && !data.Account.IsTaxFree && !data.Account.IsTaxDeferred)
                     {
                         int refnum = 321; // short term gain/loss;
                         WriteRecordFormat4(writer, data, refnum);
@@ -170,7 +166,7 @@ namespace Walkabout.Migrate
             {
                 if (data.DateSold >= startDate && data.DateSold < endDate)
                 {
-                    if (a == null || data.Account == a)
+                    if ((a == null || data.Account == a) && !data.Account.IsTaxFree && !data.Account.IsTaxDeferred)
                     {
                         int refnum = 323; // long term gain/loss
                         WriteRecordFormat4(writer, data, refnum);

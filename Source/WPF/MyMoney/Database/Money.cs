@@ -2466,7 +2466,6 @@ namespace Walkabout.Data
         private int unaccepted;
         private SqlGuid syncGuid;
         private AccountFlags flags;
-        private Category category; // for category funds.
         private Category categoryForPrincipal;  // For Loan accounts
         private Category categoryForInterest;   // For Loan accounts
 

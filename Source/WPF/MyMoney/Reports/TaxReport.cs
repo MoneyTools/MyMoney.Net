@@ -24,7 +24,7 @@ namespace Walkabout.Reports
         private DateTime startDate;
         private DateTime endDate;
         private bool consolidateOnDateSold;
-        private bool capitalGainsOnly;
+        private bool investmentsOnly;
         private int fiscalYearStart;
         private const string FiscalPrefix = "FY ";
 
@@ -55,7 +55,7 @@ namespace Walkabout.Reports
         class TaxReportState : IReportState
         {
             public int FiscalYearStart { get; set; }
-            public bool CapitalGainsOnly { get; set; }
+            public bool InvestmentsOnly { get; set; }
             public bool ConsolidateOnDateSold { get; set; }
             public int TaxYear { get; set; }
 
@@ -74,7 +74,7 @@ namespace Walkabout.Reports
             return new TaxReportState()
             {
                 FiscalYearStart = this.fiscalYearStart,
-                CapitalGainsOnly = this.capitalGainsOnly,
+                InvestmentsOnly = this.investmentsOnly,
                 ConsolidateOnDateSold = this.consolidateOnDateSold,
                 TaxYear = this.startDate.Year
             };
@@ -85,7 +85,7 @@ namespace Walkabout.Reports
             if (state is TaxReportState taxReportState)
             {
                 this.FiscalYearStart = taxReportState.FiscalYearStart;
-                this.capitalGainsOnly = taxReportState.CapitalGainsOnly;
+                this.investmentsOnly = taxReportState.InvestmentsOnly;
                 this.consolidateOnDateSold = taxReportState.ConsolidateOnDateSold;
                 this.SetStartDate(taxReportState.TaxYear);
             }
@@ -150,16 +150,6 @@ namespace Walkabout.Reports
                 byYearCombo.Margin = new Thickness(10, 0, 0, 0);
                 this.AddInline(heading, byYearCombo);
 
-                /*
-                <StackPanel Margin="10,5,10,5"  Grid.Row="2" Orientation="Horizontal">
-                    <TextBlock Text="Consolidate securities by: " Background="Transparent"/>
-                    <ComboBox x:Name="ConsolidateSecuritiesCombo" SelectedIndex="0">
-                        <ComboBoxItem>Date Acquired</ComboBoxItem>
-                        <ComboBoxItem>Date Sold</ComboBoxItem>
-                    </ComboBox>
-                </StackPanel>
-                <CheckBox Margin="10,5,10,5" x:Name="CapitalGainsOnlyCheckBox" Grid.Row="3">Capital Gains Only</CheckBox>
-                */
 
                 ComboBox consolidateCombo = new ComboBox();
                 consolidateCombo.Items.Add("Date Acquired");
@@ -173,10 +163,10 @@ namespace Walkabout.Reports
                 this.AddInline(prompt, consolidateCombo);
 
                 CheckBox checkBox = new CheckBox();
-                checkBox.Content = "Capital Gains Only";
-                checkBox.IsChecked = this.capitalGainsOnly;
-                checkBox.Checked += this.OnCapitalGainsOnlyChanged;
-                checkBox.Unchecked += this.OnCapitalGainsOnlyChanged;
+                checkBox.Content = "Investments Only";
+                checkBox.IsChecked = this.investmentsOnly;
+                checkBox.Checked += this.OnInvestmentsOnlyChanged;
+                checkBox.Unchecked += this.OnInvestmentsOnlyChanged;
                 writer.WriteParagraph("");
                 Paragraph checkBoxParagraph = fwriter.CurrentParagraph;
                 checkBoxParagraph.Inlines.Add(new InlineUIContainer(checkBox));
@@ -184,11 +174,8 @@ namespace Walkabout.Reports
 
             this.WriteCurrencyHeading(writer, this.DefaultCurrency);
 
-            if (!this.capitalGainsOnly)
-            {
-                // find all tax related categories and summarize accordingly.
-                this.GenerateCategories(writer);
-            }
+            // find all tax related categories and summarize accordingly.
+            this.GenerateCategories(writer);
             this.GenerateCapitalGains(writer);
 
             if (writer is FlowDocumentReportWriter)
@@ -249,10 +236,10 @@ namespace Walkabout.Reports
             _ = view.Generate(this);
         }
 
-        private void OnCapitalGainsOnlyChanged(object sender, RoutedEventArgs e)
+        private void OnInvestmentsOnlyChanged(object sender, RoutedEventArgs e)
         {
             CheckBox checkBox = (CheckBox)sender;
-            this.capitalGainsOnly = checkBox.IsChecked == true;
+            this.investmentsOnly = checkBox.IsChecked == true;
             this.Renerate();
         }
 
@@ -388,6 +375,10 @@ namespace Walkabout.Reports
                     {
                         continue;
                     }
+                    if (data.Account.IsTaxDeferred || data.Account.IsTaxFree)
+                    {
+                        continue;
+                    }
 
                     this.WriteCapitalGains(writer, data);
                     total += data.TotalGain;
@@ -404,6 +395,10 @@ namespace Walkabout.Reports
                 foreach (var data in calculator.LongTerm)
                 {
                     if (!this.InRange(data.DateSold))
+                    {
+                        continue;
+                    }
+                    if (data.Account.IsTaxDeferred || data.Account.IsTaxFree)
                     {
                         continue;
                     }
@@ -508,7 +503,7 @@ namespace Walkabout.Reports
         private void GenerateCategories(IReportWriter writer)
         {
             TaxCategoryCollection taxCategories = new TaxCategoryCollection();
-            List<TaxCategory> list = taxCategories.GenerateGroups(this.money, this.startDate, this.endDate);
+            List<TaxCategory> list = taxCategories.GenerateGroups(this.money, this.investmentsOnly, this.startDate, this.endDate);
 
             if (list == null)
             {
@@ -637,7 +632,7 @@ namespace Walkabout.Reports
         public override void Export(string filename)
         {
             TxfExporter exporter = new TxfExporter(this.money);
-            exporter.Export(filename, this.startDate, this.endDate, this.capitalGainsOnly, this.consolidateOnDateSold);
+            exporter.Export(filename, this.startDate, this.endDate, this.investmentsOnly, this.consolidateOnDateSold);
         }
 
 

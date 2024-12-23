@@ -40,10 +40,10 @@ namespace Walkabout.Dialogs
             set { this.ConsolidateSecuritiesCombo.SelectedIndex = value ? 1 : 0; }
         }
 
-        public bool CapitalGainsOnly
+        public bool InvestmentsOnly
         {
-            get { return this.CapitalGainsOnlyCheckBox.IsChecked == true; }
-            set { this.CapitalGainsOnlyCheckBox.IsChecked = value; }
+            get { return this.InvestmentsOnlyCheckBox.IsChecked == true; }
+            set { this.InvestmentsOnlyCheckBox.IsChecked = value; }
         }
 
         public int Year

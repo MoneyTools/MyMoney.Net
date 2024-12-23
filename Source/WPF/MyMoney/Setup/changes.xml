@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.31" date="12/23/2024">
+    - Change "capital gains only" switch on tax report to "investments only" and fix bug where
+    it was including data from tax free and tax deferred investment accounts.
+  </change>
   <change version="2.1.0.31" date="12/21/2024">
     Fix issue #133: unhandled exception trying to balance an account
   </change>
