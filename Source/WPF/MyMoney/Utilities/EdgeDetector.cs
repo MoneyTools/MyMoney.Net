@@ -574,16 +574,8 @@ namespace Walkabout.Utilities
                     float tangent;
 
                     float dx = this.derivativeX[i, j];
-
-                    if (dx == 0)
-                    {
-                        tangent = VerticalAngle;
-                    }
-                    else
-                    {
-                        float dy = this.derivativeY[i, j];
-                        tangent = (float)Math.Atan(dy / dx);
-                    }
+                    float dy = this.derivativeY[i, j];
+                    tangent = (float)Math.Atan2(dy, dx);
 
                     float g = gradient[i, j];
 
