@@ -4476,6 +4476,13 @@ namespace Walkabout
             }
             this.InternalShowMessage(text);
         }
+        public void ShowOutput(string text)
+        {
+            UiDispatcher.BeginInvoke(new Action(() =>
+            {
+                this.OutputView.AppendText(text);
+            }));
+        }
 
         private DateTime skipMessagesUntil = DateTime.MinValue;
 

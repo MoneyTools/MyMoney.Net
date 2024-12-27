@@ -3,6 +3,7 @@ namespace Walkabout.Utilities
 {
     public interface IStatusService
     {
+        void ShowOutput(string text);
 
         void ShowMessage(string text);
 

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
@@ -53,6 +54,14 @@ namespace Walkabout.Controls
             }
 
             TextPointer ptr = this.OutputTextView.Document.ContentEnd;
+            if (this.OutputTextView.Document.Blocks.LastBlock is Paragraph p)
+            {
+                if (!(p.Inlines.LastInline.PreviousInline is LineBreak))
+                {
+                    ptr.InsertLineBreak();
+                }
+            }
+
             int delta = this.OutputTextView.Selection.End.GetOffsetToPosition(this.OutputTextView.Document.ContentEnd);
             ptr.InsertTextInRun(text);
             ptr = this.OutputTextView.Document.ContentEnd;

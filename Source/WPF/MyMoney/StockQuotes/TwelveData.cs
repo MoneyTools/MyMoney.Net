@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using System.Windows.Ink;
 using System.Windows.Interop;
 using System.Xml;
 using System.Xml.Serialization;
@@ -145,6 +146,19 @@ namespace Walkabout.StockQuotes
                         JObject o = JObject.Parse(json);
                         this.AssertSuccess(o);
                         var quotes = this.ParseStockQuotes(o);
+                        // Since we didn't implement DownloadThrottledQuoteAsync we need to notify here.
+                        StockQuote latest = null;
+                        foreach (var quote in quotes)
+                        {
+                            if (latest == null || (quote.Date > latest.Date))
+                            {
+                                latest = quote;
+                            }
+                        }
+                        if (latest != null)
+                        {
+                            this.OnQuoteAvailable(latest);
+                        }
                         return quotes;
                     }
                 }

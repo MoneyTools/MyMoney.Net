@@ -167,7 +167,6 @@ namespace Walkabout.Dialogs
             return true;
         }
 
-
         private void ImportMoneyFile(MyMoney newMoney, AttachmentManager newAttachments, StatementManager importStatements)
         {
             this.dispatcher.Invoke(new Action(() =>
@@ -291,6 +290,10 @@ namespace Walkabout.Dialogs
         #region IStatusService
 
         public void ShowMessage(string text)
+        {
+        }
+
+        public void ShowOutput(string text)
         {
         }
 

@@ -184,9 +184,9 @@ namespace Walkabout.StockQuotes
 
         private Tuple<int, int> GetProgress()
         {
-            int max = 0;
-            int value = 0;
-            bool complete = true;
+            int max = this._downloader.HistoryCompleted + this._downloader.HistoryPending;
+            int value = this._downloader.HistoryCompleted;
+            bool complete = value == max;
             foreach (var service in this._services)
             {
                 int m = service.DownloadsCompleted + service.PendingCount;
@@ -423,6 +423,7 @@ namespace Walkabout.StockQuotes
         {
             Tuple<int, int> progress = this.GetProgress();
             this.status.ShowProgress(e.Name, 0, progress.Item1, progress.Item2);
+            this.status.ShowOutput($"Quote received for {e.Symbol}, closed on {e.Date.ToShortDateString()} at {e.Close.ToString("C2")}");
 
             lock (this.fetched)
             {
@@ -979,11 +980,16 @@ namespace Walkabout.StockQuotes
     internal class HistoryDownloader
     {
         private readonly object _downloadSync = new object();
-        private List<string> _downloadBatch;
+        private HashSet<string> _downloadBatch;
         private bool _downloadingHistory;
         private readonly IStockQuoteService _service;
         private readonly DownloadLog _downloadLog;
         private CancellationTokenSource tokenSource;
+        private int _historyCompleted;
+        private int _historyPending;
+
+        public int HistoryCompleted => this._historyCompleted;
+        public int HistoryPending => this._historyPending;
 
         public HistoryDownloader(IStockQuoteService service, DownloadLog log)
         {
@@ -1029,7 +1035,7 @@ namespace Walkabout.StockQuotes
                         {
                             this._downloadBatch.Remove(item);
                         }
-                        this._downloadBatch.Insert(0, item);
+                        this._downloadBatch.Add(item);
                         singleton = item;
                     }
                     else
@@ -1047,7 +1053,7 @@ namespace Walkabout.StockQuotes
                 else
                 {
                     // starting a new download batch.
-                    this._downloadBatch = new List<string>(batch);
+                    this._downloadBatch = new HashSet<string>(batch);
                 }
             }
             if (busy)
@@ -1072,6 +1078,7 @@ namespace Walkabout.StockQuotes
 
             this.tokenSource = new CancellationTokenSource();
             this._downloadingHistory = true;
+            this._historyCompleted = 0;
 
             while (this._downloadingHistory)
             {
@@ -1082,6 +1089,8 @@ namespace Walkabout.StockQuotes
                     {
                         symbol = this._downloadBatch.First();
                         this._downloadBatch.Remove(symbol);
+                        this._historyCompleted++;
+                        this._historyPending = this._downloadBatch.Count;
                     }
                 }
                 if (symbol == null)
@@ -1129,12 +1138,6 @@ namespace Walkabout.StockQuotes
                     }
 #endif
                 }
-            }
-            this._downloadingHistory = false;
-
-            while (this._downloadingHistory && this._downloadBatch.Count > 0)
-            {
-                Thread.Sleep(1000); // wait for download to finish.
             }
             this._downloadingHistory = false;
             this.OnStatus("Download history complete");
