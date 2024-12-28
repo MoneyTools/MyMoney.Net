@@ -3583,7 +3583,7 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportNetworth");
             HelpService.SetHelpKeyword(view, "Reports/NetworthReport/");
-            NetWorthReport report = new NetWorthReport() { ServiceProvider = this };
+            NetWorthReport report = new NetWorthReport(view) { ServiceProvider = this };
             this.OnReportCreated(this, report);
             this.GenerateReport(report);
         }

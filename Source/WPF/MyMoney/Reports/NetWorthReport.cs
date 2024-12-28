@@ -28,12 +28,14 @@ namespace Walkabout.Reports
         private StockQuoteCache cache;
         private bool generating;
         private bool filterOutClosedAccounts = false;
+        private FlowDocumentView view;
 
         public event EventHandler<SecurityGroup> SecurityDrillDown;
         public event EventHandler<AccountGroup> CashBalanceDrillDown;
 
-        public NetWorthReport()
+        public NetWorthReport(FlowDocumentView view)
         {
+            this.view = view;
             this.reportDate = DateTime.Now;
             this.minRandColor = 20;
             this.maxRandColor = ("" + AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128 : (byte)200;
@@ -342,10 +344,9 @@ namespace Walkabout.Reports
             }
         }
 
-        private void Regenerate()
+        private async void Regenerate()
         {
-            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
-            _ = view.Generate(this);
+            await this.view.Generate(this);
         }
 
         private void OnPieSliceClicked(object sender, ChartDataValue e)

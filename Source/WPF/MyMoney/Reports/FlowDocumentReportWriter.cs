@@ -30,7 +30,6 @@ namespace Walkabout.Reports
             internal Paragraph paragraph;
         }
 
-
         public FlowDocumentReportWriter(FlowDocument document, double pixelsPerDip)
         {
             this.pixelsPerDip = pixelsPerDip;
