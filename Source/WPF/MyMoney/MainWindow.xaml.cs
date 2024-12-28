@@ -115,7 +115,6 @@ namespace Walkabout
             if (stockService == null)
             {
                 settings.StockServiceSettings = new List<StockServiceSettings>();
-                settings.StockServiceSettings.Add(IEXCloud.GetDefaultSettings());
             }
 
             Walkabout.Utilities.UiDispatcher.CurrentDispatcher = this.Dispatcher;
@@ -3612,13 +3611,13 @@ namespace Walkabout
 
         private Report currentReport;
 
-        private void GenerateReport(Report report)
+        private async void GenerateReport(Report report)
         {
             this.currentReport = report;
             if (this.CurrentView is FlowDocumentView view && view.Visibility == Visibility.Visible && report != null)
             {
                 report.DefaultCurrency = this.myMoney.Currencies.DefaultCurrency;
-                _ = view.Generate(report);
+                await view.Generate(report);
             }
         }
 
@@ -3633,7 +3632,7 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            PortfolioReport report = new PortfolioReport()
+            PortfolioReport report = new PortfolioReport(view)
             {
                 ServiceProvider = this,
                 ReportDate = DateTime.Now
@@ -3649,7 +3648,7 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            PortfolioReport report = new PortfolioReport()
+            PortfolioReport report = new PortfolioReport(view)
             {
                 ServiceProvider = this,
                 ReportDate = e.Date,
@@ -3666,7 +3665,7 @@ namespace Walkabout
             FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
             view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "ReportPortfolio");
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
-            PortfolioReport report = new PortfolioReport()
+            PortfolioReport report = new PortfolioReport(view)
             {
                 ServiceProvider = this,
                 ReportDate = e.Date,
@@ -4165,8 +4164,8 @@ namespace Walkabout
                 view.SecurityNavigated += this.OnSecurityNavigated;
                 view.SecuritySelected += this.OnSecuritySelected;
             }
-            this.SetChartsDirty();
-
+            // first time view creation misses the events.
+            this.OnSecuritySelected(this, new SecuritySelectionEventArgs(view.SelectedSecurity));            
             return view;
         }
 

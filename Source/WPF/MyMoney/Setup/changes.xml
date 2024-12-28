@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.33" date="12/28/2024">
+   - Fix portfolio report so that it takes into account the fact that the stock quote history is now split adjusted.
+   - Fix portfolio report on accounts so that it updates properly.
+  </change>
   <change version="2.1.0.31" date="12/23/2024">
     - Change "capital gains only" switch on tax report to "investments only" and fix bug where
     it was including data from tax free and tax deferred investment accounts.

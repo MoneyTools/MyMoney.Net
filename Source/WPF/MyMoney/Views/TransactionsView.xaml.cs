@@ -2286,7 +2286,7 @@ namespace Walkabout.Views
             this.FireAfterViewStateChanged(this.SelectedRowId);
         }
 
-        private void UpdatePortfolio(Account account)
+        private async void UpdatePortfolio(Account account)
         {
             this.currentDisplayName = TransactionViewName.Portfolio;
             this.layout = "InvestmentPortfolioView";
@@ -2296,15 +2296,15 @@ namespace Walkabout.Views
             this.SetActiveAccount(account, null, null, null, null);
             // if we are reconciling then show the positions held at statement date so the stock balances can be reconciled also.
             DateTime reportDate = this.IsReconciling ? this.GetReconciledExclusiveEndDate() : DateTime.Now;
-            PortfolioReport report = new PortfolioReport()
+            PortfolioReport report = new PortfolioReport(view)
             {
                 ServiceProvider = this.ServiceProvider,
                 ReportDate = reportDate,
                 Account = account
             };
             report.DrillDown += this.OnReportDrillDown;
-            _ = view.Generate(report);
             this.portfolioReport = report;
+            await view.Generate(report);
         }
 
         private void OnReportDrillDown(object sender, SecurityGroup e)
@@ -2318,7 +2318,7 @@ namespace Walkabout.Views
             FlowDocumentView view = this.InvestmentPortfolioView;
             HelpService.SetHelpKeyword(view, "Reports/InvestmentPortfolio/");
             DateTime reportDate = this.IsReconciling ? this.GetReconciledExclusiveEndDate() : DateTime.Now;
-            PortfolioReport report = new PortfolioReport()
+            PortfolioReport report = new PortfolioReport(view)
             {
                 ServiceProvider = this.ServiceProvider,
                 ReportDate = reportDate,

@@ -39,7 +39,7 @@ namespace Walkabout.StockQuotes
         bool IsEnabled { get; }
 
         /// <summary>
-        /// Fetch updated security information for the given securities (most recent closing price).
+        /// Fetch latest security information for the given securities (most recent closing price).
         /// This can be called multiple times so the service needs to keep a queue of pending
         /// downloads.
         /// </summary>
@@ -54,13 +54,15 @@ namespace Walkabout.StockQuotes
         Task<string> TestApiKeyAsync(string apiKey);
 
         /// <summary>
-        /// Return true if your service supports the UpdateHistory function.
-        /// </summary>
-        bool SupportsHistory { get; }
-
-        /// <summary>
-        /// If the stock quote service supports it, updates the given StockQuoteHistory
-        /// with daily quotes back 20 years.
+        /// Updates the given StockQuoteHistory with daily quotes back as far as the service provides
+        /// or until the stock IPO.  
+        /// 
+        /// The history of stock quotes must be split adjusted, meaning it is showing what the
+        /// effective price of 1 share was, so if you paid $100 for a stock in 2010 and 
+        /// there was a 2:1 stock split in 2012, then you really only paid $50 for 1 share
+        /// in 2010 because that $100 actually paid for 2. So split adjustment means the
+        /// stock quote history for 2010 shows the price was $50. This ensures the entire
+        /// history is showing the price for 1 share according to today's share count.
         /// </summary>
         /// <param name="symbol">The stock whose history is to be downloaded</param>
         /// <returns>Returns true if the history was updated or false if history is not found</returns>
@@ -158,7 +160,7 @@ namespace Walkabout.StockQuotes
     }
 
     /// <summary>
-    /// A stock quote log designed for XML serialization
+    /// A stock quote log designed for XML serialization.
     /// </summary>
     public class StockQuoteHistory
     {
@@ -173,6 +175,14 @@ namespace Walkabout.StockQuotes
         public DateTime? EarliestTime { get; set; }
         public HashSet<DateTime> AdditionalClosures { get; set; }
 
+        /// <summary>
+        /// The history of stock quotes, split adjusted, meaning it is showing what the
+        /// effective price of 1 share was, so if you paid $100 for a stock in 2010 and 
+        /// there was a 2:1 stock split in 2012, then you really only paid $50 for 1 share
+        /// in 2010 because that $100 actually paid for 2. So split adjustment means the
+        /// stock quote history for 2010 shows the price was $50. This ensures the entire
+        /// history is showing the price for 1 share according to today's share count.
+        /// </summary>
         public List<StockQuote> History { get; set; }
 
         public DateTime MostRecentDownload

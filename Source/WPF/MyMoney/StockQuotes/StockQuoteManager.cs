@@ -119,16 +119,7 @@ namespace Walkabout.StockQuotes
                     return existing;
                 }
             }
-            IStockQuoteService service = null;
-            if (AlphaVantage.IsMySettings(settings))
-            {
-                service = new AlphaVantage(settings, this.LogPath);
-            }
-            else if (IEXCloud.IsMySettings(settings))
-            {
-                service = new IEXCloud(settings, this.LogPath);
-            }
-            else if (PolygonStocks.IsMySettings(settings))
+            IStockQuoteService service = null;if (PolygonStocks.IsMySettings(settings))
             {
                 service = new PolygonStocks(settings, this.LogPath);
             }
@@ -330,23 +321,21 @@ namespace Walkabout.StockQuotes
             }
 
             bool foundService = false;
-            IStockQuoteService service = this.GetHistoryService();
+            IStockQuoteService service = this.GetQuoteService();
             if (service != null)
             {
                 HistoryDownloader downloader = this.GetDownloader(service);
+                // update the latest prices.
+                service.BeginFetchQuotes(batch);
+
                 // make sure this is async!
                 Task.Run(() =>
                 {
+                    // update the history just in case MyMoney has not been running for a while.
                     downloader.BeginFetchHistory(batch, false);
                 });
                 foundService = true;
-            }
 
-            service = this.GetQuoteService();
-            if (service != null)
-            {
-                foundService = true;
-                service.BeginFetchQuotes(batch);
             }
 
             if (!foundService)
@@ -367,18 +356,6 @@ namespace Walkabout.StockQuotes
                 }
             }
             return result;
-        }
-
-        private IStockQuoteService GetHistoryService()
-        {
-            foreach (var service in this._services)
-            {
-                if (service.SupportsHistory && service.IsEnabled)
-                {
-                    return service;
-                }
-            }
-            return null;
         }
 
         private HistoryDownloader GetDownloader(IStockQuoteService service)
@@ -712,7 +689,7 @@ namespace Walkabout.StockQuotes
         {
             this.ShowMainWindowStatus($"Downloading history for {symbol}...");
             this._firstError = true;
-            var service = this.GetHistoryService();
+            var service = this.GetQuoteService();
             if (service != null)
             {
                 this.GetDownloader(service).BeginFetchHistory(new List<string>(new string[] { symbol }), forceUpdate);
@@ -729,7 +706,7 @@ namespace Walkabout.StockQuotes
             {
                 return null;
             }
-            var service = this.GetHistoryService();
+            var service = this.GetQuoteService();
             if (service != null)
             {
                 return await this.GetDownloader(service).GetCachedHistory(symbol);

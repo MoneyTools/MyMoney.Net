@@ -34,14 +34,16 @@ namespace Walkabout.Reports
         private AccountGroup accountGroup;
         private readonly Random rand = new Random(Environment.TickCount);
         private bool generating;
+        private FlowDocumentView view;
 
         public event EventHandler<SecurityGroup> DrillDown;
 
         /// <summary>
         /// Create new PortfolioReport
         /// </summary>
-        public PortfolioReport()
+        public PortfolioReport(FlowDocumentView view)
         {
+            this.view = view;
         }
 
         ~PortfolioReport()
@@ -187,16 +189,15 @@ namespace Walkabout.Reports
             this.generating = true;
             try
             {
-                this.InternalGenerate(writer);
+                return this.InternalGenerate(writer);
             }
             finally
             {
                 this.generating = false;
             }
-            return Task.CompletedTask;
         }
 
-        private void InternalGenerate(IReportWriter writer)
+        private async Task InternalGenerate(IReportWriter writer)
         {
             this.flowwriter = writer as FlowDocumentReportWriter;
 
@@ -302,7 +303,7 @@ namespace Walkabout.Reports
             {
                 if (this.selectedGroup != null)
                 {
-                    this.WriteSummary(writer, data, this.selectedGroup.TaxStatus, null, false, false);
+                    await this.WriteSummary(writer, data, this.selectedGroup.TaxStatus, null, false, false);
                 }
                 else if (this.accountGroup != null)
                 {
@@ -310,14 +311,14 @@ namespace Walkabout.Reports
                 }
                 else
                 {
-                    this.WriteSummary(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && this.IsInvestmentAccount(a); }), true, false);
-                    this.WriteSummary(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && this.IsInvestmentAccount(a); }), true, false);
-                    this.WriteSummary(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && this.IsInvestmentAccount(a); }), true, false);
+                    await this.WriteSummary(writer, data, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && this.IsInvestmentAccount(a); }), true, false);
+                    await this.WriteSummary(writer, data, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && this.IsInvestmentAccount(a); }), true, false);
+                    await this.WriteSummary(writer, data, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxDeferred && !a.IsTaxFree && this.IsInvestmentAccount(a); }), true, false);
                 }
             }
             else
             {
-                this.WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == this.account; }), false, true);
+                await this.WriteSummary(writer, data, TaxStatus.Any, new Predicate<Account>((a) => { return a == this.account; }), false, true);
             }
 
             this.WriteHeaderRow(writer, "Total", this.GetFormattedNormalizedAmount(this.totalMarketValue), this.accountGroup != null ? "" : this.GetFormattedNormalizedAmount(this.totalGainLoss));
@@ -351,7 +352,7 @@ namespace Walkabout.Reports
 
                 if (this.selectedGroup != null)
                 {
-                    this.WriteDetails(writer, this.selectedGroup.TaxStatus, this.selectedGroup);
+                    await this.WriteDetails(writer, this.selectedGroup.TaxStatus, this.selectedGroup);
                 }
                 else
                 {
@@ -368,13 +369,13 @@ namespace Walkabout.Reports
 
                     if (this.account == null)
                     {
-                        this.WriteDetails(writer, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && this.IsInvestmentAccount(a); }));
-                        this.WriteDetails(writer, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && this.IsInvestmentAccount(a); }));
-                        this.WriteDetails(writer, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxFree && !a.IsTaxDeferred && this.IsInvestmentAccount(a); }));
+                        await this.WriteDetails(writer, TaxStatus.TaxFree, new Predicate<Account>((a) => { return a.IsTaxFree && this.IsInvestmentAccount(a); }));
+                        await this.WriteDetails(writer, TaxStatus.TaxDeferred, new Predicate<Account>((a) => { return a.IsTaxDeferred && this.IsInvestmentAccount(a); }));
+                        await this.WriteDetails(writer, TaxStatus.Taxable, new Predicate<Account>((a) => { return !a.IsTaxFree && !a.IsTaxDeferred && this.IsInvestmentAccount(a); }));
                     }
                     else
                     {
-                        this.WriteDetails(writer, this.account.TaxStatus, new Predicate<Account>((a) => { return a == this.account; }));
+                        await this.WriteDetails(writer, this.account.TaxStatus, new Predicate<Account>((a) => { return a == this.account; }));
                     }
                 }
             }
@@ -407,10 +408,9 @@ namespace Walkabout.Reports
             }
         }
 
-        void Regenerate()
+        async void Regenerate()
         {
-            var view = (FlowDocumentView)this.ServiceProvider.GetService(typeof(FlowDocumentView));
-            _ = view.Generate(this);
+            await this.view.Generate(this);
         }
 
         private string GetSecurityTypeCaption(SecurityType st)
@@ -473,11 +473,11 @@ namespace Walkabout.Reports
         /// <summary>
         /// write out the securities in the given list starting with an expandable/collapsable group header.
         /// </summary>
-        private void WriteSecurities(IReportWriter writer, IList<SecurityPurchase> bySecurity, ref decimal totalMarketValue, ref decimal totalCostBasis, ref decimal totalGainLoss)
+        private async Task<Tuple<decimal, decimal, decimal>> WriteSecurities(IReportWriter writer, IList<SecurityPurchase> bySecurity, decimal totalMarketValue, decimal totalCostBasis, decimal totalGainLoss)
         {
             if (bySecurity.Count == 0)
             {
-                return;
+                return new Tuple<decimal, decimal, decimal>(totalMarketValue, totalCostBasis, totalGainLoss);
             }
 
             decimal marketValue = 0;
@@ -496,7 +496,7 @@ namespace Walkabout.Reports
                 if (!priceFound || (current != previous))
                 {
                     priceFound = true;
-                    price = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                    price = await this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
                     previous = current;
                 }
                 costBasis += i.TotalCostBasis;
@@ -511,7 +511,7 @@ namespace Walkabout.Reports
 
             if (current == null || currentQuantity == 0)
             {
-                return;
+                return new Tuple<decimal, decimal, decimal>(totalMarketValue, totalCostBasis, totalGainLoss);
             }
 
             totalMarketValue += marketValue;
@@ -530,7 +530,7 @@ namespace Walkabout.Reports
                 if (!priceFound || (current != previous))
                 {
                     priceFound = true;
-                    price = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                    price = await this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
                     previous = current;
                 }
                 // for tax reporting we need to report the real GainLoss, but if CostBasis is zero then it doesn't make sense to report something
@@ -542,6 +542,7 @@ namespace Walkabout.Reports
             }
 
             writer.EndExpandableRowGroup();
+            return new Tuple<decimal, decimal, decimal>(totalMarketValue, totalCostBasis, totalGainLoss);
         }
 
         public void ExpandAll()
@@ -560,13 +561,13 @@ namespace Walkabout.Reports
             }
         }
 
-        private void WriteDetails(IReportWriter writer, TaxStatus status, Predicate<Account> filter)
+        private async Task WriteDetails(IReportWriter writer, TaxStatus status, Predicate<Account> filter)
         {
             // compute summary
             foreach (var securityTypeGroup in this.calc.GetHoldingsBySecurityType(filter))
             {
                 securityTypeGroup.TaxStatus = status; // inherited from the account types we are filtering here.
-                this.WriteDetails(writer, status, securityTypeGroup);
+                await this.WriteDetails(writer, status, securityTypeGroup);
             }
         }
 
@@ -592,7 +593,7 @@ namespace Walkabout.Reports
             return label;
         }
 
-        private void WriteDetails(IReportWriter writer, TaxStatus status, SecurityGroup securityTypeGroup)
+        private async Task WriteDetails(IReportWriter writer, TaxStatus status, SecurityGroup securityTypeGroup)
         {
             decimal marketValue = 0;
             decimal costBasis = 0;
@@ -642,7 +643,7 @@ namespace Walkabout.Reports
                 }
                 if (foundSecuritiesInGroup)
                 {
-                    this.WriteSecurities(writer, g.Purchases, ref marketValue, ref costBasis, ref gainLoss);
+                    (marketValue, costBasis, gainLoss) = await this.WriteSecurities(writer, g.Purchases, marketValue, costBasis, gainLoss);
                 }
             }
 
@@ -682,7 +683,7 @@ namespace Walkabout.Reports
             this.totalMarketValue = total;
         }
 
-        private void WriteSummary(IReportWriter writer, IList<ChartDataValue> data, TaxStatus taxStatus, Predicate<Account> filter, bool subtotal, bool includeCashBalance)
+        private async Task WriteSummary(IReportWriter writer, IList<ChartDataValue> data, TaxStatus taxStatus, Predicate<Account> filter, bool subtotal, bool includeCashBalance)
         {
             bool wroteSectionHeader = false;
             string prefix = this.GetTaxStatusPrefix(taxStatus);
@@ -721,7 +722,7 @@ namespace Walkabout.Reports
                         if (!hasPrice || (i.Security != previous))
                         {
                             hasPrice = true;
-                            price = this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
+                            price = await this.cache.GetSecurityMarketPrice(this.reportDate, i.Security);
                             previous = i.Security;
                         }
                         var value = i.FuturesFactor * i.UnitsRemaining * price;

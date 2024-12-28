@@ -422,8 +422,8 @@ namespace Walkabout.Reports
                 foreach (SecurityPurchase sp in securityTypeGroup.Purchases)
                 {
                     // load the Stock Quote history from the download log. 
-                    await this.cache.LoadHistory(sp.Security);
-                    sb += sp.FuturesFactor * sp.UnitsRemaining * this.cache.GetSecurityMarketPrice(this.reportDate, sp.Security);
+                    var price = await this.cache.GetSecurityMarketPrice(this.reportDate, sp.Security);
+                    sb += sp.FuturesFactor * sp.UnitsRemaining * price;
                 }
                 byType[stype] = sb;
                 groupsByType[stype] = securityTypeGroup;

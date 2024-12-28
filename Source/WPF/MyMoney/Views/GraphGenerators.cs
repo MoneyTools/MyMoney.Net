@@ -100,7 +100,7 @@ namespace Walkabout.Views
         private readonly MyMoney myMoney;
         private readonly StockQuoteCache cache;
         private readonly Account account;
-        private readonly Dictionary<string, List<StockSplit>> pendingSplits = new Dictionary<string, List<StockSplit>>();
+        private readonly Dictionary<string, IList<StockSplit>> pendingSplits = new Dictionary<string, IList<StockSplit>>();
         private List<TrendValue> graph = new List<TrendValue>();
 
 
@@ -149,14 +149,10 @@ namespace Walkabout.Views
                     status.ShowProgress(0, keys.Length, 1);
                     var symbol = keys[i];
                     var s = toLoad[symbol];
-                    await this.cache.LoadHistory(s);
+                    await this.cache.LoadIndexFromHistory(s);
 
                     // setup pending stock splits.
-                    List<StockSplit> splits = new List<StockSplit>(this.myMoney.StockSplits.GetStockSplitsForSecurity(s));
-                    splits.Sort(new Comparison<StockSplit>((a, b) =>
-                    {
-                        return DateTime.Compare(a.Date, b.Date); // ascending
-                    }));
+                    IList<StockSplit> splits = this.myMoney.StockSplits.GetStockSplitsForSecurity(s);
                     this.pendingSplits[symbol] = splits;
                 }
             }
@@ -200,7 +196,7 @@ namespace Walkabout.Views
                         // stock split.  When that happens all the remaining units and cost bases in the AccountHoldings
                         // are adjusted accordingly.
                         this.ApplyPendingSplits(date, holdings);
-                        decimal marketValue = this.ComputeMarketValue(date, holdings);
+                        decimal marketValue = await this.ComputeMarketValue(date, holdings);
                         this.graph.Add(new TrendValue() { Date = date, UserData = t, Value = marketValue + cashBalance });
                         date = date.AddDays(1);
                     }
@@ -307,14 +303,14 @@ namespace Walkabout.Views
             return this.graph;
         }
 
-        private decimal ComputeMarketValue(DateTime date, AccountHoldings holding)
+        private async Task<decimal> ComputeMarketValue(DateTime date, AccountHoldings holding)
         {
             // The market value of the AccountHoldings is just the sum of the security
             // units remaining times the stock price for on this given date.
             decimal total = 0;
             foreach (var held in holding.GetHoldings())
             {
-                var value = this.cache.GetSecurityMarketPrice(date, held.Security);
+                var value = await this.cache.GetSecurityMarketPrice(date, held.Security);
                 if (value >= 0)
                 {
                     total += held.FuturesFactor * held.UnitsRemaining * value;
@@ -344,7 +340,7 @@ namespace Walkabout.Views
             dateTime = dateTime.Date;
             foreach (var key in this.pendingSplits.Keys.ToArray())
             {
-                List<StockSplit> splits = this.pendingSplits[key];
+                IList<StockSplit> splits = this.pendingSplits[key];
                 StockSplit next = splits.FirstOrDefault();
                 while (next != null && next.Date.Date < dateTime)
                 {
@@ -428,36 +424,16 @@ namespace Walkabout.Views
             string symbol = this.history.Symbol;
             foreach (var item in this.history.History)
             {
-                decimal adjustedClose = this.ApplySplits(item.Close, item.Date);
-
                 yield return new TrendValue()
                 {
                     Date = item.Date,
-                    Value = adjustedClose,
+                    Value = item.Close,
                     UserData = symbol
                 };
             }
 #if PerformanceBlocks
             }
 #endif
-        }
-
-        private decimal ApplySplits(decimal close, DateTime date)
-        {
-            if (this.security != null)
-            {
-                foreach (var split in this.security.StockSplitsSnapshot)
-                {
-                    if (date < split.Date && split.Numerator != 0)
-                    {
-                        // reverse the effect of stock split.  For example, if stock split 2 : 1 on 1/10/2010
-                        // and closing price was $20 on 1/1/2010, then the effective value of that stock on 
-                        // 1/1/2010 is now $10 because of the split.
-                        close *= split.Denominator / split.Numerator;
-                    }
-                }
-            }
-            return close;
         }
     }
 

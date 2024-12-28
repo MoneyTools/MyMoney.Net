@@ -589,12 +589,7 @@ namespace Walkabout.Data
                 List<Investment> list = pair.Value;
 
                 List<StockSplit> splits = new List<StockSplit>(this.myMoney.StockSplits.GetStockSplitsForSecurity(s));
-                splits.Sort(new Comparison<StockSplit>((a, b) =>
-                {
-                    return DateTime.Compare(a.Date, b.Date); // ascending
-                }));
-
-
+                
                 foreach (Investment i in list)
                 {
                     // Now we need to apply any splits that are now valid as of  i.Date so we have the currect number of shares
