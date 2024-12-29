@@ -318,10 +318,7 @@ namespace Walkabout.StockQuotes
                         if (range.Start < range.End)
                         {
                             var quotes = await this.DownloadTimeSeriesAsync(history.Symbol, range);
-                            foreach (var quote in quotes)
-                            {
-                                history.MergeQuote(quote);
-                            }
+                            history.UpdateHistory(quotes, range);
                         }
                     }
                     catch (StockQuoteNotFoundException)
@@ -332,11 +329,9 @@ namespace Walkabout.StockQuotes
             } 
             else
             {
-                var quotes = await this.DownloadTimeSeriesAsync(history.Symbol, new DateRange(earliest, DateTime.Today));
-                foreach (var quote in quotes)
-                {
-                    history.MergeQuote(quote);
-                }
+                var range = new DateRange(earliest, DateTime.Today);
+                var quotes = await this.DownloadTimeSeriesAsync(history.Symbol, range);
+                history.UpdateHistory(quotes, range);
             }
             return true;
         }

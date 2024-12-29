@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Navigation;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Utilities;
@@ -213,10 +215,15 @@ namespace Walkabout.StockQuotes
 
         public List<StockQuote> GetSorted()
         {
+            return this.SortByDate(this.History);
+        }
+
+        public List<StockQuote> SortByDate(IEnumerable<StockQuote> quotes)
+        {
             var result = new SortedDictionary<DateTime, StockQuote>();
-            if (this.History != null)
+            if (quotes != null)
             {
-                foreach (var quote in this.History)
+                foreach (var quote in quotes)
                 {
                     result[quote.Date] = quote;
                 }
@@ -224,7 +231,41 @@ namespace Walkabout.StockQuotes
             return new List<StockQuote>(result.Values);
         }
 
-        public bool MergeQuote(StockQuote quote, bool replace = true)
+        internal void UpdateHistory(List<StockQuote> quotes, DateRange range)
+        {
+            DateTime start = range.Start;
+            int pos = 0;
+            quotes = this.SortByDate(quotes);
+            foreach (var quote in quotes)
+            {
+                var date = quote.Date;
+                while (start < date)
+                {
+                    if (this.IsMarketOpen(start))
+                    {
+                        // oh, then our stock quote service has missing data, so we need to record this so we
+                        // don't keep asking for it over and over.
+                        Debug.WriteLine($"Quote for {quote.Symbol} on {start.ToShortDateString()} is missing");
+                        
+                        // TBD: Need more investigation on whether this is service specific... for example, we know
+                        // already that Yahoo returns sparse data the further back you go, this doesn't mean a different
+                        // service can't fill in these blanks.
+                        // this.AdditionalClosures.Add(start);
+                    }
+                    start = this.GetNextMarketOpenDate(start);
+                }
+                this.MergeQuote(quote, ref pos);
+                start = this.GetNextMarketOpenDate(date);
+            }
+        }
+
+        public bool MergeQuote(StockQuote quote)
+        {
+            int pos = 0;
+            return this.MergeQuote(quote, ref pos);
+        }
+
+        public bool MergeQuote(StockQuote quote, ref int start)
         {
             this.LastUpdate = DateTime.Today;
             if (this.History == null)
@@ -238,31 +279,31 @@ namespace Walkabout.StockQuotes
                 quote.Name = null;
             }
             int len = this.History.Count;
-            for (int i = 0; i < len; i++)
+            for (int i = start; i < len; i++)
             {
                 var h = this.History[i];
-                if (h.Date == quote.Date)
+                if (h.Date.Date == quote.Date.Date)
                 {
-                    // already have this one
-                    if (replace)
-                    {
-                        h.Downloaded = quote.Downloaded;
-                        h.Open = quote.Open;
-                        h.Close = quote.Close;
-                        h.High = quote.High;
-                        h.Low = quote.Low;
-                        h.Volume = quote.Volume;
-                    }
+                    // already have this one, so update it!
+                    h.Downloaded = quote.Downloaded;
+                    h.Open = quote.Open;
+                    h.Close = quote.Close;
+                    h.High = quote.High;
+                    h.Low = quote.Low;
+                    h.Volume = quote.Volume;
+                    start = i; // optimize next call so we start here.
                     return true;
                 }
                 if (h.Date > quote.Date)
                 {
                     // keep it sorted by date
                     this.History.Insert(i, quote);
+                    start = i; // optimize next call so we start here.
                     return true;
                 }
             }
             this.History.Add(quote);
+            start = len;
             return true;
         }
 
@@ -299,9 +340,10 @@ namespace Walkabout.StockQuotes
 
         internal void Merge(StockQuoteHistory newHistory)
         {
+            int pos = 0;
             foreach (var item in newHistory.History)
             {
-                this.MergeQuote(item);
+                this.MergeQuote(item, ref pos);
             }
 
             // promote any stock quote names to the root (to save space)
@@ -315,7 +357,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        private static readonly HashSet<DateTime> knownClosures = new HashSet<DateTime>(new DateTime[]
+        private static readonly HashSet<DateTime> KnownClosures = new HashSet<DateTime>(new DateTime[]
         {
             new DateTime(2018, 12, 5), // honor of President George Bush
             new DateTime(2012, 10, 30), // Hurrican Sandy
@@ -330,6 +372,31 @@ namespace Walkabout.StockQuotes
             new DateTime(1985, 9, 27), // Hurrican Gloria
         });
 
+        internal bool IsMarketOpen(DateTime workDay)
+        {
+            return this.holidays.IsWorkDay(workDay) && !KnownClosures.Contains(workDay) && !(this.AdditionalClosures?.Contains(workDay) == true);
+        }
+
+        internal DateTime GetPreviousMarketOpenDate(DateTime workDay)
+        {
+            workDay = this.holidays.GetPreviousWorkDay(workDay);
+            while (!this.IsMarketOpen(workDay))
+            {
+                workDay = this.holidays.GetPreviousWorkDay(workDay);
+            }
+            return workDay;
+        }
+
+        internal DateTime GetNextMarketOpenDate(DateTime workDay)
+        {
+            workDay = this.holidays.GetNextWorkDay(workDay);
+            while (!this.IsMarketOpen(workDay))
+            {
+                workDay = this.holidays.GetNextWorkDay(workDay);
+            }
+            return workDay;
+        }
+
         /// <summary>
         /// Return the days that seem to be missing in our data.
         /// </summary>
@@ -337,12 +404,11 @@ namespace Walkabout.StockQuotes
         /// <returns></returns>
         internal IEnumerable<DateRange> GetMissingDataRanges(int yearsToCheck)
         {
-            var holidays = new UsHolidays();
-            var workDay = this.holidays.MostRecentWorkDay;
+            var workDay = this.GetPreviousMarketOpenDate(this.holidays.MostRecentWorkDay);
             DateTime stopDate = workDay.AddYears(-yearsToCheck);
-            if (!holidays.IsWorkDay(stopDate))
+            while (!this.IsMarketOpen(stopDate))
             {
-                stopDate = holidays.GetNextWorkDay(stopDate);
+                stopDate = this.holidays.GetNextWorkDay(stopDate);
             }
 
             if (this.History.Count == 0)
@@ -368,33 +434,29 @@ namespace Walkabout.StockQuotes
                     }
                     if (date < workDay)
                     {
-                        bool skip = knownClosures.Contains(workDay) || (this.AdditionalClosures?.Contains(workDay) == true);
-                        if (!skip)
+                        // found a missing date range.
+                        if (missing != null)
                         {
-                            // found a missing date range.
-                            if (missing != null)
+                            // can we consolidate ranges?
+                            var gap = missing.Start - date;
+                            if (gap.TotalDays < 5)
                             {
-                                // can we consolidate ranges?
-                                var gap = missing.Start - date;
-                                if (gap.TotalDays < 5)
-                                {
-                                    // consolidate!
-                                    missing.Start = date;
-                                }
-                                else
-                                {
-                                    ranges.Add(missing);
-                                    missing = null;
-                                }
+                                // consolidate!
+                                missing.Start = date;
                             }
-                            if (missing == null)
+                            else
                             {
-                                missing = new DateRange(date, workDay);
+                                ranges.Add(missing);
+                                missing = null;
                             }
-                            workDay = date;
                         }
+                        if (missing == null)
+                        {
+                            missing = new DateRange(date, workDay);
+                        }
+                        workDay = date;
                     }
-                    workDay = holidays.GetPreviousWorkDay(workDay);
+                    workDay = this.GetPreviousMarketOpenDate(workDay);
                     if (ranges.Count > 10)
                     {
                         break;
@@ -434,23 +496,6 @@ namespace Walkabout.StockQuotes
                 if (missing != null)
                 {
                     ranges.Add(missing);
-                }
-
-                // Some data seems to be missing about 1 week around the knownClosures.
-                int closureFudge = 7; // days
-                foreach (var range in ranges.ToArray())
-                {
-                    foreach (var closure in knownClosures)
-                    {
-                        var size = (range.End - range.Start).TotalDays;
-                        var daysBefore = Math.Abs((range.Start - closure).TotalDays);
-                        var daysAfter = Math.Abs((range.End - closure).TotalDays);
-                        if (size < closureFudge && (daysBefore < closureFudge || daysAfter < closureFudge))
-                        {
-                            ranges.Remove(range);
-                            break;
-                        }
-                    }
                 }
 
                 if (ranges.Count > 5)
@@ -499,6 +544,7 @@ namespace Walkabout.StockQuotes
             }
             return false;
         }
+
     }
 
     /// <summary>
