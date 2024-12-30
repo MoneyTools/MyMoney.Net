@@ -28,6 +28,8 @@ When you select a category from this Categories Panel it will instantly show you
 
 You can also get to this view from any transaction using Right Click "View By Category".  Once you are in this view you can also select a transaction and get back to the account that transaction belongs in using "View By Account" or the back button.
 
+If the selected category matches a Split then the view will show that split as a read only fake transaction.
+
 The Categories Panel provides the following context menu items:
 
 **Properties**  brings up the categories dialog for the selected category.

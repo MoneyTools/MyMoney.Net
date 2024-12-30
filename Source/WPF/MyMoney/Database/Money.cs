@@ -10268,7 +10268,6 @@ namespace Walkabout.Data
                     continue;
                 }
 
-                // todo: what about splits?
                 bool matches = true;
                 bool first = true;
                 foreach (QueryRow r in query)
@@ -10293,6 +10292,39 @@ namespace Walkabout.Data
                 if (matches)
                 {
                     view.Add(t);
+                }
+                else if (t.IsSplit)
+                {
+                    // migth be a split!
+                    foreach (var split in t.Splits)
+                    {
+                        matches = true;
+                        first = true;
+                        foreach (QueryRow r in query)
+                        {
+                            bool result = split.Matches(r);
+                            Conjunction con = r.Conjunction;
+                            if (first)
+                            {
+                                matches = result;
+                                first = false;
+                            }
+                            else if (con == Conjunction.Or)
+                            {
+                                matches |= result;
+                            }
+                            else
+                            {
+                                matches &= result;
+                            }
+                        }
+
+                        if (matches)
+                        {
+                            // Add fake transaction corresponding to this split.
+                            view.Add(new Transaction(t, split));
+                        }
+                    }
                 }
             }
             view.Sort(SortByDate);
@@ -13933,6 +13965,40 @@ namespace Walkabout.Data
         public void UpdateCategoriesView()
         {
             this.RaisePropertyChanged("Categories");
+        }
+
+        internal bool Matches(QueryRow q)
+        {
+            switch (q.Field)
+            {
+                case Field.None:
+                    return false; // or should this allow matching of any field?
+                case Field.Accepted:
+                    return false; // inherited value from Transaction.
+                case Field.Budgeted:
+                    return false;
+                case Field.Account:
+                    return false;
+                case Field.Payment:
+                    return false; // too confusing if we match amount on splits.
+                case Field.Deposit:
+                    return false; // too confusing if we match amount on splits.
+                case Field.Category:
+                    return (this.Category == null) ? false : q.Matches(this.Category.GetFullName());
+                case Field.Date:
+                    return false; // inherited value from Transaction.
+                case Field.Memo:
+                    return q.Matches(this.Memo == null ? "" : this.Memo);
+                case Field.Number:
+                    return false; // inherited value from Transaction.
+                case Field.Payee:
+                    return q.Matches(this.Payee == null ? "" : this.Payee.Name);
+                case Field.SalesTax:
+                    return false; // inherited value from Transaction.
+                case Field.Status:
+                    return false; // inherited value from Transaction.
+            }
+            return false;
         }
 
         #endregion

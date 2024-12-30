@@ -9,6 +9,9 @@ A combo drop down appears in each field as you fill this query
 giving you the list of valid values you can use except for the
 Value column where you get to type the data you are trying to find.
 
+If you search for a Category, Payee or Memo it can also match a Split in which case you will
+see matching splits shown as read only fake transactions.
+
 You can use the up arrow icon in the top right of the above screenshot to hide the query panel after you are done.
 
 You can also do simple filtering with the [Quick Search](QuickSearch.md) feature.
