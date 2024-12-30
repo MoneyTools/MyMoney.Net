@@ -53,7 +53,7 @@ namespace Walkabout.Data
             get
             {
                 decimal factor = 1;
-                // futures prices are always listed by the instance.  But wen you buy 1 contract, you always get 100 futures in that contract
+                // futures prices are always listed by the instance.  But when you buy 1 contract, you always get 100 futures in that contract
                 if (this.Security.SecurityType == SecurityType.Futures)
                 {
                     factor = 100;
@@ -497,6 +497,8 @@ namespace Walkabout.Data
             return this.sales;
         }
 
+        public IEnumerable<AccountHoldings> GetAccountHoldings() => this.byAccount.Values;
+
         /// <summary>
         /// Get the current holdings per account.
         /// </summary>
@@ -656,9 +658,7 @@ namespace Walkabout.Data
                 }
 
                 this.ApplySplits(s, splits, this.toDate);
-
             }
-
         }
 
         private void ApplySplits(Security s, IList<StockSplit> splits, DateTime dateTime)
@@ -730,7 +730,6 @@ namespace Walkabout.Data
             }
             return result;
         }
-
     }
 
 }

@@ -4749,6 +4749,11 @@ namespace Walkabout
             this.importWatcher.Changed -= new FileSystemEventHandler(this.OnImportFolderContentHasChanged);
             this.importWatcher.EnableRaisingEvents = false;
             this.importWatcher = null;
+
+            using (this.reportHandler)
+            {
+                // dispose report handler!
+            }
         }
 
         private void CleanupStockQuoteManager()
@@ -4932,8 +4937,10 @@ namespace Walkabout
                         changes.InstallButtonClick -= this.OnInstallButtonClick;
                     }
                 }
-
-                this.report = null;
+                using (this.report)
+                {
+                    this.report = null;
+                }
                 this.windowRef = null;
             }
 

@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace Walkabout.Interfaces.Reports
 {
-    public interface IReport
+    public interface IReport : IDisposable
     {
         IServiceProvider ServiceProvider { get; set; }
 

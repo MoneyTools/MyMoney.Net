@@ -9,4 +9,5 @@ given date and subtracts credit card balances, and any loans to provide a net wo
 
 You can also create [Asset](../Accounts/Assets.md) accounts to cover the value of personal property so those show up in the report also.  Just set the Account Type to "Asset" in the Account properties dialog.
 
-You can pick different dates to go back in time and view historical values.
+The bar chart shows the networth back in time abnd you can pick different dates to get a detailed report for any date that you have historical
+stock quote data for, see [StockQuoteService](../Accounts/StockQuoteServices.md).

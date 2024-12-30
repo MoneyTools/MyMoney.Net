@@ -184,12 +184,7 @@ namespace Walkabout.StockQuotes
                         message = (string)value;
                     }
                     var msg = $"{this.FriendlyName} returned {status} code {code}: {message}";
-                    if (code == 404 ||  // not found
-                        code == 403) // not in plan.
-                    {
-                        throw new StockQuoteNotFoundException(msg);
-                    }
-                    else if (code == 429)
+                    if (code == 429)
                     {
                         // throttle limit reached.
                         var ex = new StockQuoteThrottledException(msg);
@@ -206,6 +201,10 @@ namespace Walkabout.StockQuotes
                             ex.MonthlyLimitReached = true;
                         }
                         throw ex;
+                    }
+                    else if (code >= 400 && code < 500)
+                    {
+                        throw new StockQuoteNotFoundException(msg);
                     }
                     throw new Exception(msg);
                 }

@@ -1,19 +1,26 @@
 ﻿using LovettSoftware.Charts;
+using Microsoft.Win32;
+using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Xml.Serialization;
 using Walkabout.Charts;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 using Walkabout.Views;
+using Walkabout.Views.Controls;
 
 namespace Walkabout.Reports
 {
@@ -29,6 +36,7 @@ namespace Walkabout.Reports
         private bool generating;
         private bool filterOutClosedAccounts = false;
         private FlowDocumentView view;
+        private AnimatingBarChart historicalChart;
 
         public event EventHandler<SecurityGroup> SecurityDrillDown;
         public event EventHandler<AccountGroup> CashBalanceDrillDown;
@@ -44,6 +52,12 @@ namespace Walkabout.Reports
         ~NetWorthReport()
         {
             Debug.WriteLine("NetWorthReport disposed!");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            this.historicalChart = null;
+            base.Dispose(disposing);
         }
 
         public override void OnSiteChanged()
@@ -251,7 +265,6 @@ namespace Walkabout.Reports
                     writer.EndCell();
                     writer.StartCell();
 
-
                     // pie chart
                     AnimatingPieChart chart = new AnimatingPieChart();
                     chart.Width = 600;
@@ -271,6 +284,31 @@ namespace Walkabout.Reports
                     writer.EndRow();
                     writer.EndTable();
 
+                    // insert graph of historical networth.
+                    AnimatingBarChart historicalChart = new AnimatingBarChart();
+                    historicalChart.Width = 1280;
+                    historicalChart.Height = 400;
+                    historicalChart.HorizontalContentAlignment = HorizontalAlignment.Left;
+                    historicalChart.Padding = new Thickness(20, 0, 100, 0);
+                    historicalChart.BorderThickness = new Thickness(0);
+                    historicalChart.VerticalAlignment = VerticalAlignment.Top;
+                    historicalChart.HorizontalAlignment = HorizontalAlignment.Left;
+                    historicalChart.ContextMenu = new ContextMenu();
+                    var menuItem = new MenuItem() { Header = "Export..." };
+                    menuItem.Click += this.ExportHistoryClick;
+                    historicalChart.ContextMenu.Items.Add(menuItem);
+
+                    color = this.GetRandomColor();
+                    ChartData chartData = new ChartData();
+                    var chartSeries = new ChartDataSeries() { Name = "Networth History" };
+                    chartSeries.Values.Add(new ChartDataValue() { Label = this.reportDate.Year.ToString(), Value = (double)totalBalance, Color = color });
+                    chartData.AddSeries(chartSeries);
+                    historicalChart.Data = chartData;
+
+                    this.historicalChart = historicalChart;
+                    writer.WriteElement(historicalChart);
+                    _ = Task.Run(() => this.PopulateHistoricalNetWorth(this.historicalChart, chartSeries));
+
                     if (hasNoneTypeTaxDeferred || hasNoneTypeTaxFree || hasNoneType)
                     {
                         writer.WriteParagraph("(*) One ore more of your securities has no SecurityType, you can fix this using View/Securities",
@@ -284,6 +322,74 @@ namespace Walkabout.Reports
                     this.generating = false;
                 }
             }
+        }
+
+        private void ExportHistoryClick(object sender, RoutedEventArgs e)
+        {
+            if (this.historicalChart != null)
+            {
+                var series = this.historicalChart.Data.Series.FirstOrDefault();
+                SaveFileDialog sd = new SaveFileDialog();
+                string filter = Properties.Resources.CsvFileFilter;
+                sd.Filter = filter;
+
+                if (sd.ShowDialog(App.Current.MainWindow) == true)
+                {
+                    using (var file = File.CreateText(sd.FileName))
+                    {
+                        file.WriteLine("Year,Value");
+                        foreach (var value in series.Values)
+                        {
+                            var v = value.Value.ToString("0");
+                            file.WriteLine($"{value.Label},{v}");
+                        }
+                    }
+                }
+            }
+        }
+
+        private async void PopulateHistoricalNetWorth(AnimatingBarChart chart, ChartDataSeries series)
+        {
+            var color = series.Values[0].Color;
+            for (DateTime date = this.reportDate.AddYears(-1); ; date = date.AddYears(-1))
+            {
+                if (this.historicalChart != chart)
+                {
+                    break;
+                }
+                var balance = await this.CalculateTotalBalance(date);
+                Debug.WriteLine($"Networth on {date.ToShortDateString()} is {balance:C2}");
+                if (!balance.HasValue)
+                {
+                    // done!
+                    return;
+                }
+
+                lock (series.Values)
+                {
+                    series.Values.Add(new ChartDataValue() { Label = date.Year.ToString(), Value = (double)balance.Value, Color = color });
+                }
+                historicalChart.OnDelayedUpdate();
+            }
+        }
+
+        internal async Task<decimal?> CalculateTotalBalance(DateTime date)
+        {
+            CostBasisCalculator calc = new CostBasisCalculator(this.myMoney, date);
+            decimal? total = null;
+            foreach (var accountHolding in calc.GetAccountHoldings())
+            {
+                foreach (var holding in accountHolding.GetHoldings())
+                {
+                    var price = await this.cache.GetSecurityMarketPrice(date, holding.Security);
+                    if (total == null)
+                    {
+                        total = 0;
+                    }
+                    total += holding.FuturesFactor * holding.UnitsRemaining * price;
+                }
+            }
+            return total;
         }
 
         private decimal WriteAssetAccountRows(IReportWriter writer, IList<ChartDataValue> data)
@@ -533,7 +639,6 @@ namespace Walkabout.Reports
         }
 
     }
-
 
     public class AccountGroup
     {

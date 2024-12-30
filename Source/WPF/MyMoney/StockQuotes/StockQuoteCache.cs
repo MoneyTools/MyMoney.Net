@@ -27,6 +27,8 @@ namespace Walkabout.StockQuotes
             this.myMoney.Securities.Changed += this.Securities_Changed;
         }
 
+        public string LogFolder => this.log.Folder;
+
         private void Securities_Changed(object sender, ChangeEventArgs e)
         {
             while (e != null)

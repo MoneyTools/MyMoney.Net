@@ -22,6 +22,7 @@ namespace Walkabout.Reports
         private Currency currency;
         private CultureInfo currencyCulture;
         private IServiceProvider serviceProvider;
+        private bool disposedValue;
 
         public IServiceProvider ServiceProvider
         {
@@ -126,7 +127,7 @@ namespace Walkabout.Reports
 
         public CultureInfo CurrencyCulture => this.currencyCulture;
 
-        public string GetFormattedNormalizedAmount(decimal amount, int decimalPlace = 2)
+        public decimal GetNormalizedAmount(decimal amount)
         {
             if (this.currency != null)
             {
@@ -137,6 +138,12 @@ namespace Walkabout.Reports
                 }
                 amount /= ratio;
             }
+            return amount;
+        }
+
+        public string GetFormattedNormalizedAmount(decimal amount, int decimalPlace = 2)
+        {
+            amount = this.GetNormalizedAmount(amount);
             return StringHelpers.GetFormattedAmount(amount, this.currencyCulture, decimalPlace);
         }
 
@@ -161,6 +168,27 @@ namespace Walkabout.Reports
             }
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            this.Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 
 }

@@ -303,10 +303,6 @@ namespace Walkabout.Views.Controls
             base.OnRenderSizeChanged(sizeInfo);
         }
 
-        public DateTime StartDate { get { return this.start; } }
-
-        public DateTime EndDate { get { return this.end; } }
-
         public IGraphGenerator Generator
         {
             get => this.generator;

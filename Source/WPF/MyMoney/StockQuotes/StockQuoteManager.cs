@@ -751,6 +751,8 @@ namespace Walkabout.StockQuotes
 
         public List<DownloadInfo> Downloaded { get; set; }
 
+        public string Folder => this._logFolder;
+
         public DownloadInfo GetInfo(string symbol)
         {
             if (this._downloaded.TryGetValue(symbol, out DownloadInfo info))

@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="2.1.0.35" date="12/29/2024">
+  <change version="2.1.0.36" date="12/29/2024">
     - Support Query Form matching on categories, payees and memo text in Splits.
+    - Add historical networth chart to NetworthReport.
   </change>  
   <change version="2.1.0.33" date="12/28/2024">
    - Fix portfolio report so that it takes into account the fact that the stock quote history is now split adjusted.

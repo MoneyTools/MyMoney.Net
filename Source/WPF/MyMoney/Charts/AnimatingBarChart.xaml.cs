@@ -216,7 +216,7 @@ namespace LovettSoftware.Charts
             this.mouseOverAnimationCompleted = false;
         }
 
-        private void OnDelayedUpdate()
+        internal void OnDelayedUpdate()
         {
             this.actions.StartDelayedAction("update", this.UpdateChart, TimeSpan.FromMilliseconds(10));
         }
@@ -404,48 +404,51 @@ namespace LovettSoftware.Charts
             bool firstSeries = true;
             foreach (var series in this.Data.Series)
             {
-                foreach (var item in series.Values)
+                lock (series.Values)
                 {
-                    if (item.Hidden)
+                    foreach (var item in series.Values)
                     {
-                        continue;
-                    }
-                    ColumnInfo info = null;
-                    if (index < this.bars.Count)
-                    {
-                        info = this.bars[index];
-                    }
-                    else
-                    {
-                        info = new ColumnInfo();
-                        this.bars.Add(info);
-                    }
-                    info.Data = item;
-                    info.Color = item.Color.Value;
-
-                    if (firstSeries && !string.IsNullOrEmpty(item.Label))
-                    {
-                        var block = info.Label;
-                        if (block == null)
+                        if (item.Hidden)
                         {
-                            block = new TextBlock() { Foreground = this.Foreground };
-                            info.Label = block;
+                            continue;
                         }
-                        block.Text = item.Label;
-                        block.BeginAnimation(TextBlock.OpacityProperty, null);
-                        block.Opacity = 0;
-                        this.ChartCanvas.Children.Add(block); // so it measures properly.
-                        block.Measure(new Size(100, 100));
-                        this.ChartCanvas.Children.Remove(block);
-                        var size = block.DesiredSize;
-                        minMax.Width = Math.Max(minMax.Width, size.Width);
-                        minMax.Height = Math.Max(minMax.Height, size.Height);
+                        ColumnInfo info = null;
+                        if (index < this.bars.Count)
+                        {
+                            info = this.bars[index];
+                        }
+                        else
+                        {
+                            info = new ColumnInfo();
+                            this.bars.Add(info);
+                        }
+                        info.Data = item;
+                        info.Color = item.Color.Value;
+
+                        if (firstSeries && !string.IsNullOrEmpty(item.Label))
+                        {
+                            var block = info.Label;
+                            if (block == null)
+                            {
+                                block = new TextBlock() { Foreground = this.Foreground };
+                                info.Label = block;
+                            }
+                            block.Text = item.Label;
+                            block.BeginAnimation(TextBlock.OpacityProperty, null);
+                            block.Opacity = 0;
+                            this.ChartCanvas.Children.Add(block); // so it measures properly.
+                            block.Measure(new Size(100, 100));
+                            this.ChartCanvas.Children.Remove(block);
+                            var size = block.DesiredSize;
+                            minMax.Width = Math.Max(minMax.Width, size.Width);
+                            minMax.Height = Math.Max(minMax.Height, size.Height);
+                        }
+                        else
+                        {
+                            info.Label = null;
+                        }
+                        index++;
                     }
-                    else
-                    {
-                        info.Label = null;
-                    }
-                    index++;
                 }
                 firstSeries = false;
             }
