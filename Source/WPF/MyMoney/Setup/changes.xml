@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="2.1.0.38" date="12/30/2024">
+  <change version="2.1.0.39" date="12/30/2024">
     - Fix issue #135: net worth historical chart values appears too low.
+    - Fix report dates to midnight and always include closed accounts.
   </change>
   <change version="2.1.0.37" date="12/30/2024">
     - Fix tooltips in historical networth bar chart.

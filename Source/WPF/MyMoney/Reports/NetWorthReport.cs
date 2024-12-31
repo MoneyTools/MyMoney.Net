@@ -35,7 +35,6 @@ namespace Walkabout.Reports
         private DateTime reportDate;
         private StockQuoteCache cache;
         private bool generating;
-        private bool filterOutClosedAccounts = false;
         private FlowDocumentView view;
         private AnimatingBarChart historicalChart;
 
@@ -45,7 +44,7 @@ namespace Walkabout.Reports
         public NetWorthReport(FlowDocumentView view)
         {
             this.view = view;
-            this.reportDate = DateTime.Now;
+            this.reportDate = DateTime.Today;
             this.minRandColor = 20;
             this.maxRandColor = ("" + AppTheme.Instance.GetTheme()).Contains("Dark") ? (byte)128 : (byte)200;
         }
@@ -148,7 +147,7 @@ namespace Walkabout.Reports
                     bool hasTaxDeferred = false;
                     bool hasTaxFree = false;
 
-                    foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
+                    foreach (Account a in this.myMoney.Accounts.GetAccounts(false))
                     {
                         if (a.IsTaxDeferred)
                         {
@@ -429,7 +428,7 @@ namespace Walkabout.Reports
         private decimal WriteAssetAccountRows(IReportWriter writer, IList<ChartDataValue> data)
         {
             decimal totalBalance = 0;
-            foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
+            foreach (Account a in this.myMoney.Accounts.GetAccounts(false))
             {
                 if (a.Type == AccountType.Asset)
                 {
@@ -449,7 +448,7 @@ namespace Walkabout.Reports
         private decimal WriteLoanAccountRows(IReportWriter writer, IList<ChartDataValue> data, Color color, bool liabilities)
         {
             decimal totalBalance = 0;
-            foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
+            foreach (Account a in this.myMoney.Accounts.GetAccounts(false))
             {
                 if (a.Type == AccountType.Loan)
                 {
@@ -473,7 +472,7 @@ namespace Walkabout.Reports
         private decimal GetTotalLoansBalance(DateTime date)
         {
             decimal balance = 0;
-            foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
+            foreach (Account a in this.myMoney.Accounts.GetAccounts(false))
             {
                 if (a.Type == AccountType.Loan)
                 {
@@ -494,8 +493,7 @@ namespace Walkabout.Reports
                 DatePicker picker = (DatePicker)sender;
                 if (picker.SelectedDate.HasValue)
                 {
-                    this.reportDate = picker.SelectedDate.Value;
-                    this.filterOutClosedAccounts = this.reportDate >= DateTime.Today;
+                    this.reportDate = picker.SelectedDate.Value.Date;
                     this.Regenerate();
                 }
             }
