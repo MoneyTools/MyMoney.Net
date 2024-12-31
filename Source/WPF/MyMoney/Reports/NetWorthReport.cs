@@ -362,29 +362,46 @@ namespace Walkabout.Reports
         private async void PopulateHistoricalNetWorth(AnimatingBarChart chart, ChartDataSeries series)
         {
             var color = series.Values[0].Color;
-            for (DateTime date = this.reportDate.AddYears(-1); ; date = date.AddYears(-1))
+            Transaction first = this.myMoney.Transactions.GetAllTransactionsByDate().FirstOrDefault();
+            if (first == null)
+            {
+                return;
+            }
+
+            SortedDictionary<DateTime, decimal> cashBalances = new SortedDictionary<DateTime, decimal>();
+            for (DateTime date = this.reportDate.AddYears(-1); date > first.Date; date = date.AddYears(-1))
+            {
+                cashBalances.Add(date, 0);
+            }
+
+            Predicate<Account> notLoans = (a) => a.Type != AccountType.Loan;
+            this.myMoney.GetCashBalanceNormalizedBatch(cashBalances, notLoans);
+
+            for (DateTime date = this.reportDate.AddYears(-1); date > first.Date; date = date.AddYears(-1))
             {
                 if (this.historicalChart != chart)
                 {
                     break;
                 }
-                var balance = await this.CalculateTotalBalance(date);
-                Debug.WriteLine($"Networth on {date.ToShortDateString()} is {balance:C0}");
-                if (!balance.HasValue)
+                decimal cashBalance = cashBalances[date];
+                decimal loanBalance = this.GetTotalLoansBalance(date);
+                var portfolioBalance = await this.CalculatePortfolioBalance(date);
+                decimal portfolio = 0;
+                if (portfolioBalance.HasValue)
                 {
-                    // done!
-                    return;
+                    portfolio = (decimal)portfolioBalance.Value;
                 }
-
+                var networth = cashBalance + loanBalance + portfolio;
+                Debug.WriteLine($"Networth on {date.ToShortDateString()} is {networth:C0}");
                 lock (series.Values)
                 {
-                    series.Values.Add(new ChartDataValue() { Label = date.Year.ToString(), Value = (double)balance.Value, Color = color, UserData=date });
+                    series.Values.Add(new ChartDataValue() { Label = date.Year.ToString(), Value = (double)networth, Color = color, UserData=date });
                 }
                 historicalChart.OnDelayedUpdate();
             }
         }
 
-        internal async Task<decimal?> CalculateTotalBalance(DateTime date)
+        internal async Task<decimal?> CalculatePortfolioBalance(DateTime date)
         {
             CostBasisCalculator calc = new CostBasisCalculator(this.myMoney, date);
             decimal? total = null;
@@ -445,6 +462,23 @@ namespace Walkabout.Reports
                 }
             }
             return totalBalance;
+        }
+
+        private decimal GetTotalLoansBalance(DateTime date)
+        {
+            decimal balance = 0;
+            foreach (Account a in this.myMoney.Accounts.GetAccounts(this.filterOutClosedAccounts))
+            {
+                if (a.Type == AccountType.Loan)
+                {
+                    var loan = this.myMoney.GetOrCreateLoanAccount(a);
+                    if (loan != null)
+                    {
+                        balance += loan.ComputeLoanAccountBalance(date);
+                    }
+                }
+            }
+            return balance;
         }
 
         private void Picker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)

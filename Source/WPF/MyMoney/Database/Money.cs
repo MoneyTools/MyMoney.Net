@@ -2092,6 +2092,75 @@ namespace Walkabout.Data
             return cash;
         }
 
+        /// <summary>
+        /// Get the cash balance of the filtered accounts for all the given dates.
+        /// This is an optimized single pass over the accounts and transactions.
+        /// </summary>
+        /// <param name="balances">A sorted dictionary of dates to populate with balances.</param>
+        /// <param name="filter">The account filter predicate to decide which accounts to include.</param>
+        /// <returns>Cash balances for each date populated in the sorted dictionary</returns>
+        public void GetCashBalanceNormalizedBatch(SortedDictionary<DateTime, decimal> balances, Predicate<Account> filter)
+        {
+            if (balances.Count == 0)
+            {
+                return;
+            }
+            var keys = balances.Keys.ToArray();
+            foreach (Account a in this.Accounts.GetAccounts(false))
+            {
+                if (filter(a))
+                {
+                    if (a.Type == AccountType.Loan)
+                    {
+                        throw new Exception("Do not use this method for Loan accounts");
+                    }
+                    decimal balance = 0;
+                    bool first = true;
+                    int pos = 0;
+                    var date = keys[pos];
+                    foreach (Transaction t in this.Transactions.GetTransactionsFrom(a))
+                    {
+                        while (t.Date > date)
+                        {
+                            var total = a.GetNormalizedAmount(balance);
+                            balances[date] += total;
+                            pos++;
+                            if (pos < keys.Length)
+                            {
+                                date = keys[pos];
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        if (pos == keys.Length)
+                        {
+                            break;
+                        }
+                        if (first)
+                        {
+                            balance = a.OpeningBalance;
+                            first = false;
+                        }
+                        if (!t.IsDeleted && t.Status != TransactionStatus.Void)
+                        {
+                            balance += t.Amount;
+                        }
+                    }
+
+                    // in case we never found the date (it is way out into the future), populate the
+                    // rest of the values so we always return the same length array.
+                    while (pos < keys.Length)
+                    {
+                        var total = a.GetNormalizedAmount(balance);
+                        balances[keys[pos]] += total;
+                        pos++;
+                    }
+                }
+            }
+        }
+
         internal void SwitchSecurities(Security fromSecurity, Security moveToSecurity)
         {
             foreach (Transaction t in this.transactions.GetTransactionsBySecurity(fromSecurity, null))
