@@ -407,6 +407,12 @@ namespace Walkabout.Reports
             decimal? total = null;
             foreach (var accountHolding in calc.GetAccountHoldings())
             {
+                var pending = accountHolding.GetPendingSales().Count();
+                if (pending > 0)
+                {
+                    // todo: how to handle pending sales that have not cleared by the given date?
+                    Debug.WriteLine($"Found {pending} pending sales for {accountHolding.Account.Name} on {date.ToShortDateString()}");
+                }
                 foreach (var holding in accountHolding.GetHoldings())
                 {
                     var price = await this.cache.GetSecurityMarketPrice(date, holding.Security);
