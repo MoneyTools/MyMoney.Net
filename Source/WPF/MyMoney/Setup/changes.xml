@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.37" date="12/30/2024">
+    - Fix tooltips in historical networth bar chart.
+    - Fix issue #134: unhandled exception in the networth report #134
+  </change>  
   <change version="2.1.0.36" date="12/29/2024">
     - Support Query Form matching on categories, payees and memo text in Splits.
     - Add historical networth chart to NetworthReport.

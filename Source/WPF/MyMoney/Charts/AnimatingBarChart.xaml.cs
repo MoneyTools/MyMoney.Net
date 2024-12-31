@@ -301,6 +301,8 @@ namespace LovettSoftware.Charts
 
         private ColumnInfo FindColumn(Point pos)
         {
+            pos.X -= this.Padding.Left;
+            pos.Y -= this.Padding.Top;
             for (int i = 0, n = this.bars.Count; i < n; i++)
             {
                 var info = this.bars[i];

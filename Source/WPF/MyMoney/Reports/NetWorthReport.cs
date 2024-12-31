@@ -21,6 +21,7 @@ using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 using Walkabout.Views;
 using Walkabout.Views.Controls;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Walkabout.Reports
 {
@@ -301,9 +302,10 @@ namespace Walkabout.Reports
                     color = this.GetRandomColor();
                     ChartData chartData = new ChartData();
                     var chartSeries = new ChartDataSeries() { Name = "Networth History" };
-                    chartSeries.Values.Add(new ChartDataValue() { Label = this.reportDate.Year.ToString(), Value = (double)totalBalance, Color = color });
+                    chartSeries.Values.Add(new ChartDataValue() { Label = this.reportDate.Year.ToString(), Value = (double)totalBalance, Color = color, UserData = this.reportDate });
                     chartData.AddSeries(chartSeries);
                     historicalChart.Data = chartData;
+                    historicalChart.ToolTipGenerator = this.GenerateBarChartTips;
 
                     this.historicalChart = historicalChart;
                     writer.WriteElement(historicalChart);
@@ -322,6 +324,15 @@ namespace Walkabout.Reports
                     this.generating = false;
                 }
             }
+        }
+
+        private UIElement GenerateBarChartTips(ChartDataValue value)
+        {
+            var tip = new StackPanel() { Orientation = Orientation.Vertical };
+            var date = (DateTime)value.UserData;
+            tip.Children.Add(new TextBlock() { Text = date.ToShortDateString(), FontWeight = FontWeights.Bold });
+            tip.Children.Add(new TextBlock() { Text = value.Value.ToString("C0") });
+            return tip;
         }
 
         private void ExportHistoryClick(object sender, RoutedEventArgs e)
@@ -358,7 +369,7 @@ namespace Walkabout.Reports
                     break;
                 }
                 var balance = await this.CalculateTotalBalance(date);
-                Debug.WriteLine($"Networth on {date.ToShortDateString()} is {balance:C2}");
+                Debug.WriteLine($"Networth on {date.ToShortDateString()} is {balance:C0}");
                 if (!balance.HasValue)
                 {
                     // done!
@@ -367,7 +378,7 @@ namespace Walkabout.Reports
 
                 lock (series.Values)
                 {
-                    series.Values.Add(new ChartDataValue() { Label = date.Year.ToString(), Value = (double)balance.Value, Color = color });
+                    series.Values.Add(new ChartDataValue() { Label = date.Year.ToString(), Value = (double)balance.Value, Color = color, UserData=date });
                 }
                 historicalChart.OnDelayedUpdate();
             }

@@ -161,7 +161,24 @@ namespace Walkabout.Views
                 if (value is ReportViewState s)
                 {
                     var type = s.ReportState.GetReportType();
-                    var report = (IReport)Activator.CreateInstance(type);
+                    IReport report = null;
+                    var constructor = type.GetConstructor(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance, new Type[0]);
+                    if (constructor != null)
+                    {
+                        report = (IReport)constructor.Invoke(null);
+                    }
+                    else
+                    {
+                        constructor = type.GetConstructor(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance, new Type[1] { this.GetType() });
+                        if (constructor != null)
+                        {
+                            report = (IReport)constructor.Invoke(new object[1] { this });
+                        }
+                        else
+                        {
+                            throw new Exception("Report type {type} is missing public constructor with no args or one view arg");
+                        }
+                    }
                     report.ServiceProvider = this.serviceProvider;
                     report.ApplyState(s.ReportState);
                     if (ReportCreated != null)
