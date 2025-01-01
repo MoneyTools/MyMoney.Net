@@ -4286,7 +4286,7 @@ namespace Walkabout
         {
             if (this.quotes != null)
             {
-                this.quotes.UpdateQuotes();
+                this.quotes.UpdateQuotes(true);
                 this.settings.LastStockRequest = DateTime.Today;
             }
         }

@@ -271,7 +271,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        public void UpdateQuotes()
+        public void UpdateQuotes(bool force = false)
         {
             // start with owned securities first
             HashSet<Security> combined = new HashSet<Security>(this.myMoney.GetOwnedSecurities());
@@ -285,10 +285,10 @@ namespace Walkabout.StockQuotes
             {
                 combined.Add(s);
             }
-            this.BeginGetQuotes(combined);
+            this.BeginGetQuotes(combined, force);
         }
 
-        private void BeginGetQuotes(HashSet<Security> toFetch)
+        private void BeginGetQuotes(HashSet<Security> toFetch, bool force = false)
         {
             this._firstError = true;
             if (this._services.Count == 0 || toFetch.Count == 0)
@@ -314,7 +314,7 @@ namespace Walkabout.StockQuotes
                 }
 
                 var info = this._downloadLog.GetInfo(s.Symbol);
-                if (info ==null || (info != null && !info.NotFound && info.Downloaded.Date != workDay.Date))
+                if (info ==null || (info != null && !info.NotFound && (force || info.Downloaded.Date != workDay.Date)))
                 {
                     batch.Add(s.Symbol);
                 }

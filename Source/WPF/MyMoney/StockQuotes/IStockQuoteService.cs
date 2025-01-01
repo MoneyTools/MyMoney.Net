@@ -418,8 +418,8 @@ namespace Walkabout.StockQuotes
             else
             {
                 List<DateRange> ranges = new List<DateRange>();
-                DateRange missing = null;
 
+                // search from current backwards in time so we get the most relevant quotes first.
                 for (int i = this.History.Count - 1; i >= 0; i--)
                 {
                     StockQuote quote = this.History[i];
@@ -433,27 +433,9 @@ namespace Walkabout.StockQuotes
                         break;
                     }
                     if (date < workDay)
-                    {
-                        // found a missing date range.
-                        if (missing != null)
-                        {
-                            // can we consolidate ranges?
-                            var gap = missing.Start - date;
-                            if (gap.TotalDays < 5)
-                            {
-                                // consolidate!
-                                missing.Start = date;
-                            }
-                            else
-                            {
-                                ranges.Add(missing);
-                                missing = null;
-                            }
-                        }
-                        if (missing == null)
-                        {
-                            missing = new DateRange(date, workDay);
-                        }
+                    {                        
+                        var missing = new DateRange(date, workDay);
+                        ranges.Add(missing);
                         workDay = date;
                     }
                     workDay = this.GetPreviousMarketOpenDate(workDay);
@@ -466,36 +448,27 @@ namespace Walkabout.StockQuotes
                 if (workDay > stopDate)
                 {
                     // then our data doesn't go back far enough!
-                    // can we consolidate ranges?
-                    if (missing != null)
-                    {
-                        var gap = missing.Start - stopDate;
-                        if (gap.TotalDays < 5)
-                        {
-                            // consolidate!
-                            missing.Start = stopDate;
-                        }
-                        else
-                        {
-                            ranges.Add(missing);
-                            workDay = missing.Start;
-                            missing = null;
-                        }
-                    }
+                    var missing = new DateRange(stopDate, workDay);
+                    ranges.Add(missing);
+                }
 
-                    if (missing == null)
+                // consolidate ranges that are close together, remembering they 
+                // are in reverse order date wise.
+                for (int i = 1; i < ranges.Count; )
+                {
+                    var next = ranges[i - 1];
+                    var current = ranges[i];
+                    var span = next.End - current.Start;
+                    if (span.TotalDays < 7)
                     {
-                        missing = new DateRange(stopDate, workDay);
+                        // consolidate!
+                        next.Start = current.Start;
+                        ranges.RemoveAt(i);
                     }
                     else
                     {
-                        missing.Start = stopDate;
+                        i++;
                     }
-                }
-
-                if (missing != null)
-                {
-                    ranges.Add(missing);
                 }
 
                 if (ranges.Count > 5)

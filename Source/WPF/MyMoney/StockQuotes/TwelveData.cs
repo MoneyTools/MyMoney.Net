@@ -120,6 +120,10 @@ namespace Walkabout.StockQuotes
             if (range.Start < start)
             {
                 range.Start = start;
+            } 
+            else
+            {
+                start = range.Start.AddDays(-1);
             }
 
             var startString = start.ToString("yyyy-MM-dd");
