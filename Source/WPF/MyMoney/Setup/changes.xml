@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.40" date="12/31/2024">
+    - Fix issue #131: recurring expenses not folded in with other expenses in cash flow report.
+  </change>
   <change version="2.1.0.39" date="12/30/2024">
     - Fix issue #135: net worth historical chart values appears too low.
     - Fix report dates to midnight and always include closed accounts.

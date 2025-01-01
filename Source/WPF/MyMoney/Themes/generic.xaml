@@ -216,7 +216,14 @@
             </Path>
             <VisualStateManager.VisualStateGroups>
               <VisualStateGroup x:Name="CommonStates">
-                <VisualState x:Name="Normal" />
+                <VisualState x:Name="Normal" >
+                  <Storyboard>
+                    <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="Color"
+                                          Storyboard.TargetName="ArrowBrush">
+                      <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource TriangleExpanderIconColor}" />
+                    </ColorAnimationUsingKeyFrames>
+                  </Storyboard>
+                </VisualState>
                 <VisualState x:Name="MouseOver">
                   <Storyboard>
                     <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="Color"

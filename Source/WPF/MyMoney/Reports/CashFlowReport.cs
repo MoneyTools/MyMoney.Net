@@ -111,13 +111,35 @@ namespace Walkabout.Reports
             }
         }
 
+        bool IsSimilarCategory(CategoryType a, CategoryType b)
+        {
+            switch (a)
+            {
+                case CategoryType.None:
+                    return true;
+                case CategoryType.Income:
+                case CategoryType.Savings:
+                    return b == CategoryType.Income || b == CategoryType.Savings;
+                case CategoryType.RecurringExpense:
+                case CategoryType.Expense:
+                    return b == CategoryType.Expense || b == CategoryType.RecurringExpense;
+                case CategoryType.Reserved:
+                    return false;
+                case CategoryType.Transfer:
+                    return b == CategoryType.Transfer;
+                case CategoryType.Investments:
+                    return b == CategoryType.Investments;
+            }
+            return true;
+        }
+
 
         private void TallyCategory(Transaction t, Category c, Transaction data, string columnName, decimal amount)
         {
             // let the category bubble up as high as it can go while not flipping from income to expense.
             // For example: the category "Investments" might contain sub-categories of type income (Investments:Dividends)
             // and expenses (like Investments:Fees).  
-            if (c.ParentCategory == null || (c.Type != CategoryType.None && c.Type != c.ParentCategory.Type))
+            if (c.ParentCategory == null || !this.IsSimilarCategory(c.Type, c.ParentCategory.Type))
             {
                 CashFlowColumns columns = null;
                 this.byCategory.TryGetValue(c, out columns);

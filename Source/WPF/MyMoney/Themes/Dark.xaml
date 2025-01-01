@@ -63,7 +63,7 @@
     <SolidColorBrush x:Key="HyperlinkForeground" Color="#00A7FF"/>
 
     <!-- The row headers and footers -->
-    <SolidColorBrush x:Key="ReportHeaderBackground" Color="#33FFFFFF"/>
+    <SolidColorBrush x:Key="ReportHeaderBackground" Color="Transparent"/>
     <SolidColorBrush x:Key="ReportHeaderForeground" Color="white"/>
     <SolidColorBrush x:Key="ReportHeadingForeground" Color="{m:DynamicColor SystemAccentColorLight1}"/>
     <SolidColorBrush x:Key="ReportSubHeadingForeground" Color="{m:DynamicColor SystemAccentColorLight1}"/>
