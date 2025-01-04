@@ -36,7 +36,7 @@ namespace Walkabout.Utilities
             {
                 return node.Value.Trim();
             }
-            return null;
+            return "";
         }
 
         public static decimal SelectElementValueAsDecimal(this XElement element, string xpath)

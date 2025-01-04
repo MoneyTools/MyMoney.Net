@@ -2706,7 +2706,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 t.FITID = invtran.SelectElementValue("FITID").GetNormalizedValue();
                 t.Date = ParseOfxDate(invtran.SelectElementValue("DTTRADE"));
                 // todo: should use DTSETTLE for stock splits.
-                t.Memo = invtran.SelectElementValue("MEMO").GetNormalizedValue();
+                t.Memo = this.GetMemo(invtran);
             }
             t.Amount = e.SelectElementValueAsDecimal("TOTAL");
             return t;
@@ -2822,7 +2822,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 t.FITID = s.SelectElementValue("FITID").GetNormalizedValue();
                 t.Date = ParseOfxDate(s.SelectElementValue("DTPOSTED"));
                 t.Amount = s.SelectElementValueAsDecimal("TRNAMT");
-                var memo = s.SelectElementValue("MEMO").GetNormalizedValue();
+                var memo = this.GetMemo(s);
                 var payee = s.SelectElementValue("NAME").GetNormalizedValue();
                 if (!string.IsNullOrEmpty(payee))
                 {
@@ -2888,6 +2888,27 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             }
             return t;
         }
+
+        private string GetMemo(XElement e)
+        {
+            var memo = e.SelectElementValue("MEMO").GetNormalizedValue();
+            if (memo == "N/A")
+            {
+                memo = "";
+            }
+            return memo;
+        }
+
+        private string GetMemo2(XElement e)
+        {
+            var memo = e.SelectElementValue("MEMO2").GetNormalizedValue();
+            if (memo == "N/A")
+            {
+                memo = "";
+            }
+            return memo;
+        }
+
 
         private Transaction ProcessMarginInterest(Account a, XElement e)
         {
@@ -3189,14 +3210,10 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     }
 
 
-                    string memo = null;
-                    if ((e = sr.Element("MEMO")) != null)
+                    string memo = this.GetMemo(sr);
+                    if (string.IsNullOrEmpty(memo))
                     {
-                        memo = e.Value.GetNormalizedValue();
-                    }
-                    else if ((e = sr.Element("MEMO2")) != null)
-                    {
-                        memo = e.Value.GetNormalizedValue();
+                        memo = this.GetMemo2(sr);
                     }
 
                     string s = "Bill Payment ";

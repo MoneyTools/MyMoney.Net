@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.41" date="1/3/2025">
+    - Don't store "N/A" in memo field from OFX downloads.
+  </change>
   <change version="2.1.0.40" date="12/31/2024">
     - Fix issue #131: recurring expenses not folded in with other expenses in cash flow report.
   </change>
