@@ -294,6 +294,7 @@ namespace Walkabout.Reports
                     historicalChart.VerticalAlignment = VerticalAlignment.Top;
                     historicalChart.HorizontalAlignment = HorizontalAlignment.Left;
                     historicalChart.ContextMenu = new ContextMenu();
+                    historicalChart.ColumnClicked += this.OnBarChartColumnClicked;
                     var menuItem = new MenuItem() { Header = "Export..." };
                     menuItem.Click += this.ExportHistoryClick;
                     historicalChart.ContextMenu.Items.Add(menuItem);
@@ -323,6 +324,12 @@ namespace Walkabout.Reports
                     this.generating = false;
                 }
             }
+        }
+
+        private void OnBarChartColumnClicked(object sender, ChartDataValue e)
+        {
+            this.reportDate = (DateTime)e.UserData;
+            this.Regenerate();
         }
 
         private UIElement GenerateBarChartTips(ChartDataValue value)

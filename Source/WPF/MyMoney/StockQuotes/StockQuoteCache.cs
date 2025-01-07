@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms.Design.Behavior;
 using Walkabout.Data;
@@ -170,21 +171,6 @@ namespace Walkabout.StockQuotes
             }
 
             return index;
-        }
-
-        /// <summary>
-        /// Use this method to provide stock quote info from Transactions in the case that
-        /// you have a security that has no download stock price history, which can happen
-        /// with custom securities that are not publicly traded.
-        /// </summary>
-        internal void SetQuote(DateTime date, Security security, decimal price)
-        {
-            if (!this.quoteIndex.TryGetValue(security, out StockQuoteIndex index))
-            {
-                // create an empty index that we can update below.
-                this.quoteIndex[security] = new StockQuoteIndex();
-            }
-            this.quoteIndex[security].SetQuote(date, price);
         }
 
         /// <summary>

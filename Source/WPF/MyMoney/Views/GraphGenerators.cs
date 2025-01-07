@@ -223,13 +223,6 @@ namespace Walkabout.Views
                             case InvestmentType.Add:
                                 if (i.Units > 0)
                                 {
-                                    if (i.UnitPrice != 0)
-                                    {
-                                        // In case we don't have any online stock quote histories this at least
-                                        // tells our StockQuotesByDate what the unit price was on the date of this
-                                        // transaction.
-                                        this.RecordPrice(i.Date, s, i.UnitPrice);
-                                    }
                                     holdings.Buy(i.Security, i.Date, i.Units, i.OriginalCostBasis);
                                     foreach (var sale in holdings.ProcessPendingSales(i.Security))
                                     {
@@ -241,10 +234,6 @@ namespace Walkabout.Views
                             case InvestmentType.Sell:
                                 if (i.Units > 0)
                                 {
-                                    if (i.UnitPrice != 0)
-                                    {
-                                        this.RecordPrice(i.Date, s, i.UnitPrice);
-                                    }
                                     if (i.Transaction.Transfer == null)
                                     {
                                         foreach (var sale in holdings.Sell(s, i.Date, i.Units, i.OriginalCostBasis))
@@ -322,14 +311,6 @@ namespace Walkabout.Views
                 }
             }
             return total;
-        }
-
-        private void RecordPrice(DateTime date, Security security, decimal price)
-        {
-            if (security != null && this.cache != null)
-            {
-                this.cache.SetQuote(date, security, price);
-            }
         }
 
         private void ApplyPendingSplits(DateTime dateTime, AccountHoldings holding)
