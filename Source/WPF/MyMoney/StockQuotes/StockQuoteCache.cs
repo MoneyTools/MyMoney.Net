@@ -99,20 +99,18 @@ namespace Walkabout.StockQuotes
 
             bool found = false;
             decimal price = 0;
-            if (this.quoteIndex.TryGetValue(s, out StockQuoteIndex index))
-            {
-                var quote = index.GetQuote(date);
-                if (quote != null)
-                {
-                    found = true;
-                    price = quote.Close;
-                }
-            }
-            else
+            if (!this.quoteIndex.TryGetValue(s, out StockQuoteIndex index))
             {
                 index = await this.LoadIndexFromHistory(s);
                 // create an empty index that we can update below.
                 this.quoteIndex[s] = index;
+            }
+
+            var quote = index.GetQuote(date);
+            if (quote != null)
+            {
+                found = true;
+                price = quote.Close;
             }
 
             if (!found)

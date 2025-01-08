@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.43" date="1/7/2025">
+    - Fix #135: fix load order of stock quote history.
+  </change>
   <change version="2.1.0.42" date="1/7/2025">
     - Fix #135: net worth historical chart values appears too low
     - Implement bar chart column mouse click to pivot networth report.
