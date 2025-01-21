@@ -107,32 +107,33 @@ namespace Walkabout.Data
 
         public static void WriteTransactionHeader(StreamWriter writer)
         {
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"", "Account", "Date", "Payee", "Amount", "Category", "Memo");
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"", 
+                "Account", "Date", "Payee", "Amount", "Category", "Memo");
         }
 
         public static void WriteTransaction(StreamWriter writer, Transaction t)
         {
-            string category = t.CategoryName;
+            string payee = t.PayeeName;
             if (t.Transfer != null)
             {
-                category = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
+                payee = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
             }
             writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"",
-                t.AccountName, t.Date.ToShortDateString(), t.PayeeName, t.Amount.ToString("C2"), category, GetMemoCsv(t));
+                t.AccountName, t.Date.ToShortDateString(), payee, t.Amount.ToString("C2"), t.CategoryName, GetMemoCsv(t));
         }
 
         public static void WriteInvestmentHeader(StreamWriter writer)
         {
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"",
-                "Date", "Payee", "Category", "Activity", "Symbol", "Units", "UnitPrice", "Amount", "Memo");
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\"",
+                "Account", "Date", "Payee", "Category", "Activity", "Symbol", "Units", "UnitPrice", "Amount", "Memo");
         }
 
         public static void WriteInvestment(StreamWriter writer, Transaction t)
         {
-            string category = t.CategoryName;
+            string payee = t.PayeeName;
             if (t.Transfer != null)
             {
-                category = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
+                payee = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
             }
             string tradeType = "";
             if (t.InvestmentType != InvestmentType.None)
@@ -140,8 +141,8 @@ namespace Walkabout.Data
                 tradeType = t.InvestmentType.ToString();
             }
 
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"",
-                t.Date.ToShortDateString(), t.PayeeName, category,
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\"",
+                t.AccountName, t.Date.ToShortDateString(), payee, t.CategoryName,
                 tradeType, t.InvestmentSecuritySymbol, t.InvestmentUnits, t.InvestmentUnitPrice, t.Amount.ToString("C2"), GetMemoCsv(t));
         }
 
@@ -153,13 +154,13 @@ namespace Walkabout.Data
         public static void WriteInvestmentTransaction(StreamWriter writer, Transaction t)
         {
             // writes a non-investment transaction in the investment header format.
-            string category = t.CategoryName;
+            string payee = t.PayeeName;
             if (t.Transfer != null)
             {
-                category = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
+                payee = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
             }
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",,,,,\"{3}\"",
-                t.Date.ToShortDateString(), t.PayeeName, category, t.Amount.ToString("C2"));
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",,,,,\"{4}\"",
+                t.AccountName, t.Date.ToShortDateString(), payee, t.CategoryName, t.Amount.ToString("C2"));
         }
 
         public virtual void Backup(string path)

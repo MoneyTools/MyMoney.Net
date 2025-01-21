@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.44" date="1/21/2025">
+    - Fix #138: Export switches category and payee for transfer transactions.
+  </change>
   <change version="2.1.0.43" date="1/7/2025">
     - Fix #135: fix load order of stock quote history.
   </change>

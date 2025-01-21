@@ -57,6 +57,7 @@ git push origin --tags
 echo Creating new release for version %VERSION%
 xsl -e -s MyMoney\Setup\LatestVersion.xslt MyMoney\Setup\changes.xml > notes.txt
 gh release create %VERSION% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
+if ERRORLEVEL 1 goto :ghreleaseerr
 REM gh release create %VERSION% %ROOT%MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle --notes-file notes.txt --title "MyMoney.Net %VERSION%"
 del notes.txt
 
@@ -147,4 +148,8 @@ exit /b /1
 
 :err_build
 echo Error: build.cmd failed.
+exit /b /1
+
+:ghreleaseerr
+echo Error: creating github release, do you need to re-run "gh auth login" ?
 exit /b /1
