@@ -8,6 +8,7 @@ using System.Windows;
 using System.Xml;
 using Walkabout.Data;
 using Walkabout.Utilities;
+using static Walkabout.Data.CsvStore;
 
 namespace Walkabout.Migrate
 {
@@ -178,13 +179,27 @@ namespace Walkabout.Migrate
         private void ExportToCsv(StreamWriter writer, IEnumerable<object> data)
         {
             bool first = true;
-            bool containsInvestmentInfo = false;
+
+            OptionalColumnFlags flags = OptionalColumnFlags.None;
+            HashSet<string> currencies = new HashSet<string>();
             foreach (object row in data)
             {
-                if (row is Transaction t && t.Investment != null)
+                if (row is Transaction t)
                 {
-                    containsInvestmentInfo = true;
+                    if (t.Investment != null)
+                    {
+                        flags |= OptionalColumnFlags.InvestmentInfo;
+                    }
+                    if (t.SalesTax != 0)
+                    {
+                        flags |= OptionalColumnFlags.SalesTax;
+                    }
+                    currencies.Add(t.GetAccountCurrency().Symbol);
                 }
+            }
+            if (currencies.Count > 1)
+            {
+                flags |= OptionalColumnFlags.Currency;
             }
 
             foreach (object row in data)
@@ -195,27 +210,9 @@ namespace Walkabout.Migrate
                     if (first)
                     {
                         first = false;
-                        if (containsInvestmentInfo)
-                        {
-                            CsvStore.WriteInvestmentHeader(writer);
-                        }
-                        else
-                        {
-                            CsvStore.WriteTransactionHeader(writer);
-                        }
-                    };
-                    if (t.Investment != null)
-                    {
-                        CsvStore.WriteInvestment(writer, t);
+                        CsvStore.WriteTransactionHeader(writer, flags);
                     }
-                    else if (containsInvestmentInfo)
-                    {
-                        CsvStore.WriteInvestmentTransaction(writer, t);
-                    }
-                    else
-                    {
-                        CsvStore.WriteTransaction(writer, t);
-                    }
+                    CsvStore.WriteTransaction(writer, t, flags);
                 }
                 else
                 {
@@ -227,7 +224,7 @@ namespace Walkabout.Migrate
                             first = false;
                             CsvStore.WriteInvestmentHeader(writer);
                         };
-                        CsvStore.WriteInvestment(writer, i.Transaction);
+                        CsvStore.WriteInvestment(writer, i);
                     }
                     else
                     {
@@ -237,18 +234,9 @@ namespace Walkabout.Migrate
                             if (first)
                             {
                                 first = false;
-                                writer.WriteLine("Date,Account,Payment,Percentage,Principal,Interest,Balance");
+                                CsvStore.WriteLoanPaymentHeader(writer);
                             };
-
-                            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}%\",\"{4}\",\"{5}\",\"{6}\"",
-                                l.Date.ToShortDateString(),
-                                l.Account,
-                                l.Payment.ToString("C2"),
-                                l.Percentage.ToString("N3"),
-                                l.Principal.ToString("C2"),
-                                l.Interest.ToString("C2"),
-                                l.Balance.ToString("C2")
-                                );
+                            CsvStore.WriteLoanPayment(writer, l);
                         }
                     }
                 }

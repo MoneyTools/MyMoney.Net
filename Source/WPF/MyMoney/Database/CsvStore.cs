@@ -82,7 +82,7 @@ namespace Walkabout.Data
             try
             {
                 writer = new StreamWriter(this.fileName);
-                WriteTransactionHeader(writer);
+                WriteTransactionHeader(writer, OptionalColumnFlags.None);
 
                 if (this.rows != null)
                 {
@@ -90,7 +90,7 @@ namespace Walkabout.Data
                     {
                         if (t != null)
                         {
-                            WriteTransaction(writer, t);
+                            WriteTransaction(writer, t, OptionalColumnFlags.None);
                         }
                     }
                 }
@@ -105,31 +105,81 @@ namespace Walkabout.Data
             }
         }
 
-        public static void WriteTransactionHeader(StreamWriter writer)
+        [Flags]
+        public enum OptionalColumnFlags: int
         {
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"", 
-                "Account", "Date", "Payee", "Amount", "Category", "Memo");
+            None = 0,
+            InvestmentInfo = 1,
+            SalesTax = 2,
+            Currency = 4,
         }
 
-        public static void WriteTransaction(StreamWriter writer, Transaction t)
+        public static void WriteTransactionHeader(StreamWriter writer, OptionalColumnFlags optionalColumns)
+        {
+            writer.Write("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\"",
+                "Account", "Date", "Payee", "Category", "Amount"); 
+            if (optionalColumns.HasFlag(OptionalColumnFlags.InvestmentInfo))
+            {
+                writer.Write(",\"{0}\",\"{1}\",\"{2}\",\"{3}\"",
+                    "Activity", "Symbol", "Units", "UnitPrice");
+            }
+            if (optionalColumns.HasFlag(OptionalColumnFlags.SalesTax))
+            {
+                writer.Write(",\"{0}\"", "SalesTax");
+            }
+            if (optionalColumns.HasFlag(OptionalColumnFlags.Currency))
+            {
+                writer.Write(",\"{0}\"", "Currency");
+            }
+            writer.WriteLine(",\"{0}\"", "Memo");
+        }
+
+
+        public static void WriteTransaction(StreamWriter writer, Transaction t, OptionalColumnFlags optionalColumns)
         {
             string payee = t.PayeeName;
             if (t.Transfer != null)
             {
                 payee = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
             }
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\"",
-                t.AccountName, t.Date.ToShortDateString(), payee, t.Amount.ToString("C2"), t.CategoryName, GetMemoCsv(t));
+            writer.Write("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\"",
+                t.AccountName, t.Date.ToShortDateString(), payee, t.CategoryName, t.Amount.ToString("C2"));
+
+            if (optionalColumns.HasFlag(OptionalColumnFlags.InvestmentInfo))
+            {
+                string tradeType = "";
+                if (t.InvestmentType != InvestmentType.None)
+                {
+                    tradeType = t.InvestmentType.ToString();
+                }
+                writer.Write(",\"{0}\",\"{1}\",\"{2}\",\"{3}\"",
+                    tradeType, t.InvestmentSecuritySymbol, t.InvestmentUnits.ToString("C2"), t.InvestmentUnitPrice.ToString("C2"));
+            }
+            if (optionalColumns.HasFlag(OptionalColumnFlags.SalesTax))
+            {
+                writer.Write(",\"{0}\"", t.SalesTax.ToString("C2"));
+            }
+            if (optionalColumns.HasFlag(OptionalColumnFlags.Currency))
+            {
+                writer.Write(",\"{0}\"", t.GetAccountCurrency().Symbol);
+            }
+            writer.WriteLine(",\"{0}\"", GetMemoCsv(t));
         }
+
+        private static string GetMemoCsv(Transaction t)
+        {
+            return (t.Memo + "").Replace(",", " ");
+        }
+
 
         public static void WriteInvestmentHeader(StreamWriter writer)
         {
             writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\"",
                 "Account", "Date", "Payee", "Category", "Activity", "Symbol", "Units", "UnitPrice", "Amount", "Memo");
         }
-
-        public static void WriteInvestment(StreamWriter writer, Transaction t)
+        public static void WriteInvestment(StreamWriter writer, Investment i)
         {
+            Transaction t = i.Transaction;
             string payee = t.PayeeName;
             if (t.Transfer != null)
             {
@@ -146,21 +196,23 @@ namespace Walkabout.Data
                 tradeType, t.InvestmentSecuritySymbol, t.InvestmentUnits, t.InvestmentUnitPrice, t.Amount.ToString("C2"), GetMemoCsv(t));
         }
 
-        private static string GetMemoCsv(Transaction t)
+        public static void WriteLoanPaymentHeader(StreamWriter writer)
         {
-            return (t.Memo + "").Replace(",", " ");
+            writer.WriteLine("Date,Account,Payment,Percentage,Principal,Interest,Balance");
         }
 
-        public static void WriteInvestmentTransaction(StreamWriter writer, Transaction t)
+
+        internal static void WriteLoanPayment(StreamWriter writer, LoanPaymentAggregation l)
         {
-            // writes a non-investment transaction in the investment header format.
-            string payee = t.PayeeName;
-            if (t.Transfer != null)
-            {
-                payee = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
-            }
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",,,,,\"{4}\"",
-                t.AccountName, t.Date.ToShortDateString(), payee, t.CategoryName, t.Amount.ToString("C2"));
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}%\",\"{4}\",\"{5}\",\"{6}\"",
+                l.Date.ToShortDateString(),
+                l.Account,
+                l.Payment.ToString("C2"),
+                l.Percentage.ToString("N3"),
+                l.Principal.ToString("C2"),
+                l.Interest.ToString("C2"),
+                l.Balance.ToString("C2")
+                );
         }
 
         public virtual void Backup(string path)
@@ -240,6 +292,5 @@ namespace Walkabout.Data
 
             return total;
         }
-
     }
 }
