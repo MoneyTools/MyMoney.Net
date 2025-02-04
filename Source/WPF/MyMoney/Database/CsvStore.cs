@@ -153,7 +153,7 @@ namespace Walkabout.Data
                     tradeType = t.InvestmentType.ToString();
                 }
                 writer.Write(",\"{0}\",\"{1}\",\"{2}\",\"{3}\"",
-                    tradeType, t.InvestmentSecuritySymbol, t.InvestmentUnits.ToString("C2"), t.InvestmentUnitPrice.ToString("C2"));
+                    tradeType, t.InvestmentSecuritySymbol, t.InvestmentUnits, t.InvestmentUnitPrice.ToString("C2"));
             }
             if (optionalColumns.HasFlag(OptionalColumnFlags.SalesTax))
             {

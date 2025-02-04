@@ -3245,8 +3245,9 @@ namespace Walkabout.Views
                         }
                         if (t != null)
                         {
-                            if (t != null && tc != null)
+                            if (tc != null)
                             {
+                                bool quietDropTransaction = false;
                                 if (t.Account == this.ActiveAccount || this.ActiveAccount == null)
                                 {
                                     if (args.ChangeType == ChangeType.Deleted || args.ChangeType == ChangeType.Inserted)
@@ -3269,16 +3270,39 @@ namespace Walkabout.Views
                                     {
                                         rebalance = true;
                                     }
+                                    if (this.ActiveCategory != null && !this.ActiveCategory.Contains(t.Category))
+                                    {
+                                        // category has changed, and we are viewing by category, so remove it from this view
+                                        // but don't let the TransactionCollection think this is a delete operation!
+                                        quietDropTransaction = true;
+                                    }
+                                    else if (this.ActivePayee != null && this.ActivePayee != t.Payee)
+                                    {
+                                        // account has changed, and we are viewing by payee, so remove it from this view
+                                        // but don't let the TransactionCollection think this is a delete operation!
+                                        quietDropTransaction = true;
+                                    }
                                 }
                                 else if (this.ActiveAccount != null && t.Account != this.ActiveAccount)
                                 {
                                     // account has changed, so remove it from this view but don't let the TransactionCollection
                                     // think this is a delete operation!
+                                    quietDropTransaction = true;
+                                }
+
+                                if (quietDropTransaction)
+                                {
                                     if (tc.Contains(t))
                                     {
                                         tc.QuietDelete = true;
                                         tc.Remove(t);
                                         tc.QuietDelete = false;
+
+                                        // trigger an event to make the charts dirty.
+                                        if (ViewModelChanged != null)
+                                        {
+                                            ViewModelChanged(this, EventArgs.Empty);
+                                        }
                                     }
                                 }
                             }

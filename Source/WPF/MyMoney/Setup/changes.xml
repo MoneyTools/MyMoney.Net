@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.45" date="2/4/2025">
+    - Fix #137: expense history chart does not refresh when updating a transaction
+    - Fix #144: Stock account export missing precision
+  </change>
   <change version="2.1.0.44" date="1/21/2025">
     - Fix #138: Export switches category and payee for transfer transactions.
   </change>
