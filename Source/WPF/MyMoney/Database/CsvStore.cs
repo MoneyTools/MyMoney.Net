@@ -142,8 +142,13 @@ namespace Walkabout.Data
             {
                 payee = Walkabout.Data.Transaction.GetTransferCaption(t.Transfer.Transaction.Account, t.Amount > 0);
             }
+            // we put every column inside double quotes because some locale's use comma as a decimal separator.
             writer.Write("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\"",
-                t.AccountName, t.Date.ToShortDateString(), payee, t.CategoryName, t.Amount.ToString("C2"));
+                CsvSafeString(t.AccountName),
+                CsvSafeString(t.Date.ToShortDateString()),
+                CsvSafeString(payee),
+                CsvSafeString(t.CategoryName),
+                CsvSafeString(t.Amount.ToString("C2"))); 
 
             if (optionalColumns.HasFlag(OptionalColumnFlags.InvestmentInfo))
             {
@@ -153,24 +158,21 @@ namespace Walkabout.Data
                     tradeType = t.InvestmentType.ToString();
                 }
                 writer.Write(",\"{0}\",\"{1}\",\"{2}\",\"{3}\"",
-                    tradeType, t.InvestmentSecuritySymbol, t.InvestmentUnits, t.InvestmentUnitPrice.ToString("C2"));
+                    tradeType,
+                    CsvSafeString(t.InvestmentSecuritySymbol),
+                    CsvSafeString(t.InvestmentUnits.ToString()),
+                    CsvSafeString(t.InvestmentUnitPrice.ToString("C2")));
             }
             if (optionalColumns.HasFlag(OptionalColumnFlags.SalesTax))
             {
-                writer.Write(",\"{0}\"", t.SalesTax.ToString("C2"));
+                writer.Write(",\"{0}\"", CsvSafeString(t.SalesTax.ToString("C2")));
             }
             if (optionalColumns.HasFlag(OptionalColumnFlags.Currency))
             {
-                writer.Write(",\"{0}\"", t.GetAccountCurrency().Symbol);
+                writer.Write(",\"{0}\"", CsvSafeString(t.GetAccountCurrency().Symbol));
             }
-            writer.WriteLine(",\"{0}\"", GetMemoCsv(t));
+            writer.WriteLine(",\"{0}\"", CsvSafeString("" + t.Memo));
         }
-
-        private static string GetMemoCsv(Transaction t)
-        {
-            return (t.Memo + "").Replace(",", " ");
-        }
-
 
         public static void WriteInvestmentHeader(StreamWriter writer)
         {
@@ -192,8 +194,16 @@ namespace Walkabout.Data
             }
 
             writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\"",
-                t.AccountName, t.Date.ToShortDateString(), payee, t.CategoryName,
-                tradeType, t.InvestmentSecuritySymbol, t.InvestmentUnits, t.InvestmentUnitPrice, t.Amount.ToString("C2"), GetMemoCsv(t));
+                CsvSafeString(t.AccountName),
+                CsvSafeString(t.Date.ToShortDateString()),
+                CsvSafeString(payee),
+                CsvSafeString(t.CategoryName),
+                tradeType,
+                CsvSafeString(t.InvestmentSecuritySymbol),
+                CsvSafeString(t.InvestmentUnits.ToString()),
+                CsvSafeString(t.InvestmentUnitPrice.ToString("C2")),
+                CsvSafeString(t.Amount.ToString("C2")),
+                CsvSafeString("" + t.Memo));
         }
 
         public static void WriteLoanPaymentHeader(StreamWriter writer)
@@ -205,13 +215,13 @@ namespace Walkabout.Data
         internal static void WriteLoanPayment(StreamWriter writer, LoanPaymentAggregation l)
         {
             writer.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}%\",\"{4}\",\"{5}\",\"{6}\"",
-                l.Date.ToShortDateString(),
-                l.Account,
-                l.Payment.ToString("C2"),
-                l.Percentage.ToString("N3"),
-                l.Principal.ToString("C2"),
-                l.Interest.ToString("C2"),
-                l.Balance.ToString("C2")
+                CsvSafeString(l.Date.ToShortDateString()),
+                CsvSafeString(l.AccountName),
+                CsvSafeString(l.Payment.ToString("C2")),
+                CsvSafeString(l.Percentage.ToString("N3")),
+                CsvSafeString(l.Principal.ToString("C2")),
+                CsvSafeString(l.Interest.ToString("C2")),
+                CsvSafeString(l.Balance.ToString("C2"))
                 );
         }
 
@@ -220,6 +230,13 @@ namespace Walkabout.Data
             MessageBoxEx.Show("XML Backup is not implemented");
         }
 
+        public static string CsvSafeString(string s)
+        {
+            // everything is going inside double quotes, so we have to protect any existing double quotes
+            // which is done by replacing them with 2 quotes like this "".
+            s = s.Replace("\"", "\"\"");
+            return s;
+        }
 
         public virtual string GetLog()
         {

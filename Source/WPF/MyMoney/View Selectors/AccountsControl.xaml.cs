@@ -956,7 +956,10 @@ namespace Walkabout.Views.Controls
                 {
                     if (item is AccountItemViewModel vm)
                     {
-                        sw.WriteLine(vm.Account.Type + "," + vm.Account.Name + "," + vm.Balance);
+                        var type = vm.Account.Type;
+                        var name = CsvStore.CsvSafeString(vm.Account.Name);
+                        var balance = CsvStore.CsvSafeString(vm.Balance.ToString("C3"));
+                        sw.WriteLine($"\"{type}\",\"{name}\",\"{balance}\"");
                     }
                 }
             }
