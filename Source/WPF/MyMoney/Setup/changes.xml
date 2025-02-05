@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="2.1.0.45" date="2/4/2025">
+  <change version="2.1.0.47" date="2/4/2025">
     - Fix #137: expense history chart does not refresh when updating a transaction
     - Fix #144: Stock account export missing precision
     - Fix #145: Export account list generates non-numbers
