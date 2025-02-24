@@ -1371,10 +1371,6 @@ namespace Walkabout.Sgml
         {
             char ch = this._current.SkipWhitespace();
             string[] names = this.ParseNameGroup(ch, true);
-            if (names[0] == "TICKER")
-            {
-                Debug.WriteLine("debug me");
-            }
             ch = this._current.SkipWhitespace();
             bool sto = char.ToLower(ch) == 'o'; // start tag optional?   
             if (ch == '-' || ch == 'o' || ch == 'O')

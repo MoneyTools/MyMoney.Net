@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -649,45 +650,54 @@ namespace Walkabout.Controls
         /// </summary>
         public virtual bool MoveFocusToNextEditableField()
         {
-            if (this.SelectedItem == null)
+            if (this.SelectedItem == null || this.CurrentColumn== null)
             {
                 return false;
             }
 
-            // First check if the current column has more than one editable control.
-            FrameworkElement contentPresenter = this.CurrentColumn.GetCellContent(this.SelectedItem);
-            if (contentPresenter == null)
+            try
             {
-                return false;
-            }
-            List<Control> editors = new List<Control>();
-            WpfHelper.FindEditableControls(contentPresenter, editors);
-
-            // Move focus to the next editor in the cell if there is one.  
-            // This can happen on the "Payee/Category/Memo" column which has 3 editors in one column.
-            for (int i = 0; i < editors.Count; i++)
-            {
-                Control editor = editors[i];
-                if (editor.IsKeyboardFocusWithin && i + 1 < editors.Count)
+                // First check if the current column has more than one editable control.
+                FrameworkElement contentPresenter = this.CurrentColumn.GetCellContent(this.SelectedItem);
+                if (contentPresenter == null)
                 {
-                    editor = editors[i + 1];
-                    this.OnStartEdit(editor);
-                    return true;
+                    return false;
                 }
-            }
-            {
-                // Begin edit on the next column, and set focus on the text edit field and skip non-editable columns.
-                DataGridColumn c = this.CurrentColumn;
-                int i = this.Columns.IndexOf(c) + 1;
-                for (int n = this.Columns.Count; i < n; i++)
+                List<Control> editors = new List<Control>();
+                WpfHelper.FindEditableControls(contentPresenter, editors);
+
+                // Move focus to the next editor in the cell if there is one.  
+                // This can happen on the "Payee/Category/Memo" column which has 3 editors in one column.
+                for (int i = 0; i < editors.Count; i++)
                 {
-                    DataGridColumn next = this.Columns[i];
-                    if (next != null && !next.IsReadOnly)
+                    Control editor = editors[i];
+                    if (editor.IsKeyboardFocusWithin && i + 1 < editors.Count)
                     {
-                        this.CurrentColumn = next;
+                        editor = editors[i + 1];
+                        this.OnStartEdit(editor);
                         return true;
                     }
                 }
+
+                {
+                    // Begin edit on the next column, and set focus on the text edit field and skip non-editable columns.
+                    DataGridColumn c = this.CurrentColumn;
+                    int i = this.Columns.IndexOf(c) + 1;
+                    for (int n = this.Columns.Count; i < n; i++)
+                    {
+                        DataGridColumn next = this.Columns[i];
+                        if (next != null && !next.IsReadOnly)
+                        {
+                            this.CurrentColumn = next;
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Unhandled exception in MoveFocusToNextEditableField: " + ex.Message);
+                // customers reporting NullReferenceExceptions from this code, so protecting it with try/catch.
             }
             return false;
         }

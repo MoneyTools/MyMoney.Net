@@ -55,6 +55,7 @@ namespace Walkabout.Commands
         public static readonly RoutedUICommand CommandAddSampleData;
         public static readonly RoutedUICommand CommandTroubleshootCheckTransfer;
         public static readonly RoutedUICommand CommandViewChanges;
+        public static readonly RoutedUICommand CommandViewLogs;
 
         // ContextMenu on Graphs & Charts
         public static readonly RoutedUICommand CommandYearToDate;
@@ -124,6 +125,7 @@ namespace Walkabout.Commands
             CommandAddSampleData = new RoutedUICommand("AddSampleData", "Add Sample Data", typeof(AppCommands));
             CommandTroubleshootCheckTransfer = new RoutedUICommand("TroubleshootCheckTransfer", "Check Transfer", typeof(AppCommands));
             CommandViewChanges = new RoutedUICommand("CommandViewChanges", "View Changes", typeof(AppCommands));
+            CommandViewLogs = new RoutedUICommand("CommandViewLogs", "View Logs", typeof(AppCommands));
 
             // Cusrtom Report range dialog
             CommandYearToDate = new RoutedUICommand("Year to date", "CommandYearToDate", typeof(AppCommands));

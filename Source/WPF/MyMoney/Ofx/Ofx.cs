@@ -9,11 +9,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
+using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -217,6 +219,7 @@ namespace Walkabout.Ofx
         private readonly MyMoney myMoney;
         private readonly OfxRequest.PickAccountDelegate resolverWhenMissingAccountId;
         private readonly Dispatcher dispatcher;
+        private ILogger log;
 
         public OfxThread(MyMoney myMoney, IList list, string[] files, OfxRequest.PickAccountDelegate resolverWhenMissingAccountId, Dispatcher uiThreadDispatcher)
         {
@@ -225,6 +228,7 @@ namespace Walkabout.Ofx
             this.files = files;
             this.resolverWhenMissingAccountId = resolverWhenMissingAccountId;
             this.dispatcher = uiThreadDispatcher;
+            this.log = Log.GetLogger("OfxThread");
         }
 
         public void Start()
@@ -328,6 +332,7 @@ namespace Walkabout.Ofx
                         }
                         catch (Exception ex)
                         {
+                            this.log.Error($"Error loading file: {fname}", ex);
                             se.Error = ex;
                             se.Message = "Error loading file";
                         }
@@ -336,6 +341,7 @@ namespace Walkabout.Ofx
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error($"Error loading file: {fname}", ex);
                     se.Error = ex;
                     se.Message = "Error opening import file";
                     MessageBoxEx.Show("Error opening import file", null, ex.Message, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -491,6 +497,7 @@ namespace Walkabout.Ofx
         private readonly HashSet<string> skippedAccounts = new HashSet<string>();
         private CancellationTokenSource cancellation = new CancellationTokenSource();
         private HashSet<string> currencyErrors = new HashSet<string>();
+        private ILogger log;
 
 
         public OfxRequest(OnlineAccount oa, MyMoney m, PickAccountDelegate resolveMissingAccountId)
@@ -498,6 +505,7 @@ namespace Walkabout.Ofx
             this.onlineAccount = oa;
             this.myMoney = m;
             this.callerPickAccount = resolveMissingAccountId;
+            this.log = Log.GetLogger("OfxRequest");
         }
 
         private static string ofxLogPath;
@@ -1000,8 +1008,9 @@ NEWFILEUID:{1}
                         {
                             errormsg = await response.Content.ReadAsStringAsync();
                         }
-                        catch
+                        catch (Exception ex)
                         {
+                            this.log.Error($"Error with web request: {uri}", ex);
                         }
                         throw new OfxException(errormsg, response.StatusCode.ToString(), response.ReasonPhrase, response.Headers.ToString());
                     }
@@ -1015,19 +1024,14 @@ NEWFILEUID:{1}
                     }
                     catch (Exception e)
                     {
-                        //if (e.Response != null)
-                        //{
-                        //    resp = (HttpWebResponse)e.Response;
-                        //    string headers = GetHttpHeaders(resp);
-                        //    throw new OfxException(e.Message, resp.StatusDescription, GetResponseBody(resp), headers);
-                        //}
-                        Debug.WriteLine("Caught exception " + e.GetType().FullName);
+                        this.log.Error($"Error with web request: {uri}", e);
                         throw;
                     }
                 }
             }
             catch (Exception ex)
             {
+                this.log.Error($"Error with web request: {uri}", ex);
                 throw new OfxException(ex.Message);
             }
         }
@@ -1065,7 +1069,7 @@ NEWFILEUID:{1}
             return result;
         }
 
-        public static OFX LoadCachedProfile(MyMoney money, OnlineAccount oa)
+        public OFX LoadCachedProfile(MyMoney money, OnlineAccount oa)
         {
             string profilePath = Path.Combine(OfxLogPath, OfxRequest.GetLogfileName(money, oa) + "PROF_RS.xml");
             if (File.Exists(profilePath))
@@ -1073,7 +1077,7 @@ NEWFILEUID:{1}
                 try
                 {
                     XDocument doc = XDocument.Load(profilePath);
-                    OFX ofx = DeserializeOfxResponse(doc);
+                    OFX ofx = this.DeserializeOfxResponse(doc);
                     return ofx;
                 }
                 catch
@@ -1113,7 +1117,7 @@ NEWFILEUID:{1}
             {
                 doc = await this.SendOfxRequest(doc);
                 // deserialize response into our OfxProfile structure.
-                ofx = DeserializeOfxResponse(doc);
+                ofx = this.DeserializeOfxResponse(doc);
 
                 this.CheckSignOnStatusError(ofx);
             }
@@ -1123,7 +1127,7 @@ NEWFILEUID:{1}
                 {
                     // then return the cached profile.
                     doc = XDocument.Load(cache);
-                    ofx = DeserializeOfxResponse(doc);
+                    ofx = this.DeserializeOfxResponse(doc);
                 }
                 else
                 {
@@ -1134,13 +1138,15 @@ NEWFILEUID:{1}
 
             if (ofx.ProfileMessageSet == null || ofx.ProfileMessageSet.ProfileMessageResponse == null)
             {
+                this.log.Error($"Error missing profile", null);
                 throw new OfxException("Missing profile response");
             }
 
             var msgset = ofx.ProfileMessageSet;
             var profileStatus = msgset.ProfileMessageResponse.OfxStatus;
             if (profileStatus == null)
-            {
+            { 
+                this.log.Error($"Error missing profile status", null);
                 throw new OfxException("Missing profile response status");
             }
 
@@ -1149,7 +1155,7 @@ NEWFILEUID:{1}
             {
                 // then latest profile is up to date.
                 doc = XDocument.Load(cache);
-                ofx = DeserializeOfxResponse(doc);
+                ofx = this.DeserializeOfxResponse(doc);
             }
             else
             {
@@ -1276,7 +1282,7 @@ NEWFILEUID:{1}
             return doc;
         }
 
-        internal static OFX DeserializeOfxResponse(XDocument doc)
+        internal OFX DeserializeOfxResponse(XDocument doc)
         {
             try
             {
@@ -1289,8 +1295,9 @@ NEWFILEUID:{1}
                 }
                 return ofx;
             }
-            catch
+            catch (Exception ex)
             {
+                this.log.Error($"Error parsing OFX response", ex);
                 throw new OfxException("Error parsing OFX response", "Error", doc.ToString(), null);
             }
         }
@@ -1335,7 +1342,6 @@ NEWFILEUID:{1}
 
             if (e != null)
             {
-                Debug.WriteLine(e.Message);
                 // try a different version of OFX
                 string version = oa.OfxVersion;
                 oa.OfxVersion = version.StartsWith("2") ? "1" : "2";
@@ -1343,8 +1349,9 @@ NEWFILEUID:{1}
                 {
                     result = await this.InternalSignup(oa);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    this.log.Error($"Error with sign up request", ex);
                     // still didn't work, so put it back the way it was
                     oa.OfxVersion = version;
                     throw;
@@ -1354,9 +1361,11 @@ NEWFILEUID:{1}
             return result;
         }
 
-        public static OfxSignOnInfo GetSignonInfo(MyMoney money, OnlineAccount oa)
+        public OfxSignOnInfo GetSignonInfo()
         {
-            var ofxProfile = LoadCachedProfile(money, oa);
+            var money = this.myMoney;
+            var oa = this.onlineAccount;
+            var ofxProfile = this.LoadCachedProfile(money, oa);
             if (ofxProfile != null && ofxProfile.ProfileMessageSet != null)
             {
                 ProfileMessageResponse msgResponse = ofxProfile.ProfileMessageSet.ProfileMessageResponse;
@@ -1392,7 +1401,7 @@ NEWFILEUID:{1}
 
             this.OfxCachePath = SaveLog(doc, this.GetLogfileName(this.onlineAccount) + "SIGNUP_RS.xml");
 
-            OFX ofx = DeserializeOfxResponse(doc);
+            OFX ofx = this.DeserializeOfxResponse(doc);
 
             OfxException e = this.GetSignOnStatusError(ofx);
 
@@ -1552,6 +1561,7 @@ NEWFILEUID:{1}
                     {
                         ea = oe.Account;
                     }
+                    this.log.Error($"Error synchronizing accounts", ex);
                     results.AddError(this.onlineAccount, ea, ex);
                 }
             }));
@@ -1702,9 +1712,11 @@ NEWFILEUID:{1}
                                         {
                                             enc = Encoding.GetEncoding(value);
                                         }
-                                        catch
+                                        catch (Exception ex)
                                         {
-                                            throw new OfxException("Unsupported encoding: " + value + " found in Ofx response");
+                                            var msg = $"Unsupported encoding: {value} found in Ofx response";
+                                            this.log.Error(msg, ex);
+                                            throw new OfxException(msg);
                                         }
                                     }
                                 }
@@ -1724,9 +1736,11 @@ NEWFILEUID:{1}
                                         {
                                             enc = Encoding.GetEncoding(value);
                                         }
-                                        catch (Exception)
+                                        catch (Exception ex)
                                         {
-                                            throw new OfxException("Unsupported character set: " + value + " found in Ofx response");
+                                            var msg = "Unsupported character set: " + value + " found in Ofx response";
+                                            this.log.Error(msg, ex);
+                                            throw new OfxException(msg);
                                         }
                                     }
                                 }

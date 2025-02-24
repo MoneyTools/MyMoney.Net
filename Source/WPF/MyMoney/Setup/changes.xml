@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.48" date="2/23/2025">
+    - Fix #152: CSV import should ignore currency symbols.
+    - Fix #150: unhandled exception
+    - Fix #149: export of an account fails with error popup
+    - Fix #147: scrolling during reconcile
+    - Fix #146: unnecessary error popups doing category change
+    - Fix #143: Feature - export accounts - currency, start and end
+    - Feature: add logging to %TEMP%\MyMoney\Logs
+  </change>
   <change version="2.1.0.47" date="2/4/2025">
     - Fix #137: expense history chart does not refresh when updating a transaction
     - Fix #144: Stock account export missing precision

@@ -821,6 +821,22 @@ namespace Walkabout.Data
             this.LazyInitialize();
             this.payeeAccountIndex.Reload();
             this.Transactions.JoinExtras(this.TransactionExtras);
+
+            HashSet<string> dups = new HashSet<string>();
+            Regex stripWs = new Regex("[\\s]+");
+            foreach (var p in this.Payees.GetPayees())
+            {
+                var name = stripWs.Replace(p.Name, "");
+                if (dups.Contains(name))
+                {
+                    Debug.WriteLine("Duplicate name: " + name);
+                }
+                else
+                {
+                    dups.Add(name);
+                }
+            }
+
             this.WatchChanges();
         }
 
@@ -2487,7 +2503,7 @@ namespace Walkabout.Data
         // There is a hole here from deleted type which we can fill when we invent new types, but the types 8-10 have to keep those numbers        
         // or else we mess up the existing databases.
         Asset = 8,              // Used for tracking Assets like "House, Car, Boat, Jewelry, this helps to make NetWorth more accurate
-        // CategoryFund = 9 must leave a hole here for data compatibility.        
+        CategoryFund = 9, // unused, but must leave a hole here for data compatibility.        
         Loan = 10,
         CreditLine = 11
     }
@@ -4609,11 +4625,15 @@ namespace Walkabout.Data
 
         public Currency FindCurrencyOrDefault(string currencySymbol)
         {
+            Currency c = null;
             if (String.IsNullOrEmpty(currencySymbol))
             {
-                return this.FindCurrency("USD");
+                c = this.FindCurrency("USD");
             }
-            var c = this.FindCurrency(currencySymbol);
+            else
+            {
+                c = this.FindCurrency(currencySymbol);
+            }
             if (c == null)
             {
                 c = GetDefaultCurrency();
@@ -4747,6 +4767,8 @@ namespace Walkabout.Data
         private int nextPayee;
         private Hashtable<int, Payee> payees = new Hashtable<int, Payee>();
         private Hashtable<string, Payee> payeeIndex = new Hashtable<string, Payee>();
+        private Regex replaceWhitespaces = new Regex("[\\s]+");
+
 
         public Payees()
         {
@@ -4835,6 +4857,7 @@ namespace Walkabout.Data
             {
                 return null;
             }
+            name = replaceWhitespaces.Replace(name, " ");
             // find or add account of given name
             Payee result = this.payeeIndex[name];
             if (result == null && add)

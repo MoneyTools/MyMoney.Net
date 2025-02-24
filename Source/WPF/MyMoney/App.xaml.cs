@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Threading;
 using System.Xml.Linq;
 using Walkabout.Configuration;
 using Walkabout.Help;
@@ -23,6 +26,10 @@ namespace Walkabout
     /// </summary>
     public partial class App : Application
     {
+        private ILogger rootLog;
+        private Log appLog;
+        private string logsLocation;
+
         private void MyApplicationStartup(object sender, StartupEventArgs e)
         {
             Settings settings = null;
@@ -31,6 +38,16 @@ namespace Walkabout
             using (PerformanceBlock.Create(ComponentId.Money, CategoryId.View, MeasurementId.AppInitialize))
             {
 #endif
+            var path = Path.Combine(Path.GetTempPath(), "MyMoney");
+            var logs = Path.Combine(path, "Logs");
+            Directory.CreateDirectory(logs);
+            this.rootLog = new Log(logs);
+            this.appLog = Log.GetLogger("App");
+            Log.CheckCrashLog(path);
+
+            Debug.WriteLine($"Writing logs to {logs}");
+            appLog.Info("Launching MyMoney.Net");
+
             HelpService.Initialize();
 
             Process currentRunningInstanceOfMyMoney = null;
@@ -61,7 +78,11 @@ namespace Walkabout
             }
 
             // Load the application settings
-            settings = LoadSettings(noSettings);
+            settings = this.LoadSettings(noSettings);
+
+            System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.OnAppDomainUnhandledException);
+            TaskScheduler.UnobservedTaskException += this.TaskScheduler_UnobservedTaskException1;
 
 #if PerformanceBlocks
             }
@@ -72,7 +93,15 @@ namespace Walkabout
             mainWindow.Show();
         }
 
-        public static Settings LoadSettings(bool noSettings)
+        protected override void OnExit(ExitEventArgs e)
+        {
+            this.appLog?.Info($"App terminating with exit code {e.ApplicationExitCode}");
+            this.appLog?.Dispose();
+            this.rootLog?.Dispose();
+            base.OnExit(e);
+        }
+
+        public Settings LoadSettings(bool noSettings)
         {
             // make sure the directory exists.
             ProcessHelper.CreateSettingsDirectory();
@@ -100,7 +129,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("### Error reading settings: " + ex.Message);
+                this.appLog.Error("### Error reading settings: " + ex.Message);
             }
 
             Settings.TheSettings = s;
@@ -214,12 +243,115 @@ namespace Walkabout
             return null;
         }
 
+        // stop re-entrancy
+        private bool handlingException;
 
+        private void OnUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            this.appLog.Error("Unhandled app exception", e.Exception);
+            if (this.handlingException)
+            {
+                e.Handled = false;
+            }
+            else
+            { 
+                this.handlingException = true;
+                UiDispatcher.Invoke(new Action(() =>
+                {
+                    try
+                    {
+                        e.Handled = this.HandleUnhandledException(e.Exception);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    this.handlingException = false;
+                }));
+            }
+        }
 
+        private void OnAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            this.appLog.Error("Unhandled app domain exception", e.ExceptionObject as Exception);
+            if (!this.handlingException)
+            {
+                this.handlingException = true;
+                UiDispatcher.Invoke(new Action(() =>
+                {
+                    try
+                    {
+                        this.HandleUnhandledException(e.ExceptionObject);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    this.handlingException = false;
+                }));
+            }
+        }
 
+        private void TaskScheduler_UnobservedTaskException1(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            this.appLog.Error("Unhandled task scheduler exception", e.Exception);
+            if (!this.handlingException)
+            {
+                this.handlingException = true;
+                e.SetObserved();
+                UiDispatcher.Invoke(new Action(() =>
+                {
+                    try
+                    {
+                        this.HandleUnhandledException(e.Exception);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    this.handlingException = false;
+                }));
+            }
+        }
 
+        public bool HandleUnhandledException(object exceptionObject)
+        {
+            Exception ex = exceptionObject as Exception;
+            string message = null;
+            string details = null;
+            if (ex == null && exceptionObject != null)
+            {
+                ex = new Exception(exceptionObject.GetType().FullName + ": " + exceptionObject.ToString());
+            }
+
+            message = ex.Message;
+            details = ex.ToString();
+
+            try
+            {
+                MessageBoxEx.Show(message + " - " + Log.ReportLogging, "Unhandled Exception", details, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                MainWindow mw = (MainWindow)Application.Current.MainWindow;
+                if (mw != null && mw.IsVisible)
+                {
+                    mw.SaveIfDirty("Unhandled exception, do you want to save your changes?", null);
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                // hmmm, if we can't show the dialog then perhaps this is some sort of stack overflow.
+                // save the details to a file, terminate the process 
+                this.appLog.FatalUnhandledException(message, ex);
+                return false;
+            }
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                this.HandleUnhandledException(e.Exception);
+            }
+            e.SetObserved();
+        }
 
     }
-
-
 }

@@ -951,15 +951,18 @@ namespace Walkabout.Views.Controls
         {
             using (StreamWriter sw = new StreamWriter(fileName))
             {
-                sw.WriteLine("Type,Account,Balance");
-                foreach (var item in this.items)
+                sw.WriteLine("Type,Account,Closed,Currency,Balance,LastBalanceDate");
+                foreach (var account in this.MyMoney.Accounts.GetAccounts())
                 {
-                    if (item is AccountItemViewModel vm)
+                    var type = account.Type;
+                    if (type != AccountType.CategoryFund)
                     {
-                        var type = vm.Account.Type;
-                        var name = CsvStore.CsvSafeString(vm.Account.Name);
-                        var balance = CsvStore.CsvSafeString(vm.Balance.ToString("C3"));
-                        sw.WriteLine($"\"{type}\",\"{name}\",\"{balance}\"");
+                        var name = CsvStore.CsvSafeString(account.Name);
+                        var balance = CsvStore.CsvSafeString(account.Balance.ToString("C3"));
+                        var currency = account.GetCurrency().Symbol;
+                        var closed = account.IsClosed;
+                        var lastBalance = account.LastBalance;
+                        sw.WriteLine($"\"{type}\",\"{name}\",\"{closed}\",\"{currency}\",\"{balance}\",\"{lastBalance}\"");
                     }
                 }
             }

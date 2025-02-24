@@ -171,7 +171,7 @@ namespace Walkabout.Data
             {
                 writer.Write(",\"{0}\"", CsvSafeString(t.GetAccountCurrency().Symbol));
             }
-            writer.WriteLine(",\"{0}\"", CsvSafeString("" + t.Memo));
+            writer.WriteLine(",\"{0}\"", CsvSafeString(t.Memo));
         }
 
         public static void WriteInvestmentHeader(StreamWriter writer)
@@ -203,7 +203,7 @@ namespace Walkabout.Data
                 CsvSafeString(t.InvestmentUnits.ToString()),
                 CsvSafeString(t.InvestmentUnitPrice.ToString("C2")),
                 CsvSafeString(t.Amount.ToString("C2")),
-                CsvSafeString("" + t.Memo));
+                CsvSafeString(t.Memo));
         }
 
         public static void WriteLoanPaymentHeader(StreamWriter writer)
@@ -232,6 +232,10 @@ namespace Walkabout.Data
 
         public static string CsvSafeString(string s)
         {
+            if (string.IsNullOrEmpty(s))
+            {
+                return "";
+            }
             // everything is going inside double quotes, so we have to protect any existing double quotes
             // which is done by replacing them with 2 quotes like this "".
             s = s.Replace("\"", "\"\"");

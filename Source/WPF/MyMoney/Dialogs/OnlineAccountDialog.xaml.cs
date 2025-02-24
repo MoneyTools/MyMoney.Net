@@ -666,7 +666,8 @@ namespace Walkabout.Dialogs
 
             try
             {
-                var info = OfxRequest.GetSignonInfo(this.money, this.editing);
+                var req = new OfxRequest(this.editing, this.money, null);
+                var info = req.GetSignonInfo();
 
                 if (info.AuthTokenRequired.ConvertYesNoToBoolean() && string.IsNullOrEmpty(this.editing.AuthToken))
                 {
@@ -837,7 +838,8 @@ namespace Walkabout.Dialogs
                 OfxErrorCode code = this.GetSignOnCode(ex.Root);
                 if ((code == OfxErrorCode.AUTHTOKENRequired && string.IsNullOrWhiteSpace(this.editing.AuthToken)) || code == OfxErrorCode.AUTHTOKENInvalid)
                 {
-                    var info = OfxRequest.GetSignonInfo(this.money, this.editing);
+                    var req = new OfxRequest(this.editing, this.money, null);
+                    var info = req.GetSignonInfo();
                     if (info != null)
                     {
                         if (!this.PromptForAuthToken(info, code))
@@ -870,7 +872,9 @@ namespace Walkabout.Dialogs
                 }
                 else if (code == OfxErrorCode.SignonInvalid)
                 {
-                    this.PromptForPassword(OfxRequest.GetSignonInfo(this.money, this.editing), null, code, ex.Message, continuation);
+                    var req = new OfxRequest(this.editing, this.money, null);
+                    var info = req.GetSignonInfo();
+                    this.PromptForPassword(info, null, code, ex.Message, continuation);
                     return;
                 }
             }
@@ -956,7 +960,8 @@ namespace Walkabout.Dialogs
 
         private void PromptForNewPassword(Action continuation)
         {
-            var info = OfxRequest.GetSignonInfo(this.money, this.editing);
+            var req = new OfxRequest(this.editing, this.money, null);
+            var info = req.GetSignonInfo();
 
             ChangePasswordDialog dialog = new ChangePasswordDialog(info, this.editing, this.money);
             dialog.Owner = this;

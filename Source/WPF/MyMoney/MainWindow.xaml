@@ -96,6 +96,7 @@
     <CommandBinding Command="p:AppCommands.CommandAddSampleData" Executed="OnCommandAddSampleData"/>
     <CommandBinding Command="p:AppCommands.CommandTroubleshootCheckTransfer" Executed="OnCommandTroubleshootCheckTransfer"/>
     <CommandBinding Command="p:AppCommands.CommandViewChanges" Executed="OnCommandViewChanges"/>
+    <CommandBinding Command="p:AppCommands.CommandViewLogs" Executed="OnCommandViewLogs"/>
 
   </Window.CommandBindings>
 
@@ -229,6 +230,8 @@
             <Separator/>
             <MenuItem x:Name="MenuSampleData" Header="_Add Sample Data..." Command="p:AppCommands.CommandAddSampleData" ToolTip="This command populates an empty database with data generated from a sample histogram"/>
             <MenuItem x:Name="MenuExportSampleData" Header="Export Sample Data..." Click="MenuExportSampleData_Click" ToolTip="This command creates a sample histogram from your real data for use in creating sample databases"/>
+            <Separator/>
+            <MenuItem x:Name="MenuItemViewLogs" Header="View _Logs" Command="p:AppCommands.CommandViewLogs" ToolTip="Open the log folder"/>
           </MenuItem>
 
         </Menu>

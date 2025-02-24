@@ -61,6 +61,7 @@ namespace Walkabout
         private bool canSave;
         private IDatabase database;
         private DatabaseSettings databaseSettings = new DatabaseSettings();
+        private ILogger log = Log.GetLogger("MainWindow");
 
         internal MyMoney myMoney = new MyMoney();
         private ChangeTracker tracker;
@@ -124,12 +125,6 @@ namespace Walkabout
 
             this.navigator = new UndoManager(1000); // view state stack
             this.manager = new UndoManager(1000);
-
-
-            System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.OnUnhandledException);
-            App.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(this.OnDispatcherUnhandledException);
-            TaskScheduler.UnobservedTaskException += this.TaskScheduler_UnobservedTaskException;
 
             this.InitializeComponent();
 
@@ -315,6 +310,7 @@ namespace Walkabout
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Error saving updated database settings", ex);
                     MessageBoxEx.Show("Error saving updated database settings: " + ex.Message, "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }, TimeSpan.FromSeconds(1));
@@ -519,116 +515,6 @@ namespace Walkabout
             this.SetChartsDirty();
         }
 
-        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            // Log it to error window instead of crashing the app
-            if (e.IsTerminating)
-            {
-                string msg = null;
-                if (e.ExceptionObject != null)
-                {
-                    msg = "The reason is:\n" + e.ExceptionObject.ToString();
-                }
-
-                this.SaveIfDirty("The program is terminating, do you want to save your changes?", msg);
-            }
-            else if (e.ExceptionObject != null)
-            {
-                this.HandleUnhandledException(e.ExceptionObject);
-            }
-        }
-
-        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-        {
-            if (e.Exception != null)
-            {
-                this.HandleUnhandledException(e.Exception);
-            }
-            e.SetObserved();
-        }
-
-        // stop re-entrancy
-        private bool handlingException;
-
-        private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
-            if (this.handlingException)
-            {
-                e.Handled = false;
-            }
-            else
-            {
-                this.handlingException = true;
-                UiDispatcher.Invoke(new Action(() =>
-                {
-                    try
-                    {
-                        e.Handled = this.HandleUnhandledException(e.Exception);
-                    }
-                    catch (Exception)
-                    {
-                    }
-                    this.handlingException = false;
-                }));
-            }
-        }
-
-        private bool HandleUnhandledException(object exceptionObject)
-        {
-            Exception ex = exceptionObject as Exception;
-            string message = null;
-            string details = null;
-            if (ex == null && exceptionObject != null)
-            {
-                message = exceptionObject.GetType().FullName;
-                details = exceptionObject.ToString();
-            }
-            else
-            {
-                message = ex.Message;
-                details = ex.ToString();
-            }
-
-            try
-            {
-                MessageBoxEx.Show(message, "Unhandled Exception - Please email details to Chris", details, MessageBoxButton.OK, MessageBoxImage.Error);
-                return true;
-            }
-            catch (Exception)
-            {
-                // hmmm, if we can't show the dialog then perhaps this is some sort of stack overflow.
-                // save the details to a file, terminate the process and 
-                this.SaveCrashLog(message, details);
-            }
-            return false;
-        }
-
-        private void SaveCrashLog(string message, string details)
-        {
-            string path = this.database.DatabasePath;
-            string crashFile = Path.Combine(Path.GetDirectoryName(path), "crash.xml");
-            XDocument doc = new XDocument(new XElement("Crash",
-                new XElement("Message", message),
-                new XElement("Details", details)));
-            doc.Save(crashFile);
-        }
-
-        private void CheckCrashLog()
-        {
-            string path = this.database.DatabasePath;
-            string crashFile = Path.Combine(Path.GetDirectoryName(path), "crash.xml");
-            if (File.Exists(crashFile))
-            {
-                XDocument doc = XDocument.Load(crashFile);
-                File.Delete(crashFile);
-
-                string message = (string)doc.Root.Element("Message");
-                string details = (string)doc.Root.Element("Details");
-
-                MessageBoxEx.Show(message, "Money app crashed previously - Please email details to Chris", details, MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
         private void StopTracking()
         {
             using (this.tracker)
@@ -819,8 +705,6 @@ namespace Walkabout
             this.CheckLastVersion();
 
             this.StartTracking();
-
-            this.CheckCrashLog();
         }
 
         private void OnStockDownloadComplete(object sender, EventArgs e)
@@ -917,6 +801,10 @@ namespace Walkabout
 /h        Show this help page", "Command Line Help", MessageBoxButton.OK, MessageBoxImage.None);
         }
 
+        private void OnCommandViewLogs(object sender, ExecutedRoutedEventArgs e)
+        {
+            NativeMethods.ShellExecute(IntPtr.Zero, "Open", log.LogPath, "", "", NativeMethods.SW_SHOWNORMAL);
+        }
         #endregion
 
         #region Toolbox Selection change events
@@ -977,7 +865,6 @@ namespace Walkabout
             var count = this.myMoney.TotalChangeListenerCount;
             if (count != this.lastHandlerCount)
             {
-                Debug.WriteLine($"Number of listeners changed from {this.lastHandlerCount} to {count}");
                 this.lastHandlerCount = count;
             }
 #endif
@@ -1378,10 +1265,6 @@ namespace Walkabout
 
         private void Back()
         {
-            //Debug.WriteLine("");
-            //Debug.WriteLine("------------------------------------------------------------");
-            //Debug.WriteLine("****** Main window Back button was pressed, current view is " + ((IView)this.CurrentView).Caption);
-
             if (this.navigator.Current == null)
             {
                 // Current == null just means we are at the front of the back/forward history (there is nothing to go forwards to).
@@ -1591,6 +1474,7 @@ namespace Walkabout
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Error saving updated settings", ex);
                     MessageBoxEx.Show("Error saving updated settings: " + ex.Message, "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -1714,7 +1598,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
-
+                this.log.Error("Error while importing", ex);
                 MessageBoxEx.Show(ex.Message, "Error while attempting to import", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -1752,6 +1636,7 @@ namespace Walkabout
                     }
                     catch (Exception ex)
                     {
+                        this.log.Error("Import Error", ex);
                         MessageBoxEx.Show(ex.Message, "Import Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     }
                 }
@@ -1862,9 +1747,10 @@ namespace Walkabout
                         this.LoadImportFiles();
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    MessageBoxEx.Show(e.Message, "Error Loading Database", MessageBoxButton.OK, MessageBoxImage.Error);
+                    this.log.Error("Error Loading Database", ex);
+                    MessageBoxEx.Show(ex.Message, "Error Loading Database", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             finally
@@ -2013,10 +1899,11 @@ namespace Walkabout
 
                 watch.Stop();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                this.log.Error("Error Loading Database", ex);
                 this.ShowMessage("");
-                MessageBoxEx.Show(e.Message, "Error Loading Database", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxEx.Show(ex.Message, "Error Loading Database", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 #if PerformanceBlocks
             }
@@ -2069,6 +1956,7 @@ namespace Walkabout
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Error saving updated settings", ex);
                     MessageBoxEx.Show("Error saving updated settings: " + ex.Message, "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -2147,6 +2035,7 @@ namespace Walkabout
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Error creating new database", ex);
                     MessageBoxEx.Show(ex.Message, "Create Error", MessageBoxButton.OKCancel, MessageBoxImage.Error);
                     return false;
                 }
@@ -2198,6 +2087,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
+                this.log.Error("Error creating new database", ex);
                 MessageBoxEx.Show(ex.ToString(), "Error creating new database", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -2222,6 +2112,7 @@ namespace Walkabout
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Error opening database", ex);
                     MessageBoxEx.Show(ex.ToString(), "Error opening database", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -2282,9 +2173,10 @@ namespace Walkabout
                 }
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                MessageBoxEx.Show(e.Message, "Error saving data", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.log.Error("Error updating database", ex);
+                MessageBoxEx.Show(ex.Message, "Error saving data", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             finally
@@ -2359,6 +2251,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
+                this.log.Error("Error saving new database", ex);
                 MessageBoxEx.Show(ex.Message, "Error Saving", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -2393,6 +2286,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
+                this.log.Error("Error saving xml", ex);
                 MessageBoxEx.Show(ex.Message, "Error Saving", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -2417,6 +2311,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
+                this.log.Error("Error saving binary xml", ex);
                 MessageBoxEx.Show(ex.Message, "Error Saving", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -3312,6 +3207,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
+                this.log.Error("Error during query", ex);
                 MessageBoxEx.Show(ex.ToString(), "Unhandled Exception", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -3501,6 +3397,7 @@ namespace Walkabout
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Copy Error", ex);
                     MessageBoxEx.Show(ex.Message, "Copy Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -3526,6 +3423,7 @@ namespace Walkabout
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Paste Error", ex);
                     MessageBoxEx.Show(ex.Message, "Paste Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -3551,6 +3449,7 @@ namespace Walkabout
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Delete Error", ex);
                     MessageBoxEx.Show(ex.Message, "Delete Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -3875,6 +3774,7 @@ namespace Walkabout
                         }
                         catch (Exception ex)
                         {
+                            this.log.Error("Import Error", ex);
                             MessageBoxEx.Show(ex.Message, "Import Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         }
 
@@ -3949,6 +3849,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
+                this.log.Error("Import Error", ex);
                 MessageBoxEx.Show(ex.Message, "Import Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
             return count;
@@ -4020,9 +3921,10 @@ namespace Walkabout
 
                 MessageBoxEx.Show("File type .qif, .qfx, .ofx and .mmdb are now associated with this application");
             }
-            catch (Exception exp)
+            catch (Exception ex)
             {
-                MessageBoxEx.Show(exp.Message, "Error changing file associations", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.log.Error("Error changing file associations", ex);
+                MessageBoxEx.Show(ex.Message, "Error changing file associations", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -4072,6 +3974,7 @@ namespace Walkabout
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Backup Error", ex);
                     MessageBoxEx.Show(ex.Message, "Backup Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 finally
@@ -4241,6 +4144,7 @@ namespace Walkabout
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Error changing password on database", ex);
                     MessageBoxEx.Show(ex.Message, "Error changing password on database", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -4672,9 +4576,9 @@ namespace Walkabout
                     return doc;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                //MessageBoxEx.Show("Internal error parsing Walkabout.Setup.changes.xml");
+                this.log.Error("Internal error parsing Walkabout.Setup.changes.xml", ex);
             }
 
             return null;
@@ -4741,7 +4645,7 @@ namespace Walkabout
             }
             catch (Exception ex)
             {
-                Trace.WriteLine("SaveConfig failed: " + ex.Message);
+                this.log.Error("SaveConfig failed", ex);
             }
 
             TempFilesManager.Shutdown();

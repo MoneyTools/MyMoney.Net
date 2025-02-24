@@ -278,7 +278,8 @@ h2 { font-size: 12pt; }";
 
         private void GetNewPassword(OfxDownloadData ofxData)
         {
-            var info = OfxRequest.GetSignonInfo(this.myMoney, ofxData.OnlineAccount);
+            var req = new OfxRequest(ofxData.OnlineAccount, this.myMoney, null);
+            var info = req.GetSignonInfo();
 
             ChangePasswordDialog dialog = new ChangePasswordDialog(info, ofxData.OnlineAccount, this.myMoney);
             dialog.Owner = Application.Current.MainWindow;
@@ -306,7 +307,8 @@ h2 { font-size: 12pt; }";
 
         private void GetLogin(OfxDownloadData ofxData)
         {
-            var info = OfxRequest.GetSignonInfo(this.myMoney, ofxData.OnlineAccount);
+            var req = new OfxRequest(ofxData.OnlineAccount, this.myMoney, null);
+            var info = req.GetSignonInfo();
 
             string msg = (ofxData.Error != null) ? ofxData.Error.Message : null;
 
@@ -388,7 +390,8 @@ h2 { font-size: 12pt; }";
 
         private void GetAuthenticationToken(OfxDownloadData ofxData, OfxErrorCode code)
         {
-            var info = OfxRequest.GetSignonInfo(this.myMoney, ofxData.OnlineAccount);
+            var req = new OfxRequest(ofxData.OnlineAccount, this.myMoney, null);
+            var info = req.GetSignonInfo();
             if (info != null)
             {
                 this.PromptForAuthToken(ofxData, info, code);

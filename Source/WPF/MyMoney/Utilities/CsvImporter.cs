@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Data;
@@ -63,6 +64,7 @@ namespace Walkabout.Migrate
         private readonly Account account;
         private readonly CsvMap map;
         private readonly List<TBag> typedData = new List<TBag>();
+        private readonly Regex numericRegex = new Regex(@"([+-]?[\d,.]+)");
 
         // this is what we "can" import...
         private readonly string[] fields = new string[] { "Date", "Payee", "Memo", "Amount" };
@@ -255,7 +257,8 @@ namespace Walkabout.Migrate
                     t.Memo = value;
                     break;
                 case "Amount":
-                    if (decimal.TryParse(value, out decimal amount))
+                    var match = numericRegex.Match(value);
+                    if (match.Success && decimal.TryParse(match.Groups[1].Value, out decimal amount))
                     {
                         if (this.account.Type == AccountType.Credit)
                         {

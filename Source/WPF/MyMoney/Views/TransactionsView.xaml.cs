@@ -96,7 +96,7 @@ namespace Walkabout.Views
         private MyMoney myMoney;
         private TypeToFind ttf;
         private readonly DelayedActions delayedUpdates = new DelayedActions();
-
+        private ILogger log;
         private IEnumerable<Transaction> fixedList;
         #endregion
 
@@ -396,6 +396,7 @@ namespace Walkabout.Views
 #endif
 
             this.InitializeComponent();
+            this.log = Log.GetLogger("TransactionView");
 
             this.TheGrid_BankTransactionDetails.ParentMenu = this.ContextMenu;
             this.TheGrid_BankTransactionDetails.CustomBeginEdit += this.OnCustomBeginEdit;
@@ -427,7 +428,6 @@ namespace Walkabout.Views
             this.TheGrid_BySecurity.Visibility = System.Windows.Visibility.Collapsed;
             this.InvestmentPortfolioView.Visibility = System.Windows.Visibility.Collapsed;
             this.ToggleExpandAll.Visibility = System.Windows.Visibility.Collapsed;
-
             ContextMenu menu = this.ContextMenu;
             menu.DataContext = this;
 
@@ -1078,6 +1078,7 @@ namespace Walkabout.Views
                     }
                     if (sb.Length > 0)
                     {
+                        this.log.Error("Add Attachments Failed", new Exception(sb.ToString()));
                         MessageBoxEx.Show(sb.ToString(), "Add Attachments Failed", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
@@ -1157,6 +1158,7 @@ namespace Walkabout.Views
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Merge Failed", ex);
                     MessageBoxEx.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -1723,7 +1725,10 @@ namespace Walkabout.Views
         public int SelectedRowIndex
         {
             get { return this.TheActiveGrid.SelectedIndex; }
-            set { this.TheActiveGrid.SelectedIndex = value; }
+            set {
+                this.TheActiveGrid.SelectedIndex = value;
+                this.TheActiveGrid.ScrollIntoView(this.TheActiveGrid.SelectedItem);
+            }
         }
 
         public Transaction SelectedTransaction
@@ -2631,6 +2636,7 @@ namespace Walkabout.Views
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Paste Attachment Failed", ex);
                     MessageBoxEx.Show(ex.Message, "Paste Attachment Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
@@ -2717,7 +2723,6 @@ namespace Walkabout.Views
 
         private void OnImageAnimationComplete(object sender, EventArgs e)
         {
-            Debug.WriteLine("done!");
         }
 
         public void Delete()
@@ -2764,6 +2769,7 @@ namespace Walkabout.Views
             }
             catch (Exception e)
             {
+                this.log.Error("Copy Error", e);
                 MessageBoxEx.Show(e.Message, "Copy Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 selected = null;
             }
@@ -2828,6 +2834,7 @@ namespace Walkabout.Views
                 }
                 catch (Exception ex)
                 {
+                    this.log.Error("Paste Error", ex);
                     // clipboard must have contained something else then.
                     MessageBoxEx.Show(ex.Message, "Paste Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -3522,7 +3529,7 @@ namespace Walkabout.Views
             }
             else if (data != null && data.Count > 0)
             {
-                this.TheActiveGrid.SelectedIndex = data.Count - 1;
+                this.SelectedRowIndex = data.Count - 1;
             }
 
             this.TheActiveGrid.AsyncScrollSelectedRowIntoView();
@@ -4013,8 +4020,9 @@ namespace Walkabout.Views
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    this.log.Error("Accept All Failed", ex);
                 }
                 this.myMoney.EndUpdate();
             }
@@ -4150,6 +4158,7 @@ namespace Walkabout.Views
             }
             catch (Exception ex)
             {
+                this.log.Error("Paste Splits Failed", ex);
                 MessageBoxEx.Show(ex.Message, "Error pasting splits", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -5067,6 +5076,7 @@ namespace Walkabout.Views
                     }
                     catch (Exception ex)
                     {
+                        this.log.Error("Auto-categorization Failed", ex);
                         MessageBoxEx.Show(ex.ToString(), "Unexpected Internal Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
@@ -5194,6 +5204,7 @@ namespace Walkabout.Views
                         }
                         catch (Exception ex)
                         {
+                            this.log.Error("Move Transaction Failed", ex);
                             MessageBoxEx.Show(ex.Message, "Move failed", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
@@ -5711,13 +5722,13 @@ namespace Walkabout.Views
             Transaction t = this[index];
             if (t != null)
             {
-                if (t.Status == TransactionStatus.Reconciled && t.Amount != 0)
-                {
-                    MessageBoxEx.Show("You cannot remove Reconciled transactions", string.Empty, MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else if (this.QuietDelete)
+                if (this.QuietDelete)
                 {
                     base.RemoveItem(index);
+                }
+                else if (t.Status == TransactionStatus.Reconciled && t.Amount != 0)
+                {
+                    MessageBoxEx.Show("You cannot remove Reconciled transactions", string.Empty, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
@@ -6390,7 +6401,7 @@ namespace Walkabout.Views
         {
             // Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:TransactionsView}}, 
             //          Path=OneLineView, Converter={StaticResource FalseToVisible}}"
-            this.view = view;
+            this.view = view;            
             Debug.Assert(view != null, "Internal Error: null TransactionsView");
             this.context = dataItem;
             this.categoryBinding = category;
