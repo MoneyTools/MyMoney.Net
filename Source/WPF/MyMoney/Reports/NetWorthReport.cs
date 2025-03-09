@@ -343,9 +343,10 @@ namespace Walkabout.Reports
 
         private void ExportHistoryClick(object sender, RoutedEventArgs e)
         {
-            if (this.historicalChart != null)
+            var chart = this.historicalChart;
+            if (chart != null && chart.Data != null && chart.Data.Series != null)
             {
-                var series = this.historicalChart.Data.Series.FirstOrDefault();
+                var series = chart.Data.Series.FirstOrDefault();
                 SaveFileDialog sd = new SaveFileDialog();
                 string filter = Properties.Resources.CsvFileFilter;
                 sd.Filter = filter;
@@ -403,7 +404,7 @@ namespace Walkabout.Reports
                 {
                     series.Values.Add(new ChartDataValue() { Label = date.Year.ToString(), Value = (double)networth, Color = color, UserData=date });
                 }
-                historicalChart.OnDelayedUpdate();
+                chart.OnDelayedUpdate();
             }
         }
 
