@@ -139,7 +139,7 @@
                        KeyDown="OnAccountAliasesKeyDown"/>
 
             <TextBlock Text="Reconcile Warning:" Grid.Column="0" Grid.Row="20" HorizontalAlignment="Right" />
-            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="20" HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="20" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
                 <TextBox x:Name="TextBoxReconcileWarning" Text="{Binding Path=ReconcileWarning, Mode=TwoWay}"  Width="50" TabIndex="13"
                          ToolTip="Enter when you would like to see a warning reminding you to balance this account (for example, you might want this to be less than the number of statements kept by your bank)"/>
                 <TextBlock Text="months" VerticalAlignment="Center" Margin="10,0,0,0"/>

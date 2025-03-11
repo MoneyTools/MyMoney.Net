@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.49" date="3/10/2025">
+    - Fix #155: unhandled exception looking at payee
+    - Fix #154: Clicking on a payee with no transactions shows invalid data
+    - Fix #153: unhandled exception due to invalid char in account name
+  </change>
   <change version="2.1.0.48" date="2/23/2025">
     - Fix #152: CSV import should ignore currency symbols.
     - Fix #150: unhandled exception

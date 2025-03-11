@@ -431,15 +431,13 @@ namespace Walkabout.Dialogs
             }
             this.DialogResult = false;
             this.Close();
-        }
-
-        private static readonly char[] InvalidNameChars = new char[] { '{', '}', ':' };
+        }        
 
         private void OnNameChanged(object sender, TextChangedEventArgs e)
         {
             this.CheckButtonStates();
 
-            if (this.TextBoxName.Text.IndexOfAny(InvalidNameChars) >= 0)
+            if (this.TextBoxName.Text.IndexOfAny(Accounts.InvalidNameChars) >= 0)
             {
                 this.TextBoxName.Background = Brushes.Red;
                 this.TextBoxName.ToolTip = Walkabout.Properties.Resources.AccountNameValidChars;

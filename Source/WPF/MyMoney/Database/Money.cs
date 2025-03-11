@@ -2248,6 +2248,8 @@ namespace Walkabout.Data
             }
             return null;
         }
+        
+        public static readonly char[] InvalidNameChars = new char[] { '{', '}', ':', '*', '"', '/', '\\', '<', '>', '|', '?' };
 
         public override void OnNameChanged(object o, string oldName, string newName)
         {
@@ -4853,13 +4855,19 @@ namespace Walkabout.Data
 
         public Payee FindPayee(string name, bool add)
         {
-            if (name == null)
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
-            name = replaceWhitespaces.Replace(name, " ");
+            var normalized = replaceWhitespaces.Replace(name, " ");
+            var result = this.payeeIndex[normalized];
+            if (result == null) 
+            {                
+                // might need to lookup a legacy non-space normalized payee...
+                result = this.payeeIndex[name];
+            }
+            
             // find or add account of given name
-            Payee result = this.payeeIndex[name];
             if (result == null && add)
             {
                 result = this.AddPayee(this.nextPayee++);
@@ -4948,7 +4956,7 @@ namespace Walkabout.Data
             {
                 foreach (Payee p in this.payees.Values)
                 {
-                    if (!p.IsDeleted)
+                    if (!p.IsDeleted && !string.IsNullOrEmpty(p.Name))
                     {
                         list.Add(p);
                     }

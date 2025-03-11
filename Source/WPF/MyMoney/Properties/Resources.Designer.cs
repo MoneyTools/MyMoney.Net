@@ -61,7 +61,7 @@ namespace Walkabout.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Account name cannot contain the characters &apos;{&apos;, &apos;}&apos; or &apos;:&apos;.
+        ///   Looks up a localized string similar to Account name cannot contain the characters &apos;{&apos;, &apos;}&apos;, &apos;:&apos;, &apos;*&apos;, &apos;&quot;&apos;, &apos;/&apos;, &apos;\\&apos;, &apos;&lt;&apos;, &apos;&gt;&apos;, &apos;|&apos;, or &apos;?&apos;.
         /// </summary>
         internal static string AccountNameValidChars {
             get {
