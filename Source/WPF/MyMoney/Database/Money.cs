@@ -706,6 +706,7 @@ namespace Walkabout.Data
         private TransactionExtras extras;
         internal PayeeIndex payeeAccountIndex;
         private bool watching;
+        private List<Transaction> recentlyDownloaded;
 
         public static Type[] GetKnownTypes()
         {
@@ -2201,6 +2202,34 @@ namespace Walkabout.Data
                 total += this.StockSplits.ChangeListenerCount;
                 return total;
             }
+        }
+
+        internal void RecordDownloaded(Transaction t)
+        {
+            if (this.recentlyDownloaded == null)
+            {
+                this.recentlyDownloaded = new List<Transaction>();
+            }
+            this.recentlyDownloaded.Add(t);
+        }
+
+        internal void ClearDownloadedState()
+        {
+            if (this.recentlyDownloaded?.Count > 0)
+            {
+                this.BeginUpdate(this);
+                foreach (var t in this.recentlyDownloaded)
+                {
+                    t.IsDownloaded = false;
+                }
+                this.recentlyDownloaded.Clear();
+                this.EndUpdate();
+            }
+        }
+
+        internal void OnSaved()
+        {
+            this.ClearDownloadedState();
         }
     }
 
@@ -10697,6 +10726,7 @@ namespace Walkabout.Data
         private DateTime? mergeDate;
         private string originalPayee; // before auto-aliasing, helps with future merging.
         private TransactionViewFlags viewState; // ui transient state only, not persisted.
+        private bool downloaded;
 
         private enum TransactionViewFlags : byte
         {
@@ -12764,6 +12794,28 @@ namespace Walkabout.Data
         [XmlIgnore]
         [IgnoreDataMember]
         public DateTime TaxDate => this.Extra != null && this.Extra.TaxDate.HasValue ? this.Extra.TaxDate.Value : this.Date;
+
+        /// <summary>
+        /// A state we can use to highlight recently downloaded transactions.
+        /// </summary>
+        [XmlIgnore]
+        [IgnoreDataMember]
+        public bool IsDownloaded
+        {
+            get => this.downloaded;
+            internal set
+            {
+                if (this.downloaded != value)
+                {
+                    this.downloaded = value;
+                    this.OnChanged("IsDownloaded");
+                    if (value)
+                    {
+                        this.MyMoney?.RecordDownloaded(this);
+                    }
+                }
+            }
+        }
 
         public void UpdateCategoriesView()
         {

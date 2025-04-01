@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.50" date="3/31/2025">
+    - Feature: Highlight recently downloaded/merged transactions for easier spotting of duplicates.
+  </change>
   <change version="2.1.0.49" date="3/10/2025">
     - Fix #155: unhandled exception looking at payee
     - Fix #154: Clicking on a payee with no transactions shows invalid data

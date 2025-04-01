@@ -5964,6 +5964,9 @@ namespace Walkabout.Views
                 case "IsReconciling":
                     this.UpdateBackground();
                     break;
+                case "IsDownloaded":
+                    this.UpdateBackground();
+                    break;
                 case "IsCutting":
                     this.UpdateBackground();
                     break;
@@ -5997,10 +6000,12 @@ namespace Walkabout.Views
             bool isReconciling = false;
             bool isCutting = false;
             bool isSelected = this.IsSelected;
+            bool isDownloaded = false;
             if (this.context != null)
             {
                 isReconciling = this.context.IsReconciling;
                 isCutting = this.context.IsCutting;
+                isDownloaded = this.context.IsDownloaded;
             }
             Brush backgroundBrush = null;
             if (isCutting)
@@ -6021,6 +6026,10 @@ namespace Walkabout.Views
             else if (isReconciling)
             {
                 backgroundBrush = AppTheme.Instance.GetThemedBrush("ListItemReconcilingBackgroundBrush");
+            }
+            else if (isDownloaded)
+            {
+                backgroundBrush = AppTheme.Instance.GetThemedBrush("ListItemDownloadedBackgroundBrush");
             }
 
             if (backgroundBrush == null)

@@ -2382,6 +2382,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     register.AddTransaction(t);
                     count++;
                 }
+                t.IsDownloaded = true;
                 newTransactions[t.Id] = t;
 
                 t = null;
@@ -3321,6 +3322,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                         register.AddTransaction(t);
                         count++;
                     }
+                    t.IsDownloaded = true;
                     newTransactions[t.Id] = t;
                 }
                 string message = (count > 0) ? "Downloaded " + count + " new transactions" : null;

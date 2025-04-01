@@ -613,6 +613,7 @@ namespace Walkabout.Data
                     this.UpdateTransactionExtras(money.TransactionExtras);
 
                     tran.Commit();
+                    money.OnSaved();
                 }
                 finally
                 {

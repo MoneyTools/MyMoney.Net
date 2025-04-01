@@ -148,11 +148,13 @@ namespace Walkabout.Migrate
                         t.Memo = bag.Memo;
                         t.Date = bag.Date;
                         this.money.Transactions.Add(t);
+                        found = t;
                     }
                     else if (found.Status == TransactionStatus.None)
                     {
                         found.Status = TransactionStatus.Electronic;
                     }
+                    found.IsDownloaded = true;
                 }
             }
             finally

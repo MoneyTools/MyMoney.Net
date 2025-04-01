@@ -279,6 +279,7 @@ namespace Walkabout.Data
                 File.Delete(path);
             }
 
+            money.OnSaved();
 
         }
 

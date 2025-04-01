@@ -405,6 +405,7 @@ namespace Walkabout.Migrate
                                         transactionsAdded++;
                                         myMoney.Transactions.AddTransaction(t);
                                     }
+                                    t.IsDownloaded = true;
                                     newTransactions[t.Id] = t;
                                 }
                                 t = myMoney.Transactions.NewTransaction(a);
