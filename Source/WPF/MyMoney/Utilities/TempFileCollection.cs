@@ -139,19 +139,26 @@ namespace Walkabout.Utilities
             string fname = TempFileList;
             if (File.Exists(fname))
             {
-                XDocument doc = XDocument.Load(fname);
-                foreach (XElement file in doc.Root.Elements("File"))
+                try
                 {
-                    string name = (string)file.Attribute("Name");
-                    if (!string.IsNullOrEmpty(name) && File.Exists(name))
+                    XDocument doc = XDocument.Load(fname);
+                    foreach (XElement file in doc.Root.Elements("File"))
                     {
-                        Instance.files.Add(name);
+                        string name = (string)file.Attribute("Name");
+                        if (!string.IsNullOrEmpty(name) && File.Exists(name))
+                        {
+                            Instance.files.Add(name);
+                        }
                     }
                 }
-            }
+                catch (Exception)
+                {
+                    // ignore errors
+                }
 
-            // now try and delete them!
-            Cleanup();
+                // now try and delete them!
+                Cleanup();
+            }
         }
     }
 }

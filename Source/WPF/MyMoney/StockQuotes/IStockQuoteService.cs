@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -458,6 +459,11 @@ namespace Walkabout.StockQuotes
                 {
                     var next = ranges[i - 1];
                     var current = ranges[i];
+
+                    if (current.Start.Year == 2025 && current.Start.Month == 1 && current.Start.Day == 8 && this.Symbol == "MSFT")
+                    {
+                        Debug.WriteLine("???");
+                    }
                     var span = next.End - current.Start;
                     if (span.TotalDays < 7)
                     {
