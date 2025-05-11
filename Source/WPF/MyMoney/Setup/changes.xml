@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+  <change version="2.1.0.51" date="5/11/2025">
+    - Bug: Fix crash during startup if %LOCALAPPDATA%\MyMoney\tempfiles.xml got corrupted somehow.
+  </change>
   <change version="2.1.0.50" date="3/31/2025">
     - Feature: Highlight recently downloaded/merged transactions for easier spotting of duplicates.
   </change>
