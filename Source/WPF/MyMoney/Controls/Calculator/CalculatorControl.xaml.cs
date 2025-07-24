@@ -185,7 +185,7 @@ namespace Walkabout.Controls
 
         private void UpdateValue(double v)
         {
-            this.text.Text = v.ToString("N2");
+            this.text.Text = v.ToString("N2", System.Globalization.CultureInfo.CurrentCulture);
         }
 
         private void OnClick(object sender, RoutedEventArgs e)
@@ -211,7 +211,7 @@ namespace Walkabout.Controls
                     this.memory = 0;
                     break;
                 case "MR":
-                    string ms = this.memory.ToString();
+                    string ms = this.memory.ToString("N2", System.Globalization.CultureInfo.CurrentCulture);
                     this.text.Text = this.text.Text.Substring(0, pos) + ms + this.text.Text.Substring(pos + this.text.SelectionLength);
                     this.text.SelectionStart = pos + ms.Length;
                     this.text.SelectionLength = 0;
@@ -248,7 +248,7 @@ namespace Walkabout.Controls
                 {
                     Parser p = new Parser();
                     result = p.Parse(test);
-                    this.text.Text = result.ToString();
+                    this.text.Text = result.ToString("N2", System.Globalization.CultureInfo.CurrentCulture);
                     this.text.SelectionStart = this.text.Text.Length;
                 }
             }

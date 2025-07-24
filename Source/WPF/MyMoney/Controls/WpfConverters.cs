@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -410,11 +411,23 @@ namespace Walkabout.WpfConverters
     {
         private string TrimTrailingZeros(string formatted)
         {
-            int dot = formatted.LastIndexOf('.');
-            if (dot > 0)
+            if (string.IsNullOrEmpty(formatted))
+            {
+                return formatted;
+            }
+
+            // Find the decimal separator (could be dot or comma depending on culture)
+            int decimalIndex = formatted.LastIndexOf('.');
+            if (decimalIndex < 0)
+            {
+                decimalIndex = formatted.LastIndexOf(',');
+            }
+            
+            if (decimalIndex > 0)
             {
                 int i = formatted.Length - 1;
-                while (i > dot + 2)
+                // Ensure we keep at least 2 decimal places
+                while (i > decimalIndex + 2)
                 {
                     if (formatted[i] != '0')
                     {
@@ -485,6 +498,9 @@ namespace Walkabout.WpfConverters
             }
             string s = (string)value;
 
+            // Use the culture parameter if provided, otherwise fall back to CurrentCulture
+            var cultureToUse = culture ?? CultureInfo.CurrentCulture;
+
             if (targetType == typeof(SqlDecimal))
             {
                 if (string.IsNullOrWhiteSpace(s))
@@ -492,17 +508,17 @@ namespace Walkabout.WpfConverters
                     return new SqlDecimal();
                 }
                 // SqlDecimal.Parse doesn't support culture, so parse as decimal first
-                var decimalValue = decimal.Parse(s, culture ?? CultureInfo.CurrentCulture);
+                var decimalValue = ParseDecimalValue(s, cultureToUse);
                 return new SqlDecimal(decimalValue);
             }
             else if (targetType == typeof(decimal))
             {
                 if (string.IsNullOrWhiteSpace(s))
                 {
-                    return 0D;
+                    return 0M;
                 }
 
-                return decimal.Parse(s, culture ?? CultureInfo.CurrentCulture);
+                return ParseDecimalValue(s, cultureToUse);
             }
             else if (targetType == typeof(DateTime))
             {
@@ -511,7 +527,7 @@ namespace Walkabout.WpfConverters
                     return DateTime.Now;
                 }
 
-                return DateTime.Parse(s, culture ?? CultureInfo.CurrentCulture);
+                return DateTime.Parse(s, cultureToUse);
             }
             else if (targetType == typeof(string))
             {
@@ -519,8 +535,74 @@ namespace Walkabout.WpfConverters
             }
             else
             {
-                throw new Exception("Unexpected target type passed to PreserveDecimalDigitsValueConverter.ConvertBack : " + value.GetType().Name);
+                throw new Exception("Unexpected target type passed to PreserveDecimalDigitsValueConverter.ConvertBack : " + targetType.Name);
             }
+        }
+
+        private decimal ParseDecimalValue(string input, CultureInfo culture)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return 0M;
+            }
+
+            // Clean the input string - remove any spaces
+            string cleanInput = input.Trim();
+
+            // Try to parse with the provided culture first using Number style (allows decimal separator and sign)
+            if (decimal.TryParse(cleanInput, NumberStyles.Number, culture, out decimal result))
+            {
+                return result;
+            }
+
+            // If that fails, try with AllowDecimalPoint, AllowLeadingSign, and AllowTrailingSign
+            if (decimal.TryParse(cleanInput, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign | NumberStyles.AllowTrailingSign, culture, out result))
+            {
+                return result;
+            }
+
+            // If the culture is Polish and input contains comma, ensure we're handling it correctly
+            if (culture.Name == "pl-PL" || culture.NumberFormat.NumberDecimalSeparator == ",")
+            {
+                // For Polish culture, comma is the decimal separator
+                // If input contains a dot, try replacing it with comma and parse again
+                if (cleanInput.Contains(".") && !cleanInput.Contains(","))
+                {
+                    string withComma = cleanInput.Replace(".", ",");
+                    if (decimal.TryParse(withComma, NumberStyles.Number, culture, out result))
+                    {
+                        return result;
+                    }
+                }
+            }
+
+            // Last resort: try with invariant culture to handle dot as decimal separator
+            if (decimal.TryParse(cleanInput, NumberStyles.Number, CultureInfo.InvariantCulture, out result))
+            {
+                return result;
+            }
+
+            // If all parsing attempts fail, try to be more permissive
+            // Remove any non-digit, non-comma, non-dot, non-minus characters
+            string digitsOnly = System.Text.RegularExpressions.Regex.Replace(cleanInput, @"[^\d,.\-]", "");
+            
+            if (!string.IsNullOrEmpty(digitsOnly))
+            {
+                // Try one more time with the cleaned string
+                if (decimal.TryParse(digitsOnly, NumberStyles.Number, culture, out result))
+                {
+                    return result;
+                }
+                
+                // Try with invariant culture as final fallback
+                if (decimal.TryParse(digitsOnly, NumberStyles.Number, CultureInfo.InvariantCulture, out result))
+                {
+                    return result;
+                }
+            }
+
+            // If everything fails, return 0
+            return 0M;
         }
     }
 

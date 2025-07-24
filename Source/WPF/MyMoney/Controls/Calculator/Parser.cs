@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Walkabout.Controls
@@ -341,6 +342,10 @@ namespace Walkabout.Controls
 
         private IEnumerable<Token> Tokenize(string expression)
         {
+            var culture = CultureInfo.CurrentCulture;
+            string decimalSeparator = culture.NumberFormat.NumberDecimalSeparator;
+            string groupSeparator = culture.NumberFormat.NumberGroupSeparator;
+            
             for (int i = 0, n = expression.Length; i < n; i++)
             {
                 char c = expression[i];
@@ -373,23 +378,25 @@ namespace Walkabout.Controls
                             yield return Token.RightParen;
                             break;
                         default:
-                            if (char.IsDigit(c) || c == '.')
+                            if (char.IsDigit(c) || c.ToString() == decimalSeparator || c.ToString() == groupSeparator)
                             {
                                 this.number = 0;
                                 double decimalFactor = 0;
+                                bool foundDecimalSeparator = false;
 
-                                while (char.IsDigit(c) || c == '.' || c == ',')
+                                while (i < n && (char.IsDigit(c) || c.ToString() == decimalSeparator || c.ToString() == groupSeparator))
                                 {
-                                    if (c == ',')
+                                    if (c.ToString() == groupSeparator)
                                     {
-                                        // ignore thousand separators.
+                                        // ignore thousand/group separators.
                                     }
-                                    else if (c == '.')
+                                    else if (c.ToString() == decimalSeparator)
                                     {
-                                        if (decimalFactor > 0)
+                                        if (foundDecimalSeparator)
                                         {
                                             throw new ArgumentException(string.Format("Invalid second decimal point in expression '{0}'", expression));
                                         }
+                                        foundDecimalSeparator = true;
                                         decimalFactor = 10;
                                     }
                                     else
