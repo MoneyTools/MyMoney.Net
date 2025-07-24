@@ -143,7 +143,7 @@ namespace Walkabout.Utilities
             return sb.ToString();
         }
 
-        public static CultureInfo GetDefaultCultureInfo(string cultureName, string fallback = "en-US")
+        public static CultureInfo GetDefaultCultureInfo(string cultureName, string fallback = "pl-PL")
         {
             CultureInfo culture;
             try
@@ -152,7 +152,7 @@ namespace Walkabout.Utilities
             }
             catch
             {
-                // If all fails default back to USD
+                // If all fails default back to PLN
                 culture = CultureInfo.GetCultureInfo(fallback);
             }
             return culture;
@@ -162,7 +162,7 @@ namespace Walkabout.Utilities
         {
             if (currencyCulture == null)
             {
-                currencyCulture = new CultureInfo("en-US");
+                currencyCulture = new CultureInfo("pl-PL");
             }
             return string.Format(currencyCulture, "{0:C" + decimalPlace.ToString() + "}", amount);
         }

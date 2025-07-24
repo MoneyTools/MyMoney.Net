@@ -444,6 +444,23 @@ namespace Walkabout.Configuration
             }
         }
 
+        public string Culture
+        {
+            get
+            {
+                object value = this.map["Culture"];
+                return value is string ? (string)value : "pl-PL";
+            }
+            set
+            {
+                if (this.Culture != value)
+                {
+                    this.map["Culture"] = value;
+                    this.OnPropertyChanged("Culture");
+                }
+            }
+        }
+
         public string ExeVersion
         {
             get

@@ -11,6 +11,8 @@
              xmlns:u="clr-namespace:Walkabout.Utilities"
              xmlns:help="clr-namespace:Walkabout.Help" 
              xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
              mc:Ignorable="d"
              FontSize="{DynamicResource MainTransactionAreaFontSize}"
              d:DesignHeight="300" d:DesignWidth="600">
@@ -213,22 +215,22 @@
         <!-- PAYMENT USED IN DETAILED SPLIT VIEW -->
         <DataTemplate x:Key="myTemplateSplitPayment">
             <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0" 
-                            Grid.Column="1" Text="{Binding Debit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2}"                            
+                            Grid.Column="1" Text="{Binding Debit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}}"                            
                             TextAlignment="Right" VerticalAlignment="Top" Foreground="{DynamicResource ListItemForegroundBrush}"/>
         </DataTemplate>
         <DataTemplate x:Key="myTemplatePaymentEditInTheSplitDetailedView">
-            <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Debit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N5, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right"/>
+            <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Debit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N5, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right"/>
         </DataTemplate>
 
         <!-- DEPOSIT USED IN DETAILED SPLIT VIEW -->
         <DataTemplate x:Key="myTemplateSplitDeposit">
             <TextBlock  Style="{StaticResource DataTextBlockStyle}" Margin="0,0,2,0" 
-                            Grid.Column="1" Text="{Binding Credit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2}"                            
+                            Grid.Column="1" Text="{Binding Credit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}}"                            
                             TextAlignment="Right" VerticalAlignment="Top" Foreground="{DynamicResource ListItemForegroundBrush}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="myTemplateDepositEditInTheSplitDetailedView" >
-            <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Credit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N5, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right" />
+            <TextBox Style="{StaticResource NumericTextBoxStyle}" Text="{Binding Credit, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N5, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}, Mode=TwoWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" TextAlignment="Right" />
         </DataTemplate>
 
         <!-- Memo USED IN DETAILED SPLIT VIEW -->
@@ -394,7 +396,7 @@
                                 <GridViewColumn Width="Auto" x:Name="Amount" >
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                              <TextBlock Text="{Binding Amount, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2}"  
+                                              <TextBlock Text="{Binding Amount, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}}"  
                                                        Width="100" 
                                                        Foreground="{DynamicResource ListItemForegroundBrush}"
                                                        HorizontalAlignment="Right"
@@ -409,7 +411,7 @@
                                 Visibility="{Binding Splits.HasUnassigned, Converter={StaticResource TrueToVisible}}"
                                 TextBlock.Foreground="{DynamicResource NegativeCurrencyForegroundBrush}">
                         <TextBlock Text="Unassigned amount: " />
-                        <TextBlock Text="{Binding Path=NonNullSplits.Unassigned, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2}" />
+                        <TextBlock Text="{Binding Path=NonNullSplits.Unassigned, Converter={StaticResource PreserveDecimalDigitsValueConverter}, ConverterParameter=N2, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}}" />
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -925,5 +927,3 @@
     </Grid>
 
 </UserControl>
-
-    

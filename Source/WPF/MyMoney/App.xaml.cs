@@ -80,6 +80,20 @@ namespace Walkabout
             // Load the application settings
             settings = this.LoadSettings(noSettings);
 
+            // Set the global culture based on settings
+            try
+            {
+                var culture = new System.Globalization.CultureInfo(settings.Culture);
+                System.Threading.Thread.CurrentThread.CurrentCulture = culture;
+                System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
+                System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+                System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            }
+            catch (Exception ex)
+            {
+                appLog.Warning($"Failed to set culture to {settings.Culture}: {ex.Message}");
+            }
+
             System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.OnAppDomainUnhandledException);
             TaskScheduler.UnobservedTaskException += this.TaskScheduler_UnobservedTaskException1;
@@ -142,6 +156,7 @@ namespace Walkabout
             s.PlaySounds = true; // default true.
             s.TransferSearchDays = 5;
             s.ImportOFXAsUTF8 = false;
+            s.Culture = "pl-PL"; // Default to Polish culture
         }
 
         /// <summary>

@@ -449,6 +449,9 @@ namespace Walkabout.WpfConverters
                 format = s;
             }
 
+            // Use the culture parameter if provided, otherwise fall back to CurrentCulture
+            var cultureToUse = culture ?? CultureInfo.CurrentCulture;
+
             Type valueType = value.GetType();
             if (valueType == typeof(SqlDecimal))
             {
@@ -457,16 +460,16 @@ namespace Walkabout.WpfConverters
                 {
                     return "";
                 }
-                return this.TrimTrailingZeros(d.Value.ToString(format));
+                return this.TrimTrailingZeros(d.Value.ToString(format, cultureToUse));
             }
             else if (valueType == typeof(decimal))
             {
                 decimal d = (decimal)value;
-                return this.TrimTrailingZeros(d.ToString(format));
+                return this.TrimTrailingZeros(d.ToString(format, cultureToUse));
             }
             else if (valueType == typeof(DateTime))
             {
-                return ((DateTime)value).ToString("d");
+                return ((DateTime)value).ToString("d", cultureToUse);
             }
             else
             {
@@ -488,7 +491,9 @@ namespace Walkabout.WpfConverters
                 {
                     return new SqlDecimal();
                 }
-                return SqlDecimal.Parse(s);
+                // SqlDecimal.Parse doesn't support culture, so parse as decimal first
+                var decimalValue = decimal.Parse(s, culture ?? CultureInfo.CurrentCulture);
+                return new SqlDecimal(decimalValue);
             }
             else if (targetType == typeof(decimal))
             {
@@ -497,7 +502,7 @@ namespace Walkabout.WpfConverters
                     return 0D;
                 }
 
-                return decimal.Parse(s);
+                return decimal.Parse(s, culture ?? CultureInfo.CurrentCulture);
             }
             else if (targetType == typeof(DateTime))
             {
@@ -506,7 +511,7 @@ namespace Walkabout.WpfConverters
                     return DateTime.Now;
                 }
 
-                return DateTime.Parse(s);
+                return DateTime.Parse(s, culture ?? CultureInfo.CurrentCulture);
             }
             else if (targetType == typeof(string))
             {
@@ -580,7 +585,7 @@ namespace Walkabout.WpfConverters
                 if (!string.IsNullOrWhiteSpace(stringVal) &&
                     false == decimal.TryParse(stringVal, NumberStyles.Currency, CultureInfo.CurrentCulture, out d))
                 {
-                    d = System.Convert.ToDecimal(stringVal, CultureInfo.GetCultureInfo("en-US"));
+                    d = System.Convert.ToDecimal(stringVal, CultureInfo.CurrentCulture);
                 }
 
                 return d;
