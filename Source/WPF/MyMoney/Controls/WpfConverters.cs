@@ -12,6 +12,11 @@ using Walkabout.Utilities;
 
 namespace Walkabout.WpfConverters
 {
+    public class ValueConverterException : Exception
+    {
+        public ValueConverterException(string message) : base(message) { }
+    }
+
     // Extracts the first letter of the Category name.
     public class CategoryTypeLetterConverter : IValueConverter
     {
@@ -478,43 +483,51 @@ namespace Walkabout.WpfConverters
         {
             if (value != null && value.GetType() != typeof(string))
             {
-                throw new Exception("Unexpected value type passed to PreserveDecimalDigitsValueConverter.ConvertBack : " + value.GetType().Name);
+                throw new ValueConverterException("Unexpected value type passed to PreserveDecimalDigitsValueConverter.ConvertBack : " + value.GetType().Name);
             }
-            string s = (string)value;
+            try
+            {
+                string s = (string)value;
 
-            if (targetType == typeof(SqlDecimal))
-            {
-                if (string.IsNullOrWhiteSpace(s))
+                if (targetType == typeof(SqlDecimal))
                 {
-                    return new SqlDecimal();
+                    if (string.IsNullOrWhiteSpace(s))
+                    {
+                        return new SqlDecimal();
+                    }
+                    return SqlDecimal.Parse(s);
                 }
-                return SqlDecimal.Parse(s);
-            }
-            else if (targetType == typeof(decimal))
-            {
-                if (string.IsNullOrWhiteSpace(s))
+                else if (targetType == typeof(decimal))
                 {
-                    return 0D;
-                }
+                    if (string.IsNullOrWhiteSpace(s))
+                    {
+                        return 0D;
+                    }
 
-                return decimal.Parse(s);
-            }
-            else if (targetType == typeof(DateTime))
-            {
-                if (string.IsNullOrWhiteSpace(s))
-                {
-                    return DateTime.Now;
+                    return decimal.Parse(s);
                 }
+                else if (targetType == typeof(DateTime))
+                {
+                    if (string.IsNullOrWhiteSpace(s))
+                    {
+                        return DateTime.Now;
+                    }
 
-                return DateTime.Parse(s);
+                    return DateTime.Parse(s);
+                }
+                else if (targetType == typeof(string))
+                {
+                    return s;
+                }
+                else
+                {
+                    throw new Exception("Unexpected target type passed to PreserveDecimalDigitsValueConverter.ConvertBack : " + value.GetType().Name);
+                }
             }
-            else if (targetType == typeof(string))
+            catch (Exception ex)
             {
-                return s;
-            }
-            else
-            {
-                throw new Exception("Unexpected target type passed to PreserveDecimalDigitsValueConverter.ConvertBack : " + value.GetType().Name);
+                // Need to wrap it in something we can recognize later in HandleUnhandledException
+                throw new ValueConverterException(ex.Message);
             }
         }
     }
@@ -537,19 +550,27 @@ namespace Walkabout.WpfConverters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is string)
+            try
             {
-                string s = (string)value;
-                if (string.IsNullOrWhiteSpace(s))
+                if (value is string)
                 {
-                    return SqlDecimal.Null;
+                    string s = (string)value;
+                    if (string.IsNullOrWhiteSpace(s))
+                    {
+                        return SqlDecimal.Null;
+                    }
+                    return new SqlDecimal(System.Convert.ToDecimal(value));
                 }
-                return new SqlDecimal(System.Convert.ToDecimal(value));
-            }
 
-            if (value is decimal)
+                if (value is decimal)
+                {
+                    return new SqlDecimal((decimal)value);
+                }
+            }
+            catch (Exception ex)
             {
-                return new SqlDecimal((decimal)value);
+                // Need to wrap it in something we can recognize later in HandleUnhandledException
+                throw new ValueConverterException(ex.Message);
             }
             return new SqlDecimal(0);
         }
@@ -571,19 +592,26 @@ namespace Walkabout.WpfConverters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-
-            if (value is string)
+            try
             {
-                string stringVal = value as string;
-
-                decimal d = 0;
-                if (!string.IsNullOrWhiteSpace(stringVal) &&
-                    false == decimal.TryParse(stringVal, NumberStyles.Currency, CultureInfo.CurrentCulture, out d))
+                if (value is string)
                 {
-                    d = System.Convert.ToDecimal(stringVal, CultureInfo.GetCultureInfo("en-US"));
-                }
+                    string stringVal = value as string;
 
-                return d;
+                    decimal d = 0;
+                    if (!string.IsNullOrWhiteSpace(stringVal) &&
+                        false == decimal.TryParse(stringVal, NumberStyles.Currency, CultureInfo.CurrentCulture, out d))
+                    {
+                        d = System.Convert.ToDecimal(stringVal, CultureInfo.GetCultureInfo("en-US"));
+                    }
+
+                    return d;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Need to wrap it in something we can recognize later in HandleUnhandledException
+                throw new ValueConverterException(ex.Message);
             }
             return value;
         }

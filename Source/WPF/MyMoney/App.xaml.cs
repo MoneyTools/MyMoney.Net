@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using Walkabout.Configuration;
 using Walkabout.Help;
 using Walkabout.Utilities;
+using Walkabout.WpfConverters;
 
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -314,6 +315,14 @@ namespace Walkabout
         public bool HandleUnhandledException(object exceptionObject)
         {
             Exception ex = exceptionObject as Exception;
+            if (ex is ValueConverterException)
+            {
+                // This exception can be raised if you drag/drop text in a numeric field that results in an invalid format.
+                // We cannot catch this exception because there is no Money code on the stack except the originator of the
+                // exception in WpfConverters.cs. Fixes issue #156.
+                return true;
+            }
+
             string message = null;
             string details = null;
             if (ex == null && exceptionObject != null)
