@@ -644,7 +644,8 @@ namespace Walkabout
 
         private void SetupStockQuoteManager(MyMoney money)
         {
-            this.quotes = new StockQuoteManager(this, this.settings.StockServiceSettings, this.GetStockQuotePath());
+            var stockQuotes = this.GetStockQuotePath();
+            this.quotes = new StockQuoteManager(this, this.settings.StockServiceSettings, stockQuotes);
             this.quotes.DownloadComplete += new EventHandler<EventArgs>(this.OnStockDownloadComplete);
             this.quotes.HistoryAvailable += this.OnStockQuoteHistoryAvailable;
             this.cache = new StockQuoteCache(money, this.quotes.DownloadLog);
@@ -652,7 +653,7 @@ namespace Walkabout
 
         private string GetStockQuotePath()
         {
-            string path = this.database.DatabasePath;
+            string path = this.database?.DatabasePath;
             return string.IsNullOrEmpty(path) ? null : Path.Combine(Path.GetDirectoryName(path), "StockQuotes");
         }
 
@@ -4226,7 +4227,13 @@ namespace Walkabout
                 }
             }
 
-            SampleDatabase sample = new SampleDatabase(this.myMoney, this.quotes, this.GetStockQuotePath());
+            var stockQuotes = this.GetStockQuotePath();
+            if (string.IsNullOrEmpty(stockQuotes))
+            {
+                MessageBoxEx.Show("Please create a database first", "Add Sample Data Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            SampleDatabase sample = new SampleDatabase(this.myMoney, this.quotes, stockQuotes);
             sample.Create();
 
             this.toolBox.Selected = this.accountsControl;
@@ -4240,7 +4247,13 @@ namespace Walkabout
         private void MenuExportSampleData_Click(object sender, RoutedEventArgs e)
         {
             string temp = Path.Combine(Path.GetTempPath(), "SampleData.xml");
-            SampleDatabase sample = new SampleDatabase(this.myMoney, this.quotes, this.GetStockQuotePath());
+            var stockQuotes = this.GetStockQuotePath();
+            if (string.IsNullOrEmpty(stockQuotes))
+            {
+                MessageBoxEx.Show("Please create a database first", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            SampleDatabase sample = new SampleDatabase(this.myMoney, this.quotes, stockQuotes);
             sample.Export(temp);
             InternetExplorer.OpenUrl(IntPtr.Zero, temp);
         }

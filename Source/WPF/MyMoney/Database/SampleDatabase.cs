@@ -29,6 +29,9 @@ namespace Walkabout.Assitance
             this.manager = manager;
             this.money = money;
             this.stockQuotePath = stockQuotePath;
+            if (string.IsNullOrEmpty(stockQuotePath)){
+                throw new Exception("StockQuotePath cannot be empty. Have you created a database yet?");
+            }
         }
 
         public void Create()
