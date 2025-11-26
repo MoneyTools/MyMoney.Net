@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-  <change version="2.1.0.2" date="9/19/2025">
+	<change version="2.1.0.53" date="11/26/2025">
+		- Feature: Add CSV mapping for ReferenceNumber to FITID.
+	</change>
+  <change version="2.1.0.52" date="9/19/2025">
     - Bug: Fix issue #156: unhandled exception on drag/drop text in ill-formatted numeric field.
   </change>
   <change version="2.1.0.51" date="5/11/2025">
