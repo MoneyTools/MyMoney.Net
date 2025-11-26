@@ -67,7 +67,7 @@ namespace Walkabout.Migrate
         private readonly Regex numericRegex = new Regex(@"([+-]?[\d,.]+)");
 
         // this is what we "can" import...
-        private readonly string[] fields = new string[] { "Date", "Payee", "Memo", "Amount" };
+        private readonly string[] fields = new string[] { "Date", "Payee", "Memo", "Amount", "FITID" };
 
         public CsvTransactionImporter(MyMoney money, Account account, CsvMap map)
         {
@@ -147,6 +147,7 @@ namespace Walkabout.Migrate
                         t.Amount = bag.Amount;
                         t.Memo = bag.Memo;
                         t.Date = bag.Date;
+                        t.FITID = bag.FITID;
                         this.money.Transactions.Add(t);
                         found = t;
                     }
@@ -258,6 +259,9 @@ namespace Walkabout.Migrate
                 case "Memo":
                     t.Memo = value;
                     break;
+                case "FITID":
+                    t.FITID = value;
+                    break;
                 case "Amount":
                     var match = numericRegex.Match(value);
                     if (match.Success && decimal.TryParse(match.Groups[1].Value, out decimal amount))
@@ -279,6 +283,7 @@ namespace Walkabout.Migrate
             public string Memo;
             public decimal Amount;
             public Payee Payee;
+            public string FITID;
         }
     }
 
