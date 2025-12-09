@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -14,18 +15,25 @@ namespace Walkabout.Dialogs
     public partial class CsvImportDialog : BaseDialog
     {
         private readonly string[] fields;
-        private List<CsvFieldMap> map;
+        private CsvMap map = new CsvMap();        
 
         public CsvImportDialog(string[] expectedColumns)
         {
             this.InitializeComponent();
             this.fields = expectedColumns;
+            this.DataContext = this.map;
         }
 
         internal void SetHeaders(IEnumerable<string> headers)
         {
-            this.map = new List<CsvFieldMap>(from h in headers select new CsvFieldMap() { Header = h });
-            this.FieldListView.ItemsSource = this.map;
+            this.map.Fields = new List<CsvFieldMap>(from h in headers select new CsvFieldMap() { Header = h });
+            this.FieldListView.ItemsSource = this.map.Fields;
+        }
+
+        public bool Negate
+        {
+            get { return this.map.Negate; }
+            set { this.map.Negate = value; }
         }
 
         public string[] TransactionFields
@@ -36,7 +44,14 @@ namespace Walkabout.Dialogs
             }
         }
 
-        public List<CsvFieldMap> Mapping => this.map;
+        public CsvMap Mapping => this.map;
+
+        public void SetMap(CsvMap map)
+        {
+            this.map = map;
+            this.FieldListView.ItemsSource = this.map.Fields;
+            this.DataContext = this.map;
+        }
 
         private void OnCancel(object sender, RoutedEventArgs e)
         {
@@ -58,7 +73,7 @@ namespace Walkabout.Dialogs
             // check all fields are mapped.
             int count = 0;
             HashSet<string> unique = new HashSet<string>();
-            foreach (var f in this.map)
+            foreach (var f in this.map.Fields)
             {
                 if (!string.IsNullOrEmpty(f.Field))
                 {

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -41,6 +42,7 @@ namespace Walkabout.Views.Controls
         public static RoutedUICommand CommandExportAccount;
         public static RoutedUICommand CommandExportList;
         public static RoutedUICommand CommandImportCsv;
+        public static RoutedUICommand CommandEditCsvMapping;
         public static RoutedUICommand CommandToggleClosedAccounts;
 
         static AccountsControl()
@@ -56,6 +58,7 @@ namespace Walkabout.Views.Controls
             CommandExportAccount = new RoutedUICommand("ExportAccount", "ExportAccount", typeof(AccountsControl));
             CommandExportList = new RoutedUICommand("ExportList", "ExportList", typeof(AccountsControl));
             CommandImportCsv = new RoutedUICommand("ImportCsv", "ImportCsv", typeof(AccountsControl));
+            CommandEditCsvMapping = new RoutedUICommand("EditCsv", "EditCsv", typeof(AccountsControl));
             CommandToggleClosedAccounts = new RoutedUICommand("ToggleClosedAccounts", "ToggleClosedAccounts", typeof(AccountsControl));
         }
 
@@ -1011,6 +1014,17 @@ namespace Walkabout.Views.Controls
             }
         }
 
+        private bool HasCsvMap()
+        {
+            Account a = this.SelectedAccount;
+            if (a != null)
+            {
+                var map = this.LoadMap(a);
+                return map.Fields != null && map.Fields.Count > 0;
+            }
+            return false;
+        }
+
         private CsvMap LoadMap(Account a)
         {
             if (this.databaseSettings != null)
@@ -1024,6 +1038,34 @@ namespace Walkabout.Views.Controls
                 return CsvMap.Load(filename);
             }
             return new CsvMap();
+        }
+
+        private void OnEditCsvMapping(object sender, ExecutedRoutedEventArgs e)
+        {
+            var account = this.SelectedAccount;
+            if (account != null)
+            {
+                try
+                {
+                    var map = this.LoadMap(account);
+                    var ti = new CsvTransactionImporter(this.myMoney, account, map);
+                    ti.EditCsvMap(null);
+                } 
+                catch (UserCanceledException)
+                {
+                    // do nothing.
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxEx.Show(ex.Message, "Error Editing CSV Map", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    return;
+                }
+            }
+        }
+
+        private void HasCsvMapping(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = this.SelectedAccount != null && this.HasCsvMap();
         }
     }
 

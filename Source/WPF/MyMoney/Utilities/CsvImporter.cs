@@ -25,6 +25,8 @@ namespace Walkabout.Migrate
         [XmlIgnore]
         public string FileName { get; set; }
 
+        public bool Negate { get; set; }
+
         public List<CsvFieldMap> Fields { get; set; }
 
         public static CsvMap Load(string fileName)
@@ -164,6 +166,28 @@ namespace Walkabout.Migrate
             }
         }
 
+        public void EditCsvMap(IEnumerable<string> headers)
+        {
+            CsvImportDialog cd = new CsvImportDialog(this.fields);
+            cd.Owner = System.Windows.Application.Current.MainWindow;
+            if (headers != null)
+            {
+                cd.SetHeaders(headers);
+            }
+            else
+            {
+                cd.SetMap(this.map);
+            }
+            if (cd.ShowDialog() == true)
+            {
+                this.map.Save();
+            }
+            else
+            {
+                throw new UserCanceledException("User cancelled");
+            }
+        }
+
         public override void WriteHeaders(IEnumerable<string> headers)
         {
             if (this.HeadersMatch(headers))
@@ -171,17 +195,7 @@ namespace Walkabout.Migrate
                 // we're good!
                 return;
             }
-            CsvImportDialog cd = new CsvImportDialog(this.fields);
-            cd.Owner = System.Windows.Application.Current.MainWindow;
-            cd.SetHeaders(headers);
-            if (cd.ShowDialog() == true)
-            {
-                this.map.Fields = cd.Mapping;
-            }
-            else
-            {
-                throw new UserCanceledException("User cancelled");
-            }
+            this.EditCsvMap(headers);
         }
 
         private bool HeadersMatch(IEnumerable<string> headers)
@@ -222,7 +236,7 @@ namespace Walkabout.Migrate
                     var fm = this.map.Fields[col];
                     if (!string.IsNullOrEmpty(fm.Field))
                     {
-                        this.MapField(t, fm.Field, s);
+                        this.MapField(t, fm, s);
                     }
                 }
                 col++;
@@ -230,8 +244,9 @@ namespace Walkabout.Migrate
             this.typedData.Add(t);
         }
 
-        private void MapField(TBag t, string fieldName, string value)
+        private void MapField(TBag t, CsvFieldMap field, string value)
         {
+            string fieldName = field.Field;
             // matches this.fields.
             switch (fieldName)
             {
@@ -266,12 +281,14 @@ namespace Walkabout.Migrate
                     var match = numericRegex.Match(value);
                     if (match.Success && decimal.TryParse(match.Groups[1].Value, out decimal amount))
                     {
-                        if (this.account.Type == AccountType.Credit)
+                        if (map.Negate)
                         {
-                            // credit cards show payments as positive numbers (yeah positive for them!)
-                            amount = -amount;
+                            t.Amount = -amount;
                         }
-                        t.Amount = amount;
+                        else
+                        {
+                            t.Amount = amount;
+                        }
                     }
                     break;
             }
@@ -296,7 +313,7 @@ namespace Walkabout.Migrate
         public abstract void WriteHeaders(IEnumerable<string> headers);
 
         /// <summary>
-        /// Now that headers are estabilished and we know which column
+        /// Now that headers are established and we know which column
         /// maps to which field, we can import rows of data.
         /// </summary>
         /// <param name="values"></param>

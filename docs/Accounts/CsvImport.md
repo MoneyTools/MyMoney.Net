@@ -25,6 +25,8 @@ found in this file with the fields of the Money Transactions as follows:
 
 ![CsvImportMap](../Images/CsvImportMap.png)
 
+You should check negate CheckBox if your Credit Card Company returns withdrawals as positive numbers and deposits as negative numbers.
+
 This map will be saved in the same folder as your Money database under a new folder named `CsvMaps`
 so you will not have to keep re-entering this mapping information (unless the columns are changed by your bank).
 

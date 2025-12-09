@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.54" date="12/26/2025">
+		- Feature: Add "Edit 8 Map..." menu item on account dialog context menu.
+		- Feature: Add "negate" button on Csv map dialog.
+	</change>
 	<change version="2.1.0.53" date="11/26/2025">
 		- Feature: Add CSV mapping for ReferenceNumber to FITID.
 	</change>

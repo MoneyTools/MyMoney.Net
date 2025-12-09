@@ -30,8 +30,13 @@
               Converter={StaticResource GridBackgroundAlternationConverter}}"/>
     </Style>
   </Window.Resources>
-  <DockPanel Margin="20">
-    <ListView x:Name="FieldListView" DockPanel.Dock="Top" ItemContainerStyle="{StaticResource AlternationItemStyle}"
+  <Grid Margin="20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+      <ListView x:Name="FieldListView" Grid.Row="0" ItemContainerStyle="{StaticResource AlternationItemStyle}"
               BorderThickness="1" BorderBrush="{DynamicResource GridLineBrush}"
               Background="Transparent" AlternationCount="2">
       <ListView.Resources>
@@ -66,15 +71,17 @@
                 </controls:FilteringComboBox >
               </DataTemplate>
             </GridViewColumn.CellTemplate>
-          </GridViewColumn>
+           </GridViewColumn>
         </GridView>
       </ListView.View>
     </ListView>
     <!-- OK or Cancel -->
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Margin="10,0,10,10">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="5" Margin="10,2,10,10">
+      <CheckBox Name="negateCheckBox" IsChecked="{Binding Negate}" MinWidth="32" />
+      <TextBlock Text="Negate Amounts" VerticalAlignment="Center" Margin="0,0,10,0"/>
       <Button Name="okButton" IsDefault="True" Margin="0,0,10,0" Click="OnOk">OK</Button>
       <Button Name="cancelButton" IsCancel="True" Click="OnCancel">Cancel</Button>
     </StackPanel>
-  </DockPanel>
+  </Grid>
 
 </d:BaseDialog>
