@@ -70,7 +70,7 @@ namespace Walkabout.Dialogs
                 }
             }
 
-            List<string> currencies = new List<string>(Enum.GetNames(typeof(RestfulWebServices.CurrencyCode)));
+            List<string> currencies = new List<string>(Enum.GetNames(typeof(Walkabout.StockQuotes.CurrencyCode)));
             currencies.Sort();
             this.ComboBoxCurrency.ItemsSource = currencies;
         }

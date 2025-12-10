@@ -680,7 +680,6 @@ namespace Walkabout.Reports
                 writer.WriteParagraph(name);
             }
             writer.EndCell();
-
             writer.StartCell();
             writer.WriteNumber(this.GetFormattedNormalizedAmount(balance));
             writer.EndCell();

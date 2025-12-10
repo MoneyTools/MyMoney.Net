@@ -492,6 +492,11 @@ namespace Walkabout.Data
             this.Calculate();
         }
 
+        public DateTime ToDate 
+        {
+            get { return this.toDate; }
+        }
+
         public IEnumerable<SecuritySale> GetSales()
         {
             return this.sales;

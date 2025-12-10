@@ -1,7 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-	<change version="2.1.0.54" date="12/26/2025">
-		- Feature: Add "Edit 8 Map..." menu item on account dialog context menu.
+	<change version="2.1.0.56" date="12/10/2025">
+		- Feature: Add account summary report with date picker.
+		- Feature: Switch to https://www.fastforex.io/ for exchange rate info.
+	</change>
+	<change version="2.1.0.54" date="12/8/2025">
+		- Feature: Add "Edit Csv Map..." menu item on account dialog context menu.
 		- Feature: Add "negate" button on Csv map dialog.
 	</change>
 	<change version="2.1.0.53" date="11/26/2025">

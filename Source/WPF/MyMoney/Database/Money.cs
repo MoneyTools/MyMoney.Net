@@ -10,8 +10,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 #if PerformanceBlocks
 using Microsoft.VisualStudio.Diagnostics.PerformanceProvider;
@@ -707,6 +709,7 @@ namespace Walkabout.Data
         internal PayeeIndex payeeAccountIndex;
         private bool watching;
         private List<Transaction> recentlyDownloaded;
+        private StockQuoteCache quoteCache;
 
         public static Type[] GetKnownTypes()
         {
@@ -731,6 +734,16 @@ namespace Walkabout.Data
         {
             this.LazyInitialize();
             this.WatchChanges();
+        }
+
+        public void SetStockQuoteCache(StockQuoteCache cache)
+        {
+            this.quoteCache = cache;
+        }
+
+        public StockQuoteCache GetStockQuoteCache()
+        {
+            return this.quoteCache;
         }
 
         private void LazyInitialize()
@@ -1175,15 +1188,15 @@ namespace Walkabout.Data
             return dangling;
         }
 
-        public void Rebalance(Account a)
+        public async Task Rebalance(Account a)
         {
             CostBasisCalculator calculator = new CostBasisCalculator(this, DateTime.Now);
-            this.Rebalance(calculator, a);
+            await this.Rebalance(calculator, a);
         }
 
-        public void Rebalance(CostBasisCalculator calculator, Account a)
+        public async Task Rebalance(CostBasisCalculator calculator, Account a)
         {
-            if (this.Transactions.Rebalance(calculator, a) && this.balanceHandlers != null && this.balanceHandlers.HasListeners)
+            if (await this.Transactions.Rebalance(calculator, this.quoteCache, a) && this.balanceHandlers != null && this.balanceHandlers.HasListeners)
             {
                 var args = new ChangeEventArgs(a, "Balance", ChangeType.Rebalanced);
                 this.balanceHandlers.RaiseEvent(this, args);
@@ -1199,7 +1212,7 @@ namespace Walkabout.Data
             }
         }
 
-        public void RebalanceInvestments()
+        public async void RebalanceInvestments()
         {
             CostBasisCalculator calculator = new CostBasisCalculator(this, DateTime.Now);
 
@@ -1207,7 +1220,7 @@ namespace Walkabout.Data
             {
                 if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
                 {
-                    this.Rebalance(calculator, a);
+                    await this.Rebalance(calculator, a);
                 }
             }
         }
@@ -1224,18 +1237,27 @@ namespace Walkabout.Data
             }
         }
 
-        private void ApplyPendingBalance()
+        private async void ApplyPendingBalance()
         {
             bool changed = false;
-            if (this.balancePending != null && this.balancePending.Count > 0)
+            List<Account> copy = null;
+            lock (this.balancePending)
             {
+                if (this.balancePending != null && this.balancePending.Count > 0)
+                {
+                    copy = new List<Account>(this.balancePending);
+                }
+                this.balancePending.Clear();
+            }
+            if (copy != null && copy.Count > 0) 
+            { 
                 CostBasisCalculator calculator = new CostBasisCalculator(this, DateTime.Now);
                 this.Transactions.BeginUpdate(false);
                 try
                 {
-                    foreach (Account account in new List<Account>(this.balancePending))
+                    foreach (Account account in copy)
                     {
-                        changed = this.Transactions.Rebalance(calculator, account);
+                        changed = await this.Transactions.Rebalance(calculator, this.quoteCache, account);
                         if (changed && this.balanceHandlers != null && this.balanceHandlers.HasListeners)
                         {
                             this.balanceHandlers.RaiseEvent(this, new ChangeEventArgs(account, "Balance", ChangeType.Rebalanced));
@@ -1246,21 +1268,23 @@ namespace Walkabout.Data
                 {
                     this.Transactions.EndUpdate();
                 }
-                this.balancePending.Clear();
             }
 
         }
 
-        public bool Rebalance(Transaction t)
+        public async Task<bool> Rebalance(Transaction t)
         {
             bool changed = false;
             if (this.IsUpdating)
             {
-                this.balancePending.Add(t.Account);
-                if (t.Transfer != null)
+                lock (this.balancePending)
                 {
-                    Transaction u = t.Transfer.Transaction;
-                    this.balancePending.Add(u.Account);
+                    this.balancePending.Add(t.Account);
+                    if (t.Transfer != null)
+                    {
+                        Transaction u = t.Transfer.Transaction;
+                        this.balancePending.Add(u.Account);
+                    }
                 }
             }
             else
@@ -1269,11 +1293,11 @@ namespace Walkabout.Data
                 try
                 {
                     CostBasisCalculator calculator = new CostBasisCalculator(this, DateTime.Now);
-                    changed = this.Transactions.Rebalance(calculator, t.Account);
+                    changed = await this.Transactions.Rebalance(calculator, this.quoteCache, t.Account);
                     if (t.Transfer != null)
                     {
                         Transaction u = t.Transfer.Transaction;
-                        changed |= this.Transactions.Rebalance(calculator, u.Account);
+                        changed |= await this.Transactions.Rebalance(calculator, this.quoteCache, u.Account);
                     }
                 }
                 finally
@@ -1988,7 +2012,7 @@ namespace Walkabout.Data
             // Now we can rebalance the accounts.
             foreach (Account a in this.Accounts)
             {
-                this.Rebalance(calculator, a);
+                _ = this.Rebalance(calculator, a); // should not need async behavior in this case, since we are rebalancing to latest market value.
             }
             this.MarkAllUpToDate();
 
@@ -2517,6 +2541,22 @@ namespace Walkabout.Data
             {
                 a.AccountCurrencyRatio = 0; // clear cache.
             }
+        }
+
+        internal List<Account> GetAccountsByType(AccountType type, bool filterOutClosedAccount)
+        {
+            List<Account> list = new List<Account>();
+            foreach (Account a in this.GetAccounts())
+            {
+                if (a.Type == type)
+                {
+                    if (!filterOutClosedAccount || !a.IsClosed)
+                    {
+                        list.Add(a);
+                    }
+                }
+            }
+            return list;
         }
         #endregion
 
@@ -9897,7 +9937,7 @@ namespace Walkabout.Data
         }
 
 
-        public bool Rebalance(CostBasisCalculator calculator, Account a)
+        public async Task<bool> Rebalance(CostBasisCalculator calculator, StockQuoteCache cache, Account a)
         {
             if (a == null)
             {
@@ -9908,49 +9948,15 @@ namespace Walkabout.Data
             this.BeginUpdate(true);
             try
             {
-                lock (this.transactions)
+                var result = await this.GetAccountBalance(calculator, cache, a);
+                // Refresh the Account balance value
+                var balance = result.Balance + result.InvestmentValue;
+                if (a.Balance != balance)
                 {
-
-                    decimal balance = a.OpeningBalance;
-
-                    int unaccepted = 0;
-                    foreach (Transaction t in this.GetTransactionsFrom(a))
-                    {
-                        if (t.Unaccepted)
-                        {
-                            unaccepted++;
-                        }
-
-                        if (!t.IsDeleted && t.Status != TransactionStatus.Void)
-                        {
-                            // current account balance 
-                            balance += t.Amount;
-                        }
-
-                        // snapshot the current running balance value
-                        t.Balance = balance;
-                    }
-
-                    if (a.Type == AccountType.Brokerage || a.Type == AccountType.Retirement)
-                    {
-                        foreach (SecurityPurchase sp in calculator.GetHolding(a).GetHoldings())
-                        {
-                            //if (Math.Floor(sp.UnitsRemaining) > 0)
-                            {
-                                balance += sp.LatestMarketValue;
-                            }
-                        }
-                    }
-
-                    // Refresh the Account balance value
-                    if (a.Balance != balance)
-                    {
-                        changed = true;
-                    }
-                    a.Balance = balance;
-                    a.Unaccepted = unaccepted;
-
+                    changed = true;
                 }
+                a.Balance = balance;
+                a.Unaccepted = result.Unaccepted;
             }
             finally
             {
@@ -9959,23 +9965,42 @@ namespace Walkabout.Data
             return changed;
         }
 
-        public static decimal GetBalance(MyMoney money, System.Collections.IEnumerable data, Account account, bool normalize, bool withoutTax, out int count, out decimal salesTax, out decimal investmentValue)
+        private async Task<AccountBalanceInfo> GetAccountBalance(CostBasisCalculator calculator, StockQuoteCache cache, Account a)
         {
-            count = 0;
-            salesTax = 0;
-            investmentValue = 0;
+            return await this.GetBalance(calculator, cache, this.GetTransactionsFrom(a), a, false, false);
+        }
 
-            decimal balance = account != null ? account.OpeningBalance : 0;
-            DateTime lastDate = DateTime.Now;
+        public async Task<AccountBalanceInfo> GetBalance(CostBasisCalculator calculator, StockQuoteCache cache, System.Collections.IEnumerable data, Account account, bool normalize, bool withoutTax)
+        {
+            MyMoney money = this.Parent as MyMoney;
+            var result = new AccountBalanceInfo();
+            decimal balance = 0;
+            DateTime toDate = calculator.ToDate;
             bool hasInvestments = false;
+            var today = DateTime.Today;
+            bool first = true;
 
             foreach (object row in data)
             {
-                count++;
                 Transaction t = row as Transaction;
                 if (t != null && !t.IsDeleted && t.Status != TransactionStatus.Void)
                 {
-                    lastDate = t.Date;
+                    if (t.Date > toDate)
+                    {
+                        continue;
+                    }
+                    if (first)
+                    {
+                        // we have something in the date range, so include the opening balance.
+                        // TODO: we really need to store the account creation date.
+                        balance = account != null ? account.OpeningBalance : 0;
+                        first = false;
+                    }
+                    result.Count++;
+                    if (t.Unaccepted)
+                    {
+                        result.Unaccepted++;
+                    }
 
                     decimal iTax = 0;
                     if (t.Investment != null)
@@ -9984,44 +10009,49 @@ namespace Walkabout.Data
                         iTax = t.Investment.Taxes;
                     }
 
-                    if (normalize)
+                    var tax =  t.NetSalesTax + iTax;
+                    var amount = t.Amount;
+                    if (withoutTax)
                     {
-                        salesTax += t.CurrencyNormalizedAmount(t.NetSalesTax) + t.CurrencyNormalizedAmount(iTax);
-
-                        if (withoutTax)
-                        {
-                            balance += t.CurrencyNormalizedAmount(t.AmountMinusTax);
-                        }
-                        else
-                        {
-                            balance += t.CurrencyNormalizedAmount(t.Amount);
-                        }
+                        amount = t.AmountMinusTax;
                     }
                     else
                     {
-                        // We don't currently have a scenario where we want unnormalized, without tax
-                        Debug.Assert(withoutTax == false);
-
-                        balance += t.Amount;
-                        salesTax += t.NetSalesTax + iTax;
+                        amount = t.Amount;
                     }
+                    if (normalize && t.Account != null)
+                    {
+                        tax = t.Account.GetNormalizedAmount(tax);
+                        amount = t.Account.GetNormalizedAmount(amount);
+                    }
+
+                    balance += amount;
+                    result.SalesTax += tax;
                 }
             }
 
             if (hasInvestments && account != null)
             {
                 // get the investment value as of the date of the last transaction
-                CostBasisCalculator calculator = new CostBasisCalculator(money, lastDate);
                 foreach (SecurityPurchase sp in calculator.GetHolding(account).GetHoldings())
                 {
                     Security s = sp.Security;
                     if (Math.Floor(sp.UnitsRemaining) > 0)
                     {
-                        investmentValue += sp.LatestMarketValue;
+                        if (toDate >= today || cache == null)
+                        {
+                            result.InvestmentValue += sp.LatestMarketValue;
+                        }
+                        else
+                        {
+                            decimal price = await cache.GetSecurityMarketPrice(toDate, s);
+                            result.InvestmentValue += price * sp.UnitsRemaining * sp.FuturesFactor;
+                        }
                     }
                 }
             }
-            return balance;
+            result.Balance = balance;
+            return result;
         }
 
 
@@ -10691,6 +10721,15 @@ namespace Walkabout.Data
         HasAttachment = 4,
         NotDuplicate = 8,
         HasStatement = 16
+    }
+
+    public class AccountBalanceInfo
+    {
+        public decimal Balance;
+        public int Count;
+        public decimal SalesTax;
+        public decimal InvestmentValue;
+        public int Unaccepted;
     }
 
     //================================================================================

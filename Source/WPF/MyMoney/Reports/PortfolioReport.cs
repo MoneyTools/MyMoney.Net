@@ -199,6 +199,10 @@ namespace Walkabout.Reports
 
         private async Task InternalGenerate(IReportWriter writer)
         {
+            if (this.reportDate == DateTime.MinValue)
+            {
+                this.reportDate = DateTime.Now;
+            }
             this.flowwriter = writer as FlowDocumentReportWriter;
 
             this.calc = new CostBasisCalculator(this.myMoney, this.reportDate);

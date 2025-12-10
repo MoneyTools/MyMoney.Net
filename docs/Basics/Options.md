@@ -16,6 +16,7 @@ You can use this to:
 * Enable/Disable playing of any sounds.
 * Configure how Ctrl+Space works during [account balancing](../Accounts/BalancingAccounts.md).
 * Enable loading of .ofx files using UTF-8 encoding.
+* Enable [exchange rate](Currencies.md) downloading from fastFOREX.io.
 
 
 See also [Keyboard](Keyboard.md)

@@ -52,7 +52,7 @@ namespace Walkabout.Dialogs
             this.TheAccount = a;
             this.onlineAccounts.Add(NewLabel); // so you can add new online accounts.
 
-            List<string> currencies = new List<string>(Enum.GetNames(typeof(RestfulWebServices.CurrencyCode)));
+            List<string> currencies = new List<string>(Enum.GetNames(typeof(Walkabout.StockQuotes.CurrencyCode)));
             currencies.Sort();
             this.ComboBoxCurrency.ItemsSource = currencies;
 
@@ -471,7 +471,7 @@ namespace Walkabout.Dialogs
             ExchangeRates rates = this.serviceProvider.GetService(typeof(ExchangeRates)) as ExchangeRates;
             if (rates != null)
             {
-                rates.Enqueue(currency);
+                rates.CreateOrUpdate(currency);
             }
 
             this.UpdateRateText();

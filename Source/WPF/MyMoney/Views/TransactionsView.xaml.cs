@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Windows;
 using System.Windows.Automation;
@@ -3583,38 +3584,42 @@ namespace Walkabout.Views
         }
 
 
-        private void ShowBalance()
+        private async void ShowBalance()
         {
             if (this.Rows != null)
             {
-                int count = 0;
-                decimal salesTax = 0;
-                decimal investmentValue = 0;
-                decimal balance;
+                AccountBalanceInfo balance;
+                string currency = "USD";
+                StockQuoteCache cache = this.Money.GetStockQuoteCache();
+                CostBasisCalculator calculator = new CostBasisCalculator(this.myMoney, DateTime.Today);
                 switch (this.ActiveViewName)
                 {
                     case TransactionViewName.ByCategory:
                     case TransactionViewName.ByCategoryCustom:
-                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, true, true, out count, out salesTax, out investmentValue);
+                        balance = await this.myMoney.Transactions.GetBalance(calculator, cache, this.Rows, this.ActiveAccount, true, true);
                         break;
 
                     case TransactionViewName.ByPayee:
-                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, true, false, out count, out salesTax, out investmentValue);
+                        balance = await this.myMoney.Transactions.GetBalance(calculator, cache, this.Rows, this.ActiveAccount, true, false);
                         break;
 
                     default:
-                        balance = Transactions.GetBalance(this.myMoney, this.Rows, this.ActiveAccount, false, false, out count, out salesTax, out investmentValue);
+                        if (this.activeAccount != null)
+                        {
+                            currency = this.activeAccount.NormalizedCurrency;
+                        }
+                        balance = await this.myMoney.Transactions.GetBalance(calculator, cache, this.Rows, this.ActiveAccount, false, false);
                         break;
                 }
 
-                string msg = count + " rows, " + balance.ToString("C");
-                if (salesTax != 0)
+                string msg = balance.Count + " rows, " + currency + " " + balance.Balance.ToString("C");
+                if (balance.SalesTax != 0)
                 {
-                    msg += ", taxes " + salesTax.ToString("C");
+                    msg += ", taxes " + currency + " " + balance.SalesTax.ToString("C");
                 }
-                if (investmentValue != 0)
+                if (balance.InvestmentValue != 0)
                 {
-                    msg += ", investments " + investmentValue.ToString("C");
+                    msg += ", investments " + currency + " " + balance.InvestmentValue.ToString("C");
                 }
 
                 this.ShowStatus(msg);

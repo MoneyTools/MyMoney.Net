@@ -1,5 +1,8 @@
 ﻿using NUnit.Framework;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows.Controls;
 using Walkabout.Data;
+using Walkabout.StockQuotes;
 using Walkabout.Taxes;
 using Walkabout.Utilities;
 
@@ -82,9 +85,42 @@ namespace Walkabout.Tests
         public void CostBasisAcrossTransfers()
         {
             UiDispatcher.CurrentDispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
-            MyMoney m = new MyMoney();
+            MyMoney m = SetupSecurityTransactions();
+            var a = m.Accounts.FindAccount("Ameritrade");
+            var a2 = m.Accounts.FindAccount("Fidelity");
+
+            // Ok, now let's if the cost basis is correct!
+            CostBasisCalculator calc = new CostBasisCalculator(m, DateTime.Now);
+            List<SecurityPurchase> holdings = new List<SecurityPurchase>(calc.GetHolding(a).GetHoldings());
+
+            Assert.AreEqual(0, holdings.Count); // should have nothing left.
+
+            // should have 2 separate cost basis records to cover what we sold.
+            List<SecuritySale> sales = new List<SecuritySale>(calc.GetSales());
+            Assert.AreEqual(2, sales.Count);
+
+            SecuritySale s1 = sales[0];
+            SecuritySale s2 = sales[1];
+
+            // since the sale from Ameritrade account happened first it should be returned first
+            Assert.AreEqual(2, s1.CostBasisPerUnit); // $2, no splits
+            Assert.AreEqual(a, s1.Account); // Ameritrade
+            Assert.AreEqual(Math.Round(10M, 5), Math.Round(s1.UnitsSold, 5));
+
+            // Notice here that the Fidelity account inherited the cost basis records correctly
+            // from the Ameritrade account as a result of the "Transfer" that happened above.
+            Assert.AreEqual(Math.Round(1M / 2M, 5), Math.Round(s2.CostBasisPerUnit, 5)); // $1 after 2:1 split
+            Assert.AreEqual(a2, s2.Account); // Fidelity
+            Assert.AreEqual(Math.Round(10M, 5), Math.Round(s2.UnitsSold, 5));
+        }
+
+        private static MyMoney SetupSecurityTransactions()
+        {
+            var m = new MyMoney();
             Security s = m.Securities.NewSecurity();
-            s.Name = "MSFT";
+            s.Name = "Microsoft Corporation";
+            s.Symbol = "MSFT";
+            s.Price = 100;
             Account a = m.Accounts.AddAccount("Ameritrade");
             a.Type = AccountType.Brokerage;
             Account a2 = m.Accounts.AddAccount("Fidelity");
@@ -107,38 +143,47 @@ namespace Walkabout.Tests
             AddInvestment(m, s, a, DateTime.Parse("1/1/2003"), 10, 3, InvestmentType.Sell);
 
             // and we should have 30 in the other account
-            AddInvestment(m, s, a2, DateTime.Parse("1/1/2004"), 30, 5, InvestmentType.Sell);
+            AddInvestment(m, s, a2, DateTime.Parse("1/1/2004"), 10, 5, InvestmentType.Sell);
 
-            // Ok, now let's if the cost basis is correct!
-            CostBasisCalculator calc = new CostBasisCalculator(m, DateTime.Now);
-            List<SecurityPurchase> holdings = new List<SecurityPurchase>(calc.GetHolding(a).GetHoldings());
+            // Setup some stock quote history.
+            var log = new DownloadLog();
+            var history = new StockQuoteHistory()
+            {
+                Symbol = s.Symbol
+            };
+            var quotes = new StockQuote[]
+            {
+                new StockQuote() { Date = DateTime.Parse("1/1/2000"), Symbol = s.Symbol, Close = 100 },
+                new StockQuote() { Date = DateTime.Parse("6/1/2002"), Symbol = s.Symbol, Close = 200 },
+                new StockQuote() { Date = DateTime.Parse("1/1/2005"), Symbol = s.Symbol, Close = 500 }
+            };
+            // fill in the gaps so we have a quote for each day so we have a complete log.
+            var now = quotes[0].Date;
+            var end = quotes[quotes.Length - 1].Date;
+            var pos = 0;
+            while (pos < quotes.Length - 1 && now < end)
+            {
+                var quote = quotes[pos];
+                var next = quotes[pos + 1];
+                if (now < next.Date)
+                {
+                    var filling = new StockQuote() { Date = now, Symbol = s.Symbol, Close = quote.Close };
+                    history.MergeQuote(filling);
+                }
+                else
+                {
+                    pos++;
+                }
+                now = now.AddDays(1);
+            }
+            log.AddHistory(history);
 
-            Assert.AreEqual(0, holdings.Count); // should have nothing left.
+            var cache = new StockQuoteCache(m, log);
+            m.SetStockQuoteCache(cache);
 
-            // should have 3 separate cost basis records to cover what we sold.
-            List<SecuritySale> sales = new List<SecuritySale>(calc.GetSales());
-            Assert.AreEqual(3, sales.Count);
-
-            SecuritySale s1 = sales[0];
-            SecuritySale s2 = sales[1];
-            SecuritySale s3 = sales[2];
-
-            // since the sale from Ameritrade account happened first it should be returned first
-            Assert.AreEqual(2, s1.CostBasisPerUnit); // $2, no splits
-            Assert.AreEqual(a, s1.Account); // Ameritrade
-            Assert.AreEqual(Math.Round(10M, 5), Math.Round(s1.UnitsSold, 5));
-
-            // Notice here that the Fidelity account inherited the cost basis records correctly
-            // from the Ameritrade account as a result of the "Transfer" that happened above.
-            Assert.AreEqual(Math.Round(1M / 2M, 5), Math.Round(s2.CostBasisPerUnit, 5)); // $1 after 2:1 split
-            Assert.AreEqual(a2, s2.Account); // Fidelity
-            Assert.AreEqual(Math.Round(20M, 5), Math.Round(s2.UnitsSold, 5));
-
-            Assert.AreEqual(2, s3.CostBasisPerUnit); // $2, no splits
-            Assert.AreEqual(a2, s2.Account); // Fidelity
-            Assert.AreEqual(Math.Round(10M, 5), Math.Round(s3.UnitsSold, 5));
-
+            return m;
         }
+
         private static Transaction AddInvestment(MyMoney m, Security s, Account a, DateTime date, decimal units, decimal unitPrice, InvestmentType type)
         {
             Transaction t = m.Transactions.NewTransaction(a);
@@ -153,5 +198,37 @@ namespace Walkabout.Tests
         }
 
 
+        [Test]
+        public async Task AccountBalanceTests()
+        {
+            MyMoney m = SetupSecurityTransactions();
+            var a = m.Accounts.FindAccount("Ameritrade");
+            var a2 = m.Accounts.FindAccount("Fidelity");
+            var s = m.Securities.FindSecurity("Microsoft Corporation", false);
+            var cache = m.GetStockQuoteCache();
+
+            CostBasisCalculator c = new CostBasisCalculator(m, DateTime.Now);
+            var result = await m.Transactions.GetBalance(c, cache, m.Transactions.GetTransactionsFrom(a), a, false, false);
+            var value = result.Balance + result.InvestmentValue;
+            Assert.AreEqual(value, 0, "Expected 0 shares since we sold them on 1/1/2003");
+
+            result = await m.Transactions.GetBalance(c, cache, m.Transactions.GetTransactionsFrom(a2), a2, false, false);
+            value = result.Balance + result.InvestmentValue;
+            var price = await cache.GetSecurityMarketPrice(DateTime.Now, s);
+            Assert.AreEqual(value, 20 * price, "Expected 20 shares since we sold 10 on 1/1/2004");
+
+            // But if we ask for balance on 10/1/2002 we should see some shares before they were sold.
+            var date = DateTime.Parse("10/1/2002");
+            c = new CostBasisCalculator(m, date);
+            price = await cache.GetSecurityMarketPrice(date, s); // price as of 10/1/2002
+
+            result = await m.Transactions.GetBalance(c, cache, m.Transactions.GetTransactionsFrom(a), a, false, false);
+            value = result.Balance + result.InvestmentValue;
+            Assert.AreEqual(value, 10 * price, "Expected 10 shares since we transferred 30 on 1/1/2002");
+
+            result = await m.Transactions.GetBalance(c, cache, m.Transactions.GetTransactionsFrom(a2), a2, false, false);
+            value = result.Balance + result.InvestmentValue;
+            Assert.AreEqual(value, 30 * price, "Expected 30 shares transferred into this account on 1/1/2002");
+        }
     }
 }

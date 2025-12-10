@@ -72,6 +72,8 @@
     <CommandBinding Command="p:AppCommands.CommandReportCashFlow" Executed="OnCommandReportCashFlow"/>
     <CommandBinding Command="p:AppCommands.CommandReportUnaccepted" Executed="OnCommandReportUnaccepted"/>
     <CommandBinding Command="p:AppCommands.CommandFutureBills" Executed="OnCommandFutureBills"/>
+    <CommandBinding Command="p:AppCommands.CommandAccountSummary" Executed="OnCommandAccountSummary"/>
+
 
     <!-- QUERY -->
     <CommandBinding Command="p:AppCommands.CommandQueryShowForm" Executed="OnCommandShowQuery" />
@@ -196,13 +198,13 @@
             <Separator/>
             <MenuItem x:Name="MenuReportsInvestment" Header="_Investment Portfolio" Command="p:AppCommands.CommandReportInvestment"/>
             <MenuItem x:Name="MenuReportsTaxReport" Header="Income _Tax Report" Command="p:AppCommands.CommandTaxReport"/>
-            <MenuItem x:Name="MenuReportsW2Report" Header="W2 and_ Other Tax Forms" Command="p:AppCommands.CommandW2Report"/>
+            <MenuItem x:Name="MenuReportsW2Report" Header="W2 and _Other Tax Forms" Command="p:AppCommands.CommandW2Report"/>
             <Separator/>
             <MenuItem x:Name="MenuReportsCashFlow" Header="Cash _Flow" Command="p:AppCommands.CommandReportCashFlow"/>
             <MenuItem x:Name="MenuReportsUnaccepted" Header="_Unaccepted" Command="p:AppCommands.CommandReportUnaccepted"/>
-            <MenuItem x:Name="MenuFutureBills" Header="_Future Bills" Command="p:AppCommands.CommandFutureBills"/>
-
-
+            <MenuItem x:Name="MenuFutureBills" Header="Future _Bills" Command="p:AppCommands.CommandFutureBills"/>
+            <MenuItem x:Name="MenuAccountSummary" Header="Account _Summary" Command="p:AppCommands.CommandAccountSummary"/>
+            
           </MenuItem>
 
           <MenuItem x:Name="MenuQuery" Header="_Query">

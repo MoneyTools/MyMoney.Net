@@ -92,7 +92,7 @@ namespace Walkabout.StockQuotes
         public async Task<decimal> GetSecurityMarketPrice(DateTime date, Security s)
         {
             // return the closing price of the given security for this date.
-            if (date.Date == DateTime.Today.Date)
+            if (date.Date >= DateTime.Today.Date)
             {
                 return s.Price;
             }

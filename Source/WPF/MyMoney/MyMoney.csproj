@@ -21,11 +21,6 @@
     <SupportedPlatform Include="Windows" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Service References\**" />
-    <None Remove="Service References\**" />
-    <Page Remove="Service References\**" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="Icons\Flags\ac.png" />
     <None Remove="Icons\Flags\ad.png" />
     <None Remove="Icons\Flags\ae.png" />
@@ -307,15 +302,9 @@
     <Compile Include="..\Version\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Compile Include="Service References\RestfulWebServices\Reference.cs" />
     <EmbeddedResource Include="Database\SampleStockQuotes.zip" />
     <EmbeddedResource Include="Ofx\ofx201.dtd" />
     <None Include=".editorconfig" />
-    <None Include="Service References\RestfulWebServices\configuration.svcinfo" />
-    <None Include="Service References\RestfulWebServices\configuration91.svcinfo" />
-    <None Include="Service References\RestfulWebServices\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-    </None>
     <None Include="StockQuotes\Design.dgml" />
     <Resource Include="Charts\Icons\Excel.png" />
     <EmbeddedResource Include="Ofx\MfaPhrases.xml" />
@@ -622,22 +611,6 @@
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />
-    <None Include="Service References\RestfulWebServices\CurrencyService.wsdl" />
-    <None Include="Service References\RestfulWebServices\CurrencyService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\RestfulWebServices\CurrencyService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\RestfulWebServices\CurrencyService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\RestfulWebServices\CurrencyService3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\RestfulWebServices\Walkabout.RestfulWebServices.Currency.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
   </ItemGroup>
 
   <ItemGroup>

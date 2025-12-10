@@ -308,6 +308,20 @@ namespace Walkabout.Configuration
             }
         }
 
+        public string FastForexKey
+        {
+            get
+            {
+                object value = this.map["FastForexKey"];
+                return value == null ? null : value.ToString();
+            }
+            set
+            {
+                this.map["FastForexKey"] = value;
+                this.OnPropertyChanged("FastForexKey");
+            }
+        }
+
         public bool ImportOFXAsUTF8
         {
             get

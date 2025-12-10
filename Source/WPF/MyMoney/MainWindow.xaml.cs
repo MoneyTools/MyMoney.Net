@@ -182,6 +182,7 @@ namespace Walkabout
             this.securitiesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Securities);
 
             this.exchangeRates = new ExchangeRates();
+            this.exchangeRates.Error += OnExchangeRateError;
 
             //-----------------------------------------------------------------
             // Setup the "file import" module
@@ -262,6 +263,11 @@ namespace Walkabout
 #endif
         }
 
+        private void OnExchangeRateError(object sender, Exception e)
+        {
+            this.ShowMessage("fastFOREX error: " + e.Message);
+        }
+
         private void OnSettingsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Settings settings = (Settings)sender;
@@ -269,6 +275,9 @@ namespace Walkabout
             {
                 case "Theme":
                     this.OnThemeChanged(this.settings.Theme);
+                    break;
+                case "FastForexKey":
+                    this.UpdateCurrencyRates();
                     break;
             }
         }
@@ -394,7 +403,7 @@ namespace Walkabout
             }
         }
 
-        private void UpdateBalance()
+        private async void UpdateBalance()
         {
             this.myMoney.BeginUpdate(this);
             try
@@ -404,7 +413,7 @@ namespace Walkabout
                 {
                     if (a.Type != AccountType.Loan)
                     {
-                        this.myMoney.Rebalance(calculator, a);
+                        await this.myMoney.Rebalance(calculator, a);
                     }
                 }
             }
@@ -568,6 +577,7 @@ namespace Walkabout
                     {
                         string path = this.database.DatabasePath;
                         this.SetupStockQuoteManager(money);
+                        money.SetStockQuoteCache(this.cache);
                         OfxRequest.OfxLogPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
                     }
 
@@ -627,7 +637,11 @@ namespace Walkabout
                 if (this.settings.LastStockRequest != DateTime.Today && this.quotes != null)
                 {
                     this.quotes.UpdateQuotes();
-                    this.exchangeRates.UpdateRates();
+                }
+
+                if (this.exchangeRates.NeedsUpdate)
+                {
+                    this.UpdateCurrencyRates();
                 }
 
                 this.ShowNetWorth();
@@ -639,6 +653,25 @@ namespace Walkabout
                 this.HideBalancePanel(false, false);
 
                 this.Dispatcher.BeginInvoke(new Action(this.AfterLoadChecks), DispatcherPriority.Background);
+            }
+        }
+
+        private void UpdateCurrencyRates()
+        {
+            if (!this.closed)
+            {
+                this.delayedActions.CancelDelayedAction("updateRates");
+                try
+                {
+                    this.exchangeRates.UpdateRates();
+                } 
+                catch (Exception ex)
+                {
+                    this.ShowMessageUIThread(ex.Message);
+                }
+                // And do it again tomorrow - just in case the app stays open this long.
+                TimeSpan nextUpdate = DateTime.Today.AddDays(1) - DateTime.Now + TimeSpan.FromMinutes(1);
+                this.delayedActions.StartDelayedAction("updateRates", this.UpdateCurrencyRates, nextUpdate);
             }
         }
 
@@ -663,7 +696,7 @@ namespace Walkabout
             this.HideDownloadTab();
         }
 
-        private void AfterLoadChecks()
+        private async void AfterLoadChecks()
         {
             this.myMoney.BeginUpdate(this);
             try
@@ -685,7 +718,7 @@ namespace Walkabout
                 {
                     if (a.Type != AccountType.Loan)
                     {
-                        this.myMoney.Rebalance(calculator, a);
+                        await this.myMoney.Rebalance(calculator, a);
                     }
                 }
 
@@ -3499,6 +3532,17 @@ namespace Walkabout
             this.GenerateReport(report);
         }
 
+        private void OnCommandAccountSummary(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.SaveViewStateOfCurrentView();
+            FlowDocumentView view = this.SetCurrentView<FlowDocumentView>();
+            view.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, "AccountSummaryReport");
+            HelpService.SetHelpKeyword(view, "Reports/AccountSummaryReport/");
+            AccountSummaryReport report = new AccountSummaryReport(view) { ServiceProvider = this };
+            this.OnReportCreated(this, report);
+            this.GenerateReport(report);
+        }
+
         private void OnReportCategorySelected(object sender, Category c)
         {
             this.ViewTransactionsByCategory(c);
@@ -3711,7 +3755,7 @@ namespace Walkabout
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnCommandFileImport(object sender, ExecutedRoutedEventArgs e)
+        private async void OnCommandFileImport(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             openFileDialog1.Filter = StringHelpers.CreateFileFilter(
@@ -3795,7 +3839,7 @@ namespace Walkabout
                         {
                             foreach (var name in csvFiles)
                             {
-                                totalTransactions += this.ImportCsv(name);
+                                totalTransactions += await this.ImportCsv(name);
                             }
                         }
 
@@ -3818,7 +3862,7 @@ namespace Walkabout
             }
         }
 
-        private int ImportCsv(string fileName)
+        private async Task<int> ImportCsv(string fileName)
         {
             int count = 0;
             try
@@ -3835,7 +3879,7 @@ namespace Walkabout
                         ti.Commit();
                         map.Save();
 
-                        this.myMoney.Rebalance(acct);
+                        await this.myMoney.Rebalance(acct);
 
                         var view = this.TransactionView;
                         if (view.CheckTransfers() && acct != null)
@@ -4698,7 +4742,7 @@ namespace Walkabout
             {
                 version = this.GetType().Assembly.GetName().Version.ToString();
             }
-            var msg = string.Format("MyMoney, Version {0}\r\n\r\nData provided by https://twelvedata.com/ and https://yahoo.com/", version);
+            var msg = string.Format("MyMoney, Version {0}\r\n\r\nData provided by https://twelvedata.com/ and https://yahoo.com/ and https://fastforex.io", version);
             MessageBoxEx.Show(msg, "About", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -4762,6 +4806,11 @@ namespace Walkabout
                     bills.PayeeSelected += this.OnReportPayeeSelected;
                     bills.CategorySelected += this.OnReportCategorySelected;
                 }
+                else if (e is AccountSummaryReport asr)
+                {
+                    asr.SelectAccount -= this.OnReportSelectAccount;
+                    asr.SelectAccount += this.OnReportSelectAccount;
+                }
                 else if (e is PortfolioReport portfolio)
                 {
                     portfolio.DrillDown -= this.OnReportDrillDown;
@@ -4774,6 +4823,14 @@ namespace Walkabout
                 }
             }
 
+            private void OnReportSelectAccount(object sender, Account e)
+            {
+                if (windowRef.TryGetTarget(out MainWindow target))
+                {
+                    target.accountsControl.SelectedAccount = e;
+                    target.OnSelectionChangeFor_Account(this, EventArgs.Empty);
+                }
+            }
 
             private void OnFlowViewPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
             {
@@ -4844,6 +4901,10 @@ namespace Walkabout
                     {
                         bills.PayeeSelected -= this.OnReportPayeeSelected;
                         bills.CategorySelected -= this.OnReportCategorySelected;
+                    }
+                    else if (report is AccountSummaryReport asr)
+                    {
+                        asr.SelectAccount -= this.OnReportSelectAccount;
                     }
                     else if (report is PortfolioReport portfolio)
                     {
