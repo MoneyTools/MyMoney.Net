@@ -97,6 +97,7 @@ nav:
     - W2 Report: Reports/W2Report.md
     - Unaccepted Report: Reports/UnacceptedReport.md
     - Future Bills Report: Reports/FutureBillsReport.md
+    - Account Summary Report: Reports/AccountSummaryReport.md
 
   - Development:
     - Overview: dev/index.md
