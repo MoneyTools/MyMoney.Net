@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 //using Kerr;
 using Walkabout.Controls;
@@ -41,8 +42,6 @@ namespace Walkabout.Dialogs
         {
             this.TextBlockIntroMessage.Width = Math.Max(0, e.NewSize.Width - 20);
         }
-
-
 
         public void AddUserDefinedField(string id, string label)
         {

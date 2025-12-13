@@ -1,6 +1,6 @@
 ﻿using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Walkabout.Controls
 {
@@ -55,5 +55,24 @@ namespace Walkabout.Controls
         {
             this.PasswordField.Password = this.PasswordTextBox.Text;
         }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            // Make sure we can use ValuePattern on this control for automation.
+            var id = this.Name;
+            if (this.PasswordTextBox.Visibility == System.Windows.Visibility.Visible)
+            {
+                this.PasswordTextBox.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, id);
+                return new TextBoxAutomationPeer(this.PasswordTextBox);
+            }
+            else
+            {
+                this.PasswordField.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, id);
+                return new PasswordBoxAutomationPeer(this.PasswordField);
+            }
+        }
+
+
     }
+
 }

@@ -19,7 +19,6 @@ namespace Walkabout.Tests.Wrappers
 
         public string Password
         {
-            get { return this.window.GetTextBox("PasswordBox"); }
             set { this.window.SetTextBox("PasswordBox", value); }
         }
 

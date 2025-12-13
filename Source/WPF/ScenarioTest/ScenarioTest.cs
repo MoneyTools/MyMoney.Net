@@ -557,8 +557,11 @@ namespace ScenarioTest
         internal void SignOnToBank()
         {
             this.WriteLine("  - SignOnToBank");
-            this.ofxServerWindow.UserName = this.passwordDialog.UserName = "test";
-            this.ofxServerWindow.Password = this.passwordDialog.Password = "1234";
+            this.passwordDialog.UserName = "test";
+            this.passwordDialog.Password = "1234";
+            // this brings the ofx dialog to the front.
+            this.ofxServerWindow.UserName = "test";
+            this.ofxServerWindow.Password = "1234";
 
             bool mfa = false;
             if (this.random.Next(0, 2) == 0)
@@ -1070,6 +1073,8 @@ to make sure attachments work.");
             }
             this.ClearTransactionViewState();
             this.dataChangedSinceExport = true;
+            this.selectedCurrency = null;
+            this.editedCurrency = null;
         }
         #endregion
 
@@ -1258,6 +1263,7 @@ to make sure attachments work.");
                 {
                     throw new Exception("Cannot find any transaction to select!");
                 }
+                this.transactions.ScrollSelectionIntoView();
             }
         }
 
@@ -1632,12 +1638,15 @@ to make sure attachments work.");
 
         private void SearchTransactionView()
         {
+            this.transactions = this.window.FindTransactionGrid();
             if (this.transactions != null && this.transactions.CountNoPlaceholder > 5)
             {
                 this.EnsureSelectedTransaction();
 
                 this.WriteLine("- SearchTransactionView");
-                var row1 = this.transactions.WaitForSelection();
+                var row1 = this.transactions.WaitForSelection();                
+                Assert.That(row1, Is.Not.Null, "Selection not found after trying to set a selection?");
+
                 var t = this.transactions.GetSelectedTransactionProxy();
                 var search = "\"" + t.Date.ToShortDateString() + "\" and " + t.Amount;
 
@@ -1648,16 +1657,17 @@ to make sure attachments work.");
 
                 // Make sure selection is preserved on the matching transaction
                 var row2 = this.transactions.WaitForSelection();
-                Assert.That(row2, Is.Not.Null, "Selection not found after setting search filter");
+                if (row2 == null)
+                {
+                    // WTF?
+                    Assert.That(row2, Is.Not.Null, "Selection not found after setting search filter");
+                }
                 Assert.That(row2.Id, Is.EqualTo(row1.Id), $"Expected election automation id {row1.Id} doesn't match {row2.Id}");
 
                 var t2 = this.transactions.GetSelectedTransactionProxy();
-                Assert.Multiple(() =>
-                {
-                    Assert.That(t2.Date, Is.EqualTo(t.Date), "Dates don't match");
-                    Assert.That(t2.Amount, Is.EqualTo(t.Amount), "Amounts don't match");
-                });
-
+                Assert.That(t2.Date, Is.EqualTo(t.Date), "Dates don't match");
+                Assert.That(t2.Amount, Is.EqualTo(t.Amount), "Amounts don't match");
+                
                 // don't leave Money with active search filter as it makes the rest of the
                 // editing logic very complicated.
                 quickFilter.ClearSearch();
@@ -1665,18 +1675,12 @@ to make sure attachments work.");
 
                 // Make sure selection is preserved after search is cleared.
                 var row3 = this.transactions.WaitForSelection();
-                Assert.Multiple(() =>
-                {
-                    Assert.That(row3, Is.Not.Null, "Selection not restored after clearing search filter");
-                    Assert.That(row3.Id, Is.EqualTo(row1.Id), $"Expected election automation id {row1.Id} doesn't match {row3.Id}");
-                });
-
+                Assert.That(row3, Is.Not.Null, "Selection not restored after clearing search filter");
+                Assert.That(row3.Id, Is.EqualTo(row1.Id), $"Expected election automation id {row1.Id} doesn't match {row3.Id}");
+                
                 var t3 = this.transactions.GetSelectedTransactionProxy();
-                Assert.Multiple(() =>
-                {
-                    Assert.That(t3.Date, Is.EqualTo(t.Date), "Dates don't match");
-                    Assert.That(t3.Amount, Is.EqualTo(t.Amount), "Amounts don't match");
-                });
+                Assert.That(t3.Date, Is.EqualTo(t.Date), "Dates don't match");
+                Assert.That(t3.Amount, Is.EqualTo(t.Amount), "Amounts don't match");                
             }
         }
 

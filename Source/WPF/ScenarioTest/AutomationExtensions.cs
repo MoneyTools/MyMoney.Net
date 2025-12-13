@@ -1,4 +1,5 @@
 ﻿using System.Windows.Automation;
+using Walkabout.Tests.Interop;
 using Walkabout.Tests.Wrappers;
 
 namespace Walkabout.Tests
@@ -122,8 +123,15 @@ namespace Walkabout.Tests
             {
                 throw new Exception("TextBox '" + name + "' is not enabled");
             }
-            ValuePattern p = (ValuePattern)box.GetCurrentPattern(ValuePattern.Pattern);
-            p.SetValue(value);
+
+            if (box.TryGetCurrentPattern(ValuePattern.Pattern, out object obj) && obj is ValuePattern p)
+            {
+                p.SetValue(value);
+            }
+            else
+            {
+                throw new Exception("TextBox '" + name + "' does not support ValuePattern");
+            }
             return box;
         }
 

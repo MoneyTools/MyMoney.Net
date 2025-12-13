@@ -1241,13 +1241,16 @@ namespace Walkabout.Data
         {
             bool changed = false;
             List<Account> copy = null;
-            lock (this.balancePending)
+            if (this.balancePending != null)
             {
-                if (this.balancePending != null && this.balancePending.Count > 0)
+                lock (this.balancePending)
                 {
-                    copy = new List<Account>(this.balancePending);
+                    if (this.balancePending != null && this.balancePending.Count > 0)
+                    {
+                        copy = new List<Account>(this.balancePending);
+                    }
+                    this.balancePending.Clear();
                 }
-                this.balancePending.Clear();
             }
             if (copy != null && copy.Count > 0) 
             { 
@@ -9948,7 +9951,7 @@ namespace Walkabout.Data
             this.BeginUpdate(true);
             try
             {
-                var result = await this.GetAccountBalance(calculator, cache, a);
+                var result = await this.GetBalance(calculator, cache, this.GetTransactionsFrom(a), a, false, false, true);
                 // Refresh the Account balance value
                 var balance = result.Balance + result.InvestmentValue;
                 if (a.Balance != balance)
@@ -9965,12 +9968,7 @@ namespace Walkabout.Data
             return changed;
         }
 
-        private async Task<AccountBalanceInfo> GetAccountBalance(CostBasisCalculator calculator, StockQuoteCache cache, Account a)
-        {
-            return await this.GetBalance(calculator, cache, this.GetTransactionsFrom(a), a, false, false);
-        }
-
-        public async Task<AccountBalanceInfo> GetBalance(CostBasisCalculator calculator, StockQuoteCache cache, System.Collections.IEnumerable data, Account account, bool normalize, bool withoutTax)
+        public async Task<AccountBalanceInfo> GetBalance(CostBasisCalculator calculator, StockQuoteCache cache, System.Collections.IEnumerable data, Account account, bool normalize, bool withoutTax, bool updateTransactionBalance = false)
         {
             MyMoney money = this.Parent as MyMoney;
             var result = new AccountBalanceInfo();
@@ -10027,6 +10025,10 @@ namespace Walkabout.Data
 
                     balance += amount;
                     result.SalesTax += tax;
+                    if (updateTransactionBalance)
+                    {
+                        t.Balance = balance;
+                    }
                 }
             }
 
