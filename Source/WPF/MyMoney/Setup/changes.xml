@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
-	<change version="2.1.0.57" date="12/13/2025">
-		- Bug: Fix account balance column in Transaction View.
+	<change version="2.1.0.58" date="12/13/2025">
+		- Bug: Fix issue #160: crash when double clicking in Account view.
+		- Bug: Fix issue #159: account balance column in Transaction View.
 	</change>
 	<change version="2.1.0.56" date="12/10/2025">
-		- Feature: Add account summary report with date picker.
+		- Feature: issue #142: Add account summary report with date picker.
 		- Feature: Switch to https://www.fastforex.io/ for exchange rate info.
 	</change>
 	<change version="2.1.0.54" date="12/8/2025">

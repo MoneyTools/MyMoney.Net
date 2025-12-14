@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -340,7 +341,15 @@ namespace Walkabout.Views.Controls
         private void OnListBoxMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             this.delayedActions.CancelDelayedAction("SingleClick");
-            object item = this.GetElementFromPoint(this.listBox1, e.GetPosition(this.listBox1));
+            object item = null;
+            try
+            {
+                this.GetElementFromPoint(this.listBox1, e.GetPosition(this.listBox1));
+            } 
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Ignoring hit test exception : " + ex.Message);
+            }
 
             if (item is AccountViewModel m)
             {
@@ -359,7 +368,7 @@ namespace Walkabout.Views.Controls
 
         private object GetElementFromPoint(ItemsControl hostingControl, Point point)
         {
-            UIElement element = (UIElement)hostingControl.InputHitTest(point);
+            DependencyObject element = hostingControl.InputHitTest(point) as DependencyObject;
             while (element != null)
             {
 
@@ -376,7 +385,11 @@ namespace Walkabout.Views.Controls
                 {
                     return item;
                 }
-                element = (UIElement)VisualTreeHelper.GetParent(element);
+                var parent = VisualTreeHelper.GetParent(element) as DependencyObject;
+                if (parent == element) {
+                    break;
+                }
+                element = parent;
             }
 
             return null;
