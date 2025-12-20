@@ -86,7 +86,7 @@
     <CommandBinding Command="p:AppCommands.CommandOnlineSyncAccount" Executed="OnSynchronizeOnlineAccounts" CanExecute="CanSynchronizeOnlineAccounts"/>
     <CommandBinding Command="p:AppCommands.CommandOnlineUpdateSecurities" Executed="OnCommandUpdateSecurities" CanExecute="CanUpdateSecurities"/>
     <CommandBinding Command="p:AppCommands.CommandDownloadAccounts" Executed="OnCommandDownloadAccounts" />
-    <CommandBinding Command="p:AppCommands.CommandStockQuoteServiceOptions" Executed="OnStockQuoteServiceOptions" />
+    <CommandBinding Command="p:AppCommands.CommandOnlineServiceOptions" Executed="OnStockQuoteServiceOptions" />
 
     <!-- Navigation -->
     <CommandBinding Command="p:AppCommands.CommandBack" Executed="OnCommandBackExecute" CanExecute="OnCommandBackCanExecute"/>
@@ -222,7 +222,7 @@
             <MenuItem x:Name="MenuOnlineSyncAccount" Header="_Synchronize Account" Command="p:AppCommands.CommandOnlineSyncAccount"/>
             <MenuItem x:Name="MenuOnlineUpdateSecurities" Header="_Update Securities" Command="p:AppCommands.CommandOnlineUpdateSecurities"/>
             <MenuItem x:Name="MenuOnlineDownloadAccounts" Header="_Download Accounts..." Command="p:AppCommands.CommandDownloadAccounts"/>
-            <MenuItem x:Name="MenuStockQuoteServiceOptions" Header="Stock Quote Accounts..." Command="p:AppCommands.CommandStockQuoteServiceOptions"/>
+            <MenuItem x:Name="MenuStockQuoteServiceOptions" Header="Online Services..." Command="p:AppCommands.CommandOnlineServiceOptions"/>
           </MenuItem>
 
           <MenuItem x:Name="MenuHelp" Header="_Help">

@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Xps.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
+using Walkabout.Configuration;
 using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Utilities;
@@ -32,7 +33,7 @@ namespace Walkabout.StockQuotes
         private readonly HashSet<string> fetched = new HashSet<string>(); // list that we have already fetched.
         private readonly IStatusService status;
         private readonly IServiceProvider provider;
-        private List<StockServiceSettings> _settings;
+        private List<OnlineServiceSettings> _settings;
         private List<IStockQuoteService> _services = new List<IStockQuoteService>();
         private readonly DownloadLog _downloadLog = new DownloadLog();
         private List<StockQuote> _batch = new List<StockQuote>();
@@ -42,7 +43,7 @@ namespace Walkabout.StockQuotes
         private bool _firstError = true;
         private UsHolidays holidays = new UsHolidays();
 
-        public StockQuoteManager(IServiceProvider provider, List<StockServiceSettings> settings, string logPath)
+        public StockQuoteManager(IServiceProvider provider, List<OnlineServiceSettings> settings, string logPath)
         {
             this._logPath = logPath;
             EnsurePathExists(logPath);
@@ -78,7 +79,7 @@ namespace Walkabout.StockQuotes
             get => this._downloadLog;
         }
 
-        public List<StockServiceSettings> Settings
+        public List<OnlineServiceSettings> Settings
         {
             get
             {
@@ -110,7 +111,7 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        private IStockQuoteService GetServiceForSettings(StockServiceSettings settings)
+        private IStockQuoteService GetServiceForSettings(OnlineServiceSettings settings)
         {
             foreach (var existing in this._services)
             {
@@ -119,7 +120,8 @@ namespace Walkabout.StockQuotes
                     return existing;
                 }
             }
-            IStockQuoteService service = null;if (PolygonStocks.IsMySettings(settings))
+            IStockQuoteService service = null;
+            if (PolygonStocks.IsMySettings(settings))
             {
                 service = new PolygonStocks(settings, this.LogPath);
             }
@@ -160,6 +162,7 @@ namespace Walkabout.StockQuotes
                     this._services.Add(service);
                 }
             }
+
         }
 
         private void OnSymbolNotFound(object sender, string symbol)
@@ -207,17 +210,6 @@ namespace Walkabout.StockQuotes
             {
                 this.status.ShowProgress("", 0, progress.Item1, progress.Item2);
             }
-        }
-
-        public List<StockServiceSettings> GetDefaultSettingsList()
-        {
-            List<StockServiceSettings> result = new List<StockServiceSettings>();
-            result.Add(TwelveData.GetDefaultSettings());
-            //result.Add(PolygonStocks.GetDefaultSettings());
-            result.Add(YahooFinance.GetDefaultSettings());
-            //result.Add(IEXCloud.GetDefaultSettings());
-            //result.Add(AlphaVantage.GetDefaultSettings());
-            return result;
         }
 
         private void OnMoneyChanged(object sender, ChangeEventArgs args)
@@ -714,7 +706,7 @@ namespace Walkabout.StockQuotes
             return null;
         }
 
-        internal async Task<string> TestApiKeyAsync(StockServiceSettings settings)
+        internal async Task<string> TestApiKeyAsync(OnlineServiceSettings settings)
         {
             var service = this.GetServiceForSettings(settings);
             if (service != null)

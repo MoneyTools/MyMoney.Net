@@ -1,6 +1,6 @@
 # Stock Chart
 
-When you select the "View by Security" view you will get an additional tab labelled "Stock" which will show the complete stock price history for that security.  This will only happen if you have setup your [Stock Quote Services](../Accounts/StockQuoteServices.md).
+When you select the "View by Security" view you will get an additional tab labelled "Stock" which will show the complete stock price history for that security.  This will only happen if you have setup your [Online Services](../Accounts/OnlineService.md).
 
 ![](../Images/Stock%20Chart.png)
 

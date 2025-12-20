@@ -1,6 +1,6 @@
 # Securities
 
-You can view a list of your stocks, mutual funds and so on using the "Securities" View menu item.  The following view appears, and is where you can specify the **Type**  of the security.    The current price for Securities is automatically retrieved if you configure your [Stock Quote Service](../Accounts/StockQuoteServices.md).  The "LastPrice" is the previous day's closing price and %Change is the daily change since the last download.
+You can view a list of your stocks, mutual funds and so on using the "Securities" View menu item.  The following view appears, and is where you can specify the **Type**  of the security.    The current price for Securities is automatically retrieved if you configure your [Online Services](../Accounts/OnlineService.md).  The "LastPrice" is the previous day's closing price and %Change is the daily change since the last download.
 
 ![](../Images/Securities.png)
 
@@ -15,7 +15,7 @@ The Type column can have these values:
 
 ![](../Images/Securities1.png)
 
-The **Private**  type allows you to track other kinds of non-publicly traded investments.  If the [Stock Quote Service](../Accounts/StockQuoteServices.md) doesn't know what it is then you can enter the price details manually. 
+The **Private**  type allows you to track other kinds of non-publicly traded investments.  If the [Online Services](../Accounts/OnlineService.md) doesn't know what it is then you can enter the price details manually. 
 
 The little triangle arrow on the left side expands to show the stock split information.  You can edit this grid to add any missing stock splits.  Click the triangle again to hide the stock splits.
 

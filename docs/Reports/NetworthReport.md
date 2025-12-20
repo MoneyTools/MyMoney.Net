@@ -10,7 +10,7 @@ given date and subtracts credit card balances, and any loans to provide a net wo
 You can pick different dates to get a detailed report for any date that you have historical
 stock quote data for. Simply edit the date field.
 
-Historical stock quotes come from your configured [StockQuoteService](../Accounts/StockQuoteServices.md).
+Historical stock quotes come from your configured [Online Services](../Accounts/OnlineService.md).
 
 You can also create [Asset](../Accounts/Assets.md) accounts to cover the value of personal property so those show up in the report also.  Just set the Account Type to "Asset" in the Account properties dialog.
 

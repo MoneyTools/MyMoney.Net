@@ -107,7 +107,7 @@ namespace Walkabout.StockQuotes
 
         /// <summary>
         /// This event is raised if quota limits are stopping the service from responding right now.
-        /// The booling is true when suspended, and false when resuming.
+        /// The boolean is true when suspended, and false when resuming.
         /// </summary>
         event EventHandler<bool> Suspended;
 
@@ -361,8 +361,8 @@ namespace Walkabout.StockQuotes
         private static readonly HashSet<DateTime> KnownClosures = new HashSet<DateTime>(new DateTime[]
         {
             new DateTime(2018, 12, 5), // honor of President George Bush
-            new DateTime(2012, 10, 30), // Hurrican Sandy
-            new DateTime(2012, 10, 29), // Hurrican Sandy
+            new DateTime(2012, 10, 30), // Hurricane Sandy
+            new DateTime(2012, 10, 29), // Hurricane Sandy
             new DateTime(2007, 1, 2), // Honor of President Gerald Ford
             new DateTime(2004, 6, 11), // Honor of President Ronald Reagan
             new DateTime(2001, 9, 14), // 9/11
@@ -370,7 +370,7 @@ namespace Walkabout.StockQuotes
             new DateTime(2001, 9, 12), // 9/11
             new DateTime(2001, 9, 11), // 9/11
             new DateTime(1994, 4, 27), // Honor of President Richard Nixon
-            new DateTime(1985, 9, 27), // Hurrican Gloria
+            new DateTime(1985, 9, 27), // Hurricane Gloria
         });
 
         internal bool IsMarketOpen(DateTime workDay)
@@ -522,194 +522,6 @@ namespace Walkabout.StockQuotes
                 return duplicates.Count > 0;
             }
             return false;
-        }
-
-    }
-
-    /// <summary>
-    /// </summary>
-    public class StockServiceSettings : INotifyPropertyChanged
-    {
-        private string _name;
-        private string _address;
-        private string _apiKey;
-        private int _requestsPerMinute;
-        private int _requestsPerDay;
-        private int _requestsPerMonth;
-        private bool _historyEnabled;
-        private bool _splitHistoryEnabled;
-
-        public string Name
-        {
-            get { return this._name; }
-            set
-            {
-                if (this._name != value)
-                {
-                    this._name = value;
-                    this.OnPropertyChanged("Name");
-                }
-            }
-        }
-
-        public string Address
-        {
-            get { return this._address; }
-            set
-            {
-                if (this._address != value)
-                {
-                    this._address = value;
-                    this.OnPropertyChanged("Address");
-                }
-            }
-        }
-
-        public string ApiKey
-        {
-            get { return this._apiKey; }
-            set
-            {
-                if (this._apiKey != value)
-                {
-                    this._apiKey = value;
-                    this.OnPropertyChanged("ApiKey");
-                }
-            }
-        }
-
-        public int ApiRequestsPerMinuteLimit
-        {
-            get { return this._requestsPerMinute; }
-            set
-            {
-                if (this._requestsPerMinute != value)
-                {
-                    this._requestsPerMinute = value;
-                    this.OnPropertyChanged("ApiRequestsPerMinuteLimit");
-                }
-            }
-        }
-
-        public int ApiRequestsPerDayLimit
-        {
-            get { return this._requestsPerDay; }
-            set
-            {
-                if (this._requestsPerDay != value)
-                {
-                    this._requestsPerDay = value;
-                    this.OnPropertyChanged("ApiRequestsPerDayLimit");
-                }
-            }
-        }
-
-        public int ApiRequestsPerMonthLimit
-        {
-            get { return this._requestsPerMonth; }
-            set
-            {
-                if (this._requestsPerMonth != value)
-                {
-                    this._requestsPerMonth = value;
-                    this.OnPropertyChanged("ApiRequestsPerMonthLimit");
-                }
-            }
-        }
-
-        public bool HistoryEnabled
-        {
-            get { return this._historyEnabled; }
-            set
-            {
-                if (this._historyEnabled != value)
-                {
-                    this._historyEnabled = value;
-                    this.OnPropertyChanged("HistoryEnabled");
-                }
-            }
-        }
-
-        /// <summary>
-        ///  Can fetch stock splits.
-        /// </summary>
-        public bool SplitHistoryEnabled
-        {
-            get { return this._splitHistoryEnabled; }
-            set
-            {
-                if (this._splitHistoryEnabled != value)
-                {
-                    this._splitHistoryEnabled = value;
-                    this.OnPropertyChanged("SplitHistoryEnabled");
-                }
-            }
-        }
-
-        public string OldName { get; internal set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
-        }
-
-        public void Serialize(XmlWriter w)
-        {
-            w.WriteElementString("Name", this.Name == null ? "" : this.Name);
-            w.WriteElementString("ApiKey", this.ApiKey == null ? "" : this.ApiKey);
-            w.WriteElementString("ApiRequestsPerMinuteLimit", this.ApiRequestsPerMinuteLimit.ToString());
-            w.WriteElementString("ApiRequestsPerDayLimit", this.ApiRequestsPerDayLimit.ToString());
-            w.WriteElementString("ApiRequestsPerMonthLimit", this.ApiRequestsPerMonthLimit.ToString());
-            w.WriteElementString("HistoryEnabled", XmlConvert.ToString(this.HistoryEnabled));
-            w.WriteElementString("SplitHistoryEnabled", XmlConvert.ToString(this.SplitHistoryEnabled));
-        }
-
-        public void Deserialize(XmlReader r)
-        {
-            if (r.IsEmptyElement)
-            {
-                return;
-            }
-
-            while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
-            {
-                if (r.NodeType == XmlNodeType.Element)
-                {
-                    if (r.Name == "Name")
-                    {
-                        this.Name = r.ReadElementContentAsString();
-                    }
-                    else if (r.Name == "ApiKey")
-                    {
-                        this.ApiKey = r.ReadElementContentAsString();
-                    }
-                    else if (r.Name == "ApiRequestsPerMinuteLimit")
-                    {
-                        this.ApiRequestsPerMinuteLimit = r.ReadElementContentAsInt();
-                    }
-                    else if (r.Name == "ApiRequestsPerDayLimit")
-                    {
-                        this.ApiRequestsPerDayLimit = r.ReadElementContentAsInt();
-                    }
-                    else if (r.Name == "ApiRequestsPerMonthLimit")
-                    {
-                        this.ApiRequestsPerMonthLimit = r.ReadElementContentAsInt();
-                    }
-                    else if (r.Name == "HistoryEnabled")
-                    {
-                        this.HistoryEnabled = r.ReadElementContentAsBoolean();
-                    }
-                    else if (r.Name == "SplitHistoryEnabled")
-                    {
-                        this.SplitHistoryEnabled = r.ReadElementContentAsBoolean();
-                    }
-                }
-            }
         }
 
     }

@@ -308,20 +308,6 @@ namespace Walkabout.Configuration
             }
         }
 
-        public string FastForexKey
-        {
-            get
-            {
-                object value = this.map["FastForexKey"];
-                return value == null ? null : value.ToString();
-            }
-            set
-            {
-                this.map["FastForexKey"] = value;
-                this.OnPropertyChanged("FastForexKey");
-            }
-        }
-
         public bool ImportOFXAsUTF8
         {
             get
@@ -364,12 +350,12 @@ namespace Walkabout.Configuration
             }
         }
 
-        public List<StockServiceSettings> StockServiceSettings
+        public List<OnlineServiceSettings> StockServiceSettings
         {
             get
             {
                 object value = this.map["StockServiceSettings"];
-                return value is List<StockServiceSettings> ? (List<StockServiceSettings>)value : null;
+                return value is List<OnlineServiceSettings> ? (List<OnlineServiceSettings>)value : null;
             }
             set
             {
@@ -625,13 +611,13 @@ namespace Walkabout.Configuration
                         {
                             pi.SetValue(this, ReadQuery(r), null);
                         }
-                        else if (t == typeof(List<StockServiceSettings>))
+                        else if (t == typeof(List<OnlineServiceSettings>))
                         {
-                            StockServiceSettings s = new StockServiceSettings();
+                            OnlineServiceSettings s = new OnlineServiceSettings();
                             s.Deserialize(r);
                             if (this.StockServiceSettings == null)
                             {
-                                this.StockServiceSettings = new List<StockServiceSettings>();
+                                this.StockServiceSettings = new List<OnlineServiceSettings>();
                             }
                             this.StockServiceSettings.Add(s);
                         }
@@ -778,9 +764,9 @@ namespace Walkabout.Configuration
                         WriteQuery(w, (QueryRow[])value);
                         w.WriteEndElement();
                     }
-                    else if (t == typeof(List<StockServiceSettings>))
+                    else if (t == typeof(List<OnlineServiceSettings>))
                     {
-                        List<StockServiceSettings> s = (List<StockServiceSettings>)value;
+                        List<OnlineServiceSettings> s = (List<OnlineServiceSettings>)value;
                         foreach (var item in s)
                         {
                             w.WriteStartElement("StockServiceSettings");

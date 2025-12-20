@@ -28,7 +28,7 @@ namespace Walkabout.StockQuotes
         }
 
         [XmlIgnore]
-        public StockServiceSettings Settings { get; set; }
+        public OnlineServiceSettings Settings { get; set; }
 
         public DateTime LastCall
         {

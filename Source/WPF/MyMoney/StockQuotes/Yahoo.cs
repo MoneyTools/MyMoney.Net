@@ -46,9 +46,13 @@ namespace Walkabout.StockQuotes
             TimeSpan.FromDays(365 * 100),
         };
 
-        public YahooFinance(StockServiceSettings settings, string logPath) : base(settings, logPath)
+        public YahooFinance(OnlineServiceSettings settings, string logPath) : base(settings, logPath)
         {
             settings.Name = name;
+            if (string.IsNullOrEmpty(settings.ServiceType))
+            {
+                settings.ServiceType = "StockQuote";
+            }
         }
 
         public override string FriendlyName => name;
@@ -57,11 +61,12 @@ namespace Walkabout.StockQuotes
 
         public override bool SupportsHistory => true;
 
-        public static StockServiceSettings GetDefaultSettings()
+        public static OnlineServiceSettings GetDefaultSettings()
         {
-            return new StockServiceSettings()
+            return new OnlineServiceSettings()
             {
                 Name = name,
+                ServiceType = "StockQuote",
                 Address = baseAddress,
                 ApiKey = "",
                 ApiRequestsPerMinuteLimit = 60,
@@ -71,7 +76,7 @@ namespace Walkabout.StockQuotes
             };
         }
 
-        public static bool IsMySettings(StockServiceSettings settings)
+        public static bool IsMySettings(OnlineServiceSettings settings)
         {
             return settings.Name == name;
         }

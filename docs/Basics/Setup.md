@@ -9,7 +9,7 @@ When you first launch the app you will be greeted with a setup dialog where you 
 You should choose a folder that is otherwise empty because MyMoney.Net will create some more
 folders inside the location you choose to store [Attachments](Attachments.md),
 [Statements](../Accounts/Statemnents.md), [Online Banking](./Accounts/OnlineBanking.md) Logs, and optional
-[StockQuotes](../Accounts/StockQuoteServices.md).  If you move the database, you will want to
+[Online Services](../Accounts/OnlineService.md).  If you move the database, you will want to
 move all this together and maintain the same folder hierarchy.
 
 The ellipsis button to the right of the filename allows you to choose an existing database and optionally change the file type from SqlLite (*.mmdb) to one of the following:

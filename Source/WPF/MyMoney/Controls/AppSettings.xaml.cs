@@ -78,7 +78,6 @@ namespace Walkabout.Controls
                     this.checkBoxPlaySounds.IsChecked = this.settings.PlaySounds;
                     this.checkBoxAcceptReconciled.IsChecked = this.settings.AcceptReconciled;
                     this.comboBoxFiscalYear.SelectedIndex = this.databaseSettings.FiscalYearStart;
-                    this.textBoxFastForex.Text = this.settings.FastForexKey;
 
                     this.comboBoxCurrency.Items.Clear();
                     this.currencies?.GetCurrencies().ToList().ForEach(currency =>
@@ -218,15 +217,6 @@ namespace Walkabout.Controls
         private void OnOfxOverrideChanged(object sender, RoutedEventArgs e)
         {
             this.settings.ImportOFXAsUTF8 = this.checkBoxOfxUtf8Override.IsChecked == true;
-        }
-
-        private void OnFastForexKeyChanged(object sender, TextChangedEventArgs e)
-        {
-            var key = this.textBoxFastForex.Text.Trim();
-            if (key != this.settings.FastForexKey)
-            {
-                this.settings.FastForexKey = key;
-            }
         }
     }
 }

@@ -102,6 +102,7 @@
                       SelectedItem="{Binding Symbol, Mode=TwoWay, Converter={StaticResource CulturePickerConverter}, ConverterParameter=CurrencySymbol}"
                       ItemsSource="{Binding Path=CurrencyCultures, Source={StaticResource CultureHelpers }}" 
                       GotFocus="ComboBoxForSymbol_GotFocus"
+                      LostFocus="ComboBoxForSymbol_LostFocus"
                       DisplayMemberPath="CurrencySymbol" 
                       FilterChanged="ComboBoxCultureInfo_FilterChanged" 
                       IsTextSearchCaseSensitive="False"
@@ -171,7 +172,9 @@
         <DataTemplate x:Key="myTemplateRatioEdit" >
             <!-- the border makes the whole column hittable -->
             <Border BorderThickness="0,0,0,0" Background="Transparent" Focusable="false" VerticalAlignment="Stretch">
-                <TextBox Style="{StaticResource GridTextBoxStyle}"  Text="{Binding Ratio, StringFormat={}{0:0.0000}, Mode=TwoWay}" TextAlignment="Right" 
+                <TextBox Style="{StaticResource GridTextBoxStyle}"  Text="{Binding Ratio, StringFormat={}{0:0.0000}, Mode=TwoWay}" 
+                         TextAlignment="Right"                          
+                         GotFocus="ComboBoxForRatio_GotFocus"
                          ToolTip="What is 1 unit of this currency in US dollars."/>
             </Border>
         </DataTemplate>

@@ -80,7 +80,7 @@ namespace Walkabout
         private string caption;
         private BalanceControl balanceControl;
 
-        private readonly ExchangeRates exchangeRates;
+        private ExchangeRateService exchangeRates;
         private StockQuoteManager quotes;
         private StockQuoteCache cache;
         private readonly int mainThreadId;
@@ -115,7 +115,7 @@ namespace Walkabout
             var stockService = settings.StockServiceSettings;
             if (stockService == null)
             {
-                settings.StockServiceSettings = new List<StockServiceSettings>();
+                settings.StockServiceSettings = new List<OnlineServiceSettings>();
             }
 
             Walkabout.Utilities.UiDispatcher.CurrentDispatcher = this.Dispatcher;
@@ -180,9 +180,6 @@ namespace Walkabout
             this.categoriesControl.SelectedTransactionChanged += new EventHandler(this.CategoriesControl_SelectedTransactionChanged);
             this.payeesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Payees);
             this.securitiesControl.SelectionChanged += new EventHandler(this.OnSelectionChangeFor_Securities);
-
-            this.exchangeRates = new ExchangeRates();
-            this.exchangeRates.Error += OnExchangeRateError;
 
             //-----------------------------------------------------------------
             // Setup the "file import" module
@@ -576,7 +573,7 @@ namespace Walkabout
                     if (this.database != null)
                     {
                         string path = this.database.DatabasePath;
-                        this.SetupStockQuoteManager(money);
+                        this.SetupOnlineServices(money);
                         money.SetStockQuoteCache(this.cache);
                         OfxRequest.OfxLogPath = Path.Combine(Path.GetDirectoryName(path), "Logs");
                     }
@@ -629,7 +626,10 @@ namespace Walkabout
                     this.SetGraphState(graphState);
                 }
 
-                this.exchangeRates.MyMoney = money;
+                if (this.exchangeRates != null)
+                {
+                    this.exchangeRates.MyMoney = money;
+                }
 
                 this.ClearOutput();
                 this.ClearOfxDownloads();
@@ -639,7 +639,7 @@ namespace Walkabout
                     this.quotes.UpdateQuotes();
                 }
 
-                if (this.exchangeRates.NeedsUpdate)
+                if (this.exchangeRates != null && this.exchangeRates.NeedsUpdate)
                 {
                     this.UpdateCurrencyRates();
                 }
@@ -658,7 +658,7 @@ namespace Walkabout
 
         private void UpdateCurrencyRates()
         {
-            if (!this.closed)
+            if (!this.closed && this.exchangeRates != null)
             {
                 this.delayedActions.CancelDelayedAction("updateRates");
                 try
@@ -675,13 +675,37 @@ namespace Walkabout
             }
         }
 
-        private void SetupStockQuoteManager(MyMoney money)
+        private void SetupOnlineServices(MyMoney money)
         {
             var stockQuotes = this.GetStockQuotePath();
+            if (this.quotes != null)
+            {
+                this.quotes.DownloadComplete -= this.OnStockDownloadComplete;
+                this.quotes.HistoryAvailable -= this.OnStockQuoteHistoryAvailable;
+            }
             this.quotes = new StockQuoteManager(this, this.settings.StockServiceSettings, stockQuotes);
-            this.quotes.DownloadComplete += new EventHandler<EventArgs>(this.OnStockDownloadComplete);
+            this.quotes.DownloadComplete += this.OnStockDownloadComplete;
             this.quotes.HistoryAvailable += this.OnStockQuoteHistoryAvailable;
             this.cache = new StockQuoteCache(money, this.quotes.DownloadLog);
+
+            var exchangeRateSettings = this.FindExchangeRateSettings();
+            if (exchangeRateSettings != null)
+            {
+                this.exchangeRates = new ExchangeRateService(exchangeRateSettings, stockQuotes, this);
+            }
+        }
+
+        private OnlineServiceSettings FindExchangeRateSettings()
+        {
+            // Search the this.settings.StockServiceSettings list for an exchange rate service
+            foreach (var s in this.settings.StockServiceSettings)
+            {
+                if (ExchangeRateService.IsMySettings(s))
+                {
+                    return s;
+                }
+            }
+            return null;
         }
 
         private string GetStockQuotePath()
@@ -3321,7 +3345,7 @@ namespace Walkabout
             {
                 return this.cache;
             }
-            else if (service == typeof(ExchangeRates))
+            else if (service == typeof(ExchangeRateService))
             {
                 return this.exchangeRates;
             }
@@ -4750,8 +4774,9 @@ namespace Walkabout
         {
             if (this.quotes != null)
             {
-                StockQuoteServiceDialog d = new StockQuoteServiceDialog();
+                OnlineServiceDialog d = new OnlineServiceDialog();
                 d.Owner = this;
+                d.ServiceProvider = this;
                 d.StockQuoteManager = this.quotes;
                 if (d.ShowDialog() == true)
                 {
@@ -4761,10 +4786,10 @@ namespace Walkabout
                     this.settings.StockServiceSettings = settings;
                     this.quotes.Settings = settings;
                     this.quotes.UpdateQuotes();
+                    this.UpdateCurrencyRates();                    
                 }
             }
         }
-
 
         #endregion
 

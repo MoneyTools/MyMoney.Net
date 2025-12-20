@@ -468,7 +468,7 @@ namespace Walkabout.Dialogs
 
             System.Windows.Threading.Dispatcher dispatcher = this.Dispatcher;
 
-            ExchangeRates rates = this.serviceProvider.GetService(typeof(ExchangeRates)) as ExchangeRates;
+            ExchangeRateService rates = this.serviceProvider.GetService(typeof(ExchangeRateService)) as ExchangeRateService;
             if (rates != null)
             {
                 rates.CreateOrUpdate(currency);

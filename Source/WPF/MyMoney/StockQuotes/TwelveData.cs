@@ -32,10 +32,14 @@ namespace Walkabout.StockQuotes
         private const string earliestTimeUri = "https://api.twelvedata.com/earliest_timestamp?format=JSON&&interval=1day&symbol={0}";
         private const string authorizationHeader = "apikey {0}";
 
-        public TwelveData(StockServiceSettings settings, string logPath) : base(settings, logPath)
+        public TwelveData(OnlineServiceSettings settings, string logPath) : base(settings, logPath)
         {
             settings.SplitHistoryEnabled = true;
-            settings.Name = name;            
+            settings.Name = name;
+            if (string.IsNullOrEmpty(settings.ServiceType))
+            {
+                settings.ServiceType = "StockQuote";
+            }
         }
 
         public override string FriendlyName => name;
@@ -44,12 +48,13 @@ namespace Walkabout.StockQuotes
 
         public override bool SupportsHistory => true;
 
-        public static StockServiceSettings GetDefaultSettings()
+        public static OnlineServiceSettings GetDefaultSettings()
         {
-            return new StockServiceSettings()
+            return new OnlineServiceSettings()
             {
                 Name = name,
                 Address = baseAddress,
+                ServiceType = "StockQuote",
                 ApiKey = "",
                 ApiRequestsPerMinuteLimit = 8,
                 ApiRequestsPerDayLimit = 800,
@@ -59,7 +64,7 @@ namespace Walkabout.StockQuotes
             };
         }
 
-        public static bool IsMySettings(StockServiceSettings settings)
+        public static bool IsMySettings(OnlineServiceSettings settings)
         {
             return settings.Name == name;
         }

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.59" date="12/19/2025">
+		- Feature: move currency service management to Online Services.
+		- Feature: hook up currency view to currency service so it shows last updated rates when you add a new currency.
+	</change>
 	<change version="2.1.0.58" date="12/13/2025">
 		- Bug: Fix issue #160: crash when double clicking in Account view.
 		- Bug: Fix issue #159: account balance column in Transaction View.

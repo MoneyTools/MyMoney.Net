@@ -51,7 +51,7 @@ The security may be held in multiple Accounts.  The FIFO column shows buy/sell 
 
 ### Historical Market Value
 
-If you have configured your [Stock Quote Service](StockQuoteServices.md) and stock history information is available then the [TrendGraph](../Charts/TrendGraph.md) will show a nice smooth historical account value.
+If you have configured your [Online Services](OnlineService.md) and stock history information is available then the [TrendGraph](../Charts/TrendGraph.md) will show a nice smooth historical account value.
 The following shows what the TrendGraph will show if you do **not** have daily stock quote history:
 
 ![value](../Images/MarketValue.png)
@@ -60,13 +60,13 @@ Notice the step functions where market values are only updated when
 individual transactions record new unit prices.
 The following shows the smooth historical market value that you get
 if you have daily stock quote histories already downloaded by the
-[Stock Quote Service](StockQuoteServices.md):
+[Online Services](OnlineService.md):
 
 ![smooth](../Images/SmoothMarketValue.png)
 
 
 ### Portfolio Tab
-Once the security information with stock splits is setup using the [Securities](../Basics/Securities.md) view and current prices are available (either downloaded automatically using [Stock Quote Services](StockQuoteServices.md), or entered by hand in the Securities view), you can use the second tab of your Investment account called "Portfolio".  This tab provides a report just for this account listing the holdings in that account (ignoring similar holdings in other accounts).  See [Investment Portfolio](../Reports/InvestmentPortfolio.md) for details on what is in this report.
+Once the security information with stock splits is setup using the [Securities](../Basics/Securities.md) view and current prices are available (either downloaded automatically using [Online Services](OnlineService.md), or entered by hand in the Securities view), you can use the second tab of your Investment account called "Portfolio".  This tab provides a report just for this account listing the holdings in that account (ignoring similar holdings in other accounts).  See [Investment Portfolio](../Reports/InvestmentPortfolio.md) for details on what is in this report.
 You can change the date in the date picker in the heading to see historical values.
 
 ![](../Images/Investment%20Accounts3.png)

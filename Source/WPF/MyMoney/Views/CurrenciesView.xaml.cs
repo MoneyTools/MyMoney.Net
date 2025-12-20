@@ -9,6 +9,7 @@ using System.Xml;
 using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Interfaces.Views;
+using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 using Walkabout.WpfConverters;
 
@@ -42,7 +43,6 @@ namespace Walkabout.Views
                 }
             };
         }
-
         public void FocusQuickFilter()
         {
         }
@@ -231,6 +231,25 @@ namespace Walkabout.Views
             }
         }
 
+        private void ComboBoxForSymbol_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // lookup the latest rates for this new currency symbol.
+            FilteringComboBox box = (FilteringComboBox)sender;
+            if (this.CurrenciesDataGrid.SelectedItem is Currency c && this.ServiceProvider != null)
+            {
+                ExchangeRateService rates = this.ServiceProvider.GetService(typeof(ExchangeRateService)) as ExchangeRateService;
+                if (rates != null)
+                {
+                    var found = rates.CreateOrUpdate(box.Text);
+                    if (found != null)
+                    {
+                        // update our row object.
+                        c.Ratio = found.Ratio;
+                    }
+                }
+            }
+        }
+
         private void ComboBoxForName_GotFocus(object sender, RoutedEventArgs e)
         {
             FilteringComboBox box = (FilteringComboBox)sender;
@@ -356,6 +375,18 @@ namespace Walkabout.Views
                 CulturePicker cp = (CulturePicker)o;
                 return this.IsMatch(cp.CurrencySymbol, combo.Filter) || this.IsMatch(cp.CultureCode, combo.Filter) || this.IsMatch(cp.DisplayName, combo.Filter);
             });
+        }
+
+        private void ComboBoxForRatio_GotFocus(object sender, RoutedEventArgs e)
+        {
+            // auto populate if possible.
+            if (this.CurrenciesDataGrid.SelectedItem is Currency c)
+            {
+                if (sender is TextBox box && string.IsNullOrEmpty(box.Text))
+                {
+                    box.Text = c.Ratio.ToString(CultureInfo.CurrentCulture);
+                }
+            }
         }
 
         private Boolean IsMatch(string value, string textToMatch)

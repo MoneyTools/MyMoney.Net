@@ -1483,6 +1483,10 @@ to make sure attachments work.");
             string dateEditedAsNormalizedString = DateTime.Parse(this.editedValues.Date).ToShortDateString();
 
             Assert.IsNotNull(this.editedValues);
+            if (this.editedValues.SalesTax != transaction.SalesTax)
+            {
+                this.WriteLine($"Sales tax expected {this.editedValues.SalesTax}, but found {transaction.SalesTax}");
+            }
             this.AreEqual(this.editedValues.SalesTax, transaction.SalesTax, "Sales tax");
             this.AreEqual(this.editedValues.Amount, transaction.Amount, "Amount");
             this.AreEqual(this.editedValues.Payee, transaction.PayeeName, "Payee");

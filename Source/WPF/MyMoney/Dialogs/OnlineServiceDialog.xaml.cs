@@ -3,31 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
-using Walkabout.Configuration;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs
 {
     /// <summary>
-    /// Interaction logic for StockQuoteServiceDialog.xaml
+    /// Interaction logic for OnlineServiceDialog.xaml
     /// </summary>
-    public partial class StockQuoteServiceDialog : BaseDialog
+    public partial class OnlineServiceDialog : BaseDialog
     {
         private StockQuoteManager _stockQuotes;
-        private List<StockServiceSettings> _list;
-        private StockServiceSettings _selection;
+        private List<OnlineServiceSettings> _list;
+        private OnlineServiceSettings _selection;
         private bool _initialized = false;
-        private string _password = string.Empty;
         private bool _selectingService;
         private DelayedActions _actions = new DelayedActions();
 
-        public StockQuoteServiceDialog()
+        public OnlineServiceDialog()
         {
             this.InitializeComponent();
             this._initialized = true;
         }
+
+        public MainWindow ServiceProvider { get; internal set; }
 
         public StockQuoteManager StockQuoteManager
         {
@@ -38,6 +37,7 @@ namespace Walkabout.Dialogs
                 this.UpdateDialog();
             }
         }
+
         private void OnServiceSelected(object sender, SelectionChangedEventArgs e)
         {
             if (!this._initialized)
@@ -68,13 +68,13 @@ namespace Walkabout.Dialogs
 
         private void UpdateDialog()
         {
-            foreach (StockServiceSettings item in this.ComboServiceName.Items)
+            foreach (OnlineServiceSettings item in this.ComboServiceName.Items)
             {
                 item.PropertyChanged -= this.OnSettingsChanged;
             }
             this.ComboServiceName.Items.Clear();
-            var list = this._stockQuotes.GetDefaultSettingsList();
-            var current = new List<StockServiceSettings>();
+            var list = IOnlineService.GetDefaultSettingsList();
+            var current = new List<OnlineServiceSettings>();
             // find the settings that match the current list of stock quote services.
             for (int i = 0; i < list.Count(); i++)
             {
@@ -118,7 +118,7 @@ namespace Walkabout.Dialogs
             this.ErrorMessage.Text = msg;
         }
 
-        public List<StockServiceSettings> Settings
+        public List<OnlineServiceSettings> Settings
         {
             get { return this._list; }
         }
@@ -128,7 +128,7 @@ namespace Walkabout.Dialogs
             // TODO: apply has nothing to do since we don't yet have a proper cancel that restores the edited settings on cancel.
         }
 
-        public StockServiceSettings SelectedSettings
+        public OnlineServiceSettings SelectedSettings
         {
             get { return this._selection; }
         }
@@ -175,7 +175,7 @@ namespace Walkabout.Dialogs
         async void CheckApiKey()
         {
             var box = this.PasswordBoxApiKey;
-            StockServiceSettings settings = (StockServiceSettings)box.DataContext;
+            OnlineServiceSettings settings = (OnlineServiceSettings)box.DataContext;
             settings.ApiKey = box.Password;
             if (string.IsNullOrEmpty(settings.ApiKey))
             {
@@ -188,7 +188,15 @@ namespace Walkabout.Dialogs
                 string error = null;
                 try
                 {
-                    error = await this._stockQuotes.TestApiKeyAsync(settings);
+                    if (settings.ServiceType == "ExchangeRate")
+                    {
+                        var svc = new ExchangeRateService(settings, this._stockQuotes.LogPath, this.ServiceProvider);
+                        error = await svc.TestApiKeyAsync(settings);
+                    }
+                    else
+                    {
+                        error = await this._stockQuotes.TestApiKeyAsync(settings);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -218,14 +226,24 @@ namespace Walkabout.Dialogs
 
         void CheckMultiple()
         {
-            // Check if multiple
-            List<string> enabled = new List<string>(from s in this._list
-                                                    where !string.IsNullOrEmpty(s.ApiKey)
-                                                    select s.Name);
-            if (enabled.Count > 1)
+            // Check if multiple services of the same ExchangeRateService have  non-empty api key.
+            var map = new Dictionary<string, OnlineServiceSettings>();
+            foreach (var s in this._list)
             {
-                var msg = string.Join(",", enabled);
-                this.ShowErrorMessage($"Multiple services are enabled: {msg}, this is not recommended");
+                var type = s.ServiceType;
+                if (!string.IsNullOrEmpty(s.ApiKey))
+                {
+                    if (map.ContainsKey(type))
+                    {
+                        var msg = map[type].Name + ", " + s.Name;
+                        this.ShowErrorMessage($"Multiple {type} services are enabled: {msg}, this is not recommended");
+                        return;
+                    }
+                    else
+                    {
+                        map[type] = s;
+                    }
+                }
             }
         }
 

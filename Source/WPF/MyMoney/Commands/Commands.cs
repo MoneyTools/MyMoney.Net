@@ -48,7 +48,7 @@ namespace Walkabout.Commands
         public static readonly RoutedUICommand CommandOnlineSyncAccount;
         public static readonly RoutedUICommand CommandOnlineUpdateSecurities;
         public static readonly RoutedUICommand CommandDownloadAccounts;
-        public static readonly RoutedUICommand CommandStockQuoteServiceOptions;
+        public static readonly RoutedUICommand CommandOnlineServiceOptions;
 
         // Help
         public static readonly RoutedUICommand CommandHelpAbout;
@@ -119,7 +119,7 @@ namespace Walkabout.Commands
             CommandOnlineSyncAccount = new RoutedUICommand("Sync Account", "SyncAccount", typeof(AppCommands));
             CommandOnlineUpdateSecurities = new RoutedUICommand("UpdateSecurities", "Update Securities", typeof(AppCommands));
             CommandDownloadAccounts = new RoutedUICommand("DownloadAccounts", "DownloadAccounts", typeof(AppCommands));
-            CommandStockQuoteServiceOptions = new RoutedUICommand("StockQuoteServiceOptions", "StockQuoteServiceOptions", typeof(AppCommands));
+            CommandOnlineServiceOptions = new RoutedUICommand("StockQuoteServiceOptions", "StockQuoteServiceOptions", typeof(AppCommands));
 
             // HELP
             CommandHelpAbout = new RoutedUICommand("HelpAbout", "About", typeof(AppCommands));

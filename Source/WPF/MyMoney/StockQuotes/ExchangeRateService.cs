@@ -7,7 +7,11 @@ using System.Security.Policy;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using System.Windows.Documents;
+using System.Windows.Forms;
+using System.Xml.Linq;
 using Walkabout.Configuration;
+using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Sgml;
 using Walkabout.StockQuotes;
@@ -181,21 +185,66 @@ namespace Walkabout.StockQuotes
         ZMW, // Zambian Kwacha
     }
 
-    public class ExchangeRates : IDisposable
+    public class ExchangeRateService : IDisposable
     {
+        private static readonly string name = "fastforex.io";
+        private static string endPoint = "https://api.fastforex.io/";
+        private string query = "fetch-all?from=USD";
         private MyMoney myMoney;
-        private string endPoint = "https://api.fastforex.io/fetch-all?from=USD";
         private CancellationTokenSource cancelSource = null;
         private Task downloadTask = null;
-        private string apiKey = null;
+        private bool _firstError = true;
         private DateTime lastDownload = DateTime.MinValue;
         private Dictionary<string, decimal> ratesCache = new Dictionary<string, decimal>();
+        OnlineServiceSettings settings;
+        IServiceProvider provider;
 
-        public ExchangeRates()
+        public ExchangeRateService(OnlineServiceSettings settings, string logPath, IServiceProvider provider)
         {
+            this.settings = settings;
+            this.provider = provider;
+            if (string.IsNullOrEmpty(settings.ServiceType))
+            {
+                settings.ServiceType = "ExchangeRate";
+            }
+            settings.Address = endPoint; 
         }
 
-        public event EventHandler<Exception> Error;
+        public static OnlineServiceSettings GetDefaultSettings()
+        {
+            return new OnlineServiceSettings()
+            {
+                Name = name,
+                ServiceType = "ExchangeRate",
+                Address = endPoint,
+                ApiKey = "",
+                ApiRequestsPerMinuteLimit = 0,
+                ApiRequestsPerDayLimit = 0,
+                ApiRequestsPerMonthLimit = 1000000
+            };
+        }
+
+        public static bool IsMySettings(OnlineServiceSettings settings)
+        {
+            return settings.Name == name;
+        }
+
+        public void LogError(string msg)
+        {
+            if (this.provider != null)
+            {
+                Paragraph p = new Paragraph();
+                p.Inlines.Add(msg);
+                OutputPane output = (OutputPane)this.provider.GetService(typeof(OutputPane));
+                output.AppendParagraph(p);
+                if (this._firstError)
+                {
+                    this._firstError = false;
+                    output.Show();
+                }
+            }
+        }
+
 
         public void Dispose()
         {
@@ -225,8 +274,8 @@ namespace Walkabout.StockQuotes
         {
             if (this.myMoney != null)
             {
-                this.apiKey = Settings.TheSettings.FastForexKey;
-                if (this.downloadTask == null && !string.IsNullOrEmpty(this.apiKey))
+                var apiKey = this.settings.ApiKey?.Trim();
+                if (this.downloadTask == null && !string.IsNullOrEmpty(apiKey))
                 {
                     this.cancelSource = new CancellationTokenSource();
                     this.downloadTask = Task.Run(this.GetRates, cancelSource.Token);
@@ -239,10 +288,22 @@ namespace Walkabout.StockQuotes
             var token = this.cancelSource.Token;            
             if (!token.IsCancellationRequested)
             {
-                await this.GetExchangeRates(token);
+                Exception error = null;
+                try
+                {
+                    await this.GetExchangeRates(token);
+                } 
+                catch (Exception ex)
+                {
+                    error = ex;
+                }
                 UiDispatcher.Invoke(() =>
                 {
                     this.UpdateCurrencyInfo();
+                    if (error != null)
+                    {
+                        this.LogError("Error updating exchange rates from fastforex.io: " + error.Message);
+                    }
                 });
             }
 
@@ -266,43 +327,49 @@ namespace Walkabout.StockQuotes
             }
         }
 
-        private async Task GetExchangeRates(CancellationToken token)
+        public async Task<string> TestApiKeyAsync(OnlineServiceSettings settings)
         {
             try
             {
-                HttpClient client = new HttpClient();
-                // Set http header X-API-Key to our api key
-                client.DefaultRequestHeaders.Add("X-API-Key", this.apiKey);
-                var response = await client.GetAsync(this.endPoint, token);            
-                if (response != null)
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        this.lastDownload = DateTime.Now.Date;
-                        var json = await response.Content.ReadAsStringAsync(token);
-                        var result = Newtonsoft.Json.JsonConvert.DeserializeObject<FastForexResponse>(json);
-                        if (result != null && result.results != null)
-                        {
-                            // USD to XXX
-                            lock (ratesCache)
-                            {
-                                foreach (var kvp in result.results)
-                                {
-                                    ratesCache[kvp.Key] = kvp.Value;
-                                }
-                            }
-                        }
-                    } else
-                    {
-                        response.EnsureSuccessStatusCode();
-                    }
-                }
-            }
+                this.settings = settings;
+                var source = new CancellationTokenSource();
+                await this.GetExchangeRates(source.Token);
+            } 
             catch (Exception ex)
             {
-                if (this.Error != null)
+                return ex.Message;
+            }
+            return null;
+        }
+
+        private async Task GetExchangeRates(CancellationToken token)
+        {
+            HttpClient client = new HttpClient();
+            // Set http header X-API-Key to our api key
+            var apiKey = this.settings.ApiKey?.Trim();
+            client.DefaultRequestHeaders.Add("X-API-Key", apiKey);
+            var response = await client.GetAsync(this.settings.Address + this.query, token);            
+            if (response != null)
+            {
+                if (response.IsSuccessStatusCode)
                 {
-                    this.Error(this, ex);
+                    this.lastDownload = DateTime.Now.Date;
+                    var json = await response.Content.ReadAsStringAsync(token);
+                    var result = Newtonsoft.Json.JsonConvert.DeserializeObject<FastForexResponse>(json);
+                    if (result != null && result.results != null)
+                    {
+                        // USD to XXX
+                        lock (ratesCache)
+                        {
+                            foreach (var kvp in result.results)
+                            {
+                                ratesCache[kvp.Key] = kvp.Value;
+                            }
+                        }
+                    }
+                } else
+                {
+                    response.EnsureSuccessStatusCode();
                 }
             }
         }
@@ -310,7 +377,7 @@ namespace Walkabout.StockQuotes
         /// <summary>
         /// Call this method when user edits a new currency to lookup the rate for it from our daily cache
         /// </summary>
-        internal void CreateOrUpdate(string code)
+        internal Currency CreateOrUpdate(string code)
         {
             if (this.ratesCache != null)
             {
@@ -329,9 +396,11 @@ namespace Walkabout.StockQuotes
                         {
                             found.Ratio = 1 / ratio;
                         }
+                        return found;
                     }
                 }
             }
+            return null;
         }
     }
 

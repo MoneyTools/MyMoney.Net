@@ -39,7 +39,7 @@ namespace Walkabout.StockQuotes
     {
         protected const string userAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
         private readonly char[] illegalUrlChars = new char[] { ' ', '\t', '\n', '\r', '/', '+', '=', '&', ':' };
-        private readonly StockServiceSettings _settings;
+        private readonly OnlineServiceSettings _settings;
         private HashSet<string> _pending = new HashSet<string>();
         private readonly HashSet<string> _retry = new HashSet<string>();
         private int _completed;
@@ -51,7 +51,7 @@ namespace Walkabout.StockQuotes
         private readonly string _logPath;
         private readonly StockQuoteThrottle _throttle;
 
-        public ThrottledStockQuoteService(StockServiceSettings settings, string logPath)
+        public ThrottledStockQuoteService(OnlineServiceSettings settings, string logPath)
         {
             settings.Name = this.FriendlyName;
             this._settings = settings;
@@ -62,7 +62,7 @@ namespace Walkabout.StockQuotes
             this._logPath = logPath;
         }
 
-        protected StockServiceSettings Settings => this._settings;
+        protected OnlineServiceSettings Settings => this._settings;
 
         protected CancellationTokenSource TokenSource => this._source;
 
