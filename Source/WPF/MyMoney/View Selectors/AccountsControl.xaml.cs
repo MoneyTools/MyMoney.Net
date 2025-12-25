@@ -1009,14 +1009,23 @@ namespace Walkabout.Views.Controls
         {
             try
             {
+                var csv = CsvDocument.Load(fileName);
+                if (csv.Headers.Contains("Account"))
+                {
+                    // Throw exception because this this import is supposed to be account specific.
+                    throw new InvalidOperationException("The CSV file contains an 'Account' column but you are importing into a specific account. " +
+                        "Please use File/Import instead.");
+                }
                 // load existing csv map if we have one.
                 var map = this.LoadMap(account);
-                var ti = new CsvTransactionImporter(this.myMoney, account, map);
-                CsvImporter importer = new CsvImporter(this.myMoney, ti);
-                importer.Import(fileName);
-                ti.Commit();
+                var fields = account.Type == AccountType.Brokerage || account.Type == AccountType.Retirement ?
+                    CsvTransactionImporter.BrokerageAccountFields :
+                    CsvTransactionImporter.BankAccountFields;
+                var importer = new CsvTransactionImporter(this.myMoney, account, map, fields);
+                importer.Import(csv);
+                importer.Commit();
                 map.Save();
-                this.myMoney.Rebalance(account);
+                _ = this.myMoney.Rebalance(account);
             }
             catch (UserCanceledException)
             {
@@ -1061,7 +1070,10 @@ namespace Walkabout.Views.Controls
                 try
                 {
                     var map = this.LoadMap(account);
-                    var ti = new CsvTransactionImporter(this.myMoney, account, map);
+                    var fields = account.Type == AccountType.Brokerage || account.Type == AccountType.Retirement ?
+                        CsvTransactionImporter.BrokerageAccountFields :
+                        CsvTransactionImporter.BankAccountFields;
+                    var ti = new CsvTransactionImporter(this.myMoney, account, map, fields);
                     ti.EditCsvMap(null);
                 } 
                 catch (UserCanceledException)

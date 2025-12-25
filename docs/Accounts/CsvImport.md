@@ -30,5 +30,17 @@ You should check negate CheckBox if your Credit Card Company returns withdrawals
 This map will be saved in the same folder as your Money database under a new folder named `CsvMaps`
 so you will not have to keep re-entering this mapping information (unless the columns are changed by your bank).
 
+## Multi-account .csv
+
+Some financial institutions (like Fidelity) allow downloading all activity across all your Fidelity
+accounts as one .csv file where the file contains an "Account" and
+"Account Number" column. In this case use File/Import... and select the ".csv" file extension.
+You will see the Brokerage account fields added to the CSV import Field Map as follows:
+
+![brokeragecsv](../Images/CsvBrokerageImport.png)
+
+This will create a map for all the accounts found in the .csv file.
+If you need to Negate some of them you can later edit the map for a single
+account. This seems to be needed on the Fidelity 401k accounts, which is odd.
 
 See also: [Merging](../Basics/Merging.md) | [Online Banking](OnlineBanking.md)

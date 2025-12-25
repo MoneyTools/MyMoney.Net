@@ -422,7 +422,7 @@ namespace Walkabout.Migrate
                     lineNumber++;
                 }
                 r.Close();
-                myMoney.Rebalance(a);
+                _ = myMoney.Rebalance(a);
                 return transactionsAdded;
             }
         }

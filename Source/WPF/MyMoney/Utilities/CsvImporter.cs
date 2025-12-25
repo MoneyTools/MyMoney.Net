@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Walkabout.Data;
 using Walkabout.Dialogs;
+using Walkabout.Utilities;
 
 namespace Walkabout.Migrate
 {
@@ -53,6 +55,12 @@ namespace Walkabout.Migrate
                 s.Serialize(writer, this);
             }
         }
+
+        internal void CopyFrom(CsvMap mapping)
+        {
+            this.Fields = mapping.Fields;
+            this.Negate = mapping.Negate;
+        }
     }
 
     internal class UserCanceledException : Exception
@@ -60,27 +68,94 @@ namespace Walkabout.Migrate
         public UserCanceledException(string msg) : base(msg) { }
     }
 
-    internal class CsvTransactionImporter : CsvFieldWriter
+    internal class CsvTransactionImporter
     {
         private readonly MyMoney money;
         private readonly Account account;
         private readonly CsvMap map;
         private readonly List<TBag> typedData = new List<TBag>();
         private readonly Regex numericRegex = new Regex(@"([+-]?[\d,.]+)");
+        private readonly string[] fields;
 
-        // this is what we "can" import...
-        private readonly string[] fields = new string[] { "Date", "Payee", "Memo", "Amount", "FITID" };
+        // this is what we "can" import...must match the values in the MapField switch statement.
+        public static string[] BankAccountFields = new string[] { "Date", "Payee", "Memo", "Amount", "FITID" };
+        public static string[] BrokerageAccountFields = new string[] { "Date", "Payee", "Memo", "Action", "Symbol", "TradeType", "UnitPrice", "Quantity", "Amount", "FITID" };
 
-        public CsvTransactionImporter(MyMoney money, Account account, CsvMap map)
+        public CsvTransactionImporter(MyMoney money, Account account, CsvMap map, string[] fields)
         {
             this.money = money;
             this.account = account;
             this.map = map;
+            this.fields = fields;
+        }
+
+        public static Dictionary<Account, CsvDocument> GroupCsvByAccount(MyMoney money, CsvDocument csv)
+        {
+            int accountNumberIndex = csv.Headers.IndexOf("Account Number");
+            int accountNameIndex = csv.Headers.IndexOf("Account");
+            Dictionary<string, string> accounts = new Dictionary<string, string>();
+            Dictionary<Account, CsvDocument> groupedByAccount = new Dictionary<Account, CsvDocument>();
+            foreach (var row in csv.Rows)
+            {
+                string accountNumber = null;
+                string accountName = null;
+                if (accountNumberIndex >= 0 && accountNumberIndex < row.Count)
+                {
+                    accountNumber = row[accountNumberIndex];
+                }
+                if (accountNameIndex >= 0 && accountNameIndex < row.Count)
+                {
+                    accountName = row[accountNameIndex];
+                }
+                if (!string.IsNullOrEmpty(accountNumber))
+                {
+                    Account found = null;
+                    foreach (Account a in money.Accounts.GetAccounts())
+                    {
+                        if (a.AccountId == accountNumber || a.OfxAccountId == accountNumber)
+                        {
+                            found = a;
+                            break;
+                        }
+                    }
+                    if (found == null)
+                    {
+                        var prompt = $"Please select Account to import the CSV transactions from '{accountName}', amd make sure it has account number {accountNumber}";
+                        found = AccountHelper.PickAccount(money, null, prompt);
+                    }
+                    if (found != null)
+                    {
+                        // Create new account specific CsvDocument that does not contain the Account and AccountNumber columns.
+                        if (!groupedByAccount.ContainsKey(found))
+                        {
+                            var doc = new CsvDocument();
+                            groupedByAccount[found] = doc;
+                            doc.Headers.AddRange(csv.Headers);
+                            doc.Headers.Remove("Account");
+                            doc.Headers.Remove("Account Number");
+                        }
+                        if (accountNumberIndex >= 0)
+                        {
+                            if (accountNameIndex > accountNumberIndex)
+                            {
+                                accountNameIndex--;
+                            }
+                            row.RemoveAt(accountNumberIndex);
+                        }
+                        if (accountNameIndex >= 0)
+                        {
+                            row.RemoveAt(accountNameIndex);
+                        }
+                        groupedByAccount[found].Rows.Add(row);
+                    }
+                }
+            }
+            return groupedByAccount;
         }
 
         public void Commit()
         {
-            // ok, we haved typed data, no exceptions, so merge with the account.
+            // ok, we have typed data, no exceptions, so merge with the account.
             if (this.typedData.Count == 0)
             {
                 return;
@@ -89,7 +164,7 @@ namespace Walkabout.Migrate
             {
                 this.money.BeginUpdate(this);
                 var existing = this.money.Transactions.GetTransactionsFrom(this.account);
-                // CSV doesn't provide an FITID so each import can create tons of duplicates.
+                // CSV doesn't always provide an FITID so each import can create tons of duplicates.
                 // So we need constant time lookup by date so that import can quickly match existing matching transactions.
                 Dictionary<DateTime, object> indexed = new Dictionary<DateTime, object>();
                 foreach (var t in existing)
@@ -150,6 +225,12 @@ namespace Walkabout.Migrate
                         t.Memo = bag.Memo;
                         t.Date = bag.Date;
                         t.FITID = bag.FITID;
+
+                        if (this.account.Type == AccountType.Brokerage || this.account.Type == AccountType.Retirement)
+                        {
+                            this.AddInvestmentInfo(t, bag);
+                        }
+
                         this.money.Transactions.Add(t);
                         found = t;
                     }
@@ -163,6 +244,60 @@ namespace Walkabout.Migrate
             finally
             {
                 this.money.EndUpdate();
+            }
+        }
+
+        private void AddInvestmentInfo(Transaction t, TBag bag)
+        {
+            var symbol = bag.Symbol;
+            if (!string.IsNullOrEmpty(symbol) || bag.Quantity != 0)
+            {
+                var i = t.GetOrCreateInvestment();
+                if (!string.IsNullOrEmpty(symbol))
+                {
+                    Security s = this.money.Securities.FindSymbol(symbol.Trim(), false);
+                    if (s == null)
+                    {
+                        s = this.money.Securities.FindSymbol(symbol.Trim(), true);
+                        if (bag.Payee != null)
+                        {
+                            s.Name = bag.Payee.Name;
+                        }
+                    }
+                    else
+                    {
+                        // then the payee is nicer if it just matches the security name.
+                        t.Payee = this.money.Payees.FindPayee(s.Name, true);
+                    }
+                    i.Security = s;
+                }
+                i.UnitPrice = bag.UnitPrice;
+                i.Units = bag.Quantity;
+                if (bag.Quantity == 0)
+                {
+                    // then could be dividends
+                    string memo = (t.Memo + "").ToLowerInvariant();
+                    if (memo.Contains("dividend"))
+                    {
+                        i.Type = InvestmentType.Dividend;
+                        t.Category = this.money.Categories.InvestmentDividends;
+                    }
+                    else if (memo.Contains("interest"))
+                    {
+                        t.Category = this.money.Categories.InvestmentInterest;
+                    }
+                }
+                else
+                {
+                    if (bag.Quantity > 0)
+                    {
+                        i.Type = bag.TradeType == "Shares" ? InvestmentType.Add : InvestmentType.Buy;
+                    }
+                    else
+                    {
+                        i.Type = bag.TradeType == "Shares" ? InvestmentType.Remove : InvestmentType.Sell;
+                    }
+                }
             }
         }
 
@@ -180,6 +315,7 @@ namespace Walkabout.Migrate
             }
             if (cd.ShowDialog() == true)
             {
+                this.map.CopyFrom(cd.Mapping);
                 this.map.Save();
             }
             else
@@ -188,14 +324,17 @@ namespace Walkabout.Migrate
             }
         }
 
-        public override void WriteHeaders(IEnumerable<string> headers)
+        internal int Import(CsvDocument csv)
         {
-            if (this.HeadersMatch(headers))
+            if (!this.HeadersMatch(csv.Headers))
             {
-                // we're good!
-                return;
+                this.EditCsvMap(csv.Headers);
             }
-            this.EditCsvMap(headers);
+            foreach (var row in csv.Rows)
+            {
+                this.ImportRow(row);
+            }
+            return csv.Rows.Count;
         }
 
         private bool HeadersMatch(IEnumerable<string> headers)
@@ -220,9 +359,10 @@ namespace Walkabout.Migrate
             return false;
         }
 
-        public override void WriteRow(IEnumerable<string> values)
+        private void ImportRow(List<string> values)
         {
-            if (this.map == null)
+            // Rows that contain only one value are like comments in a .csv file containing disclaimer info.
+            if (this.map == null || values.Count == 0 || values.Count == 1)
             {
                 return;
             }
@@ -247,6 +387,7 @@ namespace Walkabout.Migrate
         private void MapField(TBag t, CsvFieldMap field, string value)
         {
             string fieldName = field.Field;
+            value = value.Trim();
             // matches this.fields.
             switch (fieldName)
             {
@@ -257,10 +398,15 @@ namespace Walkabout.Migrate
                     }
                     break;
                 case "Payee":
+                    if (value == "No Description" && !string.IsNullOrEmpty(t.Memo))
+                    {
+                        // this is a hack for the Fidelity .csv files where sometimes the Payee is just "No Description"
+                        value = t.Memo;
+                    }
                     Alias alias = this.money.Aliases.FindMatchingAlias(value);
                     if (alias != null)
                     {
-                        if (alias.Payee.Name != value)
+                        if (alias.Payee.Name != value && string.IsNullOrEmpty(t.Memo))
                         {
                             t.Memo = value;
                         }
@@ -291,6 +437,30 @@ namespace Walkabout.Migrate
                         }
                     }
                     break;
+                case "Account":
+                    t.Account = value;
+                    break;
+                case "AccountNumber":
+                    t.AccountNumber = value;
+                    break;
+                case "Symbol":
+                    t.Symbol = value;
+                    break;
+                case "TradeType":
+                    t.TradeType = value;
+                    break;
+                case "UnitPrice":
+                    if (decimal.TryParse(value, out decimal up))
+                    {
+                        t.UnitPrice = up;
+                    }
+                    break;
+                case "Quantity":
+                    if (decimal.TryParse(value, out decimal q))
+                    {
+                        t.Quantity = q;
+                    }
+                    break;
             }
         }
 
@@ -301,189 +471,13 @@ namespace Walkabout.Migrate
             public decimal Amount;
             public Payee Payee;
             public string FITID;
-        }
-    }
-
-    public abstract class CsvFieldWriter
-    {
-        /// <summary>
-        /// Try and map the given headers to target Transaction fields.
-        /// </summary>
-        /// <param name="headers">The headers found in the CSV file</param>
-        public abstract void WriteHeaders(IEnumerable<string> headers);
-
-        /// <summary>
-        /// Now that headers are established and we know which column
-        /// maps to which field, we can import rows of data.
-        /// </summary>
-        /// <param name="values"></param>
-        public abstract void WriteRow(IEnumerable<string> values);
-    }
-
-    public class CsvImporter : Importer
-    {
-        private int _quoteChar;
-        private readonly int _fieldDelimiter = ',';
-        private readonly List<StringBuilder> _fields = new List<StringBuilder>();
-        private int _fieldCount;
-        private readonly CsvFieldWriter _writer;
-
-        public CsvImporter(MyMoney money, CsvFieldWriter writer) : base(money)
-        {
-            this._writer = writer;
-        }
-
-        public override int Import(string file)
-        {
-            using (var reader = new StreamReader(file))
-            {
-                return this.ImportStream(reader);
-            }
-        }
-
-        public int ImportStream(TextReader reader)
-        {
-            int rows = 0;
-            while (true)
-            {
-                string line = reader.ReadLine();
-                if (line == null)
-                {
-                    break;
-                }
-                if (this.ReadRecord(line))
-                {
-                    if (this._fieldCount > 0)
-                    {
-                        var values = from f in this._fields select f.ToString();
-                        if (rows == 0)
-                        {
-                            // first row might be row headers e.g. "Trans. Date,Post Date,Description,Amount,Category"
-                            this._writer.WriteHeaders(values);
-                        }
-                        else
-                        {
-                            this._writer.WriteRow(values);
-                        }
-                    }
-                    rows++;
-                }
-            }
-            return rows;
-        }
-
-        private StringBuilder AddField()
-        {
-            if (this._fieldCount == this._fields.Count)
-            {
-                var builder = new StringBuilder();
-                this._fields.Add(builder);
-                this._fieldCount++;
-                return builder;
-            }
-            var sb = this._fields[this._fieldCount++];
-            sb.Length = 0;
-            return sb;
-        }
-
-        public List<string> GetFields()
-        {
-            var result = new List<string>();
-            for (int i = 0; i < this._fieldCount; i++)
-            {
-                result.Add(this._fields[i].ToString());
-            }
-            return result;
-        }
-
-        public bool ReadRecord(string line)
-        {
-            this._fieldCount = 0;
-            // read a record.
-            int pos = 0;
-            int len = line.Length;
-            if (pos >= len)
-            {
-                return false;
-            }
-
-            char ch = line[pos++];
-            while (pos < len && (ch == ' ' || ch == '\t'))
-            {
-                ch = line[pos++];
-            }
-
-            if (pos >= len)
-            {
-                return false;
-            }
-
-            while (pos < len)
-            {
-                StringBuilder sb = this.AddField();
-                if (ch == '\'' || ch == '"')
-                {
-                    this._quoteChar = ch;
-                    var c = line[pos++];
-                    bool done = false;
-                    while (!done && pos < len)
-                    {
-                        while (pos < len && c != ch)
-                        {
-                            // scan literal.
-                            sb.Append(c);
-                            c = line[pos++];
-                        }
-                        if (pos == len)
-                        {
-                            // error: hit end of line before matching quote!
-                            done = true;
-                        }
-                        else // (c == ch)
-                        {
-                            done = true;
-                            var next = line[pos++]; // peek next char
-                            if (next == ch)
-                            {
-                                // it was an escaped quote sequence "" inside the literal
-                                // so append a single " and consume the second end quote.
-                                done = false;
-                                sb.Append(next);
-                                c = (pos < len) ? line[pos++] : '\0';
-                            }
-                            else
-                            {
-                                c = next;
-                            }
-                        }
-                    }
-                    // skip whitespace after closing quote up to next field delimiter.
-                    while (pos < len && c == ' ')
-                    {
-                        c = line[pos++];
-                    }
-                    ch = c;
-                }
-                else
-                {
-                    // scan number, date, time, float, etc.
-                    while (pos < len && ch != this._fieldDelimiter)
-                    {
-                        sb.Append(ch);
-                        ch = line[pos++]; // peek next char
-                    }
-                    if (ch != this._fieldDelimiter)
-                    {
-                        sb.Append(ch);
-                        ch = '\0';
-                    }
-                }
-                if (ch == this._fieldDelimiter && pos < len)
-                {
-                    ch = line[pos++];
-                }
-            }
-            return true;
+            // Fidelity brokerage .csv fields.
+            public string Account;
+            public string AccountNumber;
+            public string Symbol;
+            public string TradeType;
+            public decimal UnitPrice;
+            public decimal Quantity;            
         }
     }
 }

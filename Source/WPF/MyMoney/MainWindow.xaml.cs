@@ -3891,27 +3891,46 @@ namespace Walkabout
             int count = 0;
             try
             {
+                Account last = null;
+                var csv = CsvDocument.Load(fileName);
+                if (csv.Headers.Contains("Account Number"))
                 {
-                    Account acct = AccountHelper.PickAccount(this.myMoney, null, "Please select Account to import the CSV transactions to.");
-                    if (acct != null)
+                    CsvMap map = null;
+                    var grouped = CsvTransactionImporter.GroupCsvByAccount(this.myMoney, csv);
+                    foreach (var key in grouped.Keys)
                     {
-                        // load existing csv map if we have one.
-                        var map = this.LoadMap(acct);
-                        var ti = new CsvTransactionImporter(this.myMoney, acct, map);
-                        CsvImporter importer = new CsvImporter(this.myMoney, ti);
-                        count = importer.Import(fileName);
-                        ti.Commit();
-                        map.Save();
-
-                        await this.myMoney.Rebalance(acct);
-
-                        var view = this.TransactionView;
-                        if (view.CheckTransfers() && acct != null)
+                        var doc = grouped[key];
+                        var result = this.ImportCsvForAccount(doc, key, map);
+                        count += result.Item1;
+                        if (map == null)
                         {
-                            view.ViewTransactionsForSingleAccount(acct, TransactionSelection.Current, 0);
+                            map = result.Item2;
+                        }
+                        if (count > 0)
+                        {
+                            await this.myMoney.Rebalance(key);
+                            last = key;
                         }
                     }
                 }
+                else
+                {
+                    var result = this.ImportCsvForAccount(csv, null);
+                    count = result.Item1;
+                    var acct = result.Item3;
+                    if (count > 0 && acct != null)
+                    {
+                        last = acct;
+                        await this.myMoney.Rebalance(acct);
+                    }
+                }
+
+                var view = this.TransactionView;
+                if (view.CheckTransfers() && last != null)
+                {
+                    view.ViewTransactionsForSingleAccount(last, TransactionSelection.Current, 0);
+                }
+
             }
             catch (UserCanceledException)
             {
@@ -3924,8 +3943,34 @@ namespace Walkabout
             return count;
         }
 
-        private CsvMap LoadMap(Account a)
+
+        private Tuple<int, CsvMap, Account> ImportCsvForAccount(CsvDocument csv, Account acct, CsvMap defaultMap = null)
         {
+            int count = 0;
+            CsvMap map = null;
+            if (acct == null)
+            {
+                string prompt = "Please select Account to import the CSV transactions into";
+                acct = AccountHelper.PickAccount(this.myMoney, null, prompt);
+            }
+            if (acct != null)
+            {
+                // load existing csv map if we have one.
+                map = this.LoadMap(acct, defaultMap);
+                var fields = acct.Type == AccountType.Brokerage || acct.Type == AccountType.Retirement ?
+                    CsvTransactionImporter.BrokerageAccountFields :
+                    CsvTransactionImporter.BankAccountFields;
+                var importer = new CsvTransactionImporter(this.myMoney, acct, map, fields);
+                count = importer.Import(csv);
+                importer.Commit();
+                map.Save();
+            }
+            return new Tuple<int, CsvMap, Account>(count, map, acct);
+        }
+
+        private CsvMap LoadMap(Account a, CsvMap defaultMap)
+        {
+            CsvMap map = null;
             if (this.databaseSettings != null)
             {
                 var dir = Path.Combine(Path.GetDirectoryName(this.databaseSettings.SettingsFileName), "CsvMaps");
@@ -3934,9 +3979,17 @@ namespace Walkabout
                     Directory.CreateDirectory(dir);
                 }
                 var filename = Path.Combine(dir, a.Id + ".xml");
-                return CsvMap.Load(filename);
+                map = CsvMap.Load(filename);
             }
-            return new CsvMap();
+            else
+            {
+                map = new CsvMap();
+            }
+            if (defaultMap != null && map.Fields == null)
+            {
+                map.CopyFrom(defaultMap);
+            }
+            return map;
         }
 
         private void OnCommandCanOpenContainingFolder(object sender, CanExecuteRoutedEventArgs e)

@@ -1,7 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.60" date="12/24/2025">
+		- Feature: add support for Brokerage .csv files (like the ones from Fidelity download).
+	</change>
 	<change version="2.1.0.59" date="12/19/2025">
-		- Feature: move currency service management to Online Services.
+		- Feature: move currency service management to Online Services dialog.
 		- Feature: hook up currency view to currency service so it shows last updated rates when you add a new currency.
 	</change>
 	<change version="2.1.0.58" date="12/13/2025">

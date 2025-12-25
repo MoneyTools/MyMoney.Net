@@ -14,9 +14,10 @@ namespace Walkabout.Tests
         {
             var money = new MyMoney();
             var map = new TestMap();
-            CsvImporter importer = new CsvImporter(money, map);
-            int rows = importer.ImportStream(new StringReader(map.GetCsv()));
-            Assert.AreEqual(3, rows);
+            var csv = CsvDocument.Read(new StringReader(map.GetCsv()));
+            int rows = csv.Rows.Count();
+            Assert.AreEqual(2, rows);
+            map.AssertEqual(csv);
         }
 
 
@@ -31,7 +32,7 @@ namespace Walkabout.Tests
             Assert.That(doc.Root.Element("row").Element("UserName").ToString(), Is.EqualTo(@"<UserName>chris@contoso.com</UserName>"));
         }
 
-        private class TestMap : CsvFieldWriter
+        private class TestMap
         {
             private readonly string[] headers = new string[] { "Trans. Date", "Post Date", "Description", "Amount", "Category" };
             private readonly string[] row1 = new string[] { "09/23/2022", "09/23/2022", "\"HLU*HULU,374413022733-U \"\"HULU.COM\"\"/BILLCAHLU*HULU, 374413022733-U\"", "14.35", "\"Services\"" };
@@ -47,12 +48,16 @@ namespace Walkabout.Tests
                     string.Join(",", this.row2) + Environment.NewLine;
             }
 
-            public override void WriteHeaders(IEnumerable<string> headers)
+            public void AssertEqual(CsvDocument doc)
             {
-                this.AssertEqual(this.headers, headers);
+                this.AssertEqual(doc.Headers, headers);
+                foreach (var row in doc.Rows)
+                {
+                    this.AssertRow(row);
+                }
             }
 
-            public override void WriteRow(IEnumerable<string> values)
+            private void AssertRow(IEnumerable<string> values)
             {
                 if (this.row == 0)
                 {
@@ -69,7 +74,7 @@ namespace Walkabout.Tests
                 this.row++;
             }
 
-            private void AssertEqual(string[] expected, IEnumerable<string> actual)
+            private void AssertEqual(IList<string> expected, IEnumerable<string> actual)
             {
                 int len = expected.Count();
                 Assert.AreEqual(actual.Count(), len, "Collection sizes don't match");
