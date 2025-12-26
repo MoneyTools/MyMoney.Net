@@ -69,9 +69,6 @@
         <HierarchicalDataTemplate DataType="{x:Type local:CategoryGroup}" ItemsSource="{Binding Path=Subcategories}" >
             <Border BorderBrush="{DynamicResource GridLineBrush}" BorderThickness="0,0,0,1">
                 <Grid HorizontalAlignment="Stretch" >
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
                     <TextBlock  Text="{Binding Path=Name}" MinWidth="200" FontWeight="Bold" />
                 </Grid>
             </Border>

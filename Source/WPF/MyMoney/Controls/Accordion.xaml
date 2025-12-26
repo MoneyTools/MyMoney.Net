@@ -9,8 +9,6 @@
 			 >
 
     <Grid x:Name="MainGrid">
-        <Grid.RowDefinitions>
-        </Grid.RowDefinitions>
     </Grid>
 
 </UserControl>
