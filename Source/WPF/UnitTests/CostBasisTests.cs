@@ -210,7 +210,7 @@ namespace Walkabout.Tests
             CostBasisCalculator c = new CostBasisCalculator(m, DateTime.Now);
             var result = await m.Transactions.GetBalance(c, cache, m.Transactions.GetTransactionsFrom(a), a, false, false);
             var value = result.Balance + result.InvestmentValue;
-            Assert.AreEqual(value, 0, "Expected 0 shares since we sold them on 1/1/2003");
+            Assert.AreEqual(0, value, "Expected 0 shares since we sold them on 1/1/2003");
 
             result = await m.Transactions.GetBalance(c, cache, m.Transactions.GetTransactionsFrom(a2), a2, false, false);
             value = result.Balance + result.InvestmentValue;

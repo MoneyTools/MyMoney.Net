@@ -1354,7 +1354,7 @@ namespace Walkabout.Data
                 }
             }
 
-            this.Rebalance(t);
+            _ = this.Rebalance(t);
             return true;
         }
 
@@ -1608,7 +1608,7 @@ namespace Walkabout.Data
             u.Transfer = new Transfer(0, u, t, s);
             s.Transfer = new Transfer(0, t, s, u);
             this.Transactions.AddTransaction(u);
-            this.Rebalance(to);
+            _ = this.Rebalance(to);
         }
 
         public event EventHandler<TransferChangedEventArgs> BeforeTransferChanged;
@@ -11383,7 +11383,7 @@ namespace Walkabout.Data
                             if (a != null)
                             {
                                 money.Transfer(this, a);
-                                money.Rebalance(a);
+                                _ = money.Rebalance(a);
                             }
                         }
                     }

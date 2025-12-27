@@ -285,7 +285,7 @@ namespace Walkabout.Assitance
                 // now balance the accounts.
                 foreach (Account a in this.money.Accounts.GetAccounts())
                 {
-                    this.money.Rebalance(a);
+                    _ = this.money.Rebalance(a);
                 }
 
                 DateTime end = start.AddYears(1);
@@ -410,7 +410,7 @@ namespace Walkabout.Assitance
             // now balance the accounts again!
             foreach (Account a in this.money.Accounts.GetAccounts())
             {
-                this.money.Rebalance(a);
+                _ = this.money.Rebalance(a);
             }
         }
 

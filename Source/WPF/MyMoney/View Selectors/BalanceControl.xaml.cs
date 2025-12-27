@@ -590,7 +590,7 @@ namespace Walkabout.Views.Controls
                 t.Date = this.StatementDate;
                 this.myMoney.Transactions.AddTransaction(t);
                 this.weAddedInterest = true;
-                this.myMoney.Rebalance(this.account);
+                _ = this.myMoney.Rebalance(this.account);
             }
             if (this.interestTransaction != null)
             {
@@ -599,7 +599,7 @@ namespace Walkabout.Views.Controls
                 {
                     this.myMoney.Transactions.RemoveTransaction(this.interestTransaction);
                     this.interestTransaction = null;
-                    this.myMoney.Rebalance(this.account);
+                    _ = this.myMoney.Rebalance(this.account);
                 }
             }
         }

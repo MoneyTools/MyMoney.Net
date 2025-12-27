@@ -2159,7 +2159,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                 </INVBAL>
                  */
 
-                this.myMoney.Rebalance(a);
+                _ = this.myMoney.Rebalance(a);
             }
 
         }

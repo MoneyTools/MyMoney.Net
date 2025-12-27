@@ -88,11 +88,11 @@ namespace Walkabout.Views
             get
             {
                 ObservableCollection<SecurityType> list = new ObservableCollection<SecurityType>();
-                foreach (System.Reflection.FieldInfo field in typeof(SecurityType).GetFields())
+                foreach (System.Reflection.FieldInfo fieldInfo in typeof(SecurityType).GetFields())
                 {
-                    if (field.IsStatic)
+                    if (fieldInfo.IsStatic)
                     {
-                        object value = field.GetValue(null);
+                        object value = fieldInfo.GetValue(null);
                         if (value is SecurityType)
                         {
                             list.Add((SecurityType)value);

@@ -1014,7 +1014,7 @@ namespace Walkabout.Views
             this.rebalancing = true;
             if (this.activeAccount != null)
             {
-                this.myMoney.Rebalance(this.activeAccount);
+                _ = this.myMoney.Rebalance(this.activeAccount);
             }
             else if (this.ActiveRental != null)
             {

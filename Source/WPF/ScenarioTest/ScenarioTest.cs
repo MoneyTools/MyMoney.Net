@@ -393,7 +393,7 @@ namespace ScenarioTest
         private void AddSampleData()
         {
             this.WriteLine("- AddSampleData");
-            ContextMenu subMenu = this.window.MainMenu.OpenSubMenu("MenuHelp");
+            Walkabout.Tests.Wrappers.ContextMenu subMenu = this.window.MainMenu.OpenSubMenu("MenuHelp");
             subMenu.InvokeMenuItem("MenuSampleData");
 
             AutomationElement msgbox = this.window.Element.FindChildWindow("Add Sample Data", 5);

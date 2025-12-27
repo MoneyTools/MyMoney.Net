@@ -3,7 +3,7 @@
 This most convenient is to install it directly from the web browser.  If the browser downloads this
 file, click "Open file" to install it.
 
-You must first ensure you have [.NET 8.0 runtime installed](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+You must first ensure you have [.NET 10.0 runtime installed](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 
 When installed using ClickOnce the app will [auto-update](Updates.md).
 

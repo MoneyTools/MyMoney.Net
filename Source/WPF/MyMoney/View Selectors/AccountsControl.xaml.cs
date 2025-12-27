@@ -688,7 +688,7 @@ namespace Walkabout.Views.Controls
                 dialog.Owner = App.Current.MainWindow;
                 if (dialog.ShowDialog() == true)
                 {
-                    this.myMoney.Rebalance(a);
+                    _ = this.myMoney.Rebalance(a);
                 }
             }
             else
@@ -697,7 +697,7 @@ namespace Walkabout.Views.Controls
                 dialog.Owner = App.Current.MainWindow;
                 if (dialog.ShowDialog() == true)
                 {
-                    this.myMoney.Rebalance(a);
+                    _ = this.myMoney.Rebalance(a);
                 }
             }
         }

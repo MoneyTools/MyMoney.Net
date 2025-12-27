@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.61" date="12/26/2025">
+		- Feature: move to .NET 10.0.
+	</change>
 	<change version="2.1.0.60" date="12/24/2025">
 		- Feature: add support for Brokerage .csv files (like the ones from Fidelity download).
 	</change>
