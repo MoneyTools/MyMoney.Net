@@ -99,7 +99,7 @@ jobs:
         
     # Test the application.
     - name: Run unit tests
-      run: vstest.console /Platform:x64 Source\WPF\UnitTests\bin\$env:Configuration\net8.0-windows7.0\UnitTests.dll
+      run: vstest.console /Platform:x64 Source\WPF\UnitTests\bin\$env:Configuration\net10.0-windows7.0\UnitTests.dll
       env:
         Configuration: ${{ matrix.configuration }}
         Platform: ${{ matrix.platform }}
