@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
-using Walkabout.Migrate;
+using Walkabout.Importers;
 using Walkabout.Taxes;
 using Walkabout.Utilities;
 using Walkabout.Views;

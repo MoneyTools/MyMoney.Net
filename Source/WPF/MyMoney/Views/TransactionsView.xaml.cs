@@ -30,7 +30,7 @@ using Walkabout.Data;
 using Walkabout.Dialogs;
 using Walkabout.Help;
 using Walkabout.Interfaces.Views;
-using Walkabout.Migrate;
+using Walkabout.Importers;
 using Walkabout.Reports;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;

@@ -5,7 +5,7 @@ using System.Linq;
 using Walkabout.Data;
 using Walkabout.Taxes;
 
-namespace Walkabout.Migrate
+namespace Walkabout.Importers
 {
 
     /// <summary>

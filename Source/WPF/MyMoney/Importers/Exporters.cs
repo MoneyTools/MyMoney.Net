@@ -10,7 +10,7 @@ using Walkabout.Data;
 using Walkabout.Utilities;
 using static Walkabout.Data.CsvStore;
 
-namespace Walkabout.Migrate
+namespace Walkabout.Importers
 {
     public class Exporters
     {

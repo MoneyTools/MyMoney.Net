@@ -1,9 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
@@ -11,7 +9,7 @@ using Walkabout.Data;
 using Walkabout.Dialogs;
 using Walkabout.Utilities;
 
-namespace Walkabout.Migrate
+namespace Walkabout.Importers
 {
     public class CsvFieldMap
     {
@@ -76,17 +74,19 @@ namespace Walkabout.Migrate
         private readonly List<TBag> typedData = new List<TBag>();
         private readonly Regex numericRegex = new Regex(@"([+-]?[\d,.]+)");
         private readonly string[] fields;
+        private readonly DownloadData data;
 
         // this is what we "can" import...must match the values in the MapField switch statement.
         public static string[] BankAccountFields = new string[] { "Date", "Payee", "Memo", "Amount", "FITID" };
         public static string[] BrokerageAccountFields = new string[] { "Date", "Payee", "Memo", "Action", "Symbol", "TradeType", "UnitPrice", "Quantity", "Amount", "FITID" };
 
-        public CsvTransactionImporter(MyMoney money, Account account, CsvMap map, string[] fields)
+        public CsvTransactionImporter(MyMoney money, Account account, CsvMap map, DownloadData data, string[] fields)
         {
             this.money = money;
             this.account = account;
             this.map = map;
             this.fields = fields;
+            this.data = data;
         }
 
         public static Dictionary<Account, CsvDocument> GroupCsvByAccount(MyMoney money, CsvDocument csv)
@@ -121,7 +121,10 @@ namespace Walkabout.Migrate
                     if (found == null)
                     {
                         var prompt = $"Please select Account to import the CSV transactions from '{accountName}', amd make sure it has account number {accountNumber}";
-                        found = AccountHelper.PickAccount(money, null, prompt);
+                        Account template = new Account();
+                        template.AccountId = accountNumber;
+                        template.Name = accountName;
+                        found = AccountHelper.PickAccount(money, template, prompt);
                     }
                     if (found != null)
                     {
@@ -164,57 +167,15 @@ namespace Walkabout.Migrate
             {
                 this.money.BeginUpdate(this);
                 var existing = this.money.Transactions.GetTransactionsFrom(this.account);
+                var cache = new TransactionCache(existing);
                 // CSV doesn't always provide an FITID so each import can create tons of duplicates.
                 // So we need constant time lookup by date so that import can quickly match existing matching transactions.
                 Dictionary<DateTime, object> indexed = new Dictionary<DateTime, object>();
-                foreach (var t in existing)
-                {
-                    if (indexed.TryGetValue(t.Date, out object o))
-                    {
-                        if (o is List<Transaction> list)
-                        {
-                            list.Add(t);
-                        }
-                        else if (o is Transaction u)
-                        {
-                            var newList = new List<Transaction>();
-                            newList.Add(u);
-                            newList.Add(t);
-                            indexed[t.Date] = newList;
-                        }
-                    }
-                    else
-                    {
-                        indexed[t.Date] = t;
-                    }
-                }
+                
 
                 foreach (var bag in this.typedData)
                 {
-                    Transaction found = null;
-                    if (indexed.TryGetValue(bag.Date, out object o))
-                    {
-                        if (o is List<Transaction> list)
-                        {
-                            foreach (var u in list)
-                            {
-                                if (u.Payee == bag.Payee && u.Amount == bag.Amount && u.Date == bag.Date)
-                                {
-                                    // found a perfect match so skip it!
-                                    found = u;
-                                    break;
-                                }
-                            }
-                        }
-                        else if (o is Transaction u)
-                        {
-                            if (u.Payee == bag.Payee && u.Amount == bag.Amount && u.Date == bag.Date)
-                            {
-                                // found a perfect match so skip it!
-                                found = u;
-                            }
-                        }
-                    }
+                    Transaction found = cache.FindMatch(bag);
                     if (found == null)
                     {
                         Transaction t = this.money.Transactions.NewTransaction(this.account);
@@ -239,6 +200,7 @@ namespace Walkabout.Migrate
                         found.Status = TransactionStatus.Electronic;
                     }
                     found.IsDownloaded = true;
+                    this.data.AddItem(found);
                 }
             }
             finally
@@ -253,24 +215,7 @@ namespace Walkabout.Migrate
             if (!string.IsNullOrEmpty(symbol) || bag.Quantity != 0)
             {
                 var i = t.GetOrCreateInvestment();
-                if (!string.IsNullOrEmpty(symbol))
-                {
-                    Security s = this.money.Securities.FindSymbol(symbol.Trim(), false);
-                    if (s == null)
-                    {
-                        s = this.money.Securities.FindSymbol(symbol.Trim(), true);
-                        if (bag.Payee != null)
-                        {
-                            s.Name = bag.Payee.Name;
-                        }
-                    }
-                    else
-                    {
-                        // then the payee is nicer if it just matches the security name.
-                        t.Payee = this.money.Payees.FindPayee(s.Name, true);
-                    }
-                    i.Security = s;
-                }
+                i.Security = bag.Security;
                 i.UnitPrice = bag.UnitPrice;
                 i.Units = bag.Quantity;
                 if (bag.Quantity == 0)
@@ -381,6 +326,26 @@ namespace Walkabout.Migrate
                 }
                 col++;
             }
+
+            if (!string.IsNullOrEmpty(t.Symbol))
+            {
+                Security s = this.money.Securities.FindSymbol(t.Symbol.Trim(), false);
+                if (s == null)
+                {
+                    // then this is a new security, so create it and use the payee name.
+                    s = this.money.Securities.FindSymbol(t.Symbol.Trim(), true);
+                    if (t.Payee != null)
+                    {
+                        s.Name = t.Payee.Name;
+                    }
+                }
+                else
+                {
+                    // then the payee is nicer if it just matches the security name.
+                    t.Payee = this.money.Payees.FindPayee(s.Name, true);
+                }
+                t.Security = s;
+            }
             this.typedData.Add(t);
         }
 
@@ -464,7 +429,7 @@ namespace Walkabout.Migrate
             }
         }
 
-        private class TBag
+        internal class TBag
         {
             public DateTime Date;
             public string Memo;
@@ -475,9 +440,95 @@ namespace Walkabout.Migrate
             public string Account;
             public string AccountNumber;
             public string Symbol;
+            public Security Security;
             public string TradeType;
             public decimal UnitPrice;
             public decimal Quantity;            
         }
+
+
+        internal class TransactionCache
+        {
+            Dictionary<DateTime, object> indexed = new Dictionary<DateTime, object>();
+
+            public TransactionCache(IList<Transaction> existing)
+            {
+                // CSV doesn't always provide an FITID so each import can create tons of duplicates.
+                // So we need constant time lookup by date so that import can quickly match existing matching transactions.
+                foreach (var t in existing)
+                {
+                    if (indexed.TryGetValue(t.Date, out object o))
+                    {
+                        if (o is List<Transaction> list)
+                        {
+                            list.Add(t);
+                        }
+                        else if (o is Transaction u)
+                        {
+                            var newList = new List<Transaction>();
+                            newList.Add(u);
+                            newList.Add(t);
+                            indexed[t.Date] = newList;
+                        }
+                    }
+                    else
+                    {
+                        indexed[t.Date] = t;
+                    }
+                }
+            }
+
+            internal Transaction FindMatch(TBag bag)
+            {
+                Transaction found = null;
+                if (indexed.TryGetValue(bag.Date, out object o))
+                {
+                    if (o is List<Transaction> list)
+                    {
+                        foreach (var u in list)
+                        {
+                            if (this.IsMatch(u, bag))
+                            {
+                                found = u;
+                                break;
+                            }
+                        }
+                    }
+                    else if (o is Transaction u)
+                    {
+                        if (this.IsMatch(u, bag))
+                        {
+                            found = u;
+                        }
+                    }
+                }
+                return found;
+            }
+
+            public bool IsMatch(Transaction u, TBag bag)
+            {
+                var i = u.Investment;
+                if (i != null)
+                {
+                    var s = i.Security;
+                    if (s != null && s.Symbol != bag.Symbol)
+                    {
+                        return false; // no match
+                    }
+                    if (i.Units != bag.Quantity)
+                    {
+                        return false; // no match
+                    }
+                }
+
+                if (u.Payee == bag.Payee && u.Amount == bag.Amount && u.Date == bag.Date)
+                {
+                    // found a perfect match so skip it!
+                    return true;
+                }
+                return false;
+            }
+        }
+
     }
 }

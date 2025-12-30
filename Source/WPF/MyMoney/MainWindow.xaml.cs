@@ -23,9 +23,9 @@ using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Dialogs;
 using Walkabout.Help;
+using Walkabout.Importers;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
-using Walkabout.Migrate;
 using Walkabout.Ofx;
 using Walkabout.Reports;
 using Walkabout.Setup;
@@ -87,6 +87,7 @@ namespace Walkabout
         private uint loadTime = NativeMethods.TickCount;
         private readonly RecentFilesMenu recentFilesMenu;
         private AnimatedMessage animatedStatus;
+        private OfxDownloadController ofxController;
         #endregion
 
         #region CONSTRUCTORS
@@ -254,6 +255,10 @@ namespace Walkabout
             this.TransactionGraph.ServiceProvider = this;
             this.AppSettingsPanel.Closed += this.OnAppSettingsPanelClosed;
             this.ApplyDisplayCurrency();
+
+            TabItem item = this.TabDownload;
+            DownloadControl dc = item.Content as DownloadControl;
+            this.ofxController = new OfxDownloadController(dc);
 
 #if PerformanceBlocks
             }
@@ -431,7 +436,7 @@ namespace Walkabout
             this.BeginLoadDatabase();
         }
 
-        private void OfxDownloadControl_SelectionChanged(object sender, OfxDocumentControlSelectionChangedEventArgs e)
+        private void OfxDownloadControl_SelectionChanged(object sender, DownloadControlSelectionChangedEventArgs e)
         {
             IViewNavigator navigator = this;
             var data = e.Data;
@@ -716,7 +721,7 @@ namespace Walkabout
 
         private void ClearOfxDownloads()
         {
-            this.OfxDownloadControl.Cancel();
+            this.ofxController.Cancel();
             this.HideDownloadTab();
         }
 
@@ -1688,7 +1693,9 @@ namespace Walkabout
                     try
                     {
                         int count;
-                        QifImporter importer = new QifImporter(this.myMoney);
+                        TabItem item = this.ShowDownloadTab();
+                        DownloadControl dc = item.Content as DownloadControl;
+                        QifImporter importer = new QifImporter(dc, this.myMoney);
                         acct = importer.Import(selected, file, out count);
                         total += count;
                     }
@@ -2392,8 +2399,7 @@ namespace Walkabout
 
         private void OnDownloadTabClose(object sender, RoutedEventArgs e)
         {
-            OfxDownloadControl dc = this.TabDownload.Content as OfxDownloadControl;
-            dc.Cancel();
+            this.ofxController.Cancel();
             this.HideDownloadTab();
         }
 
@@ -2406,8 +2412,7 @@ namespace Walkabout
         private int ImportOfx(string[] files)
         {
             TabItem item = this.ShowDownloadTab();
-            OfxDownloadControl dc = item.Content as OfxDownloadControl;
-            dc.BeginImport(this.myMoney, files);
+            this.ofxController.BeginImport(this.myMoney, files);
             return 0;
         }
 
@@ -3389,6 +3394,11 @@ namespace Walkabout
             {
                 return this.GetOrCreateView<FlowDocumentView>();
             }
+            else if (service == typeof(DownloadControl))
+            {
+                TabItem item = this.ShowDownloadTab();
+                return item.Content as DownloadControl;
+            }
             return null;
         }
 
@@ -3886,110 +3896,21 @@ namespace Walkabout
             }
         }
 
-        private async Task<int> ImportCsv(string fileName)
+        private string GetDatabaseDir()
         {
-            int count = 0;
-            try
-            {
-                Account last = null;
-                var csv = CsvDocument.Load(fileName);
-                if (csv.Headers.Contains("Account Number"))
-                {
-                    CsvMap map = null;
-                    var grouped = CsvTransactionImporter.GroupCsvByAccount(this.myMoney, csv);
-                    foreach (var key in grouped.Keys)
-                    {
-                        var doc = grouped[key];
-                        var result = this.ImportCsvForAccount(doc, key, map);
-                        count += result.Item1;
-                        if (map == null)
-                        {
-                            map = result.Item2;
-                        }
-                        if (count > 0)
-                        {
-                            await this.myMoney.Rebalance(key);
-                            last = key;
-                        }
-                    }
-                }
-                else
-                {
-                    var result = this.ImportCsvForAccount(csv, null);
-                    count = result.Item1;
-                    var acct = result.Item3;
-                    if (count > 0 && acct != null)
-                    {
-                        last = acct;
-                        await this.myMoney.Rebalance(acct);
-                    }
-                }
-
-                var view = this.TransactionView;
-                if (view.CheckTransfers() && last != null)
-                {
-                    view.ViewTransactionsForSingleAccount(last, TransactionSelection.Current, 0);
-                }
-
-            }
-            catch (UserCanceledException)
-            {
-            }
-            catch (Exception ex)
-            {
-                this.log.Error("Import Error", ex);
-                MessageBoxEx.Show(ex.Message, "Import Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
-            return count;
-        }
-
-
-        private Tuple<int, CsvMap, Account> ImportCsvForAccount(CsvDocument csv, Account acct, CsvMap defaultMap = null)
-        {
-            int count = 0;
-            CsvMap map = null;
-            if (acct == null)
-            {
-                string prompt = "Please select Account to import the CSV transactions into";
-                acct = AccountHelper.PickAccount(this.myMoney, null, prompt);
-            }
-            if (acct != null)
-            {
-                // load existing csv map if we have one.
-                map = this.LoadMap(acct, defaultMap);
-                var fields = acct.Type == AccountType.Brokerage || acct.Type == AccountType.Retirement ?
-                    CsvTransactionImporter.BrokerageAccountFields :
-                    CsvTransactionImporter.BankAccountFields;
-                var importer = new CsvTransactionImporter(this.myMoney, acct, map, fields);
-                count = importer.Import(csv);
-                importer.Commit();
-                map.Save();
-            }
-            return new Tuple<int, CsvMap, Account>(count, map, acct);
-        }
-
-        private CsvMap LoadMap(Account a, CsvMap defaultMap)
-        {
-            CsvMap map = null;
             if (this.databaseSettings != null)
             {
-                var dir = Path.Combine(Path.GetDirectoryName(this.databaseSettings.SettingsFileName), "CsvMaps");
-                if (!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-                var filename = Path.Combine(dir, a.Id + ".xml");
-                map = CsvMap.Load(filename);
+                return Path.GetDirectoryName(this.databaseSettings.SettingsFileName);
             }
-            else
-            {
-                map = new CsvMap();
-            }
-            if (defaultMap != null && map.Fields == null)
-            {
-                map.CopyFrom(defaultMap);
-            }
-            return map;
+            return null;
+        }
+
+        private async Task<int> ImportCsv(string fileName)
+        {
+            TabItem item = this.ShowDownloadTab();
+            DownloadControl dc = item.Content as DownloadControl;
+            CsvImportController importer = new CsvImportController(dc, this.myMoney, this.GetDatabaseDir());
+            return await importer.ImportCsv(fileName);
         }
 
         private void OnCommandCanOpenContainingFolder(object sender, CanExecuteRoutedEventArgs e)
@@ -4288,15 +4209,15 @@ namespace Walkabout
             if (list.Count == 0)
             {
                 TabItem item = this.ShowDownloadTab();
-                OfxDownloadControl dc = item.Content as OfxDownloadControl;
+                DownloadControl dc = item.Content as DownloadControl;
 
-                OfxDownloadData f = new OfxDownloadData(null, "Error", "");
+                DownloadData f = new DownloadData(null, "Error", "");
                 f.Message = @"You have not configured any online account to synchronize with. See Online -> Download Accounts...";
                 f.IsError = true;
                 f.IsDownloading = false;
-                var data = new ThreadSafeObservableCollection<OfxDownloadData>();
+                var data = new ThreadSafeObservableCollection<DownloadData>();
                 data.Add(f);
-                dc.OfxEventTree.ItemsSource = data;
+                dc.DownloadEventTree.ItemsSource = data;
                 return;
             }
             this.DoSync(list);
@@ -4480,10 +4401,8 @@ namespace Walkabout
             try
             {
                 this.accountsControl.MenuSync.IsEnabled = false;
-
                 TabItem item = this.ShowDownloadTab();
-                OfxDownloadControl dc = item.Content as OfxDownloadControl;
-                dc.BeginDownload(this.myMoney, accounts);
+                this.ofxController.BeginDownload(this.myMoney, accounts);
             }
             finally
             {

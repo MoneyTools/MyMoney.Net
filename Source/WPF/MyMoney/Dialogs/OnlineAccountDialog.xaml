@@ -20,6 +20,9 @@
 
     <Window.Resources>
 
+        <Style TargetType="TextBlock">
+          <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
         <DataTemplate DataType="{x:Type ofx:OfxInstitutionInfo}">
             <TextBlock Text="{Binding Path=Name}"/>
         </DataTemplate>

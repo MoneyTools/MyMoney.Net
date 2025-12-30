@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.62" date="12/26/2025">
+		- Feature: refactor DownloadControl so it can be reused for .csv and .qif import.
+		- Cleanup: move OFX special handling from DownloadControl into new OfxDownloadController.
+		- Bug: fix bug in password window where password would type itself in a backwards order due to event race condition.
+	</change>
 	<change version="2.1.0.61" date="12/26/2025">
 		- Feature: move to .NET 10.0.
 	</change>

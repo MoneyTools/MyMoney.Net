@@ -2,7 +2,7 @@
 using System.Text;
 using System.Xml.Linq;
 using Walkabout.Data;
-using Walkabout.Migrate;
+using Walkabout.Importers;
 using Walkabout.Utilities;
 
 namespace Walkabout.Tests

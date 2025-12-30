@@ -2,20 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
-using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Interop;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -23,186 +19,12 @@ using Walkabout.Configuration;
 using Walkabout.Data;
 using Walkabout.Sgml;
 using Walkabout.Utilities;
+using Walkabout.Importers;
 using Dispatcher = System.Windows.Threading.Dispatcher;
 
 
 namespace Walkabout.Ofx
 {
-    public delegate void OfxDownloadProgress(int min, int max, int value, OfxDownloadEventArgs e);
-
-    public class OfxDownloadData : INotifyPropertyChanged
-    {
-        private string message;
-        private Exception error;
-        private readonly OnlineAccount online;
-        private readonly Account account;
-        private readonly string fileName;
-        private bool isError;
-        private bool isDownloading;
-        private bool success;
-        private readonly ThreadSafeObservableCollection<OfxDownloadData> children;
-        private readonly List<Transaction> added = new List<Transaction>();
-        private OfxErrorCode ofxError;
-        private string linkCaption = "Details...";
-
-        public OfxDownloadData(OnlineAccount online, Account account)
-        {
-            this.online = online;
-            this.account = account;
-            this.children = new ThreadSafeObservableCollection<OfxDownloadData>();
-        }
-        public OfxDownloadData(OnlineAccount online, Account account, string msg)
-        {
-            this.online = online;
-            this.account = account;
-            this.message = msg;
-            this.children = new ThreadSafeObservableCollection<OfxDownloadData>();
-        }
-
-        public OfxDownloadData(OnlineAccount online, string fileName, string msg)
-        {
-            this.online = online;
-            this.fileName = fileName;
-            this.message = msg;
-            this.children = new ThreadSafeObservableCollection<OfxDownloadData>();
-        }
-
-        public int Index { get; set; }
-
-        public List<Transaction> Added { get { return this.added; } }
-
-        public OnlineAccount OnlineAccount { get { return this.online; } }
-
-        public Account Account { get { return this.account; } }
-
-        public bool IsError { get { return this.isError; } set { this.isError = value; this.OnPropertyChanged("IsError"); } }
-
-        public bool IsDownloading { get { return this.isDownloading; } set { this.isDownloading = value; this.OnPropertyChanged("IsDownloading"); } }
-
-        public bool Success { get { return this.success; } set { this.success = value; this.OnPropertyChanged("Success"); } }
-
-        public OfxErrorCode OfxError { get { return this.ofxError; } set { this.ofxError = value; this.OnPropertyChanged("OfxError"); } }
-
-        public string Message
-        {
-            get { return (this.Caption == this.message) ? "" : this.message; }
-            set { this.message = value; this.OnPropertyChanged("Message"); }
-        }
-
-        public Exception Error { get { return this.error; } set { this.error = value; this.OnPropertyChanged("Error"); } }
-
-        public Visibility ErrorVisibility { get { return this.error == null ? Visibility.Hidden : Visibility.Visible; } }
-
-        public string LinkCaption { get { return this.linkCaption; } set { this.linkCaption = value; this.OnPropertyChanged("LinkCaption"); } }
-
-        public string Caption
-        {
-            get
-            {
-                string name = null;
-                if (this.Account != null)
-                {
-                    name = this.Account.Name;
-                }
-                else if (this.OnlineAccount != null)
-                {
-                    name = this.OnlineAccount.Name;
-                }
-                else if (!string.IsNullOrEmpty(this.fileName))
-                {
-                    name = this.fileName;
-                }
-                if (name == null)
-                {
-                    name = this.message;
-                }
-                return name;
-            }
-        }
-
-        public ThreadSafeObservableCollection<OfxDownloadData> Children { get { return this.children; } }
-
-        public OfxDownloadData AddError(OnlineAccount oa, Account account, string error)
-        {
-            OfxDownloadData e = new OfxDownloadData(oa, account, "Error");
-            e.Message = error;
-            if (!string.IsNullOrEmpty(error))
-            {
-                e.Error = new OfxException(error);
-            }
-            e.isError = true;
-            this.children.Add(e);
-            return e;
-        }
-
-        public OfxDownloadData AddError(OnlineAccount oa, Account account, Exception error)
-        {
-            OfxDownloadData e = new OfxDownloadData(oa, account, "Error");
-            e.Error = error;
-            e.isError = true;
-            this.children.Add(e);
-            return e;
-        }
-
-        public OfxDownloadData AddMessage(OnlineAccount oa, Account account, string msg)
-        {
-            OfxDownloadData e = new OfxDownloadData(oa, account, msg);
-            this.children.Add(e);
-            return e;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string name)
-        {
-            UiDispatcher.BeginInvoke(new Action(() =>
-            {
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs(name));
-                }
-            }));
-        }
-
-    }
-
-    public class OfxDownloadEventArgs : EventArgs
-    {
-        private readonly ThreadSafeObservableCollection<OfxDownloadData> list;
-
-        public OfxDownloadEventArgs()
-        {
-            this.list = new ThreadSafeObservableCollection<OfxDownloadData>();
-        }
-
-        public ThreadSafeObservableCollection<OfxDownloadData> Entries
-        {
-            get { return this.list; }
-        }
-
-        public OfxDownloadData AddError(OnlineAccount online, Account account, string message)
-        {
-            OfxDownloadData entry = new OfxDownloadData(online, account, message);
-            entry.IsError = true;
-            this.list.Add(entry);
-            return entry;
-        }
-
-        public OfxDownloadData AddError(OnlineAccount online, string fileName, string message)
-        {
-            OfxDownloadData entry = new OfxDownloadData(online, fileName, message);
-            entry.IsError = true;
-            this.list.Add(entry);
-            return entry;
-        }
-
-        public OfxDownloadData AddEntry(OnlineAccount online, Account account, string caption)
-        {
-            OfxDownloadData entry = new OfxDownloadData(online, account, caption);
-            this.list.Add(entry);
-            return entry;
-        }
-    }
 
     internal class LogFileInfo
     {
@@ -212,16 +34,16 @@ namespace Walkabout.Ofx
     public class OfxThread
     {
 
-        public event OfxDownloadProgress Status;
+        public event DownloadProgress Status;
 
-        private readonly IList list;
+        private readonly List<OnlineAccount> list;
         private string[] files;
         private readonly MyMoney myMoney;
         private readonly OfxRequest.PickAccountDelegate resolverWhenMissingAccountId;
         private readonly Dispatcher dispatcher;
         private ILogger log;
 
-        public OfxThread(MyMoney myMoney, IList list, string[] files, OfxRequest.PickAccountDelegate resolverWhenMissingAccountId, Dispatcher uiThreadDispatcher)
+        public OfxThread(MyMoney myMoney, List<OnlineAccount> list, string[] files, OfxRequest.PickAccountDelegate resolverWhenMissingAccountId, Dispatcher uiThreadDispatcher)
         {
             this.myMoney = myMoney;
             this.list = list;
@@ -260,7 +82,7 @@ namespace Walkabout.Ofx
 
         private readonly DelayedActions delayedActions = new DelayedActions();
 
-        private void UpdateStatusOnUIThread(int min, int max, int value, OfxDownloadEventArgs e)
+        private void UpdateStatusOnUIThread(int min, int max, int value, DownloadEventArgs e)
         {
             this.delayedActions.StartDelayedAction("UpdateStatus", () =>
             {
@@ -274,15 +96,15 @@ namespace Walkabout.Ofx
         private async Task LoadImports()
         {
             Thread.CurrentThread.Name = "Synchronize";
-            var downloadArgs = new OfxDownloadEventArgs();
+            var downloadArgs = new DownloadEventArgs();
             OfxRequest ofx = new OfxRequest(null, this.myMoney, this.resolverWhenMissingAccountId);
             var snapshot = this.files;
             this.files = null;
             int count = snapshot.Length;
-            List<OfxDownloadData> entries = new List<OfxDownloadData>();
+            List<DownloadData> entries = new List<DownloadData>();
             foreach (string fname in snapshot)
             {
-                OfxDownloadData se = downloadArgs.AddEntry(null, null, fname);
+                DownloadData se = downloadArgs.AddEntry(null, null, fname);
                 se.IsDownloading = true;
                 entries.Add(se);
             }
@@ -293,7 +115,7 @@ namespace Walkabout.Ofx
             int i = 0;
             foreach (string fname in snapshot)
             {
-                OfxDownloadData se = entries[i];
+                DownloadData se = entries[i];
                 i++;
                 this.UpdateStatusOnUIThread(0, count + 1, i, downloadArgs);
                 await Task.Delay(100); // give time for progress animation to happen.
@@ -365,20 +187,20 @@ namespace Walkabout.Ofx
             }
         }
 
-        private OfxDownloadEventArgs downloadEventArgs;
-        private readonly ConcurrentQueue<OfxDownloadData> work = new ConcurrentQueue<OfxDownloadData>();
+        private DownloadEventArgs downloadEventArgs;
+        private readonly ConcurrentQueue<DownloadData> work = new ConcurrentQueue<DownloadData>();
         private int completed;
 
         private void Synchronize()
         {
-            this.downloadEventArgs = new OfxDownloadEventArgs();
+            this.downloadEventArgs = new DownloadEventArgs();
             int count = this.list.Count;
             this.completed = 0;
             int i = 0;
             for (i = 0; i < count; i++)
             {
                 OnlineAccount oa = this.list[i] as OnlineAccount;
-                OfxDownloadData f = this.downloadEventArgs.AddEntry(oa, null, null);
+                DownloadData f = this.downloadEventArgs.AddEntry(oa, null, null);
                 f.Index = i;
                 f.IsDownloading = true;
                 this.work.Enqueue(f);
@@ -403,7 +225,7 @@ namespace Walkabout.Ofx
         {
             Thread.CurrentThread.Name = "Synchronize";
 
-            OfxDownloadData f = null;
+            DownloadData f = null;
             if (!this.work.TryDequeue(out f))
             {
                 return;
@@ -426,7 +248,7 @@ namespace Walkabout.Ofx
                     this.pending.Add(request);
                 }
 
-                ArrayList accounts = new ArrayList();
+                var accounts = new List<Account>();
                 foreach (Account a in this.myMoney.Accounts.GetAccounts())
                 {
                     if (a.OnlineAccount == oa)
@@ -1481,7 +1303,7 @@ NEWFILEUID:{1}
             }
         }
 
-        public async Task SyncAccountsAsync(IList accounts, OfxDownloadData results, Dispatcher dispatcher)
+        public async Task SyncAccountsAsync(List<Account> accounts, DownloadData results, Dispatcher dispatcher)
         {
             if (accounts.Count == 0)
             {
@@ -1847,7 +1669,7 @@ NEWFILEUID:{1}
             }
         }
 
-        public void ProcessResponse(XDocument doc, OfxDownloadData results)
+        public void ProcessResponse(XDocument doc, DownloadData results)
         {
             // So we don't have to do a .Trim() on every single selected value when parsing the response.
             StripWhitespace(doc);
@@ -1963,7 +1785,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             }
         }
 
-        private void ProcessCreditCardResponse(XElement cc, OfxDownloadData results)
+        private void ProcessCreditCardResponse(XElement cc, DownloadData results)
         {
             List<Tuple<Account, XElement>> pending = new List<Tuple<Account, XElement>>();
 
@@ -2023,7 +1845,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             }
         }
 
-        private void ProcessBankResponse(XElement br, OfxDownloadData results)
+        private void ProcessBankResponse(XElement br, DownloadData results)
         {
             List<Tuple<Account, XElement>> pending = new List<Tuple<Account, XElement>>();
 
@@ -2085,7 +1907,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             }
         }
 
-        private void ProcessInvestmentResponse(XElement ir, OfxDownloadData results)
+        private void ProcessInvestmentResponse(XElement ir, DownloadData results)
         {
             List<Tuple<Account, XElement>> pending = new List<Tuple<Account, XElement>>();
 
@@ -2228,7 +2050,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             }
         }
 
-        private void ProcessInvestmentTransactionList(Account a, XElement tranList, OfxDownloadData results)
+        private void ProcessInvestmentTransactionList(Account a, XElement tranList, DownloadData results)
         {
             if (tranList == null)
             {
@@ -2387,12 +2209,11 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
 
                 t = null;
             }
-
-            string message = (count > 0) ? "Downloaded " + count + " new transactions" : null;
-            OfxDownloadData items = results.AddMessage(this.onlineAccount, a, message);
+            
+            DownloadData items = results.AddResult(this.onlineAccount, a, count);
             foreach (Transaction nt in added)
             {
-                items.Added.Add(nt);
+                items.AddItem(nt);
             }
 
         }
@@ -2938,7 +2759,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         }
 
 
-        private void ProcessCurrency(XElement e, Account account, OfxDownloadData results)
+        private void ProcessCurrency(XElement e, Account account, DownloadData results)
         {
             var currency = e.SelectElement("CURRENCY");
             if (currency == null)
@@ -2953,7 +2774,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             {
                 if (this.currencyErrors.Contains(symbol))
                 {
-                    OfxDownloadData data = results.AddError(this.onlineAccount, account, $"Transaction with currency {symbol} doesn't match account currency {c.Name}");
+                    DownloadData data = results.AddError(this.onlineAccount, account, $"Transaction with currency {symbol} doesn't match account currency {c.Name}");
                     data.LinkCaption = e.ToString();
                     this.currencyErrors.Add(symbol);
                 }
@@ -3172,7 +2993,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         /// <summary>
         /// Process STMTRS
         /// </summary>
-        private void ProcessStatement(OfxDownloadData results, Account a, XElement srs)
+        private void ProcessStatement(DownloadData results, Account a, XElement srs)
         {
             Transactions register = this.myMoney.Transactions;
 
@@ -3325,14 +3146,14 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
                     t.IsDownloaded = true;
                     newTransactions[t.Id] = t;
                 }
-                string message = (count > 0) ? "Downloaded " + count + " new transactions" : null;
-                OfxDownloadData items = results.AddMessage(this.onlineAccount, a, message);
+                
+                DownloadData items = results.AddResult(this.onlineAccount, a, count);
                 foreach (Transaction t in added)
                 {
-                    items.Added.Add(t);
+                    items.AddItem(t);
                 }
 
-                this.myMoney.Rebalance(a);
+                _ = this.myMoney.Rebalance(a);
                 items.Success = true;
             }
             finally
@@ -3342,7 +3163,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
         }
 
         // process INVACCTFROM
-        private bool CheckAccountId(ref Account a, AccountType accountType, XElement from, OfxDownloadData results)
+        private bool CheckAccountId(ref Account a, AccountType accountType, XElement from, DownloadData results)
         {
             string accountid = from.SelectElementValue("ACCTID").GetNormalizedValue();
 
@@ -3515,7 +3336,7 @@ Please save the log file '{0}' so we can implement this", GetLogFileLocation(doc
             return null;
         }
 
-        private static bool CheckUSD(XElement srs, OfxDownloadData results, Account a)
+        private static bool CheckUSD(XElement srs, DownloadData results, Account a)
         {
             string dollar = srs.SelectElementValue("CURDEF").GetNormalizedValue();
 

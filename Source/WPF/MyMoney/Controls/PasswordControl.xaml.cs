@@ -9,6 +9,8 @@ namespace Walkabout.Controls
     /// </summary>
     public partial class PasswordControl : UserControl
     {
+        private bool synchronizing;
+
         public PasswordControl()
         {
             this.InitializeComponent();
@@ -24,7 +26,12 @@ namespace Walkabout.Controls
 
         private void OnPasswordChanged(object sender, RoutedEventArgs e)
         {
-            this.PasswordTextBox.Text = this.PasswordField.Password;
+            if (!synchronizing)
+            {
+                this.synchronizing = true;
+                this.PasswordTextBox.Text = this.PasswordField.Password;
+                this.synchronizing = false;
+            }
             if (PasswordChanged != null)
             {
                 PasswordChanged(sender, e);
@@ -53,7 +60,12 @@ namespace Walkabout.Controls
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            this.PasswordField.Password = this.PasswordTextBox.Text;
+            if (!synchronizing)
+            {
+                synchronizing = true;
+                this.PasswordField.Password = this.PasswordTextBox.Text;
+                synchronizing = false;
+            }
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()

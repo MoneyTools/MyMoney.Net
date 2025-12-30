@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="Walkabout.Views.Controls.OfxDownloadControl"
+﻿<UserControl x:Class="Walkabout.Views.Controls.DownloadControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:ofx="clr-namespace:Walkabout.Ofx"
+             xmlns:i="clr-namespace:Walkabout.Importers"
              xmlns:c="clr-namespace:Walkabout.WpfConverters"
              xmlns:ui="http://schemas.modernwpf.com/2019"
              Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
@@ -14,10 +14,10 @@
 
         <c:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
-        <HierarchicalDataTemplate DataType="{x:Type ofx:OfxDownloadData}" ItemsSource="{Binding Path=Children}" >
+        <HierarchicalDataTemplate DataType="{x:Type i:DownloadData}" ItemsSource="{Binding Path=Children}" >
             <StackPanel Orientation="Horizontal">
                 <Grid MinWidth="16" MinHeight="16" Margin="0,0,5,0" >
-                    <Button Click="ButtonRemoveOnlineAccount_Clicked" VerticalAlignment="Top" Visibility="{Binding IsError, Converter={StaticResource BoolToVisibilityConverter}}"
+                    <Button Click="ButtonRemoveOnlineAccount_Clicked" VerticalAlignment="Top" Visibility="{Binding IsOfxError, Converter={StaticResource BoolToVisibilityConverter}}"
                             ToolTip="Click here if you want to remove this online account settings">
                         <ui:SymbolIcon Symbol="Important" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Button>
@@ -63,7 +63,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TreeView x:Name="OfxEventTree" ItemContainerStyle="{StaticResource TreeViewStyle}" Margin="0" BorderThickness="0" Padding="10">
+        <TreeView x:Name="DownloadEventTree" ItemContainerStyle="{StaticResource TreeViewStyle}" Margin="0" BorderThickness="0" Padding="10">
         </TreeView>
         <ProgressBar x:Name="Progress" Grid.Row="1" HorizontalAlignment="Right" Width="100" Height="15"/>
     </Grid>

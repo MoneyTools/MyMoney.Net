@@ -412,7 +412,7 @@
                   <c:CloseBox Click="OnDownloadTabClose" x:Name="ButtonCloseDownloads"/>
                 </StackPanel>
               </TabItem.Header>
-              <vc:OfxDownloadControl x:Name="OfxDownloadControl"/>
+              <vc:DownloadControl x:Name="OfxDownloadControl"/>
             </TabItem>
           </TabControl>
         </Grid>

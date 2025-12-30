@@ -1,6 +1,6 @@
 ﻿using Walkabout.Data;
 
-namespace Walkabout.Migrate
+namespace Walkabout.Importers
 {
     /// <summary>
     /// This class matches the Exporter in terms of being able to import the XML or CSV data that was exported by the Exporter

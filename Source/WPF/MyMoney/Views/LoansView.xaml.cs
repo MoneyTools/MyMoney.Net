@@ -10,7 +10,7 @@ using System.Windows.Threading;
 using System.Xml;
 using Walkabout.Data;
 using Walkabout.Interfaces.Views;
-using Walkabout.Migrate;
+using Walkabout.Importers;
 using Walkabout.Utilities;
 
 namespace Walkabout.Views

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using Walkabout.Controls;
-using Walkabout.Migrate;
+using Walkabout.Importers;
 using Walkabout.Utilities;
 
 namespace Walkabout.Dialogs

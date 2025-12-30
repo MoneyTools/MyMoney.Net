@@ -6,7 +6,7 @@ using System.Xml;
 using Walkabout.Attachments;
 using Walkabout.Data;
 
-namespace Walkabout.Migrate
+namespace Walkabout.Importers
 {
     public class XmlImporter : Importer
     {

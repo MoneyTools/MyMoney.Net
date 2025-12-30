@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.IO;
 using System.Windows;
 using Walkabout.Data;
 using Walkabout.Utilities;
+using Walkabout.Views.Controls;
 
-namespace Walkabout.Migrate
+namespace Walkabout.Importers
 {
     /// <summary>
     /// Implements parts of the QIF specification for importing.
@@ -13,16 +15,20 @@ namespace Walkabout.Migrate
     /// </summary>
     public class QifImporter : Importer
     {
+        private DownloadControl control;
         public static string SpecialImportFileName = "~IMPORT~.QIF";
 
-        public QifImporter(MyMoney myMoney)
+        public QifImporter(DownloadControl control, MyMoney myMoney)
             : base(myMoney)
         {
+            this.control = control;
         }
 
         public Account Import(Account currentlySelectedAccount, string filename, out int count)
         {
             count = 0;
+            var entries = new ThreadSafeObservableCollection<DownloadData>();
+            this.control.DownloadEventTree.ItemsSource = entries;
             string name = Path.GetFileNameWithoutExtension(filename);
             Account a = this.Money.Accounts.FindAccount(name);
             if (a == null)
@@ -69,8 +75,11 @@ namespace Walkabout.Migrate
                 }
             }
 
-            count = this.ImportQif(a, filename);
-
+            var data = new DownloadData(null, a);
+            entries.Add(data);
+            count = this.ImportQif(a, data, filename);
+            data.Success = true;
+            data.Message = (count > 0) ? $"Downloaded {count} transactions" : null;
             return a;
         }
 
@@ -83,7 +92,7 @@ namespace Walkabout.Migrate
             return memo + ", " + line;
         }
 
-        public int ImportQif(Account a, string filename)
+        public int ImportQif(Account a, DownloadData data, string filename)
         {
             bool merge = false;
             MyMoney myMoney = this.Money;
@@ -405,6 +414,7 @@ namespace Walkabout.Migrate
                                         transactionsAdded++;
                                         myMoney.Transactions.AddTransaction(t);
                                     }
+                                    data.AddItem(t);
                                     t.IsDownloaded = true;
                                     newTransactions[t.Id] = t;
                                 }

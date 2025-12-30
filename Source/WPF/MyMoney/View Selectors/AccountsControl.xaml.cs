@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,7 +16,7 @@ using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Dialogs;
 using Walkabout.Help;
-using Walkabout.Migrate;
+using Walkabout.Importers;
 using Walkabout.Utilities;
 
 #if PerformanceBlocks
@@ -1007,6 +1006,9 @@ namespace Walkabout.Views.Controls
 
         private void ImportCsv(Account account, string fileName)
         {
+            DownloadControl downloadControl = (DownloadControl)this.Site.GetService(typeof(DownloadControl));
+            var entries = new ThreadSafeObservableCollection<DownloadData>();
+            DownloadData data = new DownloadData(null, account, "");
             try
             {
                 var csv = CsvDocument.Load(fileName);
@@ -1016,14 +1018,18 @@ namespace Walkabout.Views.Controls
                     throw new InvalidOperationException("The CSV file contains an 'Account' column but you are importing into a specific account. " +
                         "Please use File/Import instead.");
                 }
+                downloadControl.DownloadEventTree.ItemsSource = entries;
                 // load existing csv map if we have one.
                 var map = this.LoadMap(account);
                 var fields = account.Type == AccountType.Brokerage || account.Type == AccountType.Retirement ?
                     CsvTransactionImporter.BrokerageAccountFields :
                     CsvTransactionImporter.BankAccountFields;
-                var importer = new CsvTransactionImporter(this.myMoney, account, map, fields);
-                importer.Import(csv);
+                entries.Add(data);
+                var importer = new CsvTransactionImporter(this.myMoney, account, map, data, fields);
+                var count = importer.Import(csv);
+                data.Message = (count > 0) ? $"Downloaded {count} transactions" : null;
                 importer.Commit();
+                data.Success = true;
                 map.Save();
                 _ = this.myMoney.Rebalance(account);
             }
@@ -1032,6 +1038,7 @@ namespace Walkabout.Views.Controls
             }
             catch (Exception ex)
             {
+                data.AddError(null, account, ex);
                 MessageBoxEx.Show(ex.Message, "Import Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
@@ -1073,7 +1080,8 @@ namespace Walkabout.Views.Controls
                     var fields = account.Type == AccountType.Brokerage || account.Type == AccountType.Retirement ?
                         CsvTransactionImporter.BrokerageAccountFields :
                         CsvTransactionImporter.BankAccountFields;
-                    var ti = new CsvTransactionImporter(this.myMoney, account, map, fields);
+                    DownloadData data = new DownloadData(null, account, "");
+                    var ti = new CsvTransactionImporter(this.myMoney, account, map, data, fields);
                     ti.EditCsvMap(null);
                 } 
                 catch (UserCanceledException)

@@ -11,6 +11,11 @@
         ShowInTaskbar="False"  
         WindowStartupLocation="CenterOwner" 
         WindowStyle="ToolWindow" >
+  <local:BaseDialog.Resources>
+    <Style TargetType="TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+  </local:BaseDialog.Resources>
   <Grid>
     <Grid Margin="20">
       <Grid.ColumnDefinitions>
