@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.63" date="12/30/2025">
+		- Bug #140: GoTo statement does not show the right statement.
+	</change>
 	<change version="2.1.0.62" date="12/26/2025">
 		- Feature: refactor DownloadControl so it can be reused for .csv and .qif import.
 		- Cleanup: move OFX special handling from DownloadControl into new OfxDownloadController.

@@ -1655,7 +1655,7 @@ namespace Walkabout.Views
         /// </summary>
         private void ShowReconciledState(DateTime statementDate)
         {
-            this.SetReconciledState(false);
+            this.SetReconciledState(true);
             this.reconcilingTransactions = new Dictionary<Transaction, TransactionStatus>();
 
             this.myMoney.Transactions.BeginUpdate(false);
@@ -1669,11 +1669,9 @@ namespace Walkabout.Views
                         if (t.ReconciledDate.HasValue && t.Status == TransactionStatus.Reconciled)
                         {
                             DateTime dt = t.ReconciledDate.Value;
-
-                            if (dt.Year == statementDate.Year && dt.Month == statementDate.Month)
+                            if (dt.Date == statementDate.Date)
                             {
                                 t.IsReconciling = true;
-                                t.ReconciledDate = statementDate; // in case user changed the statement date half way through reconciling!
                                 this.reconcilingTransactions[t] = t.Status;
                             }
                         }
