@@ -1,12 +1,12 @@
 
-MyMoney.Net is a rich client .NET 8.0 application for managing your personal finances. It is
+MyMoney.Net is a rich client .NET 10.0 application for managing your personal finances. It is
 written entirely in C# and is designed for programmers who want easy access to their data and who
 want to quickly and easily add their own features. Your data will not be locked up in some
 proprietary format, it is yours to do with as you like.
 
 ## Install
 
-Once you have [.NET 8.0 Desktop Runtime installed](https://dotnet.microsoft.com/en-us/download/dotnet/)
+Once you have [.NET 10.0 Desktop Runtime installed](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 you can simply click the [ClickOnce
 Installer](https://moneytools.github.io/MyMoney.Net/#Basics/install) to install the app.
 

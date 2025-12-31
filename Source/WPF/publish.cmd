@@ -42,11 +42,9 @@ if ERRORLEVEL 1 goto :err_restore
 if not EXIST %ClickOnceBits%\MyMoney.application goto :nopub
 CleanupPublishFolder %VERSION% %ClickOnceBits%
 
-echo ### BugBug: TODO fix msix package build of .NET 8.0 apps, it is currently not supported, skipping winget package creation...
-rem if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
-rem msbuild /target:publish MyMoneyPackage.sln /p:Configuration=Release "/p:Platform=Any CPU"
-rem if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :noappx
-rem https://developercommunity.visualstudio.com/t/PublishReadyToRun-doesnt-seem-to-work-o/10272475
+if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
+msbuild MyMoneyPackage.sln /t:Publish /p:Configuration=Release /p:Platform=x64 /p:AppxBundlePlatforms=x64
+if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_x64.msixbundle goto :noappx
 
 :dorelease
 if "%GITRELEASE%" == "0" goto :upload
@@ -55,10 +53,11 @@ git tag %VERSION%
 git push origin --tags
 
 echo Creating new release for version %VERSION%
+set MSIXBUNDLE=MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_x64.msixbundle
 xsl -e -s MyMoney\Setup\LatestVersion.xslt MyMoney\Setup\changes.xml > notes.txt
-gh release create %VERSION% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
+REM gh release create %VERSION% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
+gh release create %VERSION% %ROOT%%MSIXBUNDLE% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
 if ERRORLEVEL 1 goto :ghreleaseerr
-REM gh release create %VERSION% %ROOT%MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle --notes-file notes.txt --title "MyMoney.Net %VERSION%"
 del notes.txt
 
 :upload
@@ -66,14 +65,13 @@ if "%UPLOAD%" == "0" goto :dowinget
 echo Uploading ClickOnce installer
 copy /y MyMoney\Setup\changes.xml %ClickOnceBits%
 call AzurePublishClickOnce %ClickOnceBits% downloads/MyMoney "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
-REM call AzurePublishClickOnce %ROOT%MoneyPackage\AppPackages downloads/MyMoney.Net "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
+call AzurePublishClickOnce %ROOT%MoneyPackage\AppPackages downloads/MyMoney.Net/ "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
 
 echo ============ Done publishing ClickOnce installer ==============
 :dowinget
-goto :skipwinget
-rem if "%WINGET%"=="0" goto :skipwinget
+if "%WINGET%"=="0" goto :skipwinget
 if not exist %WINGET_SRC% goto :nowinget
-if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_AnyCPU.msixbundle goto :eof
+if not EXIST %MSIXBUNDLE% goto :eof
 
 :syncwinget
 echo Syncing winget master branch
@@ -102,10 +100,14 @@ git mv "!OLDEST!" %VERSION%
 popd
 
 echo Preparing winget package
+where wingetcreate > nul 2>&1
+if ERRORLEVEL 1 winget install wingetcreate
+winget upgrade wingetcreate
+
 set TARGET=%WINGET_SRC%\manifests\l\LovettSoftware\MyMoney\Net\%VERSION%
 if not exist %TARGET% mkdir %TARGET%
 copy /y WinGetTemplate\LovettSoftware*.yaml  %TARGET%
-wingetcreate update LovettSoftware.MyMoney.Net --version %VERSION% -o %WINGET_SRC% -u https://github.com/MoneyTools/MyMoney.Net/releases/download/%VERSION%/MoneyPackage_%VERSION%_AnyCPU.msixbundle
+wingetcreate update LovettSoftware.MyMoney.Net --version %VERSION% -o %WINGET_SRC% -u https://github.com/MoneyTools/MyMoney.Net/releases/download/%VERSION%/MoneyPackage_%VERSION%_x64.msixbundle
 if ERRORLEVEL 1 goto :eof
 
 pushd %TARGET%
