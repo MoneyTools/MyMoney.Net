@@ -42,6 +42,7 @@ if ERRORLEVEL 1 goto :err_restore
 if not EXIST %ClickOnceBits%\MyMoney.application goto :nopub
 CleanupPublishFolder %VERSION% %ClickOnceBits%
 
+if "%WINGET%"=="0" goto :dorelease
 if EXIST MoneyPackage\AppPackages rd /s /q MoneyPackage\AppPackages
 msbuild MyMoneyPackage.sln /t:Publish /p:Configuration=Release /p:Platform=x64 /p:AppxBundlePlatforms=x64
 if not EXIST MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_x64.msixbundle goto :noappx
@@ -55,8 +56,11 @@ git push origin --tags
 echo Creating new release for version %VERSION%
 set MSIXBUNDLE=MoneyPackage\AppPackages\MoneyPackage_%VERSION%_Test\MoneyPackage_%VERSION%_x64.msixbundle
 xsl -e -s MyMoney\Setup\LatestVersion.xslt MyMoney\Setup\changes.xml > notes.txt
-REM gh release create %VERSION% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
-gh release create %VERSION% %ROOT%%MSIXBUNDLE% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
+if "%WINGET%"=="0" (
+  gh release create %VERSION% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
+) else (
+  gh release create %VERSION% %ROOT%%MSIXBUNDLE% --notes-file notes.txt --title "MyMoney.Net %VERSION%"
+)
 if ERRORLEVEL 1 goto :ghreleaseerr
 del notes.txt
 
@@ -65,7 +69,6 @@ if "%UPLOAD%" == "0" goto :dowinget
 echo Uploading ClickOnce installer
 copy /y MyMoney\Setup\changes.xml %ClickOnceBits%
 call AzurePublishClickOnce %ClickOnceBits% downloads/MyMoney "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
-call AzurePublishClickOnce %ROOT%MoneyPackage\AppPackages downloads/MyMoney.Net/ "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
 
 echo ============ Done publishing ClickOnce installer ==============
 :dowinget
@@ -73,6 +76,7 @@ if "%WINGET%"=="0" goto :skipwinget
 if not exist %WINGET_SRC% goto :nowinget
 if not EXIST %MSIXBUNDLE% goto :eof
 
+call AzurePublishClickOnce %ROOT%MoneyPackage\AppPackages downloads/MyMoney.Net/ "%LOVETTSOFTWARE_STORAGE_CONNECTION_STRING%"
 :syncwinget
 echo Syncing winget master branch
 pushd %WINGET_SRC%\manifests\l\LovettSoftware\MyMoney\Net
