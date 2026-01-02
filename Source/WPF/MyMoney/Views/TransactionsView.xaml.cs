@@ -5895,6 +5895,8 @@ namespace Walkabout.Views
             this.cell = newCell;
             if (this.cell != null)
             {
+                this.cell.Selected -= new RoutedEventHandler(this.OnCellSelectionChanged);
+                this.cell.Unselected -= new RoutedEventHandler(this.OnCellSelectionChanged);
                 this.cell.Selected += new RoutedEventHandler(this.OnCellSelectionChanged);
                 this.cell.Unselected += new RoutedEventHandler(this.OnCellSelectionChanged);
             }
