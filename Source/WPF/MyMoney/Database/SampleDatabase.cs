@@ -10,10 +10,10 @@ using Walkabout.Dialogs;
 using Walkabout.StockQuotes;
 using Walkabout.Utilities;
 
-namespace Walkabout.Assitance
+namespace Walkabout.Assistance
 {
     /// <summary>
-    /// This class creates a sample database, creating ficticious accounts and transactions.
+    /// This class creates a sample database, creating fictitious accounts and transactions.
     /// </summary>
     public class SampleDatabase
     {

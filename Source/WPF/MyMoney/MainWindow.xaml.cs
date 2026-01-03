@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using Walkabout.Assitance;
+using Walkabout.Assistance;
 using Walkabout.Attachments;
 using Walkabout.Charts;
 using Walkabout.Configuration;
