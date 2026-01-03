@@ -8,9 +8,10 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.Xml;
+using System.Xml.Serialization;
 using Walkabout.Data;
-using Walkabout.Interfaces.Views;
 using Walkabout.Importers;
+using Walkabout.Interfaces.Views;
 using Walkabout.Utilities;
 
 namespace Walkabout.Views
@@ -418,34 +419,12 @@ namespace Walkabout.Views
     {
         public int LoanAccountId { get; set; }
 
+        public ViewStateForLoan() { }
 
-        public override void ReadXml(XmlReader r)
+        public static ViewStateForLoan Deserialize(XmlReader r)
         {
-            if (r.IsEmptyElement)
-            {
-                return;
-            }
-
-            while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
-            {
-                if (r.NodeType == XmlNodeType.Element)
-                {
-                    switch (r.Name)
-                    {
-                        case "LoanAccount":
-                            this.LoanAccountId = Convert.ToInt32(r.ReadString());
-                            break;
-                    }
-                }
-            }
-        }
-
-        public override void WriteXml(XmlWriter writer)
-        {
-            if (writer != null)
-            {
-                writer.WriteElementString("LoanAccount", this.LoanAccountId.ToString());
-            }
+            XmlSerializer s = new XmlSerializer(typeof(ViewStateForLoan));
+            return (ViewStateForLoan)s.Deserialize(r);
         }
     }
 

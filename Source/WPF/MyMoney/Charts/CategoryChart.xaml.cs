@@ -439,7 +439,7 @@ namespace Walkabout.Charts
                 }
             }
 
-            cd.Transactions.Add(t);
+            //cd.Transactions.Add(t);
 
             cd.Total += (double)total;
             return true;

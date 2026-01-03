@@ -5865,7 +5865,7 @@ namespace Walkabout.Data
     [DataContract(Namespace = "http://schemas.vteam.com/Money/2010")]
     public class RentalBuildingSingleYearSingleDepartment
     {
-        public Category DepartmentCategory;
+        public string DepartmentCategory { get; set; }
         public string Name { get; set; }
         public RentBuilding Building { get; set; }
         public int Year { get; set; }
@@ -6675,7 +6675,7 @@ namespace Walkabout.Data
                 Building = transactionsForYear.Building,
                 Year = transactionsForYear.Year,
                 Name = label,
-                DepartmentCategory = categoryToFind,
+                DepartmentCategory = categoryToFind.GetFullName(),
                 Total = total
             });
 
@@ -9781,7 +9781,7 @@ namespace Walkabout.Data
         }
 
 
-        public ICollection<Transaction> GetAllTransactionsByDate()
+        public IList<Transaction> GetAllTransactionsByDate()
         {
             List<Transaction> view = new List<Transaction>();
             foreach (Transaction t in this.transactions.Values)
@@ -9797,7 +9797,7 @@ namespace Walkabout.Data
             return view;
         }
 
-        public ICollection<Transaction> GetAllTransactionsByTaxDate()
+        public IList<Transaction> GetAllTransactionsByTaxDate()
         {
             List<Transaction> view = new List<Transaction>();
             foreach (Transaction t in this.transactions.Values)
@@ -10140,6 +10140,10 @@ namespace Walkabout.Data
         public IList<Transaction> GetTransactionsByPayee(Payee p, Predicate<Transaction> include)
         {
             List<Transaction> view = new List<Transaction>();
+            if (p == null)
+            {
+                return new List<Transaction>();
+            }
             foreach (Transaction t in this.transactions.Values)
             {
                 if (t.IsDeleted)
@@ -10199,6 +10203,10 @@ namespace Walkabout.Data
         public IList<Transaction> GetTransactionsBySecurity(Security s, Predicate<Transaction> include)
         {
             List<Transaction> view = new List<Transaction>();
+            if (s == null)
+            {
+                return view;
+            }
 
             MyMoney money = this.Parent as MyMoney;
 
@@ -10309,6 +10317,10 @@ namespace Walkabout.Data
         {
             MyMoney money = this.Parent as MyMoney;
             List<Transaction> view = new List<Transaction>();
+            if (c == null)
+            {
+                return view;
+            }
             foreach (Transaction t in this.transactions.Values)
             {
                 if (t.IsDeleted)
@@ -10364,7 +10376,7 @@ namespace Walkabout.Data
         {
             if (c == null)
             {
-                return null;
+                return new List<Transaction>();
             }
 
             MyMoney money = this.Parent as MyMoney;

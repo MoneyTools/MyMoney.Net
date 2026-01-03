@@ -1003,7 +1003,8 @@ namespace Walkabout
             }
 
             total.Sort(Transactions.SortByDate);
-            view.ViewTransactionsForCategory(new Data.Category() { Name = g.Name }, total);
+            //view.ViewTransactionsForCategory(new Data.Category() { Name = g.Name }, total);
+            view.ViewTransactions(total);
             this.TrackSelectionChanges();
         }
 
@@ -1139,9 +1140,27 @@ namespace Walkabout
                         XmlElement stateNode = this.settings.GetViewStateNode(typeof(T));
                         if (stateNode != null)
                         {
-                            ViewState newState = iView.DeserializeViewState(new XmlNodeReader(stateNode));
-                            iView.ViewState = newState;
-                            this.settings.SetViewState(typeof(T), newState);
+                            try
+                            {
+                                XmlElement inner = null;
+                                foreach (var node in stateNode.ChildNodes)
+                                {
+                                    if (node is XmlElement e)
+                                    {
+                                        inner = e;
+                                        break;
+                                    }
+                                }
+                                if (inner != null) { 
+                                    ViewState newState = iView.DeserializeViewState(new XmlNodeReader(inner));
+                                    iView.ViewState = newState;
+                                    this.settings.SetViewState(typeof(T), newState);
+                                }
+                            } 
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex.Message);
+                            }
                         }
                     }
                     // Cache the new singleton instance
@@ -2647,7 +2666,7 @@ namespace Walkabout
 
             this.viewStateChanging = e;
 
-            if (sender is ITransactionView view)
+            if (sender is TransactionsView view)
             {
                 this.SetCurrentView<TransactionsView>();
 
@@ -2817,22 +2836,15 @@ namespace Walkabout
             }
         }
 
-        private void HistoryChart_SelectionChanged(object sender, EventArgs e)
+        private void 
+            HistoryChart_SelectionChanged(object sender, EventArgs e)
         {
             HistoryChartColumn selection = this.HistoryChart.Selection;
             if (selection != null)
             {
-                List<Transaction> list = new List<Transaction>(from v in selection.Values select (Transaction)v.UserData);
                 this.TransactionView.QuickFilter = ""; // need to clear this as they might conflict.
                 var view = this.TransactionView;
-                if (this.TransactionView.ActiveCategory != null)
-                {
-                    view.ViewTransactionsForCategory(this.TransactionView.ActiveCategory, list);
-                }
-                else if (this.TransactionView.ActivePayee != null)
-                {
-                    view.ViewTransactionsForPayee(this.TransactionView.ActivePayee, list);
-                }
+                view.AddHistoryFilter(selection.StartDate, selection.EndDate);
             }
         }
 
@@ -2909,7 +2921,7 @@ namespace Walkabout
 
                     if (parent != filter)
                     {
-                        rows = this.myMoney.Transactions.GetTransactionsByCategory(parent, this.TransactionView.GetTransactionIncludePredicate());
+                        rows = this.myMoney.Transactions.GetTransactionsByCategory(parent, null);
                     }
                     if (parent == null)
                     {
@@ -3087,10 +3099,6 @@ namespace Walkabout
                 brush = new SolidColorBrush(c);
             }
             HistoryChartColumn selection = this.HistoryChart.Selection;
-            if (selection == null)
-            {
-                selection = new Charts.HistoryChartColumn() { Range = HistoryRange.Year };
-            }
             List<HistoryDataValue> rows = new List<Charts.HistoryDataValue>();
             foreach (var transaction in this.TransactionView.ViewModel)
             {
@@ -3137,7 +3145,18 @@ namespace Walkabout
                     Value = amount
                 });
             }
-
+            if (selection == null)
+            {
+                selection = new Charts.HistoryChartColumn() { Range = HistoryRange.Year };
+                if (rows.Count > 0)
+                {
+                    selection.StartDate = rows[0].Date;
+                }
+                else
+                {
+                    selection.StartDate = DateTime.Today;
+                }
+            }
             selection.Values = rows;
             selection.Brush = brush;
             this.HistoryChart.Selection = selection;
@@ -3202,7 +3221,7 @@ namespace Walkabout
             if (data != null)
             {
                 TransactionsView view = this.TransactionView;
-                view.ViewTransactionsForCategory(data.Category, data.Transactions);
+                view.AddCategoryFilter(data.Category);
             }
         }
 

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Serialization;
 
 namespace Walkabout.Interfaces.Reports
 {
@@ -21,6 +22,7 @@ namespace Walkabout.Interfaces.Reports
         void OnMouseLeftButtonClick(object sender, MouseButtonEventArgs e);
     }
 
+    [XmlInclude(typeof(SimpleReportState))]
     public interface IReportState
     {
         Type GetReportType();

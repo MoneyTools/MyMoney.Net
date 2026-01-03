@@ -88,6 +88,8 @@ namespace Walkabout.Views.Controls
         #region PROPERTIES
 
         private MyMoney money;
+        private Category delayedSelection;
+        private bool programaticChange;
 
         public MyMoney MyMoney
         {
@@ -122,10 +124,18 @@ namespace Walkabout.Views.Controls
             {
                 if (value != null && value != this.Selected)
                 {
-                    List<object> path = new List<object>();
-                    if (this.FindTreeItemByCategory(this.treeView.Items, value, path))
+                    if (this.treeView.ItemsSource == null)
                     {
-                        this.SelectedAndExpandPath(this.treeView, path);
+                        // not loaded yet, so store this until then.
+                        this.delayedSelection = value;
+                    }
+                    else
+                    {
+                        List<object> path = new List<object>();
+                        if (this.FindTreeItemByCategory(this.treeView.Items, value, path))
+                        {
+                            this.SelectedAndExpandPath(this.treeView, path);
+                        }
                     }
                 }
             }
@@ -380,6 +390,21 @@ namespace Walkabout.Views.Controls
         private void OnTreeViewLoaded(object sender, RoutedEventArgs e)
         {
             this.ExpandGroups();
+
+            if (this.delayedSelection != null)
+            {
+                var temp = this.delayedSelection;
+                this.delayedSelection = null;
+                this.programaticChange = true;
+                try
+                {
+                    this.Selected = temp;
+                } 
+                finally
+                {
+                    this.programaticChange = false;
+                }
+            }
         }
 
         private void ExpandGroups()
@@ -559,6 +584,10 @@ namespace Walkabout.Views.Controls
 
         private void OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            if (this.programaticChange)
+            {
+                return;
+            }
             Category dataBoundItemTreeview = this.treeView.SelectedItem as Category;
             if (dataBoundItemTreeview != null)
             {

@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml;
+using System.Xml.Serialization;
 using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Interfaces.Views;
@@ -826,69 +827,12 @@ namespace Walkabout.Views
             set { this.direction = value; }
         }
 
-        public override void ReadXml(XmlReader r)
-        {
-            if (r.IsEmptyElement)
-            {
-                return;
-            }
+        public SecuritiesViewState() { }
 
-            while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
-            {
-                if (r.NodeType == XmlNodeType.Element)
-                {
-                    switch (r.Name)
-                    {
-                        case "ViewAllSplits":
-                            this.ViewAllSplits = ReadBoolean(r);
-                            break;
-                        case "ViewAllSecurities":
-                            this.ViewAllSecurities = ReadBoolean(r);
-                            break;
-                        case "SelectedSecurity":
-                            this.SelectedSecurity = r.ReadString();
-                            break;
-                        case "SortedColumn":
-                            this.SortedColumn = ReadInt(r, -1);
-                            break;
-                        case "SortDirection":
-                            this.SortDirection = ReadEnum<ListSortDirection>(r);
-                            break;
-
-                    }
-                }
-            }
+        public static SecuritiesViewState Deserialize(XmlReader r) {
+            XmlSerializer s = new XmlSerializer(typeof(SecuritiesViewState));
+            return (SecuritiesViewState)s.Deserialize(r);
         }
-
-        public override void WriteXml(XmlWriter writer)
-        {
-            if (writer != null)
-            {
-                writer.WriteElementString("ViewAllSplits", this.ViewAllSplits.ToString());
-                writer.WriteElementString("ViewAllSecurities", this.ViewAllSecurities.ToString());
-                if (!string.IsNullOrEmpty(this.SelectedSecurity))
-                {
-                    writer.WriteElementString("SelectedSecurity", this.SelectedSecurity);
-                }
-                if (this.SortedColumn != -1)
-                {
-                    writer.WriteElementString("SortedColumn", this.SortedColumn.ToString());
-                }
-                if (this.SortDirection.HasValue)
-                {
-                    writer.WriteElementString("SortDirection", this.SortDirection.Value.ToString());
-                }
-            }
-        }
-
-
-        public static SecuritiesViewState Deserialize(XmlReader r)
-        {
-            SecuritiesViewState state = new SecuritiesViewState();
-            state.ReadXml(r);
-            return state;
-        }
-
     }
 
     /// <summary>

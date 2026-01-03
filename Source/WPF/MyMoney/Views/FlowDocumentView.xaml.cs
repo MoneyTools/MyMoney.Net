@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Xml;
+using System.Xml.Serialization;
 using Walkabout.Data;
 using Walkabout.Interfaces.Reports;
 using Walkabout.Interfaces.Views;
@@ -366,9 +367,12 @@ namespace Walkabout.Views
     /// <summary>
     /// Todo: serialize this if we can, so restart can show the same report.
     /// </summary>
-    internal class ReportViewState : ViewState
+    public class ReportViewState : ViewState
     {
+        [XmlIgnore]  
         public IReportState ReportState { get; private set; }
+
+        public ReportViewState() { } // for serialization 
 
         public ReportViewState(IReportState reportState)
         {

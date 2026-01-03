@@ -25,7 +25,7 @@ namespace Walkabout.Charts
 
         public Category Category { get; set; }
 
-        public List<Transaction> Transactions { get { return this.transactions; } }
+        //public List<Transaction> Transactions { get { return this.transactions; } }
 
         public string Name
         {

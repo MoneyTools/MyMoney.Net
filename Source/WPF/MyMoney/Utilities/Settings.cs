@@ -806,7 +806,8 @@ namespace Walkabout.Configuration
                     string key = s.GetType().FullName;
                     w.WriteStartElement(key);
                     w.WriteAttributeString("ViewType", t.FullName);
-                    s.WriteXml(w);
+                    XmlSerializer ss = new XmlSerializer(s.GetType());
+                    ss.Serialize(w, s);
                     w.WriteEndElement();
                 }
             }

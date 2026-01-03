@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
+using System.Xml.Serialization;
 using Walkabout.Controls;
 using Walkabout.Data;
 using Walkabout.Interfaces.Views;
@@ -623,60 +624,14 @@ namespace Walkabout.Views
             set { this.direction = value; }
         }
 
-        public override void ReadXml(XmlReader r)
-        {
-            if (r.IsEmptyElement)
-            {
-                return;
-            }
-
-            while (r.Read() && !r.EOF && r.NodeType != XmlNodeType.EndElement)
-            {
-                if (r.NodeType == XmlNodeType.Element)
-                {
-                    switch (r.Name)
-                    {
-                        case "SelectedSecurity":
-                            this.SelectedSecurity = r.ReadString();
-                            break;
-                        case "SortedColumn":
-                            this.SortedColumn = ReadInt(r, -1);
-                            break;
-                        case "SortDirection":
-                            this.SortDirection = ReadEnum<ListSortDirection>(r);
-                            break;
-
-                    }
-                }
-            }
-        }
-
-        public override void WriteXml(XmlWriter writer)
-        {
-            if (writer != null)
-            {
-                if (!string.IsNullOrEmpty(this.SelectedSecurity))
-                {
-                    writer.WriteElementString("SelectedSecurity", this.SelectedSecurity);
-                }
-                if (this.SortedColumn != -1)
-                {
-                    writer.WriteElementString("SortedColumn", this.SortedColumn.ToString());
-                }
-                if (this.SortDirection.HasValue)
-                {
-                    writer.WriteElementString("SortDirection", this.SortDirection.Value.ToString());
-                }
-            }
-        }
-
+        public CurrenciesViewState() { }
 
         public static CurrenciesViewState Deserialize(XmlReader r)
         {
-            CurrenciesViewState state = new CurrenciesViewState();
-            state.ReadXml(r);
-            return state;
+            XmlSerializer s = new XmlSerializer(typeof(CurrenciesViewState));
+            return (CurrenciesViewState)s.Deserialize(r);
         }
+
 
     }
 

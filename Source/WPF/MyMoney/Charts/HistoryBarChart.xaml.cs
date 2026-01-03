@@ -55,7 +55,31 @@ namespace Walkabout.Charts
         public decimal Amount { get; set; }
         public ColumnLabel Label { get; set; }
         public decimal Average { get; set; }
-        public DateTime StartDate
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate
+        {
+            get
+            {
+                DateTime endDate = this.StartDate;
+                switch (this.Range)
+                {
+                    case HistoryRange.Year:
+                        endDate = endDate.AddYears(1);
+                        break;
+                    case HistoryRange.Month:
+                        endDate = endDate.AddMonths(1);
+                        break;
+                    case HistoryRange.Day:
+                        endDate = endDate.AddDays(1);
+                        break;
+                    default:
+                        break;
+                }
+                return endDate;
+            }
+        }
+
+        public DateTime ActualStartDate
         {
             get
             {
@@ -63,7 +87,8 @@ namespace Walkabout.Charts
                 return (first != null) ? first.Date : DateTime.Now;
             }
         }
-        public DateTime EndDate
+
+        public DateTime ActualEndDate
         {
             get
             {
@@ -71,7 +96,6 @@ namespace Walkabout.Charts
                 return (last != null) ? last.Date : DateTime.Now;
             }
         }
-
     }
 
     /// <summary>
@@ -174,7 +198,7 @@ namespace Walkabout.Charts
                 this.selection.Range = newRange;
             }
             this.UpdateChart();
-        }
+        }        
 
         private bool updating;
 
@@ -429,12 +453,12 @@ namespace Walkabout.Charts
                     {
                         label = start.Year.ToString();
                     }
-                    columnRange = HistoryRange.Month;
+                    columnRange = HistoryRange.Year;
                     break;
                 case HistoryRange.Month:
                     year -= 100 * century;
                     label = string.Format("{0:00}/{1:00}", start.Month, year);
-                    columnRange = HistoryRange.Day;
+                    columnRange = HistoryRange.Month;
                     break;
                 case HistoryRange.Day:
                     label = string.Format("{0:00}", start.Day);
@@ -443,7 +467,7 @@ namespace Walkabout.Charts
             }
             ColumnLabel clabel = new Charts.ColumnLabel(label);
 
-            HistoryChartColumn column = new HistoryChartColumn() { Amount = total, Range = columnRange, Label = clabel, Values = bucket, Brush = brush };
+            HistoryChartColumn column = new HistoryChartColumn() { Amount = total, Range = columnRange, Label = clabel, Values = bucket, Brush = brush, StartDate = start };
             clabel.Data = column;
             this.collection.Add(column);
         }

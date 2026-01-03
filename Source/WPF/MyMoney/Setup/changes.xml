@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <changes>
+	<change version="2.1.0.64" date="1/2/2026">
+		- Feature #136: Losing the year filter when looking at the expense chart for a category.
+	</change>
 	<change version="2.1.0.63" date="12/30/2025">
 		- Bug #140: GoTo statement does not show the right statement.
 	</change>

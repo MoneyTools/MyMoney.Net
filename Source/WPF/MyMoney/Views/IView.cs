@@ -37,17 +37,6 @@ namespace Walkabout.Interfaces.Views
         void FocusQuickFilter();
     }
 
-
-    public interface ITransactionView : IView
-    {
-        Account ActiveAccount { get; }
-        Category ActiveCategory { get; }
-        Security ActiveSecurity { get; }
-        Payee ActivePayee { get; }
-        RentBuilding ActiveRental { get; }
-    }
-
-
     /// <summary>
     /// Interface abstraction for decoupling the views from the main controlling windows
     /// This allows one view to make a request to the main control for jumping to another view

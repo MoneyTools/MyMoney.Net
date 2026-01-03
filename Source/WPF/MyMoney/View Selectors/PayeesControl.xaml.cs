@@ -23,6 +23,7 @@ namespace Walkabout.Views.Controls
         public IServiceProvider Site { get; set; }
 
         private MyMoney myMoney;
+        private bool programaticChange;
 
         public MyMoney MyMoney
         {
@@ -60,7 +61,14 @@ namespace Walkabout.Views.Controls
             {
                 this.selection = value;
                 this.listbox1.SelectedItem = value;
-                this.listbox1.ScrollIntoView(value);
+                this.programaticChange = true;
+                try
+                {
+                    this.listbox1.ScrollIntoView(value);
+                } finally
+                {
+                    this.programaticChange = false;
+                }
             }
         }
 
@@ -108,7 +116,7 @@ namespace Walkabout.Views.Controls
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count > 0)
+            if (e.AddedItems.Count > 0 && !this.programaticChange)
             {
                 Payee p = e.AddedItems[0] as Payee;
                 if (p != this.selection)
